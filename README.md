@@ -1,3 +1,36 @@
+**Pillar Wallet** 
+
+To get started clone repo and run
+
+`npm install`
+
+This will download all the necessary packages to build the project. The project can be deployed using the simpple command of `npm start`. This will get your project running in development mode.
+
+**Debugging**
+
+Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devices, you will see the in-app developer menu. Tap “Debug JS Remotely”. The Chrome debugger will be opened automatically. You still need to open Developer Tools in Chrome manually. Open source files in the Sources tab, you can set breakpoints here. [READ MORE](https://codeburst.io/react-native-debugging-tools-3a24e4e40e4)
+
+This can also be referenced via [react-devtools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools)
+
+**Running on iOS:**
+
+The project may be run from the directory using 
+
+`npm run ios`
+
+This will launch the simulator, for instructions on debuggin via Chrome please see [React Dev-Tools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools) to get started.
+
+
+**Running on Android:**
+
+Like npm start, but also attempts to open your app in the iOS Simulator if you're on a Mac and have it installed.
+
+`npm run android`
+
+
+
+
+
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 
 Below you'll find information about performing common tasks. The most recent version of this guide is available [here](https://github.com/react-community/create-react-native-app/blob/master/react-native-scripts/template/README.md).
