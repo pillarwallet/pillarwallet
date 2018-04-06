@@ -4,7 +4,7 @@ To get started clone repo and run
 
 `npm install`
 
-This will download all the necessary packages to build the project. The project can be deployed using the simpple command of `npm start`. This will get your project running in development mode.
+This will download all the necessary packages to build the project. The project can be deployed using the simple command of `npm start`. This will get your project running in development mode.
 
 **Debugging**
 
