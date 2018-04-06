@@ -2782,6 +2782,10 @@ find-up@^2.0.0, find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
+flow-bin@^0.69.0:
+  version "0.69.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.69.0.tgz#053159a684a6051fcbf0b71a2eb19a9679082da6"
+
 follow-redirects@^1.2.3:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.4.1.tgz#d8120f4518190f55aac65bb6fc7b85fcd666d6aa"
@@ -5574,9 +5578,9 @@ react-native-vector-icons@4.5.0:
     prop-types "^15.5.10"
     yargs "^8.0.2"
 
-react-native@0.54.0:
-  version "0.54.0"
-  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.54.0.tgz#1582cc2b2a639d46e39c44bcc50e051d0061820a"
+react-native@^0.54.2:
+  version "0.54.4"
+  resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.54.4.tgz#19c6c598f6acf04f1c032fe9a1812f0c640fa8b7"
   dependencies:
     absolute-path "^0.0.0"
     art "^0.10.0"
@@ -5683,16 +5687,7 @@ react-transform-hmr@^1.0.4:
     global "^4.3.0"
     react-proxy "^1.1.7"
 
-react@16.3.0-alpha.1:
-  version "16.3.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.3.0-alpha.1.tgz#de20f646e31e8b3c004e6bcbd3c54d51b48e1120"
-  dependencies:
-    fbjs "^0.8.16"
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.0"
-
-react@^16.0.0:
+react@^16.0.0, react@^16.3.0-alpha.1:
   version "16.3.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.3.1.tgz#4a2da433d471251c69b6033ada30e2ed1202cfd8"
   dependencies:
