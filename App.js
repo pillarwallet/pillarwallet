@@ -1,11 +1,9 @@
 // @flow
 
-import React from "react";
+import * as React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-type Props = {};
-
-export default class App extends React.Component<Props> {
+export default class App extends React.Component<{}> {
   render() {
     return (
       <View style={styles.container}>
