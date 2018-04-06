@@ -14,7 +14,8 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "jest"
+    "test": "jest",
+    "flow": "flow"
   },
   "jest": {
     "preset": "jest-expo"
