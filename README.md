@@ -27,7 +27,7 @@ Like npm start, but also attempts to open your app in the iOS Simulator if you'r
 
 `npm run android`
 
---
+---
 
 
 
