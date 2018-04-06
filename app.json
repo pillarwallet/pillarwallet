@@ -9,6 +9,11 @@
     },
     "android": {
       "package": "com.pillarproject.wallet"
+    },
+    "splash": {
+      "image": "./app/resources/platform/splash.png",
+      "backgroundColor": "#FFFFFF",
+      "resizeMode": "cover"
     }
   }
 }
