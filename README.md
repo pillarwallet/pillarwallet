@@ -1,5 +1,4 @@
-**Pillar Wallet** 
-
+## Pillar Wallet
 To get started clone repo and run
 
 `npm install`
@@ -28,6 +27,12 @@ Like npm start, but also attempts to open your app in the iOS Simulator if you'r
 `npm run android`
 
 ---
+
+**Resource Links:**
+
+[Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
+
+
 
 
 
