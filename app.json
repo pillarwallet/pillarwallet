@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "26.0.0"
+    "name": "Pillar Wallet",
+    "version": "1.0.0",
+    "sdkVersion": "26.0.0",
+    "ios": {
+      "bundleIdentifier": "com.pillarproject.wallet"
+    },
+    "android": {
+      "package": "com.pillarproject.wallet"
+    }
   }
 }
+
+
