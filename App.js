@@ -21,7 +21,7 @@ const RootStack = StackNavigator(
     }
   },
   {
-    initialRouteName: 'Pincode',
+    initialRouteName: 'Home',
   }
 );
 
