@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import Intro from "./screens/Intro";
 import { StackNavigator } from 'react-navigation';
-import NewWallet from "./screens/NewWallet";
-import Login from "./screens/Login";
+import Intro from './screens/Intro';
+import NewWallet from './screens/NewWallet';
+import Login from './screens/Login';
 
 const RootStack = StackNavigator(
   {
@@ -19,11 +19,12 @@ const RootStack = StackNavigator(
   },
   {
     initialRouteName: 'Home',
-  }
+  },
 );
 
-export default class App extends React.Component {
-  render() {
-    return <RootStack />;
-  }
-}
+
+const App = function func() {
+  return <RootStack />;
+};
+
+export default App;
