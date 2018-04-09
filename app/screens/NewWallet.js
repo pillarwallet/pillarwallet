@@ -43,7 +43,7 @@ export default class NewWallet extends React.Component {
     const wallet = ethers.Wallet.fromMnemonic(mnemonic);
 
     const timeout = setTimeout(async () => {
-      this.storeEncryptedWallet(await wallet.encrypt(pin));
+      this.storeEncryptedWallet(await wallet.encrypt(this.state.pin));
       clearTimeout(timeout);
     }, 0);
 
@@ -65,24 +65,7 @@ export default class NewWallet extends React.Component {
   }
 
   async storeEncryptedWallet(encryptedWallet) {
-    console.log("encryptedWallet", encryptedWallet);
     await AsyncStorage.setItem("wallet", JSON.stringify(encryptedWallet));
-
-    AsyncStorage.getItem("wallet")
-      .then((json) => {
-        try {
-          console.log('encryptedWallet', json);
-          const wallet = JSON.parse(json);
-          console.log('encryptedWallet parsed', wallet);
-        } catch(e) {
-        }
-      })
-      .catch(() => {
-        this.setState({
-          loadedEncryptedWallet: false
-        });
-      });
-
     this.setState({
       walletCreated: true,
       showLoader: false
