@@ -11,32 +11,38 @@ import {
   Row,
 } from 'react-native';
 
-export default class Pincode extends Component<{
-    use: 'New'
-}> {
+export default class Pincode extends Component {
+    
+    static defaultProps = {
+        pageHeading: 'Enter Passcode',
+        pageInstructions: 'Setup your Passcode'
+    }
+
     state = {
         passCode: [],
         passCodeLength: 6,
     }
 
-    pageHeading = 'Enter Passcode';
-    pageInstructions = 'Setup your Passcode';
-
     handleKeyPress = (key) => {
+
+        if (this.state.passCode.length === this.state.passCodeLength) {
+            return
+        }
+
         this.setState({
             passCode: [ ...this.state.passCode, key]
+        }, () => {
+            if (this.state.passCode.length === this.state.passCodeLength) {
+                this.props.onPinSubmit(this.state.passCode.join(''));
+            }
         })
 
-        if (this.state.passCode.length === this.state.passCodeLength - 1) {
-            this.verifyPin();
-            return;
-        }
+        
     };
 
     handleKeyPressDelete = () => {
-        var array = this.state.passCode;
-        array.splice(0, 1);
-        this.setState({passCode: array });
+        const { passCode } = this.state
+        this.setState({passCode: passCode.slice(0, -1) });
     };
 
     handleKeyPressForgot = () => {
@@ -49,9 +55,11 @@ export default class Pincode extends Component<{
       var array = [];
       this.setState({passCode: array });
     }
+    
 
     render() {
       const { passCode, passCodeLength } = this.state
+      const { pageHeading, pageInstructions} = this.props
 
       const pinCodeDots = Array.apply(null, { length: this.state.passCodeLength })
         .map((num, i) =>(
@@ -88,8 +96,8 @@ export default class Pincode extends Component<{
         
         <View style={styles.container}>
             <View style={styles.textContainer}>
-                <Text style={styles.header}> { this.pageHeading } </Text>
-                <Text style={styles.paragraph}> { this.pageInstructions } </Text>
+                <Text style={styles.header}> {pageHeading } </Text>
+                <Text style={styles.paragraph}> {pageInstructions } </Text>
             </View>
 
             <View style={styles.pinContainer}>
