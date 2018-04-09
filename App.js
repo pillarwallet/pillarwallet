@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import Intro from "./app/screens/Intro";
+import Intro from "./screens/Intro";
 import { StackNavigator } from 'react-navigation';
-import NewWallet from "./app/screens/NewWallet";
-import Login from "./app/screens/Login";
+import NewWallet from "./screens/NewWallet";
+import Login from "./screens/Login";
 
 const RootStack = StackNavigator(
   {

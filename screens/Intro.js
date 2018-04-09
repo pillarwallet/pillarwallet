@@ -45,7 +45,7 @@ export default class Intro extends React.Component<{}> {
     return (
       <View style={styles.container}>
         <Image
-          source={require('../assets/images/pillar.png')}
+          source={require('../assets/images/logo_pillar_intro.png')}
           style={styles.image}
         />
         <TouchableHighlight
@@ -90,4 +90,3 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   }
 });
-
