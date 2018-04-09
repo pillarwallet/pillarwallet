@@ -2,10 +2,33 @@
 import * as React from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, Image } from 'react-native';
 
-export default class Intro extends React.Component<{}> {
-  // static defaultProps = {foo: 42};
+const introImage = require('../../assets/images/logo_pillar_intro.png');
 
-  setBackground(btn) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: 18,
+    color: '#111',
+    alignSelf: 'center',
+  },
+  image: {
+    alignSelf: 'center',
+    height: 150,
+    width: 150,
+    marginBottom: 50,
+  },
+});
+
+export default class Intro extends React.Component<{}> {
+  componentDidMount() {
+    // empty
+  }
+  setBackground = (btn) => {
     const obj = {
       height: 45,
       flexDirection: 'row',
@@ -15,7 +38,7 @@ export default class Intro extends React.Component<{}> {
       marginBottom: 10,
       marginTop: 10,
       alignSelf: 'stretch',
-      justifyContent: 'center'
+      justifyContent: 'center',
     };
 
     if (btn === 0) {
@@ -45,48 +68,31 @@ export default class Intro extends React.Component<{}> {
     return (
       <View style={styles.container}>
         <Image
-          source={require('../assets/images/logo_pillar_intro.png')}
+          source={introImage}
           style={styles.image}
         />
         <TouchableHighlight
           style={this.setBackground(0)}
-          underlayColor='white'
-          onPress={this.createNewWallet}>
+          underlayColor="white"
+          onPress={this.createNewWallet}
+        >
           <Text style={styles.buttonText}>Create new wallet</Text>
         </TouchableHighlight>
         <TouchableHighlight
           style={this.setBackground(1)}
-          underlayColor='white'
-          onPress={this.unlockExistingWallet}>
+          underlayColor="white"
+          onPress={this.unlockExistingWallet}
+        >
           <Text style={styles.buttonText}>Unlock existing</Text>
         </TouchableHighlight>
         <TouchableHighlight
           style={this.setBackground(2)}
-          underlayColor='white'
-          onPress={this.importOldWallet}>
+          underlayColor="white"
+          onPress={this.importOldWallet}
+        >
           <Text style={styles.buttonText}>Import old wallet</Text>
         </TouchableHighlight>
       </View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#111',
-    alignSelf: 'center'
-  },
-  image: {
-    alignSelf: 'center',
-    height: 150,
-    width: 150,
-    marginBottom: 50,
-  }
-});

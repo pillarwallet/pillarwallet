@@ -2,7 +2,8 @@
   "plugins": [
     "react",
     "react-native",
-    "jest"
+    "jest",
+    "flowtype"
   ],
   "env": {
     "node": true,
@@ -11,8 +12,13 @@
     "jest/globals": true
   },
   "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "class-methods-use-this": [0],
+    "react/prop-types": [0]
   },
   "parser": "babel-eslint",
-  "extends": "airbnb"
+  "extends": [
+    "airbnb",
+    "plugin:flowtype/recommended"
+  ]
 }

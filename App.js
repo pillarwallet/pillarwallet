@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
 import { StackNavigator } from 'react-navigation';
-import Intro from './screens/Intro';
-import NewWallet from './screens/NewWallet';
-import Login from './screens/Login';
+import Intro from './screens/Intro/Intro';
+import NewWallet from './screens/NewWallet/NewWallet';
+import Login from './screens/Login/Login';
 
 const RootStack = StackNavigator(
   {
@@ -23,8 +23,6 @@ const RootStack = StackNavigator(
 );
 
 
-const App = function func() {
-  return <RootStack />;
-};
+const App = () => <RootStack />;
 
 export default App;
