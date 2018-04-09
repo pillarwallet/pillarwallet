@@ -4,6 +4,7 @@ import Intro from "./app/screens/Intro";
 import { StackNavigator } from 'react-navigation';
 import NewWallet from "./app/screens/NewWallet";
 import Login from "./app/screens/Login";
+import Pincode from "./app/screens/Pincode";
 
 const RootStack = StackNavigator(
   {
@@ -16,9 +17,12 @@ const RootStack = StackNavigator(
     Login: {
       screen: Login,
     },
+    Pincode:{
+      screen: Pincode
+    }
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Pincode',
   }
 );
 

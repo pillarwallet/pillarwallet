@@ -11,26 +11,26 @@ import {
   Row,
 } from 'react-native';
 
-export default class Pincode extends Component<{
-    usage:string,
-
-    }> {
+export default class Pincode extends Component<{}> {
     state = {
         passCode: [],
         passCodeLength: 6,
     }
 
     handleKeyPress = (key) => {
-        if (this.state.passCode.length >= this.state.passCodeLength) {
-            return;
-        }
+        
         this.setState({
             passCode: [ ...this.state.passCode, key]
         })
+
+        if (this.state.passCode.length === this.state.passCodeLength - 1) {
+            this.verifyPin();
+            return;
+        }
+
     };
 
     handleKeyPressDelete = () => {
-        console.log(this.state.passCode)
         var array = this.state.passCode;
         array.splice(0, 1);
         this.setState({passCode: array });
@@ -38,6 +38,15 @@ export default class Pincode extends Component<{
 
     handleKeyPressForgot = () => {
         console.log('Need to Reset Wallet');
+    }
+
+    //Verify Pincode
+    verifyPin = () =>{
+        //RUN VERIFY LOGIC HERE
+        console.log('Verify Pin');
+
+        var array = [];
+        this.setState({passCode: array });
     }
 
     render() {
@@ -82,8 +91,8 @@ export default class Pincode extends Component<{
         <View style={styles.container}>
 
             <View style={styles.textContainer}>
-            <Text style={styles.header}> { pageHeading } </Text>
-            <Text style={styles.paragraph}> { pageInstructions } </Text>
+                <Text style={styles.header}> { pageHeading } </Text>
+                <Text style={styles.paragraph}> { pageInstructions } </Text>
             </View>
 
             <View style={styles.pinContainer}>
@@ -104,7 +113,6 @@ export default class Pincode extends Component<{
       flex: 1,
       padding: 10,
       backgroundColor: 'white',
-
     },
 
     textContainer: {
@@ -131,7 +139,6 @@ export default class Pincode extends Component<{
         alignSelf: 'center',
         width: 140,
         justifyContent: 'space-between',
-        
     },
 
     inactivePinDot: {
@@ -161,6 +168,3 @@ export default class Pincode extends Component<{
     }, 
 
   });
-  
-  
-  
