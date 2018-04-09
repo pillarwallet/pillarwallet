@@ -16,10 +16,13 @@ const RootStack = StackNavigator(
     Login: {
       screen: Login,
     },
+    Pincode:{
+      screen: Pincode
+    }
   },
   {
-    initialRouteName: 'Home',
-  },
+    initialRouteName: 'Pincode',
+  }
 );
 
 
