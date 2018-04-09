@@ -1,14 +1,14 @@
 // @flow
 import * as React from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
   TouchableHighlight,
-  ActivityIndicator, AsyncStorage
+  ActivityIndicator, AsyncStorage,
 } from 'react-native';
-import ethers from "ethers";
+import ethers from 'ethers';
+import styles from './styles';
 
 export default class Login extends React.Component {
   state = {
@@ -23,9 +23,12 @@ export default class Login extends React.Component {
   async componentDidMount() {
     let wallet = null;
     try {
-      wallet = await AsyncStorage.getItem("wallet").then(JSON.parse);
-    } catch (e) {}
+      wallet = await AsyncStorage.getItem('wallet').then(JSON.parse);
+    } catch (e) {
+      // empty
+    }
 
+    // eslint-disable-next-line
     this.setState({
       encryptedWalletExists: !!wallet,
       encryptedWallet: wallet,
@@ -34,7 +37,7 @@ export default class Login extends React.Component {
 
   handlePinChange = (event) => {
     this.setState({
-      pin: event.nativeEvent.text
+      pin: event.nativeEvent.text,
     });
   };
 
@@ -42,7 +45,7 @@ export default class Login extends React.Component {
     const validationError = this.validatePin(this.state.pin);
     if (validationError) {
       this.setState({
-        pinError: validationError
+        pinError: validationError,
       });
       return;
     }
@@ -54,23 +57,24 @@ export default class Login extends React.Component {
 
     this.setState({
       pinError: '',
-      showLoader: true
+      showLoader: true,
     });
   };
 
   decryptWallet(encryptedWallet, password) {
+    // eslint-disable-next-line
     console.log(encryptedWallet, password);
     ethers.Wallet.fromEncryptedWallet(encryptedWallet, password)
-      .then(wallet => {
+      .then((wallet) => {
         this.setState({
           decryptedWallet: wallet,
-          showLoader: false
+          showLoader: false,
         });
       })
-      .catch((e) => {
+      .catch(() => {
         this.setState({
-          pinError: "Incorrect pin code",
-          showLoader: false
+          pinError: 'Incorrect pin code',
+          showLoader: false,
         });
       });
   }
@@ -78,8 +82,8 @@ export default class Login extends React.Component {
   validatePin(pin) {
     if (pin.length !== 6) {
       return "Invalid pin's length (should be 6 numbers)";
-    } else if(!pin.match(/^\d+$/)) {
-      return "Pin could contain numbers only";
+    } else if (!pin.match(/^\d+$/)) {
+      return 'Pin could contain numbers only';
     }
     return '';
   }
@@ -91,7 +95,7 @@ export default class Login extends React.Component {
       pinError,
       encryptedWallet,
       encryptedWalletExists,
-      decryptedWallet
+      decryptedWallet,
     } = this.state;
 
     const showError = (
@@ -111,8 +115,8 @@ export default class Login extends React.Component {
         <View style={styles.container}>
           <ActivityIndicator
             animating={showLoader}
-            color='#111'
-            size='large'
+            color="#111"
+            size="large"
           />
         </View>
       );
@@ -139,8 +143,9 @@ export default class Login extends React.Component {
             />
             <TouchableHighlight
               style={styles.submitButton}
-              underlayColor='white'
-              onPress={this.handlePinSubmit}>
+              underlayColor="white"
+              onPress={this.handlePinSubmit}
+            >
               <Text style={styles.buttonText}>Login</Text>
             </TouchableHighlight>
           </View>
@@ -150,60 +155,10 @@ export default class Login extends React.Component {
 
         <ActivityIndicator
           animating={showLoader}
-          color='#111'
-          size='large'
+          color="#111"
+          size="large"
         />
       </View>
-    )
+    );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 30,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: 'white'
-  },
-  textRow: {
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  title: {
-    marginBottom: 20,
-    fontSize: 25,
-    textAlign: 'center'
-  },
-  pinInput: {
-    height: 50,
-    padding: 4,
-    marginRight: 5,
-    fontSize: 23,
-    borderWidth: 1,
-    borderColor: 'grey',
-    borderRadius: 8
-  },
-  buttonText: {
-    fontSize: 18,
-    color: 'white',
-    alignSelf: 'center'
-  },
-  submitButton: {
-    height: 45,
-    flexDirection: 'row',
-    borderColor: '#48BBEC',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    marginTop: 10,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    backgroundColor: '#48BBEC'
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: 'center',
-    color: 'red'
-  }
-});

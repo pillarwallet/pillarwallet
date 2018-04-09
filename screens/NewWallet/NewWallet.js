@@ -1,16 +1,16 @@
 // @flow
 import * as React from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
   TouchableHighlight,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import ethers from 'ethers';
+import styles from './styles';
 
 export default class NewWallet extends React.Component {
   state = {
@@ -19,12 +19,12 @@ export default class NewWallet extends React.Component {
     walletCreated: false,
     pin: '',
     pinError: '',
-    showLoader: false
+    showLoader: false,
   };
 
   handlePinChange = (event) => {
     this.setState({
-      pin: event.nativeEvent.text
+      pin: event.nativeEvent.text,
     });
   };
 
@@ -32,7 +32,7 @@ export default class NewWallet extends React.Component {
     const validationError = this.validatePin(this.state.pin);
     if (validationError) {
       this.setState({
-        pinError: validationError
+        pinError: validationError,
       });
       return;
     }
@@ -49,24 +49,24 @@ export default class NewWallet extends React.Component {
       pinError: '',
       showLoader: true,
       mnemonic,
-      wallet
+      wallet,
     });
   };
 
   validatePin(pin) {
     if (pin.length !== 6) {
       return "Invalid pin's length (should be 6 numbers)";
-    } else if(!pin.match(/^\d+$/)) {
-      return "Pin could contain numbers only";
+    } else if (!pin.match(/^\d+$/)) {
+      return 'Pin could contain numbers only';
     }
     return '';
   }
 
   async storeEncryptedWallet(encryptedWallet) {
-    await AsyncStorage.setItem("wallet", JSON.stringify(encryptedWallet));
+    await AsyncStorage.setItem('wallet', JSON.stringify(encryptedWallet));
     this.setState({
       walletCreated: true,
-      showLoader: false
+      showLoader: false,
     });
   }
 
@@ -85,7 +85,7 @@ export default class NewWallet extends React.Component {
       walletCreated,
       pin,
       pinError,
-      showLoader
+      showLoader,
     } = this.state;
 
     const showError = (
@@ -103,7 +103,8 @@ export default class NewWallet extends React.Component {
 
         <TouchableHighlight
           style={styles.submitButton}
-          onPress={this.goToLoginPage}>
+          onPress={this.goToLoginPage}
+        >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableHighlight>
       </View>
@@ -121,8 +122,9 @@ export default class NewWallet extends React.Component {
             />
             <TouchableHighlight
               style={styles.submitButton}
-              underlayColor='white'
-              onPress={this.handlePinSubmit}>
+              underlayColor="white"
+              onPress={this.handlePinSubmit}
+            >
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableHighlight>
           </View>
@@ -132,8 +134,8 @@ export default class NewWallet extends React.Component {
 
         <ActivityIndicator
           animating={showLoader}
-          color='#111'
-          size='large'
+          color="#111"
+          size="large"
         />
       </View>
     );
@@ -141,59 +143,3 @@ export default class NewWallet extends React.Component {
     return walletCreated ? walletCreatedComponent : enterPinComponent;
   }
 }
-
-const styles = StyleSheet.create({
-  pinCodeCreatedContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  enterPinContainer: {
-    flex: 1,
-    padding: 30,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: 'white'
-  },
-  textRow: {
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  title: {
-    marginBottom: 20,
-    fontSize: 25,
-    textAlign: 'center'
-  },
-  pinInput: {
-    height: 50,
-    padding: 4,
-    marginRight: 5,
-    fontSize: 23,
-    borderWidth: 1,
-    borderColor: 'grey',
-    borderRadius: 8
-  },
-  buttonText: {
-    fontSize: 18,
-    color: 'white',
-    alignSelf: 'center'
-  },
-  submitButton: {
-    height: 45,
-    flexDirection: 'row',
-    borderColor: '#48BBEC',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    marginTop: 10,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    backgroundColor: '#48BBEC'
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: 'center',
-    color: 'red'
-  }
-});
