@@ -1,28 +1,9 @@
 // @flow
 import * as React from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, Image } from 'react-native';
+import { Text, View, TouchableHighlight, Image } from 'react-native';
+import styles from './styles';
 
 const introImage = require('../../assets/images/logo_pillar_intro.png');
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#111',
-    alignSelf: 'center',
-  },
-  image: {
-    alignSelf: 'center',
-    height: 150,
-    width: 150,
-    marginBottom: 50,
-  },
-});
 
 export default class Intro extends React.Component<{}> {
   componentDidMount() {
