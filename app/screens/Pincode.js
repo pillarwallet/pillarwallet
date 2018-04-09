@@ -11,14 +11,18 @@ import {
   Row,
 } from 'react-native';
 
-export default class Pincode extends Component<{}> {
+export default class Pincode extends Component<{
+    use: 'New'
+}> {
     state = {
         passCode: [],
         passCodeLength: 6,
     }
 
+    pageHeading = 'Enter Passcode';
+    pageInstructions = 'Setup your Passcode';
+
     handleKeyPress = (key) => {
-        
         this.setState({
             passCode: [ ...this.state.passCode, key]
         })
@@ -27,7 +31,6 @@ export default class Pincode extends Component<{}> {
             this.verifyPin();
             return;
         }
-
     };
 
     handleKeyPressDelete = () => {
@@ -37,24 +40,19 @@ export default class Pincode extends Component<{}> {
     };
 
     handleKeyPressForgot = () => {
-        console.log('Need to Reset Wallet');
+      console.log('Need to Reset Wallet');
     }
 
     //Verify Pincode
-    verifyPin = () =>{
-        //RUN VERIFY LOGIC HERE
-        console.log('Verify Pin');
-
-        var array = [];
-        this.setState({passCode: array });
+    verifyPin = () =>{    
+      console.log('Verify Pin');
+      var array = [];
+      this.setState({passCode: array });
     }
 
     render() {
       const { passCode, passCodeLength } = this.state
 
-      pageHeading = "Enter Passcode"
-      pageInstructions = 'Unlock your Phone';
-      
       const pinCodeDots = Array.apply(null, { length: this.state.passCodeLength })
         .map((num, i) =>(
             <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot ]}></View>
@@ -89,10 +87,9 @@ export default class Pincode extends Component<{}> {
       return (
         
         <View style={styles.container}>
-
             <View style={styles.textContainer}>
-                <Text style={styles.header}> { pageHeading } </Text>
-                <Text style={styles.paragraph}> { pageInstructions } </Text>
+                <Text style={styles.header}> { this.pageHeading } </Text>
+                <Text style={styles.paragraph}> { this.pageInstructions } </Text>
             </View>
 
             <View style={styles.pinContainer}>
@@ -102,8 +99,8 @@ export default class Pincode extends Component<{}> {
             <View style={styles.inputKeyContainer}>
                 { keyInputs } 
             </View>
-           
         </View>
+      
       );
     }
   }
@@ -133,7 +130,7 @@ export default class Pincode extends Component<{}> {
     },
 
     pinContainer: {
-        flex: 0.60,
+        flex: 0.65,
         flexWrap: 'wrap',
         flexDirection: 'row',
         alignSelf: 'center',
@@ -164,7 +161,7 @@ export default class Pincode extends Component<{}> {
     inputKey: {
         justifyContent: 'center',
         width:120,
-        height:50,
+        height:55,
     }, 
 
   });

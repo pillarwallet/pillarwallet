@@ -18,7 +18,7 @@ const RootStack = StackNavigator(
       screen: Login,
     },
     Pincode:{
-      screen: Pincode
+      screen: Pincode,
     }
   },
   {
