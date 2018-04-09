@@ -1,25 +1,29 @@
 // @flow
+import * as React from 'react';
+import Intro from "./app/screens/Intro";
+import { StackNavigator } from 'react-navigation';
+import NewWallet from "./app/screens/NewWallet";
+import Login from "./app/screens/Login";
 
-import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
+const RootStack = StackNavigator(
+  {
+    Home: {
+      screen: Intro,
+    },
+    NewWallet: {
+      screen: NewWallet,
+    },
+    Login: {
+      screen: Login,
+    },
+  },
+  {
+    initialRouteName: 'Home',
+  }
+);
 
-export default class App extends React.Component<{}> {
+export default class App extends React.Component {
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
-    );
+    return <RootStack />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
-  }
-});
