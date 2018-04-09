@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pillar Wallet",
     "version": "1.0.0",
-    "icon": "./app/resources/platform/icon.png",
+    "icon": "./assets/platform/icon.png",
     "sdkVersion": "26.0.0",
     "ios": {
       "bundleIdentifier": "com.pillarproject.wallet"
@@ -11,11 +11,9 @@
       "package": "com.pillarproject.wallet"
     },
     "splash": {
-      "image": "./app/resources/platform/splash.png",
+      "image": "./assets/platform/splash.png",
       "backgroundColor": "#FFFFFF",
       "resizeMode": "cover"
     }
   }
 }
-
-
