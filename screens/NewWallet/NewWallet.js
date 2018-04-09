@@ -11,6 +11,7 @@ import {
 import { NavigationActions } from 'react-navigation';
 import ethers from 'ethers';
 import styles from './styles';
+import Pincode from '../Pincode/Pincode';
 
 export default class NewWallet extends React.Component {
   state = {
@@ -28,8 +29,9 @@ export default class NewWallet extends React.Component {
     });
   };
 
-  handlePinSubmit = () => {
-    const validationError = this.validatePin(this.state.pin);
+  handlePinSubmit = (pin) => {
+    console.log(pin)
+    const validationError = this.validatePin(pin);
     if (validationError) {
       this.setState({
         pinError: validationError,
@@ -111,6 +113,7 @@ export default class NewWallet extends React.Component {
     );
 
     const enterPinComponent = (
+<<<<<<< HEAD:screens/NewWallet/NewWallet.js
       <View style={styles.enterPinContainer}>
         <Text style={styles.title}>Enter your pin</Text>
         {!showLoader && (
@@ -138,6 +141,39 @@ export default class NewWallet extends React.Component {
           size="large"
         />
       </View>
+=======
+      !showLoader && <Pincode
+      pageHeading = "Setup New Pin"
+      onPinSubmit = {this.handlePinSubmit}> 
+      </Pincode>
+      
+      // <View style={styles.enterPinContainer}>
+      //   <Text style={styles.title}>Enter your pin</Text>
+      //   {!showLoader && (
+      //     <View>
+      //       <TextInput
+      //         style={styles.pinInput}
+      //         value={pin}
+      //         onChange={this.handlePinChange}
+      //       />
+      //       <TouchableHighlight
+      //         style={styles.submitButton}
+      //         underlayColor='white'
+      //         onPress={this.handlePinSubmit}>
+      //         <Text style={styles.buttonText}>Submit</Text>
+      //       </TouchableHighlight>
+      //     </View>
+      //   )}
+
+      //   {showError}
+
+      //   <ActivityIndicator
+      //     animating={showLoader}
+      //     color='#111'
+      //     size='large'
+      //   />
+      // </View>
+>>>>>>> Added Pin for Setting up Passcode:app/screens/NewWallet.js
     );
 
     return walletCreated ? walletCreatedComponent : enterPinComponent;
