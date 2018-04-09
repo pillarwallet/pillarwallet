@@ -14,34 +14,22 @@ export default class Login extends React.Component {
   state = {
     showLoader: false,
     encryptedWallet: null,
-    loadedEncryptedWallet: true,
+    encryptedWalletExists: true,
     pin: '',
     pinError: '',
     decryptedWallet: null,
   };
 
-  componentDidMount() {
-    AsyncStorage.getItem("wallet")
-      .then((json) => {
-        try {
-          console.log('encryptedWallet', json);
-          const wallet = JSON.parse(json);
-          console.log('encryptedWallet parsed', wallet);
-          this.setState({
-            loadedEncryptedWallet: true,
-            encryptedWallet: wallet,
-          });
-        } catch(e) {
-          this.setState({
-            loadedEncryptedWallet: false
-          });
-        }
-      })
-      .catch(() => {
-        this.setState({
-          loadedEncryptedWallet: false
-        });
-      });
+  async componentDidMount() {
+    let wallet = null;
+    try {
+      wallet = await AsyncStorage.getItem("wallet").then(JSON.parse);
+    } catch (e) {}
+
+    this.setState({
+      encryptedWalletExists: !!wallet,
+      encryptedWallet: wallet,
+    });
   }
 
   handlePinChange = (event) => {
@@ -79,7 +67,7 @@ export default class Login extends React.Component {
           showLoader: false
         });
       })
-      .catch(() => {
+      .catch((e) => {
         this.setState({
           pinError: "Incorrect pin code",
           showLoader: false
@@ -102,7 +90,7 @@ export default class Login extends React.Component {
       pin,
       pinError,
       encryptedWallet,
-      loadedEncryptedWallet,
+      encryptedWalletExists,
       decryptedWallet
     } = this.state;
 
@@ -110,7 +98,7 @@ export default class Login extends React.Component {
       pinError ? <Text style={styles.errorText}>{pinError}</Text> : null
     );
 
-    if (!encryptedWallet && !loadedEncryptedWallet) {
+    if (!encryptedWallet && !encryptedWalletExists) {
       return (
         <View style={styles.container}>
           <Text style={styles.title}>No wallet is stored on this device</Text>
@@ -118,7 +106,7 @@ export default class Login extends React.Component {
       );
     }
 
-    if (!encryptedWallet && loadedEncryptedWallet) {
+    if (!encryptedWallet && encryptedWalletExists) {
       return (
         <View style={styles.container}>
           <ActivityIndicator
@@ -142,19 +130,21 @@ export default class Login extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Enter your pin</Text>
-        <View>
-          <TextInput
-            style={styles.pinInput}
-            value={pin}
-            onChange={this.handlePinChange}
-          />
-          <TouchableHighlight
-            style={styles.submitButton}
-            underlayColor='white'
-            onPress={this.handlePinSubmit}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>
-        </View>
+        {!showLoader && (
+          <View>
+            <TextInput
+              style={styles.pinInput}
+              value={pin}
+              onChange={this.handlePinChange}
+            />
+            <TouchableHighlight
+              style={styles.submitButton}
+              underlayColor='white'
+              onPress={this.handlePinSubmit}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableHighlight>
+          </View>
+        )}
 
         {showError}
 
