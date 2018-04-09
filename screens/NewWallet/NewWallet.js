@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import ethers from 'ethers';
+import Pincode from './Pincode';
 import styles from './styles';
 
 export default class NewWallet extends React.Component {
@@ -28,8 +29,9 @@ export default class NewWallet extends React.Component {
     });
   };
 
-  handlePinSubmit = () => {
-    const validationError = this.validatePin(this.state.pin);
+  handlePinSubmit = (pin) => {
+    console.log(pin)
+    const validationError = this.validatePin(pin);
     if (validationError) {
       this.setState({
         pinError: validationError,
@@ -111,33 +113,39 @@ export default class NewWallet extends React.Component {
     );
 
     const enterPinComponent = (
-      <View style={styles.enterPinContainer}>
-        <Text style={styles.title}>Enter your pin</Text>
-        {!showLoader && (
-          <View>
-            <TextInput
-              style={styles.pinInput}
-              value={pin}
-              onChange={this.handlePinChange}
-            />
-            <TouchableHighlight
-              style={styles.submitButton}
-              underlayColor="white"
-              onPress={this.handlePinSubmit}
-            >
-              <Text style={styles.buttonText}>Submit</Text>
-            </TouchableHighlight>
-          </View>
-        )}
 
-        {showError}
+      !showLoader && <Pincode
+      pageHeading = "Setup New Pin"
+      onPinSubmit = {this.handlePinSubmit}> 
+      </Pincode>
 
-        <ActivityIndicator
-          animating={showLoader}
-          color="#111"
-          size="large"
-        />
-      </View>
+      // <View style={styles.enterPinContainer}>
+      //   <Text style={styles.title}>Enter your pin</Text>
+      //   {!showLoader && (
+      //     <View>
+      //       <TextInput
+      //         style={styles.pinInput}
+      //         value={pin}
+      //         onChange={this.handlePinChange}
+      //       />
+      //       <TouchableHighlight
+      //         style={styles.submitButton}
+      //         underlayColor="white"
+      //         onPress={this.handlePinSubmit}
+      //       >
+      //         <Text style={styles.buttonText}>Submit</Text>
+      //       </TouchableHighlight>
+      //     </View>
+      //   )}
+
+      //   {showError}
+
+      //   <ActivityIndicator
+      //     animating={showLoader}
+      //     color="#111"
+      //     size="large"
+      //   />
+      // </View>
     );
 
     return walletCreated ? walletCreatedComponent : enterPinComponent;
