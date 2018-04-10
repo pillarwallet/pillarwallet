@@ -12,13 +12,15 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: add
-          command: yarn add
+          name: install
+          command: yarn install
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
-
       - run:
           name: unit-test
-          command:  npm test
+          command:  npm run test:coverage
+      - store_artifacts:
+          path: ./reports/
+          destination: reports
