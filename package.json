@@ -14,6 +14,7 @@
     "eslint-plugin-react-native": "^3.2.1",
     "flow-bin": "^0.69.0",
     "jest-expo": "26.0.0",
+    "jest-html-reporter": "2.0.0",
     "react-native-scripts": "1.13.1",
     "react-test-renderer": "16.3.0-alpha.1"
   },
@@ -27,7 +28,26 @@
     "flow": "flow"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "roots": [
+      "."
+    ],
+    "testRegex": "\\.test\\.js$",
+    "testResultsProcessor": "./node_modules/jest-html-reporter",
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/reports/**",
+    ],
+    "coverageReporters": [
+      "lcov"
+    ],
+    "coverageDirectory": "./reports"
+  },
+  "jest-html-reporter": {
+    "pageTitle": "Jest results",
+    "outputPath": "./reports/jest/test-report.html",
+    "includeFailureMsg": true
   },
   "dependencies": {
     "ethers": "^3.0.9",
