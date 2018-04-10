@@ -70,11 +70,6 @@ export default class PopModal extends Component {
       ]).start();  
 
     }
-
-    dismissPopover(){
-      //TODO: Make this a block so the Prop is Fired after modal dismisses
-      this.props.popModalHandleDismiss;
-    }
   
     render(){
 
@@ -83,7 +78,7 @@ export default class PopModal extends Component {
       return (
         <Animated.View style={[styles.popOverContainer, {opacity:showPopAnimation}]}>
 
-          <TouchableHighlight style={styles.popOverContainerBG} onPress={this.dismissPopover}>
+          <TouchableHighlight style={styles.popOverContainerBG} onPress={this.props.popModalHandleDismiss}>
             <View />
           </TouchableHighlight>
 
