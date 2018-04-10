@@ -69,7 +69,7 @@ export default class PinCode extends React.Component<{}, State> {
   }
 
   generatePinInputs() {
-    const keyInputs = Array(9)
+    const keyInputs = Array(9).fill('')
       .map((num, i) => {
         const key = `${i + 1}`;
         const title = key;
@@ -90,7 +90,7 @@ export default class PinCode extends React.Component<{}, State> {
     const { passCode } = this.state;
     const { pageHeading, pageInstructions } = this.tempProps;
 
-    const pinCodeDots = Array(PASS_CODE_LENGTH)
+    const pinCodeDots = Array(PASS_CODE_LENGTH).fill('')
       .map((num, i) => this.createPinDot(i, passCode));
 
     const keyInputs = this.generatePinInputs();
