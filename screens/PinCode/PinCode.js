@@ -1,36 +1,32 @@
 import React, { Component } from 'react';
 import {
-  Platform,
   StyleSheet,
   Text,
   View,
-  NavigatorIOS,
   Button,
-  ActivityIndicator,
-  Image,
-  Row,
 } from 'react-native';
 
-export default class Pincode extends Component {
+const PASS_CODE_LENGTH = 6;
+
+export default class PinCode extends Component {
   static defaultProps = {
     pageHeading: 'Enter Passcode',
     pageInstructions: 'Setup your Passcode',
-  }
+  };
 
   state = {
     passCode: [],
-    passCodeLength: 6,
-  }
+  };
 
   handleKeyPress = (key) => {
-    if (this.state.passCode.length === this.state.passCodeLength) {
+    if (this.state.passCode.length === PASS_CODE_LENGTH) {
       return;
     }
 
     this.setState({
       passCode: [...this.state.passCode, key],
     }, () => {
-      if (this.state.passCode.length === this.state.passCodeLength) {
+      if (this.state.passCode.length === PASS_CODE_LENGTH) {
         // TODO: Handle callback for pin submit
         // this.props.onPinSubmit(this.state.passCode.join(''));
       }
@@ -44,66 +40,54 @@ export default class Pincode extends Component {
 
   handleKeyPressForgot = () => {
     console.log('Need to Reset Wallet');
-  }
+  };
 
-  // Verify Pincode
   verifyPin = () => {
     console.log('Verify Pin');
     const array = [];
     this.setState({passCode: array});
+  };
+
+  createPinDot(i, passCode) {
+    return (
+      <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot]}/>
+    );
   }
 
+  createPinButton(key, title, callback) {
+    return (
+      <View style={styles.inputKey} key={key}>
+        <Button title={title} onPress={callback}/>
+      </View>
+    );
+  }
 
-  render() {
-    const {passCode, passCodeLength} = this.state;
-    const {pageHeading, pageInstructions} = this.props;
-
-    const pinCodeDots = Array(...{length: this.state.passCodeLength})
-      .map((num, i) => (
-        <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot]}/>
-      ));
-
-    // SETUP PINPAD INPUTS
+  generatePinInputs() {
     const keyInputs = Array(...{length: 9})
-      .map((num, i) => (
-        <View style={styles.inputKey} key={i + 1}>
-          <Button
-            title={`${i + 1}`}
-            onPress={() => {
-              this.handleKeyPress(`${i + 1}`);
-            }}
-          />
-        </View>
-      ));
+      .map((num, i) => {
+        const key = i + 1;
+        const title = key.toString();
+        const callback = () => this.handleKeyPress(`${i + 1}`);
+        return this.createPinButton(key, title, callback);
+      });
 
     keyInputs.push(
-      <View style={styles.inputKey} key="Forgot">
-        <Button
-          title="Forgot?"
-          onPress={() => {
-            this.handleKeyPressForgot();
-          }}
-        />
-      </View>,
-
-      <View style={styles.inputKey} key={0}>
-        <Button
-          title="0"
-          onPress={() => {
-            this.handleKeyPress('0');
-          }}
-        />
-      </View>,
-
-      <View style={styles.inputKey} key="⌫">
-        <Button
-          title="⌫"
-          onPress={() => {
-            this.handleKeyPressDelete();
-          }}
-        />
-      </View>,
+      this.createPinButton('Forgot', 'Forgot?', () => this.handleKeyPressForgot()),
+      this.createPinButton(0, '0', () => this.handleKeyPress('0')),
+      this.createPinButton('⌫', '⌫', () => this.handleKeyPressDelete()),
     );
+
+    return keyInputs;
+  }
+
+  render() {
+    const {passCode} = this.state;
+    const {pageHeading, pageInstructions} = this.props;
+
+    const pinCodeDots = Array(...{length: PASS_CODE_LENGTH})
+      .map((num, i) => this.createPinDot(i, passCode));
+
+    const keyInputs = this.generatePinInputs();
 
     return (
       <View style={styles.container}>
