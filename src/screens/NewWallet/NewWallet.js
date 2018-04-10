@@ -9,10 +9,25 @@ import {
   AsyncStorage,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
+
 import ethers from 'ethers';
 import styles from './styles';
 
-export default class NewWallet extends React.Component {
+type State = {
+  mnemonic: string,
+  wallet: Object,
+  walletCreated: boolean,
+  pin: string,
+  pinError: string,
+  showLoader: boolean,
+};
+
+type Props = {
+  navigation: NavigationScreenProp<*>
+};
+
+export default class NewWallet extends React.Component<Props, State> {
   state = {
     mnemonic: '',
     wallet: {},
@@ -20,12 +35,6 @@ export default class NewWallet extends React.Component {
     pin: '',
     pinError: '',
     showLoader: false,
-  };
-
-  handlePinChange = (event) => {
-    this.setState({
-      pin: event.nativeEvent.text,
-    });
   };
 
   handlePinSubmit = () => {
@@ -53,7 +62,7 @@ export default class NewWallet extends React.Component {
     });
   };
 
-  validatePin(pin) {
+  validatePin(pin: string) {
     if (pin.length !== 6) {
       return "Invalid pin's length (should be 6 numbers)";
     } else if (!pin.match(/^\d+$/)) {
@@ -62,7 +71,7 @@ export default class NewWallet extends React.Component {
     return '';
   }
 
-  async storeEncryptedWallet(encryptedWallet) {
+  async storeEncryptedWallet(encryptedWallet: Object) {
     await AsyncStorage.setItem('wallet', JSON.stringify(encryptedWallet));
     this.setState({
       walletCreated: true,
@@ -118,7 +127,7 @@ export default class NewWallet extends React.Component {
             <TextInput
               style={styles.pinInput}
               value={pin}
-              onChange={this.handlePinChange}
+              onChangeText={text => this.setState({ pin: text })}
             />
             <TouchableHighlight
               style={styles.submitButton}

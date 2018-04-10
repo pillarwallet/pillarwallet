@@ -1,24 +1,31 @@
-import React, { Component } from 'react';
+// @flow
+import * as React from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   Button,
 } from 'react-native';
+import styles from './styles';
 
 const PASS_CODE_LENGTH = 6;
 
-export default class PinCode extends Component {
-  static defaultProps = {
-    pageHeading: 'Enter Passcode',
-    pageInstructions: 'Setup your Passcode',
-  };
+type PassCode = string[];
 
+type State = {
+  passCode: PassCode,
+};
+
+export default class PinCode extends React.Component<{}, State> {
   state = {
     passCode: [],
   };
 
-  handleKeyPress = (key) => {
+  tempProps = {
+    pageHeading: 'Enter Passcode',
+    pageInstructions: 'Setup your Passcode',
+  };
+
+  handleKeyPress = (key: string) => {
     if (this.state.passCode.length === PASS_CODE_LENGTH) {
       return;
     }
@@ -34,46 +41,45 @@ export default class PinCode extends Component {
   };
 
   handleKeyPressDelete = () => {
-    const {passCode} = this.state;
-    this.setState({passCode: passCode.slice(0, -1)});
+    const { passCode } = this.state;
+    this.setState({ passCode: passCode.slice(0, -1) });
   };
 
   handleKeyPressForgot = () => {
-    console.log('Need to Reset Wallet');
+    console.log('Need to Reset Wallet'); // eslint-disable-line no-console
   };
 
   verifyPin = () => {
-    console.log('Verify Pin');
     const array = [];
-    this.setState({passCode: array});
+    this.setState({ passCode: array });
   };
 
-  createPinDot(i, passCode) {
+  createPinDot(i: number, passCode: PassCode) {
     return (
-      <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot]}/>
+      <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot]} />
     );
   }
 
-  createPinButton(key, title, callback) {
+  createPinButton(key: string, title: string, callback: () => void) {
     return (
       <View style={styles.inputKey} key={key}>
-        <Button title={title} onPress={callback}/>
+        <Button title={title} onPress={callback} />
       </View>
     );
   }
 
   generatePinInputs() {
-    const keyInputs = Array(...{length: 9})
+    const keyInputs = Array(9)
       .map((num, i) => {
-        const key = i + 1;
-        const title = key.toString();
-        const callback = () => this.handleKeyPress(`${i + 1}`);
+        const key = `${i + 1}`;
+        const title = key;
+        const callback = () => this.handleKeyPress(key);
         return this.createPinButton(key, title, callback);
       });
 
     keyInputs.push(
       this.createPinButton('Forgot', 'Forgot?', () => this.handleKeyPressForgot()),
-      this.createPinButton(0, '0', () => this.handleKeyPress('0')),
+      this.createPinButton('0', '0', () => this.handleKeyPress('0')),
       this.createPinButton('⌫', '⌫', () => this.handleKeyPressDelete()),
     );
 
@@ -81,10 +87,10 @@ export default class PinCode extends Component {
   }
 
   render() {
-    const {passCode} = this.state;
-    const {pageHeading, pageInstructions} = this.props;
+    const { passCode } = this.state;
+    const { pageHeading, pageInstructions } = this.tempProps;
 
-    const pinCodeDots = Array(...{length: PASS_CODE_LENGTH})
+    const pinCodeDots = Array(PASS_CODE_LENGTH)
       .map((num, i) => this.createPinDot(i, passCode));
 
     const keyInputs = this.generatePinInputs();
@@ -107,64 +113,3 @@ export default class PinCode extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: 'white',
-  },
-
-  textContainer: {
-    flex: 0.25,
-    justifyContent: 'flex-start',
-  },
-
-  header: {
-    fontSize: 32,
-    marginTop: 10,
-    alignItems: 'center',
-  },
-
-  paragraph: {
-    paddingTop: 10,
-    fontSize: 16,
-    color: 'grey',
-  },
-
-  pinContainer: {
-    flex: 0.65,
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    alignSelf: 'center',
-    width: 140,
-    justifyContent: 'space-between',
-  },
-
-  inactivePinDot: {
-    width: 12,
-    height: 12,
-    backgroundColor: 'gray',
-    borderRadius: 12 / 2,
-    opacity: 0.5,
-  },
-
-  activePinDot: {
-    opacity: 1,
-  },
-
-  inputKeyContainer: {
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    alignSelf: 'center',
-    width: 360,
-    justifyContent: 'flex-end',
-  },
-
-  inputKey: {
-    justifyContent: 'center',
-    width: 120,
-    height: 55,
-  },
-
-});
