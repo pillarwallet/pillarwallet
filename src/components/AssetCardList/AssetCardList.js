@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import AssetCard from 'app/components/AssetCard';
+import AssetCard from 'components/AssetCard';
 import styles from './styles';
 
 export default class AssetCardList extends React.Component<{}> {
