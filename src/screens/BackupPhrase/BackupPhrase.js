@@ -2,6 +2,7 @@
 // backup phrase for the wallet.
 import React, { Component } from 'react';
 import {
+  Animated,
   StyleSheet,
   Text,
   View,
@@ -12,6 +13,7 @@ import {
 import ethers from 'ethers';
 
 import DefaultButton from '../../components/Buttons/DefaultButton';
+import PopModal from '../../components/Modals/PopModal';
 
 const mneumonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
 const mneumonicList = mneumonicPhrase.split(" ");
@@ -24,15 +26,19 @@ export default class BackupPhrase extends Component {
     );
   }
 
-  handleNext(){
-    console.log("click")
-    //TODO: Push next screen
+  popModalHandlePrimary(){
+    console.log('tap')
+  }
+
+  popModalHandleDismiss(){
+    console.log('tap')
   }
 
   render() {
 
     const wordList = Array(...{length: mneumonicList.length})
       .map((num, i) => this.createListItem(i, mneumonicList));
+
     return (
       <View style={styles.container}>
         <View style={styles.textContainer}>
@@ -49,7 +55,17 @@ export default class BackupPhrase extends Component {
           <DefaultButton title="I've Written it Down" onPress={this.handleNext}></DefaultButton>
         </View>
 
+        <PopModal
+          style={{opacity: 0}}
+          title = 'Be Advised'
+          message = 'To protect your assets, write down your backup phrase and passcode on paper.'
+          actionPrimary = 'I got it'
+          showCloseBtn = 'true'
+          popModalHandlePrimary={this.popModalHandlePrimary}
+          popModalHandleDismiss={this.popModalHandleDismiss}/>
+
       </View>
+
     );
   }
 }
@@ -57,12 +73,13 @@ export default class BackupPhrase extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: 'white',
   },
 
   textContainer: {
     justifyContent: 'flex-start',
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 
   header: {
