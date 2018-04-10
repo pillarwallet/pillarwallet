@@ -16,8 +16,4 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# output of jest tests+ coverage etc.
-/reports/
-
 package-lock.json
