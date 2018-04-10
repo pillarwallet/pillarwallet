@@ -5,6 +5,7 @@ import Intro from './src/screens/Intro';
 import NewWallet from './src/screens/NewWallet';
 import Login from './src/screens/Login';
 import PinCode from './src/screens/PinCode';
+import BackupPhrase from './src/screens/BackupPhrase/BackupPhrase';
 
 const RootStack = StackNavigator(
   {
@@ -20,9 +21,12 @@ const RootStack = StackNavigator(
     PinCode: {
       screen: PinCode,
     },
+    BackupPhrase: {
+      screen: BackupPhrase,
+    },
   },
   {
-    initialRouteName: 'PinCode',
+    initialRouteName: 'BackupPhrase',
   },
 );
 
