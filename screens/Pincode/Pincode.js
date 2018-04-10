@@ -12,118 +12,116 @@ import {
 } from 'react-native';
 
 export default class Pincode extends Component {
-    static defaultProps = {
-      pageHeading: 'Enter Passcode',
-      pageInstructions: 'Setup your Passcode',
+  static defaultProps = {
+    pageHeading: 'Enter Passcode',
+    pageInstructions: 'Setup your Passcode',
+  }
+
+  state = {
+    passCode: [],
+    passCodeLength: 6,
+  }
+
+  handleKeyPress = (key) => {
+    if (this.state.passCode.length === this.state.passCodeLength) {
+      return;
     }
 
-    state = {
-      passCode: [],
-      passCodeLength: 6,
-    }
-
-    handleKeyPress = (key) => {
+    this.setState({
+      passCode: [...this.state.passCode, key],
+    }, () => {
       if (this.state.passCode.length === this.state.passCodeLength) {
-        return;
+        // TODO: Handle callback for pin submit
+        // this.props.onPinSubmit(this.state.passCode.join(''));
       }
+    });
+  };
 
-      this.setState({
-        passCode: [...this.state.passCode, key],
-      }, () => {
-        if (this.state.passCode.length === this.state.passCodeLength) {
-          // TODO: Handle callback for pin submit
-          // this.props.onPinSubmit(this.state.passCode.join(''));
-        }
-      });
-    };
+  handleKeyPressDelete = () => {
+    const {passCode} = this.state;
+    this.setState({passCode: passCode.slice(0, -1)});
+  };
 
-    handleKeyPressDelete = () => {
-      const { passCode } = this.state;
-      this.setState({ passCode: passCode.slice(0, -1) });
-    };
+  handleKeyPressForgot = () => {
+    console.log('Need to Reset Wallet');
+  }
 
-    handleKeyPressForgot = () => {
-      console.log('Need to Reset Wallet');
-    }
-
-    // Verify Pincode
-    verifyPin = () => {
-      console.log('Verify Pin');
-      const array = [];
-      this.setState({ passCode: array });
-    }
+  // Verify Pincode
+  verifyPin = () => {
+    console.log('Verify Pin');
+    const array = [];
+    this.setState({passCode: array});
+  }
 
 
-    render() {
-      const { passCode, passCodeLength } = this.state;
-      const { pageHeading, pageInstructions } = this.props;
+  render() {
+    const {passCode, passCodeLength} = this.state;
+    const {pageHeading, pageInstructions} = this.props;
 
-      const pinCodeDots = Array(...{ length: this.state.passCodeLength })
-        .map((num, i) => (
-          <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot]} />
-        ));
+    const pinCodeDots = Array(...{length: this.state.passCodeLength})
+      .map((num, i) => (
+        <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot]}/>
+      ));
 
-      // SETUP PINPAD INPUTS
-      const keyInputs = Array(...{ length: 9 })
-        .map((num, i) => (
-          <View style={styles.inputKey} key={i + 1}>
-            <Button
-              title={`${i + 1}`}
-              onPress={() => {
-                this.handleKeyPress(`${i + 1}`);
-}}
-            />
-          </View>
-        ));
-
-      keyInputs.push(
-        <View style={styles.inputKey} key="Forgot">
+    // SETUP PINPAD INPUTS
+    const keyInputs = Array(...{length: 9})
+      .map((num, i) => (
+        <View style={styles.inputKey} key={i + 1}>
           <Button
-            title="Forgot?"
+            title={`${i + 1}`}
             onPress={() => {
-                this.handleKeyPressForgot();
-}}
+              this.handleKeyPress(`${i + 1}`);
+            }}
           />
-        </View>,
+        </View>
+      ));
 
-        <View style={styles.inputKey} key={0}>
-          <Button
-            title="0"
-            onPress={() => {
-                this.handleKeyPress('0');
-}}
-          />
-        </View>,
+    keyInputs.push(
+      <View style={styles.inputKey} key="Forgot">
+        <Button
+          title="Forgot?"
+          onPress={() => {
+            this.handleKeyPressForgot();
+          }}
+        />
+      </View>,
 
-        <View style={styles.inputKey} key="⌫">
-          <Button
-            title="⌫"
-            onPress={() => {
-                this.handleKeyPressDelete();
-}}
-          />
-        </View>,
-      );
+      <View style={styles.inputKey} key={0}>
+        <Button
+          title="0"
+          onPress={() => {
+            this.handleKeyPress('0');
+          }}
+        />
+      </View>,
 
-      return (
+      <View style={styles.inputKey} key="⌫">
+        <Button
+          title="⌫"
+          onPress={() => {
+            this.handleKeyPressDelete();
+          }}
+        />
+      </View>,
+    );
 
-        <View style={styles.container}>
-          <View style={styles.textContainer}>
-            <Text style={styles.header}> {pageHeading } </Text>
-            <Text style={styles.paragraph}> {pageInstructions } </Text>
-          </View>
-
-          <View style={styles.pinContainer}>
-            { pinCodeDots }
-          </View>
-
-          <View style={styles.inputKeyContainer}>
-            { keyInputs }
-          </View>
+    return (
+      <View style={styles.container}>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}> {pageHeading} </Text>
+          <Text style={styles.paragraph}> {pageInstructions} </Text>
         </View>
 
-      );
-    }
+        <View style={styles.pinContainer}>
+          {pinCodeDots}
+        </View>
+
+        <View style={styles.inputKeyContainer}>
+          {keyInputs}
+        </View>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
