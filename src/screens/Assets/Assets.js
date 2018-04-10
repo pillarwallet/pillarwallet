@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import { View, Text } from 'react-native';
-import AssetCardList from 'AssetCardList';
+import { View } from 'react-native';
+import AssetCardList from 'components/AssetCardList';
 import styles from './styles';
 
 export default class Assets extends React.Component<{}> {
