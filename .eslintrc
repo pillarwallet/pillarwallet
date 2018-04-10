@@ -3,7 +3,9 @@
     "react",
     "react-native",
     "jest",
-    "flowtype"
+    "flowtype-errors",
+    "flowtype",
+    "promise"
   ],
   "env": {
     "node": true,
@@ -12,6 +14,7 @@
     "jest/globals": true
   },
   "rules": {
+    "flowtype/require-valid-file-annotation": ["error", "always"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "class-methods-use-this": [0],
     "react/prop-types": [0],
@@ -20,6 +23,7 @@
   "parser": "babel-eslint",
   "extends": [
     "airbnb",
-    "plugin:flowtype/recommended"
+    "plugin:flowtype/recommended",
+    "plugin:promise/recommended"
   ]
 }
