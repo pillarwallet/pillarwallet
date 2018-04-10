@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { View } from 'react-native';
-import AssetCardList from 'app/components/AssetCardList';
+import AssetCardList from 'components/AssetCardList';
 import styles from './styles';
 
 const assetCardListItems = [{ key: 'Ethereum' }, { key: 'Pillar' }];
