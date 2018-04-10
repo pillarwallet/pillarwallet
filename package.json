@@ -7,18 +7,24 @@
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-flowtype": "^2.46.1",
+    "eslint-plugin-flowtype-errors": "^3.5.1",
     "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-jest": "^21.15.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-react": "^7.7.0",
     "eslint-plugin-react-native": "^3.2.1",
     "flow-bin": "^0.69.0",
     "jest": "^22.4.3",
+    "flow-typed": "^2.4.0",
     "jest-expo": "26.0.0",
+    "jest-html-reporter": "2.0.0",
+    "npm-run-all": "^4.1.2",
     "react-native-dotenv": "^0.1.1",
     "react-native-scripts": "1.13.1",
     "react-test-renderer": "16.3.0-alpha.1",
     "redux-mock-store": "^1.5.1"
+    "run-s": "^0.0.0"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
@@ -27,10 +33,34 @@
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
     "test": "jest --watchAll",
-    "flow": "flow"
+    "flow": "flow",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "flow-stop": "flow stop",
+    "flow-typed": "flow-typed install",
+    "validate": "run-s flow lint"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "roots": [
+      "."
+    ],
+    "testRegex": "\\.test\\.js$",
+    "testResultsProcessor": "./node_modules/jest-html-reporter",
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/reports/**"
+    ],
+    "coverageReporters": [
+      "lcov"
+    ],
+    "coverageDirectory": "./reports"
+  },
+  "jest-html-reporter": {
+    "pageTitle": "Jest results",
+    "outputPath": "./reports/jest/test-report.html",
+    "includeFailureMsg": true
   },
   "dependencies": {
     "ethers": "^3.0.9",

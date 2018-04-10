@@ -40,6 +40,7 @@
 [include]
 
 [libs]
+./flow-typed
 node_modules/react-native/Libraries/react-native/react-native-interface.js
 node_modules/react-native/flow/
 node_modules/expo/flow/
@@ -68,8 +69,12 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(>=0\\.\\(5[0-6]\\|[1
 suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(>=0\\.\\(5[0-6]\\|[1-4][0-9]\\|[0-9]\\).[0-9]\\)? *\\(site=[a-z,_]*react_native_oss[a-z,_]*\\)?)\\)?:? #[0-9]+
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
+suppress_comment=\\(.\\|\n\\)*\\$FlowIgnore
 
-unsafe.enable_getters_and_setters=true
+;unsafe.enable_getters_and_setters=true
+
+[untyped]
+<PROJECT_ROOT>/node_modules/react-native
 
 [version]
 ^0.69.0
