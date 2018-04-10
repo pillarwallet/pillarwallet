@@ -55,7 +55,7 @@ class Intro extends React.Component<Props> {
   };
 
   importOldWallet = () => {
-
+    this.props.navigation.navigate('Import');
   };
 
   render() {
