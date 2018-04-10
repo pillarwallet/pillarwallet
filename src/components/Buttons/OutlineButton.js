@@ -12,7 +12,7 @@ import {
 // @required Any action for onPressDefinition
 // onPress(){}
 
-export default class DefaultButton extends Component { 
+export default class OutlineButton extends Component { 
     render(){
       return (
         <TouchableHighlight style={styles.defaultBtn} onPress={this.props.onPress}>
@@ -27,7 +27,8 @@ export default class DefaultButton extends Component {
       alignItems: 'center',
       padding: 10,
       borderRadius: 10 * 2,
-      backgroundColor: '#01bbff',
+      borderColor: 'white',
+      borderWidth: 2,
       width: '80%',
     },
 
