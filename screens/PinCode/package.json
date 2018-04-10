@@ -1,0 +1,6 @@
+{
+  "name": "PinCode",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./PinCode.js"
+}
