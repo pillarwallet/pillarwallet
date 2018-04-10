@@ -12,33 +12,13 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: install
-          command: yarn install
+          name: add
+          command: yarn add
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
-      - run:
-          name: linting
-          command:  npm run tslint:report
-      - store_artifacts:
-          path: ./reports/tslint/
-          destination: lint-results
+
       - run:
           name: unit-test
-          command:  npm run test:coverage
-      - store_artifacts:
-          path: ./reports/jest/
-          destination: test-results
-      - store_artifacts:
-          path: ./reports/lcov-report/
-          destination: lcov-report
-      - run:
-          name: install-cordova
-          command:  'sudo npm install -g ionic cordova'
-      - run:
-          name: add-browser
-          command:  ionic cordova platform add browser
-      - run:
-          name: ionic-build
-          command: npm run ionic:build
+          command:  npm test
