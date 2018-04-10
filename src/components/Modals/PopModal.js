@@ -7,6 +7,7 @@ import {
   Text,
   TouchableHighlight,
   Touchable,
+  Image
 } from 'react-native';
 
 import OutlineButton from '../Buttons/OutlineButton';
@@ -38,7 +39,7 @@ export default class PopModal extends Component {
         Animated.timing(                 
           this.state.showPopAnimation, {
             toValue: 1,
-            duration: 500,
+            duration: 250,
         }),
 
         //BOUNCE ANIMATION
@@ -48,17 +49,17 @@ export default class PopModal extends Component {
             this.state.verticalBounce, {
             toValue: -20,
             easing: Easing.in(),
-            duration: 350,
+            duration: 250,
           }),
           Animated.timing(
             this.state.verticalBounce, {
             toValue: 5,
-            duration: 180,
+            duration: 100,
           }),
           Animated.timing(
             this.state.verticalBounce, {
             toValue: -2,
-            duration: 90,
+            duration: 40,
           }),
           Animated.timing(
             this.state.verticalBounce, {
@@ -69,6 +70,16 @@ export default class PopModal extends Component {
         
       ]).start();  
 
+    }
+
+    dismissAnimation = () =>{
+      // Animated.timing(                 
+      //   this.state.showPopAnimation, {
+      //     toValue: 0,
+      //     duration: 120,
+      // }).start();
+      //TODO: Make this happen after the animation completes
+      this.props.popModalHandleDismiss();
     }
   
     render(){
@@ -93,7 +104,7 @@ export default class PopModal extends Component {
             </View>
 
             <View style={styles.popOverActions}>
-            <OutlineButton title={this.props.actionPrimary} onPress={this.props.popModalHandlePrimary}></OutlineButton>
+              <OutlineButton title={this.props.actionPrimary} onPress={this.dismissAnimation}></OutlineButton>
             </View>
             
             </Animated.View>

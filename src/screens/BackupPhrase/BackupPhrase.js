@@ -20,22 +20,28 @@ const mneumonicList = mneumonicPhrase.split(" ");
 
 export default class BackupPhrase extends Component {
 
+  state = {
+    isPopupOpen: false,
+  }
+
   createListItem(i, list) {
     return (
       <Text style={styles.listItem} key={{i}+list[i]}>{ list[i] }</Text>
     );
   }
 
-  popModalHandlePrimary(){
-    console.log('tap')
+  popModalHandlePrimary = () => {
+    this.handlePopupState();
   }
 
-  popModalHandleDismiss(){
-    console.log('tap')
+  handlePopupState = () => {
+    this.setState({
+      isPopupOpen: !this.state.isPopupOpen
+    })
   }
 
   render() {
-
+    const { isPopupOpen } = this.state
     const wordList = Array(...{length: mneumonicList.length})
       .map((num, i) => this.createListItem(i, mneumonicList));
 
@@ -52,18 +58,17 @@ export default class BackupPhrase extends Component {
 
         <View style={styles.confirmContainer}>
           <Text style={styles.paragraphSmall}>Did your write down your backup phrase?</Text>
-          <DefaultButton title="I've Written it Down" onPress={this.handleNext}></DefaultButton>
+          <DefaultButton title="I've Written it Down" onPress={this.handlePopupState}></DefaultButton>
         </View>
 
-        <PopModal
-          style={{opacity: 0}}
+        {isPopupOpen && <PopModal
           title = 'Be Advised'
           message = 'To protect your assets, write down your backup phrase and passcode on paper.'
           actionPrimary = 'I got it'
           showCloseBtn = 'true'
           popModalHandlePrimary={this.popModalHandlePrimary}
-          popModalHandleDismiss={this.popModalHandleDismiss}/>
-
+          popModalHandleDismiss={this.handlePopupState}/>
+        }
       </View>
 
     );
