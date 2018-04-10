@@ -19,3 +19,5 @@ yarn-error.log*
 
 # output of jest tests+ coverage etc.
 /reports/
+
+package-lock.json

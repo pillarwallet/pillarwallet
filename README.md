@@ -1,11 +1,11 @@
-## Pillar Wallet
-To get started clone repo and run
+# Pillar Wallet
+To get started clone the repo and run
 
-`npm install`
+`yarn install`
 
-This will download all the necessary packages to build the project. The project can be deployed using the simple command of `npm start`. This will get your project running in development mode.
+This will download all the necessary packages to build the project. The project can be deployed using the simple command of `yarn start`. This will get your project running in development mode.
 
-**Debugging**
+## Debugging
 
 Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devices, you will see the in-app developer menu. Tap “Debug JS Remotely”. The Chrome debugger will be opened automatically. You still need to open Developer Tools in Chrome manually. Open source files in the Sources tab, you can set breakpoints here. [READ MORE](https://codeburst.io/react-native-debugging-tools-3a24e4e40e4)
 
@@ -15,23 +15,52 @@ This can also be referenced via [react-devtools](https://github.com/facebook/rea
 
 The project may be run from the directory using 
 
-`npm run ios`
+`yarn ios`
 
 This will launch the simulator, for instructions on debuggin via Chrome please see [React Dev-Tools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools) to get started.
 
 
 **Running on Android:**
 
-Like npm start, but also attempts to open your app in the iOS Simulator if you're on a Mac and have it installed.
+Like yarn start, but also attempts to open your app in the iOS Simulator if you're on a Mac and have it installed.
 
-`npm run android`
+`yarn android`
 
----
+## App configuration
+
+Add your app configuration in an **.env** file.
+
+```
+API_KEY=lorem
+ANOTHER_CONFIG=foobar
+```
+
+Now you can import it in your **.js** file.
+
+```js
+import { API_KEY, ANOTHER_CONFIG } from 'react-native-dotenv'
+
+ApiClient.init(API_KEY, ANOTHER_CONFIG)
+```
+
+**How does it works?**
+
+As you can see, it's implemented as a babel plugin. All referenced imported members are replaced as the values specified in the **.env** file.
+
+The example above will get compiled as below.
+
+```js
+ApiClient.init('lorem', 'foobar')
+```
+
+**In Production**
+
+Simply create a separate **.env.production** file and the default release process of react-native will pickup the right config.
 
 **Resource Links:**
 
-[Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
-
+* [Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
+* [Configuration](https://github.com/zetachang/react-native-dotenv)
 
 
 

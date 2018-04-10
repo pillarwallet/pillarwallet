@@ -15,6 +15,7 @@
     "flow-bin": "^0.69.0",
     "jest-expo": "26.0.0",
     "jest-html-reporter": "2.0.0",
+    "react-native-dotenv": "^0.1.1",
     "react-native-scripts": "1.13.1",
     "react-test-renderer": "16.3.0-alpha.1"
   },
