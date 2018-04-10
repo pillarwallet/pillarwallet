@@ -29,7 +29,7 @@ const RootStack = StackNavigator(
     },
   },
   {
-    initialRouteName: 'NewWallet',
+    initialRouteName: 'Home',
   },
 );
 
