@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { Text, FlatList } from 'react-native';
+import AssetCard from 'components/AssetCard';
 import styles from './styles';
 
 export default class AssetCardList extends React.Component<{}> {
@@ -10,9 +11,10 @@ export default class AssetCardList extends React.Component<{}> {
 
   render() {
     return (
-      <View>
-        <Text>{this.props.text}</Text>
-      </View>
+      <FlatList
+        data={this.props.assetCardListItems}
+        renderItem={({ item }) => <AssetCard title={item.key} />}
+      />
     );
   }
 }

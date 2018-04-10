@@ -11,7 +11,7 @@ export default class AssetCard extends React.Component<{}> {
   render() {
     return (
       <View>
-        <Text>{this.props.text}</Text>
+        <Text>{this.props.title}</Text>
       </View>
     );
   }

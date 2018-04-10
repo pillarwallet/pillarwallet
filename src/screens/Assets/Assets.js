@@ -4,6 +4,8 @@ import { View } from 'react-native';
 import AssetCardList from 'app/components/AssetCardList';
 import styles from './styles';
 
+const assetCardListItems = [{ key: 'Ethereum' }, { key: 'Pillar' }];
+
 export default class Assets extends React.Component<{}> {
   componentDidMount() {
     // empty
@@ -12,7 +14,7 @@ export default class Assets extends React.Component<{}> {
   render() {
     return (
       <View style={styles.assets}>
-        <AssetCardList />
+        <AssetCardList assetCardListItems={assetCardListItems} />
       </View>
     );
   }
