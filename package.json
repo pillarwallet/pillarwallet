@@ -37,7 +37,7 @@
     "collectCoverageFrom": [
       "**/*.{js,jsx}",
       "!**/node_modules/**",
-      "!**/reports/**",
+      "!**/reports/**"
     ],
     "coverageReporters": [
       "lcov"
