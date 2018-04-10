@@ -39,7 +39,6 @@
     "import/extensions": ["off"],
     "import/prefer-default-export": "off"
   },
-  "parser": "babel-eslint",
   "settings": {
     "import/resolver": {
       "babel-module": {}
