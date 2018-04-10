@@ -13,10 +13,12 @@
     "eslint-plugin-react": "^7.7.0",
     "eslint-plugin-react-native": "^3.2.1",
     "flow-bin": "^0.69.0",
+    "jest": "^22.4.3",
     "jest-expo": "26.0.0",
     "react-native-dotenv": "^0.1.1",
     "react-native-scripts": "1.13.1",
-    "react-test-renderer": "16.3.0-alpha.1"
+    "react-test-renderer": "16.3.0-alpha.1",
+    "redux-mock-store": "^1.5.1"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
@@ -24,7 +26,7 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "jest",
+    "test": "jest --watchAll",
     "flow": "flow"
   },
   "jest": {
@@ -34,8 +36,12 @@
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
     "global": "^4.3.2",
+    "pouchdb-react-native": "^6.4.1",
     "react": "^16.3.0-alpha.1",
     "react-native": "^0.54.2",
-    "react-navigation": "^1.5.11"
+    "react-navigation": "^1.5.11",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
   }
 }
