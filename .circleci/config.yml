@@ -18,7 +18,9 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - ./node_modules
-
       - run:
           name: unit-test
-          command:  npm test
+          command:  npm run test:coverage
+      - store_artifacts:
+          path: ./reports/
+          destination: reports

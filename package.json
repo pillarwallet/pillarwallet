@@ -25,6 +25,7 @@
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "flow": "flow"
   },
   "jest": {
