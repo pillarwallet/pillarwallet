@@ -1,25 +1,30 @@
 // @flow
 import { GENERATE_ENCRYPTED_WALLET, UPDATE_WALLET_STATE } from '../constants/walletConstants'
 
-type Wallet = {
+export type Wallet = {
     address: string,
     privateKey: string
 }
 
-type State = {
+export type WalletReducerState = {
     data: Wallet,
-    walletState: any
+    walletState: ?boolean
 }
 
-const initialState: State = {
+export type WalletReducerAction = {
+    type: string,
+    payload: Object
+}
+
+const initialState: WalletReducerState = {
     data: {
-        address: null,
-        privateKey: null
+        address: '',
+        privateKey: ''
     },
     walletState: null
 }
 
-export default function newWalletReducer(state = initialState, action) {
+export default function newWalletReducer(state: WalletReducerState = initialState, action: WalletReducerAction) {
     switch (action.type) {
         case GENERATE_ENCRYPTED_WALLET:
             return { ...state, ...action.payload }
