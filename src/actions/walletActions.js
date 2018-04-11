@@ -1,10 +1,16 @@
 // @flow
 import ethers from 'ethers';
-import { GENERATE_ENCRYPTED_WALLET, CREATED, ENCRYPTING, GENERATING, UPDATE_WALLET_STATE } from '../constants/walletConstants';
+import {
+  GENERATE_ENCRYPTED_WALLET,
+  CREATED,
+  ENCRYPTING,
+  GENERATING,
+  UPDATE_WALLET_STATE,
+} from '../constants/walletConstants';
 import { delay } from '../utils/delay';
 
-export function generateEncryptedWalletAction(mnemonic: string, pin: string) {
-  return async function (dispatch: Function) {
+export const generateEncryptedWalletAction = (mnemonic: string, pin: string) => {
+  return async (dispatch: Function) => {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: GENERATING,
@@ -26,8 +32,5 @@ export function generateEncryptedWalletAction(mnemonic: string, pin: string) {
       payload: { data: { ...encryptedWallet }, walletState: CREATED },
     });
   };
-}
-
-export default {
-  generateEncryptedWalletAction,
 };
+

@@ -20,12 +20,18 @@
     }
   },
   "rules": {
+    "arrow-body-style": ["off"],
     "flowtype/require-valid-file-annotation": ["error", "always"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "class-methods-use-this": [0],
     "react/prop-types": [0],
     "promise/always-return": [0],
-    "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}]
+    "promise/avoid-new": ["off"],
+    "max-len": ["error", 120, {"ignoreUrls": true}],
+    "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
+    "import/no-unresolved": ["off"],
+    "import/extensions": ["off"],
+    "import/prefer-default-export": "off"
   },
   "parser": "babel-eslint",
   "extends": [
