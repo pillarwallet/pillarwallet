@@ -7,3 +7,5 @@ export const GENERATING = 'GENERATING';
 export const ENCRYPTING = 'ENCRYPTING';
 export const DECRYPTING = 'DECRYPTING';
 export const DECRYPTED = 'DECRYPTED';
+export const EXISTS = 'EXISTS';
+export const EMPTY = 'EMPTY';

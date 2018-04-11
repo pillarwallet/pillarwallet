@@ -2,15 +2,26 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Text, View, TouchableHighlight, Image } from 'react-native';
+import { connect } from 'react-redux';
+import { checkIfWalletExistsAction } from '../../actions/walletActions';
+import { EXISTS } from '../../constants/walletConstants';
 import styles from './styles';
 
 const introImage = require('../../assets/images/logo_pillar_intro.png');
 
 type Props = {
-  navigation: NavigationScreenProp<*>
+  navigation: NavigationScreenProp<*>,
+  checkIfWalletExists: () => Function,
+  wallet: Object,
 };
 
-export default class Intro extends React.Component<Props> {
+class Intro extends React.Component<Props> {
+
+  componentWillMount(){
+    const { checkIfWalletExists } = this.props;
+    checkIfWalletExists();
+  }
+
   setBackground = (btn: number) => {
     const obj = {
       height: 45,
@@ -49,6 +60,8 @@ export default class Intro extends React.Component<Props> {
   };
 
   render() {
+    const { wallet: { walletState }} = this.props;
+    
     return (
       <View style={styles.container}>
         <Image
@@ -63,9 +76,10 @@ export default class Intro extends React.Component<Props> {
           <Text style={styles.buttonText}>Create new wallet</Text>
         </TouchableHighlight>
         <TouchableHighlight
-          style={this.setBackground(1)}
+          style={[this.setBackground(1), walletState !== EXISTS && { backgroundColor: 'lightgray' }]}
           underlayColor="white"
           onPress={this.unlockExistingWallet}
+          disabled={walletState !== EXISTS}
         >
           <Text style={styles.buttonText}>Unlock existing</Text>
         </TouchableHighlight>
@@ -80,3 +94,11 @@ export default class Intro extends React.Component<Props> {
     );
   }
 }
+
+const mapStateToProps = ({ wallet }) => ({ wallet });
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  checkIfWalletExists: () => dispatch(checkIfWalletExistsAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Intro);

@@ -7,6 +7,8 @@ import {
   ENCRYPTING,
   GENERATING,
   DECRYPTING,
+  EXISTS,
+  EMPTY
 } from '../constants/walletConstants';
 import { delay } from '../utils/delay';
 import Storage from '../services/storage';
@@ -42,25 +44,39 @@ export function generateEncryptedWalletAction(mnemonic: string, pin: string) {
 
 export function decryptWalletAction(pin: string) {
   return async function (dispatch: Function) {
+    const encryptedWallet = await storage.get('wallet');
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: DECRYPTING,
+    });
+    await delay(400);
+    const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
+    dispatch({
+      type: DECRYPT_WALLET,
+      payload: wallet,
+    });
+  };
+}
+
+export function checkIfWalletExistsAction(){
+  return async function (dispatch: Function) {
     try {
-      const encryptedWallet = await storage.get('wallet');
+      await storage.get('wallet');
       dispatch({
         type: UPDATE_WALLET_STATE,
-        payload: DECRYPTING,
-      });
-      await delay(400);
-      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
-      dispatch({
-        type: DECRYPT_WALLET,
-        payload: wallet,
+        payload: EXISTS,
       });
     } catch (e) {
-      console.log(e);
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: EMPTY,
+      });
     }
-  };
+  }
 }
 
 export default {
   generateEncryptedWalletAction,
   decryptWalletAction,
+  checkIfWalletExistsAction
 };
