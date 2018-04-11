@@ -10,7 +10,9 @@ type Props = {
 const AssetCardWrapper = styled.View`
   background: red;
   flex: 1;
-  height: 100;
+  height: 72;
+  box-shadow: 0px 8px rgba(0,0,0,.2);
+  border-radius: 4;
 `;
 
 export default class AssetCard extends React.Component<Props> {

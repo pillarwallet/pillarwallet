@@ -2,10 +2,9 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import AssetCard from 'components/AssetCard';
-import styles from './styles';
 
 type Props = {
-  assetCardListItems: []
+  assetCardListItems: ["name"]
 }
 
 export default class AssetCardList extends React.Component<Props> {
