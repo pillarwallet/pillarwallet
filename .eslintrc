@@ -14,6 +14,11 @@
     "jest/globals": true,
     "jest": true
   },
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
+  },
   "rules": {
     "flowtype/require-valid-file-annotation": ["error", "always"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
