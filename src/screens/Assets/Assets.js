@@ -1,8 +1,7 @@
 // @flow
 import * as React from 'react';
-import { View } from 'react-native';
+import Container from 'components/Container';
 import AssetCardList from 'components/AssetCardList';
-import styles from './styles';
 
 const assetCardListItems = [{ key: 'Ethereum' }, { key: 'Pillar' }];
 
@@ -13,9 +12,9 @@ export default class Assets extends React.Component<{}> {
 
   render() {
     return (
-      <View style={styles.assets}>
+      <Container>
         <AssetCardList assetCardListItems={assetCardListItems} />
-      </View>
+      </Container>
     );
   }
 }
