@@ -4,7 +4,7 @@ import { FlatList } from 'react-native';
 import AssetCard from 'components/AssetCard';
 
 type Props = {
-  assetCardListItems: ["name"]
+  assetCardListItems: ["name", "amount"]
 }
 
 export default class AssetCardList extends React.Component<Props> {
@@ -16,7 +16,7 @@ export default class AssetCardList extends React.Component<Props> {
     return (
       <FlatList
         data={this.props.assetCardListItems}
-        renderItem={({ item }) => <AssetCard title={item.key} />}
+        renderItem={({ item }) => <AssetCard name={item.key} amount={item.amount} color={item.color} />}
       />
     );
   }
