@@ -6,9 +6,6 @@ jobs:
       - image: circleci/node:8.9.4
     steps:
       - checkout
-      - run:
-          name: update-npm
-          command: 'sudo npm install -g npm@latest'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
@@ -19,8 +16,11 @@ jobs:
           paths:
             - ./node_modules
       - run:
-          name: unit-test
-          command:  npm run test:coverage
+          name: validate
+          command: yarn validate
+      - run:
+          name: generate coverage stats
+          command:  yarn test:coverage
       - store_artifacts:
           path: ./reports/
           destination: reports
