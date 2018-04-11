@@ -6,42 +6,38 @@ import {
   TextInput,
   TouchableHighlight,
   ActivityIndicator,
-  AsyncStorage,
 } from 'react-native';
-import { NavigationActions, NavigationScreenProp } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+import ethers from 'ethers';
+
 import { generateEncryptedWalletAction } from '../../actions/walletActions';
 import { ENCRYPTING, CREATED, GENERATING } from '../../constants/walletConstants';
-import { connect } from 'react-redux'
-import ethers from 'ethers';
 import styles from './styles';
 
 type State = {
   mnemonic: string,
-  wallet: Object,
-  walletCreated: boolean,
   pin: string,
-  pinError: string,
-  showLoader: boolean,
+  pinError: string
 };
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  generateEncryptedWallet: (mnemonic: string, pin: string) => Function
+  generateEncryptedWallet: (mnemonic: string, pin: string) => Function,
+  wallet: Object,
 };
 
 class NewWallet extends React.Component<Props, State> {
   state = {
     mnemonic: '',
-    wallet: {},
-    walletCreated: false,
     pin: '',
     pinError: '',
-    showLoader: false,
   };
 
   handlePinSubmit = () => {
     const validationError = this.validatePin(this.state.pin);
-    const { generateEncryptedWallet } = this.props
+    const { generateEncryptedWallet } = this.props;
     if (validationError) {
       this.setState({
         pinError: validationError,
@@ -49,7 +45,7 @@ class NewWallet extends React.Component<Props, State> {
       return;
     }
     const mnemonic = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
-    generateEncryptedWallet(mnemonic, this.state.pin)
+    generateEncryptedWallet(mnemonic, this.state.pin);
   };
 
   validatePin(pin: string) {
@@ -72,14 +68,11 @@ class NewWallet extends React.Component<Props, State> {
   render() {
     const {
       mnemonic,
-      wallet,
-      walletCreated,
       pin,
       pinError,
-      showLoader,
     } = this.state;
 
-    const { walletState } = this.props.wallet
+    const { walletState, data: wallet } = this.props.wallet;
 
     if (walletState === CREATED) {
       return (
@@ -96,7 +89,7 @@ class NewWallet extends React.Component<Props, State> {
             <Text style={styles.buttonText}>Login</Text>
           </TouchableHighlight>
         </View>
-      )
+      );
     }
 
     if (walletState === GENERATING || walletState === ENCRYPTING) {
@@ -109,7 +102,7 @@ class NewWallet extends React.Component<Props, State> {
             size="large"
           />
         </View>
-      )
+      );
     }
 
     const showError = (
@@ -121,20 +114,20 @@ class NewWallet extends React.Component<Props, State> {
     return (
       <View style={styles.enterPinContainer}>
         <Text style={styles.title}>Enter your pin</Text>
-          <View>
-            <TextInput
-              style={styles.pinInput}
-              value={pin}
-              onChangeText={text => this.setState({ pin: text })}
-            />
-            <TouchableHighlight
-              style={styles.submitButton}
-              underlayColor="white"
-              onPress={this.handlePinSubmit}
-            >
-              <Text style={styles.buttonText}>Submit</Text>
-            </TouchableHighlight>
-          </View>
+        <View>
+          <TextInput
+            style={styles.pinInput}
+            value={pin}
+            onChangeText={text => this.setState({ pin: text })}
+          />
+          <TouchableHighlight
+            style={styles.submitButton}
+            underlayColor="white"
+            onPress={this.handlePinSubmit}
+          >
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableHighlight>
+        </View>
         {showError}
       </View>
     );
@@ -142,11 +135,12 @@ class NewWallet extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({ wallet }) => ({
-  wallet
-})
+  wallet,
+});
 
-const mapDispatchToProps = (dispatch) => ({
-  generateEncryptedWallet: (mnemonic, pin) => dispatch(generateEncryptedWalletAction(mnemonic, pin))
-})
+const mapDispatchToProps = (dispatch: Function) => ({
+  generateEncryptedWallet: (mnemonic, pin) =>
+    dispatch(generateEncryptedWalletAction(mnemonic, pin)),
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewWallet)
+export default connect(mapStateToProps, mapDispatchToProps)(NewWallet);

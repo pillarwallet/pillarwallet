@@ -1,6 +1,7 @@
-import { combineReducers } from 'redux'
-import walletReducer from './walletReducer.js'
+// @flow
+import { combineReducers } from 'redux';
+import walletReducer from './walletReducer';
 
 export default combineReducers({
-    wallet: walletReducer
+  wallet: walletReducer,
 });

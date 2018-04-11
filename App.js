@@ -11,7 +11,7 @@ import PinCode from './src/screens/PinCode';
 
 import configureStore from './src/configureStore';
 
-const store = configureStore()
+const store = configureStore();
 
 const RootStack = StackNavigator(
   {

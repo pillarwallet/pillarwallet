@@ -32,13 +32,16 @@
     "eject": "react-native-scripts eject",
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
-    "test": "jest --watchAll",
-    "flow": "flow",
+    "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
+    "flow": "flow",
     "flow-stop": "flow stop",
     "flow-typed": "flow-typed install",
-    "validate": "run-s flow test lint"
+    "validate": "run-s flow test lint",
+    "jest": "jest --colors",
+    "jest-watch": "jest --colors --watchAll",
+    "jest-update": "jest --colors -u"
   },
   "jest": {
     "preset": "jest-expo",
@@ -65,7 +68,6 @@
   "dependencies": {
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
-    "global": "^4.3.2",
     "pouchdb-react-native": "^6.4.1",
     "react": "^16.3.0-alpha.1",
     "react-native": "^0.54.2",
