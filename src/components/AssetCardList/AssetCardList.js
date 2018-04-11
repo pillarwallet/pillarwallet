@@ -4,7 +4,11 @@ import { FlatList } from 'react-native';
 import AssetCard from 'components/AssetCard';
 import styles from './styles';
 
-export default class AssetCardList extends React.Component<{}> {
+type Props = {
+  assetCardListItems: []
+}
+
+export default class AssetCardList extends React.Component<Props> {
   componentDidMount() {
     // empty
   }
