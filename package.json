@@ -50,7 +50,8 @@
     "collectCoverageFrom": [
       "**/*.{js,jsx}",
       "!**/node_modules/**",
-      "!**/reports/**"
+      "!**/reports/**",
+      "!**/flow-typed/**"
     ],
     "coverageReporters": [
       "lcov"
