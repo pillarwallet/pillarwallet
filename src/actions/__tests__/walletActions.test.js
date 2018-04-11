@@ -1,8 +1,8 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { generateEncryptedWalletAction } from '../walletActions';
-import { UPDATE_WALLET_STATE, GENERATE_ENCRYPTED_WALLET } from '../../constants/walletConstants';
+import { generateEncryptedWalletAction, decryptWalletAction } from '../walletActions';
+import { UPDATE_WALLET_STATE, GENERATE_ENCRYPTED_WALLET, DECRYPT_WALLET } from '../../constants/walletConstants';
 
 const mockStore = configureMockStore([thunk]);
 
@@ -13,6 +13,9 @@ jest.mock('ethers', () => ({
         address: '0x9c',
       }),
     }),
+    fromEncryptedWallet: (encryptedWallet: string) => ({
+      address: '0x9c',
+    })
   },
 }));
 
@@ -28,6 +31,21 @@ describe('Wallet actions', () => {
     const pin = '123456';
 
     return store.dispatch(generateEncryptedWalletAction(mnemonic, pin))
+      .then(() => {
+        const actualActions = store.getActions().map(action => action.type);
+        expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it('should expect series of actions to be dispatch on decryptWalletAction execution', () => {
+    const store = mockStore({});
+    const expectedActions = [
+      UPDATE_WALLET_STATE, // DECRYPTING
+      DECRYPT_WALLET,
+    ];
+    const pin = '123456';
+
+    return store.dispatch(decryptWalletAction(pin))
       .then(() => {
         const actualActions = store.getActions().map(action => action.type);
         expect(actualActions).toEqual(expectedActions);
