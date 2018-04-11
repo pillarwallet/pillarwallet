@@ -6,95 +6,130 @@ import {
   View,
   Text,
   TouchableHighlight,
-  Touchable,
-  Image
 } from 'react-native';
 
 import OutlineButton from '../Buttons/OutlineButton';
 
-// Please Implement Callback methods when using component
-// @props
-// var title : string = 'PopModal Header Text'
-// var message : string  = 'PopModal Message'
-// var actionPrimary : string = 'Primary Button Title'
+const styles = StyleSheet.create({
+  popOverContainer: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
-// @required
-// Handle Logic to Dimiss Popover
-// popModalHandleDismiss(){} 
+  popOverContainerBG: {
+    backgroundColor: 'black',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    opacity: 0.5,
+  },
 
-// Handle Logic to Primary Action
-// popModalHandlePrimary(){} 
+  popOverBackground: {
+    width: '85%',
+    margin: 'auto',
+    height: 300,
+    backgroundColor: '#01bbff',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+  },
 
-export default class PopModal extends Component { 
+  popOverHeader: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  popOverHeaderText: {
+    color: 'white',
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+
+  popOverContentText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+
+  popOverActions: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingBottom: 20,
+  },
+
+  popOverActionsText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+
+});
+
+export default class PopModal extends Component {
   //
     state = {
       showPopAnimation: new Animated.Value(0),
       verticalBounce: new Animated.Value(10),
     }
 
-    componentDidMount(){
-
+    componentDidMount() {
       Animated.parallel([
-        
-        Animated.timing(                 
-          this.state.showPopAnimation, {
-            toValue: 1,
-            duration: 250,
+
+        Animated.timing(this.state.showPopAnimation, {
+          toValue: 1,
+          duration: 250,
         }),
-
-        //BOUNCE ANIMATION
         Animated.sequence([
-
-          Animated.timing(
-            this.state.verticalBounce, {
+          Animated.timing(this.state.verticalBounce, {
             toValue: -20,
             easing: Easing.in(),
             duration: 250,
           }),
-          Animated.timing(
-            this.state.verticalBounce, {
+          Animated.timing(this.state.verticalBounce, {
             toValue: 5,
             duration: 100,
           }),
-          Animated.timing(
-            this.state.verticalBounce, {
+          Animated.timing(this.state.verticalBounce, {
             toValue: -2,
             duration: 40,
           }),
-          Animated.timing(
-            this.state.verticalBounce, {
+          Animated.timing(this.state.verticalBounce, {
             toValue: 0,
             duration: 30,
           }),
-        ])
-        
-      ]).start();  
-
+        ]),
+      ]).start();
     }
 
-    dismissAnimation = () =>{
-      // Animated.timing(                 
+    dismissAnimation = () => {
+      // Animated.timing(
       //   this.state.showPopAnimation, {
       //     toValue: 0,
       //     duration: 120,
       // }).start();
-      //TODO: Make this happen after the animation completes
+      //  TODO: Make this happen after the animation completes
       this.props.popModalHandleDismiss();
     }
-  
-    render(){
 
-      let { showPopAnimation, verticalBounce } = this.state;
+    render() {
+      const { showPopAnimation, verticalBounce } = this.state;
 
       return (
-        <Animated.View style={[styles.popOverContainer, {opacity:showPopAnimation}]}>
+        <Animated.View style={[styles.popOverContainer, { opacity: showPopAnimation }]}>
 
           <TouchableHighlight style={styles.popOverContainerBG} onPress={this.props.popModalHandleDismiss}>
             <View />
           </TouchableHighlight>
 
-          <Animated.View style={[styles.popOverBackground, {top: verticalBounce}]}>
-            
+          <Animated.View style={[styles.popOverBackground, { top: verticalBounce }]}>
+
             <View style={styles.popOverHeader}>
               <Text style={styles.popOverHeaderText}>{this.props.title}</Text>
             </View>
@@ -104,73 +139,12 @@ export default class PopModal extends Component {
             </View>
 
             <View style={styles.popOverActions}>
-              <OutlineButton title={this.props.actionPrimary} onPress={this.dismissAnimation}></OutlineButton>
+              <OutlineButton title={this.props.actionPrimary} onPress={this.dismissAnimation} />
             </View>
-            
-            </Animated.View>
+
+          </Animated.View>
         </Animated.View>
       );
     }
-  }
-  
-  const styles = StyleSheet.create({
-    popOverContainer: {
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+}
 
-    popOverContainerBG: {
-      backgroundColor: 'black',
-      position: 'absolute',
-      width: '100%',
-      height: '100%',
-      opacity: 0.5,
-    },
-
-    popOverBackground: {
-      width: '85%',
-      margin: 'auto',
-      height: 300,
-      backgroundColor: '#01bbff',
-      borderRadius: 10,
-      padding: 20,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.5,
-      shadowRadius: 10,
-    },
-
-    popOverHeader: {
-      alignItems: 'center',
-      marginBottom:10,
-    },
-
-    popOverHeaderText: {
-      color: 'white',
-      fontSize: 28,
-      fontWeight: 'bold',
-    },
-
-    popOverContentText: {
-      color: 'white',
-      fontSize: 14,
-      fontWeight: 'bold',
-    },
-
-    popOverActions: {
-      flex: 1,
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      paddingBottom: 20,
-    },
-
-    popOverActionsText: {
-      color: 'white',
-      fontSize: 12,
-      fontWeight: 'bold',
-    },
-
-  });
