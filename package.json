@@ -38,7 +38,7 @@
     "lint": "eslint .",
     "flow-stop": "flow stop",
     "flow-typed": "flow-typed install",
-    "validate": "run-s flow lint"
+    "validate": "run-s flow test lint"
   },
   "jest": {
     "preset": "jest-expo",

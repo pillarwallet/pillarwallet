@@ -3,11 +3,8 @@ import ethers from 'ethers'
 import { GENERATE_ENCRYPTED_WALLET, CREATED, ENCRYPTING, GENERATING, UPDATE_WALLET_STATE } from '../constants/walletConstants'
 import { delay } from '../utils/delay'
 
-/**
- * 
- */
 export function generateEncryptedWalletAction (mnemonic: string, pin: string) {
-    return async function (dispatch) {
+    return async function (dispatch: Function) {
         dispatch({
             type: UPDATE_WALLET_STATE,
             payload: GENERATING
