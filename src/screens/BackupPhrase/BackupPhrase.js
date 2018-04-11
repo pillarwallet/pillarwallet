@@ -1,13 +1,10 @@
-// PURPOSE: this screen is used to display the 12-word 
+// PURPOSE: this screen is used to display the 12-word
 // backup phrase for the wallet.
 import React, { Component } from 'react';
 import {
-  Animated,
   StyleSheet,
   Text,
   View,
-  Button,
-  TouchableHighlight,
 } from 'react-native';
 
 import ethers from 'ethers';
@@ -16,64 +13,7 @@ import DefaultButton from '../../components/Buttons/DefaultButton';
 import PopModal from '../../components/Modals/PopModal';
 
 const mneumonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
-const mneumonicList = mneumonicPhrase.split(" ");
-
-export default class BackupPhrase extends Component {
-
-  state = {
-    isPopupOpen: false,
-  }
-
-  createListItem(i, list) {
-    return (
-      <Text style={styles.listItem} key={{i}+list[i]}>{ list[i] }</Text>
-    );
-  }
-
-  popModalHandlePrimary = () => {
-    this.handlePopupState();
-  }
-
-  handlePopupState = () => {
-    this.setState({
-      isPopupOpen: !this.state.isPopupOpen
-    })
-  }
-
-  render() {
-    const { isPopupOpen } = this.state
-    const wordList = Array(...{length: mneumonicList.length})
-      .map((num, i) => this.createListItem(i, mneumonicList));
-
-    return (
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text style={styles.header}>Write Down Your Backup Phrase</Text>
-          <Text style={styles.paragraph}>This is your unique 12-word backup phrase. Write down your backup phrase in the exact sequence.</Text>
-        </View>
-        
-        <View style={styles.mneumonicContainer}>
-        { wordList }
-        </View>
-
-        <View style={styles.confirmContainer}>
-          <Text style={styles.paragraphSmall}>Did your write down your backup phrase?</Text>
-          <DefaultButton title="I've Written it Down" onPress={this.handlePopupState}></DefaultButton>
-        </View>
-
-        {isPopupOpen && <PopModal
-          title = 'Be Advised'
-          message = 'To protect your assets, write down your backup phrase and passcode on paper.'
-          actionPrimary = 'I got it'
-          showCloseBtn = 'true'
-          popModalHandlePrimary={this.popModalHandlePrimary}
-          popModalHandleDismiss={this.handlePopupState}/>
-        }
-      </View>
-
-    );
-  }
-}
+const mneumonicList = mneumonicPhrase.split(' ');
 
 const styles = StyleSheet.create({
   container: {
@@ -100,7 +40,7 @@ const styles = StyleSheet.create({
   },
 
   paragraphSmall: {
-    fontSize:12,
+    fontSize: 12,
     padding: 10,
     color: 'grey',
   },
@@ -132,6 +72,63 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingBottom: 20,
-  }
+  },
 
 });
+
+export default class BackupPhrase extends Component {
+  state = {
+    isPopupOpen: false,
+  }
+
+  createListItem(i, list) {
+    return (
+      <Text style={styles.listItem} key={{ i } + list[i]}>{ list[i] }</Text>
+    );
+  }
+
+  popModalHandlePrimary = () => {
+    this.handlePopupState();
+  }
+
+  handlePopupState = () => {
+    this.setState({
+      isPopupOpen: !this.state.isPopupOpen,
+    });
+  }
+
+  render() {
+    const { isPopupOpen } = this.state;
+    const wordList = Array(...{ length: mneumonicList.length })
+      .map((num, i) => this.createListItem(i, mneumonicList));
+
+    return (
+      <View style={styles.container}>
+        <View style={styles.textContainer}>
+          <Text style={styles.header}>Write Down Your Backup Phrase</Text>
+          <Text style={styles.paragraph}>This is your unique 12-word backup phrase. Write down your backup phrase in the exact sequence.</Text>
+        </View>
+
+        <View style={styles.mneumonicContainer}>
+          { wordList }
+        </View>
+
+        <View style={styles.confirmContainer}>
+          <Text style={styles.paragraphSmall}>Did your write down your backup phrase?</Text>
+          <DefaultButton title="I've Written it Down" onPress={this.handlePopupState} />
+        </View>
+
+        {isPopupOpen && <PopModal
+          title="Be Advised"
+          message="To protect your assets, write down your backup phrase and passcode on paper."
+          actionPrimary="I got it"
+          showCloseBtn="true"
+          popModalHandlePrimary={this.popModalHandlePrimary}
+          popModalHandleDismiss={this.handlePopupState}
+        />
+        }
+      </View>
+
+    );
+  }
+}
