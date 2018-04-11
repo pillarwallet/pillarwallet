@@ -1,5 +1,10 @@
 {
   "presets": ["babel-preset-expo", "react-native-dotenv"],
+  "plugins": [
+    ["module-resolver", {
+      "root": ["./src"]
+    }]
+  ],
   "env": {
     "development": {
       "plugins": ["transform-react-jsx-source"]
