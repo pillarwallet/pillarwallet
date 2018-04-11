@@ -10,7 +10,16 @@ import {
 import ethers from 'ethers';
 import styles from './styles';
 
-export default class Login extends React.Component {
+type State = {
+  showLoader: boolean,
+  encryptedWallet: ?Object,
+  encryptedWalletExists: boolean,
+  pin: string,
+  pinError: string,
+  decryptedWallet: ?Object,
+};
+
+export default class Login extends React.Component<{}, State> {
   state = {
     showLoader: false,
     encryptedWallet: null,
@@ -35,12 +44,6 @@ export default class Login extends React.Component {
     });
   }
 
-  handlePinChange = (event) => {
-    this.setState({
-      pin: event.nativeEvent.text,
-    });
-  };
-
   handlePinSubmit = () => {
     const validationError = this.validatePin(this.state.pin);
     if (validationError) {
@@ -61,7 +64,7 @@ export default class Login extends React.Component {
     });
   };
 
-  decryptWallet(encryptedWallet, password) {
+  decryptWallet(encryptedWallet: ?Object, password: string) {
     // eslint-disable-next-line
     console.log(encryptedWallet, password);
     ethers.Wallet.fromEncryptedWallet(encryptedWallet, password)
@@ -70,6 +73,7 @@ export default class Login extends React.Component {
           decryptedWallet: wallet,
           showLoader: false,
         });
+        // return wallet;
       })
       .catch(() => {
         this.setState({
@@ -79,7 +83,7 @@ export default class Login extends React.Component {
       });
   }
 
-  validatePin(pin) {
+  validatePin(pin: string) {
     if (pin.length !== 6) {
       return "Invalid pin's length (should be 6 numbers)";
     } else if (!pin.match(/^\d+$/)) {
@@ -139,7 +143,7 @@ export default class Login extends React.Component {
             <TextInput
               style={styles.pinInput}
               value={pin}
-              onChange={this.handlePinChange}
+              onChangeText={text => this.setState({ pin: text })}
             />
             <TouchableHighlight
               style={styles.submitButton}

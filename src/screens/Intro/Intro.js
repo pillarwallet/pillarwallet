@@ -1,15 +1,17 @@
 // @flow
 import * as React from 'react';
+import type { NavigationScreenProp } from 'react-navigation';
 import { Text, View, TouchableHighlight, Image } from 'react-native';
 import styles from './styles';
 
 const introImage = require('../../assets/images/logo_pillar_intro.png');
 
-export default class Intro extends React.Component<{}> {
-  componentDidMount() {
-    // empty
-  }
-  setBackground = (btn) => {
+type Props = {
+  navigation: NavigationScreenProp<*>
+};
+
+export default class Intro extends React.Component<Props> {
+  setBackground = (btn: number) => {
     const obj = {
       height: 45,
       flexDirection: 'row',
@@ -20,6 +22,7 @@ export default class Intro extends React.Component<{}> {
       marginTop: 10,
       alignSelf: 'stretch',
       justifyContent: 'center',
+      backgroundColor: '',
     };
 
     if (btn === 0) {
@@ -31,7 +34,7 @@ export default class Intro extends React.Component<{}> {
     }
 
     return obj;
-  }
+  };
 
   createNewWallet = () => {
     this.props.navigation.navigate('NewWallet');
