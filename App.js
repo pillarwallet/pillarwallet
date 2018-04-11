@@ -33,7 +33,7 @@ const RootStack = StackNavigator(
     },
   },
   {
-    initialRouteName: 'BackupPhrase',
+    initialRouteName: 'Home',
   },
 );
 
