@@ -6,60 +6,46 @@ import {
   TextInput,
   TouchableHighlight,
   ActivityIndicator,
-  AsyncStorage,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-
+import { connect } from 'react-redux';
 import ethers from 'ethers';
+
+import { generateEncryptedWalletAction } from '../../actions/walletActions';
+import { ENCRYPTING, CREATED, GENERATING } from '../../constants/walletConstants';
 import styles from './styles';
 
 type State = {
   mnemonic: string,
-  wallet: Object,
-  walletCreated: boolean,
   pin: string,
-  pinError: string,
-  showLoader: boolean,
+  pinError: string
 };
 
 type Props = {
-  navigation: NavigationScreenProp<*>
+  navigation: NavigationScreenProp<*>,
+  generateEncryptedWallet: (mnemonic: string, pin: string) => Function,
+  wallet: Object,
 };
 
-export default class NewWallet extends React.Component<Props, State> {
+class NewWallet extends React.Component<Props, State> {
   state = {
     mnemonic: '',
-    wallet: {},
-    walletCreated: false,
     pin: '',
     pinError: '',
-    showLoader: false,
   };
 
   handlePinSubmit = () => {
     const validationError = this.validatePin(this.state.pin);
+    const { generateEncryptedWallet } = this.props;
     if (validationError) {
       this.setState({
         pinError: validationError,
       });
       return;
     }
-
     const mnemonic = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
-    const wallet = ethers.Wallet.fromMnemonic(mnemonic);
-
-    const timeout = setTimeout(async () => {
-      this.storeEncryptedWallet(await wallet.encrypt(this.state.pin));
-      clearTimeout(timeout);
-    }, 0);
-
-    this.setState({
-      pinError: '',
-      showLoader: true,
-      mnemonic,
-      wallet,
-    });
+    generateEncryptedWallet(mnemonic, this.state.pin);
   };
 
   validatePin(pin: string) {
@@ -69,14 +55,6 @@ export default class NewWallet extends React.Component<Props, State> {
       return 'Pin could contain numbers only';
     }
     return '';
-  }
-
-  async storeEncryptedWallet(encryptedWallet: Object) {
-    await AsyncStorage.setItem('wallet', JSON.stringify(encryptedWallet));
-    this.setState({
-      walletCreated: true,
-      showLoader: false,
-    });
   }
 
   goToLoginPage = () => {
@@ -90,12 +68,42 @@ export default class NewWallet extends React.Component<Props, State> {
   render() {
     const {
       mnemonic,
-      wallet,
-      walletCreated,
       pin,
       pinError,
-      showLoader,
     } = this.state;
+
+    const { walletState, data: wallet } = this.props.wallet;
+
+    if (walletState === CREATED) {
+      return (
+        <View style={styles.pinCodeCreatedContainer}>
+          <Text style={styles.textRow}>Password: {pin}</Text>
+          <Text style={styles.textRow}>Mnemonic: {mnemonic}</Text>
+          <Text style={styles.textRow}>Public address: {wallet.address}</Text>
+          <Text style={styles.textRow}>Private key: {wallet.privateKey}</Text>
+
+          <TouchableHighlight
+            style={styles.submitButton}
+            onPress={this.goToLoginPage}
+          >
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableHighlight>
+        </View>
+      );
+    }
+
+    if (walletState === GENERATING || walletState === ENCRYPTING) {
+      return (
+        <View>
+          <Text>{walletState}</Text>
+          <ActivityIndicator
+            animating
+            color="#111"
+            size="large"
+          />
+        </View>
+      );
+    }
 
     const showError = (
       pinError ?
@@ -103,52 +111,36 @@ export default class NewWallet extends React.Component<Props, State> {
         null
     );
 
-    const walletCreatedComponent = (
-      <View style={styles.pinCodeCreatedContainer}>
-        <Text style={styles.textRow}>Password: {pin}</Text>
-        <Text style={styles.textRow}>Mnemonic: {mnemonic}</Text>
-        <Text style={styles.textRow}>Public address: {wallet.address}</Text>
-        <Text style={styles.textRow}>Private key: {wallet.privateKey}</Text>
-
-        <TouchableHighlight
-          style={styles.submitButton}
-          onPress={this.goToLoginPage}
-        >
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableHighlight>
-      </View>
-    );
-
-    const enterPinComponent = (
+    return (
       <View style={styles.enterPinContainer}>
         <Text style={styles.title}>Enter your pin</Text>
-        {!showLoader && (
-          <View>
-            <TextInput
-              style={styles.pinInput}
-              value={pin}
-              onChangeText={text => this.setState({ pin: text })}
-            />
-            <TouchableHighlight
-              style={styles.submitButton}
-              underlayColor="white"
-              onPress={this.handlePinSubmit}
-            >
-              <Text style={styles.buttonText}>Submit</Text>
-            </TouchableHighlight>
-          </View>
-        )}
-
+        <View>
+          <TextInput
+            style={styles.pinInput}
+            value={pin}
+            onChangeText={text => this.setState({ pin: text })}
+          />
+          <TouchableHighlight
+            style={styles.submitButton}
+            underlayColor="white"
+            onPress={this.handlePinSubmit}
+          >
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableHighlight>
+        </View>
         {showError}
-
-        <ActivityIndicator
-          animating={showLoader}
-          color="#111"
-          size="large"
-        />
       </View>
     );
-
-    return walletCreated ? walletCreatedComponent : enterPinComponent;
   }
 }
+
+const mapStateToProps = ({ wallet }) => ({
+  wallet,
+});
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  generateEncryptedWallet: (mnemonic, pin) =>
+    dispatch(generateEncryptedWalletAction(mnemonic, pin)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewWallet);
