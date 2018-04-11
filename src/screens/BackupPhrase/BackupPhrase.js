@@ -9,13 +9,12 @@ import {
 } from 'react-native';
 
 import ethers from 'ethers';
+import DefaultButton from 'components/Buttons/DefaultButton';
+import PopModal from 'components/Modals/PopModal';
 import styles from './styles';
 
-import DefaultButton from '../../components/Buttons/DefaultButton';
-import PopModal from '../../components/Modals/PopModal';
-
-const mneumonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
-const mneumonicList = mneumonicPhrase.split(' ');
+const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+const mnemonicList = mnemonicPhrase.split(' ');
 
 type State = {
   isPopupOpen: boolean,
@@ -44,8 +43,8 @@ export default class BackupPhrase extends React.Component<{}, State> {
 
   render() {
     const { isPopupOpen } = this.state;
-    const wordList = Array(mneumonicList.length).fill('')
-      .map((num, i) => this.createListItem(i, mneumonicList));
+    const wordList = Array(mnemonicList.length).fill('')
+      .map((num, i) => this.createListItem(i, mnemonicList));
 
     return (
       <View style={styles.container}>

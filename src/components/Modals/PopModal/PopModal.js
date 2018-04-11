@@ -7,8 +7,8 @@ import {
   Text,
   TouchableHighlight,
 } from 'react-native';
+import OutlineButton from 'components/Buttons/OutlineButton';
 import styles from './styles';
-import OutlineButton from '../Buttons/OutlineButton';
 
 
 type Props = {

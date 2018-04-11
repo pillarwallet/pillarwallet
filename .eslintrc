@@ -27,8 +27,10 @@
     "react/prop-types": [0],
     "promise/always-return": [0],
     "promise/avoid-new": ["off"],
-    "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
     "max-len": ["error", 120, {"ignoreUrls": true}],
+    "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
+    "import/no-unresolved": ["off"],
+    "import/extensions": ["off"],
     "import/prefer-default-export": "off"
   },
   "parser": "babel-eslint",
