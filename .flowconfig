@@ -66,14 +66,23 @@ module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|we
 module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'
 module.name_mapper='^screens' -> '<PROJECT_ROOT>/src/screens'
 
+module.name_mapper='^actions\/\(.*\)$' -> '<PROJECT_ROOT>/src/actions/\1'
+module.name_mapper='^actions' -> '<PROJECT_ROOT>/src/actions'
+
 module.name_mapper='^assets\/\(.*\)$' -> '<PROJECT_ROOT>/src/assets/\1'
 module.name_mapper='^assets' -> '<PROJECT_ROOT>/src/assets'
 
 module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/src/components/\1'
 module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
 
+module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
+module.name_mapper='^constants' -> '<PROJECT_ROOT>/src/constants'
+
 module.name_mapper='^models\/\(.*\)$' -> '<PROJECT_ROOT>/src/models/\1'
 module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
+
+module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
+module.name_mapper='^utils' -> '<PROJECT_ROOT>/src/utils'
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe

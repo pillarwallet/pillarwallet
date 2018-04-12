@@ -7,7 +7,6 @@ import { Provider } from 'react-redux';
 import Intro from 'screens/Intro';
 import NewWallet from 'screens/NewWallet';
 import Login from 'screens/Login';
-import PinCode from 'screens/PinCode';
 import Assets from 'screens/Assets';
 import BackupPhrase from 'screens/BackupPhrase';
 import ImportWallet from './src/screens/ImportWallet';
@@ -25,9 +24,6 @@ const RootStack = StackNavigator(
     },
     Login: {
       screen: Login,
-    },
-    PinCode: {
-      screen: PinCode,
     },
     BackupPhrase: {
       screen: BackupPhrase,

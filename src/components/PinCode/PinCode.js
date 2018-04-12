@@ -11,18 +11,24 @@ const PASS_CODE_LENGTH = 6;
 
 type PassCode = string[];
 
+type Props = {
+  onPinEntered: Function,
+  pageHeading?: string,
+  pageInstructions?: string,
+};
+
 type State = {
   passCode: PassCode,
 };
 
-export default class PinCode extends React.Component<{}, State> {
-  state = {
-    passCode: [],
-  };
-
-  tempProps = {
+export default class PinCode extends React.Component<Props, State> {
+  static defaultProps = {
     pageHeading: 'Enter Passcode',
     pageInstructions: 'Setup your Passcode',
+  };
+
+  state = {
+    passCode: [],
   };
 
   handleKeyPress = (key: string) => {
@@ -34,8 +40,7 @@ export default class PinCode extends React.Component<{}, State> {
       passCode: [...this.state.passCode, key],
     }, () => {
       if (this.state.passCode.length === PASS_CODE_LENGTH) {
-        // TODO: Handle callback for pin submit
-        // this.props.onPinSubmit(this.state.passCode.join(''));
+        this.props.onPinEntered(this.state.passCode.join(''));
       }
     });
   };
@@ -88,7 +93,7 @@ export default class PinCode extends React.Component<{}, State> {
 
   render() {
     const { passCode } = this.state;
-    const { pageHeading, pageInstructions } = this.tempProps;
+    const { pageHeading, pageInstructions } = this.props;
 
     const pinCodeDots = Array(PASS_CODE_LENGTH).fill('')
       .map((num, i) => this.createPinDot(i, passCode));
