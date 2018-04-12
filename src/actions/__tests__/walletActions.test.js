@@ -13,7 +13,7 @@ jest.mock('ethers', () => ({
         address: '0x9c',
       }),
     }),
-    fromEncryptedWallet: (json: string) => ({
+    fromEncryptedWallet: () => ({
       address: '0x9c',
     }),
   },

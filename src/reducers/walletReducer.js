@@ -1,5 +1,11 @@
 // @flow
-import { GENERATE_ENCRYPTED_WALLET, UPDATE_WALLET_STATE, DECRYPT_WALLET, CREATED, DECRYPTED } from '../constants/walletConstants';
+import {
+  GENERATE_ENCRYPTED_WALLET,
+  UPDATE_WALLET_STATE,
+  DECRYPT_WALLET,
+  CREATED,
+  DECRYPTED,
+} from '../constants/walletConstants';
 
 export type Wallet = {
   address: string,

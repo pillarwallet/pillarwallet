@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import {
   Text,
   View,
@@ -51,18 +51,9 @@ class Login extends React.Component<Props, State> {
       pin,
       pinError,
     } = this.state;
-    
-    const showError = pinError ? <Text style={styles.errorText}>{pinError}</Text> : null
-    
-    const { walletState, data: wallet } = this.props.wallet;
 
-    // if (!encryptedWallet && !encryptedWalletExists) {
-    //   return (
-    //     <View style={styles.container}>
-    //       <Text style={styles.title}>No wallet is stored on this device</Text>
-    //     </View>
-    //   );
-    // }
+    const showError = pinError ? <Text style={styles.errorText}>{pinError}</Text> : null;
+    const { walletState, data: wallet } = this.props.wallet;
 
     if (walletState === DECRYPTING) {
       return (
@@ -116,5 +107,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
     dispatch(decryptWalletAction(pin)),
 });
 
-
-export default connect(mapStateToProps, mapDispatchToProps )(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

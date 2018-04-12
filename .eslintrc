@@ -31,6 +31,7 @@
     "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
     "import/no-unresolved": ["off"],
     "import/extensions": ["off"],
+    "no-underscore-dangle": ["off"],
     "import/prefer-default-export": "off"
   },
   "parser": "babel-eslint",

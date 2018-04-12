@@ -40,10 +40,10 @@ export const generateEncryptedWalletAction = (mnemonic: string, pin: string) => 
       payload: wallet,
     });
   };
-}
+};
 
-export function decryptWalletAction(pin: string) {
-  return async function (dispatch: Function) {
+export const decryptWalletAction = (pin: string) => {
+  return async (dispatch: Function) => {
     const encryptedWallet = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -56,10 +56,10 @@ export function decryptWalletAction(pin: string) {
       payload: wallet,
     });
   };
-}
+};
 
-export function checkIfWalletExistsAction() {
-  return async function (dispatch: Function) {
+export const checkIfWalletExistsAction = () => {
+  return async (dispatch: Function) => {
     try {
       await storage.get('wallet');
       dispatch({
@@ -73,7 +73,7 @@ export function checkIfWalletExistsAction() {
       });
     }
   };
-}
+};
 
 export default {
   generateEncryptedWalletAction,

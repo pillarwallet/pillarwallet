@@ -16,7 +16,7 @@ export default class AsyncStorageMock {
   }
 
   setItem = mock(jest.fn((key, value) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.storageCache[key] = value;
       resolve(value);
     });
@@ -29,25 +29,27 @@ export default class AsyncStorageMock {
   }));
 
   removeItem = mock(jest.fn((key) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       delete this.storageCache[key];
       resolve(null);
     });
   }));
 
-  clear = mock(jest.fn((key) => {
-    return new Promise((resolve, reject) => {
+  clear = mock(jest.fn(() => {
+    return new Promise((resolve) => {
       this.storageCache = {};
       resolve(null);
     });
   }));
 
-  getAllKeys = mock(jest.fn((key) => {
-    return new Promise((resolve, reject) => resolve(Object.keys(this.storageCache)));
+  getAllKeys = mock(jest.fn(() => {
+    return new Promise((resolve) => {
+      resolve(Object.keys(this.storageCache));
+    });
   }));
 
   multiSet = mock(jest.fn((items) => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       items.forEach(([key, value]) => {
         this.storageCache[key] = value;
       });
