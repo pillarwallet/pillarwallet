@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   },
   instructionsContainer: {
     alignItems: 'center',
+
   },
   checkboxRow: {
     flexDirection: 'row',
@@ -30,11 +31,9 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '80%',
   },
-
   confirmContainer: {
-    justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor: 'red',
+    backgroundColor: 'white',
 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

@@ -4,8 +4,10 @@
 // backup phrase for the wallet.
 import * as React from 'react';
 import {
-  View,
+  Animated,
+  Button,
   Text,
+  View,
 } from 'react-native';
 
 import Checkbox from '../../components/Checkbox/Checkbox';
@@ -13,29 +15,61 @@ import DefaultButton from '../../components/Buttons/DefaultButton/DefaultButton'
 
 import styles from './styles';
 
-type State = { };
+type Checks = any[];
+
+type State = {
+  termsViewVisible: boolean,
+  checkboxes: Checks,
+};
 
 export default class LegalTerms extends React.Component<{}, State> {
-  handlePopupState = () => {
+  state = {
+    termsViewVisible: false,
+    checkboxes: [],
   };
 
   toggleCheckBox = (tag: Checkbox) => {
-    console.log(tag);
+    this.setState({
+      checkboxes: [...this.state.checkboxes, tag],
+    }, () => {
+      if (this.state.checkboxes.length === 2) {
+        this.displayAcceptance();
+      }
+    });
+  }
+
+  displayAcceptance = () => {
+    this.setState({
+      termsViewVisible: !this.state.termsViewVisible,
+    });
   }
 
   handleConfirm = () => {
-    console.log('Confirm');
+    // TODO: Send to next screen
+  }
+
+  openURLTermsOfUse = () => {
+    // TODO: Need to Open Terms of Use
+  }
+
+  openURLPrivacyPolicy = () => {
+    // TODO: Need to Open Terms of Use
   }
 
   render() {
+    const {
+      termsViewVisible,
+    } = this.state;
+
     return (
       <View style={styles.container}>
-        <View style={styles.instructionsContainer}>
-          <Text style={styles.header2}>Let&#39;s Review</Text>
-          <Text style={styles.paragraphSmall}>By using the Pillar Wallet you agree that:</Text>
-        </View>
 
-        <View style={{ justifyContent: 'center' }}>
+        <View style={{ justifyContent: 'flex-start', flex: 1 }}>
+
+          <View style={styles.instructionsContainer}>
+            <Text style={styles.header2}>Let&#39;s Review</Text>
+            <Text style={styles.paragraphSmall}>By using the Pillar Wallet you agree that:</Text>
+          </View>
 
           <View style={styles.checkboxRow}>
             <Checkbox toggleCheckbox={this.toggleCheckBox} tag={1} />
@@ -51,20 +85,36 @@ export default class LegalTerms extends React.Component<{}, State> {
           the only way my funds and contacts can be recovered is by using my 12 word backup phrase.
             </Text>
           </View>
+        </View>
 
-          <View style={styles.confirmContainer}>
+        {termsViewVisible && (
+        <Animated.View style={styles.confirmContainer}>
 
-            <View style={styles.checkboxRow}>
-              <Checkbox toggleCheckbox={this.toggleCheckBox} tag={3} />
-              <Text style={[styles.paragraph, { marginLeft: 10 }]}>
-            I have read, understand, and agree to the Terms of Use.
-              </Text>
-            </View>
-
-            <DefaultButton title="Confirm and Finish" onPress={this.handleConfirm} />
+          <View style={styles.checkboxRow}>
+            <Checkbox toggleCheckbox={this.toggleCheckBox} tag={3} />
+            <Text style={[styles.paragraph, { marginLeft: 10 }]}>
+          I have read, understand, and agree to the Terms of Use.
+            </Text>
           </View>
 
-        </View>
+          <DefaultButton title="Confirm and Finish" onPress={this.handleConfirm} disabled={termsViewVisible} />
+
+          <View style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginTop: 10,
+          marginBottom: 10,
+        }}
+          >
+            <Button title="Terms of Use" onPress={this.openURLTermsOfUse} />
+            <Text>and</Text>
+            <Button title="Privacy Policy" onPress={this.openURLPrivacyPolicy} />
+          </View>
+        </Animated.View>
+        )}
+
+
       </View>
 
     );
