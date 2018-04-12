@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import {
+  Animated,
   TouchableHighlight,
-  View,
   StyleSheet,
 } from 'react-native';
 
@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
   },
 
   checkBoxActive: {
-    borderWidth: (30 / 2) - 4,
     borderColor: '#01bbff',
   },
 });
@@ -27,13 +26,14 @@ type Props = {
 };
 
 type State = {
-  active: boolean
+  active: boolean,
+  animateActive: any,
 };
-
 
 export default class Checkbox extends React.Component<Props, State> {
   state = {
     active: false,
+    animateActive: new Animated.Value(0),
   }
 
   toggleCheckBox = () => {
@@ -41,17 +41,23 @@ export default class Checkbox extends React.Component<Props, State> {
       active: !this.state.active,
     });
 
-    this.props.toggleCheckbox(this.props.tag);
+    Animated.spring(this.state.animateActive, {
+      toValue: 12,
+      duration: 300,
+    }).start(this.finishedAnimating);
   };
 
+  finishedAnimating = () => {
+    this.props.toggleCheckbox(this.props.tag);
+  }
+
   render() {
+    const { animateActive } = this.state;
     return (
-      <TouchableHighlight
-        style={[styles.checkBox, this.state.active && styles.checkBoxActive]}
-        onPress={this.toggleCheckBox}
-        underlayColor="transparent"
-      >
-        <View />
+      <TouchableHighlight onPress={this.toggleCheckBox} underlayColor="transparent" >
+        <Animated.View style={[styles.checkBox, this.state.active &&
+          [{ borderWidth: animateActive }, styles.checkBoxActive]]}
+        />
       </TouchableHighlight>
     );
   }
