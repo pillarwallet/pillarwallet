@@ -9,6 +9,7 @@ import {
   DECRYPTING,
   EXISTS,
   EMPTY,
+  INVALID_PASSWORD,
 } from '../constants/walletConstants';
 import { delay } from '../utils/delay';
 import Storage from '../services/storage';
@@ -50,11 +51,18 @@ export const decryptWalletAction = (pin: string) => {
       payload: DECRYPTING,
     });
     await delay(400);
-    const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
-    dispatch({
-      type: DECRYPT_WALLET,
-      payload: wallet,
-    });
+    try {
+      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
+      dispatch({
+        type: DECRYPT_WALLET,
+        payload: wallet,
+      });
+    } catch (e) {
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: INVALID_PASSWORD,
+      });
+    }
   };
 };
 
