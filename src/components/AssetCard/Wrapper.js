@@ -1,7 +1,7 @@
 // @flow
 import styled from 'styled-components/native';
 
-export const Wrapper = styled.View`
+const Wrapper = styled.View`
   background-color: ${props => props.color};
   height: 72;
   box-shadow: 0px 0 4px rgba(0,0,0,.2);
@@ -13,3 +13,5 @@ export const Wrapper = styled.View`
   flex-direction: row;
   padding: 12px;
 `;
+
+export default Wrapper;

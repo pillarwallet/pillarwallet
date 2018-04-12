@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import { Wrapper } from './Wrapper';
-import { Icon } from './Icon';
-import { Name } from './Name';
-import { Amount } from './Amount';
+import Wrapper from './Wrapper';
+import Icon from './Icon';
+import Name from './Name';
+import Amount from './Amount';
 
 
 type Props = {
