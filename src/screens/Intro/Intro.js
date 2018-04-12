@@ -16,8 +16,7 @@ type Props = {
 };
 
 class Intro extends React.Component<Props> {
-
-  componentWillMount(){
+  componentWillMount() {
     const { checkIfWalletExists } = this.props;
     checkIfWalletExists();
   }
@@ -60,8 +59,8 @@ class Intro extends React.Component<Props> {
   };
 
   render() {
-    const { wallet: { walletState }} = this.props;
-    
+    const { wallet: { walletState } } = this.props;
+
     return (
       <View style={styles.container}>
         <Image

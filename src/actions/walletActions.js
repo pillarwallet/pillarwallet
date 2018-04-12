@@ -8,7 +8,7 @@ import {
   GENERATING,
   DECRYPTING,
   EXISTS,
-  EMPTY
+  EMPTY,
 } from '../constants/walletConstants';
 import { delay } from '../utils/delay';
 import Storage from '../services/storage';
@@ -58,7 +58,7 @@ export function decryptWalletAction(pin: string) {
   };
 }
 
-export function checkIfWalletExistsAction(){
+export function checkIfWalletExistsAction() {
   return async function (dispatch: Function) {
     try {
       await storage.get('wallet');
@@ -72,11 +72,11 @@ export function checkIfWalletExistsAction(){
         payload: EMPTY,
       });
     }
-  }
+  };
 }
 
 export default {
   generateEncryptedWalletAction,
   decryptWalletAction,
-  checkIfWalletExistsAction
+  checkIfWalletExistsAction,
 };
