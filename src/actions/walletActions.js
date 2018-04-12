@@ -2,6 +2,7 @@
 import ethers from 'ethers';
 import {
   GENERATE_ENCRYPTED_WALLET,
+<<<<<<< HEAD
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
   ENCRYPTING,
@@ -9,14 +10,20 @@ import {
   DECRYPTING,
   EXISTS,
   EMPTY,
+=======
+  CREATED,
+  ENCRYPTING,
+  GENERATING,
+  UPDATE_WALLET_STATE,
+>>>>>>> develop
 } from '../constants/walletConstants';
 import { delay } from '../utils/delay';
 import Storage from '../services/storage';
 
 const storage = Storage.getInstance('db');
 
-export function generateEncryptedWalletAction(mnemonic: string, pin: string) {
-  return async function (dispatch: Function) {
+export const generateEncryptedWalletAction = (mnemonic: string, pin: string) => {
+  return async (dispatch: Function) => {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: GENERATING,
@@ -80,3 +87,4 @@ export default {
   decryptWalletAction,
   checkIfWalletExistsAction,
 };
+
