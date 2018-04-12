@@ -1,7 +1,7 @@
 // @flow
 import styled from 'styled-components/native';
 
-export const AssetCardIcon = styled.View`
+export const Icon = styled.View`
   width: 36;
   height: 36;
   border-radius: 18;

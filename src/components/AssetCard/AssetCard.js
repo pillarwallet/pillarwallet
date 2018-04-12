@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import { AssetCardWrapper } from './AssetCardWrapper';
-import { AssetCardIcon } from './AssetCardIcon';
-import { AssetCardName } from './AssetCardName';
-import { AssetCardAmount } from './AssetCardAmount';
+import { Wrapper } from './Wrapper';
+import { Icon } from './Icon';
+import { Name } from './Name';
+import { Amount } from './Amount';
 
 
 type Props = {
@@ -15,11 +15,11 @@ type Props = {
 
 const AssetCard = (props: Props) => {
   return (
-    <AssetCardWrapper color={props.color}>
-      <AssetCardIcon />
-      <AssetCardName>{props.name}</AssetCardName>
-      <AssetCardAmount>{props.amount}</AssetCardAmount>
-    </AssetCardWrapper>
+    <Wrapper color={props.color}>
+      <Icon />
+      <Name>{props.name}</Name>
+      <Amount>{props.amount}</Amount>
+    </Wrapper>
   );
 };
 export default AssetCard;

@@ -1,7 +1,7 @@
 // @flow
 import styled from 'styled-components/native';
 
-export const AssetCardWrapper = styled.View`
+export const Wrapper = styled.View`
   background-color: ${props => props.color};
   height: 72;
   box-shadow: 0px 0 4px rgba(0,0,0,.2);
