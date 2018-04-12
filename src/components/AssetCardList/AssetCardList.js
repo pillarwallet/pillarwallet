@@ -3,8 +3,15 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import AssetCard from 'components/AssetCard';
 
+type Asset = {
+  key: string,
+  name: string,
+  amount: number,
+  color: string
+}
+
 type Props = {
-  assetCardListItems: ["name", "amount"]
+  assetData: Asset[]
 }
 
 export default class AssetCardList extends React.Component<Props> {
@@ -15,8 +22,10 @@ export default class AssetCardList extends React.Component<Props> {
   render() {
     return (
       <FlatList
-        data={this.props.assetCardListItems}
-        renderItem={({ item }) => <AssetCard name={item.key} amount={item.amount} color={item.color} />}
+        data={this.props.assetData}
+        renderItem={({ item }: {item: Asset}) => (
+          <AssetCard name={item.name} amount={item.amount} color={item.color} />
+        )}
       />
     );
   }
