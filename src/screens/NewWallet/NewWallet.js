@@ -14,6 +14,7 @@ import ethers from 'ethers';
 
 import { generateEncryptedWalletAction } from '../../actions/walletActions';
 import { ENCRYPTING, CREATED, GENERATING } from '../../constants/walletConstants';
+import { validatePin } from '../../utils/validators';
 import styles from './styles';
 
 type State = {
@@ -36,7 +37,7 @@ class NewWallet extends React.Component<Props, State> {
   };
 
   handlePinSubmit = () => {
-    const validationError = this.validatePin(this.state.pin);
+    const validationError = validatePin(this.state.pin);
     const { generateEncryptedWallet } = this.props;
     if (validationError) {
       this.setState({
@@ -47,15 +48,6 @@ class NewWallet extends React.Component<Props, State> {
     const mnemonic = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
     generateEncryptedWallet(mnemonic, this.state.pin);
   };
-
-  validatePin(pin: string) {
-    if (pin.length !== 6) {
-      return "Invalid pin's length (should be 6 numbers)";
-    } else if (!pin.match(/^\d+$/)) {
-      return 'Pin could contain numbers only';
-    }
-    return '';
-  }
 
   goToLoginPage = () => {
     const resetAction = NavigationActions.reset({
@@ -134,9 +126,7 @@ class NewWallet extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({
-  wallet,
-});
+const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   generateEncryptedWallet: (mnemonic, pin) =>
