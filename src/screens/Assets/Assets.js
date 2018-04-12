@@ -12,16 +12,11 @@ const assets = [
   },
 ];
 
-export default class Assets extends React.Component<{}> {
-  componentDidMount() {
-    // empty
-  }
-
-  render() {
-    return (
-      <Container>
-        <AssetCardList assets={assets} />
-      </Container>
-    );
-  }
-}
+const Assets = () => {
+  return (
+    <Container>
+      <AssetCardList assets={assets} />
+    </Container>
+  );
+};
+export default Assets;

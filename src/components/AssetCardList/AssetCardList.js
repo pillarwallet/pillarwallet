@@ -5,22 +5,17 @@ import type { Asset } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
 
 type Props = {
-  assets: Array<Asset>
+  assets: Asset[]
 }
 
-export default class AssetCardList extends React.Component<Props> {
-  componentDidMount() {
-    // empty
-  }
-
-  render() {
-    return (
-      <FlatList
-        data={this.props.assets}
-        renderItem={({ item }: {item: Asset}) => (
-          <AssetCard name={item.name} amount={item.amount} color={item.color} />
-        )}
-      />
-    );
-  }
-}
+const AssetCardList = (props: Props) => {
+  return (
+    <FlatList
+      data={props.assets}
+      renderItem={({ item }: {item: Asset}) => (
+        <AssetCard name={item.name} amount={item.amount} color={item.color} />
+      )}
+    />
+  );
+};
+export default AssetCardList;

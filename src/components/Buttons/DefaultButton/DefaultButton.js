@@ -11,10 +11,11 @@ type Props = {
   onPress: Function,
 };
 
-export default function DefaultButton(props: Props) {
+const DefaultButton = (props: Props) => {
   return (
     <TouchableHighlight style={styles.defaultBtn} onPress={props.onPress}>
       <Text style={styles.defaultBtnTitle}>{props.title}</Text>
     </TouchableHighlight>
   );
-}
+};
+export default DefaultButton;

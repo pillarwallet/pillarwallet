@@ -39,18 +39,13 @@ const AssetCardAmount = styled.Text`
 `;
 
 
-export default class AssetCard extends React.Component<Props> {
-  componentDidMount() {
-    // empty
-  }
-
-  render() {
-    return (
-      <AssetCardWrapper color={this.props.color}>
-        <AssetCardIcon />
-        <AssetCardName>{this.props.name}</AssetCardName>
-        <AssetCardAmount>{this.props.amount}</AssetCardAmount>
-      </AssetCardWrapper>
-    );
-  }
-}
+const AssetCard = (props: Props) => {
+  return (
+    <AssetCardWrapper color={props.color}>
+      <AssetCardIcon />
+      <AssetCardName>{props.name}</AssetCardName>
+      <AssetCardAmount>{props.amount}</AssetCardAmount>
+    </AssetCardWrapper>
+  );
+};
+export default AssetCard;
