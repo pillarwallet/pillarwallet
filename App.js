@@ -36,7 +36,7 @@ const RootStack = StackNavigator(
     },
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Assets',
   },
 );
 
