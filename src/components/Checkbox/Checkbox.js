@@ -22,23 +22,26 @@ const styles = StyleSheet.create({
 
 type Props = {
   toggleCheckbox: Function,
-  tag: any,
 };
 
 type State = {
-  active: boolean,
+  checked: boolean,
   animateActive: any,
 };
 
 export default class Checkbox extends React.Component<Props, State> {
   state = {
-    active: false,
+    checked: false,
     animateActive: new Animated.Value(0),
+  }
+
+  checkStatus = () => {
+    return this.state.checked;
   }
 
   toggleCheckBox = () => {
     this.setState({
-      active: !this.state.active,
+      checked: !this.state.checked,
     });
 
     Animated.spring(this.state.animateActive, {
@@ -46,14 +49,14 @@ export default class Checkbox extends React.Component<Props, State> {
       duration: 60,
     }).start();
 
-    this.props.toggleCheckbox(this.props.tag);
+    this.props.toggleCheckbox(!this.state.checked);
   };
 
   render() {
     const { animateActive } = this.state;
     return (
       <TouchableHighlight onPress={this.toggleCheckBox} underlayColor="transparent" >
-        <Animated.View style={[styles.checkBox, this.state.active &&
+        <Animated.View style={[styles.checkBox, this.state.checked &&
           [{ borderWidth: animateActive }, styles.checkBoxActive]]}
         />
       </TouchableHighlight>
