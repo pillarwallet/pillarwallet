@@ -10,7 +10,7 @@ import Login from 'screens/Login';
 import PinCode from 'screens/PinCode';
 import Assets from 'screens/Assets';
 import BackupPhrase from 'screens/BackupPhrase';
-import Import from './app/screens/Import';
+import ImportWallet from './src/screens/ImportWallet';
 import configureStore from './src/configureStore';
 
 const store = configureStore();
@@ -36,7 +36,7 @@ const RootStack = StackNavigator(
       screen: Assets,
     },
     Import: {
-      screen: Import,
+      screen: ImportWallet,
     },
   },
   {

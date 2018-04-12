@@ -1,0 +1,6 @@
+{
+  "name": "ImportWallet",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./ImportWallet.js"
+}

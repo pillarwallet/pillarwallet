@@ -1,41 +1,36 @@
 // @flow
 import * as React from 'react';
 import {
-  StyleSheet,
   Text,
   View,
   TextInput,
   TouchableHighlight,
   ActivityIndicator,
-  AsyncStorage
 } from 'react-native';
-import ethers from "ethers";
+import ethers from 'ethers';
+import styles from './styles';
 
-export default class Import extends React.Component {
+type State = {
+  showLoader: boolean,
+  privateKey: string,
+  tWordsPhrase: string,
+  importError: string,
+  restoredWallet: ?Object
+};
+
+export default class ImportWallet extends React.Component<{}, State> {
   state = {
     showLoader: false,
     privateKey: '',
     tWordsPhrase: '',
     importError: '',
-    restoredWallet: null
-  };
-
-  handlePrivateKeyChange = (event) => {
-    this.setState({
-      privateKey: event.nativeEvent.text
-    });
-  };
-
-  handleTWordsChange = (event) => {
-    this.setState({
-      tWordsPhrase: event.nativeEvent.text
-    });
+    restoredWallet: null,
   };
 
   handleImportSubmit = () => {
     this.setState({
       importError: '',
-      showLoader: true
+      showLoader: true,
     });
 
     let restoredWallet = null;
@@ -47,38 +42,38 @@ export default class Import extends React.Component {
 
     this.setState({
       restoredWallet,
-      showLoader: false
+      showLoader: false,
     });
   };
 
-  handlePrivateKeyImport(privateKey) {
-    privateKey = privateKey.substr(0, 2) === "0x" ? privateKey : "0x" + privateKey;
+  handlePrivateKeyImport(privateKey: string) {
+    const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
     try {
-      return new ethers.Wallet(privateKey);
+      return new ethers.Wallet(walletPrivateKey);
     } catch (e) {
       this.setState({
-        importError: e.toString()
+        importError: e.toString(),
       });
       return null;
     }
   }
 
-  handleTWordsRestore(tWordsPhrase) {
+  handleTWordsRestore(tWordsPhrase: string) {
     try {
       return ethers.Wallet.fromMnemonic(tWordsPhrase);
     } catch (e) {
       this.setState({
-        importError: e.toString()
+        importError: e.toString(),
       });
       return null;
     }
   }
 
-  validatePin(pin) {
+  validatePin(pin: string) {
     if (pin.length !== 6) {
       return "Invalid pin's length (should be 6 numbers)";
-    } else if(!pin.match(/^\d+$/)) {
-      return "Pin could contain numbers only";
+    } else if (!pin.match(/^\d+$/)) {
+      return 'Pin could contain numbers only';
     }
     return '';
   }
@@ -89,7 +84,7 @@ export default class Import extends React.Component {
       privateKey,
       tWordsPhrase,
       importError,
-      restoredWallet
+      restoredWallet,
     } = this.state;
 
     const showError = (
@@ -112,7 +107,7 @@ export default class Import extends React.Component {
             <TextInput
               style={styles.input}
               value={privateKey}
-              onChange={this.handlePrivateKeyChange}
+              onChangeText={text => this.setState({ privateKey: text })}
             />
 
             <Text style={styles.textRow}>- OR -</Text>
@@ -122,14 +117,15 @@ export default class Import extends React.Component {
               style={styles.input}
               value={tWordsPhrase}
               height={80}
-              multiline={true}
-              onChange={this.handleTWordsChange}
+              multiline
+              onChangeText={text => this.setState({ tWordsPhrase: text })}
             />
 
             <TouchableHighlight
               style={styles.submitButton}
-              underlayColor='white'
-              onPress={this.handleImportSubmit}>
+              underlayColor="white"
+              onPress={this.handleImportSubmit}
+            >
               <Text style={styles.buttonText}>Import</Text>
             </TouchableHighlight>
           </View>
@@ -139,60 +135,10 @@ export default class Import extends React.Component {
 
         <ActivityIndicator
           animating={showLoader}
-          color='#111'
-          size='large'
+          color="#111"
+          size="large"
         />
       </View>
-    )
+    );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 30,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    backgroundColor: 'white'
-  },
-  textRow: {
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  title: {
-    marginBottom: 20,
-    fontSize: 25,
-    textAlign: 'center'
-  },
-  input: {
-    height: 50,
-    padding: 4,
-    marginRight: 5,
-    fontSize: 23,
-    borderWidth: 1,
-    borderColor: 'grey',
-    borderRadius: 8
-  },
-  buttonText: {
-    fontSize: 18,
-    color: 'white',
-    alignSelf: 'center'
-  },
-  submitButton: {
-    height: 45,
-    flexDirection: 'row',
-    borderColor: '#48BBEC',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    marginTop: 10,
-    alignSelf: 'stretch',
-    justifyContent: 'center',
-    backgroundColor: '#48BBEC'
-  },
-  errorText: {
-    fontSize: 18,
-    textAlign: 'center',
-    color: 'red'
-  }
-});
