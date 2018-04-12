@@ -3,7 +3,7 @@ import * as React from 'react';
 import Container from 'components/Container';
 import AssetCardList from 'components/AssetCardList';
 
-const assetData = [
+const assets = [
   {
     key: 'Ethereum', name: 'Ethereum', amount: 1250.1094, color: '#B4D455',
   },
@@ -12,11 +12,7 @@ const assetData = [
   },
 ];
 
-type Props = {
-  assetData: []
-}
-
-export default class Assets extends React.Component<Props> {
+export default class Assets extends React.Component<{}> {
   componentDidMount() {
     // empty
   }
@@ -24,7 +20,7 @@ export default class Assets extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <AssetCardList assetData={assetData} />
+        <AssetCardList assets={assets} />
       </Container>
     );
   }
