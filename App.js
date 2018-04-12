@@ -9,6 +9,7 @@ import NewWallet from './src/screens/NewWallet';
 import Login from './src/screens/Login';
 import PinCode from './src/screens/PinCode';
 import BackupPhrase from './src/screens/BackupPhrase';
+import LegalTerms from './src/screens/LegalTerms';
 
 import configureStore from './src/configureStore';
 
@@ -31,9 +32,12 @@ const RootStack = StackNavigator(
     BackupPhrase: {
       screen: BackupPhrase,
     },
+    LegalTerms: {
+      screen: LegalTerms,
+    },
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'LegalTerms',
   },
 );
 
