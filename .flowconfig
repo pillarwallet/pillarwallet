@@ -4,7 +4,7 @@
 
 
 ; Ignore storybook
-./storybook
+<PROJECT_ROOT>/storybook
 
 ; Ignore templates for 'react-native init'
 <PROJECT_ROOT>/node_modules/react-native/local-cli/templates/.*
