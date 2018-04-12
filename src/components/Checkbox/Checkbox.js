@@ -43,13 +43,11 @@ export default class Checkbox extends React.Component<Props, State> {
 
     Animated.spring(this.state.animateActive, {
       toValue: 12,
-      duration: 300,
-    }).start(this.finishedAnimating);
-  };
+      duration: 60,
+    }).start();
 
-  finishedAnimating = () => {
     this.props.toggleCheckbox(this.props.tag);
-  }
+  };
 
   render() {
     const { animateActive } = this.state;
