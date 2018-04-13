@@ -72,9 +72,6 @@ module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
 module.name_mapper='^models\/\(.*\)$' -> '<PROJECT_ROOT>/src/models/\1'
 module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
 
-module.name_mapper='^storybook\/\(.*\)$' -> '<PROJECT_ROOT>/storybook/\1'
-module.name_mapper='^storybook' -> '<PROJECT_ROOT>/storybook'
-
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps
