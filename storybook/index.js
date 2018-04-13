@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { AppRegistry } from 'react-native';
 import { getStorybookUI, configure } from '@storybook/react-native';
+import { loadStories } from './storyLoader';
+import Container from 'components/Container';
 
 // import stories
 configure(() => {
-  require('./stories');
+  loadStories()
 }, module);
 
 // This assumes that storybook is running on the same host as your RN packager,
@@ -16,7 +18,11 @@ const StorybookUIRoot = getStorybookUI({ port: 7007, onDeviceUI: true });
 // eslint-disable-next-line react/prefer-stateless-function
 class StorybookUIHMRRoot extends Component {
   render() {
-    return <StorybookUIRoot />;
+    return (
+      <Container>
+        <StorybookUIRoot />
+      </Container>
+    );
   }
 }
 

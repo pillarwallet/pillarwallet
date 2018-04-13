@@ -55,7 +55,15 @@
     "jest": "jest --colors",
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",
+    "prestorybook": "rnstl",
     "storybook": "storybook start -p 7007"
+  },
+  "config": {
+    "react-native-storybook-loader": {
+      "searchDir": ["./src"],
+      "pattern": "**/*.stories.js",
+      "outputFile": "./storybook/storyLoader.js"
+    }
   },
   "jest": {
     "preset": "jest-expo",

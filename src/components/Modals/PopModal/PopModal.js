@@ -14,7 +14,7 @@ import styles from './styles';
 type Props = {
   title: string,
   message: string,
-  popModalHandleDismiss: Function,
+  popModalHandleDismiss?: Function,
   actionPrimary: string
 };
 
@@ -91,4 +91,3 @@ export default class PopModal extends React.Component<Props, State> {
     );
   }
 }
-
