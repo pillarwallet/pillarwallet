@@ -111,6 +111,7 @@ class NewWallet extends React.Component<Props, State> {
           onPinEntered={this.handlePinSubmit}
           pageHeading="Enter Passcode"
           pageInstructions="Setup your Passcode"
+          showForgotButton={false}
         />
         {showError}
       </View>

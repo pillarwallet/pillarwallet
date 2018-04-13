@@ -15,6 +15,7 @@ type Props = {
   onPinEntered: Function,
   pageHeading?: string,
   pageInstructions?: string,
+  showForgotButton?: boolean
 };
 
 type State = {
@@ -25,6 +26,7 @@ export default class PinCode extends React.Component<Props, State> {
   static defaultProps = {
     pageHeading: 'Enter Passcode',
     pageInstructions: 'Setup your Passcode',
+    showForgotButton: true,
   };
 
   state = {
@@ -85,8 +87,11 @@ export default class PinCode extends React.Component<Props, State> {
     keyInputs.push(
       this.createPinButton('Forgot', 'Forgot?', () => this.handleKeyPressForgot()),
       this.createPinButton('0', '0', () => this.handleKeyPress('0')),
-      this.createPinButton('⌫', '⌫', () => this.handleKeyPressDelete()),
     );
+
+    if (this.props.showForgotButton) {
+      keyInputs.push(this.createPinButton('⌫', '⌫', () => this.handleKeyPressDelete()));
+    }
 
     return keyInputs;
   }
