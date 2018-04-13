@@ -14,6 +14,6 @@ const assets = [
 
 
 storiesOf('Asset Card List', module)
-  .add('Initial', () => (
+  .add('Default', () => (
     <AssetCardList assets={assets} />
   ));
