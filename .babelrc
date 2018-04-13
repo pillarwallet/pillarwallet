@@ -3,11 +3,12 @@
   "plugins": [
     ["module-resolver", {
       "root": ["./src"]
-    }]
+    }],
+    ["babel-plugin-styled-components"]
   ],
   "env": {
     "development": {
-      "plugins": ["transform-react-jsx-source"]
+      "plugins": ["transform-react-jsx-source", "babel-plugin-styled-components"]
     }
   }
 }
