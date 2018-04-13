@@ -62,6 +62,12 @@ export default class Checkbox extends React.Component<Props, State> {
       duration: 60,
     }).start();
 
+    if (this.state.checked === true) {
+      this.setState({
+        animateActive: new Animated.Value(0),
+      });
+    }
+
     this.props.toggleCheckbox(!this.state.checked, this.props.tag);
   };
 
