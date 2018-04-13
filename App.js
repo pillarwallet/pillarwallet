@@ -11,7 +11,7 @@ import Login from 'screens/Login';
 import PinCode from 'screens/PinCode';
 import Assets from 'screens/Assets';
 import BackupPhrase from 'screens/BackupPhrase';
-import LegalTerms from './src/screens/LegalTerms';
+import LegalTerms from 'screens/LegalTerms';
 
 import configureStore from './src/configureStore';
 
