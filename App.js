@@ -36,12 +36,13 @@ const RootStack = StackNavigator(
     },
     LegalTerms: {
       screen: LegalTerms,
+    },
     Assets: {
       screen: Assets,
     },
   },
   {
-    initialRouteName: 'LegalTerms',
+    initialRouteName: 'Home',
   },
 );
 
