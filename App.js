@@ -50,4 +50,6 @@ const App = () => (
   </Provider>
 );
 
+// Use the next line to use Storybook
+// module.exports = __DEV__ ? StorybookUI : App;
 export default App;

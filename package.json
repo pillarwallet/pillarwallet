@@ -85,9 +85,12 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps)/)"
+      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper)/)"
     ],
-    "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js"
+    "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
+    "moduleNameMapper": {
+      ".+\\.(png)$": "jest-static-stubs/png"
+    }
   },
   "jest-html-reporter": {
     "pageTitle": "Jest results",
@@ -97,6 +100,7 @@
   "dependencies": {
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
+    "jest-static-stubs": "^0.0.1",
     "pouchdb-react-native": "^6.4.1",
     "react": "^16.3.0-alpha.1",
     "react-native": "^0.54.2",

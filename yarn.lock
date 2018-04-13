@@ -6322,6 +6322,10 @@ jest-snapshot@^22.4.3:
     natural-compare "^1.4.0"
     pretty-format "^22.4.3"
 
+jest-static-stubs@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/jest-static-stubs/-/jest-static-stubs-0.0.1.tgz#aff26f161ac32593f9944ac3bc3446b688acab83"
+
 jest-styled-components@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/jest-styled-components/-/jest-styled-components-5.0.1.tgz#386c5a161a0f5e783444d624bfc18c6d228d1277"
