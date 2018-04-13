@@ -10,18 +10,20 @@ const store = configureStore();
 const addListener = createReduxBoundAddListener('root');
 
 const App = ({ dispatch, navigation }) => (
-  <RootNavigation navigation={addNavigationHelpers({
-    dispatch,
-    state: navigation,
-    addListener
-  })} />
+  <RootNavigation
+    navigation={addNavigationHelpers({
+      dispatch,
+      state: navigation,
+      addListener,
+    })}
+  />
 );
 
 const mapStateToProps = ({ navigation }) => ({
-  navigation
+  navigation,
 });
 
-const AppWithNavigationState = connect(mapStateToProps)(App)
+const AppWithNavigationState = connect(mapStateToProps)(App);
 
 const Root = () => (
   <Provider store={store}>

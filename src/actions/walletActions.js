@@ -1,6 +1,6 @@
 // @flow
 import ethers from 'ethers';
-import { NavigationActions } from "react-navigation";
+import { NavigationActions } from 'react-navigation';
 import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPT_WALLET,
@@ -11,7 +11,7 @@ import {
   EXISTS,
   EMPTY,
 } from '../constants/walletConstants';
-import { ASSETS } from '../constants/navigationConstants'
+import { ASSETS } from '../constants/navigationConstants';
 import { delay } from '../utils/delay';
 import Storage from '../services/storage';
 

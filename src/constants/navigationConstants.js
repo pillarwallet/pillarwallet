@@ -1,3 +1,4 @@
+// @flow
 export const ASSETS = 'ASSETS';
 export const PIN_CODE = 'PIN_CODE';
 export const BACKUP_PHRASE = 'BACKUP_PHRASE';
