@@ -11,8 +11,7 @@ import PinCode from 'screens/PinCode';
 import Assets from 'screens/Assets';
 import BackupPhrase from 'screens/BackupPhrase';
 import configureStore from './src/configureStore';
-import StorybookUI from './storybook';
-
+import StorybookUI from './storybook'; // eslint-disable-line
 const store = configureStore();
 
 const RootStack = StackNavigator(
@@ -48,4 +47,7 @@ const App = () => (
   </Provider>
 );
 
-module.exports = __DEV__ ? StorybookUI : App;
+// Use the below line to use Storybook
+// module.exports = __DEV__ ? StorybookUI : App;
+
+export default App;

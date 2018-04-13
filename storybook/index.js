@@ -16,7 +16,7 @@ const StorybookUIRoot = getStorybookUI({ port: 7007, onDeviceUI: true });
 // react-native hot module loader must take in a Class - https://github.com/facebook/react-native/issues/10991
 // https://github.com/storybooks/storybook/issues/2081
 // eslint-disable-next-line react/prefer-stateless-function
-class StorybookUIHMRRoot extends Component {
+class StorybookUI extends Component {
   render() {
     return (
       <Container>
@@ -26,5 +26,5 @@ class StorybookUIHMRRoot extends Component {
   }
 }
 
-AppRegistry.registerComponent('%APP_NAME%', () => StorybookUIHMRRoot);
-export default StorybookUIHMRRoot;
+AppRegistry.registerComponent('%APP_NAME%', () => StorybookUI);
+export default StorybookUI;

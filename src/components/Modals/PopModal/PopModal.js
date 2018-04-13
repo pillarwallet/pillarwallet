@@ -14,7 +14,7 @@ import styles from './styles';
 type Props = {
   title: string,
   message: string,
-  popModalHandleDismiss?: Function,
+  popModalHandleDismiss: Function,
   actionPrimary: string
 };
 
