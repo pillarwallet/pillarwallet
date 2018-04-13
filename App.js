@@ -34,6 +34,9 @@ const RootStack = StackNavigator(
     Assets: {
       screen: Assets,
     },
+    Storybook: {
+      screen: StorybookUI,
+    },
   },
   {
     initialRouteName: 'Home',
@@ -46,8 +49,5 @@ const App = () => (
     <RootStack />
   </Provider>
 );
-
-// Use the below line to use Storybook
-// module.exports = __DEV__ ? StorybookUI : App;
 
 export default App;
