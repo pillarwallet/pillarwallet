@@ -22,6 +22,8 @@ const styles = StyleSheet.create({
 
 type Props = {
   toggleCheckbox: Function,
+  checked: boolean,
+  tag: any,
 };
 
 type State = {
@@ -30,13 +32,24 @@ type State = {
 };
 
 export default class Checkbox extends React.Component<Props, State> {
-  state = {
-    checked: false,
-    animateActive: new Animated.Value(0),
+  constructor(props: any) {
+    super();
+    this.state = {
+      checked: props.checked,
+      animateActive: new Animated.Value(0),
+    };
   }
 
-  checkStatus = () => {
-    return this.state.checked;
+  componentWillReceiveProps(nextProps: any) {
+    if (nextProps.checked !== this.props.checked) {
+      this.setState({
+        checked: nextProps.checked,
+      });
+    }
+  }
+
+  shouldComponentUpdate(nextProps: any) {
+    return nextProps.checked !== this.props.checked;
   }
 
   toggleCheckBox = () => {
@@ -49,7 +62,7 @@ export default class Checkbox extends React.Component<Props, State> {
       duration: 60,
     }).start();
 
-    this.props.toggleCheckbox(!this.state.checked);
+    this.props.toggleCheckbox(!this.state.checked, this.props.tag);
   };
 
   render() {
