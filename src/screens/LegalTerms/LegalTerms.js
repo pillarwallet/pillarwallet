@@ -5,6 +5,7 @@
 import * as React from 'react';
 import {
   Button,
+  Linking,
   Text,
   View,
 } from 'react-native';
@@ -44,10 +45,12 @@ export default class LegalTerms extends React.Component<{}, State> {
       if (this.state.box01 === true && this.state.box02 === true) {
         this.setState({
           termsViewVisible: true,
+
         });
       } else {
         this.setState({
           termsViewVisible: false,
+          box03: false,
         });
       }
 
@@ -66,11 +69,11 @@ export default class LegalTerms extends React.Component<{}, State> {
   }
 
   openURLTermsOfUse = () => {
-    // TODO: Need to Open Terms of Use
+    Linking.openURL('https://pillarproject.io/en/terms-of-use/');
   }
 
   openURLPrivacyPolicy = () => {
-    // TODO: Need to Open Terms of Use
+    Linking.openURL('https://pillarproject.io');
   }
 
   render() {
