@@ -46,6 +46,7 @@ class NewWallet extends React.Component<Props, State> {
       });
       return;
     }
+
     const mnemonic = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
     generateEncryptedWallet(mnemonic, pin);
 
@@ -122,8 +123,9 @@ class NewWallet extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  generateEncryptedWallet: (mnemonic, pin) =>
-    dispatch(generateEncryptedWalletAction(mnemonic, pin)),
+  generateEncryptedWallet: (mnemonic, pin) => {
+    dispatch(generateEncryptedWalletAction(mnemonic, pin));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewWallet);
