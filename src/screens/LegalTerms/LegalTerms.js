@@ -50,6 +50,10 @@ export default class LegalTerms extends React.Component<{}, State> {
           termsViewVisible: false,
         });
       }
+
+      if (this.state.box03 === true) {
+        // TODO: Need to set NEXT BUTTON FROM DISABLED to ENABLED
+      }
     });
   }
 
