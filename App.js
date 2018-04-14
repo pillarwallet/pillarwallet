@@ -9,6 +9,7 @@ import NewWallet from './src/screens/NewWallet';
 import Login from './src/screens/Login';
 import PinCode from './src/screens/PinCode';
 import BackupPhrase from './src/screens/BackupPhrase';
+import ICO from './src/screens/ICO';
 
 import configureStore from './src/configureStore';
 
@@ -31,6 +32,10 @@ const RootStack = StackNavigator(
     BackupPhrase: {
       screen: BackupPhrase,
     },
+    ICO: {
+      screen: ICO,
+    }
+  }, 
   {
     initialRouteName: 'Home',
   },
