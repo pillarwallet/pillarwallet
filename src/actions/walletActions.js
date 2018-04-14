@@ -57,7 +57,7 @@ export const decryptWalletAction = (pin: string) => {
         type: DECRYPT_WALLET,
         payload: wallet,
       });
-    } catch(e) {
+    } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: INVALID_PASSWORD,

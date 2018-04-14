@@ -63,7 +63,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps)/)"
+      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|tcomb-form-native)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js"
   },

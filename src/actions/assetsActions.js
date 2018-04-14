@@ -4,31 +4,44 @@ import {
   UPDATE_ASSET,
   UPDATE_ASSETS_STATE,
   FETCHING,
-  FETCHED
+  FETCHED,
+  ETH,
 } from 'constants/assetsConstants';
-import { delay } from 'utils/delay';
 
-export const sendAssetAction = ({ gasLimit, amount, address, gasPrice }: { gasLimit: number, amount: number, address: string}) => {
+type Transaction = {
+  gasLimit: number,
+  amount: number,
+  address: string,
+  gasPrice: number
+}
+
+export const sendAssetAction = ({
+  gasLimit,
+  amount,
+  address,
+  gasPrice,
+}: Transaction) => {
   return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet }, assets: { data: assets } } = getState();
     const trx = {
       gasLimit,
       gasPrice: utils.bigNumberify(gasPrice),
       value: utils.parseEther(amount.toString()),
-      to: address
-    }
+      to: address,
+    };
     dispatch({
       type: UPDATE_ASSETS_STATE,
-      payload: FETCHING
+      payload: FETCHING,
     });
-    const hash = await wallet.sendTransaction(trx)
+
+    await wallet.sendTransaction(trx);
     dispatch({
       type: UPDATE_ASSET,
-      payload: { id: 'ETH', balance: assets['ETH'].balance - amount },
+      payload: { id: ETH, balance: assets[ETH].balance - amount }, // Temporary here
     });
     dispatch({
       type: UPDATE_ASSETS_STATE,
-      payload: FETCHED
+      payload: FETCHED,
     });
   };
 };
@@ -38,21 +51,21 @@ export const fetchEtherBalanceAction = () => {
   return async (dispatch: Function, getState: Function) => {
     dispatch({
       type: UPDATE_ASSETS_STATE,
-      payload: FETCHING
+      payload: FETCHING,
     });
     // wallet is not neccessary
     const { wallet: { data: wallet } } = getState();
     const balance = await wallet.getBalance().then(utils.formatEther);
     dispatch({
       type: UPDATE_ASSET,
-      payload: { id: 'ETH', balance }
+      payload: { id: ETH, balance },
     });
     dispatch({
       type: UPDATE_ASSETS_STATE,
-      payload: FETCHED
+      payload: FETCHED,
     });
   };
-}
+};
 
 export default {
   sendAssetAction,

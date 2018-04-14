@@ -32,6 +32,7 @@
     "import/no-unresolved": ["off"],
     "import/extensions": ["off"],
     "no-underscore-dangle": ["off"],
+    "no-case-declarations": ["off"],
     "import/prefer-default-export": "off"
   },
   "parser": "babel-eslint",

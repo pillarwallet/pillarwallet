@@ -34,8 +34,8 @@ const RootStack = StackNavigator(
     },
     ICO: {
       screen: ICO,
-    }
-  }, 
+    },
+  },
   {
     initialRouteName: 'Home',
   },
