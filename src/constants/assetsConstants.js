@@ -1,0 +1,4 @@
+export const FETCHED = 'FETCHED';
+export const FETCHING = 'FETCHING';
+export const UPDATE_ASSET = 'UPDATE_ASSET';
+export const UPDATE_ASSETS_STATE = 'UPDATE_ASSETS_STATE';

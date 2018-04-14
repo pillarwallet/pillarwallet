@@ -31,7 +31,6 @@ const RootStack = StackNavigator(
     BackupPhrase: {
       screen: BackupPhrase,
     },
-  },
   {
     initialRouteName: 'Home',
   },

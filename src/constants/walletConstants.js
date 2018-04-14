@@ -9,3 +9,4 @@ export const DECRYPTING = 'DECRYPTING';
 export const DECRYPTED = 'DECRYPTED';
 export const EXISTS = 'EXISTS';
 export const EMPTY = 'EMPTY';
+export const INVALID_PASSWORD = 'INVALID_PASSWORD';
