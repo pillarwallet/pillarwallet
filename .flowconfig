@@ -2,6 +2,10 @@
 ; We fork some components by platform
 .*/*[.]android.js
 
+
+; Ignore storybook
+<PROJECT_ROOT>/storybook/.*
+
 ; Ignore templates for 'react-native init'
 <PROJECT_ROOT>/node_modules/react-native/local-cli/templates/.*
 
@@ -76,6 +80,9 @@ module.name_mapper='^assets' -> '<PROJECT_ROOT>/src/assets'
 
 module.name_mapper='^components\/\(.*\)$' -> '<PROJECT_ROOT>/src/components/\1'
 module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
+
+module.name_mapper='^models\/\(.*\)$' -> '<PROJECT_ROOT>/src/models/\1'
+module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
 
 suppress_type=$FlowIssue
 suppress_type=$FlowFixMe

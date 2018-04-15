@@ -9,7 +9,7 @@ function mock(mockFn) {
 }
 
 export default class AsyncStorageMock {
-  storageCache: Object
+  storageCache: Object;
 
   constructor(cache: Object = {}) {
     this.storageCache = cache;

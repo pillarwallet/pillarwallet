@@ -3,8 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "@storybook/addon-actions": "^3.4.1",
+    "@storybook/addon-links": "^3.4.1",
+    "@storybook/addons": "^3.4.1",
+    "@storybook/react-native": "^3.4.1",
+    "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
     "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-styled-components": "^1.5.1",
+    "babel-runtime": "^6.26.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-import-resolver-babel-module": "^4.0.0",
@@ -21,7 +28,10 @@
     "jest": "^22.4.3",
     "jest-expo": "26.0.0",
     "jest-html-reporter": "2.0.0",
+    "jest-styled-components": "^5.0.1",
     "npm-run-all": "^4.1.2",
+    "prop-types": "^15.6.1",
+    "react-dom": "^16.3.0-alpha.1",
     "react-native-dotenv": "^0.1.1",
     "react-native-scripts": "1.13.1",
     "react-test-renderer": "16.3.0-alpha.1",
@@ -43,7 +53,8 @@
     "validate": "run-s flow test lint",
     "jest": "jest --colors",
     "jest-watch": "jest --colors --watchAll",
-    "jest-update": "jest --colors -u"
+    "jest-update": "jest --colors -u",
+    "storybook": "storybook start -p 7007"
   },
   "jest": {
     "preset": "jest-expo",
@@ -83,6 +94,10 @@
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+<<<<<<< HEAD
     "tcomb-form-native": "^0.6.11"
+=======
+    "styled-components": "^3.2.5"
+>>>>>>> develop
   }
 }

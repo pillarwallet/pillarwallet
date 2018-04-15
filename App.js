@@ -4,12 +4,13 @@ import { StackNavigator } from 'react-navigation';
 import { Provider } from 'react-redux';
 
 // screens
-import Intro from './src/screens/Intro';
-import NewWallet from './src/screens/NewWallet';
-import Login from './src/screens/Login';
-import PinCode from './src/screens/PinCode';
-import BackupPhrase from './src/screens/BackupPhrase';
-import ICO from './src/screens/ICO';
+import Intro from 'screens/Intro';
+import NewWallet from 'screens/NewWallet';
+import Login from 'screens/Login';
+import PinCode from 'screens/PinCode';
+import Assets from 'screens/Assets';
+import BackupPhrase from 'screens/BackupPhrase';
+import ICO from 'screens/ICO';
 
 import configureStore from './src/configureStore';
 
@@ -34,6 +35,9 @@ const RootStack = StackNavigator(
     },
     ICO: {
       screen: ICO,
+    },
+    Assets: {
+      screen: Assets,
     },
   },
   {
