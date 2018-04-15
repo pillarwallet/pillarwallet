@@ -12,7 +12,8 @@ import {
   INVALID_PASSWORD,
   IMPORT_ERROR,
   IMPORT_SET_PIN,
-  SET_WALLET_ERROR, IMPORTED,
+  SET_WALLET_ERROR,
+  IMPORTED,
 } from 'constants/walletConstants';
 import { delay } from 'utils/delay';
 import Storage from 'services/storage';
