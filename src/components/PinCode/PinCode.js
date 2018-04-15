@@ -84,14 +84,16 @@ export default class PinCode extends React.Component<Props, State> {
         return this.createPinButton(key, title, callback);
       });
 
-    keyInputs.push(
-      this.createPinButton('Forgot', 'Forgot?', () => this.handleKeyPressForgot()),
-      this.createPinButton('0', '0', () => this.handleKeyPress('0')),
-    );
-
     if (this.props.showForgotButton) {
-      keyInputs.push(this.createPinButton('⌫', '⌫', () => this.handleKeyPressDelete()));
+      keyInputs.push(this.createPinButton('Forgot', 'Forgot?', () => this.handleKeyPressForgot()));
+    } else {
+      keyInputs.push(this.createPinButton('', '', () => {}));
     }
+
+    keyInputs.push(
+      this.createPinButton('0', '0', () => this.handleKeyPress('0')),
+      this.createPinButton('⌫', '⌫', () => this.handleKeyPressDelete()),
+    );
 
     return keyInputs;
   }
