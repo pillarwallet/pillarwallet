@@ -34,7 +34,6 @@ export const generateEncryptedWalletAction = (mnemonic: string, pin: string) => 
     const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => {});
-
     await storage.save('wallet', encryptedWallet);
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,

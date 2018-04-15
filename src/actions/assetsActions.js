@@ -1,5 +1,5 @@
 // @flow
-import { utils } from 'ethers';
+import { utils, providers } from 'ethers';
 import {
   UPDATE_ASSET,
   UPDATE_ASSETS_STATE,
@@ -8,6 +8,7 @@ import {
   ETH,
 } from 'constants/assetsConstants';
 
+// Consider adding asset ID?
 type Transaction = {
   gasLimit: number,
   amount: number,
@@ -35,6 +36,8 @@ export const sendAssetAction = ({
     });
 
     await wallet.sendTransaction(trx);
+
+    // worth consdering moving calculation logic to reducer
     dispatch({
       type: UPDATE_ASSET,
       payload: { id: ETH, balance: assets[ETH].balance - amount }, // Temporary here
@@ -53,9 +56,10 @@ export const fetchEtherBalanceAction = () => {
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
     });
-    // wallet is not neccessary
+    // whole wallet is not neccessary.
     const { wallet: { data: wallet } } = getState();
-    const balance = await wallet.getBalance().then(utils.formatEther);
+    const provider = providers.getDefaultProvider('ropsten'); // MOVE TO .ENV ONCE DESIGNED AND IMPLEMETNED
+    const balance = await provider.getBalance(wallet.address).then(utils.formatEther);
     dispatch({
       type: UPDATE_ASSET,
       payload: { id: ETH, balance },
