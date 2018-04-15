@@ -7,129 +7,132 @@ import {
   TouchableHighlight,
   ActivityIndicator,
 } from 'react-native';
-import ethers from 'ethers';
+import { connect } from 'react-redux';
+
+import {
+  importWalletFromTWordsPhraseAction,
+  importWalletFromPrivateKeyAction,
+  setPinForImportedWalletAction,
+} from 'actions/walletActions';
+
+import {
+  IMPORTED,
+  WALLET_ERROR,
+  IMPORT_ERROR,
+  IMPORT_SET_PIN,
+  ENCRYPTING,
+} from 'constants/walletConstants';
+
+import PinCode from 'components/PinCode';
 import styles from './styles';
+
+type Props = {
+  importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
+  importWalletFromPrivateKey: (privateKey: string) => Function,
+  encryptWithPinCode: (pin: string, wallet: Object) => Function,
+  wallet: Object,
+};
 
 type State = {
   showLoader: boolean,
   privateKey: string,
   tWordsPhrase: string,
-  importError: string,
-  restoredWallet: ?Object
 };
 
-export default class ImportWallet extends React.Component<{}, State> {
+class ImportWallet extends React.Component<Props, State> {
   state = {
     showLoader: false,
     privateKey: '',
     tWordsPhrase: '',
-    importError: '',
-    restoredWallet: null,
   };
 
   handleImportSubmit = () => {
-    this.setState({
-      importError: '',
-      showLoader: true,
-    });
+    const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
 
-    let restoredWallet = null;
     if (this.state.privateKey) {
-      restoredWallet = this.handlePrivateKeyImport(this.state.privateKey);
+      importWalletFromPrivateKey(this.state.privateKey);
     } else if (this.state.tWordsPhrase) {
-      restoredWallet = this.handleTWordsRestore(this.state.tWordsPhrase);
+      importWalletFromTWordsPhrase(this.state.tWordsPhrase);
     }
-
-    this.setState({
-      restoredWallet,
-      showLoader: false,
-    });
   };
 
-  handlePrivateKeyImport(privateKey: string) {
-    const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
-    try {
-      return new ethers.Wallet(walletPrivateKey);
-    } catch (e) {
-      this.setState({
-        importError: e.toString(),
-      });
-      return null;
-    }
-  }
-
-  handleTWordsRestore(tWordsPhrase: string) {
-    try {
-      return ethers.Wallet.fromMnemonic(tWordsPhrase);
-    } catch (e) {
-      this.setState({
-        importError: e.toString(),
-      });
-      return null;
-    }
-  }
-
-  validatePin(pin: string) {
-    if (pin.length !== 6) {
-      return "Invalid pin's length (should be 6 numbers)";
-    } else if (!pin.match(/^\d+$/)) {
-      return 'Pin could contain numbers only';
-    }
-    return '';
-  }
-
   render() {
+    const { walletState, data: wallet, error } = this.props.wallet;
     const {
       showLoader,
       privateKey,
       tWordsPhrase,
-      importError,
-      restoredWallet,
     } = this.state;
 
-    const showError = (
-      importError ? <Text style={styles.errorText}>{importError}</Text> : null
-    );
+    const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR
+      ? <Text style={styles.errorText}>{error.message}</Text>
+      : null;
 
-    const enterPinCode = restoredWallet && (
-      <View>
-        <Text style={styles.textRow}>Public key: {restoredWallet.address}</Text>
-      </View>
-    );
+    if (walletState === IMPORTED) {
+      return (
+        <View>
+          <Text style={styles.textRow}>Public key: {wallet.address}</Text>
+        </View>
+      );
+    }
+
+    if (walletState === IMPORT_SET_PIN) {
+      return (
+        <View style={styles.container}>
+          <PinCode
+            onPinEntered={pin => this.props.encryptWithPinCode(pin, wallet)}
+            pageHeading="Enter Passcode"
+            pageInstructions="Setup your Passcode"
+            showForgotButton={false}
+          />
+          {showError}
+        </View>
+      );
+    }
+
+    if (walletState === ENCRYPTING) {
+      return (
+        <View>
+          <Text>{walletState}</Text>
+          <ActivityIndicator
+            animating
+            color="#111"
+            size="large"
+          />
+        </View>
+      );
+    }
 
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Wallet import</Text>
-        {enterPinCode}
-        {!showLoader && !restoredWallet && (
-          <View>
-            <Text style={styles.textRow}>Private key</Text>
-            <TextInput
-              style={styles.input}
-              value={privateKey}
-              onChangeText={text => this.setState({ privateKey: text })}
-            />
+        <View>
+          <Text style={styles.textRow}>Private key</Text>
+          <TextInput
+            style={styles.input}
+            value={privateKey}
+            onChangeText={text => this.setState({ privateKey: text })}
+          />
 
-            <Text style={styles.textRow}>- OR -</Text>
+          <Text style={styles.textRow}>- OR -</Text>
 
-            <Text style={styles.textRow}>12 words phrase</Text>
-            <TextInput
-              style={styles.input}
-              value={tWordsPhrase}
-              height={80}
-              multiline
-              onChangeText={text => this.setState({ tWordsPhrase: text })}
-            />
+          <Text style={styles.textRow}>12 words phrase</Text>
+          <TextInput
+            style={styles.input}
+            value={tWordsPhrase}
+            height={80}
+            multiline
+            onChangeText={text => this.setState({ tWordsPhrase: text })}
+          />
 
-            <TouchableHighlight
-              style={styles.submitButton}
-              underlayColor="white"
-              onPress={this.handleImportSubmit}
-            >
-              <Text style={styles.buttonText}>Import</Text>
-            </TouchableHighlight>
-          </View>
-        )}
+          <TouchableHighlight
+            style={styles.submitButton}
+            underlayColor="white"
+            onPress={this.handleImportSubmit}
+          >
+            <Text style={styles.buttonText}>Import</Text>
+          </TouchableHighlight>
+        </View>
 
         {showError}
 
@@ -142,3 +145,19 @@ export default class ImportWallet extends React.Component<{}, State> {
     );
   }
 }
+
+const mapStateToProps = ({ wallet }) => ({ wallet });
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  importWalletFromTWordsPhrase: (tWordsPhrase) => {
+    dispatch(importWalletFromTWordsPhraseAction(tWordsPhrase));
+  },
+  importWalletFromPrivateKey: (privateKey) => {
+    dispatch(importWalletFromPrivateKeyAction(privateKey));
+  },
+  encryptWithPinCode: (pin, wallet) => {
+    dispatch(setPinForImportedWalletAction(pin, wallet));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ImportWallet);
