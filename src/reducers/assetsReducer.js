@@ -9,7 +9,7 @@ export type AssetsReducerState = {
 
 export type AssetsReducerAction = {
   type: string,
-  payload: Object
+  payload: any
 }
 
 const initialState = {
@@ -30,6 +30,7 @@ export default function assetsReducer(
         data: { [id]: { ...action.payload } },
       };
       return merge(
+        {},
         state,
         updatedState,
       );

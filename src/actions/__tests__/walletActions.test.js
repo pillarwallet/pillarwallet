@@ -28,8 +28,12 @@ jest.mock('ethers', () => ({
 }));
 
 describe('Wallet actions', () => {
+  let store;
+  beforeEach(() => {
+    store = mockStore({});
+  });
+
   it('should expect series of actions with payload to be dispatch on generateEncryptedWalletAction execution', () => {
-    const store = mockStore({});
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
@@ -46,7 +50,6 @@ describe('Wallet actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on decryptWalletAction execution', () => {
-    const store = mockStore({});
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: DECRYPT_WALLET, payload: mockWallet },
@@ -61,7 +64,6 @@ describe('Wallet actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on checkIfWalletExists execution', () => {
-    const store = mockStore({});
     const expectedActions = [
       UPDATE_WALLET_STATE,
     ];
