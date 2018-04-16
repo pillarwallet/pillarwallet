@@ -24,6 +24,7 @@ export const sendAssetAction = ({
 }: Transaction) => {
   return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet }, assets: { data: assets } } = getState();
+    wallet.providers = providers.getDefaultProvider('ropsten');
     const trx = {
       gasLimit,
       gasPrice: utils.bigNumberify(gasPrice),
