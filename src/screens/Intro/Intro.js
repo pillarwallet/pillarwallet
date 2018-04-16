@@ -5,6 +5,7 @@ import { Text, View, TouchableHighlight, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { checkIfWalletExistsAction } from '../../actions/walletActions';
 import { EMPTY } from '../../constants/walletConstants';
+import { NEW_WALLET, LOGIN } from '../../constants/navigationConstants';
 import styles from './styles';
 
 const introImage = require('../../assets/images/logo_pillar_intro.png');
@@ -47,11 +48,11 @@ class Intro extends React.Component<Props> {
   };
 
   createNewWallet = () => {
-    this.props.navigation.navigate('NewWallet');
+    this.props.navigation.navigate(NEW_WALLET);
   };
 
   unlockExistingWallet = () => {
-    this.props.navigation.navigate('Login');
+    this.props.navigation.navigate(LOGIN);
   };
 
   importOldWallet = () => {

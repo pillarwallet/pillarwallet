@@ -1,5 +1,6 @@
 // @flow
 import ethers from 'ethers';
+import { NavigationActions } from 'react-navigation';
 import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPT_WALLET,
@@ -15,7 +16,8 @@ import {
   SET_WALLET_ERROR,
   IMPORTED,
 } from 'constants/walletConstants';
-import { delay } from 'utils/delay';
+import { ASSETS } from 'constants/navigationConstants';
+import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { validatePin } from 'utils/validators';
 
@@ -55,13 +57,14 @@ export const decryptWalletAction = (pin: string) => {
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
-    await delay(400);
+    await delay(100);
     try {
       const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
       dispatch({
         type: DECRYPT_WALLET,
         payload: wallet,
       });
+      dispatch(NavigationActions.navigate({ routeName: ASSETS }));
     } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,

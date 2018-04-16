@@ -1,50 +1,34 @@
 // @flow
 import * as React from 'react';
-import { StackNavigator } from 'react-navigation';
-import { Provider } from 'react-redux';
-
-// screens
-import Intro from 'screens/Intro';
-import NewWallet from 'screens/NewWallet';
-import Login from 'screens/Login';
-import Assets from 'screens/Assets';
-import BackupPhrase from 'screens/BackupPhrase';
-import ImportWallet from './src/screens/ImportWallet';
+import { addNavigationHelpers } from 'react-navigation';
+import { Provider, connect } from 'react-redux';
+import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
+import RootNavigation from './src/navigation/rootNavigation';
 import configureStore from './src/configureStore';
 
 const store = configureStore();
+const addListener = createReduxBoundAddListener('root');
 
-const RootStack = StackNavigator(
-  {
-    Home: {
-      screen: Intro,
-    },
-    NewWallet: {
-      screen: NewWallet,
-    },
-    Login: {
-      screen: Login,
-    },
-    BackupPhrase: {
-      screen: BackupPhrase,
-    },
-    Assets: {
-      screen: Assets,
-    },
-    Import: {
-      screen: ImportWallet,
-    },
-  },
-  {
-    initialRouteName: 'Home',
-  },
+const App = ({ dispatch, navigation }) => (
+  <RootNavigation
+    navigation={addNavigationHelpers({
+      dispatch,
+      state: navigation,
+      addListener,
+    })}
+  />
 );
 
+const mapStateToProps = ({ navigation }) => ({
+  navigation,
+});
 
-const App = () => (
+const AppWithNavigationState = connect(mapStateToProps)(App);
+
+const Root = () => (
   <Provider store={store}>
-    <RootStack />
+    <AppWithNavigationState />
   </Provider>
 );
 
-export default App;
+export default Root;

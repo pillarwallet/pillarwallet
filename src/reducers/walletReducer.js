@@ -26,7 +26,7 @@ export type WalletReducerState = {
 
 export type WalletReducerAction = {
   type: string,
-  payload: Object
+  payload: any
 }
 
 const initialState = {
