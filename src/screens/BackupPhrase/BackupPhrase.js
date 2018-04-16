@@ -1,17 +1,16 @@
 // @flow
 
-// PURPOSE: this screen is used to display the 12-word
-// backup phrase for the wallet.
 import * as React from 'react';
-import {
-  Text,
-  View,
-} from 'react-native';
-
+import { Text } from 'react-native';
 import ethers from 'ethers';
-import DefaultButton from 'components/Buttons/DefaultButton';
 import PopModal from 'components/Modals/PopModal';
-import styles from './styles';
+import Container from 'components/Container';
+import Footer from 'components/Footer';
+import Title from 'components/Title';
+import Button from 'components/Button';
+import ButtonHelpText from 'components/ButtonHelpText';
+import MneumonicPhrase from 'components/MneumonicPhrase';
+import MneumonicPhraseItem from 'components/MneumonicPhraseItem';
 
 const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
 const mnemonicList = mnemonicPhrase.split(' ');
@@ -27,7 +26,7 @@ export default class BackupPhrase extends React.Component<{}, State> {
 
   createListItem(i: number, list: string[]) {
     return (
-      <Text style={styles.listItem} key={i + list[i]}>{ list[i] }</Text>
+      <MneumonicPhraseItem key={i + list[i]}>{ list[i] }</MneumonicPhraseItem>
     );
   }
 
@@ -47,23 +46,21 @@ export default class BackupPhrase extends React.Component<{}, State> {
       .map((num, i) => this.createListItem(i, mnemonicList));
 
     return (
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text style={styles.header}>Write Down Your Backup Phrase</Text>
-          <Text style={styles.paragraph}>
-            This is your unique 12-word backup phrase.
-            Write down your backup phrase in the exact sequence.
-          </Text>
-        </View>
+      <Container>
+        <Title>Write Down Your Backup Phrase</Title>
+        <Text style={{ color: 'grey' }}>
+          This is your unique 12-word backup phrase.
+          Write down your backup phrase in the exact sequence.
+        </Text>
 
-        <View style={styles.mneumonicContainer}>
+        <MneumonicPhrase>
           { wordList }
-        </View>
+        </MneumonicPhrase>
 
-        <View style={styles.confirmContainer}>
-          <Text style={styles.paragraphSmall}>Did your write down your backup phrase?</Text>
-          <DefaultButton title="I've Written it Down" onPress={this.handlePopupState} />
-        </View>
+        <Footer>
+          <ButtonHelpText>Did your write down your backup phrase?</ButtonHelpText>
+          <Button title="I've Written it Down" onPress={this.handlePopupState} />
+        </Footer>
 
         {isPopupOpen && (
           <PopModal
@@ -75,7 +72,7 @@ export default class BackupPhrase extends React.Component<{}, State> {
             popModalHandleDismiss={this.handlePopupState}
           />
         )}
-      </View>
+      </Container>
 
     );
   }
