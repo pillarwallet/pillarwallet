@@ -1,14 +1,14 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { checkIfWalletExistsAction } from 'actions/walletActions';
 import { EMPTY } from 'constants/walletConstants';
 import { NEW_WALLET, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
+import Container from 'components/Container';
 import Button from 'components/Button';
+import IntroImage from 'components/IntroImage';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
-import styles from './styles';
 
 const introImage = require('../../assets/images/logo_pillar_intro.png');
 
@@ -65,11 +65,8 @@ class Intro extends React.Component<Props> {
     const { wallet: { walletState } } = this.props;
 
     return (
-      <View style={styles.container}>
-        <Image
-          source={introImage}
-          style={styles.image}
-        />
+      <Container center>
+        <IntroImage source={introImage} />
         <MultiButtonWrapper>
           <Button
             title="Create new wallet"
@@ -89,7 +86,7 @@ class Intro extends React.Component<Props> {
           />
         </MultiButtonWrapper>
 
-      </View>
+      </Container>
     );
   }
 }
