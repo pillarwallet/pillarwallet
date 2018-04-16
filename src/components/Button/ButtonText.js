@@ -2,7 +2,7 @@
 import styled from 'styled-components/native';
 
 const ButtonText = styled.Text`
-  color: white;
+  color: ${props => props.color};
   font-weight: bold;
 `;
 
