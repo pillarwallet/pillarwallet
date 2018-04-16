@@ -6,6 +6,8 @@ import { UPDATE_WALLET_STATE, GENERATE_ENCRYPTED_WALLET, DECRYPT_WALLET } from '
 
 const mockStore = configureMockStore([thunk]);
 
+const NAVIGATE = 'Navigation/NAVIGATE';
+
 jest.mock('ethers', () => ({
   Wallet: {
     fromMnemonic: () => ({
@@ -42,6 +44,7 @@ describe('Wallet actions', () => {
     const expectedActions = [
       UPDATE_WALLET_STATE, // DECRYPTING
       DECRYPT_WALLET,
+      NAVIGATE,
     ];
     const pin = '123456';
 

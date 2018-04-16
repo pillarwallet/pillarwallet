@@ -74,7 +74,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps)/)"
+      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js"
   },
@@ -90,6 +90,7 @@
     "react": "^16.3.0-alpha.1",
     "react-native": "^0.54.2",
     "react-navigation": "^1.5.11",
+    "react-navigation-redux-helpers": "^1.0.5",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
