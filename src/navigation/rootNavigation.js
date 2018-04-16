@@ -11,7 +11,14 @@ import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import LegalTerms from 'screens/LegalTerms';
 
-import { ASSETS, PIN_CODE, BACKUP_PHRASE, NEW_WALLET, LOGIN, HOME, LEGAL_TERMS } from '../constants/navigationConstants';
+import {
+  ASSETS,
+  PIN_CODE,
+  BACKUP_PHRASE,
+  NEW_WALLET,
+  LOGIN, HOME,
+  LEGAL_TERMS,
+} from '../constants/navigationConstants';
 
 const onBoardingFlow = StackNavigator({
   [NEW_WALLET]: NewWalletScreen,
