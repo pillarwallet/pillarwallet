@@ -1,5 +1,4 @@
 // @flow
-
 import * as React from 'react';
 import { Text } from 'react-native';
 import ethers from 'ethers';
@@ -7,10 +6,10 @@ import PopModal from 'components/Modals/PopModal';
 import Container from 'components/Container';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
+import Button from 'components/Button';
 import ButtonHelpText from 'components/ButtonHelpText';
 import MneumonicPhrase from 'components/MneumonicPhrase';
 import MneumonicPhraseItem from 'components/MneumonicPhraseItem';
-import Button from 'components/Button';
 
 const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
 const mnemonicList = mnemonicPhrase.split(' ');
@@ -73,7 +72,6 @@ export default class BackupPhrase extends React.Component<{}, State> {
           />
         )}
       </Container>
-
     );
   }
 }
