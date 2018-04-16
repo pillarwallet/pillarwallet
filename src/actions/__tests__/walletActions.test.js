@@ -1,7 +1,6 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { generateEncryptedWalletAction, decryptWalletAction, checkIfWalletExistsAction } from '../walletActions';
 import {
   UPDATE_WALLET_STATE,
   GENERATE_ENCRYPTED_WALLET,
@@ -9,8 +8,11 @@ import {
   DECRYPTING,
   GENERATING,
   ENCRYPTING,
-} from '../../constants/walletConstants';
+} from 'constants/walletConstants';
+import { ASSETS } from 'constants/navigationConstants';
+import { generateEncryptedWalletAction, decryptWalletAction, checkIfWalletExistsAction } from '../walletActions';
 
+const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
 const mockWallet: Object = {
   address: '0x9c',
@@ -19,6 +21,7 @@ const mockWallet: Object = {
 Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
+
 
 jest.mock('ethers', () => ({
   Wallet: {
@@ -53,6 +56,7 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: DECRYPT_WALLET, payload: mockWallet },
+      { type: NAVIGATE, routeName: ASSETS },
     ];
     const pin = '123456';
 

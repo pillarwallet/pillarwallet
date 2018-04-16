@@ -75,6 +75,9 @@ module.name_mapper='^constants' -> '<PROJECT_ROOT>/src/constants'
 module.name_mapper='^screens\/\(.*\)$' -> '<PROJECT_ROOT>/src/screens/\1'
 module.name_mapper='^screens' -> '<PROJECT_ROOT>/src/screens'
 
+module.name_mapper='^navigation\/\(.*\)$' -> '<PROJECT_ROOT>/src/navigation/\1'
+module.name_mapper='^navigation' -> '<PROJECT_ROOT>/src/navigation'
+
 module.name_mapper='^assets\/\(.*\)$' -> '<PROJECT_ROOT>/src/assets/\1'
 module.name_mapper='^assets' -> '<PROJECT_ROOT>/src/assets'
 
