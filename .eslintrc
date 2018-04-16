@@ -37,9 +37,9 @@
     "import/no-extraneous-dependencies": ["error", {"packageDir": "./"}],
     "import/no-unresolved": ["off"],
     "import/extensions": ["off"],
+    "no-case-declarations": ["off"],
     "import/prefer-default-export": ["off"],
     "react/no-unused-prop-types": ["off"],
     "no-underscore-dangle": ["off"]
-
-  },
+  }
 }

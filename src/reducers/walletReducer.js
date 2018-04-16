@@ -14,12 +14,12 @@ export type Wallet = {
 
 export type WalletReducerState = {
   data: Wallet,
-  walletState: ?boolean
+  walletState: ?string
 }
 
 export type WalletReducerAction = {
   type: string,
-  payload: Object
+  payload: any
 }
 
 const initialState = {

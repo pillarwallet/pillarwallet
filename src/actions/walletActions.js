@@ -10,9 +10,10 @@ import {
   DECRYPTING,
   EXISTS,
   EMPTY,
+  INVALID_PASSWORD,
 } from '../constants/walletConstants';
 import { ASSETS } from '../constants/navigationConstants';
-import { delay } from '../utils/delay';
+import { delay } from '../utils/common';
 import Storage from '../services/storage';
 
 const storage = Storage.getInstance('db');
@@ -35,7 +36,6 @@ export const generateEncryptedWalletAction = (mnemonic: string, pin: string) => 
     const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => {});
-
     await storage.save('wallet', encryptedWallet);
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
@@ -51,13 +51,20 @@ export const decryptWalletAction = (pin: string) => {
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
-    await delay(400);
-    const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
-    dispatch({
-      type: DECRYPT_WALLET,
-      payload: wallet,
-    });
-    dispatch(NavigationActions.navigate({ routeName: ASSETS }));
+    await delay(100);
+    try {
+      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
+      dispatch({
+        type: DECRYPT_WALLET,
+        payload: wallet,
+      });
+      dispatch(NavigationActions.navigate({ routeName: ASSETS }));
+    } catch (e) {
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: INVALID_PASSWORD,
+      });
+    }
   };
 };
 
