@@ -34,6 +34,7 @@
     "react-dom": "^16.3.0-alpha.1",
     "react-native-dotenv": "^0.1.1",
     "react-native-scripts": "1.13.1",
+    "react-native-storybook-loader": "^1.8.0",
     "react-test-renderer": "16.3.0-alpha.1",
     "redux-mock-store": "^1.5.1",
     "run-s": "^0.0.0"
@@ -54,7 +55,17 @@
     "jest": "jest --colors",
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",
+    "prestorybook": "rnstl",
     "storybook": "storybook start -p 7007"
+  },
+  "config": {
+    "react-native-storybook-loader": {
+      "searchDir": [
+        "./src"
+      ],
+      "pattern": "**/*.stories.js",
+      "outputFile": "./storybook/storyLoader.js"
+    }
   },
   "jest": {
     "preset": "jest-expo",
@@ -74,9 +85,12 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|tcomb-form-native)/)"
+      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native)/)"
     ],
-    "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js"
+    "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
+    "moduleNameMapper": {
+      ".+\\.(png)$": "jest-static-stubs/png"
+    }
   },
   "jest-html-reporter": {
     "pageTitle": "Jest results",
@@ -87,6 +101,7 @@
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
     "lodash.merge": "^4.6.1",
+    "jest-static-stubs": "^0.0.1",
     "pouchdb-react-native": "^6.4.1",
     "react": "^16.3.0-alpha.1",
     "react-native": "^0.54.2",
