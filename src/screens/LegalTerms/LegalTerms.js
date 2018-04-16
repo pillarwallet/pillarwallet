@@ -1,16 +1,16 @@
 // @flow
 import * as React from 'react';
-import {
-  Button,
-  Linking,
-  Text,
-  View,
-} from 'react-native';
+import { Linking, Text } from 'react-native';
 
-import Checkbox from '../../components/Checkbox/Checkbox';
-import DefaultButton from '../../components/Buttons/DefaultButton/DefaultButton';
+import Container from 'components/Container';
+import MultiButtonWrapper from 'components/MultiButtonWrapper';
 
-import styles from './styles';
+import Footer from 'components/Footer';
+import Title from 'components/Title';
+import Button from 'components/Button';
+import Checkbox from 'components/Checkbox';
+import CheckboxItem from 'components/CheckboxItem';
+import CheckboxText from 'components/CheckboxText';
 
 type State = {
   termsViewVisible: boolean,
@@ -82,60 +82,59 @@ export default class LegalTerms extends React.Component<{}, State> {
     } = this.state;
 
     return (
-      <View style={styles.container}>
+      <Container>
 
-        <View style={{ justifyContent: 'flex-start', flex: 1 }}>
 
-          <View style={styles.instructionsContainer}>
-            <Text style={styles.header2}>Let&#39;s Review</Text>
-            <Text style={styles.paragraphSmall}>By using the Pillar Wallet you agree that:</Text>
-          </View>
+        <Title>Let&#39;s Review</Title>
+        <Text style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Text>
+        <CheckboxItem>
+          { this.buildCheckBox('box01', box01) }
+          <CheckboxText>
+            I understand that my funds are held securely on this device, not by a company.
+          </CheckboxText>
+        </CheckboxItem>
 
-          <View style={styles.checkboxRow}>
-            { this.buildCheckBox('box01', box01) }
-            <Text style={[styles.paragraph, { marginLeft: 10 }]}>
-          I understand that my funds are held securely on this device, not by a company.
-            </Text>
-          </View>
-
-          <View style={styles.checkboxRow}>
-            { this.buildCheckBox('box02', box02) }
-            <Text style={[styles.paragraph, { marginLeft: 10 }]}>
-          I understand that if this app is moved to a new phone or deleted,
-          the only way my funds and contacts can be recovered is by using my 12 word backup phrase.
-            </Text>
-          </View>
-        </View>
-
+        <CheckboxItem>
+          { this.buildCheckBox('box02', box02) }
+          <CheckboxText>
+            I understand that if this app is moved to a new phone or deleted,
+            the only way my funds and contacts can be recovered is by using my 12 word backup phrase.
+          </CheckboxText>
+        </CheckboxItem>
         {termsViewVisible && (
-        <View style={styles.confirmContainer}>
+          <Footer>
 
-          <View style={styles.checkboxRow}>
-            { this.buildCheckBox('box03', box03) }
-            <Text style={[styles.paragraph, { marginLeft: 10 }]}>
-          I have read, understand, and agree to the Terms of Use.
-            </Text>
-          </View>
+            <MultiButtonWrapper>
 
-          <DefaultButton title="Confirm and Finish" onPress={this.handleConfirm} disabled={termsViewVisible} />
+              <CheckboxItem marginBottom>
+                { this.buildCheckBox('box03', box03) }
+                <CheckboxText>
+                  I have read, understand, and agree to the Terms of Use.
+                </CheckboxText>
+              </CheckboxItem>
 
-          <View style={{
-          flexDirection: 'row',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 10,
-          marginBottom: 10,
-        }}
-          >
-            <Button title="Terms of Use" onPress={this.openURLTermsOfUse} />
-            <Text>and</Text>
-            <Button title="Privacy Policy" onPress={this.openURLPrivacyPolicy} />
-          </View>
-        </View>
+              <Button
+                title="Confirm and Finish"
+                onPress={this.handleConfirm}
+                disabled={termsViewVisible}
+                marginBottom
+              />
+
+              <Button
+                title="Terms of Use"
+                onPress={this.openURLTermsOfUse}
+                marginBottom
+              />
+              <Button
+                title="Privacy Policy"
+                onPress={this.openURLPrivacyPolicy}
+              />
+            </MultiButtonWrapper>
+          </Footer>
         )}
 
 
-      </View>
+      </Container>
 
     );
   }
