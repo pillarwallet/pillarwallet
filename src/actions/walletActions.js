@@ -13,7 +13,7 @@ import {
   INVALID_PASSWORD,
 } from '../constants/walletConstants';
 import { ASSETS } from '../constants/navigationConstants';
-import { delay } from '../utils/delay';
+import { delay } from '../utils/common';
 import Storage from '../services/storage';
 
 const storage = Storage.getInstance('db');
