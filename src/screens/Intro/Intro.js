@@ -3,9 +3,9 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Text, View, TouchableHighlight, Image } from 'react-native';
 import { connect } from 'react-redux';
-import { checkIfWalletExistsAction } from '../../actions/walletActions';
-import { EXISTS } from '../../constants/walletConstants';
-import { NEW_WALLET, LOGIN } from '../../constants/navigationConstants';
+import { checkIfWalletExistsAction } from 'actions/walletActions';
+import { EMPTY } from 'constants/walletConstants';
+import { NEW_WALLET, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
 import styles from './styles';
 
 const introImage = require('../../assets/images/logo_pillar_intro.png');
@@ -56,7 +56,7 @@ class Intro extends React.Component<Props> {
   };
 
   importOldWallet = () => {
-
+    this.props.navigation.navigate(IMPORT_WALLET);
   };
 
   render() {
@@ -76,10 +76,10 @@ class Intro extends React.Component<Props> {
           <Text style={styles.buttonText}>Create new wallet</Text>
         </TouchableHighlight>
         <TouchableHighlight
-          style={[this.setBackground(1), walletState !== EXISTS && { backgroundColor: 'lightgray' }]}
+          style={[this.setBackground(1), walletState === EMPTY && { backgroundColor: 'lightgray' }]}
           underlayColor="white"
           onPress={this.unlockExistingWallet}
-          disabled={walletState !== EXISTS}
+          disabled={walletState === EMPTY}
         >
           <Text style={styles.buttonText}>Unlock existing</Text>
         </TouchableHighlight>

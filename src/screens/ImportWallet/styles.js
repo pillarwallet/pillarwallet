@@ -2,13 +2,7 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  pinCodeCreatedContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-  },
-  enterPinContainer: {
+  container: {
     flex: 1,
     padding: 30,
     flexDirection: 'column',
@@ -18,6 +12,20 @@ const styles = StyleSheet.create({
   textRow: {
     paddingTop: 10,
     paddingBottom: 10,
+  },
+  title: {
+    marginBottom: 20,
+    fontSize: 25,
+    textAlign: 'center',
+  },
+  input: {
+    height: 50,
+    padding: 4,
+    marginRight: 5,
+    fontSize: 23,
+    borderWidth: 1,
+    borderColor: 'grey',
+    borderRadius: 8,
   },
   buttonText: {
     fontSize: 18,

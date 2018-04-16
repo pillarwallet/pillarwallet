@@ -5,7 +5,10 @@ import {
   DECRYPT_WALLET,
   CREATED,
   DECRYPTED,
-} from '../constants/walletConstants';
+  SET_WALLET_ERROR,
+  WALLET_ERROR,
+  IMPORT_SET_PIN,
+} from 'constants/walletConstants';
 
 export type Wallet = {
   address: string,
@@ -14,7 +17,11 @@ export type Wallet = {
 
 export type WalletReducerState = {
   data: Wallet,
-  walletState: ?string
+  walletState: ?string,
+  error: ?{
+    code: string,
+    message: string,
+  },
 }
 
 export type WalletReducerAction = {
@@ -28,6 +35,7 @@ const initialState = {
     privateKey: '',
   },
   walletState: null,
+  error: null,
 };
 
 export default function newWalletReducer(
@@ -39,8 +47,12 @@ export default function newWalletReducer(
       return { ...state, data: action.payload, walletState: CREATED };
     case UPDATE_WALLET_STATE:
       return { ...state, walletState: action.payload };
+    case SET_WALLET_ERROR:
+      return { ...state, error: action.payload, walletState: WALLET_ERROR };
     case DECRYPT_WALLET:
       return { ...state, data: action.payload, walletState: DECRYPTED };
+    case IMPORT_SET_PIN:
+      return { ...state, data: action.payload, walletState: IMPORT_SET_PIN };
     default:
       return state;
   }

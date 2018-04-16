@@ -16,7 +16,7 @@ const mockWallet: Object = {
 describe('Wallet reducer', () => {
   it('should handle GENERATE_ENCRYPTED_WALLET', () => {
     const updateAction = { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet };
-    expect(reducer(undefined, updateAction)).toEqual({ data: mockWallet, walletState: CREATED });
+    expect(reducer(undefined, updateAction)).toEqual({ data: mockWallet, error: null, walletState: CREATED });
   });
 
   it('should handle UPDATE_WALLET_STATE', () => {
@@ -26,6 +26,6 @@ describe('Wallet reducer', () => {
 
   it('should handle DECRYPT_WALLET', () => {
     const updateAction = { type: DECRYPT_WALLET, payload: mockWallet };
-    expect(reducer(undefined, updateAction)).toEqual({ data: mockWallet, walletState: DECRYPTED });
+    expect(reducer(undefined, updateAction)).toEqual({ data: mockWallet, error: null, walletState: DECRYPTED });
   });
 });

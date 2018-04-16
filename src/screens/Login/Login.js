@@ -3,14 +3,13 @@ import * as React from 'react';
 import {
   Text,
   View,
-  TextInput,
-  TouchableHighlight,
   ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { decryptWalletAction } from '../../actions/walletActions';
-import { validatePin } from '../../utils/validators';
-import { DECRYPTING, DECRYPTED } from '../../constants/walletConstants';
+import { decryptWalletAction } from 'actions/walletActions';
+import { validatePin } from 'utils/validators';
+import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
+import PinCode from 'components/PinCode';
 
 import styles from './styles';
 
@@ -20,18 +19,22 @@ type Props = {
 }
 
 type State = {
-  pin: string,
   pinError: string,
 };
 
 class Login extends React.Component<Props, State> {
   state = {
-    pin: '',
     pinError: '',
   };
 
-  handlePinSubmit = () => {
-    const { pin } = this.state;
+  componentWillReceiveProps(nextProps: Props) {
+    const { walletState } = nextProps.wallet;
+    if (walletState === INVALID_PASSWORD) {
+      this.setState({ pinError: 'Invalid password' });
+    }
+  }
+
+  handlePinSubmit = (pin: string) => {
     const validationError = validatePin(pin);
     const { decryptWallet } = this.props;
     if (validationError) {
@@ -47,10 +50,7 @@ class Login extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      pin,
-      pinError,
-    } = this.state;
+    const { pinError } = this.state;
 
     const showError = pinError ? <Text style={styles.errorText}>{pinError}</Text> : null;
     const { walletState, data: wallet } = this.props.wallet;
@@ -79,21 +79,11 @@ class Login extends React.Component<Props, State> {
 
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Enter your pin</Text>
-        <View>
-          <TextInput
-            style={styles.pinInput}
-            value={pin}
-            onChangeText={text => this.setState({ pin: text })}
-          />
-          <TouchableHighlight
-            style={styles.submitButton}
-            underlayColor="white"
-            onPress={this.handlePinSubmit}
-          >
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>
-        </View>
+        <PinCode
+          onPinEntered={this.handlePinSubmit}
+          pageHeading="Enter Passcode"
+          pageInstructions=""
+        />
         {showError}
       </View>
     );

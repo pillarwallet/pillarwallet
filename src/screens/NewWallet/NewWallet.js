@@ -3,7 +3,6 @@ import * as React from 'react';
 import {
   Text,
   View,
-  TextInput,
   TouchableHighlight,
   ActivityIndicator,
 } from 'react-native';
@@ -12,9 +11,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import ethers from 'ethers';
 
-import { generateEncryptedWalletAction } from '../../actions/walletActions';
-import { ENCRYPTING, CREATED, GENERATING } from '../../constants/walletConstants';
-import { validatePin } from '../../utils/validators';
+import PinCode from 'components/PinCode';
+import { generateEncryptedWalletAction } from 'actions/walletActions';
+import { ENCRYPTING, CREATED, GENERATING } from 'constants/walletConstants';
+import { validatePin } from 'utils/validators';
 import styles from './styles';
 
 type State = {
@@ -36,17 +36,24 @@ class NewWallet extends React.Component<Props, State> {
     pinError: '',
   };
 
-  handlePinSubmit = () => {
-    const validationError = validatePin(this.state.pin);
+  handlePinSubmit = (pin: string) => {
+    const validationError = validatePin(pin);
     const { generateEncryptedWallet } = this.props;
+
     if (validationError) {
       this.setState({
         pinError: validationError,
       });
       return;
     }
+
     const mnemonic = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
-    generateEncryptedWallet(mnemonic, this.state.pin);
+    generateEncryptedWallet(mnemonic, pin);
+
+    this.setState({
+      pin,
+      mnemonic,
+    });
   };
 
   goToLoginPage = () => {
@@ -97,29 +104,16 @@ class NewWallet extends React.Component<Props, State> {
       );
     }
 
-    const showError = (
-      pinError ?
-        <Text style={styles.errorText}>{pinError}</Text> :
-        null
-    );
+    const showError = pinError ? <Text style={styles.errorText}>{pinError}</Text> : null;
 
     return (
       <View style={styles.enterPinContainer}>
-        <Text style={styles.title}>Enter your pin</Text>
-        <View>
-          <TextInput
-            style={styles.pinInput}
-            value={pin}
-            onChangeText={text => this.setState({ pin: text })}
-          />
-          <TouchableHighlight
-            style={styles.submitButton}
-            underlayColor="white"
-            onPress={this.handlePinSubmit}
-          >
-            <Text style={styles.buttonText}>Submit</Text>
-          </TouchableHighlight>
-        </View>
+        <PinCode
+          onPinEntered={this.handlePinSubmit}
+          pageHeading="Enter Passcode"
+          pageInstructions="Setup your Passcode"
+          showForgotButton={false}
+        />
         {showError}
       </View>
     );
@@ -129,8 +123,9 @@ class NewWallet extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  generateEncryptedWallet: (mnemonic, pin) =>
-    dispatch(generateEncryptedWalletAction(mnemonic, pin)),
+  generateEncryptedWallet: (mnemonic, pin) => {
+    dispatch(generateEncryptedWalletAction(mnemonic, pin));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewWallet);
