@@ -3,7 +3,7 @@ import * as React from 'react';
 import { StackNavigator } from 'react-navigation';
 import { Provider } from 'react-redux';
 
-// screens
+// Screens
 import Intro from 'screens/Intro';
 import NewWallet from 'screens/NewWallet';
 import Login from 'screens/Login';
@@ -11,7 +11,7 @@ import PinCode from 'screens/PinCode';
 import Assets from 'screens/Assets';
 import BackupPhrase from 'screens/BackupPhrase';
 import configureStore from './src/configureStore';
-
+import StorybookUI from './storybook'; // eslint-disable-line
 const store = configureStore();
 
 const RootStack = StackNavigator(
@@ -34,6 +34,9 @@ const RootStack = StackNavigator(
     Assets: {
       screen: Assets,
     },
+    Storybook: {
+      screen: StorybookUI,
+    },
   },
   {
     initialRouteName: 'Home',
@@ -47,4 +50,6 @@ const App = () => (
   </Provider>
 );
 
+// Use the next line to use Storybook
+// module.exports = __DEV__ ? StorybookUI : App;
 export default App;

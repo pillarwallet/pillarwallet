@@ -2,10 +2,6 @@
 ; We fork some components by platform
 .*/*[.]android.js
 
-
-; Ignore storybook
-<PROJECT_ROOT>/storybook/.*
-
 ; Ignore templates for 'react-native init'
 <PROJECT_ROOT>/node_modules/react-native/local-cli/templates/.*
 
@@ -40,6 +36,7 @@
 <PROJECT_ROOT>/node_modules/xdl/.*
 <PROJECT_ROOT>/node_modules/reqwest/.*
 <PROJECT_ROOT>/node_modules/metro-bundler/.*
+<PROJECT_ROOT>/node_modules/findup/.*
 
 [include]
 
