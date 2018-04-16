@@ -8,11 +8,12 @@ type Props = {
   onPress: Function,
 };
 
-const Button = (props: Props) => {
+const ButtonTwo = (props: Props) => {
   return (
     <ButtonWrapper onPress={props.onPress}>
       <ButtonText>{props.title}</ButtonText>
     </ButtonWrapper>
   );
 };
-export default Button;
+
+export default ButtonTwo;
