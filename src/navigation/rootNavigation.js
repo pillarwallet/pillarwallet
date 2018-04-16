@@ -9,8 +9,9 @@ import LoginScreen from 'screens/Login';
 import PinCodeScreen from 'screens/PinCode';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
+import LegalTerms from 'screens/LegalTerms';
 
-import { ASSETS, PIN_CODE, BACKUP_PHRASE, NEW_WALLET, LOGIN, HOME } from '../constants/navigationConstants';
+import { ASSETS, PIN_CODE, BACKUP_PHRASE, NEW_WALLET, LOGIN, HOME, LEGAL_TERMS } from '../constants/navigationConstants';
 
 const onBoardingFlow = StackNavigator({
   [NEW_WALLET]: NewWalletScreen,
@@ -21,6 +22,7 @@ const onBoardingFlow = StackNavigator({
 const AppFlow = StackNavigator({
   [LOGIN]: LoginScreen,
   [ASSETS]: AssetsScreen,
+  [LEGAL_TERMS]: LegalTerms,
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({

@@ -5,3 +5,4 @@ export const BACKUP_PHRASE = 'BACKUP_PHRASE';
 export const NEW_WALLET = 'NEW_WALLET';
 export const LOGIN = 'LOGIN';
 export const HOME = 'HOME';
+export const LEGAL_TERMS = 'LEGAL_TERMS';
