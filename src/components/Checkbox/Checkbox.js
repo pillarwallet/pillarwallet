@@ -33,7 +33,7 @@ type State = {
 
 export default class Checkbox extends React.Component<Props, State> {
   constructor(props: any) {
-    super();
+    super(props);
     this.state = {
       checked: props.checked,
       animateActive: new Animated.Value(0),
