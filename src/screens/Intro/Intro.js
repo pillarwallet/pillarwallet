@@ -3,9 +3,9 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Text, View, TouchableHighlight, Image } from 'react-native';
 import { connect } from 'react-redux';
-import { checkIfWalletExistsAction } from '../../actions/walletActions';
-import { EMPTY } from '../../constants/walletConstants';
-import { NEW_WALLET, LOGIN } from '../../constants/navigationConstants';
+import { checkIfWalletExistsAction } from 'actions/walletActions';
+import { EMPTY } from 'constants/walletConstants';
+import { NEW_WALLET, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
 import styles from './styles';
 
 const introImage = require('../../assets/images/logo_pillar_intro.png');
@@ -56,7 +56,7 @@ class Intro extends React.Component<Props> {
   };
 
   importOldWallet = () => {
-    this.props.navigation.navigate('Import');
+    this.props.navigation.navigate(IMPORT_WALLET);
   };
 
   render() {
