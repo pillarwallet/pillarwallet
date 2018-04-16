@@ -54,7 +54,7 @@ class ICO extends React.Component<Props, State> {
     fetchEtherBalance();
   }
 
-  _form: t.Form
+  _form: t.Form;
 
   handleICOTransaction = () => {
     const { sendAsset } = this.props;
@@ -62,18 +62,18 @@ class ICO extends React.Component<Props, State> {
     if (!value) return;
     sendAsset(value);
     this.handlePopupState();
-  }
+  };
 
   handleChange = (value) => {
     this.setState({ value });
-  }
+  };
 
   handlePopupState = () => {
     const { isPopupOpen } = this.state;
     this.setState({
       isPopupOpen: !isPopupOpen,
     });
-  }
+  };
 
   render() {
     const {
