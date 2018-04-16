@@ -2,7 +2,6 @@
 import { validatePin } from '../validators';
 
 describe('Validators', () => {
-  
   describe('validatePin', () => {
     it('should validate the length of provided pin code', () => {
       const pin = '123456';
@@ -16,5 +15,4 @@ describe('Validators', () => {
       expect(validatePin('1asd')).toBe(expectedErrorMessage);
     });
   });
-
 });
