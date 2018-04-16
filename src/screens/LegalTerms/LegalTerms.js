@@ -1,7 +1,4 @@
 // @flow
-
-// PURPOSE: this screen is used to display the 12-word
-// backup phrase for the wallet.
 import * as React from 'react';
 import {
   Button,
