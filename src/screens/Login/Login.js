@@ -1,17 +1,15 @@
 // @flow
 import * as React from 'react';
-import {
-  Text,
-  View,
-  ActivityIndicator,
-} from 'react-native';
+import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
+
+import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
-import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
+import Container from 'components/Container';
+import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 
-import styles from './styles';
 
 type Props = {
   decryptWallet: (pin: string) => Function,
@@ -52,40 +50,40 @@ class Login extends React.Component<Props, State> {
   render() {
     const { pinError } = this.state;
 
-    const showError = pinError ? <Text style={styles.errorText}>{pinError}</Text> : null;
+    const showError = pinError ? <Text>{pinError}</Text> : null;
     const { walletState, data: wallet } = this.props.wallet;
 
     if (walletState === DECRYPTING) {
       return (
-        <View>
-          <Text>{walletState}</Text>
+        <Container center>
+          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
           <ActivityIndicator
             animating
             color="#111"
             size="large"
           />
-        </View>
+        </Container>
       );
     }
 
     if (walletState === DECRYPTED) {
       return (
-        <View style={styles.container}>
-          <Text style={styles.title}>Wallet unlocked</Text>
-          <Text style={styles.title}>Public address: {wallet.address}</Text>
-        </View>
+        <Container>
+          <Title>Wallet unlocked</Title>
+          <Text>Public address: {wallet.address}</Text>
+        </Container>
       );
     }
 
     return (
-      <View style={styles.container}>
+      <Container>
+        <Title center>Enter Passcode</Title>
         <PinCode
           onPinEntered={this.handlePinSubmit}
-          pageHeading="Enter Passcode"
           pageInstructions=""
         />
         {showError}
-      </View>
+      </Container>
     );
   }
 }
