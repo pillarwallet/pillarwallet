@@ -14,7 +14,7 @@ type Props = {
 };
 
 
-const ButtonTwo = (props: Props) => {
+const Button = (props: Props) => {
   const setBackgroundColor = () => {
     if (props.disabled === true) {
       return 'lightgray';
@@ -71,4 +71,4 @@ const ButtonTwo = (props: Props) => {
   );
 };
 
-export default ButtonTwo;
+export default Button;
