@@ -10,7 +10,7 @@ import Button from 'components/Button';
 import IntroImage from 'components/IntroImage';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 
-const introImage = require('../../assets/images/logo_pillar_intro.png');
+const introImage = require('assets/images/logo_pillar_intro.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
