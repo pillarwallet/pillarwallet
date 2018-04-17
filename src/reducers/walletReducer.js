@@ -8,6 +8,7 @@ import {
   SET_WALLET_ERROR,
   WALLET_ERROR,
   IMPORT_SET_PIN,
+  UPDATE_WALLET_MNEMONIC,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -31,6 +32,7 @@ export type WalletReducerAction = {
 
 const initialState = {
   data: {
+    mnemonic: '',
     address: '',
     privateKey: '',
   },
@@ -47,6 +49,8 @@ export default function newWalletReducer(
       return { ...state, data: action.payload, walletState: CREATED };
     case UPDATE_WALLET_STATE:
       return { ...state, walletState: action.payload };
+    case UPDATE_WALLET_MNEMONIC:
+      return { ...state, data: { ...state.data, mnemonic: action.payload } };
     case SET_WALLET_ERROR:
       return { ...state, error: action.payload, walletState: WALLET_ERROR };
     case DECRYPT_WALLET:

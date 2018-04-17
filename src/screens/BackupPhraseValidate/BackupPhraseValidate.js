@@ -1,7 +1,5 @@
 // @flow
 
-// PURPOSE: this screen is used to display the 12-word
-// backup phrase for the wallet.
 import * as React from 'react';
 import {
   Text,
@@ -13,20 +11,15 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import DefaultButton from 'components/Buttons/DefaultButton';
-import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
+// import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 import styles from './styles';
 
 type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
-  generateWalletMnemonic: () => Function,
 };
 
-class BackupPhrase extends React.Component<Props, {}> {
-  componentDidMount() {
-    this.props.generateWalletMnemonic();
-  }
-
+class BackupPhraseValidate extends React.Component<Props, {}> {
   createListItem(i: number, list: string[]) {
     return (
       <Text style={styles.listItem} key={i + list[i]}>{ list[i] }</Text>
@@ -34,7 +27,7 @@ class BackupPhrase extends React.Component<Props, {}> {
   }
 
   goToNextScreen = () => {
-    this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE);
+    // this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE);
   };
 
   render() {
@@ -47,7 +40,7 @@ class BackupPhrase extends React.Component<Props, {}> {
     return (
       <View style={styles.container}>
         <View style={styles.textContainer}>
-          <Text style={styles.header}>Write Down Your Backup Phrase</Text>
+          <Text style={styles.header}>Yo!</Text>
           <Text style={styles.paragraph}>
             This is your unique 12-word backup phrase.
             Write down your backup phrase in the exact sequence.
@@ -75,4 +68,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BackupPhrase);
+export default connect(mapStateToProps, mapDispatchToProps)(BackupPhraseValidate);

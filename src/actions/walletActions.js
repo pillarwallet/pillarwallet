@@ -4,6 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPT_WALLET,
+  UPDATE_WALLET_MNEMONIC,
   UPDATE_WALLET_STATE,
   ENCRYPTING,
   GENERATING,
@@ -161,6 +162,16 @@ export const setPinForImportedWalletAction = (pin: string, wallet: Object) => {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: IMPORTED,
+    });
+  };
+};
+
+export const generateWalletMnemonicAction = () => {
+  return async (dispatch: Function) => {
+    const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+    dispatch({
+      type: UPDATE_WALLET_MNEMONIC,
+      payload: mnemonicPhrase,
     });
   };
 };
