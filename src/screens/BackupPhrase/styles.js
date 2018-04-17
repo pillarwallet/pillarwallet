@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
 
-  mneumonicContainer: {
+  mnemonicContainer: {
     marginLeft: -10,
     marginRight: -10,
     marginTop: 20,

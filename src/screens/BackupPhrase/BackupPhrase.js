@@ -56,7 +56,7 @@ export default class BackupPhrase extends React.Component<{}, State> {
           </Text>
         </View>
 
-        <View style={styles.mneumonicContainer}>
+        <View style={styles.mnemonicContainer}>
           { wordList }
         </View>
 
