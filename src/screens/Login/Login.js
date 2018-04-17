@@ -53,7 +53,7 @@ class Login extends React.Component<Props, State> {
     const { pinError } = this.state;
 
     const showError = pinError ? <Text style={styles.errorText}>{pinError}</Text> : null;
-    const { walletState, data: wallet } = this.props.wallet;
+    const { walletState } = this.props.wallet;
 
     if (walletState === DECRYPTING) {
       return (
@@ -68,14 +68,7 @@ class Login extends React.Component<Props, State> {
       );
     }
 
-    if (walletState === DECRYPTED) {
-      return (
-        <View style={styles.container}>
-          <Text style={styles.title}>Wallet unlocked</Text>
-          <Text style={styles.title}>Public address: {wallet.address}</Text>
-        </View>
-      );
-    }
+    if (walletState === DECRYPTED) return null;
 
     return (
       <View style={styles.container}>
