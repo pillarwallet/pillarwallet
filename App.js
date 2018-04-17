@@ -31,4 +31,4 @@ const Root = () => (
   </Provider>
 );
 
-export default Root;
+export default StorybookUI;
