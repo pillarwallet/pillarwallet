@@ -8,7 +8,8 @@ type Props = {
   onPress: Function,
   disabled?: boolean,
   secondary?: boolean,
-  marginBottom?: boolean
+  marginBottom?: boolean,
+  small?: boolean
 };
 
 
@@ -40,12 +41,22 @@ const ButtonTwo = (props: Props) => {
     return '#80dfff';
   };
 
+  const setMarginBottom = () => {
+    if (props.small === true && props.marginBottom === true) {
+      return '10px';
+    } else if (props.marginBottom === true) {
+      return '20px';
+    }
+    return '0';
+  };
+
   return (
     <ButtonWrapper
       backgroundColor={setBackgroundColor()}
       secondary={props.secondary}
+      small={props.small}
       underlayColor={setUnderlayColor()}
-      marginBottom={props.marginBottom}
+      marginBottom={setMarginBottom()}
       onPress={props.onPress}
     >
       <ButtonText color={setTextColor()} disabled={props.disabled}>{props.title}</ButtonText>

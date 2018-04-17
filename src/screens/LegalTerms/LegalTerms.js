@@ -8,6 +8,7 @@ import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
+import Divider from 'components/Divider';
 import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
 import CheckboxText from 'components/CheckboxText';
@@ -87,14 +88,14 @@ export default class LegalTerms extends React.Component<{}, State> {
 
         <Title>Let&#39;s Review</Title>
         <Text style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Text>
-        <CheckboxItem>
+        <CheckboxItem marginBottom>
           { this.buildCheckBox('box01', box01) }
           <CheckboxText>
             I understand that my funds are held securely on this device, not by a company.
           </CheckboxText>
         </CheckboxItem>
 
-        <CheckboxItem>
+        <CheckboxItem marginBottom>
           { this.buildCheckBox('box02', box02) }
           <CheckboxText>
             I understand that if this app is moved to a new phone or deleted,
@@ -103,31 +104,32 @@ export default class LegalTerms extends React.Component<{}, State> {
         </CheckboxItem>
         {termsViewVisible && (
           <Footer>
-
+            <CheckboxItem marginBottom>
+              { this.buildCheckBox('box03', box03) }
+              <CheckboxText>
+                I have read, understand, and agree to the Terms of Use.
+              </CheckboxText>
+            </CheckboxItem>
+            <Divider />
             <MultiButtonWrapper>
-
-              <CheckboxItem marginBottom>
-                { this.buildCheckBox('box03', box03) }
-                <CheckboxText>
-                  I have read, understand, and agree to the Terms of Use.
-                </CheckboxText>
-              </CheckboxItem>
-
               <Button
                 title="Confirm and Finish"
                 onPress={this.handleConfirm}
                 disabled={termsViewVisible}
+                small
                 marginBottom
               />
 
               <Button
                 title="Terms of Use"
                 onPress={this.openURLTermsOfUse}
+                small
                 marginBottom
               />
               <Button
                 title="Privacy Policy"
                 onPress={this.openURLPrivacyPolicy}
+                small
               />
             </MultiButtonWrapper>
           </Footer>
