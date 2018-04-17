@@ -2,8 +2,6 @@
 import * as React from 'react';
 import {
   Text,
-  View,
-  TouchableHighlight,
   ActivityIndicator,
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
@@ -11,12 +9,16 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import ethers from 'ethers';
 
+import Container from 'components/Container';
+import Footer from 'components/Footer';
+import Title from 'components/Title';
 import PinCode from 'components/PinCode';
+import Button from 'components/Button';
+
 import { generateEncryptedWalletAction } from 'actions/walletActions';
 import { ENCRYPTING, CREATED, GENERATING } from 'constants/walletConstants';
 import { LOGIN } from 'constants/navigationConstants';
 import { validatePin } from 'utils/validators';
-import styles from './styles';
 
 type State = {
   mnemonic: string,
@@ -75,47 +77,48 @@ class NewWallet extends React.Component<Props, State> {
 
     if (walletState === CREATED) {
       return (
-        <View style={styles.pinCodeCreatedContainer}>
-          <Text style={styles.textRow}>Password: {pin}</Text>
-          <Text style={styles.textRow}>Mnemonic: {mnemonic}</Text>
-          <Text style={styles.textRow}>Public address: {wallet.address}</Text>
-          <Text style={styles.textRow}>Private key: {wallet.privateKey}</Text>
+        <Container>
+          <Title>Wallet Created</Title>
+          <Text style={{ marginBottom: 10 }}>Password: {pin}</Text>
+          <Text style={{ marginBottom: 10 }}>Mnemonic: {mnemonic}</Text>
+          <Text style={{ marginBottom: 10 }}>Public address: {wallet.address}</Text>
+          <Text style={{ marginBottom: 10 }}>Private key: {wallet.privateKey}</Text>
 
-          <TouchableHighlight
-            style={styles.submitButton}
-            onPress={this.goToLoginPage}
-          >
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>
-        </View>
+          <Footer>
+            <Button
+              onPress={this.goToLoginPage}
+              title="Login"
+            />
+          </Footer>
+        </Container>
       );
     }
 
     if (walletState === GENERATING || walletState === ENCRYPTING) {
       return (
-        <View>
-          <Text>{walletState}</Text>
+        <Container center>
+          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
           <ActivityIndicator
             animating
             color="#111"
             size="large"
           />
-        </View>
+        </Container>
       );
     }
 
-    const showError = pinError ? <Text style={styles.errorText}>{pinError}</Text> : null;
+    const showError = pinError ? <Text>{pinError}</Text> : null;
 
     return (
-      <View style={styles.enterPinContainer}>
+      <Container>
+        <Title center>Enter Passcode</Title>
         <PinCode
           onPinEntered={this.handlePinSubmit}
-          pageHeading="Enter Passcode"
           pageInstructions="Setup your Passcode"
           showForgotButton={false}
         />
         {showError}
-      </View>
+      </Container>
     );
   }
 }

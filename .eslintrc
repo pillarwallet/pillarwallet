@@ -32,6 +32,7 @@
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "class-methods-use-this": [0],
     "react/prop-types": [0],
+    "react/require-default-props": [0],
     "promise/always-return": [0],
     "promise/avoid-new": ["off"],
     "max-len": ["error", 120, {"ignoreUrls": true}],
