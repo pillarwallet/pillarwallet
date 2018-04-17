@@ -22,6 +22,7 @@ import {
 } from 'constants/walletConstants';
 
 import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
@@ -109,22 +110,24 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Title>Wallet import</Title>
-        <InputGroup>
-          <Label>Private key</Label>
-          <Input
-            value={privateKey}
-            onChangeText={text => this.setState({ privateKey: text })}
-          />
+        <Wrapper padding>
+          <Title>Wallet import</Title>
+          <InputGroup>
+            <Label>Private key</Label>
+            <Input
+              value={privateKey}
+              onChangeText={text => this.setState({ privateKey: text })}
+            />
 
-          <Label>12 words phrase</Label>
-          <Input
-            value={tWordsPhrase}
-            height={80}
-            multiline
-            onChangeText={text => this.setState({ tWordsPhrase: text })}
-          />
-        </InputGroup>
+            <Label>12 words phrase</Label>
+            <Input
+              value={tWordsPhrase}
+              height={80}
+              multiline
+              onChangeText={text => this.setState({ tWordsPhrase: text })}
+            />
+          </InputGroup>
+        </Wrapper>
         <Footer>
           <Button
             title="Import"
