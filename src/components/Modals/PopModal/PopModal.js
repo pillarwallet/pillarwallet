@@ -83,7 +83,7 @@ export default class PopModal extends React.Component<Props, State> {
           </View>
 
           <View style={styles.popOverActions}>
-            <Button secondary title={this.props.actionPrimary} onPress={this.dismissAnimation} />
+            <Button light title={this.props.actionPrimary} onPress={this.dismissAnimation} />
           </View>
 
         </Animated.View>

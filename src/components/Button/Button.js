@@ -9,6 +9,7 @@ type Props = {
   disabled?: boolean,
   secondary?: boolean,
   marginBottom?: boolean,
+  light?: boolean,
   small?: boolean
 };
 
@@ -19,6 +20,8 @@ const ButtonTwo = (props: Props) => {
       return 'lightgray';
     } else if (props.secondary) {
       return 'rgba(0,0,0,0)';
+    } else if (props.light) {
+      return '#80dfff';
     }
     return '#00bfff';
   };
@@ -28,6 +31,8 @@ const ButtonTwo = (props: Props) => {
       return 'gray';
     } else if (props.secondary) {
       return '#00bfff';
+    } else if (props.light) {
+      return '#000000';
     }
     return 'white';
   };
@@ -37,6 +42,8 @@ const ButtonTwo = (props: Props) => {
       return 'darkgray';
     } else if (props.secondary) {
       return '#e5f9ff';
+    } else if (props.light) {
+      return '#00bfff';
     }
     return '#80dfff';
   };
