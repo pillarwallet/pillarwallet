@@ -7,7 +7,7 @@ import {
   Text,
   TouchableHighlight,
 } from 'react-native';
-import OutlineButton from 'components/Buttons/OutlineButton';
+import Button from 'components/Button';
 import styles from './styles';
 
 
@@ -83,7 +83,7 @@ export default class PopModal extends React.Component<Props, State> {
           </View>
 
           <View style={styles.popOverActions}>
-            <OutlineButton title={this.props.actionPrimary} onPress={this.dismissAnimation} />
+            <Button secondary title={this.props.actionPrimary} onPress={this.dismissAnimation} />
           </View>
 
         </Animated.View>
