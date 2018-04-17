@@ -71,7 +71,7 @@ export default class LegalTerms extends React.Component<{}, State> {
   }
 
   openURLPrivacyPolicy = () => {
-    Linking.openURL('https://pillarproject.io');
+    Linking.openURL('https://pillarproject.io/en/legal/privacy/');
   }
 
   render() {
