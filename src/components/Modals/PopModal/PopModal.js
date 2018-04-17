@@ -91,4 +91,3 @@ export default class PopModal extends React.Component<Props, State> {
     );
   }
 }
-
