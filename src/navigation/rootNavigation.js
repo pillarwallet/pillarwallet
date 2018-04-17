@@ -1,6 +1,8 @@
 // @flow
+import * as React from 'react';
+import { Text } from 'react-native';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import { StackNavigator, SwitchNavigator } from 'react-navigation';
+import { StackNavigator, SwitchNavigator, NavigationActions } from 'react-navigation';
 
 // screens
 import IntroScreen from 'screens/Intro';
@@ -23,17 +25,37 @@ import {
 } from 'constants/navigationConstants';
 
 const onBoardingFlow = StackNavigator({
-  [NEW_WALLET]: NewWalletScreen,
+  [NEW_WALLET]: {
+    screen:NewWalletScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: () => <Text onPress={() => { navigation.dispatch(NavigationActions.navigate({ routeName: HOME })) }}>{'Home'}</Text>
+    })
+  },
   [BACKUP_PHRASE]: BackupPhraseScreen,
 });
 
 const importWalletFlow = StackNavigator({
-  [IMPORT_WALLET]: ImportWalletScreen,
+  [IMPORT_WALLET]: {
+    screen: ImportWalletScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: () => <Text onPress={() => { navigation.dispatch(NavigationActions.navigate({ routeName: HOME })) }}>{'Home'}</Text>
+    })
+  },
 });
 
 const appFlow = StackNavigator({
-  [LOGIN]: LoginScreen,
-  [ASSETS]: AssetsScreen,
+  [LOGIN]: {
+    screen:LoginScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: () => <Text onPress={() => { navigation.dispatch(NavigationActions.navigate({ routeName: HOME })) }}>{'Home'}</Text>,
+    })
+  },
+  [ASSETS]: {
+    screen: AssetsScreen,
+    navigationOptions: {
+      header: null
+    }
+  },
   [LEGAL_TERMS]: LegalTermsScreen,
   [ICO]: ICOScreen,
 });
@@ -43,8 +65,6 @@ const RootSwitch: SwitchNavigatorType = SwitchNavigator({
   appFlow,
   onBoardingFlow,
   importWalletFlow,
-}, {
-  initialRouteName: HOME,
 });
 
 export default RootSwitch;

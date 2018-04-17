@@ -14,6 +14,7 @@ import ethers from 'ethers';
 import PinCode from 'components/PinCode';
 import { generateEncryptedWalletAction } from 'actions/walletActions';
 import { ENCRYPTING, CREATED, GENERATING } from 'constants/walletConstants';
+import { LOGIN } from 'constants/navigationConstants';
 import { validatePin } from 'utils/validators';
 import styles from './styles';
 
@@ -57,11 +58,10 @@ class NewWallet extends React.Component<Props, State> {
   };
 
   goToLoginPage = () => {
-    const resetAction = NavigationActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'Login' })],
+    const navigationAction = NavigationActions.navigate({
+      routeName: LOGIN
     });
-    this.props.navigation.dispatch(resetAction);
+    this.props.navigation.dispatch(navigationAction);
   };
 
   render() {
