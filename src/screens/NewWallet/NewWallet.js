@@ -59,7 +59,7 @@ class NewWallet extends React.Component<Props, State> {
 
   goToLoginPage = () => {
     const navigationAction = NavigationActions.navigate({
-      routeName: LOGIN
+      routeName: LOGIN,
     });
     this.props.navigation.dispatch(navigationAction);
   };
