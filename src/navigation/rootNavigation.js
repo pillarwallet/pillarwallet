@@ -29,13 +29,13 @@ const renderHomeButton = (navigation) => {
 };
 
 const onBoardingFlow = StackNavigator({
-  [NEW_WALLET]: {
-    screen: NewWalletScreen,
+  [BACKUP_PHRASE]: {
+    screen: BackupPhraseScreen,
     navigationOptions: ({ navigation }) => ({
       headerLeft: renderHomeButton(navigation),
     }),
   },
-  [BACKUP_PHRASE]: BackupPhraseScreen,
+  [NEW_WALLET]: NewWalletScreen,
 });
 
 const importWalletFlow = StackNavigator({
