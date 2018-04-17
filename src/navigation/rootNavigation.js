@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { TouchableHighlight, Text } from 'react-native';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { StackNavigator, SwitchNavigator, NavigationActions, HeaderBackButton } from 'react-navigation';
 
