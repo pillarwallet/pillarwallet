@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import { Text } from 'react-native';
+import { TouchableHighlight, Text } from 'react-native';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import { StackNavigator, SwitchNavigator, NavigationActions } from 'react-navigation';
+import { StackNavigator, SwitchNavigator, NavigationActions, HeaderBackButton } from 'react-navigation';
 
 // screens
 import IntroScreen from 'screens/Intro';
@@ -24,12 +24,17 @@ import {
   IMPORT_WALLET,
 } from 'constants/navigationConstants';
 
+const renderHomeButton = (navigation) => {
+  const onButtonClicked = () => navigation.dispatch(NavigationActions.navigate({ routeName: HOME }));
+  return props => <HeaderBackButton {...props} onPress={onButtonClicked} />;
+};
+
 const onBoardingFlow = StackNavigator({
   [NEW_WALLET]: {
-    screen:NewWalletScreen,
+    screen: NewWalletScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: () => <Text onPress={() => { navigation.dispatch(NavigationActions.navigate({ routeName: HOME })) }}>{'Home'}</Text>
-    })
+      headerLeft: renderHomeButton(navigation),
+    }),
   },
   [BACKUP_PHRASE]: BackupPhraseScreen,
 });
@@ -38,23 +43,23 @@ const importWalletFlow = StackNavigator({
   [IMPORT_WALLET]: {
     screen: ImportWalletScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: () => <Text onPress={() => { navigation.dispatch(NavigationActions.navigate({ routeName: HOME })) }}>{'Home'}</Text>
-    })
+      headerLeft: renderHomeButton(navigation),
+    }),
   },
 });
 
 const appFlow = StackNavigator({
   [LOGIN]: {
-    screen:LoginScreen,
+    screen: LoginScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: () => <Text onPress={() => { navigation.dispatch(NavigationActions.navigate({ routeName: HOME })) }}>{'Home'}</Text>,
-    })
+      headerLeft: renderHomeButton(navigation),
+    }),
   },
   [ASSETS]: {
     screen: AssetsScreen,
     navigationOptions: {
-      header: null
-    }
+      headerLeft: null,
+    },
   },
   [LEGAL_TERMS]: LegalTermsScreen,
   [ICO]: ICOScreen,
