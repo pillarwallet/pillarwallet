@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
+import Container from 'components/Container';
+import Title from 'components/Title';
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
@@ -78,14 +80,14 @@ class Login extends React.Component<Props, State> {
     }
 
     return (
-      <View style={styles.container}>
+      <Container>
+        <Title center>Enter Passcode</Title>
         <PinCode
           onPinEntered={this.handlePinSubmit}
-          pageHeading="Enter Passcode"
           pageInstructions=""
         />
         {showError}
-      </View>
+      </Container>
     );
   }
 }
