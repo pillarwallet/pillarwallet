@@ -26,10 +26,16 @@ type State = {
 export default class AssetCardList extends React.Component<Props, State> {
   state = {
     animHeaderHeight: new Animated.Value(200),
-    animCardPositionY: new Animated.Value(20),
+    animCardPositionY: new Animated.Value(30),
     cardActive: false,
     card01: false,
     card02: false,
+  }
+
+  onScroll = (event: any) => {
+    if (event.nativeEvent.contentOffset.y <= -100) {
+      this.setCardInactive();
+    }
   }
 
   setCardActive = () => {
@@ -49,6 +55,7 @@ export default class AssetCardList extends React.Component<Props, State> {
     ]);
   }
 
+
   setCardInactive = () => {
     Animated.parallel([
       Animated.spring(
@@ -60,7 +67,7 @@ export default class AssetCardList extends React.Component<Props, State> {
       Animated.spring(
         this.state.animCardPositionY,
         {
-          toValue: 20,
+          toValue: 30,
         },
       ).start(),
     ]);
@@ -117,7 +124,7 @@ export default class AssetCardList extends React.Component<Props, State> {
     return (
       <View>
 
-        <ScrollView style={{ height: '100%' }}>
+        <ScrollView style={{ height: '100%' }} onScroll={this.onScroll} scrollEventThrottle={200}>
           { this.headerComponent() }
 
           {!card01 && (
@@ -143,6 +150,7 @@ export default class AssetCardList extends React.Component<Props, State> {
             />
           </Animated.View>
           )}
+
         </ScrollView>
       </View>
     );

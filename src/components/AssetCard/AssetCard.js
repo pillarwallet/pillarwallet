@@ -27,11 +27,6 @@ type State = {
     animCardWidth: any,
 }
 
-// const {
-//   width,
-//   height,
-// } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   card: {
     height: 100,
