@@ -59,6 +59,7 @@ const Button = (props: Props) => {
 
   return (
     <ButtonWrapper
+      {...props}
       backgroundColor={setBackgroundColor()}
       secondary={props.secondary}
       small={props.small}

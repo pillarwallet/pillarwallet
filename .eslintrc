@@ -42,6 +42,7 @@
     "no-case-declarations": ["off"],
     "import/prefer-default-export": ["off"],
     "react/no-unused-prop-types": ["off"],
+    "react/sort-comp": ["off"],
     "no-underscore-dangle": ["off"]
   }
 }

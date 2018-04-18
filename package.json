@@ -100,8 +100,8 @@
   "dependencies": {
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
-    "lodash.merge": "^4.6.1",
     "jest-static-stubs": "^0.0.1",
+    "lodash.merge": "^4.6.1",
     "pouchdb-react-native": "^6.4.1",
     "react": "^16.3.0-alpha.1",
     "react-native": "^0.54.2",
@@ -110,7 +110,8 @@
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
-    "tcomb-form-native": "^0.6.11",
-    "styled-components": "^3.2.5"
+    "shuffle-array": "^1.0.1",
+    "styled-components": "^3.2.5",
+    "tcomb-form-native": "^0.6.11"
   }
 }
