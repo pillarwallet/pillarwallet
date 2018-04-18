@@ -1,11 +1,13 @@
 // @flow
 import * as React from 'react';
-import {
-  Text,
-  View,
-  Button,
-} from 'react-native';
-import styles from './styles';
+import { Button } from 'react-native';
+
+import Wrapper from 'components/Wrapper';
+import Footer from 'components/Footer';
+import PinDots from './PinDots';
+import PinDot from './PinDot';
+import KeyPad from './KeyPad';
+import KeyInput from './KeyInput';
 
 const PASS_CODE_LENGTH = 6;
 
@@ -13,7 +15,6 @@ type PassCode = string[];
 
 type Props = {
   onPinEntered: Function,
-  pageHeading?: string,
   pageInstructions?: string,
   showForgotButton?: boolean
 };
@@ -61,17 +62,21 @@ export default class PinCode extends React.Component<Props, State> {
     this.setState({ passCode: array });
   };
 
-  createPinDot(i: number, passCode: PassCode) {
+  createPinDot(i: number) {
+    let isActive = false;
+    if (this.state.passCode.length >= (i + 1)) {
+      isActive = true;
+    }
     return (
-      <View key={i} style={[styles.inactivePinDot, passCode[i] && styles.activePinDot]} />
+      <PinDot key={i} active={isActive} />
     );
   }
 
   createPinButton(key: string, title: string, callback: () => void) {
     return (
-      <View style={styles.inputKey} key={key}>
+      <KeyInput key={key}>
         <Button title={title} onPress={callback} />
-      </View>
+      </KeyInput>
     );
   }
 
@@ -99,29 +104,21 @@ export default class PinCode extends React.Component<Props, State> {
   }
 
   render() {
-    const { passCode } = this.state;
-    const { pageHeading, pageInstructions } = this.props;
-
     const pinCodeDots = Array(PASS_CODE_LENGTH).fill('')
-      .map((num, i) => this.createPinDot(i, passCode));
-
+      .map((num, i) => this.createPinDot(i));
     const keyInputs = this.generatePinInputs();
 
     return (
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text style={styles.header}> {pageHeading} </Text>
-          <Text style={styles.paragraph}> {pageInstructions} </Text>
-        </View>
-
-        <View style={styles.pinContainer}>
+      <Wrapper>
+        <PinDots>
           {pinCodeDots}
-        </View>
-
-        <View style={styles.inputKeyContainer}>
-          {keyInputs}
-        </View>
-      </View>
+        </PinDots>
+        <Footer>
+          <KeyPad>
+            {keyInputs}
+          </KeyPad>
+        </Footer>
+      </Wrapper>
     );
   }
 }

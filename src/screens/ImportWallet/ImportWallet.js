@@ -3,8 +3,6 @@ import * as React from 'react';
 import {
   Text,
   View,
-  TextInput,
-  TouchableHighlight,
   ActivityIndicator,
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -23,8 +21,15 @@ import {
   ENCRYPTING,
 } from 'constants/walletConstants';
 
+import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
+import Footer from 'components/Footer';
+import Title from 'components/Title';
+import Button from 'components/Button';
+import Input from 'components/Input';
+import InputGroup from 'components/InputGroup';
+import Label from 'components/Label';
 import PinCode from 'components/PinCode';
-import styles from './styles';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -65,74 +70,70 @@ class ImportWallet extends React.Component<Props, State> {
     } = this.state;
 
     const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR
-      ? <Text style={styles.errorText}>{error.message}</Text>
+      ? <Text>{error.message}</Text>
       : null;
 
     if (walletState === IMPORTED) {
       return (
         <View>
-          <Text style={styles.textRow}>Public key: {wallet.address}</Text>
+          <Text>Public key: {wallet.address}</Text>
         </View>
       );
     }
 
     if (walletState === IMPORT_SET_PIN) {
       return (
-        <View style={styles.container}>
+        <Container>
+          <Title>Enter Passcode</Title>
           <PinCode
             onPinEntered={pin => this.props.encryptWithPinCode(pin, wallet)}
-            pageHeading="Enter Passcode"
             pageInstructions="Setup your Passcode"
             showForgotButton={false}
           />
           {showError}
-        </View>
+        </Container>
       );
     }
 
     if (walletState === ENCRYPTING) {
       return (
-        <View>
-          <Text>{walletState}</Text>
+        <Container center>
+          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
           <ActivityIndicator
             animating
             color="#111"
             size="large"
           />
-        </View>
+        </Container>
       );
     }
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Wallet import</Text>
-        <View>
-          <Text style={styles.textRow}>Private key</Text>
-          <TextInput
-            style={styles.input}
-            value={privateKey}
-            onChangeText={text => this.setState({ privateKey: text })}
-          />
+      <Container>
+        <Wrapper padding>
+          <Title>Wallet import</Title>
+          <InputGroup>
+            <Label>Private key</Label>
+            <Input
+              value={privateKey}
+              onChangeText={text => this.setState({ privateKey: text })}
+            />
 
-          <Text style={styles.textRow}>- OR -</Text>
-
-          <Text style={styles.textRow}>12 words phrase</Text>
-          <TextInput
-            style={styles.input}
-            value={tWordsPhrase}
-            height={80}
-            multiline
-            onChangeText={text => this.setState({ tWordsPhrase: text })}
-          />
-
-          <TouchableHighlight
-            style={styles.submitButton}
-            underlayColor="white"
+            <Label>12 words phrase</Label>
+            <Input
+              value={tWordsPhrase}
+              height={80}
+              multiline
+              onChangeText={text => this.setState({ tWordsPhrase: text })}
+            />
+          </InputGroup>
+        </Wrapper>
+        <Footer>
+          <Button
+            title="Import"
             onPress={this.handleImportSubmit}
-          >
-            <Text style={styles.buttonText}>Import</Text>
-          </TouchableHighlight>
-        </View>
+          />
+        </Footer>
 
         {showError}
 
@@ -141,7 +142,7 @@ class ImportWallet extends React.Component<Props, State> {
           color="#111"
           size="large"
         />
-      </View>
+      </Container>
     );
   }
 }

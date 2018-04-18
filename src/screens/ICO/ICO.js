@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {
   Text,
-  View,
   Modal,
   RefreshControl,
   ScrollView,
@@ -10,10 +9,14 @@ import {
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 
-import DefaultButton from 'components/Buttons/DefaultButton';
+import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
+import Title from 'components/Title';
+import Button from 'components/Button';
+import Footer from 'components/Footer';
+
 import { sendAssetAction, fetchEtherBalanceAction } from 'actions/assetsActions';
 import { FETCHING, ETH } from 'constants/assetsConstants';
-import styles from './styles';
 
 // https://ropsten.etherscan.io/address/0x583cbbb8a8443b38abcc0c956bece47340ea1367#readContract
 const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
@@ -82,49 +85,58 @@ class ICO extends React.Component<Props, State> {
     } = this.state;
     const { assets: { data: assets, assetsState } } = this.props;
     return (
-      <ScrollView
-        style={styles.container}
-        contentInset={{ bottom: 49 }}
-        automaticallyAdjustContentInsets={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={() => {
-              this.props.fetchEtherBalance();
-            }}
-            tintColor="#EBEBEB"
-            title="Loading..."
-            colors={['#ff0000', '#00ff00', '#0000ff']}
-            progressBackgroundColor="#EBEBEB"
-          />
-        }
-      >
-        <Text>Participate in the ICO</Text>
-        <Text>{address}</Text>
-        <Text>
-            You have: {assets[ETH] && assetsState !== FETCHING ? assets[ETH].balance : '*Fetching*'} ETH
-        </Text>
-        <DefaultButton title="Participate" onPress={this.handlePopupState} />
-        <Modal
-          animationType="slide"
-          showCloseBtn="true"
-          transparent={false}
-          visible={isPopupOpen}
-          onRequestClose={this.handlePopupState}
-        >
-          <View>
-            <Form
-              ref={(node) => {
-                this._form = node;
-              }}
-              type={ICO_TYPE}
-              value={value}
-              onChange={this.handleChange}
-            />
-            <DefaultButton title="Send" onPress={this.handleICOTransaction} />
-          </View>
-        </Modal>
-      </ScrollView>
+      <Container>
+        <Wrapper padding>
+          <Title>ICOs</Title>
+          <ScrollView
+            contentInset={{ bottom: 49 }}
+            automaticallyAdjustContentInsets={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  this.props.fetchEtherBalance();
+                }}
+                tintColor="#EBEBEB"
+                title="Loading..."
+                colors={['#ff0000', '#00ff00', '#0000ff']}
+                progressBackgroundColor="#EBEBEB"
+              />
+            }
+          >
+            <Text style={{ marginBottom: 20 }}>Participate in the ICO</Text>
+            <Text style={{ marginBottom: 20 }}>{address}</Text>
+            <Text style={{ marginBottom: 20 }}>
+              You have: {assets[ETH] && assetsState !== FETCHING ? assets[ETH].balance : '*Fetching*'} ETH
+            </Text>
+            <Button small title="Participate" onPress={this.handlePopupState} />
+            <Modal
+              animationType="slide"
+              showCloseBtn="true"
+              transparent={false}
+              visible={isPopupOpen}
+              onRequestClose={this.handlePopupState}
+            >
+              <Container>
+                <Wrapper padding>
+                  <Title>Participate in ICO</Title>
+                  <Form
+                    ref={(node) => {
+                      this._form = node;
+                    }}
+                    type={ICO_TYPE}
+                    value={value}
+                    onChange={this.handleChange}
+                  />
+                </Wrapper>
+                <Footer>
+                  <Button marginBottom title="Send" onPress={this.handleICOTransaction} />
+                </Footer>
+              </Container>
+            </Modal>
+          </ScrollView>
+        </Wrapper>
+      </Container>
     );
   }
 }

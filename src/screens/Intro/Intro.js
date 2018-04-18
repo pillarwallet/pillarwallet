@@ -1,14 +1,16 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Text, View, TouchableHighlight, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { checkIfWalletExistsAction } from 'actions/walletActions';
 import { EMPTY } from 'constants/walletConstants';
 import { NEW_WALLET, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
-import styles from './styles';
+import Container from 'components/Container';
+import Button from 'components/Button';
+import IntroImage from 'components/IntroImage';
+import MultiButtonWrapper from 'components/MultiButtonWrapper';
 
-const introImage = require('../../assets/images/logo_pillar_intro.png');
+const introImage = require('assets/images/logo_pillar_intro.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -63,34 +65,28 @@ class Intro extends React.Component<Props> {
     const { wallet: { walletState } } = this.props;
 
     return (
-      <View style={styles.container}>
-        <Image
-          source={introImage}
-          style={styles.image}
-        />
-        <TouchableHighlight
-          style={this.setBackground(0)}
-          underlayColor="white"
-          onPress={this.createNewWallet}
-        >
-          <Text style={styles.buttonText}>Create new wallet</Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          style={[this.setBackground(1), walletState === EMPTY && { backgroundColor: 'lightgray' }]}
-          underlayColor="white"
-          onPress={this.unlockExistingWallet}
-          disabled={walletState === EMPTY}
-        >
-          <Text style={styles.buttonText}>Unlock existing</Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          style={this.setBackground(2)}
-          underlayColor="white"
-          onPress={this.importOldWallet}
-        >
-          <Text style={styles.buttonText}>Import old wallet</Text>
-        </TouchableHighlight>
-      </View>
+      <Container center>
+        <IntroImage source={introImage} />
+        <MultiButtonWrapper>
+          <Button
+            title="Create new wallet"
+            onPress={this.createNewWallet}
+            marginBottom
+          />
+          <Button
+            title="Unlock existing"
+            onPress={this.unlockExistingWallet}
+            disabled={walletState === EMPTY}
+            marginBottom
+          />
+          <Button
+            title="Import old wallet"
+            onPress={this.importOldWallet}
+            secondary
+          />
+        </MultiButtonWrapper>
+
+      </Container>
     );
   }
 }
