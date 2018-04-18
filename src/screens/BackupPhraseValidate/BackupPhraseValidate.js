@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import shuffle from 'shuffle-array';
 
 import { Text, View } from 'react-native';
 import Container from 'components/Container';
@@ -12,12 +11,7 @@ import Button from 'components/Button';
 import FakeInput from 'components/FakeInput';
 import InputGroup from 'components/InputGroup';
 import Label from 'components/Label';
-
-import { getRandomInt } from 'utils/common';
-import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { ENCODE_WALLET_PIN_CODE } from 'constants/navigationConstants';
-
-const NUM_WORDS_TO_CHECK = 3;
 
 type State = {
   isFormValid: boolean,
@@ -30,34 +24,20 @@ type Props = {
 };
 
 class BackupPhraseValidate extends React.Component<Props, State> {
-  wordsToValidate: number[] = [];
-  mnemonicList: string[] = [];
-  shuffledMnemonicList: string[] = [];
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      isFormValid: false,
-      enteredWords: [],
-    };
-
-    const { data: wallet } = props.wallet;
-    if (!wallet.mnemonic) return;
-
-    if (!this.wordsToValidate.length) {
-      this.mnemonicList = wallet.mnemonic.split(' ');
-      this.shuffledMnemonicList = shuffle(this.mnemonicList, { copy: true });
-      this.wordsToValidate = this.chooseWordsToValidate();
-    }
-  }
+  state = {
+    isFormValid: false,
+    enteredWords: [],
+  };
 
   setWord(word) {
     let { enteredWords } = this.state;
-    if (enteredWords.length < NUM_WORDS_TO_CHECK) {
+    const { data: wallet } = this.props.wallet;
+    const maxWords = wallet.mnemonic.wordsToValidate.length;
+
+    if (enteredWords.length < maxWords) {
       enteredWords = [...enteredWords, word];
     } else {
-      enteredWords[NUM_WORDS_TO_CHECK - 1] = word;
+      enteredWords[maxWords - 1] = word;
     }
     const isFormValid = this.validateForm(enteredWords);
 
@@ -68,12 +48,17 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   }
 
   validateForm(enteredWords) {
-    if (enteredWords.length !== NUM_WORDS_TO_CHECK) return false;
+    const { data: wallet } = this.props.wallet;
+    const maxWords = wallet.mnemonic.wordsToValidate.length;
+    if (enteredWords.length !== maxWords) return false;
 
+    const { wordsToValidate } = wallet.mnemonic;
+    const mnemonicList = wallet.mnemonic.original.split(' ');
     let isFormValid = true;
+
     enteredWords.forEach((enteredWord, i) => {
-      const rightWordIndex = this.wordsToValidate[i] - 1;
-      const rightWord = this.mnemonicList[rightWordIndex];
+      const rightWordIndex = wordsToValidate[i] - 1;
+      const rightWord = mnemonicList[rightWordIndex];
 
       if (rightWord !== enteredWord) isFormValid = false;
     });
@@ -92,17 +77,6 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     );
   }
 
-  chooseWordsToValidate() {
-    const chosenWords = [];
-    while (chosenWords.length < NUM_WORDS_TO_CHECK) {
-      const randomNumber = getRandomInt(1, 12);
-      if (chosenWords.includes(randomNumber)) continue; // eslint-disable-line
-      chosenWords.push(randomNumber);
-    }
-    chosenWords.sort((a, b) => a - b);
-    return chosenWords;
-  }
-
   goToNextScreen = () => {
     this.props.navigation.navigate(ENCODE_WALLET_PIN_CODE);
   };
@@ -111,19 +85,22 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     const { data: wallet } = this.props.wallet;
     const { isFormValid, enteredWords } = this.state;
 
-    if (!wallet.mnemonic) return null;
+    if (!wallet.mnemonic.original) return null;
+    const { wordsToValidate } = wallet.mnemonic;
+    const mnemonicList = wallet.mnemonic.original.split(' ');
+    const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
-    const wordList = this.mnemonicList
-      .map((num, i) => this.createListItem(i, this.mnemonicList));
+    const wordList = mnemonicList
+      .map((num, i) => this.createListItem(i, mnemonicList));
 
-    const shuffledWordList = this.shuffledMnemonicList
-      .map((num, i) => this.createListItem(i, this.shuffledMnemonicList));
+    const shuffledWordList = shuffledMnemonicList
+      .map((num, i) => this.createListItem(i, shuffledMnemonicList));
 
-    const inputFields = Array(NUM_WORDS_TO_CHECK).fill('')
+    const inputFields = Array(wordsToValidate.length).fill('')
       .map((el, i) => {
         return (
-          <View key={this.mnemonicList[i]}>
-            <Label>Word #{this.wordsToValidate[i]}:</Label>
+          <View key={mnemonicList[i]}>
+            <Label>Word #{wordsToValidate[i]}:</Label>
             <FakeInput>{enteredWords[i] || ''}</FakeInput>
           </View>
         );
@@ -140,11 +117,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           {inputFields}
         </InputGroup>
 
-        <Text>Original</Text>
-        <Text>{wordList}</Text>
+        {/* <Text>Original</Text>
+        <Text>{wordList}</Text> */}
 
-        <Text>Shuffled</Text>
-        <Text>{shuffledWordList}</Text>
+        <Text style={{ paddingBottom: 15 }}>12-word phrase</Text>
+        <Text style={{ paddingBottom: 30 }}>{shuffledWordList}</Text>
 
         <Button title="Debug skip" onPress={this.goToNextScreen} width="100%" />
         <Footer>
@@ -157,10 +134,4 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  generateWalletMnemonic: () => {
-    dispatch(generateWalletMnemonicAction());
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(BackupPhraseValidate);
+export default connect(mapStateToProps)(BackupPhraseValidate);

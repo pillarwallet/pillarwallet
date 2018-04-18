@@ -21,6 +21,8 @@ import { ASSETS } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { validatePin } from 'utils/validators';
+import shuffle from 'shuffle-array';
+import { generateWordsToValidate } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
 
@@ -166,12 +168,21 @@ export const setPinForImportedWalletAction = (pin: string, wallet: Object) => {
   };
 };
 
+const NUM_WORDS_TO_CHECK = 3;
 export const generateWalletMnemonicAction = () => {
   return async (dispatch: Function) => {
     const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+    const mnemonicList = mnemonicPhrase.split(' ');
+    const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
+    const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
+
     dispatch({
       type: UPDATE_WALLET_MNEMONIC,
-      payload: mnemonicPhrase,
+      payload: {
+        original: mnemonicPhrase,
+        shuffled: shuffledMnemonicPhrase,
+        wordsToValidate,
+      },
     });
   };
 };

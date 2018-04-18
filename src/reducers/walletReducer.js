@@ -32,7 +32,11 @@ export type WalletReducerAction = {
 
 const initialState = {
   data: {
-    mnemonic: '',
+    mnemonic: {
+      original: '',
+      shuffled: '',
+      wordsToValidate: [],
+    },
     address: '',
     privateKey: '',
   },

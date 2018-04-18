@@ -40,7 +40,7 @@ class BackupPhrase extends React.Component<Props, {}> {
     const { data: wallet } = this.props.wallet;
     if (!wallet.mnemonic) return null;
 
-    const mnemonicList = wallet.mnemonic.split(' ');
+    const mnemonicList = wallet.mnemonic.original.split(' ');
     const wordList = mnemonicList.map((num, i) => this.createListItem(i, mnemonicList));
 
     return (
