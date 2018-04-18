@@ -90,9 +90,6 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     const mnemonicList = wallet.mnemonic.original.split(' ');
     const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
-    const wordList = mnemonicList
-      .map((num, i) => this.createListItem(i, mnemonicList));
-
     const shuffledWordList = shuffledMnemonicList
       .map((num, i) => this.createListItem(i, shuffledMnemonicList));
 
@@ -116,9 +113,6 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         <InputGroup style={{ paddingTop: 30 }}>
           {inputFields}
         </InputGroup>
-
-        {/* <Text>Original</Text>
-        <Text>{wordList}</Text> */}
 
         <Text style={{ paddingBottom: 15 }}>12-word phrase</Text>
         <Text style={{ paddingBottom: 30 }}>{shuffledWordList}</Text>
