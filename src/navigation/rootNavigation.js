@@ -39,7 +39,7 @@ const appFlow = StackNavigator({
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [HOME]: IntroScreen,
+  [HOME]: AssetsScreen,
   appFlow,
   onBoardingFlow,
   importWalletFlow,
