@@ -46,7 +46,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   static defaultProps = {
     reactivate: false,
     rectangleColor: '#00BFFF',
-    onRead: () => {},
+    onRead: () => { },
   };
 
   state = {
@@ -54,7 +54,11 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     isScanning: false,
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.askPermissions();
+  }
+
+  async askPermissions() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({
       authorizationState: status.toUpperCase() === PERMISSION_GRANTED ? AUTHORIZED : DECLINED,
@@ -79,13 +83,15 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   render() {
     const { authorizationState } = this.state;
     const { rectangleColor } = this.props;
+    if (authorizationState !== AUTHORIZED) {
+      return <ActivityIndicator />;
+    }
     return (
-      authorizationState === AUTHORIZED ?
-        <Scanner type={Camera.Constants.Type.back} onBarCodeRead={this.handleQRRead}>
-          <RectangleContainer>
-            <Rectangle color={rectangleColor} />
-          </RectangleContainer>
-        </Scanner> : <ActivityIndicator />
+      <Scanner type={Camera.Constants.Type.back} onBarCodeRead={this.handleQRRead}>
+        <RectangleContainer>
+          <Rectangle color={rectangleColor} />
+        </RectangleContainer>
+      </Scanner>
     );
   }
 }

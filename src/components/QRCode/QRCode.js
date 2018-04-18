@@ -40,20 +40,20 @@ export default class QRCode extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this._generateQRCode();
+    this.generateQRCode();
   }
 
-  async _generateQRCode() {
+  async generateQRCode() {
     const { value } = this.props;
     const qrCodeSrc = await qrcode.create(value);
     const arr = qrCodeSrc.modules.data;
-    const sqrMatrix = this._generateSquareMatrix(arr);
+    const sqrMatrix = this.generateSquareMatrix(arr);
     this.setState({
       sqrMatrix,
     });
   }
 
-  _generateSquareMatrix(data: number[]) {
+  generateSquareMatrix(data: number[]) {
     const rowSize = Math.sqrt(data.length);
     return data.reduce((rows, key, index) => {
       if (index % rowSize) {
@@ -65,7 +65,7 @@ export default class QRCode extends React.Component<Props, State> {
     }, []);
   }
 
-  _renderQRCode() {
+  renderQRCode() {
     const { sqrMatrix } = this.state;
     const { blockHeight, positiveColor, negativeColor } = this.props;
     let startIndex = -1;
@@ -105,6 +105,6 @@ export default class QRCode extends React.Component<Props, State> {
 
   render() {
     const { sqrMatrix } = this.state;
-    return sqrMatrix.length ? this._renderQRCode() : null;
+    return sqrMatrix.length ? this.renderQRCode() : null;
   }
 }
