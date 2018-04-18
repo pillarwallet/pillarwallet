@@ -3,11 +3,11 @@ import * as React from 'react';
 import { Linking, Text } from 'react-native';
 
 import Container from 'components/Container';
-import MultiButtonWrapper from 'components/MultiButtonWrapper';
-
+import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
+import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Divider from 'components/Divider';
 import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
@@ -84,30 +84,31 @@ export default class LegalTerms extends React.Component<{}, State> {
 
     return (
       <Container>
+        <Wrapper padding>
 
-
-        <Title>Let&#39;s Review</Title>
-        <Text style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Text>
-        <CheckboxItem marginBottom>
-          { this.buildCheckBox('box01', box01) }
-          <CheckboxText>
+          <Title>Let&#39;s Review</Title>
+          <Text style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Text>
+          <CheckboxItem marginBottom>
+            { this.buildCheckBox('box01', box01) }
+            <CheckboxText>
             I understand that my funds are held securely on this device, not by a company.
-          </CheckboxText>
-        </CheckboxItem>
+            </CheckboxText>
+          </CheckboxItem>
 
-        <CheckboxItem marginBottom>
-          { this.buildCheckBox('box02', box02) }
-          <CheckboxText>
+          <CheckboxItem marginBottom>
+            { this.buildCheckBox('box02', box02) }
+            <CheckboxText>
             I understand that if this app is moved to a new phone or deleted,
             the only way my funds and contacts can be recovered is by using my 12 word backup phrase.
-          </CheckboxText>
-        </CheckboxItem>
+            </CheckboxText>
+          </CheckboxItem>
+        </Wrapper>
         {termsViewVisible && (
-          <Footer>
+          <Footer padding>
             <CheckboxItem marginBottom>
               { this.buildCheckBox('box03', box03) }
               <CheckboxText>
-                I have read, understand, and agree to the Terms of Use.
+                  I have read, understand, and agree to the Terms of Use.
               </CheckboxText>
             </CheckboxItem>
             <Divider />

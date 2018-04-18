@@ -39,7 +39,7 @@ const appFlow = StackNavigator({
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [HOME]: ICOScreen,
+  [HOME]: LegalTermsScreen,
   appFlow,
   onBoardingFlow,
   importWalletFlow,
