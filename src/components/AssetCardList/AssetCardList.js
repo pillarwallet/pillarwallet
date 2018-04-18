@@ -115,7 +115,7 @@ export default class AssetCardList extends React.Component<Props, State> {
     const { card01, card02 } = this.state;
 
     return (
-      <View style={{ backgroundColor: 'orange' }}>
+      <View>
 
         <ScrollView style={{ height: '100%' }}>
           { this.headerComponent() }

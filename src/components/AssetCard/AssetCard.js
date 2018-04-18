@@ -24,6 +24,7 @@ type Props = {
 type State = {
     pressed: any,
     animCardHeight: any,
+    animCardWidth: any,
 }
 
 // const {
@@ -44,11 +45,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   cardContainer: {
-    flex: 1,
+    height: '100%',
   },
   cardContent: {
-    flex: 1,
-    height: 200,
+    flex: 0.5,
 
   },
   cardHistory: {
@@ -60,6 +60,7 @@ export default class AssetCard extends React.Component<Props, State> {
   state = {
     pressed: false,
     animCardHeight: new Animated.Value(180),
+    animCardWidth: new Animated.Value(30),
   };
 
   onCardTap = () => {
@@ -78,35 +79,56 @@ export default class AssetCard extends React.Component<Props, State> {
 
 grow = () => {
   // this.setState({ TopBorderRadius: 0, BottomBorderRadius: 5 });
-  Animated.spring(
-    this.state.animCardHeight,
-    {
-      toValue: 200,
-
-    },
-  ).start();
+  Animated.parallel([
+    Animated.spring(
+      this.state.animCardHeight,
+      {
+        toValue: 200,
+      },
+    ),
+    Animated.spring(
+      this.state.animCardWidth,
+      {
+        toValue: 20,
+      },
+    ),
+  ]).start();
 }
 
 shrink = () => {
-  Animated.timing(
-    this.state.animCardHeight,
-    {
-      toValue: 180,
-      duration: 200,
-    },
-  ).start();
+  Animated.parallel([
+    Animated.spring(
+      this.state.animCardHeight,
+      {
+        toValue: 180,
+      },
+    ),
+    Animated.spring(
+      this.state.animCardWidth,
+      {
+        toValue: 30,
+      },
+    ),
+  ]).start();
   // this.setState({ TopBorderRadius: 5, BottomBorderRadius: 0 });
 }
 
 render() {
-  const { animCardHeight, pressed } = this.state;
+  const {
+    animCardHeight,
+    animCardWidth,
+    pressed,
+  } = this.state;
+
   return (
     <View>
       <TouchableWithoutFeedback onPress={this.onCardTap}>
         <Animated.View
           color={this.props.color}
           refs="card"
-          style={[styles.card, { height: animCardHeight, backgroundColor: this.props.color }]}
+          style={[styles.card, {
+ height: animCardHeight, marginLeft: animCardWidth, marginRight: animCardWidth, backgroundColor: this.props.color,
+}]}
         >
           <Icon />
           <Name>{this.props.name}</Name>
