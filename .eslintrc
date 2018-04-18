@@ -39,7 +39,10 @@
     "import/extensions": ["off"],
     "no-case-declarations": ["off"],
     "import/prefer-default-export": ["off"],
+    "react/no-array-index-key": ["off"],
     "react/no-unused-prop-types": ["off"],
-    "no-underscore-dangle": ["off"]
+    "react/no-did-mount-set-state": ["off"],
+    "no-underscore-dangle": ["off"],
+    "no-confusing-arrow": ["off"],
   }
 }

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Platform, Dimensions, Vibration } from 'react-native';
+import { Vibration, ActivityIndicator } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import styled from 'styled-components/native';
 
@@ -27,7 +27,7 @@ const Rectangle = styled.View`
   height: 250;
   width: 250;
   borderWidth: 2;
-  borderColor: ${(props) => props.color};
+  borderColor: ${props => props.color};
   backgroundColor: transparent;
 `;
 
@@ -46,11 +46,12 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   static defaultProps = {
     reactivate: false,
     rectangleColor: '#00BFFF',
+    onRead: () => {},
   };
 
   state = {
     authorizationState: PENDING,
-    isScanning: false
+    isScanning: false,
   };
 
   async componentDidMount() {
@@ -58,15 +59,15 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     this.setState({
       authorizationState: status.toUpperCase() === PERMISSION_GRANTED ? AUTHORIZED : DECLINED,
     });
-  };
+  }
 
   handleQRRead = (data: Object) => {
     const { onRead, reactivate } = this.props;
-    const { isScanning } = this.state
+    const { isScanning } = this.state;
     if (!isScanning) {
       this.setState({ isScanning: true }, () => {
         Vibration.vibrate();
-        onRead && onRead(data);
+        onRead(data);
       });
     }
 
@@ -76,13 +77,15 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   };
 
   render() {
+    const { authorizationState } = this.state;
     const { rectangleColor } = this.props;
     return (
-      <Scanner type={Camera.Constants.Type.back} onBarCodeRead={this.handleQRRead}>
-        <RectangleContainer>
-          <Rectangle color={rectangleColor} />
-        </RectangleContainer>
-      </Scanner>
+      authorizationState === AUTHORIZED ?
+        <Scanner type={Camera.Constants.Type.back} onBarCodeRead={this.handleQRRead}>
+          <RectangleContainer>
+            <Rectangle color={rectangleColor} />
+          </RectangleContainer>
+        </Scanner> : <ActivityIndicator />
     );
   }
 }
