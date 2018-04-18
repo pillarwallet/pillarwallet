@@ -66,7 +66,7 @@ class Intro extends React.Component<Props> {
 
     return (
       <Container center>
-        <IntroImage source={{ uri: introImage }} />
+        <IntroImage source={introImage} />
         <MultiButtonWrapper>
           <Button
             title="Create new wallet"
