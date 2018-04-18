@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   header: {
     fontWeight: 'bold',
     fontSize: 20,
-  }
+  },
 });
 
 export default class TXHistory extends React.Component<Props, State> {

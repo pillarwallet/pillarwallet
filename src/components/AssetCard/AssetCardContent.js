@@ -60,7 +60,7 @@ render() {
         <View style={{ flexDirection: 'column', alignItems: 'center' }} >
           <Image
             style={{ width: 50, height: 50 }}
-            source={'/assets/images/btn_iconSend.png'}
+            source={require('/assets/images/btn_iconSend.png')}
           />
           <Button title="Send" />
         </View>
