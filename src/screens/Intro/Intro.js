@@ -79,7 +79,6 @@ class Intro extends React.Component<Props, State> {
   }
 
   handleModalRemove = () => {
-    console.log("removeModal");
     this.setState({
       modalDisplay: false,
     });
