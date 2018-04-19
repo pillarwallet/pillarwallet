@@ -1,9 +1,7 @@
 // @flow
 import * as React from 'react';
-import { View, Button } from 'react-native';
+import { Button } from 'react-native';
 
-import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import PinDots from './PinDots';
 import PinDot from './PinDot';
 import PinWrapper from './PinWrapper';
