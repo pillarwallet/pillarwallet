@@ -9,6 +9,7 @@ import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
+import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import FakeInput from 'components/FakeInput';
 import InputGroup from 'components/InputGroup';
 import Label from 'components/Label';
@@ -119,10 +120,12 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           <Text style={{ paddingBottom: 15 }}>12-word phrase</Text>
           <Text style={{ paddingBottom: 30 }}>{shuffledWordList}</Text>
 
-          <Button title="Debug skip" onPress={this.goToNextScreen} width="100%" />
         </Wrapper>
         <Footer>
-          <Button title="Next" onPress={this.goToNextScreen} disabled={!isFormValid} />
+          <MultiButtonWrapper>
+            <Button marginBottom title="Debug skip" onPress={this.goToNextScreen} />
+            <Button title="Next" onPress={this.goToNextScreen} disabled={!isFormValid} />
+          </MultiButtonWrapper>
         </Footer>
       </Container>
     );

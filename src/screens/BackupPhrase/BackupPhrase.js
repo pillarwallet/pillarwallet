@@ -57,6 +57,8 @@ class BackupPhrase extends React.Component<Props, {}> {
             { wordList }
           </MneumonicPhrase>
           <Button title="Regenerate" small onPress={this.props.generateWalletMnemonic} width="100%" />
+
+
         </Wrapper>
         <Footer>
           <ButtonHelpText>Did your write down your backup phrase?</ButtonHelpText>
