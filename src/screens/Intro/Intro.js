@@ -24,31 +24,6 @@ class Intro extends React.Component<Props> {
     checkIfWalletExists();
   }
 
-  setBackground = (btn: number) => {
-    const obj = {
-      height: 45,
-      flexDirection: 'row',
-      borderColor: 'white',
-      borderWidth: 1,
-      borderRadius: 8,
-      marginBottom: 10,
-      marginTop: 10,
-      alignSelf: 'stretch',
-      justifyContent: 'center',
-      backgroundColor: '',
-    };
-
-    if (btn === 0) {
-      obj.backgroundColor = '#48BBEC';
-    } else if (btn === 1) {
-      obj.backgroundColor = '#E77AAE';
-    } else {
-      obj.backgroundColor = '#758BF4';
-    }
-
-    return obj;
-  };
-
   createNewWallet = () => {
     this.props.navigation.navigate(BACKUP_PHRASE);
   };
