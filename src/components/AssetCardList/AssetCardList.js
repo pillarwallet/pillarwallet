@@ -16,7 +16,8 @@ const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
 
 type Props = {
   fetchEtherBalance: () => Function,
-  assets: Object
+  assets: Object,
+  wallet: Object,
 }
 
 type State = {
@@ -38,6 +39,7 @@ class AssetCardList extends React.Component<Props, State> {
   }
 
   componentWillMount() {
+    // TODO: Need to refactor the below line
     this.props.wallet.data.address = address;
     const { fetchEtherBalance } = this.props;
     fetchEtherBalance();
@@ -138,7 +140,7 @@ class AssetCardList extends React.Component<Props, State> {
 
   generateAssetsList(assets) {
     const assetsList = [];
-    for (let i = 0; i < Object.keys(assets).length; i++) {
+    for (let i = 0; i < Object.keys(assets).length; i += 1) {
       const token = Object.keys(assets)[i];
       const displayAmount = +parseFloat(assets[token].balance).toFixed(4);
 
