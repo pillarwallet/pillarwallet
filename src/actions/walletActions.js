@@ -19,7 +19,7 @@ import {
   NEW_WALLET_SET_PIN,
   NEW_WALLET_CONFIRM_PIN,
 } from 'constants/walletConstants';
-import { ASSETS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import { ASSETS, LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { validatePin } from 'utils/validators';
@@ -205,6 +205,6 @@ export const confirmPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    dispatch(NavigationActions.navigate({ routeName: PIN_CODE_CONFIRMATION }));
+    dispatch(NavigationActions.navigate({ routeName: LEGAL_TERMS }));
   };
 };

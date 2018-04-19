@@ -43,7 +43,13 @@ const onBoardingFlow = StackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  [NEW_WALLET]: NewWalletScreen,
+  [LEGAL_TERMS]: LegalTermsScreen,
+  [NEW_WALLET]: {
+    screen: NewWalletScreen,
+    navigationOptions: {
+      headerLeft: null,
+    },
+  },
 });
 
 const importWalletFlow = StackNavigator({
@@ -68,7 +74,6 @@ const appFlow = StackNavigator({
       headerLeft: null,
     },
   },
-  [LEGAL_TERMS]: LegalTermsScreen,
   [ICO]: ICOScreen,
 });
 
