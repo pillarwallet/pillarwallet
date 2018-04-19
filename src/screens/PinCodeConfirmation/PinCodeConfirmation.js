@@ -8,7 +8,7 @@ import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
-import { NEW_WALLET_PIN_CONFIRM_ERROR, WALLET_ERROR } from 'constants/walletConstants';
+import { validatePin } from 'utils/validators';
 
 type Props = {
   confirmPinForNewWallet: (pin: string) => Function,
@@ -16,36 +16,31 @@ type Props = {
 };
 
 type State = {
-  showError: boolean,
   errorMessage: string,
 };
 
 class PinCodeConfirmation extends React.Component<Props, State> {
   state = {
-    showError: false,
     errorMessage: '',
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const { walletState, error } = nextProps.wallet;
-
-    const showError = walletState === WALLET_ERROR && error.code === NEW_WALLET_PIN_CONFIRM_ERROR;
-    const errorMessage = showError && error.message;
-
-    return {
-      ...prevState,
-      showError,
-      errorMessage,
-    };
-  }
-
   handlePinSubmit = (pin: string) => {
+    const { data: wallet } = this.props.wallet;
+    const previousPin = wallet.pin;
+    const validationError = validatePin(pin, previousPin);
+
+    if (validationError) {
+      this.setState({
+        errorMessage: validationError,
+      });
+      return;
+    }
+
     this.props.confirmPinForNewWallet(pin);
   };
 
   handlePinChange = () => {
     this.setState({
-      showError: false,
       errorMessage: '',
     });
   };
@@ -60,7 +55,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
           pageInstructions="Confirm your Passcode"
           showForgotButton={false}
         />
-        {this.state.showError && <Text>{this.state.errorMessage}</Text>}
+        {this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
       </Container>
     );
   }
