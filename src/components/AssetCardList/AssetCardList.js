@@ -7,7 +7,6 @@ import {
   View,
 }
   from 'react-native';
-import type { Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
@@ -23,10 +22,7 @@ type Props = {
 type State = {
   animHeaderHeight: any,
   animCardPositionY: any,
-
   cardActive: boolean,
-  card01: boolean,
-  card02: boolean,
 }
 
 class AssetCardList extends React.Component<Props, State> {
@@ -34,8 +30,6 @@ class AssetCardList extends React.Component<Props, State> {
     animHeaderHeight: new Animated.Value(200),
     animCardPositionY: new Animated.Value(30),
     cardActive: false,
-    card01: false,
-    card02: false,
   }
 
   componentWillMount() {
@@ -86,12 +80,11 @@ class AssetCardList extends React.Component<Props, State> {
     ]);
   }
 
-  checkStateStatus = (status: boolean) => {
-    if (status === true) {
-      this.setCardActive();
-    } else {
-      this.setCardInactive();
+  getTokenColor(token) {
+    if (token === 'ETH') {
+      return '#B4D455';
     }
+    return '#0000FF';
   }
 
   headerComponent() {
@@ -112,11 +105,12 @@ class AssetCardList extends React.Component<Props, State> {
     return component;
   }
 
-  getTokenColor(token) {
-    if (token === 'ETH') {
-      return '#B4D455';
+  checkStateStatus = (status: boolean) => {
+    if (status === true) {
+      this.setCardActive();
+    } else {
+      this.setCardInactive();
     }
-    return '#0000FF';
   }
 
   hitAssetCard = (event: any) => {

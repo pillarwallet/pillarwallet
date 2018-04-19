@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { lighten } from 'polished';
 import TXHistory from 'components/TXHistory';
 import Icon from './Icon';
 import Background from './Background';
@@ -104,6 +105,9 @@ render() {
     pressed,
   } = this.state;
 
+  const linearGradientColorStart = this.props.color;
+  const linearGradientColorEnd = lighten(0.2, this.props.color);
+
   return (
     <View>
       <TouchableWithoutFeedback onPress={this.onCardTap}>
@@ -116,7 +120,7 @@ render() {
             marginRight: animCardWidth,
           }]}
         >
-          <Background colors={['#666666', '#B0B0B0']} start={[0, 0]} end={[1, 1]}>
+          <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 0]} end={[1, 1]}>
 
             <Icon />
             <Name>{this.props.name}</Name>
