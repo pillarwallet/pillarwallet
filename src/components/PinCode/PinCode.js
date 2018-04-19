@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Button } from 'react-native';
+import { View, Button } from 'react-native';
 
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import PinDots from './PinDots';
 import PinDot from './PinDot';
+import PinWrapper from './PinWrapper';
 import KeyPad from './KeyPad';
 import KeyInput from './KeyInput';
 
@@ -112,16 +113,14 @@ export default class PinCode extends React.Component<Props, State> {
     const keyInputs = this.generatePinInputs();
 
     return (
-      <Wrapper>
+      <PinWrapper>
         <PinDots>
           {pinCodeDots}
         </PinDots>
-        <Footer>
-          <KeyPad>
-            {keyInputs}
-          </KeyPad>
-        </Footer>
-      </Wrapper>
+        <KeyPad>
+          {keyInputs}
+        </KeyPad>
+      </PinWrapper>
     );
   }
 }
