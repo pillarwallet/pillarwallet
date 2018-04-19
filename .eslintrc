@@ -43,6 +43,7 @@
     "react/no-array-index-key": ["off"],
     "react/no-unused-prop-types": ["off"],
     "no-underscore-dangle": ["off"],
-    "no-confusing-arrow": ["off"]
+    "no-confusing-arrow": ["off"],
+    "function-paren-newline": [0]
   }
 }

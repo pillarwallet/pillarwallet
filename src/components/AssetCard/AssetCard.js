@@ -6,12 +6,11 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import TXHistory from 'components/TXHistory';
 import Icon from './Icon';
 import Name from './Name';
 import Amount from './Amount';
-
-import TXHistory from '../TXHistory/TXHistory';
-import AssetCardContent from './AssetCardContent';
+import Content from './Content';
 
 type Props = {
   name: string,
@@ -133,7 +132,7 @@ render() {
 
       {pressed && (
         <View style={styles.cardContainer}>
-          <AssetCardContent style={styles.cardContent} />
+          <Content style={styles.cardContent} />
           <TXHistory style={styles.cardHistory} />
         </View>
       ) }
@@ -141,4 +140,3 @@ render() {
   );
 }
 }
-

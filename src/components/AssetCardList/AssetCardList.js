@@ -8,10 +8,15 @@ import {
 }
   from 'react-native';
 import type { Asset } from 'models/Asset';
+import { connect } from 'react-redux';
+import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 
+const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
+
 type Props = {
-  assets: Asset[]
+  fetchEtherBalance: () => Function,
+  assets: Object
 }
 
 type State = {
@@ -23,13 +28,19 @@ type State = {
   card02: boolean,
 }
 
-export default class AssetCardList extends React.Component<Props, State> {
+class AssetCardList extends React.Component<Props, State> {
   state = {
     animHeaderHeight: new Animated.Value(200),
     animCardPositionY: new Animated.Value(30),
     cardActive: false,
     card01: false,
     card02: false,
+  }
+
+  componentWillMount() {
+    this.props.wallet.data.address = address;
+    const { fetchEtherBalance } = this.props;
+    fetchEtherBalance();
   }
 
   onScroll = (event: any) => {
@@ -118,42 +129,57 @@ export default class AssetCardList extends React.Component<Props, State> {
     return component;
   }
 
+  getTokenColor(token) {
+    if (token === 'ETH') {
+      return '#B4D455';
+    }
+    return '#0000FF';
+  }
+
+  generateAssetsList(assets) {
+    const assetsList = [];
+    for (let i = 0; i < Object.keys(assets).length; i++) {
+      const token = Object.keys(assets)[i];
+      const displayAmount = +parseFloat(assets[token].balance).toFixed(4);
+
+      assetsList.push(
+        <Animated.View style={{ marginTop: this.state.animCardPositionY }}>
+          <AssetCard
+            name={assets[token].id}
+            amount={displayAmount}
+            color={this.getTokenColor(token)}
+            onTap={this.hitAssetCard}
+            tag="card01"
+          />
+        </Animated.View>,
+      );
+    }
+
+    return assetsList;
+  }
+
+
   render() {
-    const { card01, card02 } = this.state;
+    const { assets: { data: assets } } = this.props;
+
+    const assetsList = this.generateAssetsList(assets);
 
     return (
       <View>
-
         <ScrollView style={{ height: '100%' }} onScroll={this.onScroll} scrollEventThrottle={200}>
           { this.headerComponent() }
-
-          {!card01 && (
-          <Animated.View style={{ marginTop: this.state.animCardPositionY }}>
-            <AssetCard
-              name={this.props.assets[0].name}
-              amount={this.props.assets[0].amount}
-              color={this.props.assets[0].color}
-              onTap={this.hitAssetCard}
-              tag="card01"
-            />
-          </Animated.View>
-          )}
-
-          {!card02 && (
-          <Animated.View style={{ marginTop: this.state.animCardPositionY }}>
-            <AssetCard
-              name={this.props.assets[1].name}
-              amount={this.props.assets[1].amount}
-              color={this.props.assets[1].color}
-              onTap={this.hitAssetCard}
-              tag="card02"
-            />
-          </Animated.View>
-          )}
-
+          { assetsList }
         </ScrollView>
       </View>
     );
   }
 }
 
+const mapStateToProps = ({ wallet, assets }) => ({ wallet, assets });
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  fetchEtherBalance: () =>
+    dispatch(fetchEtherBalanceAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AssetCardList);

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
 
 });
 
-export default class AssetCardContent extends React.Component<Props, State> {
+export default class Content extends React.Component<Props, State> {
   state = {
     animFadeIn: new Animated.Value(0),
   }
