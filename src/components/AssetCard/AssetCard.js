@@ -28,16 +28,6 @@ type State = {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    height: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    borderRadius: 10,
-    marginBottom: 10,
-    marginLeft: 10,
-    marginRight: 10,
-  },
   cardContainer: {
     height: '100%',
   },
@@ -120,9 +110,11 @@ render() {
         <Animated.View
           color={this.props.color}
           refs="card"
-          style={[styles.card, {
- height: animCardHeight, marginLeft: animCardWidth, marginRight: animCardWidth, backgroundColor: this.props.color,
-}]}
+          style={[{
+            height: animCardHeight,
+            marginLeft: animCardWidth,
+            marginRight: animCardWidth,
+          }]}
         >
           <Background colors={['#666666', '#B0B0B0']} start={[0, 0]} end={[1, 1]}>
 

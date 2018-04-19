@@ -5,8 +5,9 @@ import { LinearGradient } from 'expo';
 
 const Background = styled(LinearGradient)`
   flex: 1;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 20px;
+  border-radius: 20px;
+  height: 100;
 `;
 
 export default Background;

@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import Container from 'components/Container';
 import AssetCardList from 'components/AssetCardList';
 
 const assets = [

@@ -86,25 +86,6 @@ class AssetCardList extends React.Component<Props, State> {
     ]);
   }
 
-  hitAssetCard = (event: any) => {
-    if (event === 'card01') {
-      this.setState({
-        cardActive: !this.state.cardActive,
-        card02: !this.state.cardActive,
-      }, () => {
-        this.checkStateStatus(this.state.cardActive);
-      });
-    }
-    if (event === 'card02') {
-      this.setState({
-        cardActive: !this.state.cardActive,
-        card01: !this.state.cardActive,
-      }, () => {
-        this.checkStateStatus(this.state.cardActive);
-      });
-    }
-  }
-
   checkStateStatus = (status: boolean) => {
     if (status === true) {
       this.setCardActive();
@@ -136,6 +117,23 @@ class AssetCardList extends React.Component<Props, State> {
       return '#B4D455';
     }
     return '#0000FF';
+  }
+
+  hitAssetCard = (event: any) => {
+    if (event === 'card01') {
+      this.setState({
+        cardActive: !this.state.cardActive,
+      }, () => {
+        this.checkStateStatus(this.state.cardActive);
+      });
+    }
+    if (event === 'card02') {
+      this.setState({
+        cardActive: !this.state.cardActive,
+      }, () => {
+        this.checkStateStatus(this.state.cardActive);
+      });
+    }
   }
 
   generateAssetsList(assets) {
