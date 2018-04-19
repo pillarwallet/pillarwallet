@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import TXHistory from 'components/TXHistory';
 import Icon from './Icon';
+import Background from './Background';
 import Name from './Name';
 import Amount from './Amount';
 import Content from './Content';
@@ -32,7 +33,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    padding: 12,
     borderRadius: 10,
     marginBottom: 10,
     marginLeft: 10,
@@ -124,10 +124,14 @@ render() {
  height: animCardHeight, marginLeft: animCardWidth, marginRight: animCardWidth, backgroundColor: this.props.color,
 }]}
         >
-          <Icon />
-          <Name>{this.props.name}</Name>
-          <Amount>{this.props.amount}</Amount>
+          <Background colors={['#666666', '#B0B0B0']} start={[0, 0]} end={[1, 1]}>
+
+            <Icon />
+            <Name>{this.props.name}</Name>
+            <Amount>{this.props.amount}</Amount>
+          </Background>
         </Animated.View>
+
       </TouchableWithoutFeedback>
 
       {pressed && (

@@ -14,9 +14,7 @@ const assets = [
 
 const Assets = () => {
   return (
-    <Container>
-      <AssetCardList assets={assets} />
-    </Container>
+    <AssetCardList assets={assets} />
   );
 };
 export default Assets;

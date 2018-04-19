@@ -61,9 +61,20 @@ export const fetchEtherBalanceAction = () => {
     const { wallet: { data: wallet } } = getState();
     const provider = providers.getDefaultProvider('ropsten'); // MOVE TO .ENV ONCE DESIGNED AND IMPLEMETNED
     const balance = await provider.getBalance(wallet.address).then(utils.formatEther);
+    const history = fetch('http://bcx-dev.pillarproject.io:8000/txhistory', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        firstParam: 'yourValue',
+        secondParam: 'yourOtherValue',
+      }),
+    });
     dispatch({
       type: UPDATE_ASSET,
-      payload: { id: ETH, balance },
+      payload: { id: ETH, balance, history },
     });
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -76,4 +87,3 @@ export default {
   sendAssetAction,
   fetchEtherBalanceAction,
 };
-

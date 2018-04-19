@@ -118,7 +118,7 @@ class AssetCardList extends React.Component<Props, State> {
       (
         <Animated.View style={
       {
-        backgroundColor: 'cyan',
+        backgroundColor: '#2CB3F8',
         height: this.state.animHeaderHeight,
         justifyContent: 'center',
         alignItems: 'center',
@@ -139,31 +139,26 @@ class AssetCardList extends React.Component<Props, State> {
   }
 
   generateAssetsList(assets) {
-    const assetsList = [];
-    for (let i = 0; i < Object.keys(assets).length; i += 1) {
-      const token = Object.keys(assets)[i];
-      const displayAmount = +parseFloat(assets[token].balance).toFixed(4);
-
-      assetsList.push(
-        <Animated.View style={{ marginTop: this.state.animCardPositionY }}>
-          <AssetCard
-            name={assets[token].id}
-            amount={displayAmount}
-            color={this.getTokenColor(token)}
-            onTap={this.hitAssetCard}
-            tag="card01"
-          />
-        </Animated.View>,
-      );
-    }
-
-    return assetsList;
+    return Object.keys(assets)
+      .map(id => assets[id])
+      .map(({ id, balance }) => {
+        const displayAmount = +parseFloat(balance).toFixed(4);
+        return (
+          <Animated.View key={id} style={{ marginTop: this.state.animCardPositionY }}>
+            <AssetCard
+              name={id}
+              amount={displayAmount}
+              color={this.getTokenColor(id)}
+              onTap={this.hitAssetCard}
+              tag="card01"
+            />
+          </Animated.View>);
+      });
   }
 
 
   render() {
     const { assets: { data: assets } } = this.props;
-
     const assetsList = this.generateAssetsList(assets);
 
     return (
