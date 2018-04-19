@@ -19,7 +19,6 @@ type Props = {
 type State = {
   animFadeInBackground: any,
   animSlideModalVertical: any,
-  isDismissing: boolean,
 };
 
 const window = Dimensions.get('window');
@@ -28,7 +27,6 @@ export default class SlideModal extends React.Component<Props, State> {
   state = {
     animFadeInBackground: new Animated.Value(0),
     animSlideModalVertical: new Animated.Value(window.height),
-    isDismissing: false,
   };
 
   componentDidMount() {
@@ -38,7 +36,7 @@ export default class SlideModal extends React.Component<Props, State> {
         duration: 200,
       }),
       Animated.spring(this.state.animSlideModalVertical, {
-        toValue: 200,
+        toValue: 0,
       }),
     ]).start();
   }
@@ -46,15 +44,7 @@ export default class SlideModal extends React.Component<Props, State> {
   handleScroll = (event: any) => {
     const distanceY = event.nativeEvent.contentOffset.y;
     if (distanceY <= -50) {
-
       this.dismissAnimation();
-      // if (!this.state.isDismissing) {
-      //   this.setState({
-      //     isDismissing: true,
-      //   }, () => {
-      //     this.dismissAnimation();
-      //   });
-      // }
     }
   }
 
@@ -62,11 +52,10 @@ export default class SlideModal extends React.Component<Props, State> {
     Animated.parallel([
       Animated.timing(this.state.animFadeInBackground, {
         toValue: 0,
-        duration: 500,
       }),
-      Animated.spring(this.state.animSlideModalVertical, {
+      Animated.timing(this.state.animSlideModalVertical, {
         toValue: window.height,
-        duration: 500,
+        duration: 200,
       }),
 
     ]).start(this.callback);
@@ -88,12 +77,17 @@ export default class SlideModal extends React.Component<Props, State> {
         <Animated.View style={[styles.dismissOverlay, { opacity: animFadeInBackground }]} />
 
         <View style={styles.modalScrollContainer}>
-          <ScrollView onScroll={this.handleScroll} scrollEventThrottle={300} >
+          <ScrollView
+            onScroll={this.handleScroll}
+            scrollEventThrottle={300}
+            showsVerticalScrollIndicator="false"
+            contentContainerStyle={styles.scrollContentStyle}
+          >
 
             <Animated.View style={[styles.sliderContainer,
               {
  marginTop: animSlideModalVertical,
-                height: window.height - 200,
+                height: window.height * 2,
 }]}
             >
               <View style={styles.sliderHeaderContainer}>

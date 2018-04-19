@@ -23,9 +23,21 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
 
+  scrollContentStyle: {
+    marginTop: 150,
+    overflow: 'visible',
+    height: 20,
+  },
+
   sliderContainer: {
     backgroundColor: 'white',
     padding: 20,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+
   },
 
   sliderHeaderContainer: {
