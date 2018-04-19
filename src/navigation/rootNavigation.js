@@ -14,6 +14,7 @@ import LegalTermsScreen from 'screens/LegalTerms';
 import ICOScreen from 'screens/ICO';
 import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
+import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 
 import {
   ASSETS,
@@ -24,7 +25,7 @@ import {
   LOGIN, HOME,
   LEGAL_TERMS,
   ICO,
-  IMPORT_WALLET,
+  IMPORT_WALLET, PIN_CODE_CONFIRMATION,
 } from 'constants/navigationConstants';
 
 const renderHomeButton = (navigation) => {
@@ -41,6 +42,7 @@ const onBoardingFlow = StackNavigator({
   },
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+  [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   [NEW_WALLET]: NewWalletScreen,
 });
 

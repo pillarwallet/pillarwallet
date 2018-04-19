@@ -8,7 +8,11 @@ import {
   SET_WALLET_ERROR,
   WALLET_ERROR,
   IMPORT_SET_PIN,
-  UPDATE_WALLET_MNEMONIC, NEW_WALLET_SET_PIN,
+  UPDATE_WALLET_MNEMONIC,
+  NEW_WALLET_SET_PIN,
+  NEW_WALLET_CONFIRM_PIN,
+  PIN_SET,
+  PIN_CONFIRMED,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -62,7 +66,17 @@ export default function newWalletReducer(
     case DECRYPT_WALLET:
       return { ...state, data: action.payload, walletState: DECRYPTED };
     case NEW_WALLET_SET_PIN:
-      return { ...state, data: { ...state.data, pin: action.payload, confirmedPin: '' } };
+      return {
+        ...state,
+        data: { ...state.data, pin: action.payload, confirmedPin: '' },
+        walletState: PIN_SET,
+      };
+    case NEW_WALLET_CONFIRM_PIN:
+      return {
+        ...state,
+        data: { ...state.data, confirmedPin: action.payload },
+        walletState: PIN_CONFIRMED,
+      };
     case IMPORT_SET_PIN:
       return { ...state, data: action.payload, walletState: IMPORT_SET_PIN };
     default:

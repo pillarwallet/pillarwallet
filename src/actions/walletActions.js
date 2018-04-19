@@ -18,6 +18,8 @@ import {
   IMPORTED,
   NEW_WALLET_PIN_ERROR,
   NEW_WALLET_SET_PIN,
+  NEW_WALLET_CONFIRM_PIN,
+  NEW_WALLET_PIN_CONFIRM_ERROR,
 } from 'constants/walletConstants';
 import { ASSETS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
@@ -206,6 +208,31 @@ export const setPinForNewWalletAction = (pin: string) => {
 
     dispatch({
       type: NEW_WALLET_SET_PIN,
+      payload: pin,
+    });
+    dispatch(NavigationActions.navigate({ routeName: PIN_CODE_CONFIRMATION }));
+  };
+};
+
+export const confirmPinForNewWalletAction = (pin: string) => {
+  return async (dispatch: Function, getState: () => any) => {
+    const currentState = getState();
+    // console.log('currentState', currentState);
+    const validationError = validatePin(pin, currentState.wallet.data.pin);
+
+    if (validationError) {
+      dispatch({
+        type: SET_WALLET_ERROR,
+        payload: {
+          code: NEW_WALLET_PIN_CONFIRM_ERROR,
+          message: validationError,
+        },
+      });
+      return;
+    }
+
+    dispatch({
+      type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
     dispatch(NavigationActions.navigate({ routeName: PIN_CODE_CONFIRMATION }));
