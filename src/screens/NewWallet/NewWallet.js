@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import ethers from 'ethers';
 
 import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
 import PinCode from 'components/PinCode';
@@ -78,12 +79,13 @@ class NewWallet extends React.Component<Props, State> {
     if (walletState === CREATED) {
       return (
         <Container>
-          <Title>Wallet Created</Title>
-          <Text style={{ marginBottom: 10 }}>Password: {pin}</Text>
-          <Text style={{ marginBottom: 10 }}>Mnemonic: {mnemonic}</Text>
-          <Text style={{ marginBottom: 10 }}>Public address: {wallet.address}</Text>
-          <Text style={{ marginBottom: 10 }}>Private key: {wallet.privateKey}</Text>
-
+          <Wrapper padding>
+            <Title>Wallet Created</Title>
+            <Text style={{ marginBottom: 10 }}>Password: {pin}</Text>
+            <Text style={{ marginBottom: 10 }}>Mnemonic: {mnemonic}</Text>
+            <Text style={{ marginBottom: 10 }}>Public address: {wallet.address}</Text>
+            <Text style={{ marginBottom: 10 }}>Private key: {wallet.privateKey}</Text>
+          </Wrapper>
           <Footer>
             <Button
               onPress={this.goToLoginPage}

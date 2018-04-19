@@ -1,0 +1,3654 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QR code scanner should render QR code with a provided value 1`] = `
+<View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 56,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={56}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 56,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={56}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 32,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={32}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 56,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={56}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 56,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={56}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={64}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 80,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={80}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 72,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={72}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 32,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={32}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 32,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={32}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 32,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={32}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 32,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={32}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 64,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={64}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 56,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={56}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 32,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={32}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 56,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={56}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={40}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 32,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={32}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 48,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={48}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 24,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={24}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 40,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={40}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+  </View>
+  <View
+    height={8}
+    style={
+      Array [
+        Object {
+          "flexDirection": "row",
+          "height": 8,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 56,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={56}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 16,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={16}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 48,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={48}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "black",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={1}
+      width={8}
+    />
+    <View
+      negativeColor="white"
+      positiveColor="black"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "white",
+            "width": 8,
+          },
+          undefined,
+        ]
+      }
+      value={0}
+      width={8}
+    />
+  </View>
+</View>
+`;

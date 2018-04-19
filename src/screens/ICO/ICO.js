@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 
 import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Footer from 'components/Footer';
@@ -85,53 +86,56 @@ class ICO extends React.Component<Props, State> {
     const { assets: { data: assets, assetsState } } = this.props;
     return (
       <Container>
-        <Title>ICOs</Title>
-        <ScrollView
-          contentInset={{ bottom: 49 }}
-          automaticallyAdjustContentInsets={false}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {
-                this.props.fetchEtherBalance();
-              }}
-              tintColor="#EBEBEB"
-              title="Loading..."
-              colors={['#ff0000', '#00ff00', '#0000ff']}
-              progressBackgroundColor="#EBEBEB"
-            />
-          }
-        >
-          <Text style={{ marginBottom: 20 }}>Participate in the ICO</Text>
-          <Text style={{ marginBottom: 20 }}>{address}</Text>
-          <Text style={{ marginBottom: 20 }}>
-            You have: {assets[ETH] && assetsState !== FETCHING ? assets[ETH].balance : '*Fetching*'} ETH
-          </Text>
-          <Button small title="Participate" onPress={this.handlePopupState} />
-
-          <Modal
-            animationType="slide"
-            showCloseBtn="true"
-            transparent={false}
-            visible={isPopupOpen}
-            onRequestClose={this.handlePopupState}
+        <Wrapper padding>
+          <Title>ICOs</Title>
+          <ScrollView
+            contentInset={{ bottom: 49 }}
+            automaticallyAdjustContentInsets={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  this.props.fetchEtherBalance();
+                }}
+                tintColor="#EBEBEB"
+                title="Loading..."
+                colors={['#ff0000', '#00ff00', '#0000ff']}
+                progressBackgroundColor="#EBEBEB"
+              />
+            }
           >
-            <Container>
-              <Title>Participate in ICO</Title>
-              <Form
-                ref={(node) => {
+            <Text style={{ marginBottom: 20 }}>Participate in the ICO</Text>
+            <Text style={{ marginBottom: 20 }}>{address}</Text>
+            <Text style={{ marginBottom: 20 }}>
+              You have: {assets[ETH] && assetsState !== FETCHING ? assets[ETH].balance : '*Fetching*'} ETH
+            </Text>
+            <Button small title="Participate" onPress={this.handlePopupState} />
+            <Modal
+              animationType="slide"
+              showCloseBtn="true"
+              transparent={false}
+              visible={isPopupOpen}
+              onRequestClose={this.handlePopupState}
+            >
+              <Container>
+                <Wrapper padding>
+                  <Title>Participate in ICO</Title>
+                  <Form
+                    ref={(node) => {
                       this._form = node;
                     }}
-                type={ICO_TYPE}
-                value={value}
-                onChange={this.handleChange}
-              />
-              <Footer>
-                <Button marginBottom title="Send" onPress={this.handleICOTransaction} />
-              </Footer>
-            </Container>
-          </Modal>
-        </ScrollView>
+                    type={ICO_TYPE}
+                    value={value}
+                    onChange={this.handleChange}
+                  />
+                </Wrapper>
+                <Footer>
+                  <Button marginBottom title="Send" onPress={this.handleICOTransaction} />
+                </Footer>
+              </Container>
+            </Modal>
+          </ScrollView>
+        </Wrapper>
       </Container>
     );
   }

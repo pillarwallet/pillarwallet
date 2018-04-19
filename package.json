@@ -89,7 +89,8 @@
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
-      ".+\\.(png)$": "jest-static-stubs/png"
+      "^image![a-zA-Z0-9$_-]+$": "GlobalImageStub",
+      "^[@./a-zA-Z0-9$_-]+\\.(png|gif)$": "RelativeImageStub"
     }
   },
   "jest-html-reporter": {
@@ -100,11 +101,12 @@
   "dependencies": {
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
-    "jest-static-stubs": "^0.0.1",
     "lodash.merge": "^4.6.1",
     "pouchdb-react-native": "^6.4.1",
+    "qrcode": "^1.2.0",
     "react": "^16.3.0-alpha.1",
     "react-native": "^0.54.2",
+    "react-native-canvas": "^0.1.20",
     "react-navigation": "^1.5.11",
     "react-navigation-redux-helpers": "^1.0.5",
     "react-redux": "^5.0.7",
