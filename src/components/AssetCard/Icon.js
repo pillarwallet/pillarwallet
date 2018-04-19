@@ -2,13 +2,12 @@
 import styled from 'styled-components/native';
 
 const Icon = styled.View`
-  width: 36;
-  height: 36;
-  border-radius: 18;
+  border-radius: 20;
   background: black;
-  margin-right: 12;
+  width: 40;
+  height: 40;
+  background: black;
   align-self: flex-end;
-
 `;
 
 export default Icon;

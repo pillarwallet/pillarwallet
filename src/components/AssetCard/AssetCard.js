@@ -9,7 +9,9 @@ import {
 import { lighten } from 'polished';
 import TXHistory from 'components/TXHistory';
 import Icon from './Icon';
+import IconWrapper from './IconWrapper';
 import Background from './Background';
+import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
 import Amount from './Amount';
 import Content from './Content';
@@ -121,10 +123,13 @@ render() {
           }]}
         >
           <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 0]} end={[1, 1]}>
-
-            <Icon />
-            <Name>{this.props.name}</Name>
-            <Amount>{this.props.amount}</Amount>
+            <DetailsWrapper>
+              <Name>{this.props.name}</Name>
+              <Amount>{this.props.amount}</Amount>
+            </DetailsWrapper>
+            <IconWrapper>
+              <Icon />
+            </IconWrapper>
           </Background>
         </Animated.View>
 
