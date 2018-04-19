@@ -10,7 +10,10 @@ import Button from 'components/Button';
 import IntroImage from 'components/IntroImage';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 
+import SlideModal from 'components/Modals/SlideModal';
+
 const introImage = require('assets/images/logo_pillar_intro.png');
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -18,7 +21,15 @@ type Props = {
   wallet: Object,
 };
 
-class Intro extends React.Component<Props> {
+type State = {
+  modalDisplay: boolean,
+}
+
+class Intro extends React.Component<Props, State> {
+  state = {
+    modalDisplay: false,
+  }
+
   componentWillMount() {
     const { checkIfWalletExists } = this.props;
     checkIfWalletExists();
@@ -61,9 +72,22 @@ class Intro extends React.Component<Props> {
     this.props.navigation.navigate(IMPORT_WALLET);
   };
 
+  handleModalDisplay = () => {
+    this.setState({
+      modalDisplay: !this.state.modalDisplay,
+    });
+  }
+
+  handleModalRemove = () => {
+    console.log("removeModal");
+    this.setState({
+      modalDisplay: false,
+    });
+  }
+
   render() {
     const { wallet: { walletState } } = this.props;
-
+    const { modalDisplay } = this.state;
     return (
       <Container center>
         <IntroImage source={introImage} />
@@ -84,8 +108,19 @@ class Intro extends React.Component<Props> {
             onPress={this.importOldWallet}
             secondary
           />
+          <Button
+            title="Sample Slide Modal"
+            onPress={this.handleModalDisplay}
+            secondary
+          />
         </MultiButtonWrapper>
 
+        {modalDisplay && (
+        <SlideModal
+          title="receive"
+          modalDismiss={this.handleModalRemove}
+        />
+        )}
       </Container>
     );
   }
