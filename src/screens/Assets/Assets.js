@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
-import { View } from 'react-native';
+import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
+import Title from 'components/Title';
 import AssetCardList from 'components/AssetCardList';
 
 const assets = [
@@ -14,9 +16,12 @@ const assets = [
 
 const Assets = () => {
   return (
-    <View>
-      <AssetCardList assets={assets} />
-    </View>
+    <Container>
+      <Wrapper padding>
+        <Title>Assets</Title>
+        <AssetCardList assets={assets} />
+      </Wrapper>
+    </Container>
   );
 };
 export default Assets;
