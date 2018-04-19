@@ -16,8 +16,10 @@ import {
   IMPORT_SET_PIN,
   SET_WALLET_ERROR,
   IMPORTED,
+  NEW_WALLET_PIN_ERROR,
+  NEW_WALLET_SET_PIN,
 } from 'constants/walletConstants';
-import { ASSETS } from 'constants/navigationConstants';
+import { ASSETS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { validatePin } from 'utils/validators';
@@ -184,5 +186,28 @@ export const generateWalletMnemonicAction = () => {
         wordsToValidate,
       },
     });
+  };
+};
+
+export const setPinForNewWalletAction = (pin: string) => {
+  return async (dispatch: Function) => {
+    const validationError = validatePin(pin);
+
+    if (validationError) {
+      dispatch({
+        type: SET_WALLET_ERROR,
+        payload: {
+          code: NEW_WALLET_PIN_ERROR,
+          message: validationError,
+        },
+      });
+      return;
+    }
+
+    dispatch({
+      type: NEW_WALLET_SET_PIN,
+      payload: pin,
+    });
+    dispatch(NavigationActions.navigate({ routeName: PIN_CODE_CONFIRMATION }));
   };
 };

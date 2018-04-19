@@ -13,11 +13,13 @@ import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import LegalTermsScreen from 'screens/LegalTerms';
 import ICOScreen from 'screens/ICO';
 import ImportWalletScreen from 'screens/ImportWallet';
+import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 
 import {
   ASSETS,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
+  SET_WALLET_PIN_CODE,
   NEW_WALLET,
   LOGIN, HOME,
   LEGAL_TERMS,
@@ -38,6 +40,7 @@ const onBoardingFlow = StackNavigator({
     }),
   },
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
+  [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [NEW_WALLET]: NewWalletScreen,
 });
 

@@ -11,7 +11,7 @@ import Button from 'components/Button';
 import FakeInput from 'components/FakeInput';
 import InputGroup from 'components/InputGroup';
 import Label from 'components/Label';
-import { ENCODE_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {
   isFormValid: boolean,
@@ -78,7 +78,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   }
 
   goToNextScreen = () => {
-    this.props.navigation.navigate(ENCODE_WALLET_PIN_CODE);
+    this.props.navigation.navigate(SET_WALLET_PIN_CODE);
   };
 
   render() {
