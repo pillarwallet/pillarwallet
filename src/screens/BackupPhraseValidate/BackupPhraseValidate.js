@@ -5,6 +5,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 import { Text, View } from 'react-native';
 import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
@@ -105,19 +106,21 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Title>Backup Test</Title>
-        <Text style={{ color: 'grey' }}>
-          Please select the appropriate words from the list
-        </Text>
+        <Wrapper padding>
+          <Title>Backup Test</Title>
+          <Text style={{ color: 'grey' }}>
+            Please select the appropriate words from the list
+          </Text>
 
-        <InputGroup style={{ paddingTop: 30 }}>
-          {inputFields}
-        </InputGroup>
+          <InputGroup style={{ paddingTop: 30 }}>
+            {inputFields}
+          </InputGroup>
 
-        <Text style={{ paddingBottom: 15 }}>12-word phrase</Text>
-        <Text style={{ paddingBottom: 30 }}>{shuffledWordList}</Text>
+          <Text style={{ paddingBottom: 15 }}>12-word phrase</Text>
+          <Text style={{ paddingBottom: 30 }}>{shuffledWordList}</Text>
 
-        <Button title="Debug skip" onPress={this.goToNextScreen} width="100%" />
+          <Button title="Debug skip" onPress={this.goToNextScreen} width="100%" />
+        </Wrapper>
         <Footer>
           <Button title="Next" onPress={this.goToNextScreen} disabled={!isFormValid} />
         </Footer>
