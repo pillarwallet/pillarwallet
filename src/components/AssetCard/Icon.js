@@ -3,12 +3,12 @@ import styled from 'styled-components/native';
 
 const Icon = styled.View`
   width: 36;
-  height: 360;
+  height: 36;
   border-radius: 18;
-  background: rgba(0,0,0,.2);
+  background: black;
   margin-right: 12;
-  display: flex;
-  justify-content: flex-end;
+  align-self: flex-end;
+
 `;
 
 export default Icon;
