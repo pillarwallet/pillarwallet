@@ -11,7 +11,8 @@ import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 
-const address = '0xabA31e585c4a221d9e196EA46c98793e0A0490bD';
+// TODO: Replace me with real address or pass in with Redux
+const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
 
 type Props = {
   fetchEtherBalance: () => Function,
@@ -48,6 +49,7 @@ class Assets extends React.Component<Props, State> {
     }
   }
 
+  // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
     fetch('https://bcx-dev.pillarproject.io/txhistory', {
       method: 'POST',
@@ -65,8 +67,8 @@ class Assets extends React.Component<Props, State> {
       this.setState({
         history: res,
       });
-    }).catch((err) => {
-      console.log(err);
+    }).catch(() => {
+      // TODO: Use proper error handling
     });
   }
 

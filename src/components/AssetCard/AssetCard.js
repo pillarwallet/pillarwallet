@@ -24,6 +24,7 @@ type Props = {
   color: string,
   onTap: any,
   tag: any,
+  address: string,
   history: {}
 }
 
@@ -32,6 +33,8 @@ type State = {
     animCardHeight: any,
     animCardWidth: any,
 }
+
+const iconEth = require('assets/tokens/ETH/icon-ETH.png');
 
 const styles = StyleSheet.create({
   cardContainer: {
@@ -127,7 +130,7 @@ render() {
               <Amount>{this.props.amount} <AmountToken>{this.props.token}</AmountToken></Amount>
             </DetailsWrapper>
             <IconWrapper>
-              <Icon source={require('assets/tokens/ETH/icon-ETH.png')} />
+              <Icon source={iconEth} />
             </IconWrapper>
           </Background>
         </Animated.View>
@@ -137,7 +140,12 @@ render() {
       {pressed && (
         <View style={styles.cardContainer}>
           <Content style={styles.cardContent} />
-          <TXHistory address={this.props.address} history={this.props.history} style={styles.cardHistory} token={this.props.token} />
+          <TXHistory
+            address={this.props.address}
+            history={this.props.history}
+            style={styles.cardHistory}
+            token={this.props.token}
+          />
         </View>
       ) }
     </View>

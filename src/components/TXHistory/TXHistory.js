@@ -19,7 +19,9 @@ const iconUp = require('assets/icons/up.png');
 const iconDown = require('assets/icons/down.png');
 
 type Props = {
-  history: {}
+  history: {},
+  token: string,
+  address: string
 }
 
 type State = {
@@ -60,25 +62,23 @@ componentDidMount = () => {
 }
 
 getTransacionDirection(address: string, fromAddress: string) {
-  console.log(address, fromAddress);
   if (address.toUpperCase() === fromAddress) {
     return 'Sent';
   }
   return 'Recieved';
 }
 
-getDisplayAmount(amount) {
+getDisplayAmount(amount: number) {
   return +parseFloat(amount).toFixed(6);
 }
-getIcon(direction) {
+getIcon(direction: string) {
   if (direction === 'Sent') {
     return iconDown;
   }
   return iconUp;
 }
 
-generateTransactionHistoryList(history) {
-  console.log(history);
+generateTransactionHistoryList(history: any) {
   let i = 0;
   const transactionHistoryList = [];
   for (i = 0; i < history.length; i += 1) {
@@ -101,7 +101,7 @@ generateTransactionHistoryList(history) {
   }
   return (
     <View>
-      {transactionHistoryList}
+      {transactionHistoryList.reverse()}
     </View>
   );
 }
