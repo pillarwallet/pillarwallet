@@ -1,8 +1,6 @@
 // @flow
 import * as React from 'react';
-import {
-  Text,
-} from 'react-native';
+import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import {

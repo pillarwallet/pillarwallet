@@ -14,7 +14,7 @@ type Props = {
   wallet: Object,
 };
 
-const NewWallet = (props: Props) =>  {
+const NewWallet = (props: Props) => {
   const { walletState } = props.wallet;
   return (
     <Container center>
