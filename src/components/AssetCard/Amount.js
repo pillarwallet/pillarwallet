@@ -5,6 +5,7 @@ const Amount = styled.Text`
   font-size: 30px;
   color: white;
   font-weight: 300;
+  margin: 0 0 30px 20px;
 `;
 
 export default Amount;

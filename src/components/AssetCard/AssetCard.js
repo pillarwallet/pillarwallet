@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 export default class AssetCard extends React.Component<Props, State> {
   state = {
     pressed: false,
-    animCardHeight: new Animated.Value(150),
+    animCardHeight: new Animated.Value(140),
     animCardWidth: new Animated.Value(30),
   };
 
@@ -88,7 +88,7 @@ shrink = () => {
     Animated.spring(
       this.state.animCardHeight,
       {
-        toValue: 150,
+        toValue: 140,
       },
     ),
     Animated.spring(

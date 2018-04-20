@@ -5,6 +5,7 @@ const Icon = styled.Image`
   align-self: flex-end;
   height: 40;
   width: 40;
+  margin: 20px;
 `;
 
 export default Icon;
