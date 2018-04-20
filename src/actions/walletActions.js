@@ -13,13 +13,19 @@ import {
   EMPTY,
   INVALID_PASSWORD,
   IMPORT_ERROR,
-  IMPORT_SET_PIN,
+  IMPORT_WALLET,
   SET_WALLET_ERROR,
   IMPORTED,
   NEW_WALLET_SET_PIN,
   NEW_WALLET_CONFIRM_PIN,
 } from 'constants/walletConstants';
-import { ASSETS, LEGAL_TERMS, NEW_WALLET, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import {
+  ASSETS,
+  LEGAL_TERMS,
+  NEW_WALLET,
+  PIN_CODE_CONFIRMATION,
+  SET_WALLET_PIN_CODE
+} from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { validatePin } from 'utils/validators';
@@ -31,19 +37,24 @@ const storage = Storage.getInstance('db');
 export const generateEncryptedWalletAction = () => {
   return async (dispatch: Function, getState: () => any) => {
     const currentState = getState();
-    const { mnemonic, pin } = currentState.wallet.onboarding;
+    const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
 
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
     await delay(50);
 
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: GENERATING,
-    });
-    await delay(50);
+    let wallet;
+    if (importedWallet) {
+      wallet = importedWallet;
+    } else {
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: GENERATING,
+      });
+      await delay(50);
+      wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
+    }
 
-    const wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,
@@ -109,9 +120,10 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
     try {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
       dispatch({
-        type: IMPORT_SET_PIN,
+        type: IMPORT_WALLET,
         payload: importedWallet,
       });
+      dispatch(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -130,9 +142,10 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
       dispatch({
-        type: IMPORT_SET_PIN,
+        type: IMPORT_WALLET,
         payload: importedWallet,
       });
+      dispatch(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -142,39 +155,6 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         },
       });
     }
-  };
-};
-
-export const setPinForImportedWalletAction = (pin: string, wallet: Object) => {
-  return async (dispatch: Function) => {
-    const validationError = validatePin(pin);
-
-    if (validationError) {
-      dispatch({
-        type: SET_WALLET_ERROR,
-        payload: {
-          code: IMPORT_ERROR,
-          message: validationError,
-        },
-      });
-      return;
-    }
-
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: ENCRYPTING,
-    });
-    await delay(50);
-
-    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 16384 } })
-      .then(JSON.parse)
-      .catch(() => {});
-
-    await storage.save('wallet', encryptedWallet);
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: IMPORTED,
-    });
   };
 };
 

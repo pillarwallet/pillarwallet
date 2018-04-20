@@ -8,7 +8,7 @@ import {
   DECRYPTED,
   SET_WALLET_ERROR,
   WALLET_ERROR,
-  IMPORT_SET_PIN,
+  IMPORT_WALLET,
   UPDATE_WALLET_MNEMONIC,
   NEW_WALLET_SET_PIN,
   NEW_WALLET_CONFIRM_PIN,
@@ -48,6 +48,7 @@ const initialState = {
     },
     pin: '',
     confirmedPin: '',
+    importedWallet: null,
   },
   walletState: null,
   error: null,
@@ -79,8 +80,8 @@ export default function newWalletReducer(
         {},
         state, { onboarding: { confirmedPin: action.payload }, walletState: PIN_CONFIRMED },
       );
-    case IMPORT_SET_PIN:
-      return merge({}, state, { data: action.payload, walletState: IMPORT_SET_PIN });
+    case IMPORT_WALLET:
+      return merge({}, state, { onboarding: { importedWallet: action.payload } });
     default:
       return state;
   }

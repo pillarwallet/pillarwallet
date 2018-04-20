@@ -83,8 +83,9 @@ class Login extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  decryptWallet: (pin: string) =>
-    dispatch(decryptWalletAction(pin)),
+  decryptWallet: (pin: string) => {
+    dispatch(decryptWalletAction(pin));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
