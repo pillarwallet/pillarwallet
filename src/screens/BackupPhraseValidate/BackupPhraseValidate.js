@@ -56,15 +56,12 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     const { wordsToValidate } = wallet.mnemonic;
     const mnemonicList = wallet.mnemonic.original.split(' ');
-    let isFormValid = true;
 
-    enteredWords.forEach((enteredWord, i) => {
-      const rightWordIndex = wordsToValidate[i] - 1;
-      const rightWord = mnemonicList[rightWordIndex];
-
-      if (rightWord !== enteredWord) isFormValid = false;
+    const validPhrase = wordsToValidate.map((wordIndex) => {
+      return mnemonicList[wordIndex - 1];
     });
-    return isFormValid;
+
+    return validPhrase.toString() === enteredWords.toString();
   }
 
   createListItem(i: number, list: string[]) {
