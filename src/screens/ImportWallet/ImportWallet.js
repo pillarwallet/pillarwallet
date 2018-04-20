@@ -43,7 +43,7 @@ class ImportWallet extends React.Component<Props, State> {
     errorMessage: '',
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { walletState, error } = nextProps.wallet;
 
     const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR;
