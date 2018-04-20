@@ -15,7 +15,6 @@ import {
   IMPORT_ERROR,
   IMPORT_WALLET,
   SET_WALLET_ERROR,
-  IMPORTED,
   NEW_WALLET_SET_PIN,
   NEW_WALLET_CONFIRM_PIN,
 } from 'constants/walletConstants';
@@ -24,11 +23,10 @@ import {
   LEGAL_TERMS,
   NEW_WALLET,
   PIN_CODE_CONFIRMATION,
-  SET_WALLET_PIN_CODE
+  SET_WALLET_PIN_CODE,
 } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
-import { validatePin } from 'utils/validators';
 import shuffle from 'shuffle-array';
 import { generateWordsToValidate } from 'utils/wallet';
 
