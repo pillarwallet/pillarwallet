@@ -6,9 +6,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Text, View } from 'react-native';
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
+import Divider from 'components/Divider';
+
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import FakeInput from 'components/FakeInput';
 import InputGroup from 'components/InputGroup';
@@ -31,7 +32,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     enteredWords: [],
   };
 
-  setWord(word) {
+  setWord = (word) => {
     let { enteredWords } = this.state;
     const { onboarding: wallet } = this.props.wallet;
     const maxWords = wallet.mnemonic.wordsToValidate.length;
@@ -64,18 +65,6 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     return validPhrase.toString() === enteredWords.toString();
   }
 
-  createListItem(i: number, list: string[]) {
-    return (
-      <Button
-        width="100%"
-        key={i + list[i]}
-        light
-        onPress={() => this.setWord(list[i])}
-        title={list[i]}
-      />
-    );
-  }
-
   goToNextScreen = () => {
     this.props.navigation.navigate(SET_WALLET_PIN_CODE);
   };
@@ -89,8 +78,18 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     const mnemonicList = wallet.mnemonic.original.split(' ');
     const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
-    const shuffledWordList = shuffledMnemonicList
-      .map((num, i) => this.createListItem(i, shuffledMnemonicList));
+    const shuffledWordList = shuffledMnemonicList.map((word: string) => (
+      <Button
+        small
+        width="90"
+        style={{ margin: 10 }}
+        key={word}
+        light
+        onPress={() => this.setWord(word)}
+        title={word}
+        marginBottom
+      />
+    ));
 
     const inputFields = Array(wordsToValidate.length).fill('')
       .map((el, i) => {
@@ -115,15 +114,21 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           </InputGroup>
 
           <Text style={{ paddingBottom: 15 }}>12-word phrase</Text>
-          <Text style={{ paddingBottom: 30 }}>{shuffledWordList}</Text>
-
-        </Wrapper>
-        <Footer>
+          <View style={{
+            flexWrap: 'wrap',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            }}
+          >
+            {shuffledWordList}
+          </View>
+          <Divider />
           <MultiButtonWrapper>
-            <Button marginBottom title="Debug skip" onPress={this.goToNextScreen} />
-            <Button title="Next" onPress={this.goToNextScreen} disabled={!isFormValid} />
+            <Button marginBottom width="100%" title="Debug skip" onPress={this.goToNextScreen} />
+            <Button marginBottom width="100%" title="Next" onPress={this.goToNextScreen} disabled={!isFormValid} />
           </MultiButtonWrapper>
-        </Footer>
+        </Wrapper>
       </Container>
     );
   }
