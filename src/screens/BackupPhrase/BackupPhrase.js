@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
+import type { NavigationScreenProp } from 'react-navigation';
+
 import { Text } from 'react-native';
-import ethers from 'ethers';
-import PopModal from 'components/Modals/PopModal';
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
@@ -12,17 +13,19 @@ import ButtonHelpText from 'components/ButtonHelpText';
 import MneumonicPhrase from 'components/MneumonicPhrase';
 import MneumonicPhraseItem from 'components/MneumonicPhraseItem';
 
-const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
-const mnemonicList = mnemonicPhrase.split(' ');
+import { generateWalletMnemonicAction } from 'actions/walletActions';
+import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 
-type State = {
-  isPopupOpen: boolean,
+type Props = {
+  wallet: Object,
+  navigation: NavigationScreenProp<*>,
+  generateWalletMnemonic: () => Function,
 };
 
-export default class BackupPhrase extends React.Component<{}, State> {
-  state = {
-    isPopupOpen: false,
-  };
+class BackupPhrase extends React.Component<Props, {}> {
+  componentDidMount() {
+    this.props.generateWalletMnemonic();
+  }
 
   createListItem(i: number, list: string[]) {
     return (
@@ -30,20 +33,16 @@ export default class BackupPhrase extends React.Component<{}, State> {
     );
   }
 
-  popModalHandlePrimary = () => {
-    this.handlePopupState();
-  };
-
-  handlePopupState = () => {
-    this.setState({
-      isPopupOpen: !this.state.isPopupOpen,
-    });
+  goToNextScreen = () => {
+    this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE);
   };
 
   render() {
-    const { isPopupOpen } = this.state;
-    const wordList = Array(mnemonicList.length).fill('')
-      .map((num, i) => this.createListItem(i, mnemonicList));
+    const { onboarding: wallet } = this.props.wallet;
+    if (!wallet.mnemonic) return null;
+
+    const mnemonicList = wallet.mnemonic.original.split(' ');
+    const wordList = mnemonicList.map((num, i) => this.createListItem(i, mnemonicList));
 
     return (
       <Container>
@@ -57,23 +56,23 @@ export default class BackupPhrase extends React.Component<{}, State> {
           <MneumonicPhrase>
             { wordList }
           </MneumonicPhrase>
+          <Button title="Regenerate" small onPress={this.props.generateWalletMnemonic} width="100%" />
         </Wrapper>
         <Footer>
           <ButtonHelpText>Did your write down your backup phrase?</ButtonHelpText>
-          <Button title="I've Written it Down" onPress={this.handlePopupState} />
+          <Button title="I've Written it Down" onPress={this.goToNextScreen} />
         </Footer>
-
-        {isPopupOpen && (
-          <PopModal
-            title="Be Advised"
-            message="To protect your assets, write down your backup phrase and passcode on paper."
-            actionPrimary="I got it"
-            showCloseBtn="true"
-            popModalHandlePrimary={this.popModalHandlePrimary}
-            popModalHandleDismiss={this.handlePopupState}
-          />
-        )}
       </Container>
     );
   }
 }
+
+const mapStateToProps = ({ wallet }) => ({ wallet });
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  generateWalletMnemonic: () => {
+    dispatch(generateWalletMnemonicAction());
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(BackupPhrase);

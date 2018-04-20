@@ -4,7 +4,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { checkIfWalletExistsAction } from 'actions/walletActions';
 import { EMPTY } from 'constants/walletConstants';
-import { NEW_WALLET, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
+import { BACKUP_PHRASE, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
 import Container from 'components/Container';
 import Button from 'components/Button';
 import IntroImage from 'components/IntroImage';
@@ -24,33 +24,8 @@ class Intro extends React.Component<Props> {
     checkIfWalletExists();
   }
 
-  setBackground = (btn: number) => {
-    const obj = {
-      height: 45,
-      flexDirection: 'row',
-      borderColor: 'white',
-      borderWidth: 1,
-      borderRadius: 8,
-      marginBottom: 10,
-      marginTop: 10,
-      alignSelf: 'stretch',
-      justifyContent: 'center',
-      backgroundColor: '',
-    };
-
-    if (btn === 0) {
-      obj.backgroundColor = '#48BBEC';
-    } else if (btn === 1) {
-      obj.backgroundColor = '#E77AAE';
-    } else {
-      obj.backgroundColor = '#758BF4';
-    }
-
-    return obj;
-  };
-
   createNewWallet = () => {
-    this.props.navigation.navigate(NEW_WALLET);
+    this.props.navigation.navigate(BACKUP_PHRASE);
   };
 
   unlockExistingWallet = () => {
@@ -63,7 +38,6 @@ class Intro extends React.Component<Props> {
 
   render() {
     const { wallet: { walletState } } = this.props;
-
     return (
       <Container center>
         <IntroImage source={introImage} />
@@ -85,7 +59,6 @@ class Intro extends React.Component<Props> {
             secondary
           />
         </MultiButtonWrapper>
-
       </Container>
     );
   }

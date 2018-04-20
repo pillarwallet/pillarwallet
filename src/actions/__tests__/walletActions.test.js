@@ -9,13 +9,21 @@ import {
   GENERATING,
   ENCRYPTING,
 } from 'constants/walletConstants';
-import { ASSETS } from 'constants/navigationConstants';
+import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
 import { generateEncryptedWalletAction, decryptWalletAction, checkIfWalletExistsAction } from '../walletActions';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
+
 const mockWallet: Object = {
   address: '0x9c',
+  privateKey: '',
+};
+const mockOnboarding: Object = {
+  confirmedPin: '',
+  importedWallet: null,
+  mnemonic: { original: '', shuffled: '', wordsToValidate: [] },
+  pin: '',
 };
 
 Object.defineProperty(mockWallet, 'encrypt', {
@@ -36,16 +44,46 @@ describe('Wallet actions', () => {
     store = mockStore({});
   });
 
-  it('should expect series of actions with payload to be dispatch on generateEncryptedWalletAction execution', () => {
+  it(`should expect series of actions with payload to be dispatch on 
+    generateEncryptedWalletAction execution when wallet wasn't imported`, () => {
+    store = mockStore({
+      wallet: {
+        onboarding: mockOnboarding,
+      },
+    });
     const expectedActions = [
+      { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: NAVIGATE, routeName: ASSETS },
     ];
-    const mnemonic = '1 2 3 4 5 6 7 8 9 10 11 12';
-    const pin = '123456';
 
-    return store.dispatch(generateEncryptedWalletAction(mnemonic, pin))
+    return store.dispatch(generateEncryptedWalletAction())
+      .then(() => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it(`should expect series of actions with payload to be dispatch on 
+    generateEncryptedWalletAction execution when wallet was imported`, () => {
+    store = mockStore({
+      wallet: {
+        onboarding: {
+          ...mockOnboarding,
+          importedWallet: mockWallet,
+        },
+      },
+    });
+    const expectedActions = [
+      { type: NAVIGATE, routeName: NEW_WALLET },
+      { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
+      { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: NAVIGATE, routeName: ASSETS },
+    ];
+
+    return store.dispatch(generateEncryptedWalletAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

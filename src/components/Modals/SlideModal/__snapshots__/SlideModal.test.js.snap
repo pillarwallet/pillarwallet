@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Slide Modal should render SlideModal correctly 1`] = `
+<View
+  style={
+    Object {
+      "alignItems": "stretch",
+      "height": "100%",
+      "justifyContent": "flex-start",
+      "position": "absolute",
+      "top": 0,
+      "width": "100%",
+    }
+  }
+>
+  <View
+    collapsable={undefined}
+    style={
+      Object {
+        "backgroundColor": "black",
+        "height": "100%",
+        "opacity": 0,
+        "zIndex": 0,
+      }
+    }
+  />
+  <View
+    style={
+      Object {
+        "alignItems": "stretch",
+        "height": "100%",
+        "position": "absolute",
+        "width": "100%",
+      }
+    }
+  >
+    <RCTScrollView
+      contentContainerStyle={
+        Object {
+          "height": 20,
+          "marginTop": 150,
+          "overflow": "visible",
+        }
+      }
+      onScroll={[Function]}
+      scrollEventThrottle={300}
+      showsVerticalScrollIndicator={false}
+    >
+      <View>
+        <View
+          collapsable={undefined}
+          style={
+            Object {
+              "backgroundColor": "white",
+              "borderRadius": 20,
+              "height": 2668,
+              "marginTop": 1334,
+              "padding": 20,
+              "shadowColor": "#000",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.5,
+              "shadowRadius": 10,
+            }
+          }
+        >
+          <View
+            style={
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "height": 30,
+                "justifyContent": "space-between",
+                "width": "100%",
+              }
+            }
+          >
+            <Text
+              accessible={true}
+              allowFontScaling={true}
+              ellipsizeMode="tail"
+              style={
+                Object {
+                  "fontSize": 24,
+                  "fontWeight": "bold",
+                }
+              }
+            >
+              title
+            </Text>
+            <View
+              accessibilityComponentType="button"
+              accessibilityLabel={undefined}
+              accessibilityTraits={
+                Array [
+                  "button",
+                ]
+              }
+              accessible={true}
+              collapsable={undefined}
+              hasTVPreferredFocus={undefined}
+              hitSlop={undefined}
+              isTVSelectable={true}
+              nativeID={undefined}
+              onLayout={undefined}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "opacity": 1,
+                }
+              }
+              testID={undefined}
+              tvParallaxProperties={undefined}
+            >
+              <View
+                style={
+                  Array [
+                    Object {},
+                  ]
+                }
+              >
+                <Text
+                  accessible={true}
+                  allowFontScaling={true}
+                  disabled={undefined}
+                  ellipsizeMode="tail"
+                  style={
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 18,
+                        "padding": 8,
+                        "textAlign": "center",
+                      },
+                    ]
+                  }
+                >
+                  dismiss
+                </Text>
+              </View>
+            </View>
+          </View>
+          <View
+            style={
+              Object {
+                "alignItems": "center",
+                "flex": 0,
+                "height": undefined,
+              }
+            }
+          />
+        </View>
+      </View>
+    </RCTScrollView>
+  </View>
+</View>
+`;

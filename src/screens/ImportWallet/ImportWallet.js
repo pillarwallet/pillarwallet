@@ -1,24 +1,16 @@
 // @flow
 import * as React from 'react';
-import {
-  Text,
-  View,
-  ActivityIndicator,
-} from 'react-native';
+import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
-  setPinForImportedWalletAction,
 } from 'actions/walletActions';
 
 import {
-  IMPORTED,
   WALLET_ERROR,
   IMPORT_ERROR,
-  IMPORT_SET_PIN,
-  ENCRYPTING,
 } from 'constants/walletConstants';
 
 import Container from 'components/Container';
@@ -29,27 +21,37 @@ import Button from 'components/Button';
 import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
 import Label from 'components/Label';
-import PinCode from 'components/PinCode';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
   importWalletFromPrivateKey: (privateKey: string) => Function,
-  encryptWithPinCode: (pin: string, wallet: Object) => Function,
   wallet: Object,
 };
 
 type State = {
-  showLoader: boolean,
   privateKey: string,
   tWordsPhrase: string,
+  errorMessage: string,
 };
 
 class ImportWallet extends React.Component<Props, State> {
   state = {
-    showLoader: false,
     privateKey: '',
     tWordsPhrase: '',
+    errorMessage: '',
   };
+
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { walletState, error } = nextProps.wallet;
+
+    const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR;
+    const errorMessage = showError && error.message;
+
+    return {
+      ...prevState,
+      errorMessage,
+    };
+  }
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
@@ -58,55 +60,15 @@ class ImportWallet extends React.Component<Props, State> {
       importWalletFromPrivateKey(this.state.privateKey);
     } else if (this.state.tWordsPhrase) {
       importWalletFromTWordsPhrase(this.state.tWordsPhrase);
+    } else {
+      this.setState({
+        errorMessage: '',
+      });
     }
   };
 
   render() {
-    const { walletState, data: wallet, error } = this.props.wallet;
-    const {
-      showLoader,
-      privateKey,
-      tWordsPhrase,
-    } = this.state;
-
-    const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR
-      ? <Text>{error.message}</Text>
-      : null;
-
-    if (walletState === IMPORTED) {
-      return (
-        <View>
-          <Text>Public key: {wallet.address}</Text>
-        </View>
-      );
-    }
-
-    if (walletState === IMPORT_SET_PIN) {
-      return (
-        <Container>
-          <Title>Enter Passcode</Title>
-          <PinCode
-            onPinEntered={pin => this.props.encryptWithPinCode(pin, wallet)}
-            pageInstructions="Setup your Passcode"
-            showForgotButton={false}
-          />
-          {showError}
-        </Container>
-      );
-    }
-
-    if (walletState === ENCRYPTING) {
-      return (
-        <Container center>
-          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
-          <ActivityIndicator
-            animating
-            color="#111"
-            size="large"
-          />
-        </Container>
-      );
-    }
+    const { privateKey, tWordsPhrase } = this.state;
 
     return (
       <Container>
@@ -135,13 +97,7 @@ class ImportWallet extends React.Component<Props, State> {
           />
         </Footer>
 
-        {showError}
-
-        <ActivityIndicator
-          animating={showLoader}
-          color="#111"
-          size="large"
-        />
+        {this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
       </Container>
     );
   }
@@ -155,9 +111,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   importWalletFromPrivateKey: (privateKey) => {
     dispatch(importWalletFromPrivateKeyAction(privateKey));
-  },
-  encryptWithPinCode: (pin, wallet) => {
-    dispatch(setPinForImportedWalletAction(pin, wallet));
   },
 });
 
