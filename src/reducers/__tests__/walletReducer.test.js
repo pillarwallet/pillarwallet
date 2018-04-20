@@ -11,12 +11,25 @@ import reducer from '../walletReducer';
 
 const mockWallet: Object = {
   address: '0x',
+  privateKey: '',
+};
+const mockOnboarding: Object = {
+  confirmedPin: '',
+  importedWallet: null,
+  mnemonic: { original: '', shuffled: '', wordsToValidate: [] },
+  pin: '',
 };
 
 describe('Wallet reducer', () => {
   it('should handle GENERATE_ENCRYPTED_WALLET', () => {
     const updateAction = { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet };
-    expect(reducer(undefined, updateAction)).toEqual({ data: mockWallet, error: null, walletState: CREATED });
+    const expected = {
+      data: mockWallet,
+      error: null,
+      onboarding: mockOnboarding,
+      walletState: CREATED,
+    };
+    expect(reducer(undefined, updateAction)).toEqual(expected);
   });
 
   it('should handle UPDATE_WALLET_STATE', () => {
@@ -26,6 +39,12 @@ describe('Wallet reducer', () => {
 
   it('should handle DECRYPT_WALLET', () => {
     const updateAction = { type: DECRYPT_WALLET, payload: mockWallet };
-    expect(reducer(undefined, updateAction)).toEqual({ data: mockWallet, error: null, walletState: DECRYPTED });
+    const expected = {
+      data: mockWallet,
+      error: null,
+      onboarding: mockOnboarding,
+      walletState: DECRYPTED,
+    };
+    expect(reducer(undefined, updateAction)).toEqual(expected);
   });
 });

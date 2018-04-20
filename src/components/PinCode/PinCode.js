@@ -2,10 +2,9 @@
 import * as React from 'react';
 import { Button } from 'react-native';
 
-import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import PinDots from './PinDots';
 import PinDot from './PinDot';
+import PinWrapper from './PinWrapper';
 import KeyPad from './KeyPad';
 import KeyInput from './KeyInput';
 
@@ -15,6 +14,7 @@ type PassCode = string[];
 
 type Props = {
   onPinEntered: Function,
+  onPinChanged?: Function,
   pageInstructions?: string,
   showForgotButton?: boolean
 };
@@ -42,24 +42,26 @@ export default class PinCode extends React.Component<Props, State> {
     this.setState({
       passCode: [...this.state.passCode, key],
     }, () => {
+      const passCodeString = this.state.passCode.join('');
       if (this.state.passCode.length === PASS_CODE_LENGTH) {
-        this.props.onPinEntered(this.state.passCode.join(''));
+        this.props.onPinEntered(passCodeString);
+      } else if (this.props.onPinChanged) {
+        this.props.onPinChanged(passCodeString);
       }
     });
   };
 
   handleKeyPressDelete = () => {
     const { passCode } = this.state;
-    this.setState({ passCode: passCode.slice(0, -1) });
+    const newPassCode = passCode.slice(0, -1);
+    if (this.props.onPinChanged) {
+      this.props.onPinChanged(newPassCode);
+    }
+    this.setState({ passCode: newPassCode });
   };
 
   handleKeyPressForgot = () => {
     console.log('Need to Reset Wallet'); // eslint-disable-line no-console
-  };
-
-  verifyPin = () => {
-    const array = [];
-    this.setState({ passCode: array });
   };
 
   createPinDot(i: number) {
@@ -109,16 +111,14 @@ export default class PinCode extends React.Component<Props, State> {
     const keyInputs = this.generatePinInputs();
 
     return (
-      <Wrapper>
+      <PinWrapper>
         <PinDots>
           {pinCodeDots}
         </PinDots>
-        <Footer>
-          <KeyPad>
-            {keyInputs}
-          </KeyPad>
-        </Footer>
-      </Wrapper>
+        <KeyPad>
+          {keyInputs}
+        </KeyPad>
+      </PinWrapper>
     );
   }
 }

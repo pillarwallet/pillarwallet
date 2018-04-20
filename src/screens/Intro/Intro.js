@@ -4,7 +4,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { checkIfWalletExistsAction } from 'actions/walletActions';
 import { EMPTY } from 'constants/walletConstants';
-import { NEW_WALLET, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
+import { BACKUP_PHRASE, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
 import Container from 'components/Container';
 import Button from 'components/Button';
 import IntroImage from 'components/IntroImage';
@@ -18,13 +18,14 @@ type Props = {
   wallet: Object,
 };
 
-type State = {
-  modalDisplay: boolean,
-}
+class Intro extends React.Component<Props> {
+  componentWillMount() {
+    const { checkIfWalletExists } = this.props;
+    checkIfWalletExists();
+  }
 
-class Intro extends React.Component<Props, State> {
   createNewWallet = () => {
-    this.props.navigation.navigate(NEW_WALLET);
+    this.props.navigation.navigate(BACKUP_PHRASE);
   };
 
   unlockExistingWallet = () => {
