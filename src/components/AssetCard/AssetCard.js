@@ -19,10 +19,12 @@ import Content from './Content';
 
 type Props = {
   name: string,
+  token: string,
   amount: number,
   color: string,
   onTap: any,
   tag: any,
+  history: {}
 }
 
 type State = {
@@ -33,15 +35,12 @@ type State = {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    height: '100%',
   },
   cardContent: {
     flex: 0.5,
 
   },
-  cardHistory: {
-    flex: 1,
-  },
+
 });
 
 export default class AssetCard extends React.Component<Props, State> {
@@ -53,7 +52,6 @@ export default class AssetCard extends React.Component<Props, State> {
 
   onCardTap = () => {
     this.props.onTap(this.props.tag);
-
     this.setState({
       pressed: !this.state.pressed,
     }, () => {
@@ -139,7 +137,7 @@ render() {
       {pressed && (
         <View style={styles.cardContainer}>
           <Content style={styles.cardContent} />
-          <TXHistory style={styles.cardHistory} />
+          <TXHistory address={this.props.address} history={this.props.history} style={styles.cardHistory} token={this.props.token} />
         </View>
       ) }
     </View>

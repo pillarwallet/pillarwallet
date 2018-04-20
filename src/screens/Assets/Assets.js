@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 
-const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
+const address = '0xabA31e585c4a221d9e196EA46c98793e0A0490bD';
 
 type Props = {
   fetchEtherBalance: () => Function,
@@ -31,6 +31,7 @@ class Assets extends React.Component<Props, State> {
     animHeaderHeight: new Animated.Value(200),
     animCardPositionY: new Animated.Value(30),
     cardActive: false,
+    history: {},
   }
 
   componentWillMount() {
@@ -55,7 +56,7 @@ class Assets extends React.Component<Props, State> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        address1: '0xabA31e585c4a221d9e196EA46c98793e0A0490bD',
+        address1: address,
         fromtmstmp: 0,
         address2: 'ALL',
         asset: 'ALL',
@@ -175,6 +176,8 @@ class Assets extends React.Component<Props, State> {
               color={this.getTokenColor(id)}
               onTap={this.hitAssetCard}
               tag="card01"
+              history={this.state.history}
+              address={address}
             />
           </Animated.View>);
       });
