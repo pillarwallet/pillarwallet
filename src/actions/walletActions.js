@@ -41,10 +41,8 @@ export const generateEncryptedWalletAction = () => {
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
     await delay(50);
 
-    let wallet;
-    if (importedWallet) {
-      wallet = importedWallet;
-    } else {
+    let wallet = importedWallet;
+    if (!wallet) {
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: GENERATING,
