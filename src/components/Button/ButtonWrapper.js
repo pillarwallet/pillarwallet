@@ -9,7 +9,7 @@ const ButtonWrapper = styled.TouchableHighlight`
   border-width: ${props => (props.secondary ? 1 : 0)};
   margin-bottom: ${props => (props.marginBottom)};
   border-radius: 20;
-  width: 80%;
+  width: ${props => (props.width || '80%')};
 `;
 
 export default ButtonWrapper;

@@ -1,4 +1,5 @@
 // @flow
+import merge from 'lodash.merge';
 import {
   GENERATE_ENCRYPTED_WALLET,
   UPDATE_WALLET_STATE,
@@ -7,7 +8,12 @@ import {
   DECRYPTED,
   SET_WALLET_ERROR,
   WALLET_ERROR,
-  IMPORT_SET_PIN,
+  IMPORT_WALLET,
+  UPDATE_WALLET_MNEMONIC,
+  NEW_WALLET_SET_PIN,
+  NEW_WALLET_CONFIRM_PIN,
+  PIN_SET,
+  PIN_CONFIRMED,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -34,6 +40,16 @@ const initialState = {
     address: '',
     privateKey: '',
   },
+  onboarding: {
+    mnemonic: {
+      original: '',
+      shuffled: '',
+      wordsToValidate: [],
+    },
+    pin: '',
+    confirmedPin: '',
+    importedWallet: null,
+  },
   walletState: null,
   error: null,
 };
@@ -44,15 +60,28 @@ export default function newWalletReducer(
 ) {
   switch (action.type) {
     case GENERATE_ENCRYPTED_WALLET:
-      return { ...state, data: action.payload, walletState: CREATED };
+      return merge({}, state, { data: action.payload, walletState: CREATED });
     case UPDATE_WALLET_STATE:
-      return { ...state, walletState: action.payload };
+      return merge({}, state, { walletState: action.payload });
+    case UPDATE_WALLET_MNEMONIC:
+      return merge({}, state, { onboarding: { mnemonic: action.payload } });
     case SET_WALLET_ERROR:
-      return { ...state, error: action.payload, walletState: WALLET_ERROR };
+      return merge({}, state, { error: action.payload, walletState: WALLET_ERROR });
     case DECRYPT_WALLET:
-      return { ...state, data: action.payload, walletState: DECRYPTED };
-    case IMPORT_SET_PIN:
-      return { ...state, data: action.payload, walletState: IMPORT_SET_PIN };
+      return merge({}, state, { data: action.payload, walletState: DECRYPTED });
+    case NEW_WALLET_SET_PIN:
+      return merge(
+        {},
+        state,
+        { onboarding: { pin: action.payload, confirmedPin: '' }, walletState: PIN_SET },
+      );
+    case NEW_WALLET_CONFIRM_PIN:
+      return merge(
+        {},
+        state, { onboarding: { confirmedPin: action.payload }, walletState: PIN_CONFIRMED },
+      );
+    case IMPORT_WALLET:
+      return merge({}, state, { onboarding: { importedWallet: action.payload } });
     default:
       return state;
   }

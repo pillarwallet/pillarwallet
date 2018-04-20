@@ -10,7 +10,6 @@ import Container from 'components/Container';
 import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 
-
 type Props = {
   decryptWallet: (pin: string) => Function,
   wallet: Object
@@ -51,7 +50,7 @@ class Login extends React.Component<Props, State> {
     const { pinError } = this.state;
 
     const showError = pinError ? <Text>{pinError}</Text> : null;
-    const { walletState, data: wallet } = this.props.wallet;
+    const { walletState } = this.props.wallet;
 
     if (walletState === DECRYPTING) {
       return (
@@ -66,14 +65,7 @@ class Login extends React.Component<Props, State> {
       );
     }
 
-    if (walletState === DECRYPTED) {
-      return (
-        <Container>
-          <Title>Wallet unlocked</Title>
-          <Text>Public address: {wallet.address}</Text>
-        </Container>
-      );
-    }
+    if (walletState === DECRYPTED) return null;
 
     return (
       <Container>
@@ -91,8 +83,9 @@ class Login extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  decryptWallet: (pin: string) =>
-    dispatch(decryptWalletAction(pin)),
+  decryptWallet: (pin: string) => {
+    dispatch(decryptWalletAction(pin));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
