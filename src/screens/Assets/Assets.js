@@ -10,8 +10,6 @@ import {
 import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import Wrapper from 'components/Wrapper';
-import Title from 'components/Title';
 
 const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
 
@@ -25,6 +23,7 @@ type State = {
   animHeaderHeight: any,
   animCardPositionY: any,
   cardActive: boolean,
+  history: {}
 }
 
 class Assets extends React.Component<Props, State> {
@@ -39,6 +38,7 @@ class Assets extends React.Component<Props, State> {
     this.props.wallet.data.address = address;
     const { fetchEtherBalance } = this.props;
     fetchEtherBalance();
+    this.getTransactionHistory();
   }
 
   onScroll = (event: any) => {
@@ -46,6 +46,29 @@ class Assets extends React.Component<Props, State> {
       this.setCardInactive();
     }
   }
+
+  getTransactionHistory() {
+    fetch('https://bcx-dev.pillarproject.io/txhistory', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        address1: '0xabA31e585c4a221d9e196EA46c98793e0A0490bD',
+        fromtmstmp: 0,
+        address2: 'ALL',
+        asset: 'ALL',
+      }),
+    }).then(res => res.json()).then((res) => {
+      this.setState({
+        history: res,
+      });
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+
 
   setCardActive = () => {
     Animated.parallel([
@@ -63,7 +86,6 @@ class Assets extends React.Component<Props, State> {
       ).start(),
     ]);
   }
-
 
   setCardInactive = () => {
     Animated.parallel([
@@ -84,9 +106,16 @@ class Assets extends React.Component<Props, State> {
 
   getTokenColor(token) {
     if (token === 'ETH') {
-      return '#B4D455';
+      return '#4C4E5E';
     }
     return '#0000FF';
+  }
+
+  getTokenName(token) {
+    if (token === 'ETH') {
+      return 'Ethereum';
+    }
+    return token;
   }
 
   headerComponent() {
@@ -140,7 +169,8 @@ class Assets extends React.Component<Props, State> {
         return (
           <Animated.View key={id} style={{ marginTop: this.state.animCardPositionY }}>
             <AssetCard
-              name={id}
+              name={this.getTokenName(id)}
+              token={id}
               amount={displayAmount}
               color={this.getTokenColor(id)}
               onTap={this.hitAssetCard}

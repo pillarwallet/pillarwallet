@@ -61,6 +61,7 @@ export const fetchEtherBalanceAction = () => {
     const { wallet: { data: wallet } } = getState();
     const provider = providers.getDefaultProvider('ropsten'); // MOVE TO .ENV ONCE DESIGNED AND IMPLEMETNED
     const balance = await provider.getBalance(wallet.address).then(utils.formatEther);
+
     dispatch({
       type: UPDATE_ASSET,
       payload: { id: ETH, balance },

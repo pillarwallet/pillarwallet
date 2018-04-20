@@ -14,6 +14,7 @@ import Background from './Background';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
 import Amount from './Amount';
+import AmountToken from './AmountToken';
 import Content from './Content';
 
 type Props = {
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
 export default class AssetCard extends React.Component<Props, State> {
   state = {
     pressed: false,
-    animCardHeight: new Animated.Value(180),
+    animCardHeight: new Animated.Value(150),
     animCardWidth: new Animated.Value(30),
   };
 
@@ -87,7 +88,7 @@ shrink = () => {
     Animated.spring(
       this.state.animCardHeight,
       {
-        toValue: 180,
+        toValue: 150,
       },
     ),
     Animated.spring(
@@ -122,13 +123,13 @@ render() {
             marginRight: animCardWidth,
           }]}
         >
-          <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 0]} end={[1, 1]}>
+          <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
             <DetailsWrapper>
               <Name>{this.props.name}</Name>
-              <Amount>{this.props.amount}</Amount>
+              <Amount>{this.props.amount} <AmountToken>{this.props.token}</AmountToken></Amount>
             </DetailsWrapper>
             <IconWrapper>
-              <Icon />
+              <Icon source={require('assets/tokens/ETH/icon-ETH.png')} />
             </IconWrapper>
           </Background>
         </Animated.View>

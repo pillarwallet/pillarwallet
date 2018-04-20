@@ -1,13 +1,10 @@
 // @flow
 import styled from 'styled-components/native';
 
-const Icon = styled.View`
-  border-radius: 20;
-  background: black;
-  width: 40;
-  height: 40;
-  background: black;
+const Icon = styled.Image`
   align-self: flex-end;
+  height: 40;
+  width: 40;
 `;
 
 export default Icon;
