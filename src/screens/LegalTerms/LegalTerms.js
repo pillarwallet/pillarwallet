@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import { Linking, Text } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
@@ -13,10 +12,11 @@ import Divider from 'components/Divider';
 import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
 import CheckboxText from 'components/CheckboxText';
-import { NEW_WALLET } from 'constants/navigationConstants';
+import { connect } from 'react-redux';
+import { generateEncryptedWalletAction } from 'actions/walletActions';
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  generateEncryptedWallet: () => Function,
 };
 
 type State = {
@@ -27,7 +27,7 @@ type State = {
   confirmButtonDisabled: boolean,
 };
 
-export default class LegalTerms extends React.Component<Props, State> {
+class LegalTerms extends React.Component<Props, State> {
   state = {
     termsViewVisible: false,
     box01: false,
@@ -77,7 +77,7 @@ export default class LegalTerms extends React.Component<Props, State> {
   };
 
   handleConfirm = () => {
-    this.props.navigation.navigate(NEW_WALLET);
+    this.props.generateEncryptedWallet();
   };
 
   openURLTermsOfUse = () => {
@@ -153,3 +153,11 @@ export default class LegalTerms extends React.Component<Props, State> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  generateEncryptedWallet: () => {
+    dispatch(generateEncryptedWalletAction());
+  },
+});
+
+export default connect(null, mapDispatchToProps)(LegalTerms);

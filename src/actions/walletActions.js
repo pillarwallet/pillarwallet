@@ -19,7 +19,7 @@ import {
   NEW_WALLET_SET_PIN,
   NEW_WALLET_CONFIRM_PIN,
 } from 'constants/walletConstants';
-import { ASSETS, LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import { ASSETS, LEGAL_TERMS, NEW_WALLET, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 import { validatePin } from 'utils/validators';
@@ -28,15 +28,22 @@ import { generateWordsToValidate } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
 
-export const generateEncryptedWalletAction = (mnemonic: string, pin: string) => {
-  return async (dispatch: Function) => {
+export const generateEncryptedWalletAction = () => {
+  return async (dispatch: Function, getState: () => any) => {
+    const currentState = getState();
+    const { mnemonic, pin } = currentState.wallet.onboarding;
+    const mnemonicPhrase = mnemonic.original;
+
+    dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
+    await delay(50);
+
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: GENERATING,
     });
     await delay(50);
 
-    const wallet = ethers.Wallet.fromMnemonic(mnemonic);
+    const wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,
@@ -52,6 +59,7 @@ export const generateEncryptedWalletAction = (mnemonic: string, pin: string) => 
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
+    dispatch(NavigationActions.navigate({ routeName: ASSETS }));
   };
 };
 

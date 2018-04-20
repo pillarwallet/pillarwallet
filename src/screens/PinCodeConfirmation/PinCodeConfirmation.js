@@ -25,7 +25,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
   };
 
   handlePinSubmit = (pin: string) => {
-    const { data: wallet } = this.props.wallet;
+    const { onboarding: wallet } = this.props.wallet;
     const previousPin = wallet.pin;
     const validationError = validatePin(pin, previousPin);
 

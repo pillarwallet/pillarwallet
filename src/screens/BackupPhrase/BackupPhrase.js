@@ -38,7 +38,7 @@ class BackupPhrase extends React.Component<Props, {}> {
   };
 
   render() {
-    const { data: wallet } = this.props.wallet;
+    const { onboarding: wallet } = this.props.wallet;
     if (!wallet.mnemonic) return null;
 
     const mnemonicList = wallet.mnemonic.original.split(' ');

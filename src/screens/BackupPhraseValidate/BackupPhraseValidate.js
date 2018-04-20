@@ -33,7 +33,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
   setWord(word) {
     let { enteredWords } = this.state;
-    const { data: wallet } = this.props.wallet;
+    const { onboarding: wallet } = this.props.wallet;
     const maxWords = wallet.mnemonic.wordsToValidate.length;
 
     if (enteredWords.length < maxWords) {
@@ -50,7 +50,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   }
 
   validateForm(enteredWords) {
-    const { data: wallet } = this.props.wallet;
+    const { onboarding: wallet } = this.props.wallet;
     const maxWords = wallet.mnemonic.wordsToValidate.length;
     if (enteredWords.length !== maxWords) return false;
 
@@ -84,7 +84,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   };
 
   render() {
-    const { data: wallet } = this.props.wallet;
+    const { onboarding: wallet } = this.props.wallet;
     const { isFormValid, enteredWords } = this.state;
 
     if (!wallet.mnemonic.original) return null;
