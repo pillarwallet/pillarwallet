@@ -33,14 +33,7 @@ const renderHomeButton = (navigation) => {
   return props => <HeaderBackButton {...props} onPress={onButtonClicked} />;
 };
 
-const onBoardingFlow = StackNavigator({
-  [BACKUP_PHRASE]: {
-    screen: BackupPhraseScreen,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: renderHomeButton(navigation),
-    }),
-  },
-  [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
+const walletCreationFlow = {
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
@@ -50,6 +43,17 @@ const onBoardingFlow = StackNavigator({
       headerLeft: null,
     },
   },
+};
+
+const onBoardingFlow = StackNavigator({
+  [BACKUP_PHRASE]: {
+    screen: BackupPhraseScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: renderHomeButton(navigation),
+    }),
+  },
+  [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
+  ...walletCreationFlow,
 });
 
 const importWalletFlow = StackNavigator({
@@ -59,6 +63,7 @@ const importWalletFlow = StackNavigator({
       headerLeft: renderHomeButton(navigation),
     }),
   },
+  ...walletCreationFlow,
 });
 
 const appFlow = StackNavigator({
