@@ -85,7 +85,7 @@ export default class TXHistory extends React.Component<Props, State> {
     for (i = 0; i < history.length; i += 1) {
       const direction = this.getTransacionDirection(this.props.address, history[i].from);
       transactionHistoryList.push(
-        <Item>
+        <Item key={`${i}item`}>
           <Section small>
             <Icon source={this.getIcon(direction)} />
           </Section>
