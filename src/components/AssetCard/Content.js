@@ -16,7 +16,6 @@ type State = {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     height: 220,
     padding: 20,
     alignItems: 'stretch',

@@ -37,12 +37,6 @@ type State = {
 const iconEth = require('assets/tokens/ETH/icon-ETH.png');
 
 const styles = StyleSheet.create({
-  cardContainer: {
-  },
-  cardContent: {
-    flex: 0.5,
-
-  },
 
 });
 

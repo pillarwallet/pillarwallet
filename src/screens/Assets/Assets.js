@@ -35,9 +35,7 @@ class Assets extends React.Component<Props, State> {
     history: {},
   }
 
-  componentWillMount() {
-    // TODO: Need to refactor the below line
-    this.props.wallet.data.address = address;
+  componentDidMount() {
     const { fetchEtherBalance } = this.props;
     fetchEtherBalance();
     this.getTransactionHistory();
@@ -57,6 +55,7 @@ class Assets extends React.Component<Props, State> {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
+      // TODO: Needs to use this.props.wallet.data.address
       body: JSON.stringify({
         address1: address,
         fromtmstmp: 0,
@@ -179,7 +178,7 @@ class Assets extends React.Component<Props, State> {
               onTap={this.hitAssetCard}
               tag="card01"
               history={this.state.history}
-              address={address}
+              address={this.props.wallet.data.address}
             />
           </Animated.View>);
       });

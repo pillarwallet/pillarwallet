@@ -7,6 +7,7 @@ import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstan
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
 import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 
@@ -69,8 +70,10 @@ class Login extends React.Component<Props, State> {
     if (walletState === DECRYPTED) {
       return (
         <Container>
-          <Title>Wallet unlocked</Title>
-          <Text>Public address: {wallet.address}</Text>
+          <Wrapper padding>
+            <Title>Wallet unlocked</Title>
+            <Text>Public address: {wallet.address}</Text>
+          </Wrapper>
         </Container>
       );
     }
