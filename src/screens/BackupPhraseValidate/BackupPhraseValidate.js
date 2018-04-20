@@ -39,7 +39,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     if (enteredWords.length < maxWords) {
       enteredWords = [...enteredWords, word];
     } else {
-      enteredWords[maxWords - 1] = word;
+      enteredWords = [...enteredWords.slice(0, -1), word];
     }
     const isFormValid = this.validateForm(enteredWords);
 
