@@ -33,7 +33,7 @@ class Assets extends React.Component<Props, State> {
     animCardPositionY: new Animated.Value(30),
     cardActive: false,
     history: {},
-  }
+  };
 
   componentDidMount() {
     const { fetchEtherBalance } = this.props;
@@ -45,7 +45,7 @@ class Assets extends React.Component<Props, State> {
     if (event.nativeEvent.contentOffset.y <= -100) {
       this.setCardInactive();
     }
-  }
+  };
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
@@ -87,7 +87,7 @@ class Assets extends React.Component<Props, State> {
         },
       ).start(),
     ]);
-  }
+  };
 
   setCardInactive = () => {
     Animated.parallel([
@@ -104,7 +104,7 @@ class Assets extends React.Component<Props, State> {
         },
       ).start(),
     ]);
-  }
+  };
 
   getTokenColor(token) {
     if (token === 'ETH') {
@@ -121,21 +121,16 @@ class Assets extends React.Component<Props, State> {
   }
 
   headerComponent() {
-    const component =
-      (
-        <Animated.View style={
-      {
-        backgroundColor: '#2CB3F8',
-        height: this.state.animHeaderHeight,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }
-    }
-        >
-          <Text>$10.02 Total Portfolio</Text>
-        </Animated.View>);
-
-    return component;
+    return (
+      <Animated.View style={{
+          backgroundColor: '#2CB3F8',
+          height: this.state.animHeaderHeight,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Text>$10.02 Total Portfolio</Text>
+      </Animated.View>);
   }
 
   checkStateStatus = (status: boolean) => {
@@ -144,7 +139,7 @@ class Assets extends React.Component<Props, State> {
     } else {
       this.setCardInactive();
     }
-  }
+  };
 
   hitAssetCard = (event: any) => {
     if (event === 'card01') {
@@ -161,7 +156,7 @@ class Assets extends React.Component<Props, State> {
         this.checkStateStatus(this.state.cardActive);
       });
     }
-  }
+  };
 
   generateAssetsList(assets) {
     return Object.keys(assets)
@@ -183,7 +178,6 @@ class Assets extends React.Component<Props, State> {
           </Animated.View>);
       });
   }
-
 
   render() {
     const { assets: { data: assets } } = this.props;

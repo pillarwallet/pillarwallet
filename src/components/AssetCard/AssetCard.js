@@ -37,7 +37,6 @@ type State = {
 const iconEth = require('assets/tokens/ETH/icon-ETH.png');
 
 const styles = StyleSheet.create({
-
 });
 
 export default class AssetCard extends React.Component<Props, State> {
@@ -58,91 +57,89 @@ export default class AssetCard extends React.Component<Props, State> {
         this.shrink();
       }
     });
+  };
+
+  grow = () => {
+    Animated.parallel([
+      Animated.spring(
+        this.state.animCardHeight,
+        {
+          toValue: 200,
+        },
+      ),
+      Animated.spring(
+        this.state.animCardWidth,
+        {
+          toValue: 20,
+        },
+      ),
+    ]).start();
+  };
+
+  shrink = () => {
+    Animated.parallel([
+      Animated.spring(
+        this.state.animCardHeight,
+        {
+          toValue: 140,
+        },
+      ),
+      Animated.spring(
+        this.state.animCardWidth,
+        {
+          toValue: 30,
+        },
+      ),
+    ]).start();
+  };
+
+  render() {
+    const {
+      animCardHeight,
+      animCardWidth,
+      pressed,
+    } = this.state;
+
+    const linearGradientColorStart = this.props.color;
+    const linearGradientColorEnd = lighten(0.2, this.props.color);
+
+    return (
+      <View>
+        <TouchableWithoutFeedback onPress={this.onCardTap}>
+          <Animated.View
+            color={this.props.color}
+            refs="card"
+            style={[{
+              height: animCardHeight,
+              marginLeft: animCardWidth,
+              marginRight: animCardWidth,
+            }]}
+          >
+            <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
+              <DetailsWrapper>
+                <Name>{this.props.name}</Name>
+                <Amount>{this.props.amount} <AmountToken>{this.props.token}</AmountToken></Amount>
+              </DetailsWrapper>
+              <IconWrapper>
+                <Icon source={iconEth} />
+              </IconWrapper>
+            </Background>
+          </Animated.View>
+
+        </TouchableWithoutFeedback>
+
+        {pressed && (
+          <View style={styles.cardContainer}>
+            <Content style={styles.cardContent} />
+            <TXHistory
+              address={this.props.address}
+              history={this.props.history}
+              style={styles.cardHistory}
+              token={this.props.token}
+            />
+          </View>
+        ) }
+      </View>
+    );
   }
-
-grow = () => {
-  // this.setState({ TopBorderRadius: 0, BottomBorderRadius: 5 });
-  Animated.parallel([
-    Animated.spring(
-      this.state.animCardHeight,
-      {
-        toValue: 200,
-      },
-    ),
-    Animated.spring(
-      this.state.animCardWidth,
-      {
-        toValue: 20,
-      },
-    ),
-  ]).start();
-}
-
-shrink = () => {
-  Animated.parallel([
-    Animated.spring(
-      this.state.animCardHeight,
-      {
-        toValue: 140,
-      },
-    ),
-    Animated.spring(
-      this.state.animCardWidth,
-      {
-        toValue: 30,
-      },
-    ),
-  ]).start();
-  // this.setState({ TopBorderRadius: 5, BottomBorderRadius: 0 });
-}
-
-render() {
-  const {
-    animCardHeight,
-    animCardWidth,
-    pressed,
-  } = this.state;
-
-  const linearGradientColorStart = this.props.color;
-  const linearGradientColorEnd = lighten(0.2, this.props.color);
-
-  return (
-    <View>
-      <TouchableWithoutFeedback onPress={this.onCardTap}>
-        <Animated.View
-          color={this.props.color}
-          refs="card"
-          style={[{
-            height: animCardHeight,
-            marginLeft: animCardWidth,
-            marginRight: animCardWidth,
-          }]}
-        >
-          <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
-            <DetailsWrapper>
-              <Name>{this.props.name}</Name>
-              <Amount>{this.props.amount} <AmountToken>{this.props.token}</AmountToken></Amount>
-            </DetailsWrapper>
-            <IconWrapper>
-              <Icon source={iconEth} />
-            </IconWrapper>
-          </Background>
-        </Animated.View>
-
-      </TouchableWithoutFeedback>
-
-      {pressed && (
-        <View style={styles.cardContainer}>
-          <Content style={styles.cardContent} />
-          <TXHistory
-            address={this.props.address}
-            history={this.props.history}
-            style={styles.cardHistory}
-            token={this.props.token}
-          />
-        </View>
-      ) }
-    </View>
-  );
-}
 }

@@ -51,68 +51,69 @@ export default class TXHistory extends React.Component<Props, State> {
     animFadeIn: new Animated.Value(0),
   };
 
-componentDidMount = () => {
-  Animated.timing(
-    this.state.animFadeIn,
-    {
-      toValue: 1,
-      duration: 500,
-    },
-  ).start();
-}
-
-getTransacionDirection(address: string, fromAddress: string) {
-  if (address.toUpperCase() === fromAddress) {
-    return 'Sent';
+  componentDidMount() {
+    Animated.timing(
+      this.state.animFadeIn,
+      {
+        toValue: 1,
+        duration: 500,
+      },
+    ).start();
   }
-  return 'Recieved';
-}
 
-getDisplayAmount(amount: number) {
-  return +parseFloat(amount).toFixed(6);
-}
-getIcon(direction: string) {
-  if (direction === 'Sent') {
-    return iconDown;
+  getTransacionDirection(address: string, fromAddress: string) {
+    if (address.toUpperCase() === fromAddress) {
+      return 'Sent';
+    }
+    return 'Recieved';
   }
-  return iconUp;
-}
 
-generateTransactionHistoryList(history: any) {
-  let i = 0;
-  const transactionHistoryList = [];
-  for (i = 0; i < history.length; i += 1) {
-    const direction = this.getTransacionDirection(this.props.address, history[i].from);
-    transactionHistoryList.push(
-      <Item>
-        <Section small>
-          <Icon source={this.getIcon(direction)} />
-        </Section>
-        <Section>
-          <Direction>{direction}</Direction>
-          <Hash>{history[i].hash.slice(0, 4)}…{history[i].hash.slice(-4)}</Hash>
-        </Section>
-        <Section>
-          <Amount>{this.getDisplayAmount(history[i].value)} {this.props.token}</Amount>
-          <Status>{history[i].status}</Status>
-        </Section>
-      </Item>,
+  getDisplayAmount(amount: number) {
+    return +parseFloat(amount).toFixed(6);
+  }
+
+  getIcon(direction: string) {
+    if (direction === 'Sent') {
+      return iconDown;
+    }
+    return iconUp;
+  }
+
+  generateTransactionHistoryList(history: any) {
+    let i = 0;
+    const transactionHistoryList = [];
+    for (i = 0; i < history.length; i += 1) {
+      const direction = this.getTransacionDirection(this.props.address, history[i].from);
+      transactionHistoryList.push(
+        <Item>
+          <Section small>
+            <Icon source={this.getIcon(direction)} />
+          </Section>
+          <Section>
+            <Direction>{direction}</Direction>
+            <Hash>{history[i].hash.slice(0, 4)}…{history[i].hash.slice(-4)}</Hash>
+          </Section>
+          <Section>
+            <Amount>{this.getDisplayAmount(history[i].value)} {this.props.token}</Amount>
+            <Status>{history[i].status}</Status>
+          </Section>
+        </Item>,
+      );
+    }
+    return (
+      <View>
+        {transactionHistoryList.reverse()}
+      </View>
     );
   }
-  return (
-    <View>
-      {transactionHistoryList.reverse()}
-    </View>
-  );
-}
 
-render() {
-  const { animFadeIn } = this.state;
-  return (
-    <Animated.View style={[styles.container, { opacity: animFadeIn }]}>
-      <Text style={styles.header} >activity</Text>
-      {this.generateTransactionHistoryList(this.props.history)}
-    </Animated.View>
-  );
-}
+  render() {
+    const { animFadeIn } = this.state;
+    return (
+      <Animated.View style={[styles.container, { opacity: animFadeIn }]}>
+        <Text style={styles.header} >activity</Text>
+        {this.generateTransactionHistoryList(this.props.history)}
+      </Animated.View>
+    );
+  }
 }
