@@ -103,6 +103,7 @@
   "dependencies": {
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
+    "ios": "^0.0.1",
     "lodash.merge": "^4.6.1",
     "polished": "^1.9.2",
     "pouchdb-react-native": "^6.4.1",

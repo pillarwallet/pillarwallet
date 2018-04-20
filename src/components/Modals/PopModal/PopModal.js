@@ -2,92 +2,133 @@
 import * as React from 'react';
 import {
   Animated,
-  Easing,
-  View,
+  Button,
   Text,
-  TouchableHighlight,
+  Image,
+  View,
 } from 'react-native';
-import Button from 'components/Button';
-import styles from './styles';
 
+import styles from './styles';
 
 type Props = {
   title: string,
   message: string,
-  popModalHandleDismiss: Function,
-  actionPrimary: string
+  actionTitle: string,
+  modalImage: string,
+  onDismiss: Function,
+  onAccept: Function,
+  children?: React.Node,
+  isVisible: boolean,
 };
 
 type State = {
-  showPopAnimation: any,
-  verticalBounce: any,
+  animFadeInBackground: any,
+  animModalPopUp: any,
+  animModalPopUpOpacity: any,
+  isVisible: boolean,
 };
 
 export default class PopModal extends React.Component<Props, State> {
-  state = {
-    showPopAnimation: new Animated.Value(0),
-    verticalBounce: new Animated.Value(10),
-  };
+  static defaultProps = {
+    onDismiss: () => {},
+  }
 
-  componentDidMount() {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    if (nextProps.isVisible !== prevState.isVisible) {
+      return {
+        ...prevState,
+        isVisible: nextProps.isVisible,
+        animFadeInBackground: new Animated.Value(0),
+        animModalPopUp: new Animated.Value(100),
+        animModalPopUpOpacity: new Animated.Value(0),
+      };
+    }
+    return null;
+  }
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      animFadeInBackground: new Animated.Value(0),
+      animModalPopUp: new Animated.Value(100),
+      animModalPopUpOpacity: new Animated.Value(0),
+      isVisible: props.isVisible,
+    };
+  }
+
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (prevState.isVisible === this.state.isVisible) return;
     Animated.parallel([
-      Animated.timing(this.state.showPopAnimation, {
-        toValue: 1,
-        duration: 250,
+      Animated.spring(this.state.animFadeInBackground, {
+        toValue: 0.5,
       }),
-      Animated.sequence([
-        Animated.timing(this.state.verticalBounce, {
-          toValue: -20,
-          easing: Easing.in(),
-          duration: 250,
-        }),
-        Animated.timing(this.state.verticalBounce, {
-          toValue: 5,
-          duration: 100,
-        }),
-        Animated.timing(this.state.verticalBounce, {
-          toValue: -2,
-          duration: 40,
-        }),
-        Animated.timing(this.state.verticalBounce, {
-          toValue: 0,
-          duration: 30,
-        }),
-      ]),
+      Animated.spring(this.state.animModalPopUp, {
+        toValue: 0,
+      }),
+      Animated.spring(this.state.animModalPopUpOpacity, {
+        toValue: 1,
+      }),
     ]).start();
   }
 
-  dismissAnimation = () => {
-    // TODO: Make this happen after the animation completes
-    this.props.popModalHandleDismiss();
+  handleAnimationDismiss = () => {
+    const { onDismiss } = this.props;
+    Animated.parallel([
+      Animated.timing(this.state.animFadeInBackground, {
+        toValue: 0,
+      }),
+      Animated.timing(this.state.animModalPopUp, {
+        toValue: 40,
+        duration: 200,
+      }),
+      Animated.spring(this.state.animModalPopUpOpacity, {
+        toValue: 0,
+      }),
+    ]).start(onDismiss);
   };
 
   render() {
-    const { showPopAnimation, verticalBounce } = this.state;
-
+    const {
+      animFadeInBackground,
+      animModalPopUp,
+      animModalPopUpOpacity,
+      isVisible,
+    } = this.state;
+    const { message, title } = this.props;
+    if (!isVisible) return null;
     return (
-      <Animated.View style={[styles.popOverContainer, { opacity: showPopAnimation }]}>
+      <View style={styles.modalContainer}>
+        <Animated.View style={[styles.dismissOverlay, { opacity: animFadeInBackground }]} />
 
-        <TouchableHighlight style={styles.popOverContainerBG} onPress={this.props.popModalHandleDismiss}>
-          <View />
-        </TouchableHighlight>
+        <View style={styles.modalWrapper}>
 
-        <Animated.View style={[styles.popOverBackground, { top: verticalBounce }]}>
+          <Animated.View style={[styles.modalContent, { marginTop: animModalPopUp, opacity: animModalPopUpOpacity }]}>
 
-          <View style={styles.popOverHeader}>
-            <Text style={styles.popOverHeaderText}>{this.props.title}</Text>
-          </View>
+            <View style={styles.sliderHeaderContainer}>
+              <Button title="✖️" onPress={this.handleAnimationDismiss} />
+            </View>
 
-          <View style={styles.popOverContent}>
-            <Text style={styles.popOverContentText}>{this.props.message}</Text>
-          </View>
+            <View style={styles.modalMessageWrapper}>
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Image
+                  style={{
+                  width: 80,
+                  height: 80,
+                  marginBottom: 20,
+                }}
+                />
 
-          <View style={styles.popOverActions}>
-            <Button light title={this.props.actionPrimary} onPress={this.dismissAnimation} />
-          </View>
+                <Text style={styles.sliderHeader}>{title}</Text>
+                <Text style={{ color: 'gray' }}>{ message }</Text>
+              </View>
 
-        </Animated.View>
-      </Animated.View>
+              <Button title={this.props.actionTitle} onPress={this.props.onAccept} />
+            </View>
+
+          </Animated.View>
+        </View>
+
+      </View>
     );
   }
 }
