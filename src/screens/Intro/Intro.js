@@ -116,7 +116,7 @@ class Intro extends React.Component<Props, State> {
         <SlideModal
           isVisible={modalDisplay}
           title="receive"
-          modalDismiss={this.handleModalRemove}
+          onDismiss={this.handleModalRemove}
         />
       </Container>
     );

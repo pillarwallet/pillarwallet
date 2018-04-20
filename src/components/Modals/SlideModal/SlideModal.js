@@ -29,14 +29,14 @@ const window = Dimensions.get('window');
 
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
-    onDismiss: () => { },
+    onDismiss: () => {},
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.isVisible !== prevState.isVisible) {
       return {
         ...prevState,
-        ...nextProps,
+        isVisible: nextProps.isVisible,
         animFadeInBackground: new Animated.Value(0),
         animSlideModalVertical: new Animated.Value(window.height),
       };
@@ -53,7 +53,8 @@ export default class SlideModal extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (prevState.isVisible === this.state.isVisible) return;
     Animated.parallel([
       Animated.timing(this.state.animFadeInBackground, {
         toValue: 0.5,
