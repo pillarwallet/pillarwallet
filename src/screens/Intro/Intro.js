@@ -10,10 +10,7 @@ import Button from 'components/Button';
 import IntroImage from 'components/IntroImage';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 
-import SlideModal from 'components/Modals/SlideModal';
-
 const introImage = require('assets/images/logo_pillar_intro.png');
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -26,40 +23,7 @@ type State = {
 }
 
 class Intro extends React.Component<Props, State> {
-  state = {
-    modalDisplay: false,
-  }
-
-  componentWillMount() {
-    const { checkIfWalletExists } = this.props;
-    checkIfWalletExists();
-  }
-
-  setBackground = (btn: number) => {
-    const obj = {
-      height: 45,
-      flexDirection: 'row',
-      borderColor: 'white',
-      borderWidth: 1,
-      borderRadius: 8,
-      marginBottom: 10,
-      marginTop: 10,
-      alignSelf: 'stretch',
-      justifyContent: 'center',
-      backgroundColor: '',
-    };
-
-    if (btn === 0) {
-      obj.backgroundColor = '#48BBEC';
-    } else if (btn === 1) {
-      obj.backgroundColor = '#E77AAE';
-    } else {
-      obj.backgroundColor = '#758BF4';
-    }
-
-    return obj;
-  };
-
+ 
   createNewWallet = () => {
     this.props.navigation.navigate(NEW_WALLET);
   };
@@ -72,21 +36,8 @@ class Intro extends React.Component<Props, State> {
     this.props.navigation.navigate(IMPORT_WALLET);
   };
 
-  handleModalDisplay = () => {
-    this.setState({
-      modalDisplay: !this.state.modalDisplay,
-    });
-  }
-
-  handleModalRemove = () => {
-    this.setState({
-      modalDisplay: false,
-    });
-  }
-
   render() {
     const { wallet: { walletState } } = this.props;
-    const { modalDisplay } = this.state;
     return (
       <Container center>
         <IntroImage source={introImage} />
@@ -107,17 +58,7 @@ class Intro extends React.Component<Props, State> {
             onPress={this.importOldWallet}
             secondary
           />
-          <Button
-            title="Sample Slide Modal"
-            onPress={this.handleModalDisplay}
-            secondary
-          />
         </MultiButtonWrapper>
-        <SlideModal
-          isVisible={modalDisplay}
-          title="receive"
-          onDismiss={this.handleModalRemove}
-        />
       </Container>
     );
   }
