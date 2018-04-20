@@ -27,12 +27,6 @@ class BackupPhrase extends React.Component<Props, {}> {
     this.props.generateWalletMnemonic();
   }
 
-  createListItem(i: number, list: string[]) {
-    return (
-      <MneumonicPhraseItem key={i + list[i]}>{ list[i] }</MneumonicPhraseItem>
-    );
-  }
-
   goToNextScreen = () => {
     this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE);
   };
@@ -40,9 +34,8 @@ class BackupPhrase extends React.Component<Props, {}> {
   render() {
     const { onboarding: wallet } = this.props.wallet;
     if (!wallet.mnemonic) return null;
-
     const mnemonicList = wallet.mnemonic.original.split(' ');
-    const wordList = mnemonicList.map((num, i) => this.createListItem(i, mnemonicList));
+    const wordList = mnemonicList.map(word => <MneumonicPhraseItem key={word}>{word}</MneumonicPhraseItem>);
 
     return (
       <Container>
@@ -52,13 +45,12 @@ class BackupPhrase extends React.Component<Props, {}> {
             This is your unique 12-word backup phrase.
             Write down your backup phrase in the exact sequence.
           </Text>
-
           <MneumonicPhrase>
             { wordList }
           </MneumonicPhrase>
           <Button title="Regenerate" small onPress={this.props.generateWalletMnemonic} width="100%" />
         </Wrapper>
-        <Footer>
+        <Footer padding>
           <ButtonHelpText>Did your write down your backup phrase?</ButtonHelpText>
           <Button title="I've Written it Down" onPress={this.goToNextScreen} />
         </Footer>
