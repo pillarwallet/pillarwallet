@@ -38,7 +38,6 @@ class Intro extends React.Component<Props> {
 
   render() {
     const { wallet: { walletState } } = this.props;
-
     return (
       <Container center>
         <IntroImage source={introImage} />
@@ -60,7 +59,6 @@ class Intro extends React.Component<Props> {
             secondary
           />
         </MultiButtonWrapper>
-
       </Container>
     );
   }
