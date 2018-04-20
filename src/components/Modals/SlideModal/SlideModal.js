@@ -8,28 +8,52 @@ import {
   Text,
   View,
 } from 'react-native';
+import type { ScrollEvent } from 'react-native';
 
 import styles from './styles';
 
 type Props = {
   title: string,
-  modalDismiss: any,
+  onDismiss: Function,
+  children?: React.Node,
+  isVisible: boolean
 };
 
 type State = {
   animFadeInBackground: any,
   animSlideModalVertical: any,
+  isVisible: boolean
 };
 
 const window = Dimensions.get('window');
 
 export default class SlideModal extends React.Component<Props, State> {
-  state = {
-    animFadeInBackground: new Animated.Value(0),
-    animSlideModalVertical: new Animated.Value(window.height),
-  };
+  static defaultProps = {
+    onDismiss: () => { },
+  }
 
-  componentDidMount() {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    if (nextProps.isVisible !== prevState.isVisible) {
+      return {
+        ...prevState,
+        ...nextProps,
+        animFadeInBackground: new Animated.Value(0),
+        animSlideModalVertical: new Animated.Value(window.height),
+      };
+    }
+    return null;
+  }
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      animFadeInBackground: new Animated.Value(0),
+      animSlideModalVertical: new Animated.Value(window.height),
+      isVisible: props.isVisible,
+    };
+  }
+
+  componentDidUpdate() {
     Animated.parallel([
       Animated.timing(this.state.animFadeInBackground, {
         toValue: 0.5,
@@ -41,14 +65,16 @@ export default class SlideModal extends React.Component<Props, State> {
     ]).start();
   }
 
-  handleScroll = (event: any) => {
+  handleScroll = (event: ScrollEvent) => {
     const distanceY = event.nativeEvent.contentOffset.y;
-    if (distanceY <= -50) {
-      this.dismissAnimation();
+    const offsetY = -50;
+    if (distanceY <= offsetY) {
+      this.handleAnimationDismiss();
     }
   }
 
-  dismissAnimation = () => {
+  handleAnimationDismiss = () => {
+    const { onDismiss } = this.props;
     Animated.parallel([
       Animated.timing(this.state.animFadeInBackground, {
         toValue: 0,
@@ -57,44 +83,38 @@ export default class SlideModal extends React.Component<Props, State> {
         toValue: window.height,
         duration: 200,
       }),
-
-    ]).start(this.callback);
+    ]).start(onDismiss);
   };
 
-  callback = () => {
-    this.props.modalDismiss();
-  }
 
   render() {
     const {
       animFadeInBackground,
       animSlideModalVertical,
+      isVisible,
     } = this.state;
-
+    const { children, title } = this.props;
+    if (!isVisible) return null;
     return (
       <View style={styles.modalContainer}>
-
         <Animated.View style={[styles.dismissOverlay, { opacity: animFadeInBackground }]} />
-
         <View style={styles.modalScrollContainer}>
           <ScrollView
             onScroll={this.handleScroll}
             scrollEventThrottle={300}
-            showsVerticalScrollIndicator="false"
+            showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContentStyle}
           >
-
             <Animated.View style={[styles.sliderContainer,
-              {
- marginTop: animSlideModalVertical,
-                height: window.height * 2,
-}]}
+            { marginTop: animSlideModalVertical, height: window.height }]}
             >
               <View style={styles.sliderHeaderContainer}>
-                <Text style={styles.sliderHeader}>{this.props.title}</Text>
-                <Button title="dismiss" onPress={this.dismissAnimation} />
+                <Text style={styles.sliderHeader}>{title}</Text>
+                <Button title="dismiss" onPress={this.handleAnimationDismiss} />
               </View>
-              {/* PLACE APPROPRIATE COMPONANT HERE */}
+              <View style={styles.contentWrapper}>
+                {children}
+              </View>
             </Animated.View>
           </ScrollView>
         </View>

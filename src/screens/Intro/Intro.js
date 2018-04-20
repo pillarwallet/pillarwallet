@@ -113,13 +113,11 @@ class Intro extends React.Component<Props, State> {
             secondary
           />
         </MultiButtonWrapper>
-
-        {modalDisplay && (
         <SlideModal
+          isVisible={modalDisplay}
           title="receive"
           modalDismiss={this.handleModalRemove}
         />
-        )}
       </Container>
     );
   }

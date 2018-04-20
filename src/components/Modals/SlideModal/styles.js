@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
+    top: 0,
     justifyContent: 'flex-start',
     alignItems: 'stretch',
   },
@@ -37,7 +38,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 10,
-
   },
 
   sliderHeaderContainer: {
@@ -53,7 +53,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-
+  contentWrapper: {
+    flex: 0,
+    height: window.height,
+    alignItems: 'center',
+  },
 });
 
 export default styles;
