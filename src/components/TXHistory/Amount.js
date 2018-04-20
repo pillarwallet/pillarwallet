@@ -2,10 +2,9 @@
 import styled from 'styled-components/native';
 
 const Amount = styled.Text`
-  font-size: 20px;
-  color: white;
-  font-weight: 300;
-  margin: 0 0 30px 20px;
+  text-align: right;
+  margin-bottom: 5px;
+  font-weight: 700;
 `;
 
 export default Amount;
