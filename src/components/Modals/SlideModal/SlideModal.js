@@ -84,7 +84,11 @@ export default class SlideModal extends React.Component<Props, State> {
         toValue: window.height,
         duration: 200,
       }),
-    ]).start(onDismiss);
+    ]).start(() => {
+      this.setState({
+        isVisible: false,
+      }, onDismiss);
+    });
   };
 
 

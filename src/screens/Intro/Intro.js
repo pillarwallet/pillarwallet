@@ -23,7 +23,6 @@ type State = {
 }
 
 class Intro extends React.Component<Props, State> {
- 
   createNewWallet = () => {
     this.props.navigation.navigate(NEW_WALLET);
   };
