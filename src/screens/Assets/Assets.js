@@ -10,9 +10,12 @@ import {
 import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import AssetHeader from 'components/AssetHeader';
 
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
+
+const AnimatedAssetHeader = Animated.createAnimatedComponent(AssetHeader);
 
 type Props = {
   fetchEtherBalance: () => Function,
@@ -120,19 +123,6 @@ class Assets extends React.Component<Props, State> {
     return token;
   }
 
-  headerComponent() {
-    return (
-      <Animated.View style={{
-          backgroundColor: '#2CB3F8',
-          height: this.state.animHeaderHeight,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Text>$10.02 Total Portfolio</Text>
-      </Animated.View>);
-  }
-
   checkStateStatus = (status: boolean) => {
     if (status === true) {
       this.setCardActive();
@@ -186,7 +176,9 @@ class Assets extends React.Component<Props, State> {
     return (
       <View>
         <ScrollView onScroll={this.onScroll} scrollEventThrottle={200}>
-          { this.headerComponent() }
+          <AnimatedAssetHeader style={{ height: this.state.animHeaderHeight }}>
+            <Text>$10.02 Total Portfolio</Text>
+          </AnimatedAssetHeader>
           { assetsList }
         </ScrollView>
       </View>
