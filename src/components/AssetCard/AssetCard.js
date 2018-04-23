@@ -41,7 +41,7 @@ const iconETH = require('assets/tokens/ETH/icon-ETH.png');
 export default class AssetCard extends React.Component<Props, State> {
   state = {
     isActive: false,
-    animCardHeight: new Animated.Value(140),
+    animCardHeight: new Animated.Value(120),
     animCardWidth: new Animated.Value(30),
     animCardContentFade: new Animated.Value(0),
   };
@@ -57,7 +57,7 @@ export default class AssetCard extends React.Component<Props, State> {
   };
 
   animateCardActiveState = (isActive: boolean) => {
-    const cardHeightValue = isActive ? 160 : 140;
+    const cardHeightValue = isActive ? 140 : 120;
     const cardWidthValue = isActive ? 20 : 30;
     const cardContentFadeValue = isActive ? 1 : 0;
     Animated.parallel([
