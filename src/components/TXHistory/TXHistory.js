@@ -6,7 +6,9 @@ import {
   Text,
   View,
 } from 'react-native';
-
+import styled from 'styled-components/native';
+import type { Transaction } from 'models/Transaction';
+import { formatETHAmount } from 'utils/common';
 import Item from './Item';
 import Icon from './Icon';
 import Amount from './Amount';
@@ -19,101 +21,71 @@ const iconUp = require('assets/icons/up.png');
 const iconDown = require('assets/icons/down.png');
 
 type Props = {
-  history: {},
+  history: Transaction[],
   token: string,
   address: string
 }
 
-type State = {
-  animFadeIn: any,
-}
+const Container = styled.ScrollView`
+  backgroundColor: #f7f7f7;
+  paddingTop: 20;
+  paddingLeft: 20;
+  paddingRight: 20;
+  shadowColor: #000;
+  shadowOpacity: 0.25;
+  justifyContent: flex-end;
+  shadowRadius: 10;
+  shadowOffset: { width: 0, height: 200 };
+  zIndex: 10;
+`;
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f7f7f7',
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    justifyContent: 'flex-end',
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 200 },
-  },
-  header: {
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-});
+// Looks like a heading (typography), shouldn't it be extracted?
+const Header = styled.Text`
+  fontWeight: bold;
+  fontSize: 20;
+`;
 
-export default class TXHistory extends React.Component<Props, State> {
-  state = {
-    animFadeIn: new Animated.Value(0),
-  };
+const SENT = 'Sent';
+const RECEIVED = 'Received';
 
-  componentDidMount() {
-    Animated.timing(
-      this.state.animFadeIn,
-      {
-        toValue: 1,
-        duration: 500,
-      },
-    ).start();
+export default class TXHistory extends React.Component<Props> {
+  static defaultProps = {
+    history: []
   }
 
-  getTransacionDirection(address: string, fromAddress: string) {
-    if (address.toUpperCase() === fromAddress) {
-      return 'Sent';
-    }
-    return 'Recieved';
-  }
-
-  getDisplayAmount(amount: number) {
-    return +parseFloat(amount).toFixed(6);
-  }
-
-  getIcon(direction: string) {
-    if (direction === 'Sent') {
-      return iconDown;
-    }
-    return iconUp;
-  }
-
-  generateTransactionHistoryList(history: any) {
-    let i = 0;
-    const transactionHistoryList = [];
-    for (i = 0; i < history.length; i += 1) {
-      const direction = this.getTransacionDirection(this.props.address, history[i].from);
-      transactionHistoryList.push(
-        <Item key={`${i}item`}>
+  renderTransactionHistory() {
+    const { history, address } = this.props;
+    return history.map(({ status, value, from, _id: id, hash, asset }) => {
+      const direction = address.toUpperCase() === from ? SENT : RECEIVED;
+      const icon = direction === SENT ? iconDown : iconUp;
+      return (
+        <Item key={id}>
           <Section small>
-            <Icon source={this.getIcon(direction)} />
+            <Icon source={icon} />
           </Section>
           <Section>
             <Direction>{direction}</Direction>
-            <Hash>{history[i].hash.slice(0, 4)}…{history[i].hash.slice(-4)}</Hash>
+            <Hash>{hash.slice(0, 4)}…{hash.slice(-4)}</Hash>
           </Section>
           <Section>
-            <Amount>{this.getDisplayAmount(history[i].value)} {this.props.token}</Amount>
-            <Status>{history[i].status}</Status>
+            <Amount>{formatETHAmount(value)} {asset}</Amount>
+            <Status>{status}</Status>
           </Section>
-        </Item>,
+        </Item>
       );
-    }
-    return (
-      <View>
-        {transactionHistoryList.reverse()}
-      </View>
-    );
-  }
+    });
+  };
 
   render() {
-    const { animFadeIn } = this.state;
+    const { history } = this.props;
+    if (!history.length) {
+      return null;
+    }
     return (
-      <Animated.View style={[styles.container, { opacity: animFadeIn }]}>
-        <Text style={styles.header} >activity</Text>
-        {this.generateTransactionHistoryList(this.props.history)}
-      </Animated.View>
+      <Container>
+        <Header>activity</Header>
+        {this.renderTransactionHistory()}
+      </Container>
     );
   }
 }
