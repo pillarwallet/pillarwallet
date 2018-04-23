@@ -4,6 +4,7 @@ import {
   Animated,
   Text,
   View,
+  ScrollView,
 }
   from 'react-native';
 import { connect } from 'react-redux';
@@ -159,12 +160,14 @@ class Assets extends React.Component<Props, State> {
         return (
           <Animated.ScrollView
             onScroll={this.onScroll}
-            scrollEventThrottle={200}
+            scrollEventThrottle={300}
             key={id}
             style={{
-             position: 'relative',
-             height: '100%',
-             top: this.state.animCardPositionY,
+              zIndex: 1,
+              overflow: 'visible',
+              position: 'relative',
+              height: '100%',
+              marginTop: this.state.animCardPositionY,
             }}
           >
             <AssetCard
