@@ -4,7 +4,6 @@ import {
   Animated,
   Text,
   View,
-  ScrollView,
 }
   from 'react-native';
 import { connect } from 'react-redux';
