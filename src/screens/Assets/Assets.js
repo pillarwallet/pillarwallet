@@ -31,6 +31,10 @@ type State = {
 }
 
 class Assets extends React.Component<Props, State> {
+  static navigationOptions = {
+    header: () => null,
+  };
+
   state = {
     animHeaderHeight: new Animated.Value(200),
     animCardPositionY: new Animated.Value(30),
@@ -154,7 +158,12 @@ class Assets extends React.Component<Props, State> {
       .map(({ id, balance }) => {
         const displayAmount = +parseFloat(balance).toFixed(4);
         return (
-          <Animated.View key={id} style={{ marginTop: this.state.animCardPositionY }}>
+          <Animated.ScrollView
+            onScroll={this.onScroll}
+            scrollEventThrottle={200}
+            key={id}
+            style={{ marginTop: this.state.animCardPositionY }}
+          >
             <AssetCard
               name={this.getTokenName(id)}
               token={id}
@@ -165,7 +174,7 @@ class Assets extends React.Component<Props, State> {
               history={this.state.history}
               address={this.props.wallet.data.address}
             />
-          </Animated.View>);
+          </Animated.ScrollView>);
       });
   }
 
@@ -175,12 +184,10 @@ class Assets extends React.Component<Props, State> {
 
     return (
       <View>
-        <ScrollView onScroll={this.onScroll} scrollEventThrottle={200}>
-          <AnimatedAssetHeader style={{ height: this.state.animHeaderHeight }}>
-            <Text>$10.02 Total Portfolio</Text>
-          </AnimatedAssetHeader>
-          { assetsList }
-        </ScrollView>
+        <AnimatedAssetHeader style={{ height: this.state.animHeaderHeight }}>
+          <Text>$10.02 Total Portfolio</Text>
+        </AnimatedAssetHeader>
+        { assetsList }
       </View>
     );
   }
