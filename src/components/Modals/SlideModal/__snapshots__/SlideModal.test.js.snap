@@ -52,8 +52,9 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           style={
             Object {
               "backgroundColor": "white",
-              "borderRadius": 20,
-              "height": 2668,
+              "borderTopLeftRadius": 20,
+              "borderTopRightRadius": 20,
+              "height": 2368,
               "marginTop": 1334,
               "padding": 20,
               "shadowColor": "#000",
@@ -151,8 +152,19 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "flex": 0,
-                "height": undefined,
+                "flex": 1,
+                "height": 1334,
+                "justifyContent": "space-around",
+              }
+            }
+          />
+          <View
+            style={
+              Object {
+                "backgroundColor": "#FFFFFF",
+                "flex": 1,
+                "height": 1334,
+                "width": "100%",
               }
             }
           />

@@ -1,5 +1,7 @@
 // @flow
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   modalContainer: {

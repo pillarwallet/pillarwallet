@@ -26,7 +26,7 @@ const Copy = styled.Text`
   marginTop: 10;
 `;
 const Address = styled.Text`
-  fontSize: 12px;
+  fontSize: 11px;
 `;
 
 export default class ReceiveModal extends React.Component<Props> {
