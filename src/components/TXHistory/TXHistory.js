@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
 } from 'react-native';
 
 import Item from './Item';
@@ -31,14 +32,13 @@ type State = {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#f7f7f7',
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
+    padding: 20,
+    paddingBottom: 80,
     shadowColor: '#000',
     shadowOpacity: 0.25,
     justifyContent: 'flex-end',
     shadowRadius: 10,
-    shadowOffset: { width: 0, height: 200 },
+    shadowOffset: { width: 0, height: 1000 },
   },
   header: {
     fontWeight: 'bold',

@@ -8,6 +8,7 @@ import {
   from 'react-native';
 import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
+import Container from 'components/Container';
 import AssetCard from 'components/AssetCard';
 import AssetHeader from 'components/AssetHeader';
 
@@ -46,12 +47,6 @@ class Assets extends React.Component<Props, State> {
     fetchEtherBalance();
     this.getTransactionHistory();
   }
-
-  onScroll = (event: any) => {
-    if (event.nativeEvent.contentOffset.y <= -100) {
-      this.setCardInactive();
-    }
-  };
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
@@ -158,7 +153,6 @@ class Assets extends React.Component<Props, State> {
         const displayAmount = +parseFloat(balance).toFixed(4);
         return (
           <Animated.ScrollView
-            onScroll={this.onScroll}
             scrollEventThrottle={300}
             key={id}
             style={{
@@ -166,7 +160,7 @@ class Assets extends React.Component<Props, State> {
               overflow: 'visible',
               position: 'relative',
               height: '100%',
-              marginTop: this.state.animCardPositionY,
+              top: this.state.animCardPositionY,
             }}
           >
             <AssetCard
