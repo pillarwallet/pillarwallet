@@ -27,6 +27,7 @@
   },
   "rules": {
     "arrow-body-style": ["off"],
+    "arrow-parens": ["off"],
     "func-names": ["off"],
     "flowtype/require-valid-file-annotation": ["error", "always"],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],

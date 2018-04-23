@@ -5,8 +5,8 @@ import merge from 'lodash.merge';
 const cryptocurrencies = {
   ETH: {
     name: 'Ethereum',
-    color: '#4C4E5E'
-  }
+    color: '#4C4E5E',
+  },
 };
 
 export type AssetsReducerState = {

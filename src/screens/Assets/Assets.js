@@ -9,8 +9,8 @@ import {
   Image,
 } from 'react-native';
 import { connect } from 'react-redux';
-import type { Transaction } from 'models/Transaction'
-import type { ScrollEvent, onPress } from 'react-native';
+import type { Transaction } from 'models/Transaction';
+import type { ScrollEvent } from 'react-native';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 
@@ -30,8 +30,8 @@ type Props = {
 const receiveModalResetState = {
   isVisible: false,
   opts: {
-    address: ''
-  }
+    address: '',
+  },
 };
 
 type State = {
@@ -89,7 +89,7 @@ class Assets extends React.Component<Props, State> {
       this.setState({
         history: res,
       });
-    }).catch((e) => {
+    }).catch(() => {
       // TODO: Use proper error handling
     });
   }
@@ -99,15 +99,15 @@ class Assets extends React.Component<Props, State> {
     const cardPositionYValue = isActive ? -40 : 30;
     Animated.parallel([
       Animated.spring(this.state.animHeaderHeight, {
-        toValue: headerHeightValue
+        toValue: headerHeightValue,
       }),
       Animated.spring(this.state.animCardPositionY, {
-        toValue: cardPositionYValue
+        toValue: cardPositionYValue,
       }),
     ]).start();
   };
 
-  handleCardTap = (event: onPress) => {
+  handleCardTap = () => {
     this.setState({
       isCardActive: !this.state.isCardActive,
     }, () => {
@@ -120,9 +120,15 @@ class Assets extends React.Component<Props, State> {
     const { history } = this.state;
     return Object.keys(assets)
       .map(id => assets[id])
-      .map(({ id, balance, name, color }) => {
+      .map(asset => {
+        const {
+          id,
+          balance,
+          name,
+          color,
+        } = asset;
         const displayAmount = +parseFloat(balance).toFixed(4);
-        const assetHistory = history.filter(({ asset }) => asset === id);
+        const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
         const receiveModalOptions = { address: wallet.address };
         return (
           <Animated.View key={id} style={{ marginTop: this.state.animCardPositionY }}>
@@ -137,7 +143,9 @@ class Assets extends React.Component<Props, State> {
               address={wallet.address}
             >
               <View>
-                <TouchableOpacity onPress={() => { this.setState({ receiveModal: { isVisible: true, opts: receiveModalOptions } }) }}>
+                <TouchableOpacity
+                  onPress={() => { this.setState({ receiveModal: { isVisible: true, opts: receiveModalOptions } }); }}
+                >
                   <Image style={{ width: 50, height: 50 }} source={imageReceive} />
                 </TouchableOpacity>
                 <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Receive</Text>
@@ -154,8 +162,7 @@ class Assets extends React.Component<Props, State> {
   }
 
   render() {
-    const { assets: { data: assets } } = this.props;
-    const { receiveModal: { isVisible: isReceiveModalOpen, opts } } = this.state
+    const { receiveModal: { isVisible: isReceiveModalOpen, opts } } = this.state;
     return (
       <View>
         <ScrollView onScroll={this.handleScroll} scrollEventThrottle={200}>
@@ -171,7 +178,11 @@ class Assets extends React.Component<Props, State> {
           </Animated.View>
           {this.renderAssets()}
         </ScrollView>
-        <ReceiveModal isVisible={isReceiveModalOpen} {...opts} onDismiss={() => { this.setState({ receiveModal: receiveModalResetState }) }} />
+        <ReceiveModal
+          isVisible={isReceiveModalOpen}
+          {...opts}
+          onDismiss={() => { this.setState({ receiveModal: receiveModalResetState }); }}
+        />
       </View>
     );
   }

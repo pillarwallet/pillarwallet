@@ -2,12 +2,11 @@
 import * as React from 'react';
 import {
   Animated,
-  StyleSheet,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { lighten } from 'polished';
-import type { Transaction } from 'models/Transaction'
+import type { Transaction } from 'models/Transaction';
 import TXHistory from 'components/TXHistory';
 import Icon from './Icon';
 import IconWrapper from './IconWrapper';
@@ -48,7 +47,7 @@ export default class AssetCard extends React.Component<Props, State> {
   };
 
   onCardTap = () => {
-    const { onTap, tag } = this.props
+    const { onTap, tag } = this.props;
     this.setState({
       isActive: !this.state.isActive,
     }, () => {
@@ -79,7 +78,6 @@ export default class AssetCard extends React.Component<Props, State> {
       animCardHeight,
       animCardWidth,
       animCardContentFade,
-      isActive,
     } = this.state;
     const {
       color: linearGradientColorStart,

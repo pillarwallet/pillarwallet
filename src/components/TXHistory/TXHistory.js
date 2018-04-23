@@ -1,11 +1,5 @@
 // @flow
 import * as React from 'react';
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
 import styled from 'styled-components/native';
 import type { Transaction } from 'models/Transaction';
 import { formatETHAmount } from 'utils/common';
@@ -50,12 +44,20 @@ const RECEIVED = 'Received';
 
 export default class TXHistory extends React.Component<Props> {
   static defaultProps = {
-    history: []
+    history: [],
   }
 
   renderTransactionHistory() {
     const { history, address } = this.props;
-    return history.map(({ status, value, from, _id: id, hash, asset }) => {
+    return history.map((transaction: Transaction) => {
+      const {
+        status,
+        value,
+        from,
+        _id: id,
+        hash,
+        asset,
+      } = transaction;
       const direction = address.toUpperCase() === from ? SENT : RECEIVED;
       const icon = direction === SENT ? iconDown : iconUp;
       return (
@@ -74,7 +76,7 @@ export default class TXHistory extends React.Component<Props> {
         </Item>
       );
     });
-  };
+  }
 
   render() {
     const { history } = this.props;

@@ -18,8 +18,8 @@ describe('Common utils', () => {
 
   describe('formatETHAmount', () => {
     it('should format ETH amount to a readable one', () => {
-      const expectedAmount = 0.0042;
-      expect(formatETHAmount(004200000000000001)).toBe(expectedAmount);
+      const expectedAmount = 0.00042;
+      expect(formatETHAmount(0.00042000001)).toBe(expectedAmount);
     });
   });
 });
