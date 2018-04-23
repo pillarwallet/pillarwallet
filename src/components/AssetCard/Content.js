@@ -2,7 +2,7 @@
 import styled from 'styled-components/native';
 
 export default styled.View`
-  height: 220;
+  flex: 0 0 160px;
   padding: 20px;
   flexDirection: row;
   alignItems: center;

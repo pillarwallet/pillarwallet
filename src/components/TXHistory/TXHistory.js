@@ -24,10 +24,8 @@ type Props = {
 const Container = styled.View`
   backgroundColor: #f7f7f7;
   padding: 20px;
-  shadowColor: #000;
-  shadowOpacity: 0.25;
-  shadowRadius: 10;
-  shadowOffset: 0px 200px;
+  flex: 1;
+  flexDirection: row;
 `;
 
 // Looks like a heading (typography), shouldn't it be extracted?
@@ -79,15 +77,17 @@ export default class TXHistory extends React.Component<Props> {
       return null;
     }
     return (
-      <Container>
-        <FlatList
-          ListHeaderComponent={<Header>activity</Header>}
-          data={this.props.history}
-          extraData={address}
-          renderItem={this.renderTransaction}
-          keyExtractor={(({ _id }) => _id)}
-        />
-      </Container>
+      <FlatList
+        ListHeaderComponent={<Header>activity</Header>}
+        data={this.props.history}
+        extraData={address}
+        renderItem={this.renderTransaction}
+        keyExtractor={(({ _id }) => _id)}
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+ justifyContent: 'flex-start', flex: 1, backgroundColor: '#FFFFFF', padding: 20,
+}}
+      />
     );
   }
 }

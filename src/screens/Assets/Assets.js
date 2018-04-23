@@ -48,7 +48,7 @@ type State = {
 
 class Assets extends React.Component<Props, State> {
   state = {
-    animHeaderHeight: new Animated.Value(200),
+    animHeaderHeight: new Animated.Value(180),
     animCardPositionY: new Animated.Value(30),
     isCardActive: false,
     receiveModal: receiveModalResetState,
@@ -94,7 +94,7 @@ class Assets extends React.Component<Props, State> {
   }
 
   animateCardPositionAndHeader = (isActive: boolean) => {
-    const headerHeightValue = isActive ? 120 : 200;
+    const headerHeightValue = isActive ? 120 : 180;
     const cardPositionYValue = isActive ? -40 : 30;
     Animated.parallel([
       Animated.spring(this.state.animHeaderHeight, {

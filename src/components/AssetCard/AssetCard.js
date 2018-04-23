@@ -57,7 +57,7 @@ export default class AssetCard extends React.Component<Props, State> {
   };
 
   animateCardActiveState = (isActive: boolean) => {
-    const cardHeightValue = isActive ? 200 : 140;
+    const cardHeightValue = isActive ? 160 : 140;
     const cardWidthValue = isActive ? 20 : 30;
     const cardContentFadeValue = isActive ? 1 : 0;
     Animated.parallel([
@@ -110,7 +110,7 @@ export default class AssetCard extends React.Component<Props, State> {
             </Background>
           </Animated.View>
         </TouchableWithoutFeedback>
-        <Animated.View style={{ opacity: animCardContentFade }}>
+        <Animated.View style={{ height: '100%', opacity: animCardContentFade }}>
           <Content>{children}</Content>
           <TXHistory
             address={this.props.address}
