@@ -3,7 +3,6 @@ import * as React from 'react';
 import {
   Animated,
   Text,
-  ScrollView,
   View,
 }
   from 'react-native';
@@ -162,7 +161,11 @@ class Assets extends React.Component<Props, State> {
             onScroll={this.onScroll}
             scrollEventThrottle={200}
             key={id}
-            style={{ marginTop: this.state.animCardPositionY }}
+            style={{
+             position: 'relative',
+             height: '100%',
+             top: this.state.animCardPositionY,
+            }}
           >
             <AssetCard
               name={this.getTokenName(id)}
