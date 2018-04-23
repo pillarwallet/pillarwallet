@@ -6,7 +6,7 @@
 
 function loadStories() {
   require('../src/components/Button/Button.stories');
-  require('../src/components/ButtonHelpText/ButtonHelpText.stories');
+  require('../src/components/HelpText/HelpText.stories');
   require('../src/components/Checkbox/Checkbox.stories');
   require('../src/components/Input/Input.stories');
   require('../src/components/InputGroup/InputGroup.stories');
@@ -20,7 +20,7 @@ function loadStories() {
 
 const stories = [
   '../src/components/Button/Button.stories',
-  '../src/components/ButtonHelpText/ButtonHelpText.stories',
+  '../src/components/HelpText/HelpText.stories',
   '../src/components/Checkbox/Checkbox.stories',
   '../src/components/Input/Input.stories',
   '../src/components/InputGroup/InputGroup.stories',
