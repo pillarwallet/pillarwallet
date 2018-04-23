@@ -165,20 +165,18 @@ class Assets extends React.Component<Props, State> {
     const { receiveModal: { isVisible: isReceiveModalOpen, opts } } = this.state;
     return (
       <View>
-        <ScrollView onScroll={this.handleScroll} scrollEventThrottle={200}>
-          <Animated.View
-            style={{
-              backgroundColor: '#2CB3F8',
-              height: this.state.animHeaderHeight,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text>$10.02 Total Portfolio</Text>
-          </Animated.View>
-          {this.renderAssets()}
-        </ScrollView>
-        <ReceiveModal
+        <Animated.View
+          style={{
+            backgroundColor: '#2CB3F8',
+            height: this.state.animHeaderHeight,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text>$10.02 Total Portfolio</Text>
+        </Animated.View>
+        {this.renderAssets()}
+        =        <ReceiveModal
           isVisible={isReceiveModalOpen}
           {...opts}
           onDismiss={() => { this.setState({ receiveModal: receiveModalResetState }); }}
