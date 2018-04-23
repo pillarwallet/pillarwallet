@@ -129,8 +129,8 @@ export default class AssetCard extends React.Component<Props, State> {
         </TouchableWithoutFeedback>
 
         {pressed && (
-          <View style={styles.cardContainer}>
-            <Content style={styles.cardContent} />
+          <View>
+            <Content />
             <TXHistory
               address={this.props.address}
               history={this.props.history}

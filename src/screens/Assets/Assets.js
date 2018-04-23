@@ -3,16 +3,18 @@ import * as React from 'react';
 import {
   Animated,
   Text,
-  ScrollView,
   View,
 }
   from 'react-native';
 import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import AssetHeader from 'components/AssetHeader';
 
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
+
+const AnimatedAssetHeader = Animated.createAnimatedComponent(AssetHeader);
 
 type Props = {
   fetchEtherBalance: () => Function,
@@ -28,6 +30,10 @@ type State = {
 }
 
 class Assets extends React.Component<Props, State> {
+  static navigationOptions = {
+    header: () => null,
+  };
+
   state = {
     animHeaderHeight: new Animated.Value(200),
     animCardPositionY: new Animated.Value(30),
@@ -40,12 +46,6 @@ class Assets extends React.Component<Props, State> {
     fetchEtherBalance();
     this.getTransactionHistory();
   }
-
-  onScroll = (event: any) => {
-    if (event.nativeEvent.contentOffset.y <= -100) {
-      this.setCardInactive();
-    }
-  };
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
@@ -120,19 +120,6 @@ class Assets extends React.Component<Props, State> {
     return token;
   }
 
-  headerComponent() {
-    return (
-      <Animated.View style={{
-          backgroundColor: '#2CB3F8',
-          height: this.state.animHeaderHeight,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Text>$10.02 Total Portfolio</Text>
-      </Animated.View>);
-  }
-
   checkStateStatus = (status: boolean) => {
     if (status === true) {
       this.setCardActive();
@@ -142,14 +129,14 @@ class Assets extends React.Component<Props, State> {
   };
 
   hitAssetCard = (event: any) => {
-    if (event === 'card01') {
+    if (event) {
       this.setState({
         cardActive: !this.state.cardActive,
       }, () => {
         this.checkStateStatus(this.state.cardActive);
       });
     }
-    if (event === 'card02') {
+    if (event) {
       this.setState({
         cardActive: !this.state.cardActive,
       }, () => {
@@ -164,18 +151,28 @@ class Assets extends React.Component<Props, State> {
       .map(({ id, balance }) => {
         const displayAmount = +parseFloat(balance).toFixed(4);
         return (
-          <Animated.View key={id} style={{ marginTop: this.state.animCardPositionY }}>
+          <Animated.ScrollView
+            scrollEventThrottle={300}
+            key={id}
+            style={{
+              zIndex: 1,
+              overflow: 'visible',
+              position: 'relative',
+              height: '100%',
+              top: this.state.animCardPositionY,
+            }}
+          >
             <AssetCard
               name={this.getTokenName(id)}
               token={id}
               amount={displayAmount}
               color={this.getTokenColor(id)}
               onTap={this.hitAssetCard}
-              tag="card01"
+              tag={id}
               history={this.state.history}
               address={this.props.wallet.data.address}
             />
-          </Animated.View>);
+          </Animated.ScrollView>);
       });
   }
 
@@ -185,10 +182,10 @@ class Assets extends React.Component<Props, State> {
 
     return (
       <View>
-        <ScrollView onScroll={this.onScroll} scrollEventThrottle={200}>
-          { this.headerComponent() }
-          { assetsList }
-        </ScrollView>
+        <AnimatedAssetHeader style={{ height: this.state.animHeaderHeight }}>
+          <Text>$10.02 Total Portfolio</Text>
+        </AnimatedAssetHeader>
+        { assetsList }
       </View>
     );
   }
