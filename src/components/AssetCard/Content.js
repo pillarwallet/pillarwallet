@@ -7,6 +7,4 @@ export default styled.View`
   flexDirection: row;
   alignItems: center;
   justifyContent: space-evenly;
-  flexWrap: wrap;
-  flex: 1;
 `;

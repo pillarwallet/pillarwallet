@@ -111,7 +111,7 @@ export default class SlideModal extends React.Component<Props, State> {
             contentContainerStyle={styles.scrollContentStyle}
           >
             <Animated.View style={[styles.sliderContainer,
-              { marginTop: animSlideModalVertical, height: window.height * 2 }]}
+              { marginTop: animSlideModalVertical, height: (window.height * 2) - 300 }]}
             >
               <View style={styles.sliderHeaderContainer}>
                 <Text style={styles.sliderHeader}>{title}</Text>
@@ -120,6 +120,7 @@ export default class SlideModal extends React.Component<Props, State> {
               <View style={styles.contentWrapper}>
                 {children}
               </View>
+              <View style={styles.offscreenWrapper} />
             </Animated.View>
           </ScrollView>
         </View>

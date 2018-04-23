@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
   sliderContainer: {
     backgroundColor: 'white',
     padding: 20,
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
@@ -54,9 +55,16 @@ const styles = StyleSheet.create({
   },
 
   contentWrapper: {
-    flex: 0,
+    flex: 1,
     height: window.height,
     alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  offscreenWrapper: {
+    flex: 1,
+    height: window.height,
+    width: '100%',
+    backgroundColor: '#FFFFFF',
   },
 });
 

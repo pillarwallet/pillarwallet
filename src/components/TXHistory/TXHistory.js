@@ -22,7 +22,7 @@ type Props = {
 
 const Container = styled.ScrollView`
   backgroundColor: #f7f7f7;
-  padding: 20px 20px 80px;
+  padding: 20px;
   shadowColor: #000;
   shadowOpacity: 0.25;
   shadowRadius: 10;
