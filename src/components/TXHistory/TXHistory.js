@@ -18,12 +18,12 @@ const iconDown = require('assets/icons/down.png');
 type Props = {
   history: Transaction[],
   token: string,
-  address: string
+  address: string,
+  onRefresh: Function
 }
 
 const Container = styled.View`
-  backgroundColor: #f7f7f7;
-  padding: 20px;
+  backgroundColor: #fff;
   flex: 1;
   flexDirection: row;
 `;
@@ -34,12 +34,20 @@ const Header = styled.Text`
   fontSize: 20;
 `;
 
+const flatListStyles = {
+  justifyContent: 'flex-start',
+  flex: 1,
+  backgroundColor: '#FFFFFF',
+  padding: 20,
+}
+
 const SENT = 'Sent';
 const RECEIVED = 'Received';
 
 export default class TXHistory extends React.Component<Props> {
   static defaultProps = {
     history: [],
+    onRefresh: () => {}
   }
 
   renderTransaction = ({ item: transaction }: { item: Transaction }) => {
@@ -72,22 +80,23 @@ export default class TXHistory extends React.Component<Props> {
   }
 
   render() {
-    const { history, address } = this.props;
+    const { history, address, onRefresh } = this.props;
     if (!history.length) {
       return null;
     }
     return (
-      <FlatList
-        ListHeaderComponent={<Header style={{ marginBottom: 10 }}>activity.</Header>}
-        data={this.props.history}
-        extraData={address}
-        renderItem={this.renderTransaction}
-        keyExtractor={(({ _id }) => _id)}
-        style={{ flex: 1 }}
-        contentContainerStyle={{
- justifyContent: 'flex-start', flex: 1, backgroundColor: '#FFFFFF', padding: 20,
-}}
-      />
+      <Container>
+        <FlatList
+          refreshing={false}
+          onRefresh={onRefresh}
+          ListHeaderComponent={<Header style={{ marginBottom: 10 }}>activity.</Header>}
+          data={this.props.history}
+          extraData={address}
+          renderItem={this.renderTransaction}
+          keyExtractor={(({ _id }) => _id)}
+          contentContainerStyle={flatListStyles}
+        />
+      </Container>
     );
   }
 }
