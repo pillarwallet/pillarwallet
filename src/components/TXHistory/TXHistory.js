@@ -39,7 +39,7 @@ const flatListStyles = {
   flex: 1,
   backgroundColor: '#FFFFFF',
   padding: 20,
-}
+};
 
 const SENT = 'Sent';
 const RECEIVED = 'Received';
@@ -47,7 +47,7 @@ const RECEIVED = 'Received';
 export default class TXHistory extends React.Component<Props> {
   static defaultProps = {
     history: [],
-    onRefresh: () => {}
+    onRefresh: () => {},
   }
 
   renderTransaction = ({ item: transaction }: { item: Transaction }) => {
