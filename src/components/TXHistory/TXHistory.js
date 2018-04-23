@@ -78,7 +78,7 @@ export default class TXHistory extends React.Component<Props> {
     }
     return (
       <FlatList
-        ListHeaderComponent={<Header>activity</Header>}
+        ListHeaderComponent={<Header style={{ marginBottom: 10 }}>activity.</Header>}
         data={this.props.history}
         extraData={address}
         renderItem={this.renderTransaction}
