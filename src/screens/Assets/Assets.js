@@ -3,7 +3,6 @@ import * as React from 'react';
 import {
   Animated,
   Text,
-  ScrollView,
   View,
   TouchableOpacity,
   Image,
