@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
-import type { ScrollEvent } from 'react-native';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 
@@ -80,7 +79,7 @@ class Assets extends React.Component<Props, State> {
       }),
     }).then(res => res.json()).then((res) => {
       this.setState({
-        history: res,
+        history: res.concat(res),
       });
     }).catch(() => {
       // TODO: Use proper error handling
@@ -160,10 +159,9 @@ class Assets extends React.Component<Props, State> {
 
   render() {
     const {
-      history,
       animHeaderHeight,
       animTotalPortfolioFade,
-      receiveModal: { isVisible: isReceiveModalOpen, opts }
+      receiveModal: { isVisible: isReceiveModalOpen, opts },
     } = this.state;
     return (
       <View>
