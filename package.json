@@ -34,6 +34,7 @@
     "npm-run-all": "^4.1.2",
     "prop-types": "^15.6.1",
     "react-dom": "^16.3.0-alpha.1",
+    "react-native-debugger-open": "^0.3.17",
     "react-native-dotenv": "^0.1.1",
     "react-native-scripts": "1.13.1",
     "react-native-storybook-loader": "^1.8.0",
@@ -58,7 +59,8 @@
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",
     "prestorybook": "rnstl",
-    "storybook": "storybook start -p 7007"
+    "storybook": "storybook start -p 7007",
+    "postinstall": "rndebugger-open"
   },
   "config": {
     "react-native-storybook-loader": {
@@ -114,6 +116,7 @@
     "react-navigation-redux-helpers": "^1.0.5",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
+    "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
     "shuffle-array": "^1.0.1",
     "styled-components": "^3.2.5",
