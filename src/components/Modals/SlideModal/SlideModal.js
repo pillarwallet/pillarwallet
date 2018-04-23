@@ -26,6 +26,7 @@ type State = {
 };
 
 const window = Dimensions.get('window');
+const modalOffset = 300;
 
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
@@ -106,12 +107,12 @@ export default class SlideModal extends React.Component<Props, State> {
         <View style={styles.modalScrollContainer}>
           <ScrollView
             onScroll={this.handleScroll}
-            scrollEventThrottle={300}
+            scrollEventThrottle={200}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContentStyle}
           >
             <Animated.View style={[styles.sliderContainer,
-              { marginTop: animSlideModalVertical, height: (window.height * 2) - 300 }]}
+              { marginTop: animSlideModalVertical, height: (window.height * 2) - modalOffset }]}
             >
               <View style={styles.sliderHeaderContainer}>
                 <Text style={styles.sliderHeader}>{title}</Text>
