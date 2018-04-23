@@ -57,7 +57,7 @@ export default class AssetCard extends React.Component<Props, State> {
   };
 
   animateCardActiveState = (isActive: boolean) => {
-    const cardHeightValue = isActive ? 160 : 140;
+    const cardHeightValue = isActive ? 180 : 140;
     const cardWidthValue = isActive ? 20 : 30;
     const cardContentFadeValue = isActive ? 1 : 0;
     Animated.parallel([
