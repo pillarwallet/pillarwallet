@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   View,
-  ScrollView,
 } from 'react-native';
 
 import Item from './Item';

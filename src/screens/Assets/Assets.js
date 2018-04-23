@@ -8,7 +8,6 @@ import {
   from 'react-native';
 import { connect } from 'react-redux';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
-import Container from 'components/Container';
 import AssetCard from 'components/AssetCard';
 import AssetHeader from 'components/AssetHeader';
 
