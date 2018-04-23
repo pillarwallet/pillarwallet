@@ -135,14 +135,14 @@ class Assets extends React.Component<Props, State> {
   };
 
   hitAssetCard = (event: any) => {
-    if (event === 'card01') {
+    if (event) {
       this.setState({
         cardActive: !this.state.cardActive,
       }, () => {
         this.checkStateStatus(this.state.cardActive);
       });
     }
-    if (event === 'card02') {
+    if (event) {
       this.setState({
         cardActive: !this.state.cardActive,
       }, () => {
@@ -175,7 +175,7 @@ class Assets extends React.Component<Props, State> {
               amount={displayAmount}
               color={this.getTokenColor(id)}
               onTap={this.hitAssetCard}
-              tag="card01"
+              tag={id}
               history={this.state.history}
               address={this.props.wallet.data.address}
             />
