@@ -55,13 +55,14 @@ export default class TXHistory extends React.Component<Props> {
       status,
       value,
       from,
+      to,
       _id: id,
-      hash,
       asset,
     } = transaction;
     const { address } = this.props;
     const direction = address.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
     const icon = direction === SENT ? iconDown : iconUp;
+    const senderRecipientAddress = direction === SENT ? to : from;
     return (
       <Item key={id}>
         <Section small>
@@ -69,7 +70,7 @@ export default class TXHistory extends React.Component<Props> {
         </Section>
         <Section>
           <Direction>{direction}</Direction>
-          <Hash>{hash.slice(0, 7)}…{hash.slice(-7)}</Hash>
+          <Hash>{senderRecipientAddress.slice(0, 7)}…{senderRecipientAddress.slice(-7)}</Hash>
         </Section>
         <Section>
           <Amount>{formatETHAmount(value)} {asset}</Amount>
