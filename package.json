@@ -103,9 +103,11 @@
     "includeFailureMsg": true
   },
   "dependencies": {
+    "@expo/vector-icons": "^6.3.1",
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
     "lodash.merge": "^4.6.1",
+    "native-base": "^2.4.2",
     "polished": "^1.9.2",
     "pouchdb-react-native": "^6.4.1",
     "qrcode": "^1.2.0",
