@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { View, Image } from 'react-native';
 import qrcode from 'qrcode';
 import { delay } from 'utils/common';
 import styled from 'styled-components/native';
@@ -20,14 +19,19 @@ type State = {
   isGenerating: boolean
 }
 
-const AVERAGE_NUMBER_OF_MATRIX_ROWS = 29;
+const AVERAGE_NUMBER_OF_MATRIX_ROWS = 30;
 
 const Container = styled.View`
-  height: ${props => props.height || 200}
+  height: ${props => props.height || 200}px;
 `;
 
-const LoadingWrapper = styled.View`
+const QRWrapper = styled.View`
   position: relative;
+`;
+
+const Image = styled.Image`
+  height: ${props => props.height || 200}px;
+  width: ${props => props.width || 200}px;
 `;
 
 const ActivityIndicator = styled.ActivityIndicator`
@@ -69,7 +73,7 @@ export default class QRCode extends React.Component<Props, State> {
 
   async generateQRCode() {
     const { value } = this.props;
-    await delay(2000);
+    await delay(600);
     const qrCodeSrc = await qrcode.create(value);
     const arr = qrCodeSrc.modules.data;
     const sqrMatrix = this.generateSquareMatrix(arr);
@@ -96,7 +100,7 @@ export default class QRCode extends React.Component<Props, State> {
     const { blockHeight, positiveColor, negativeColor } = this.props;
     let startIndex = -1;
     return (
-      <View>
+      <QRWrapper>
         {sqrMatrix.map((row, index) => (
           <QRRow key={index} height={blockHeight}>
             {row.map((value, col) => {
@@ -125,21 +129,21 @@ export default class QRCode extends React.Component<Props, State> {
             })}
           </QRRow>
         ))}
-      </View>
+      </QRWrapper>
     );
   }
 
   render() {
-    const { sqrMatrix, isGenerating } = this.state;
+    const { isGenerating } = this.state;
     const { blockHeight } = this.props;
     const height = blockHeight * AVERAGE_NUMBER_OF_MATRIX_ROWS;
     return (
       <Container height={height}>
         {isGenerating ?
-          <LoadingWrapper>
-            < Image source={qrCodePlaceholder} blurRadius={10} style={{ width: blockHeight * 30, height: blockHeight * 30 }} />
+          <QRWrapper>
+            <Image source={qrCodePlaceholder} blurRadius={10} width={height} height={height} />
             <ActivityIndicator />
-          </LoadingWrapper >
+          </QRWrapper >
           : this.renderQRCode()}
       </Container>
     );
