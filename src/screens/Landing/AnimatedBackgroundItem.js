@@ -47,6 +47,7 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
           toValue: -500,
           duration: 5000,
           delay: 0,
+          useNativeDriver: true,
         },
       ),
 
@@ -57,6 +58,7 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
             this.state.opacity,
             {
               toValue: 1,
+              useNativeDriver: true,
             },
           ),
         ]),
@@ -65,6 +67,7 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
           this.state.opacity,
           {
             toValue: 0,
+            useNativeDriver: true,
           },
         ),
 
