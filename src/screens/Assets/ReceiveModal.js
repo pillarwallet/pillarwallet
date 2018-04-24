@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Share, Clipboard } from 'react-native';
+import { View, Text, Share, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -8,13 +8,15 @@ import QRCode from 'components/QRCode';
 
 type Props = {
   address: string,
+  token: string,
+  tokenName: string,
   isVisible: boolean,
   onDismiss: Function
 }
 
 const Container = styled.View`
-  flex: 1;
-  justifyContent: space-around;
+  flex: ${props => props.flex};
+  justifyContent: center;
   flexDirection: column;
   alignItems: center;
   padding: 20px;
@@ -41,15 +43,22 @@ export default class ReceiveModal extends React.Component<Props> {
   }
 
   render() {
-    const { address, isVisible, onDismiss } = this.props;
+    const {
+      address, isVisible, onDismiss, token, tokenName,
+    } = this.props;
     return (
       <SlideModal title="receive." isVisible={isVisible} onDismiss={onDismiss}>
-        <Container>
+        <Container flex={4}>
           <QRCode value={address} blockHeight={5} />
-          <View>
-            <Address>{address}</Address>
-            <Copy onPress={this.handleAddressClipboardSet}>Copy address</Copy>
-          </View>
+          <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray' }}>
+              This is your ROPSTEN {tokenName} address, use for transfering ROPSTEN {token} only!
+          </Text>
+        </Container>
+        <Container flex={1}>
+          <Address>{address}</Address>
+          <Copy onPress={this.handleAddressClipboardSet}>Copy address</Copy>
+        </Container>
+        <Container flex={2}>
           <Button title="Share your address" onPress={this.handleAddressShare} />
         </Container>
       </SlideModal>

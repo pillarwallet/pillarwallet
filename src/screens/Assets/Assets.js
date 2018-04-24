@@ -29,6 +29,8 @@ const receiveModalResetState = {
   isVisible: false,
   opts: {
     address: '',
+    token: '',
+    tokenName: '',
   },
 };
 
@@ -41,7 +43,9 @@ type State = {
   receiveModal: {
     isVisible: boolean,
     opts: {
-      address: string
+      address: string,
+      token: string,
+      tokenName: string
     }
   }
 }
@@ -125,7 +129,7 @@ class Assets extends React.Component<Props, State> {
         } = asset;
         const displayAmount = +parseFloat(balance).toFixed(4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
-        const receiveModalOptions = { address: wallet.address };
+        const receiveModalOptions = { address: wallet.address, token: id, tokenName: name };
         return (
           <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
             <AssetCard
