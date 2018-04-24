@@ -69,11 +69,11 @@ export default class TXHistory extends React.Component<Props> {
         </Section>
         <Section>
           <Direction>{direction}</Direction>
-          <Hash>{hash.slice(0, 4)}…{hash.slice(-4)}</Hash>
+          <Hash>{hash.slice(0, 7)}…{hash.slice(-7)}</Hash>
         </Section>
         <Section>
           <Amount>{formatETHAmount(value)} {asset}</Amount>
-          <Status>{status}</Status>
+          <Status>{status.toUpperCase()}</Status>
         </Section>
       </Item>
     );
