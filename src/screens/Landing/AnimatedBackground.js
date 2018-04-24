@@ -68,7 +68,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
         animatedBackgroundItemList: newAnimatedBackgroundItemList,
       });
       i += 1;
-    }, this.randomValue(100, 100));
+    }, this.randomValue(100, 200));
   }
 
   componentDidMount() {
