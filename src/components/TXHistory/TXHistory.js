@@ -1,12 +1,9 @@
 // @flow
 import * as React from 'react';
-import {
-  Animated,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-
+import { FlatList } from 'react-native';
+import styled from 'styled-components/native';
+import type { Transaction } from 'models/Transaction';
+import { formatETHAmount } from 'utils/common';
 import Item from './Item';
 import Icon from './Icon';
 import Amount from './Amount';
@@ -19,101 +16,88 @@ const iconUp = require('assets/icons/up.png');
 const iconDown = require('assets/icons/down.png');
 
 type Props = {
-  history: {},
+  history: Transaction[],
   token: string,
-  address: string
+  address: string,
+  onRefresh: Function
 }
 
-type State = {
-  animFadeIn: any,
-}
+const Container = styled.View`
+  backgroundColor: rgb(246, 246, 246);
+  flex: 1;
+  flexDirection: row;
+`;
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#f7f7f7',
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.25,
-    justifyContent: 'flex-end',
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 200 },
-  },
-  header: {
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-});
+// Looks like a heading (typography), shouldn't it be extracted?
+const Header = styled.Text`
+  fontWeight: bold;
+  fontSize: 20;
+`;
 
-export default class TXHistory extends React.Component<Props, State> {
-  state = {
-    animFadeIn: new Animated.Value(0),
-  };
+const flatListStyles = {
+  justifyContent: 'flex-start',
+  flex: 1,
+  backgroundColor: 'rgb(246, 246, 246)',
+  padding: 20,
+};
 
-  componentDidMount() {
-    Animated.timing(
-      this.state.animFadeIn,
-      {
-        toValue: 1,
-        duration: 500,
-      },
-    ).start();
+const SENT = 'Sent';
+const RECEIVED = 'Received';
+
+export default class TXHistory extends React.Component<Props> {
+  static defaultProps = {
+    history: [],
+    onRefresh: () => {},
   }
 
-  getTransacionDirection(address: string, fromAddress: string) {
-    if (address.toUpperCase() === fromAddress) {
-      return 'Sent';
-    }
-    return 'Recieved';
-  }
-
-  getDisplayAmount(amount: number) {
-    return +parseFloat(amount).toFixed(6);
-  }
-
-  getIcon(direction: string) {
-    if (direction === 'Sent') {
-      return iconDown;
-    }
-    return iconUp;
-  }
-
-  generateTransactionHistoryList(history: any) {
-    let i = 0;
-    const transactionHistoryList = [];
-    for (i = 0; i < history.length; i += 1) {
-      const direction = this.getTransacionDirection(this.props.address, history[i].from);
-      transactionHistoryList.push(
-        <Item key={`${i}item`}>
-          <Section small>
-            <Icon source={this.getIcon(direction)} />
-          </Section>
-          <Section>
-            <Direction>{direction}</Direction>
-            <Hash>{history[i].hash.slice(0, 4)}…{history[i].hash.slice(-4)}</Hash>
-          </Section>
-          <Section>
-            <Amount>{this.getDisplayAmount(history[i].value)} {this.props.token}</Amount>
-            <Status>{history[i].status}</Status>
-          </Section>
-        </Item>,
-      );
-    }
+  renderTransaction = ({ item: transaction }: { item: Transaction }) => {
+    const {
+      status,
+      value,
+      from,
+      to,
+      _id: id,
+      asset,
+    } = transaction;
+    const { address } = this.props;
+    const direction = address.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
+    const icon = direction === SENT ? iconDown : iconUp;
+    const senderRecipientAddress = direction === SENT ? to : from;
     return (
-      <View>
-        {transactionHistoryList.reverse()}
-      </View>
+      <Item key={id}>
+        <Section small>
+          <Icon source={icon} />
+        </Section>
+        <Section>
+          <Direction>{direction}</Direction>
+          <Hash>{senderRecipientAddress.slice(0, 7)}…{senderRecipientAddress.slice(-7)}</Hash>
+        </Section>
+        <Section>
+          <Amount>{formatETHAmount(value)} {asset}</Amount>
+          <Status>{status.toUpperCase()}</Status>
+        </Section>
+      </Item>
     );
   }
 
   render() {
-    const { animFadeIn } = this.state;
+    const { history, address, onRefresh } = this.props;
+    if (!history.length) {
+      return null;
+    }
     return (
-      <Animated.View style={[styles.container, { opacity: animFadeIn }]}>
-        <Text style={styles.header} >activity</Text>
-        {this.generateTransactionHistoryList(this.props.history)}
-      </Animated.View>
+      <Container>
+        <FlatList
+          refreshing={false}
+          onRefresh={onRefresh}
+          ListHeaderComponent={<Header style={{ marginBottom: 10 }}>activity.</Header>}
+          data={this.props.history}
+          extraData={address}
+          renderItem={this.renderTransaction}
+          keyExtractor={(({ _id }) => _id)}
+          contentContainerStyle={flatListStyles}
+        />
+      </Container>
     );
   }
 }

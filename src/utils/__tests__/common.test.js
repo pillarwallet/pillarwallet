@@ -1,5 +1,5 @@
 // @flow
-import { delay } from '../common';
+import { delay, formatETHAmount } from '../common';
 
 describe('Common utils', () => {
   describe('delay', () => {
@@ -13,6 +13,13 @@ describe('Common utils', () => {
       setTimeout(() => {
         expect(value).not.toBeUndefined();
       }, timeout + 1);
+    });
+  });
+
+  describe('formatETHAmount', () => {
+    it('should format ETH amount to a readable one', () => {
+      const expectedAmount = 0.00042;
+      expect(formatETHAmount(0.00042000001)).toBe(expectedAmount);
     });
   });
 });

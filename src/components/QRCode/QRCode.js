@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
-import { View } from 'react-native';
 import qrcode from 'qrcode';
+import { delay } from 'utils/common';
 import styled from 'styled-components/native';
+import qrCodePlaceholder from 'assets/images/qr_code_placeholder.png';
 
 type Props = {
   value: string,
@@ -14,8 +15,34 @@ type Props = {
 type MatrixRow = number[]
 
 type State = {
-  sqrMatrix: MatrixRow[]
+  sqrMatrix: MatrixRow[],
+  isGenerating: boolean
 }
+
+const AVERAGE_NUMBER_OF_MATRIX_ROWS = 30;
+
+const Container = styled.View`
+  height: ${props => props.height || 200}px;
+`;
+
+const QRWrapper = styled.View`
+  position: relative;
+`;
+
+const Image = styled.Image`
+  height: ${props => props.height || 200}px;
+  width: ${props => props.width || 200}px;
+`;
+
+const ActivityIndicator = styled.ActivityIndicator`
+  position: absolute
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  alignItems: center;
+  justifyContent: center;
+`;
 
 const QRBlock = styled.View`
   width: ${props => props.width};
@@ -37,6 +64,7 @@ export default class QRCode extends React.Component<Props, State> {
 
   state = {
     sqrMatrix: [],
+    isGenerating: true,
   };
 
   componentDidMount() {
@@ -45,11 +73,13 @@ export default class QRCode extends React.Component<Props, State> {
 
   async generateQRCode() {
     const { value } = this.props;
+    await delay(600);
     const qrCodeSrc = await qrcode.create(value);
     const arr = qrCodeSrc.modules.data;
     const sqrMatrix = this.generateSquareMatrix(arr);
     this.setState({
       sqrMatrix,
+      isGenerating: false,
     });
   }
 
@@ -70,7 +100,7 @@ export default class QRCode extends React.Component<Props, State> {
     const { blockHeight, positiveColor, negativeColor } = this.props;
     let startIndex = -1;
     return (
-      <View>
+      <QRWrapper>
         {sqrMatrix.map((row, index) => (
           <QRRow key={index} height={blockHeight}>
             {row.map((value, col) => {
@@ -99,12 +129,23 @@ export default class QRCode extends React.Component<Props, State> {
             })}
           </QRRow>
         ))}
-      </View>
+      </QRWrapper>
     );
   }
 
   render() {
-    const { sqrMatrix } = this.state;
-    return sqrMatrix.length ? this.renderQRCode() : null;
+    const { isGenerating } = this.state;
+    const { blockHeight } = this.props;
+    const height = blockHeight * AVERAGE_NUMBER_OF_MATRIX_ROWS;
+    return (
+      <Container height={height}>
+        {isGenerating ?
+          <QRWrapper>
+            <Image source={qrCodePlaceholder} blurRadius={10} width={height} height={height} />
+            <ActivityIndicator />
+          </QRWrapper >
+          : this.renderQRCode()}
+      </Container>
+    );
   }
 }

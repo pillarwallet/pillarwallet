@@ -3,14 +3,19 @@ import * as React from 'react';
 import {
   Animated,
   Text,
-  ScrollView,
   View,
-}
-  from 'react-native';
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import { connect } from 'react-redux';
+import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 
+import ReceiveModal from './ReceiveModal';
+
+const imageSend = require('assets/images/btn_iconSend.png');
+const imageReceive = require('assets/images/btn_iconReceive.png');
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
 
@@ -20,19 +25,39 @@ type Props = {
   wallet: Object,
 }
 
+const receiveModalResetState = {
+  isVisible: false,
+  opts: {
+    address: '',
+    token: '',
+    tokenName: '',
+  },
+};
+
 type State = {
   animHeaderHeight: any,
   animCardPositionY: any,
-  cardActive: boolean,
-  history: {}
+  animTotalPortfolioFade: any,
+  isCardActive: boolean,
+  history: Transaction[],
+  receiveModal: {
+    isVisible: boolean,
+    opts: {
+      address: string,
+      token: string,
+      tokenName: string
+    }
+  }
 }
 
 class Assets extends React.Component<Props, State> {
   state = {
-    animHeaderHeight: new Animated.Value(200),
+    animHeaderHeight: new Animated.Value(180),
     animCardPositionY: new Animated.Value(30),
-    cardActive: false,
-    history: {},
+    animTotalPortfolioFade: new Animated.Value(1),
+    isCardActive: false,
+    receiveModal: receiveModalResetState,
+    history: [],
   };
 
   componentDidMount() {
@@ -40,12 +65,6 @@ class Assets extends React.Component<Props, State> {
     fetchEtherBalance();
     this.getTransactionHistory();
   }
-
-  onScroll = (event: any) => {
-    if (event.nativeEvent.contentOffset.y <= -100) {
-      this.setCardInactive();
-    }
-  };
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
@@ -71,124 +90,101 @@ class Assets extends React.Component<Props, State> {
     });
   }
 
-
-  setCardActive = () => {
+  animateCardPositionAndHeader = (isActive: boolean) => {
+    const headerHeightValue = isActive ? 120 : 180;
+    const cardPositionYValue = isActive ? -60 : 30;
+    const totalPortfolioFadeValue = isActive ? 0 : 1;
     Animated.parallel([
-      Animated.spring(
-        this.state.animHeaderHeight,
-        {
-          toValue: 120,
-        },
-      ).start(),
-      Animated.spring(
-        this.state.animCardPositionY,
-        {
-          toValue: -40,
-        },
-      ).start(),
-    ]);
+      Animated.spring(this.state.animHeaderHeight, {
+        toValue: headerHeightValue,
+      }),
+      Animated.spring(this.state.animCardPositionY, {
+        toValue: cardPositionYValue,
+      }),
+      Animated.spring(this.state.animTotalPortfolioFade, {
+        toValue: totalPortfolioFadeValue,
+      }),
+    ]).start();
   };
 
-  setCardInactive = () => {
-    Animated.parallel([
-      Animated.spring(
-        this.state.animHeaderHeight,
-        {
-          toValue: 200,
-        },
-      ).start(),
-      Animated.spring(
-        this.state.animCardPositionY,
-        {
-          toValue: 30,
-        },
-      ).start(),
-    ]);
+  handleCardTap = () => {
+    this.setState({
+      isCardActive: !this.state.isCardActive,
+    }, () => {
+      this.animateCardPositionAndHeader(this.state.isCardActive);
+    });
   };
 
-  getTokenColor(token) {
-    if (token === 'ETH') {
-      return '#4C4E5E';
-    }
-    return '#0000FF';
-  }
-
-  getTokenName(token) {
-    if (token === 'ETH') {
-      return 'Ethereum';
-    }
-    return token;
-  }
-
-  headerComponent() {
-    return (
-      <Animated.View style={{
-          backgroundColor: '#2CB3F8',
-          height: this.state.animHeaderHeight,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Text>$10.02 Total Portfolio</Text>
-      </Animated.View>);
-  }
-
-  checkStateStatus = (status: boolean) => {
-    if (status === true) {
-      this.setCardActive();
-    } else {
-      this.setCardInactive();
-    }
-  };
-
-  hitAssetCard = (event: any) => {
-    if (event === 'card01') {
-      this.setState({
-        cardActive: !this.state.cardActive,
-      }, () => {
-        this.checkStateStatus(this.state.cardActive);
-      });
-    }
-    if (event === 'card02') {
-      this.setState({
-        cardActive: !this.state.cardActive,
-      }, () => {
-        this.checkStateStatus(this.state.cardActive);
-      });
-    }
-  };
-
-  generateAssetsList(assets) {
+  renderAssets() {
+    const { wallet: { data: wallet }, assets: { data: assets } } = this.props;
+    const { history, animCardPositionY } = this.state;
     return Object.keys(assets)
       .map(id => assets[id])
-      .map(({ id, balance }) => {
+      .map(asset => {
+        const {
+          id,
+          balance,
+          name,
+          color,
+        } = asset;
         const displayAmount = +parseFloat(balance).toFixed(4);
+        const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
+        const receiveModalOptions = { address: wallet.address, token: id, tokenName: name };
         return (
-          <Animated.View key={id} style={{ marginTop: this.state.animCardPositionY }}>
+          <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
             <AssetCard
-              name={this.getTokenName(id)}
+              name={name || id}
               token={id}
               amount={displayAmount}
-              color={this.getTokenColor(id)}
-              onTap={this.hitAssetCard}
-              tag="card01"
-              history={this.state.history}
-              address={this.props.wallet.data.address}
-            />
+              color={color}
+              onTap={this.handleCardTap}
+              tag={id}
+              history={assetHistory}
+              address={wallet.address}
+            >
+              <View>
+                <TouchableOpacity
+                  onPress={() => { this.setState({ receiveModal: { isVisible: true, opts: receiveModalOptions } }); }}
+                >
+                  <Image style={{ width: 50, height: 50 }} source={imageReceive} />
+                </TouchableOpacity>
+                <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Receive</Text>
+              </View>
+              <View>
+                <TouchableOpacity onPress={() => { }}>
+                  <Image style={{ width: 50, height: 50 }} source={imageSend} />
+                </TouchableOpacity>
+                <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Send</Text>
+              </View>
+            </AssetCard>
           </Animated.View>);
       });
   }
 
   render() {
-    const { assets: { data: assets } } = this.props;
-    const assetsList = this.generateAssetsList(assets);
-
+    const {
+      animHeaderHeight,
+      animTotalPortfolioFade,
+      receiveModal: { isVisible: isReceiveModalOpen, opts },
+    } = this.state;
     return (
-      <View>
-        <ScrollView onScroll={this.onScroll} scrollEventThrottle={200}>
-          { this.headerComponent() }
-          { assetsList }
-        </ScrollView>
+      <View style={{ backgroundColor: '#FFFFFF' }}>
+        <Animated.View
+          style={{
+            backgroundColor: '#2CB3F8',
+            height: animHeaderHeight,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Animated.Text style={{ opacity: animTotalPortfolioFade }}>$10.02 Total Portfolio</Animated.Text>
+        </Animated.View>
+        {this.renderAssets()}
+        <ReceiveModal
+          isVisible={isReceiveModalOpen}
+          {...opts}
+          onDismiss={() => { this.setState({ receiveModal: receiveModalResetState }); }}
+        />
       </View>
     );
   }

@@ -2,6 +2,13 @@
 import { UPDATE_ASSET, UPDATE_ASSETS_STATE } from 'constants/assetsConstants';
 import merge from 'lodash.merge';
 
+const cryptocurrencies = {
+  ETH: {
+    name: 'Ethereum',
+    color: '#4C4E5E',
+  },
+};
+
 export type AssetsReducerState = {
   data: Object,
   assetsState: ?string
@@ -27,7 +34,7 @@ export default function assetsReducer(
     case UPDATE_ASSET:
       const { id } = action.payload;
       const updatedState = {
-        data: { [id]: { ...action.payload } },
+        data: { [id]: { ...action.payload, ...cryptocurrencies[id] } },
       };
       return merge(
         {},
