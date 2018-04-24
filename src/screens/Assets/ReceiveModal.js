@@ -19,7 +19,6 @@ const Container = styled.View`
   justifyContent: center;
   flexDirection: column;
   alignItems: center;
-  padding: 20px;
 `;
 
 const Copy = styled.Text`
@@ -58,7 +57,7 @@ export default class ReceiveModal extends React.Component<Props> {
           <Address>{address}</Address>
           <Copy onPress={this.handleAddressClipboardSet}>Copy address</Copy>
         </Container>
-        <Container flex={2}>
+        <Container flex={3}>
           <Button title="Share your address" onPress={this.handleAddressShare} />
         </Container>
       </SlideModal>
