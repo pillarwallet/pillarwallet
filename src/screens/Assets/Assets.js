@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
-import type { ScrollEvent } from 'react-native';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 
@@ -36,6 +35,7 @@ const receiveModalResetState = {
 type State = {
   animHeaderHeight: any,
   animCardPositionY: any,
+  animTotalPortfolioFade: any,
   isCardActive: boolean,
   history: Transaction[],
   receiveModal: {
@@ -50,6 +50,7 @@ class Assets extends React.Component<Props, State> {
   state = {
     animHeaderHeight: new Animated.Value(180),
     animCardPositionY: new Animated.Value(30),
+    animTotalPortfolioFade: new Animated.Value(1),
     isCardActive: false,
     receiveModal: receiveModalResetState,
     history: [],
@@ -60,14 +61,6 @@ class Assets extends React.Component<Props, State> {
     fetchEtherBalance();
     this.getTransactionHistory();
   }
-
-  handleScroll = (event: ScrollEvent) => {
-    const distanceY = event.nativeEvent.contentOffset.y;
-    const offsetY = -100;
-    if (distanceY < offsetY) {
-      this.animateCardPositionAndHeader(false);
-    }
-  };
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
@@ -86,7 +79,7 @@ class Assets extends React.Component<Props, State> {
       }),
     }).then(res => res.json()).then((res) => {
       this.setState({
-        history: res,
+        history: res.concat(res),
       });
     }).catch(() => {
       // TODO: Use proper error handling
@@ -95,13 +88,17 @@ class Assets extends React.Component<Props, State> {
 
   animateCardPositionAndHeader = (isActive: boolean) => {
     const headerHeightValue = isActive ? 120 : 180;
-    const cardPositionYValue = isActive ? -40 : 30;
+    const cardPositionYValue = isActive ? -60 : 30;
+    const totalPortfolioFadeValue = isActive ? 0 : 1;
     Animated.parallel([
       Animated.spring(this.state.animHeaderHeight, {
         toValue: headerHeightValue,
       }),
       Animated.spring(this.state.animCardPositionY, {
         toValue: cardPositionYValue,
+      }),
+      Animated.spring(this.state.animTotalPortfolioFade, {
+        toValue: totalPortfolioFadeValue,
       }),
     ]).start();
   };
@@ -116,7 +113,7 @@ class Assets extends React.Component<Props, State> {
 
   renderAssets() {
     const { wallet: { data: wallet }, assets: { data: assets } } = this.props;
-    const { history } = this.state;
+    const { history, animCardPositionY } = this.state;
     return Object.keys(assets)
       .map(id => assets[id])
       .map(asset => {
@@ -130,7 +127,7 @@ class Assets extends React.Component<Props, State> {
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
         const receiveModalOptions = { address: wallet.address };
         return (
-          <Animated.View key={id} style={{ marginTop: this.state.animCardPositionY }}>
+          <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
             <AssetCard
               name={name || id}
               token={id}
@@ -161,21 +158,25 @@ class Assets extends React.Component<Props, State> {
   }
 
   render() {
-    const { receiveModal: { isVisible: isReceiveModalOpen, opts } } = this.state;
+    const {
+      animHeaderHeight,
+      animTotalPortfolioFade,
+      receiveModal: { isVisible: isReceiveModalOpen, opts },
+    } = this.state;
     return (
       <View>
         <Animated.View
           style={{
             backgroundColor: '#2CB3F8',
-            height: this.state.animHeaderHeight,
+            height: animHeaderHeight,
             justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-          <Text>$10.02 Total Portfolio</Text>
+          <Animated.Text style={{ opacity: animTotalPortfolioFade }}>$10.02 Total Portfolio</Animated.Text>
         </Animated.View>
         {this.renderAssets()}
-        =        <ReceiveModal
+        <ReceiveModal
           isVisible={isReceiveModalOpen}
           {...opts}
           onDismiss={() => { this.setState({ receiveModal: receiveModalResetState }); }}
