@@ -9,7 +9,7 @@ import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
-import ButtonHelpText from 'components/ButtonHelpText';
+import HelpText from 'components/HelpText';
 import MneumonicPhrase from 'components/MneumonicPhrase';
 import MneumonicPhraseItem from 'components/MneumonicPhraseItem';
 
@@ -51,7 +51,7 @@ class BackupPhrase extends React.Component<Props, {}> {
           <Button title="Regenerate" small onPress={this.props.generateWalletMnemonic} width="100%" />
         </Wrapper>
         <Footer padding>
-          <ButtonHelpText>Did your write down your backup phrase?</ButtonHelpText>
+          <HelpText>Did your write down your backup phrase?</HelpText>
           <Button title="I've Written it Down" onPress={this.goToNextScreen} />
         </Footer>
       </Container>
