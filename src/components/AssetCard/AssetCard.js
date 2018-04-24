@@ -92,12 +92,12 @@ export default class AssetCard extends React.Component<Props, State> {
       <View>
         <TouchableWithoutFeedback onPress={this.onCardTap}>
           <Animated.View
-            style={{ backgroundColor: '#FFFFFF' }}
             color={linearGradientColorStart}
             style={[{
               height: animCardHeight,
               marginLeft: animCardWidth,
               marginRight: animCardWidth,
+              backgroundColor: '#FFFFFF',
             }]}
           >
             <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
