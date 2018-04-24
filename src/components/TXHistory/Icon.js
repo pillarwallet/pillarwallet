@@ -2,9 +2,9 @@
 import styled from 'styled-components/native';
 
 const Icon = styled.Image`
-  width: 20;
-  height: 20;
-  margin: 10px 0;
+  width: 30;
+  height: 30;
+  margin: 5px 10px 0 0;
 `;
 
 export default Icon;
