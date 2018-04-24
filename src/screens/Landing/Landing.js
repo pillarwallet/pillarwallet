@@ -1,10 +1,10 @@
 // @flow
 import * as React from 'react';
-import { Image } from 'react-native';
 import styled from 'styled-components';
 import Container from 'components/Container';
 import Button from 'components/Button';
 import Footer from 'components/Footer';
+import AnimatedBackground from './AnimatedBackground';
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
@@ -17,24 +17,27 @@ const PillarLogo = styled.Image`
   width: 120;
 `;
 
-loginAction() {
-    // TODO: Login action
-}
-
-signupAction() {
-    // TODO: Signup action
-}
 
 export default class Landing extends React.Component<Props> {
+  loginAction = () => {
+    // TODO: Login action
+  }
+
+  signupAction = () => {
+    // TODO: Signup action
+  }
+
   render() {
     return (
-      <Container center>
+    // <Container center>
+      <AnimatedBackground>
         <PillarLogo source={pillarLogoSource} />
         <Footer>
-          <Button onPress={this.loginAction()} title="Login" />
-          <Button onPress={this.signupAction()} secondary title="Signup" />
+          <Button onPress={this.loginAction} title="Login" />
+          <Button onPress={this.signupAction} secondary title="Signup" />
         </Footer>
-      </Container>
+      </AnimatedBackground>
+    // </Container>
     );
   }
 }
