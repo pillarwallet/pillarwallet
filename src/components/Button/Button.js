@@ -17,20 +17,20 @@ type Props = {
 const Button = (props: Props) => {
   const setBackgroundColor = () => {
     if (props.disabled === true) {
-      return 'lightgray';
+      return 'rgb(216, 216, 216)';
     } else if (props.secondary) {
       return 'rgba(0,0,0,0)';
     } else if (props.light) {
       return '#80dfff';
     }
-    return '#00bfff';
+    return 'rgb(32, 119, 253)';
   };
 
   const setTextColor = () => {
     if (props.disabled === true) {
       return 'gray';
     } else if (props.secondary) {
-      return '#00bfff';
+      return 'rgb(32, 119, 253)';
     } else if (props.light) {
       return '#000000';
     }
