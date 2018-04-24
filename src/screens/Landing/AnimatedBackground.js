@@ -28,7 +28,13 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     let i = 0;
 
     const newAnimatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
-    const colors = ['red', 'green', 'blue', 'yellow'];
+    const colors = [
+      'rgb(255,0,5)',
+      'rgb(0,191,255)',
+      'rgb(248,231,28)',
+      'rgb(145,145,255)',
+      'rgb(80,227,194)',
+    ];
 
     setInterval(() => {
       const newPositionX = this.randomValue(0, this.windowWidth());
@@ -36,7 +42,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
       const newSize = this.randomValue(10, 40);
       const newColor = colors[Math.floor(Math.random() * colors.length)];
 
-      if (this.state.animatedBackgroundItemList.length < 20) {
+      if (this.state.animatedBackgroundItemList.length < 50) {
         newAnimatedBackgroundItemList.push(
           {
             key: i,
@@ -62,7 +68,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
         animatedBackgroundItemList: newAnimatedBackgroundItemList,
       });
       i += 1;
-    }, this.randomValue(200, 200));
+    }, this.randomValue(100, 100));
   }
 
   componentDidMount() {
