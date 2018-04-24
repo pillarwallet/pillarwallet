@@ -92,6 +92,7 @@ export default class AssetCard extends React.Component<Props, State> {
       <View>
         <TouchableWithoutFeedback onPress={this.onCardTap}>
           <Animated.View
+            style={{ backgroundColor: '#FFFFFF' }}
             color={linearGradientColorStart}
             style={[{
               height: animCardHeight,
@@ -110,7 +111,7 @@ export default class AssetCard extends React.Component<Props, State> {
             </Background>
           </Animated.View>
         </TouchableWithoutFeedback>
-        <Animated.View style={{ height: '100%', opacity: animCardContentFade }}>
+        <Animated.View style={{ height: '100%', opacity: animCardContentFade, backgroundColor: '#FFFFFF' }}>
           <Content>{children}</Content>
           <TXHistory
             address={this.props.address}

@@ -168,7 +168,7 @@ class Assets extends React.Component<Props, State> {
       receiveModal: { isVisible: isReceiveModalOpen, opts },
     } = this.state;
     return (
-      <View>
+      <View style={{ backgroundColor: '#FFFFFF' }}>
         <Animated.View
           style={{
             backgroundColor: '#2CB3F8',

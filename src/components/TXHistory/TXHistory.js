@@ -23,7 +23,7 @@ type Props = {
 }
 
 const Container = styled.View`
-  backgroundColor: #fff;
+  backgroundColor: rgb(246, 246, 246);
   flex: 1;
   flexDirection: row;
 `;
@@ -37,7 +37,7 @@ const Header = styled.Text`
 const flatListStyles = {
   justifyContent: 'flex-start',
   flex: 1,
-  backgroundColor: '#FFFFFF',
+  backgroundColor: 'rgb(246, 246, 246)',
   padding: 20,
 };
 
