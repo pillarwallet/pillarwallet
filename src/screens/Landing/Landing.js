@@ -30,13 +30,15 @@ export default class Landing extends React.Component<Props> {
   render() {
     return (
     // <Container center>
-      <AnimatedBackground>
+      <Container>
+        <AnimatedBackground />
+
         <PillarLogo source={pillarLogoSource} />
         <Footer>
           <Button onPress={this.loginAction} title="Login" />
           <Button onPress={this.signupAction} secondary title="Signup" />
         </Footer>
-      </AnimatedBackground>
+      </Container>
     // </Container>
     );
   }

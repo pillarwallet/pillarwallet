@@ -3,12 +3,15 @@ import * as React from 'react';
 import { Dimensions, Animated } from 'react-native';
 
 type State = {
-  positionY: number,
-  positionX: number,
+  movement: number,
   opacity: number
 }
 
 type Props = {
+  positionX: number,
+  positionY: number,
+  size: number,
+  color: string
 }
 
 export default class AnimatedBackroundItem extends React.Component<Props, State> {
@@ -21,14 +24,13 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
   }
 
 
-  randomValue(max: number) {
-    return Math.random() * max;
+  randomValue(min: number, max: number) {
+    return (Math.random() * (max - min)) + min;
   }
 
   state = {
-    positionY: new Animated.Value(this.randomValue(this.windowHeight())),
-    positionX: new Animated.Value(this.randomValue(this.windowWidth())),
-    opacity: 0,
+    movement: new Animated.Value(0),
+    opacity: new Animated.Value(0),
   }
 
 
@@ -37,51 +39,57 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
   }
 
   fallDown() {
-    Animated.loop(
+    Animated.parallel([
+
+      Animated.timing(
+        this.state.movement,
+        {
+          toValue: -1000,
+          duration: 5000,
+          delay: 0,
+        },
+      ),
+
       Animated.sequence([
+
         Animated.parallel([
-          Animated.timing(
+          Animated.spring(
             this.state.opacity,
             {
               toValue: 1,
-              duration: 10000,
-              delay: 0,
-            },
-          ),
-          Animated.timing(
-            this.state.positionY,
-            {
-              toValue: this.windowHeight(),
-              duration: 10000,
-              delay: 0,
-            },
-          ),
-          Animated.timing(
-            this.state.positionX,
-            {
-              toValue: this.randomValue(this.windowWidth()),
-              duration: 10000,
-              delay: 0,
             },
           ),
         ]),
+
+        Animated.spring(
+          this.state.opacity,
+          {
+            toValue: 0,
+          },
+        ),
+
       ]),
 
-    ).start();
+    ]).start();
   }
 
   render() {
-    const { positionY, opacity } = this.state;
-
+    const { movement, opacity } = this.state;
+    const {
+      positionX, positionY, size, color,
+    } = this.props;
     return (
       <Animated.View style={{
         position: 'absolute',
         bottom: positionY,
-        left: this.randomValue(this.windowWidth()),
-        width: 40,
-        height: 40,
-        backgroundColor: '#FF0000',
+        left: positionX,
+        width: size,
+        height: size,
+        backgroundColor: color,
         opacity,
+        transform: [{
+          translateY: movement,
+        }],
       }}
       />
     );

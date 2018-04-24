@@ -9,30 +9,82 @@ type State = {
 
 export default class AnimatedBackground extends React.Component<{}, State> {
   state = {
-    animatedBackgroundItemList: [<AnimatedBackroundItem />],
+    animatedBackgroundItemList: [],
   }
 
-  componentDidMount() {
+  randomValue(min: number, max: number) {
+    return (Math.random() * (max - min)) + min;
+  }
+
+  windowHeight() {
+    return Dimensions.get('window').height;
+  }
+
+  windowWidth() {
+    return Dimensions.get('window').width;
+  }
+
+  generateAnimatedBackgroundItemList() {
+    let i = 0;
+
+    const newAnimatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
+    const colors = ['red', 'green', 'blue', 'yellow'];
+
     setInterval(() => {
-      const newAnimatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
-      newAnimatedBackgroundItemList.push(
-        <AnimatedBackroundItem key={this.state.animatedBackgroundItemList.length} />,
-      );
-      if (newAnimatedBackgroundItemList.length > 5) {
+      const newPositionX = this.randomValue(0, this.windowWidth());
+      const newPositionY = this.randomValue(0, this.windowHeight());
+      const newSize = this.randomValue(10, 40);
+      const newColor = colors[Math.floor(Math.random() * colors.length)];
+
+      if (this.state.animatedBackgroundItemList.length < 20) {
+        newAnimatedBackgroundItemList.push(
+          {
+            key: i,
+            positionX: newPositionX,
+            positionY: newPositionY,
+            size: newSize,
+            color: newColor,
+          },
+        );
+      } else {
         newAnimatedBackgroundItemList.shift();
+        newAnimatedBackgroundItemList.push(
+          {
+            key: i,
+            positionX: newPositionX,
+            positionY: newPositionY,
+            size: newSize,
+            color: newColor,
+          },
+        );
       }
       this.setState({
         animatedBackgroundItemList: newAnimatedBackgroundItemList,
       });
-    }, 5000);
+      i += 1;
+    }, this.randomValue(200, 200));
+  }
+
+  componentDidMount() {
+    this.generateAnimatedBackgroundItemList();
   }
 
   render() {
-    const windowHeight = Dimensions.get('window').height;
-    const windowWidth = Dimensions.get('window').width;
+    const { animatedBackgroundItemList } = this.state;
     return (
-      <View style={{ width: windowWidth, height: windowHeight }} >
-        {this.state.animatedBackgroundItemList}
+
+      <View style={{ width: this.windowWidth(), height: this.windowHeight() }} >
+        {animatedBackgroundItemList.map((animatedBackgroundItem) => {
+          return (
+            <AnimatedBackroundItem
+              key={animatedBackgroundItem.key}
+              size={animatedBackgroundItem.size}
+              color={animatedBackgroundItem.color}
+              positionX={animatedBackgroundItem.positionX}
+              positionY={animatedBackgroundItem.positionY}
+            />
+          );
+        })}
       </View>
     );
   }
