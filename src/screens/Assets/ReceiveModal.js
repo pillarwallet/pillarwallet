@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Text, Share, Clipboard } from 'react-native';
+import { Text, Share, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -21,11 +21,6 @@ const Container = styled.View`
   alignItems: center;
 `;
 
-const Copy = styled.Text`
-  color: #2077FD;
-  textAlign: center;
-  marginTop: 10;
-`;
 const Address = styled.Text`
   fontSize: 11px;
 `;
@@ -55,10 +50,10 @@ export default class ReceiveModal extends React.Component<Props> {
         </Container>
         <Container flex={1}>
           <Address>{address}</Address>
-          <Copy onPress={this.handleAddressClipboardSet}>Copy address</Copy>
+          <Button secondary title="Copy Address" onPress={this.handleAddressClipboardSet} />
         </Container>
         <Container flex={3}>
-          <Button title="Share your address" onPress={this.handleAddressShare} />
+          <Button title="Share Address" onPress={this.handleAddressShare} />
         </Container>
       </SlideModal>
     );

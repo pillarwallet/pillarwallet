@@ -10,7 +10,7 @@ type Props = {
   secondary?: boolean,
   marginBottom?: boolean,
   light?: boolean,
-  small?: boolean
+  small?: boolean,
 };
 
 
@@ -41,7 +41,7 @@ const Button = (props: Props) => {
     if (props.disabled === true) {
       return 'darkgray';
     } else if (props.secondary) {
-      return '#e5f9ff';
+      return 'rgba(0,0,0,0)';
     } else if (props.light) {
       return '#00bfff';
     }
