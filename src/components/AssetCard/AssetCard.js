@@ -97,7 +97,6 @@ export default class AssetCard extends React.Component<Props, State> {
               height: animCardHeight,
               marginLeft: animCardWidth,
               marginRight: animCardWidth,
-              backgroundColor: '#FFFFFF',
             }]}
           >
             <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
