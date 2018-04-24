@@ -10,7 +10,7 @@ import Footer from 'components/Footer';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import HelpText from 'components/HelpText';
-import MneumonicPhrase from 'components/MneumonicPhrase';
+import MnemonicPhrase from 'components/MnemonicPhrase';
 
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
@@ -42,7 +42,7 @@ class BackupPhrase extends React.Component<Props, {}> {
             This is your unique 12-word backup phrase.
             Write down your backup phrase in the exact sequence.
           </Text>
-          <MneumonicPhrase phrase={wallet.mnemonic.original} />
+          <MnemonicPhrase phrase={wallet.mnemonic.original} />
           <Button title="Regenerate" small onPress={this.props.generateWalletMnemonic} width="100%" />
         </Wrapper>
         <Footer padding>

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 
-const MneumonicPhraseWrapper = styled.View`
+const MnemonicPhraseWrapper = styled.View`
   margin-top: 20;
   margin-bottom: 20;
   padding: 20px;
@@ -15,7 +15,7 @@ const MneumonicPhraseWrapper = styled.View`
   border-radius: 4;
 `;
 
-const MneumonicPhraseItem = styled.Text`
+const MnemonicPhraseItem = styled.Text`
   font-weight: bold;
   margin-right: 10;
   margin-bottom: 2;
@@ -26,17 +26,17 @@ type Props = {
   phrase: string,
 };
 
-const MneumonicPhrase = (props: Props) => {
+const MnemonicPhrase = (props: Props) => {
   const { phrase } = props;
   const mnemonicList = phrase.split(' ');
 
   return (
-    <MneumonicPhraseWrapper>
+    <MnemonicPhraseWrapper>
       {
-        mnemonicList.map(word => <MneumonicPhraseItem key={word}>{word}</MneumonicPhraseItem>)
+        mnemonicList.map(word => <MnemonicPhraseItem key={word}>{word}</MnemonicPhraseItem>)
       }
-    </MneumonicPhraseWrapper>
+    </MnemonicPhraseWrapper>
   );
 };
 
-export default MneumonicPhrase;
+export default MnemonicPhrase;

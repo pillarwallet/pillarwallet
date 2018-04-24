@@ -1,11 +1,11 @@
 // @flow
 import React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import MneumonicPhrase from 'components/MneumonicPhrase';
+import MnemonicPhrase from 'components/MnemonicPhrase';
 
 const phrase = 'fox the ipsum brown green dog jumps the red quick over lorem lazy';
 
-storiesOf('MneumonicPhrase', module)
+storiesOf('MnemonicPhrase', module)
   .add('Default', () => (
-    <MneumonicPhrase phrase={phrase} />
+    <MnemonicPhrase phrase={phrase} />
   ));
