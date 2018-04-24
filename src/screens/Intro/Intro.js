@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { Image } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { checkIfWalletExistsAction } from 'actions/walletActions';
@@ -7,7 +8,6 @@ import { EMPTY } from 'constants/walletConstants';
 import { BACKUP_PHRASE, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
 import Container from 'components/Container';
 import Button from 'components/Button';
-import IntroImage from 'components/IntroImage';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 
 const introImage = require('assets/images/logo_pillar_intro.png');
@@ -40,7 +40,7 @@ class Intro extends React.Component<Props> {
     const { wallet: { walletState } } = this.props;
     return (
       <Container center>
-        <IntroImage source={introImage} />
+        <Image source={introImage} />
         <MultiButtonWrapper>
           <Button
             title="Create new wallet"
