@@ -83,7 +83,7 @@ class Assets extends React.Component<Props, State> {
       }),
     }).then(res => res.json()).then((res) => {
       this.setState({
-        history: res.concat(res),
+        history: res,
       });
     }).catch(() => {
       // TODO: Use proper error handling
