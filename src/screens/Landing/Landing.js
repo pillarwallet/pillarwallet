@@ -29,8 +29,7 @@ export default class Landing extends React.Component<Props> {
 
   render() {
     return (
-    // <Container center>
-      <Container>
+      <Container center>
         <AnimatedBackground />
 
         <PillarLogo source={pillarLogoSource} />
@@ -39,7 +38,6 @@ export default class Landing extends React.Component<Props> {
           <Button onPress={this.signupAction} secondary title="Signup" />
         </Footer>
       </Container>
-    // </Container>
     );
   }
 }

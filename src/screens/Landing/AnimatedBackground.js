@@ -73,7 +73,15 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     const { animatedBackgroundItemList } = this.state;
     return (
 
-      <View style={{ width: this.windowWidth(), height: this.windowHeight() }} >
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: this.windowWidth(),
+          height: this.windowHeight(),
+        }}
+      >
         {animatedBackgroundItemList.map((animatedBackgroundItem) => {
           return (
             <AnimatedBackroundItem
