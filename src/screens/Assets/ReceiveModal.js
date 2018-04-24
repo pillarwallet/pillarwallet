@@ -43,7 +43,7 @@ export default class ReceiveModal extends React.Component<Props> {
   render() {
     const { address, isVisible, onDismiss } = this.props;
     return (
-      <SlideModal title="Receive." isVisible={isVisible} onDismiss={onDismiss}>
+      <SlideModal title="receive." isVisible={isVisible} onDismiss={onDismiss}>
         <Container>
           <QRCode value={address} blockHeight={5} />
           <Address>{address}</Address>
