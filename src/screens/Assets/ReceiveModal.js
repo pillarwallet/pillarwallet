@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Share, Clipboard } from 'react-native';
+import { View, Share, Clipboard } from 'react-native';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -21,7 +21,7 @@ const Container = styled.View`
 `;
 
 const Copy = styled.Text`
-  color: #2077FD; 
+  color: #2077FD;
   textAlign: center;
   marginTop: 10;
 `;
@@ -46,8 +46,10 @@ export default class ReceiveModal extends React.Component<Props> {
       <SlideModal title="receive." isVisible={isVisible} onDismiss={onDismiss}>
         <Container>
           <QRCode value={address} blockHeight={5} />
-          <Address>{address}</Address>
-          <Copy onPress={this.handleAddressClipboardSet}>Copy address</Copy>
+          <View>
+            <Address>{address}</Address>
+            <Copy onPress={this.handleAddressClipboardSet}>Copy address</Copy>
+          </View>
           <Button title="Share your address" onPress={this.handleAddressShare} />
         </Container>
       </SlideModal>
