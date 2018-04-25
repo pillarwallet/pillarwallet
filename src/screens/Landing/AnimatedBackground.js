@@ -8,6 +8,8 @@ type State = {
   animatedBackgroundItemList: []
 }
 
+const window = Dimensions.get('window');
+
 export default class AnimatedBackground extends React.Component<{}, State> {
   state = {
     animatedBackgroundItemList: [],
@@ -15,14 +17,6 @@ export default class AnimatedBackground extends React.Component<{}, State> {
 
   componentDidMount() {
     this.generateAnimatedBackgroundItemList();
-  }
-
-  windowHeight() {
-    return Dimensions.get('window').height;
-  }
-
-  windowWidth() {
-    return Dimensions.get('window').width;
   }
 
   generateAnimatedBackgroundItemList() {
@@ -38,8 +32,8 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     ];
 
     setInterval(() => {
-      const newPositionX = getRandomInt(0, this.windowWidth());
-      const newPositionY = getRandomInt(0, this.windowHeight());
+      const newPositionX = getRandomInt(0, window.width);
+      const newPositionY = getRandomInt(0, window.height);
       const newSize = getRandomInt(10, 40);
       const newColor = colors[Math.floor(Math.random() * colors.length)];
 
@@ -71,8 +65,8 @@ export default class AnimatedBackground extends React.Component<{}, State> {
           position: 'absolute',
           top: 0,
           left: 0,
-          width: this.windowWidth(),
-          height: this.windowHeight(),
+          width: window.width,
+          height: window.height,
         }}
       >
         {animatedBackgroundItemList.map((animatedBackgroundItem) => {

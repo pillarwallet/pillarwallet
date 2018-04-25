@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Dimensions, Animated } from 'react-native';
+import { Animated } from 'react-native';
 
 type State = {
   movement: number,
@@ -22,14 +22,6 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
 
   componentDidMount() {
     this.fallDown();
-  }
-
-  windowWidth() {
-    return Dimensions.get('window').width;
-  }
-
-  windowHeight() {
-    return Dimensions.get('window').height;
   }
 
   fallDown() {
