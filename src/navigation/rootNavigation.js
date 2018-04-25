@@ -6,7 +6,7 @@ import { StackNavigator, SwitchNavigator, NavigationActions, HeaderBackButton } 
 // screens
 import IntroScreen from 'screens/Intro';
 import NewWalletScreen from 'screens/NewWallet';
-import LoginScreen from 'screens/Login';
+import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -68,7 +68,7 @@ const importWalletFlow = StackNavigator({
 
 const appFlow = StackNavigator({
   [LOGIN]: {
-    screen: LoginScreen,
+    screen: PinCodeUnlockScreen,
     navigationOptions: ({ navigation }) => ({
       headerLeft: renderHomeButton(navigation),
     }),
@@ -83,7 +83,7 @@ const appFlow = StackNavigator({
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [HOME]: IntroScreen,
+  [HOME]: PinCodeUnlockScreen,
   appFlow,
   onBoardingFlow,
   importWalletFlow,

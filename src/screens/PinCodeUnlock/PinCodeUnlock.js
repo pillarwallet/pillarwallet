@@ -19,7 +19,7 @@ type State = {
   pinError: string,
 };
 
-class Login extends React.Component<Props, State> {
+class PinCodeUnlock extends React.Component<Props, State> {
   state = {
     pinError: '',
   };
@@ -88,4 +88,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
