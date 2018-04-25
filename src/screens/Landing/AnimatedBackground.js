@@ -13,7 +13,7 @@ const window = Dimensions.get('window');
 export default class AnimatedBackground extends React.Component<{}, State> {
   state = {
     animatedBackgroundItemList: [],
-  }
+  };
 
   componentDidMount() {
     this.generateAnimatedBackgroundItemList();

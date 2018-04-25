@@ -18,11 +18,11 @@ const PillarLogo = styled.Image`
 export default class Landing extends React.Component<{}> {
   loginAction = () => {
     // TODO: Login action
-  }
+  };
 
   signupAction = () => {
     // TODO: Signup action
-  }
+  };
 
   render() {
     return (

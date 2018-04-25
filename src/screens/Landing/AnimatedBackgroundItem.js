@@ -18,7 +18,7 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
   state = {
     movement: new Animated.Value(0),
     opacity: new Animated.Value(0),
-  }
+  };
 
   componentDidMount() {
     this.fallDown();
