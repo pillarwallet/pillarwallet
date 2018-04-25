@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { View, Dimensions } from 'react-native';
+import { getRandomInt } from 'utils/common';
 import AnimatedBackroundItem from './AnimatedBackgroundItem';
 
 type State = {
@@ -12,8 +13,8 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     animatedBackgroundItemList: [],
   }
 
-  randomValue(min: number, max: number) {
-    return (Math.random() * (max - min)) + min;
+  componentDidMount() {
+    this.generateAnimatedBackgroundItemList();
   }
 
   windowHeight() {
@@ -37,42 +38,28 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     ];
 
     setInterval(() => {
-      const newPositionX = this.randomValue(0, this.windowWidth());
-      const newPositionY = this.randomValue(0, this.windowHeight());
-      const newSize = this.randomValue(10, 40);
+      const newPositionX = getRandomInt(0, this.windowWidth());
+      const newPositionY = getRandomInt(0, this.windowHeight());
+      const newSize = getRandomInt(10, 40);
       const newColor = colors[Math.floor(Math.random() * colors.length)];
 
-      if (this.state.animatedBackgroundItemList.length < 50) {
-        newAnimatedBackgroundItemList.push(
-          {
-            key: i,
-            positionX: newPositionX,
-            positionY: newPositionY,
-            size: newSize,
-            color: newColor,
-          },
-        );
-      } else {
+      if (this.state.animatedBackgroundItemList.length >= 50) {
         newAnimatedBackgroundItemList.shift();
-        newAnimatedBackgroundItemList.push(
-          {
-            key: i,
-            positionX: newPositionX,
-            positionY: newPositionY,
-            size: newSize,
-            color: newColor,
-          },
-        );
       }
+      newAnimatedBackgroundItemList.push(
+        {
+          key: i,
+          positionX: newPositionX,
+          positionY: newPositionY,
+          size: newSize,
+          color: newColor,
+        },
+      );
       this.setState({
         animatedBackgroundItemList: newAnimatedBackgroundItemList,
       });
       i += 1;
-    }, this.randomValue(50, 200));
-  }
-
-  componentDidMount() {
-    this.generateAnimatedBackgroundItemList();
+    }, getRandomInt(50, 200));
   }
 
   render() {

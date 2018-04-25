@@ -8,9 +8,6 @@ import AnimatedBackground from './AnimatedBackground';
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
-type Props = {
-}
-
 const PillarLogo = styled.Image`
   margin-top: 120;
   height: 60;
@@ -18,7 +15,7 @@ const PillarLogo = styled.Image`
 `;
 
 
-export default class Landing extends React.Component<Props> {
+export default class Landing extends React.Component<{}> {
   loginAction = () => {
     // TODO: Login action
   }

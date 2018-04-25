@@ -15,27 +15,21 @@ type Props = {
 }
 
 export default class AnimatedBackroundItem extends React.Component<Props, State> {
+  state = {
+    movement: new Animated.Value(0),
+    opacity: new Animated.Value(0),
+  }
+
+  componentDidMount() {
+    this.fallDown();
+  }
+
   windowWidth() {
     return Dimensions.get('window').width;
   }
 
   windowHeight() {
     return Dimensions.get('window').height;
-  }
-
-
-  randomValue(min: number, max: number) {
-    return (Math.random() * (max - min)) + min;
-  }
-
-  state = {
-    movement: new Animated.Value(0),
-    opacity: new Animated.Value(0),
-  }
-
-
-  componentDidMount() {
-    this.fallDown();
   }
 
   fallDown() {
@@ -50,9 +44,7 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
           useNativeDriver: true,
         },
       ),
-
       Animated.sequence([
-
         Animated.parallel([
           Animated.spring(
             this.state.opacity,
@@ -62,7 +54,6 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
             },
           ),
         ]),
-
         Animated.spring(
           this.state.opacity,
           {
@@ -70,9 +61,7 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
             useNativeDriver: true,
           },
         ),
-
       ]),
-
     ]).start();
   }
 
