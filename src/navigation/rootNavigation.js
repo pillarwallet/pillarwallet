@@ -76,7 +76,7 @@ const appFlow = StackNavigator({
   [ASSETS]: {
     screen: AssetsScreen,
     navigationOptions: {
-      header: null,
+      headerLeft: null,
     },
   },
   [ICO]: ICOScreen,
