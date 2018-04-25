@@ -6,12 +6,11 @@
 
 function loadStories() {
   require('../src/components/Button/Button.stories');
-  require('../src/components/HelpText/HelpText.stories');
   require('../src/components/Checkbox/Checkbox.stories');
   require('../src/components/FakeInput/FakeInput.stories');
+  require('../src/components/HelpText/HelpText.stories');
   require('../src/components/Input/Input.stories');
   require('../src/components/InputGroup/InputGroup.stories');
-  require('../src/components/IntroImage/IntroImage.stories');
   require('../src/components/MneumonicPhrase/MneumonicPhrase.stories');
   require('../src/components/Modals/PopModal/PopModal.stories');
   require('../src/components/MultiButtonWrapper/MultiButtonWrapper.stories');
@@ -21,12 +20,11 @@ function loadStories() {
 
 const stories = [
   '../src/components/Button/Button.stories',
-  '../src/components/HelpText/HelpText.stories',
   '../src/components/Checkbox/Checkbox.stories',
   '../src/components/FakeInput/FakeInput.stories',
+  '../src/components/HelpText/HelpText.stories',
   '../src/components/Input/Input.stories',
   '../src/components/InputGroup/InputGroup.stories',
-  '../src/components/IntroImage/IntroImage.stories',
   '../src/components/MneumonicPhrase/MneumonicPhrase.stories',
   '../src/components/Modals/PopModal/PopModal.stories',
   '../src/components/MultiButtonWrapper/MultiButtonWrapper.stories',
