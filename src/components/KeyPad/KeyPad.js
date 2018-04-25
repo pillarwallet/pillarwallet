@@ -20,25 +20,29 @@ const Wrapper = styled.View`
 type KeyPadButton = {
   label: string,
   value: string,
-  callback: () => void,
 }
 
 type Props = {
-  buttons: KeyPadButton[]
+  buttons: KeyPadButton[],
+  onKeyPress: Function,
 }
 
-const KeyPad = (props: Props) => {
-  const { buttons } = props;
+export default class KeyPad extends React.Component<Props> {
+  handleKeyPress = (pressedKey: any) => () => {
+    this.props.onKeyPress(pressedKey);
+  };
 
-  return (
-    <Wrapper>
-      {buttons.map(({ label, value, callback }: KeyPadButton) => (
-        <KeyInput key={value}>
-          <Button title={label} onPress={callback} />
-        </KeyInput>
-      ))}
-    </Wrapper>
-  );
-};
+  render() {
+    const { buttons } = this.props;
+    return (
+      <Wrapper>
+        {buttons.map(({ label, value }: KeyPadButton) => (
+          <KeyInput key={value}>
+            <Button title={label} onPress={this.handleKeyPress(value)} />
+          </KeyInput>
+        ))}
+      </Wrapper>
+    );
+  }
+}
 
-export default KeyPad;
