@@ -6,14 +6,12 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Text, View } from 'react-native';
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
-import Title from 'components/Title';
+import { Title, Label } from 'components/Typography';
 import Button from 'components/Button';
 import Divider from 'components/Divider';
-
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import FakeInput from 'components/FakeInput';
 import InputGroup from 'components/InputGroup';
-import Label from 'components/Label';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {

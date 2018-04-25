@@ -5,7 +5,7 @@ import { Linking, Text } from 'react-native';
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
-import Title from 'components/Title';
+import {Title} from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Divider from 'components/Divider';

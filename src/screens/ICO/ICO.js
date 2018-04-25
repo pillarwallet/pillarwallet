@@ -11,7 +11,7 @@ import t from 'tcomb-form-native';
 
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
-import Title from 'components/Title';
+import {Title} from 'components/Typography';
 import Button from 'components/Button';
 import Footer from 'components/Footer';
 

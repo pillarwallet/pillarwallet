@@ -16,11 +16,11 @@ import {
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
-import Title from 'components/Title';
+import {Title} from 'components/Typography';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
-import Label from 'components/Label';
+import {Label} from 'components/Typography';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,

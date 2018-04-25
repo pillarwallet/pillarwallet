@@ -7,7 +7,7 @@ import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstan
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import Container from 'components/Container';
-import Title from 'components/Title';
+import {Title} from 'components/Typography';
 import PinCode from 'components/PinCode';
 
 type Props = {
