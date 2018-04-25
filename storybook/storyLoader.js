@@ -11,6 +11,7 @@ function loadStories() {
   require('../src/components/HelpText/HelpText.stories');
   require('../src/components/Input/Input.stories');
   require('../src/components/InputGroup/InputGroup.stories');
+  require('../src/components/KeyPad/KeyPad.stories');
   require('../src/components/MnemonicPhrase/MnemonicPhrase.stories');
   require('../src/components/Modals/PopModal/PopModal.stories');
   require('../src/components/MultiButtonWrapper/MultiButtonWrapper.stories');
@@ -25,6 +26,7 @@ const stories = [
   '../src/components/HelpText/HelpText.stories',
   '../src/components/Input/Input.stories',
   '../src/components/InputGroup/InputGroup.stories',
+  '../src/components/KeyPad/KeyPad.stories',
   '../src/components/MnemonicPhrase/MnemonicPhrase.stories',
   '../src/components/Modals/PopModal/PopModal.stories',
   '../src/components/MultiButtonWrapper/MultiButtonWrapper.stories',
