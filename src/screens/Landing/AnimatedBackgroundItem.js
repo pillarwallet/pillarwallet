@@ -44,8 +44,8 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
       Animated.timing(
         this.state.movement,
         {
-          toValue: -500,
-          duration: 5000,
+          toValue: -50,
+          duration: 1000,
           delay: 0,
           useNativeDriver: true,
         },

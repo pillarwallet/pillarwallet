@@ -4,7 +4,6 @@ import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { StackNavigator, SwitchNavigator, NavigationActions, HeaderBackButton } from 'react-navigation';
 
 // screens
-import LandingScreen from 'screens/Landing';
 import IntroScreen from 'screens/Intro';
 import NewWalletScreen from 'screens/NewWallet';
 import LoginScreen from 'screens/Login';
@@ -84,7 +83,7 @@ const appFlow = StackNavigator({
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [HOME]: LandingScreen,
+  [HOME]: IntroScreen,
   appFlow,
   onBoardingFlow,
   importWalletFlow,
