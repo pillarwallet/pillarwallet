@@ -5,7 +5,7 @@ import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Button from 'components/Button';
-import { Title, Body, Label } from 'components/Typography';
+import { Title, Body, Label, Link } from 'components/Typography';
 import { Form, Picker, Icon, Input } from 'native-base';
 import countries from 'utils/countries.json';
 
@@ -17,7 +17,7 @@ type State = {
 }
 
 const LoginForm = styled(Form)`
-  margin: 20px 0 80px;
+  margin: 20px 0 40px;
 `;
 
 const PhoneInput = styled(Input)`
@@ -44,6 +44,11 @@ const CountryPickerWrapper = styled.View`
   justify-content: space-between;
   border-bottom-width: 1px;
   border-color: rgb(151,151,151);
+`;
+
+const FooterText = styled(Label)`
+  text-align: center;
+  max-width: 300px;
 `;
 
 class Login extends React.Component<{}, State> {
@@ -107,10 +112,13 @@ class Login extends React.Component<{}, State> {
               defaultValue={`+${this.state.selectedCountryCallingCode}`}
             />
           </LoginForm>
-          <Footer>
-            <Button onPress={this.goToNextPage} title="Next" />
-          </Footer>
         </Wrapper>
+        <Footer>
+          <Button onPress={this.goToNextPage} title="Next" marginBottom />
+          <FooterText>
+            By signing into Pillar Wallet you are agreeing to our <Link>Terms</Link> and <Link>Privacy policy</Link>
+          </FooterText>
+        </Footer>
       </Container>
     );
   }

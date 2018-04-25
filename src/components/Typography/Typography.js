@@ -19,3 +19,7 @@ export const Label = styled.Text`
   color: rgb(155,155,155);
   margin-bottom: 10;
 `;
+
+export const Link = styled.Text`
+  color: rgb(32,119,253);
+`;
