@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native/index';
 
 import KeyPad from 'components/KeyPad';
-import PinDots from './PinDots';
+import PinDots from 'components/PinDots';
 
 const PASS_CODE_LENGTH = 6;
 
