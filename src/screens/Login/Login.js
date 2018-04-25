@@ -54,22 +54,19 @@ class Login extends React.Component<{}, State> {
   }
 
   generateCountryListPickerItems() {
-    const countryListPickerItems = [];
-    Object.keys(countries).map((key, index) => {
-      countryListPickerItems.push(
+    return Object.keys(countries)
+      .map((key) => countries[key])
+      .map((country) => (
         <Picker.Item
-          label={countries[key].name.common}
-          flag={countries[key].flag}
-          value={countries[key].cca2}
-          key={index}
-        />,
-      );
-    });
-    return countryListPickerItems;
+          label={country.name.common}
+          flag={country.flag}
+          value={country.cca2}
+          key={country.cca2}
+        />
+      ));
   }
 
   onValueChange(value: string) {
-    console.log(value);
     const newSelectedCountry = countries.find((country) => {
       return (country.cca2 === value);
     });
@@ -83,8 +80,6 @@ class Login extends React.Component<{}, State> {
 
   goToNextPage = () => {
     // TODO: Link to next page
-    console.log('hello');
-    return 'hello';
   }
 
   render() {
