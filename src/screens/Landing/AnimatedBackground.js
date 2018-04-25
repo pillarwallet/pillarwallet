@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { View, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
+import styled from 'styled-components';
 import { getRandomInt } from 'utils/common';
 import AnimatedBackroundItem from './AnimatedBackgroundItem';
 
@@ -10,13 +11,27 @@ type State = {
 
 const window = Dimensions.get('window');
 
+const Wrapper = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: ${window.width};
+  height: ${window.height};
+`;
+
 export default class AnimatedBackground extends React.Component<{}, State> {
+  interval: IntervalID
+
   state = {
     animatedBackgroundItemList: [],
   }
 
   componentDidMount() {
     this.generateAnimatedBackgroundItemList();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   generateAnimatedBackgroundItemList() {
@@ -31,7 +46,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
       'rgb(80,227,194)',
     ];
 
-    setInterval(() => {
+    this.interval = setInterval(() => {
       const newPositionX = getRandomInt(0, window.width);
       const newPositionY = getRandomInt(0, window.height);
       const newSize = getRandomInt(10, 40);
@@ -60,15 +75,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     const { animatedBackgroundItemList } = this.state;
     return (
 
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: window.width,
-          height: window.height,
-        }}
-      >
+      <Wrapper>
         {animatedBackgroundItemList.map((animatedBackgroundItem) => {
           return (
             <AnimatedBackroundItem
@@ -80,7 +87,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
             />
           );
         })}
-      </View>
+      </Wrapper>
     );
   }
 }
