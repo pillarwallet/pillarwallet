@@ -2,12 +2,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-type State = {
-  SMSCode: Array<number>,
-  SMSCodeInputList: Array<Object>
-}
 
-const SMSCodeInputs = ['input1', 'input2', 'input3', 'input4'];
+type State = {
+  SMSCode: Array<string>,
+}
 
 const SMSCodeInputWrapper = styled.View`
   width: 240px;
@@ -28,46 +26,35 @@ const SMSCodeInput = styled.TextInput`
 export default class SMSConfirmationInput extends React.Component<{}, State> {
   state = {
     SMSCode: [],
-    SMSCodeInputList: [],
-  }
-  ref1 = React.createRef();
-
-  generateSMSCodeInputRefs() {
-
   }
 
-  componentDidMount() {
-    this.generateSMSCodeInputComponents();
-  }
+  inputs: Object = {}
 
-  inputCodeNumber(codeNumber: number) {
+  handleChange = (id: string, value: string) => {
     this.setState({
-      SMSCode: [...this.state.SMSCode, codeNumber],
+      SMSCode: this.state.SMSCode.concat(value),
+    }, () => {
+      const nextId = id + 1;
+      this.inputs[nextId].focus();
     });
   }
-
-  generateSMSCodeInputComponents = () => {
-    const newSMSCodeInputList = [];
-    SMSCodeInputs.forEach((input, index) => {
-      newSMSCodeInputList.push(
-        <SMSCodeInput
-          value={this.state.SMSCode[index]}
-          keyboardType="phone-pad"
-          maxLength={1}
-          key={input}
-          onChangeText={(codeNumber) => this.inputCodeNumber(codeNumber)}
-        />,
-      );
-    });
-    this.setState({
-      SMSCodeInputList: newSMSCodeInputList,
-    });
-  };
 
   render() {
+    const smsInputs = [1, 2, 3, 4]
+      .map((id, index) => (
+        <SMSCodeInput
+          innerRef={(node) => { this.inputs[id] = node; }}
+          value={this.state.SMSCode[index]}
+          onChangeText={(value) => this.handleChange(id, value) }
+          keyboardType="phone-pad"
+          maxLength={1}
+          key={id}
+        />
+      ));
+
     return (
       <SMSCodeInputWrapper>
-        {this.state.SMSCodeInputList}
+        {smsInputs}
       </SMSCodeInputWrapper>
     );
   }
