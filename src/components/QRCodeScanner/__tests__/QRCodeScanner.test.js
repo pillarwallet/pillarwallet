@@ -31,7 +31,7 @@ jest.mock('expo', () => {
 
 describe('QR code scanner', () => {
   it('should ask for permissions on component mount', () => {
-    renderer.create(<QRCodeScanner onRead={(() => { })} />);
+    renderer.create(<QRCodeScanner isActive onRead={(() => { })} onDismiss={(() => { })} />);
     expect(Permissions.askAsync).toHaveBeenCalledWith('camera');
   });
 });

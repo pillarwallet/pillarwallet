@@ -86,6 +86,8 @@ export default class AssetCard extends React.Component<Props, State> {
       amount,
       token,
       children,
+      address,
+      history,
     } = this.props;
     const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
 
@@ -115,9 +117,9 @@ export default class AssetCard extends React.Component<Props, State> {
           <Animated.View style={{ height: '100%', opacity: animCardContentFade, backgroundColor: '#FFFFFF' }}>
             <Content>{children}</Content>
             <TXHistory
-              address={this.props.address}
-              history={this.props.history}
-              token={this.props.token}
+              address={address}
+              history={history}
+              token={token}
             />
           </Animated.View>
         )}

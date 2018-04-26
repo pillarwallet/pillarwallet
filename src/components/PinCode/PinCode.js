@@ -35,34 +35,6 @@ export default class PinCode extends React.Component<Props, State> {
     passCode: [],
   };
 
-  getKeyPadButtons() {
-    const keyInputs = Array(9).fill('')
-      .map((num, i) => {
-        const key = `${i + 1}`;
-        return this.keyPadButton(key, key);
-      });
-
-    if (this.props.showForgotButton) {
-      keyInputs.push(this.keyPadButton(KEYPAD_BUTTON_FORGOT, 'Forgot?'));
-    } else {
-      keyInputs.push(this.keyPadButton('', ''));
-    }
-
-    keyInputs.push(
-      this.keyPadButton('0', '0'),
-      this.keyPadButton(KEYPAD_BUTTON_DELETE, '⌫'),
-    );
-
-    return keyInputs;
-  }
-
-  keyPadButton(value: string, label: string) {
-    return {
-      label,
-      value,
-    };
-  }
-
   handleButtonPressed = (value: any) => {
     switch (value) {
       case KEYPAD_BUTTON_DELETE: return this.handleKeyPressDelete();
@@ -106,13 +78,13 @@ export default class PinCode extends React.Component<Props, State> {
   };
 
   render() {
-    const keyPadButtons = this.getKeyPadButtons();
+    const { showForgotButton } = this.props;
     const numActiveDots = this.state.passCode.length;
 
     return (
       <PinWrapper>
         <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
-        <KeyPad buttons={keyPadButtons} onKeyPress={this.handleButtonPressed} />
+        <KeyPad type="pincode" options={{ showForgotButton }} onKeyPress={this.handleButtonPressed} />
       </PinWrapper>
     );
   }
