@@ -1,4 +1,6 @@
 // @flow
+import { utils } from 'ethers';
+
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
     return 'Invalid pin\'s length (should be 6 numbers)';
@@ -9,3 +11,15 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
   }
   return '';
 };
+
+export function isValidETHAddress(address: string): boolean {
+  let result;
+  try {
+    utils.getAddress(address)
+    result = true;
+  } catch(e) {
+    result = false;
+  }
+
+  return result;
+}
