@@ -1,13 +1,15 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components';
+import { Title, Body, Label } from 'components/Typography';
+import { Center } from 'components/Layout';
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Button from 'components/Button';
-import { Title, Body, Label } from 'components/Typography';
 import { Picker } from 'native-base';
 import countries from 'utils/countries.json';
+import SMSConfirmationInput from './SMSConfirmationInput';
 
 
 type State = {
@@ -44,7 +46,10 @@ class LoginConfirm extends React.Component<{}, State> {
           <Title>confirm</Title>
           <Body>We sent your code to</Body>
           <Body>+441234 567 890</Body>
-          <SMSConfirmationLabel>Please allow up to 10 minutes for your code to arrive.</SMSConfirmationLabel>
+          <Center>
+            <SMSConfirmationInput />
+            <SMSConfirmationLabel>Please allow up to 10 minutes for your code to arrive.</SMSConfirmationLabel>
+          </Center>
         </Wrapper>
         <Footer>
           <Button onPress={this.goToNextPage} title="Next" marginBottom />

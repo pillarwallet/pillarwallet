@@ -116,6 +116,7 @@ class Login extends React.Component<Props, State> {
             <Label>Phone</Label>
             <PhoneInput
               defaultValue={`+${this.state.selectedCountryCallingCode}`}
+              keyboardType="phone-pad"
             />
           </LoginForm>
         </Wrapper>
