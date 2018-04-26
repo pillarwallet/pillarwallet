@@ -7,7 +7,7 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 
 type Props = {
   navigation: NavigationScreenProp<*>,

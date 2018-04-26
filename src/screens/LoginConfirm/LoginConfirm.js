@@ -2,8 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { Title, Body, Label } from 'components/Typography';
-import { Center } from 'components/Layout';
-import Container from 'components/Container';
+import { Center, Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Button from 'components/Button';

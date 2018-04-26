@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import { Text, View } from 'react-native';
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import { Title, Label } from 'components/Typography';
 import Button from 'components/Button';

@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { checkIfWalletExistsAction } from 'actions/walletActions';
 import { EMPTY } from 'constants/walletConstants';
 import { BACKUP_PHRASE, LOGIN, IMPORT_WALLET } from 'constants/navigationConstants';
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 

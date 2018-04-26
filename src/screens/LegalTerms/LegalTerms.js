@@ -2,10 +2,10 @@
 import * as React from 'react';
 import { Linking, Text } from 'react-native';
 
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
-import {Title} from 'components/Typography';
+import { Title } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Divider from 'components/Divider';

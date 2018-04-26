@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import { Title } from 'components/Typography';
 import PinCode from 'components/PinCode';
 

@@ -3,8 +3,8 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
-import Container from 'components/Container';
-import {Title} from 'components/Typography';
+import { Container } from 'components/Layout';
+import { Title } from 'components/Typography';
 import PinCode from 'components/PinCode';
 
 import { confirmPinForNewWalletAction } from 'actions/walletActions';

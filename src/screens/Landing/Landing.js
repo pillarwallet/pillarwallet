@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 import type { NavigationScreenProp } from 'react-navigation';
 import { LOGIN } from 'constants/navigationConstants';
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Footer from 'components/Footer';
 import AnimatedBackground from './AnimatedBackground';
