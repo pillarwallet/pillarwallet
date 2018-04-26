@@ -27,8 +27,7 @@ type Props = {
 
 const PinDots = (props: Props) => {
   const { numAllDots, numActiveDots } = props;
-  const dotsArray = Array(numAllDots)
-    .fill('')
+  const dotsArray = Array(numAllDots).fill('')
     .map((el, i) => ({
       key: i,
       active: numActiveDots >= (i + 1),
