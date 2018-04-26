@@ -82,9 +82,6 @@ export default class TXHistory extends React.Component<Props> {
 
   render() {
     const { history, address, onRefresh } = this.props;
-    if (!history.length) {
-      return null;
-    }
     return (
       <Container>
         <FlatList
