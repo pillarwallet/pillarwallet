@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import { BCX_URL } from 'react-native-dotenv';
 
 import ReceiveModal from './ReceiveModal';
 
@@ -68,7 +69,7 @@ class Assets extends React.Component<Props, State> {
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
-    fetch('https://bcx-dev.pillarproject.io/txhistory', {
+    fetch(`${BCX_URL}/txhistory`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
