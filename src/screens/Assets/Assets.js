@@ -11,8 +11,8 @@ import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-
 import ReceiveModal from './ReceiveModal';
+import SendModal from './SendModal';
 
 const imageSend = require('assets/images/btn_iconSend.png');
 const imageReceive = require('assets/images/btn_iconReceive.png');
@@ -25,8 +25,8 @@ type Props = {
   wallet: Object,
 }
 
-const receiveModalResetState = {
-  isVisible: false,
+const activeModalResetState = {
+  type: null,
   opts: {
     address: '',
     token: '',
@@ -40,12 +40,13 @@ type State = {
   animTotalPortfolioFade: any,
   isCardActive: boolean,
   history: Transaction[],
-  receiveModal: {
-    isVisible: boolean,
+  activeModal: {
+    type: string | null,
     opts: {
-      address: string,
-      token: string,
-      tokenName: string
+      address?: string,
+      token?: string,
+      tokenName?: string,
+      formValues?: Object
     }
   }
 }
@@ -56,7 +57,7 @@ class Assets extends React.Component<Props, State> {
     animCardPositionY: new Animated.Value(30),
     animTotalPortfolioFade: new Animated.Value(1),
     isCardActive: false,
-    receiveModal: receiveModalResetState,
+    activeModal: activeModalResetState,
     history: [],
   };
 
@@ -82,9 +83,10 @@ class Assets extends React.Component<Props, State> {
         asset: 'ALL',
       }),
     }).then(res => res.json()).then((res) => {
-      this.setState({
-        history: res,
-      });
+      // console.log(res)
+      // this.setState({
+      //   history: res,
+      // });
     }).catch(() => {
       // TODO: Use proper error handling
     });
@@ -129,7 +131,7 @@ class Assets extends React.Component<Props, State> {
         } = asset;
         const displayAmount = +parseFloat(balance).toFixed(4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
-        const receiveModalOptions = { address: wallet.address, token: id, tokenName: name };
+        const activeModalOptions = { address: wallet.address };
         return (
           <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
             <AssetCard
@@ -144,14 +146,16 @@ class Assets extends React.Component<Props, State> {
             >
               <View>
                 <TouchableOpacity
-                  onPress={() => { this.setState({ receiveModal: { isVisible: true, opts: receiveModalOptions } }); }}
+                  onPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
                 >
                   <Image style={{ width: 50, height: 50 }} source={imageReceive} />
                 </TouchableOpacity>
                 <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Receive</Text>
               </View>
               <View>
-                <TouchableOpacity onPress={() => { }}>
+                <TouchableOpacity 
+                  onPress={() => { this.setState({ activeModal: { type: 'SEND', opts: {} } }); }}
+                >
                   <Image style={{ width: 50, height: 50 }} source={imageSend} />
                 </TouchableOpacity>
                 <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Send</Text>
@@ -165,7 +169,7 @@ class Assets extends React.Component<Props, State> {
     const {
       animHeaderHeight,
       animTotalPortfolioFade,
-      receiveModal: { isVisible: isReceiveModalOpen, opts },
+      activeModal: { type: activeModalType, opts },
     } = this.state;
     return (
       <View style={{ backgroundColor: '#FFFFFF' }}>
@@ -181,14 +185,20 @@ class Assets extends React.Component<Props, State> {
         </Animated.View>
         {this.renderAssets()}
         <ReceiveModal
-          isVisible={isReceiveModalOpen}
+          isVisible={activeModalType === 'RECEIVE'}
           {...opts}
-          onDismiss={() => { this.setState({ receiveModal: receiveModalResetState }); }}
+          onDismiss={() => { this.setState({ activeModal: activeModalResetState }); }}
+        />
+        <SendModal
+          isVisible={activeModalType === 'SEND'}
+          {...opts}
+          onDismiss={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
       </View>
     );
   }
 }
+
 
 const mapStateToProps = ({ wallet, assets }) => ({ wallet, assets });
 
