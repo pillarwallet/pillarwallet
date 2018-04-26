@@ -10,8 +10,7 @@ import Footer from 'components/Footer';
 import { Title } from 'components/Typography';
 import Button from 'components/Button';
 import HelpText from 'components/HelpText';
-import MneumonicPhrase from 'components/MneumonicPhrase';
-import MneumonicPhraseItem from 'components/MneumonicPhraseItem';
+import MnemonicPhrase from 'components/MnemonicPhrase';
 
 import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
@@ -34,8 +33,6 @@ class BackupPhrase extends React.Component<Props, {}> {
   render() {
     const { onboarding: wallet } = this.props.wallet;
     if (!wallet.mnemonic) return null;
-    const mnemonicList = wallet.mnemonic.original.split(' ');
-    const wordList = mnemonicList.map(word => <MneumonicPhraseItem key={word}>{word}</MneumonicPhraseItem>);
 
     return (
       <Container>
@@ -45,9 +42,7 @@ class BackupPhrase extends React.Component<Props, {}> {
             This is your unique 12-word backup phrase.
             Write down your backup phrase in the exact sequence.
           </Text>
-          <MneumonicPhrase>
-            { wordList }
-          </MneumonicPhrase>
+          <MnemonicPhrase phrase={wallet.mnemonic.original} />
           <Button title="Regenerate" small onPress={this.props.generateWalletMnemonic} width="100%" />
         </Wrapper>
         <Footer padding>
