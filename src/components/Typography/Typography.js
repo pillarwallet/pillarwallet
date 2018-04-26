@@ -18,4 +18,5 @@ export const Label = styled.Text`
   font-size: 14;
   color: rgb(155,155,155);
   margin-bottom: 10;
+  align-self: flex-start;
 `;

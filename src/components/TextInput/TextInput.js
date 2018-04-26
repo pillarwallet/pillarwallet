@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Item, Input, Label } from 'native-base';
+import { Item, Input } from 'native-base';
+import { Label } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 
 type inputPropsType = {
