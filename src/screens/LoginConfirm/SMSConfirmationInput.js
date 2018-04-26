@@ -30,12 +30,23 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
 
   inputs: Object = {}
 
-  handleChange = (id: string, value: string) => {
+  handleKeyDown = (e: any) => {
+    console.log(e);
+    console.log(this.state.SMSCode);
+
+    if (e.nativeEvent.key === 'Backspace') {
+      this.setState({
+        SMSCode: this.state.SMSCode.filter(code => code !== ''),
+      });
+    }
+  }
+
+  handleChange = (id: number, value: string) => {
     this.setState({
       SMSCode: this.state.SMSCode.concat(value),
     }, () => {
-      const nextId = id + 1;
-      this.inputs[nextId].focus();
+      const nextId = value ? id + 1 : id - 1;
+      this.inputs[nextId] && this.inputs[nextId].focus();
     });
   }
 
@@ -45,7 +56,8 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
         <SMSCodeInput
           innerRef={(node) => { this.inputs[id] = node; }}
           value={this.state.SMSCode[index]}
-          onChangeText={(value) => this.handleChange(id, value) }
+          onChangeText={(value) => this.handleChange(id, value)}
+          onKeyPress={this.handleKeyDown}
           keyboardType="phone-pad"
           maxLength={1}
           key={id}
