@@ -2,12 +2,12 @@
 import * as React from 'react';
 import {
   Animated,
-  Button,
   Dimensions,
   ScrollView,
   Text,
   View,
 } from 'react-native';
+import { Icon } from 'native-base';
 import type { ScrollEvent } from 'react-native';
 
 import styles from './styles';
@@ -118,7 +118,7 @@ export default class SlideModal extends React.Component<Props, State> {
             >
               <View style={styles.sliderHeaderContainer}>
                 <Text style={styles.sliderHeader}>{title}</Text>
-                <Button title="dismiss" onPress={this.handleAnimationDismiss} />
+                <Icon name="close" onPress={this.handleAnimationDismiss} />
               </View>
               <View style={styles.contentWrapper}>
                 {children}
