@@ -31,8 +31,8 @@ const modalOffset = 300;
 
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
-    onDismiss: () => {},
-    fullScreenComponent: null
+    onDismiss: () => { },
+    fullScreenComponent: null,
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -114,7 +114,7 @@ export default class SlideModal extends React.Component<Props, State> {
             contentContainerStyle={styles.scrollContentStyle}
           >
             <Animated.View style={[styles.sliderContainer,
-              { marginTop: animSlideModalVertical, height: (window.height * 2) - modalOffset }]}
+            { marginTop: animSlideModalVertical, height: (window.height * 2) - modalOffset }]}
             >
               <View style={styles.sliderHeaderContainer}>
                 <Text style={styles.sliderHeader}>{title}</Text>
@@ -126,7 +126,7 @@ export default class SlideModal extends React.Component<Props, State> {
               <View style={styles.offscreenWrapper} />
             </Animated.View>
           </ScrollView>
-        </View>      
+        </View>
         {fullScreenComponent}
       </View>
     );

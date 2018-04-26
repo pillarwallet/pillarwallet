@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Vibration, ActivityIndicator, Animated, Dimensions, View, Alert } from 'react-native';
+import { Vibration, Animated, Dimensions } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native';
@@ -80,7 +80,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     reactivate: false,
     rectangleColor: '#FFFFFF',
     onRead: () => { },
-    validator: (x:string) => true,
+    validator: () => true,
   };
 
   constructor(props: Props) {
@@ -116,7 +116,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     }).start();
   }
 
-  componentDidMount(){
+  componentDidMount() {
     if (this.props.isActive) {
       this.askPermissions();
     }
@@ -145,7 +145,6 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   handleAnimationDismiss = () => {
     const { onDismiss } = this.props;
-    console.log('fire')
     Animated.timing(this.state.animFadeIn, {
       toValue: 0,
       duration: 250,
@@ -158,7 +157,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   };
 
   render() {
-    const { authorizationState, isActive, animFadeIn } = this.state;
+    const { isActive, animFadeIn } = this.state;
     const { rectangleColor } = this.props;
     if (!isActive) {
       return null;

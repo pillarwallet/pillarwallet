@@ -13,13 +13,11 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
 };
 
 export function isValidETHAddress(address: string): boolean {
-  let result;
+  let result = true;
   try {
-    utils.getAddress(address)
-    result = true;
-  } catch(e) {
+    utils.getAddress(address);
+  } catch (e) {
     result = false;
   }
-
   return result;
 }

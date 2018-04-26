@@ -1,10 +1,9 @@
 // @flow
 import * as React from 'react';
-import { Share, Clipboard, View, Text } from 'react-native';
+import { Text } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
-import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 
@@ -22,30 +21,28 @@ type Props = {
 type State = {
   isScanning: boolean,
   value: {
-    address: string | null,
-    amount: number | null
+    address: ?string,
+    amount: ?number
   }
 }
 
-const Amount = t.refinement(t.Number, (amount) => {
+const Amount = t.refinement(t.Number, (amount): boolean => {
   return amount > 0;
 });
 
-Amount.getValidationErrorMessage = (amount) => {
-  return 'Amount should be specified.'
+Amount.getValidationErrorMessage = (): string => {
+  return 'Amount should be specified.';
 };
 
-const Address = t.refinement(t.String, (address) => {
+const Address = t.refinement(t.String, (address): boolean => {
   return address.length && isValidETHAddress(address);
 });
 
-Address.getValidationErrorMessage = (address) => {
-  if (!address) {
-    return 'Address must be provided.';
-  }
+Address.getValidationErrorMessage = (address): string => {
   if (!isValidETHAddress(address)) {
     return 'Invalid Ethereum Address.';
   }
+  return 'Address must be provided.';
 };
 
 const TRANSACTION_TYPE = t.struct({
@@ -65,8 +62,17 @@ function AddressInputTemplate(locals) {
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',
-  }
-  return <TextInput errorMessage={errorMessage} id="address" label={locals.label} icon="barcode" onIconPress={onIconPress} inputProps={inputProps} />
+  };
+  return (
+    <TextInput
+      errorMessage={errorMessage}
+      id="address"
+      label={locals.label}
+      icon="barcode"
+      onIconPress={onIconPress}
+      inputProps={inputProps}
+    />
+  );
 }
 
 function AmountInputTemplate(locals) {
@@ -78,17 +84,24 @@ function AmountInputTemplate(locals) {
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',
-    style: { paddingRight: 15 }
-  }
-  return <TextInput errorMessage={errorMessage} id="amount" label={locals.label} inputProps={inputProps} />
+    style: { paddingRight: 15 },
+  };
+  return (
+    <TextInput
+      errorMessage={errorMessage}
+      id="amount"
+      label={locals.label}
+      inputProps={inputProps}
+    />
+  );
 }
 
-const gerenareteFormOptions = (config: Object) => ({
+const gerenareteFormOptions = (config: Object): Object => ({
   fields: {
     amount: { template: AmountInputTemplate },
     address: { template: AddressInputTemplate, config, label: 'To' },
   },
-  order: ['amount', 'address']
+  order: ['amount', 'address'],
 });
 
 const Container = styled.View`
@@ -98,8 +111,17 @@ const Container = styled.View`
   alignSelf: stretch;
 `;
 
-export default class SendModal extends React.Component<Props, State> {
+const ActionsWrapper = styled.View`
+  flex: 1;
+  flexDirection: row;
+  justifyContent: space-between;
+  alignItems: flex-start;
+  marginTop: 15px;
+  padding: 5px;
+`;
 
+
+export default class SendModal extends React.Component<Props, State> {
   _form: t.form
 
   state = {
@@ -107,7 +129,7 @@ export default class SendModal extends React.Component<Props, State> {
     value: {
       address: '',
       amount: 0,
-    }
+    },
   }
 
   handleChange = (value: Object) => {
@@ -115,14 +137,15 @@ export default class SendModal extends React.Component<Props, State> {
   };
 
   handleFormSubmit = () => {
-    const value = this._form.getValue();
-    if (!value) return;
+    // const value = this._form.getValue();
+    // if (!value) return;
+    // HANDLE FORM SUBMISSION
   };
 
   handleToggleQRScanningState = () => {
     this.setState({
-      isScanning: !this.state.isScanning
-    })
+      isScanning: !this.state.isScanning,
+    });
   };
 
   handleQRRead = (address: string) => {
@@ -131,24 +154,36 @@ export default class SendModal extends React.Component<Props, State> {
 
 
   render() {
-    const { address, isVisible, onDismiss } = this.props;
+    const { isVisible, onDismiss } = this.props;
     const { value, isScanning } = this.state;
     const formOptions = gerenareteFormOptions({ onIconPress: this.handleToggleQRScanningState });
-    const qrScannnerComponent = <QRCodeScanner validator={isValidETHAddress} isActive={isScanning} onDismiss={this.handleToggleQRScanningState} onRead={this.handleQRRead} />
+    const qrScannnerComponent = (
+      <QRCodeScanner
+        validator={isValidETHAddress}
+        isActive={isScanning}
+        onDismiss={this.handleToggleQRScanningState}
+        onRead={this.handleQRRead}
+      />
+    );
     return (
       <SlideModal title="send." isVisible={isVisible} onDismiss={onDismiss} fullScreenComponent={qrScannnerComponent}>
         <Container>
           <Form
-            ref={node => { this._form = node }}
+            ref={node => { this._form = node; }}
             type={TRANSACTION_TYPE}
             options={formOptions}
             value={value}
             onChange={this.handleChange}
           />
-          <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 15, padding: 5 }}>
+          <ActionsWrapper>
             <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
-            <Text onPress={this.handleFormSubmit} style={{ color: '#2077FD', fontSize: 16, fontWeight: 'bold' }}>Send</Text>
-          </View>
+            <Text
+              onPress={this.handleFormSubmit}
+              style={{ color: '#2077FD', fontSize: 16, fontWeight: 'bold' }}
+            >
+              Send
+            </Text>
+          </ActionsWrapper>
         </Container>
       </SlideModal>
     );

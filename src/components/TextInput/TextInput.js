@@ -3,9 +3,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item, Input, Label } from 'native-base';
 import ButtonIcon from 'components/ButtonIcon';
-import { EventTargetLike } from 'rxjs/observable/FromEventObservable';
 
-type inputProps = {
+type inputPropsType = {
   placeholder?: string,
   onChange: Function,
   onBlur: Function
@@ -18,10 +17,14 @@ type Props = {
   iconColor?: string,
   errorMessage?: string,
   onIconPress?: Function,
-  inputProps: inputProps
+  inputProps: inputPropsType
 }
 
-const FloatingButton = styled(ButtonIcon) `
+type EventLike = {
+  nativeEvent: Object,
+}
+
+const FloatingButton = styled(ButtonIcon)`
   position:absolute;
   right: 5px;
   top: 20px;
@@ -36,16 +39,15 @@ const Error = styled.Text`
 `;
 
 class TextInput extends React.Component<Props> {
-
-  handleBlur = (e: EventTargetLike) => {
-    const { inputProps: { onBlur }} = this.props;
-    onBlur && onBlur(e.nativeEvent.text);
+  handleBlur = (e: EventLike) => {
+    const { inputProps: { onBlur } } = this.props;
+    onBlur(e.nativeEvent.text);
   }
 
 
-  handleChange = (e: EventTargetLike) => {
-    const { inputProps: { onChange }} = this.props;
-    onChange && onChange(e.nativeEvent.text);
+  handleChange = (e: EventLike) => {
+    const { inputProps: { onChange } } = this.props;
+    onChange(e.nativeEvent.text);
   }
 
   render() {
@@ -60,7 +62,7 @@ class TextInput extends React.Component<Props> {
     return (
       <Item stackedLabel style={{ marginBottom: 20 }} error={!!errorMessage}>
         <Label>{label}</Label>
-        <Input {...inputProps} onChange={this.handleChange} onBlur={this.handleBlur}/>
+        <Input {...inputProps} onChange={this.handleChange} onBlur={this.handleBlur} />
         {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
         {errorMessage && <Error>{errorMessage}</Error>}
       </Item>

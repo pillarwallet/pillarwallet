@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Text } from 'react-native';
 import renderer from 'react-test-renderer';
 import ButtonIcon from '../ButtonIcon';
 
@@ -9,5 +8,4 @@ describe('Button Icon', () => {
     const component = renderer.create(<ButtonIcon icon="barcode" />).toJSON();
     expect(component).toMatchSnapshot();
   });
-
 });

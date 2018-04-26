@@ -1,8 +1,7 @@
 // @flow
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Input, Icon, Button } from 'native-base';
-import styled from 'styled-components/native';
+import { Icon, Button } from 'native-base';
 
 type Props = {
   icon: string,
@@ -13,11 +12,12 @@ type Props = {
 }
 
 export default function ButtonIcon(props: Props) {
-  const { icon,
+  const {
+    icon,
     onPress,
     fontSize,
     color,
-    style
+    style,
   } = props;
   return (
     <Button transparent onPress={onPress} style={style}>

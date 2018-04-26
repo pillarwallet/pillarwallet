@@ -84,9 +84,9 @@ class Assets extends React.Component<Props, State> {
       }),
     }).then(res => res.json()).then((res) => {
       // console.log(res)
-      // this.setState({
-      //   history: res,
-      // });
+      this.setState({
+        history: res,
+      });
     }).catch(() => {
       // TODO: Use proper error handling
     });
@@ -153,7 +153,7 @@ class Assets extends React.Component<Props, State> {
                 <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Receive</Text>
               </View>
               <View>
-                <TouchableOpacity 
+                <TouchableOpacity
                   onPress={() => { this.setState({ activeModal: { type: 'SEND', opts: {} } }); }}
                 >
                   <Image style={{ width: 50, height: 50 }} source={imageSend} />
