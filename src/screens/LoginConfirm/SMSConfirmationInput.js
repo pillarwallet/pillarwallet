@@ -49,7 +49,7 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
         <SMSCodeInput
           value={this.state.SMSCode[index]}
           keyboardType="phone-pad"
-          maxLength="1"
+          maxLength={1}
           key={input}
           onChangeText={(codeNumber) => this.inputCodeNumber(codeNumber)}
         />,
