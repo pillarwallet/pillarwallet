@@ -30,22 +30,25 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
 
   inputs: Object = {}
 
-  handleKeyDown = (e: any) => {
-    console.log(e);
-    console.log(this.state.SMSCode);
-
-    if (e.nativeEvent.key === 'Backspace') {
+  handleKeyDown = (e: any, id: number) => {
+    console.log(id);
+    if (e.nativeEvent.key === 'Backspace' && this.state.SMSCode.length === id) {
       this.setState({
-        SMSCode: this.state.SMSCode.filter(code => code !== ''),
+        SMSCode: this.state.SMSCode.filter(({ id: inputId }) => inputId !== id),
+      }, () => {
+        const nextId = id - 1;
+        this.inputs[nextId] && this.inputs[nextId].focus();
       });
+      return;
     }
-  }
-
-  handleChange = (id: number, value: string) => {
+    const value = e.nativeEvent.key;
     this.setState({
-      SMSCode: this.state.SMSCode.concat(value),
+      SMSCode: this.state.SMSCode.concat({
+        id,
+        value,
+      }),
     }, () => {
-      const nextId = value ? id + 1 : id - 1;
+      const nextId = id + 1;
       this.inputs[nextId] && this.inputs[nextId].focus();
     });
   }
@@ -55,9 +58,8 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
       .map((id, index) => (
         <SMSCodeInput
           innerRef={(node) => { this.inputs[id] = node; }}
-          value={this.state.SMSCode[index]}
-          onChangeText={(value) => this.handleChange(id, value)}
-          onKeyPress={this.handleKeyDown}
+          value={this.state.SMSCode.filter(({ id: inputId }) => inputId === id)[0]}
+          onKeyPress={(e) => this.handleKeyDown(e, id)}
           keyboardType="phone-pad"
           maxLength={1}
           key={id}
