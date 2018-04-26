@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
-import { Label } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -63,6 +62,7 @@ function AddressInputTemplate(locals) {
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',
+    style: { paddingRight: 60 },
   };
   return (
     <TextInput
