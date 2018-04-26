@@ -5,7 +5,6 @@ import { StackNavigator, SwitchNavigator, NavigationActions, HeaderBackButton } 
 
 // screens
 import LandingScreen from 'screens/Landing';
-import IntroScreen from 'screens/Intro';
 import NewWalletScreen from 'screens/NewWallet';
 import LoginScreen from 'screens/Login';
 import LoginConfirmScreen from 'screens/LoginConfirm';
