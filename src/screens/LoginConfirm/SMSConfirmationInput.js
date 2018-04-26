@@ -30,11 +30,15 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
     SMSCode: [],
     SMSCodeInputList: [],
   }
+  ref1 = React.createRef();
+
+  generateSMSCodeInputRefs() {
+
+  }
 
   componentDidMount() {
     this.generateSMSCodeInputComponents();
   }
-
 
   inputCodeNumber(codeNumber: number) {
     this.setState({

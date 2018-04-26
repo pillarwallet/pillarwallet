@@ -36,7 +36,7 @@ export default class PinCode extends React.Component<Props, State> {
   };
 
   getKeyPadButtons() {
-    const keyInputs = Array(9).fill('')
+    const keyInputs: Array<Object> = Array(9).fill('')
       .map((num, i) => {
         const key = `${i + 1}`;
         return this.keyPadButton(key, key);
