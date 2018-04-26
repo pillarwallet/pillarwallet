@@ -39,6 +39,10 @@ class LoginConfirm extends React.Component<{}, State> {
     // TODO: Link to next page
   }
 
+  goToReSendCodePage = () => {
+    // TODO: Link to re-send code page
+  }
+
   render() {
     return (
       <Container>
@@ -49,10 +53,11 @@ class LoginConfirm extends React.Component<{}, State> {
           <Center>
             <SMSConfirmationInput />
             <SMSConfirmationLabel>Please allow up to 10 minutes for your code to arrive.</SMSConfirmationLabel>
+            <Button secondary onPress={this.goToReSendCodePage} title="Re-send Code" />
           </Center>
         </Wrapper>
         <Footer>
-          <Button onPress={this.goToNextPage} title="Next" marginBottom />
+          <Button onPress={this.goToNextPage} title="Continue" marginBottom />
         </Footer>
       </Container>
     );
