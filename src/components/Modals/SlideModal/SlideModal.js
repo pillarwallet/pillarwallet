@@ -16,6 +16,7 @@ type Props = {
   title: string,
   onDismiss: Function,
   children?: React.Node,
+  fullScreenComponent?: ?React.Node,
   isVisible: boolean
 };
 
@@ -31,6 +32,7 @@ const modalOffset = 300;
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
     onDismiss: () => {},
+    fullScreenComponent: null
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -99,7 +101,7 @@ export default class SlideModal extends React.Component<Props, State> {
       animSlideModalVertical,
       isVisible,
     } = this.state;
-    const { children, title } = this.props;
+    const { children, title, fullScreenComponent } = this.props;
     if (!isVisible) return null;
     return (
       <View style={styles.modalContainer}>
@@ -124,7 +126,8 @@ export default class SlideModal extends React.Component<Props, State> {
               <View style={styles.offscreenWrapper} />
             </Animated.View>
           </ScrollView>
-        </View>
+        </View>      
+        {fullScreenComponent}
       </View>
     );
   }
