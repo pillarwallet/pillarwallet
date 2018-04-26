@@ -7,7 +7,8 @@ import ButtonIcon from 'components/ButtonIcon';
 type inputPropsType = {
   placeholder?: string,
   onChange: Function,
-  onBlur: Function
+  onBlur: Function,
+  value: ?string
 }
 
 type Props = {
@@ -18,6 +19,10 @@ type Props = {
   errorMessage?: string,
   onIconPress?: Function,
   inputProps: inputPropsType
+}
+
+type State = {
+  value: ?string
 }
 
 type EventLike = {
@@ -38,16 +43,38 @@ const Error = styled.Text`
   bottom: -25px;
 `;
 
-class TextInput extends React.Component<Props> {
-  handleBlur = (e: EventLike) => {
-    const { inputProps: { onBlur } } = this.props;
-    onBlur(e.nativeEvent.text);
+class TextInput extends React.Component<Props, State> {
+  state = {
+    value: '',
   }
 
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    if (nextProps.inputProps.value !== prevState.value) {
+      return {
+        value: nextProps.inputProps.value,
+      };
+    }
+    return null;
+  }
+
+  handleBlur = (e: EventLike) => {
+    const { inputProps: { onBlur } } = this.props;
+    const value = e.nativeEvent.text;
+    this.setState({ value }, () => {
+      if (onBlur) {
+        onBlur(value);
+      }
+    });
+  }
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
-    onChange(e.nativeEvent.text);
+    const value = e.nativeEvent.text;
+    this.setState({ value }, () => {
+      if (onChange) {
+        onChange(value);
+      }
+    });
   }
 
   render() {
@@ -59,10 +86,12 @@ class TextInput extends React.Component<Props> {
       inputProps,
       errorMessage,
     } = this.props;
+    const { value } = this.state;
+
     return (
       <Item stackedLabel style={{ marginBottom: 20 }} error={!!errorMessage}>
         <Label>{label}</Label>
-        <Input {...inputProps} onChange={this.handleChange} onBlur={this.handleBlur} />
+        <Input {...inputProps} onChange={this.handleChange} onBlur={this.handleBlur} value={value} />
         {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
         {errorMessage && <Error>{errorMessage}</Error>}
       </Item>
