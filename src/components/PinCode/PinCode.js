@@ -1,16 +1,17 @@
 // @flow
 import * as React from 'react';
-import { Button } from 'react-native';
+import styled from 'styled-components/native/index';
 
+import KeyPad from 'components/KeyPad';
+import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import PinDots from './PinDots';
-import PinDot from './PinDot';
-import PinWrapper from './PinWrapper';
-import KeyPad from './KeyPad';
-import KeyInput from './KeyInput';
 
 const PASS_CODE_LENGTH = 6;
 
-type PassCode = string[];
+const PinWrapper = styled.View`
+  flex: 1;
+  justify-content: space-between;
+`;
 
 type Props = {
   onPinEntered: Function,
@@ -20,7 +21,7 @@ type Props = {
 };
 
 type State = {
-  passCode: PassCode,
+  passCode: string[],
 };
 
 export default class PinCode extends React.Component<Props, State> {
@@ -34,21 +35,61 @@ export default class PinCode extends React.Component<Props, State> {
     passCode: [],
   };
 
+  getKeyPadButtons() {
+    const keyInputs = Array(9).fill('')
+      .map((num, i) => {
+        const key = `${i + 1}`;
+        return this.keyPadButton(key, key);
+      });
+
+    if (this.props.showForgotButton) {
+      keyInputs.push(this.keyPadButton(KEYPAD_BUTTON_FORGOT, 'Forgot?'));
+    } else {
+      keyInputs.push(this.keyPadButton('', ''));
+    }
+
+    keyInputs.push(
+      this.keyPadButton('0', '0'),
+      this.keyPadButton(KEYPAD_BUTTON_DELETE, '⌫'),
+    );
+
+    return keyInputs;
+  }
+
+  keyPadButton(value: string, label: string) {
+    return {
+      label,
+      value,
+    };
+  }
+
+  handleButtonPressed = (value: any) => {
+    switch (value) {
+      case KEYPAD_BUTTON_DELETE: return this.handleKeyPressDelete();
+      case KEYPAD_BUTTON_FORGOT: return this.handleKeyPressForgot();
+      default: return this.handleKeyPress(value);
+    }
+  };
+
   handleKeyPress = (key: string) => {
-    if (this.state.passCode.length === PASS_CODE_LENGTH) {
+    const { passCode } = this.state;
+
+    if (passCode.length === PASS_CODE_LENGTH) {
       return;
     }
 
-    this.setState({
-      passCode: [...this.state.passCode, key],
-    }, () => {
-      const passCodeString = this.state.passCode.join('');
-      if (this.state.passCode.length === PASS_CODE_LENGTH) {
-        this.props.onPinEntered(passCodeString);
-      } else if (this.props.onPinChanged) {
-        this.props.onPinChanged(passCodeString);
-      }
-    });
+    this.setState({ passCode: [...passCode, key] }, this.onPassCodeChanged);
+  };
+
+  onPassCodeChanged = () => {
+    const { passCode } = this.state;
+    const passCodeString = passCode.join('');
+
+    if (passCode.length === PASS_CODE_LENGTH) {
+      this.props.onPinEntered(passCodeString);
+    } else if (this.props.onPinChanged) {
+      this.props.onPinChanged(passCodeString);
+    }
   };
 
   handleKeyPressDelete = () => {
@@ -64,60 +105,14 @@ export default class PinCode extends React.Component<Props, State> {
     console.log('Need to Reset Wallet'); // eslint-disable-line no-console
   };
 
-  createPinDot(i: number) {
-    let isActive = false;
-    if (this.state.passCode.length >= (i + 1)) {
-      isActive = true;
-    }
-    return (
-      <PinDot key={i} active={isActive} />
-    );
-  }
-
-  createPinButton(key: string, title: string, callback: () => void) {
-    return (
-      <KeyInput key={key}>
-        <Button title={title} onPress={callback} />
-      </KeyInput>
-    );
-  }
-
-  generatePinInputs() {
-    const keyInputs = Array(9).fill('')
-      .map((num, i) => {
-        const key = `${i + 1}`;
-        const title = key;
-        const callback = () => this.handleKeyPress(key);
-        return this.createPinButton(key, title, callback);
-      });
-
-    if (this.props.showForgotButton) {
-      keyInputs.push(this.createPinButton('Forgot', 'Forgot?', () => this.handleKeyPressForgot()));
-    } else {
-      keyInputs.push(this.createPinButton('', '', () => {}));
-    }
-
-    keyInputs.push(
-      this.createPinButton('0', '0', () => this.handleKeyPress('0')),
-      this.createPinButton('⌫', '⌫', () => this.handleKeyPressDelete()),
-    );
-
-    return keyInputs;
-  }
-
   render() {
-    const pinCodeDots = Array(PASS_CODE_LENGTH).fill('')
-      .map((num, i) => this.createPinDot(i));
-    const keyInputs = this.generatePinInputs();
+    const keyPadButtons = this.getKeyPadButtons();
+    const numActiveDots = this.state.passCode.length;
 
     return (
       <PinWrapper>
-        <PinDots>
-          {pinCodeDots}
-        </PinDots>
-        <KeyPad>
-          {keyInputs}
-        </KeyPad>
+        <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
+        <KeyPad buttons={keyPadButtons} onKeyPress={this.handleButtonPressed} />
       </PinWrapper>
     );
   }

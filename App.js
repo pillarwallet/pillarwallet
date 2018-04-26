@@ -4,7 +4,9 @@ import { addNavigationHelpers } from 'react-navigation';
 import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
+import { SHOW_STORYBOOK } from 'react-native-dotenv';
 import configureStore from './src/configureStore';
+import StorybookUI from './storybook';
 
 const store = configureStore();
 const addListener = createReduxBoundAddListener('root');
@@ -31,4 +33,4 @@ const Root = () => (
   </Provider>
 );
 
-export default Root;
+export default (__DEV__ && SHOW_STORYBOOK === 'true') ? StorybookUI : Root;
