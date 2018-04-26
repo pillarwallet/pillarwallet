@@ -4,6 +4,7 @@ import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { StackNavigator, SwitchNavigator, NavigationActions, HeaderBackButton } from 'react-navigation';
 
 // screens
+import LandingScreen from 'screens/Landing';
 import IntroScreen from 'screens/Intro';
 import NewWalletScreen from 'screens/NewWallet';
 import LoginScreen from 'screens/Login';
@@ -26,7 +27,9 @@ import {
   LOGIN, HOME,
   LEGAL_TERMS,
   ICO,
-  IMPORT_WALLET, PIN_CODE_CONFIRMATION,
+  IMPORT_WALLET,
+  PIN_CODE_CONFIRMATION,
+  PIN_CODE_UNLOCK,
 } from 'constants/navigationConstants';
 
 const renderHomeButton = (navigation) => {
@@ -69,6 +72,12 @@ const importWalletFlow = StackNavigator({
 
 const appFlow = StackNavigator({
   [LOGIN]: {
+    screen: LoginScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: renderHomeButton(navigation),
+    }),
+  },
+  [PIN_CODE_UNLOCK]: {
     screen: PinCodeUnlockScreen,
     navigationOptions: ({ navigation }) => ({
       headerLeft: renderHomeButton(navigation),
@@ -84,7 +93,7 @@ const appFlow = StackNavigator({
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [HOME]: LoginScreen,
+  [HOME]: LandingScreen,
   appFlow,
   onBoardingFlow,
   importWalletFlow,

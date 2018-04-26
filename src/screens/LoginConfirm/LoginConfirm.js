@@ -5,7 +5,6 @@ import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import Button from 'components/Button';
-import HyperLink from 'components/HyperLink';
 import { Title, Body, Label } from 'components/Typography';
 import { Form, Picker, Icon, Input } from 'native-base';
 import countries from 'utils/countries.json';
@@ -52,7 +51,7 @@ const FooterText = styled(Label)`
   max-width: 300px;
 `;
 
-class Login extends React.Component<{}, State> {
+class LoginConfirm extends React.Component<{}, State> {
   state = {
     selectedCountry: 'GB',
     selectedCountryFlag: '🇬🇧',
@@ -116,13 +115,11 @@ class Login extends React.Component<{}, State> {
         </Wrapper>
         <Footer>
           <Button onPress={this.goToNextPage} title="Next" marginBottom />
-          <FooterText>
-            By signing into Pillar Wallet you are agreeing to our <HyperLink url="http://pillarproject.io/">Terms</HyperLink> and <HyperLink url="http://pillarproject.io/">Privacy policy</HyperLink>
-          </FooterText>
+          <FooterText />
         </Footer>
       </Container>
     );
   }
 }
 
-export default Login;
+export default LoginConfirm;
