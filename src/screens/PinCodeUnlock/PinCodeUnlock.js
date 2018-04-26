@@ -2,11 +2,10 @@
 import * as React from 'react';
 import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
-
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
-import { Container } from 'components/Layout';
+import { Container, Center } from 'components/Layout';
 import { Title } from 'components/Typography';
 import PinCode from 'components/PinCode';
 
@@ -69,7 +68,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Title center>Enter Passcode</Title>
+        <Center>
+          <Title>Enter Passcode</Title>
+        </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""

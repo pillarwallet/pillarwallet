@@ -94,7 +94,7 @@ const appFlow = StackNavigator({
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [HOME]: LandingScreen,
+  [HOME]: PinCodeUnlockScreen,
   loginFlow,
   appFlow,
   onBoardingFlow,
