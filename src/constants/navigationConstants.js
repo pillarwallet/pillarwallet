@@ -7,6 +7,7 @@ export const PIN_CODE_CONFIRMATION = 'PIN_CODE_CONFIRMATION';
 export const PIN_CODE_UNLOCK = 'PIN_CODE_UNLOCK';
 export const NEW_WALLET = 'NEW_WALLET';
 export const LOGIN = 'LOGIN';
+export const LOGIN_CONFIRM = 'LOGIN_CONFIRM';
 export const HOME = 'HOME';
 export const LEGAL_TERMS = 'LEGAL_TERMS';
 export const ICO = 'ICO';

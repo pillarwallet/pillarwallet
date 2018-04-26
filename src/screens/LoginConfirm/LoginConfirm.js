@@ -91,8 +91,9 @@ class LoginConfirm extends React.Component<{}, State> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>Hello</Title>
-          <Body>Please enter the mobile number associated with your account.</Body>
+          <Title>confirm</Title>
+          <Body>We sent your code to</Body>
+          <Body>+441234 567 890</Body>
           <LoginForm>
             <Label>Country</Label>
             <CountryPickerWrapper>

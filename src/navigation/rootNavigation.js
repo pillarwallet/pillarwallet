@@ -8,6 +8,7 @@ import LandingScreen from 'screens/Landing';
 import IntroScreen from 'screens/Intro';
 import NewWalletScreen from 'screens/NewWallet';
 import LoginScreen from 'screens/Login';
+import LoginConfirmScreen from 'screens/LoginConfirm';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
@@ -24,7 +25,9 @@ import {
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
-  LOGIN, HOME,
+  LOGIN,
+  LOGIN_CONFIRM,
+  HOME,
   LEGAL_TERMS,
   ICO,
   IMPORT_WALLET,
@@ -36,6 +39,11 @@ const renderHomeButton = (navigation) => {
   const onButtonClicked = () => navigation.dispatch(NavigationActions.navigate({ routeName: HOME }));
   return props => <HeaderBackButton {...props} onPress={onButtonClicked} />;
 };
+
+const loginFlow = StackNavigator({
+  [LOGIN]: LoginScreen,
+  [LOGIN_CONFIRM]: LoginConfirmScreen,
+});
 
 const walletCreationFlow = {
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
@@ -71,12 +79,6 @@ const importWalletFlow = StackNavigator({
 });
 
 const appFlow = StackNavigator({
-  [LOGIN]: {
-    screen: LoginScreen,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: renderHomeButton(navigation),
-    }),
-  },
   [PIN_CODE_UNLOCK]: {
     screen: PinCodeUnlockScreen,
     navigationOptions: ({ navigation }) => ({
@@ -94,6 +96,7 @@ const appFlow = StackNavigator({
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
   [HOME]: LandingScreen,
+  loginFlow,
   appFlow,
   onBoardingFlow,
   importWalletFlow,

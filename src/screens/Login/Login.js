@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+import type { NavigationScreenProp } from 'react-navigation';
+import { LOGIN_CONFIRM } from 'constants/navigationConstants';
 import styled from 'styled-components';
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
@@ -10,6 +12,9 @@ import { Title, Body, Label } from 'components/Typography';
 import { Form, Picker, Icon, Input } from 'native-base';
 import countries from 'utils/countries.json';
 
+type Props = {
+  navigation: NavigationScreenProp<*>,
+}
 
 type State = {
   selectedCountry: string,
@@ -52,7 +57,7 @@ const FooterText = styled(Label)`
   max-width: 300px;
 `;
 
-class Login extends React.Component<{}, State> {
+class Login extends React.Component<Props, State> {
   state = {
     selectedCountry: 'GB',
     selectedCountryFlag: '🇬🇧',
@@ -84,15 +89,15 @@ class Login extends React.Component<{}, State> {
     });
   }
 
-  goToNextPage = () => {
-    // TODO: Link to next page
-  }
+  loginAction = () => {
+    this.props.navigation.navigate(LOGIN_CONFIRM);
+  };
 
   render() {
     return (
       <Container>
         <Wrapper padding>
-          <Title>Hello</Title>
+          <Title>login</Title>
           <Body>Please enter the mobile number associated with your account.</Body>
           <LoginForm>
             <Label>Country</Label>
@@ -115,7 +120,7 @@ class Login extends React.Component<{}, State> {
           </LoginForm>
         </Wrapper>
         <Footer>
-          <Button onPress={this.goToNextPage} title="Next" marginBottom />
+          <Button onPress={this.loginAction} title="Next" marginBottom />
           <FooterText>
             By signing into Pillar Wallet you are agreeing to our <HyperLink url="http://pillarproject.io/">Terms</HyperLink> and <HyperLink url="http://pillarproject.io/">Privacy policy</HyperLink>
           </FooterText>
