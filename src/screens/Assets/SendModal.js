@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
+import { Label } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -96,7 +97,7 @@ function AmountInputTemplate(locals) {
   );
 }
 
-const gerenareteFormOptions = (config: Object): Object => ({
+const generateFormOptions = (config: Object): Object => ({
   fields: {
     amount: { template: AmountInputTemplate },
     address: { template: AddressInputTemplate, config, label: 'To' },
@@ -156,7 +157,7 @@ export default class SendModal extends React.Component<Props, State> {
   render() {
     const { isVisible, onDismiss } = this.props;
     const { value, isScanning } = this.state;
-    const formOptions = gerenareteFormOptions({ onIconPress: this.handleToggleQRScanningState });
+    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState });
     const qrScannnerComponent = (
       <QRCodeScanner
         validator={isValidETHAddress}
