@@ -18,7 +18,7 @@ const numbers = [
   { label: '9', value: '9' },
 ];
 
-export const getPincode = (props: Object): KeyPadButton[] => {
+const getPincode = (props: Object): KeyPadButton[] => {
   const finalRow = [
     props.showForgotButton ? { label: 'Forgot?', value: KEYPAD_BUTTON_FORGOT } : { label: '', value: '' },
     { label: '0', value: '0' },
@@ -28,7 +28,7 @@ export const getPincode = (props: Object): KeyPadButton[] => {
   return numbers.concat(finalRow);
 };
 
-export const getNumeric = (): KeyPadButton[] => {
+const getNumeric = (): KeyPadButton[] => {
   const finalRow = [
     { label: '.', value: KEYPAD_BUTTON_DOT },
     { label: '0', value: '0' },

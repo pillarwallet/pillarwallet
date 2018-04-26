@@ -7,4 +7,7 @@ import KeyPad from 'components/KeyPad';
 storiesOf('KeyPad', module)
   .add('Default', () => (
     <KeyPad onKeyPress={action('Button clicked')} />
+  ))
+  .add('Pincode', () => (
+    <KeyPad type="pincode" onKeyPress={action('Button clicked')} />
   ));

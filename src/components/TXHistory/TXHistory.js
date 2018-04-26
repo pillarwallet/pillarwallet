@@ -81,14 +81,14 @@ export default class TXHistory extends React.Component<Props> {
   }
 
   render() {
-    const { address, onRefresh } = this.props;
+    const { history, address, onRefresh } = this.props;
     return (
       <Container>
         <FlatList
           refreshing={false}
           onRefresh={onRefresh}
           ListHeaderComponent={<Header style={{ marginBottom: 10 }}>activity.</Header>}
-          data={this.props.history}
+          data={history}
           extraData={address}
           renderItem={this.renderTransaction}
           keyExtractor={(({ _id }) => _id)}
