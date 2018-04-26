@@ -89,7 +89,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-navigation|react-native-safe-area-view|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native)/)"
+      "node_modules/(?!(react-native|react-native-vector-icons|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -106,6 +106,7 @@
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
     "lodash.merge": "^4.6.1",
+    "native-base": "^2.4.2",
     "polished": "^1.9.2",
     "pouchdb-react-native": "^6.4.1",
     "qrcode": "^1.2.0",
