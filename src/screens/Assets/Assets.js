@@ -81,13 +81,17 @@ class Assets extends React.Component<Props, State> {
         address2: 'ALL',
         asset: 'ALL',
       }),
-    }).then(res => res.json()).then((res) => {
-      this.setState({
-        history: res,
+    })
+      .then(res => res.json())
+      .then(res => Array.isArray(res) ? res : [])
+      .then((res) => {
+        this.setState({
+          history: res,
+        });
+      })
+      .catch(() => {
+        // TODO: Use proper error handling
       });
-    }).catch(() => {
-      // TODO: Use proper error handling
-    });
   }
 
   animateCardPositionAndHeader = (isActive: boolean) => {
