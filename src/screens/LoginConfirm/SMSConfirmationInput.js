@@ -4,8 +4,18 @@ import { TextInput } from 'react-native';
 import styled from 'styled-components';
 
 
+type Input = {
+  _id: number,
+  value: string
+}
+
+type Props = {
+  length: number,
+  onCodeFullfilled: Function
+}
+
 type State = {
-  SMSCode: Array<string>,
+  SMSCode: Input[],
 }
 
 const SMSCodeInputWrapper = styled.View`
@@ -27,10 +37,11 @@ const SMSCodeInput = styled(TextInput)`
 const BACKSPACE = 'Backspace';
 const EMPTY_STRING = '';
 
-export default class SMSConfirmationInput extends React.Component<{}, State> {
+export default class SMSConfirmationInput extends React.Component<Props, State> {
 
   static defaultProps = {
     length: 4,
+    onCodeFullfilled: (x: string) => x
   }
 
   state = {
@@ -42,16 +53,20 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
   handleKeyPress = (e: any, id: number) => {
     let { key: value } = e.nativeEvent;
     const { SMSCode } = this.state;
-    const { length } = this.props;
+    const { length, onCodeFullfilled } = this.props;
     const currentInput = SMSCode.filter(({ _id }) => _id === id)[0];
     const isCurrentInputFilled = currentInput && !!currentInput.value;
     let updatedSMSCode = SMSCode.filter(({ _id }) => id !== _id).concat({ _id: id, value });
+
+    // remove value on backspace
     if (BACKSPACE === value) {
       updatedSMSCode = SMSCode.filter(({ _id }) => id !== _id);
     }
+    
+    // if current input value is filled update the next one
     if (isCurrentInputFilled && BACKSPACE !== value) {
       let nextInputId = (id + 1) >= length ? length : (id + 1);
-      updatedSMSCode = SMSCode.concat({ _id: nextInputId, value });      
+      updatedSMSCode = SMSCode.filter(({ _id }) => nextInputId !== _id).concat({ _id: nextInputId, value });      
     }
 
     this.setState({
@@ -61,6 +76,7 @@ export default class SMSConfirmationInput extends React.Component<{}, State> {
       this.inputs[nextID] && this.inputs[nextID].focus();
       if (length === this.state.SMSCode.length) {
         let code = this.state.SMSCode.sort((a,b) => a._id - b._id).map(({ value }) => value).join('')
+        onCodeFullfilled(code);
       }
     });
   }
