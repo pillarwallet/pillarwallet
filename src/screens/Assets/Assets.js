@@ -13,7 +13,6 @@ import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import Container from 'components/Container';
 import Wrapper from 'components/Wrapper';
-import NavigationFooter from 'components/NavigationFooter';
 import { BCX_URL } from 'react-native-dotenv';
 
 import ReceiveModal from './ReceiveModal';
@@ -195,7 +194,6 @@ class Assets extends React.Component<Props, State> {
           </Animated.View>
           {this.renderAssets()}
         </Wrapper>
-        <NavigationFooter />
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
           {...opts}

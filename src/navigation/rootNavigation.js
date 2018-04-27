@@ -1,7 +1,13 @@
 // @flow
 import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import { StackNavigator, SwitchNavigator, NavigationActions, HeaderBackButton } from 'react-navigation';
+import {
+  StackNavigator,
+  SwitchNavigator,
+  TabNavigator,
+  NavigationActions,
+  HeaderBackButton,
+} from 'react-navigation';
 
 // screens
 import IntroScreen from 'screens/Intro';
@@ -66,13 +72,16 @@ const importWalletFlow = StackNavigator({
   ...walletCreationFlow,
 });
 
-const appFlow = StackNavigator({
+const loginFlow = StackNavigator({
   [LOGIN]: {
     screen: LoginScreen,
     navigationOptions: ({ navigation }) => ({
       headerLeft: renderHomeButton(navigation),
     }),
   },
+});
+
+const appFlow = TabNavigator({
   [ASSETS]: {
     screen: AssetsScreen,
     navigationOptions: {
@@ -85,6 +94,7 @@ const appFlow = StackNavigator({
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
   [HOME]: IntroScreen,
   appFlow,
+  loginFlow,
   onBoardingFlow,
   importWalletFlow,
 });
