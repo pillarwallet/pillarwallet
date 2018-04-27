@@ -11,6 +11,9 @@ import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import Container from 'components/Container';
+import Wrapper from 'components/Wrapper';
+import NavigationFooter from 'components/NavigationFooter';
 import { BCX_URL } from 'react-native-dotenv';
 
 import ReceiveModal from './ReceiveModal';
@@ -166,7 +169,8 @@ class Assets extends React.Component<Props, State> {
                 <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Send</Text>
               </View>
             </AssetCard>
-          </Animated.View>);
+          </Animated.View>
+        );
       });
   }
 
@@ -177,18 +181,21 @@ class Assets extends React.Component<Props, State> {
       activeModal: { type: activeModalType, opts },
     } = this.state;
     return (
-      <View style={{ backgroundColor: '#FFFFFF' }}>
-        <Animated.View
-          style={{
-            backgroundColor: '#2CB3F8',
-            height: animHeaderHeight,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Animated.Text style={{ opacity: animTotalPortfolioFade }}>$10.02 Total Portfolio</Animated.Text>
-        </Animated.View>
-        {this.renderAssets()}
+      <Container>
+        <Wrapper>
+          <Animated.View
+            style={{
+              backgroundColor: '#2CB3F8',
+              height: animHeaderHeight,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Animated.Text style={{ opacity: animTotalPortfolioFade }}>$10.02 Total Portfolio</Animated.Text>
+          </Animated.View>
+          {this.renderAssets()}
+        </Wrapper>
+        <NavigationFooter />
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
           {...opts}
@@ -199,7 +206,7 @@ class Assets extends React.Component<Props, State> {
           {...opts}
           onDismiss={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
-      </View>
+      </Container>
     );
   }
 }
