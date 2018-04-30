@@ -4,6 +4,7 @@
 export const APP_FLOW = 'APP_FLOW';
 export const ASSETS = 'ASSETS';
 export const ICO = 'ICO';
+export const PROFILE = 'PROFILE';
 
 // ONBOARDING FLOW
 export const ONBOARDING_FLOW = 'ONBOARDING_FLOW';

@@ -6,8 +6,10 @@ import {
   StackNavigator,
   SwitchNavigator,
   TabNavigator,
+  TabBarBottom,
   NavigationActions,
 } from 'react-navigation';
+import { Ionicons } from '@expo/vector-icons';
 
 // screens
 import OnboardingScreen from 'screens/Onboarding';
@@ -24,6 +26,7 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import OTPScreen from 'screens/OTP';
+import ProfileScreen from 'screens/Profile';
 
 // components
 import Header from 'components/Header';
@@ -47,6 +50,7 @@ import {
   ONBOARDING_HOME,
   WELCOME,
   OTP,
+  PROFILE,
 } from 'constants/navigationConstants';
 
 const renderHeader = ({ navigation, ...rest }) => {
@@ -95,10 +99,14 @@ const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen
 }, StackNavigatorConfig);
 
-const appFlow = TabNavigator({
-  [ASSETS]: AssetsScreen,
-  [ICO]: ICOScreen,
-});
+const appFlow = TabNavigator(
+  {
+    [ASSETS]: AssetsScreen,
+    [ICO]: ICOScreen,
+    [PROFILE]: ProfileScreen,
+  },
+  { ...getBottomNavigationOptions() }, // eslint-disable-line
+);
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
   [SIGN_UP_FLOW]: signupFlow,
@@ -108,3 +116,35 @@ const RootSwitch: SwitchNavigatorType = SwitchNavigator({
 });
 
 export default RootSwitch;
+
+function getBottomNavigationOptions() {
+  return {
+    navigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, tintColor }) => {
+        const { routeName } = navigation.state;
+        let iconName;
+
+        switch (routeName) {
+          case ASSETS:
+            iconName = `ios-albums${focused ? '' : '-outline'}`; break;
+          case ICO:
+            iconName = `ios-jet${focused ? '' : '-outline'}`; break;
+          case PROFILE:
+            iconName = `ios-contact${focused ? '' : '-outline'}`; break;
+          default:
+            return '';
+        }
+
+        return <Ionicons name={iconName} size={25} color={tintColor} />;
+      },
+    }),
+    tabBarOptions: {
+      activeTintColor: 'blue',
+      inactiveTintColor: 'gray',
+    },
+    tabBarComponent: TabBarBottom,
+    tabBarPosition: 'bottom',
+    animationEnabled: false,
+    swipeEnabled: false,
+  };
+}

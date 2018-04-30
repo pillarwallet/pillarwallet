@@ -89,7 +89,7 @@ class ImportWallet extends React.Component<Props, State> {
             />
           </InputGroup>
         </Wrapper>
-        <Footer>
+        <Footer padding>
           <Button
             title="Import"
             onPress={this.handleImportSubmit}
