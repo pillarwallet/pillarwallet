@@ -72,8 +72,3 @@ export const fetchEtherBalanceAction = () => {
     });
   };
 };
-
-export default {
-  sendAssetAction,
-  fetchEtherBalanceAction,
-};
