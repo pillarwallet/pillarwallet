@@ -5,7 +5,7 @@ import Header from '../Header';
 
 describe('Header', () => {
   it('should render Header correctly', () => {
-    const component = renderer.create(<Header back />).toJSON();
+    const component = renderer.create(<Header onBack={() => {}} />).toJSON();
     expect(component).toMatchSnapshot();
   });
 });

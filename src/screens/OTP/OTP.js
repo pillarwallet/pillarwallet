@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { Title, Body, Label } from 'components/Typography';
 import { Center, Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import Button from 'components/Button';
 import { Picker } from 'native-base';
 import countries from 'utils/countries.json';
@@ -16,7 +15,7 @@ type Props = {
   confirmOTP: Function
 }
 
-const SMSConfirmationLabel = styled(Label) `
+const SMSConfirmationLabel = styled(Label)`
   text-align: center;
   max-width: 200px;
 `;

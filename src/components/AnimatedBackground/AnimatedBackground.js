@@ -1,10 +1,9 @@
 // @flow
 import * as React from 'react';
 import { Dimensions } from 'react-native';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import { getRandomInt } from 'utils/common';
 import AnimatedBackroundItem from './AnimatedBackgroundItem';
-
 
 type Item = {
   positionX: number,
@@ -76,7 +75,12 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     const { animatedBackgroundItemList } = this.state;
     return (
       <Wrapper>
-        {animatedBackgroundItemList.map(({ size, color, positionX, positionY }: Item) => (
+        {animatedBackgroundItemList.map(({
+          size,
+          color,
+          positionX,
+          positionY,
+        }: Item) => (
           <AnimatedBackroundItem
             key={`${positionY}_${positionX}_${color}_${size}`}
             size={size}

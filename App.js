@@ -1,7 +1,5 @@
 // @flow
 import * as React from 'react';
-import type { NavigationContainerProps } from 'react-navigation';
-import { AsyncStorage } from 'react-native';
 import { addNavigationHelpers } from 'react-navigation';
 import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
@@ -13,7 +11,6 @@ import StorybookUI from './storybook';
 
 const store = configureStore();
 const addListener = createReduxBoundAddListener('root');
-AsyncStorage.clear()
 type State = {
   isWalletStateDefined: ?string
 }
@@ -33,8 +30,8 @@ class App extends React.Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props) {
     if (nextProps.walletState) {
       return {
-        isWalletStateDefined: true
-      }
+        isWalletStateDefined: true,
+      };
     }
 
     return null;
@@ -57,13 +54,13 @@ class App extends React.Component<Props, State> {
           })}
         />
         : null
-    )
+    );
   }
 }
 
 const mapStateToProps = ({ navigation, wallet: { walletState } }) => ({
   navigation,
-  walletState
+  walletState,
 });
 
 const mapDispatchToProps = (dispatch) => ({

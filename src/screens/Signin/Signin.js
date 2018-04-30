@@ -2,7 +2,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { OTP } from 'constants/navigationConstants';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';

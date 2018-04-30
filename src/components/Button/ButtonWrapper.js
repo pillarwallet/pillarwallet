@@ -1,6 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
-import { lighten } from 'polished';
+
 const ButtonWrapper = styled.TouchableHighlight`
   align-items: center;
   padding: ${props => (props.small ? '5px' : '12px 5px')};

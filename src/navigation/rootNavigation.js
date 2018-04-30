@@ -7,7 +7,6 @@ import {
   SwitchNavigator,
   TabNavigator,
   TabBarBottom,
-  NavigationActions,
 } from 'react-navigation';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -69,8 +68,8 @@ const StackNavigatorConfig = {
   navigationOptions: {
     header: renderHeader,
     gesturesEnabled: false,
-  }
-}
+  },
+};
 
 const onBoardingFlow = StackNavigator({
   [ONBOARDING_HOME]: OnboardingScreen,
@@ -78,7 +77,7 @@ const onBoardingFlow = StackNavigator({
     screen: NewWalletScreen,
     navigationOptions: {
       headerLeft: null,
-    }
+    },
   },
   [IMPORT_WALLET]: ImportWalletScreen,
   [BACKUP_PHRASE]: BackupPhraseScreen,
@@ -96,7 +95,7 @@ const signupFlow = StackNavigator({
 }, StackNavigatorConfig);
 
 const authFlow = StackNavigator({
-  [PIN_CODE_UNLOCK]: PinCodeUnlockScreen
+  [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
 
 const appFlow = TabNavigator(

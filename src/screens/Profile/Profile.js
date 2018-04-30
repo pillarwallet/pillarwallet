@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Title from 'components/Title';
 
 const Profile = () => {

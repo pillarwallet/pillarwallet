@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SIGN_IN } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';

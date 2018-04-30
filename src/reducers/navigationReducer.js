@@ -6,12 +6,12 @@ import RootSwitch from 'navigation/rootNavigation';
 import { WELCOME } from '../constants/navigationConstants';
 
 const initialState: NavigationState = RootSwitch.router.getStateForAction(NavigationActions.reset({
-	index: 0,
-	actions: [
-	  NavigationActions.navigate({
-		  routeName: WELCOME,
-	  }),
-	],
+  index: 0,
+  actions: [
+    NavigationActions.navigate({
+      routeName: WELCOME,
+    }),
+  ],
 }));
 
 export default function navReducer(state: NavigationState = initialState, action: NavigationAction) {

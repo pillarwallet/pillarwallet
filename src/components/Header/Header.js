@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Container, Header as NBHeader, Left, Button, Icon } from 'native-base';
+import { Header as NBHeader, Left } from 'native-base';
 import styled from 'styled-components/native';
-import ButtonIcon from 'components/ButtonIcon'
+import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
   onBack: Function,
-  index: number,
-  stateKey: string
+  index?: number,
 }
 
 const Wrapper = styled(NBHeader)`
@@ -21,7 +20,7 @@ const BackIcon = styled(ButtonIcon)`
 `;
 
 export default function Header(props: Props) {
-  const { onBack, index, stateKey } = props;
+  const { onBack, index } = props;
   if (!index) {
     return null;
   }

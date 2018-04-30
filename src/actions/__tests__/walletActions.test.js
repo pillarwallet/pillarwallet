@@ -108,6 +108,7 @@ describe('Wallet actions', () => {
   it('should expect series of actions with payload to be dispatch on checkIfWalletExists execution', () => {
     const expectedActions = [
       UPDATE_WALLET_STATE,
+      NAVIGATE,
     ];
 
     return store.dispatch(checkIfWalletExistsAction())
