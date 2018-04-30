@@ -1,18 +1,18 @@
 // @flow
 import * as React from 'react';
+import { Animated, Easing } from 'react-native';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import {
   StackNavigator,
   SwitchNavigator,
   TabNavigator,
   NavigationActions,
-  HeaderBackButton,
 } from 'react-navigation';
 
 // screens
-import IntroScreen from 'screens/Intro';
+import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
-import LoginScreen from 'screens/Login';
+import SigninScreen from 'screens/Signin';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -21,82 +21,90 @@ import ICOScreen from 'screens/ICO';
 import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
+import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
+import WelcomeScreen from 'screens/Welcome';
+import OTPScreen from 'screens/OTP';
+
+// components
+import Header from 'components/Header';
 
 import {
+  APP_FLOW,
+  SIGN_UP_FLOW,
+  ONBOARDING_FLOW,
+  AUTH_FLOW,
   ASSETS,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
-  LOGIN, HOME,
+  SIGN_IN,
   LEGAL_TERMS,
   ICO,
-  IMPORT_WALLET, PIN_CODE_CONFIRMATION,
+  IMPORT_WALLET,
+  PIN_CODE_CONFIRMATION,
+  PIN_CODE_UNLOCK,
+  ONBOARDING_HOME,
+  WELCOME,
+  OTP,
 } from 'constants/navigationConstants';
 
-const renderHomeButton = (navigation) => {
-  const onButtonClicked = () => navigation.dispatch(NavigationActions.navigate({ routeName: HOME }));
-  return props => <HeaderBackButton {...props} onPress={onButtonClicked} />;
+const renderHeader = ({ navigation, ...rest }) => {
+  return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
 };
 
-const walletCreationFlow = {
-  [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
-  [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  [LEGAL_TERMS]: LegalTermsScreen,
+const StackNavigatorConfig = {
+  headerMode: 'float',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+  navigationOptions: {
+    header: renderHeader,
+    gesturesEnabled: false,
+  }
+}
+
+const onBoardingFlow = StackNavigator({
+  [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
     navigationOptions: {
       headerLeft: null,
-    },
+    }
   },
-};
-
-const onBoardingFlow = StackNavigator({
-  [BACKUP_PHRASE]: {
-    screen: BackupPhraseScreen,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: renderHomeButton(navigation),
-    }),
-  },
+  [IMPORT_WALLET]: ImportWalletScreen,
+  [BACKUP_PHRASE]: BackupPhraseScreen,
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
-  ...walletCreationFlow,
-});
+  [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+  [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [LEGAL_TERMS]: LegalTermsScreen,
+}, StackNavigatorConfig);
 
-const importWalletFlow = StackNavigator({
-  [IMPORT_WALLET]: {
-    screen: ImportWalletScreen,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: renderHomeButton(navigation),
-    }),
-  },
-  ...walletCreationFlow,
-});
+const signupFlow = StackNavigator({
+  [WELCOME]: WelcomeScreen,
+  [SIGN_IN]: SigninScreen,
+  [OTP]: OTPScreen,
+  // [SIGNUP]: SignupScreen
+}, StackNavigatorConfig);
 
-const loginFlow = StackNavigator({
-  [LOGIN]: {
-    screen: LoginScreen,
-    navigationOptions: ({ navigation }) => ({
-      headerLeft: renderHomeButton(navigation),
-    }),
-  },
-});
+const authFlow = StackNavigator({
+  [PIN_CODE_UNLOCK]: PinCodeUnlockScreen
+}, StackNavigatorConfig);
 
 const appFlow = TabNavigator({
-  [ASSETS]: {
-    screen: AssetsScreen,
-    navigationOptions: {
-      header: null,
-    },
-  },
+  [ASSETS]: AssetsScreen,
   [ICO]: ICOScreen,
 });
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [HOME]: IntroScreen,
-  appFlow,
-  loginFlow,
-  onBoardingFlow,
-  importWalletFlow,
+  [SIGN_UP_FLOW]: signupFlow,
+  [ONBOARDING_FLOW]: onBoardingFlow,
+  [AUTH_FLOW]: authFlow,
+  [APP_FLOW]: appFlow,
 });
 
 export default RootSwitch;
