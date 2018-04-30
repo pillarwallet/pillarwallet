@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { LOGIN_CONFIRM } from 'constants/navigationConstants';
+import { OTP } from 'constants/navigationConstants';
 import styled from 'styled-components';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
@@ -57,7 +57,7 @@ const FooterText = styled(Label)`
   max-width: 300px;
 `;
 
-class Login extends React.Component<Props, State> {
+class Signin extends React.Component<Props, State> {
   state = {
     selectedCountry: 'GB',
     selectedCountryFlag: '🇬🇧',
@@ -77,20 +77,17 @@ class Login extends React.Component<Props, State> {
       ));
   }
 
-  onValueChange(value: string) {
-    const newSelectedCountry = countries.find((country) => {
-      return (country.cca2 === value);
-    });
-
+  handleValueChange(value: string) {
+    const country = countries.find(({ cca2 }) => cca2 === value);
     this.setState({
       selectedCountry: value,
-      selectedCountryFlag: newSelectedCountry.flag.length > 1 ? newSelectedCountry.flag : '🌍',
-      selectedCountryCallingCode: newSelectedCountry.callingCode > 0 ? newSelectedCountry.callingCode : '00',
+      selectedCountryFlag: country.flag || '🌍',
+      selectedCountryCallingCode: country.callingCode || '00',
     });
   }
 
   loginAction = () => {
-    this.props.navigation.navigate(LOGIN_CONFIRM);
+    this.props.navigation.navigate(OTP);
   };
 
   render() {
@@ -108,7 +105,7 @@ class Login extends React.Component<Props, State> {
                 iosIcon={<Icon name="ios-arrow-down-outline" />}
                 mode="dropdown"
                 selectedValue={this.state.selectedCountry}
-                onValueChange={(value) => this.onValueChange(value)}
+                handleValueChange={this.handleValueChange}
               >
                 {this.generateCountryListPickerItems()}
               </CountryPicker>
@@ -131,4 +128,4 @@ class Login extends React.Component<Props, State> {
   }
 }
 
-export default Login;
+export default Signin;
