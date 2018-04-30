@@ -5,9 +5,11 @@ import {
   StackNavigator,
   SwitchNavigator,
   TabNavigator,
+  TabBarBottom,
   NavigationActions,
   HeaderBackButton,
 } from 'react-navigation';
+import { Ionicons } from '@expo/vector-icons';
 
 // screens
 import IntroScreen from 'screens/Intro';
@@ -81,15 +83,18 @@ const loginFlow = StackNavigator({
   },
 });
 
-const appFlow = TabNavigator({
-  [ASSETS]: {
-    screen: AssetsScreen,
-    navigationOptions: {
-      header: null,
+const appFlow = TabNavigator(
+  {
+    [ASSETS]: {
+      screen: AssetsScreen,
+      navigationOptions: {
+        header: null,
+      },
     },
+    [ICO]: ICOScreen,
   },
-  [ICO]: ICOScreen,
-});
+  { ...getBottomNavigationOptions() }, // eslint-disable-line
+);
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
   [HOME]: IntroScreen,
@@ -100,3 +105,33 @@ const RootSwitch: SwitchNavigatorType = SwitchNavigator({
 });
 
 export default RootSwitch;
+
+function getBottomNavigationOptions() {
+  return {
+    navigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, tintColor }) => {
+        const { routeName } = navigation.state;
+        let iconName;
+
+        switch (routeName) {
+          case ASSETS:
+            iconName = `ios-information-circle${focused ? '' : '-outline'}`; break;
+          case ICO:
+            iconName = `ios-options${focused ? '' : '-outline'}`; break;
+          default:
+            return '';
+        }
+
+        return <Ionicons name={iconName} size={25} color={tintColor} />;
+      },
+    }),
+    tabBarOptions: {
+      activeTintColor: 'blue',
+      inactiveTintColor: 'gray',
+    },
+    tabBarComponent: TabBarBottom,
+    tabBarPosition: 'bottom',
+    animationEnabled: false,
+    swipeEnabled: false,
+  };
+}
