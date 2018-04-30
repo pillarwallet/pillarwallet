@@ -1,0 +1,6 @@
+{
+  "name": "Onboarding",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./Onboarding.js"
+}
