@@ -54,7 +54,7 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
     let { key: value } = e.nativeEvent;
     const { SMSCode } = this.state;
     const { length, onCodeFullfilled } = this.props;
-    const currentInput = SMSCode.filter(({ _id }) => _id === id)[0];
+    const currentInput = SMSCode.find(({ _id }) => _id === id);
     const isCurrentInputFilled = currentInput && !!currentInput.value;
     let updatedSMSCode = SMSCode.filter(({ _id }) => id !== _id).concat({ _id: id, value });
 
@@ -88,7 +88,7 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
       .fill('')
       .map((_, index) => index + 1)
       .map((id, index) => {
-        const input = this.state.SMSCode.filter(({ _id }) => _id === id)[0] || {};
+        const input = this.state.SMSCode.find(({ _id }) => _id === id) || {};
         const value = input.value || EMPTY_STRING;
         return (
           <SMSCodeInput
