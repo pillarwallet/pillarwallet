@@ -69,7 +69,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
       this.setState({
         animatedBackgroundItemList,
       });
-    }, 300);
+    }, 200);
   }
 
   render() {
