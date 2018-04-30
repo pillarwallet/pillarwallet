@@ -23,6 +23,7 @@ import ICOScreen from 'screens/ICO';
 import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
+import ProfileScreen from 'screens/Profile';
 
 import {
   ASSETS,
@@ -33,7 +34,9 @@ import {
   LOGIN, HOME,
   LEGAL_TERMS,
   ICO,
-  IMPORT_WALLET, PIN_CODE_CONFIRMATION,
+  IMPORT_WALLET,
+  PIN_CODE_CONFIRMATION,
+  PROFILE,
 } from 'constants/navigationConstants';
 
 const renderHomeButton = (navigation) => {
@@ -92,6 +95,7 @@ const appFlow = TabNavigator(
       },
     },
     [ICO]: ICOScreen,
+    [PROFILE]: ProfileScreen,
   },
   { ...getBottomNavigationOptions() }, // eslint-disable-line
 );
@@ -115,9 +119,11 @@ function getBottomNavigationOptions() {
 
         switch (routeName) {
           case ASSETS:
-            iconName = `ios-information-circle${focused ? '' : '-outline'}`; break;
+            iconName = `ios-albums${focused ? '' : '-outline'}`; break;
           case ICO:
-            iconName = `ios-options${focused ? '' : '-outline'}`; break;
+            iconName = `ios-jet${focused ? '' : '-outline'}`; break;
+          case PROFILE:
+            iconName = `ios-contact${focused ? '' : '-outline'}`; break;
           default:
             return '';
         }
