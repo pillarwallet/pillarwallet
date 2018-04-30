@@ -5,7 +5,9 @@ import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon'
 
 type Props = {
-  onBack: Function
+  onBack: Function,
+  index: number,
+  stateKey: string
 }
 
 const Wrapper = styled(NBHeader)`
@@ -19,11 +21,14 @@ const BackIcon = styled(ButtonIcon)`
 `;
 
 export default function Header(props: Props) {
-  const { onBack } = props;
+  const { onBack, index, stateKey } = props;
+  if (!index) {
+    return null;
+  }
   return (
     <Wrapper>
       <Left>
-        <BackIcon icon="arrow-back" color="#000" onPress={onBack} fontSize={28} />
+        <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
       </Left>
     </Wrapper>
   );

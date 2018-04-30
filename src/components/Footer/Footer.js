@@ -7,6 +7,8 @@ const Footer = styled.View`
   width: 100%;
   justify-content: flex-end;
   padding: ${props => (props.padding ? '20px' : '0')};
+  position: absolute;
+  bottom: 0;
 `;
 
 export default Footer;
