@@ -1,64 +1,65 @@
 // @flow
+
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  popOverContainer: {
+  modalContainer: {
     position: 'absolute',
     width: '100%',
     height: '100%',
-    alignItems: 'center',
+    top: 0,
+    bottom: 0,
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+  },
+
+  modalWrapper: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
+    alignItems: 'center',
   },
 
-  popOverContainerBG: {
-    backgroundColor: 'black',
-    position: 'absolute',
-    width: '100%',
+  dismissOverlay: {
     height: '100%',
-    opacity: 0.5,
+    backgroundColor: 'black',
+    zIndex: 0,
   },
 
-  popOverBackground: {
-    width: '85%',
-    margin: 'auto',
+  modalContent: {
+    backgroundColor: 'white',
+    width: '80%',
     height: 300,
-    backgroundColor: '#01bbff',
-    borderRadius: 10,
+    borderRadius: 20,
     padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
-    shadowRadius: 10,
+    shadowRadius: 20,
   },
 
-  popOverHeader: {
-    alignItems: 'center',
-    marginBottom: 10,
+  sliderHeaderContainer: {
+    alignItems: 'flex-end',
+    width: '100%',
   },
 
-  popOverHeaderText: {
-    color: 'white',
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-
-  popOverContentText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-
-  popOverActions: {
+  modalMessageWrapper: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 20,
   },
 
-  popOverActionsText: {
-    color: 'white',
-    fontSize: 12,
+  sliderHeader: {
+    fontSize: 18,
+    marginBottom: 5,
     fontWeight: 'bold',
+  },
+
+  contentWrapper: {
+    flex: 0,
+    height: window.height,
+    alignItems: 'center',
   },
 });
 

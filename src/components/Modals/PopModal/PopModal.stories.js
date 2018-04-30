@@ -7,10 +7,12 @@ import PopModal from 'components/Modals/PopModal';
 storiesOf('PopModal', module)
   .add('Default', () => (
     <PopModal
-      title="Continue"
-      message="Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-      actionPrimary="Close Modal"
-      popModalHandleDismiss={action('Dismiss Modal')}
+      title="Check it Out!"
+      message="Look at this super awesome Custom Alert Modal."
+      modalImage=""
+      isVisible
+      actionTitle="Radical!"
+      onAccept={action('Accept Modal')}
+      onDismiss={action('Dismiss Modal')}
     />
   ));
