@@ -16,6 +16,5 @@ const initialState: NavigationState = RootSwitch.router.getStateForAction(Naviga
 
 export default function navReducer(state: NavigationState = initialState, action: NavigationAction) {
   const nextState = RootSwitch.router.getStateForAction(action, state);
-  console.log(nextState, action);
   return nextState || state;
 }
