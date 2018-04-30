@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import { BCX_URL } from 'react-native-dotenv';
 
