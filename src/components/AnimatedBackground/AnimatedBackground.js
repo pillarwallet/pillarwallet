@@ -78,7 +78,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
       <Wrapper>
         {animatedBackgroundItemList.map(({ size, color, positionX, positionY }: Item) => (
           <AnimatedBackroundItem
-            key={`${positionY}_${positionX}`}
+            key={`${positionY}_${positionX}_${color}_${size}`}
             size={size}
             color={color}
             positionX={positionX}
