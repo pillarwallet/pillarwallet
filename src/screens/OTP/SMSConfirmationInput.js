@@ -11,7 +11,7 @@ type Input = {
 
 type Props = {
   length: number,
-  onCodeFullfilled: Function
+  onCodeFilled: Function
 }
 
 type State = {
@@ -41,7 +41,7 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
 
   static defaultProps = {
     length: 4,
-    onCodeFullfilled: (x: string) => x
+    onCodeFilled: (x: string) => x
   }
 
   state = {
@@ -53,7 +53,7 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
   handleKeyPress = (e: any, id: number) => {
     let { key: value } = e.nativeEvent;
     const { SMSCode } = this.state;
-    const { length, onCodeFullfilled } = this.props;
+    const { length, onCodeFilled } = this.props;
     const currentInput = SMSCode.find(({ _id }) => _id === id);
     const isCurrentInputFilled = currentInput && !!currentInput.value;
     let updatedSMSCode = SMSCode.filter(({ _id }) => id !== _id).concat({ _id: id, value });
@@ -76,7 +76,7 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
       this.inputs[nextID] && this.inputs[nextID].focus();
       if (length === this.state.SMSCode.length) {
         let code = this.state.SMSCode.sort((a,b) => a._id - b._id).map(({ value }) => value).join('')
-        onCodeFullfilled(code);
+        onCodeFilled(code);
       }
     });
   }
