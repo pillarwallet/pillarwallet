@@ -20,6 +20,7 @@ type Props = {
 
 type State = {
   isScanning: boolean,
+  isValidated: boolean,
   value: {
     address: ?string,
     amount: ?number
@@ -62,6 +63,7 @@ function AddressInputTemplate(locals) {
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',
+    maxLength: 42,
     style: { paddingRight: 60 },
   };
   return (
@@ -82,13 +84,19 @@ function AddressInputTemplate(locals) {
 function AmountInputTemplate(locals) {
   const errorMessage = locals.error;
   const inputProps = {
+    autoFocus: true,
     onChange: locals.onChange,
     onBlur: locals.onBlur,
     placeholder: '0.00',
     value: locals.value,
+    ellipsizeMode: 'middle',
     keyboardType: locals.keyboardType,
     textAlign: 'right',
-    style: { paddingRight: 15 },
+    style: {
+      paddingRight: 15,
+      fontSize: 36,
+      lineHeight: 0,
+    },
   };
   return (
     <TextInput
@@ -124,19 +132,27 @@ const ActionsWrapper = styled.View`
   padding: 5px;
 `;
 
+const SendButton = styled.Text`
+  fontSize: 18;
+  fontWeight: 700;
+  color: ${props => props.disabled ? 'gray' : 'rgb(32, 119, 253)'};
+`;
+
 export default class SendModal extends React.Component<Props, State> {
   _form: t.form
 
   state = {
     isScanning: false,
+    isValidated: false,
     value: {
       address: '',
-      amount: 0,
+      amount: undefined,
     },
   }
 
   handleChange = (value: Object) => {
     this.setState({ value });
+    this.checkValidations(value);
   };
 
   handleFormSubmit = () => {
@@ -154,6 +170,18 @@ export default class SendModal extends React.Component<Props, State> {
   handleQRRead = (address: string) => {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });
   };
+
+  checkValidations(value: any) {
+    if (value.amount && value.address) {
+      this.setState({
+        isValidated: true,
+      });
+    } else {
+      this.setState({
+        isValidated: false,
+      });
+    }
+  }
 
 
   render() {
@@ -180,16 +208,12 @@ export default class SendModal extends React.Component<Props, State> {
           />
           <ActionsWrapper>
             <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
-            <Text
+            <SendButton
               onPress={this.handleFormSubmit}
-              style={{
-                fontSize: 18,
-                fontWeight: '700',
-                color: 'rgb(32,119,253)',
-              }}
+              disabled={!this.state.isValidated}
             >
               Send
-            </Text>
+            </SendButton>
           </ActionsWrapper>
         </Container>
       </SlideModal>
