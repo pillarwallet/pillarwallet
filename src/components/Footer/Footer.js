@@ -6,7 +6,7 @@ const Footer = styled.View`
   align-items: center;
   width: 100%;
   justify-content: flex-end;
-  padding: ${props => (props.padding ? '20px' : '0')};
+  padding: ${props => (props.padding ? '20px' : '0 0 40px')};
   position: absolute;
   bottom: 0;
 `;
