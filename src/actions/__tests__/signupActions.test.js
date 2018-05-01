@@ -1,20 +1,19 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { ASSETS, NEW_WALLET, ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { confirmOTPAction } from '../signupActions';
+import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import Storage from 'services/storage';
+import { confirmOTPAction } from '../signupActions';
+
 const storage = Storage.getInstance('db'); // should utilise db from config once setup
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
 const store = mockStore({});
 describe('Signup actions', () => {
-
-
-  it(`should expect series of actions to be dispatch on confirmOTPAction execution including storage update`, () => {
+  it('should expect series of actions to be dispatch on confirmOTPAction execution including storage update', () => {
     const expectedActions = [
-      { type: NAVIGATE, routeName: ONBOARDING_FLOW }
+      { type: NAVIGATE, routeName: ONBOARDING_FLOW },
     ];
 
     return store.dispatch(confirmOTPAction('1111'))

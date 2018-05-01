@@ -7,9 +7,9 @@ describe('Assets reducer', () => {
     const updateAction = { type: UPDATE_APP_SETTINGS, payload: { OTP: true } };
     const expectedAssets = {
       data: {
-        OTP: true
+        OTP: true,
       },
-      isFetched: true
+      isFetched: true,
     };
     expect(reducer(undefined, updateAction)).toMatchObject(expectedAssets);
   });

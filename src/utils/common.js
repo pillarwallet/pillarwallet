@@ -27,7 +27,7 @@ export function decodeETHAddress(encodedAddress: string) {
 }
 
 export function pipe(...fns: Function[]) {
-  return fns.reduceRight((a, b) => (...args) => a(b(...args)))
+  return fns.reduceRight((a, b) => (...args) => a(b(...args)));
 }
 
 export function noop() { }

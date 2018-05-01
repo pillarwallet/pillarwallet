@@ -25,7 +25,7 @@ describe('Common utils', () => {
 
   describe('decodeETHAddress', () => {
     it('should get ETH address from string provided', () => {
-      const expectedAddress = '0xf74b153d202ab7368aca04efb71cb3c8c316b514'
+      const expectedAddress = '0xf74b153d202ab7368aca04efb71cb3c8c316b514';
       expect(decodeETHAddress('ethereum:0xf74b153d202ab7368aca04efb71cb3c8c316b514')).toBe(expectedAddress);
     });
   });
@@ -38,5 +38,5 @@ describe('Common utils', () => {
       const func = pipe(emptyJoin, toLower);
       expect(func(['PILLAR'])).toBe(expectedOutput);
     });
-  })
+  });
 });

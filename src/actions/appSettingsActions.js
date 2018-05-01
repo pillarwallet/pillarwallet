@@ -18,9 +18,8 @@ export const fetchAppSettingsAndRedirectAction = () => {
       if (!appSettings.wallet && appSettings.OTP) {
         dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
       }
-
     } catch (e) {
       dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
-     }
+    }
   };
 };

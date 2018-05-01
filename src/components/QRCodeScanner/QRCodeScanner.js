@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Vibration, Animated, Dimensions } from 'react-native';
 import { Camera, Permissions } from 'expo';
+import { noop } from 'utils/common';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native';
 
@@ -80,9 +81,9 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   static defaultProps = {
     reactivate: false,
     rectangleColor: '#FFFFFF',
-    onRead: () => { },
+    onRead: noop,
     validator: () => true,
-    dataFormatter: (x: any) => x
+    dataFormatter: (x: any) => x,
   };
 
   constructor(props: Props) {

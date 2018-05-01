@@ -24,7 +24,7 @@ type Props = {
 
 class App extends React.Component<Props, State> {
   state = {
-    isFetched: false
+    isFetched: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props) {

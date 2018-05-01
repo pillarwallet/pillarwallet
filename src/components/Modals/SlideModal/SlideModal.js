@@ -58,12 +58,12 @@ export default class SlideModal extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount(){
+  componentDidMount() {
     const { modalDismissalCallback } = this.props;
     modalDismissalCallback(this.handleAnimationDismiss);
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     const { modalDismissalCallback } = this.props;
     modalDismissalCallback(noop);
   }

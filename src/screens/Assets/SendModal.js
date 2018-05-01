@@ -14,7 +14,7 @@ import { pipe, decodeETHAddress } from 'utils/common';
 
 
 // make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress);
+const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
 
 const { Form } = t.form;
 
@@ -147,7 +147,7 @@ class SendModal extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     const value = this._form.getValue();
-    const { sendAsset, onDismiss } = this.props;
+    const { sendAsset } = this.props;
     if (!value) return;
     const transactionPayload: TransactionPayload = {
       address: value.address,
@@ -159,7 +159,7 @@ class SendModal extends React.Component<Props, State> {
     this.handleDismissal();
     this.setState({
       value: null,
-    })
+    });
   };
 
   handleToggleQRScanningState = () => {
@@ -170,7 +170,7 @@ class SendModal extends React.Component<Props, State> {
 
   // HOC DRILL PATTERN
   handleCallbackRegistration = (cb: Function) => {
-    this.handleDismissal = cb
+    this.handleDismissal = cb;
   }
 
   handleQRRead = (address: string) => {
@@ -191,7 +191,13 @@ class SendModal extends React.Component<Props, State> {
       />
     );
     return (
-      <SlideModal modalDismissalCallback={this.handleCallbackRegistration} title="send." isVisible={isVisible} onDismiss={onDismiss} fullScreenComponent={qrScannnerComponent}>
+      <SlideModal
+        modalDismissalCallback={this.handleCallbackRegistration}
+        title="send."
+        isVisible={isVisible}
+        onDismiss={onDismiss}
+        fullScreenComponent={qrScannnerComponent}
+      >
         <Container>
           <Form
             ref={node => { this._form = node; }}
@@ -216,7 +222,7 @@ class SendModal extends React.Component<Props, State> {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction))
+  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
 });
 
 export default connect(null, mapDispatchToProps)(SendModal);

@@ -9,8 +9,6 @@ import {
   ENCRYPTING,
   GENERATING,
   DECRYPTING,
-  EXISTS,
-  EMPTY,
   INVALID_PASSWORD,
   IMPORT_ERROR,
   IMPORT_WALLET,
@@ -24,7 +22,6 @@ import {
   NEW_WALLET,
   PIN_CODE_CONFIRMATION,
   SET_WALLET_PIN_CODE,
-  AUTH_FLOW,
 } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
