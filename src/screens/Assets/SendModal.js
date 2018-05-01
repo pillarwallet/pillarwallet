@@ -144,7 +144,7 @@ const SendButton = styled.Text`
 `;
 
 export default class SendModal extends React.Component<Props, State> {
-  _form: t.form
+  _form: t.form;
 
   state = {
     isScanning: false,
@@ -153,7 +153,7 @@ export default class SendModal extends React.Component<Props, State> {
       address: '',
       amount: undefined,
     },
-  }
+  };
 
   handleChange = (value: Object) => {
     this.setState({ value });
@@ -187,7 +187,6 @@ export default class SendModal extends React.Component<Props, State> {
       });
     }
   }
-
 
   render() {
     const { isVisible, onDismiss, token } = this.props;
