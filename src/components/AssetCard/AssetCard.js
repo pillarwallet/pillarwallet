@@ -78,6 +78,7 @@ export default class AssetCard extends React.Component<Props, State> {
       animCardHeight,
       animCardWidth,
       animCardContentFade,
+      isActive,
     } = this.state;
     const {
       color: linearGradientColorStart,
@@ -112,14 +113,16 @@ export default class AssetCard extends React.Component<Props, State> {
             </Background>
           </Animated.View>
         </TouchableWithoutFeedback>
-        <Animated.View style={{ height: '100%', opacity: animCardContentFade, backgroundColor: '#FFFFFF' }}>
-          <Content>{children}</Content>
-          <TXHistory
-            address={address}
-            history={history}
-            token={token}
-          />
-        </Animated.View>
+        {isActive && (
+          <Animated.View style={{ height: '100%', opacity: animCardContentFade, backgroundColor: '#FFFFFF' }}>
+            <Content>{children}</Content>
+            <TXHistory
+              address={address}
+              history={history}
+              token={token}
+            />
+          </Animated.View>
+        )}
       </View>
     );
   }

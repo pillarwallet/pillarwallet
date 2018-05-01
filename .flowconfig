@@ -105,4 +105,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIgnore
 <PROJECT_ROOT>/node_modules/react-native
 
 [version]
-^0.69.0
+^0.70.0

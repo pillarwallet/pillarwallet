@@ -24,6 +24,7 @@ import {
   NEW_WALLET,
   PIN_CODE_CONFIRMATION,
   SET_WALLET_PIN_CODE,
+  AUTH_FLOW,
 } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
@@ -102,6 +103,7 @@ export const checkIfWalletExistsAction = () => {
         type: UPDATE_WALLET_STATE,
         payload: EXISTS,
       });
+      dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
     } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,

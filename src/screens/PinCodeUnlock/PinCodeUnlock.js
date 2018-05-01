@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
-import Container from 'components/Container';
-import Title from 'components/Title';
+import { Container } from 'components/Layout';
+import { Title } from 'components/Typography';
 import PinCode from 'components/PinCode';
 
 type Props = {
@@ -19,7 +19,7 @@ type State = {
   pinError: string,
 };
 
-class Login extends React.Component<Props, State> {
+class PinCodeUnlock extends React.Component<Props, State> {
   state = {
     pinError: '',
   };
@@ -88,4 +88,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

@@ -9,9 +9,9 @@ import {
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import Title from 'components/Title';
+import { Title } from 'components/Typography';
 import Button from 'components/Button';
 import Footer from 'components/Footer';
 

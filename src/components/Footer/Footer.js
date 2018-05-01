@@ -2,12 +2,13 @@
 import styled from 'styled-components/native';
 
 const Footer = styled.View`
-  justify-content: flex-end;
+  flex-direction: column;
   align-items: center;
-  align-self: flex-end;
   width: 100%;
-  flex: 1;
+  justify-content: flex-end;
   padding: ${props => (props.padding ? '20px' : '0')};
+  position: absolute;
+  bottom: 0;
 `;
 
 export default Footer;

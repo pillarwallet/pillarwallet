@@ -5,27 +5,71 @@ import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { SHOW_STORYBOOK } from 'react-native-dotenv';
+import { checkIfWalletExistsAction } from 'actions/walletActions';
 import configureStore from './src/configureStore';
 import StorybookUI from './storybook';
 
 const store = configureStore();
 const addListener = createReduxBoundAddListener('root');
+type State = {
+  isWalletStateDefined: ?string
+}
 
-const App = ({ dispatch, navigation }) => (
-  <RootNavigation
-    navigation={addNavigationHelpers({
-      dispatch,
-      state: navigation,
-      addListener,
-    })}
-  />
-);
+type Props = {
+  dispatch: Function,
+  navigation: Object,
+  checkIfWalletExists: Function,
+  walletState: String,
+}
 
-const mapStateToProps = ({ navigation }) => ({
+class App extends React.Component<Props, State> {
+  state = {
+    isWalletStateDefined: null,
+  };
+
+  static getDerivedStateFromProps(nextProps: Props) {
+    if (nextProps.walletState) {
+      return {
+        isWalletStateDefined: true,
+      };
+    }
+
+    return null;
+  }
+  componentDidMount() {
+    const { checkIfWalletExists } = this.props;
+    checkIfWalletExists();
+  }
+
+  render() {
+    const { dispatch, navigation } = this.props;
+    const { isWalletStateDefined } = this.state;
+
+    if (!isWalletStateDefined) return null;
+
+    return (
+      <RootNavigation
+        navigation={addNavigationHelpers({
+          dispatch,
+          state: navigation,
+          addListener,
+        })}
+      />
+    );
+  }
+}
+
+const mapStateToProps = ({ navigation, wallet: { walletState } }) => ({
   navigation,
+  walletState,
 });
 
-const AppWithNavigationState = connect(mapStateToProps)(App);
+const mapDispatchToProps = (dispatch) => ({
+  dispatch,
+  checkIfWalletExists: () => dispatch(checkIfWalletExistsAction()),
+});
+
+const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
 const Root = () => (
   <Provider store={store}>

@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
 import { Text } from 'react-native';
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
-import Title from 'components/Title';
+import { Title } from 'components/Typography';
 import Button from 'components/Button';
 import HelpText from 'components/HelpText';
 import MnemonicPhrase from 'components/MnemonicPhrase';

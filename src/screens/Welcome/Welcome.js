@@ -1,23 +1,27 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components';
-import Container from 'components/Container';
+import styled from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
+import { SIGN_IN } from 'constants/navigationConstants';
+import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Footer from 'components/Footer';
-import AnimatedBackground from './AnimatedBackground';
+import AnimatedBackground from 'components/AnimatedBackground';
+
+type Props = {
+  navigation: NavigationScreenProp<*>,
+}
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
 const PillarLogo = styled.Image`
-  margin-top: 120;
   height: 60;
   width: 120;
 `;
 
-
-export default class Landing extends React.Component<{}> {
+export default class Welcome extends React.Component<Props> {
   loginAction = () => {
-    // TODO: Login action
+    this.props.navigation.navigate(SIGN_IN);
   };
 
   signupAction = () => {
@@ -28,11 +32,10 @@ export default class Landing extends React.Component<{}> {
     return (
       <Container center>
         <AnimatedBackground />
-
         <PillarLogo source={pillarLogoSource} />
         <Footer>
           <Button onPress={this.loginAction} title="Login" />
-          <Button onPress={this.signupAction} secondary title="Signup" />
+          <Button marginBottom onPress={this.signupAction} secondary title="Signup" />
         </Footer>
       </Container>
     );

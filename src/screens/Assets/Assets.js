@@ -11,6 +11,10 @@ import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import { Container } from 'components/Layout';
+import Wrapper from 'components/Wrapper';
+import { BCX_URL } from 'react-native-dotenv';
+
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
@@ -69,7 +73,7 @@ class Assets extends React.Component<Props, State> {
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
-    fetch('https://bcx-dev.pillarproject.io/txhistory', {
+    fetch(`${BCX_URL}/wallet-client/txhistory`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -82,14 +86,17 @@ class Assets extends React.Component<Props, State> {
         address2: 'ALL',
         asset: 'ALL',
       }),
-    }).then(res => res.json()).then(() => {
-      // console.log(res)
-      // this.setState({
-      //   history: res,
-      // });
-    }).catch(() => {
-      // TODO: Use proper error handling
-    });
+    })
+      .then(res => res.json())
+      .then(res => Array.isArray(res) ? res : [])
+      .then((res) => {
+        this.setState({
+          history: res,
+        });
+      })
+      .catch(() => {
+        // TODO: Use proper error handling
+      });
   }
 
   animateCardPositionAndHeader = (isActive: boolean) => {
@@ -161,7 +168,8 @@ class Assets extends React.Component<Props, State> {
                 <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Send</Text>
               </View>
             </AssetCard>
-          </Animated.View>);
+          </Animated.View>
+        );
       });
   }
 
@@ -172,18 +180,20 @@ class Assets extends React.Component<Props, State> {
       activeModal: { type: activeModalType, opts },
     } = this.state;
     return (
-      <View style={{ backgroundColor: '#FFFFFF' }}>
-        <Animated.View
-          style={{
-            backgroundColor: '#2CB3F8',
-            height: animHeaderHeight,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Animated.Text style={{ opacity: animTotalPortfolioFade }}>$10.02 Total Portfolio</Animated.Text>
-        </Animated.View>
-        {this.renderAssets()}
+      <Container>
+        <Wrapper>
+          <Animated.View
+            style={{
+              backgroundColor: '#2CB3F8',
+              height: animHeaderHeight,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Animated.Text style={{ opacity: animTotalPortfolioFade }}>$10.02 Total Portfolio</Animated.Text>
+          </Animated.View>
+          {this.renderAssets()}
+        </Wrapper>
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
           {...opts}
@@ -194,7 +204,7 @@ class Assets extends React.Component<Props, State> {
           {...opts}
           onDismiss={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
-      </View>
+      </Container>
     );
   }
 }
