@@ -63,6 +63,7 @@ export const generateEncryptedWalletAction = () => {
       .catch(() => {});
 
     await storage.save('wallet', encryptedWallet);
+    await storage.save('app_settings', { wallet: true });
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
@@ -90,24 +91,6 @@ export const decryptWalletAction = (pin: string) => {
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: INVALID_PASSWORD,
-      });
-    }
-  };
-};
-
-export const checkIfWalletExistsAction = () => {
-  return async (dispatch: Function) => {
-    try {
-      await storage.get('wallet');
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: EXISTS,
-      });
-      dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
-    } catch (e) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: EMPTY,
       });
     }
   };
