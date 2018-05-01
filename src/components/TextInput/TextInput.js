@@ -14,6 +14,7 @@ type inputPropsType = {
 
 type Props = {
   icon?: string,
+  style?: Object,
   label: string,
   id: string,
   iconColor?: string,
@@ -90,7 +91,7 @@ class TextInput extends React.Component<Props, State> {
     const { value } = this.state;
 
     return (
-      <Item stackedLabel style={{ marginBottom: 20 }} error={!!errorMessage}>
+      <Item stackedLabel style={[this.props.style, { marginBottom: 20 }]} error={!!errorMessage}>
         <Label>{label}</Label>
         <Input {...inputProps} onChange={this.handleChange} onBlur={this.handleBlur} value={value} />
         {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
