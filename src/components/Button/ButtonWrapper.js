@@ -7,7 +7,7 @@ const ButtonWrapper = styled.TouchableHighlight`
   background: ${props => props.backgroundColor};
   margin-top: ${props => (props.marginTop)};
   margin-bottom: ${props => (props.marginBottom)};
-  border-radius: 20;
+  border-radius: 40;
   box-shadow: ${props => `0px .5px .5px ${props.backgroundColor}`};
   width: ${props => (props.width || '80%')};
 `;
