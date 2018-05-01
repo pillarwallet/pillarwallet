@@ -12,6 +12,7 @@ import { isValidETHAddress } from 'utils/validators';
 const { Form } = t.form;
 
 type Props = {
+  token: string,
   address: string,
   isVisible: boolean,
   onDismiss: Function,
@@ -64,24 +65,25 @@ function AddressInputTemplate(locals) {
     keyboardType: locals.keyboardType,
     textAlign: 'right',
     maxLength: 42,
-    style: { paddingRight: 60 },
+    style: {
+      paddingRight: 40,
+      fontSize: 12,
+    },
   };
   return (
     <TextInput
       errorMessage={errorMessage}
       id="address"
       label={locals.label}
-      icon="barcode"
+      icon="ios-qr-scanner"
       onIconPress={onIconPress}
       inputProps={inputProps}
-      style={{
-        fontSize: 10,
-      }}
     />
   );
 }
 
 function AmountInputTemplate(locals) {
+  const { config: { currency } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     autoFocus: true,
@@ -93,13 +95,16 @@ function AmountInputTemplate(locals) {
     keyboardType: locals.keyboardType,
     textAlign: 'right',
     style: {
-      paddingRight: 15,
+      paddingRight: 40,
       fontSize: 36,
+      fontWeight: '700',
       lineHeight: 0,
     },
   };
+
   return (
     <TextInput
+      postfix={currency}
       errorMessage={errorMessage}
       id="amount"
       label={locals.label}
@@ -110,7 +115,7 @@ function AmountInputTemplate(locals) {
 
 const generateFormOptions = (config: Object): Object => ({
   fields: {
-    amount: { template: AmountInputTemplate },
+    amount: { template: AmountInputTemplate, config },
     address: { template: AddressInputTemplate, config, label: 'To' },
   },
   order: ['amount', 'address'],
@@ -134,7 +139,7 @@ const ActionsWrapper = styled.View`
 
 const SendButton = styled.Text`
   fontSize: 18;
-  fontWeight: 700;
+  fontWeight: bold;
   color: ${props => props.disabled ? 'gray' : 'rgb(32, 119, 253)'};
 `;
 
@@ -185,9 +190,9 @@ export default class SendModal extends React.Component<Props, State> {
 
 
   render() {
-    const { isVisible, onDismiss } = this.props;
+    const { isVisible, onDismiss, token } = this.props;
     const { value, isScanning } = this.state;
-    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState });
+    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const qrScannnerComponent = (
       <QRCodeScanner
         validator={isValidETHAddress}

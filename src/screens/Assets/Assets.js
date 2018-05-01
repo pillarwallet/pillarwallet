@@ -139,6 +139,7 @@ class Assets extends React.Component<Props, State> {
         const displayAmount = +parseFloat(balance).toFixed(4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
         const activeModalOptions = { address: wallet.address };
+        const sendModalOptions = { token: id };
         return (
           <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
             <AssetCard
@@ -161,7 +162,7 @@ class Assets extends React.Component<Props, State> {
               </View>
               <View>
                 <TouchableOpacity
-                  onPress={() => { this.setState({ activeModal: { type: 'SEND', opts: {} } }); }}
+                  onPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
                 >
                   <Image style={{ width: 50, height: 50 }} source={imageSend} />
                 </TouchableOpacity>

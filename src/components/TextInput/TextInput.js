@@ -14,6 +14,7 @@ type inputPropsType = {
 
 type Props = {
   icon?: string,
+  postfix?: string,
   label: string,
   id: string,
   iconColor?: string,
@@ -32,9 +33,12 @@ type EventLike = {
 
 const FloatingButton = styled(ButtonIcon)`
   position:absolute;
-  right: 5px;
+  right: -15px;
   top: 20px;
   justifyContent: center;
+  width: 60px;
+  margin: 0;
+  padding: 0;
 `;
 
 const Error = styled.Text`
@@ -42,6 +46,13 @@ const Error = styled.Text`
   position: absolute;
   left: 0;
   bottom: -25px;
+`;
+
+const PostFix = styled.Text`
+  fontWeight: 900;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 `;
 
 class TextInput extends React.Component<Props, State> {
@@ -81,6 +92,7 @@ class TextInput extends React.Component<Props, State> {
   render() {
     const {
       icon,
+      postfix,
       label,
       onIconPress,
       iconColor = '#2077FD',
@@ -94,6 +106,7 @@ class TextInput extends React.Component<Props, State> {
         <Label>{label}</Label>
         <Input {...inputProps} onChange={this.handleChange} onBlur={this.handleBlur} value={value} />
         {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
+        {postfix && <PostFix>{postfix}</PostFix>}
         {errorMessage && <Error>{errorMessage}</Error>}
       </Item>
     );
