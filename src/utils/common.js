@@ -15,3 +15,19 @@ export function getRandomInt(min: number, max: number): number {
 export function formatETHAmount(amount: number) {
   return +parseFloat(amount).toFixed(6);
 }
+
+export function decodeETHAddress(encodedAddress: string) {
+  if (!encodedAddress || encodedAddress.substr(0, 9) !== 'ethereum:') {
+    return encodedAddress;
+  }
+  if (encodedAddress.length >= 51) {
+    return encodedAddress.substr(9, 42);
+  }
+  return encodedAddress;
+}
+
+export function pipe(...fns: Function[]) {
+  return fns.reduceRight((a, b) => (...args) => a(b(...args)))
+}
+
+export function noop() { }

@@ -64,6 +64,7 @@ type Props = {
   onDismiss: Function,
   reactivate: boolean,
   validator: Function,
+  dataFormatter: Function,
   rectangleColor: string,
   isActive: boolean,
 }
@@ -81,6 +82,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     rectangleColor: '#FFFFFF',
     onRead: () => { },
     validator: () => true,
+    dataFormatter: (x: any) => x
   };
 
   constructor(props: Props) {
@@ -130,15 +132,16 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   }
 
   handleQRRead = (data: Object) => {
-    const { onRead, validator } = this.props;
+    const { onRead, validator, dataFormatter } = this.props;
     const { isScanned } = this.state;
     const { data: address } = data;
+
     const isValid = validator(address);
 
     if (!isScanned && isValid) {
       this.setState({ isScanned: true }, () => {
         Vibration.vibrate();
-        onRead(address);
+        onRead(dataFormatter(address));
       });
     }
   };
