@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { getRandomInt } from 'utils/common';
 import { Animated } from 'react-native';
 
 type State = {
@@ -21,36 +22,36 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
   };
 
   componentDidMount() {
-    this.fallDown();
+    this.moveUp();
   }
 
-  fallDown() {
+  moveUp() {
     Animated.parallel([
 
       Animated.timing(
         this.state.movement,
         {
-          toValue: -50,
-          duration: 1000,
-          delay: 0,
+          toValue: getRandomInt(-40, -80),
+          duration: 2400,
           useNativeDriver: true,
         },
       ),
+
       Animated.sequence([
-        Animated.parallel([
-          Animated.spring(
-            this.state.opacity,
-            {
-              toValue: 1,
-              useNativeDriver: true,
-            },
-          ),
-        ]),
-        Animated.spring(
+        Animated.timing(
+          this.state.opacity,
+          {
+            toValue: 1,
+            useNativeDriver: true,
+            duration: 1200,
+          },
+        ),
+        Animated.timing(
           this.state.opacity,
           {
             toValue: 0,
             useNativeDriver: true,
+            duration: 1200,
           },
         ),
       ]),

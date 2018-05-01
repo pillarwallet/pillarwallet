@@ -53,8 +53,8 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     let { animatedBackgroundItemList } = this.state;
     this.interval = setInterval(() => {
       const newPositionX = getRandomInt(0, window.width);
-      const newPositionY = getRandomInt(0, window.height);
-      const newSize = getRandomInt(10, 40);
+      const newPositionY = getRandomInt(0, window.height - 50);
+      const newSize = getRandomInt(15, 40);
       const newColor = colors[getRandomInt(0, colors.length - 1)];
       if (animatedBackgroundItemList.length >= 50) {
         animatedBackgroundItemList = animatedBackgroundItemList.slice(1);
