@@ -39,7 +39,7 @@ export default class Welcome extends React.Component<Props> {
       <Container center>
         <AnimatedBackground />
         <PillarLogo source={pillarLogoSource} />
-        <Footer>
+        <Footer padding>
           <Button marginBottom onPress={this.loginAction} title="Login" />
           <HelpTextDivider title="Don&#39;t have an account?" />
           <Button onPress={this.signupAction} secondary title="Signup" />
