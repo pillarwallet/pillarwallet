@@ -132,7 +132,6 @@ const ActionsWrapper = styled.View`
   padding: 5px;
 `;
 
-
 export default class SendModal extends React.Component<Props, State> {
   _form: t.form
 
@@ -191,7 +190,11 @@ export default class SendModal extends React.Component<Props, State> {
             <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
             <Text
               onPress={this.handleFormSubmit}
-              style={{ color: '#2077FD', fontSize: 16, fontWeight: 'bold' }}
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: 'rgb(32,119,253)',
+              }}
             >
               Send
             </Text>
