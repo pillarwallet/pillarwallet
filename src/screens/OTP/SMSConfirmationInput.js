@@ -6,12 +6,12 @@ import styled from 'styled-components/native';
 
 type Input = {
   _id: number,
-  value: string
+  value: string,
 }
 
 type Props = {
   length: number,
-  onCodeFilled: Function
+  onCodeFilled: Function,
 }
 
 type State = {
@@ -41,13 +41,13 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
   static defaultProps = {
     length: 4,
     onCodeFilled: (x: string) => x,
-  }
+  };
 
   state = {
     SMSCode: [],
-  }
+  };
 
-  inputs: Object = {}
+  inputs: Object = {};
 
   handleKeyPress = (e: any, id: number) => {
     const { key: value } = e.nativeEvent;
@@ -84,7 +84,7 @@ export default class SMSConfirmationInput extends React.Component<Props, State> 
         onCodeFilled(code);
       }
     });
-  }
+  };
 
 
   render() {

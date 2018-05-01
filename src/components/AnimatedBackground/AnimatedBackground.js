@@ -35,11 +35,11 @@ const colors = [
 ];
 
 export default class AnimatedBackground extends React.Component<{}, State> {
-  interval: IntervalID
+  interval: IntervalID;
 
   state = {
     animatedBackgroundItemList: [],
-  }
+  };
 
   componentDidMount() {
     this.generateAnimatedBackgroundItemList();

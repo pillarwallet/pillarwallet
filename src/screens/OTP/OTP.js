@@ -12,7 +12,7 @@ import { confirmOTPAction } from 'actions/signupActions';
 import SMSConfirmationInput from './SMSConfirmationInput';
 
 type Props = {
-  confirmOTP: Function
+  confirmOTP: Function,
 }
 
 const SMSConfirmationLabel = styled(Label)`
@@ -37,10 +37,10 @@ class OTP extends React.Component<Props> {
   handleOTPConfirmation = (code: string) => {
     const { confirmOTP } = this.props;
     confirmOTP(code);
-  }
+  };
 
   handleOTPResend = () => {
-  }
+  };
 
   render() {
     return (

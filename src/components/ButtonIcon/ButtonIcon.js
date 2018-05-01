@@ -8,10 +8,10 @@ type Props = {
   color?: string,
   onPress?: Function,
   fontSize?: number,
-  style?: StyleSheet.Styles
+  style?: StyleSheet.Styles,
 }
 
-export default function ButtonIcon(props: Props) {
+const ButtonIcon = (props: Props) => {
   const {
     icon,
     onPress,
@@ -24,4 +24,6 @@ export default function ButtonIcon(props: Props) {
       <Icon active={false} name={icon} style={{ fontSize, color }} />
     </Button>
   );
-}
+};
+
+export default ButtonIcon;

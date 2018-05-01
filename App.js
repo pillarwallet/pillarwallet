@@ -25,7 +25,7 @@ type Props = {
 class App extends React.Component<Props, State> {
   state = {
     isWalletStateDefined: null,
-  }
+  };
 
   static getDerivedStateFromProps(nextProps: Props) {
     if (nextProps.walletState) {
@@ -44,16 +44,17 @@ class App extends React.Component<Props, State> {
   render() {
     const { dispatch, navigation } = this.props;
     const { isWalletStateDefined } = this.state;
+
+    if (!isWalletStateDefined) return null;
+
     return (
-      isWalletStateDefined
-        ? <RootNavigation
-          navigation={addNavigationHelpers({
-            dispatch,
-            state: navigation,
-            addListener,
-          })}
-        />
-        : null
+      <RootNavigation
+        navigation={addNavigationHelpers({
+          dispatch,
+          state: navigation,
+          addListener,
+        })}
+      />
     );
   }
 }

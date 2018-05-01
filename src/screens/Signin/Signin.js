@@ -19,7 +19,7 @@ type Props = {
 type State = {
   selectedCountry: string,
   selectedCountryFlag: string,
-  selectedCountryCallingCode: string
+  selectedCountryCallingCode: string,
 }
 
 const LoginForm = styled(Form)`
@@ -62,7 +62,7 @@ class Signin extends React.Component<Props, State> {
     selectedCountry: 'GB',
     selectedCountryFlag: '🇬🇧',
     selectedCountryCallingCode: '44',
-  }
+  };
 
   generateCountryListPickerItems() {
     return Object.keys(countries)

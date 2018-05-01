@@ -19,11 +19,11 @@ const BackIcon = styled(ButtonIcon)`
   top: 10px;
 `;
 
-export default function Header(props: Props) {
+const Header = (props: Props) => {
   const { onBack, index } = props;
-  if (!index) {
-    return null;
-  }
+
+  if (!index) return null;
+
   return (
     <Wrapper>
       <Left>
@@ -31,4 +31,6 @@ export default function Header(props: Props) {
       </Left>
     </Wrapper>
   );
-}
+};
+
+export default Header;
