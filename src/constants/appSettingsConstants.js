@@ -1,0 +1,2 @@
+// @flow
+export const UPDATE_APP_SETTINGS = 'UPDATE_APP_SETTINGS';
