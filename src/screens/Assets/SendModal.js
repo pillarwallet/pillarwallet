@@ -81,7 +81,7 @@ function AmountInputTemplate(locals) {
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: 'Specify the amount',
+    placeholder: '0.00',
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',

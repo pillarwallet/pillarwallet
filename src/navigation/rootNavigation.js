@@ -11,9 +11,15 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 // screens
+<<<<<<< HEAD
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
 import SigninScreen from 'screens/Signin';
+=======
+import IntroScreen from 'screens/Intro';
+import NewWalletScreen from 'screens/NewWallet';
+import LoginScreen from 'screens/Login';
+>>>>>>> 766e860... Fix visual bugs
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -40,6 +46,7 @@ import {
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
+<<<<<<< HEAD
   SIGN_IN,
   LEGAL_TERMS,
   ICO,
@@ -50,12 +57,19 @@ import {
   WELCOME,
   OTP,
   PROFILE,
+=======
+  LOGIN, HOME,
+  LEGAL_TERMS,
+  ICO,
+  IMPORT_WALLET, PIN_CODE_CONFIRMATION,
+>>>>>>> 766e860... Fix visual bugs
 } from 'constants/navigationConstants';
 
 const renderHeader = ({ navigation, ...rest }) => {
   return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
 };
 
+<<<<<<< HEAD
 const StackNavigatorConfig = {
   headerMode: 'float',
   transitionConfig: () => ({
@@ -73,6 +87,12 @@ const StackNavigatorConfig = {
 
 const onBoardingFlow = StackNavigator({
   [ONBOARDING_HOME]: OnboardingScreen,
+=======
+const walletCreationFlow = {
+  [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
+  [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [LEGAL_TERMS]: LegalTermsScreen,
+>>>>>>> 766e860... Fix visual bugs
   [NEW_WALLET]: {
     screen: NewWalletScreen,
     navigationOptions: {
@@ -94,6 +114,7 @@ const signupFlow = StackNavigator({
   // [SIGNUP]: SignupScreen
 }, StackNavigatorConfig);
 
+<<<<<<< HEAD
 const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
@@ -103,15 +124,36 @@ const appFlow = TabNavigator(
     [ASSETS]: AssetsScreen,
     [ICO]: ICOScreen,
     [PROFILE]: ProfileScreen,
+=======
+const appFlow = StackNavigator({
+  [LOGIN]: {
+    screen: LoginScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: renderHomeButton(navigation),
+    }),
+  },
+  [ASSETS]: {
+    screen: AssetsScreen,
+    navigationOptions: {
+      header: null,
+    },
+>>>>>>> 766e860... Fix visual bugs
   },
   { ...getBottomNavigationOptions() }, // eslint-disable-line
 );
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
+<<<<<<< HEAD
   [SIGN_UP_FLOW]: signupFlow,
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: appFlow,
+=======
+  [HOME]: IntroScreen,
+  appFlow,
+  onBoardingFlow,
+  importWalletFlow,
+>>>>>>> 766e860... Fix visual bugs
 });
 
 export default RootSwitch;
