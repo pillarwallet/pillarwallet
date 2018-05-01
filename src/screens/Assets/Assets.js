@@ -73,7 +73,7 @@ class Assets extends React.Component<Props, State> {
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
-    fetch(`${BCX_URL}/txhistory`, {
+    fetch(`${BCX_URL}/wallet-client/txhistory`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
