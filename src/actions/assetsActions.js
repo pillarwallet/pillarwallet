@@ -7,24 +7,18 @@ import {
   FETCHED,
   ETH,
 } from 'constants/assetsConstants';
-
-// Consider adding asset ID?
-type Transaction = {
-  gasLimit: number,
-  amount: number,
-  address: string,
-  gasPrice: number
-}
+import { PROVIDER } from 'react-native-dotenv';
+import type { TransactionPayload } from 'models/Transaction';
 
 export const sendAssetAction = ({
   gasLimit,
   amount,
   address,
   gasPrice,
-}: Transaction) => {
+}: TransactionPayload) => {
   return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet }, assets: { data: assets } } = getState();
-    wallet.providers = providers.getDefaultProvider('ropsten');
+    wallet.provider = providers.getDefaultProvider(PROVIDER);
     const trx = {
       gasLimit,
       gasPrice: utils.bigNumberify(gasPrice),
@@ -59,7 +53,7 @@ export const fetchEtherBalanceAction = () => {
     });
     // whole wallet is not neccessary.
     const { wallet: { data: wallet } } = getState();
-    const provider = providers.getDefaultProvider('ropsten'); // MOVE TO .ENV ONCE DESIGNED AND IMPLEMETNED
+    const provider = providers.getDefaultProvider(PROVIDER);
     const balance = await provider.getBalance(wallet.address).then(utils.formatEther);
 
     dispatch({
