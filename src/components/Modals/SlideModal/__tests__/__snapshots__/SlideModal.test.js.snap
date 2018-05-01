@@ -91,62 +91,38 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             >
               title
             </Text>
-            <View
-              accessibilityComponentType="button"
-              accessibilityLabel={undefined}
-              accessibilityTraits={
+            <Text
+              accessible={true}
+              allowFontScaling={false}
+              ellipsizeMode="tail"
+              onPress={[Function]}
+              style={
                 Array [
-                  "button",
+                  Object {
+                    "color": undefined,
+                    "fontSize": 12,
+                  },
+                  Array [
+                    Object {
+                      "color": "#000",
+                      "fontSize": 30,
+                    },
+                    Object {
+                      "color": "#000",
+                      "fontSize": 30,
+                    },
+                  ],
+                  Object {
+                    "fontFamily": "Ionicons",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
                 ]
               }
-              accessible={true}
-              collapsable={undefined}
-              hasTVPreferredFocus={undefined}
-              hitSlop={undefined}
-              isTVSelectable={true}
-              nativeID={undefined}
-              onLayout={undefined}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              style={
-                Object {
-                  "opacity": 1,
-                }
-              }
-              testID={undefined}
-              tvParallaxProperties={undefined}
+              virtual={undefined}
             >
-              <View
-                style={
-                  Array [
-                    Object {},
-                  ]
-                }
-              >
-                <Text
-                  accessible={true}
-                  allowFontScaling={true}
-                  disabled={undefined}
-                  ellipsizeMode="tail"
-                  style={
-                    Array [
-                      Object {
-                        "color": "#007AFF",
-                        "fontSize": 18,
-                        "padding": 8,
-                        "textAlign": "center",
-                      },
-                    ]
-                  }
-                >
-                  dismiss
-                </Text>
-              </View>
-            </View>
+              
+            </Text>
           </View>
           <View
             style={
