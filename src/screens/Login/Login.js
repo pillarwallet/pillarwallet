@@ -1,91 +1,134 @@
 // @flow
 import * as React from 'react';
-import { Text, ActivityIndicator } from 'react-native';
-import { connect } from 'react-redux';
-
-import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
-import { decryptWalletAction } from 'actions/walletActions';
-import { validatePin } from 'utils/validators';
-import Container from 'components/Container';
-import Title from 'components/Title';
-import PinCode from 'components/PinCode';
+import type { NavigationScreenProp } from 'react-navigation';
+import { LOGIN_CONFIRM } from 'constants/navigationConstants';
+import styled from 'styled-components';
+import { Container } from 'components/Layout';
+import Wrapper from 'components/Wrapper';
+import Footer from 'components/Footer';
+import Button from 'components/Button';
+import HyperLink from 'components/HyperLink';
+import { Title, Body, Label } from 'components/Typography';
+import { Form, Picker, Icon, Input } from 'native-base';
+import countries from 'utils/countries.json';
 
 type Props = {
-  decryptWallet: (pin: string) => Function,
-  wallet: Object
+  navigation: NavigationScreenProp<*>,
 }
 
 type State = {
-  pinError: string,
-};
+  selectedCountry: string,
+  selectedCountryFlag: string,
+  selectedCountryCallingCode: string
+}
+
+const LoginForm = styled(Form)`
+  margin: 20px 0 40px;
+`;
+
+const PhoneInput = styled(Input)`
+  border-bottom-width: 1px;
+  border-color: rgb(151,151,151);
+  font-size: 24px;
+`;
+
+const Emoji = styled.Text`
+  flex: 0 0 40px;
+  font-size: 36px;
+  line-height: 50px;
+`;
+
+const CountryPicker = styled(Picker)`
+  flex: 1;
+  align-self: flex-end;
+`;
+
+const CountryPickerWrapper = styled.View`
+  width: 100%;
+  margin-bottom: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom-width: 1px;
+  border-color: rgb(151,151,151);
+`;
+
+const FooterText = styled(Label)`
+  text-align: center;
+  max-width: 300px;
+`;
 
 class Login extends React.Component<Props, State> {
   state = {
-    pinError: '',
-  };
-
-  componentWillReceiveProps(nextProps: Props) {
-    const { walletState } = nextProps.wallet;
-    if (walletState === INVALID_PASSWORD) {
-      this.setState({ pinError: 'Invalid password' });
-    }
+    selectedCountry: 'GB',
+    selectedCountryFlag: '🇬🇧',
+    selectedCountryCallingCode: '44',
   }
 
-  handlePinSubmit = (pin: string) => {
-    const validationError = validatePin(pin);
-    const { decryptWallet } = this.props;
-    if (validationError) {
-      this.setState({
-        pinError: validationError,
-      });
-      return;
-    }
-    this.setState({
-      pinError: validationError,
+  generateCountryListPickerItems() {
+    return Object.keys(countries)
+      .map((key) => countries[key])
+      .map((country) => (
+        <Picker.Item
+          label={country.name.common}
+          flag={country.flag}
+          value={country.cca2}
+          key={country.cca2}
+        />
+      ));
+  }
+
+  onValueChange(value: string) {
+    const newSelectedCountry = countries.find((country) => {
+      return (country.cca2 === value);
     });
-    decryptWallet(pin);
+
+    this.setState({
+      selectedCountry: value,
+      selectedCountryFlag: newSelectedCountry.flag.length > 1 ? newSelectedCountry.flag : '🌍',
+      selectedCountryCallingCode: newSelectedCountry.callingCode > 0 ? newSelectedCountry.callingCode : '00',
+    });
+  }
+
+  loginAction = () => {
+    this.props.navigation.navigate(LOGIN_CONFIRM);
   };
 
   render() {
-    const { pinError } = this.state;
-
-    const showError = pinError ? <Text>{pinError}</Text> : null;
-    const { walletState } = this.props.wallet;
-
-    if (walletState === DECRYPTING) {
-      return (
-        <Container center>
-          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
-          <ActivityIndicator
-            animating
-            color="#111"
-            size="large"
-          />
-        </Container>
-      );
-    }
-
-    if (walletState === DECRYPTED) return null;
-
     return (
       <Container>
-        <Title center>Enter Passcode</Title>
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          pageInstructions=""
-        />
-        {showError}
+        <Wrapper padding>
+          <Title>login</Title>
+          <Body>Please enter the mobile number associated with your account.</Body>
+          <LoginForm>
+            <Label>Country</Label>
+            <CountryPickerWrapper>
+              <Emoji>{this.state.selectedCountryFlag}</Emoji>
+              <CountryPicker
+                iosHeader="Select Country"
+                iosIcon={<Icon name="ios-arrow-down-outline" />}
+                mode="dropdown"
+                selectedValue={this.state.selectedCountry}
+                onValueChange={(value) => this.onValueChange(value)}
+              >
+                {this.generateCountryListPickerItems()}
+              </CountryPicker>
+            </CountryPickerWrapper>
+            <Label>Phone</Label>
+            <PhoneInput
+              defaultValue={`+${this.state.selectedCountryCallingCode}`}
+              keyboardType="phone-pad"
+            />
+          </LoginForm>
+        </Wrapper>
+        <Footer>
+          <Button onPress={this.loginAction} title="Next" marginBottom />
+          <FooterText>
+            By signing into Pillar Wallet you are agreeing to our <HyperLink url="http://pillarproject.io/">Terms</HyperLink> and <HyperLink url="http://pillarproject.io/">Privacy policy</HyperLink>
+          </FooterText>
+        </Footer>
       </Container>
     );
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  decryptWallet: (pin: string) => {
-    dispatch(decryptWalletAction(pin));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;

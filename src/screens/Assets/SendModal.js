@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Text } from 'react-native';
 import t from 'tcomb-form-native';
-import styled from 'styled-components/native';
+import styled from 'styled-components';
 import SlideModal from 'components/Modals/SlideModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -25,6 +25,9 @@ type State = {
     amount: ?number
   }
 }
+
+const AmountInput = styled(TextInput)`
+`;
 
 const Amount = t.refinement(t.Number, (amount): boolean => {
   return amount > 0;
@@ -62,6 +65,7 @@ function AddressInputTemplate(locals) {
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',
+    style: { paddingRight: 60 },
   };
   return (
     <TextInput
@@ -84,10 +88,18 @@ function AmountInputTemplate(locals) {
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',
-    style: { paddingRight: 15 },
+    style: {
+      padding: 0,
+      margin: 0,
+      paddingRight: 15,
+      fontSize: 36,
+      lineHeight: 0,
+      paddingBottom: 5,
+      fontWeight: '700',
+    },
   };
   return (
-    <TextInput
+    <AmountInput
       errorMessage={errorMessage}
       id="amount"
       label={locals.label}
@@ -96,7 +108,7 @@ function AmountInputTemplate(locals) {
   );
 }
 
-const gerenareteFormOptions = (config: Object): Object => ({
+const generateFormOptions = (config: Object): Object => ({
   fields: {
     amount: { template: AmountInputTemplate },
     address: { template: AddressInputTemplate, config, label: 'To' },
@@ -156,7 +168,7 @@ export default class SendModal extends React.Component<Props, State> {
   render() {
     const { isVisible, onDismiss } = this.props;
     const { value, isScanning } = this.state;
-    const formOptions = gerenareteFormOptions({ onIconPress: this.handleToggleQRScanningState });
+    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState });
     const qrScannnerComponent = (
       <QRCodeScanner
         validator={isValidETHAddress}

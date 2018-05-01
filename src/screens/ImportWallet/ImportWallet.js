@@ -13,14 +13,13 @@ import {
   IMPORT_ERROR,
 } from 'constants/walletConstants';
 
-import Container from 'components/Container';
+import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
-import Title from 'components/Title';
+import { Title, Label } from 'components/Typography';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import InputGroup from 'components/InputGroup';
-import Label from 'components/Label';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,

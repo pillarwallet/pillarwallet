@@ -16,7 +16,7 @@ function loadStories() {
   require('../src/components/Modals/PopModal/PopModal.stories');
   require('../src/components/MultiButtonWrapper/MultiButtonWrapper.stories');
   require('../src/components/PinCode/Pincode.stories');
-  
+
 }
 
 const stories = [
@@ -31,7 +31,7 @@ const stories = [
   '../src/components/Modals/PopModal/PopModal.stories',
   '../src/components/MultiButtonWrapper/MultiButtonWrapper.stories',
   '../src/components/PinCode/Pincode.stories',
-  
+
 ];
 
 module.exports = {

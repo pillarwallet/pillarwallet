@@ -2,12 +2,13 @@
 import * as React from 'react';
 import {
   Animated,
-  Button,
   Dimensions,
   ScrollView,
-  Text,
   View,
 } from 'react-native';
+import styled from 'styled-components';
+import { Title } from 'components/Typography';
+import { Icon } from 'native-base';
 import type { ScrollEvent } from 'react-native';
 
 import styles from './styles';
@@ -28,6 +29,27 @@ type State = {
 
 const window = Dimensions.get('window');
 const modalOffset = 300;
+
+
+const SlideModalHeader = styled.View`
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+`
+
+const SlideModalTitle = styled(Title)`
+  margin: 0;
+  height: 36px;
+  flex: 1;
+`;
+
+const SlideModalIcon = styled(Icon)`
+  font-size: 36px;
+  height: 36px;
+  font-weight: 700;
+  line-height: 36px;
+`;
 
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
@@ -116,10 +138,10 @@ export default class SlideModal extends React.Component<Props, State> {
             <Animated.View style={[styles.sliderContainer,
             { marginTop: animSlideModalVertical, height: (window.height * 2) - modalOffset }]}
             >
-              <View style={styles.sliderHeaderContainer}>
-                <Text style={styles.sliderHeader}>{title}</Text>
-                <Button title="dismiss" onPress={this.handleAnimationDismiss} />
-              </View>
+              <SlideModalHeader>
+                <SlideModalTitle>{title}</SlideModalTitle>
+                <SlideModalIcon name="close" onPress={this.handleAnimationDismiss} />
+              </SlideModalHeader>
               <View style={styles.contentWrapper}>
                 {children}
               </View>
