@@ -19,3 +19,9 @@ export const Label = styled.Text`
   color: rgb(155,155,155);
   margin-bottom: 10;
 `;
+
+export const HelpText = styled.Text`
+  font-size: 12;
+  padding: 10px;
+  color: grey;
+`;
