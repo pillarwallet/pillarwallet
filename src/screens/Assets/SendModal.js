@@ -75,6 +75,9 @@ function AddressInputTemplate(locals) {
       icon="barcode"
       onIconPress={onIconPress}
       inputProps={inputProps}
+      style={{
+        fontSize: 10,
+      }}
     />
   );
 }
