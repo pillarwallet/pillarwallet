@@ -88,10 +88,10 @@ class Assets extends React.Component<Props, State> {
       }),
     })
       .then(res => res.json())
-      .then(res => Array.isArray(res) ? res : [])
-      .then((res) => {
+      .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
+      .then((txHistory) => {
         this.setState({
-          history: res,
+          history: txHistory,
         });
       })
       .catch(() => {
