@@ -10,13 +10,6 @@ import Wrapper from 'components/Wrapper';
 import Footer from 'components/Footer';
 import HelpTextDivider from 'components/HelpTextDivider';
 
-// const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
-
-// const PillarLogo = styled.Image`
-//   height: 60;
-//   width: 120;
-// `;
-
 type Props = {
   navigation: NavigationScreenProp<*>,
 };

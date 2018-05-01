@@ -1,25 +1,38 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Label } from 'components/Typography';
 
 const MnemonicPhraseWrapper = styled.View`
-  margin-top: 20;
-  margin-bottom: 20;
-  padding: 20px;
-  background-color: #f2f2f2;
-  flex-wrap: wrap;
   flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding-top: 20px;
+`;
+
+const MnemonicPhraseItem = styled.View`
+  width: 40%;
+  flex-direction: row;
+  align-items: center;
+  align-content: center;
+  justify-content: space-around;
+  margin-bottom: 20px;
+`;
+
+const MnemonicPhraseIndex = styled.Text`
+  margin-right: 30px;
+`;
+
+const MnemonicPhraseWord = styled.Text`
+  background-color: #f2f2f2;
+  font-weight: bold;
+  font-size: 14px;
+  width: 100%;
   border-color: #d6d7da;
   border-style: dashed;
   border-width: 1;
-  border-radius: 4;
-`;
-
-const MnemonicPhraseItem = styled.Text`
-  font-weight: bold;
-  margin-right: 10;
-  margin-bottom: 2;
-  font-size: 12px;
+  border-radius: 6;
+  padding: 10px;
 `;
 
 type Props = {
@@ -33,7 +46,13 @@ const MnemonicPhrase = (props: Props) => {
   return (
     <MnemonicPhraseWrapper>
       {
-        mnemonicList.map(word => <MnemonicPhraseItem key={word}>{word}</MnemonicPhraseItem>)
+        mnemonicList.map((word, index) => (
+          <MnemonicPhraseItem key={word}>
+            <MnemonicPhraseIndex><Label>{index + 1}</Label></MnemonicPhraseIndex>
+            <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
+          </MnemonicPhraseItem>
+          ),
+        )
       }
     </MnemonicPhraseWrapper>
   );
