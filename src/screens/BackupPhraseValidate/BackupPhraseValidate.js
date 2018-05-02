@@ -113,9 +113,9 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     });
   }
 
-  removeWord(i) {
+  handleLastWordRemoval = () => {
     let { enteredWords } = this.state;
-    enteredWords = [...enteredWords.slice(0, i)];
+    enteredWords = [...enteredWords.slice(0, -1)];
 
     this.setState({
       enteredWords,
@@ -173,7 +173,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
               <WordInputText>{enteredWords[i] || ''}</WordInputText>
             </WordInput>
             {enteredWords.length === i + 1 &&
-            <WordInputPostfix onPress={() => this.removeWord(i)}><Icon name="close" /></WordInputPostfix>
+            <WordInputPostfix onPress={this.handleLastWordRemoval}><Icon name="close" /></WordInputPostfix>
             }
           </WordInputWrapper>
 
