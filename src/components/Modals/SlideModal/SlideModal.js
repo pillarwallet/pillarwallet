@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import type { ScrollEvent } from 'react-native';
-
+import { noop } from 'utils/common';
 import styles from './styles';
 
 type Props = {
@@ -17,6 +17,7 @@ type Props = {
   onDismiss: Function,
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
+  modalDismissalCallback: Function,
   isVisible: boolean
 };
 
@@ -31,7 +32,8 @@ const modalOffset = 300;
 
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
-    onDismiss: () => { },
+    onDismiss: noop,
+    modalDismissalCallback: noop,
     fullScreenComponent: null,
   }
 
@@ -54,6 +56,16 @@ export default class SlideModal extends React.Component<Props, State> {
       animSlideModalVertical: new Animated.Value(window.height),
       isVisible: props.isVisible,
     };
+  }
+
+  componentDidMount() {
+    const { modalDismissalCallback } = this.props;
+    modalDismissalCallback(this.handleAnimationDismiss);
+  }
+
+  componentWillUnmount() {
+    const { modalDismissalCallback } = this.props;
+    modalDismissalCallback(noop);
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {

@@ -10,7 +10,7 @@ import {
   ENCRYPTING,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
-import { generateEncryptedWalletAction, decryptWalletAction, checkIfWalletExistsAction } from '../walletActions';
+import { generateEncryptedWalletAction, decryptWalletAction } from '../walletActions';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
@@ -101,19 +101,6 @@ describe('Wallet actions', () => {
     return store.dispatch(decryptWalletAction(pin))
       .then(() => {
         const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
-  });
-
-  it('should expect series of actions with payload to be dispatch on checkIfWalletExists execution', () => {
-    const expectedActions = [
-      UPDATE_WALLET_STATE,
-      NAVIGATE,
-    ];
-
-    return store.dispatch(checkIfWalletExistsAction())
-      .then(() => {
-        const actualActions = store.getActions().map(action => action.type);
         expect(actualActions).toEqual(expectedActions);
       });
   });
