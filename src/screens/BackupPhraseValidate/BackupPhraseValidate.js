@@ -150,6 +150,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     const mnemonicList = wallet.mnemonic.original.split(' ');
     const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
+
     const shuffledWordList = shuffledMnemonicList.map((word: string) => (
       <MnemonicPhraseWord
         key={word}
@@ -165,14 +166,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         return (
           <WordInputWrapper key={mnemonicList[i]}>
             <WordInputPrefix><WordInputNumber>{wordsToValidate[i]}</WordInputNumber></WordInputPrefix>
-            <WordInput filled={enteredWords.length >= i + 1}>
+            <WordInput filled={!!enteredWords[i]}>
               <WordInputText>{enteredWords[i] || ''}</WordInputText>
             </WordInput>
-            {enteredWords.length === i + 1 &&
+            {enteredWords[i] &&
             <WordInputPostfix onPress={this.handleLastWordRemoval}><Icon name="close" /></WordInputPostfix>
             }
           </WordInputWrapper>
-
         );
       });
 
