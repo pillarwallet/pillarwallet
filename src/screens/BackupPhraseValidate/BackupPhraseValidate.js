@@ -58,7 +58,6 @@ const WordInput = styled.View`
 
 const WordInputPrefix = styled.View`
   flex: 0 0 30px;
-  text-align: right;
   height: 42px;
   justify-content: center;
   align-items: center;
@@ -95,16 +94,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     enteredWords: [],
   };
 
-  setWord = (word) => {
+  handleWordSetting = (word) => {
     let { enteredWords } = this.state;
     const { onboarding: wallet } = this.props.wallet;
     const maxWords = wallet.mnemonic.wordsToValidate.length;
+    if (enteredWords.length === maxWords) return;
+    enteredWords = [...enteredWords, word];
 
-    if (enteredWords.length < maxWords) {
-      enteredWords = [...enteredWords, word];
-    } else {
-      enteredWords = [...enteredWords.slice(0, -1), word];
-    }
     const isFormValid = this.validateForm(enteredWords);
 
     this.setState({
@@ -157,7 +153,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     const shuffledWordList = shuffledMnemonicList.map((word: string) => (
       <MnemonicPhraseWord
         key={word}
-        onPress={() => this.setWord(word)}
+        onPress={() => this.handleWordSetting(word)}
         entered={!(enteredWords.indexOf(word) > -1)}
       >
         <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
