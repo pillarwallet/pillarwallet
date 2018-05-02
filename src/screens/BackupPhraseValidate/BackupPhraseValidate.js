@@ -56,16 +56,18 @@ const WordInput = styled.View`
 `;
 
 const WordInputPrefix = styled.View`
-  flex: 0 0 20px;
+  flex: 0 0 40px;
   text-align: right;
   height: 42px;
   justify-content: center;
+  align-items: center;
 `;
 
 const WordInputPostfix = styled.View`
-  flex: 0 0 20px;
+  flex: 0 0 40px;
   height: 42px;
   justify-content: center;
+  align-items: center;
 `;
 
 const WordInputNumber = styled(Label)`
@@ -106,6 +108,15 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     this.setState({
       enteredWords,
       isFormValid,
+    });
+  }
+
+  removeWord(i) {
+    let { enteredWords } = this.state;
+    enteredWords = [...enteredWords.slice(0, i)];
+
+    this.setState({
+      enteredWords,
     });
   }
 
@@ -156,7 +167,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           <WordInputWrapper key={mnemonicList[i]}>
             <WordInputPrefix><WordInputNumber>{wordsToValidate[i]}</WordInputNumber></WordInputPrefix>
             <WordInput><WordInputText>{enteredWords[i] || ''}</WordInputText></WordInput>
-            <WordInputPostfix><Icon name="close" /></WordInputPostfix>
+            <WordInputPostfix><Icon name="close" onPress={this.removeWord(i)} /></WordInputPostfix>
           </WordInputWrapper>
         );
       });
