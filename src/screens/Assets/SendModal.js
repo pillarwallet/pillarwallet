@@ -21,7 +21,6 @@ type Props = {
 
 type State = {
   isScanning: boolean,
-  isValidated: boolean,
   value: {
     address: ?string,
     amount: ?number
@@ -148,7 +147,6 @@ export default class SendModal extends React.Component<Props, State> {
 
   state = {
     isScanning: false,
-    isValidated: false,
     value: {
       address: '',
       amount: undefined,
@@ -157,7 +155,6 @@ export default class SendModal extends React.Component<Props, State> {
 
   handleChange = (value: Object) => {
     this.setState({ value });
-    this.checkValidations(value);
   };
 
   handleFormSubmit = () => {
@@ -176,22 +173,12 @@ export default class SendModal extends React.Component<Props, State> {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });
   };
 
-  checkValidations(value: any) {
-    if (value.amount && value.address) {
-      this.setState({
-        isValidated: true,
-      });
-    } else {
-      this.setState({
-        isValidated: false,
-      });
-    }
-  }
 
   render() {
     const { isVisible, onDismiss, token } = this.props;
     const { value, isScanning } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
+    const isFilled = Object.keys(value).length === Object.values(value).filter(Boolean).length;
     const qrScannnerComponent = (
       <QRCodeScanner
         validator={isValidETHAddress}
@@ -214,7 +201,7 @@ export default class SendModal extends React.Component<Props, State> {
             <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
             <SendButton
               onPress={this.handleFormSubmit}
-              disabled={!this.state.isValidated}
+              disabled={!isFilled}
             >
               Send
             </SendButton>

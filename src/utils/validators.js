@@ -21,3 +21,8 @@ export function isValidETHAddress(address: string): boolean {
   }
   return result;
 }
+export function hasAllValues(object: Object) {
+  const keys = Object.keys(object);
+  const values = Object.values(object).filter((value) => value !== undefined && value !== '');
+  return keys.length === values.length;
+}
