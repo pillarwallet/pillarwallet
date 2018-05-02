@@ -27,7 +27,7 @@ const WordInputFields = styled.View`
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
-  background-color: #2077fd;
+  background-color: ${props => (props.entered ? '#2077fd' : 'grey')};
   border-radius: 6;
   padding: 10px;
   margin: 5px;
@@ -46,9 +46,10 @@ const WordInputWrapper = styled.View`
 `;
 
 const WordInput = styled.View`
-  border-width: 1px;
-  border-style: dashed;
-  border-color: grey;
+  background-color: ${props => (props.filled ? '#2077fd' : 'transparent')};
+  border-width: ${props => (props.filled ? '0' : '1')};
+  border-style: ${props => (props.filled ? 'solid' : 'dashed')};
+  border-color: ${props => (props.filled ? 'transparent' : 'grey')};;
   border-radius: 6px;
   padding: 10px;
   height: 42px;
@@ -63,7 +64,7 @@ const WordInputPrefix = styled.View`
   align-items: center;
 `;
 
-const WordInputPostfix = styled.View`
+const WordInputPostfix = styled.TouchableHighlight`
   flex: 0 0 40px;
   height: 42px;
   justify-content: center;
@@ -77,6 +78,7 @@ const WordInputNumber = styled(Label)`
 const WordInputText = styled.Text`
   font-size: 14px;
   font-weight: bold;
+  color: white;
 `;
 
 const ShuffledWordWrapper = styled.View`
@@ -156,6 +158,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
       <MnemonicPhraseWord
         key={word}
         onPress={() => this.setWord(word)}
+        entered={!(enteredWords.indexOf(word) > -1)}
       >
         <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
       </MnemonicPhraseWord>
@@ -166,9 +169,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         return (
           <WordInputWrapper key={mnemonicList[i]}>
             <WordInputPrefix><WordInputNumber>{wordsToValidate[i]}</WordInputNumber></WordInputPrefix>
-            <WordInput><WordInputText>{enteredWords[i] || ''}</WordInputText></WordInput>
-            <WordInputPostfix><Icon name="close" onPress={this.removeWord(i)} /></WordInputPostfix>
+            <WordInput filled={enteredWords.length >= i + 1}>
+              <WordInputText>{enteredWords[i] || ''}</WordInputText>
+            </WordInput>
+            {enteredWords.length === i + 1 &&
+            <WordInputPostfix onPress={() => this.removeWord(i)}><Icon name="close" /></WordInputPostfix>
+            }
           </WordInputWrapper>
+
         );
       });
 
