@@ -122,7 +122,7 @@ class LegalTerms extends React.Component<Props, State> {
                 title="Confirm and Finish"
                 onPress={this.handleConfirm}
                 disabled={confirmButtonDisabled}
-                marginBottom
+                marginBottom="20px"
               />
 
               <Body>

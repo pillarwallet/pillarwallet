@@ -29,8 +29,8 @@ export default class Profile extends React.Component<{}, State> {
         <Title center>Profile</Title>
         <Footer>
           <Button
-            marginBottom
-            width="100%"
+            block
+            marginBottom="20px"
             title="Clear Local Storage"
             onPress={this.clearLocalStorage}
           />

@@ -38,7 +38,7 @@ class Onboarding extends React.Component<Props> {
         </Wrapper>
         <Footer>
           <Body>How would you like to use the Pillar Wallet?</Body>
-          <Button marginBottom marginTop onPress={this.createNewWallet} title="Setup new wallet" />
+          <Button marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup new wallet" />
           <HelpTextDivider title="or" />
           <Button onPress={this.importOldWallet} secondary title="Restore from existing" />
           <HelpText>Requires 12 word backup phrase or Private Key</HelpText>

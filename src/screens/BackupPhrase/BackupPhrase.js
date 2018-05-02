@@ -38,7 +38,7 @@ class BackupPhrase extends React.Component<Props, {}> {
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </Wrapper>
         <Footer>
-          <Button block marginBottom title="Verify" onPress={this.goToNextScreen} />
+          <Button block marginBottom="20px" title="Verify" onPress={this.goToNextScreen} />
         </Footer>
       </Container>
     );

@@ -108,7 +108,7 @@ class ICO extends React.Component<Props, State> {
             <Text style={{ marginBottom: 20 }}>
               You have: {assets[ETH] && assetsState !== FETCHING ? assets[ETH].balance : '*Fetching*'} ETH
             </Text>
-            <Button small title="Participate" onPress={this.handlePopupState} />
+            <Button title="Participate" onPress={this.handlePopupState} />
             <Modal
               animationType="slide"
               showCloseBtn="true"
@@ -129,7 +129,7 @@ class ICO extends React.Component<Props, State> {
                   />
                 </Wrapper>
                 <Footer>
-                  <Button marginBottom title="Send" onPress={this.handleICOTransaction} />
+                  <Button marginBottom="20px" title="Send" onPress={this.handleICOTransaction} />
                 </Footer>
               </Container>
             </Modal>

@@ -39,10 +39,10 @@ export default class Welcome extends React.Component<Props> {
         <AnimatedBackground />
         <PillarLogo source={pillarLogoSource} />
         <Footer>
-          <Button block marginBottom onPress={this.loginAction} title="Login" />
+          <Button block marginBottom="20px" onPress={this.loginAction} title="Login" />
           <HelpTextDivider title="Don&#39;t have an account?" />
           <Button onPress={this.signupAction} secondary title="Signup" />
-          <Button marginTop secondary small onPress={this.viewTermsAndConditions} title="Terms and Conditions" />
+          <Button marginTop="20px" secondary small onPress={this.viewTermsAndConditions} title="Terms and Conditions" />
         </Footer>
       </Container>
     );

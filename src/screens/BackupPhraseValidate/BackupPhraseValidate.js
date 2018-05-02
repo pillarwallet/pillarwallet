@@ -192,8 +192,19 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           </ShuffledWordWrapper>
           <Divider />
           <MultiButtonWrapper>
-            <Button marginBottom width="100%" title="Debug skip" onPress={this.goToNextScreen} />
-            <Button marginBottom width="100%" title="Next" onPress={this.goToNextScreen} disabled={!isFormValid} />
+            <Button
+              block
+              marginBottom="20px"
+              title="Debug skip"
+              onPress={this.goToNextScreen}
+            />
+            <Button
+              block
+              marginBottom="20px"
+              title="Next"
+              onPress={this.goToNextScreen}
+              disabled={!isFormValid}
+            />
           </MultiButtonWrapper>
         </Wrapper>
       </Container>

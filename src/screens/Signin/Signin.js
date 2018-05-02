@@ -117,7 +117,7 @@ class Signin extends React.Component<Props, State> {
           </LoginForm>
         </Wrapper>
         <Footer>
-          <Button block onPress={this.loginAction} title="Next" marginBottom />
+          <Button block onPress={this.loginAction} title="Next" marginBottom="20px" />
           <Center>
             <FooterText>
               By signing into Pillar Wallet you are agreeing to our <HyperLink url="http://pillarproject.io/">Terms</HyperLink> and <HyperLink url="http://pillarproject.io/">Privacy policy</HyperLink>
