@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled from 'styled-components';
+import styled from 'styled-components/native';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import { Title, Body, Label } from 'components/Typography';
