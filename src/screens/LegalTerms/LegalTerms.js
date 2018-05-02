@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Linking, Text } from 'react-native';
-
 import { Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import { Title } from 'components/Typography';
+import { Title, Body } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Divider from 'components/Divider';
+import HyperLink from 'components/HyperLink';
 import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
 import CheckboxText from 'components/CheckboxText';
@@ -79,14 +78,6 @@ class LegalTerms extends React.Component<Props, State> {
     this.props.generateEncryptedWallet();
   };
 
-  openURLTermsOfUse = () => {
-    Linking.openURL('https://pillarproject.io/en/terms-of-use/');
-  };
-
-  openURLPrivacyPolicy = () => {
-    Linking.openURL('https://pillarproject.io/en/legal/privacy/');
-  };
-
   render() {
     const {
       termsViewVisible,
@@ -100,7 +91,7 @@ class LegalTerms extends React.Component<Props, State> {
       <Container>
         <Wrapper padding>
           <Title>Let&#39;s Review</Title>
-          <Text style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Text>
+          <Body style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Body>
           <CheckboxItem marginBottom>
             { this.buildCheckBox('box01', box01) }
             <CheckboxText>
@@ -134,19 +125,12 @@ class LegalTerms extends React.Component<Props, State> {
                 marginBottom
               />
 
-              <Button
-                block
-                title="Terms of Use"
-                onPress={this.openURLTermsOfUse}
-                small
-                marginBottom
-              />
-              <Button
-                block
-                title="Privacy Policy"
-                onPress={this.openURLPrivacyPolicy}
-                small
-              />
+              <Body>
+                <HyperLink url="https://pillarproject.io/en/terms-of-use/">Terms of Use </HyperLink>
+                and
+                <HyperLink url="https://pillarproject.io/en/legal/privacy/"> Privacy Policy</HyperLink>
+              </Body>
+
             </MultiButtonWrapper>
           </Footer>
         )}
