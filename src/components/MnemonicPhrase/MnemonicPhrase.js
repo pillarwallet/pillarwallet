@@ -4,19 +4,21 @@ import styled from 'styled-components/native';
 import { Label } from 'components/Typography';
 
 const MnemonicPhraseWrapper = styled.View`
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
   padding-top: 20px;
+  height: 400px;
+  width: 100%;
 `;
 
 const MnemonicPhraseItem = styled.View`
   width: 40%;
+  margin: 0 5% 20px;
   flex-direction: row;
   align-items: center;
   align-content: center;
   justify-content: space-around;
-  margin-bottom: 20px;
 `;
 
 const MnemonicPhraseIndex = styled.Text`
@@ -42,6 +44,7 @@ type Props = {
 const MnemonicPhrase = (props: Props) => {
   const { phrase } = props;
   const mnemonicList = phrase.split(' ');
+
 
   return (
     <MnemonicPhraseWrapper>
