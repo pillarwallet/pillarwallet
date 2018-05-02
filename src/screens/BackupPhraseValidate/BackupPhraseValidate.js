@@ -6,6 +6,7 @@ import styled from 'styled-components/native';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import { Title, Body, Label } from 'components/Typography';
+import ButtonIcon from 'components/ButtonIcon';
 import Button from 'components/Button';
 import { Icon } from 'native-base';
 import Divider from 'components/Divider';
@@ -27,7 +28,7 @@ const WordInputFields = styled.View`
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
-  background-color: ${props => (props.entered ? '#2077fd' : 'grey')};
+  background-color: ${props => (props.entered ? 'grey' : '#2077fd')};
   border-radius: 6;
   padding: 10px;
   margin: 5px;
@@ -70,7 +71,7 @@ const WordInputPostfix = styled.TouchableHighlight`
   align-items: center;
 `;
 
-const WordInputNumber = styled(Label)`
+const WordInputNumber = styled(Label) `
   line-height: 42px;
 `;
 
@@ -137,10 +138,6 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     this.props.navigation.navigate(SET_WALLET_PIN_CODE);
   };
 
-  generateEnteredWordsPhrase = () => {
-    return this.state.enteredWords.join(' ');
-  }
-
   render() {
     const { onboarding: wallet } = this.props.wallet;
     const { isFormValid, enteredWords } = this.state;
@@ -150,16 +147,18 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     const mnemonicList = wallet.mnemonic.original.split(' ');
     const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
-
-    const shuffledWordList = shuffledMnemonicList.map((word: string) => (
-      <MnemonicPhraseWord
-        key={word}
-        onPress={() => this.handleWordSetting(word)}
-        entered={!(enteredWords.indexOf(word) > -1)}
-      >
-        <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
-      </MnemonicPhraseWord>
-    ));
+    const shuffledWordList = shuffledMnemonicList.map((word: string) => {
+      const isEntered = enteredWords.indexOf(word) > -1;
+      return (
+        <MnemonicPhraseWord
+          key={word}
+          onPress={() => this.handleWordSetting(word)}
+          entered={isEntered}
+        >
+          <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
+        </MnemonicPhraseWord>
+      )
+    });
 
     const inputFields = Array(wordsToValidate.length).fill('')
       .map((el, i) => {
@@ -169,8 +168,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             <WordInput filled={!!enteredWords[i]}>
               <WordInputText>{enteredWords[i] || ''}</WordInputText>
             </WordInput>
-            {enteredWords[i] &&
-            <WordInputPostfix onPress={this.handleLastWordRemoval}><Icon name="close" /></WordInputPostfix>
+            {enteredWords.length === (i + 1) &&
+              <ButtonIcon icon="close" onPress={this.handleLastWordRemoval} fontSize={27} />
             }
           </WordInputWrapper>
         );
