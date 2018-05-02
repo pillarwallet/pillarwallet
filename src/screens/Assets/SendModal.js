@@ -6,8 +6,7 @@ import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
-
-import { isValidETHAddress } from 'utils/validators';
+import { isValidETHAddress, hasAllValues } from 'utils/validators';
 
 const { Form } = t.form;
 
@@ -178,7 +177,7 @@ export default class SendModal extends React.Component<Props, State> {
     const { isVisible, onDismiss, token } = this.props;
     const { value, isScanning } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
-    const isFilled = Object.keys(value).length === Object.values(value).filter(Boolean).length;
+    const isFilled = hasAllValues(value);
     const qrScannnerComponent = (
       <QRCodeScanner
         validator={isValidETHAddress}

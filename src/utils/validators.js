@@ -22,6 +22,8 @@ export function isValidETHAddress(address: string): boolean {
   return result;
 }
 export function hasAllValues(object: Object) {
+  // No param reassign makes eslint sad
+  object = object || {}; // eslint-disable-line
   const keys = Object.keys(object);
   const values = Object.values(object).filter((value) => value !== undefined && value !== '');
   return keys.length === values.length;
