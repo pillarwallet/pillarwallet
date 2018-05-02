@@ -9,6 +9,7 @@ type Props = {
   disabled?: boolean,
   secondary?: boolean,
   marginBottom?: boolean,
+  marginTop?: boolean,
   light?: boolean,
   small?: boolean,
 };
@@ -48,6 +49,15 @@ const Button = (props: Props) => {
     return '#80dfff';
   };
 
+  const setMarginTop = () => {
+    if (props.small === true && props.marginTop === true) {
+      return '10px';
+    } else if (props.marginTop === true) {
+      return '20px';
+    }
+    return '0';
+  };
+
   const setMarginBottom = () => {
     if (props.small === true && props.marginBottom === true) {
       return '10px';
@@ -57,6 +67,13 @@ const Button = (props: Props) => {
     return '0';
   };
 
+  const setTextSize = () => {
+    if (props.small === true) {
+      return '12px';
+    }
+    return '18px';
+  };
+
   return (
     <ButtonWrapper
       {...props}
@@ -64,10 +81,16 @@ const Button = (props: Props) => {
       secondary={props.secondary}
       small={props.small}
       underlayColor={setUnderlayColor()}
+      marginTop={setMarginTop()}
       marginBottom={setMarginBottom()}
       onPress={props.onPress}
     >
-      <ButtonText color={setTextColor()} disabled={props.disabled}>{props.title}</ButtonText>
+      <ButtonText
+        size={setTextSize()}
+        color={setTextColor()}
+        disabled={props.disabled}
+      >{props.title}
+      </ButtonText>
     </ButtonWrapper>
   );
 };
