@@ -130,7 +130,8 @@ export default class SlideModal extends React.Component<Props, State> {
             >
               <View style={styles.sliderHeaderContainer}>
                 <Text style={styles.sliderHeader}>{title}</Text>
-                <ButtonIcon icon="close"
+                <ButtonIcon
+                  icon="close"
                   onPress={this.handleAnimationDismiss}
                   fontSize={36}
                   style={styles.closeButton}
