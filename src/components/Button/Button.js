@@ -33,21 +33,23 @@ const themes = {
   },
 };
 
+const getTheme = (props: Props) => {
+  if (props.disabled) {
+    return themes.disabled;
+  }
+  if (props.secondary) {
+    return themes.secondary;
+  }
+  return themes.primary;
+};
+
 const Button = (props: Props) => {
-  const setTheme = () => {
-    if (props.disabled) {
-      return themes.disabled;
-    }
-    if (props.secondary) {
-      return themes.secondary;
-    }
-    return themes.primary;
-  };
+  const theme = getTheme(props);
 
   return (
     <ButtonWrapper
       {...props}
-      theme={setTheme()}
+      theme={theme}
       block={props.block}
       marginTop={props.marginTop}
       marginBottom={props.marginBottom}
@@ -55,7 +57,7 @@ const Button = (props: Props) => {
       width={props.width}
     >
       <ButtonText
-        theme={setTheme()}
+        theme={theme}
       >{props.title}
       </ButtonText>
     </ButtonWrapper>
