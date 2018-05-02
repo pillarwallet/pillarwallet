@@ -7,9 +7,9 @@ import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
+import { isValidETHAddress, hasAllValues } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
-import { isValidETHAddress, hasAllValues } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
 
