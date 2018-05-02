@@ -23,7 +23,7 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
-  margin: 20px 0;
+  margin: 20px 0 0;
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
@@ -40,7 +40,7 @@ const MnemonicPhraseWordText = styled.Text`
 `;
 
 const WordInputWrapper = styled.View`
-  margin: 0 0 20px;
+  margin: 0 0 10px;
   flex-direction: row;
   align-items: flex-start;
 `;
@@ -57,7 +57,7 @@ const WordInput = styled.View`
 `;
 
 const WordInputPrefix = styled.View`
-  flex: 0 0 40px;
+  flex: 0 0 30px;
   text-align: right;
   height: 42px;
   justify-content: center;
@@ -86,7 +86,7 @@ const ShuffledWordWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 20px;
+  margin: 20px 0;
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
