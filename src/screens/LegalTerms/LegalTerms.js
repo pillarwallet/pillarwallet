@@ -127,20 +127,22 @@ class LegalTerms extends React.Component<Props, State> {
             <Divider />
             <MultiButtonWrapper>
               <Button
+                block
                 title="Confirm and Finish"
                 onPress={this.handleConfirm}
                 disabled={confirmButtonDisabled}
-                small
                 marginBottom
               />
 
               <Button
+                block
                 title="Terms of Use"
                 onPress={this.openURLTermsOfUse}
                 small
                 marginBottom
               />
               <Button
+                block
                 title="Privacy Policy"
                 onPress={this.openURLPrivacyPolicy}
                 small

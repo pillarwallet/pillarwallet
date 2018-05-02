@@ -15,11 +15,9 @@ type Props = {
   width?: number,
   block?: boolean
 };
-
-
 const Button = (props: Props) => {
   const setBackgroundColor = () => {
-    if (props.disabled === true) {
+    if (props.disabled) {
       return 'rgb(216, 216, 216)';
     } else if (props.secondary) {
       return 'rgba(0,0,0,0)';
@@ -79,7 +77,7 @@ const Button = (props: Props) => {
   };
 
   const setTextSize = () => {
-    if (props.small === true) {
+    if (props.small) {
       return '12px';
     }
     return '18px';

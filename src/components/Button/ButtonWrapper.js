@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 
 const ButtonWrapper = styled.TouchableHighlight`
   align-items: center;
-  padding: ${props => (props.small ? '5px 20px' : '10px 80px')};
+  padding: ${props => (props.small ? '5px 20px' : '10px 40px')};
   background: ${props => props.backgroundColor};
   margin-top: ${props => (props.marginTop)};
   margin-bottom: ${props => (props.marginBottom)};
