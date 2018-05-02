@@ -2,8 +2,7 @@
 import * as React from 'react';
 
 import { AsyncStorage, Text } from 'react-native';
-import { Container } from 'components/Layout';
-import Footer from 'components/Footer';
+import { Container, Footer } from 'components/Layout';
 import Title from 'components/Title';
 import Button from 'components/Button';
 
@@ -28,7 +27,7 @@ export default class Profile extends React.Component<{}, State> {
     return (
       <Container>
         <Title center>Profile</Title>
-        <Footer padding>
+        <Footer>
           <Button
             marginBottom
             width="100%"

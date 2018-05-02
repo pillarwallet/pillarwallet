@@ -12,6 +12,8 @@ type Props = {
   marginTop?: boolean,
   light?: boolean,
   small?: boolean,
+  width?: number,
+  block?: boolean
 };
 
 
@@ -27,8 +29,17 @@ const Button = (props: Props) => {
     return 'rgb(32, 119, 253)';
   };
 
+  const setWidth = () => {
+    if (props.width) {
+      return props.width;
+    } else if (props.block) {
+      return '100%';
+    }
+    return 'auto';
+  };
+
   const setTextColor = () => {
-    if (props.disabled === true) {
+    if (props.disabled) {
       return 'gray';
     } else if (props.secondary) {
       return 'rgb(32, 119, 253)';
@@ -39,7 +50,7 @@ const Button = (props: Props) => {
   };
 
   const setUnderlayColor = () => {
-    if (props.disabled === true) {
+    if (props.disabled) {
       return 'darkgray';
     } else if (props.secondary) {
       return 'rgba(0,0,0,0)';
@@ -50,18 +61,18 @@ const Button = (props: Props) => {
   };
 
   const setMarginTop = () => {
-    if (props.small === true && props.marginTop === true) {
+    if (props.small && props.marginTop) {
       return '10px';
-    } else if (props.marginTop === true) {
+    } else if (props.marginTop) {
       return '20px';
     }
     return '0';
   };
 
   const setMarginBottom = () => {
-    if (props.small === true && props.marginBottom === true) {
+    if (props.small && props.marginBottom) {
       return '10px';
-    } else if (props.marginBottom === true) {
+    } else if (props.marginBottom) {
       return '20px';
     }
     return '0';
@@ -84,6 +95,7 @@ const Button = (props: Props) => {
       marginTop={setMarginTop()}
       marginBottom={setMarginBottom()}
       onPress={props.onPress}
+      width={setWidth()}
     >
       <ButtonText
         size={setTextSize()}

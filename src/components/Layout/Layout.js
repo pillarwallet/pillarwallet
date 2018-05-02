@@ -16,3 +16,12 @@ export const Container = styled.SafeAreaView`
   height: ${() => Platform.OS === 'ios' ? deviceHeight : deviceHeight - 20};
 `;
 
+export const Footer = styled.View`
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-end;
+  padding: 20px 20px 40px;
+  position: absolute;
+  bottom: 0;
+`;

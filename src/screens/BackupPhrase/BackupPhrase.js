@@ -3,9 +3,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Title, Body } from 'components/Typography';
-import { Container } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import Button from 'components/Button';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 

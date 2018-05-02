@@ -3,11 +3,10 @@ import * as React from 'react';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import { BACKUP_PHRASE, IMPORT_WALLET } from 'constants/navigationConstants';
-import { Container } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import { Title, Body, BodyLight, HelpText } from 'components/Typography';
 import Button from 'components/Button';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import HelpTextDivider from 'components/HelpTextDivider';
 
 type Props = {

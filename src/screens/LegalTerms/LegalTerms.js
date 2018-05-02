@@ -2,9 +2,8 @@
 import * as React from 'react';
 import { Linking, Text } from 'react-native';
 
-import { Container } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import { Title } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
@@ -118,7 +117,7 @@ class LegalTerms extends React.Component<Props, State> {
           </CheckboxItem>
         </Wrapper>
         {termsViewVisible && (
-          <Footer padding>
+          <Footer>
             <CheckboxItem marginBottom>
               { this.buildCheckBox('box03', box03) }
               <CheckboxText>
