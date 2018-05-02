@@ -56,6 +56,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
+  closeButton: {
+    position: 'relative',
+    top: -10,
+  },
+
   contentWrapper: {
     flex: 1,
     height: window.height,

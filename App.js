@@ -5,47 +5,43 @@ import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { SHOW_STORYBOOK } from 'react-native-dotenv';
-import { checkIfWalletExistsAction } from 'actions/walletActions';
+import { fetchAppSettingsAndRedirectAction } from 'actions/appSettingsActions';
 import configureStore from './src/configureStore';
 import StorybookUI from './storybook';
 
 const store = configureStore();
 const addListener = createReduxBoundAddListener('root');
 type State = {
-  isWalletStateDefined: ?string
+  isFetched: boolean
 }
 
 type Props = {
   dispatch: Function,
   navigation: Object,
-  checkIfWalletExists: Function,
-  walletState: String,
+  isFetched: Boolean,
+  fetchAppSettingsAndRedirect: Function,
 }
 
 class App extends React.Component<Props, State> {
   state = {
-    isWalletStateDefined: null,
+    isFetched: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props) {
-    if (nextProps.walletState) {
-      return {
-        isWalletStateDefined: true,
-      };
-    }
-
-    return null;
+    return {
+      isFetched: nextProps.isFetched,
+    };
   }
   componentDidMount() {
-    const { checkIfWalletExists } = this.props;
-    checkIfWalletExists();
+    const { fetchAppSettingsAndRedirect } = this.props;
+    fetchAppSettingsAndRedirect();
   }
 
   render() {
     const { dispatch, navigation } = this.props;
-    const { isWalletStateDefined } = this.state;
+    const { isFetched } = this.state;
 
-    if (!isWalletStateDefined) return null;
+    if (!isFetched) return null;
 
     return (
       <RootNavigation
@@ -59,14 +55,14 @@ class App extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ navigation, wallet: { walletState } }) => ({
+const mapStateToProps = ({ navigation, appSettings: { isFetched } }) => ({
   navigation,
-  walletState,
+  isFetched,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
-  checkIfWalletExists: () => dispatch(checkIfWalletExistsAction()),
+  fetchAppSettingsAndRedirect: () => dispatch(fetchAppSettingsAndRedirectAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
-import { Container } from 'components/Layout';
+import { Container, Center } from 'components/Layout';
 import { Title } from 'components/Typography';
 import PinCode from 'components/PinCode';
 
@@ -46,7 +46,9 @@ class SetWalletPinCode extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <Title center>Enter Passcode</Title>
+        <Center>
+          <Title>Enter Passcode</Title>
+        </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}

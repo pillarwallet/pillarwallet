@@ -14,3 +14,10 @@ export type Transaction = {
   __v: number,
   receipt: Object
 }
+
+export type TransactionPayload = {
+  gasLimit: number,
+  amount: number,
+  address: string,
+  gasPrice: number
+}

@@ -20,8 +20,8 @@ describe('Slide Modal', () => {
   it('should close modal on dismiss', (done) => {
     const onDismiss = jest.fn();
     const wrapper = shallow(<SlideModal title="title" isVisible onDismiss={onDismiss} />);
-    const dimissBtn = wrapper.find({ title: 'dismiss' });
-    dimissBtn.simulate('Press');
+    const dimissIcon = wrapper.find({ icon: 'close' });
+    dimissIcon.simulate('Press');
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       expect(onDismiss).toHaveBeenCalled();
