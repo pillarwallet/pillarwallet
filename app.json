@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Pillar Wallet",
-    "version": "1.0.0",
+    "version": "0.0.2",
     "icon": "./src/assets/platform/icon.png",
     "sdkVersion": "26.0.0",
     "ios": {
