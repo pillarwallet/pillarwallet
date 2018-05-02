@@ -1,12 +1,20 @@
 // @flow
 import * as React from 'react';
 import { Text } from 'react-native';
+import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
+import type { TransactionPayload } from 'models/Transaction';
+import { sendAssetAction } from 'actions/assetsActions';
 import { isValidETHAddress, hasAllValues } from 'utils/validators';
+import { pipe, decodeETHAddress } from 'utils/common';
+
+
+// make Dynamic once more tokens supported
+const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
 
 const { Form } = t.form;
 
@@ -15,12 +23,13 @@ type Props = {
   address: string,
   isVisible: boolean,
   onDismiss: Function,
+  sendAsset: Function,
   formValues?: Object
 }
 
 type State = {
   isScanning: boolean,
-  value: {
+  value: ?{
     address: ?string,
     amount: ?number
   }
@@ -141,25 +150,37 @@ const SendButton = styled.Text`
   color: ${props => props.disabled ? 'gray' : 'rgb(32, 119, 253)'};
 `;
 
-export default class SendModal extends React.Component<Props, State> {
+class SendModal extends React.Component<Props, State> {
   _form: t.form;
+
+  handleDismissal: Function;
+
+  handleDismissal = () => {}
 
   state = {
     isScanning: false,
-    value: {
-      address: '',
-      amount: undefined,
-    },
-  };
+    value: null,
+  }
 
   handleChange = (value: Object) => {
     this.setState({ value });
   };
 
   handleFormSubmit = () => {
-    // const value = this._form.getValue();
-    // if (!value) return;
-    // HANDLE FORM SUBMISSION
+    const value = this._form.getValue();
+    const { sendAsset } = this.props;
+    if (!value) return;
+    const transactionPayload: TransactionPayload = {
+      address: value.address,
+      amount: value.amount,
+      gasLimit: 1500000,
+      gasPrice: 20000000000,
+    };
+    sendAsset(transactionPayload);
+    this.handleDismissal();
+    this.setState({
+      value: null,
+    });
   };
 
   handleToggleQRScanningState = () => {
@@ -168,10 +189,14 @@ export default class SendModal extends React.Component<Props, State> {
     });
   };
 
+  // HOC DRILL PATTERN
+  handleCallbackRegistration = (cb: Function) => {
+    this.handleDismissal = cb;
+  }
+
   handleQRRead = (address: string) => {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });
   };
-
 
   render() {
     const { isVisible, onDismiss, token } = this.props;
@@ -180,14 +205,21 @@ export default class SendModal extends React.Component<Props, State> {
     const isFilled = hasAllValues(value);
     const qrScannnerComponent = (
       <QRCodeScanner
-        validator={isValidETHAddress}
+        validator={ETHValidator}
+        dataFormatter={decodeETHAddress}
         isActive={isScanning}
         onDismiss={this.handleToggleQRScanningState}
         onRead={this.handleQRRead}
       />
     );
     return (
-      <SlideModal title="send." isVisible={isVisible} onDismiss={onDismiss} fullScreenComponent={qrScannnerComponent}>
+      <SlideModal
+        modalDismissalCallback={this.handleCallbackRegistration}
+        title="send."
+        isVisible={isVisible}
+        onDismiss={onDismiss}
+        fullScreenComponent={qrScannnerComponent}
+      >
         <Container>
           <Form
             ref={node => { this._form = node; }}
@@ -210,3 +242,9 @@ export default class SendModal extends React.Component<Props, State> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch) => ({
+  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
+});
+
+export default connect(null, mapDispatchToProps)(SendModal);
