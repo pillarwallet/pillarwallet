@@ -2,9 +2,9 @@
 import styled from 'styled-components/native';
 
 const ButtonText = styled.Text`
-  color: ${props => props.color};
+  color: ${props => props.theme.color};
   font-weight: bold;
-  font-size: ${props => props.size};
+  font-size: 18px;
 `;
 
 export default ButtonText;

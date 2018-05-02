@@ -3,9 +3,8 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { OTP } from 'constants/navigationConstants';
 import styled from 'styled-components/native';
-import { Container, Center } from 'components/Layout';
+import { Container, Footer, Center } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import Button from 'components/Button';
 import HyperLink from 'components/HyperLink';
 import { Title, Body, Label } from 'components/Typography';
@@ -118,8 +117,8 @@ class Signin extends React.Component<Props, State> {
           </LoginForm>
         </Wrapper>
         <Footer>
+          <Button block onPress={this.loginAction} title="Next" marginBottom="20px" />
           <Center>
-            <Button onPress={this.loginAction} title="Next" marginBottom />
             <FooterText>
               By signing into Pillar Wallet you are agreeing to our <HyperLink url="http://pillarproject.io/">Terms</HyperLink> and <HyperLink url="http://pillarproject.io/">Privacy policy</HyperLink>
             </FooterText>

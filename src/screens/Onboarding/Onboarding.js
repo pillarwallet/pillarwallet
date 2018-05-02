@@ -3,11 +3,10 @@ import * as React from 'react';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import { BACKUP_PHRASE, IMPORT_WALLET } from 'constants/navigationConstants';
-import { Container } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import { Title, Body, BodyLight, HelpText } from 'components/Typography';
 import Button from 'components/Button';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import HelpTextDivider from 'components/HelpTextDivider';
 
 type Props = {
@@ -39,7 +38,7 @@ class Onboarding extends React.Component<Props> {
         </Wrapper>
         <Footer>
           <Body>How would you like to use the Pillar Wallet?</Body>
-          <Button marginBottom marginTop onPress={this.createNewWallet} title="Setup new wallet" />
+          <Button marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup new wallet" />
           <HelpTextDivider title="or" />
           <Button onPress={this.importOldWallet} secondary title="Restore from existing" />
           <HelpText>Requires 12 word backup phrase or Private Key</HelpText>

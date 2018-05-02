@@ -3,9 +3,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Title, Body } from 'components/Typography';
-import { Container } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import Button from 'components/Button';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 
@@ -39,7 +38,7 @@ class BackupPhrase extends React.Component<Props, {}> {
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </Wrapper>
         <Footer>
-          <Button marginBottom title="Verify" onPress={this.goToNextScreen} />
+          <Button block marginBottom="20px" title="Verify" onPress={this.goToNextScreen} />
         </Footer>
       </Container>
     );

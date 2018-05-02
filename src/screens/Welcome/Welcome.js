@@ -4,9 +4,8 @@ import { Linking } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SIGN_IN } from 'constants/navigationConstants';
-import { Container } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
-import Footer from 'components/Footer';
 import HelpTextDivider from 'components/HelpTextDivider';
 import AnimatedBackground from 'components/AnimatedBackground';
 
@@ -40,10 +39,10 @@ export default class Welcome extends React.Component<Props> {
         <AnimatedBackground />
         <PillarLogo source={pillarLogoSource} />
         <Footer>
-          <Button marginBottom onPress={this.loginAction} title="Login" />
+          <Button block marginBottom="20px" onPress={this.loginAction} title="Login" />
           <HelpTextDivider title="Don&#39;t have an account?" />
           <Button onPress={this.signupAction} secondary title="Signup" />
-          <Button marginTop secondary small onPress={this.viewTermsAndConditions} title="Terms and Conditions" />
+          <Button marginTop="20px" secondary small onPress={this.viewTermsAndConditions} title="Terms and Conditions" />
         </Footer>
       </Container>
     );

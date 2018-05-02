@@ -8,8 +8,8 @@ import Button from 'components/Button';
 storiesOf('MultiButtonWrapper', module)
   .add('Default', () => (
     <MultiButtonWrapper>
-      <Button marginBottom onPress={action('Press Button')} title="Sign in" />
-      <Button secondary marginBottom onPress={action('Press Button')} title="Register" />
-      <Button secondary marginBottom onPress={action('Press Button')} title="Recover Account" />
+      <Button marginBottom="20px" onPress={action('Press Button')} title="Sign in" />
+      <Button secondary marginBottom="20px" onPress={action('Press Button')} title="Register" />
+      <Button secondary marginBottom="20px" onPress={action('Press Button')} title="Recover Account" />
     </MultiButtonWrapper>
   ));

@@ -13,9 +13,8 @@ import {
   IMPORT_ERROR,
 } from 'constants/walletConstants';
 
-import { Container } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import Footer from 'components/Footer';
 import { Title, Label } from 'components/Typography';
 import Button from 'components/Button';
 import Input from 'components/Input';
@@ -89,7 +88,7 @@ class ImportWallet extends React.Component<Props, State> {
             />
           </InputGroup>
         </Wrapper>
-        <Footer padding>
+        <Footer>
           <Button
             title="Import"
             onPress={this.handleImportSubmit}

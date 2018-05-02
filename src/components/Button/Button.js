@@ -8,87 +8,56 @@ type Props = {
   onPress: Function,
   disabled?: boolean,
   secondary?: boolean,
-  marginBottom?: boolean,
-  marginTop?: boolean,
+  marginBottom?: string,
+  marginTop?: string,
   light?: boolean,
-  small?: boolean,
+  width?: string,
+  block?: boolean
 };
 
+const themes = {
+  primary: {
+    background: '#2077fd',
+    underlay: '80dfff',
+    color: '#ffffff',
+  },
+  secondary: {
+    background: 'rgba(0,0,0,0)',
+    underlay: 'rgba(0,0,0,0)',
+    color: '#2077fd',
+  },
+  disabled: {
+    background: '#d8d8d8',
+    underlay: '#a9a9a9',
+    color: '#808080',
+  },
+};
+
+const getTheme = (props: Props) => {
+  if (props.disabled) {
+    return themes.disabled;
+  }
+  if (props.secondary) {
+    return themes.secondary;
+  }
+  return themes.primary;
+};
 
 const Button = (props: Props) => {
-  const setBackgroundColor = () => {
-    if (props.disabled === true) {
-      return 'rgb(216, 216, 216)';
-    } else if (props.secondary) {
-      return 'rgba(0,0,0,0)';
-    } else if (props.light) {
-      return '#80dfff';
-    }
-    return 'rgb(32, 119, 253)';
-  };
-
-  const setTextColor = () => {
-    if (props.disabled === true) {
-      return 'gray';
-    } else if (props.secondary) {
-      return 'rgb(32, 119, 253)';
-    } else if (props.light) {
-      return '#000000';
-    }
-    return 'white';
-  };
-
-  const setUnderlayColor = () => {
-    if (props.disabled === true) {
-      return 'darkgray';
-    } else if (props.secondary) {
-      return 'rgba(0,0,0,0)';
-    } else if (props.light) {
-      return '#00bfff';
-    }
-    return '#80dfff';
-  };
-
-  const setMarginTop = () => {
-    if (props.small === true && props.marginTop === true) {
-      return '10px';
-    } else if (props.marginTop === true) {
-      return '20px';
-    }
-    return '0';
-  };
-
-  const setMarginBottom = () => {
-    if (props.small === true && props.marginBottom === true) {
-      return '10px';
-    } else if (props.marginBottom === true) {
-      return '20px';
-    }
-    return '0';
-  };
-
-  const setTextSize = () => {
-    if (props.small === true) {
-      return '12px';
-    }
-    return '18px';
-  };
+  const theme = getTheme(props);
 
   return (
     <ButtonWrapper
       {...props}
-      backgroundColor={setBackgroundColor()}
-      secondary={props.secondary}
-      small={props.small}
-      underlayColor={setUnderlayColor()}
-      marginTop={setMarginTop()}
-      marginBottom={setMarginBottom()}
+      theme={theme}
+      block={props.block}
+      marginTop={props.marginTop}
+      marginBottom={props.marginBottom}
       onPress={props.onPress}
+      width={props.width}
     >
       <ButtonText
-        size={setTextSize()}
-        color={setTextColor()}
-        disabled={props.disabled}
+        theme={theme}
       >{props.title}
       </ButtonText>
     </ButtonWrapper>

@@ -13,7 +13,4 @@ storiesOf('Button', module)
   ))
   .add('Disabled', () => (
     <Button onPress={action('Press Disabled Button')} disabled title="Withdraw" />
-  ))
-  .add('Small', () => (
-    <Button onPress={action('Press Small Button')} small title="More Options" />
   ));
