@@ -8,7 +8,6 @@ import Wrapper from 'components/Wrapper';
 import { Title, Body, Label } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import Button from 'components/Button';
-import { Icon } from 'native-base';
 import Divider from 'components/Divider';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -64,14 +63,7 @@ const WordInputPrefix = styled.View`
   align-items: center;
 `;
 
-const WordInputPostfix = styled.TouchableHighlight`
-  flex: 0 0 40px;
-  height: 42px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const WordInputNumber = styled(Label) `
+const WordInputNumber = styled(Label)`
   line-height: 42px;
 `;
 
@@ -142,7 +134,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   renderInputFields = () => {
     const { onboarding: wallet } = this.props.wallet;
     const { wordsToValidate } = wallet.mnemonic;
-    const { isFormValid, enteredWords } = this.state;
+    const { enteredWords } = this.state;
     const mnemonicList = wallet.mnemonic.original.split(' ');
 
     return [...Array(wordsToValidate.length)]
@@ -176,13 +168,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         >
           <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
         </MnemonicPhraseWord>
-      )
+      );
     });
   }
 
   render() {
     const { onboarding: wallet } = this.props.wallet;
-    const { isFormValid, enteredWords } = this.state;
+    const { isFormValid } = this.state;
     if (!wallet.mnemonic.original) return null;
 
     return (
