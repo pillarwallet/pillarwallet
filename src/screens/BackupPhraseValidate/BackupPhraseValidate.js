@@ -138,29 +138,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     this.props.navigation.navigate(SET_WALLET_PIN_CODE);
   };
 
-  render() {
+
+  renderInputFields = () => {
     const { onboarding: wallet } = this.props.wallet;
-    const { isFormValid, enteredWords } = this.state;
-
-    if (!wallet.mnemonic.original) return null;
     const { wordsToValidate } = wallet.mnemonic;
+    const { isFormValid, enteredWords } = this.state;
     const mnemonicList = wallet.mnemonic.original.split(' ');
-    const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
-    const shuffledWordList = shuffledMnemonicList.map((word: string) => {
-      const isEntered = enteredWords.indexOf(word) > -1;
-      return (
-        <MnemonicPhraseWord
-          key={word}
-          onPress={() => this.handleWordSetting(word)}
-          entered={isEntered}
-        >
-          <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
-        </MnemonicPhraseWord>
-      )
-    });
-
-    const inputFields = Array(wordsToValidate.length).fill('')
+    return [...Array(wordsToValidate.length)]
       .map((el, i) => {
         return (
           <WordInputWrapper key={mnemonicList[i]}>
@@ -174,6 +159,31 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           </WordInputWrapper>
         );
       });
+  }
+
+  renderShuffledWordList = () => {
+    const { onboarding: wallet } = this.props.wallet;
+    const { enteredWords } = this.state;
+    const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
+
+    return shuffledMnemonicList.map((word: string) => {
+      const isEntered = enteredWords.indexOf(word) > -1;
+      return (
+        <MnemonicPhraseWord
+          key={word}
+          onPress={() => this.handleWordSetting(word)}
+          entered={isEntered}
+        >
+          <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
+        </MnemonicPhraseWord>
+      )
+    });
+  }
+
+  render() {
+    const { onboarding: wallet } = this.props.wallet;
+    const { isFormValid, enteredWords } = this.state;
+    if (!wallet.mnemonic.original) return null;
 
     return (
       <Container>
@@ -183,10 +193,10 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             Please select the appropriate words from the list
           </Body>
           <WordInputFields>
-            {inputFields}
+            {this.renderInputFields()}
           </WordInputFields>
           <ShuffledWordWrapper>
-            {shuffledWordList}
+            {this.renderShuffledWordList()}
           </ShuffledWordWrapper>
           <Divider />
           <MultiButtonWrapper>
