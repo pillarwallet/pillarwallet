@@ -12,6 +12,7 @@ Storage.prototype.get = function (id: string) {
 Storage.prototype.save = function (id: string, data: Object) {
   return this.db.get(id).then((doc) => {
     return this.db.put({
+      ...doc,
       _id: id,
       _rev: doc._rev,
       ...data,
