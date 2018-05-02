@@ -7,8 +7,10 @@ import {
   FETCHED,
   ETH,
 } from 'constants/assetsConstants';
-import { PROVIDER } from 'react-native-dotenv';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { TransactionPayload } from 'models/Transaction';
+
+const PROVIDER = NETWORK_PROVIDER;
 
 export const sendAssetAction = ({
   gasLimit,
