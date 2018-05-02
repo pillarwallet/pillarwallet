@@ -1,5 +1,5 @@
 // @flow
-import { validatePin, isValidETHAddress } from '../validators';
+import { validatePin, isValidETHAddress, hasAllValues } from '../validators';
 
 describe('Validators', () => {
   describe('validatePin', () => {
@@ -25,6 +25,17 @@ describe('Validators', () => {
     it('should return false for the invvalid ETH address', () => {
       const isValid = isValidETHAddress('Jon Snow');
       expect(isValid).toBeFalsy();
+    });
+  });
+
+  describe('hasAllValues', () => {
+    it('should return true for an object with all values', () => {
+      const object = { foo: 1, bar: false };
+      expect(hasAllValues(object)).toBeTruthy();
+    });
+    it('should return false for an object without all values', () => {
+      const object = { foo: 1, bar: false, baz: '' };
+      expect(hasAllValues(object)).toBeFalsy();
     });
   });
 });

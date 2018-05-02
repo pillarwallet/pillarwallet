@@ -7,9 +7,9 @@ import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
+import { isValidETHAddress, hasAllValues } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
-import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
 
@@ -19,6 +19,7 @@ const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isVal
 const { Form } = t.form;
 
 type Props = {
+  token: string,
   address: string,
   isVisible: boolean,
   onDismiss: Function,
@@ -70,13 +71,18 @@ function AddressInputTemplate(locals) {
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'right',
+    maxLength: 42,
+    style: {
+      paddingRight: 40,
+      fontSize: 12,
+    },
   };
   return (
     <TextInput
       errorMessage={errorMessage}
       id="address"
       label={locals.label}
-      icon="barcode"
+      icon="ios-qr-scanner"
       onIconPress={onIconPress}
       inputProps={inputProps}
     />
@@ -84,18 +90,28 @@ function AddressInputTemplate(locals) {
 }
 
 function AmountInputTemplate(locals) {
+  const { config: { currency } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
+    autoFocus: true,
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: 'Specify the amount',
+    placeholder: '0.00',
     value: locals.value,
+    ellipsizeMode: 'middle',
     keyboardType: locals.keyboardType,
     textAlign: 'right',
-    style: { paddingRight: 15 },
+    style: {
+      paddingRight: 40,
+      fontSize: 36,
+      fontWeight: '700',
+      lineHeight: 0,
+    },
   };
+
   return (
     <TextInput
+      postfix={currency}
       errorMessage={errorMessage}
       id="amount"
       label={locals.label}
@@ -104,9 +120,9 @@ function AmountInputTemplate(locals) {
   );
 }
 
-const gerenareteFormOptions = (config: Object): Object => ({
+const generateFormOptions = (config: Object): Object => ({
   fields: {
-    amount: { template: AmountInputTemplate },
+    amount: { template: AmountInputTemplate, config },
     address: { template: AddressInputTemplate, config, label: 'To' },
   },
   order: ['amount', 'address'],
@@ -128,6 +144,11 @@ const ActionsWrapper = styled.View`
   padding: 5px;
 `;
 
+const SendButton = styled.Text`
+  fontSize: 18;
+  fontWeight: bold;
+  color: ${props => props.disabled ? 'gray' : 'rgb(32, 119, 253)'};
+`;
 
 class SendModal extends React.Component<Props, State> {
   _form: t.form;
@@ -178,9 +199,10 @@ class SendModal extends React.Component<Props, State> {
   };
 
   render() {
-    const { isVisible, onDismiss } = this.props;
+    const { isVisible, onDismiss, token } = this.props;
     const { value, isScanning } = this.state;
-    const formOptions = gerenareteFormOptions({ onIconPress: this.handleToggleQRScanningState });
+    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
+    const isFilled = hasAllValues(value);
     const qrScannnerComponent = (
       <QRCodeScanner
         validator={ETHValidator}
@@ -208,12 +230,12 @@ class SendModal extends React.Component<Props, State> {
           />
           <ActionsWrapper>
             <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
-            <Text
+            <SendButton
               onPress={this.handleFormSubmit}
-              style={{ color: '#2077FD', fontSize: 16, fontWeight: 'bold' }}
+              disabled={!isFilled}
             >
               Send
-            </Text>
+            </SendButton>
           </ActionsWrapper>
         </Container>
       </SlideModal>
