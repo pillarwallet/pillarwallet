@@ -26,4 +26,5 @@ export const SIGN_UP_FLOW = 'SIGN_UP_FLOW';
 export const WELCOME = 'WELCOME';
 export const SIGN_IN = 'SIGN_IN';
 export const OTP = 'OTP';
+export const OTP_STATUS = 'OTP_STATUS';
 export const SIGN_UP = 'SIGN_UP';

@@ -1,18 +1,17 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { OTP } from 'constants/navigationConstants';
+import { OTP_STATUS } from 'constants/navigationConstants';
 import { Container, Footer, Center } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Button from 'components/Button';
 import Emoji from 'components/Emoji';
 import HyperLink from 'components/HyperLink';
-import { Title, Body, Label } from 'components/Typography';
 import FooterText from 'components/FooterText';
 import { CountryPicker, CountryPickerWrapper } from 'components/CountryPicker';
+import { Title, Body, Label } from 'components/Typography';
+import { LoginForm, PhoneInput, InputField } from 'components/Form';
 import { Picker, Icon } from 'native-base';
-import { LoginForm, PhoneInput } from 'components/Form';
-
 import countries from 'utils/countries.json';
 
 type Props = {
@@ -25,7 +24,7 @@ type State = {
   selectedCountryCallingCode: string,
 }
 
-class Signin extends React.Component<Props, State> {
+class Signup extends React.Component<Props, State> {
   state = {
     selectedCountry: 'GB',
     selectedCountryFlag: '🇬🇧',
@@ -55,16 +54,24 @@ class Signin extends React.Component<Props, State> {
   }
 
   loginAction = () => {
-    this.props.navigation.navigate(OTP);
+    this.props.navigation.navigate(OTP_STATUS);
   };
 
   render() {
     return (
       <Container>
         <Wrapper padding>
-          <Title>login</Title>
-          <Body>Please enter the mobile number associated with your account.</Body>
+          <Title>signup</Title>
+          <Body>Securely manage your digital assets and participate in exlusive Initial Coin Offerings.</Body>
           <LoginForm>
+            <Label>Firstname</Label>
+            <InputField
+              isFocused
+            />
+            <Label>Surname</Label>
+            <InputField />
+            <Label>E-mail</Label>
+            <InputField />
             <Label>Country</Label>
             <CountryPickerWrapper>
               <Emoji>{this.state.selectedCountryFlag}</Emoji>
@@ -86,7 +93,7 @@ class Signin extends React.Component<Props, State> {
           </LoginForm>
         </Wrapper>
         <Footer>
-          <Button block onPress={this.loginAction} title="Next" marginBottom="20px" />
+          <Button block onPress={this.loginAction} title="Next" marginBottom="10px" />
           <Center>
             <FooterText>
               By signing into Pillar Wallet you are agreeing to our <HyperLink url="http://pillarproject.io/">Terms</HyperLink> and <HyperLink url="http://pillarproject.io/">Privacy policy</HyperLink>
@@ -98,4 +105,4 @@ class Signin extends React.Component<Props, State> {
   }
 }
 
-export default Signin;
+export default Signup;

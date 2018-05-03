@@ -14,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
 import SigninScreen from 'screens/Signin';
+import SignupScreen from 'screens/Signup';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -25,6 +26,7 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import OTPScreen from 'screens/OTP';
+import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
 
 // components
@@ -41,6 +43,7 @@ import {
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
   SIGN_IN,
+  SIGN_UP,
   LEGAL_TERMS,
   ICO,
   IMPORT_WALLET,
@@ -49,6 +52,7 @@ import {
   ONBOARDING_HOME,
   WELCOME,
   OTP,
+  OTP_STATUS,
   PROFILE,
 } from 'constants/navigationConstants';
 
@@ -91,7 +95,8 @@ const signupFlow = StackNavigator({
   [WELCOME]: WelcomeScreen,
   [SIGN_IN]: SigninScreen,
   [OTP]: OTPScreen,
-  // [SIGNUP]: SignupScreen
+  [SIGN_UP]: SignupScreen,
+  [OTP_STATUS]: OTPStatusScreen,
 }, StackNavigatorConfig);
 
 const authFlow = StackNavigator({
