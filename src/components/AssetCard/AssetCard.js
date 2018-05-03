@@ -77,7 +77,7 @@ export default class AssetCard extends React.Component<Props, State> {
   };
 
   onLayout = (e: any) => {
-    console.log('on layout');
+    console.log(e.nativeEvent);
     this.setState({
       yPosition: e.nativeEvent.layout.y,
     });
@@ -102,8 +102,8 @@ export default class AssetCard extends React.Component<Props, State> {
     const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
 
     return (
-      <View onLayout={this.onLayout} >
-        <TouchableWithoutFeedback onPress={this.handleCardTap}>
+      <View>
+        <TouchableWithoutFeedback onPress={this.handleCardTap} onLayout={this.onLayout} >
           <Animated.View
             color={linearGradientColorStart}
             style={[{

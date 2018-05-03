@@ -1,16 +1,11 @@
 // @flow
 import * as React from 'react';
-import {
-  Animated,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import AssetButtons from 'components/AssetButtons';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import { BCX_URL } from 'react-native-dotenv';
@@ -18,8 +13,7 @@ import { BCX_URL } from 'react-native-dotenv';
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
-const imageSend = require('assets/images/btn_iconSend.png');
-const imageReceive = require('assets/images/btn_iconReceive.png');
+
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
 
@@ -119,7 +113,6 @@ class Assets extends React.Component<Props, State> {
   };
 
   handleCardTap = (id: string, startingPosition: number) => {
-    alert(id);
     this.setState({
       isCardActive: !this.state.isCardActive,
       activeCard: id,
@@ -147,17 +140,14 @@ class Assets extends React.Component<Props, State> {
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: id };
         const cardShouldShow = () => {
-          if (!isCardActive) {
-            return true;
+          if (isCardActive && activeCard !== id) {
+            return false;
           }
-          if (isCardActive && activeCard === id) {
-            return true;
-          }
-          return false;
+          return true;
         };
 
         return (
-          cardShouldShow &&
+          cardShouldShow() &&
           <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
             <AssetCard
               name={name || id}
@@ -168,23 +158,14 @@ class Assets extends React.Component<Props, State> {
               tag={id}
               history={assetHistory}
               address={wallet.address}
+              style={cardShouldShow ? { height: '20px' } : { height: '10px' }}
             >
-              <View>
-                <TouchableOpacity
-                  onPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
-                >
-                  <Image style={{ width: 50, height: 50 }} source={imageReceive} />
-                </TouchableOpacity>
-                <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Receive</Text>
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
-                >
-                  <Image style={{ width: 50, height: 50 }} source={imageSend} />
-                </TouchableOpacity>
-                <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Send</Text>
-              </View>
+
+              <AssetButtons
+                recieveOnPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
+                sendOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
+              />
+
             </AssetCard>
           </Animated.View>
 
