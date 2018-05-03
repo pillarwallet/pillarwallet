@@ -31,6 +31,7 @@ type Props = {
 
 type State = {
   isActive: boolean,
+  yPosition: number,
   animCardHeight: number,
   animCardWidth: any,
   animCardContentFade: any
@@ -41,6 +42,7 @@ const iconETH = require('assets/tokens/ETH/icon-ETH.png');
 export default class AssetCard extends React.Component<Props, State> {
   state = {
     isActive: false,
+    yPosition: 0,
     animCardHeight: new Animated.Value(120),
     animCardWidth: new Animated.Value(30),
     animCardContentFade: new Animated.Value(0),
@@ -48,11 +50,12 @@ export default class AssetCard extends React.Component<Props, State> {
 
   handleCardTap = () => {
     const { onTap, tag } = this.props;
+
     this.setState({
       isActive: !this.state.isActive,
     }, () => {
       this.animateCardActiveState(this.state.isActive);
-      onTap(tag);
+      onTap(tag, this.state.yPosition);
     });
   };
 
@@ -71,6 +74,13 @@ export default class AssetCard extends React.Component<Props, State> {
         toValue: cardContentFadeValue,
       }),
     ]).start();
+  };
+
+  onLayout = (e: any) => {
+    console.log('on layout');
+    this.setState({
+      yPosition: e.nativeEvent.layout.y,
+    });
   };
 
   render() {
@@ -92,7 +102,7 @@ export default class AssetCard extends React.Component<Props, State> {
     const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
 
     return (
-      <View>
+      <View onLayout={this.onLayout} >
         <TouchableWithoutFeedback onPress={this.handleCardTap}>
           <Animated.View
             color={linearGradientColorStart}

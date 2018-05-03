@@ -43,6 +43,7 @@ type State = {
   animCardPositionY: any,
   animTotalPortfolioFade: any,
   isCardActive: boolean,
+  activeCard: string,
   history: Transaction[],
   activeModal: {
     type: string | null,
@@ -61,6 +62,7 @@ class Assets extends React.Component<Props, State> {
     animCardPositionY: new Animated.Value(30),
     animTotalPortfolioFade: new Animated.Value(1),
     isCardActive: false,
+    activeCard: '',
     activeModal: activeModalResetState,
     history: [],
   };
@@ -99,9 +101,9 @@ class Assets extends React.Component<Props, State> {
       });
   }
 
-  animateCardPositionAndHeader = (isActive: boolean) => {
+  animateCardPositionAndHeader = (isActive: boolean, startingPosition: number) => {
     const headerHeightValue = isActive ? 120 : 180;
-    const cardPositionYValue = isActive ? -60 : 30;
+    const cardPositionYValue = isActive ? startingPosition - 90 : startingPosition;
     const totalPortfolioFadeValue = isActive ? 0 : 1;
     Animated.parallel([
       Animated.spring(this.state.animHeaderHeight, {
@@ -116,17 +118,21 @@ class Assets extends React.Component<Props, State> {
     ]).start();
   };
 
-  handleCardTap = () => {
+  handleCardTap = (id: string, startingPosition: number) => {
+    alert(id);
     this.setState({
       isCardActive: !this.state.isCardActive,
+      activeCard: id,
     }, () => {
-      this.animateCardPositionAndHeader(this.state.isCardActive);
+      this.animateCardPositionAndHeader(this.state.isCardActive, startingPosition);
     });
   };
 
   renderAssets() {
     const { wallet: { data: wallet }, assets: { data: assets } } = this.props;
-    const { history, animCardPositionY } = this.state;
+    const {
+      history, animCardPositionY, isCardActive, activeCard,
+    } = this.state;
     return Object.keys(assets)
       .map(id => assets[id])
       .map(asset => {
@@ -140,7 +146,18 @@ class Assets extends React.Component<Props, State> {
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: id };
+        const cardShouldShow = () => {
+          if (!isCardActive) {
+            return true;
+          }
+          if (isCardActive && activeCard === id) {
+            return true;
+          }
+          return false;
+        };
+
         return (
+          cardShouldShow &&
           <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
             <AssetCard
               name={name || id}
@@ -170,6 +187,7 @@ class Assets extends React.Component<Props, State> {
               </View>
             </AssetCard>
           </Animated.View>
+
         );
       });
   }
