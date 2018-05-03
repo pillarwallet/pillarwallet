@@ -46,7 +46,7 @@ export default class AssetCard extends React.Component<Props, State> {
     animCardContentFade: new Animated.Value(0),
   };
 
-  onCardTap = () => {
+  handleCardTap = () => {
     const { onTap, tag } = this.props;
     this.setState({
       isActive: !this.state.isActive,
@@ -93,7 +93,7 @@ export default class AssetCard extends React.Component<Props, State> {
 
     return (
       <View>
-        <TouchableWithoutFeedback onPress={this.onCardTap}>
+        <TouchableWithoutFeedback onPress={this.handleCardTap}>
           <Animated.View
             color={linearGradientColorStart}
             style={[{

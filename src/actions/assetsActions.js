@@ -6,6 +6,7 @@ import {
   FETCHING,
   FETCHED,
   ETH,
+  PLR,
 } from 'constants/assetsConstants';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { TransactionPayload } from 'models/Transaction';
@@ -61,6 +62,10 @@ export const fetchEtherBalanceAction = () => {
     dispatch({
       type: UPDATE_ASSET,
       payload: { id: ETH, balance },
+    });
+    dispatch({
+      type: UPDATE_ASSET,
+      payload: { id: PLR, balance: 0 },
     });
     dispatch({
       type: UPDATE_ASSETS_STATE,
