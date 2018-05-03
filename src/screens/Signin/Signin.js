@@ -2,13 +2,17 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { OTP } from 'constants/navigationConstants';
-import styled from 'styled-components/native';
 import { Container, Footer, Center } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Button from 'components/Button';
+import Emoji from 'components/Emoji';
 import HyperLink from 'components/HyperLink';
 import { Title, Body, Label } from 'components/Typography';
-import { Form, Picker, Icon, Input } from 'native-base';
+import FooterText from 'components/FooterText';
+import { CountryPicker, CountryPickerWrapper } from 'components/CountryPicker';
+import { Picker, Icon } from 'native-base';
+import { LoginForm, PhoneInput } from 'components/Form';
+
 import countries from 'utils/countries.json';
 
 type Props = {
@@ -20,41 +24,6 @@ type State = {
   selectedCountryFlag: string,
   selectedCountryCallingCode: string,
 }
-
-const LoginForm = styled(Form)`
-  margin: 20px 0 40px;
-`;
-
-const PhoneInput = styled(Input)`
-  border-bottom-width: 1px;
-  border-color: rgb(151,151,151);
-  font-size: 24px;
-`;
-
-const Emoji = styled.Text`
-  flex: 0 0 40px;
-  font-size: 36px;
-  line-height: 50px;
-`;
-
-const CountryPicker = styled(Picker)`
-  flex: 1;
-  align-self: flex-end;
-`;
-
-const CountryPickerWrapper = styled.View`
-  width: 100%;
-  margin-bottom: 20px;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom-width: 1px;
-  border-color: rgb(151,151,151);
-`;
-
-const FooterText = styled(Label)`
-  text-align: center;
-  max-width: 300px;
-`;
 
 class Signin extends React.Component<Props, State> {
   state = {
