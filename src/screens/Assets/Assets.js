@@ -91,7 +91,7 @@ class Assets extends React.Component<Props, State> {
       .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
       .then((txHistory) => {
         this.setState({
-          history: txHistory.slice(0, 10),
+          history: txHistory.slice(0, 10), // show 10 latest transactions only
         });
       })
       .catch(() => {
