@@ -77,7 +77,6 @@ export default class AssetCard extends React.Component<Props, State> {
   };
 
   onLayout = (e: any) => {
-    console.log(e.nativeEvent);
     this.setState({
       yPosition: e.nativeEvent.layout.y,
     });
@@ -89,6 +88,7 @@ export default class AssetCard extends React.Component<Props, State> {
       animCardWidth,
       animCardContentFade,
       isActive,
+      yPosition,
     } = this.state;
     const {
       color: linearGradientColorStart,
@@ -102,19 +102,21 @@ export default class AssetCard extends React.Component<Props, State> {
     const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
 
     return (
-      <View>
-        <TouchableWithoutFeedback onPress={this.handleCardTap} onLayout={this.onLayout} >
+      <View onLayout={this.onLayout}>
+        <TouchableWithoutFeedback onPress={this.handleCardTap}>
           <Animated.View
             color={linearGradientColorStart}
             style={[{
               height: animCardHeight,
               marginLeft: animCardWidth,
               marginRight: animCardWidth,
+              marginBottom: 20,
             }]}
           >
             <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
               <DetailsWrapper>
                 <Name>{name}</Name>
+                <Name>{yPosition}</Name>
                 <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
               </DetailsWrapper>
               <IconWrapper>
