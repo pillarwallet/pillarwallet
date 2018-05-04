@@ -100,12 +100,16 @@ export default class SlideModal extends React.Component<Props, State> {
       isVisible,
     } = this.state;
     const { children, title, fullScreenComponent } = this.props;
+    const animationTiming = 500;
 
     return (
       <Modal
         isVisible={isVisible}
-        swipeDirection="down"
         onSwipe={this.hideModal}
+        onBackdropPress={this.hideModal}
+        swipeDirection="down"
+        animationInTiming={animationTiming}
+        animationOutTiming={animationTiming}
       >
         <ModalWrapper>
           <ModalBackground style={{
