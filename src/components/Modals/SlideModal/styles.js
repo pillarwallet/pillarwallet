@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    top: 0,
+    bottom: 0,
     justifyContent: 'flex-start',
     alignItems: 'stretch',
   },
@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
   contentWrapper: {
     flex: 1,
     height: window.height,
+    paddingBottom: 180,
     alignItems: 'center',
     justifyContent: 'space-around',
   },
