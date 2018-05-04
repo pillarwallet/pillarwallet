@@ -11,7 +11,6 @@ type Props = {
   token: string,
   tokenName: string,
   isVisible: boolean,
-  onDismiss: Function,
 }
 
 const Container = styled.View`
@@ -38,11 +37,11 @@ export default class ReceiveModal extends React.Component<Props> {
 
   render() {
     const {
-      address, isVisible, onDismiss, token, tokenName,
+      address, isVisible, token, tokenName,
     } = this.props;
 
     return (
-      <SlideModal title="receive." isVisible={isVisible} onDismiss={onDismiss}>
+      <SlideModal title="receive." isVisible={isVisible}>
         <Container flex={4}>
           <QRCode value={address} blockHeight={5} />
           <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray' }}>

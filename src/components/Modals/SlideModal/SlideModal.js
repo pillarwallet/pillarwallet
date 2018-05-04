@@ -7,7 +7,6 @@ import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
   title: string,
-  onDismiss: Function,
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
   isVisible: boolean,

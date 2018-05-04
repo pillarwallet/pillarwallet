@@ -209,12 +209,10 @@ class Assets extends React.Component<Props, State> {
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
           {...opts}
-          onDismiss={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
         <SendModal
           isVisible={activeModalType === 'SEND'}
           {...opts}
-          onDismiss={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
       </Container>
     );
