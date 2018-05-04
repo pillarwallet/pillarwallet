@@ -129,24 +129,24 @@ const generateFormOptions = (config: Object): Object => ({
 });
 
 const Container = styled.View`
-  justifyContent: flex-start;
-  paddingTop: 20px;
+  justify-content: flex-start;
+  padding-top: 20px;
   flex: 1;
-  alignSelf: stretch;
+  align-self: stretch;
 `;
 
 const ActionsWrapper = styled.View`
   flex: 1;
-  flexDirection: row;
-  justifyContent: space-between;
-  alignItems: flex-start;
-  marginTop: 15px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 15px;
   padding: 5px;
 `;
 
 const SendButton = styled.Text`
-  fontSize: 18;
-  fontWeight: bold;
+  font-size: 18;
+  font-weight: bold;
   color: ${props => props.disabled ? 'gray' : 'rgb(32, 119, 253)'};
 `;
 
@@ -155,12 +155,12 @@ class SendModal extends React.Component<Props, State> {
 
   handleDismissal: Function;
 
-  handleDismissal = () => {}
+  handleDismissal = () => {};
 
   state = {
     isScanning: false,
     value: null,
-  }
+  };
 
   handleChange = (value: Object) => {
     this.setState({ value });
@@ -192,7 +192,7 @@ class SendModal extends React.Component<Props, State> {
   // HOC DRILL PATTERN
   handleCallbackRegistration = (cb: Function) => {
     this.handleDismissal = cb;
-  }
+  };
 
   handleQRRead = (address: string) => {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });

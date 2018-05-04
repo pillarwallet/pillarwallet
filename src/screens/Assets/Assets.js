@@ -1,25 +1,18 @@
 // @flow
 import * as React from 'react';
-import {
-  Animated,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
+import { Animated } from 'react-native';
 import { connect } from 'react-redux';
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import AssetButtons from 'components/AssetButtons';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import { BCX_URL } from 'react-native-dotenv';
-
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
-const imageSend = require('assets/images/btn_iconSend.png');
-const imageReceive = require('assets/images/btn_iconReceive.png');
+
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
 
@@ -39,10 +32,10 @@ const activeModalResetState = {
 };
 
 type State = {
-  animHeaderHeight: any,
-  animCardPositionY: any,
-  animTotalPortfolioFade: any,
+  animHeaderHeight: Animated.Value,
+  animHeaderTextOpacity: Animated.Value,
   isCardActive: boolean,
+  activeCard: string,
   history: Transaction[],
   activeModal: {
     type: string | null,
@@ -57,13 +50,15 @@ type State = {
 
 class Assets extends React.Component<Props, State> {
   state = {
-    animHeaderHeight: new Animated.Value(180),
-    animCardPositionY: new Animated.Value(30),
-    animTotalPortfolioFade: new Animated.Value(1),
+    animHeaderHeight: new Animated.Value(150),
+    animHeaderTextOpacity: new Animated.Value(1),
     isCardActive: false,
+    activeCard: '',
     activeModal: activeModalResetState,
     history: [],
   };
+
+  activeCardPositionY: number = 0;
 
   componentDidMount() {
     const { fetchEtherBalance } = this.props;
@@ -99,37 +94,39 @@ class Assets extends React.Component<Props, State> {
       });
   }
 
-  animateCardPositionAndHeader = (isActive: boolean) => {
-    const headerHeightValue = isActive ? 120 : 180;
-    const cardPositionYValue = isActive ? -60 : 30;
-    const totalPortfolioFadeValue = isActive ? 0 : 1;
+  animateHeaderHeight = () => {
+    const headerHeightValue = this.state.isCardActive ? 120 : 150;
+    const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
+
     Animated.parallel([
       Animated.spring(this.state.animHeaderHeight, {
         toValue: headerHeightValue,
       }),
-      Animated.spring(this.state.animCardPositionY, {
-        toValue: cardPositionYValue,
-      }),
-      Animated.spring(this.state.animTotalPortfolioFade, {
-        toValue: totalPortfolioFadeValue,
+      Animated.spring(this.state.animHeaderTextOpacity, {
+        toValue: headerTextOpacityValue,
       }),
     ]).start();
   };
 
-  handleCardTap = () => {
+  handleCardTap = (id: string) => {
     this.setState({
       isCardActive: !this.state.isCardActive,
+      activeCard: id,
     }, () => {
-      this.animateCardPositionAndHeader(this.state.isCardActive);
+      this.animateHeaderHeight();
     });
   };
 
   renderAssets() {
     const { wallet: { data: wallet }, assets: { data: assets } } = this.props;
-    const { history, animCardPositionY } = this.state;
+    const {
+      history,
+      activeCard,
+      isCardActive,
+    } = this.state;
     return Object.keys(assets)
       .map(id => assets[id])
-      .map(asset => {
+      .map((asset, index) => {
         const {
           id,
           balance,
@@ -140,60 +137,74 @@ class Assets extends React.Component<Props, State> {
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: id };
+
+        const defaultCardPositionTop = () => {
+          return (index * 140) + 30;
+        };
+
         return (
-          <Animated.View key={id} style={{ marginTop: animCardPositionY }}>
-            <AssetCard
-              name={name || id}
-              token={id}
-              amount={displayAmount}
-              color={color}
-              onTap={this.handleCardTap}
-              tag={id}
-              history={assetHistory}
-              address={wallet.address}
-            >
-              <View>
-                <TouchableOpacity
-                  onPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
-                >
-                  <Image style={{ width: 50, height: 50 }} source={imageReceive} />
-                </TouchableOpacity>
-                <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Receive</Text>
-              </View>
-              <View>
-                <TouchableOpacity
-                  onPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
-                >
-                  <Image style={{ width: 50, height: 50 }} source={imageSend} />
-                </TouchableOpacity>
-                <Text style={{ color: '#2077FD', textAlign: 'center', marginTop: 10 }}>Send</Text>
-              </View>
-            </AssetCard>
-          </Animated.View>
+          <AssetCard
+            key={index}
+            id={id}
+            isCardActive={isCardActive}
+            activeCardId={activeCard}
+            name={name || id}
+            token={id}
+            amount={displayAmount}
+            color={color}
+            onTap={this.handleCardTap}
+            defaultPositionY={defaultCardPositionTop()}
+            history={assetHistory}
+            address={wallet.address}
+          >
+
+            <AssetButtons
+              recieveOnPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
+              sendOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
+            />
+
+          </AssetCard>
+
         );
       });
   }
 
   render() {
     const {
-      animHeaderHeight,
-      animTotalPortfolioFade,
       activeModal: { type: activeModalType, opts },
+      animHeaderHeight,
+      animHeaderTextOpacity,
     } = this.state;
     return (
       <Container>
-        <Wrapper>
+        <Wrapper
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: '100%',
+          }}
+        >
           <Animated.View
             style={{
-              backgroundColor: '#2CB3F8',
+              backgroundColor: '#00a5ff',
               height: animHeaderHeight,
               justifyContent: 'center',
               alignItems: 'center',
             }}
           >
-            <Animated.Text style={{ opacity: animTotalPortfolioFade }}>$10.02 Total Portfolio</Animated.Text>
+            <Animated.Text
+              style={{
+                opacity: animHeaderTextOpacity,
+                color: 'white',
+                fontSize: 32,
+              }}
+            >
+              £1023.45
+            </Animated.Text>
           </Animated.View>
+
           {this.renderAssets()}
+
         </Wrapper>
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}

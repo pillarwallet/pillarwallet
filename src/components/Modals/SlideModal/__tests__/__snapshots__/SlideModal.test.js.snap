@@ -5,10 +5,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
   style={
     Object {
       "alignItems": "stretch",
+      "bottom": 0,
       "height": "100%",
       "justifyContent": "flex-start",
       "position": "absolute",
-      "top": 0,
       "width": "100%",
     }
   }
@@ -185,6 +185,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "flex": 1,
                 "height": 1334,
                 "justifyContent": "space-around",
+                "paddingBottom": 180,
               }
             }
           />

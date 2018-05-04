@@ -18,13 +18,13 @@ type Props = {
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
   modalDismissalCallback: Function,
-  isVisible: boolean
+  isVisible: boolean,
 };
 
 type State = {
   animFadeInBackground: any,
   animSlideModalVertical: any,
-  isVisible: boolean
+  isVisible: boolean,
 };
 
 const window = Dimensions.get('window');
@@ -35,6 +35,15 @@ export default class SlideModal extends React.Component<Props, State> {
     onDismiss: noop,
     modalDismissalCallback: noop,
     fullScreenComponent: null,
+  };
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      animFadeInBackground: new Animated.Value(0),
+      animSlideModalVertical: new Animated.Value(window.height),
+      isVisible: props.isVisible,
+    };
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -47,15 +56,6 @@ export default class SlideModal extends React.Component<Props, State> {
       };
     }
     return null;
-  }
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      animFadeInBackground: new Animated.Value(0),
-      animSlideModalVertical: new Animated.Value(window.height),
-      isVisible: props.isVisible,
-    };
   }
 
   componentDidMount() {
@@ -87,7 +87,7 @@ export default class SlideModal extends React.Component<Props, State> {
     if (distanceY <= offsetY) {
       this.handleAnimationDismiss();
     }
-  }
+  };
 
   handleAnimationDismiss = () => {
     const { onDismiss } = this.props;
@@ -106,7 +106,6 @@ export default class SlideModal extends React.Component<Props, State> {
     });
   };
 
-
   render() {
     const {
       animFadeInBackground,
@@ -114,7 +113,9 @@ export default class SlideModal extends React.Component<Props, State> {
       isVisible,
     } = this.state;
     const { children, title, fullScreenComponent } = this.props;
+
     if (!isVisible) return null;
+
     return (
       <View style={styles.modalContainer}>
         <Animated.View style={[styles.dismissOverlay, { opacity: animFadeInBackground }]} />
@@ -125,8 +126,11 @@ export default class SlideModal extends React.Component<Props, State> {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollContentStyle}
           >
-            <Animated.View style={[styles.sliderContainer,
-            { marginTop: animSlideModalVertical, height: (window.height * 2) - modalOffset }]}
+            <Animated.View style={
+              [
+                styles.sliderContainer,
+                { marginTop: animSlideModalVertical, height: (window.height * 2) - modalOffset },
+              ]}
             >
               <View style={styles.sliderHeaderContainer}>
                 <Text style={styles.sliderHeader}>{title}</Text>

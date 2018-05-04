@@ -18,12 +18,15 @@ import AmountToken from './AmountToken';
 import Content from './Content';
 
 type Props = {
+  id: string,
+  activeCardId: string,
+  isCardActive: boolean,
   name: string,
   token: string,
   amount: number,
   color: string,
   onTap: Function,
-  tag: string,
+  defaultPositionY: number,
   address: string,
   history: Transaction[],
   children?: React.Node
@@ -31,9 +34,10 @@ type Props = {
 
 type State = {
   isActive: boolean,
-  animCardHeight: number,
-  animCardWidth: any,
-  animCardContentFade: any
+  animCardPosition: Animated.Value,
+  animCardHeight: Animated.Value,
+  animCardWidth: Animated.Value,
+  animCardContentFade: Animated.Value,
 }
 
 const iconETH = require('assets/tokens/ETH/icon-ETH.png');
@@ -44,23 +48,38 @@ export default class AssetCard extends React.Component<Props, State> {
     animCardHeight: new Animated.Value(120),
     animCardWidth: new Animated.Value(30),
     animCardContentFade: new Animated.Value(0),
+    animCardPosition: new Animated.Value(this.props.defaultPositionY),
   };
 
-  onCardTap = () => {
-    const { onTap, tag } = this.props;
-    this.setState({
-      isActive: !this.state.isActive,
-    }, () => {
-      this.animateCardActiveState(this.state.isActive);
-      onTap(tag);
-    });
+  handleCardTap = () => {
+    const {
+      onTap,
+      defaultPositionY,
+      id,
+      activeCardId,
+      isCardActive,
+    } = this.props;
+
+    if (!isCardActive || id === activeCardId) {
+      this.setState({
+        isActive: !this.state.isActive,
+      }, () => {
+        this.animateCardActiveState(this.state.isActive);
+        onTap(id, defaultPositionY);
+      });
+    }
   };
 
   animateCardActiveState = (isActive: boolean) => {
     const cardHeightValue = isActive ? 140 : 120;
     const cardWidthValue = isActive ? 20 : 30;
     const cardContentFadeValue = isActive ? 1 : 0;
+    const cardPositionValue = isActive ? -60 : this.props.defaultPositionY;
+
     Animated.parallel([
+      Animated.spring(this.state.animCardPosition, {
+        toValue: cardPositionValue,
+      }),
       Animated.spring(this.state.animCardHeight, {
         toValue: cardHeightValue,
       }),
@@ -78,6 +97,7 @@ export default class AssetCard extends React.Component<Props, State> {
       animCardHeight,
       animCardWidth,
       animCardContentFade,
+      animCardPosition,
       isActive,
     } = this.state;
     const {
@@ -93,14 +113,29 @@ export default class AssetCard extends React.Component<Props, State> {
 
     return (
       <View>
-        <TouchableWithoutFeedback onPress={this.onCardTap}>
+        <TouchableWithoutFeedback
+          onPress={this.handleCardTap}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 10,
+          }}
+        >
           <Animated.View
             color={linearGradientColorStart}
             style={[{
-              height: animCardHeight,
-              marginLeft: animCardWidth,
-              marginRight: animCardWidth,
-            }]}
+            height: animCardHeight,
+            marginLeft: animCardWidth,
+            marginRight: animCardWidth,
+            marginBottom: 20,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: animCardPosition,
+          }]}
           >
             <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
               <DetailsWrapper>
@@ -113,8 +148,16 @@ export default class AssetCard extends React.Component<Props, State> {
             </Background>
           </Animated.View>
         </TouchableWithoutFeedback>
+
         {isActive && (
-          <Animated.View style={{ height: '100%', opacity: animCardContentFade, backgroundColor: '#FFFFFF' }}>
+          <Animated.View
+            style={{
+              height: '100%',
+              opacity: animCardContentFade,
+              backgroundColor: '#FFFFFF',
+              zIndex: -10,
+            }}
+          >
             <Content>{children}</Content>
             <TXHistory
               address={address}
