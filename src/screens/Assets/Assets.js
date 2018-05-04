@@ -33,6 +33,7 @@ const activeModalResetState = {
 };
 
 type State = {
+  animHeaderHeight: Animated.Value,
   isCardActive: boolean,
   activeCard: string,
   history: Transaction[],
@@ -49,6 +50,7 @@ type State = {
 
 class Assets extends React.Component<Props, State> {
   state = {
+    animHeaderHeight: new Animated.Value(150),
     isCardActive: false,
     activeCard: '',
     activeModal: activeModalResetState,
@@ -91,12 +93,23 @@ class Assets extends React.Component<Props, State> {
       });
   }
 
+  animateHeaderHeight = () => {
+    const headerHeightValue = this.state.isCardActive ? 120 : 150;
+
+    Animated.parallel([
+      Animated.spring(this.state.animHeaderHeight, {
+        toValue: headerHeightValue,
+      }),
+    ]).start();
+  };
+
   handleCardTap = (id: string) => {
     this.setState({
       isCardActive: !this.state.isCardActive,
       activeCard: id,
     }, () => {
       // Animations should happen here
+      this.animateHeaderHeight();
     });
   };
 
@@ -104,8 +117,8 @@ class Assets extends React.Component<Props, State> {
     const { wallet: { data: wallet }, assets: { data: assets } } = this.props;
     const {
       history,
-      isCardActive,
       activeCard,
+      isCardActive,
     } = this.state;
     return Object.keys(assets)
       .map(id => assets[id])
@@ -128,36 +141,26 @@ class Assets extends React.Component<Props, State> {
         //   return true;
         // };
 
-        const thisCardIsActive = () => {
-          if (isCardActive && activeCard === id) {
-            return true;
-          }
-          return false;
-        };
-
         const defaultCardPositionTop = () => {
-          return index * 140;
+          return (index * 140) + 30;
         };
 
         return (
           // cardShouldShow() &&
           <Animated.View
             key={id}
-            style={{
-              position: 'absolute',
-              top: defaultCardPositionTop(),
-              left: 0,
-              width: '100%',
-              backgroundColor: thisCardIsActive() ? 'green' : 'red',
-            }}
           >
             <AssetCard
+              index={index}
+              id={id}
+              isCardActive={isCardActive}
+              activeCardId={activeCard}
               name={name || id}
               token={id}
               amount={displayAmount}
               color={color}
               onTap={this.handleCardTap}
-              tag={id}
+              defaultPositionY={defaultCardPositionTop()}
               history={assetHistory}
               address={wallet.address}
             >
@@ -177,6 +180,7 @@ class Assets extends React.Component<Props, State> {
   render() {
     const {
       activeModal: { type: activeModalType, opts },
+      animHeaderHeight,
     } = this.state;
     return (
       <Container>
@@ -185,20 +189,23 @@ class Assets extends React.Component<Props, State> {
             position: 'relative',
             width: '100%',
             height: '100%',
-            backgroundColor: 'blue',
           }}
         >
           <Animated.View
             style={{
               backgroundColor: '#2CB3F8',
-              height: 150,
+              height: animHeaderHeight,
               justifyContent: 'center',
               alignItems: 'center',
             }}
           >
             <Animated.Text style={{ opacity: 1 }}>$10.02 Total Portfolio</Animated.Text>
           </Animated.View>
-          <Animated.View>
+          <Animated.View
+            style={{
+              position: 'relative',
+            }}
+          >
             {this.renderAssets()}
           </Animated.View>
         </Wrapper>
