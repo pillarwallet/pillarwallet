@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import { Animated, Dimensions } from 'react-native';
-import type { ScrollEvent } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon';
@@ -17,8 +16,7 @@ type Props = {
 };
 
 type State = {
-  animFadeInBackground: any,
-  animSlideModalVertical: any,
+  animSlideModalVertical: Animated.Value,
   isVisible: boolean,
 };
 
@@ -29,37 +27,37 @@ const ModalWrapper = styled.View`
   position: absolute;
   width: 100%;
   height: 60%;
-  alignItems: stretch;
+  align-items: stretch;
 `;
 
 const ModalBackground = styled.View`
-  backgroundColor: white;
+  background-color: white;
   padding: 20px;
-  borderTopLeftRadius: 20;
-  borderTopRightRadius: 20;
+  border-top-left-radius: 20;
+  border-top-right-radius: 20;
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
 `;
 
 const ModalHeader = styled.View`
-  flexDirection: row;
+  flex-direction: row;
   height: 30;
   width: 100%;
-  alignItems: center;
-  justifyContent: space-between;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 const ModalContent = styled.View`
   flex: 1;
   height: ${window.height};
-  alignItems: center;
-  justifyContent: space-around;
+  align-items: center;
+  justify-content: space-around;
 `;
 
 const ModalOverflow = styled.View`
   flex: 1;
   height: ${window.height};
   width: 100%;
-  backgroundColor: #FFFFFF;
+  background-color: #FFFFFF;
 `;
 
 const ModalTitle = styled.Text`
@@ -84,7 +82,6 @@ export default class SlideModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      animFadeInBackground: new Animated.Value(0),
       animSlideModalVertical: new Animated.Value(window.height),
       isVisible: props.isVisible,
     };
@@ -95,7 +92,6 @@ export default class SlideModal extends React.Component<Props, State> {
       return {
         ...prevState,
         isVisible: nextProps.isVisible,
-        animFadeInBackground: new Animated.Value(0),
         animSlideModalVertical: new Animated.Value(window.height),
       };
     }
@@ -115,30 +111,16 @@ export default class SlideModal extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (prevState.isVisible === this.state.isVisible) return;
     Animated.parallel([
-      Animated.timing(this.state.animFadeInBackground, {
-        toValue: 0.5,
-        duration: 200,
-      }),
       Animated.spring(this.state.animSlideModalVertical, {
         toValue: 0,
       }),
     ]).start();
   }
 
-  handleScroll = (event: ScrollEvent) => {
-    const distanceY = event.nativeEvent.contentOffset.y;
-    const offsetY = -50;
-    if (distanceY <= offsetY) {
-      this.handleAnimationDismiss();
-    }
-  };
 
   handleAnimationDismiss = () => {
     const { onDismiss } = this.props;
     Animated.parallel([
-      Animated.timing(this.state.animFadeInBackground, {
-        toValue: 0,
-      }),
       Animated.timing(this.state.animSlideModalVertical, {
         toValue: window.height,
         duration: 200,
@@ -152,7 +134,6 @@ export default class SlideModal extends React.Component<Props, State> {
 
   render() {
     const {
-      animFadeInBackground,
       animSlideModalVertical,
       isVisible,
     } = this.state;
@@ -161,10 +142,8 @@ export default class SlideModal extends React.Component<Props, State> {
     if (!isVisible) return null;
 
     return (
-      <Modal isVisible={isVisible} style={styles.modalContainer}>
-        <Animated.View style={[styles.dismissOverlay, { opacity: animFadeInBackground }]} />
+      <Modal isVisible={isVisible}>
         <ModalWrapper>
-
           <AnimatedModalBackground style={{
             marginTop: animSlideModalVertical,
             height: (window.height * 2) - modalOffset,
