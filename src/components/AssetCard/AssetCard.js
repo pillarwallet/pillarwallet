@@ -55,14 +55,30 @@ export default class AssetCard extends React.Component<Props, State> {
   };
 
   handleCardTap = () => {
-    const { onTap, defaultPositionY, id } = this.props;
+    const {
+      onTap,
+      defaultPositionY,
+      id,
+      activeCardId,
+      isCardActive,
+    } = this.props;
 
-    this.setState({
-      isActive: !this.state.isActive,
-    }, () => {
-      this.animateCardActiveState(this.state.isActive);
-      onTap(id, defaultPositionY);
-    });
+    let isActive = false;
+
+    if (!isCardActive) {
+      isActive = true;
+    } else if (id === activeCardId) {
+      isActive = false;
+    }
+
+    if (!(isCardActive && id !== activeCardId)) {
+      this.setState({
+        isActive,
+      }, () => {
+        this.animateCardActiveState(this.state.isActive);
+        onTap(id, defaultPositionY);
+      });
+    }
   };
 
   isThereAnActiveCard: boolean = (this.props.activeCardId === this.props.id);
@@ -175,12 +191,12 @@ export default class AssetCard extends React.Component<Props, State> {
               zIndex: -10,
             }}
           >
-            <Content>{children}</Content>
+            {/* <Content>{children}</Content>
             <TXHistory
               address={address}
               history={history}
               token={token}
-            />
+            /> */}
           </Animated.View>
         )}
       </View>

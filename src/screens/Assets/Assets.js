@@ -114,7 +114,6 @@ class Assets extends React.Component<Props, State> {
       isCardActive: !this.state.isCardActive,
       activeCard: id,
     }, () => {
-      // Animations should happen here
       this.animateHeaderHeight();
     });
   };
@@ -139,13 +138,6 @@ class Assets extends React.Component<Props, State> {
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: id };
-
-        // const cardShouldShow = () => {
-        //   if (isCardActive && activeCard !== id) {
-        //     return false;
-        //   }
-        //   return true;
-        // };
 
         const defaultCardPositionTop = () => {
           return (index * 140) + 30;
