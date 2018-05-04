@@ -22,7 +22,6 @@ type Props = {
   activeCardId: string,
   isCardActive: boolean,
   name: string,
-  index: number,
   token: string,
   amount: number,
   color: string,

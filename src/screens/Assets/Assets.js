@@ -144,32 +144,27 @@ class Assets extends React.Component<Props, State> {
         };
 
         return (
-          // cardShouldShow() &&
-          <Animated.View
-            key={id}
+          <AssetCard
+            key={index}
+            id={id}
+            isCardActive={isCardActive}
+            activeCardId={activeCard}
+            name={name || id}
+            token={id}
+            amount={displayAmount}
+            color={color}
+            onTap={this.handleCardTap}
+            defaultPositionY={defaultCardPositionTop()}
+            history={assetHistory}
+            address={wallet.address}
           >
-            <AssetCard
-              index={index}
-              id={id}
-              isCardActive={isCardActive}
-              activeCardId={activeCard}
-              name={name || id}
-              token={id}
-              amount={displayAmount}
-              color={color}
-              onTap={this.handleCardTap}
-              defaultPositionY={defaultCardPositionTop()}
-              history={assetHistory}
-              address={wallet.address}
-            >
 
-              <AssetButtons
-                recieveOnPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
-                sendOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
-              />
+            <AssetButtons
+              recieveOnPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
+              sendOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
+            />
 
-            </AssetCard>
-          </Animated.View>
+          </AssetCard>
 
         );
       });
@@ -202,19 +197,15 @@ class Assets extends React.Component<Props, State> {
               style={{
                 opacity: animHeaderTextOpacity,
                 color: 'white',
-                fontSize: '32px',
+                fontSize: 32,
               }}
             >
               £1023.45
             </Animated.Text>
           </Animated.View>
-          <Animated.View
-            style={{
-              position: 'relative',
-            }}
-          >
-            {this.renderAssets()}
-          </Animated.View>
+
+          {this.renderAssets()}
+
         </Wrapper>
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
