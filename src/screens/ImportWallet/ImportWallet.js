@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import {
@@ -18,6 +17,7 @@ import Wrapper from 'components/Wrapper';
 import { Title, Label } from 'components/Typography';
 import Button from 'components/Button';
 import Input from 'components/Input';
+import ErrorMessage from 'components/ErrorMessage';
 import InputGroup from 'components/InputGroup';
 
 type Props = {
@@ -70,6 +70,7 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <Container>
+        {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <Wrapper padding>
           <Title>Wallet import</Title>
           <InputGroup>
@@ -95,7 +96,7 @@ class ImportWallet extends React.Component<Props, State> {
           />
         </Footer>
 
-        {this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
+
       </Container>
     );
   }

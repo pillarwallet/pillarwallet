@@ -7,6 +7,7 @@ import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { Container, Center } from 'components/Layout';
 import { Title } from 'components/Typography';
+import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 
 type Props = {
@@ -48,7 +49,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
   render() {
     const { pinError } = this.state;
 
-    const showError = pinError ? <Text>{pinError}</Text> : null;
+    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     const { walletState } = this.props.wallet;
 
     if (walletState === DECRYPTING) {
@@ -68,6 +69,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     return (
       <Container>
+        {showError}
         <Center>
           <Title>Enter Passcode</Title>
         </Center>
@@ -75,7 +77,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""
         />
-        {showError}
       </Container>
     );
   }
