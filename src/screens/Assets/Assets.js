@@ -192,13 +192,21 @@ class Assets extends React.Component<Props, State> {
         >
           <Animated.View
             style={{
-              backgroundColor: '#2CB3F8',
+              backgroundColor: '#00a5ff',
               height: animHeaderHeight,
               justifyContent: 'center',
               alignItems: 'center',
             }}
           >
-            <Animated.Text style={{ opacity: animHeaderTextOpacity }}>$10.02 Total Portfolio</Animated.Text>
+            <Animated.Text
+              style={{
+                opacity: animHeaderTextOpacity,
+                color: 'white',
+                fontSize: '32px',
+              }}
+            >
+              £1023.45
+            </Animated.Text>
           </Animated.View>
           <Animated.View
             style={{
