@@ -1,22 +1,19 @@
 // @flow
 import * as React from 'react';
-import { Animated, Dimensions } from 'react-native';
+import { Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon';
-import { noop } from 'utils/common';
 
 type Props = {
   title: string,
   onDismiss: Function,
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
-  modalDismissalCallback: Function,
   isVisible: boolean,
 };
 
 type State = {
-  animSlideModalVertical: Animated.Value,
   isVisible: boolean,
 };
 
@@ -36,6 +33,7 @@ const ModalBackground = styled.View`
   border-top-left-radius: 20;
   border-top-right-radius: 20;
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
+  height: ${window.height} - modalOffset'
 `;
 
 const ModalHeader = styled.View`
@@ -70,19 +68,14 @@ const CloseButton = styled(ButtonIcon)`
   top: -10px;
 `;
 
-const AnimatedModalBackground = Animated.createAnimatedComponent(ModalBackground);
-
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
-    onDismiss: noop,
-    modalDismissalCallback: noop,
     fullScreenComponent: null,
   };
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      animSlideModalVertical: new Animated.Value(window.height),
       isVisible: props.isVisible,
     };
   }
@@ -92,29 +85,9 @@ export default class SlideModal extends React.Component<Props, State> {
       return {
         ...prevState,
         isVisible: nextProps.isVisible,
-        animSlideModalVertical: new Animated.Value(window.height),
       };
     }
     return null;
-  }
-
-  componentDidMount() {
-    const { modalDismissalCallback } = this.props;
-    modalDismissalCallback(this.handleAnimationDismiss);
-  }
-
-  componentWillUnmount() {
-    const { modalDismissalCallback } = this.props;
-    modalDismissalCallback(noop);
-  }
-
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    if (prevState.isVisible === this.state.isVisible) return;
-    Animated.parallel([
-      Animated.spring(this.state.animSlideModalVertical, {
-        toValue: 0,
-      }),
-    ]).start();
   }
 
   hideModal = () => {
@@ -125,7 +98,6 @@ export default class SlideModal extends React.Component<Props, State> {
 
   render() {
     const {
-      animSlideModalVertical,
       isVisible,
     } = this.state;
     const { children, title, fullScreenComponent } = this.props;
@@ -137,8 +109,7 @@ export default class SlideModal extends React.Component<Props, State> {
         onSwipe={this.hideModal}
       >
         <ModalWrapper>
-          <AnimatedModalBackground style={{
-            marginTop: animSlideModalVertical,
+          <ModalBackground style={{
             height: (window.height * 2) - modalOffset,
             }}
           >
@@ -154,7 +125,7 @@ export default class SlideModal extends React.Component<Props, State> {
               {children}
             </ModalContent>
             <ModalOverflow />
-          </AnimatedModalBackground>
+          </ModalBackground>
 s
         </ModalWrapper>
         {fullScreenComponent}
