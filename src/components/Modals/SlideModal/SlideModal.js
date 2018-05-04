@@ -106,7 +106,7 @@ export default class SlideModal extends React.Component<Props, State> {
       fullScreenComponent,
       onModalHide,
     } = this.props;
-    const animationTiming = 400;
+    const animationTiming = 800;
 
     return (
       <Modal
@@ -116,7 +116,12 @@ export default class SlideModal extends React.Component<Props, State> {
         swipeDirection="down"
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
+        animationIn="bounceInUp"
+        animationOut="bounceOutDown"
         onModalHide={onModalHide}
+        style={{
+          margin: 0,
+        }}
       >
         <ModalWrapper>
           <ModalBackground style={{
