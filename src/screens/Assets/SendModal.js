@@ -129,10 +129,10 @@ const generateFormOptions = (config: Object): Object => ({
 });
 
 const Container = styled.View`
-  justifyContent: flex-start;
-  paddingTop: 20px;
+  justify-content: flex-start;
+  padding-top: 20px;
   flex: 1;
-  alignSelf: stretch;
+  align-self: stretch;
 `;
 
 const ActionsWrapper = styled.View`

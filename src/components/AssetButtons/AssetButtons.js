@@ -34,7 +34,6 @@ const AssetButtonText = styled.Text`
 
 const AssetButtons = (props: Props) => {
   return (
-
     <AssetButtonsWrapper>
       <AssetButton onPress={props.sendOnPress}>
         <AssetButtonImage source={imageReceive} />
