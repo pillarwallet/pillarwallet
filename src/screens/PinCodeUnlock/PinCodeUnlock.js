@@ -1,8 +1,11 @@
 // @flow
 import * as React from 'react';
+
 import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
+import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
+import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { decryptWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
 import { Container, Center } from 'components/Layout';
@@ -12,7 +15,8 @@ import PinCode from 'components/PinCode';
 
 type Props = {
   decryptWallet: (pin: string) => Function,
-  wallet: Object
+  wallet: Object,
+  navigation: NavigationScreenProp<*>,
 }
 
 type State = {
@@ -46,6 +50,10 @@ class PinCodeUnlock extends React.Component<Props, State> {
     decryptWallet(pin);
   };
 
+  handleForgotPasscode = () => {
+    this.props.navigation.navigate(ONBOARDING_FLOW);
+  }
+
   render() {
     const { pinError } = this.state;
 
@@ -76,6 +84,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""
+          onForgotPin={this.handleForgotPasscode}
         />
       </Container>
     );
