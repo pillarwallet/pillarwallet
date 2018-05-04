@@ -12,13 +12,13 @@ import {
   IMPORT_ERROR,
 } from 'constants/walletConstants';
 
-import { Container, Footer } from 'components/Layout';
+import { Center, Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import { Title, Label } from 'components/Typography';
+import { Body, Title, Label } from 'components/Typography';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import ErrorMessage from 'components/ErrorMessage';
-import InputGroup from 'components/InputGroup';
+import HelpTextDivider from 'components/HelpTextDivider';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -59,9 +59,7 @@ class ImportWallet extends React.Component<Props, State> {
     } else if (this.state.tWordsPhrase) {
       importWalletFromTWordsPhrase(this.state.tWordsPhrase);
     } else {
-      this.setState({
-        errorMessage: '',
-      });
+      this.setState({ errorMessage: '' });
     }
   };
 
@@ -72,30 +70,34 @@ class ImportWallet extends React.Component<Props, State> {
       <Container>
         {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <Wrapper padding>
-          <Title>Wallet import</Title>
-          <InputGroup>
-            <Label>Private key</Label>
+          <Title>wallet</Title>
+          <Body>Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
+          </Body>
+
+          <Center>
+            <Body center>Enter your 12 word backup phrase.</Body>
+            <Input
+              value={tWordsPhrase}
+              height={80}
+              width="100%"
+              multiline
+              onChangeText={text => this.setState({ tWordsPhrase: text })}
+            />
+          </Center>
+        </Wrapper>
+
+        <Footer>
+          <Button block marginBottom="20px" onPress={this.handleImportSubmit} title="Continue" />
+          <HelpTextDivider title="Don&#39;t have your backup phrase?" />
+          <Center>
+            <Label>Use your Private Key</Label>
             <Input
               value={privateKey}
               onChangeText={text => this.setState({ privateKey: text })}
             />
-
-            <Label>12 words phrase</Label>
-            <Input
-              value={tWordsPhrase}
-              height={80}
-              multiline
-              onChangeText={text => this.setState({ tWordsPhrase: text })}
-            />
-          </InputGroup>
-        </Wrapper>
-        <Footer>
-          <Button
-            title="Import"
-            onPress={this.handleImportSubmit}
-          />
+            <Label>Please use safety when exposing your wallet private key.</Label>
+          </Center>
         </Footer>
-
 
       </Container>
     );
