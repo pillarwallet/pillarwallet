@@ -139,10 +139,12 @@ export default class SlideModal extends React.Component<Props, State> {
     } = this.state;
     const { children, title, fullScreenComponent } = this.props;
 
-    if (!isVisible) return null;
-
     return (
-      <Modal isVisible={isVisible}>
+      <Modal
+        isVisible={isVisible}
+        swipeDirection="down"
+        onSwipe={() => this.setState({ isVisible: false })}
+      >
         <ModalWrapper>
           <AnimatedModalBackground style={{
             marginTop: animSlideModalVertical,
