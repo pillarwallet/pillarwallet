@@ -77,7 +77,7 @@ export default class PinCode extends React.Component<Props, State> {
     if (this.props.onForgotPin) {
       this.props.onForgotPin();
     }
-  }
+  };
 
   render() {
     const { showForgotButton } = this.props;

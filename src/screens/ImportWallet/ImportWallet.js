@@ -59,9 +59,7 @@ class ImportWallet extends React.Component<Props, State> {
     } else if (this.state.tWordsPhrase) {
       importWalletFromTWordsPhrase(this.state.tWordsPhrase);
     } else {
-      this.setState({
-        errorMessage: '',
-      });
+      this.setState({ errorMessage: '' });
     }
   };
 
