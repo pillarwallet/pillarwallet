@@ -34,6 +34,7 @@ const activeModalResetState = {
 
 type State = {
   animHeaderHeight: Animated.Value,
+  animHeaderTextOpacity: Animated.Value,
   isCardActive: boolean,
   activeCard: string,
   history: Transaction[],
@@ -51,6 +52,7 @@ type State = {
 class Assets extends React.Component<Props, State> {
   state = {
     animHeaderHeight: new Animated.Value(150),
+    animHeaderTextOpacity: new Animated.Value(1),
     isCardActive: false,
     activeCard: '',
     activeModal: activeModalResetState,
@@ -95,10 +97,14 @@ class Assets extends React.Component<Props, State> {
 
   animateHeaderHeight = () => {
     const headerHeightValue = this.state.isCardActive ? 120 : 150;
+    const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
 
     Animated.parallel([
       Animated.spring(this.state.animHeaderHeight, {
         toValue: headerHeightValue,
+      }),
+      Animated.spring(this.state.animHeaderTextOpacity, {
+        toValue: headerTextOpacityValue,
       }),
     ]).start();
   };
@@ -181,6 +187,7 @@ class Assets extends React.Component<Props, State> {
     const {
       activeModal: { type: activeModalType, opts },
       animHeaderHeight,
+      animHeaderTextOpacity,
     } = this.state;
     return (
       <Container>
@@ -199,7 +206,7 @@ class Assets extends React.Component<Props, State> {
               alignItems: 'center',
             }}
           >
-            <Animated.Text style={{ opacity: 1 }}>$10.02 Total Portfolio</Animated.Text>
+            <Animated.Text style={{ opacity: animHeaderTextOpacity }}>$10.02 Total Portfolio</Animated.Text>
           </Animated.View>
           <Animated.View
             style={{
