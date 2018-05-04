@@ -22,7 +22,7 @@ type Props = {
   token: string,
   address: string,
   isVisible: boolean,
-  onDismiss: Function,
+  onModalHide?: Function,
   sendAsset: Function,
   formValues?: Object
 }
@@ -189,17 +189,12 @@ class SendModal extends React.Component<Props, State> {
     });
   };
 
-  // HOC DRILL PATTERN
-  handleCallbackRegistration = (cb: Function) => {
-    this.handleDismissal = cb;
-  };
-
   handleQRRead = (address: string) => {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });
   };
 
   render() {
-    const { isVisible, onDismiss, token } = this.props;
+    const { isVisible, onModalHide, token } = this.props;
     const { value, isScanning } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const isFilled = hasAllValues(value);
@@ -214,10 +209,9 @@ class SendModal extends React.Component<Props, State> {
     );
     return (
       <SlideModal
-        modalDismissalCallback={this.handleCallbackRegistration}
         title="send."
         isVisible={isVisible}
-        onDismiss={onDismiss}
+        onModalHide={onModalHide}
         fullScreenComponent={qrScannnerComponent}
       >
         <Container>

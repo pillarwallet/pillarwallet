@@ -8,6 +8,7 @@ import ButtonIcon from 'components/ButtonIcon';
 type Props = {
   title: string,
   children?: React.Node,
+  onModalHide?: Function,
   fullScreenComponent?: ?React.Node,
   isVisible: boolean,
 };
@@ -99,8 +100,13 @@ export default class SlideModal extends React.Component<Props, State> {
     const {
       isVisible,
     } = this.state;
-    const { children, title, fullScreenComponent } = this.props;
-    const animationTiming = 500;
+    const {
+      children,
+      title,
+      fullScreenComponent,
+      onModalHide,
+    } = this.props;
+    const animationTiming = 400;
 
     return (
       <Modal
@@ -110,6 +116,7 @@ export default class SlideModal extends React.Component<Props, State> {
         swipeDirection="down"
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
+        onModalHide={onModalHide}
       >
         <ModalWrapper>
           <ModalBackground style={{
