@@ -15,7 +15,7 @@ const PinWrapper = styled.View`
 type Props = {
   onPinEntered: Function,
   onPinChanged?: Function,
-  onForgotPin: Function,
+  onForgotPin?: Function,
   pageInstructions?: string,
   showForgotButton?: boolean,
 };
@@ -74,7 +74,9 @@ export default class PinCode extends React.Component<Props, State> {
   };
 
   handleForgotPin = () => {
-    this.props.onForgotPin();
+    if (this.props.onForgotPin) {
+      this.props.onForgotPin();
+    }
   }
 
   render() {
