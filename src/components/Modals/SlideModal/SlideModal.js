@@ -1,16 +1,11 @@
 // @flow
 import * as React from 'react';
-import {
-  Animated,
-  Dimensions,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
+import { Animated, Dimensions } from 'react-native';
 import type { ScrollEvent } from 'react-native';
+import Modal from 'react-native-modal';
+import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon';
 import { noop } from 'utils/common';
-import styles from './styles';
 
 type Props = {
   title: string,
@@ -29,6 +24,55 @@ type State = {
 
 const window = Dimensions.get('window');
 const modalOffset = 300;
+
+const ModalWrapper = styled.View`
+  position: absolute;
+  width: 100%;
+  height: 60%;
+  alignItems: stretch;
+`;
+
+const ModalBackground = styled.View`
+  backgroundColor: white;
+  padding: 20px;
+  borderTopLeftRadius: 20;
+  borderTopRightRadius: 20;
+  box-shadow: 10px 5px 5px rgba(0,0,0,.5);
+`;
+
+const ModalHeader = styled.View`
+  flexDirection: row;
+  height: 30;
+  width: 100%;
+  alignItems: center;
+  justifyContent: space-between;
+`;
+
+const ModalContent = styled.View`
+  flex: 1;
+  height: ${window.height};
+  alignItems: center;
+  justifyContent: space-around;
+`;
+
+const ModalOverflow = styled.View`
+  flex: 1;
+  height: ${window.height};
+  width: 100%;
+  backgroundColor: #FFFFFF;
+`;
+
+const ModalTitle = styled.Text`
+  font-size: 24px;
+  font-weight: 700;
+`;
+
+const CloseButton = styled(ButtonIcon)`
+  position: relative;
+  top: -10px;
+`;
+
+const AnimatedModalBackground = Animated.createAnimatedComponent(ModalBackground);
 
 export default class SlideModal extends React.Component<Props, State> {
   static defaultProps = {
@@ -117,39 +161,32 @@ export default class SlideModal extends React.Component<Props, State> {
     if (!isVisible) return null;
 
     return (
-      <View style={styles.modalContainer}>
+      <Modal isVisible={isVisible} style={styles.modalContainer}>
         <Animated.View style={[styles.dismissOverlay, { opacity: animFadeInBackground }]} />
-        <View style={styles.modalScrollContainer}>
-          <ScrollView
-            onScroll={this.handleScroll}
-            scrollEventThrottle={200}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContentStyle}
+        <ModalWrapper>
+
+          <AnimatedModalBackground style={{
+            marginTop: animSlideModalVertical,
+            height: (window.height * 2) - modalOffset,
+            }}
           >
-            <Animated.View style={
-              [
-                styles.sliderContainer,
-                { marginTop: animSlideModalVertical, height: (window.height * 2) - modalOffset },
-              ]}
-            >
-              <View style={styles.sliderHeaderContainer}>
-                <Text style={styles.sliderHeader}>{title}</Text>
-                <ButtonIcon
-                  icon="close"
-                  onPress={this.handleAnimationDismiss}
-                  fontSize={36}
-                  style={styles.closeButton}
-                />
-              </View>
-              <View style={styles.contentWrapper}>
-                {children}
-              </View>
-              <View style={styles.offscreenWrapper} />
-            </Animated.View>
-          </ScrollView>
-        </View>
+            <ModalHeader>
+              <ModalTitle>{title}</ModalTitle>
+              <CloseButton
+                icon="close"
+                onPress={this.handleAnimationDismiss}
+                fontSize={36}
+              />
+            </ModalHeader>
+            <ModalContent>
+              {children}
+            </ModalContent>
+            <ModalOverflow />
+          </AnimatedModalBackground>
+s
+        </ModalWrapper>
         {fullScreenComponent}
-      </View>
+      </Modal>
     );
   }
 }
