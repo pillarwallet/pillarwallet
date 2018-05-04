@@ -117,20 +117,11 @@ export default class SlideModal extends React.Component<Props, State> {
     ]).start();
   }
 
-
-  handleAnimationDismiss = () => {
-    const { onDismiss } = this.props;
-    Animated.parallel([
-      Animated.timing(this.state.animSlideModalVertical, {
-        toValue: window.height,
-        duration: 200,
-      }),
-    ]).start(() => {
-      this.setState({
-        isVisible: false,
-      }, onDismiss);
+  hideModal = () => {
+    this.setState({
+      isVisible: false,
     });
-  };
+  }
 
   render() {
     const {
@@ -143,7 +134,7 @@ export default class SlideModal extends React.Component<Props, State> {
       <Modal
         isVisible={isVisible}
         swipeDirection="down"
-        onSwipe={() => this.setState({ isVisible: false })}
+        onSwipe={this.hideModal}
       >
         <ModalWrapper>
           <AnimatedModalBackground style={{
@@ -155,7 +146,7 @@ export default class SlideModal extends React.Component<Props, State> {
               <ModalTitle>{title}</ModalTitle>
               <CloseButton
                 icon="close"
-                onPress={this.handleAnimationDismiss}
+                onPress={this.hideModal}
                 fontSize={36}
               />
             </ModalHeader>
