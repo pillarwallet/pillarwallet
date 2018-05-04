@@ -39,7 +39,6 @@ type State = {
   animCardHeight: Animated.Value,
   animCardWidth: Animated.Value,
   animCardContentFade: Animated.Value,
-  animCardOpacity: Animated.Value,
 }
 
 const iconETH = require('assets/tokens/ETH/icon-ETH.png');
@@ -51,7 +50,6 @@ export default class AssetCard extends React.Component<Props, State> {
     animCardWidth: new Animated.Value(30),
     animCardContentFade: new Animated.Value(0),
     animCardPosition: new Animated.Value(this.props.defaultPositionY),
-    animCardOpacity: new Animated.Value(1),
   };
 
   handleCardTap = () => {
@@ -63,17 +61,9 @@ export default class AssetCard extends React.Component<Props, State> {
       isCardActive,
     } = this.props;
 
-    let isActive = false;
-
-    if (!isCardActive) {
-      isActive = true;
-    } else if (id === activeCardId) {
-      isActive = false;
-    }
-
     if (!(isCardActive && id !== activeCardId)) {
       this.setState({
-        isActive,
+        isActive: !this.state.isActive,
       }, () => {
         this.animateCardActiveState(this.state.isActive);
         onTap(id, defaultPositionY);
@@ -89,25 +79,7 @@ export default class AssetCard extends React.Component<Props, State> {
     const cardContentFadeValue = isActive ? 1 : 0;
     const cardPositionValue = isActive ? -60 : this.props.defaultPositionY;
 
-    let cardOpacityValue = 1;
-
-    console.log('animation begin', isActive);
-
-    if (!this.props.isCardActive) {
-      console.log('active card is false', !this.props.isCardActive);
-      cardOpacityValue = 1;
-    } else if (this.props.isCardActive && isActive) {
-      cardOpacityValue = 1;
-      console.log('active card is true and this card is active');
-    } else if (this.props.isCardActive && this.props.activeCardId !== this.props.id) {
-      cardOpacityValue = 0.5;
-      console.log('active card is true, but it\'s not this card');
-    }
-
     Animated.parallel([
-      Animated.spring(this.state.animCardOpacity, {
-        toValue: cardOpacityValue,
-      }),
       Animated.spring(this.state.animCardPosition, {
         toValue: cardPositionValue,
       }),
@@ -129,7 +101,6 @@ export default class AssetCard extends React.Component<Props, State> {
       animCardWidth,
       animCardContentFade,
       animCardPosition,
-      animCardOpacity,
       isActive,
     } = this.state;
     const {
@@ -164,7 +135,6 @@ export default class AssetCard extends React.Component<Props, State> {
             marginRight: animCardWidth,
             marginBottom: 20,
             position: 'absolute',
-            opacity: animCardOpacity,
             left: 0,
             right: 0,
             top: animCardPosition,
@@ -191,12 +161,12 @@ export default class AssetCard extends React.Component<Props, State> {
               zIndex: -10,
             }}
           >
-            {/* <Content>{children}</Content>
+            <Content>{children}</Content>
             <TXHistory
               address={address}
               history={history}
               token={token}
-            /> */}
+            />
           </Animated.View>
         )}
       </View>
