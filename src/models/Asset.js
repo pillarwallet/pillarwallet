@@ -2,6 +2,6 @@
 export type Asset = {
   key: string,
   name: string,
-  amount: number,
+  balance: number,
   color: string
 }

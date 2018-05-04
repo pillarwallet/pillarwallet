@@ -104,6 +104,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
+    "cryptocompare": "^0.5.0",
     "ethers": "^3.0.9",
     "expo": "^26.0.0",
     "lodash.merge": "^4.6.1",

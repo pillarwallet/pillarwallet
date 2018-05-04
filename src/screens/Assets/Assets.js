@@ -2,18 +2,20 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
 import { connect } from 'react-redux';
+import { BCX_URL } from 'react-native-dotenv';
+
 import type { Transaction } from 'models/Transaction';
 import { fetchEtherBalanceAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
-import { BCX_URL } from 'react-native-dotenv';
+import PortfolioBalance from 'components/PortfolioBalance';
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
 
 // TODO: Replace me with real address or pass in with Redux
-const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
+const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 
 type Props = {
   fetchEtherBalance: () => Function,
@@ -160,7 +162,6 @@ class Assets extends React.Component<Props, State> {
             />
 
           </AssetCard>
-
         );
       });
   }
@@ -171,6 +172,7 @@ class Assets extends React.Component<Props, State> {
       animHeaderHeight,
       animHeaderTextOpacity,
     } = this.state;
+    const { assets: { data: assets } } = this.props;
     return (
       <Container>
         <Wrapper
@@ -188,14 +190,8 @@ class Assets extends React.Component<Props, State> {
               alignItems: 'center',
             }}
           >
-            <Animated.Text
-              style={{
-                opacity: animHeaderTextOpacity,
-                color: 'white',
-                fontSize: 32,
-              }}
-            >
-              £1023.45
+            <Animated.Text style={{ opacity: animHeaderTextOpacity }}>
+              <PortfolioBalance assets={assets} />
             </Animated.Text>
           </Animated.View>
 

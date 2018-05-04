@@ -7,6 +7,10 @@ const cryptocurrencies = {
     name: 'Ethereum',
     color: '#4C4E5E',
   },
+  PLR: {
+    name: 'Pillar',
+    color: '#4C4E5E',
+  },
 };
 
 export type AssetsReducerState = {
