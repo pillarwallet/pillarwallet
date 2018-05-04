@@ -9,7 +9,7 @@ const cryptocurrencies = {
   },
   PLR: {
     name: 'Pillar',
-    color: '#4C4E5E',
+    color: '#5e1b22',
   },
 };
 
