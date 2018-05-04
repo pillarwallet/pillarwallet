@@ -11,18 +11,18 @@ type Props = {
   token: string,
   tokenName: string,
   isVisible: boolean,
-  onDismiss: Function
+  onDismiss: Function,
 }
 
 const Container = styled.View`
   flex: ${props => props.flex};
-  justifyContent: center;
-  flexDirection: column;
-  alignItems: center;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const Address = styled.Text`
-  fontSize: 11px;
+  font-size: 11px;
 `;
 
 export default class ReceiveModal extends React.Component<Props> {
@@ -34,12 +34,13 @@ export default class ReceiveModal extends React.Component<Props> {
   handleAddressShare = () => {
     const { address } = this.props;
     Share.share({ title: 'Public address', message: address });
-  }
+  };
 
   render() {
     const {
       address, isVisible, onDismiss, token, tokenName,
     } = this.props;
+
     return (
       <SlideModal title="receive." isVisible={isVisible} onDismiss={onDismiss}>
         <Container flex={4}>
