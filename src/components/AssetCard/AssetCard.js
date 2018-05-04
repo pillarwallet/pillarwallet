@@ -70,8 +70,6 @@ export default class AssetCard extends React.Component<Props, State> {
     }
   };
 
-  isThereAnActiveCard: boolean = (this.props.activeCardId === this.props.id);
-
   animateCardActiveState = (isActive: boolean) => {
     const cardHeightValue = isActive ? 140 : 120;
     const cardWidthValue = isActive ? 20 : 30;

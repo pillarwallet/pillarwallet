@@ -9,7 +9,6 @@ import AssetButtons from 'components/AssetButtons';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import { BCX_URL } from 'react-native-dotenv';
-
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
