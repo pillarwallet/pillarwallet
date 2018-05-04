@@ -60,7 +60,7 @@ export default class AssetCard extends React.Component<Props, State> {
       isCardActive,
     } = this.props;
 
-    if (!(isCardActive && id !== activeCardId)) {
+    if (!isCardActive || id === activeCardId) {
       this.setState({
         isActive: !this.state.isActive,
       }, () => {
