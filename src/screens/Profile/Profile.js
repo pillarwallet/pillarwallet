@@ -26,7 +26,7 @@ export default class Profile extends React.Component<{}, State> {
     const { status } = this.state;
     return (
       <Container>
-        <Title center>Profile</Title>
+        <Title title="profile" />
         <Footer>
           <Button
             block

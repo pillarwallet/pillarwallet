@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
+import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { formatETHAmount } from 'utils/common';
 import Item from './Item';
@@ -26,12 +27,6 @@ const Container = styled.View`
   backgroundColor: rgb(246, 246, 246);
   flex: 1;
   flexDirection: row;
-`;
-
-// Looks like a heading (typography), shouldn't it be extracted?
-const Header = styled.Text`
-  fontWeight: bold;
-  fontSize: 20;
 `;
 
 const flatListStyles = {
@@ -87,7 +82,7 @@ export default class TXHistory extends React.Component<Props> {
         <FlatList
           refreshing={false}
           onRefresh={onRefresh}
-          ListHeaderComponent={<Header style={{ marginBottom: 10 }}>activity.</Header>}
+          ListHeaderComponent={<Title title="activity" />}
           data={history}
           extraData={address}
           renderItem={this.renderTransaction}

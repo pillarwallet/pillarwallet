@@ -215,7 +215,7 @@ class SendModal extends React.Component<Props, State> {
     return (
       <SlideModal
         modalDismissalCallback={this.handleCallbackRegistration}
-        title="send."
+        title="send"
         isVisible={isVisible}
         onDismiss={onDismiss}
         fullScreenComponent={qrScannnerComponent}
