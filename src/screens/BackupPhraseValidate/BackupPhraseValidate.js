@@ -5,7 +5,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import { Title, Body, Label } from 'components/Typography';
+import { Body, Label } from 'components/Typography';
+import Title from 'components/Title';
 import ButtonIcon from 'components/ButtonIcon';
 import Button from 'components/Button';
 import Divider from 'components/Divider';
@@ -180,7 +181,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>verify</Title>
+          <Title title="verify" />
           <Body style={{ color: 'grey' }}>
             Please select the appropriate words from the list
           </Body>

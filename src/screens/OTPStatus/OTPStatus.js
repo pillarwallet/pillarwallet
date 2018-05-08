@@ -5,7 +5,8 @@ import { OTP } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import HyperLink from 'components/HyperLink';
-import { Title, Body } from 'components/Typography';
+import { Body } from 'components/Typography';
+import Title from 'components/Title';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -19,7 +20,7 @@ class OTPStatus extends React.Component<Props> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>thanks</Title>
+          <Title title="thanks" />
           <Body>Congratulations!</Body>
           <Body>You have been placed on our waiting list. We will notify you once your access has been approved.</Body>
           <Body>

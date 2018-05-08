@@ -14,7 +14,8 @@ import {
 
 import { Center, Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
-import { Body, Title, Label } from 'components/Typography';
+import { Body, Label } from 'components/Typography';
+import Title from 'components/Title';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import ErrorMessage from 'components/ErrorMessage';
@@ -70,7 +71,7 @@ class ImportWallet extends React.Component<Props, State> {
       <Container>
         {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <Wrapper padding>
-          <Title>wallet</Title>
+          <Title title="wallet" />
           <Body>Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
           </Body>
 
