@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { getRandomInt } from 'utils/common';
 import variables from 'utils/variables';
 
 type Props = {
@@ -47,19 +46,53 @@ const ProfileCardBackgroundSquare = styled.View`
   left: ${props => props.left};
 `;
 
-const generateProfileCardBackgroundSquares = () => {
+const generateProfileCardBackgroundSquares = (input: string) => {
   const profileCardBackgroundSquares = [];
+  let seedFromName = 0;
+
+  for (let i = 0; i < input.length; i += 1) {
+    seedFromName += input[i].charCodeAt(0);
+  }
+
+  function getRandomIntFromSeed() {
+    const x = Math.sin(seedFromName += 1) * 10000;
+    return x - Math.floor(x);
+  }
 
   for (let i = 0; i < 6; i += 1) {
-    const left = `${getRandomInt(0, 100)}%`;
-    const top = `${getRandomInt(0, 100)}%`;
-    const size = getRandomInt(20, 40);
+    let left = getRandomIntFromSeed() * 100;
+    let top = getRandomIntFromSeed() * 100;
+    let size = getRandomIntFromSeed() * 20;
+
+    if (left > 20 && left < 50) {
+      left = getRandomIntFromSeed() * 20;
+    } else if (left < 80 && left > 50) {
+      left = 100 - (getRandomIntFromSeed() * 20);
+    }
+
+    if (top > 20 && top < 50) {
+      left = getRandomIntFromSeed() * 20;
+    } else if (top < 80 && top > 50) {
+      top = 100 - (getRandomIntFromSeed() * 20);
+    }
+
+    if (size < 20) {
+      size = 10 + (getRandomIntFromSeed() * 20);
+    } else if (size > 40) {
+      size = 30 - (getRandomIntFromSeed() * 20);
+    }
+
+    left += '%';
+    top += '%';
+
+
     const colors = variables.color;
     const colorsKeys = Object.keys(colors);
-    const color = colors[colorsKeys[getRandomInt(0, colorsKeys.length)]];
+    const color = colors[colorsKeys[Math.round(getRandomIntFromSeed() * colorsKeys.length)]];
 
     profileCardBackgroundSquares.push(
       <ProfileCardBackgroundSquare
+        key={i}
         background={color}
         size={size}
         left={left}
@@ -74,7 +107,7 @@ const generateProfileCardBackgroundSquares = () => {
 const ProfileCard = (props: Props) => {
   return (
     <ProfileCardWrapper>
-      {generateProfileCardBackgroundSquares()}
+      {generateProfileCardBackgroundSquares(props.name)}
       <ProfileCardAvatar />
       <ProfileCardName>{props.name}</ProfileCardName>
       <ProfileCardEmail>{props.email}</ProfileCardEmail>
