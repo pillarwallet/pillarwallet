@@ -58,7 +58,6 @@ const generateProfileCardBackgroundSquares = (input: string) => {
   const profileCardBackgroundSquares = [];
   let seedFromName = 0;
 
-
   for (let i = 0; i < input.length; i += 1) {
     seedFromName += input[i].charCodeAt(0);
   }
