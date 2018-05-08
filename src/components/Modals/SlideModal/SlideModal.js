@@ -9,7 +9,7 @@ type Props = {
   title: string,
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
-  onModalHide: Function,
+  onModalHide?: Function,
   isVisible: boolean,
 };
 

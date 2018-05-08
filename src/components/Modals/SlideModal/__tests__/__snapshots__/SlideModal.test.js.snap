@@ -105,7 +105,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               "backgroundColor": "white",
               "borderTopLeftRadius": 20,
               "borderTopRightRadius": 20,
-              "height": "1334 - modalOffset'",
+              "height": 2368,
               "paddingBottom": 20,
               "paddingLeft": 20,
               "paddingRight": 20,
@@ -118,9 +118,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               "shadowOpacity": 1,
               "shadowRadius": 5,
             },
-            Object {
-              "height": 2368,
-            },
+            undefined,
           ]
         }
       >
@@ -272,7 +270,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           }
         />
       </View>
-      s
     </View>
   </View>
 </Modal>
