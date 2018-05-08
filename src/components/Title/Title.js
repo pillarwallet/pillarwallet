@@ -4,13 +4,12 @@ import styled from 'styled-components/native';
 
 type Props = {
   title: string,
-  align?: string,
+  style?: Object,
 };
 
 const Wrapper = styled.View`
   flex-direction: row;
   margin: 20px 0px;
-  justify-content: ${props => (props.align || 'flex-start')};
 `;
 
 const Text = styled.Text`
@@ -29,7 +28,7 @@ const BlueDot = styled.View`
 
 const Title = (props: Props) => {
   return (
-    <Wrapper {...props}>
+    <Wrapper style={props.style}>
       <Text>{props.title}</Text>
       <BlueDot />
     </Wrapper>
