@@ -2,7 +2,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Title, Body } from 'components/Typography';
+import { Body } from 'components/Typography';
+import Title from 'components/Title';
 import { Container, Footer } from 'components/Layout';
 import Wrapper from 'components/Wrapper';
 import Button from 'components/Button';
@@ -33,7 +34,7 @@ class BackupPhrase extends React.Component<Props, {}> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>passphrase</Title>
+          <Title title="passphrase" />
           <Body>Carefully write down the words. Don&#39;t email or screeshot it, keep it secure.</Body>
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </Wrapper>

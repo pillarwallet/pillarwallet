@@ -4,7 +4,8 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BACKUP_PHRASE, IMPORT_WALLET } from 'constants/navigationConstants';
 import { Container, Footer } from 'components/Layout';
-import { Title, Body, BodyLight, HelpText } from 'components/Typography';
+import Title from 'components/Title';
+import { Body, BodyLight, HelpText } from 'components/Typography';
 import Button from 'components/Button';
 import Wrapper from 'components/Wrapper';
 import HelpTextDivider from 'components/HelpTextDivider';
@@ -26,7 +27,7 @@ class Onboarding extends React.Component<Props> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>wallet</Title>
+          <Title title="wallet" />
           <Body>Welcome to the Pillar Wallet! Pillar is a next-generation digital wallet
             and application for personal data management. Your unique invitation code
             allows you to participate in exlusive ICO offerings.

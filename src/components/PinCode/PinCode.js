@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native/index';
-
 import KeyPad from 'components/KeyPad';
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import PinDots from './PinDots';
@@ -16,8 +15,9 @@ const PinWrapper = styled.View`
 type Props = {
   onPinEntered: Function,
   onPinChanged?: Function,
+  onForgotPin?: Function,
   pageInstructions?: string,
-  showForgotButton?: boolean
+  showForgotButton?: boolean,
 };
 
 type State = {
@@ -38,7 +38,7 @@ export default class PinCode extends React.Component<Props, State> {
   handleButtonPressed = (value: any) => {
     switch (value) {
       case KEYPAD_BUTTON_DELETE: return this.handleKeyPressDelete();
-      case KEYPAD_BUTTON_FORGOT: return this.handleKeyPressForgot();
+      case KEYPAD_BUTTON_FORGOT: return this.handleForgotPin();
       default: return this.handleKeyPress(value);
     }
   };
@@ -73,8 +73,10 @@ export default class PinCode extends React.Component<Props, State> {
     this.setState({ passCode: newPassCode });
   };
 
-  handleKeyPressForgot = () => {
-    console.log('Need to Reset Wallet'); // eslint-disable-line no-console
+  handleForgotPin = () => {
+    if (this.props.onForgotPin) {
+      this.props.onForgotPin();
+    }
   };
 
   render() {
