@@ -16,6 +16,11 @@ export const Container = styled.SafeAreaView`
   height: ${() => Platform.OS === 'ios' ? deviceHeight : deviceHeight - 20};
 `;
 
+export const Wrapper = styled.ScrollView`
+  padding: ${props => (props.padding ? '0 20px' : '0')};
+  flex: 1;
+`;
+
 export const Footer = styled.View`
   flex-direction: column;
   align-items: center;

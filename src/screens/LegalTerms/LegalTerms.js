@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Container, Footer } from 'components/Layout';
-import Wrapper from 'components/Wrapper';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import { Title, Body } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';

@@ -2,7 +2,7 @@
 import * as React from 'react';
 
 import { AsyncStorage, Text } from 'react-native';
-import { Container, Footer } from 'components/Layout';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import { Title } from 'components/Typography';
 import Button from 'components/Button';
 
@@ -26,7 +26,9 @@ export default class Profile extends React.Component<{}, State> {
     const { status } = this.state;
     return (
       <Container>
-        <Title center>Profile</Title>
+        <Wrapper>
+          <Title center>Profile</Title>
+        </Wrapper>
         <Footer>
           <Button
             block
