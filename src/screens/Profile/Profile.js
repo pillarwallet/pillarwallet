@@ -5,6 +5,7 @@ import { AsyncStorage, Text } from 'react-native';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import { Title } from 'components/Typography';
 import Button from 'components/Button';
+import ProfileHeader from './ProfileHeader';
 
 type State = {
   status: string,
@@ -26,9 +27,9 @@ export default class Profile extends React.Component<{}, State> {
     const { status } = this.state;
     return (
       <Container>
-        <Wrapper>
+        <ProfileHeader>
           <Title center>Profile</Title>
-        </Wrapper>
+        </ProfileHeader>
         <Footer>
           <Button
             block
