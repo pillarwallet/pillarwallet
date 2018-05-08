@@ -137,10 +137,7 @@ class Assets extends React.Component<Props, State> {
         const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: id };
-
-        const defaultCardPositionTop = () => {
-          return (index * 140) + 30;
-        };
+        const defaultCardPositionTop = (index * 140) + 30;
 
         return (
           <AssetCard
@@ -153,7 +150,7 @@ class Assets extends React.Component<Props, State> {
             amount={displayAmount}
             color={color}
             onTap={this.handleCardTap}
-            defaultPositionY={defaultCardPositionTop()}
+            defaultPositionY={defaultCardPositionTop}
             history={assetHistory}
             address={wallet.address}
           >
