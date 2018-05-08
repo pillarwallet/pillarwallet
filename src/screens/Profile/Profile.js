@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { AsyncStorage, Text } from 'react-native';
 import { Container, Footer } from 'components/Layout';
-import Title from 'components/Title';
+import { Title } from 'components/Typography';
 import Button from 'components/Button';
 
 type State = {
