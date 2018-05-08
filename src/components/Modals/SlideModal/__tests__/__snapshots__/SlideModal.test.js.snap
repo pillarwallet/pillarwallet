@@ -83,6 +83,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 Array [
                   Object {
                     "flexDirection": "row",
+                    "justifyContent": "flex-start",
                     "marginBottom": 20,
                     "marginLeft": 0,
                     "marginRight": 0,
@@ -91,6 +92,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   undefined,
                 ]
               }
+              title="title"
             >
               <Text
                 accessible={true}
@@ -101,11 +103,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     Object {
                       "fontSize": 24,
                       "fontWeight": "700",
-                      "paddingBottom": 0,
-                      "paddingLeft": 0,
-                      "paddingRight": 0,
-                      "paddingTop": 0,
-                      "textAlign": "left",
                     },
                     undefined,
                   ]
