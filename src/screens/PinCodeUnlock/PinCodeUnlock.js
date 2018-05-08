@@ -7,7 +7,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { decryptWalletAction } from 'actions/walletActions';
-import { validatePin } from 'utils/validators';
 import { Container, Center } from 'components/Layout';
 import { Title } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';
@@ -28,31 +27,25 @@ class PinCodeUnlock extends React.Component<Props, State> {
     pinError: '',
   };
 
-  componentWillReceiveProps(nextProps: Props) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { walletState } = nextProps.wallet;
     if (walletState === INVALID_PASSWORD) {
-      this.setState({ pinError: 'Invalid password' });
+      return {
+        ...prevState,
+        pinError: 'Invalid password',
+      };
     }
+    return null;
   }
 
   handlePinSubmit = (pin: string) => {
-    const validationError = validatePin(pin);
     const { decryptWallet } = this.props;
-    if (validationError) {
-      this.setState({
-        pinError: validationError,
-      });
-      return;
-    }
-    this.setState({
-      pinError: validationError,
-    });
     decryptWallet(pin);
   };
 
   handleForgotPasscode = () => {
     this.props.navigation.navigate(ONBOARDING_FLOW);
-  }
+  };
 
   render() {
     const { pinError } = this.state;
