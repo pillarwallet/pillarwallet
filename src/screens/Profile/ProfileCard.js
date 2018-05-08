@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { getRandomInt } from 'utils/common';
+import variables from 'utils/variables';
 
 type Props = {
   name: string,
@@ -36,9 +38,43 @@ const ProfileCardEmail = styled.Text`
   color: #4a4a4a;
 `;
 
+const ProfileCardBackgroundSquare = styled.View`
+  width: ${props => props.size};
+  height: ${props => props.size};
+  background-color: ${props => props.background};
+  position: absolute;
+  top: ${props => props.top};
+  left: ${props => props.left};
+`;
+
+const generateProfileCardBackgroundSquares = () => {
+  const profileCardBackgroundSquares = [];
+
+  for (let i = 0; i < 6; i += 1) {
+    const left = `${getRandomInt(0, 100)}%`;
+    const top = `${getRandomInt(0, 100)}%`;
+    const size = getRandomInt(20, 40);
+    const colors = variables.color;
+    const colorsKeys = Object.keys(colors);
+    const color = colors[colorsKeys[getRandomInt(0, colorsKeys.length)]];
+
+    profileCardBackgroundSquares.push(
+      <ProfileCardBackgroundSquare
+        background={color}
+        size={size}
+        left={left}
+        top={top}
+      />,
+    );
+  }
+
+  return profileCardBackgroundSquares;
+};
+
 const ProfileCard = (props: Props) => {
   return (
     <ProfileCardWrapper>
+      {generateProfileCardBackgroundSquares()}
       <ProfileCardAvatar />
       <ProfileCardName>{props.name}</ProfileCardName>
       <ProfileCardEmail>{props.email}</ProfileCardEmail>
