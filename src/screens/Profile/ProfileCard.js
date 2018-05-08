@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import variables from 'utils/variables';
+import { baseColors, UIColors } from 'utils/variables';
 
 type Props = {
   name: string,
@@ -11,7 +11,7 @@ type Props = {
 const ProfileCardWrapper = styled.View`
   background-color: #ffffff;
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.26);
+  border: 1px solid ${UIColors.defaultBorderColor};
   width: 100%;
   padding: 20px;
   align-items: center;
@@ -21,20 +21,20 @@ const ProfileCardAvatar = styled.View`
   width: 60px;
   height: 60px;
   background-color: #d8d8d8;
-  border: 1px solid #c0c0c0;
+  border: 1px solid ${UIColors.defaultBorderColor};
   border-radius: 30px;
   margin-bottom: 10px;
 `;
 
 const ProfileCardName = styled.Text`
   font-size: 22px;
-  color: #4a4a4a;
+  color: ${UIColors.defaultTextColor};
   margin-bottom: 10px;
 `;
 
 const ProfileCardEmail = styled.Text`
   font-size: 16px;
-  color: #4a4a4a;
+  color: ${UIColors.defaultTextColor};
 `;
 
 const ProfileCardBackgroundSquare = styled.View`
@@ -86,7 +86,7 @@ const generateProfileCardBackgroundSquares = (input: string) => {
     top += '%';
 
 
-    const colors = variables.color;
+    const colors = baseColors;
     const colorsKeys = Object.keys(colors);
     const color = colors[colorsKeys[Math.round(getRandomIntFromSeed() * colorsKeys.length)]];
 
