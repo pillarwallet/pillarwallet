@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { brandColors, UIColors } from 'utils/variables';
+import { baseColors, brandColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
 
 type Props = {
   name: string,
@@ -9,7 +9,7 @@ type Props = {
 }
 
 const ProfileCardWrapper = styled.View`
-  background-color: #ffffff;
+  background-color: ${baseColors.white};
   border-radius: 12px;
   border: 1px solid ${UIColors.defaultBorderColor};
   width: 100%;
@@ -24,16 +24,24 @@ const ProfileCardAvatar = styled.View`
   border: 1px solid ${UIColors.defaultBorderColor};
   border-radius: 30px;
   margin-bottom: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ProfileCardAvatarText = styled.Text`
+  font-size: ${fontSizes.large};
+  font-weight: ${fontWeights.bold};
+  color: ${baseColors.white};
 `;
 
 const ProfileCardName = styled.Text`
-  font-size: 22px;
+  font-size: ${fontSizes.large};
   color: ${UIColors.defaultTextColor};
   margin-bottom: 10px;
 `;
 
 const ProfileCardEmail = styled.Text`
-  font-size: 16px;
+  font-size: ${fontSizes.medium};
   color: ${UIColors.defaultTextColor};
 `;
 
@@ -103,10 +111,23 @@ const generateProfileCardBackgroundSquares = (input: string) => {
 };
 
 const ProfileCard = (props: Props) => {
+  const getInitials = () => {
+    const names = props.name.split(' ');
+    let initials = names[0].substring(0, 1).toUpperCase();
+
+    if (names.length > 1) {
+      initials += names[names.length - 1].substring(0, 1).toUpperCase();
+    }
+
+    return initials;
+  };
+
   return (
     <ProfileCardWrapper>
       {generateProfileCardBackgroundSquares(props.name)}
-      <ProfileCardAvatar />
+      <ProfileCardAvatar>
+        <ProfileCardAvatarText>{getInitials()}</ProfileCardAvatarText>
+      </ProfileCardAvatar>
       <ProfileCardName>{props.name}</ProfileCardName>
       <ProfileCardEmail>{props.email}</ProfileCardEmail>
     </ProfileCardWrapper>

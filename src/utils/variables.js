@@ -26,3 +26,19 @@ export const UIColors = {
   defaultBorderColor: 'rgba(0, 0, 0, 0.25)',
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
 };
+
+export const fontSizes = {
+  extraSmall: 9,
+  small: 12,
+  medium: 16,
+  large: 22,
+  extraLarge: 24,
+};
+
+export const fontWeights = {
+  thin: '100',
+  light: '300',
+  book: '400',
+  bold: '700',
+  black: '900',
+};
