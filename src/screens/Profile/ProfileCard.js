@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, UIColors } from 'utils/variables';
+import { brandColors, UIColors } from 'utils/variables';
 
 type Props = {
   name: string,
@@ -50,6 +50,7 @@ const generateProfileCardBackgroundSquares = (input: string) => {
   const profileCardBackgroundSquares = [];
   let seedFromName = 0;
 
+
   for (let i = 0; i < input.length; i += 1) {
     seedFromName += input[i].charCodeAt(0);
   }
@@ -85,10 +86,7 @@ const generateProfileCardBackgroundSquares = (input: string) => {
     left += '%';
     top += '%';
 
-
-    const colors = baseColors;
-    const colorsKeys = Object.keys(colors);
-    const color = colors[colorsKeys[Math.round(getRandomIntFromSeed() * colorsKeys.length)]];
+    const color = brandColors[Math.round(getRandomIntFromSeed() * brandColors.length)];
 
     profileCardBackgroundSquares.push(
       <ProfileCardBackgroundSquare
