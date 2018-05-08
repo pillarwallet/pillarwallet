@@ -73,7 +73,7 @@ export default class QRCode extends React.Component<Props, State> {
 
   async generateQRCode() {
     const { value } = this.props;
-    await delay(600);
+    await delay(800);
     const qrCodeSrc = await qrcode.create(value);
     const arr = qrCodeSrc.modules.data;
     const sqrMatrix = this.generateSquareMatrix(arr);
