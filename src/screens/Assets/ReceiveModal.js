@@ -8,10 +8,10 @@ import QRCode from 'components/QRCode';
 
 type Props = {
   address: string,
+  onModalHide: Function,
   token: string,
   tokenName: string,
   isVisible: boolean,
-  onDismiss: Function,
 }
 
 const Container = styled.View`
@@ -38,15 +38,19 @@ export default class ReceiveModal extends React.Component<Props> {
 
   render() {
     const {
-      address, isVisible, onDismiss, token, tokenName,
+      address,
+      isVisible,
+      token,
+      tokenName,
+      onModalHide,
     } = this.props;
 
     return (
-      <SlideModal title="receive" isVisible={isVisible} onDismiss={onDismiss}>
+      <SlideModal title="receive." isVisible={isVisible} onModalHide={onModalHide}>
         <Container flex={4}>
           <QRCode value={address} blockHeight={5} />
           <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray' }}>
-              This is your ROPSTEN {tokenName} address, use for transfering ROPSTEN {token} only!
+            This is your ROPSTEN {tokenName} address, use for transfering ROPSTEN {token} only!
           </Text>
         </Container>
         <Container flex={1}>

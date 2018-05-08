@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Text, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
@@ -22,7 +22,7 @@ type Props = {
   token: string,
   address: string,
   isVisible: boolean,
-  onDismiss: Function,
+  onModalHide: Function,
   sendAsset: Function,
   formValues?: Object
 }
@@ -54,7 +54,7 @@ Address.getValidationErrorMessage = (address): string => {
   return 'Address must be provided.';
 };
 
-const TRANSACTION_TYPE = t.struct({
+const FORM_STRUCTURE = t.struct({
   address: Address,
   amount: Amount,
 });
@@ -153,10 +153,6 @@ const SendButton = styled.Text`
 class SendModal extends React.Component<Props, State> {
   _form: t.form;
 
-  handleDismissal: Function;
-
-  handleDismissal = () => {};
-
   state = {
     isScanning: false,
     value: null,
@@ -168,7 +164,7 @@ class SendModal extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     const value = this._form.getValue();
-    const { sendAsset } = this.props;
+    const { sendAsset, onModalHide } = this.props;
     if (!value) return;
     const transactionPayload: TransactionPayload = {
       address: value.address,
@@ -177,7 +173,7 @@ class SendModal extends React.Component<Props, State> {
       gasPrice: 20000000000,
     };
     sendAsset(transactionPayload);
-    this.handleDismissal();
+    onModalHide();
     this.setState({
       value: null,
     });
@@ -186,12 +182,11 @@ class SendModal extends React.Component<Props, State> {
   handleToggleQRScanningState = () => {
     this.setState({
       isScanning: !this.state.isScanning,
+    }, () => {
+      if (this.state.isScanning) {
+        Keyboard.dismiss();
+      }
     });
-  };
-
-  // HOC DRILL PATTERN
-  handleCallbackRegistration = (cb: Function) => {
-    this.handleDismissal = cb;
   };
 
   handleQRRead = (address: string) => {
@@ -199,7 +194,7 @@ class SendModal extends React.Component<Props, State> {
   };
 
   render() {
-    const { isVisible, onDismiss, token } = this.props;
+    const { isVisible, onModalHide, token } = this.props;
     const { value, isScanning } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const isFilled = hasAllValues(value);
@@ -214,16 +209,15 @@ class SendModal extends React.Component<Props, State> {
     );
     return (
       <SlideModal
-        modalDismissalCallback={this.handleCallbackRegistration}
-        title="send"
+        title="send."
         isVisible={isVisible}
-        onDismiss={onDismiss}
+        onModalHide={onModalHide}
         fullScreenComponent={qrScannnerComponent}
       >
         <Container>
           <Form
             ref={node => { this._form = node; }}
-            type={TRANSACTION_TYPE}
+            type={FORM_STRUCTURE}
             options={formOptions}
             value={value}
             onChange={this.handleChange}
