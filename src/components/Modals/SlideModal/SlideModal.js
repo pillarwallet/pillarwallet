@@ -8,8 +8,8 @@ import ButtonIcon from 'components/ButtonIcon';
 type Props = {
   title: string,
   children?: React.Node,
-  onModalHide?: Function,
   fullScreenComponent?: ?React.Node,
+  onModalHide: Function,
   isVisible: boolean,
 };
 
@@ -33,7 +33,7 @@ const ModalBackground = styled.View`
   border-top-left-radius: 20;
   border-top-right-radius: 20;
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
-  height: ${window.height} - modalOffset'
+  height: ${(window.height * 2) - modalOffset};
 `;
 
 const ModalHeader = styled.View`
@@ -83,7 +83,6 @@ export default class SlideModal extends React.Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.isVisible !== prevState.isVisible) {
       return {
-        ...prevState,
         isVisible: nextProps.isVisible,
       };
     }
@@ -106,28 +105,25 @@ export default class SlideModal extends React.Component<Props, State> {
       fullScreenComponent,
       onModalHide,
     } = this.props;
-    const animationTiming = 800;
-
+    const animationInTiming = 800;
+    const animationOutTiming = 400;
     return (
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
+        onModalHide={onModalHide}
         onBackdropPress={this.hideModal}
-        swipeDirection="down"
-        animationInTiming={animationTiming}
-        animationOutTiming={animationTiming}
+        animationInTiming={animationInTiming}
+        animationOutTiming={animationOutTiming}
         animationIn="bounceInUp"
         animationOut="bounceOutDown"
-        onModalHide={onModalHide}
+        swipeDirection="down"
         style={{
           margin: 0,
         }}
       >
         <ModalWrapper>
-          <ModalBackground style={{
-            height: (window.height * 2) - modalOffset,
-            }}
-          >
+          <ModalBackground>
             <ModalHeader>
               <ModalTitle>{title}</ModalTitle>
               <CloseButton
@@ -137,11 +133,10 @@ export default class SlideModal extends React.Component<Props, State> {
               />
             </ModalHeader>
             <ModalContent>
-              {children}
+              {isVisible && children}
             </ModalContent>
             <ModalOverflow />
           </ModalBackground>
-s
         </ModalWrapper>
         {fullScreenComponent}
       </Modal>
