@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import { Container, Wrapper, Footer } from 'components/Layout';
-import { Title, Body } from 'components/Typography';
+import Title from 'components/Title';
+import { Body } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Divider from 'components/Divider';
@@ -89,7 +90,7 @@ class LegalTerms extends React.Component<Props, State> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>Let&#39;s Review</Title>
+          <Title title="review" />
           <Body style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Body>
           <CheckboxItem marginBottom>
             { this.buildCheckBox('box01', box01) }

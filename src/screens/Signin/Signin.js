@@ -6,7 +6,8 @@ import { Container, Wrapper, Footer, Center } from 'components/Layout';
 import Button from 'components/Button';
 import Emoji from 'components/Emoji';
 import HyperLink from 'components/HyperLink';
-import { Title, Body, Label } from 'components/Typography';
+import { Body, Label } from 'components/Typography';
+import Title from 'components/Title';
 import FooterText from 'components/FooterText';
 import { CountryPicker, CountryPickerWrapper } from 'components/CountryPicker';
 import { Picker, Icon } from 'native-base';
@@ -61,7 +62,7 @@ class Signin extends React.Component<Props, State> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>login</Title>
+          <Title title="login" />
           <Body>Please enter the mobile number associated with your account.</Body>
           <LoginForm>
             <Label>Country</Label>

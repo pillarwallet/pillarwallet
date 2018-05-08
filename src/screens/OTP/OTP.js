@@ -2,8 +2,9 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { Title, Body, Label } from 'components/Typography';
+import { Body, Label } from 'components/Typography';
 import { Center, Container, Wrapper } from 'components/Layout';
+import Title from 'components/Title';
 import Button from 'components/Button';
 import { Picker } from 'native-base';
 import countries from 'utils/countries.json';
@@ -45,7 +46,7 @@ class OTP extends React.Component<Props> {
     return (
       <Container>
         <Wrapper padding>
-          <Title>confirm</Title>
+          <Title title="confirm" />
           <Body>We sent your code to</Body>
           <Body>+441234 567 890</Body>
           <Center>
