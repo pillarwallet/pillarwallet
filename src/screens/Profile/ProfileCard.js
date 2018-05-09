@@ -93,7 +93,7 @@ const generateProfileCardBackgroundSquares = (input: string) => {
     left += '%';
     top += '%';
 
-    const color = brandColors[Math.round(getRandomIntFromSeed() * brandColors.length)];
+    const color = brandColors[Math.round(getRandomIntFromSeed() * (brandColors.length - 1))];
 
     profileCardBackgroundSquares.push(
       <ProfileCardBackgroundSquare
