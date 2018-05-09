@@ -2,12 +2,9 @@
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import {
-  GENERATE_ENCRYPTED_WALLET,
   DECRYPT_WALLET,
   UPDATE_WALLET_MNEMONIC,
   UPDATE_WALLET_STATE,
-  ENCRYPTING,
-  GENERATING,
   DECRYPTING,
   INVALID_PASSWORD,
   IMPORT_ERROR,
@@ -19,7 +16,6 @@ import {
 import {
   ASSETS,
   LEGAL_TERMS,
-  NEW_WALLET,
   PIN_CODE_CONFIRMATION,
   SET_WALLET_PIN_CODE,
 } from 'constants/navigationConstants';
@@ -29,45 +25,6 @@ import shuffle from 'shuffle-array';
 import { generateWordsToValidate } from 'utils/wallet';
 
 const storage = Storage.getInstance('db');
-
-export const generateEncryptedWalletAction = () => {
-  return async (dispatch: Function, getState: () => any) => {
-    const currentState = getState();
-    const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
-    const mnemonicPhrase = mnemonic.original;
-
-    dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
-    await delay(50);
-
-    let wallet = importedWallet;
-    if (!wallet) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: GENERATING,
-      });
-      await delay(50);
-      wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
-    }
-
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: ENCRYPTING,
-    });
-    await delay(50);
-
-    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 16384 } })
-      .then(JSON.parse)
-      .catch(() => {});
-
-    await storage.save('wallet', encryptedWallet);
-    await storage.save('app_settings', { wallet: +new Date() });
-    dispatch({
-      type: GENERATE_ENCRYPTED_WALLET,
-      payload: wallet,
-    });
-    dispatch(NavigationActions.navigate({ routeName: ASSETS }));
-  };
-};
 
 export const decryptWalletAction = (pin: string) => {
   return async (dispatch: Function) => {
