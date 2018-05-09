@@ -75,6 +75,9 @@ module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
 module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
 module.name_mapper='^constants' -> '<PROJECT_ROOT>/src/constants'
 
+module.name_mapper='^fixtures\/\(.*\)$' -> '<PROJECT_ROOT>/src/fixtures/\1'
+module.name_mapper='^fixtures' -> '<PROJECT_ROOT>/src/fixtures'
+
 module.name_mapper='^models\/\(.*\)$' -> '<PROJECT_ROOT>/src/models/\1'
 module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
 

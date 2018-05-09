@@ -9,7 +9,9 @@ import {
   UPDATE_WALLET_STATE,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
+import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import Storage from 'services/storage';
+import { initialAssets } from 'fixtures/assets';
 
 const storage = Storage.getInstance('db');
 
@@ -19,9 +21,11 @@ export const registerWalletAction = () => {
     const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
 
+    // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
     await delay(50);
 
+    // STEP 2: check if wallet was imported or create it from the mnemonic phrase otherwise
     let wallet = importedWallet;
     if (!wallet) {
       dispatch({
@@ -32,6 +36,7 @@ export const registerWalletAction = () => {
       wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
     }
 
+    // STEP 3: encrypt the wallet
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,
@@ -48,6 +53,16 @@ export const registerWalletAction = () => {
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
+
+    // STEP 4: store default assets
+    // TODO: get the initial assets from SDK
+    dispatch({
+      type: SET_INITIAL_ASSETS,
+      payload: initialAssets,
+    });
+    await storage.save('assets', initialAssets);
+
+    // STEP 5: all done, navigate to the assets screen
     dispatch(NavigationActions.navigate({ routeName: ASSETS }));
   };
 };
