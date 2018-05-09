@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Body } from 'components/Typography';
 import Title from 'components/Title';
-import { Container, Footer } from 'components/Layout';
-import Wrapper from 'components/Wrapper';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 

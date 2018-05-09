@@ -5,6 +5,8 @@ import { AsyncStorage, Text } from 'react-native';
 import { Container, Footer } from 'components/Layout';
 import Title from 'components/Title';
 import Button from 'components/Button';
+import ProfileHeader from './ProfileHeader';
+import ProfileCard from './ProfileCard';
 
 type State = {
   status: string,
@@ -26,7 +28,10 @@ export default class Profile extends React.Component<{}, State> {
     const { status } = this.state;
     return (
       <Container>
-        <Title title="profile" />
+        <ProfileHeader>
+          <Title title="profile" />
+          <ProfileCard name="John Doe" email="johndoe@email.com" />
+        </ProfileHeader>
         <Footer>
           <Button
             block

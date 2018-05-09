@@ -2,8 +2,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { OTP_STATUS } from 'constants/navigationConstants';
-import { Container, Footer, Center } from 'components/Layout';
-import Wrapper from 'components/Wrapper';
+import { Container, Wrapper, Footer, Center } from 'components/Layout';
 import Button from 'components/Button';
 import Emoji from 'components/Emoji';
 import HyperLink from 'components/HyperLink';

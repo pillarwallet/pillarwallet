@@ -12,8 +12,7 @@ import {
   IMPORT_ERROR,
 } from 'constants/walletConstants';
 
-import { Center, Container, Footer } from 'components/Layout';
-import Wrapper from 'components/Wrapper';
+import { Center, Container, Wrapper, Footer } from 'components/Layout';
 import { Body, Label } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
