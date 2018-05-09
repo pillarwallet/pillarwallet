@@ -30,7 +30,7 @@ export default class Profile extends React.Component<{}, State> {
       <Container>
         <ProfileHeader>
           <Title title="profile" />
-          <ProfileCard name="John Doe" email="johndoe@email.com" />
+          <ProfileCard name="David Bowie" email="johndoe@email.com" />
         </ProfileHeader>
         <Footer>
           <Button
