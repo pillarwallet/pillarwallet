@@ -9,7 +9,7 @@ export const confirmOTPAction = (code: string) => {
   return async (dispatch: Function) => {
     // VALIDATE OTP
     if (code !== '1111') return;
-    await storage.save('app_settings', { OTP: true });
+    await storage.save('app_settings', { OTP: +new Date() });
     dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };
