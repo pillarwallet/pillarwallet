@@ -3,8 +3,10 @@ import * as React from 'react';
 
 import { AsyncStorage, Text } from 'react-native';
 import { Container, Footer } from 'components/Layout';
+import { Form } from 'native-base';
 import Title from 'components/Title';
 import Button from 'components/Button';
+import TextInput from 'components/TextInput';
 import ProfileHeader from './ProfileHeader';
 import ProfileCard from './ProfileCard';
 
@@ -32,6 +34,14 @@ export default class Profile extends React.Component<{}, State> {
           <Title title="profile" />
           <ProfileCard name="David Bowie" email="johndoe@email.com" />
         </ProfileHeader>
+        <Form>
+          <TextInput
+            id="country"
+            label="Country"
+            inlineLabel
+            inputProps={{}}
+          />
+        </Form>
         <Footer>
           <Button
             block
