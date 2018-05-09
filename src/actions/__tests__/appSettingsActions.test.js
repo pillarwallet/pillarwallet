@@ -2,7 +2,7 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { fetchAppSettingsAndRedirectAction } from '../appSettingsActions';
+import { initAppAndRedirectAction } from '../appActions';
 
 const mockStore = configureMockStore([thunk]);
 const store = mockStore({});
@@ -12,7 +12,7 @@ describe('App settings actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: {} },
     ];
 
-    return store.dispatch(fetchAppSettingsAndRedirectAction())
+    return store.dispatch(initAppAndRedirectAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

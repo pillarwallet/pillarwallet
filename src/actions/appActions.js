@@ -6,11 +6,12 @@ import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 
 const storage = Storage.getInstance('db');
 
-export const fetchAppSettingsAndRedirectAction = () => {
+export const initAppAndRedirectAction = () => {
   return async (dispatch: Function) => {
     try {
       const appSettings = await storage.get('app_settings');
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+
       if (appSettings.wallet && appSettings.OTP) {
         dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       }
