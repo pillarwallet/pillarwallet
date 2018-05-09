@@ -58,16 +58,16 @@ const generateProfileCardBackgroundSquares = (input: string) => {
   const profileCardBackgroundSquares = [];
   let seedFromName = 0;
 
-  for (let i = 0; i < input.length; i += 1) {
+  for (let i = 0; i < input.length; i++) {
     seedFromName += input[i].charCodeAt(0);
   }
 
   function getRandomIntFromSeed() {
-    const x = Math.sin(seedFromName += 1) * 10000;
+    const x = Math.sin(seedFromName++) * 10000;
     return x - Math.floor(x);
   }
 
-  for (let i = 0; i < 6; i += 1) {
+  for (let i = 0; i < 6; i++) {
     let left = getRandomIntFromSeed() * 100;
     let top = getRandomIntFromSeed() * 100;
     let size = getRandomIntFromSeed() * 20;
