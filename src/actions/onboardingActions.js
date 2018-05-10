@@ -9,7 +9,7 @@ import {
   UPDATE_WALLET_STATE,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
-import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import Storage from 'services/storage';
 import { initialAssets } from 'fixtures/assets';
 
@@ -54,13 +54,18 @@ export const registerWalletAction = () => {
       payload: wallet,
     });
 
-    // STEP 4: store default assets
+    // STEP 4: store initial assets
     // TODO: get the initial assets from SDK
+    const convertedAssets = initialAssets.reduce((memo, asset) => {
+      memo[asset.symbol] = asset;
+      return memo;
+    }, {});
+
     dispatch({
-      type: SET_INITIAL_ASSETS,
-      payload: initialAssets,
+      type: UPDATE_ASSETS,
+      payload: convertedAssets,
     });
-    await storage.save('assets', initialAssets);
+    await storage.save('assets', { assets: convertedAssets });
 
     // STEP 5: all done, navigate to the assets screen
     dispatch(NavigationActions.navigate({ routeName: ASSETS }));

@@ -1,17 +1,6 @@
 // @flow
-import { UPDATE_ASSET, UPDATE_ASSETS_STATE } from 'constants/assetsConstants';
+import { UPDATE_ASSET, UPDATE_ASSETS, UPDATE_ASSETS_STATE } from 'constants/assetsConstants';
 import merge from 'lodash.merge';
-
-const cryptocurrencies = {
-  ETH: {
-    name: 'Ethereum',
-    color: '#4C4E5E',
-  },
-  PLR: {
-    name: 'Pillar',
-    color: '#5e1b22',
-  },
-};
 
 export type AssetsReducerState = {
   data: Object,
@@ -38,13 +27,15 @@ export default function assetsReducer(
     case UPDATE_ASSET:
       const { id } = action.payload;
       const updatedState = {
-        data: { [id]: { ...action.payload, ...cryptocurrencies[id] } },
+        data: { [id]: { ...action.payload, ...state.data[id] } },
       };
       return merge(
         {},
         state,
         updatedState,
       );
+    case UPDATE_ASSETS:
+      return { ...state, data: action.payload };
     default:
       return state;
   }

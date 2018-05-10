@@ -17,11 +17,11 @@ import SendModal from './SendModal';
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 
-type Props = {
-  fetchEtherBalance: () => Function,
-  assets: Object,
-  wallet: Object,
-}
+const defaultAssetColor = '#4C4E5E';
+const assetColors = {
+  ETH: '#4C4E5E',
+  PLR: '#5e1b22',
+};
 
 const activeModalResetState = {
   type: null,
@@ -31,6 +31,12 @@ const activeModalResetState = {
     tokenName: '',
   },
 };
+
+type Props = {
+  fetchEtherBalance: () => Function,
+  assets: Object,
+  wallet: Object,
+}
 
 type State = {
   animHeaderHeight: Animated.Value,
@@ -129,27 +135,27 @@ class Assets extends React.Component<Props, State> {
       .map(id => assets[id])
       .map((asset, index) => {
         const {
-          id,
           balance,
           name,
-          color,
+          symbol,
         } = asset;
         const displayAmount = +parseFloat(balance).toFixed(4);
-        const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
+        const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
-        const sendModalOptions = { token: id };
+        const sendModalOptions = { token: symbol };
+        const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = (index * 140) + 30;
 
         return (
           <AssetCard
             key={index}
-            id={id}
+            id={symbol}
             isCardActive={isCardActive}
             activeCardId={activeCard}
-            name={name || id}
-            token={id}
+            name={name || symbol}
+            token={symbol}
             amount={displayAmount}
-            color={color}
+            color={assetColor}
             onTap={this.handleCardTap}
             defaultPositionY={defaultCardPositionTop}
             history={assetHistory}
