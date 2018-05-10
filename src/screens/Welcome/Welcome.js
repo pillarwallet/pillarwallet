@@ -13,7 +13,7 @@ import AnimatedBackground from 'components/AnimatedBackground';
 type Props = {
   navigation: NavigationScreenProp<*>,
   isFetched: boolean,
-  wallet: boolean | number,
+  OTP: boolean | number,
 }
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
@@ -33,8 +33,8 @@ class Welcome extends React.Component<Props> {
   };
 
   render() {
-    const { isFetched, wallet } = this.props;
-    if (!isFetched || wallet) return null;
+    const { isFetched, OTP } = this.props;
+    if (!isFetched || OTP) return null;
     return (
       <Container center>
         <AnimatedBackground />
@@ -50,9 +50,9 @@ class Welcome extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ appSettings: { isFetched, data: { wallet } } }) => ({
+const mapStateToProps = ({ appSettings: { isFetched, data: { OTP } } }) => ({
   isFetched,
-  wallet,
+  OTP,
 });
 
 export default connect(mapStateToProps)(Welcome);
