@@ -12,6 +12,8 @@ import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
+import Title from 'components/Title';
+
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
@@ -217,7 +219,9 @@ class AssetsScreen extends React.Component<Props, State> {
               <PortfolioBalance />
             </Animated.View>
           </Animated.View>
-
+          <Wrapper padding>
+            <Title title="assets" />
+          </Wrapper>
           {this.renderAssets()}
 
         </Wrapper>
