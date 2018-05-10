@@ -4,6 +4,7 @@ import merge from 'lodash.merge';
 
 export type AppSettingsReducerState = {
   data: Object,
+  isFetched: boolean,
 }
 
 export type AppSettingsReducerAction = {
