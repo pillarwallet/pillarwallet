@@ -9,6 +9,7 @@ export const baseColors = {
   white: '#ffffff',
   lightGray: '#f6f6f6',
   mediumGray: '#d8d8d8',
+  darkGray: '#4a4a4a',
 };
 
 export const brandColors = [
