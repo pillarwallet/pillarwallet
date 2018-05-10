@@ -5,6 +5,7 @@ export const baseColors = {
   fireEngineRed: '#ff0005',
   brightSkyBlue: '#00bfff',
   aquaMarine: '#50e3c2',
+  lightGreen: '#40e252',
   clearBlue: '#2077fd',
   white: '#ffffff',
   lightGray: '#f6f6f6',
