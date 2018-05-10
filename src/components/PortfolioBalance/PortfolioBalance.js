@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
 import { Text, View } from 'react-native';
-// import cryptocompare from 'cryptocompare';
 import type { Asset } from 'models/Asset';
+// import cryptocompare from 'cryptocompare';
+import { delay } from 'utils/common';
 
 const cryptocompare = {
   priceMulti: (tokensArray, pricesArray) => {
@@ -29,7 +30,7 @@ type Props = {
   assets: Assets,
 };
 
-type Prices = {
+type Rates = {
   [string]: {
     USD: number,
     EUR: number,
@@ -38,98 +39,54 @@ type Prices = {
 };
 
 type State = {
-  portfolioBalance: {
-    USD: number,
-    EUR: number,
-    GBP: number,
-  },
+  rates: ?Rates,
 };
 
 export default class PortfolioBalance extends React.Component<Props, State> {
-  // state = {
-  /* portfolioBalance = {
-    USD: 0,
-    EUR: 0,
-    GBP: 0,
-  }; */
-  // };
-
-  prices: ?Prices = null;
-  pricesFetched: boolean = false;
-
-  componentDidMount() {
-    cryptocompare.priceMulti(['ETH', 'PLR'], ['USD', 'EUR', 'GBP'])
-      .then(prices => {
-        console.log('prices', prices);
-        this.prices = prices;
-        this.pricesFetched = true;
-        this.forceUpdate();
-      })
-      .catch(console.error);
+  state = {
+    rates: null
   }
 
-  /* static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (Object.keys(nextProps.assets).length && this.pricesFetched) {
-      return {
-        ...prevState,
-        portfolioBalance: this.calculatePortfolioBalance(),
-      };
-    }
-    return null;
-  } */
-
-  calculatePortfolioBalance(assets: Assets) {
-    const portfolioBalance = {
-      USD: 0,
-      EUR: 0,
-      GBP: 0,
-    };
-
-    if (!this.pricesFetched) return portfolioBalance;
-
-    Object.keys(assets).forEach(asset => {
-      if (!this.prices || !this.prices[asset]) return;
-
-      const amount = assets[asset].balance;
-
-      portfolioBalance.USD += this.prices[asset].USD * amount;
-      portfolioBalance.EUR += this.prices[asset].EUR * amount;
-      portfolioBalance.GBP += this.prices[asset].GBP * amount;
-    });
-
-    return portfolioBalance;
+  async componentDidMount() {
+    await delay(600);
+    const rates = await cryptocompare.priceMulti(['ETH', 'PLR'], ['USD', 'EUR', 'GBP']);
+    this.setState({ rates })
   }
 
-  /*
-    assets Object {
-     "ETH": Object {
-       "balance": "21.749756564999937",
-       "color": "#4C4E5E",
-       "id": "ETH",
-       "name": "Ethereum",
-     },
-     "PLR": Object {
-       "balance": 100,
-       "color": "#4C4E5E",
-       "id": "PLR",
-       "name": "Pillar",
-     },
-    }
-   */
+  calculatePortfolioBalance(assets: Assets, rates: Rates) {
+    // CLEANUP REQUIRED
+    return Object
+      .values(assets)
+      .map((item) => {
+        const assetFiatBalance = Object
+          .keys(rates[item.symbol])
+          .map(key => ({
+            currency: key,
+            total: rates[item.symbol][key] * item.balance
+          }))
+        return assetFiatBalance;
+      }).reduce((memo, item) => {
+        return memo.concat(item)
+      }, []).reduce((memo, item) => {
+        memo[item.currency] = (memo[item.currency] || 0) + item.total
+        return memo;
+      }, {});
+  }
 
   render() {
     const { assets } = this.props;
-    // const { portfolioBalance } = this.state;
-    if (!Object.keys(assets).length) return null;
-    const portfolioBalance = this.calculatePortfolioBalance(assets);
-
+    const { rates } = this.state;
+    if (!rates) {
+      return null;
+    }
+    const portfolioBalance = this.calculatePortfolioBalance(assets, rates);
     return (
       <View>
         <Text style={{ color: 'white', fontSize: 32 }}>
           Total Portfolio
         </Text>
         <Text style={{ color: 'white', fontSize: 32, textAlign: 'center' }}>
-          ${+parseFloat(portfolioBalance.USD).toFixed(2)}
+          {portfolioBalance['USD']}
         </Text>
       </View>
     );
