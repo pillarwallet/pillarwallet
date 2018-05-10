@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { BCX_URL } from 'react-native-dotenv';
 
 import type { Transaction } from 'models/Transaction';
-import { fetchEtherBalanceAction } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
@@ -33,7 +33,7 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchEtherBalance: () => Function,
+  fetchAssetsBalances: () => Function,
   assets: Object,
   wallet: Object,
 }
@@ -65,11 +65,9 @@ class Assets extends React.Component<Props, State> {
     history: [],
   };
 
-  activeCardPositionY: number = 0;
-
   componentDidMount() {
-    const { fetchEtherBalance } = this.props;
-    fetchEtherBalance();
+    const { fetchAssetsBalances } = this.props;
+    fetchAssetsBalances();
     this.getTransactionHistory();
   }
 
@@ -219,12 +217,10 @@ class Assets extends React.Component<Props, State> {
   }
 }
 
-
 const mapStateToProps = ({ wallet, assets }) => ({ wallet, assets });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchEtherBalance: () =>
-    dispatch(fetchEtherBalanceAction()),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Assets);

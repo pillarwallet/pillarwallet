@@ -5,7 +5,7 @@ export const initialAssets = [
     decimals: 18,
     description: `Ethereum is a decentralized platform that runs smart contracts: applications that run exactly
     as programmed without any possibility of downtime, censorship, fraud or third-party interference.`,
-    name: 'Ethereumn',
+    name: 'Ethereum',
     symbol: 'ETH',
     wallpaperUrl: 'assets/images/backgrounds/ethereum.png',
     iconUrl: 'assets/images/tokens/icon_ethereum.png',

@@ -1,5 +1,10 @@
 // @flow
-import { UPDATE_ASSET, UPDATE_ASSETS, UPDATE_ASSETS_STATE } from 'constants/assetsConstants';
+import {
+  UPDATE_ASSET,
+  UPDATE_ASSETS,
+  UPDATE_ASSETS_STATE,
+  UPDATE_ASSETS_BALANCES,
+} from 'constants/assetsConstants';
 import merge from 'lodash.merge';
 
 export type AssetsReducerState = {
@@ -36,6 +41,13 @@ export default function assetsReducer(
       );
     case UPDATE_ASSETS:
       return { ...state, data: action.payload };
+    case UPDATE_ASSETS_BALANCES:
+      const assets = { ...state.data };
+      const newBalances = action.payload || [];
+      newBalances.forEach(({ symbol: id, balance }) => {
+        assets[id] = { ...assets[id], balance };
+      });
+      return { ...state, data: assets };
     default:
       return state;
   }
