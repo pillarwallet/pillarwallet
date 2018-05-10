@@ -61,11 +61,11 @@ export const fetchEtherBalanceAction = () => {
 
     dispatch({
       type: UPDATE_ASSET,
-      payload: { id: ETH, balance },
+      payload: { symbol: ETH, balance },
     });
     dispatch({
       type: UPDATE_ASSET,
-      payload: { id: PLR, balance: 1000 },
+      payload: { symbol: PLR, balance: 1000 },
     });
     dispatch({
       type: UPDATE_ASSETS_STATE,

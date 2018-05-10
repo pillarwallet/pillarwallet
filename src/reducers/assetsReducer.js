@@ -4,13 +4,13 @@ import merge from 'lodash.merge';
 
 export type AssetsReducerState = {
   data: Object,
-  assetsState: ?string
-}
+  assetsState: ?string,
+};
 
 export type AssetsReducerAction = {
   type: string,
-  payload: any
-}
+  payload: any,
+};
 
 const initialState = {
   data: {},
@@ -25,9 +25,9 @@ export default function assetsReducer(
     case UPDATE_ASSETS_STATE:
       return { ...state, assetsState: action.payload };
     case UPDATE_ASSET:
-      const { id } = action.payload;
+      const { symbol } = action.payload;
       const updatedState = {
-        data: { [id]: { ...action.payload, ...state.data[id] } },
+        data: { [symbol]: { ...state.data[symbol], ...action.payload } },
       };
       return merge(
         {},
