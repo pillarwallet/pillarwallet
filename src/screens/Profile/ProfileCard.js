@@ -50,50 +50,45 @@ const ProfileCardBackgroundSquare = styled.View`
   height: ${props => props.size};
   background-color: ${props => props.background};
   position: absolute;
-  top: ${props => props.top};
-  left: ${props => props.left};
+  top: ${props => props.top}%;
+  left: ${props => props.left}%;
 `;
 
 const generateProfileCardBackgroundSquares = (input: string) => {
   const profileCardBackgroundSquares = [];
-  let seedFromName = 0;
+  const seedFromName = input.split('').reduce((seed, letter) => {
+    return seed + letter.charCodeAt(0);
+  }, 0);
 
-  for (let i = 0; i < input.length; i++) {
-    seedFromName += input[i].charCodeAt(0);
-  }
-
-  function getRandomIntFromSeed() {
-    const x = Math.sin(seedFromName++) * 10000;
+  function getRandomIntFromSeed(seed, increment) {
+    const x = Math.sin(seed / ((increment + 1) * 0.9)) * 10000;
     return x - Math.floor(x);
   }
 
   for (let i = 0; i < 6; i++) {
-    let left = getRandomIntFromSeed() * 100;
-    let top = getRandomIntFromSeed() * 100;
-    let size = getRandomIntFromSeed() * 20;
+    const randomInt = getRandomIntFromSeed(seedFromName, i);
+    let left = randomInt * 100;
+    let top = randomInt * 100;
+    let size = randomInt * 20;
 
     if (left > 20 && left < 50) {
-      left = getRandomIntFromSeed() * 20;
+      left = randomInt * 20;
     } else if (left < 80 && left > 50) {
-      left = 100 - (getRandomIntFromSeed() * 20);
+      left = 100 - (randomInt * 20);
     }
 
     if (top > 20 && top < 50) {
-      left = getRandomIntFromSeed() * 20;
+      left = randomInt * 20;
     } else if (top < 80 && top > 50) {
-      top = 100 - (getRandomIntFromSeed() * 20);
+      top = 100 - (randomInt * 20);
     }
 
     if (size < 20) {
-      size = 10 + (getRandomIntFromSeed() * 20);
+      size = 10 + (randomInt * 20);
     } else if (size > 40) {
-      size = 30 - (getRandomIntFromSeed() * 20);
+      size = 30 - (randomInt * 20);
     }
-
-    left += '%';
-    top += '%';
-
-    const color = brandColors[Math.round(getRandomIntFromSeed() * (brandColors.length - 1))];
+    const color = brandColors[Math.round(randomInt * (brandColors.length - 1))];
 
     profileCardBackgroundSquares.push(
       <ProfileCardBackgroundSquare
@@ -110,22 +105,17 @@ const generateProfileCardBackgroundSquares = (input: string) => {
 };
 
 const ProfileCard = (props: Props) => {
-  const getInitials = () => {
-    const names = props.name.split(' ');
-    let initials = names[0].substring(0, 1).toUpperCase();
-
-    if (names.length > 1) {
-      initials += names[names.length - 1].substring(0, 1).toUpperCase();
-    }
-
-    return initials;
-  };
+  const initials = props.name
+    .split(' ')
+    .map(name => name.substring(0, 1))
+    .join('')
+    .toUpperCase();
 
   return (
     <ProfileCardWrapper>
       {generateProfileCardBackgroundSquares(props.name)}
       <ProfileCardAvatar>
-        <ProfileCardAvatarText>{getInitials()}</ProfileCardAvatarText>
+        <ProfileCardAvatarText>{initials}</ProfileCardAvatarText>
       </ProfileCardAvatar>
       <ProfileCardName>{props.name}</ProfileCardName>
       <ProfileCardEmail>{props.email}</ProfileCardEmail>
