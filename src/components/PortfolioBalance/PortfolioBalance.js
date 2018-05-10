@@ -44,31 +44,31 @@ type State = {
 
 export default class PortfolioBalance extends React.Component<Props, State> {
   state = {
-    rates: null
-  }
+    rates: null,
+  };
 
   async componentDidMount() {
     await delay(600);
     const rates = await cryptocompare.priceMulti(['ETH', 'PLR'], ['USD', 'EUR', 'GBP']);
-    this.setState({ rates })
+    this.setState({ rates });
   }
 
   calculatePortfolioBalance(assets: Assets, rates: Rates) {
     // CLEANUP REQUIRED
     return Object
       .values(assets)
-      .map((item) => {
+      .map((item: Asset) => {
         const assetFiatBalance = Object
           .keys(rates[item.symbol])
           .map(key => ({
             currency: key,
-            total: rates[item.symbol][key] * item.balance
-          }))
+            total: rates[item.symbol][key] * item.balance,
+          }));
         return assetFiatBalance;
       }).reduce((memo, item) => {
-        return memo.concat(item)
+        return memo.concat(item);
       }, []).reduce((memo, item) => {
-        memo[item.currency] = (memo[item.currency] || 0) + item.total
+        memo[item.currency] = (memo[item.currency] || 0) + item.total;
         return memo;
       }, {});
   }
@@ -86,7 +86,7 @@ export default class PortfolioBalance extends React.Component<Props, State> {
           Total Portfolio
         </Text>
         <Text style={{ color: 'white', fontSize: 32, textAlign: 'center' }}>
-          {portfolioBalance['USD']}
+          ${+parseFloat(portfolioBalance.USD).toFixed(2)}
         </Text>
       </View>
     );
