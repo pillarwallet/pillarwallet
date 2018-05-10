@@ -12,6 +12,7 @@ import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import Storage from 'services/storage';
 import { initialAssets } from 'fixtures/assets';
+import { transformAssetsToObject } from 'utils/assets';
 
 const storage = Storage.getInstance('db');
 
@@ -56,10 +57,7 @@ export const registerWalletAction = () => {
 
     // STEP 4: store initial assets
     // TODO: get the initial assets from SDK
-    const convertedAssets = initialAssets.reduce((memo, asset) => {
-      memo[asset.symbol] = asset;
-      return memo;
-    }, {});
+    const convertedAssets = transformAssetsToObject(initialAssets);
 
     dispatch({
       type: UPDATE_ASSETS,

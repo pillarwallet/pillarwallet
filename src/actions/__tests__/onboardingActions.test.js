@@ -11,6 +11,7 @@ import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import { initialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
+import { transformAssetsToObject } from 'utils/assets';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
@@ -55,7 +56,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: UPDATE_ASSETS, payload: initialAssets },
+      { type: UPDATE_ASSETS, payload: transformAssetsToObject(initialAssets) },
       { type: NAVIGATE, routeName: ASSETS },
     ];
 
@@ -80,7 +81,7 @@ describe('Wallet actions', () => {
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: UPDATE_ASSETS, payload: initialAssets },
+      { type: UPDATE_ASSETS, payload: transformAssetsToObject(initialAssets) },
       { type: NAVIGATE, routeName: ASSETS },
     ];
 

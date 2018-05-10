@@ -84,6 +84,9 @@ module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
 module.name_mapper='^navigation\/\(.*\)$' -> '<PROJECT_ROOT>/src/navigation/\1'
 module.name_mapper='^navigation' -> '<PROJECT_ROOT>/src/navigation'
 
+module.name_mapper='^reducers\/\(.*\)$' -> '<PROJECT_ROOT>/src/reducers/\1'
+module.name_mapper='^reducers' -> '<PROJECT_ROOT>/src/reducers'
+
 module.name_mapper='^services\/\(.*\)$' -> '<PROJECT_ROOT>/src/services/\1'
 module.name_mapper='^services' -> '<PROJECT_ROOT>/src/services'
 
