@@ -156,6 +156,7 @@ class AssetsScreen extends React.Component<Props, State> {
         const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = (index * 140) + 30;
 
+
         return (
           <AssetCard
             key={index}
@@ -209,15 +210,13 @@ class AssetsScreen extends React.Component<Props, State> {
         >
           <Animated.View
             style={{
-              backgroundColor: '#00a5ff',
               height: animHeaderHeight,
-              justifyContent: 'center',
-              alignItems: 'center',
             }}
           >
             <Animated.View style={{ opacity: animHeaderTextOpacity }}>
               <PortfolioBalance />
             </Animated.View>
+
           </Animated.View>
           <Wrapper padding>
             <Title title="assets" />
