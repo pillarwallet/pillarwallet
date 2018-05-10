@@ -1,7 +1,6 @@
 // @flow
 export type Asset = {
-  key: string,
+  symbol: string,
   name: string,
   balance: number,
-  color: string
-}
+};
