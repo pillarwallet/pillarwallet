@@ -5,7 +5,7 @@ import { baseColors } from 'utils/variables';
 
 type Props = {
   children?: React.Node,
-}
+};
 
 const FormDividerBackground = styled.View`
   width: 100%;
@@ -16,7 +16,6 @@ const FormDividerBackground = styled.View`
 const FormDividerText = styled.Text`
   color: ${baseColors.darkGray};
 `;
-
 
 const FormDivider = (props: Props) => {
   return (
