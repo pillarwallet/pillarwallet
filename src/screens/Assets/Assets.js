@@ -2,11 +2,10 @@
 import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
+import { UIColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
-
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
@@ -20,8 +19,9 @@ import SendModal from './SendModal';
 
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
-
 const defaultAssetColor = '#4C4E5E';
+const pillarLogoSource = require('assets/images/header-pillar-logo.png');
+
 const assetColors = {
   ETH: '#4C4E5E',
   PLR: '#5e1b22',
@@ -211,12 +211,23 @@ class AssetsScreen extends React.Component<Props, State> {
           <Animated.View
             style={{
               height: animHeaderHeight,
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              borderColor: UIColors.defaultBorderColor,
+              padding: 20,
             }}
           >
+            <Animated.Image
+              source={pillarLogoSource}
+              style={{
+                opacity: animHeaderTextOpacity,
+                height: 35,
+                width: 71,
+              }}
+            />
             <Animated.View style={{ opacity: animHeaderTextOpacity }}>
               <PortfolioBalance />
             </Animated.View>
-
           </Animated.View>
           <Wrapper padding>
             <Title title="assets" />
