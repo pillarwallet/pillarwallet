@@ -125,7 +125,7 @@ export default class Profile extends React.Component<{}, State> {
             <ListSeparator>
               <ListSeparatorText>DEBUG</ListSeparatorText>
             </ListSeparator>
-            <ListItem onPress={this.clearLocalStorage}>
+            <ListItem noBorder onPress={this.clearLocalStorage}>
               <Body>
                 <ListItemText>Clear Local Storage</ListItemText>
               </Body>
@@ -136,7 +136,7 @@ export default class Profile extends React.Component<{}, State> {
             <ListSeparator>
               <ListSeparatorText lastSynced>Last Synced 00:01:02 Feb 2, 2018</ListSeparatorText>
             </ListSeparator>
-            <ListItem>
+            <ListItem noBorder>
               <Body>
                 <ListItemText>Manage Account</ListItemText>
               </Body>
@@ -147,7 +147,7 @@ export default class Profile extends React.Component<{}, State> {
             <ListSeparator>
               <ListSeparatorText>SETTINGS</ListSeparatorText>
             </ListSeparator>
-            <ListItem>
+            <ListItem noBorder>
               <Body>
                 <ListItemText>Base Currency</ListItemText>
               </Body>
@@ -182,7 +182,7 @@ export default class Profile extends React.Component<{}, State> {
                 <Switch value={false} />
               </Right>
             </ListItem>
-            <ListItem>
+            <ListItem noBorder>
               <Body>
                 <ListItemText>Request Pin for Transaction</ListItemText>
               </Body>
