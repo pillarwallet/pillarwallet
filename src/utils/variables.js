@@ -5,10 +5,12 @@ export const baseColors = {
   fireEngineRed: '#ff0005',
   brightSkyBlue: '#00bfff',
   aquaMarine: '#50e3c2',
+  lightGreen: '#82bc40',
   clearBlue: '#2077fd',
   white: '#ffffff',
   lightGray: '#f6f6f6',
   mediumGray: '#d8d8d8',
+  darkGray: '#4a4a4a',
 };
 
 export const brandColors = [
