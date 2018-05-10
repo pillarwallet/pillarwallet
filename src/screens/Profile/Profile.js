@@ -174,14 +174,6 @@ export default class Profile extends React.Component<{}, State> {
                 <Icon name="arrow-forward" />
               </Right>
             </ListItem>
-            <ListItem>
-              <Body>
-                <ListItemText>Request Pin at Startup</ListItemText>
-              </Body>
-              <Right>
-                <Switch value={false} />
-              </Right>
-            </ListItem>
             <ListItem noBorder>
               <Body>
                 <ListItemText>Request Pin for Transaction</ListItemText>
