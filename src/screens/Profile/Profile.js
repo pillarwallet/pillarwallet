@@ -6,14 +6,10 @@ import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Label } from 'components/Typography';
 import { Container, Wrapper } from 'components/Layout';
 import { Grid, Row, Column } from 'components/Grid';
-import { List, ListItem, Icon, Body, Right, Switch } from 'native-base';
+import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
 import Title from 'components/Title';
 import ProfileHeader from './ProfileHeader';
 import ProfileCard from './ProfileCard';
-
-type State = {
-  status: string,
-}
 
 const ProfileInfoItem = styled.View`
   margin-left: 20px;
@@ -51,20 +47,18 @@ const ListItemText = styled.Text`
   margin: 10px 4px;
 `;
 
-export default class Profile extends React.Component<{}, State> {
-  state = {
-    status: '',
-  };
+const leftColumnSize = '0 0 100px';
 
-  clearLocalStorage = () => {
+export default class Profile extends React.Component<{}> {
+  clearLocalStorage() {
     AsyncStorage.clear();
-    this.setState({
-      status: 'Cleared',
+    Toast.show({
+      text: 'Cleared',
+      buttonText: '',
     });
-  };
+  }
 
   render() {
-    const { status } = this.state;
     return (
       <Container>
         <Wrapper>
@@ -72,23 +66,10 @@ export default class Profile extends React.Component<{}, State> {
             <Title title="profile" />
             <ProfileCard name="David Bowie" email="johndoe@email.com" />
           </ProfileHeader>
-          {status &&
           <ProfileInfoItem>
             <Grid>
               <Row>
-                <Column size="0 0 100px">
-                  <ProfileInfoLabel>Storage Status</ProfileInfoLabel>
-                </Column>
-                <Column>
-                  <ProfileInfoValue>{status}</ProfileInfoValue>
-                </Column>
-              </Row>
-            </Grid>
-          </ProfileInfoItem>}
-          <ProfileInfoItem>
-            <Grid>
-              <Row>
-                <Column size="0 0 100px">
+                <Column size={leftColumnSize}>
                   <ProfileInfoLabel>Country</ProfileInfoLabel>
                 </Column>
                 <Column>
@@ -100,7 +81,7 @@ export default class Profile extends React.Component<{}, State> {
           <ProfileInfoItem>
             <Grid>
               <Row>
-                <Column size="0 0 100px">
+                <Column size={leftColumnSize}>
                   <ProfileInfoLabel>City</ProfileInfoLabel>
                 </Column>
                 <Column>
@@ -112,7 +93,7 @@ export default class Profile extends React.Component<{}, State> {
           <ProfileInfoItem noBorder>
             <Grid>
               <Row>
-                <Column size="0 0 100px">
+                <Column size={leftColumnSize}>
                   <ProfileInfoLabel>Phone</ProfileInfoLabel>
                 </Column>
                 <Column>
