@@ -10,7 +10,6 @@ import tokens from 'utils/erc_whitelist.json';
 
 type Props = {}
 
-
 const TokenIcons = {};
 
 TokenIcons.PLR = require('assets/images/tokens/PLR/icon.png');
@@ -48,7 +47,7 @@ export default class AddToken extends React.Component<Props> {
     return Object.keys(tokens)
       .map((key) => tokens[key])
       .map((token) => (
-        <TokenListItem>
+        <TokenListItem key={token.symbol}>
           <Thumbnail square size={80} source={TokenIcons[token.symbol]} />
           <Body style={{ marginLeft: 20 }}>
             <TokenName>{token.name}</TokenName>
