@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated } from 'react-native';
+import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { BCX_URL } from 'react-native-dotenv';
 
@@ -189,6 +189,15 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <Container>
         <Wrapper
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                const { assets, wallet } = this.props;
+                this.props.fetchAssetsBalances(assets, wallet.address);
+              }}
+            />
+          }
           style={{
             position: 'relative',
             width: '100%',
