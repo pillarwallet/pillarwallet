@@ -16,6 +16,7 @@ import NewWalletScreen from 'screens/NewWallet';
 import SigninScreen from 'screens/Signin';
 import SignupScreen from 'screens/Signup';
 import AssetsScreen from 'screens/Assets';
+import AddTokenScreen from 'screens/AddToken';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import LegalTermsScreen from 'screens/LegalTerms';
@@ -106,7 +107,7 @@ const authFlow = StackNavigator({
 const appFlow = TabNavigator(
   {
     [ASSETS]: AssetsScreen,
-    [ICO]: ICOScreen,
+    [ICO]: AddTokenScreen,
     [PROFILE]: ProfileScreen,
   },
   { ...getBottomNavigationOptions() }, // eslint-disable-line
