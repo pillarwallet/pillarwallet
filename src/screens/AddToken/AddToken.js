@@ -8,17 +8,17 @@ import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import Title from 'components/Title';
 import tokens from 'utils/erc_whitelist.json';
 
-const TokenIcons = {};
+const tokenIcons = {};
 
-TokenIcons.PLR = require('assets/images/tokens/PLR/icon.png');
-TokenIcons.QTM = require('assets/images/tokens/QTM/icon.png');
-TokenIcons.OMG = require('assets/images/tokens/OMG/icon.png');
-TokenIcons.ICX = require('assets/images/tokens/ICX/icon.png');
-TokenIcons.STORJ = require('assets/images/tokens/STORJ/icon.png');
-TokenIcons.BAT = require('assets/images/tokens/BAT/icon.png');
-TokenIcons.GNT = require('assets/images/tokens/GNT/icon.png');
-TokenIcons.PPT = require('assets/images/tokens/PPT/icon.png');
-TokenIcons.SALT = require('assets/images/tokens/SALT/icon.png');
+tokenIcons.PLR = require('assets/images/tokens/PLR/icon.png');
+tokenIcons.QTM = require('assets/images/tokens/QTM/icon.png');
+tokenIcons.OMG = require('assets/images/tokens/OMG/icon.png');
+tokenIcons.ICX = require('assets/images/tokens/ICX/icon.png');
+tokenIcons.STORJ = require('assets/images/tokens/STORJ/icon.png');
+tokenIcons.BAT = require('assets/images/tokens/BAT/icon.png');
+tokenIcons.GNT = require('assets/images/tokens/GNT/icon.png');
+tokenIcons.PPT = require('assets/images/tokens/PPT/icon.png');
+tokenIcons.SALT = require('assets/images/tokens/SALT/icon.png');
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.medium};
@@ -44,7 +44,7 @@ export default class AddToken extends React.Component<{}> {
   generateAddTokenListItems() {
     return tokens.map(({ symbol, name }) => (
       <TokenListItem key={symbol}>
-        <Thumbnail square size={80} source={TokenIcons[symbol]} />
+        <Thumbnail square size={80} source={tokenIcons[symbol]} />
         <Body style={{ marginLeft: 20 }}>
           <TokenName>{name}</TokenName>
           <TokenSymbol>{symbol}</TokenSymbol>
