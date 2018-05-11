@@ -8,7 +8,7 @@ import Emoji from 'components/Emoji';
 import HyperLink from 'components/HyperLink';
 import FooterText from 'components/FooterText';
 import { CountryPicker, CountryPickerWrapper } from 'components/CountryPicker';
-import { Body, Label } from 'components/Typography';
+import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
 import { LoginForm, PhoneInput, InputField } from 'components/Form';
 import { Picker, Icon } from 'native-base';
@@ -62,7 +62,7 @@ class Signup extends React.Component<Props, State> {
       <Container>
         <Wrapper padding>
           <Title title="signup" />
-          <Body>Securely manage your digital assets and participate in exlusive Initial Coin Offerings.</Body>
+          <Paragraph>Securely manage your digital assets and participate in exlusive Initial Coin Offerings.</Paragraph>
           <LoginForm>
             <Label>Firstname</Label>
             <InputField

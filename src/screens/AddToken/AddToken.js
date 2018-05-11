@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
@@ -12,7 +11,6 @@ type Props = {}
 
 const TokenIcons = {
   PLR: require('assets/images/tokens/PLR/icon.png'),
-  EOS: require('assets/images/tokens/EOS/icon.png'),
   QTM: require('assets/images/tokens/QTM/icon.png'),
   OMG: require('assets/images/tokens/OMG/icon.png'),
   ICX: require('assets/images/tokens/ICX/icon.png'),
@@ -54,7 +52,7 @@ export default class AddToken extends React.Component<Props> {
       .map((token) => (
         <TokenListItem>
           <Thumbnail square size={80} source={TokenIcons[token.symbol]} />
-          <Body>
+          <Body style={{ marginLeft: 20 }}>
             <TokenName>{token.name}</TokenName>
             <TokenSymbol>{token.symbol}</TokenSymbol>
           </Body>

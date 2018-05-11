@@ -20,25 +20,6 @@
   },
   {
     "id": "0",
-    "addr": "0x86fa049857e0209aa7d9e616f7eb3b3b78ecfdb0",
-    "decimals": 18,
-    "description": "Infrastructure for Decentralized Applications",
-    "name": "EOS",
-    "symbol": "EOS",
-    "graphics": {
-      "wallpaperUrl": "wallpaper/wp_eos.png",
-      "iconUrl": "icons/icon_eos.png"
-    },
-    "links": {
-      "Email": "mailto:eos@block.one",
-      "Telegram": "https://t.me/joinchat/AAAAAEQbOeucnaMWN0A9dQ",
-      "Twitter": "https://twitter.com/eos_io",
-      "Website": "https://eos.io",
-      "Whitepaper": "https://github.com/EOSIO/Documentation/blob/master/TechnicalWhitePaper.md"
-    }
-  },
-  {
-    "id": "0",
     "addr": "0x9a642d6b3368ddc662CA244bAdf32cDA716005BC",
     "decimals": 18,
     "description": "Build Decentralized Applications that Simply Work Executable on mobile devices, compatible with major existing blockchain ecosystem",
