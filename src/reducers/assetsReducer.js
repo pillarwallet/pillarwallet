@@ -4,7 +4,9 @@ import {
   UPDATE_ASSETS,
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS_BALANCES,
+  FETCHED,
 } from 'constants/assetsConstants';
+import { transformAssetsToObject } from 'utils/assets';
 import merge from 'lodash.merge';
 
 export type AssetsReducerState = {
@@ -42,12 +44,13 @@ export default function assetsReducer(
     case UPDATE_ASSETS:
       return { ...state, data: action.payload };
     case UPDATE_ASSETS_BALANCES:
-      const assets = { ...state.data };
-      const newBalances = action.payload || [];
-      newBalances.forEach(({ symbol: id, balance }) => {
-        assets[id] = { ...assets[id], balance };
-      });
-      return { ...state, data: assets };
+      const mappedAssets = transformAssetsToObject(action.payload);
+      return merge(
+        {},
+        state,
+        { assetsState: FETCHED },
+        { data: mappedAssets },
+      );
     default:
       return state;
   }

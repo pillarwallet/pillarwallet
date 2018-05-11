@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {
   Animated,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';

@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { BCX_URL } from 'react-native-dotenv';
 
 import type { Transaction } from 'models/Transaction';
+import type { Assets } from 'models/Asset';
+
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
@@ -33,7 +35,7 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchAssetsBalances: () => Function,
+  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Object,
   wallet: Object,
   rates: Object,
@@ -56,7 +58,7 @@ type State = {
   }
 }
 
-class Assets extends React.Component<Props, State> {
+class AssetsScreen extends React.Component<Props, State> {
   state = {
     animHeaderHeight: new Animated.Value(150),
     animHeaderTextOpacity: new Animated.Value(1),
@@ -67,8 +69,8 @@ class Assets extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchAssetsBalances } = this.props;
-    fetchAssetsBalances();
+    const { fetchAssetsBalances, assets, wallet } = this.props;
+    fetchAssetsBalances(assets, wallet.address);
     this.getTransactionHistory();
   }
 
@@ -147,7 +149,7 @@ class Assets extends React.Component<Props, State> {
         const displayAmount = +parseFloat(balance).toFixed(4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
-        const sendModalOptions = { token: symbol };
+        const sendModalOptions = { token: symbol, totalBalance: balance };
         const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = (index * 140) + 30;
 
@@ -235,7 +237,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
+  fetchAssetsBalances: (assets, walletAddress) =>
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Assets);
+export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

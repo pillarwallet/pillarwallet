@@ -1,14 +1,9 @@
 // @flow
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import type { Asset } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 import { USD } from 'constants/assetsConstants';
-import { delay } from 'utils/common';
 import { connect } from 'react-redux';
-
-type Assets = {
-  [string]: Asset,
-};
 
 type Rates = {
   [string]: {
@@ -25,7 +20,6 @@ type Props = {
 };
 
 class PortfolioBalance extends React.Component<Props, {}> {
-
   static defaultProps = {
     baseCurrency: USD,
   }
@@ -33,7 +27,8 @@ class PortfolioBalance extends React.Component<Props, {}> {
   calculatePortfolioBalance(assets: Assets, rates: Rates) {
     // CLEANUP REQUIRED
     return Object
-      .values(assets)
+      .keys(assets)
+      .map(key => assets[key])
       .map((item: Asset) => {
         const assetFiatBalance = Object
           .keys(rates[item.symbol])
@@ -42,9 +37,11 @@ class PortfolioBalance extends React.Component<Props, {}> {
             total: rates[item.symbol][key] * item.balance,
           }));
         return assetFiatBalance;
-      }).reduce((memo, item) => {
+      })
+      .reduce((memo, item) => {
         return memo.concat(item);
-      }, []).reduce((memo, item) => {
+      }, [])
+      .reduce((memo, item) => {
         memo[item.currency] = (memo[item.currency] || 0) + item.total;
         return memo;
       }, {});

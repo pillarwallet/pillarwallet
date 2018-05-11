@@ -43,30 +43,30 @@ const getFormStructure = (options = {}) => {
   const Amount = t.refinement(t.Number, (amount): boolean => {
     return amount > 0 && amount <= options.totalBalance;
   });
-  
+
   Amount.getValidationErrorMessage = (amount): string => {
     if (amount > options.totalBalance) {
       return 'Amount should not exceed the total balance.';
     }
     return 'Amount should be specified.';
   };
-  
+
   const Address = t.refinement(t.String, (address): boolean => {
     return address.length && isValidETHAddress(address);
   });
-  
+
   Address.getValidationErrorMessage = (address): string => {
     if (!isValidETHAddress(address)) {
       return 'Invalid Ethereum Address.';
     }
     return 'Address must be provided.';
   };
-  
+
   return t.struct({
     address: Address,
     amount: Amount,
   });
-}
+};
 
 // EXTRACT TO FACTORY
 function AddressInputTemplate(locals) {
@@ -160,21 +160,21 @@ const SendButton = styled.Text`
 
 class SendModal extends React.Component<Props, State> {
   _form: t.form;
-  
-  constructor(props){
+
+  constructor(props) {
     super(props);
     this.state = {
       isScanning: false,
       value: null,
-      formStructure: getFormStructure(props)
+      formStructure: getFormStructure(props),
     };
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps) {
     if (nextProps.totalBalance) {
       return {
-        formStructure: getFormStructure(nextProps)
-      }
+        formStructure: getFormStructure(nextProps),
+      };
     }
     return null;
   }
@@ -185,16 +185,24 @@ class SendModal extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     const value = this._form.getValue();
-    const { sendAsset, onModalHide, token, contractAddress } = this.props;
+    const {
+      sendAsset,
+      onModalHide,
+      token,
+      contractAddress,
+    } = this.props;
+
     if (!value) return;
+
     const transactionPayload: TransactionPayload = {
       to: value.address,
       amount: value.amount,
       gasLimit: 1500000,
       gasPrice: 20000000000,
-      id: token,
-      contractAddress
+      symbol: token,
+      contractAddress,
     };
+
     sendAsset(transactionPayload);
     onModalHide();
     this.setState({

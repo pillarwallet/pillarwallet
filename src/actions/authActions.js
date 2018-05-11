@@ -15,7 +15,8 @@ import Storage from 'services/storage';
 
 // TODO: remove and mock
 const cryptocompare = {
-  priceMulti: (tokensArray, pricesArray) => {
+  priceMulti: (tokensArray, priceMulti) => {
+    console.log(priceMulti);
     return Promise.resolve({
       ETH: {
         EUR: 624.21,
