@@ -38,7 +38,7 @@ describe('Wallet actions', () => {
   });
 
   beforeEach(() => {
-    store = mockStore({});
+    store = mockStore({ assets: { data: {} } });
   });
 
   it('should expect series of actions with payload to be dispatch on loginAction execution', () => {

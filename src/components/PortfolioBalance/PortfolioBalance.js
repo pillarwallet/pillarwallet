@@ -2,25 +2,7 @@
 import * as React from 'react';
 import { Text, View } from 'react-native';
 import type { Asset } from 'models/Asset';
-// import cryptocompare from 'cryptocompare';
 import { delay } from 'utils/common';
-
-const cryptocompare = {
-  priceMulti: (tokensArray, pricesArray) => {
-    return Promise.resolve({
-      ETH: {
-        EUR: 624.21,
-        GBP: 544.57,
-        USD: 748.92,
-      },
-      PLR: {
-        EUR: 0.3142,
-        GBP: 0.2762,
-        USD: 0.377,
-      },
-    });
-  },
-};
 
 type Assets = {
   [string]: Asset,
@@ -49,8 +31,8 @@ export default class PortfolioBalance extends React.Component<Props, State> {
 
   async componentDidMount() {
     await delay(600);
-    const rates = await cryptocompare.priceMulti(['ETH', 'PLR'], ['USD', 'EUR', 'GBP']);
-    this.setState({ rates });
+    // const rates = await cryptocompare.priceMulti(['ETH', 'PLR'], ['USD', 'EUR', 'GBP']);
+    // this.setState({ rates });
   }
 
   calculatePortfolioBalance(assets: Assets, rates: Rates) {
