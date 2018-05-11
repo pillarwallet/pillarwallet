@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { Body, Label } from 'components/Typography';
+import { Paragraph, Label } from 'components/Typography';
 import { Center, Container, Wrapper } from 'components/Layout';
 import Title from 'components/Title';
 import Button from 'components/Button';
@@ -47,8 +47,8 @@ class OTP extends React.Component<Props> {
       <Container>
         <Wrapper padding>
           <Title title="confirm" />
-          <Body>We sent your code to</Body>
-          <Body>+441234 567 890</Body>
+          <Paragraph>We sent your code to</Paragraph>
+          <Paragraph>+441234 567 890</Paragraph>
           <Center>
             <SMSConfirmationInput onCodeFilled={this.handleOTPConfirmation} />
             <SMSConfirmationLabel>Please allow up to 10 minutes for your code to arrive.</SMSConfirmationLabel>
