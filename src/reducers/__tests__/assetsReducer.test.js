@@ -4,11 +4,11 @@ import reducer from '../assetsReducer';
 
 describe('Assets reducer', () => {
   it('should handle UPDATE_ASSET', () => {
-    const updateAction = { type: UPDATE_ASSET, payload: { id: ETH, balance: 5 } };
+    const updateAction = { type: UPDATE_ASSET, payload: { symbol: ETH, balance: 5 } };
     const expectedAssets = {
       data: {
         [ETH]: {
-          id: ETH,
+          symbol: ETH,
           balance: 5,
         },
       },

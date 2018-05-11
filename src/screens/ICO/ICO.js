@@ -13,7 +13,7 @@ import { Container, Wrapper, Footer } from 'components/Layout';
 import { Title } from 'components/Typography';
 import Button from 'components/Button';
 
-import { sendAssetAction, fetchEtherBalanceAction } from 'actions/assetsActions';
+import { sendAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { FETCHING, ETH } from 'constants/assetsConstants';
 
 // https://ropsten.etherscan.io/address/0x583cbbb8a8443b38abcc0c956bece47340ea1367#readContract
@@ -145,7 +145,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   sendAsset: (transaction: Object) =>
     dispatch(sendAssetAction(transaction)),
   fetchEtherBalance: () =>
-    dispatch(fetchEtherBalanceAction()),
+    dispatch(fetchAssetsBalancesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ICO);
