@@ -201,9 +201,9 @@ class Assets extends React.Component<Props, State> {
               alignItems: 'center',
             }}
           >
-            <Animated.Text style={{ opacity: animHeaderTextOpacity }}>
+            <Animated.View style={{ opacity: animHeaderTextOpacity }}>
               <PortfolioBalance />
-            </Animated.Text>
+            </Animated.View>
           </Animated.View>
 
           {this.renderAssets()}
