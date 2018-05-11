@@ -141,6 +141,7 @@ class AssetsScreen extends React.Component<Props, State> {
           balance,
           name,
           symbol,
+          address: contractAddress,
         } = asset;
 
         // TODO: extract this to service
@@ -149,7 +150,7 @@ class AssetsScreen extends React.Component<Props, State> {
         const displayAmount = +parseFloat(balance).toFixed(4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
-        const sendModalOptions = { token: symbol, totalBalance: balance };
+        const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
         const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = (index * 140) + 30;
 
