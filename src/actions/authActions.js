@@ -1,7 +1,7 @@
 // @flow
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
-// import cryptocompare from 'cryptocompare';
+import cryptocompare from 'cryptocompare';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -14,7 +14,7 @@ import { delay } from 'utils/common';
 import Storage from 'services/storage';
 
 // TODO: remove and mock
-const cryptocompare = {
+/* const cryptocompare = {
   priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
     return Promise.resolve({
       ETH: {
@@ -29,7 +29,7 @@ const cryptocompare = {
       },
     });
   },
-};
+}; */
 
 const storage = Storage.getInstance('db');
 
