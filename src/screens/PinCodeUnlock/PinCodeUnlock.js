@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { decryptWalletAction } from 'actions/walletActions';
+import { decryptWalletAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import { Title } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';

@@ -8,7 +8,7 @@ import {
 } from 'constants/walletConstants';
 import { ASSETS } from 'constants/navigationConstants';
 import Storage from 'services/storage';
-import { decryptWalletAction } from '../walletActions';
+import { decryptWalletAction } from '../authActions';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
