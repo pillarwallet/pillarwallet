@@ -195,7 +195,7 @@ class Assets extends React.Component<Props, State> {
             }}
           >
             <Animated.Text style={{ opacity: animHeaderTextOpacity }}>
-              <PortfolioBalance assets={Object.values(assets)} />
+              <PortfolioBalance />
             </Animated.Text>
           </Animated.View>
 

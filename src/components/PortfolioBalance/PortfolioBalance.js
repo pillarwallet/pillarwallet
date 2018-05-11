@@ -3,13 +3,10 @@ import * as React from 'react';
 import { Text, View } from 'react-native';
 import type { Asset } from 'models/Asset';
 import { delay } from 'utils/common';
+import { connect } from 'react-redux';
 
 type Assets = {
   [string]: Asset,
-};
-
-type Props = {
-  assets: Assets,
 };
 
 type Rates = {
@@ -20,19 +17,21 @@ type Rates = {
   },
 };
 
-type State = {
-  rates: ?Rates,
+type Props = {
+  assets: Assets,
+  rates: Rates,
 };
 
-export default class PortfolioBalance extends React.Component<Props, State> {
-  state = {
-    rates: null,
-  };
+/* type State = {
 
+}; */
+
+class PortfolioBalance extends React.Component<Props, {}> {
   async componentDidMount() {
-    await delay(600);
+    await delay(1000);
     // const rates = await cryptocompare.priceMulti(['ETH', 'PLR'], ['USD', 'EUR', 'GBP']);
-    // this.setState({ rates });
+    console.log('herer');
+    this.setState({});
   }
 
   calculatePortfolioBalance(assets: Assets, rates: Rates) {
@@ -56,12 +55,12 @@ export default class PortfolioBalance extends React.Component<Props, State> {
   }
 
   render() {
-    const { assets } = this.props;
-    const { rates } = this.state;
-    if (!rates) {
+    const { assets, rates } = this.props;
+    if (!Object.keys(rates).length || !Object.keys(assets).length) {
       return null;
     }
     const portfolioBalance = this.calculatePortfolioBalance(assets, rates);
+    console.log('Portfolio balance', portfolioBalance);
     return (
       <View>
         <Text style={{ color: 'white', fontSize: 32 }}>
@@ -74,3 +73,9 @@ export default class PortfolioBalance extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = ({ assets: { data: assets }, rates: { data: rates } }) => ({
+  rates,
+  assets,
+});
+export default connect(mapStateToProps)(PortfolioBalance);
