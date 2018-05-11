@@ -6,14 +6,14 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { decryptWalletAction } from 'actions/authActions';
+import { loginAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import { Title } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 
 type Props = {
-  decryptWallet: (pin: string) => Function,
+  login: (pin: string) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
 }
@@ -39,8 +39,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const { decryptWallet } = this.props;
-    decryptWallet(pin);
+    const { login } = this.props;
+    login(pin);
   };
 
   handleForgotPasscode = () => {
@@ -87,8 +87,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  decryptWallet: (pin: string) => {
-    dispatch(decryptWalletAction(pin));
+  login: (pin: string) => {
+    dispatch(loginAction(pin));
   },
 });
 

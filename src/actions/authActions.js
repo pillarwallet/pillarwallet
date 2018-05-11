@@ -13,7 +13,7 @@ import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
 
-export const decryptWalletAction = (pin: string) => {
+export const loginAction = (pin: string) => {
   return async (dispatch: Function) => {
     const encryptedWallet = await storage.get('wallet');
     dispatch({

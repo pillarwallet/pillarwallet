@@ -8,7 +8,7 @@ import {
 } from 'constants/walletConstants';
 import { ASSETS } from 'constants/navigationConstants';
 import Storage from 'services/storage';
-import { decryptWalletAction } from '../authActions';
+import { loginAction } from '../authActions';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
@@ -41,7 +41,7 @@ describe('Wallet actions', () => {
     store = mockStore({});
   });
 
-  it('should expect series of actions with payload to be dispatch on decryptWalletAction execution', () => {
+  it('should expect series of actions with payload to be dispatch on loginAction execution', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: DECRYPT_WALLET, payload: mockWallet },
@@ -49,7 +49,7 @@ describe('Wallet actions', () => {
     ];
     const pin = '123456';
 
-    return store.dispatch(decryptWalletAction(pin))
+    return store.dispatch(loginAction(pin))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
