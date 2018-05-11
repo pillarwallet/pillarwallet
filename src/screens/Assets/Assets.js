@@ -74,25 +74,26 @@ class Assets extends React.Component<Props, State> {
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
-    fetch(`${BCX_URL}/wallet-client/txhistory`, {
-      method: 'POST',
+    // TODO: Needs to use this.props.wallet.data.address
+    const queryParams = [
+      `address1=${address}`,
+      'address2=ALL',
+      'asset=ALL',
+      'batchNb=0', // show 10 latest transactions only
+    ];
+
+    fetch(`${BCX_URL}/wallet-client/txhistory?${queryParams.join('&')}`, {
+      method: 'GET',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      // TODO: Needs to use this.props.wallet.data.address
-      body: JSON.stringify({
-        address1: address,
-        fromtmstmp: 0,
-        address2: 'ALL',
-        asset: 'ALL',
-      }),
     })
       .then(res => res.json())
       .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
       .then((txHistory) => {
         this.setState({
-          history: txHistory.slice(0, 10), // show 10 latest transactions only
+          history: txHistory,
         });
       })
       .catch(() => {
