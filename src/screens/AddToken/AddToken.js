@@ -3,23 +3,25 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
+import { Paragraph } from 'components/Typography';
 import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import Title from 'components/Title';
 import tokens from 'utils/erc_whitelist.json';
 
 type Props = {}
 
-const TokenIcons = {
-  PLR: require('assets/images/tokens/PLR/icon.png'),
-  QTM: require('assets/images/tokens/QTM/icon.png'),
-  OMG: require('assets/images/tokens/OMG/icon.png'),
-  ICX: require('assets/images/tokens/ICX/icon.png'),
-  STORJ: require('assets/images/tokens/STORJ/icon.png'),
-  BAT: require('assets/images/tokens/BAT/icon.png'),
-  GNT: require('assets/images/tokens/GNT/icon.png'),
-  PPT: require('assets/images/tokens/PPT/icon.png'),
-  SALT: require('assets/images/tokens/SALT/icon.png'),
-};
+
+const TokenIcons = {};
+
+TokenIcons.PLR = require('assets/images/tokens/PLR/icon.png');
+TokenIcons.QTM = require('assets/images/tokens/QTM/icon.png');
+TokenIcons.OMG = require('assets/images/tokens/OMG/icon.png');
+TokenIcons.ICX = require('assets/images/tokens/ICX/icon.png');
+TokenIcons.STORJ = require('assets/images/tokens/STORJ/icon.png');
+TokenIcons.BAT = require('assets/images/tokens/BAT/icon.png');
+TokenIcons.GNT = require('assets/images/tokens/GNT/icon.png');
+TokenIcons.PPT = require('assets/images/tokens/PPT/icon.png');
+TokenIcons.SALT = require('assets/images/tokens/SALT/icon.png');
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.medium};
@@ -32,12 +34,8 @@ const TokenSymbol = styled.Text`
   font-weight: ${fontWeights.light};
 `;
 
-const AddTokenTitle = styled(Title)`
-  margin-left: 20px;
-`;
-
 const TokenListItem = styled(ListItem)`
-  margin-left: 20px;
+  margin: 0;
 `;
 
 
@@ -66,8 +64,11 @@ export default class AddToken extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Wrapper>
-          <AddTokenTitle title="add token" />
+        <Wrapper padding>
+          <Title title="add token" />
+          <Paragraph>
+            Toggle ERC-20 tokens your wallet should display.
+          </Paragraph>
           <List>
             {this.generateAddTokenListItems()}
           </List>

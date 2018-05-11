@@ -6,7 +6,7 @@ import { Container, Wrapper, Footer, Center } from 'components/Layout';
 import Button from 'components/Button';
 import Emoji from 'components/Emoji';
 import HyperLink from 'components/HyperLink';
-import { Body, Label } from 'components/Typography';
+import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
 import FooterText from 'components/FooterText';
 import { CountryPicker, CountryPickerWrapper } from 'components/CountryPicker';
@@ -63,7 +63,7 @@ class Signin extends React.Component<Props, State> {
       <Container>
         <Wrapper padding>
           <Title title="login" />
-          <Body>Please enter the mobile number associated with your account.</Body>
+          <Paragraph>Please enter the mobile number associated with your account.</Paragraph>
           <LoginForm>
             <Label>Country</Label>
             <CountryPickerWrapper>
