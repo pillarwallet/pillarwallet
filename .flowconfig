@@ -75,11 +75,17 @@ module.name_mapper='^components' -> '<PROJECT_ROOT>/src/components'
 module.name_mapper='^constants\/\(.*\)$' -> '<PROJECT_ROOT>/src/constants/\1'
 module.name_mapper='^constants' -> '<PROJECT_ROOT>/src/constants'
 
+module.name_mapper='^fixtures\/\(.*\)$' -> '<PROJECT_ROOT>/src/fixtures/\1'
+module.name_mapper='^fixtures' -> '<PROJECT_ROOT>/src/fixtures'
+
 module.name_mapper='^models\/\(.*\)$' -> '<PROJECT_ROOT>/src/models/\1'
 module.name_mapper='^models' -> '<PROJECT_ROOT>/src/models'
 
 module.name_mapper='^navigation\/\(.*\)$' -> '<PROJECT_ROOT>/src/navigation/\1'
 module.name_mapper='^navigation' -> '<PROJECT_ROOT>/src/navigation'
+
+module.name_mapper='^reducers\/\(.*\)$' -> '<PROJECT_ROOT>/src/reducers/\1'
+module.name_mapper='^reducers' -> '<PROJECT_ROOT>/src/reducers'
 
 module.name_mapper='^services\/\(.*\)$' -> '<PROJECT_ROOT>/src/services/\1'
 module.name_mapper='^services' -> '<PROJECT_ROOT>/src/services'

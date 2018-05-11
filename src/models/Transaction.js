@@ -18,6 +18,8 @@ export type Transaction = {
 export type TransactionPayload = {
   gasLimit: number,
   amount: number,
-  address: string,
-  gasPrice: number
+  to: string,
+  gasPrice: number,
+  symbol: string,
+  contractAddress: ?string,
 }

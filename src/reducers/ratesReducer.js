@@ -1,13 +1,13 @@
 // @flow
-import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { SET_RATES } from 'constants/ratesConstants';
 import merge from 'lodash.merge';
 
-export type AppSettingsReducerState = {
+export type RatesReducerState = {
   data: Object,
   isFetched: boolean,
 }
 
-export type AppSettingsReducerAction = {
+export type RatesReducerAction = {
   type: string,
   payload: any
 }
@@ -18,11 +18,11 @@ const initialState = {
 };
 
 export default function assetsReducer(
-  state: AppSettingsReducerState = initialState,
-  action: AppSettingsReducerAction,
+  state: RatesReducerState = initialState,
+  action: RatesReducerAction,
 ) {
   switch (action.type) {
-    case UPDATE_APP_SETTINGS:
+    case SET_RATES:
       const updatedState = { data: action.payload, isFetched: true };
       return merge(
         {},

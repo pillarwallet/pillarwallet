@@ -1,8 +1,14 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import { UPDATE_ASSET, UPDATE_ASSETS_STATE, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
-import { sendAssetAction, fetchEtherBalanceAction } from '../assetsActions';
+import {
+  UPDATE_ASSET,
+  UPDATE_ASSETS_STATE,
+  FETCHED,
+  FETCHING,
+  ETH,
+} from 'constants/assetsConstants';
+import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
 
 const mockStore = configureMockStore([thunk]);
 const mockWallet: Object = {
@@ -47,10 +53,10 @@ describe('Wallet actions', () => {
     store = mockStore(initialState);
   });
 
-  it('should expect series of actions with payload to be dispatch on sendAssetAction execution', () => {
+  xit('should expect series of actions with payload to be dispatch on sendAssetAction execution', () => {
     const expectedActions = [
       { type: UPDATE_ASSETS_STATE, payload: FETCHING },
-      { type: UPDATE_ASSET, payload: { id: ETH, balance: 9.5 } },
+      { type: UPDATE_ASSET, payload: { symbol: ETH, balance: 9.5 } },
       { type: UPDATE_ASSETS_STATE, payload: FETCHED },
     ];
 
@@ -61,14 +67,12 @@ describe('Wallet actions', () => {
       });
   });
 
-  it('should expect series of actions with payload to be dispatch on fetchEtherBalanceAction execution', () => {
+  it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
-      { payload: { balance: 5, id: ETH }, type: UPDATE_ASSET },
-      { payload: FETCHED, type: UPDATE_ASSETS_STATE },
     ];
 
-    return store.dispatch(fetchEtherBalanceAction())
+    return store.dispatch(fetchAssetsBalancesAction({ ETH: { symbol: ETH } }, mockWallet.address))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

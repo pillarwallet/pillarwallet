@@ -11,7 +11,7 @@ import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
 import CheckboxText from 'components/CheckboxText';
 import { connect } from 'react-redux';
-import { generateEncryptedWalletAction } from 'actions/walletActions';
+import { registerWalletAction } from 'actions/onboardingActions';
 
 type Props = {
   generateEncryptedWallet: () => Function,
@@ -141,7 +141,7 @@ class LegalTerms extends React.Component<Props, State> {
 
 const mapDispatchToProps = (dispatch: Function) => ({
   generateEncryptedWallet: () => {
-    dispatch(generateEncryptedWalletAction());
+    dispatch(registerWalletAction());
   },
 });
 

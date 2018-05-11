@@ -43,7 +43,7 @@ export default class TXHistory extends React.Component<Props> {
   static defaultProps = {
     history: [],
     onRefresh: () => {},
-  }
+  };
 
   renderTransaction = ({ item: transaction }: { item: Transaction }) => {
     const {
@@ -73,7 +73,7 @@ export default class TXHistory extends React.Component<Props> {
         </Section>
       </Item>
     );
-  }
+  };
 
   render() {
     const { history, address, onRefresh } = this.props;

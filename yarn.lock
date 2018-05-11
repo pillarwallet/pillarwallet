@@ -3262,6 +3262,10 @@ crypto-token@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/crypto-token/-/crypto-token-1.0.1.tgz#27c6482faf3b63c2f5da11577f8304346fe797a5"
 
+cryptocompare@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/cryptocompare/-/cryptocompare-0.5.0.tgz#e3b377b31d0f309039cda0dc9292c7dfb085c2ae"
+
 css-color-keywords@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/css-color-keywords/-/css-color-keywords-1.0.0.tgz#fea2616dc676b2962686b3af8dbdbe180b244e05"

@@ -1,23 +1,23 @@
 // @flow
-import { UPDATE_ASSET, UPDATE_ASSETS_STATE } from 'constants/assetsConstants';
+import {
+  UPDATE_ASSET,
+  UPDATE_ASSETS,
+  UPDATE_ASSETS_STATE,
+  UPDATE_ASSETS_BALANCES,
+  FETCHED,
+} from 'constants/assetsConstants';
+import { transformAssetsToObject } from 'utils/assets';
 import merge from 'lodash.merge';
-
-const cryptocurrencies = {
-  ETH: {
-    name: 'Ethereum',
-    color: '#4C4E5E',
-  },
-};
 
 export type AssetsReducerState = {
   data: Object,
-  assetsState: ?string
-}
+  assetsState: ?string,
+};
 
 export type AssetsReducerAction = {
   type: string,
-  payload: any
-}
+  payload: any,
+};
 
 const initialState = {
   data: {},
@@ -32,14 +32,24 @@ export default function assetsReducer(
     case UPDATE_ASSETS_STATE:
       return { ...state, assetsState: action.payload };
     case UPDATE_ASSET:
-      const { id } = action.payload;
+      const { symbol } = action.payload;
       const updatedState = {
-        data: { [id]: { ...action.payload, ...cryptocurrencies[id] } },
+        data: { [symbol]: { ...state.data[symbol], ...action.payload } },
       };
       return merge(
         {},
         state,
         updatedState,
+      );
+    case UPDATE_ASSETS:
+      return { ...state, data: action.payload };
+    case UPDATE_ASSETS_BALANCES:
+      const mappedAssets = transformAssetsToObject(action.payload);
+      return merge(
+        {},
+        state,
+        { assetsState: FETCHED },
+        { data: mappedAssets },
       );
     default:
       return state;

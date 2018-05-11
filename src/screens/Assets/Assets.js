@@ -1,25 +1,29 @@
 // @flow
 import * as React from 'react';
-import { Animated } from 'react-native';
+import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
+import { BCX_URL } from 'react-native-dotenv';
+
 import type { Transaction } from 'models/Transaction';
-import { fetchEtherBalanceAction } from 'actions/assetsActions';
+import type { Assets } from 'models/Asset';
+
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
-import { BCX_URL } from 'react-native-dotenv';
+import PortfolioBalance from 'components/PortfolioBalance';
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
 
 // TODO: Replace me with real address or pass in with Redux
-const address = '0x583cbbb8a8443b38abcc0c956bece47340ea1367';
+const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 
-type Props = {
-  fetchEtherBalance: () => Function,
-  assets: Object,
-  wallet: Object,
-}
+const defaultAssetColor = '#4C4E5E';
+const assetColors = {
+  ETH: '#4C4E5E',
+  PLR: '#5e1b22',
+};
 
 const activeModalResetState = {
   type: null,
@@ -29,6 +33,13 @@ const activeModalResetState = {
     tokenName: '',
   },
 };
+
+type Props = {
+  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  assets: Object,
+  wallet: Object,
+  rates: Object,
+}
 
 type State = {
   animHeaderHeight: Animated.Value,
@@ -47,7 +58,7 @@ type State = {
   }
 }
 
-class Assets extends React.Component<Props, State> {
+class AssetsScreen extends React.Component<Props, State> {
   state = {
     animHeaderHeight: new Animated.Value(150),
     animHeaderTextOpacity: new Animated.Value(1),
@@ -57,35 +68,34 @@ class Assets extends React.Component<Props, State> {
     history: [],
   };
 
-  activeCardPositionY: number = 0;
-
   componentDidMount() {
-    const { fetchEtherBalance } = this.props;
-    fetchEtherBalance();
+    const { fetchAssetsBalances, assets, wallet } = this.props;
+    fetchAssetsBalances(assets, wallet.address);
     this.getTransactionHistory();
   }
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
   getTransactionHistory() {
-    fetch(`${BCX_URL}/wallet-client/txhistory`, {
-      method: 'POST',
+    // TODO: Needs to use this.props.wallet.data.address
+    const queryParams = [
+      `address1=${address}`,
+      'address2=ALL',
+      'asset=ALL',
+      'batchNb=0', // show 10 latest transactions only
+    ];
+
+    fetch(`${BCX_URL}/wallet-client/txhistory?${queryParams.join('&')}`, {
+      method: 'GET',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      // TODO: Needs to use this.props.wallet.data.address
-      body: JSON.stringify({
-        address1: address,
-        fromtmstmp: 0,
-        address2: 'ALL',
-        asset: 'ALL',
-      }),
     })
       .then(res => res.json())
       .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
       .then((txHistory) => {
         this.setState({
-          history: txHistory.slice(0, 10), // show 10 latest transactions only
+          history: txHistory,
         });
       })
       .catch(() => {
@@ -117,37 +127,44 @@ class Assets extends React.Component<Props, State> {
   };
 
   renderAssets() {
-    const { wallet: { data: wallet }, assets: { data: assets } } = this.props;
+    const { wallet, assets, rates } = this.props;
     const {
       history,
       activeCard,
       isCardActive,
     } = this.state;
+
     return Object.keys(assets)
       .map(id => assets[id])
       .map((asset, index) => {
         const {
-          id,
           balance,
           name,
-          color,
+          symbol,
+          address: contractAddress,
         } = asset;
+
+        // TODO: extract this to service
+        const balanceInFiat = rates[symbol] ? +parseFloat(balance * rates[symbol].USD).toFixed(2) : 0;
+
         const displayAmount = +parseFloat(balance).toFixed(4);
-        const assetHistory = history.filter(({ asset: assetName }) => assetName === id);
+        const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
-        const sendModalOptions = { token: id };
+        const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
+        const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = (index * 140) + 30;
 
         return (
           <AssetCard
             key={index}
-            id={id}
+            id={symbol}
             isCardActive={isCardActive}
             activeCardId={activeCard}
-            name={name || id}
-            token={id}
+            name={name || symbol}
+            token={symbol}
             amount={displayAmount}
-            color={color}
+            balanceInFiat={{ amount: balanceInFiat, currency: 'USD' }}
+            color={assetColor}
             onTap={this.handleCardTap}
             defaultPositionY={defaultCardPositionTop}
             history={assetHistory}
@@ -160,7 +177,6 @@ class Assets extends React.Component<Props, State> {
             />
 
           </AssetCard>
-
         );
       });
   }
@@ -174,6 +190,15 @@ class Assets extends React.Component<Props, State> {
     return (
       <Container>
         <Wrapper
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                const { assets, wallet } = this.props;
+                this.props.fetchAssetsBalances(assets, wallet.address);
+              }}
+            />
+          }
           style={{
             position: 'relative',
             width: '100%',
@@ -188,15 +213,9 @@ class Assets extends React.Component<Props, State> {
               alignItems: 'center',
             }}
           >
-            <Animated.Text
-              style={{
-                opacity: animHeaderTextOpacity,
-                color: 'white',
-                fontSize: 32,
-              }}
-            >
-              £1023.45
-            </Animated.Text>
+            <Animated.View style={{ opacity: animHeaderTextOpacity }}>
+              <PortfolioBalance />
+            </Animated.View>
           </Animated.View>
 
           {this.renderAssets()}
@@ -217,12 +236,19 @@ class Assets extends React.Component<Props, State> {
   }
 }
 
-
-const mapStateToProps = ({ wallet, assets }) => ({ wallet, assets });
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  fetchEtherBalance: () =>
-    dispatch(fetchEtherBalanceAction()),
+const mapStateToProps = ({
+  wallet: { data: wallet },
+  assets: { data: assets },
+  rates: { data: rates },
+}) => ({
+  wallet,
+  assets,
+  rates,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Assets);
+const mapDispatchToProps = (dispatch: Function) => ({
+  fetchAssetsBalances: (assets, walletAddress) =>
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

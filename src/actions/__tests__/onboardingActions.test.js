@@ -4,13 +4,14 @@ import thunk from 'redux-thunk';
 import {
   UPDATE_WALLET_STATE,
   GENERATE_ENCRYPTED_WALLET,
-  DECRYPT_WALLET,
-  DECRYPTING,
   GENERATING,
   ENCRYPTING,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
-import { generateEncryptedWalletAction, decryptWalletAction } from '../walletActions';
+import { UPDATE_ASSETS } from 'constants/assetsConstants';
+import { initialAssets } from 'fixtures/assets';
+import { registerWalletAction } from 'actions/onboardingActions';
+import { transformAssetsToObject } from 'utils/assets';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
@@ -30,7 +31,6 @@ Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
-
 jest.mock('ethers', () => ({
   Wallet: {
     fromMnemonic: () => mockWallet,
@@ -45,7 +45,7 @@ describe('Wallet actions', () => {
   });
 
   it(`should expect series of actions with payload to be dispatch on 
-    generateEncryptedWalletAction execution when wallet wasn't imported`, () => {
+    registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
       wallet: {
         onboarding: mockOnboarding,
@@ -56,10 +56,11 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: UPDATE_ASSETS, payload: transformAssetsToObject(initialAssets) },
       { type: NAVIGATE, routeName: ASSETS },
     ];
 
-    return store.dispatch(generateEncryptedWalletAction())
+    return store.dispatch(registerWalletAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -67,7 +68,7 @@ describe('Wallet actions', () => {
   });
 
   it(`should expect series of actions with payload to be dispatch on 
-    generateEncryptedWalletAction execution when wallet was imported`, () => {
+    registerWalletAction execution when wallet was imported`, () => {
     store = mockStore({
       wallet: {
         onboarding: {
@@ -80,25 +81,11 @@ describe('Wallet actions', () => {
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: UPDATE_ASSETS, payload: transformAssetsToObject(initialAssets) },
       { type: NAVIGATE, routeName: ASSETS },
     ];
 
-    return store.dispatch(generateEncryptedWalletAction())
-      .then(() => {
-        const actualActions = store.getActions();
-        expect(actualActions).toEqual(expectedActions);
-      });
-  });
-
-  it('should expect series of actions with payload to be dispatch on decryptWalletAction execution', () => {
-    const expectedActions = [
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
-      { type: DECRYPT_WALLET, payload: mockWallet },
-      { type: NAVIGATE, routeName: ASSETS },
-    ];
-    const pin = '123456';
-
-    return store.dispatch(decryptWalletAction(pin))
+    return store.dispatch(registerWalletAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

@@ -6,7 +6,7 @@ import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { SHOW_STORYBOOK } from 'react-native-dotenv';
-import { fetchAppSettingsAndRedirectAction } from 'actions/appSettingsActions';
+import { initAppAndRedirectAction } from 'actions/appActions';
 import configureStore from './src/configureStore';
 import StorybookUI from './storybook';
 
@@ -63,7 +63,7 @@ const mapStateToProps = ({ navigation, appSettings: { isFetched } }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
-  fetchAppSettingsAndRedirect: () => dispatch(fetchAppSettingsAndRedirectAction()),
+  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

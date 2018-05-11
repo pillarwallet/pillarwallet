@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SIGN_IN, SIGN_UP } from 'constants/navigationConstants';
@@ -11,6 +12,8 @@ import AnimatedBackground from 'components/AnimatedBackground';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  isFetched: boolean,
+  OTP: boolean | number,
 }
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
@@ -20,7 +23,7 @@ const PillarLogo = styled.Image`
   width: 120;
 `;
 
-export default class Welcome extends React.Component<Props> {
+class Welcome extends React.Component<Props> {
   loginAction = () => {
     this.props.navigation.navigate(SIGN_IN);
   };
@@ -30,6 +33,8 @@ export default class Welcome extends React.Component<Props> {
   };
 
   render() {
+    const { isFetched, OTP } = this.props;
+    if (!isFetched || OTP) return null;
     return (
       <Container center>
         <AnimatedBackground />
@@ -44,3 +49,10 @@ export default class Welcome extends React.Component<Props> {
     );
   }
 }
+
+const mapStateToProps = ({ appSettings: { isFetched, data: { OTP } } }) => ({
+  isFetched,
+  OTP,
+});
+
+export default connect(mapStateToProps)(Welcome);

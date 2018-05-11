@@ -13,7 +13,7 @@ import { Container, Wrapper, Footer } from 'components/Layout';
 import { Title } from 'components/Typography';
 import Button from 'components/Button';
 
-import { sendAssetAction, fetchEtherBalanceAction } from 'actions/assetsActions';
+import { sendAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { FETCHING, ETH } from 'constants/assetsConstants';
 
 // https://ropsten.etherscan.io/address/0x583cbbb8a8443b38abcc0c956bece47340ea1367#readContract
@@ -35,8 +35,9 @@ const ICO_TYPE = t.struct({
 
 type Props = {
   sendAsset: (pin: string) => Function,
-  fetchEtherBalance: () => Function,
-  assets: Object
+  fetchEtherBalance: (assets: Object, walletAddress: string) => Function,
+  assets: Object,
+  wallet: Object
 }
 
 type State = {
@@ -51,8 +52,8 @@ class ICO extends React.Component<Props, State> {
   };
 
   componentWillMount() {
-    const { fetchEtherBalance } = this.props;
-    fetchEtherBalance();
+    const { fetchEtherBalance, wallet: { data: wallet }, assets: { data: assets } } = this.props;
+    fetchEtherBalance(assets, wallet.address);
   }
 
   _form: t.Form;
@@ -93,7 +94,7 @@ class ICO extends React.Component<Props, State> {
               <RefreshControl
                 refreshing={false}
                 onRefresh={() => {
-                  this.props.fetchEtherBalance();
+                  // this.props.fetchEtherBalance();
                 }}
                 tintColor="#EBEBEB"
                 title="Loading..."
@@ -144,8 +145,8 @@ const mapStateToProps = ({ wallet, assets }) => ({ wallet, assets });
 const mapDispatchToProps = (dispatch: Function) => ({
   sendAsset: (transaction: Object) =>
     dispatch(sendAssetAction(transaction)),
-  fetchEtherBalance: () =>
-    dispatch(fetchEtherBalanceAction()),
+  fetchEtherBalance: (assets, walletAddress) =>
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ICO);

@@ -2,17 +2,17 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { fetchAppSettingsAndRedirectAction } from '../appSettingsActions';
+import { initAppAndRedirectAction } from '../appActions';
 
 const mockStore = configureMockStore([thunk]);
 const store = mockStore({});
-describe('App settings actions', () => {
+describe('App actions', () => {
   it('should trigger the app settings updated with any redirection due to the empty storage', () => {
     const expectedActions = [
       { type: UPDATE_APP_SETTINGS, payload: {} },
     ];
 
-    return store.dispatch(fetchAppSettingsAndRedirectAction())
+    return store.dispatch(initAppAndRedirectAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

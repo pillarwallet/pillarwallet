@@ -21,10 +21,12 @@ const { Form } = t.form;
 type Props = {
   token: string,
   address: string,
+  totalBalance: number,
+  contractAddress: string,
   isVisible: boolean,
   onModalHide: Function,
   sendAsset: Function,
-  formValues?: Object
+  formValues?: Object,
 }
 
 type State = {
@@ -32,33 +34,39 @@ type State = {
   value: ?{
     address: ?string,
     amount: ?number
-  }
+  },
+  formStructure: t.struct,
 }
 
-const Amount = t.refinement(t.Number, (amount): boolean => {
-  return amount > 0;
-});
 
-Amount.getValidationErrorMessage = (): string => {
-  return 'Amount should be specified.';
+const getFormStructure = (options = {}) => {
+  const Amount = t.refinement(t.Number, (amount): boolean => {
+    return amount > 0 && amount <= options.totalBalance;
+  });
+
+  Amount.getValidationErrorMessage = (amount): string => {
+    if (amount > options.totalBalance) {
+      return 'Amount should not exceed the total balance.';
+    }
+    return 'Amount should be specified.';
+  };
+
+  const Address = t.refinement(t.String, (address): boolean => {
+    return address.length && isValidETHAddress(address);
+  });
+
+  Address.getValidationErrorMessage = (address): string => {
+    if (!isValidETHAddress(address)) {
+      return 'Invalid Ethereum Address.';
+    }
+    return 'Address must be provided.';
+  };
+
+  return t.struct({
+    address: Address,
+    amount: Amount,
+  });
 };
-
-const Address = t.refinement(t.String, (address): boolean => {
-  return address.length && isValidETHAddress(address);
-});
-
-Address.getValidationErrorMessage = (address): string => {
-  if (!isValidETHAddress(address)) {
-    return 'Invalid Ethereum Address.';
-  }
-  return 'Address must be provided.';
-};
-
-const FORM_STRUCTURE = t.struct({
-  address: Address,
-  amount: Amount,
-});
-
 
 // EXTRACT TO FACTORY
 function AddressInputTemplate(locals) {
@@ -153,10 +161,23 @@ const SendButton = styled.Text`
 class SendModal extends React.Component<Props, State> {
   _form: t.form;
 
-  state = {
-    isScanning: false,
-    value: null,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      isScanning: false,
+      value: null,
+      formStructure: getFormStructure(props),
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps) {
+    if (nextProps.totalBalance) {
+      return {
+        formStructure: getFormStructure(nextProps),
+      };
+    }
+    return null;
+  }
 
   handleChange = (value: Object) => {
     this.setState({ value });
@@ -164,14 +185,24 @@ class SendModal extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     const value = this._form.getValue();
-    const { sendAsset, onModalHide } = this.props;
+    const {
+      sendAsset,
+      onModalHide,
+      token,
+      contractAddress,
+    } = this.props;
+
     if (!value) return;
+
     const transactionPayload: TransactionPayload = {
-      address: value.address,
+      to: value.address,
       amount: value.amount,
       gasLimit: 1500000,
       gasPrice: 20000000000,
+      symbol: token,
+      contractAddress,
     };
+
     sendAsset(transactionPayload);
     onModalHide();
     this.setState({
@@ -195,7 +226,7 @@ class SendModal extends React.Component<Props, State> {
 
   render() {
     const { isVisible, onModalHide, token } = this.props;
-    const { value, isScanning } = this.state;
+    const { value, isScanning, formStructure } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const isFilled = hasAllValues(value);
     const qrScannnerComponent = (
@@ -217,7 +248,7 @@ class SendModal extends React.Component<Props, State> {
         <Container>
           <Form
             ref={node => { this._form = node; }}
-            type={FORM_STRUCTURE}
+            type={formStructure}
             options={formOptions}
             value={value}
             onChange={this.handleChange}
