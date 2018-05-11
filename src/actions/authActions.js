@@ -15,7 +15,7 @@ import Storage from 'services/storage';
 
 // TODO: remove and mock
 const cryptocompare = {
-  priceMulti: (tokensArray, priceMulti) => {
+  priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
     return Promise.resolve({
       ETH: {
         EUR: 624.21,
