@@ -8,8 +8,6 @@ import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import Title from 'components/Title';
 import tokens from 'utils/erc_whitelist.json';
 
-type Props = {}
-
 const TokenIcons = {};
 
 TokenIcons.PLR = require('assets/images/tokens/PLR/icon.png');
@@ -38,26 +36,24 @@ const TokenListItem = styled(ListItem)`
 `;
 
 
-export default class AddToken extends React.Component<Props> {
+export default class AddToken extends React.Component<{}> {
   getImagePath(symbol: string) {
     return `assets/images/${symbol}/icon.png`;
   }
 
   generateAddTokenListItems() {
-    return Object.keys(tokens)
-      .map((key) => tokens[key])
-      .map((token) => (
-        <TokenListItem key={token.symbol}>
-          <Thumbnail square size={80} source={TokenIcons[token.symbol]} />
-          <Body style={{ marginLeft: 20 }}>
-            <TokenName>{token.name}</TokenName>
-            <TokenSymbol>{token.symbol}</TokenSymbol>
-          </Body>
-          <Right>
-            <Switch value={false} />
-          </Right>
-        </TokenListItem>
-      ));
+    return tokens.map(({ symbol, name }) => (
+      <TokenListItem key={symbol}>
+        <Thumbnail square size={80} source={TokenIcons[symbol]} />
+        <Body style={{ marginLeft: 20 }}>
+          <TokenName>{name}</TokenName>
+          <TokenSymbol>{symbol}</TokenSymbol>
+        </Body>
+        <Right>
+          <Switch value={false} />
+        </Right>
+      </TokenListItem>
+    ));
   }
 
   render() {
