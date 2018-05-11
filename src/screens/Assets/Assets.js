@@ -2,7 +2,8 @@
 import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
-import { UIColors } from 'utils/variables';
+import { Grid, Row, Column } from 'components/Grid';
+import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
@@ -215,19 +216,34 @@ class AssetsScreen extends React.Component<Props, State> {
               borderStyle: 'solid',
               borderColor: UIColors.defaultBorderColor,
               padding: 20,
+              flexDirection: 'row',
             }}
           >
-            <Animated.Image
-              source={pillarLogoSource}
-              style={{
-                opacity: animHeaderTextOpacity,
-                height: 35,
-                width: 71,
-              }}
-            />
-            <Animated.View style={{ opacity: animHeaderTextOpacity }}>
-              <PortfolioBalance />
-            </Animated.View>
+
+            <Grid>
+              <Row>
+                <Animated.Image
+                  source={pillarLogoSource}
+                  style={{
+                    opacity: animHeaderTextOpacity,
+                    height: 35,
+                    width: 71,
+                  }}
+                />
+              </Row>
+              <Row>
+                <Column
+                  style={{
+                    alignSelf: 'flex-end',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Animated.View style={{ opacity: animHeaderTextOpacity }}>
+                    <PortfolioBalance />
+                  </Animated.View>
+                </Column>
+              </Row>
+            </Grid>
           </Animated.View>
           <Wrapper padding>
             <Title title="assets" />
