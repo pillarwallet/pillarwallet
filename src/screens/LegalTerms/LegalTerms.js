@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Title from 'components/Title';
-import { Body } from 'components/Typography';
+import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Divider from 'components/Divider';
@@ -91,7 +91,7 @@ class LegalTerms extends React.Component<Props, State> {
       <Container>
         <Wrapper padding>
           <Title title="review" />
-          <Body style={{ color: 'grey', marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Body>
+          <Paragraph light>By using the Pillar Wallet you agree that:</Paragraph>
           <CheckboxItem marginBottom>
             { this.buildCheckBox('box01', box01) }
             <CheckboxText>
@@ -125,11 +125,11 @@ class LegalTerms extends React.Component<Props, State> {
                 marginBottom="20px"
               />
 
-              <Body>
+              <Paragraph>
                 <HyperLink url="https://pillarproject.io/en/terms-of-use/">Terms of Use </HyperLink>
                 and
                 <HyperLink url="https://pillarproject.io/en/legal/privacy/"> Privacy Policy</HyperLink>
-              </Body>
+              </Paragraph>
 
             </MultiButtonWrapper>
           </Footer>

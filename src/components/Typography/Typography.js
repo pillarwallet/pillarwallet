@@ -1,5 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
+import { UIColors, baseColors } from 'utils/variables';
 
 export const Title = styled.Text`
   font-size: 24;
@@ -9,15 +10,11 @@ export const Title = styled.Text`
   text-align: ${props => (props.align || 'left')};
 `;
 
-export const Body = styled.Text`
+export const Paragraph = styled.Text`
   font-size: 16;
   margin-bottom: 10;
-`;
-
-export const BodyLight = styled.Text`
-  font-size: 16;
-  margin-bottom: 10;
-  color: grey;
+  color: ${props => props.light ? baseColors.mediumGray : UIColors.defaultTextColor};
+  text-align: ${props => props.center ? 'center' : 'left'};
 `;
 
 export const Label = styled.Text`

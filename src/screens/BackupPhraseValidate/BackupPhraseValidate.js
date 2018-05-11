@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import { Body, Label } from 'components/Typography';
+import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
 import ButtonIcon from 'components/ButtonIcon';
 import Button from 'components/Button';
@@ -181,9 +181,9 @@ class BackupPhraseValidate extends React.Component<Props, State> {
       <Container>
         <Wrapper padding>
           <Title title="verify" />
-          <Body style={{ color: 'grey' }}>
+          <Paragraph light>
             Please select the appropriate words from the list
-          </Body>
+          </Paragraph>
           <WordInputFields>
             {this.renderInputFields()}
           </WordInputFields>

@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { addNavigationHelpers } from 'react-navigation';
+import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
@@ -68,9 +69,11 @@ const mapDispatchToProps = (dispatch) => ({
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
 const Root = () => (
-  <Provider store={store}>
-    <AppWithNavigationState />
-  </Provider>
+  <NBRoot>
+    <Provider store={store}>
+      <AppWithNavigationState />
+    </Provider>
+  </NBRoot>
 );
 
 export default (__DEV__ && SHOW_STORYBOOK === 'true') ? StorybookUI : Root;

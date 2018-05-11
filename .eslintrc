@@ -47,6 +47,7 @@
     "react/sort-comp": ["off"],
     "no-underscore-dangle": ["off"],
     "no-confusing-arrow": ["off"],
+    "no-plusplus": ["off"],
     "function-paren-newline": [0],
     "no-param-reassign": ["off"]
   }
