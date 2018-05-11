@@ -36,6 +36,7 @@ type Props = {
   fetchAssetsBalances: () => Function,
   assets: Object,
   wallet: Object,
+  rates: Object,
 }
 
 type State = {
@@ -123,12 +124,13 @@ class Assets extends React.Component<Props, State> {
   };
 
   renderAssets() {
-    const { wallet: { data: wallet }, assets: { data: assets } } = this.props;
+    const { wallet, assets, rates } = this.props;
     const {
       history,
       activeCard,
       isCardActive,
     } = this.state;
+
     return Object.keys(assets)
       .map(id => assets[id])
       .map((asset, index) => {
@@ -137,6 +139,10 @@ class Assets extends React.Component<Props, State> {
           name,
           symbol,
         } = asset;
+
+        // TODO: extract this to service
+        const balanceInFiat = rates[symbol] ? +parseFloat(balance * rates[symbol].USD).toFixed(2) : 0;
+
         const displayAmount = +parseFloat(balance).toFixed(4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
@@ -153,6 +159,7 @@ class Assets extends React.Component<Props, State> {
             name={name || symbol}
             token={symbol}
             amount={displayAmount}
+            balanceInFiat={{ amount: balanceInFiat, currency: 'USD' }}
             color={assetColor}
             onTap={this.handleCardTap}
             defaultPositionY={defaultCardPositionTop}
@@ -176,7 +183,6 @@ class Assets extends React.Component<Props, State> {
       animHeaderHeight,
       animHeaderTextOpacity,
     } = this.state;
-    const { assets: { data: assets } } = this.props;
     return (
       <Container>
         <Wrapper
@@ -217,7 +223,15 @@ class Assets extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet, assets }) => ({ wallet, assets });
+const mapStateToProps = ({
+  wallet: { data: wallet },
+  assets: { data: assets },
+  rates: { data: rates },
+}) => ({
+  wallet,
+  assets,
+  rates,
+});
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),

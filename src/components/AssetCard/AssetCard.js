@@ -2,6 +2,7 @@
 import * as React from 'react';
 import {
   Animated,
+  Text,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -13,8 +14,7 @@ import IconWrapper from './IconWrapper';
 import Background from './Background';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
-import Amount from './Amount';
-import AmountToken from './AmountToken';
+import { Amount, AmountToken, FiatAmount, FiatAmountToken } from './Amount';
 import Content from './Content';
 
 type Props = {
@@ -29,7 +29,11 @@ type Props = {
   defaultPositionY: number,
   address: string,
   history: Transaction[],
-  children?: React.Node
+  children?: React.Node,
+  balanceInFiat: {
+    amount: number,
+    currency: string,
+  },
 }
 
 type State = {
@@ -108,6 +112,7 @@ export default class AssetCard extends React.Component<Props, State> {
       children,
       address,
       history,
+      balanceInFiat,
     } = this.props;
     const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
 
@@ -141,6 +146,10 @@ export default class AssetCard extends React.Component<Props, State> {
               <DetailsWrapper>
                 <Name>{name}</Name>
                 <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
+                <FiatAmount>
+                  {balanceInFiat.amount}
+                  <FiatAmountToken> {balanceInFiat.currency}</FiatAmountToken>
+                </FiatAmount>
               </DetailsWrapper>
               <IconWrapper>
                 <Icon source={iconETH} />
