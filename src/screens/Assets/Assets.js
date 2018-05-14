@@ -130,7 +130,7 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
-  gotToAddTokenPage = () => {
+  goToAddTokenPage = () => {
     // TODO: Link to add token page
   };
 
@@ -161,7 +161,6 @@ class AssetsScreen extends React.Component<Props, State> {
         const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
         const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = index * 140;
-
 
         return (
           <AssetCard
@@ -258,7 +257,7 @@ class AssetsScreen extends React.Component<Props, State> {
                   <Title title="assets" />
                 </Column>
                 <Column style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                  <Button secondary noPadding marginBottom="20px" onPress={this.gotToAddTokenPage} title="Add Token+" />
+                  <Button secondary noPadding marginBottom="20px" onPress={this.goToAddTokenPage} title="Add Token+" />
                 </Column>
               </Row>
             </Grid>
