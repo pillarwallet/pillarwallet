@@ -20,10 +20,3 @@ export const AmountToken = styled.Text`
   color: white;
   font-weight: 700;
 `;
-
-export const FiatAmountToken = styled.Text`
-  font-size: 14px;
-  color: white;
-  font-weight: 700;
-`;
-
