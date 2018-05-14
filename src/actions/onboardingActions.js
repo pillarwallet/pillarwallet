@@ -13,7 +13,8 @@ import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
 import { initialAssets } from 'fixtures/assets';
-import { transformAssetsToObject, getExchangeRates } from 'utils/assets';
+import { transformAssetsToObject } from 'utils/assets';
+import { getExchangeRates } from 'services/assets';
 
 const storage = Storage.getInstance('db');
 

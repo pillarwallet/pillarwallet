@@ -11,7 +11,7 @@ import { ASSETS } from 'constants/navigationConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
-import { getExchangeRates } from 'utils/assets';
+import { getExchangeRates } from 'services/assets';
 
 const storage = Storage.getInstance('db');
 
