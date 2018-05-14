@@ -3,10 +3,11 @@ import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { UIColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
+import Button from 'components/Button';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
@@ -129,6 +130,10 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
+  gotToAddTokenPage = () => {
+    // TODO: Link to add token page
+  }
+
   renderAssets() {
     const { wallet, assets, rates } = this.props;
     const {
@@ -219,7 +224,6 @@ class AssetsScreen extends React.Component<Props, State> {
               flexDirection: 'row',
             }}
           >
-
             <Grid>
               <Row>
                 <Animated.Image
@@ -246,7 +250,16 @@ class AssetsScreen extends React.Component<Props, State> {
             </Grid>
           </Animated.View>
           <Wrapper padding>
-            <Title title="assets" />
+            <Grid>
+              <Row>
+                <Column>
+                  <Title title="assets" />
+                </Column>
+                <Column style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                  <Button secondary noPadding marginBottom="20px" onPress={this.gotToAddTokenPage} title="Add Token+" />
+                </Column>
+              </Row>
+            </Grid>
           </Wrapper>
           {this.renderAssets()}
 
