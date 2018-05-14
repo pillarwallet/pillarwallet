@@ -155,7 +155,7 @@ class AssetsScreen extends React.Component<Props, State> {
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
         const assetColor = assetColors[symbol] || defaultAssetColor;
-        const defaultCardPositionTop = (index * 140) + 30;
+        const defaultCardPositionTop = index * 140;
 
 
         return (
