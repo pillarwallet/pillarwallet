@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
-import { UIColors } from 'utils/variables';
+import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
@@ -25,8 +25,8 @@ const defaultAssetColor = '#4C4E5E';
 const pillarLogoSource = require('assets/images/header-pillar-logo.png');
 
 const assetColors = {
-  ETH: '#4C4E5E',
-  PLR: '#5e1b22',
+  ETH: baseColors.darkGray,
+  PLR: baseColors.clearBlue,
 };
 
 const activeModalResetState = {

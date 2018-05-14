@@ -56,7 +56,11 @@ class PortfolioBalance extends React.Component<Props, {}> {
     const portfolioBalance = this.calculatePortfolioBalance(assets, rates);
     return (
       <View>
-        <Text style={{ color: baseColors.warmGray, fontSize: fontSizes.medium }}>
+        <Text style={{
+          color: baseColors.warmGray,
+          fontSize: fontSizes.medium,
+          }}
+        >
           Total Portfolio
         </Text>
         <Text style={{
