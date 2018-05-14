@@ -17,6 +17,7 @@ import Title from 'components/Title';
 
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
+import { formatMoney } from '../../utils/common';
 
 
 // TODO: Replace me with real address or pass in with Redux
@@ -152,10 +153,8 @@ class AssetsScreen extends React.Component<Props, State> {
           address: contractAddress,
         } = asset;
 
-        // TODO: extract this to service
-        const balanceInFiat = rates[symbol] ? +parseFloat(balance * rates[symbol].USD).toFixed(2) : 0;
-
-        const displayAmount = +parseFloat(balance).toFixed(4);
+        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : 0;
+        const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
