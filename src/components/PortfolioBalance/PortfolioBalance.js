@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Text, View } from 'react-native';
+import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import type { Asset, Assets } from 'models/Asset';
 import { USD } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
@@ -55,10 +56,19 @@ class PortfolioBalance extends React.Component<Props, {}> {
     const portfolioBalance = this.calculatePortfolioBalance(assets, rates);
     return (
       <View>
-        <Text style={{ color: 'white', fontSize: 32 }}>
+        <Text style={{
+          color: baseColors.warmGray,
+          fontSize: fontSizes.medium,
+          }}
+        >
           Total Portfolio
         </Text>
-        <Text style={{ color: 'white', fontSize: 32, textAlign: 'center' }}>
+        <Text style={{
+          color: UIColors.defaultTextColor,
+          fontSize: fontSizes.extraExtraLarge,
+          fontWeight: fontWeights.bold,
+        }}
+        >
           ${+parseFloat(portfolioBalance[baseCurrency]).toFixed(2)}
         </Text>
       </View>

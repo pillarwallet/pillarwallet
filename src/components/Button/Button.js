@@ -12,13 +12,14 @@ type Props = {
   marginTop?: string,
   light?: boolean,
   width?: string,
-  block?: boolean
+  block?: boolean,
+  noPadding?: boolean,
 };
 
 const themes = {
   primary: {
     background: '#2077fd',
-    underlay: '80dfff',
+    underlay: '#80dfff',
     color: '#ffffff',
   },
   secondary: {
@@ -53,8 +54,10 @@ const Button = (props: Props) => {
       block={props.block}
       marginTop={props.marginTop}
       marginBottom={props.marginBottom}
+      noPadding={props.noPadding}
       onPress={props.onPress}
       width={props.width}
+      underlayColor={theme.underlay}
     >
       <ButtonText
         theme={theme}

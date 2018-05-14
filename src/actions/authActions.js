@@ -56,7 +56,7 @@ export const loginAction = (pin: string) => {
       if (tickers.length) {
         cryptocompare.priceMulti(tickers, ['USD', 'EUR', 'GBP'])
           .then(rates => dispatch({ type: SET_RATES, payload: rates }))
-          .catch(e => console.log(e));
+          .catch(console.log); // eslint-disable-line
       }
       dispatch(NavigationActions.navigate({ routeName: ASSETS }));
     } catch (e) {

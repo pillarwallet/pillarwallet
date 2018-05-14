@@ -145,6 +145,11 @@ function getBottomNavigationOptions() {
     tabBarOptions: {
       activeTintColor: 'blue',
       inactiveTintColor: 'gray',
+      activeBackgroundColor: 'white',
+      inactiveBackgroundColor: 'white',
+      style: {
+        backgroundColor: 'white',
+      },
     },
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',

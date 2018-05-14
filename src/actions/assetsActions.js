@@ -63,6 +63,6 @@ export const fetchAssetsBalancesAction = (assets: Object, walletAddress: string)
           type: UPDATE_ASSETS_BALANCES,
           payload: data,
         });
-      }).catch(console.log);
+      }).catch(console.log); // eslint-disable-line
   };
 };

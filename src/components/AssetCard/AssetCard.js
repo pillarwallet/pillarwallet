@@ -39,7 +39,6 @@ type State = {
   isActive: boolean,
   animCardPosition: Animated.Value,
   animCardHeight: Animated.Value,
-  animCardWidth: Animated.Value,
   animCardContentFade: Animated.Value,
 }
 
@@ -49,7 +48,6 @@ export default class AssetCard extends React.Component<Props, State> {
   state = {
     isActive: false,
     animCardHeight: new Animated.Value(120),
-    animCardWidth: new Animated.Value(30),
     animCardContentFade: new Animated.Value(0),
     animCardPosition: new Animated.Value(this.props.defaultPositionY),
   };
@@ -75,7 +73,6 @@ export default class AssetCard extends React.Component<Props, State> {
 
   animateCardActiveState = (isActive: boolean) => {
     const cardHeightValue = isActive ? 140 : 120;
-    const cardWidthValue = isActive ? 20 : 30;
     const cardContentFadeValue = isActive ? 1 : 0;
     const cardPositionValue = isActive ? -60 : this.props.defaultPositionY;
 
@@ -86,9 +83,6 @@ export default class AssetCard extends React.Component<Props, State> {
       Animated.spring(this.state.animCardHeight, {
         toValue: cardHeightValue,
       }),
-      Animated.spring(this.state.animCardWidth, {
-        toValue: cardWidthValue,
-      }),
       Animated.spring(this.state.animCardContentFade, {
         toValue: cardContentFadeValue,
       }),
@@ -98,7 +92,6 @@ export default class AssetCard extends React.Component<Props, State> {
   render() {
     const {
       animCardHeight,
-      animCardWidth,
       animCardContentFade,
       animCardPosition,
       isActive,
@@ -132,8 +125,8 @@ export default class AssetCard extends React.Component<Props, State> {
             color={linearGradientColorStart}
             style={[{
             height: animCardHeight,
-            marginLeft: animCardWidth,
-            marginRight: animCardWidth,
+            marginLeft: 20,
+            marginRight: 20,
             marginBottom: 20,
             position: 'absolute',
             left: 0,

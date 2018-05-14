@@ -2,27 +2,31 @@
 import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
+import { Grid, Row, Column } from 'components/Grid';
+import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
-
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-
+import Button from 'components/Button';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
+import Title from 'components/Title';
+
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
 
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
-
 const defaultAssetColor = '#4C4E5E';
+const pillarLogoSource = require('assets/images/header-pillar-logo.png');
+
 const assetColors = {
-  ETH: '#4C4E5E',
-  PLR: '#5e1b22',
+  ETH: baseColors.darkGray,
+  PLR: baseColors.clearBlue,
 };
 
 const activeModalResetState = {
@@ -126,6 +130,10 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
+  goToAddTokenPage = () => {
+    // TODO: Link to add token page
+  };
+
   renderAssets() {
     const { wallet, assets, rates } = this.props;
     const {
@@ -152,7 +160,7 @@ class AssetsScreen extends React.Component<Props, State> {
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
         const assetColor = assetColors[symbol] || defaultAssetColor;
-        const defaultCardPositionTop = (index * 140) + 30;
+        const defaultCardPositionTop = index * 140;
 
         return (
           <AssetCard
@@ -203,21 +211,57 @@ class AssetsScreen extends React.Component<Props, State> {
             position: 'relative',
             width: '100%',
             height: '100%',
+            backgroundColor: baseColors.lightGray,
           }}
         >
           <Animated.View
             style={{
-              backgroundColor: '#00a5ff',
               height: animHeaderHeight,
-              justifyContent: 'center',
-              alignItems: 'center',
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              backgroundColor: baseColors.white,
+              borderColor: UIColors.defaultBorderColor,
+              padding: 20,
+              flexDirection: 'row',
             }}
           >
-            <Animated.View style={{ opacity: animHeaderTextOpacity }}>
-              <PortfolioBalance />
-            </Animated.View>
+            <Grid>
+              <Row>
+                <Animated.Image
+                  source={pillarLogoSource}
+                  style={{
+                    opacity: animHeaderTextOpacity,
+                    height: 35,
+                    width: 71,
+                  }}
+                />
+              </Row>
+              <Row>
+                <Column
+                  style={{
+                    alignSelf: 'flex-end',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Animated.View style={{ opacity: animHeaderTextOpacity }}>
+                    <PortfolioBalance />
+                  </Animated.View>
+                </Column>
+              </Row>
+            </Grid>
           </Animated.View>
-
+          <Wrapper padding>
+            <Grid>
+              <Row>
+                <Column>
+                  <Title title="assets" />
+                </Column>
+                <Column style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                  <Button secondary noPadding marginBottom="20px" onPress={this.goToAddTokenPage} title="Add Token+" />
+                </Column>
+              </Row>
+            </Grid>
+          </Wrapper>
           {this.renderAssets()}
 
         </Wrapper>
