@@ -212,6 +212,7 @@ class AssetsScreen extends React.Component<Props, State> {
             position: 'relative',
             width: '100%',
             height: '100%',
+            backgroundColor: baseColors.lightGray,
           }}
         >
           <Animated.View
@@ -219,6 +220,7 @@ class AssetsScreen extends React.Component<Props, State> {
               height: animHeaderHeight,
               borderBottomWidth: 1,
               borderStyle: 'solid',
+              backgroundColor: baseColors.white,
               borderColor: UIColors.defaultBorderColor,
               padding: 20,
               flexDirection: 'row',
