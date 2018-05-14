@@ -1,10 +1,7 @@
 // @flow
 import * as React from 'react';
-import { Platform, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
-
-const deviceHeight = Dimensions.get('window').height;
 
 type ContainerProps = {
   children?: React.Node,
