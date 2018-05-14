@@ -1,7 +1,6 @@
 // @flow
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import cryptocompare from 'cryptocompare';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -12,24 +11,7 @@ import { ASSETS } from 'constants/navigationConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
-
-// TODO: remove and mock
-/* const cryptocompare = {
-  priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
-    return Promise.resolve({
-      ETH: {
-        EUR: 624.21,
-        GBP: 544.57,
-        USD: 748.92,
-      },
-      PLR: {
-        EUR: 0.3142,
-        GBP: 0.2762,
-        USD: 0.377,
-      },
-    });
-  },
-}; */
+import { getExchangeRates } from 'utils/assets';
 
 const storage = Storage.getInstance('db');
 
@@ -54,7 +36,7 @@ export const loginAction = (pin: string) => {
       // Load exchange rates
       const tickers = Object.keys(assets);
       if (tickers.length) {
-        cryptocompare.priceMulti(tickers, ['USD', 'EUR', 'GBP'])
+        getExchangeRates(tickers)
           .then(rates => dispatch({ type: SET_RATES, payload: rates }))
           .catch(console.log); // eslint-disable-line
       }

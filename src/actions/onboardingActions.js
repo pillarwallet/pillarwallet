@@ -10,9 +10,10 @@ import {
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
+import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
 import { initialAssets } from 'fixtures/assets';
-import { transformAssetsToObject } from 'utils/assets';
+import { transformAssetsToObject, getExchangeRates } from 'utils/assets';
 
 const storage = Storage.getInstance('db');
 
@@ -56,8 +57,14 @@ export const registerWalletAction = () => {
     });
 
     // STEP 4: store initial assets
-    // TODO: get the initial assets from SDK
+    // TODO: get initial assets from the SDK
     const convertedAssets = transformAssetsToObject(initialAssets);
+    const tickers = Object.keys(convertedAssets);
+    if (tickers.length) {
+      getExchangeRates(tickers)
+        .then(rates => dispatch({ type: SET_RATES, payload: rates }))
+        .catch(console.log); // eslint-disable-line
+    }
 
     dispatch({
       type: UPDATE_ASSETS,
