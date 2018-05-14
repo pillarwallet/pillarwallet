@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 const ButtonWrapper = styled.TouchableHighlight`
   align-items: center;
   padding: ${props => props.noPadding ? '0' : '10px 40px'};
-  background-color: '${props => props.theme.background}';
+  background-color: ${props => props.theme.background};
   margin-top: ${props => props.marginTop || '0px'};
   margin-bottom: ${props => props.marginBottom || '0px'};
   border-radius: 40;

@@ -17,11 +17,10 @@ export const Center = styled.View`
 
 const ContainerOuter = styled.SafeAreaView`
   background-color: ${baseColors.white};
-  height: ${() => Platform.OS === 'ios' ? deviceHeight : deviceHeight - 20};
 `;
 
 const ContainerInner = styled.View`
-  flex: 1;
+  height: 100%;
   align-items: ${props => (props.center ? 'center' : 'stretch')};
   justify-content: ${props => (props.center ? 'center' : 'flex-start')};
 `;
@@ -46,7 +45,7 @@ export const Footer = styled.View`
   align-items: center;
   width: 100%;
   justify-content: flex-end;
-  padding: 20px 20px 40px;
+  padding: 20px;
   position: absolute;
   bottom: 0;
 `;

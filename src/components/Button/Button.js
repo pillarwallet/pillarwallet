@@ -19,7 +19,7 @@ type Props = {
 const themes = {
   primary: {
     background: '#2077fd',
-    underlay: '80dfff',
+    underlay: '#80dfff',
     color: '#ffffff',
   },
   secondary: {
