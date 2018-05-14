@@ -5,6 +5,7 @@ import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import type { Asset, Assets } from 'models/Asset';
 import { USD } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
 
 type Rates = {
   [string]: {
@@ -23,7 +24,7 @@ type Props = {
 class PortfolioBalance extends React.Component<Props, {}> {
   static defaultProps = {
     baseCurrency: USD,
-  }
+  };
 
   calculatePortfolioBalance(assets: Assets, rates: Rates) {
     // CLEANUP REQUIRED
@@ -53,7 +54,9 @@ class PortfolioBalance extends React.Component<Props, {}> {
     if (!Object.keys(rates).length || !Object.keys(assets).length) {
       return null;
     }
-    const portfolioBalance = this.calculatePortfolioBalance(assets, rates);
+    let portfolioBalance = this.calculatePortfolioBalance(assets, rates);
+    portfolioBalance = formatMoney(portfolioBalance[baseCurrency]);
+    const currencySymbol = getCurrencySymbol(baseCurrency);
     return (
       <View>
         <Text style={{
@@ -69,7 +72,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
           fontWeight: fontWeights.bold,
         }}
         >
-          ${+parseFloat(portfolioBalance[baseCurrency]).toFixed(2)}
+          {currencySymbol}{portfolioBalance}
         </Text>
       </View>
     );
