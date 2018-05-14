@@ -132,7 +132,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
   gotToAddTokenPage = () => {
     // TODO: Link to add token page
-  }
+  };
 
   renderAssets() {
     const { wallet, assets, rates } = this.props;
