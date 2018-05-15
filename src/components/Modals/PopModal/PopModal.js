@@ -1,93 +1,124 @@
 // @flow
 import * as React from 'react';
-import {
-  Animated,
-  Easing,
-  View,
-  Text,
-  TouchableHighlight,
-} from 'react-native';
+import { Dimensions } from 'react-native';
+import Modal from 'react-native-modal';
+import styled from 'styled-components/native';
+import Title from 'components/Title';
 import Button from 'components/Button';
-import styles from './styles';
-
 
 type Props = {
-  title: string,
-  message: string,
-  popModalHandleDismiss: Function,
-  actionPrimary: string
+  title?: string,
+  headerImage?: string,
+  children?: React.Node,
+  fullScreenComponent?: ?React.Node,
+  onModalHide?: Function,
+  isVisible: boolean,
 };
 
 type State = {
-  showPopAnimation: any,
-  verticalBounce: any,
+  isVisible: boolean,
 };
 
+const window = Dimensions.get('window');
+
+const ModalWrapper = styled.View`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ModalHeaderImage = styled.Image`
+  width: 300;
+  height: 150;
+`;
+
+const ModalBackground = styled.View`
+  background-color: white;
+  padding: 20px;
+  border-radius: 20;
+  box-shadow: 10px 5px 5px rgba(0,0,0,.5);
+  height: ${window.height / 2};
+  width: ${window.width - 40};
+  overflow: hidden;
+`;
+
+const ModalContent = styled.View`
+  flex: 1;
+  height: ${window.height};
+  align-items: center;
+  justify-content: space-around;
+`;
+
+
 export default class PopModal extends React.Component<Props, State> {
-  state = {
-    showPopAnimation: new Animated.Value(0),
-    verticalBounce: new Animated.Value(10),
+  static defaultProps = {
+    fullScreenComponent: null,
   };
 
-  componentDidMount() {
-    Animated.parallel([
-      Animated.timing(this.state.showPopAnimation, {
-        toValue: 1,
-        duration: 250,
-      }),
-      Animated.sequence([
-        Animated.timing(this.state.verticalBounce, {
-          toValue: -20,
-          easing: Easing.in(),
-          duration: 250,
-        }),
-        Animated.timing(this.state.verticalBounce, {
-          toValue: 5,
-          duration: 100,
-        }),
-        Animated.timing(this.state.verticalBounce, {
-          toValue: -2,
-          duration: 40,
-        }),
-        Animated.timing(this.state.verticalBounce, {
-          toValue: 0,
-          duration: 30,
-        }),
-      ]),
-    ]).start();
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      isVisible: props.isVisible,
+    };
   }
 
-  dismissAnimation = () => {
-    // TODO: Make this happen after the animation completes
-    this.props.popModalHandleDismiss();
-  };
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    if (nextProps.isVisible !== prevState.isVisible) {
+      return {
+        isVisible: nextProps.isVisible,
+      };
+    }
+    return null;
+  }
+
+  hideModal = () => {
+    this.setState({
+      isVisible: false,
+    });
+  }
 
   render() {
-    const { showPopAnimation, verticalBounce } = this.state;
-
+    const {
+      isVisible,
+    } = this.state;
+    const {
+      children,
+      title,
+      fullScreenComponent,
+      onModalHide,
+      headerImage,
+    } = this.props;
+    const animationInTiming = 800;
+    const animationOutTiming = 400;
     return (
-      <Animated.View style={[styles.popOverContainer, { opacity: showPopAnimation }]}>
-
-        <TouchableHighlight style={styles.popOverContainerBG} onPress={this.props.popModalHandleDismiss}>
-          <View />
-        </TouchableHighlight>
-
-        <Animated.View style={[styles.popOverBackground, { top: verticalBounce }]}>
-
-          <View style={styles.popOverHeader}>
-            <Text style={styles.popOverHeaderText}>{this.props.title}</Text>
-          </View>
-
-          <View style={styles.popOverContent}>
-            <Text style={styles.popOverContentText}>{this.props.message}</Text>
-          </View>
-
-          <View style={styles.popOverActions}>
-            <Button light title={this.props.actionPrimary} onPress={this.dismissAnimation} />
-          </View>
-
-        </Animated.View>
-      </Animated.View>
+      <Modal
+        isVisible={isVisible}
+        onSwipe={this.hideModal}
+        onModalHide={onModalHide}
+        onBackdropPress={this.hideModal}
+        animationInTiming={animationInTiming}
+        animationOutTiming={animationOutTiming}
+        animationIn="bounceInUp"
+        animationOut="bounceOutDown"
+        swipeDirection="down"
+        style={{
+          margin: 0,
+        }}
+      >
+        <ModalWrapper>
+          <ModalBackground>
+            <ModalContent>
+              {headerImage && <ModalHeaderImage source={headerImage} />}
+              {title && <Title title={title} />}
+              {isVisible && children}
+              <Button block title="Dismiss" onPress={this.hideModal} />
+            </ModalContent>
+          </ModalBackground>
+        </ModalWrapper>
+        {fullScreenComponent}
+      </Modal>
     );
   }
 }

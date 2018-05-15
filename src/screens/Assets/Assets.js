@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
+import { Paragraph } from 'components/Typography';
 import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
@@ -14,7 +15,7 @@ import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
-
+import PopModal from 'components/Modals/PopModal';
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 import { formatMoney } from '../../utils/common';
@@ -24,6 +25,7 @@ import { formatMoney } from '../../utils/common';
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 const defaultAssetColor = '#4C4E5E';
 const pillarLogoSource = require('assets/images/header-pillar-logo.png');
+const tokenSentConfirmationImage = require('assets/images/token-sent-confirmation-image.png');
 
 const assetColors = {
   ETH: baseColors.darkGray,
@@ -274,6 +276,21 @@ class AssetsScreen extends React.Component<Props, State> {
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           {...opts}
         />
+        <PopModal
+          isVisible={activeModalType === 'SEND_CONFIRMATION'}
+          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
+          headerImage={tokenSentConfirmationImage}
+        >
+          <Title
+            title="Your transaction is pending"
+            center
+            maxWidth={200}
+          />
+          <Paragraph light center style={{ marginBottom: 20 }}>
+            The process may take up to 10 minutes to complete. please check your transaction history.
+          </Paragraph>
+        </PopModal>
+
       </Container>
     );
   }
