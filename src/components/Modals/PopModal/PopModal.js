@@ -39,7 +39,7 @@ const ModalBackground = styled.View`
   padding: 20px;
   border-radius: 20;
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
-  height: ${window.width};
+  height: ${window.height / 2};
   width: ${window.width - 40};
   overflow: hidden;
 `;

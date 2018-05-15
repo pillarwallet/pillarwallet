@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
+import { Paragraph } from 'components/Typography';
 import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
@@ -282,11 +283,15 @@ class AssetsScreen extends React.Component<Props, State> {
           headerImage={tokenSentConfirmationImage}
         >
           <Title
-            title="Your transaction has been sent"
+            title="Your transaction is pending"
             center
             maxWidth={200}
           />
+          <Paragraph light center style={{ marginBottom: 20 }}>
+            The process may take up to 10 minutes to complete. please check your transaction history.
+          </Paragraph>
         </PopModal>
+
       </Container>
     );
   }
