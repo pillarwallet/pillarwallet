@@ -7,7 +7,8 @@ import Title from 'components/Title';
 import Button from 'components/Button';
 
 type Props = {
-  title: string,
+  title?: string,
+  headerImage?: string,
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
@@ -28,6 +29,11 @@ const ModalWrapper = styled.View`
   justify-content: center;
 `;
 
+const ModalHeaderImage = styled.Image`
+  width: 300;
+  height: 150;
+`;
+
 const ModalBackground = styled.View`
   background-color: white;
   padding: 20px;
@@ -45,10 +51,6 @@ const ModalContent = styled.View`
   justify-content: space-around;
 `;
 
-const ModalTitle = styled.Text`
-  font-size: 24px;
-  font-weight: 700;
-`;
 
 export default class PopModal extends React.Component<Props, State> {
   static defaultProps = {
@@ -86,6 +88,7 @@ export default class PopModal extends React.Component<Props, State> {
       title,
       fullScreenComponent,
       onModalHide,
+      headerImage,
     } = this.props;
     const animationInTiming = 800;
     const animationOutTiming = 400;
@@ -107,7 +110,8 @@ export default class PopModal extends React.Component<Props, State> {
         <ModalWrapper>
           <ModalBackground>
             <ModalContent>
-              <Title title={title} />
+              {headerImage && <ModalHeaderImage source={headerImage} />}
+              {title && <Title title={title} />}
               {isVisible && children}
               <Button block title="Dismiss" onPress={this.hideModal} />
             </ModalContent>

@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
-import PopModal from 'components/Modals/PopModal';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress, hasAllValues } from 'utils/validators';
@@ -16,7 +15,6 @@ import { pipe, decodeETHAddress } from 'utils/common';
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
-
 const { Form } = t.form;
 
 type Props = {
@@ -227,7 +225,9 @@ class SendModal extends React.Component<Props, State> {
 
   render() {
     const { isVisible, onModalHide, token } = this.props;
-    const { value, isScanning, formStructure } = this.state;
+    const {
+      value, isScanning, formStructure,
+    } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const isFilled = hasAllValues(value);
     const qrScannnerComponent = (
@@ -262,13 +262,7 @@ class SendModal extends React.Component<Props, State> {
             >
               Send
             </SendButton>
-            <PopModal
-              isVisible
-              title="Your transaction has been sent"
-            >
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-              Veniam vero nemo distinctio rerum libero dolores cupiditate, non accusamus molestias illum!
-            </PopModal>
+
           </ActionsWrapper>
         </Container>
       </SlideModal>
