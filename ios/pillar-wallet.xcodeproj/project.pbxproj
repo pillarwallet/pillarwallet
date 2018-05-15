@@ -1,0 +1,834 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
+		16CD8FBA20A8E19700BD276F /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CD8FB920A8E19700BD276F /* libReact.a */; };
+		16FAA79F20A8FB350001246E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 16FAA79E20A8FB350001246E /* GoogleService-Info.plist */; };
+		22F95E64F92E4E398099112D /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 209ECA9FD3A147FF82955E48 /* Entypo.ttf */; };
+		276C827361654D53B0300D88 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */; };
+		2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */; };
+		2EC3EE0BF47A4A74940BE84E /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCE4860CBACC4A99B26705F0 /* Zocial.ttf */; };
+		308F1777F22140319410B3D5 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A53A48870B24236BA9A090E /* Octicons.ttf */; };
+		3BE522D36D0E44CB973ECA16 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 43399DA83DE5422CB158B171 /* MaterialIcons.ttf */; };
+		3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E57168F09C0F4E06ADD6E15F /* libRNFirebase.a */; };
+		44C758D34A0A45438D9BBC25 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE9C8A714CA544BB85EFA109 /* Foundation.ttf */; };
+		4738BC479653470A8BC52374 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */; };
+		4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A144060C424F469E8074D840 /* SimpleLineIcons.ttf */; };
+		4E9A9E801BE94E43B50FF9F7 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2702BF20B911498186578798 /* SimpleLineIcons.ttf */; };
+		5024DD2C1ACA4DF494A1CCB1 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB597A9C1A5B42FDA30549CE /* Entypo.ttf */; };
+		55CF3F18E6EF415F8718A968 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 327A307B25DC4C5299D33695 /* Feather.ttf */; };
+		5F1F067D48844591B2A659A9 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */; };
+		63DDAC5BF5F84775A54FEFB1 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 751A293D237B47E0BDE37FF9 /* FontAwesome.ttf */; };
+		7FE0949E8E1E4A86920A222E /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */; };
+		8D2F06EA360544BDADBED075 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 06BB724CDE404052B9BE592C /* Octicons.ttf */; };
+		8FDBC48B259C41AD8BA2A002 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0A919F81462B49BEADFD1CBD /* EvilIcons.ttf */; };
+		B501732B1DC01252003445D9 /* EXShell.plist in Resources */ = {isa = PBXBuildFile; fileRef = B501732A1DC01252003445D9 /* EXShell.plist */; };
+		B56386491DB9693800A0598C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56386481DB9693800A0598C /* AppDelegate.m */; };
+		B56386511DB9693800A0598C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B56386501DB9693800A0598C /* Assets.xcassets */; };
+		B56386611DB96A5E00A0598C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B563865E1DB96A5E00A0598C /* main.m */; };
+		B56386671DB9994300A0598C /* EXSDKVersions.plist in Resources */ = {isa = PBXBuildFile; fileRef = B56386661DB9994300A0598C /* EXSDKVersions.plist */; };
+		B5693E8E1FABD16A00307FA4 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5693E8D1FABD16A00307FA4 /* LaunchScreen.xib */; };
+		B5693E911FABD46800307FA4 /* launch_background_image.png in Resources */ = {isa = PBXBuildFile; fileRef = B5693E8F1FABD46800307FA4 /* launch_background_image.png */; };
+		B5693E921FABD46800307FA4 /* launch_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B5693E901FABD46800307FA4 /* launch_icon.png */; };
+		B5CFBF4F1EDE419400B4BE24 /* EXBuildConstants.plist in Resources */ = {isa = PBXBuildFile; fileRef = B5CFBF4E1EDE419400B4BE24 /* EXBuildConstants.plist */; };
+		B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047E1F3A684600E91581 /* shell-app-manifest.json */; };
+		B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047F1F3A684600E91581 /* shell-app.bundle */; };
+		B666863B0A07408B887D99ED /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CDF7B322B74120A8501540 /* Roboto.ttf */; };
+		D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 809C8F6F2C484692B42E92AE /* MaterialCommunityIcons.ttf */; };
+		DE488ED3D5684B76A0C40B8C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ABE6DAB20184465D8E053C80 /* Ionicons.ttf */; };
+		E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */; };
+		E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */; };
+		FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		16CD8FAC20A8D94D00BD276F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 301E55644687407DAF5C612F /* RNFirebase.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNFirebase;
+		};
+		16CD8FAF20A8D94D00BD276F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 656DE667C19E4B64B8132FD8 /* RNVectorIcons.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5DBEB1501B18CEA900B34395;
+			remoteInfo = RNVectorIcons;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		06BB724CDE404052B9BE592C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		091E87CFB7B878842C4CB7F5 /* Pods-pillar-wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillar-wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet.release.xcconfig"; sourceTree = "<group>"; };
+		0A919F81462B49BEADFD1CBD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		1625638A20A8F7EA00E77868 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1691663120A976E400897610 /* pillar-wallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pillar-wallet.entitlements"; sourceTree = "<group>"; };
+		16CD8FB520A8DC1B00BD276F /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		16CD8FB920A8E19700BD276F /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		16FAA79E20A8FB350001246E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
+		209ECA9FD3A147FF82955E48 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		26CDF7B322B74120A8501540 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
+		2702BF20B911498186578798 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		301E55644687407DAF5C612F /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
+		3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		327A307B25DC4C5299D33695 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		43399DA83DE5422CB158B171 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		4A53A48870B24236BA9A090E /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		656DE667C19E4B64B8132FD8 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/@expo/vector-icons/vendor/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
+		751A293D237B47E0BDE37FF9 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		7D0396A597875542ECE2CDF9 /* Pods-pillar-wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillar-wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet.debug.xcconfig"; sourceTree = "<group>"; };
+		80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
+		809C8F6F2C484692B42E92AE /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		A144060C424F469E8074D840 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		ABE6DAB20184465D8E053C80 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillar-wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B501732A1DC01252003445D9 /* EXShell.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = EXShell.plist; sourceTree = "<group>"; };
+		B56386411DB9693800A0598C /* pillar-wallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pillar-wallet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B56386471DB9693800A0598C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		B56386481DB9693800A0598C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		B56386501DB9693800A0598C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B563865C1DB96A5E00A0598C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B563865E1DB96A5E00A0598C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B56386661DB9994300A0598C /* EXSDKVersions.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = EXSDKVersions.plist; sourceTree = "<group>"; };
+		B5693E8D1FABD16A00307FA4 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		B5693E8F1FABD46800307FA4 /* launch_background_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launch_background_image.png; sourceTree = "<group>"; };
+		B5693E901FABD46800307FA4 /* launch_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launch_icon.png; sourceTree = "<group>"; };
+		B5CFBF4E1EDE419400B4BE24 /* EXBuildConstants.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = EXBuildConstants.plist; sourceTree = "<group>"; };
+		B5DB047E1F3A684600E91581 /* shell-app-manifest.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "shell-app-manifest.json"; sourceTree = "<group>"; };
+		B5DB047F1F3A684600E91581 /* shell-app.bundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "shell-app.bundle"; sourceTree = "<group>"; };
+		BB597A9C1A5B42FDA30549CE /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
+		BCE4860CBACC4A99B26705F0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		BE9C8A714CA544BB85EFA109 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		E57168F09C0F4E06ADD6E15F /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
+		E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
+		E95F3AE135154DC384D6FE21 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
+		ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B563863E1DB9693800A0598C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16CD8FBA20A8E19700BD276F /* libReact.a in Frameworks */,
+				3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */,
+				FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		16CD8FA620A8D94B00BD276F /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				E57168F09C0F4E06ADD6E15F /* libRNFirebase.a */,
+				E95F3AE135154DC384D6FE21 /* libRNVectorIcons.a */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		16CD8FA720A8D94C00BD276F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				16CD8FAD20A8D94D00BD276F /* libRNFirebase.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		16CD8FA920A8D94C00BD276F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				16CD8FB020A8D94D00BD276F /* libRNVectorIcons.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3BD32C7E56A0F383F77FCFE5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1625638A20A8F7EA00E77868 /* libRNVectorIcons.a */,
+				16CD8FB920A8E19700BD276F /* libReact.a */,
+				16CD8FB520A8DC1B00BD276F /* libReact.a */,
+				B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		51C23A8E43154C9E88764F47 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BB597A9C1A5B42FDA30549CE /* Entypo.ttf */,
+				228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */,
+				DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */,
+				BE9C8A714CA544BB85EFA109 /* Foundation.ttf */,
+				ABE6DAB20184465D8E053C80 /* Ionicons.ttf */,
+				80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */,
+				06BB724CDE404052B9BE592C /* Octicons.ttf */,
+				1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */,
+				26CDF7B322B74120A8501540 /* Roboto.ttf */,
+				E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */,
+				2702BF20B911498186578798 /* SimpleLineIcons.ttf */,
+				FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */,
+				209ECA9FD3A147FF82955E48 /* Entypo.ttf */,
+				0A919F81462B49BEADFD1CBD /* EvilIcons.ttf */,
+				327A307B25DC4C5299D33695 /* Feather.ttf */,
+				751A293D237B47E0BDE37FF9 /* FontAwesome.ttf */,
+				ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */,
+				3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */,
+				809C8F6F2C484692B42E92AE /* MaterialCommunityIcons.ttf */,
+				43399DA83DE5422CB158B171 /* MaterialIcons.ttf */,
+				4A53A48870B24236BA9A090E /* Octicons.ttf */,
+				A144060C424F469E8074D840 /* SimpleLineIcons.ttf */,
+				BCE4860CBACC4A99B26705F0 /* Zocial.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		69BE83450974470B970EB9BA /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				301E55644687407DAF5C612F /* RNFirebase.xcodeproj */,
+				656DE667C19E4B64B8132FD8 /* RNVectorIcons.xcodeproj */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		B56386381DB9693800A0598C = {
+			isa = PBXGroup;
+			children = (
+				B56386431DB9693800A0598C /* pillar-wallet */,
+				B56386421DB9693800A0598C /* Products */,
+				69BE83450974470B970EB9BA /* Libraries */,
+				51C23A8E43154C9E88764F47 /* Resources */,
+				D541AE0DFE89A47B06F9BC51 /* Pods */,
+				3BD32C7E56A0F383F77FCFE5 /* Frameworks */,
+				16CD8FA620A8D94B00BD276F /* Recovered References */,
+			);
+			sourceTree = "<group>";
+		};
+		B56386421DB9693800A0598C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B56386411DB9693800A0598C /* pillar-wallet.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B56386431DB9693800A0598C /* pillar-wallet */ = {
+			isa = PBXGroup;
+			children = (
+				1691663120A976E400897610 /* pillar-wallet.entitlements */,
+				B56386471DB9693800A0598C /* AppDelegate.h */,
+				B56386481DB9693800A0598C /* AppDelegate.m */,
+				B56386501DB9693800A0598C /* Assets.xcassets */,
+				B563865B1DB96A5E00A0598C /* Supporting */,
+			);
+			path = "pillar-wallet";
+			sourceTree = "<group>";
+		};
+		B563865B1DB96A5E00A0598C /* Supporting */ = {
+			isa = PBXGroup;
+			children = (
+				B5693E8F1FABD46800307FA4 /* launch_background_image.png */,
+				B5693E901FABD46800307FA4 /* launch_icon.png */,
+				B5693E8D1FABD16A00307FA4 /* LaunchScreen.xib */,
+				B5DB047E1F3A684600E91581 /* shell-app-manifest.json */,
+				B5DB047F1F3A684600E91581 /* shell-app.bundle */,
+				B5CFBF4E1EDE419400B4BE24 /* EXBuildConstants.plist */,
+				B501732A1DC01252003445D9 /* EXShell.plist */,
+				B56386661DB9994300A0598C /* EXSDKVersions.plist */,
+				16FAA79E20A8FB350001246E /* GoogleService-Info.plist */,
+				B563865C1DB96A5E00A0598C /* Info.plist */,
+				B563865E1DB96A5E00A0598C /* main.m */,
+			);
+			path = Supporting;
+			sourceTree = "<group>";
+		};
+		D541AE0DFE89A47B06F9BC51 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7D0396A597875542ECE2CDF9 /* Pods-pillar-wallet.debug.xcconfig */,
+				091E87CFB7B878842C4CB7F5 /* Pods-pillar-wallet.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B56386401DB9693800A0598C /* pillar-wallet */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B56386581DB9693800A0598C /* Build configuration list for PBXNativeTarget "pillar-wallet" */;
+			buildPhases = (
+				F3E5A62CE080FA06FEE72A56 /* [CP] Check Pods Manifest.lock */,
+				B5722AD01DFB7E3F0084848F /* Prepare Expo */,
+				B563863D1DB9693800A0598C /* Sources */,
+				B563863E1DB9693800A0598C /* Frameworks */,
+				B563863F1DB9693800A0598C /* Resources */,
+				7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */,
+				EFB07EFBD6D009930E33CABE /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "pillar-wallet";
+			productName = "pillar-wallet";
+			productReference = B56386411DB9693800A0598C /* pillar-wallet.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B56386391DB9693800A0598C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 900;
+				ORGANIZATIONNAME = "650 Industries, Inc.";
+				TargetAttributes = {
+					B56386401DB9693800A0598C = {
+						CreatedOnToolsVersion = 8.0;
+						DevelopmentTeam = J9DEY3FGPD;
+						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = B563863C1DB9693800A0598C /* Build configuration list for PBXProject "pillar-wallet" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B56386381DB9693800A0598C;
+			productRefGroup = B56386421DB9693800A0598C /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 16CD8FA720A8D94C00BD276F /* Products */;
+					ProjectRef = 301E55644687407DAF5C612F /* RNFirebase.xcodeproj */;
+				},
+				{
+					ProductGroup = 16CD8FA920A8D94C00BD276F /* Products */;
+					ProjectRef = 656DE667C19E4B64B8132FD8 /* RNVectorIcons.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				B56386401DB9693800A0598C /* pillar-wallet */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		16CD8FAD20A8D94D00BD276F /* libRNFirebase.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNFirebase.a;
+			remoteRef = 16CD8FAC20A8D94D00BD276F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		16CD8FB020A8D94D00BD276F /* libRNVectorIcons.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNVectorIcons.a;
+			remoteRef = 16CD8FAF20A8D94D00BD276F /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B563863F1DB9693800A0598C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5693E911FABD46800307FA4 /* launch_background_image.png in Resources */,
+				B501732B1DC01252003445D9 /* EXShell.plist in Resources */,
+				B5CFBF4F1EDE419400B4BE24 /* EXBuildConstants.plist in Resources */,
+				B56386671DB9994300A0598C /* EXSDKVersions.plist in Resources */,
+				B5693E921FABD46800307FA4 /* launch_icon.png in Resources */,
+				B5693E8E1FABD16A00307FA4 /* LaunchScreen.xib in Resources */,
+				B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */,
+				B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */,
+				16FAA79F20A8FB350001246E /* GoogleService-Info.plist in Resources */,
+				B56386511DB9693800A0598C /* Assets.xcassets in Resources */,
+				5024DD2C1ACA4DF494A1CCB1 /* Entypo.ttf in Resources */,
+				E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */,
+				10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */,
+				44C758D34A0A45438D9BBC25 /* Foundation.ttf in Resources */,
+				DE488ED3D5684B76A0C40B8C /* Ionicons.ttf in Resources */,
+				E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */,
+				8D2F06EA360544BDADBED075 /* Octicons.ttf in Resources */,
+				276C827361654D53B0300D88 /* Roboto_medium.ttf in Resources */,
+				B666863B0A07408B887D99ED /* Roboto.ttf in Resources */,
+				7FE0949E8E1E4A86920A222E /* rubicon-icon-font.ttf in Resources */,
+				4E9A9E801BE94E43B50FF9F7 /* SimpleLineIcons.ttf in Resources */,
+				4738BC479653470A8BC52374 /* Zocial.ttf in Resources */,
+				22F95E64F92E4E398099112D /* Entypo.ttf in Resources */,
+				8FDBC48B259C41AD8BA2A002 /* EvilIcons.ttf in Resources */,
+				55CF3F18E6EF415F8718A968 /* Feather.ttf in Resources */,
+				63DDAC5BF5F84775A54FEFB1 /* FontAwesome.ttf in Resources */,
+				5F1F067D48844591B2A659A9 /* Foundation.ttf in Resources */,
+				2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */,
+				D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */,
+				3BE522D36D0E44CB973ECA16 /* MaterialIcons.ttf in Resources */,
+				308F1777F22140319410B3D5 /* Octicons.ttf in Resources */,
+				4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */,
+				2EC3EE0BF47A4A74940BE84E /* Zocial.ttf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet-resources.sh",
+				"${PODS_ROOT}/Amplitude-iOS/Amplitude/api.amplitude.com.der",
+				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoCaLimitedRsaCertificationAuthority.der",
+				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoRsaCA.der",
+				"${PODS_ROOT}/Amplitude-iOS/Amplitude/ComodoRsaDomainValidationCA.der",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_amatorka.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_miss_etikate.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_soft_elegance_1.png",
+				"${PODS_ROOT}/GPUImage/framework/Resources/lookup_soft_elegance_2.png",
+				"${PODS_ROOT}/GoogleAuthUtilities/Frameworks/frameworks/GoogleAuthUtilities.framework/Resources/GTMOAuth2ViewTouch.xib",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
+				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC/gRPCCertificates.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/api.amplitude.com.der",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ComodoCaLimitedRsaCertificationAuthority.der",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ComodoRsaCA.der",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ComodoRsaDomainValidationCA.der",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/lookup.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/lookup_amatorka.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/lookup_miss_etikate.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/lookup_soft_elegance_1.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/lookup_soft_elegance_2.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GTMOAuth2ViewTouch.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B5722AD01DFB7E3F0084848F /* Prepare Expo */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Prepare Expo";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "set -eo pipefail\n\npushd ${SRCROOT}/..\nvalue=$(cat ~/.expo/PATH)\nPATH=\"$PATH:$value\" exp prepare-detached-build --platform ios\npopd\n";
+		};
+		EFB07EFBD6D009930E33CABE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F3E5A62CE080FA06FEE72A56 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-pillar-wallet-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B563863D1DB9693800A0598C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B56386611DB96A5E00A0598C /* main.m in Sources */,
+				B56386491DB9693800A0598C /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		B56386561DB9693800A0598C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		B56386571DB9693800A0598C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B56386591DB9693800A0598C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7D0396A597875542ECE2CDF9 /* Pods-pillar-wallet.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J9DEY3FGPD;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/Core/Sources",
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Amplitude-iOS\"",
+					"\"${PODS_ROOT}/Headers/Public/Analytics\"",
+					"\"${PODS_ROOT}/Headers/Public/AppAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/Bolts\"",
+					"\"${PODS_ROOT}/Headers/Public/BoringSSL\"",
+					"\"${PODS_ROOT}/Headers/Public/Branch\"",
+					"\"${PODS_ROOT}/Headers/Public/CocoaLumberjack\"",
+					"\"${PODS_ROOT}/Headers/Public/Crashlytics\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FBAudienceNetwork\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSDKCoreKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSDKLoginKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSDKShareKit\"",
+					"\"${PODS_ROOT}/Headers/Public/Fabric\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseABTesting\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAnalytics\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseDatabase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseDynamicLinks\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseFirestore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstanceID\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseMessaging\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebasePerformance\"",
+					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase\"",
+					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/messaging\"",
+					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/notifications\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseRemoteConfig\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseStorage\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseSwizzlingUtilities\"",
+					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase\"",
+					"\"${PODS_ROOT}/Headers/Public/Folly\"",
+					"\"${PODS_ROOT}/Headers/Public/GPUImage\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
+					"\"${PODS_ROOT}/Headers/Public/Google-Mobile-Ads-SDK\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleAppUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleAuthUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleMaps\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleNetworkingUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleSignIn\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleSymbolUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleToolboxForMac\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/JKBigInteger2\"",
+					"\"${PODS_ROOT}/Headers/Public/Protobuf\"",
+					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/boost-for-react-native\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-ProtoRPC\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-RxLibrary\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+					"\"${PODS_ROOT}/Headers/Public/lottie-ios\"",
+					"\"${PODS_ROOT}/Headers/Public/nanopb\"",
+					"\"${PODS_ROOT}/Headers/Public/yoga\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/pillar-wallet/Supporting/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B563865A1DB9693800A0598C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 091E87CFB7B878842C4CB7F5 /* Pods-pillar-wallet.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = J9DEY3FGPD;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_ROOT}/Firebase/Core/Sources",
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/Amplitude-iOS\"",
+					"\"${PODS_ROOT}/Headers/Public/Analytics\"",
+					"\"${PODS_ROOT}/Headers/Public/AppAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/Bolts\"",
+					"\"${PODS_ROOT}/Headers/Public/BoringSSL\"",
+					"\"${PODS_ROOT}/Headers/Public/Branch\"",
+					"\"${PODS_ROOT}/Headers/Public/CocoaLumberjack\"",
+					"\"${PODS_ROOT}/Headers/Public/Crashlytics\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FBAudienceNetwork\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSDKCoreKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSDKLoginKit\"",
+					"\"${PODS_ROOT}/Headers/Public/FBSDKShareKit\"",
+					"\"${PODS_ROOT}/Headers/Public/Fabric\"",
+					"\"${PODS_ROOT}/Headers/Public/Firebase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseABTesting\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAnalytics\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseAuth\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseDatabase\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseDynamicLinks\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseFirestore\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseInstanceID\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseMessaging\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebasePerformance\"",
+					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase\"",
+					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/messaging\"",
+					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/notifications\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseRemoteConfig\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseStorage\"",
+					"\"${PODS_ROOT}/Headers/Public/FirebaseSwizzlingUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/Folly\"",
+					"\"${PODS_ROOT}/Headers/Public/GPUImage\"",
+					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
+					"\"${PODS_ROOT}/Headers/Public/Google-Mobile-Ads-SDK\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleAppUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleAuthUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleMaps\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleNetworkingUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleSignIn\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleSymbolUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleToolboxForMac\"",
+					"\"${PODS_ROOT}/Headers/Public/GoogleUtilities\"",
+					"\"${PODS_ROOT}/Headers/Public/JKBigInteger2\"",
+					"\"${PODS_ROOT}/Headers/Public/Protobuf\"",
+					"\"${PODS_ROOT}/Headers/Public/RNVectorIcons\"",
+					"\"${PODS_ROOT}/Headers/Public/React\"",
+					"\"${PODS_ROOT}/Headers/Public/boost-for-react-native\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-ProtoRPC\"",
+					"\"${PODS_ROOT}/Headers/Public/gRPC-RxLibrary\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/leveldb-library\"",
+					"\"${PODS_ROOT}/Headers/Public/lottie-ios\"",
+					"\"${PODS_ROOT}/Headers/Public/nanopb\"",
+					"\"${PODS_ROOT}/Headers/Public/yoga\"",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/pillar-wallet/Supporting/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B563863C1DB9693800A0598C /* Build configuration list for PBXProject "pillar-wallet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B56386561DB9693800A0598C /* Debug */,
+				B56386571DB9693800A0598C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B56386581DB9693800A0598C /* Build configuration list for PBXNativeTarget "pillar-wallet" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B56386591DB9693800A0598C /* Debug */,
+				B563865A1DB9693800A0598C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B56386391DB9693800A0598C /* Project object */;
+}
