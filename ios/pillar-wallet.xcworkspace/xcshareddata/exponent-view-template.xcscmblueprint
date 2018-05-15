@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "D2CB3C10D46793188BE8245B683DEC97E86BAB0E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "D2CB3C10D46793188BE8245B683DEC97E86BAB0E" : 9223372036854775807,
+    "16CE14A2D81CCE323D476004724594AEF6B38C0A" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "482FF109-9F3F-458E-B6E3-D550AB0C2128",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "D2CB3C10D46793188BE8245B683DEC97E86BAB0E" : "universe\/",
+    "16CE14A2D81CCE323D476004724594AEF6B38C0A" : "universe\/react-native-lab\/react-native\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "exponent-view-template",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "exponent\/exponent-view-template\/ios\/exponent-view-template.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:exponentjs\/react-native.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "16CE14A2D81CCE323D476004724594AEF6B38C0A"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:exponent\/universe.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D2CB3C10D46793188BE8245B683DEC97E86BAB0E"
+    }
+  ]
+}
