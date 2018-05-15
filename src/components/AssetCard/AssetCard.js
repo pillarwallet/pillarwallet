@@ -8,12 +8,13 @@ import {
 import { lighten } from 'polished';
 import type { Transaction } from 'models/Transaction';
 import TXHistory from 'components/TXHistory';
+import { getCurrencySymbol } from 'utils/common';
 import Icon from './Icon';
 import IconWrapper from './IconWrapper';
 import Background from './Background';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
-import { Amount, AmountToken, FiatAmount, FiatAmountToken } from './Amount';
+import { Amount, AmountToken, FiatAmount } from './Amount';
 import Content from './Content';
 
 type Props = {
@@ -22,7 +23,7 @@ type Props = {
   isCardActive: boolean,
   name: string,
   token: string,
-  amount: number,
+  amount: string,
   color: string,
   onTap: Function,
   defaultPositionY: number,
@@ -30,7 +31,7 @@ type Props = {
   history: Transaction[],
   children?: React.Node,
   balanceInFiat: {
-    amount: number,
+    amount: string | number,
     currency: string,
   },
 }
@@ -39,7 +40,6 @@ type State = {
   isActive: boolean,
   animCardPosition: Animated.Value,
   animCardHeight: Animated.Value,
-  animCardWidth: Animated.Value,
   animCardContentFade: Animated.Value,
 }
 
@@ -49,7 +49,6 @@ export default class AssetCard extends React.Component<Props, State> {
   state = {
     isActive: false,
     animCardHeight: new Animated.Value(120),
-    animCardWidth: new Animated.Value(30),
     animCardContentFade: new Animated.Value(0),
     animCardPosition: new Animated.Value(this.props.defaultPositionY),
   };
@@ -75,7 +74,6 @@ export default class AssetCard extends React.Component<Props, State> {
 
   animateCardActiveState = (isActive: boolean) => {
     const cardHeightValue = isActive ? 140 : 120;
-    const cardWidthValue = isActive ? 20 : 30;
     const cardContentFadeValue = isActive ? 1 : 0;
     const cardPositionValue = isActive ? -60 : this.props.defaultPositionY;
 
@@ -86,9 +84,6 @@ export default class AssetCard extends React.Component<Props, State> {
       Animated.spring(this.state.animCardHeight, {
         toValue: cardHeightValue,
       }),
-      Animated.spring(this.state.animCardWidth, {
-        toValue: cardWidthValue,
-      }),
       Animated.spring(this.state.animCardContentFade, {
         toValue: cardContentFadeValue,
       }),
@@ -98,7 +93,6 @@ export default class AssetCard extends React.Component<Props, State> {
   render() {
     const {
       animCardHeight,
-      animCardWidth,
       animCardContentFade,
       animCardPosition,
       isActive,
@@ -114,6 +108,7 @@ export default class AssetCard extends React.Component<Props, State> {
       balanceInFiat,
     } = this.props;
     const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
     return (
       <View>
@@ -132,8 +127,8 @@ export default class AssetCard extends React.Component<Props, State> {
             color={linearGradientColorStart}
             style={[{
             height: animCardHeight,
-            marginLeft: animCardWidth,
-            marginRight: animCardWidth,
+            marginLeft: 20,
+            marginRight: 20,
             marginBottom: 20,
             position: 'absolute',
             left: 0,
@@ -146,8 +141,7 @@ export default class AssetCard extends React.Component<Props, State> {
                 <Name>{name}</Name>
                 <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
                 <FiatAmount>
-                  {balanceInFiat.amount}
-                  <FiatAmountToken> {balanceInFiat.currency}</FiatAmountToken>
+                  {currencySymbol}{balanceInFiat.amount}
                 </FiatAmount>
               </DetailsWrapper>
               <IconWrapper>

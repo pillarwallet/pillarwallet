@@ -15,7 +15,6 @@ import { pipe, decodeETHAddress } from 'utils/common';
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
-
 const { Form } = t.form;
 
 type Props = {
@@ -226,7 +225,9 @@ class SendModal extends React.Component<Props, State> {
 
   render() {
     const { isVisible, onModalHide, token } = this.props;
-    const { value, isScanning, formStructure } = this.state;
+    const {
+      value, isScanning, formStructure,
+    } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const isFilled = hasAllValues(value);
     const qrScannnerComponent = (
@@ -261,6 +262,7 @@ class SendModal extends React.Component<Props, State> {
             >
               Send
             </SendButton>
+
           </ActionsWrapper>
         </Container>
       </SlideModal>
