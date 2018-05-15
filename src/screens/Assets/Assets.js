@@ -273,7 +273,7 @@ class AssetsScreen extends React.Component<Props, State> {
         />
         <SendModal
           isVisible={activeModalType === 'SEND'}
-          onModalHide={() => { this.setState({ activeModal: { type: 'SEND_CONFIRMATION', opts: {} } }); }}
+          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           {...opts}
         />
         <PopModal
