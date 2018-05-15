@@ -8,12 +8,13 @@ import {
 import { lighten } from 'polished';
 import type { Transaction } from 'models/Transaction';
 import TXHistory from 'components/TXHistory';
+import { getCurrencySymbol } from 'utils/common';
 import Icon from './Icon';
 import IconWrapper from './IconWrapper';
 import Background from './Background';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
-import { Amount, AmountToken, FiatAmount, FiatAmountToken } from './Amount';
+import { Amount, AmountToken, FiatAmount } from './Amount';
 import Content from './Content';
 
 type Props = {
@@ -22,7 +23,7 @@ type Props = {
   isCardActive: boolean,
   name: string,
   token: string,
-  amount: number,
+  amount: string,
   color: string,
   onTap: Function,
   defaultPositionY: number,
@@ -30,7 +31,7 @@ type Props = {
   history: Transaction[],
   children?: React.Node,
   balanceInFiat: {
-    amount: number,
+    amount: string | number,
     currency: string,
   },
 }
@@ -107,6 +108,7 @@ export default class AssetCard extends React.Component<Props, State> {
       balanceInFiat,
     } = this.props;
     const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
     return (
       <View>
@@ -139,8 +141,7 @@ export default class AssetCard extends React.Component<Props, State> {
                 <Name>{name}</Name>
                 <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
                 <FiatAmount>
-                  {balanceInFiat.amount}
-                  <FiatAmountToken> {balanceInFiat.currency}</FiatAmountToken>
+                  {currencySymbol}{balanceInFiat.amount}
                 </FiatAmount>
               </DetailsWrapper>
               <IconWrapper>

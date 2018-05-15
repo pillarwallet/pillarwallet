@@ -31,3 +31,34 @@ export function pipe(...fns: Function[]) {
 }
 
 export function noop() { }
+
+/**
+ * formatMoney(n, x, s, c)
+ *
+ * @param src Mixed  number to format
+ * @param n   Integer length of decimal
+ * @param x   Integer length of whole part
+ * @param s   Mixed   sections delimiter
+ * @param c   Mixed   decimal delimiter
+ */
+export function formatMoney(
+  src: number | string,
+  n: number = 2,
+  x: number = 3,
+  s: ?string = ',',
+  c: ?string = '.',
+): string {
+  const re = `\\d(?=(\\d{${x || 3}})+${n > 0 ? '\\D' : '$'})`;
+  const num = Number(src).toFixed(Math.max(0, Math.floor(n)));
+
+  return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
+}
+
+export function getCurrencySymbol(currency: string): string {
+  const currencies = {
+    USD: '$',
+    GBP: '£',
+    EUR: '€',
+  };
+  return currencies[currency] || '';
+}
