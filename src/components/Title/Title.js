@@ -26,18 +26,21 @@ const Text = styled.Text`
   width: ${props => props.center ? '100%' : 'auto'};
 `;
 
-const BlueDot = styled.Text`
-  color: ${baseColors.clearBlue};
-  font-size: ${fontSizes.extraSmall};
-  font-family: Symbol;
+const BlueDot = styled.View`
+  background-color: ${baseColors.brightSkyBlue};
+  height: 4px;
+  width: 4px;
+  position: relative;
+  top: 16px;
+  left: 2px;
 `;
 
 
 const Title = (props: Props) => {
   return (
     <Wrapper style={props.style} center={props.center} maxWidth={props.maxWidth}>
-      <Text center={props.center}>{props.title}<BlueDot> ■</BlueDot></Text>
-
+      <Text center={props.center}>{props.title}</Text>
+      <BlueDot />
     </Wrapper>
   );
 };
