@@ -28,6 +28,7 @@ import WelcomeScreen from 'screens/Welcome';
 import OTPScreen from 'screens/OTP';
 import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
+import AddTokenScreen from 'screens/AddToken';
 
 // components
 import Header from 'components/Header';
@@ -54,6 +55,8 @@ import {
   OTP,
   OTP_STATUS,
   PROFILE,
+  ADD_TOKEN,
+  TAB_NAVIGATION,
 } from 'constants/navigationConstants';
 
 const renderHeader = ({ navigation, ...rest }) => {
@@ -103,13 +106,24 @@ const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
 
-const appFlow = TabNavigator(
+const tabNavigation = TabNavigator(
   {
     [ASSETS]: AssetsScreen,
     [ICO]: ICOScreen,
     [PROFILE]: ProfileScreen,
+  }, {
+    ...getBottomNavigationOptions() // eslint-disable-line
   },
-  { ...getBottomNavigationOptions() }, // eslint-disable-line
+);
+
+const appFlow = StackNavigator(
+  {
+    [TAB_NAVIGATION]: tabNavigation,
+    [ADD_TOKEN]: AddTokenScreen,
+  }, {
+    mode: 'modal',
+    headerMode: 'none',
+  },
 );
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
@@ -153,7 +167,7 @@ function getBottomNavigationOptions() {
     },
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
-    animationEnabled: false,
+    animationEnabled: true,
     swipeEnabled: false,
   };
 }

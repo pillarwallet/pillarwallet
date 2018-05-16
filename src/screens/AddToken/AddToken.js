@@ -1,8 +1,10 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontWeights, fontSizes } from 'utils/variables';
+import type { NavigationScreenProp } from 'react-navigation';
+import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
+import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
 import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import Title from 'components/Title';
@@ -35,12 +37,18 @@ const TokenListItem = styled(ListItem)`
   margin: 0;
 `;
 
+const CloseButton = styled(ButtonIcon)`
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  zIndex: 5;
+`;
 
-export default class AddToken extends React.Component<{}> {
-  getImagePath(symbol: string) {
-    return `assets/images/${symbol}/icon.png`;
-  }
+type Props = {
+  navigation: NavigationScreenProp<*>,
+}
 
+export default class AddToken extends React.Component<Props> {
   generateAddTokenListItems() {
     return tokens.map(({ symbol, name }) => (
       <TokenListItem key={symbol}>
@@ -56,10 +64,21 @@ export default class AddToken extends React.Component<{}> {
     ));
   }
 
+  handleScreenDissmisal = () => {
+    const { navigation } = this.props;
+    navigation.goBack(null);
+  }
+
   render() {
     return (
       <Container>
         <Wrapper padding>
+          <CloseButton
+            icon="close"
+            onPress={this.handleScreenDissmisal}
+            color={UIColors.primary}
+            fontSize={42}
+          />
           <Title title="add token" />
           <Paragraph>
             Toggle ERC-20 tokens your wallet should display.

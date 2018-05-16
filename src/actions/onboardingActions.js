@@ -8,7 +8,7 @@ import {
   GENERATING,
   UPDATE_WALLET_STATE,
 } from 'constants/walletConstants';
-import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
@@ -60,12 +60,8 @@ export const registerWalletAction = () => {
     // STEP 4: store initial assets
     // TODO: get initial assets from the SDK
     const convertedAssets = transformAssetsToObject(initialAssets);
-    const tickers = Object.keys(convertedAssets);
-    if (tickers.length) {
-      getExchangeRates(tickers)
-        .then(rates => dispatch({ type: SET_RATES, payload: rates }))
-        .catch(console.log); // eslint-disable-line
-    }
+    const rates = await getExchangeRates(Object.keys(convertedAssets));
+    dispatch({ type: SET_RATES, payload: rates });
 
     dispatch({
       type: UPDATE_ASSETS,
@@ -74,6 +70,12 @@ export const registerWalletAction = () => {
     await storage.save('assets', { assets: convertedAssets });
 
     // STEP 5: all done, navigate to the assets screen
-    dispatch(NavigationActions.navigate({ routeName: ASSETS }));
+    const navigateToAssetsAction = NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName: ASSETS }),
+    });
+
+    dispatch(navigateToAssetsAction);
   };
 };
