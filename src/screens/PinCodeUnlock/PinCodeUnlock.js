@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { DECRYPTING, DECRYPTED, INVALID_PASSWORD } from 'constants/walletConstants';
+import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';

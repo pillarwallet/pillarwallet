@@ -36,7 +36,7 @@ class App extends React.Component<Props, State> {
   state = {
     isFetched: false,
   };
-  
+
   static getDerivedStateFromProps(nextProps: Props) {
     return {
       isFetched: nextProps.isFetched,
