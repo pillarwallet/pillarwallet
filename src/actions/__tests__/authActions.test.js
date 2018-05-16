@@ -6,7 +6,7 @@ import {
   DECRYPT_WALLET,
   DECRYPTING,
 } from 'constants/walletConstants';
-import { ASSETS } from 'constants/navigationConstants';
+import { APP_FLOW, ASSETS } from 'constants/navigationConstants';
 import Storage from 'services/storage';
 import { loginAction } from '../authActions';
 
@@ -45,8 +45,14 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: DECRYPT_WALLET, payload: mockWallet },
-      { type: NAVIGATE, routeName: ASSETS },
+      {
+        type: NAVIGATE,
+        routeName: APP_FLOW,
+        params: {},
+        action: { type: NAVIGATE, routeName: ASSETS },
+      },
     ];
+
     const pin = '123456';
 
     return store.dispatch(loginAction(pin))

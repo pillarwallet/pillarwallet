@@ -12,3 +12,8 @@ const AsyncStorage = new StorageMock(storageCache);
 
 jest.setMock('AsyncStorage', AsyncStorage);
 jest.setMock('react-native-firebase', FirebaseMock);
+jest.setMock('cryptocompare', {
+  priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
+    return Promise.resolve({});
+  },
+});

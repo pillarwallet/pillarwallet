@@ -8,6 +8,7 @@ import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
+import type { NavigationScreenProp } from 'react-navigation';
 import Button from 'components/Button';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
@@ -16,6 +17,7 @@ import { Container, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import PopModal from 'components/Modals/PopModal';
+import { ADD_TOKEN } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 import { formatMoney } from '../../utils/common';
@@ -46,6 +48,7 @@ type Props = {
   assets: Object,
   wallet: Object,
   rates: Object,
+  navigation: NavigationScreenProp<*>,
 }
 
 type State = {
@@ -134,7 +137,7 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   goToAddTokenPage = () => {
-    // TODO: Link to add token page
+    this.props.navigation.navigate(ADD_TOKEN);
   };
 
   renderAssets() {
