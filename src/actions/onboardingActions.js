@@ -12,9 +12,9 @@ import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
-import { initialAssets } from 'fixtures/assets';
 import { transformAssetsToObject } from 'utils/assets';
 import { getExchangeRates } from 'services/assets';
+import { registerOnBackend, getInitialAssets } from '../services/api';
 
 const storage = Storage.getInstance('db');
 
@@ -57,23 +57,45 @@ export const registerWalletAction = () => {
       payload: wallet,
     });
 
-    // STEP 4: store initial assets
-    // TODO: get initial assets from the SDK
-    const convertedAssets = transformAssetsToObject(initialAssets);
-    const tickers = Object.keys(convertedAssets);
-    if (tickers.length) {
-      getExchangeRates(tickers)
-        .then(rates => dispatch({ type: SET_RATES, payload: rates }))
-        .catch(console.log); // eslint-disable-line
+    const user = await registerOnBackend(wallet.privateKey);
+    await storage.save('user', { user });
+
+    if (!user) {
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: 'REGISTRATION_FAILED',
+      });
+      return;
     }
+
+    // STEP 4: store initial assets
+    const initialAssets = await getInitialAssets();
+    const rates = await getExchangeRates(Object.keys(initialAssets));
+
+    dispatch({
+      type: SET_RATES,
+      payload: rates,
+    });
 
     dispatch({
       type: UPDATE_ASSETS,
-      payload: convertedAssets,
+      payload: initialAssets,
     });
-    await storage.save('assets', { assets: convertedAssets });
+
+    await storage.save('assets', { assets: initialAssets });
 
     // STEP 5: all done, navigate to the assets screen
     dispatch(NavigationActions.navigate({ routeName: ASSETS }));
   };
 };
+
+
+// console.log('wallet', wallet.privateKey);
+// console.log('userData', userData);
+
+/* .catch(() => {
+  dispatch({
+    type: UPDATE_WALLET_STATE,
+    payload: 'REGISTRATION_FAILED',
+  });
+}) */
