@@ -7,7 +7,7 @@ import {
   DECRYPTING,
   INVALID_PASSWORD,
 } from 'constants/walletConstants';
-import { ASSETS } from 'constants/navigationConstants';
+import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
@@ -40,7 +40,13 @@ export const loginAction = (pin: string) => {
           .then(rates => dispatch({ type: SET_RATES, payload: rates }))
           .catch(console.log); // eslint-disable-line
       }
-      dispatch(NavigationActions.navigate({ routeName: ASSETS }));
+      const navigateToAssetsAction = NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: ASSETS }),
+      });
+
+      dispatch(navigateToAssetsAction);
     } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,
