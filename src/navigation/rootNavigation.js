@@ -29,6 +29,7 @@ import OTPScreen from 'screens/OTP';
 import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
 import AddTokenScreen from 'screens/AddToken';
+import SendTokenScreen from 'screens/SendToken';
 
 // components
 import Header from 'components/Header';
@@ -57,6 +58,8 @@ import {
   PROFILE,
   ADD_TOKEN,
   TAB_NAVIGATION,
+  SEND_TOKEN_FLOW,
+  SEND_TOKEN,
 } from 'constants/navigationConstants';
 
 const renderHeader = ({ navigation, ...rest }) => {
@@ -102,6 +105,10 @@ const signupFlow = StackNavigator({
   [OTP_STATUS]: OTPStatusScreen,
 }, StackNavigatorConfig);
 
+const sendTokenFlow = StackNavigator({
+  [SEND_TOKEN]: SendTokenScreen,
+}, StackNavigatorConfig);
+
 const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
@@ -120,6 +127,7 @@ const appFlow = StackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
+    [SEND_TOKEN_FLOW]: sendTokenFlow,
   }, {
     mode: 'modal',
     headerMode: 'none',

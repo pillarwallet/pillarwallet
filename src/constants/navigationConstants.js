@@ -30,3 +30,7 @@ export const SIGN_IN = 'SIGN_IN';
 export const OTP = 'OTP';
 export const OTP_STATUS = 'OTP_STATUS';
 export const SIGN_UP = 'SIGN_UP';
+
+// SEND TOKEN FLOW
+export const SEND_TOKEN_FLOW = 'SEND_TOKEN_FLOW';
+export const SEND_TOKEN = 'SEND_TOKEN';

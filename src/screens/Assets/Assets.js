@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import { Animated, RefreshControl } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
+import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
 import { Paragraph } from 'components/Typography';
@@ -8,7 +10,6 @@ import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import type { NavigationScreenProp } from 'react-navigation';
 import Button from 'components/Button';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
@@ -17,9 +18,7 @@ import { Container, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import PopModal from 'components/Modals/PopModal';
-import { ADD_TOKEN } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
-import SendModal from './SendModal';
 import { formatMoney } from '../../utils/common';
 
 
@@ -44,6 +43,7 @@ const activeModalResetState = {
 };
 
 type Props = {
+  navigation: NavigationScreenProp<*>,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Object,
   wallet: Object,
@@ -140,6 +140,11 @@ class AssetsScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(ADD_TOKEN);
   };
 
+  goToSendTokenPage = () => {
+    alert('send token page pls');
+    this.props.navigation.navigate(SEND_TOKEN_FLOW);
+  }
+
   renderAssets() {
     const { wallet, assets, rates } = this.props;
     const {
@@ -161,7 +166,7 @@ class AssetsScreen extends React.Component<Props, State> {
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : 0;
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
-        const activeModalOptions = { address: wallet.address };
+        // const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
         const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = index * 140;
@@ -184,8 +189,8 @@ class AssetsScreen extends React.Component<Props, State> {
           >
 
             <AssetButtons
-              recieveOnPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
-              sendOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
+              recieveOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: sendModalOptions } }); }}
+              sendOnPress={this.goToSendTokenPage}
             />
 
           </AssetCard>
@@ -274,11 +279,7 @@ class AssetsScreen extends React.Component<Props, State> {
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           {...opts}
         />
-        <SendModal
-          isVisible={activeModalType === 'SEND'}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-          {...opts}
-        />
+
         <PopModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
