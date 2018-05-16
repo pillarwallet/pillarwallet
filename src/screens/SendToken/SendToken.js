@@ -4,6 +4,8 @@ import { Text, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
+import { Container, Wrapper } from 'components/Layout';
+import Title from 'components/Title';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress, hasAllValues } from 'utils/validators';
@@ -134,12 +136,6 @@ const generateFormOptions = (config: Object): Object => ({
   order: ['amount', 'address'],
 });
 
-const Container = styled.View`
-  justify-content: flex-start;
-  padding-top: 20px;
-  flex: 1;
-  align-self: stretch;
-`;
 
 const ActionsWrapper = styled.View`
   flex: 1;
@@ -240,23 +236,26 @@ class SendToken extends React.Component<Props, State> {
     );
     return (
       <Container>
-        <Form
-          ref={node => { this._form = node; }}
-          type={formStructure}
-          options={formOptions}
-          value={value}
-          onChange={this.handleChange}
-        />
-        <ActionsWrapper>
-          <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
-          <SendButton
-            onPress={this.handleFormSubmit}
-            disabled={!isFilled}
-          >
-            Send
-          </SendButton>
+        <Wrapper padding>
+          <Title title="send" />
+          <Form
+            ref={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            value={value}
+            onChange={this.handleChange}
+          />
+          <ActionsWrapper>
+            <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
+            <SendButton
+              onPress={this.handleFormSubmit}
+              disabled={!isFilled}
+            >
+              Send
+            </SendButton>
 
-        </ActionsWrapper>
+          </ActionsWrapper>
+        </Wrapper>
       </Container>
     );
   }
