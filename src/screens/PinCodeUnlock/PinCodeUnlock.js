@@ -66,8 +66,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
       );
     }
 
-    if (walletState === DECRYPTED) return null;
-
     return (
       <Container>
         {showError}
