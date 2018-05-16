@@ -51,51 +51,10 @@ const getFormStructure = (options = {}) => {
     return 'Amount should be specified.';
   };
 
-  const Address = t.refinement(t.String, (address): boolean => {
-    return address.length && isValidETHAddress(address);
-  });
-
-  Address.getValidationErrorMessage = (address): string => {
-    if (!isValidETHAddress(address)) {
-      return 'Invalid Ethereum Address.';
-    }
-    return 'Address must be provided.';
-  };
-
   return t.struct({
-    address: Address,
     amount: Amount,
   });
 };
-
-// EXTRACT TO FACTORY
-function AddressInputTemplate(locals) {
-  const { config: { onIconPress } } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    placeholder: 'Ethereum Address',
-    value: locals.value,
-    keyboardType: locals.keyboardType,
-    textAlign: 'right',
-    maxLength: 42,
-    style: {
-      paddingRight: 40,
-      fontSize: 12,
-    },
-  };
-  return (
-    <TextInput
-      errorMessage={errorMessage}
-      id="address"
-      label={locals.label}
-      icon="ios-qr-scanner"
-      onIconPress={onIconPress}
-      inputProps={inputProps}
-    />
-  );
-}
 
 function AmountInputTemplate(locals) {
   const { config: { currency } } = locals;
@@ -131,7 +90,6 @@ function AmountInputTemplate(locals) {
 const generateFormOptions = (config: Object): Object => ({
   fields: {
     amount: { template: AmountInputTemplate, config },
-    address: { template: AddressInputTemplate, config, label: 'To' },
   },
   order: ['amount', 'address'],
 });
