@@ -33,4 +33,4 @@ export const SIGN_UP = 'SIGN_UP';
 
 // SEND TOKEN FLOW
 export const SEND_TOKEN_FLOW = 'SEND_TOKEN_FLOW';
-export const SEND_TOKEN = 'SEND_TOKEN';
+export const SEND_TOKEN_AMOUNT = 'SEND_TOKEN_AMOUNT';

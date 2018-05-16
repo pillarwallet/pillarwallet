@@ -29,7 +29,7 @@ import OTPScreen from 'screens/OTP';
 import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
 import AddTokenScreen from 'screens/AddToken';
-import SendTokenScreen from 'screens/SendToken';
+import SendTokenAmountScreen from 'screens/SendTokenAmount';
 
 // components
 import Header from 'components/Header';
@@ -59,7 +59,7 @@ import {
   ADD_TOKEN,
   TAB_NAVIGATION,
   SEND_TOKEN_FLOW,
-  SEND_TOKEN,
+  SEND_TOKEN_AMOUNT,
 } from 'constants/navigationConstants';
 
 const renderHeader = ({ navigation, ...rest }) => {
@@ -106,7 +106,7 @@ const signupFlow = StackNavigator({
 }, StackNavigatorConfig);
 
 const sendTokenFlow = StackNavigator({
-  [SEND_TOKEN]: SendTokenScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
 }, StackNavigatorConfig);
 
 const authFlow = StackNavigator({
