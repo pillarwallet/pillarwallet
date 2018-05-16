@@ -31,6 +31,7 @@ export const UIColors = {
 };
 
 export const fontSizes = {
+  extraExtraSmall: 6,
   extraSmall: 9,
   small: 12,
   medium: 16,
