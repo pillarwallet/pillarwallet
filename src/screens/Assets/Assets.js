@@ -137,11 +137,11 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   goToAddTokenPage = () => {
-    this.props.navigation.navigate(ADD_TOKEN);
+    this.props.navigation.push(ADD_TOKEN);
   };
 
-  goToSendTokenPage = () => {
-    this.props.navigation.navigate(SEND_TOKEN_FLOW);
+  goToSendTokenFlow = () => {
+    this.props.navigation.push(SEND_TOKEN_FLOW);
   }
 
   renderAssets() {
@@ -189,7 +189,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
             <AssetButtons
               recieveOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: sendModalOptions } }); }}
-              sendOnPress={this.goToSendTokenPage}
+              sendOnPress={this.goToSendTokenFlow}
             />
 
           </AssetCard>

@@ -129,7 +129,6 @@ const appFlow = StackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FLOW]: sendTokenFlow,
   }, {
-    mode: 'modal',
     headerMode: 'none',
   },
 );
