@@ -31,7 +31,7 @@ type Props = {
 
 
 class App extends React.Component<Props, State> {
-  timer: any | TimeoutID
+  timer: any | TimeoutID;
 
   state = {
     isFetched: false,
