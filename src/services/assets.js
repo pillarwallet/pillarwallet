@@ -123,24 +123,6 @@ export function fetchAssetBalances(assets: Assets, walletAddress: string) {
   return Promise.all(promises).catch(() => ({}));
 }
 
-// TODO: remove and mock
-/* const cryptocompare = {
-  priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
-    return Promise.resolve({
-      ETH: {
-        EUR: 624.21,
-        GBP: 544.57,
-        USD: 748.92,
-      },
-      PLR: {
-        EUR: 0.3142,
-        GBP: 0.2762,
-        USD: 0.377,
-      },
-    });
-  },
-}; */
-
 export function getExchangeRates(assets: string[]): Promise<?Object> {
   return cryptocompare.priceMulti(assets, ['USD', 'EUR', 'GBP']).catch(() => ({}));
 }
