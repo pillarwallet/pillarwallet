@@ -138,7 +138,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
   goToAddTokenPage = () => {
     this.props.navigation.push(ADD_TOKEN);
-  };
+  }
 
   goToSendTokenFlow = () => {
     this.props.navigation.push(SEND_TOKEN_FLOW);

@@ -5,13 +5,16 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
+import Button from 'components/Button';
 import Title from 'components/Title';
 import TextInput from 'components/TextInput';
+import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress, hasAllValues } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
+import SendTokenAmountHeader from './SendTokenAmountHeader';
 
 
 // make Dynamic once more tokens supported
@@ -23,6 +26,7 @@ type Props = {
   address: string,
   totalBalance: number,
   contractAddress: string,
+  navigation: NavigationScreenProp<*>,
   isVisible: boolean,
   onModalHide: Function,
   sendAsset: Function,
@@ -96,18 +100,8 @@ const generateFormOptions = (config: Object): Object => ({
 
 
 const ActionsWrapper = styled.View`
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 15px;
-  padding: 5px;
-`;
-
-const SendButton = styled.Text`
-  font-size: 18;
-  font-weight: bold;
-  color: ${props => props.disabled ? 'gray' : 'rgb(32, 119, 253)'};
+  margin-top: 10px;
+  margin-bottom: 20px;
 `;
 
 class SendTokenAmount extends React.Component<Props, State> {
@@ -193,28 +187,32 @@ class SendTokenAmount extends React.Component<Props, State> {
       />
     );
     return (
-      <Container>
-        <Wrapper padding>
-          <Title title="send" />
-          <Form
-            ref={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={value}
-            onChange={this.handleChange}
-          />
-          <ActionsWrapper>
-            <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
-            <SendButton
+      <React.Fragment>
+        <SendTokenAmountHeader
+          onBack={this.props.navigation.goBack}
+        />
+        <Container>
+          <Wrapper padding>
+            <Title title="send" />
+            <Form
+              ref={node => { this._form = node; }}
+              type={formStructure}
+              options={formOptions}
+              value={value}
+              onChange={this.handleChange}
+            />
+            <ActionsWrapper>
+              <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
+            </ActionsWrapper>
+            <Button
+              block
               onPress={this.handleFormSubmit}
               disabled={!isFilled}
-            >
-              Send
-            </SendButton>
-
-          </ActionsWrapper>
-        </Wrapper>
-      </Container>
+              title="Send"
+            />
+          </Wrapper>
+        </Container>
+      </React.Fragment>
     );
   }
 }

@@ -81,6 +81,21 @@ const StackNavigatorConfig = {
   },
 };
 
+const StackNavigatorModalConfig = {
+  headerMode: 'float',
+  mode: 'modal',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+  navigationOptions: {
+    header: renderHeader,
+  },
+};
+
 const onBoardingFlow = StackNavigator({
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
@@ -107,7 +122,7 @@ const signupFlow = StackNavigator({
 
 const sendTokenFlow = StackNavigator({
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-}, StackNavigatorConfig);
+}, StackNavigatorModalConfig);
 
 const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
@@ -130,6 +145,7 @@ const appFlow = StackNavigator(
     [SEND_TOKEN_FLOW]: sendTokenFlow,
   }, {
     headerMode: 'none',
+    mode: 'modal',
   },
 );
 
