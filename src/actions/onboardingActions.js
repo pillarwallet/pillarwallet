@@ -10,7 +10,7 @@ import {
   API_REGISTRATION_FAILED,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
-import { UPDATE_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
