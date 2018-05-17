@@ -2,6 +2,8 @@
 import { Contract, utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
+import { ETH } from 'constants/assetsConstants';
+import type { Assets, Asset } from 'models/Asset';
 
 const PROVIDER = NETWORK_PROVIDER;
 
@@ -104,6 +106,21 @@ export async function fetchERC20Balance(walletAddress: Address, contractAddress:
   const contract = new Contract(contractAddress, CONTRACT_ABI, provider);
   const balance = await contract.balanceOf(walletAddress).then(utils.formatEther);
   return balance;
+}
+
+export function fetchAssetBalances(assets: Assets, walletAddress: string) {
+  const promises = Object.keys(assets)
+    .map(key => assets[key])
+    .map(async (asset: Asset) => {
+      const balance = asset.symbol === ETH
+        ? await fetchETHBalance(walletAddress)
+        : await fetchERC20Balance(walletAddress, asset.address);
+      return {
+        balance,
+        symbol: asset.symbol,
+      };
+    });
+  return Promise.all(promises).catch(() => ({}));
 }
 
 // TODO: remove and mock

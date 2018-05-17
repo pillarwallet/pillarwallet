@@ -47,7 +47,7 @@ const activeModalResetState = {
 };
 
 type Props = {
-  fetchInitialAssets: () => Function,
+  fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
   assets: Object,
@@ -97,7 +97,7 @@ class AssetsScreen extends React.Component<Props, State> {
     this.getTransactionHistory();
 
     if (!Object.keys(assets).length) {
-      fetchInitialAssets();
+      fetchInitialAssets(wallet.address);
     }
   }
 
@@ -235,7 +235,7 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           )}
           {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={fetchInitialAssets} />
+            <Button title="Try again" onPress={fetchInitialAssets(wallet.address)} />
           )}
         </Container>
       );
@@ -353,8 +353,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchInitialAssets: () => {
-    dispatch(fetchInitialAssetsAction());
+  fetchInitialAssets: (walletAddress) => {
+    dispatch(fetchInitialAssetsAction(walletAddress));
   },
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));

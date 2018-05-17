@@ -6,19 +6,17 @@ import {
   FETCHING,
   FETCHING_INITIAL,
   FETCH_INITIAL_FAILED,
-  FETCHED_INITIAL,
   ETH,
 } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import {
   transferETH,
   transferERC20,
-  fetchETHBalance,
-  fetchERC20Balance,
   getExchangeRates,
+  fetchAssetBalances,
 } from 'services/assets';
 import type { TransactionPayload } from 'models/Transaction';
-import type { Assets, Asset } from 'models/Asset';
+import type { Assets } from 'models/Asset';
 import { getInitialAssets } from 'services/api';
 import Storage from 'services/storage';
 import { delay } from 'utils/common';
@@ -61,26 +59,11 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
       payload: FETCHING,
     });
 
-    // extract once API provided.
-    const promises = Object.keys(assets)
-      .map(key => assets[key])
-      .map(async (asset: Asset) => {
-        const balance = asset.symbol === ETH
-          ? await fetchETHBalance(walletAddress)
-          : await fetchERC20Balance(walletAddress, asset.address);
-        return {
-          balance,
-          symbol: asset.symbol,
-        };
-      });
-
-    Promise.all(promises)
-      .then((data) => {
-        dispatch({
-          type: UPDATE_ASSETS_BALANCES,
-          payload: data,
-        });
-      }).catch(console.log); // eslint-disable-line
+    const balances = await fetchAssetBalances(assets, walletAddress);
+    dispatch({
+      type: UPDATE_ASSETS_BALANCES,
+      payload: balances,
+    });
   };
 };
 
@@ -95,7 +78,7 @@ export const fetchExchangeRatesAction = (assets: Assets) => {
   };
 };
 
-export const fetchInitialAssetsAction = () => {
+export const fetchInitialAssetsAction = (walletAddress: string) => {
   return async (dispatch: Function) => {
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -121,6 +104,12 @@ export const fetchInitialAssetsAction = () => {
     dispatch({
       type: SET_RATES,
       payload: rates,
+    });
+
+    const balances = await fetchAssetBalances(initialAssets, walletAddress);
+    dispatch({
+      type: UPDATE_ASSETS_BALANCES,
+      payload: balances,
     });
 
     await storage.save('assets', { assets: initialAssets });
