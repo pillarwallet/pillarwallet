@@ -7,7 +7,7 @@ import {
   DECRYPTING,
   INVALID_PASSWORD,
 } from 'constants/walletConstants';
-import { ASSETS } from 'constants/navigationConstants';
+import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 
@@ -29,7 +29,13 @@ export const loginAction = (pin: string) => {
         payload: wallet,
       });
 
-      dispatch(NavigationActions.navigate({ routeName: ASSETS }));
+      const navigateToAssetsAction = NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: ASSETS }),
+      });
+
+      dispatch(navigateToAssetsAction);
     } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,

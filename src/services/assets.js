@@ -60,7 +60,7 @@ type ETHTransferOptions = {
   wallet: Object
 }
 
-export async function transferERC20(options: ERC20TransferOptions) {
+export function transferERC20(options: ERC20TransferOptions) {
   const {
     contractAddress,
     to,
@@ -70,11 +70,10 @@ export async function transferERC20(options: ERC20TransferOptions) {
   wallet.provider = providers.getDefaultProvider(PROVIDER);
   const contract = new Contract(contractAddress, CONTRACT_ABI, wallet);
   const numberOfDecimals = 18;
-  const transaction = await contract.transfer(to, utils.parseUnits(amount.toString(), numberOfDecimals));
-  return transaction;
+  return contract.transfer(to, utils.parseUnits(amount.toString(), numberOfDecimals));
 }
 
-export async function transferETH(options: ETHTransferOptions) {
+export function transferETH(options: ETHTransferOptions) {
   const {
     to,
     wallet,
@@ -89,23 +88,20 @@ export async function transferETH(options: ETHTransferOptions) {
     to,
   };
   wallet.provider = providers.getDefaultProvider(PROVIDER);
-  const transaction = await wallet.sendTransaction(trx);
-  return transaction;
+  return wallet.sendTransaction(trx);
 }
 
 // Fetch methods are temporary until the BCX API provided
 
-export async function fetchETHBalance(walletAddress: Address) {
+export function fetchETHBalance(walletAddress: Address) {
   const provider = providers.getDefaultProvider(PROVIDER);
-  const balance = await provider.getBalance(walletAddress).then(utils.formatEther);
-  return balance;
+  return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export async function fetchERC20Balance(walletAddress: Address, contractAddress: Address) {
+export function fetchERC20Balance(walletAddress: Address, contractAddress: Address) {
   const provider = providers.getDefaultProvider(PROVIDER);
   const contract = new Contract(contractAddress, CONTRACT_ABI, provider);
-  const balance = await contract.balanceOf(walletAddress).then(utils.formatEther);
-  return balance;
+  return contract.balanceOf(walletAddress).then(utils.formatEther);
 }
 
 export function fetchAssetBalances(assets: Assets, walletAddress: string) {

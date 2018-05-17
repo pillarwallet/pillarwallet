@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing } from 'react-native';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import {
   StackNavigator,
@@ -28,6 +27,7 @@ import WelcomeScreen from 'screens/Welcome';
 import OTPScreen from 'screens/OTP';
 import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
+import AddTokenScreen from 'screens/AddToken';
 
 // components
 import Header from 'components/Header';
@@ -54,6 +54,8 @@ import {
   OTP,
   OTP_STATUS,
   PROFILE,
+  ADD_TOKEN,
+  TAB_NAVIGATION,
 } from 'constants/navigationConstants';
 
 const renderHeader = ({ navigation, ...rest }) => {
@@ -61,14 +63,7 @@ const renderHeader = ({ navigation, ...rest }) => {
 };
 
 const StackNavigatorConfig = {
-  headerMode: 'float',
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
+  headerMode: 'screen',
   navigationOptions: {
     header: renderHeader,
     gesturesEnabled: false,
@@ -103,13 +98,26 @@ const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
 
-const appFlow = TabNavigator(
+const tabNavigation = TabNavigator(
   {
     [ASSETS]: AssetsScreen,
     [ICO]: ICOScreen,
     [PROFILE]: ProfileScreen,
+  }, {
+    ...getBottomNavigationOptions() // eslint-disable-line
   },
-  { ...getBottomNavigationOptions() }, // eslint-disable-line
+);
+
+const appFlow = StackNavigator(
+  {
+    [TAB_NAVIGATION]: tabNavigation,
+    [ADD_TOKEN]: AddTokenScreen,
+  }, {
+    mode: 'modal',
+    navigationOptions: {
+      header: null,
+    },
+  },
 );
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
@@ -153,7 +161,7 @@ function getBottomNavigationOptions() {
     },
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
-    animationEnabled: false,
+    animationEnabled: true,
     swipeEnabled: false,
   };
 }

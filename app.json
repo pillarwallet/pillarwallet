@@ -5,16 +5,28 @@
     "icon": "./src/assets/platform/icon.png",
     "sdkVersion": "26.0.0",
     "ios": {
-      "bundleIdentifier": "com.pillarproject.wallet"
+      "bundleIdentifier": "com.pillarproject.wallet",
+      "publishBundlePath": "ios/pillar-wallet/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/pillar-wallet/Supporting/shell-app-manifest.json"
     },
     "android": {
-      "package": "com.pillarproject.wallet"
+      "package": "com.pillarproject.wallet",
+      "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
+      "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
     },
     "splash": {
       "image": "./src/assets/platform/splash.png",
       "backgroundColor": "#FFFFFF",
       "resizeMode": "cover"
     },
-    "privacy": "unlisted"
+    "privacy": "unlisted",
+    "slug": "pillar-wallet",
+    "isDetached": true,
+    "detach": {
+      "scheme": "exp38a4bbfce2ec45389ca2f4a5178939d6",
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.4.4-sdk26.0.0-3bd935c7-cdd3-4002-8e44-4df857a675f2.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.4.0-sdk26.0.0-e63d9209-070c-4118-b06b-c60e82da0b66.tar.gz"
+    },
+    "scheme": "exp38a4bbfce2ec45389ca2f4a5178939d6"
   }
 }

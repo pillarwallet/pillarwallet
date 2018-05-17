@@ -9,7 +9,7 @@ import {
   UPDATE_WALLET_STATE,
   API_REGISTRATION_FAILED,
 } from 'constants/walletConstants';
-import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
@@ -46,7 +46,7 @@ export const registerWalletAction = () => {
     });
     await delay(50);
 
-    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 16384 } })
+    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 8192 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
@@ -86,6 +86,12 @@ export const registerWalletAction = () => {
     await storage.save('assets', { assets: initialAssets });
 
     // STEP 5: all done, navigate to the assets screen
-    dispatch(NavigationActions.navigate({ routeName: ASSETS }));
+    const navigateToAssetsAction = NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName: ASSETS }),
+    });
+
+    dispatch(navigateToAssetsAction);
   };
 };
