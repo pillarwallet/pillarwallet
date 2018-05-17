@@ -7,12 +7,12 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
+  API_REGISTRATION_FAILED,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET } from 'constants/navigationConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
-import { transformAssetsToObject } from 'utils/assets';
 import { getExchangeRates } from 'services/assets';
 import { registerOnBackend, getInitialAssets } from '../services/api';
 
@@ -63,12 +63,12 @@ export const registerWalletAction = () => {
     if (!user) {
       dispatch({
         type: UPDATE_WALLET_STATE,
-        payload: 'REGISTRATION_FAILED',
+        payload: API_REGISTRATION_FAILED,
       });
       return;
     }
 
-    // STEP 4: store initial assets
+    // STEP 4: get&store initial assets
     const initialAssets = await getInitialAssets();
     const rates = await getExchangeRates(Object.keys(initialAssets));
 

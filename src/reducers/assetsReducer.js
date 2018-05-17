@@ -42,7 +42,8 @@ export default function assetsReducer(
         updatedState,
       );
     case UPDATE_ASSETS:
-      return { ...state, data: action.payload };
+      const data = action.payload || {};
+      return { ...state, data };
     case UPDATE_ASSETS_BALANCES:
       const mappedAssets = transformAssetsToObject(action.payload);
       return merge(
