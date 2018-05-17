@@ -4,7 +4,9 @@ import {
   UPDATE_ASSETS,
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS_BALANCES,
+  SET_INITIAL_ASSETS,
   FETCHED,
+  FETCHED_INITIAL,
 } from 'constants/assetsConstants';
 import { transformAssetsToObject } from 'utils/assets';
 import merge from 'lodash.merge';
@@ -42,8 +44,9 @@ export default function assetsReducer(
         updatedState,
       );
     case UPDATE_ASSETS:
-      const data = action.payload || {};
-      return { ...state, data };
+      return { ...state, data: action.payload || {} };
+    case SET_INITIAL_ASSETS:
+      return { ...state, data: action.payload || {}, assetsState: FETCHED_INITIAL };
     case UPDATE_ASSETS_BALANCES:
       const mappedAssets = transformAssetsToObject(action.payload);
       return merge(

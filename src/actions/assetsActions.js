@@ -2,7 +2,11 @@
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS_BALANCES,
+  SET_INITIAL_ASSETS,
   FETCHING,
+  FETCHING_INITIAL,
+  FETCH_INITIAL_FAILED,
+  FETCHED_INITIAL,
   ETH,
 } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
@@ -15,6 +19,11 @@ import {
 } from 'services/assets';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets, Asset } from 'models/Asset';
+import { getInitialAssets } from 'services/api';
+import Storage from 'services/storage';
+import { delay } from 'utils/common';
+
+const storage = Storage.getInstance('db');
 
 export const sendAssetAction = ({
   gasLimit,
@@ -86,3 +95,34 @@ export const fetchExchangeRatesAction = (assets: Assets) => {
   };
 };
 
+export const fetchInitialAssetsAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_ASSETS_STATE,
+      payload: FETCHING_INITIAL,
+    });
+    await delay(1000);
+    const initialAssets = await getInitialAssets();
+
+    if (!Object.keys(initialAssets).length) {
+      dispatch({
+        type: UPDATE_ASSETS_STATE,
+        payload: FETCH_INITIAL_FAILED,
+      });
+      return;
+    }
+
+    dispatch({
+      type: SET_INITIAL_ASSETS,
+      payload: initialAssets,
+    });
+
+    const rates = await getExchangeRates(Object.keys(initialAssets));
+    dispatch({
+      type: SET_RATES,
+      payload: rates,
+    });
+
+    await storage.save('assets', { assets: initialAssets });
+  };
+};

@@ -7,7 +7,7 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
-import { Container, Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import { API_REGISTRATION_FAILED } from 'constants/walletConstants';
 import { ASSETS } from 'constants/navigationConstants';
@@ -30,11 +30,7 @@ const NewWallet = (props: Props) => {
   if (walletState === API_REGISTRATION_FAILED) {
     statusMessage = 'REGISTRATION FAILED';
     showSpinner = false;
-    note = (
-      <Wrapper padding>
-        <Button block title="Try again" onPress={tryToReRegister} />
-      </Wrapper>
-    );
+    note = <Button title="Try again" onPress={tryToReRegister} />;
   }
 
   return (

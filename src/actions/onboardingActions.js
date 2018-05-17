@@ -14,7 +14,7 @@ import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
-import { registerOnBackend, getInitialAssets } from '../services/api';
+import { registerOnBackend, getInitialAssets } from 'services/api';
 
 const storage = Storage.getInstance('db');
 
@@ -78,7 +78,7 @@ export const registerWalletAction = () => {
     });
 
     dispatch({
-      type: UPDATE_ASSETS,
+      type: SET_INITIAL_ASSETS,
       payload: initialAssets,
     });
 
@@ -88,14 +88,3 @@ export const registerWalletAction = () => {
     dispatch(NavigationActions.navigate({ routeName: ASSETS }));
   };
 };
-
-
-// console.log('wallet', wallet.privateKey);
-// console.log('userData', userData);
-
-/* .catch(() => {
-  dispatch({
-    type: UPDATE_WALLET_STATE,
-    payload: 'REGISTRATION_FAILED',
-  });
-}) */
