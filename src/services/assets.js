@@ -125,5 +125,5 @@ export async function fetchERC20Balance(walletAddress: Address, contractAddress:
 }; */
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
-  return cryptocompare.priceMulti(assets, ['USD', 'EUR', 'GBP']).catch(() => {});
+  return cryptocompare.priceMulti(assets, ['USD', 'EUR', 'GBP']).catch(() => ({}));
 }
