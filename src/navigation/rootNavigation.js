@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing } from 'react-native';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import {
   StackNavigator,
@@ -64,14 +63,7 @@ const renderHeader = ({ navigation, ...rest }) => {
 };
 
 const StackNavigatorConfig = {
-  headerMode: 'float',
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
+  headerMode: 'screen',
   navigationOptions: {
     header: renderHeader,
     gesturesEnabled: false,
@@ -122,7 +114,9 @@ const appFlow = StackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
   }, {
     mode: 'modal',
-    headerMode: 'none',
+    navigationOptions: {
+      header: null,
+    },
   },
 );
 

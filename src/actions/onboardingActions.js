@@ -46,7 +46,7 @@ export const registerWalletAction = () => {
     });
     await delay(50);
 
-    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 16384 } })
+    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 8192 } })
       .then(JSON.parse)
       .catch(() => {});
 
