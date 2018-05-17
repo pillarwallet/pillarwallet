@@ -10,6 +10,7 @@ import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchExchangeRatesAction } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
@@ -43,6 +44,7 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchExchangeRates: (assets: Assets) => Function,
   assets: Object,
   wallet: Object,
   rates: Object,
@@ -76,8 +78,9 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchAssetsBalances, assets, wallet } = this.props;
+    const { fetchAssetsBalances, fetchExchangeRates, assets, wallet } = this.props;
     fetchAssetsBalances(assets, wallet.address);
+    fetchExchangeRates(assets);
     this.getTransactionHistory();
   }
 
@@ -205,6 +208,7 @@ class AssetsScreen extends React.Component<Props, State> {
               onRefresh={() => {
                 const { assets, wallet } = this.props;
                 this.props.fetchAssetsBalances(assets, wallet.address);
+                this.props.fetchExchangeRates(assets);
               }}
             />
           }
@@ -307,8 +311,12 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets, walletAddress) =>
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
+  fetchAssetsBalances: (assets, walletAddress) => {
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
+  },
+  fetchExchangeRates: (assets) => {
+    dispatch(fetchExchangeRatesAction(assets));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);
