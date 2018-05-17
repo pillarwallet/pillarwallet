@@ -61,6 +61,7 @@ export const registerWalletAction = () => {
     await storage.save('user', { user });
 
     if (!user) {
+      await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: API_REGISTRATION_FAILED,
