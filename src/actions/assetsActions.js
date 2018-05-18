@@ -1,13 +1,21 @@
 // @flow
+import merge from 'lodash.merge';
 import {
   UPDATE_ASSETS_STATE,
-  UPDATE_ASSETS_BALANCES,
+  UPDATE_ASSETS,
+  ADD_ASSET,
+  REMOVE_ASSET,
   FETCHING,
   ETH,
 } from 'constants/assetsConstants';
-import { transferETH, transferERC20, fetchETHBalance, fetchERC20Balance } from 'services/assets';
+import { SET_RATES } from 'constants/ratesConstants';
+import { transferETH, transferERC20, fetchETHBalance, fetchERC20Balance, getExchangeRates } from 'services/assets';
+import { transformAssetsToObject } from 'utils/assets';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
+import Storage from 'services/storage';
+
+const storage = Storage.getInstance('db');
 
 export const sendAssetAction = ({
   gasLimit,
@@ -39,12 +47,11 @@ export const sendAssetAction = ({
 };
 
 export const fetchAssetsBalancesAction = (assets: Object, walletAddress: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
     });
-
 
     // extract once API provided.
     const promises = Object.keys(assets).map(key => assets[key]).map(async (asset: Asset) => {
@@ -56,13 +63,24 @@ export const fetchAssetsBalancesAction = (assets: Object, walletAddress: string)
         symbol: asset.symbol,
       };
     });
-
-    Promise.all(promises)
-      .then((data) => {
-        dispatch({
-          type: UPDATE_ASSETS_BALANCES,
-          payload: data,
-        });
-      }).catch(console.log); // eslint-disable-line
+    const balances = await Promise.all(promises);
+    const updatedAssets = merge({}, assets, transformAssetsToObject(balances));
+    const rates = await getExchangeRates(Object.keys(updatedAssets));
+    await storage.save('assets', { assets: updatedAssets });
+    dispatch({ type: SET_RATES, payload: rates });
+    dispatch({
+      type: UPDATE_ASSETS,
+      payload: updatedAssets,
+    });
   };
 };
+
+export const addAssetAction = (asset: Object) => ({
+  type: ADD_ASSET,
+  payload: asset
+});
+
+export const removeAssetAction = (asset: Object) => ({
+  type: REMOVE_ASSET,
+  payload: asset
+});
