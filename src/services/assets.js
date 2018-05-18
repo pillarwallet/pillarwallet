@@ -104,19 +104,19 @@ export function fetchERC20Balance(walletAddress: Address, contractAddress: Addre
   return contract.balanceOf(walletAddress).then(utils.formatEther);
 }
 
-export function fetchAssetBalances(assets: Assets, walletAddress: string) {
+export function fetchAssetBalances(assets: Assets, walletAddress: string): Promise<Object[]> {
   const promises = Object.keys(assets)
     .map(key => assets[key])
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
         ? await fetchETHBalance(walletAddress)
-        : await fetchERC20Balance(walletAddress, asset.address);
+        : await fetchERC20Balance(walletAddress, asset.address).catch(() => 0);
       return {
         balance,
         symbol: asset.symbol,
       };
     });
-  return Promise.all(promises).catch(() => ({}));
+  return Promise.all(promises).catch(() => ([]));
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {

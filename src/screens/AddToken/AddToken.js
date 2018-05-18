@@ -2,13 +2,17 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
+import type { Assets, Asset } from 'models/Asset';
+import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
+import { partial } from 'utils/common';
 import { Container, Wrapper } from 'components/Layout';
 import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
-import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import Title from 'components/Title';
-import tokens from 'utils/erc_whitelist.json';
+import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { getSupportedAssets } from 'services/api';
 
 const tokenIcons = {};
 
@@ -46,26 +50,71 @@ const CloseButton = styled(ButtonIcon)`
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  assets: Assets,
+  wallet: Object,
+  fetchAssetsBalances: Function,
+  addAsset: Function,
+  removeAsset: Function,
 }
 
-export default class AddToken extends React.Component<Props> {
+type State = {
+  supportedAssets: Asset[],
+}
+
+class AddToken extends React.Component<Props, State> {
+  state = {
+    supportedAssets: [],
+  }
+
+  componentDidMount() {
+    // move to redux actions once SDK added
+    getSupportedAssets().then((supportedAssets) => {
+      this.setState({
+        supportedAssets,
+      });
+    }).catch(() => []);
+  }
+
+  handleAssetToggle = (asset: Asset, enabled: Boolean) => {
+    const { addAsset, removeAsset } = this.props;
+    if (enabled) {
+      addAsset(asset);
+      return;
+    }
+    removeAsset(asset);
+  }
+
   generateAddTokenListItems() {
-    return tokens.map(({ symbol, name }) => (
-      <TokenListItem key={symbol}>
-        <Thumbnail square size={80} source={tokenIcons[symbol]} />
-        <Body style={{ marginLeft: 20 }}>
-          <TokenName>{name}</TokenName>
-          <TokenSymbol>{symbol}</TokenSymbol>
-        </Body>
-        <Right>
-          <Switch value={false} />
-        </Right>
-      </TokenListItem>
-    ));
+    const { assets } = this.props;
+    const { supportedAssets } = this.state;
+    return supportedAssets.map(({ symbol, name, ...rest }) => {
+      const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+      return (
+        <TokenListItem key={symbol}>
+          <Thumbnail square size={80} source={tokenIcons[symbol]} />
+          <Body style={{ marginLeft: 20 }}>
+            <TokenName>{name}</TokenName>
+            <TokenSymbol>{symbol}</TokenSymbol>
+          </Body>
+          <Right>
+            <Switch
+              onValueChange={boundAssetToggleHandler}
+              value={!!assets[symbol]}
+            />
+          </Right>
+        </TokenListItem>
+      );
+    });
   }
 
   handleScreenDissmisal = () => {
-    const { navigation } = this.props;
+    const {
+      navigation,
+      fetchAssetsBalances,
+      assets,
+      wallet,
+    } = this.props;
+    fetchAssetsBalances(assets, wallet.address);
     navigation.goBack(null);
   }
 
@@ -91,3 +140,17 @@ export default class AddToken extends React.Component<Props> {
     );
   }
 }
+
+const mapStateToProps = ({ assets: { data: assets }, wallet: { data: wallet } }) => ({
+  assets,
+  wallet,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
+  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  fetchAssetsBalances: (assets, walletAddress) =>
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddToken);

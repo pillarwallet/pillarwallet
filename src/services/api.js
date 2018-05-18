@@ -1,5 +1,8 @@
 // @flow
 import { initialAssets } from 'fixtures/assets';
+// remove from utils
+import tokens from 'utils/erc_whitelist.json';
+
 import { transformAssetsToObject } from 'utils/assets';
 
 const pillarSdk = {
@@ -20,4 +23,8 @@ export function getInitialAssets() {
     .catch(() => [])
     // .then(() => []) // remove this
     .then(transformAssetsToObject);
+}
+
+export function getSupportedAssets() {
+  return Promise.resolve(tokens);
 }

@@ -48,6 +48,7 @@ const activeModalResetState = {
   },
 };
 
+
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -172,13 +173,12 @@ class AssetsScreen extends React.Component<Props, State> {
       .map(id => assets[id])
       .map((asset, index) => {
         const {
-          balance,
           name,
           symbol,
           address: contractAddress,
         } = asset;
-
-        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : 0;
+        const balance = asset.balance || 0;
+        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
@@ -251,8 +251,12 @@ class AssetsScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                this.props.fetchAssetsBalances(assets, wallet.address);
-                this.props.fetchExchangeRates(assets);
+                const {
+                  fetchAssetsBalances,
+                  fetchExchangeRates,
+                } = this.props;
+                fetchAssetsBalances(assets, wallet.address);
+                fetchExchangeRates(assets);
               }}
             />
           }

@@ -1,7 +1,10 @@
 // @flow
+import merge from 'lodash.merge';
 import {
   UPDATE_ASSETS_STATE,
-  UPDATE_ASSETS_BALANCES,
+  UPDATE_ASSETS,
+  ADD_ASSET,
+  REMOVE_ASSET,
   SET_INITIAL_ASSETS,
   FETCHING,
   FETCHING_INITIAL,
@@ -19,6 +22,7 @@ import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import { getInitialAssets } from 'services/api';
 import Storage from 'services/storage';
+import { transformAssetsToObject } from 'utils/assets';
 import { delay } from 'utils/common';
 
 const storage = Storage.getInstance('db');
@@ -60,9 +64,14 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     });
 
     const balances = await fetchAssetBalances(assets, walletAddress);
+    // once API provided from SDK, there won't be need to merge
+    const updatedAssets = merge({}, assets, transformAssetsToObject(balances));
+    const rates = await getExchangeRates(Object.keys(updatedAssets));
+    await storage.save('assets', { assets: updatedAssets });
+    dispatch({ type: SET_RATES, payload: rates });
     dispatch({
-      type: UPDATE_ASSETS_BALANCES,
-      payload: balances,
+      type: UPDATE_ASSETS,
+      payload: updatedAssets,
     });
   };
 };
@@ -107,11 +116,22 @@ export const fetchInitialAssetsAction = (walletAddress: string) => {
     });
 
     const balances = await fetchAssetBalances(initialAssets, walletAddress);
+    // once API provided from SDK, there won't be need to merge
+    const updatedAssets = merge({}, initialAssets, transformAssetsToObject(balances));
+    await storage.save('assets', { assets: updatedAssets });
     dispatch({
-      type: UPDATE_ASSETS_BALANCES,
-      payload: balances,
+      type: UPDATE_ASSETS,
+      payload: updatedAssets,
     });
-
-    await storage.save('assets', { assets: initialAssets });
   };
 };
+
+export const addAssetAction = (asset: Object) => ({
+  type: ADD_ASSET,
+  payload: asset,
+});
+
+export const removeAssetAction = (asset: Object) => ({
+  type: REMOVE_ASSET,
+  payload: asset,
+});
