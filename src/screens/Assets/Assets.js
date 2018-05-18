@@ -151,15 +151,15 @@ class AssetsScreen extends React.Component<Props, State> {
     return Object.keys(assets)
       .map(id => assets[id])
       .map((asset, index) => {
-        let {
+        const {
           balance,
           name,
           symbol,
           address: contractAddress,
         } = asset;
-        balance = balance || 0;
-        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : formatMoney(0);
-        const displayAmount =  formatMoney(balance, 4);
+
+        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : 0;
+        const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
@@ -206,8 +206,8 @@ class AssetsScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                const { assets, wallet, fetchAssetsBalances } = this.props;
-                fetchAssetsBalances(assets, wallet.address);
+                const { assets, wallet } = this.props;
+                this.props.fetchAssetsBalances(assets, wallet.address);
               }}
             />
           }

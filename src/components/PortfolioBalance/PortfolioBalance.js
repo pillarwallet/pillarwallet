@@ -32,12 +32,11 @@ class PortfolioBalance extends React.Component<Props, {}> {
       .keys(assets)
       .map(key => assets[key])
       .map((item: Asset) => {
-        const assetRates = rates[item.symbol] || {};
         const assetFiatBalance = Object
-          .keys(assetRates)
+          .keys(rates[item.symbol])
           .map(key => ({
             currency: key,
-            total: assetRates[key] * item.balance,
+            total: rates[item.symbol][key] * item.balance,
           }));
         return assetFiatBalance;
       })
