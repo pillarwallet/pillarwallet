@@ -35,6 +35,7 @@ type Props = {
 
 type State = {
   isScanning: boolean,
+  asset: Object,
   value: ?{
     address: ?string,
     amount: ?number
@@ -113,6 +114,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       isScanning: false,
       value: null,
       formStructure: getFormStructure(props),
+      asset: {},
     };
   }
 
@@ -173,10 +175,13 @@ class SendTokenAmount extends React.Component<Props, State> {
   render() {
     const { token } = this.props;
     const {
-      value, isScanning, formStructure,
+      value,
+      isScanning,
+      formStructure,
     } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const isFilled = hasAllValues(value);
+    const asset = this.props.navigation.getParam('asset', {});
     const qrScannnerComponent = (
       <QRCodeScanner
         validator={ETHValidator}
@@ -190,6 +195,8 @@ class SendTokenAmount extends React.Component<Props, State> {
       <React.Fragment>
         <SendTokenAmountHeader
           onBack={this.props.navigation.goBack}
+          balanceAmount={asset.balance.toString()}
+          symbol={asset.symbol}
         />
         <Container>
           <Wrapper padding>
@@ -212,6 +219,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             />
           </Wrapper>
         </Container>
+        {qrScannnerComponent}
       </React.Fragment>
     );
   }

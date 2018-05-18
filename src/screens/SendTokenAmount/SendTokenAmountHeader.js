@@ -8,6 +8,8 @@ import ButtonIcon from 'components/ButtonIcon';
 type Props = {
   onBack: Function,
   index?: number,
+  balanceAmount: string,
+  symbol: string,
 }
 
 const Wrapper = styled(NBHeader)`
@@ -32,14 +34,14 @@ const BalanceAmount = styled.Text`
 `;
 
 const SendTokenAmountHeader = (props: Props) => {
-  const { onBack } = props;
+  const { onBack, balanceAmount, symbol } = props;
 
   return (
     <Wrapper>
       <Left />
       <Body>
         <BalanceLabel>Available Balance</BalanceLabel>
-        <BalanceAmount>£9000.1234</BalanceAmount>
+        <BalanceAmount>{balanceAmount} {symbol}</BalanceAmount>
       </Body>
       <Right>
         <BackIcon icon="close" color="#000" onPress={() => onBack(null)} fontSize={36} />

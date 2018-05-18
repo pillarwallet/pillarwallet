@@ -487,6 +487,7 @@ declare module 'react-navigation' {
     +state: S,
     dispatch: NavigationDispatch,
     goBack: (routeKey?: ?string) => boolean,
+    getParam: (paramName: string, fallback?: any) => any, // This has been added temporarily by Lewis Flude
     navigate: (
       routeName: string,
       params?: NavigationParams,
