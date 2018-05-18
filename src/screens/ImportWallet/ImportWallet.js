@@ -72,7 +72,7 @@ class ImportWallet extends React.Component<Props, State> {
         <Wrapper padding>
           <Title title="wallet" />
           <Paragraph>
-            Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
+            Import your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
           </Paragraph>
 
           <Center>
