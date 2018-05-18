@@ -116,7 +116,7 @@ export function fetchAssetBalances(assets: Assets, walletAddress: string): Promi
         symbol: asset.symbol,
       };
     });
-  return Promise.all(promises).catch(() => ({}));
+  return Promise.all(promises).catch(() => ([]));
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {

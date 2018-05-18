@@ -66,12 +66,13 @@ class AddToken extends React.Component<Props, State> {
     supportedAssets: [],
   }
 
-  async componentDidMount(){
+  componentDidMount() {
     // move to redux actions once SDK added
-    const supportedAssets = await getSupportedAssets();
-    this.setState({
-      supportedAssets,
-    })
+    getSupportedAssets().then((supportedAssets) => {
+      this.setState({
+        supportedAssets,
+      });
+    }).catch(() => []);
   }
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {

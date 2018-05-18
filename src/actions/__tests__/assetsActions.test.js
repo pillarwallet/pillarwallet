@@ -4,7 +4,6 @@ import thunk from 'redux-thunk';
 import {
   UPDATE_ASSET,
   UPDATE_ASSETS_STATE,
-  UPDATE_ASSETS_BALANCES,
   FETCHED,
   FETCHING,
   ETH,
@@ -50,7 +49,7 @@ jest.mock('ethers', () => ({
   },
   providers: {
     getDefaultProvider: () => ({
-      getBalance: () => Promise.resolve(5), // ropsten dummy balance
+      getBalance: () => Promise.resolve(1), // ropsten dummy balance
     }),
   },
 }));
@@ -84,7 +83,7 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
       { payload: {}, type: SET_RATES },
-      { payload: { ETH: { balance: 5, symbol: ETH } }, type: UPDATE_ASSETS },
+      { payload: { ETH: mockAssets.ETH }, type: UPDATE_ASSETS },
     ];
     return store.dispatch(fetchAssetsBalancesAction(mockAssets, mockWallet.address))
       .then(() => {

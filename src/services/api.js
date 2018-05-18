@@ -25,6 +25,6 @@ export function getInitialAssets() {
     .then(transformAssetsToObject);
 }
 
-export function getSupportedAssets(){
+export function getSupportedAssets() {
   return Promise.resolve(tokens);
 }

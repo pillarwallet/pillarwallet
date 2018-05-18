@@ -251,7 +251,10 @@ class AssetsScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                const { assets, wallet, fetchAssetsBalances, fetchExchangeRates } = this.props;
+                const {
+                  fetchAssetsBalances,
+                  fetchExchangeRates,
+                } = this.props;
                 fetchAssetsBalances(assets, wallet.address);
                 fetchExchangeRates(assets);
               }}
