@@ -18,9 +18,9 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import PopModal from 'components/Modals/PopModal';
 import { ADD_TOKEN } from 'constants/navigationConstants';
+import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
-import { formatMoney } from '../../utils/common';
 
 
 // TODO: Replace me with real address or pass in with Redux
@@ -42,6 +42,7 @@ const activeModalResetState = {
     tokenName: '',
   },
 };
+
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -151,15 +152,14 @@ class AssetsScreen extends React.Component<Props, State> {
     return Object.keys(assets)
       .map(id => assets[id])
       .map((asset, index) => {
-        let {
-          balance,
+        const {
           name,
           symbol,
           address: contractAddress,
         } = asset;
-        balance = balance || 0;
+        const balance = asset.balance || 0;
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : formatMoney(0);
-        const displayAmount =  formatMoney(balance, 4);
+        const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
         const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };

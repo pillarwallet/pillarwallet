@@ -6,6 +6,7 @@ import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import type { Assets, Asset } from 'models/asset';
 import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
+import { partial } from 'utils/common';
 import { Container, Wrapper } from 'components/Layout';
 import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
@@ -36,11 +37,11 @@ const TokenSymbol = styled.Text`
   font-weight: ${fontWeights.light};
 `;
 
-const TokenListItem = styled(ListItem) `
+const TokenListItem = styled(ListItem)`
   margin: 0;
 `;
 
-const CloseButton = styled(ButtonIcon) `
+const CloseButton = styled(ButtonIcon)`
   position: absolute;
   right: 5px;
   top: 5px;
@@ -57,9 +58,8 @@ type Props = {
 }
 
 class AddToken extends React.Component<Props> {
-
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
-    const { addAsset, removeAsset } = this.props
+    const { addAsset, removeAsset } = this.props;
     if (enabled) {
       addAsset(asset);
       return;
@@ -69,22 +69,33 @@ class AddToken extends React.Component<Props> {
 
   generateAddTokenListItems() {
     const { assets } = this.props;
-    return tokens.map(({ symbol, name, ...rest }) => (
-      <TokenListItem key={symbol}>
-        <Thumbnail square size={80} source={tokenIcons[symbol]} />
-        <Body style={{ marginLeft: 20 }}>
-          <TokenName>{name}</TokenName>
-          <TokenSymbol>{symbol}</TokenSymbol>
-        </Body>
-        <Right>
-          <Switch onValueChange={this.handleAssetToggle.bind(null, { symbol, name, ...rest })} value={!!assets[symbol]} />
-        </Right>
-      </TokenListItem>
-    ));
+    return tokens.map(({ symbol, name, ...rest }) => {
+      const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+      return (
+        <TokenListItem key={symbol}>
+          <Thumbnail square size={80} source={tokenIcons[symbol]} />
+          <Body style={{ marginLeft: 20 }}>
+            <TokenName>{name}</TokenName>
+            <TokenSymbol>{symbol}</TokenSymbol>
+          </Body>
+          <Right>
+            <Switch
+              onValueChange={boundAssetToggleHandler}
+              value={!!assets[symbol]}
+            />
+          </Right>
+        </TokenListItem>
+      );
+    });
   }
 
   handleScreenDissmisal = () => {
-    const { navigation, fetchAssetsBalances, assets, wallet } = this.props;
+    const {
+      navigation,
+      fetchAssetsBalances,
+      assets,
+      wallet,
+    } = this.props;
     fetchAssetsBalances(assets, wallet.address);
     navigation.goBack(null);
   }

@@ -47,7 +47,7 @@ export const sendAssetAction = ({
 };
 
 export const fetchAssetsBalancesAction = (assets: Object, walletAddress: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function) => {
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
@@ -79,10 +79,10 @@ export const fetchAssetsBalancesAction = (assets: Object, walletAddress: string)
 
 export const addAssetAction = (asset: Object) => ({
   type: ADD_ASSET,
-  payload: asset
+  payload: asset,
 });
 
 export const removeAssetAction = (asset: Object) => ({
   type: REMOVE_ASSET,
-  payload: asset
+  payload: asset,
 });

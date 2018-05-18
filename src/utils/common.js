@@ -62,3 +62,9 @@ export function getCurrencySymbol(currency: string): string {
   };
   return currencies[currency] || '';
 }
+
+export function partial(fn: Function, ...fixedArgs: any) {
+  return (...rest: any) => {
+    return fn.apply(null, [...fixedArgs, ...rest]);
+  };
+}

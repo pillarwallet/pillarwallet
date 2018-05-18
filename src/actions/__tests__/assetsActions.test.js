@@ -7,7 +7,9 @@ import {
   FETCHED,
   FETCHING,
   ETH,
+  UPDATE_ASSETS,
 } from 'constants/assetsConstants';
+import { SET_RATES } from 'constants/ratesConstants';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
 
 const mockStore = configureMockStore([thunk]);
@@ -70,6 +72,8 @@ describe('Wallet actions', () => {
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
+      { payload: {}, type: SET_RATES },
+      { payload: { ETH: { balance: 5, symbol: ETH } }, type: UPDATE_ASSETS },
     ];
 
     return store.dispatch(fetchAssetsBalancesAction({ ETH: { symbol: ETH } }, mockWallet.address))
