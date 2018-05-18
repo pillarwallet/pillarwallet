@@ -110,7 +110,7 @@ export function fetchAssetBalances(assets: Assets, walletAddress: string): Promi
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
         ? await fetchETHBalance(walletAddress)
-        : await fetchERC20Balance(walletAddress, asset.address);
+        : await fetchERC20Balance(walletAddress, asset.address).catch(() => 0);
       return {
         balance,
         symbol: asset.symbol,
