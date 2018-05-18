@@ -8,17 +8,13 @@ import {
   INVALID_PASSWORD,
 } from 'constants/walletConstants';
 import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
-import { SET_RATES } from 'constants/ratesConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
-import { getExchangeRates } from 'services/assets';
 
 const storage = Storage.getInstance('db');
 
 export const loginAction = (pin: string) => {
-  return async (dispatch: Function, getState: () => any) => {
-    const currentState = getState();
-    const { data: assets } = currentState.assets;
+  return async (dispatch: Function) => {
     const encryptedWallet = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -33,13 +29,6 @@ export const loginAction = (pin: string) => {
         payload: wallet,
       });
 
-      // Load exchange rates
-      const tickers = Object.keys(assets);
-      if (tickers.length) {
-        getExchangeRates(tickers)
-          .then(rates => dispatch({ type: SET_RATES, payload: rates }))
-          .catch(console.log); // eslint-disable-line
-      }
       const navigateToAssetsAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},

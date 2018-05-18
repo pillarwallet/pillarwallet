@@ -6,7 +6,7 @@ function Storage(name: string, opts: ?Object) {
 }
 
 Storage.prototype.get = function (id: string) {
-  return this.db.get(id);
+  return this.db.get(id).catch(() => ({}));
 };
 
 Storage.prototype.save = function (id: string, data: Object) {

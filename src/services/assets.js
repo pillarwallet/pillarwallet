@@ -2,6 +2,8 @@
 import { Contract, utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
+import { ETH } from 'constants/assetsConstants';
+import type { Assets, Asset } from 'models/Asset';
 
 const PROVIDER = NETWORK_PROVIDER;
 
@@ -102,24 +104,21 @@ export function fetchERC20Balance(walletAddress: Address, contractAddress: Addre
   return contract.balanceOf(walletAddress).then(utils.formatEther);
 }
 
-// TODO: remove and mock
-/* const cryptocompare = {
-  priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
-    return Promise.resolve({
-      ETH: {
-        EUR: 624.21,
-        GBP: 544.57,
-        USD: 748.92,
-      },
-      PLR: {
-        EUR: 0.3142,
-        GBP: 0.2762,
-        USD: 0.377,
-      },
+export function fetchAssetBalances(assets: Assets, walletAddress: string) {
+  const promises = Object.keys(assets)
+    .map(key => assets[key])
+    .map(async (asset: Asset) => {
+      const balance = asset.symbol === ETH
+        ? await fetchETHBalance(walletAddress)
+        : await fetchERC20Balance(walletAddress, asset.address);
+      return {
+        balance,
+        symbol: asset.symbol,
+      };
     });
-  },
-}; */
+  return Promise.all(promises).catch(() => ({}));
+}
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
-  return cryptocompare.priceMulti(assets, ['USD', 'EUR', 'GBP']);
+  return cryptocompare.priceMulti(assets, ['USD', 'EUR', 'GBP']).catch(() => ({}));
 }
