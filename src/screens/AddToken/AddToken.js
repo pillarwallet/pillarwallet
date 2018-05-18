@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
-import type { Assets, Asset } from 'models/asset';
+import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
