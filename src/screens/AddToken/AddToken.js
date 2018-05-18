@@ -2,15 +2,12 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
-import type { Assets, Asset } from 'models/asset';
-import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
+import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import Title from 'components/Title';
-import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import tokens from 'utils/erc_whitelist.json';
 
 const tokenIcons = {};
@@ -36,11 +33,11 @@ const TokenSymbol = styled.Text`
   font-weight: ${fontWeights.light};
 `;
 
-const TokenListItem = styled(ListItem) `
+const TokenListItem = styled(ListItem)`
   margin: 0;
 `;
 
-const CloseButton = styled(ButtonIcon) `
+const CloseButton = styled(ButtonIcon)`
   position: absolute;
   right: 5px;
   top: 5px;
@@ -49,27 +46,11 @@ const CloseButton = styled(ButtonIcon) `
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  assets: Assets,
-  wallet: Object,
-  fetchAssetsBalances: Function,
-  addAsset: Function,
-  removeAsset: Function,
 }
 
-class AddToken extends React.Component<Props> {
-
-  handleAssetToggle = (asset: Asset, enabled: Boolean) => {
-    const { addAsset, removeAsset } = this.props
-    if (enabled) {
-      addAsset(asset);
-      return;
-    }
-    removeAsset(asset);
-  }
-
+export default class AddToken extends React.Component<Props> {
   generateAddTokenListItems() {
-    const { assets } = this.props;
-    return tokens.map(({ symbol, name, ...rest }) => (
+    return tokens.map(({ symbol, name }) => (
       <TokenListItem key={symbol}>
         <Thumbnail square size={80} source={tokenIcons[symbol]} />
         <Body style={{ marginLeft: 20 }}>
@@ -77,15 +58,14 @@ class AddToken extends React.Component<Props> {
           <TokenSymbol>{symbol}</TokenSymbol>
         </Body>
         <Right>
-          <Switch onValueChange={this.handleAssetToggle.bind(null, { symbol, name, ...rest })} value={!!assets[symbol]} />
+          <Switch value={false} />
         </Right>
       </TokenListItem>
     ));
   }
 
   handleScreenDissmisal = () => {
-    const { navigation, fetchAssetsBalances, assets, wallet } = this.props;
-    fetchAssetsBalances(assets, wallet.address);
+    const { navigation } = this.props;
     navigation.goBack(null);
   }
 
@@ -111,17 +91,3 @@ class AddToken extends React.Component<Props> {
     );
   }
 }
-
-const mapStateToProps = ({ assets: { data: assets }, wallet: { data: wallet } }) => ({
-  assets,
-  wallet,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
-  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchAssetsBalances: (assets, walletAddress) =>
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddToken);

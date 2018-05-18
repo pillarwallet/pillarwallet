@@ -4,8 +4,6 @@ import {
   UPDATE_ASSETS,
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS_BALANCES,
-  ADD_ASSET,
-  REMOVE_ASSET,
   FETCHED,
 } from 'constants/assetsConstants';
 import { transformAssetsToObject } from 'utils/assets';
@@ -45,14 +43,14 @@ export default function assetsReducer(
       );
     case UPDATE_ASSETS:
       return { ...state, data: action.payload };
-    case ADD_ASSET:
-      const addedAsset = action.payload;
-      return merge({}, state, { data: { [addedAsset.symbol]: { ...addedAsset } } });
-    case REMOVE_ASSET:
-      const removedAsset = action.payload;
-      const clonedState = merge({}, state);    
-      delete clonedState.data[removedAsset.symbol]
-      return { ...clonedState }
+    case UPDATE_ASSETS_BALANCES:
+      const mappedAssets = transformAssetsToObject(action.payload);
+      return merge(
+        {},
+        state,
+        { assetsState: FETCHED },
+        { data: mappedAssets },
+      );
     default:
       return state;
   }
