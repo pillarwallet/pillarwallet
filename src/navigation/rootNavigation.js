@@ -75,7 +75,7 @@ const onBoardingFlow = StackNavigator({
   [NEW_WALLET]: {
     screen: NewWalletScreen,
     navigationOptions: {
-      headerLeft: null,
+      header: null,
     },
   },
   [IMPORT_WALLET]: ImportWalletScreen,

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated, RefreshControl } from 'react-native';
+import { Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
 import { Paragraph } from 'components/Typography';
@@ -10,15 +10,20 @@ import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import Button from 'components/Button';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import {
+  fetchInitialAssetsAction,
+  fetchAssetsBalancesAction,
+  fetchExchangeRatesAction,
+} from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import PopModal from 'components/Modals/PopModal';
-import { ADD_TOKEN } from 'constants/navigationConstants';
 import { formatMoney } from 'utils/common';
+import { FETCH_INITIAL_FAILED } from 'constants/assetsConstants';
+import { ADD_TOKEN } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 import SendModal from './SendModal';
 
@@ -45,10 +50,13 @@ const activeModalResetState = {
 
 
 type Props = {
+  fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchExchangeRates: (assets: Assets) => Function,
   assets: Object,
   wallet: Object,
   rates: Object,
+  assetsState: ?string,
   navigation: NavigationScreenProp<*>,
 }
 
@@ -80,9 +88,21 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchAssetsBalances, assets, wallet } = this.props;
+    const {
+      fetchInitialAssets,
+      fetchAssetsBalances,
+      fetchExchangeRates,
+      assets,
+      wallet,
+    } = this.props;
+
     fetchAssetsBalances(assets, wallet.address);
+    fetchExchangeRates(assets);
     this.getTransactionHistory();
+
+    if (!Object.keys(assets).length) {
+      fetchInitialAssets(wallet.address);
+    }
   }
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
@@ -199,6 +219,31 @@ class AssetsScreen extends React.Component<Props, State> {
       animHeaderHeight,
       animHeaderTextOpacity,
     } = this.state;
+    const {
+      assets,
+      wallet,
+      assetsState,
+      fetchInitialAssets,
+    } = this.props;
+
+    if (!Object.keys(assets).length) {
+      return (
+        <Container center>
+          <Text style={{ marginBottom: 20 }}>Loading default assets</Text>
+          {assetsState !== FETCH_INITIAL_FAILED && (
+            <ActivityIndicator
+              animating
+              color="#111"
+              size="large"
+            />
+          )}
+          {assetsState === FETCH_INITIAL_FAILED && (
+            <Button title="Try again" onPress={fetchInitialAssets(wallet.address)} />
+          )}
+        </Container>
+      );
+    }
+
     return (
       <Container>
         <Wrapper
@@ -206,8 +251,9 @@ class AssetsScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                const { assets, wallet, fetchAssetsBalances } = this.props;
+                const { assets, wallet, fetchAssetsBalances, fetchExchangeRates } = this.props;
                 fetchAssetsBalances(assets, wallet.address);
+                fetchExchangeRates(assets);
               }}
             />
           }
@@ -301,17 +347,25 @@ class AssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
-  assets: { data: assets },
+  assets: { data: assets, assetsState },
   rates: { data: rates },
 }) => ({
   wallet,
   assets,
+  assetsState,
   rates,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchAssetsBalances: (assets, walletAddress) =>
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
+  fetchInitialAssets: (walletAddress) => {
+    dispatch(fetchInitialAssetsAction(walletAddress));
+  },
+  fetchAssetsBalances: (assets, walletAddress) => {
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
+  },
+  fetchExchangeRates: (assets) => {
+    dispatch(fetchExchangeRatesAction(assets));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

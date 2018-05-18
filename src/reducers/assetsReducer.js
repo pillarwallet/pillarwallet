@@ -5,8 +5,12 @@ import {
   UPDATE_ASSETS_STATE,
   ADD_ASSET,
   REMOVE_ASSET,
+  UPDATE_ASSETS_BALANCES,
+  SET_INITIAL_ASSETS,
   FETCHED,
+  FETCHED_INITIAL,
 } from 'constants/assetsConstants';
+import { transformAssetsToObject } from 'utils/assets';
 import merge from 'lodash.merge';
 
 export type AssetsReducerState = {
@@ -52,6 +56,16 @@ export default function assetsReducer(
       // better to use reduce to filter out and remove the key from the object
       delete clonedState.data[removedAsset.symbol];
       return { ...clonedState };
+    case SET_INITIAL_ASSETS:
+      return { ...state, data: action.payload || {}, assetsState: FETCHED_INITIAL };
+    case UPDATE_ASSETS_BALANCES:
+      const mappedAssets = transformAssetsToObject(action.payload);
+      return merge(
+        {},
+        state,
+        { assetsState: FETCHED },
+        { data: mappedAssets },
+      );
     default:
       return state;
   }

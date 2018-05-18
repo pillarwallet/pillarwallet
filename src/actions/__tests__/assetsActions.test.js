@@ -4,12 +4,14 @@ import thunk from 'redux-thunk';
 import {
   UPDATE_ASSET,
   UPDATE_ASSETS_STATE,
+  UPDATE_ASSETS_BALANCES,
   FETCHED,
   FETCHING,
   ETH,
   UPDATE_ASSETS,
 } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
+import type { Assets } from 'models/Asset';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
 
 const mockStore = configureMockStore([thunk]);
@@ -22,6 +24,15 @@ const mockTranscation: Object = {
   amount: 0.5,
   address: '000x124',
   gasPrice: 15000,
+};
+
+const mockAssets: Assets = {
+  ETH: {
+    symbol: ETH,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+  },
 };
 
 Object.defineProperty(mockWallet, 'sendTransaction', {
@@ -75,8 +86,7 @@ describe('Wallet actions', () => {
       { payload: {}, type: SET_RATES },
       { payload: { ETH: { balance: 5, symbol: ETH } }, type: UPDATE_ASSETS },
     ];
-
-    return store.dispatch(fetchAssetsBalancesAction({ ETH: { symbol: ETH } }, mockWallet.address))
+    return store.dispatch(fetchAssetsBalancesAction(mockAssets, mockWallet.address))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

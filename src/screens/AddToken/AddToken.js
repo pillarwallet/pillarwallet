@@ -12,7 +12,7 @@ import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
-import tokens from 'utils/erc_whitelist.json';
+import { getSupportedAssets } from 'services/api';
 
 const tokenIcons = {};
 
@@ -57,7 +57,23 @@ type Props = {
   removeAsset: Function,
 }
 
-class AddToken extends React.Component<Props> {
+type State = {
+  supportedAssets: Asset[],
+}
+
+class AddToken extends React.Component<Props, State> {
+  state = {
+    supportedAssets: [],
+  }
+
+  async componentDidMount(){
+    // move to redux actions once SDK added
+    const supportedAssets = await getSupportedAssets();
+    this.setState({
+      supportedAssets,
+    })
+  }
+
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
     if (enabled) {
@@ -69,7 +85,8 @@ class AddToken extends React.Component<Props> {
 
   generateAddTokenListItems() {
     const { assets } = this.props;
-    return tokens.map(({ symbol, name, ...rest }) => {
+    const { supportedAssets } = this.state;
+    return supportedAssets.map(({ symbol, name, ...rest }) => {
       const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
       return (
         <TokenListItem key={symbol}>

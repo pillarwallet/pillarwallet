@@ -7,14 +7,14 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
+  API_REGISTRATION_FAILED,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
-import { UPDATE_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import Storage from 'services/storage';
-import { initialAssets } from 'fixtures/assets';
-import { transformAssetsToObject } from 'utils/assets';
 import { getExchangeRates } from 'services/assets';
+import { registerOnBackend, getInitialAssets } from 'services/api';
 
 const storage = Storage.getInstance('db');
 
@@ -48,7 +48,7 @@ export const registerWalletAction = () => {
 
     const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 8192 } })
       .then(JSON.parse)
-      .catch(() => {});
+      .catch(() => ({}));
 
     await storage.save('wallet', encryptedWallet);
     await storage.save('app_settings', { wallet: +new Date() });
@@ -57,17 +57,33 @@ export const registerWalletAction = () => {
       payload: wallet,
     });
 
-    // STEP 4: store initial assets
-    // TODO: get initial assets from the SDK
-    const convertedAssets = transformAssetsToObject(initialAssets);
-    const rates = await getExchangeRates(Object.keys(convertedAssets));
-    dispatch({ type: SET_RATES, payload: rates });
+    const user = await registerOnBackend(wallet.privateKey);
+    await storage.save('user', { user });
+
+    if (!user) {
+      await storage.save('assets', { assets: {} });
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: API_REGISTRATION_FAILED,
+      });
+      return;
+    }
+
+    // STEP 4: get&store initial assets
+    const initialAssets = await getInitialAssets();
+    const rates = await getExchangeRates(Object.keys(initialAssets));
 
     dispatch({
-      type: UPDATE_ASSETS,
-      payload: convertedAssets,
+      type: SET_RATES,
+      payload: rates,
     });
-    await storage.save('assets', { assets: convertedAssets });
+
+    dispatch({
+      type: SET_INITIAL_ASSETS,
+      payload: initialAssets,
+    });
+
+    await storage.save('assets', { assets: initialAssets });
 
     // STEP 5: all done, navigate to the assets screen
     const navigateToAssetsAction = NavigationActions.navigate({
