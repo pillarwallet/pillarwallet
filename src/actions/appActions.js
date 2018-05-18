@@ -9,23 +9,18 @@ const storage = Storage.getInstance('db');
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function) => {
-    try {
-      const appSettings = await storage.get('app_settings');
-      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+    const appSettings = await storage.get('app_settings');
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
 
-      if (appSettings.wallet && appSettings.OTP) {
-        // load assets from db into redux store
-        const { assets } = await storage.get('assets');
-        dispatch({ type: UPDATE_ASSETS, payload: assets || {} });
+    if (appSettings.wallet && appSettings.OTP) {
+      const { assets } = await storage.get('assets');
+      dispatch({ type: UPDATE_ASSETS, payload: assets });
 
-        dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
-      }
+      dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
+    }
 
-      if (!appSettings.wallet && appSettings.OTP) {
-        dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
-      }
-    } catch (e) {
-      dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    if (!appSettings.wallet && appSettings.OTP) {
+      dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     }
   };
 };
