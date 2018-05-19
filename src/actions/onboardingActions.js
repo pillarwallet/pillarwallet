@@ -7,6 +7,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
+  API_REGISTRATION_STARTED,
   API_REGISTRATION_FAILED,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
@@ -60,7 +61,7 @@ export const registerWalletAction = () => {
     const user = await registerOnBackend(wallet.privateKey);
     await storage.save('user', { user });
 
-    if (!user) {
+    if (!user || !Object.keys(user).length) {
       await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
@@ -86,6 +87,38 @@ export const registerWalletAction = () => {
     await storage.save('assets', { assets: initialAssets });
 
     // STEP 5: all done, navigate to the assets screen
+    const navigateToAssetsAction = NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName: ASSETS }),
+    });
+
+    dispatch(navigateToAssetsAction);
+  };
+};
+
+export const registerOnBackendAction = () => {
+  return async (dispatch: Function, getState: () => any) => {
+    const currentState = getState();
+    const { wallet: { data: wallet } } = currentState;
+
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: API_REGISTRATION_STARTED,
+    });
+    await delay(1000);
+
+    const user = await registerOnBackend(wallet.privateKey);
+
+    if (!user || !Object.keys(user).length) {
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: API_REGISTRATION_FAILED,
+      });
+      return;
+    }
+    await storage.save('user', { user });
+
     const navigateToAssetsAction = NavigationActions.navigate({
       routeName: APP_FLOW,
       params: {},

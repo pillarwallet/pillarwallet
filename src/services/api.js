@@ -7,7 +7,7 @@ import { transformAssetsToObject } from 'utils/assets';
 
 const pillarSdk = {
   registerOnBackend(privateKey: string) { // eslint-disable-line
-    return Promise.resolve({});
+    return Promise.resolve({ id: 1 });
   },
   getInitialAssets() {
     return Promise.resolve(initialAssets);

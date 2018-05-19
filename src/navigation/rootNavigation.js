@@ -1,24 +1,16 @@
 // @flow
 import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import {
-  StackNavigator,
-  SwitchNavigator,
-  TabNavigator,
-  TabBarBottom,
-} from 'react-navigation';
-import { Ionicons } from '@expo/vector-icons';
+import { StackNavigator, SwitchNavigator } from 'react-navigation';
 
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
 import SigninScreen from 'screens/Signin';
 import SignupScreen from 'screens/Signup';
-import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import LegalTermsScreen from 'screens/LegalTerms';
-import ICOScreen from 'screens/ICO';
 import ImportWalletScreen from 'screens/ImportWallet';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
@@ -26,8 +18,6 @@ import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import OTPScreen from 'screens/OTP';
 import OTPStatusScreen from 'screens/OTPStatus';
-import ProfileScreen from 'screens/Profile';
-import AddTokenScreen from 'screens/AddToken';
 
 // components
 import Header from 'components/Header';
@@ -37,7 +27,6 @@ import {
   SIGN_UP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
-  ASSETS,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
@@ -45,7 +34,6 @@ import {
   SIGN_IN,
   SIGN_UP,
   LEGAL_TERMS,
-  ICO,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
@@ -53,10 +41,9 @@ import {
   WELCOME,
   OTP,
   OTP_STATUS,
-  PROFILE,
-  ADD_TOKEN,
-  TAB_NAVIGATION,
 } from 'constants/navigationConstants';
+
+import AppFlow from './appNavigation';
 
 const renderHeader = ({ navigation, ...rest }) => {
   return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
@@ -98,70 +85,12 @@ const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
 
-const tabNavigation = TabNavigator(
-  {
-    [ASSETS]: AssetsScreen,
-    [ICO]: ICOScreen,
-    [PROFILE]: ProfileScreen,
-  }, {
-    ...getBottomNavigationOptions() // eslint-disable-line
-  },
-);
-
-const appFlow = StackNavigator(
-  {
-    [TAB_NAVIGATION]: tabNavigation,
-    [ADD_TOKEN]: AddTokenScreen,
-  }, {
-    mode: 'modal',
-    navigationOptions: {
-      header: null,
-    },
-  },
-);
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
   [SIGN_UP_FLOW]: signupFlow,
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
-  [APP_FLOW]: appFlow,
+  [APP_FLOW]: AppFlow,
 });
 
 export default RootSwitch;
-
-function getBottomNavigationOptions() {
-  return {
-    navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, tintColor }) => {
-        const { routeName } = navigation.state;
-        let iconName;
-
-        switch (routeName) {
-          case ASSETS:
-            iconName = `ios-albums${focused ? '' : '-outline'}`; break;
-          case ICO:
-            iconName = `ios-jet${focused ? '' : '-outline'}`; break;
-          case PROFILE:
-            iconName = `ios-contact${focused ? '' : '-outline'}`; break;
-          default:
-            return '';
-        }
-
-        return <Ionicons name={iconName} size={25} color={tintColor} />;
-      },
-    }),
-    tabBarOptions: {
-      activeTintColor: 'blue',
-      inactiveTintColor: 'gray',
-      activeBackgroundColor: 'white',
-      inactiveBackgroundColor: 'white',
-      style: {
-        backgroundColor: 'white',
-      },
-    },
-    tabBarComponent: TabBarBottom,
-    tabBarPosition: 'bottom',
-    animationEnabled: true,
-    swipeEnabled: false,
-  };
-}
