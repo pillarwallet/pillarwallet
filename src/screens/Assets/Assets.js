@@ -31,8 +31,10 @@ import SendModal from './SendModal';
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 const defaultAssetColor = '#4C4E5E';
+
 const pillarLogoSource = require('assets/images/header-pillar-logo.png');
 const tokenSentConfirmationImage = require('assets/images/token-sent-confirmation-image.png');
+
 const ASSET_CARD_HEIGHT = 140;
 const assetColors = {
   ETH: baseColors.darkGray,
