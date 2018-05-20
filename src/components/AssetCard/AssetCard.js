@@ -112,20 +112,9 @@ export default class AssetCard extends React.Component<Props, State> {
 
     return (
       <View>
-        <TouchableWithoutFeedback
-          onPress={this.handleCardTap}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: 10,
-          }}
-        >
-          <Animated.View
-            color={linearGradientColorStart}
-            style={[{
+        <Animated.View
+          color={linearGradientColorStart}
+          style={[{
             height: animCardHeight,
             marginLeft: 20,
             marginRight: 20,
@@ -135,6 +124,9 @@ export default class AssetCard extends React.Component<Props, State> {
             right: 0,
             top: animCardPosition,
           }]}
+        >
+          <TouchableWithoutFeedback
+            onPress={this.handleCardTap}
           >
             <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
               <DetailsWrapper>
@@ -148,8 +140,8 @@ export default class AssetCard extends React.Component<Props, State> {
                 <Icon source={iconETH} />
               </IconWrapper>
             </Background>
-          </Animated.View>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </Animated.View>
 
         {isActive && (
           <Animated.View
