@@ -1,16 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Text, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
-import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import Button from 'components/Button';
-import Title from 'components/Title';
-import TextInput from 'components/TextInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
-import { isValidETHAddress, hasAllValues } from 'utils/validators';
+import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
@@ -19,7 +15,6 @@ import SendTokenContactsHeader from './SendTokenContactsHeader';
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
-const { Form } = t.form;
 
 type Props = {
   token: string,
@@ -34,12 +29,11 @@ type Props = {
 
 type State = {
   isScanning: boolean,
-  asset: Object,
+  transactionPayload: Object,
   value: ?{
     address: ?string,
     amount: ?number
   },
-  formStructure: t.struct,
 }
 
 
@@ -60,61 +54,16 @@ const getFormStructure = (totalBalance) => {
   });
 };
 
-function AmountInputTemplate(locals) {
-  const { config: { currency } } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    autoFocus: true,
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    placeholder: '0.00',
-    value: locals.value,
-    ellipsizeMode: 'middle',
-    keyboardType: locals.keyboardType,
-    textAlign: 'right',
-    style: {
-      paddingRight: 40,
-      fontSize: 36,
-      fontWeight: '700',
-      lineHeight: 0,
-    },
-  };
-
-  return (
-    <TextInput
-      postfix={currency}
-      errorMessage={errorMessage}
-      id="amount"
-      label={locals.label}
-      inputProps={inputProps}
-    />
-  );
-}
-
-const generateFormOptions = (config: Object): Object => ({
-  fields: {
-    amount: { template: AmountInputTemplate, config },
-  },
-  order: ['amount', 'address'],
-});
-
-
-const ActionsWrapper = styled.View`
-  margin-top: 10px;
-  margin-bottom: 20px;
-`;
-
 class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
 
   constructor(props) {
     super(props);
-    const asset = this.props.navigation.getParam('asset', {});
+    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
     this.state = {
       isScanning: false,
       value: null,
-      formStructure: getFormStructure(asset.balance),
-      asset,
+      transactionPayload,
     };
   }
 
@@ -153,7 +102,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({
       value: null,
     });
-    alert('it worked');
   };
 
   handleToggleQRScanningState = () => {
@@ -171,15 +119,10 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { token } = this.props;
     const {
-      value,
       isScanning,
-      formStructure,
-      asset,
+      transactionPayload,
     } = this.state;
-    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
-    const isFilled = hasAllValues(value);
 
     const qrScannnerComponent = (
       <QRCodeScanner
@@ -194,29 +137,11 @@ class SendTokenAmount extends React.Component<Props, State> {
       <React.Fragment>
         <SendTokenContactsHeader
           onBack={this.props.navigation.goBack}
-          balanceAmount={asset.balance.toString()}
-          symbol={asset.symbol}
+          nextOnPress={this.handleFormSubmit}
+          amount={transactionPayload.amount}
         />
         <Container>
-          <Wrapper padding>
-            <Title title="send" />
-            <Form
-              ref={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleChange}
-            />
-            <ActionsWrapper>
-              <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
-            </ActionsWrapper>
-            <Button
-              block
-              onPress={this.handleFormSubmit}
-              disabled={!isFilled}
-              title="Send"
-            />
-          </Wrapper>
+          <Wrapper padding />
         </Container>
         {qrScannnerComponent}
       </React.Fragment>

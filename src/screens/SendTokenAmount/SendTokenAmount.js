@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import { Text, Keyboard } from 'react-native';
-import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -12,7 +11,6 @@ import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
-import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
 import SendTokenAmountHeader from './SendTokenAmountHeader';
 
@@ -104,7 +102,7 @@ const ActionsWrapper = styled.View`
   margin-bottom: 20px;
 `;
 
-class SendTokenAmount extends React.Component<Props, State> {
+export default class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
 
   constructor(props) {
@@ -118,14 +116,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps(nextProps) {
-    if (nextProps.totalBalance) {
-      return {
-        formStructure: getFormStructure(nextProps),
-      };
-    }
-    return null;
-  }
 
   handleChange = (value: Object) => {
     this.setState({ value });
@@ -144,19 +134,17 @@ class SendTokenAmount extends React.Component<Props, State> {
     if (!value) return;
 
     const transactionPayload: TransactionPayload = {
-      to: value.address,
+      to: '',
       amount: value.amount,
       gasLimit: 1500000,
       gasPrice: 20000000000,
       symbol: token,
       contractAddress,
     };
-    sendAsset(transactionPayload);
-    this.setState({
-      value: null,
-    });
     navigation.push(SEND_TOKEN_CONTACTS, {
       asset,
+      transactionPayload,
+      sendAsset,
     });
   };
 
@@ -221,9 +209,3 @@ class SendTokenAmount extends React.Component<Props, State> {
     );
   }
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
-});
-
-export default connect(null, mapDispatchToProps)(SendTokenAmount);

@@ -94,7 +94,7 @@ const StackNavigatorModalConfig = {
     },
   }),
   navigationOptions: {
-    header: renderHeader,
+    header: false,
   },
 };
 
