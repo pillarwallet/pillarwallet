@@ -58,7 +58,6 @@ export const registerWalletAction = () => {
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
-
     const user = await registerOnBackend(wallet.privateKey);
     await storage.save('user', { user });
     const userState = Object.keys(user).length ? REGISTERED : PENDING;

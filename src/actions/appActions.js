@@ -28,8 +28,9 @@ export const initAppAndRedirectAction = () => {
 
 export const fetchUserAction = () => {
   return async (dispatch: Function) => {
-    const { user } = await storage.get('user');
-    const userState = Object.keys(user || {}).length ? REGISTERED : PENDING;
+    let { user } = await storage.get('user');
+    user = user || {};
+    const userState = Object.keys(user).length ? REGISTERED : PENDING;
     dispatch({
       type: SET_USER,
       payload: {

@@ -19,8 +19,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
 
 // constants
-import { PENDING } from 'constants/userConstants';
-import { REGISTERED } from '../constants/userConstants';
+import { PENDING, REGISTERED } from 'constants/userConstants';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
@@ -113,7 +112,7 @@ class AppFlow extends React.Component<Props, State> {
       this.timer = setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
     }
   }
-  
+
   render() {
     const { userState } = this.props;
     if (!userState) return null;
