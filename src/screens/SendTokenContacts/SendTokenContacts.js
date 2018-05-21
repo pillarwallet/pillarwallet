@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import { Container, Wrapper } from 'components/Layout';
 import TextInput from 'components/TextInput';
+import SlideModal from 'components/Modals/SlideModal';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress } from 'utils/validators';
@@ -33,6 +34,7 @@ type State = {
   isScanning: boolean,
   transactionPayload: Object,
   asset: Object,
+  showConfirmModal: boolean,
   value: ?{
     address: ?string,
     amount: ?number
@@ -102,9 +104,11 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.state = {
       isScanning: false,
       value: null,
+      showConfirmModal: false,
       formStructure: getFormStructure(),
       transactionPayload,
       asset,
+
     };
   }
 
@@ -118,6 +122,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       sendAsset,
       token,
       contractAddress,
+      navigation,
     } = this.props;
 
     if (!value) return;
@@ -134,6 +139,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({
       value: null,
     });
+    navigation.popToTop();
   };
 
   handleToggleQRScanningState = () => {
@@ -156,6 +162,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       transactionPayload,
       asset,
       formStructure,
+      showConfirmModal,
     } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: asset.symbol });
@@ -188,6 +195,10 @@ class SendTokenAmount extends React.Component<Props, State> {
           </Wrapper>
         </Container>
         {qrScannnerComponent}
+        <SlideModal
+          isVisible={showConfirmModal}
+          title="confirm"
+        />
       </React.Fragment>
     );
   }
