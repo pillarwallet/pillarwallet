@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import { StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation';
+import { connect } from 'react-redux';
+import { AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // screens
@@ -12,9 +14,18 @@ import ProfileScreen from 'screens/Profile';
 // components
 import { ADD_TOKEN, ASSETS, ICO, PROFILE, TAB_NAVIGATION } from 'constants/navigationConstants';
 import RetryApiRegistration from 'components/RetryApiRegistration';
-import Storage from 'services/storage';
 
-const storage = Storage.getInstance('db');
+// actions
+import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
+
+// constants
+import { PENDING } from 'constants/userConstants';
+import { REGISTERED } from '../constants/userConstants';
+
+const SLEEP_TIMEOUT = 20000;
+const BACKGROUND_APP_STATE = 'background';
+const INACTIVE_APP_STATE = 'inactive';
+const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
 
 const tabNavigation = TabNavigator(
@@ -23,50 +34,6 @@ const tabNavigation = TabNavigator(
     [ICO]: ICOScreen,
     [PROFILE]: ProfileScreen,
   }, {
-    ...getBottomNavigationOptions() // eslint-disable-line
-  },
-);
-
-const AppFlowNavigation = StackNavigator(
-  {
-    [TAB_NAVIGATION]: tabNavigation,
-    [ADD_TOKEN]: AddTokenScreen,
-  }, {
-    mode: 'modal',
-    navigationOptions: {
-      header: null,
-    },
-  },
-);
-
-type State = {
-  user: Object,
-};
-
-export default class AppFlow extends React.Component<{}, State> {
-  state = {
-    user: {},
-  };
-
-  async componentDidMount() {
-    const { user } = await storage.get('user');
-    this.setState({ user: user || {} }); // eslint-disable-line
-  }
-
-  render() {
-    const { user } = this.state;
-    const userRegistered = Object.keys(user).length;
-
-    if (!userRegistered) {
-      return <RetryApiRegistration />;
-    }
-
-    return <AppFlowNavigation />;
-  }
-}
-
-function getBottomNavigationOptions() {
-  return {
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
@@ -99,5 +66,72 @@ function getBottomNavigationOptions() {
     tabBarPosition: 'bottom',
     animationEnabled: true,
     swipeEnabled: false,
-  };
+  },
+);
+
+const AppFlowNavigation = StackNavigator(
+  {
+    [TAB_NAVIGATION]: tabNavigation,
+    [ADD_TOKEN]: AddTokenScreen,
+  }, {
+    mode: 'modal',
+    navigationOptions: {
+      header: null,
+    },
+  },
+);
+
+type State = {
+  user: Object,
+};
+
+type Props = {
+  fetchAppSettingsAndRedirect: Function,
+  fetchUser: Function,
+  userState: ?string,
 }
+
+class AppFlow extends React.Component<Props, State> {
+  timer: any | TimeoutID;
+
+  componentDidMount() {
+    const { fetchUser, userState } = this.props;
+    if (userState !== REGISTERED) {
+      fetchUser();
+    }
+    AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState: string) => {
+    const { fetchAppSettingsAndRedirect } = this.props;
+    clearTimeout(this.timer);
+    if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
+      this.timer = setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
+    }
+  }
+  
+  render() {
+    const { userState } = this.props;
+    if (!userState) return null;
+    if (userState === PENDING) {
+      return <RetryApiRegistration />;
+    }
+
+    return <AppFlowNavigation />;
+  }
+}
+
+const mapStateToProps = ({ user: { userState } }) => ({
+  userState,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
+  fetchUser: () => dispatch(fetchUserAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

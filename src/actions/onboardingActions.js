@@ -13,6 +13,7 @@ import {
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
+import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
 import { registerOnBackend, getInitialAssets } from 'services/api';
@@ -60,8 +61,15 @@ export const registerWalletAction = () => {
 
     const user = await registerOnBackend(wallet.privateKey);
     await storage.save('user', { user });
-
-    if (!user || !Object.keys(user).length) {
+    const userState = Object.keys(user).length ? REGISTERED : PENDING;
+    dispatch({
+      type: SET_USER,
+      payload: {
+        user,
+        state: userState,
+      },
+    });
+    if (userState === PENDING) {
       await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
@@ -109,15 +117,23 @@ export const registerOnBackendAction = () => {
     await delay(1000);
 
     const user = await registerOnBackend(wallet.privateKey);
+    await storage.save('user', { user });
+    const userState = Object.keys(user).length ? REGISTERED : PENDING;
+    dispatch({
+      type: SET_USER,
+      payload: {
+        user,
+        state: userState,
+      },
+    });
 
-    if (!user || !Object.keys(user).length) {
+    if (userState === PENDING) {
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: API_REGISTRATION_FAILED,
       });
       return;
     }
-    await storage.save('user', { user });
 
     const navigateToAssetsAction = NavigationActions.navigate({
       routeName: APP_FLOW,

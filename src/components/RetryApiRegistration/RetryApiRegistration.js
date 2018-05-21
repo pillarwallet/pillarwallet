@@ -16,7 +16,6 @@ type Props = {
 class RetryApiRegistration extends React.Component<Props> {
   componentDidMount() {
     const { registerOnBackend } = this.props;
-    console.log('componentDidMount');
     registerOnBackend();
   }
 
