@@ -4,6 +4,7 @@ import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import { Container, Wrapper } from 'components/Layout';
+import TextInput from 'components/TextInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress } from 'utils/validators';
@@ -15,6 +16,7 @@ import SendTokenContactsHeader from './SendTokenContactsHeader';
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
+const { Form } = t.form;
 
 type Props = {
   token: string,
@@ -35,25 +37,60 @@ type State = {
     address: ?string,
     amount: ?number
   },
+  formStructure: t.struct,
 }
 
+function AddressInputTemplate(locals) {
+  const { config: { onIconPress } } = locals;
+  const errorMessage = locals.error;
+  const inputProps = {
+    onChange: locals.onChange,
+    onBlur: locals.onBlur,
+    placeholder: 'Ethereum Address',
+    value: locals.value,
+    keyboardType: locals.keyboardType,
+    textAlign: 'right',
+    maxLength: 42,
+    style: {
+      paddingRight: 40,
+      fontSize: 12,
+    },
+  };
+  return (
+    <TextInput
+      errorMessage={errorMessage}
+      id="address"
+      label={locals.label}
+      icon="ios-qr-scanner"
+      onIconPress={onIconPress}
+      inputProps={inputProps}
+    />
+  );
+}
 
-const getFormStructure = (totalBalance) => {
-  const Amount = t.refinement(t.Number, (amount): boolean => {
-    return amount > 0 && amount <= totalBalance;
+const getFormStructure = () => {
+  const Address = t.refinement(t.String, (address): boolean => {
+    return address.length && isValidETHAddress(address);
   });
 
-  Amount.getValidationErrorMessage = (amount): string => {
-    if (amount > totalBalance) {
-      return 'Amount should not exceed the total balance.';
+  Address.getValidationErrorMessage = (address): string => {
+    if (!isValidETHAddress(address)) {
+      return 'Invalid Ethereum Address.';
     }
-    return 'Amount should be specified.';
+    return 'Address must be provided.';
   };
 
   return t.struct({
-    amount: Amount,
+    address: Address,
   });
 };
+
+const generateFormOptions = (config: Object): Object => ({
+  fields: {
+    address: { template: AddressInputTemplate, config, label: 'To' },
+  },
+  order: ['address'],
+});
 
 class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
@@ -65,18 +102,10 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.state = {
       isScanning: false,
       value: null,
+      formStructure: getFormStructure(),
       transactionPayload,
       asset,
     };
-  }
-
-  static getDerivedStateFromProps(nextProps) {
-    if (nextProps.totalBalance) {
-      return {
-        formStructure: getFormStructure(nextProps),
-      };
-    }
-    return null;
   }
 
   handleChange = (value: Object) => {
@@ -126,7 +155,10 @@ class SendTokenAmount extends React.Component<Props, State> {
       isScanning,
       transactionPayload,
       asset,
+      formStructure,
     } = this.state;
+
+    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: asset.symbol });
 
     const qrScannnerComponent = (
       <QRCodeScanner
@@ -146,7 +178,14 @@ class SendTokenAmount extends React.Component<Props, State> {
           symbol={asset.symbol}
         />
         <Container>
-          <Wrapper padding />
+          <Wrapper padding>
+            <Form
+              ref={node => { this._form = node; }}
+              type={formStructure}
+              options={formOptions}
+              onChange={this.handleChange}
+            />
+          </Wrapper>
         </Container>
         {qrScannnerComponent}
       </React.Fragment>
