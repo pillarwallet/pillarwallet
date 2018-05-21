@@ -4,6 +4,8 @@ import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import { Container, Wrapper } from 'components/Layout';
+import { Grid, Row, Column } from 'components/Grid';
+import { Label, Paragraph } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import SlideModal from 'components/Modals/SlideModal';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -35,9 +37,8 @@ type State = {
   transactionPayload: Object,
   asset: Object,
   showConfirmModal: boolean,
-  value: ?{
-    address: ?string,
-    amount: ?number
+  value: {
+    address: string,
   },
   formStructure: t.struct,
 }
@@ -45,6 +46,7 @@ type State = {
 function AddressInputTemplate(locals) {
   const { config: { onIconPress } } = locals;
   const errorMessage = locals.error;
+  console.log(locals.value, errorMessage);
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
@@ -72,6 +74,7 @@ function AddressInputTemplate(locals) {
 
 const getFormStructure = () => {
   const Address = t.refinement(t.String, (address): boolean => {
+    console.log(address.length, isValidETHAddress(address), address);
     return address.length && isValidETHAddress(address);
   });
 
@@ -94,7 +97,7 @@ const generateFormOptions = (config: Object): Object => ({
   order: ['address'],
 });
 
-class SendTokenAmount extends React.Component<Props, State> {
+class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
 
   constructor(props) {
@@ -103,12 +106,11 @@ class SendTokenAmount extends React.Component<Props, State> {
     const asset = this.props.navigation.getParam('asset', {});
     this.state = {
       isScanning: false,
-      value: null,
+      value: { address: '' },
       showConfirmModal: false,
       formStructure: getFormStructure(),
       transactionPayload,
       asset,
-
     };
   }
 
@@ -122,24 +124,22 @@ class SendTokenAmount extends React.Component<Props, State> {
       sendAsset,
       token,
       contractAddress,
-      navigation,
     } = this.props;
-
+    const { transactionPayload } = this.state;
     if (!value) return;
 
-    const transactionPayload: TransactionPayload = {
+    const transactionPayloadWithAddress: TransactionPayload = {
       to: value.address,
-      amount: value.amount,
-      gasLimit: 1500000,
-      gasPrice: 20000000000,
+      amount: transactionPayload.amount,
+      gasLimit: transactionPayload.gasLimit,
+      gasPrice: transactionPayload.gasPrice,
       symbol: token,
       contractAddress,
     };
-    sendAsset(transactionPayload);
+    sendAsset(transactionPayloadWithAddress);
     this.setState({
-      value: null,
+      showConfirmModal: true,
     });
-    navigation.popToTop();
   };
 
   handleToggleQRScanningState = () => {
@@ -163,6 +163,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       asset,
       formStructure,
       showConfirmModal,
+      value,
     } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: asset.symbol });
@@ -191,6 +192,8 @@ class SendTokenAmount extends React.Component<Props, State> {
               type={formStructure}
               options={formOptions}
               onChange={this.handleChange}
+              onBlur={this.handleChange}
+              value={value}
             />
           </Wrapper>
         </Container>
@@ -198,7 +201,28 @@ class SendTokenAmount extends React.Component<Props, State> {
         <SlideModal
           isVisible={showConfirmModal}
           title="confirm"
-        />
+        >
+          <Grid>
+            <Row>
+              <Column size="0 0 40px">
+                <Label>To</Label>
+              </Column>
+              <Column><Paragraph>{value.address}</Paragraph></Column>
+            </Row>
+            <Row>
+              <Column>
+                <Label>Amount</Label>
+              </Column>
+              <Column><Paragraph>{transactionPayload.amount}</Paragraph></Column>
+            </Row>
+            <Row>
+              <Column>
+                <Label>Fee</Label>
+              </Column>
+              <Column><Paragraph>0.0004 ETH</Paragraph></Column>
+            </Row>
+          </Grid>
+        </SlideModal>
       </React.Fragment>
     );
   }
@@ -208,4 +232,4 @@ const mapDispatchToProps = (dispatch) => ({
   sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
 });
 
-export default connect(null, mapDispatchToProps)(SendTokenAmount);
+export default connect(null, mapDispatchToProps)(SendTokenContacts);

@@ -8,6 +8,7 @@ import Button from 'components/Button';
 type Props = {
   onBack: Function,
   index?: number,
+  nextOnPress: Function,
   amount: number,
   symbol: string,
 }
@@ -29,7 +30,12 @@ const BalanceAmount = styled.Text`
 `;
 
 const SendTokenAmountHeader = (props: Props) => {
-  const { onBack, amount, symbol } = props;
+  const {
+    onBack,
+    nextOnPress,
+    amount,
+    symbol,
+  } = props;
 
   return (
     <Header>
@@ -55,7 +61,7 @@ const SendTokenAmountHeader = (props: Props) => {
           noPadding
           marginTop="20px"
           marginRight="10px"
-          onPress={() => onBack(null)}
+          onPress={() => nextOnPress()}
           title="Next"
         />
       </Right>

@@ -200,7 +200,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
               onChange={this.handleChange}
             />
             <ActionsWrapper>
-              <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
+              <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004 ETH</Text></Text>
             </ActionsWrapper>
           </Wrapper>
         </Container>
