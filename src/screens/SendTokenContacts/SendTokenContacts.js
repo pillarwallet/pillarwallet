@@ -30,6 +30,7 @@ type Props = {
 type State = {
   isScanning: boolean,
   transactionPayload: Object,
+  asset: Object,
   value: ?{
     address: ?string,
     amount: ?number
@@ -60,10 +61,12 @@ class SendTokenAmount extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
+    const asset = this.props.navigation.getParam('asset', {});
     this.state = {
       isScanning: false,
       value: null,
       transactionPayload,
+      asset,
     };
   }
 
@@ -122,6 +125,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const {
       isScanning,
       transactionPayload,
+      asset,
     } = this.state;
 
     const qrScannnerComponent = (
@@ -139,6 +143,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           onBack={this.props.navigation.goBack}
           nextOnPress={this.handleFormSubmit}
           amount={transactionPayload.amount}
+          symbol={asset.symbol}
         />
         <Container>
           <Wrapper padding />

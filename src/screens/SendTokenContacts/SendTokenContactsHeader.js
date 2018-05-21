@@ -9,6 +9,7 @@ type Props = {
   onBack: Function,
   index?: number,
   amount: number,
+  symbol: string,
 }
 
 const Header = styled(NBHeader)`
@@ -28,7 +29,7 @@ const BalanceAmount = styled.Text`
 `;
 
 const SendTokenAmountHeader = (props: Props) => {
-  const { onBack, amount } = props;
+  const { onBack, amount, symbol } = props;
 
   return (
     <Header>
@@ -45,7 +46,7 @@ const SendTokenAmountHeader = (props: Props) => {
       </Left>
       <Body>
         <BalanceLabel>Send</BalanceLabel>
-        <BalanceAmount>{amount}</BalanceAmount>
+        <BalanceAmount>{amount} {symbol}</BalanceAmount>
       </Body>
       <Right>
         <Button
