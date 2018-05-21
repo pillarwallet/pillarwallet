@@ -10,7 +10,6 @@ type Props = {
   index?: number,
   balanceAmount: string,
   symbol: string,
-  nextOnPress: Function,
 }
 
 const Header = styled(NBHeader)`
@@ -30,12 +29,7 @@ const BalanceAmount = styled.Text`
 `;
 
 const SendTokenAmountHeader = (props: Props) => {
-  const {
-    onBack,
-    balanceAmount,
-    symbol,
-    nextOnPress,
-  } = props;
+  const { onBack, balanceAmount, symbol } = props;
 
   return (
     <Header>
@@ -61,7 +55,7 @@ const SendTokenAmountHeader = (props: Props) => {
           noPadding
           marginTop="20px"
           marginRight="10px"
-          onPress={nextOnPress}
+          onPress={() => onBack(null)}
           title="Next"
         />
       </Right>

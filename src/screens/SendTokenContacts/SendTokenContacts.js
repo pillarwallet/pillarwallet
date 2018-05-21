@@ -5,16 +5,16 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
+import Button from 'components/Button';
 import Title from 'components/Title';
 import TextInput from 'components/TextInput';
 import type { NavigationScreenProp } from 'react-navigation';
-import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import QRCodeScanner from 'components/QRCodeScanner';
-import { isValidETHAddress } from 'utils/validators';
+import { isValidETHAddress, hasAllValues } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
-import SendTokenAmountHeader from './SendTokenAmountHeader';
+import SendTokenContactsHeader from './SendTokenContactsHeader';
 
 
 // make Dynamic once more tokens supported
@@ -137,9 +137,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       sendAsset,
       token,
       contractAddress,
-      navigation,
     } = this.props;
-    const { asset } = this.state;
 
     if (!value) return;
 
@@ -155,9 +153,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({
       value: null,
     });
-    navigation.push(SEND_TOKEN_CONTACTS, {
-      asset,
-    });
+    alert('it worked');
   };
 
   handleToggleQRScanningState = () => {
@@ -183,6 +179,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       asset,
     } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
+    const isFilled = hasAllValues(value);
 
     const qrScannnerComponent = (
       <QRCodeScanner
@@ -195,9 +192,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     );
     return (
       <React.Fragment>
-        <SendTokenAmountHeader
+        <SendTokenContactsHeader
           onBack={this.props.navigation.goBack}
-          nextOnPress={this.handleFormSubmit}
           balanceAmount={asset.balance.toString()}
           symbol={asset.symbol}
         />
@@ -214,6 +210,12 @@ class SendTokenAmount extends React.Component<Props, State> {
             <ActionsWrapper>
               <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004ETH</Text></Text>
             </ActionsWrapper>
+            <Button
+              block
+              onPress={this.handleFormSubmit}
+              disabled={!isFilled}
+              title="Send"
+            />
           </Wrapper>
         </Container>
         {qrScannnerComponent}

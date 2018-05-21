@@ -161,14 +161,12 @@ class AssetsScreen extends React.Component<Props, State> {
           balance,
           name,
           symbol,
-          address: contractAddress,
         } = asset;
 
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : 0;
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
-        // const activeModalOptions = { address: wallet.address };
-        const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
+        const activeModalOptions = { address: wallet.address };
         const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = index * 140;
 
@@ -190,7 +188,7 @@ class AssetsScreen extends React.Component<Props, State> {
           >
 
             <AssetButtons
-              recieveOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: sendModalOptions } }); }}
+              recieveOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
               sendOnPress={() => this.goToSendTokenFlow(asset)}
             />
 
