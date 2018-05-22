@@ -118,7 +118,7 @@ const ModalItem = styled.View`
 `;
 
 const ModalLabel = styled(Paragraph)`
-  flex: ${props => props.small ? '0 0 30px' : '0 0 60px'};
+  flex: 0 0 60px;
   font-weight: ${fontWeights.bold};
   color: ${baseColors.warmGray};
 `;
@@ -263,7 +263,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         >
           <ModalItemWrapper>
             <ModalItem large>
-              <ModalLabel small>To</ModalLabel>
+              <ModalLabel>To</ModalLabel>
               <ModalAddressValue>{value.address}</ModalAddressValue>
             </ModalItem>
             <ModalItem>
@@ -282,7 +282,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             </ModalItem>
           </ModalItemWrapper>
           <ModalFooter>
-            <ModalParagraph>
+            <ModalParagraph light>
               The process may take up to 10 minutes to complete. Please check your transaction history.
             </ModalParagraph>
             <Button title="Send" onPress={this.handleFormSubmit} />

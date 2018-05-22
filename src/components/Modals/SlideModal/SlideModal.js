@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
+import Title from 'components/Title';
 import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
@@ -38,8 +39,6 @@ const ModalBackground = styled.View`
 
 const ModalHeader = styled.View`
   flex-direction: row;
-  height: 30;
-  margin-bottom: 30;
   width: 100%;
   align-items: center;
   justify-content: space-between;
@@ -55,14 +54,11 @@ const ModalOverflow = styled.View`
   background-color: #FFFFFF;
 `;
 
-const ModalTitle = styled.Text`
-  font-size: 24px;
-  font-weight: 700;
-`;
 
 const CloseButton = styled(ButtonIcon)`
   position: relative;
   top: -10px;
+  right: -10px;
 `;
 
 export default class SlideModal extends React.Component<Props, State> {
@@ -122,7 +118,7 @@ export default class SlideModal extends React.Component<Props, State> {
         <ModalWrapper>
           <ModalBackground>
             <ModalHeader>
-              <ModalTitle>{title}</ModalTitle>
+              <Title noMargin title={title} />
               <CloseButton
                 icon="close"
                 onPress={this.hideModal}
