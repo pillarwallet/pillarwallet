@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontSizes, fontWeights } from 'utils/variables';
+import { fontSizes, fontWeights, baseColors } from 'utils/variables';
 import { Header as NBHeader, Body, Left, Right } from 'native-base';
 import Button from 'components/Button';
+import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
   onBack: Function,
@@ -29,6 +30,11 @@ const BalanceAmount = styled.Text`
   font-weight: ${fontWeights.bold};
 `;
 
+const BackIcon = styled(ButtonIcon)`
+  position: relative;
+  top: 10px;
+`;
+
 const SendTokenAmountHeader = (props: Props) => {
   const {
     onBack,
@@ -40,15 +46,7 @@ const SendTokenAmountHeader = (props: Props) => {
   return (
     <Header>
       <Left>
-        <Button
-          secondary
-          small
-          noPadding
-          marginTop="20px"
-          marginLeft="10px"
-          onPress={() => onBack(null)}
-          title="Cancel"
-        />
+        <BackIcon icon="arrow-back" color={baseColors.clearBlue} onPress={() => onBack(null)} fontSize={28} />
       </Left>
       <Body>
         <BalanceLabel>Send</BalanceLabel>
@@ -62,7 +60,7 @@ const SendTokenAmountHeader = (props: Props) => {
           marginTop="20px"
           marginRight="10px"
           onPress={() => nextOnPress()}
-          title="Next"
+          title="Send"
         />
       </Right>
     </Header>

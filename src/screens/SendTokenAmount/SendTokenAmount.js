@@ -105,7 +105,7 @@ const ActionsWrapper = styled.View`
 export default class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     const asset = this.props.navigation.getParam('asset', {});
     this.state = {

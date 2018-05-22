@@ -176,14 +176,14 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({ value });
   };
 
-  handleFormSubmit = () => {
+  openConfirmationModal = () => {
     const value = this._form.getValue();
     const {
-      sendAsset,
       token,
       contractAddress,
     } = this.props;
     const { transactionPayload } = this.state;
+
     if (!value) return;
 
     const transactionPayloadWithAddress: TransactionPayload = {
@@ -194,10 +194,15 @@ class SendTokenContacts extends React.Component<Props, State> {
       symbol: token,
       contractAddress,
     };
-    sendAsset(transactionPayloadWithAddress);
+
     this.setState({
       showConfirmModal: true,
+      transactionPayload: transactionPayloadWithAddress,
     });
+  }
+
+  handleFormSubmit = () => {
+    this.props.sendAsset(this.state.transactionPayload);
   };
 
   handleToggleQRScanningState = () => {
@@ -239,7 +244,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       <React.Fragment>
         <SendTokenContactsHeader
           onBack={this.props.navigation.goBack}
-          nextOnPress={this.handleFormSubmit}
+          nextOnPress={this.openConfirmationModal}
           amount={transactionPayload.amount}
           symbol={asset.symbol}
         />
@@ -270,22 +275,22 @@ class SendTokenContacts extends React.Component<Props, State> {
               <ModalLabel>Amount</ModalLabel>
               <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol></ModalValue>
             </ModalItem>
-            <ModalItem>
+            <ModalItem noBorder>
               <ModalLabel>Fee</ModalLabel>
               <ModalValue>0.0004 <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
             </ModalItem>
-            <ModalItem large noBorder>
+            {/* <ModalItem large noBorder>
               <ModalLabel>Total</ModalLabel>
               <ModalValue large>
                 {(transactionPayload.amount + 0.0004).toFixed(6)} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol>
               </ModalValue>
-            </ModalItem>
+            </ModalItem> */}
           </ModalItemWrapper>
           <ModalFooter>
             <ModalParagraph light>
               The process may take up to 10 minutes to complete. Please check your transaction history.
             </ModalParagraph>
-            <Button title="Send" onPress={this.handleFormSubmit} />
+            <Button title="Confirm Transaction" onPress={this.handleFormSubmit} />
           </ModalFooter>
         </ConfirmationModal>
       </React.Fragment>
