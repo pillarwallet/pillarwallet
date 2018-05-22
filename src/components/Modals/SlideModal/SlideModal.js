@@ -39,6 +39,7 @@ const ModalBackground = styled.View`
 const ModalHeader = styled.View`
   flex-direction: row;
   height: 30;
+  margin-bottom: 30;
   width: 100%;
   align-items: center;
   justify-content: space-between;
@@ -48,7 +49,6 @@ const ModalContent = styled.View`
   flex: 1;
   height: ${window.height};
   align-items: center;
-  justify-content: space-around;
 `;
 
 const ModalOverflow = styled.View`

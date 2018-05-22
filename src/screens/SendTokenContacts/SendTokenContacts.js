@@ -1,11 +1,13 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
-import { Container, Wrapper } from 'components/Layout';
-import { Grid, Row, Column } from 'components/Grid';
-import { Label, Paragraph } from 'components/Typography';
+import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
+import { Container, Footer, Wrapper } from 'components/Layout';
+import { Paragraph } from 'components/Typography';
+import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import SlideModal from 'components/Modals/SlideModal';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -15,11 +17,6 @@ import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
 import SendTokenContactsHeader from './SendTokenContactsHeader';
-
-
-// make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
-const { Form } = t.form;
 
 type Props = {
   token: string,
@@ -43,10 +40,13 @@ type State = {
   formStructure: t.struct,
 }
 
+// make Dynamic once more tokens supported
+const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
+const { Form } = t.form;
+
 function AddressInputTemplate(locals) {
   const { config: { onIconPress } } = locals;
   const errorMessage = locals.error;
-  console.log(locals.value, errorMessage);
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
@@ -74,7 +74,6 @@ function AddressInputTemplate(locals) {
 
 const getFormStructure = () => {
   const Address = t.refinement(t.String, (address): boolean => {
-    console.log(address.length, isValidETHAddress(address), address);
     return address.length && isValidETHAddress(address);
   });
 
@@ -96,6 +95,45 @@ const generateFormOptions = (config: Object): Object => ({
   },
   order: ['address'],
 });
+
+const ConfirmationModal = styled(SlideModal)`
+  align-items: flex-start;
+`;
+
+const ModalItemWrapper = styled.View`
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 20px;
+`;
+
+const ModalItem = styled.View`
+  height: ${props => props.large ? '60px' : '30px'};
+  margin-bottom: 10px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom-width: ${props => props.large ? '0' : '1px'};
+  border-color: ${UIColors.defaultBorderColor};
+`;
+
+const ModalLabel = styled(Paragraph)`
+  flex: ${props => props.small ? '0 0 40px' : '0 0 80px'};
+  font-weight: ${fontWeights.bold};
+  color: ${baseColors.warmGray};
+`;
+
+const ModalValue = styled(Paragraph)`
+  flex: 1;
+  text-align: right;
+  font-size: ${props => props.large ? fontSizes.large : fontSizes.medium};
+  font-weight: ${props => props.large ? fontWeights.bold : fontWeights.book};
+  color: ${props => props.large ? baseColors.black : baseColors.warmGray};
+`;
+
+const ModalValueSymbol = styled.Text`
+  font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.bold};
+`;
 
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
@@ -198,31 +236,37 @@ class SendTokenContacts extends React.Component<Props, State> {
           </Wrapper>
         </Container>
         {qrScannnerComponent}
-        <SlideModal
+        <ConfirmationModal
           isVisible={showConfirmModal}
           title="confirm"
         >
-          <Grid>
-            <Row>
-              <Column size="0 0 40px">
-                <Label>To</Label>
-              </Column>
-              <Column><Paragraph>{value.address}</Paragraph></Column>
-            </Row>
-            <Row>
-              <Column>
-                <Label>Amount</Label>
-              </Column>
-              <Column><Paragraph>{transactionPayload.amount}</Paragraph></Column>
-            </Row>
-            <Row>
-              <Column>
-                <Label>Fee</Label>
-              </Column>
-              <Column><Paragraph>0.0004 ETH</Paragraph></Column>
-            </Row>
-          </Grid>
-        </SlideModal>
+          <ModalItemWrapper>
+            <ModalItem>
+              <ModalLabel small>To</ModalLabel>
+              <ModalValue>{value.address}</ModalValue>
+            </ModalItem>
+            <ModalItem>
+              <ModalLabel>Amount</ModalLabel>
+              <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol></ModalValue>
+            </ModalItem>
+            <ModalItem>
+              <ModalLabel>Fee</ModalLabel>
+              <ModalValue>0.0004 <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
+            </ModalItem>
+            <ModalItem large>
+              <ModalLabel>Total</ModalLabel>
+              <ModalValue large>
+                {(transactionPayload.amount + 0.0004).toFixed(6)} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol>
+              </ModalValue>
+            </ModalItem>
+          </ModalItemWrapper>
+          <Footer>
+            <Paragraph>
+              The process may take up to 10 minutes to complete. Please check your transaction history.
+            </Paragraph>
+            <Button title="Send" onPress={this.handleFormSubmit} />
+          </Footer>
+        </ConfirmationModal>
       </React.Fragment>
     );
   }
