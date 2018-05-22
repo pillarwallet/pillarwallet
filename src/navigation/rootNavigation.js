@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing } from 'react-native';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import {
   StackNavigator,
@@ -8,6 +7,7 @@ import {
   TabNavigator,
   TabBarBottom,
 } from 'react-navigation';
+import { Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // screens
@@ -69,14 +69,7 @@ const renderHeader = ({ navigation, ...rest }) => {
 };
 
 const StackNavigatorConfig = {
-  headerMode: 'float',
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
+  headerMode: 'screen',
   navigationOptions: {
     header: renderHeader,
     gesturesEnabled: false,
@@ -103,7 +96,7 @@ const onBoardingFlow = StackNavigator({
   [NEW_WALLET]: {
     screen: NewWalletScreen,
     navigationOptions: {
-      headerLeft: null,
+      header: null,
     },
   },
   [IMPORT_WALLET]: ImportWalletScreen,
@@ -147,8 +140,10 @@ const appFlow = StackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FLOW]: sendTokenFlow,
   }, {
-    headerMode: 'none',
     mode: 'modal',
+    navigationOptions: {
+      header: null,
+    },
   },
 );
 

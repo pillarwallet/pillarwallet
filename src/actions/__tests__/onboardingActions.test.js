@@ -8,7 +8,7 @@ import {
   ENCRYPTING,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET, APP_FLOW } from 'constants/navigationConstants';
-import { UPDATE_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { initialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
@@ -28,6 +28,14 @@ const mockOnboarding: Object = {
   pin: '',
 };
 
+const mockExchangeRates = {
+  ETH: {
+    EUR: 624.21,
+    GBP: 544.57,
+    USD: 748.92,
+  },
+};
+
 Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
@@ -37,6 +45,10 @@ jest.mock('ethers', () => ({
     fromMnemonic: () => mockWallet,
     fromEncryptedWallet: () => mockWallet,
   },
+}));
+
+jest.mock('cryptocompare', () => ({
+  priceMulti: () => Promise.resolve(mockExchangeRates),
 }));
 
 describe('Wallet actions', () => {
@@ -57,8 +69,8 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: SET_RATES, payload: {} },
-      { type: UPDATE_ASSETS, payload: transformAssetsToObject(initialAssets) },
+      { type: SET_RATES, payload: mockExchangeRates },
+      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(initialAssets) },
       {
         type: NAVIGATE,
         routeName: APP_FLOW,
@@ -88,8 +100,8 @@ describe('Wallet actions', () => {
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: SET_RATES, payload: {} },
-      { type: UPDATE_ASSETS, payload: transformAssetsToObject(initialAssets) },
+      { type: SET_RATES, payload: mockExchangeRates },
+      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(initialAssets) },
       {
         type: NAVIGATE,
         routeName: APP_FLOW,

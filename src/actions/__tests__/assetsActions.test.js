@@ -7,7 +7,10 @@ import {
   FETCHED,
   FETCHING,
   ETH,
+  UPDATE_ASSETS,
 } from 'constants/assetsConstants';
+import { SET_RATES } from 'constants/ratesConstants';
+import type { Assets } from 'models/Asset';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
 
 const mockStore = configureMockStore([thunk]);
@@ -20,6 +23,15 @@ const mockTranscation: Object = {
   amount: 0.5,
   address: '000x124',
   gasPrice: 15000,
+};
+
+const mockAssets: Assets = {
+  ETH: {
+    symbol: ETH,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+  },
 };
 
 Object.defineProperty(mockWallet, 'sendTransaction', {
@@ -37,7 +49,7 @@ jest.mock('ethers', () => ({
   },
   providers: {
     getDefaultProvider: () => ({
-      getBalance: () => Promise.resolve(5), // ropsten dummy balance
+      getBalance: () => Promise.resolve(1), // ropsten dummy balance
     }),
   },
 }));
@@ -70,9 +82,10 @@ describe('Wallet actions', () => {
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
+      { payload: {}, type: SET_RATES },
+      { payload: { ETH: mockAssets.ETH }, type: UPDATE_ASSETS },
     ];
-
-    return store.dispatch(fetchAssetsBalancesAction({ ETH: { symbol: ETH } }, mockWallet.address))
+    return store.dispatch(fetchAssetsBalancesAction(mockAssets, mockWallet.address))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
