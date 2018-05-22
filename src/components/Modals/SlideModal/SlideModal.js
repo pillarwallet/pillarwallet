@@ -57,7 +57,7 @@ const ModalOverflow = styled.View`
 
 const CloseButton = styled(ButtonIcon)`
   position: relative;
-  top: -10px;
+  top: -15px;
   right: -10px;
 `;
 
