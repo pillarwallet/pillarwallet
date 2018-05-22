@@ -55,7 +55,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
           pageInstructions="Setup your Passcode"
           showForgotButton={false}
         />
-        {this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
+        {!!this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
       </Container>
     );
   }

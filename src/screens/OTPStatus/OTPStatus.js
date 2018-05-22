@@ -18,7 +18,7 @@ class OTPStatus extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="thanks" />
           <Paragraph>Congratulations!</Paragraph>
           <Paragraph>

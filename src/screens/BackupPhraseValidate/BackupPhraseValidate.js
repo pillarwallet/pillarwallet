@@ -179,7 +179,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="verify" />
           <Paragraph light>
             Please select the appropriate words from the list

@@ -60,7 +60,7 @@ class Signup extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="signup" />
           <Paragraph>Securely manage your digital assets and participate in exlusive Initial Coin Offerings.</Paragraph>
           <LoginForm>

@@ -46,7 +46,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
+        {!!this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <Center>
           <Title>Confirm Passcode</Title>
         </Center>

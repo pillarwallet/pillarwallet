@@ -116,9 +116,9 @@ class TextInput extends React.Component<Props, State> {
             textAlign: alignRight ? 'right' : 'left',
           }}
         />
-        {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
-        {postfix && <PostFix>{postfix}</PostFix>}
-        {errorMessage && <Error>{errorMessage}</Error>}
+        {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
+        {!!postfix && <PostFix>{postfix}</PostFix>}
+        {!!errorMessage && <Error>{errorMessage}</Error>}
       </Item>
     );
   }

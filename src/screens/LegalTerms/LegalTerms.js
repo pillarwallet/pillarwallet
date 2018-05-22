@@ -89,7 +89,7 @@ class LegalTerms extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="review" />
           <Paragraph light>By using the Pillar Wallet you agree that:</Paragraph>
           <CheckboxItem marginBottom>
@@ -107,7 +107,7 @@ class LegalTerms extends React.Component<Props, State> {
             </CheckboxText>
           </CheckboxItem>
         </Wrapper>
-        {termsViewVisible && (
+        {!!termsViewVisible && (
           <Footer>
             <CheckboxItem marginBottom>
               { this.buildCheckBox('box03', box03) }

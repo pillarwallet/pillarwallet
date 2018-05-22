@@ -303,7 +303,7 @@ class AssetsScreen extends React.Component<Props, State> {
               </Row>
             </Grid>
           </Animated.View>
-          <Wrapper padding>
+          <Wrapper regularPadding>
             <Grid>
               <Row>
                 <Column>

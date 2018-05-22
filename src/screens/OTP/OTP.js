@@ -45,7 +45,7 @@ class OTP extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="confirm" />
           <Paragraph>We sent your code to</Paragraph>
           <Paragraph>+441234 567 890</Paragraph>

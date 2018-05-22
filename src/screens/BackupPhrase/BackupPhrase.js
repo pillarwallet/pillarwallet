@@ -32,7 +32,7 @@ class BackupPhrase extends React.Component<Props, {}> {
 
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="passphrase" />
           <Paragraph>Carefully write down the words. Don&#39;t email or screeshot it, keep it secure.</Paragraph>
           <MnemonicPhrase phrase={wallet.mnemonic.original} />

@@ -33,7 +33,7 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.ScrollView`
-  padding: ${props => (props.padding ? '0 20px' : '0')};
+  padding: ${props => (props.regularPadding ? '0 20px' : '0')};
   flex: 1;
 `;
 

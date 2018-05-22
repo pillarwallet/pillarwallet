@@ -121,7 +121,7 @@ class AddToken extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <CloseButton
             icon="close"
             onPress={this.handleScreenDissmisal}
