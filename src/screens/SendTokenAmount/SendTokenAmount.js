@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Text, Keyboard } from 'react-native';
+import { Text, Keyboard, TouchableOpacity } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -211,7 +211,9 @@ export default class SendTokenAmount extends React.Component<Props, State> {
               value={value}
               onChange={this.handleChange}
             />
-            <UseMaxValueButton onPress={this.useMaxValue}>Use Max</UseMaxValueButton>
+            <TouchableOpacity onPress={this.useMaxValue}>
+              <UseMaxValueButton>Use Max</UseMaxValueButton>
+            </TouchableOpacity>
             <ActionsWrapper>
               <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004 ETH</Text></Text>
             </ActionsWrapper>
