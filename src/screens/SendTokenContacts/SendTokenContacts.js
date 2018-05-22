@@ -5,8 +5,9 @@ import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
-import { Container, Footer, Wrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
+import Title from 'components/Title';
 import Button from 'components/Button';
 import TextInput from 'components/TextInput';
 import SlideModal from 'components/Modals/SlideModal';
@@ -103,7 +104,7 @@ const ConfirmationModal = styled(SlideModal)`
 const ModalItemWrapper = styled.View`
   justify-content: flex-start;
   align-items: flex-start;
-  margin-top: 20px;
+  flex: 1;
 `;
 
 const ModalItem = styled.View`
@@ -112,12 +113,12 @@ const ModalItem = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border-bottom-width: ${props => props.large ? '0' : '1px'};
+  border-bottom-width: ${props => props.noBorder ? '0' : '1px'};
   border-color: ${UIColors.defaultBorderColor};
 `;
 
 const ModalLabel = styled(Paragraph)`
-  flex: ${props => props.small ? '0 0 40px' : '0 0 80px'};
+  flex: ${props => props.small ? '0 0 30px' : '0 0 60px'};
   font-weight: ${fontWeights.bold};
   color: ${baseColors.warmGray};
 `;
@@ -125,14 +126,33 @@ const ModalLabel = styled(Paragraph)`
 const ModalValue = styled(Paragraph)`
   flex: 1;
   text-align: right;
+  flex-wrap: wrap;
   font-size: ${props => props.large ? fontSizes.large : fontSizes.medium};
   font-weight: ${props => props.large ? fontWeights.bold : fontWeights.book};
   color: ${props => props.large ? baseColors.black : baseColors.warmGray};
 `;
 
+const ModalAddressValue = styled(Paragraph)`
+  flex: 1;
+  text-align: left;
+  flex-wrap: wrap;
+  font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.book};
+  color: ${baseColors.warmGray};
+`;
+
 const ModalValueSymbol = styled.Text`
   font-size: ${fontSizes.small};
   font-weight: ${fontWeights.bold};
+`;
+
+const ModalParagraph = styled(Paragraph)`
+  margin-bottom: 20px;
+`;
+
+const ModalFooter = styled.View`
+  flex: 2;
+  justify-content: flex-end;
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
@@ -225,6 +245,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         />
         <Container>
           <Wrapper padding>
+            <Title title="choose contact" />
             <Form
               ref={node => { this._form = node; }}
               type={formStructure}
@@ -241,9 +262,9 @@ class SendTokenContacts extends React.Component<Props, State> {
           title="confirm"
         >
           <ModalItemWrapper>
-            <ModalItem>
+            <ModalItem large>
               <ModalLabel small>To</ModalLabel>
-              <ModalValue>{value.address}</ModalValue>
+              <ModalAddressValue>{value.address}</ModalAddressValue>
             </ModalItem>
             <ModalItem>
               <ModalLabel>Amount</ModalLabel>
@@ -253,19 +274,19 @@ class SendTokenContacts extends React.Component<Props, State> {
               <ModalLabel>Fee</ModalLabel>
               <ModalValue>0.0004 <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
             </ModalItem>
-            <ModalItem large>
+            <ModalItem large noBorder>
               <ModalLabel>Total</ModalLabel>
               <ModalValue large>
                 {(transactionPayload.amount + 0.0004).toFixed(6)} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol>
               </ModalValue>
             </ModalItem>
           </ModalItemWrapper>
-          <Footer>
-            <Paragraph>
+          <ModalFooter>
+            <ModalParagraph>
               The process may take up to 10 minutes to complete. Please check your transaction history.
-            </Paragraph>
+            </ModalParagraph>
             <Button title="Send" onPress={this.handleFormSubmit} />
-          </Footer>
+          </ModalFooter>
         </ConfirmationModal>
       </React.Fragment>
     );

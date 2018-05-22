@@ -46,13 +46,10 @@ const ModalHeader = styled.View`
 `;
 
 const ModalContent = styled.View`
-  flex: 1;
-  height: ${window.height};
-  align-items: center;
+  height: ${window.height - modalOffset};
 `;
 
 const ModalOverflow = styled.View`
-  flex: 1;
   height: ${window.height};
   width: 100%;
   background-color: #FFFFFF;
