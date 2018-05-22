@@ -12,6 +12,7 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { pipe, decodeETHAddress } from 'utils/common';
+import { baseColors } from 'utils/variables';
 import SendTokenAmountHeader from './SendTokenAmountHeader';
 
 
@@ -34,7 +35,6 @@ type State = {
   isScanning: boolean,
   asset: Object,
   value: ?{
-    address: ?string,
     amount: ?number
   },
   formStructure: t.struct,
@@ -100,6 +100,12 @@ const ActionsWrapper = styled.View`
   margin-bottom: 20px;
 `;
 
+const UseMaxValueButton = styled.Text`
+  color: ${baseColors.clearBlue};
+  width: 100%;
+  text-align: right;
+`;
+
 export default class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
 
@@ -143,6 +149,15 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       asset,
       transactionPayload,
       sendAsset,
+    });
+  };
+
+  useMaxValue = () => {
+    const maxValue = this.state.asset.balance - 0.0004;
+    this.setState({
+      value: {
+        amount: maxValue,
+      },
     });
   };
 
@@ -196,6 +211,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
               value={value}
               onChange={this.handleChange}
             />
+            <UseMaxValueButton onPress={this.useMaxValue}>Use Max</UseMaxValueButton>
             <ActionsWrapper>
               <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004 ETH</Text></Text>
             </ActionsWrapper>
