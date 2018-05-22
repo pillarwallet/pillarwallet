@@ -129,7 +129,7 @@ const ModalValue = styled(Paragraph)`
   flex-wrap: wrap;
   font-size: ${props => props.large ? fontSizes.large : fontSizes.medium};
   font-weight: ${props => props.large ? fontWeights.bold : fontWeights.book};
-  color: ${props => props.large ? baseColors.black : baseColors.warmGray};
+  color: ${props => props.large ? baseColors.black : baseColors.darkGray};
 `;
 
 const ModalAddressValue = styled(Paragraph)`
@@ -138,7 +138,7 @@ const ModalAddressValue = styled(Paragraph)`
   flex-wrap: wrap;
   font-size: ${fontSizes.small};
   font-weight: ${fontWeights.book};
-  color: ${baseColors.warmGray};
+  color: ${baseColors.darkGray};
 `;
 
 const ModalValueSymbol = styled.Text`
