@@ -48,14 +48,9 @@ android {
     devRemoteKernel {
       minSdkVersion 21
     }
-    dev19 {
-      // For debugging / development on older SDK versions. Increases build
-      // time so use 'dev' if not running on older SDKs.
-      minSdkVersion 19
-    }
     prod {
       // The actual minSdkVersion for the application.
-      minSdkVersion 19
+      minSdkVersion 21
     }
   }
   buildTypes {
@@ -103,9 +98,10 @@ preBuild.dependsOn exponentPrebuildStep
 
 
 dependencies {
-    compile(project(':react-native-firebase')) {
-        transitive = false
-    }
+// TODO: implement external firebase library
+//  compile(project(':react-native-firebase')) {
+//        transitive = false
+//    }
   compile fileTree(dir: 'libs', include: ['*.jar'])
 
   compile 'com.android.support:multidex:1.0.1'
