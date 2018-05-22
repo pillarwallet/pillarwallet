@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Dimensions } from 'react-native';
+import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import Title from 'components/Title';
@@ -123,6 +124,7 @@ export default class SlideModal extends React.Component<Props, State> {
                 icon="close"
                 onPress={this.hideModal}
                 fontSize={36}
+                color={baseColors.clearBlue}
               />
             </ModalHeader>
             <ModalContent>
