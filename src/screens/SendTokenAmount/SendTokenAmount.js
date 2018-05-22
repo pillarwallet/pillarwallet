@@ -5,7 +5,7 @@ import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import Title from 'components/Title';
-import TextInput from 'components/TextInput';
+import AmountInput from 'components/AmountInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -79,7 +79,7 @@ function AmountInputTemplate(locals) {
   };
 
   return (
-    <TextInput
+    <AmountInput
       postfix={currency}
       errorMessage={errorMessage}
       id="amount"
@@ -93,9 +93,7 @@ const generateFormOptions = (config: Object): Object => ({
   fields: {
     amount: { template: AmountInputTemplate, config },
   },
-  order: ['amount', 'address'],
 });
-
 
 const ActionsWrapper = styled.View`
   margin-top: 10px;
@@ -163,14 +161,13 @@ export default class SendTokenAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { token } = this.props;
     const {
       value,
       isScanning,
       formStructure,
       asset,
     } = this.state;
-    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
+    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: asset.symbol });
 
     const qrScannnerComponent = (
       <QRCodeScanner
