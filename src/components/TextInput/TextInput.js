@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item, Input, Label } from 'native-base';
+import { fontSizes, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 
 type inputPropsType = {
@@ -21,7 +22,8 @@ type Props = {
   iconColor?: string,
   errorMessage?: string,
   onIconPress?: Function,
-  inputProps: inputPropsType
+  inputProps: inputPropsType,
+  inputType?: string,
 }
 
 type State = {
@@ -31,6 +33,26 @@ type State = {
 type EventLike = {
   nativeEvent: Object,
 }
+
+const inputTypes = {
+  default: {
+    fontSize: fontSizes.medium,
+    fontWeight: fontWeights.book,
+    textAlign: 'left',
+  },
+  amount: {
+    fontSize: fontSizes.extraExtraLarge,
+    fontWeight: fontWeights.bold,
+    textAlign: 'right',
+  },
+};
+
+const getInputType = (inputType?: string) => {
+  if (inputType === 'amount') {
+    return inputTypes.amount;
+  }
+  return inputTypes.default;
+};
 
 const FloatingButton = styled(ButtonIcon)`
   position:absolute;
@@ -100,9 +122,11 @@ class TextInput extends React.Component<Props, State> {
       inputProps,
       errorMessage,
       inlineLabel,
-      alignRight,
     } = this.props;
     const { value } = this.state;
+
+    const inputType = getInputType(this.props.inputType);
+    const marginRight = postfix ? 30 : 0;
 
     return (
       <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>
@@ -113,7 +137,10 @@ class TextInput extends React.Component<Props, State> {
           onBlur={this.handleBlur}
           value={value}
           style={{
-            textAlign: alignRight ? 'right' : 'left',
+            fontWeight: inputType.fontWeight,
+            fontSize: inputType.fontSize,
+            textAlign: inputType.textAlign,
+            marginRight,
           }}
         />
         {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}

@@ -5,7 +5,7 @@ import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import Title from 'components/Title';
-import AmountInput from 'components/AmountInput';
+import TextInput from 'components/TextInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -79,7 +79,8 @@ function AmountInputTemplate(locals) {
   };
 
   return (
-    <AmountInput
+    <TextInput
+      inputType="amount"
       postfix={currency}
       errorMessage={errorMessage}
       id="amount"
