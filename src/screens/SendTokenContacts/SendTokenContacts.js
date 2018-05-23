@@ -239,6 +239,35 @@ class SendTokenContacts extends React.Component<Props, State> {
         onRead={this.handleQRRead}
       />
     );
+
+    const confirmationModal = (
+      <ConfirmationModal
+        isVisible={showConfirmModal}
+        title="confirm"
+      >
+        <ModalItemWrapper>
+          <ModalItem large>
+            <ModalLabel>To</ModalLabel>
+            <ModalAddressValue>{value.address}</ModalAddressValue>
+          </ModalItem>
+          <ModalItem>
+            <ModalLabel>Amount</ModalLabel>
+            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol></ModalValue>
+          </ModalItem>
+          <ModalItem noBorder>
+            <ModalLabel>Fee</ModalLabel>
+            <ModalValue>0.0004 <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
+          </ModalItem>
+        </ModalItemWrapper>
+        <ModalFooter>
+          <ModalParagraph light>
+          The process may take up to 10 minutes to complete. Please check your transaction history.
+          </ModalParagraph>
+          <Button title="Confirm Transaction" onPress={this.handleFormSubmit} />
+        </ModalFooter>
+      </ConfirmationModal>
+    );
+
     return (
       <React.Fragment>
         <SendTokenContactsHeader
@@ -261,37 +290,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </Wrapper>
         </Container>
         {qrScannnerComponent}
-        <ConfirmationModal
-          isVisible={showConfirmModal}
-          title="confirm"
-        >
-          <ModalItemWrapper>
-            <ModalItem large>
-              <ModalLabel>To</ModalLabel>
-              <ModalAddressValue>{value.address}</ModalAddressValue>
-            </ModalItem>
-            <ModalItem>
-              <ModalLabel>Amount</ModalLabel>
-              <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol></ModalValue>
-            </ModalItem>
-            <ModalItem noBorder>
-              <ModalLabel>Fee</ModalLabel>
-              <ModalValue>0.0004 <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
-            </ModalItem>
-            {/* <ModalItem large noBorder>
-              <ModalLabel>Total</ModalLabel>
-              <ModalValue large>
-                {(transactionPayload.amount + 0.0004).toFixed(6)} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol>
-              </ModalValue>
-            </ModalItem> */}
-          </ModalItemWrapper>
-          <ModalFooter>
-            <ModalParagraph light>
-              The process may take up to 10 minutes to complete. Please check your transaction history.
-            </ModalParagraph>
-            <Button title="Confirm Transaction" onPress={this.handleFormSubmit} />
-          </ModalFooter>
-        </ConfirmationModal>
+        {confirmationModal}
       </React.Fragment>
     );
   }
