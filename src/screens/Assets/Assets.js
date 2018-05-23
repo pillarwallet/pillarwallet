@@ -206,8 +206,8 @@ class AssetsScreen extends React.Component<Props, State> {
           >
 
             <AssetButtons
-              recieveOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
-              sendOnPress={() => this.goToSendTokenFlow(asset)}
+              onPressReceive={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
+              onPressSend={() => this.goToSendTokenFlow(asset)}
             />
 
           </AssetCard>
