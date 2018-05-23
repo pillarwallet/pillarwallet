@@ -5,6 +5,7 @@ import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import Title from 'components/Title';
+import { Icon } from 'native-base';
 import TextInput from 'components/TextInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
@@ -12,7 +13,7 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { pipe, decodeETHAddress } from 'utils/common';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import SendTokenAmountHeader from './SendTokenAmountHeader';
 
 
@@ -162,6 +163,10 @@ export default class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
+  openFeeInfoModal = () => {
+    // Add fee modal logic in here
+  };
+
   handleToggleQRScanningState = () => {
     this.setState({
       isScanning: !this.state.isScanning,
@@ -216,7 +221,20 @@ export default class SendTokenAmount extends React.Component<Props, State> {
               <UseMaxValueButton>Use Max</UseMaxValueButton>
             </TouchableOpacity>
             <ActionsWrapper>
-              <Text>Fee: <Text style={{ fontWeight: 'bold', color: '#000' }}>0.0004 ETH</Text></Text>
+              <Text>
+                Fee:
+                <Text style={{ fontWeight: 'bold', color: '#000' }}>
+                  0.0004 ETH
+                  <Icon
+                    name="alert"
+                    style={{
+                      fontSize: fontSizes.medium,
+                      color: baseColors.clearBlue,
+                    }}
+                    onPress={this.openFeeInfoModal}
+                  />
+                </Text>
+              </Text>
             </ActionsWrapper>
           </Wrapper>
         </Container>
