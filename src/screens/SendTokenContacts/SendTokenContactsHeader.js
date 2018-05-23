@@ -9,7 +9,7 @@ import ButtonIcon from 'components/ButtonIcon';
 type Props = {
   onBack: Function,
   index?: number,
-  nextOnPress: Function,
+  onNext: Function,
   amount: number,
   symbol: string,
 }
@@ -38,7 +38,7 @@ const BackIcon = styled(ButtonIcon)`
 const SendTokenAmountHeader = (props: Props) => {
   const {
     onBack,
-    nextOnPress,
+    onNext,
     amount,
     symbol,
   } = props;
@@ -59,7 +59,7 @@ const SendTokenAmountHeader = (props: Props) => {
           noPadding
           marginTop="20px"
           marginRight="10px"
-          onPress={() => nextOnPress()}
+          onPress={() => onNext()}
           title="Send"
         />
       </Right>

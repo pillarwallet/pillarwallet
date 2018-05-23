@@ -94,7 +94,6 @@ const generateFormOptions = (config: Object): Object => ({
   fields: {
     address: { template: AddressInputTemplate, config, label: 'To' },
   },
-  order: ['address'],
 });
 
 const ConfirmationModal = styled(SlideModal)`
@@ -244,7 +243,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       <React.Fragment>
         <SendTokenContactsHeader
           onBack={this.props.navigation.goBack}
-          nextOnPress={this.openConfirmationModal}
+          onNext={this.openConfirmationModal}
           amount={transactionPayload.amount}
           symbol={asset.symbol}
         />
