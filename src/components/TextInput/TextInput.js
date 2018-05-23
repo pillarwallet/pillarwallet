@@ -23,7 +23,7 @@ type Props = {
   errorMessage?: string,
   onIconPress?: Function,
   inputProps: inputPropsType,
-  inputType?: string,
+  inputType: string,
 }
 
 type State = {
@@ -82,7 +82,9 @@ class TextInput extends React.Component<Props, State> {
     value: '',
   }
 
-  static defaultProps = { inputType: 'default' };
+  static defaultProps = {
+    inputType: 'default',
+  };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.inputProps.value !== prevState.value) {
@@ -125,7 +127,6 @@ class TextInput extends React.Component<Props, State> {
       inlineLabel,
     } = this.props;
     const { value } = this.state;
-
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     return (
