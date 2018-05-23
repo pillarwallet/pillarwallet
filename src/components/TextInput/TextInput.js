@@ -78,6 +78,12 @@ const PostFix = styled.Text`
   right: 0;
 `;
 
+const InputField = styled(Input)`
+  font-size: ${props => props.inputType.fontSize};
+  font-weight: ${props => props.inputType.fontWeight};
+  text-align: ${props => props.inputType.textAlign};
+`;
+
 class TextInput extends React.Component<Props, State> {
   state = {
     value: '',
@@ -126,22 +132,16 @@ class TextInput extends React.Component<Props, State> {
     const { value } = this.state;
 
     const inputType = getInputType(this.props.inputType);
-    const marginRight = postfix ? 30 : 0;
 
     return (
       <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>
         <Label>{label}</Label>
-        <Input
+        <InputField
           {...inputProps}
           onChange={this.handleChange}
           onBlur={this.handleBlur}
           value={value}
-          style={{
-            fontWeight: inputType.fontWeight,
-            fontSize: inputType.fontSize,
-            textAlign: inputType.textAlign,
-            marginRight,
-          }}
+          inputType={inputType}
         />
         {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
         {postfix && <PostFix>{postfix}</PostFix>}
