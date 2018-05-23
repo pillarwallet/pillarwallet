@@ -45,7 +45,6 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 ios/*/Supporting/GoogleService-Info.plist
-/ios
 #### Android/IntelliJ
 
 # Built application files
