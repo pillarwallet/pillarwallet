@@ -47,13 +47,6 @@ const inputTypes = {
   },
 };
 
-const getInputType = (inputType?: string) => {
-  if (inputType === 'amount') {
-    return inputTypes.amount;
-  }
-  return inputTypes.default;
-};
-
 const FloatingButton = styled(ButtonIcon)`
   position:absolute;
   right: -15px;
@@ -88,6 +81,8 @@ class TextInput extends React.Component<Props, State> {
   state = {
     value: '',
   }
+
+  static defaultProps = { inputType: 'default' };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.inputProps.value !== prevState.value) {
@@ -131,7 +126,7 @@ class TextInput extends React.Component<Props, State> {
     } = this.props;
     const { value } = this.state;
 
-    const inputType = getInputType(this.props.inputType);
+    const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     return (
       <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>

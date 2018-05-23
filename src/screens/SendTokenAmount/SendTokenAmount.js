@@ -5,7 +5,7 @@ import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import Title from 'components/Title';
-import { Icon } from 'native-base';
+import ButtonIcon from 'components/ButtonIcon';
 import TextInput from 'components/TextInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
@@ -225,13 +225,12 @@ export default class SendTokenAmount extends React.Component<Props, State> {
                 Fee:
                 <Text style={{ fontWeight: 'bold', color: '#000' }}>
                   0.0004 ETH
-                  <Icon
-                    name="alert"
-                    style={{
-                      fontSize: fontSizes.medium,
-                      color: baseColors.clearBlue,
-                    }}
+                  <ButtonIcon
+                    icon="alert"
+                    color={baseColors.clearBlue}
+                    fontSize={fontSizes.large}
                     onPress={this.openFeeInfoModal}
+
                   />
                 </Text>
               </Text>
