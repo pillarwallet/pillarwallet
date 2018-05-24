@@ -58,10 +58,10 @@ android {
       storeFile file('../debug.keystore')
     }
     release {
-      keyAlias 'key0'
-      keyPassword '123456'
-      storeFile file('../demo.jks')
-      storePassword '123456'
+//      keyAlias '-'
+//      keyPassword '-'
+//      storeFile file('-')
+//      storePassword '-'
     }
   }
   buildTypes {
