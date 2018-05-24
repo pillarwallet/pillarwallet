@@ -133,7 +133,7 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   animateHeaderHeight = () => {
-    const headerHeightValue = this.state.isCardActive ? 120 : 150;
+    const headerHeightValue = this.state.isCardActive ? 90 : 150;
     const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
 
     const {
@@ -209,7 +209,6 @@ class AssetsScreen extends React.Component<Props, State> {
             history={assetHistory}
             address={wallet.address}
           >
-
             <AssetButtons
               onPressReceive={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
               onPressSend={() => this.goToSendTokenFlow(asset)}

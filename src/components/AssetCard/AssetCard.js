@@ -5,11 +5,14 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import styled from 'styled-components';
+import { Icon } from 'native-base';
+import { baseColors, fontWeights } from 'utils/variables';
 import { lighten } from 'polished';
 import type { Transaction } from 'models/Transaction';
 import TXHistory from 'components/TXHistory';
 import { getCurrencySymbol } from 'utils/common';
-import Icon from './Icon';
+import IconImage from './IconImage';
 import IconWrapper from './IconWrapper';
 import Background from './Background';
 import DetailsWrapper from './DetailsWrapper';
@@ -44,6 +47,13 @@ type State = {
 }
 
 const iconETH = require('assets/tokens/ETH/icon-ETH.png');
+
+const CloseIcon = styled(Icon)`
+  align-self: flex-end;
+  margin-right: 30;
+  color: ${baseColors.clearBlue};
+  font-weight: ${fontWeights.bold};
+`;
 
 export default class AssetCard extends React.Component<Props, State> {
   state = {
@@ -111,7 +121,27 @@ export default class AssetCard extends React.Component<Props, State> {
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
     return (
-      <View>
+      <View
+        style={{
+          backgroundColor: baseColors.white,
+        }}
+      >
+
+        {isActive && (
+          <Animated.View
+            style={{
+              position: 'relative',
+              top: -90,
+              opacity: animCardContentFade,
+            }}
+          >
+            <CloseIcon
+              name="close"
+              onPress={this.handleCardTap}
+            />
+          </Animated.View>
+        )}
+
         <TouchableWithoutFeedback
           onPress={this.handleCardTap}
           style={{
@@ -123,6 +153,8 @@ export default class AssetCard extends React.Component<Props, State> {
             zIndex: 10,
           }}
         >
+
+
           <Animated.View
             color={linearGradientColorStart}
             style={[{
@@ -145,7 +177,7 @@ export default class AssetCard extends React.Component<Props, State> {
                 </FiatAmount>
               </DetailsWrapper>
               <IconWrapper>
-                <Icon source={iconETH} />
+                <IconImage source={iconETH} />
               </IconWrapper>
             </Background>
           </Animated.View>
