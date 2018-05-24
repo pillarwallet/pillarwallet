@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
+import NewProfileScreen from 'screens/NewProfile';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -40,6 +41,7 @@ import {
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
+  NEW_PROFILE,
   LEGAL_TERMS,
   ICO,
   IMPORT_WALLET,
@@ -96,6 +98,7 @@ const onBoardingFlow = StackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [NEW_PROFILE]: NewProfileScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
 }, StackNavigatorConfig);
 
