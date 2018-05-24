@@ -8,10 +8,12 @@ import {
 } from 'constants/walletConstants';
 import { APP_FLOW, ASSETS } from 'constants/navigationConstants';
 import Storage from 'services/storage';
+import PillarSdk from 'services/api';
 import { loginAction } from '../authActions';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
-const mockStore = configureMockStore([thunk]);
+const pillarSdk = new PillarSdk();
+const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
 const mockWallet: Object = {
   address: '0x9c',

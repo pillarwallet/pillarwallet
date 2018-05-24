@@ -14,7 +14,7 @@ import Storage from 'services/storage';
 const storage = Storage.getInstance('db');
 
 export const loginAction = (pin: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
     const encryptedWallet = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -24,6 +24,7 @@ export const loginAction = (pin: string) => {
 
     try {
       const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
+      await api.init({ privateKey: wallet.privateKey });
       dispatch({
         type: DECRYPT_WALLET,
         payload: wallet,

@@ -15,9 +15,11 @@ import { SET_USER, REGISTERED } from 'constants/userConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
+import PillarSdk from 'services/api';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
-const mockStore = configureMockStore([thunk]);
+const pillarSdk = new PillarSdk();
+const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
 const mockWallet: Object = {
   address: '0x9c',
@@ -71,7 +73,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: SET_USER, payload: { state: REGISTERED, user: { id: 2 } } },
+      { type: SET_USER, payload: { state: REGISTERED, user: { id: 1 } } },
       { type: SET_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
@@ -103,7 +105,7 @@ describe('Wallet actions', () => {
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: SET_USER, payload: { state: REGISTERED, user: { id: 2 } } },
+      { type: SET_USER, payload: { state: REGISTERED, user: { id: 1 } } },
       { type: SET_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {

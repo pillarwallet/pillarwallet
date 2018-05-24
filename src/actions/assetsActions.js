@@ -20,7 +20,6 @@ import {
 } from 'services/assets';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import { getInitialAssets } from 'services/api';
 import Storage from 'services/storage';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay } from 'utils/common';
@@ -88,13 +87,13 @@ export const fetchExchangeRatesAction = (assets: Assets) => {
 };
 
 export const fetchInitialAssetsAction = (walletAddress: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING_INITIAL,
     });
     await delay(1000);
-    const initialAssets = await getInitialAssets();
+    const initialAssets = await api.getInitialAssets();
 
     if (!Object.keys(initialAssets).length) {
       dispatch({

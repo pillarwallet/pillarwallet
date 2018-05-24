@@ -16,12 +16,11 @@ import { SET_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
-import { registerOnBackend, getInitialAssets } from 'services/api';
 
 const storage = Storage.getInstance('db');
 
 export const registerWalletAction = () => {
-  return async (dispatch: Function, getState: () => any) => {
+  return async (dispatch: Function, getState: () => any, api: Object) => {
     const currentState = getState();
     const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
@@ -58,7 +57,8 @@ export const registerWalletAction = () => {
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
-    const user = await registerOnBackend(wallet.privateKey);
+    await api.init({ privateKey: wallet.privateKey });
+    const user = await api.registerOnBackend();
     await storage.save('user', { user });
     const userState = Object.keys(user).length ? REGISTERED : PENDING;
     dispatch({
@@ -78,7 +78,7 @@ export const registerWalletAction = () => {
     }
 
     // STEP 4: get&store initial assets
-    const initialAssets = await getInitialAssets();
+    const initialAssets = await api.getInitialAssets();
     const rates = await getExchangeRates(Object.keys(initialAssets));
 
     dispatch({
@@ -105,17 +105,14 @@ export const registerWalletAction = () => {
 };
 
 export const registerOnBackendAction = () => {
-  return async (dispatch: Function, getState: () => any) => {
-    const currentState = getState();
-    const { wallet: { data: wallet } } = currentState;
-
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: API_REGISTRATION_STARTED,
     });
     await delay(1000);
 
-    const user = await registerOnBackend(wallet.privateKey);
+    const user = await api.registerOnBackend();
     await storage.save('user', { user });
     const userState = Object.keys(user).length ? REGISTERED : PENDING;
     dispatch({

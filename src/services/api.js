@@ -28,3 +28,29 @@ export function getInitialAssets() {
 export function getSupportedAssets() {
   return Promise.resolve(tokens);
 }
+
+
+// temporary here
+export default class PillarSdk {
+  privateKey: string;
+
+  init({ privateKey }: { privateKey: string }) {
+    if (this.privateKey) return;
+    this.privateKey = privateKey;
+  }
+
+  registerOnBackend() {
+    return pillarSdk.registerOnBackend(this.privateKey).catch(() => null);
+  }
+
+  getInitialAssets() {
+    return pillarSdk.getInitialAssets()
+      .catch(() => [])
+      // .then(() => []) // remove this
+      .then(transformAssetsToObject);
+  }
+
+  getSupportedAssets() {
+    return Promise.resolve(tokens);
+  }
+}
