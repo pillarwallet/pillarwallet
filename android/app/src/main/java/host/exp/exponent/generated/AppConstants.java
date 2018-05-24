@@ -12,9 +12,9 @@ import host.exp.exponent.Constants;
 public class AppConstants {
 
   public static final String VERSION_NAME = "2.4.0";
-  public static String INITIAL_URL = "exp://exp.host/@rostislavcn/pillar-wallet";
+  public static String INITIAL_URL = "exp://exp.host/@pillarbot/pillar-wallet";
   public static final boolean IS_DETACHED = true;
-  public static final String SHELL_APP_SCHEME = "exp38a4bbfce2ec45389ca2f4a5178939d6";
+  public static final String SHELL_APP_SCHEME = "`aexp38a4bbfce2ec45389ca2f4a5178939d6";
   public static final String RELEASE_CHANNEL = "default";
   public static boolean SHOW_LOADING_VIEW_IN_SHELL_APP = true;
   public static boolean ARE_REMOTE_UPDATES_ENABLED = true;
@@ -23,9 +23,16 @@ public class AppConstants {
   static {
     List<Constants.EmbeddedResponse> embeddedResponses = new ArrayList<>();
 
-    // ADD EMBEDDED RESPONSES HERE
-    // START EMBEDDED RESPONSES
-    // END EMBEDDED RESPONSES
+    
+        
+        
+        
+        
+        // ADD EMBEDDED RESPONSES HERE
+        // START EMBEDDED RESPONSES
+        embeddedResponses.add(new Constants.EmbeddedResponse("https://exp.host/@deimantas/pillar-wallet/index.exp", "assets://shell-app-manifest.json", "application/json"));
+        embeddedResponses.add(new Constants.EmbeddedResponse("https://d1wp6m56sqw74a.cloudfront.net/%40deimantas%2Fpillar-wallet%2F0.0.2%2F5e489d0425e754f20865dc9adb584afb-26.0.0-android.js", "assets://shell-app.bundle", "application/javascript"));
+        // END EMBEDDED RESPONSES
     EMBEDDED_RESPONSES = embeddedResponses;
   }
 
