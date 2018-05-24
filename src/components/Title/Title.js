@@ -6,6 +6,7 @@ import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 type Props = {
   title: string,
   style?: Object,
+  noMargin?: boolean,
   center?: boolean,
   maxWidth?: number,
 };
@@ -14,7 +15,7 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-self: flex-start;
   flex-wrap: wrap;
-  margin: 20px 0px;
+  margin: ${props => props.noMargin ? '0' : '20px 0'};
   width: ${props => props.maxWidth ? props.maxWidth : 'auto'};
   align-self: ${props => props.center ? 'center' : 'flex-start'};
 `;
@@ -26,18 +27,21 @@ const Text = styled.Text`
   width: ${props => props.center ? '100%' : 'auto'};
 `;
 
-const BlueDot = styled.Text`
-  color: ${baseColors.clearBlue};
-  font-size: ${fontSizes.extraSmall};
-  font-family: Symbol;
+const BlueDot = styled.View`
+  background-color: ${baseColors.brightSkyBlue};
+  height: 4px;
+  width: 4px;
+  position: relative;
+  top: 16px;
+  left: 2px;
 `;
 
 
 const Title = (props: Props) => {
   return (
-    <Wrapper style={props.style} center={props.center} maxWidth={props.maxWidth}>
-      <Text center={props.center}>{props.title}<BlueDot> ■</BlueDot></Text>
-
+    <Wrapper noMargin={props.noMargin} style={props.style} center={props.center} maxWidth={props.maxWidth}>
+      <Text center={props.center}>{props.title}</Text>
+      <BlueDot />
     </Wrapper>
   );
 };
