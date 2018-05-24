@@ -40,9 +40,7 @@ class Welcome extends React.Component<Props> {
         <AnimatedBackground />
         <PillarLogo source={pillarLogoSource} />
         <Footer>
-          <Button block marginBottom="20px" onPress={this.loginAction} title="Login" />
-          <HelpTextDivider title="Don&#39;t have an account?" />
-          <Button marginBottom="20px" onPress={this.signupAction} secondary title="Signup" />
+          <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />
           <HyperLink url="https://pillarproject.io/en/terms-of-use/">Terms and Conditions</HyperLink>
         </Footer>
       </Container>
