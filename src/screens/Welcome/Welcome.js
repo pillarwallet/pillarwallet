@@ -3,11 +3,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { SIGN_IN, SIGN_UP } from 'constants/navigationConstants';
+import { ONBOARDING_HOME } from 'constants/navigationConstants';
 import HyperLink from 'components/HyperLink';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
-import HelpTextDivider from 'components/HelpTextDivider';
 import AnimatedBackground from 'components/AnimatedBackground';
 
 type Props = {
@@ -25,11 +24,7 @@ const PillarLogo = styled.Image`
 
 class Welcome extends React.Component<Props> {
   loginAction = () => {
-    this.props.navigation.navigate(SIGN_IN);
-  };
-
-  signupAction = () => {
-    this.props.navigation.navigate(SIGN_UP);
+    this.props.navigation.navigate(ONBOARDING_HOME);
   };
 
   render() {
