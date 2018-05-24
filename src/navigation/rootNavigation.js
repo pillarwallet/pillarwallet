@@ -13,8 +13,6 @@ import { Ionicons } from '@expo/vector-icons';
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
-import SigninScreen from 'screens/Signin';
-import SignupScreen from 'screens/Signup';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -25,8 +23,6 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
-import OTPScreen from 'screens/OTP';
-import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
 import AddTokenScreen from 'screens/AddToken';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
@@ -37,7 +33,6 @@ import Header from 'components/Header';
 
 import {
   APP_FLOW,
-  SIGN_UP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
   ASSETS,
@@ -45,8 +40,6 @@ import {
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
-  SIGN_IN,
-  SIGN_UP,
   LEGAL_TERMS,
   ICO,
   IMPORT_WALLET,
@@ -54,8 +47,6 @@ import {
   PIN_CODE_UNLOCK,
   ONBOARDING_HOME,
   WELCOME,
-  OTP,
-  OTP_STATUS,
   PROFILE,
   ADD_TOKEN,
   TAB_NAVIGATION,
@@ -92,6 +83,7 @@ const StackNavigatorModalConfig = {
 };
 
 const onBoardingFlow = StackNavigator({
+  [WELCOME]: WelcomeScreen,
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
@@ -105,14 +97,6 @@ const onBoardingFlow = StackNavigator({
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
-}, StackNavigatorConfig);
-
-const signupFlow = StackNavigator({
-  [WELCOME]: WelcomeScreen,
-  [SIGN_IN]: SigninScreen,
-  [OTP]: OTPScreen,
-  [SIGN_UP]: SignupScreen,
-  [OTP_STATUS]: OTPStatusScreen,
 }, StackNavigatorConfig);
 
 const sendTokenFlow = StackNavigator({
@@ -148,7 +132,6 @@ const appFlow = StackNavigator(
 );
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [SIGN_UP_FLOW]: signupFlow,
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: appFlow,
