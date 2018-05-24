@@ -7,6 +7,7 @@ import {
   TabNavigator,
   TabBarBottom,
 } from 'react-navigation';
+import { Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // screens
@@ -28,6 +29,8 @@ import OTPScreen from 'screens/OTP';
 import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
 import AddTokenScreen from 'screens/AddToken';
+import SendTokenAmountScreen from 'screens/SendTokenAmount';
+import SendTokenContactsScreen from 'screens/SendTokenContacts';
 
 // components
 import Header from 'components/Header';
@@ -56,6 +59,9 @@ import {
   PROFILE,
   ADD_TOKEN,
   TAB_NAVIGATION,
+  SEND_TOKEN_FLOW,
+  SEND_TOKEN_AMOUNT,
+  SEND_TOKEN_CONTACTS,
 } from 'constants/navigationConstants';
 
 const renderHeader = ({ navigation, ...rest }) => {
@@ -67,6 +73,21 @@ const StackNavigatorConfig = {
   navigationOptions: {
     header: renderHeader,
     gesturesEnabled: false,
+  },
+};
+
+const StackNavigatorModalConfig = {
+  headerMode: 'float',
+  mode: 'modal',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+  navigationOptions: {
+    header: false,
   },
 };
 
@@ -94,6 +115,11 @@ const signupFlow = StackNavigator({
   [OTP_STATUS]: OTPStatusScreen,
 }, StackNavigatorConfig);
 
+const sendTokenFlow = StackNavigator({
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+}, StackNavigatorModalConfig);
+
 const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
@@ -112,6 +138,7 @@ const appFlow = StackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
+    [SEND_TOKEN_FLOW]: sendTokenFlow,
   }, {
     mode: 'modal',
     navigationOptions: {

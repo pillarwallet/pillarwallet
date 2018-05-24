@@ -12,6 +12,7 @@ export const baseColors = {
   mediumGray: '#d8d8d8',
   warmGray: '#757575',
   darkGray: '#4a4a4a',
+  black: '#000000',
 };
 
 export const brandColors = [
@@ -31,6 +32,7 @@ export const UIColors = {
 };
 
 export const fontSizes = {
+  extraExtraSmall: 6,
   extraSmall: 9,
   small: 12,
   medium: 16,
