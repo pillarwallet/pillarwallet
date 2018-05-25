@@ -12,7 +12,6 @@ type Props = {
 };
 
 const Wrapper = styled.View`
-  flex-direction: row;
   align-self: flex-start;
   flex-wrap: wrap;
   margin: ${props => props.noMargin ? '0' : '20px 0'};
@@ -31,9 +30,10 @@ const BlueDot = styled.View`
   background-color: ${baseColors.brightSkyBlue};
   height: 4px;
   width: 4px;
+  align-self: flex-end;
   position: relative;
-  top: 16px;
-  left: 2px;
+  top: -9px;
+  left: 6px;
 `;
 
 

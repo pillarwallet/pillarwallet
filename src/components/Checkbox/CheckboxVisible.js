@@ -1,5 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
+import { UIColors, baseColors } from 'utils/variables';
 
 const CheckboxVisible = styled.View`
   width: 30;
@@ -7,7 +8,7 @@ const CheckboxVisible = styled.View`
   margin-right: 20;
   border-radius: 60;
   border-width: 2;
-  border-color: ${props => (props.active ? '#00bfff' : 'gray')};
+  border-color: ${props => (props.active ? UIColors.primary : baseColors.mediumGray)};
 `;
 
 export default CheckboxVisible;

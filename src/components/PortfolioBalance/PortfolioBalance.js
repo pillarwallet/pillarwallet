@@ -61,7 +61,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
     return (
       <View>
         <Text style={{
-          color: baseColors.warmGray,
+          color: baseColors.mediumGray,
           fontSize: fontSizes.medium,
           }}
         >
