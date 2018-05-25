@@ -28,12 +28,11 @@ class Onboarding extends React.Component<Props> {
         <Wrapper padding>
           <Title title="welcome" />
           <Paragraph>Pillar is a next-generation digital wallet
-            and application for personal data management. Your unique invitation code
-            allows you to participate in exlusive ICO offerings.
+            and application for personal data management.
           </Paragraph>
           <Paragraph light>Please keep in mind that Pillar does not
             store any personal information other than what
-            was provided for verification purposes.
+            we need for verification purposes.
           </Paragraph>
         </Wrapper>
         <Footer>
