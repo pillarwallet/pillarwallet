@@ -7,8 +7,7 @@ const MnemonicPhraseWrapper = styled.View`
   flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
-  padding-top: 20px;
-  height: 350px;
+  height: 320px;
   width: 100%;
 `;
 
