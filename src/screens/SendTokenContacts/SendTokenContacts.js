@@ -119,7 +119,7 @@ const ModalItem = styled.View`
 const ModalLabel = styled(Paragraph)`
   flex: 0 0 60px;
   font-weight: ${fontWeights.bold};
-  color: ${baseColors.warmGray};
+  color: ${baseColors.mediumGray};
 `;
 
 const ModalValue = styled(Paragraph)`

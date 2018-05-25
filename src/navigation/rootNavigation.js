@@ -56,6 +56,7 @@ import {
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
 } from 'constants/navigationConstants';
+import { UIColors, baseColors } from 'utils/variables';
 
 const renderHeader = ({ navigation, ...rest }) => {
   return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
@@ -164,12 +165,12 @@ function getBottomNavigationOptions() {
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'blue',
-      inactiveTintColor: 'gray',
-      activeBackgroundColor: 'white',
-      inactiveBackgroundColor: 'white',
+      activeTintColor: UIColors.primary,
+      inactiveTintColor: baseColors.mediumGray,
+      activeBackgroundColor: baseColors.white,
+      inactiveBackgroundColor: baseColors.white,
       style: {
-        backgroundColor: 'white',
+        backgroundColor: baseColors.white,
       },
     },
     tabBarComponent: TabBarBottom,

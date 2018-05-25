@@ -26,19 +26,18 @@ class Onboarding extends React.Component<Props> {
     return (
       <Container>
         <Wrapper padding>
-          <Title title="wallet" />
-          <Paragraph>Welcome to the Pillar Wallet! Pillar is a next-generation digital wallet
-            and application for personal data management. Your unique invitation code
-            allows you to participate in exlusive ICO offerings.
+          <Title title="welcome" />
+          <Paragraph>Pillar is a next-generation digital wallet
+            and application for personal data management.
           </Paragraph>
           <Paragraph light>Please keep in mind that Pillar does not
             store any personal information other than what
-            was provided for verification purposes.
+            we need for verification purposes.
           </Paragraph>
         </Wrapper>
         <Footer>
           <Paragraph>How would you like to use the Pillar Wallet?</Paragraph>
-          <Button marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup new wallet" />
+          <Button block marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup new wallet" />
           <HelpTextDivider title="or" />
           <Button onPress={this.importOldWallet} secondary title="Restore from existing" />
           <HelpText>Requires 12 word backup phrase or Private Key</HelpText>
