@@ -9,8 +9,7 @@ export const baseColors = {
   clearBlue: '#2077fd',
   white: '#ffffff',
   lightGray: '#f6f6f6',
-  mediumGray: '#d8d8d8',
-  warmGray: '#757575',
+  mediumGray: '#777777',
   darkGray: '#4a4a4a',
   black: '#000000',
 };

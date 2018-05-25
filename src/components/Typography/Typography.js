@@ -13,7 +13,7 @@ export const Title = styled.Text`
 export const Paragraph = styled.Text`
   font-size: 16;
   margin-bottom: 10;
-  color: ${props => props.light ? baseColors.warmGray : UIColors.defaultTextColor};
+  color: ${props => props.light ? baseColors.mediumGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
 `;
 
