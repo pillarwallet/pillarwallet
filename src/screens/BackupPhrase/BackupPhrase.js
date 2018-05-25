@@ -35,7 +35,10 @@ class BackupPhrase extends React.Component<Props, {}> {
         <Wrapper padding>
           <Title title="passphrase" />
           <Paragraph>Carefully write down your 12 word passphrase in the correct order.</Paragraph>
-          <Paragraph light>Keep it secure as it&#39;s the only way to recover your account in an emergency. Don&#39;t email or screenshot it.</Paragraph>
+          <Paragraph light>
+            Keep it secure as it&#39;s the only way to recover your account in an emergency.
+            Don&#39;t email or screenshot it.
+          </Paragraph>
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </Wrapper>
         <Footer>

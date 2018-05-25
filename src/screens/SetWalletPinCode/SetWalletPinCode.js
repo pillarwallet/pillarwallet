@@ -54,6 +54,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
           onPinChanged={this.handlePinChange}
           pageInstructions="Setup your Passcode"
           showForgotButton={false}
+          showNewPincodeText
         />
         {this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
       </Container>
