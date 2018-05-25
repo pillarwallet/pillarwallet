@@ -1,6 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
-import { UIColors, baseColors } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 export const Title = styled.Text`
   font-size: 24;
@@ -18,8 +18,8 @@ export const Paragraph = styled.Text`
 `;
 
 export const Label = styled.Text`
-  font-size: 14;
-  color: rgb(155,155,155);
+  font-size: ${fontSizes.small};
+  color: ${baseColors.mediumGray};
   margin-bottom: 10;
   align-self: flex-start;
 `;

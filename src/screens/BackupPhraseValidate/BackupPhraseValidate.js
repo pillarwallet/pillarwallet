@@ -3,13 +3,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
+import { Footer, Container, Wrapper } from 'components/Layout';
 import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
 import ButtonIcon from 'components/ButtonIcon';
 import Button from 'components/Button';
-import Divider from 'components/Divider';
-import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {
@@ -180,8 +178,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     return (
       <Container>
         <Wrapper padding>
-          <Title title="verify" />
-          <Paragraph light>
+          <Title title="verify passphrase" />
+          <Paragraph>
             Please select the appropriate words from the list
           </Paragraph>
           <WordInputFields>
@@ -190,23 +188,23 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           <ShuffledWordWrapper>
             {this.renderShuffledWordList()}
           </ShuffledWordWrapper>
-          <Divider />
-          <MultiButtonWrapper>
-            <Button
-              block
-              marginBottom="20px"
-              title="Debug skip"
-              onPress={this.goToNextScreen}
-            />
-            <Button
-              block
-              marginBottom="20px"
-              title="Next"
-              onPress={this.goToNextScreen}
-              disabled={!isFormValid}
-            />
-          </MultiButtonWrapper>
+
         </Wrapper>
+        <Footer>
+          <Button
+            block
+            marginBottom="20px"
+            title="Debug skip"
+            onPress={this.goToNextScreen}
+          />
+          <Button
+            block
+            marginBottom="20px"
+            title="Next"
+            onPress={this.goToNextScreen}
+            disabled={!isFormValid}
+          />
+        </Footer>
       </Container>
     );
   }
