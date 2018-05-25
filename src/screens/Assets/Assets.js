@@ -136,11 +136,16 @@ class AssetsScreen extends React.Component<Props, State> {
     const headerHeightValue = this.state.isCardActive ? 120 : 150;
     const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
 
+    const {
+      animHeaderHeight,
+      animHeaderTextOpacity,
+    } = this.state;
+
     Animated.parallel([
-      Animated.spring(this.state.animHeaderHeight, {
+      Animated.spring(animHeaderHeight, {
         toValue: headerHeightValue,
       }),
-      Animated.spring(this.state.animHeaderTextOpacity, {
+      Animated.spring(animHeaderTextOpacity, {
         toValue: headerTextOpacityValue,
       }),
     ]).start();
@@ -204,7 +209,6 @@ class AssetsScreen extends React.Component<Props, State> {
             history={assetHistory}
             address={wallet.address}
           >
-
             <AssetButtons
               onPressReceive={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
               onPressSend={() => this.goToSendTokenFlow(asset)}
@@ -227,6 +231,11 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsState,
       fetchInitialAssets,
     } = this.props;
+
+    const headerBorderColor = animHeaderTextOpacity.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['rgba(0, 0, 0, 0)', UIColors.defaultBorderColor],
+    });
 
     if (!Object.keys(assets).length) {
       return (
@@ -275,7 +284,7 @@ class AssetsScreen extends React.Component<Props, State> {
               borderBottomWidth: 1,
               borderStyle: 'solid',
               backgroundColor: baseColors.white,
-              borderColor: UIColors.defaultBorderColor,
+              borderColor: headerBorderColor,
               padding: 20,
               flexDirection: 'row',
             }}
