@@ -91,7 +91,7 @@ class LegalTerms extends React.Component<Props, State> {
       <Container>
         <Wrapper padding>
           <Title title="review" />
-          <Paragraph light>By using the Pillar Wallet you agree that:</Paragraph>
+          <Paragraph>By using the Pillar Wallet you agree that:</Paragraph>
           <CheckboxItem marginBottom>
             { this.buildCheckBox('box01', box01) }
             <CheckboxText>
@@ -107,33 +107,34 @@ class LegalTerms extends React.Component<Props, State> {
             </CheckboxText>
           </CheckboxItem>
         </Wrapper>
-        {termsViewVisible && (
-          <Footer>
-            <CheckboxItem marginBottom>
-              { this.buildCheckBox('box03', box03) }
-              <CheckboxText>
-                I have read, understand, and agree to the Terms of Use.
-              </CheckboxText>
-            </CheckboxItem>
-            <Divider />
-            <MultiButtonWrapper>
-              <Button
-                block
-                title="Confirm and Finish"
-                onPress={this.handleConfirm}
-                disabled={confirmButtonDisabled}
-                marginBottom="20px"
-              />
+        <Footer>
+          <CheckboxItem
+            marginBottom
+            disabled={!termsViewVisible}
+          >
+            { this.buildCheckBox('box03', box03) }
+            <CheckboxText>
+              I have read, understand, and agree to the Terms of Use.
+            </CheckboxText>
+          </CheckboxItem>
+          <Divider />
+          <MultiButtonWrapper>
+            <Button
+              block
+              title="Confirm and Finish"
+              onPress={this.handleConfirm}
+              disabled={confirmButtonDisabled}
+              marginBottom="20px"
+            />
 
-              <Paragraph>
-                <HyperLink url="https://pillarproject.io/en/terms-of-use/">Terms of Use </HyperLink>
-                and
-                <HyperLink url="https://pillarproject.io/en/legal/privacy/"> Privacy Policy</HyperLink>
-              </Paragraph>
+            <Paragraph>
+              <HyperLink url="https://pillarproject.io/en/terms-of-use/">Terms of Use </HyperLink>
+              and
+              <HyperLink url="https://pillarproject.io/en/legal/privacy/"> Privacy Policy</HyperLink>
+            </Paragraph>
 
-            </MultiButtonWrapper>
-          </Footer>
-        )}
+          </MultiButtonWrapper>
+        </Footer>
       </Container>
     );
   }
