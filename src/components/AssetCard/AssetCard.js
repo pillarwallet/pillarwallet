@@ -131,12 +131,12 @@ export default class AssetCard extends React.Component<Props, State> {
           <Animated.View
             style={{
               position: 'relative',
-              top: -90,
+              top: -110,
               opacity: animCardContentFade,
             }}
           >
             <CloseIcon
-              name="close"
+              name="md-close"
               onPress={this.handleCardTap}
             />
           </Animated.View>

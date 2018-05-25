@@ -133,7 +133,7 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   animateHeaderHeight = () => {
-    const headerHeightValue = this.state.isCardActive ? 90 : 150;
+    const headerHeightValue = this.state.isCardActive ? 120 : 150;
     const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
 
     const {
