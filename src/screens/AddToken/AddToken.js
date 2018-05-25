@@ -43,7 +43,7 @@ const TokenListItem = styled(ListItem)`
 
 const CloseButton = styled(ButtonIcon)`
   position: absolute;
-  right: 5px;
+  right: 0;
   top: 5px;
   zIndex: 5;
 `;
@@ -123,7 +123,7 @@ class AddToken extends React.Component<Props, State> {
       <Container>
         <Wrapper padding>
           <CloseButton
-            icon="close"
+            icon="md-close"
             onPress={this.handleScreenDissmisal}
             color={UIColors.primary}
             fontSize={42}
