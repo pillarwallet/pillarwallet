@@ -126,7 +126,7 @@ class AddToken extends React.Component<Props, State> {
             icon="md-close"
             onPress={this.handleScreenDissmisal}
             color={UIColors.primary}
-            fontSize={42}
+            fontSize={32}
           />
           <Title title="add token" />
           <Paragraph>
