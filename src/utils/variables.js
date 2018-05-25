@@ -25,7 +25,7 @@ export const brandColors = [
 export const UIColors = {
   primary: baseColors.clearBlue,
   danger: baseColors.fireEngineRed,
-  defaultTextColor: '#4a4a4a',
+  defaultTextColor: baseColors.black,
   defaultBorderColor: 'rgba(0, 0, 0, 0.25)',
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
 };
