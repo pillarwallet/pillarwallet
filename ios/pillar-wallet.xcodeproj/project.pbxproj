@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
 		16CD8FBA20A8E19700BD276F /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CD8FB920A8E19700BD276F /* libReact.a */; };
-		1D20A7B420B71BE400799791 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D20A7B120B71BE400799791 /* GoogleService-Info.plist */; };
+		1D20A7AE20B6EFA000799791 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */; };
 		22F95E64F92E4E398099112D /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 209ECA9FD3A147FF82955E48 /* Entypo.ttf */; };
 		276C827361654D53B0300D88 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */; };
 		2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */; };
@@ -73,7 +73,7 @@
 		16CD8FB520A8DC1B00BD276F /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		16CD8FB920A8E19700BD276F /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
-		1D20A7B120B71BE400799791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		209ECA9FD3A147FF82955E48 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		26CDF7B322B74120A8501540 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
@@ -241,7 +241,7 @@
 		B563865B1DB96A5E00A0598C /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
-				1D20A7B120B71BE400799791 /* GoogleService-Info.plist */,
+				1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */,
 				B5693E8F1FABD46800307FA4 /* launch_background_image.png */,
 				B5693E901FABD46800307FA4 /* launch_icon.png */,
 				B5693E8D1FABD16A00307FA4 /* LaunchScreen.xib */,
@@ -391,7 +391,7 @@
 				5F1F067D48844591B2A659A9 /* Foundation.ttf in Resources */,
 				2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */,
 				D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */,
-				1D20A7B420B71BE400799791 /* GoogleService-Info.plist in Resources */,
+				1D20A7AE20B6EFA000799791 /* GoogleService-Info.plist in Resources */,
 				3BE522D36D0E44CB973ECA16 /* MaterialIcons.ttf in Resources */,
 				308F1777F22140319410B3D5 /* Octicons.ttf in Resources */,
 				4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */,
