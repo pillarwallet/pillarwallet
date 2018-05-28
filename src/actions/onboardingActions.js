@@ -1,6 +1,7 @@
 // @flow
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
+import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
 import {
   ENCRYPTING,
@@ -58,7 +59,9 @@ export const registerWalletAction = () => {
       payload: wallet,
     });
     await api.init({ privateKey: wallet.privateKey });
-    const user = await api.registerOnBackend();
+    await firebase.messaging().requestPermission();
+    const fcmToken = await firebase.messaging().getToken();
+    const user = await api.registerOnBackend(fcmToken);
     await storage.save('user', { user });
     const userState = Object.keys(user).length ? REGISTERED : PENDING;
     dispatch({
@@ -111,8 +114,9 @@ export const registerOnBackendAction = () => {
       payload: API_REGISTRATION_STARTED,
     });
     await delay(1000);
-
-    const user = await api.registerOnBackend();
+    await firebase.messaging().requestPermission();
+    const fcmToken = await firebase.messaging().getToken();
+    const user = await api.registerOnBackend(fcmToken);
     await storage.save('user', { user });
     const userState = Object.keys(user).length ? REGISTERED : PENDING;
     dispatch({

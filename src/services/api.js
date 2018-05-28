@@ -4,53 +4,37 @@ import { initialAssets } from 'fixtures/assets';
 import tokens from 'utils/erc_whitelist.json';
 
 import { transformAssetsToObject } from 'utils/assets';
+import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
-const pillarSdk = {
-  registerOnBackend(privateKey: string) { // eslint-disable-line
-    return Promise.resolve({ id: 1 });
-  },
-  getInitialAssets() {
-    return Promise.resolve(initialAssets);
-  },
-};
-
-export function registerOnBackend(privateKey: string) {
-  return pillarSdk.registerOnBackend(privateKey).catch(() => null);
+type Options = {
+  privateKey: string,
 }
 
-export function getInitialAssets() {
-  return pillarSdk.getInitialAssets()
+// temporary here
+export default function SDKWrapper() {
+  this.sdk = null;
+}
+
+SDKWrapper.prototype.init = function (opts: Options) {
+  this.sdk = new PillarSdk({
+    privateKey: opts.privateKey.slice(2),
+    apiUrl: SDK_PROVIDER,
+  });
+};
+
+SDKWrapper.prototype.registerOnBackend = function (fcm: string) {
+  return this.sdk.wallet.register({ fcmToken: fcm }).catch(() => ({}));
+};
+
+SDKWrapper.prototype.getInitialAssets = function () {
+  return this.sdk.getInitialAssets()
     .catch(() => [])
     // .then(() => []) // remove this
     .then(transformAssetsToObject);
-}
+};
 
-export function getSupportedAssets() {
+SDKWrapper.prototype.getSupportedAsset = function () {
   return Promise.resolve(tokens);
-}
+};
 
-
-// temporary here
-export default class PillarSdk {
-  privateKey: string;
-
-  init({ privateKey }: { privateKey: string }) {
-    if (this.privateKey) return;
-    this.privateKey = privateKey;
-  }
-
-  registerOnBackend() {
-    return pillarSdk.registerOnBackend(this.privateKey).catch(() => null);
-  }
-
-  getInitialAssets() {
-    return pillarSdk.getInitialAssets()
-      .catch(() => [])
-      // .then(() => []) // remove this
-      .then(transformAssetsToObject);
-  }
-
-  getSupportedAssets() {
-    return Promise.resolve(tokens);
-  }
-}
