@@ -9,6 +9,7 @@ import {
 } from 'react-navigation';
 import { Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import BackButton from 'components/BackButton';
 
 // screens
 import OnboardingScreen from 'screens/Onboarding';
@@ -57,12 +58,13 @@ import { UIColors, baseColors } from 'utils/variables';
 
 const StackNavigatorConfig = {
   headerMode: 'screen',
-  navigationOptions: {
+  navigationOptions: ({ navigation }) => ({
     headerStyle: {
       backgroundColor: baseColors.white,
       borderBottomWidth: 0,
     },
-  },
+    headerLeft: <BackButton navigation={navigation} />,
+  }),
 };
 
 const StackNavigatorModalConfig = {

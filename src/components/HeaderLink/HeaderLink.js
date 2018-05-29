@@ -1,9 +1,7 @@
 // @flow
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Icon } from 'native-base';
 import { TextLink } from 'components/Typography';
-import { UIColors } from 'utils/variables';
 
 type Props = {
   children: React.Node,
