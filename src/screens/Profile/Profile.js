@@ -8,6 +8,7 @@ import { Container, Wrapper } from 'components/Layout';
 import { Grid, Row, Column } from 'components/Grid';
 import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
 import Title from 'components/Title';
+import CurrencySelector from 'components/ProfileSettings/CurrencySelector';
 import ProfileHeader from './ProfileHeader';
 import ProfileCard from './ProfileCard';
 
@@ -133,7 +134,7 @@ export default class Profile extends React.Component<{}> {
                 <ListItemText>Base Currency</ListItemText>
               </Body>
               <Right>
-                <Icon name="arrow-forward" />
+                <CurrencySelector />
               </Right>
             </ListItem>
             <ListSeparator>
