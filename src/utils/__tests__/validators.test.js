@@ -3,7 +3,7 @@ import { validatePin, isValidETHAddress, hasAllValues } from '../validators';
 
 describe('Validators', () => {
   describe('validatePin', () => {
-    it('should validate the length of provided pin code', () => {
+    it('should validate the length of provided pincode', () => {
       const pin = '123456';
       const expectedErrorMessage = 'Invalid pin\'s length (should be 6 numbers)';
       expect(validatePin(pin)).toHaveLength(0);

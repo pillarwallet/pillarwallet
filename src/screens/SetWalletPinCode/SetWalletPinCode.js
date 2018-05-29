@@ -47,12 +47,12 @@ class SetWalletPinCode extends React.Component<Props, State> {
     return (
       <Container>
         <Center>
-          <Title center title="create passcode" />
+          <Title center title="create pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}
-          pageInstructions="Setup your Passcode"
+          pageInstructions="Setup your Pincode"
           showForgotButton={false}
           showNewPincodeText
         />
