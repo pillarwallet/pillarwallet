@@ -4,7 +4,7 @@ platform :ios, '9.0'
 target 'pillar-wallet' do
   pod 'ExpoKit',
     :git => "http://github.com/expo/expo.git",
-    :tag => "ios/2.5.9",
+    :tag => "ios/2.5.10",
     :subspecs => [
       "Core",
       "CPP",

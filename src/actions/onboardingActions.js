@@ -58,7 +58,7 @@ export const registerWalletAction = () => {
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
-    await api.init({ privateKey: wallet.privateKey });
+    await api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const user = await api.registerOnBackend(fcmToken);
@@ -109,11 +109,13 @@ export const registerWalletAction = () => {
 
 export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const { wallet: { data: wallet } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: API_REGISTRATION_STARTED,
     });
     await delay(1000);
+    await api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const user = await api.registerOnBackend(fcmToken);

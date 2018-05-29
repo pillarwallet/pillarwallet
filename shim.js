@@ -1,5 +1,12 @@
 // @flow
 /* eslint-disable */
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings([
+  'Class RCTCxxModule',
+  'Module RNRandomBytes',
+  'Module RNOS',
+  'Class EX'
+]);
 
 if (typeof __dirname === 'undefined') global.__dirname = '/';
 if (typeof __filename === 'undefined') global.__filename = '';

@@ -61,7 +61,7 @@
     "jest-update": "jest --colors -u",
     "prestorybook": "rnstl",
     "storybook": "storybook start -p 7007",
-    "postinstall": "rndebugger-open"
+    "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && rndebugger-open"
   },
   "config": {
     "react-native-storybook-loader": {
