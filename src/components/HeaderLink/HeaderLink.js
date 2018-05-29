@@ -26,19 +26,11 @@ const HeaderLink = (props: Props) => {
       <TextLink
         style={{
           opacity: props.disabled ? 0.5 : 1,
+          marginRight: 20,
         }}
       >
         {props.children}
       </TextLink>
-      <Icon
-        name="arrow-forward"
-        style={{
-          fontSize: 34,
-          color: UIColors.primary,
-          marginRight: 10,
-          opacity: props.disabled ? 0.5 : 1,
-        }}
-      />
 
     </TouchableOpacity>
   );
