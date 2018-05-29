@@ -190,7 +190,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
     } = this.state;
     const formOptions = generateFormOptions({ currency: asset.symbol });
 
-    const qrScannnerComponent = (
+    const qrScannerComponent = (
       <QRCodeScanner
         validator={ETHValidator}
         dataFormatter={decodeETHAddress}
@@ -237,7 +237,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
             </ActionsWrapper>
           </Wrapper>
         </Container>
-        {qrScannnerComponent}
+        {qrScannerComponent}
       </React.Fragment>
     );
   }
