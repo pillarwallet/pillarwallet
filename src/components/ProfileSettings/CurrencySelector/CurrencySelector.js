@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Icon, Form, Picker } from 'native-base';
+import { Icon, Picker } from 'native-base';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
 import { saveBaseFiatCurrencyAction } from 'actions/profileActions';
@@ -28,17 +28,15 @@ class CurrencySelector extends React.Component<Props, State> {
   render() {
     const { selectedCurrency } = this.state;
     return (
-      <Form>
-        <Picker
-          iosHeader="Select currency"
-          mode="dropdown"
-          selectedValue={selectedCurrency}
-          onValueChange={this.onCurrencyChanged}
-          iosIcon={<Icon name="arrow-forward" />}
-        >
-          {supportedFiatCurrencies.map(el => <Picker.Item label={el} value={el} key={el} />)}
-        </Picker>
-      </Form>
+      <Picker
+        iosHeader="Select currency"
+        mode="dropdown"
+        selectedValue={selectedCurrency}
+        onValueChange={this.onCurrencyChanged}
+        iosIcon={<Icon name="arrow-forward" />}
+      >
+        {supportedFiatCurrencies.map(el => <Picker.Item label={el} value={el} key={el} />)}
+      </Picker>
     );
   }
 }
