@@ -178,7 +178,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     return (
       <Container>
         <Wrapper padding>
-          <Title title="verify passphrase" />
+          <Title title="verify backup phrase" />
           <Paragraph>
             Please select the appropriate words from the list
           </Paragraph>

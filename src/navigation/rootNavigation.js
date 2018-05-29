@@ -29,9 +29,6 @@ import AddTokenScreen from 'screens/AddToken';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendTokenContacts';
 
-// components
-import Header from 'components/Header';
-
 import {
   APP_FLOW,
   ONBOARDING_FLOW,
@@ -58,16 +55,8 @@ import {
 } from 'constants/navigationConstants';
 import { UIColors, baseColors } from 'utils/variables';
 
-const renderHeader = ({ navigation, ...rest }) => {
-  return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
-};
-
 const StackNavigatorConfig = {
   headerMode: 'screen',
-  navigationOptions: {
-    header: renderHeader,
-    gesturesEnabled: false,
-  },
 };
 
 const StackNavigatorModalConfig = {
