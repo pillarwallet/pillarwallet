@@ -50,7 +50,7 @@ const MnemonicPhrase = (props: Props) => {
     <MnemonicPhraseWrapper>
       {
         mnemonicList.map((word, index) => (
-          <MnemonicPhraseItem key={word}>
+          <MnemonicPhraseItem key={`${word}+${index}`}>
             <MnemonicPhraseIndex><Label>{index + 1}</Label></MnemonicPhraseIndex>
             <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
           </MnemonicPhraseItem>

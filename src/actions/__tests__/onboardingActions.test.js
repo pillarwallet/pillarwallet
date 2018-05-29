@@ -19,11 +19,13 @@ import PillarSdk from 'services/api';
 
 type SDK = {
   registerOnBackend: Function,
+  getInitialAssets: Function,
 };
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const pillarSdk: SDK = new PillarSdk();
 pillarSdk.registerOnBackend = jest.fn(() => ({ id: 1 }));
+pillarSdk.getInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
 const mockWallet: Object = {

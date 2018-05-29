@@ -88,12 +88,13 @@ export const fetchExchangeRatesAction = (assets: Assets) => {
 
 export const fetchInitialAssetsAction = (walletAddress: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const { user: { data: { walletId } } } = getState();
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING_INITIAL,
     });
     await delay(1000);
-    const initialAssets = await api.getInitialAssets();
+    const initialAssets = await api.getInitialAssets(walletId);
 
     if (!Object.keys(initialAssets).length) {
       dispatch({

@@ -82,7 +82,7 @@ export const registerWalletAction = () => {
     }
 
     // STEP 5: get&store initial assets
-    const initialAssets = await api.getInitialAssets();
+    const initialAssets = await api.getInitialAssets(user.walletId);
     const rates = await getExchangeRates(Object.keys(initialAssets));
 
     dispatch({

@@ -13,7 +13,8 @@ export const initAppAndRedirectAction = () => {
     const appSettings = await storage.get('app_settings');
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     if (appSettings.wallet) {
-      const { assets } = await storage.get('assets');
+      let { assets } = await storage.get('assets');
+      assets = assets || {};
       dispatch({ type: UPDATE_ASSETS, payload: assets });
       dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
