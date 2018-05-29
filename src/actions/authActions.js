@@ -24,7 +24,7 @@ export const loginAction = (pin: string) => {
 
     try {
       const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
-      await api.init({ privateKey: wallet.privateKey });
+      await api.init(wallet.privateKey);
       dispatch({
         type: DECRYPT_WALLET,
         payload: wallet,

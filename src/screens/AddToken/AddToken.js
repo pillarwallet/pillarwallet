@@ -12,7 +12,6 @@ import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getSupportedAssets } from 'services/api';
 
 const tokenIcons = {};
 
@@ -64,15 +63,6 @@ type State = {
 class AddToken extends React.Component<Props, State> {
   state = {
     supportedAssets: [],
-  }
-
-  componentDidMount() {
-    // move to redux actions once SDK added
-    getSupportedAssets().then((supportedAssets) => {
-      this.setState({
-        supportedAssets,
-      });
-    }).catch(() => []);
   }
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {

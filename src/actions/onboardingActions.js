@@ -58,6 +58,7 @@ export const registerWalletAction = () => {
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
+    // STEP 4: Initialize SDK annd register user
     await api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
@@ -80,7 +81,7 @@ export const registerWalletAction = () => {
       return;
     }
 
-    // STEP 4: get&store initial assets
+    // STEP 5: get&store initial assets
     const initialAssets = await api.getInitialAssets();
     const rates = await getExchangeRates(Object.keys(initialAssets));
 
@@ -96,7 +97,7 @@ export const registerWalletAction = () => {
 
     await storage.save('assets', { assets: initialAssets });
 
-    // STEP 5: all done, navigate to the assets screen
+    // STEP 6: all done, navigate to the assets screen
     const navigateToAssetsAction = NavigationActions.navigate({
       routeName: APP_FLOW,
       params: {},

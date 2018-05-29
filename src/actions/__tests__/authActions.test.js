@@ -17,7 +17,7 @@ const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
 const mockWallet: Object = {
   address: '0x9c',
-  privateKey: '',
+  privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
 };
 
 Object.defineProperty(mockWallet, 'encrypt', {

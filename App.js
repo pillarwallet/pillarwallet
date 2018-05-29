@@ -1,6 +1,5 @@
 // @flow
-import './shim.js';
-
+import 'utils/shim.js';
 import * as React from 'react';
 import { addNavigationHelpers } from 'react-navigation';
 import { Root as NBRoot } from 'native-base';

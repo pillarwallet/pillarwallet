@@ -6,7 +6,6 @@ import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
 Enzyme.configure({ adapter: new Adapter() });
-
 const storageCache = {};
 const AsyncStorage = new StorageMock(storageCache);
 

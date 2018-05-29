@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing  } from 'react-native';
+import { AppState, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // screens
@@ -28,6 +28,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 
 // actions
 import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
+import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
 
 // constants
 import { PENDING, REGISTERED } from 'constants/userConstants';
@@ -114,28 +115,29 @@ const AppFlowNavigation = StackNavigator(
   },
 );
 
-type State = {
-  user: Object,
-};
-
 type Props = {
+  userState: ?string,
   fetchAppSettingsAndRedirect: Function,
   fetchUser: Function,
-  userState: ?string,
+  startListeningNotifications: Function,
+  stopListeningNotifications: Function,
 }
 
-class AppFlow extends React.Component<Props, State> {
+class AppFlow extends React.Component<Props, {}> {
   timer: any | TimeoutID;
 
   componentDidMount() {
-    const { fetchUser, userState } = this.props;
+    const { fetchUser, userState, startListeningNotifications } = this.props;
     if (userState !== REGISTERED) {
       fetchUser();
     }
+    startListeningNotifications();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentWillUnmount() {
+    const { stopListeningNotifications } = this.props;
+    stopListeningNotifications();
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
@@ -165,6 +167,8 @@ const mapStateToProps = ({ user: { userState } }) => ({
 const mapDispatchToProps = (dispatch) => ({
   fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
   fetchUser: () => dispatch(fetchUserAction()),
+  stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
+  startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

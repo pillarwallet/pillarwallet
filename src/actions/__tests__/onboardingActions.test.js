@@ -17,13 +17,18 @@ import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
 import PillarSdk from 'services/api';
 
+type SDK = {
+  registerOnBackend: Function,
+};
+
 const NAVIGATE = 'Navigation/NAVIGATE';
-const pillarSdk = new PillarSdk();
+const pillarSdk: SDK = new PillarSdk();
+pillarSdk.registerOnBackend = jest.fn(() => ({ id: 1 }));
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
 const mockWallet: Object = {
   address: '0x9c',
-  privateKey: '',
+  privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
 };
 const mockOnboarding: Object = {
   confirmedPin: '',

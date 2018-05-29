@@ -2,13 +2,6 @@
 
 import Firebase from 'react-native-firebase';
 
-export const registerFCMToken = () => {
-  return async (dispatch: Function) => { // eslint-disable-line
-    const token = await Firebase.messaging().getToken(); // eslint-disable-line
-    // register FCM Token
-  };
-};
-
 let notificationsListener = null;
 
 export const startListeningNotificationsAction = () => {

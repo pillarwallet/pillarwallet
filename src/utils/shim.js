@@ -1,4 +1,3 @@
-// @flow
 /* eslint-disable */
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings([

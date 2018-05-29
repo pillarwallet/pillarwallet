@@ -2,6 +2,7 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { SET_USER, PENDING } from 'constants/userConstants';
 import { initAppAndRedirectAction, fetchUserAction } from '../appActions';
 
@@ -16,6 +17,7 @@ describe('App actions', () => {
   with any redirection due to the empty storage`, () => {
     const expectedActions = [
       { type: UPDATE_APP_SETTINGS, payload: {} },
+      { routeName: ONBOARDING_FLOW, type: 'Navigation/NAVIGATE' },
     ];
 
     return store.dispatch(initAppAndRedirectAction())
