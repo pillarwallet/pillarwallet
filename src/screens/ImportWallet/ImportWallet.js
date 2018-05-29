@@ -17,7 +17,6 @@ import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
 import Input from 'components/Input';
 import ErrorMessage from 'components/ErrorMessage';
-import HelpTextDivider from 'components/HelpTextDivider';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,

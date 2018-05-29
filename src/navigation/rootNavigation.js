@@ -172,7 +172,6 @@ function getBottomNavigationOptions() {
     },
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
-    animationEnabled: true,
-    swipeEnabled: false,
+    animationEnabled: false,
   };
 }
