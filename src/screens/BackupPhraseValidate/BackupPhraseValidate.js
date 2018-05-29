@@ -108,14 +108,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     if (enteredWords.length === maxWords) return;
     enteredWords = [...enteredWords, word];
 
-    const isFormValid = this.validateForm(enteredWords);
-
-    this.props.navigation.setParams({
-      isFormValid,
-    });
-
     this.setState({
       enteredWords,
+    }, () => {
+      const isFormValid = this.validateForm(this.state.enteredWords);
+      this.props.navigation.setParams({
+        isFormValid,
+      });
     });
   }
 
@@ -125,6 +124,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     this.setState({
       enteredWords,
+    }, () => {
+      const isFormValid = this.validateForm(this.state.enteredWords);
+      this.props.navigation.setParams({
+        isFormValid,
+      });
     });
   }
 

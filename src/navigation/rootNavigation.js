@@ -57,6 +57,12 @@ import { UIColors, baseColors } from 'utils/variables';
 
 const StackNavigatorConfig = {
   headerMode: 'screen',
+  navigationOptions: {
+    headerStyle: {
+      backgroundColor: baseColors.white,
+      borderBottomWidth: 0,
+    },
+  },
 };
 
 const StackNavigatorModalConfig = {

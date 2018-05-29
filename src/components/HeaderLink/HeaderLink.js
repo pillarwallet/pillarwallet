@@ -23,15 +23,20 @@ const HeaderLink = (props: Props) => {
         height: 45,
       }}
     >
-      <TextLink>
+      <TextLink
+        style={{
+          opacity: props.disabled ? 0.5 : 1,
+        }}
+      >
         {props.children}
       </TextLink>
       <Icon
         name="arrow-forward"
         style={{
-          fontSize: 32,
+          fontSize: 34,
           color: UIColors.primary,
           marginRight: 10,
+          opacity: props.disabled ? 0.5 : 1,
         }}
       />
 
