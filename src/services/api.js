@@ -1,6 +1,4 @@
 // @flow
-import { initialAssets } from 'fixtures/assets';
-
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import { SDK_PROVIDER } from 'react-native-dotenv';
