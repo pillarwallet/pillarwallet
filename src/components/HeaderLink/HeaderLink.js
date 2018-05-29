@@ -8,6 +8,7 @@ import { UIColors } from 'utils/variables';
 type Props = {
   children: React.Node,
   onPress?: Function,
+  disabled?: boolean,
 }
 
 
@@ -15,6 +16,7 @@ const HeaderLink = (props: Props) => {
   return (
     <TouchableOpacity
       onPress={props.onPress}
+      disabled={props.disabled}
       style={{
         flexDirection: 'row',
         alignItems: 'center',
