@@ -6,7 +6,7 @@ jobs:
       - image: circleci/node:8.9.4
     steps:
       - checkout
-        - run:
+			- run:
 					name: Authenticate with registry
 					command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
