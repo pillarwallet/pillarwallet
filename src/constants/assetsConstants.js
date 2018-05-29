@@ -13,4 +13,9 @@ export const REMOVE_ASSET = 'REMOVE_ASSET';
 export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
 export const ETH = 'ETH';
 export const PLR = 'PLR';
+export const EUR = 'EUR';
+export const GBP = 'GBP';
 export const USD = 'USD';
+
+export const supportedFiatCurrencies = [GBP, EUR, USD];
+export const defaultFiatCurrency = USD;
