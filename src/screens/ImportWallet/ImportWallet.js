@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-
+import type { NavigationScreenProp } from 'react-navigation';
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
@@ -11,11 +11,10 @@ import {
   WALLET_ERROR,
   IMPORT_ERROR,
 } from 'constants/walletConstants';
-
-import { Center, Container, Wrapper, Footer } from 'components/Layout';
+import HeaderLink from 'components/HeaderLink';
+import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
-import Button from 'components/Button';
 import Input from 'components/Input';
 import ErrorMessage from 'components/ErrorMessage';
 import HelpTextDivider from 'components/HelpTextDivider';
@@ -24,6 +23,7 @@ type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
   importWalletFromPrivateKey: (privateKey: string) => Function,
   wallet: Object,
+  navigation: NavigationScreenProp<*>,
 };
 
 type State = {
@@ -38,6 +38,23 @@ class ImportWallet extends React.Component<Props, State> {
     tWordsPhrase: '',
     errorMessage: '',
   };
+
+  constructor(props: Props) {
+    super(props);
+    props.navigation.setParams({
+      handleImportSubmit: this.handleImportSubmit,
+    });
+  }
+
+  static navigationOptions = ({ navigation }) => ({
+    headerRight: (
+      <HeaderLink
+        onPress={() => navigation.state.params.handleImportSubmit}
+      >
+      Import
+      </HeaderLink>
+    ),
+  });
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { walletState, error } = nextProps.wallet;
@@ -83,20 +100,14 @@ class ImportWallet extends React.Component<Props, State> {
             multiline
             onChangeText={text => this.setState({ tWordsPhrase: text })}
           />
+          <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
+          <Label>Use your Private Key</Label>
+          <Input
+            value={privateKey}
+            onChangeText={text => this.setState({ privateKey: text })}
+          />
         </Wrapper>
 
-        <Footer>
-          <Button block marginBottom="20px" onPress={this.handleImportSubmit} title="Continue" />
-          <HelpTextDivider title="Don&#39;t have your backup phrase?" />
-          <Center>
-            <Label>Use your Private Key</Label>
-            <Input
-              value={privateKey}
-              onChangeText={text => this.setState({ privateKey: text })}
-            />
-            <Label>Please use safety when exposing your wallet private key.</Label>
-          </Center>
-        </Footer>
 
       </Container>
     );

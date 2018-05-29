@@ -14,7 +14,7 @@ type Props = {
 const Wrapper = styled.View`
   align-self: flex-start;
   flex-wrap: wrap;
-  margin: ${props => props.noMargin ? '0' : '0 0 20px 0'};
+  margin: ${props => props.noMargin ? '0' : '20px 0'};
   width: ${props => props.maxWidth ? props.maxWidth : 'auto'};
   align-self: ${props => props.center ? 'center' : 'flex-start'};
 `;
