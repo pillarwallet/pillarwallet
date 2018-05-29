@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
-import { AppState } from 'react-native';
+import { AppState, Animated, Easing  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // screens
@@ -10,9 +10,20 @@ import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import ICOScreen from 'screens/ICO';
 import ProfileScreen from 'screens/Profile';
+import SendTokenAmountScreen from 'screens/SendTokenAmount';
+import SendTokenContactsScreen from 'screens/SendTokenContacts';
 
 // components
-import { ADD_TOKEN, ASSETS, ICO, PROFILE, TAB_NAVIGATION } from 'constants/navigationConstants';
+import {
+  ADD_TOKEN,
+  ASSETS,
+  ICO,
+  PROFILE,
+  TAB_NAVIGATION,
+  SEND_TOKEN_AMOUNT,
+  SEND_TOKEN_CONTACTS,
+  SEND_TOKEN_FLOW,
+} from 'constants/navigationConstants';
 import RetryApiRegistration from 'components/RetryApiRegistration';
 
 // actions
@@ -26,7 +37,7 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
-
+// TAB NAVIGATION FLOW
 const tabNavigation = TabNavigator(
   {
     [ASSETS]: AssetsScreen,
@@ -68,10 +79,33 @@ const tabNavigation = TabNavigator(
   },
 );
 
+// SEND TOKEN FLOW
+const StackNavigatorModalConfig = {
+  headerMode: 'float',
+  mode: 'modal',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+  navigationOptions: {
+    header: false,
+  },
+};
+
+const sendTokenFlow = StackNavigator({
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+}, StackNavigatorModalConfig);
+
+// APP NAVIGATION FLOW
 const AppFlowNavigation = StackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
+    [SEND_TOKEN_FLOW]: sendTokenFlow,
   }, {
     mode: 'modal',
     navigationOptions: {

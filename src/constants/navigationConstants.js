@@ -12,6 +12,7 @@ export const ADD_TOKEN = 'ADD_TOKEN';
 export const ONBOARDING_FLOW = 'ONBOARDING_FLOW';
 export const ONBOARDING_HOME = 'ONBOARDING_HOME';
 export const NEW_WALLET = 'NEW_WALLET';
+export const NEW_PROFILE = 'NEW_PROFILE';
 export const IMPORT_WALLET = 'IMPORT_WALLET';
 export const BACKUP_PHRASE = 'BACKUP_PHRASE';
 export const BACKUP_PHRASE_VALIDATE = 'BACKUP_PHRASE_VALIDATE';
@@ -30,3 +31,8 @@ export const SIGN_IN = 'SIGN_IN';
 export const OTP = 'OTP';
 export const OTP_STATUS = 'OTP_STATUS';
 export const SIGN_UP = 'SIGN_UP';
+
+// SEND TOKEN FLOW
+export const SEND_TOKEN_FLOW = 'SEND_TOKEN_FLOW';
+export const SEND_TOKEN_AMOUNT = 'SEND_TOKEN_AMOUNT';
+export const SEND_TOKEN_CONTACTS = 'SEND_TOKEN_CONTACTS';

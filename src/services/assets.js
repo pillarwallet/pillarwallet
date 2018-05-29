@@ -2,7 +2,7 @@
 import { Contract, utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
 import type { Assets, Asset } from 'models/Asset';
 
 const PROVIDER = NETWORK_PROVIDER;
@@ -120,5 +120,5 @@ export function fetchAssetBalances(assets: Assets, walletAddress: string): Promi
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
-  return cryptocompare.priceMulti(assets, ['USD', 'EUR', 'GBP']).catch(() => ({}));
+  return cryptocompare.priceMulti(assets, supportedFiatCurrencies).catch(() => ({}));
 }

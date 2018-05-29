@@ -2,12 +2,10 @@
 import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { StackNavigator, SwitchNavigator } from 'react-navigation';
-
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
-import SigninScreen from 'screens/Signin';
-import SignupScreen from 'screens/Signup';
+import NewProfileScreen from 'screens/NewProfile';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import LegalTermsScreen from 'screens/LegalTerms';
@@ -16,31 +14,25 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
-import OTPScreen from 'screens/OTP';
-import OTPStatusScreen from 'screens/OTPStatus';
 
 // components
 import Header from 'components/Header';
 
 import {
   APP_FLOW,
-  SIGN_UP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
-  SIGN_IN,
-  SIGN_UP,
+  NEW_PROFILE,
   LEGAL_TERMS,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
   ONBOARDING_HOME,
   WELCOME,
-  OTP,
-  OTP_STATUS,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -58,6 +50,7 @@ const StackNavigatorConfig = {
 };
 
 const onBoardingFlow = StackNavigator({
+  [WELCOME]: WelcomeScreen,
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
@@ -70,24 +63,15 @@ const onBoardingFlow = StackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [NEW_PROFILE]: NewProfileScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
-}, StackNavigatorConfig);
-
-const signupFlow = StackNavigator({
-  [WELCOME]: WelcomeScreen,
-  [SIGN_IN]: SigninScreen,
-  [OTP]: OTPScreen,
-  [SIGN_UP]: SignupScreen,
-  [OTP_STATUS]: OTPStatusScreen,
 }, StackNavigatorConfig);
 
 const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
 
-
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [SIGN_UP_FLOW]: signupFlow,
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,

@@ -8,7 +8,7 @@ import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
-import { Title } from 'components/Typography';
+import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 
@@ -70,7 +70,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       <Container>
         {showError}
         <Center>
-          <Title>Enter Passcode</Title>
+          <Title center title="enter passcode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}

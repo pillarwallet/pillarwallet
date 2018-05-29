@@ -3,29 +3,23 @@ import * as React from 'react';
 import { Text, View } from 'react-native';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import type { Asset, Assets } from 'models/Asset';
-import { USD } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 type Rates = {
   [string]: {
-    USD: number,
-    EUR: number,
-    GBP: number,
+    [string]: number,
   },
 };
 
 type Props = {
   assets: Assets,
   rates: Rates,
-  baseCurrency: string
+  baseFiatCurrency: string
 };
 
 class PortfolioBalance extends React.Component<Props, {}> {
-  static defaultProps = {
-    baseCurrency: USD,
-  };
-
   calculatePortfolioBalance(assets: Assets, rates: Rates) {
     // CLEANUP REQUIRED
     return Object
@@ -51,17 +45,21 @@ class PortfolioBalance extends React.Component<Props, {}> {
   }
 
   render() {
-    const { assets, rates, baseCurrency } = this.props;
+    const { assets, rates, baseFiatCurrency } = this.props;
+
     if (!Object.keys(rates).length || !Object.keys(assets).length) {
       return null;
     }
+
     let portfolioBalance = this.calculatePortfolioBalance(assets, rates);
-    portfolioBalance = formatMoney(portfolioBalance[baseCurrency]);
-    const currencySymbol = getCurrencySymbol(baseCurrency);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    portfolioBalance = formatMoney(portfolioBalance[fiatCurrency]);
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
     return (
       <View>
         <Text style={{
-          color: baseColors.warmGray,
+          color: baseColors.mediumGray,
           fontSize: fontSizes.medium,
           }}
         >
@@ -80,8 +78,13 @@ class PortfolioBalance extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = ({ assets: { data: assets }, rates: { data: rates } }) => ({
+const mapStateToProps = ({
+  assets: { data: assets },
+  rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
+}) => ({
   rates,
   assets,
+  baseFiatCurrency,
 });
 export default connect(mapStateToProps)(PortfolioBalance);

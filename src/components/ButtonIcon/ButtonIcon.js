@@ -20,7 +20,7 @@ const ButtonIcon = (props: Props) => {
     style,
   } = props;
   return (
-    <Button transparent onPress={onPress} style={style}>
+    <Button transparent iconLeft={0} onPress={onPress} style={style}>
       <Icon active={false} name={icon} style={{ fontSize, color }} />
     </Button>
   );

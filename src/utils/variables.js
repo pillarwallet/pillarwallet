@@ -9,9 +9,9 @@ export const baseColors = {
   clearBlue: '#2077fd',
   white: '#ffffff',
   lightGray: '#f6f6f6',
-  mediumGray: '#d8d8d8',
-  warmGray: '#757575',
+  mediumGray: '#777777',
   darkGray: '#4a4a4a',
+  black: '#000000',
 };
 
 export const brandColors = [
@@ -25,12 +25,13 @@ export const brandColors = [
 export const UIColors = {
   primary: baseColors.clearBlue,
   danger: baseColors.fireEngineRed,
-  defaultTextColor: '#4a4a4a',
+  defaultTextColor: baseColors.black,
   defaultBorderColor: 'rgba(0, 0, 0, 0.25)',
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
 };
 
 export const fontSizes = {
+  extraExtraSmall: 6,
   extraSmall: 9,
   small: 12,
   medium: 16,

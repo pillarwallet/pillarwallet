@@ -1,9 +1,9 @@
 // @flow
 import styled from 'styled-components/native';
-import { UIColors, baseColors } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 export const Title = styled.Text`
-  font-size: 24;
+  font-size: ${fontSizes.extraLarge};
   margin: 20px 0;
   font-weight: 700;
   padding: ${props => (props.padding ? '0 20px' : '0')};
@@ -11,21 +11,21 @@ export const Title = styled.Text`
 `;
 
 export const Paragraph = styled.Text`
-  font-size: 16;
+  font-size: ${fontSizes.medium};
   margin-bottom: 10;
-  color: ${props => props.light ? baseColors.warmGray : UIColors.defaultTextColor};
+  color: ${props => props.light ? baseColors.mediumGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
 `;
 
 export const Label = styled.Text`
-  font-size: 14;
-  color: rgb(155,155,155);
+  font-size: ${fontSizes.small};
+  color: ${baseColors.mediumGray};
   margin-bottom: 10;
   align-self: flex-start;
 `;
 
 export const HelpText = styled.Text`
-  font-size: 12;
+  font-size: ${fontSizes.small};
   padding: 10px;
   color: grey;
 `;

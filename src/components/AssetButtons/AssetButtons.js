@@ -3,8 +3,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 
 type Props = {
-  recieveOnPress: Function,
-  sendOnPress: Function,
+  onPressReceive: Function,
+  onPressSend: Function,
 }
 
 const imageSend = require('assets/images/btn_iconSend.png');
@@ -35,12 +35,12 @@ const AssetButtonText = styled.Text`
 const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
-      <AssetButton onPress={props.sendOnPress}>
+      <AssetButton onPress={props.onPressReceive}>
         <AssetButtonImage source={imageReceive} />
         <AssetButtonText>Receive</AssetButtonText>
       </AssetButton>
 
-      <AssetButton onPress={props.recieveOnPress}>
+      <AssetButton onPress={props.onPressSend}>
         <AssetButtonImage source={imageSend} />
         <AssetButtonText>Send</AssetButtonText>
       </AssetButton>

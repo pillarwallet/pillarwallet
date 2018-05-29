@@ -324,6 +324,7 @@
 		16F1DCAF20BC061100A8F843 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		16FAA79E20A8FB350001246E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
+		1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		209ECA9FD3A147FF82955E48 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		26CDF7B322B74120A8501540 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
@@ -630,6 +631,7 @@
 		B563865B1DB96A5E00A0598C /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
+				1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */,
 				B5693E8F1FABD46800307FA4 /* launch_background_image.png */,
 				B5693E901FABD46800307FA4 /* launch_icon.png */,
 				B5693E8D1FABD16A00307FA4 /* LaunchScreen.xib */,
@@ -638,7 +640,6 @@
 				B5CFBF4E1EDE419400B4BE24 /* EXBuildConstants.plist */,
 				B501732A1DC01252003445D9 /* EXShell.plist */,
 				B56386661DB9994300A0598C /* EXSDKVersions.plist */,
-				16FAA79E20A8FB350001246E /* GoogleService-Info.plist */,
 				B563865C1DB96A5E00A0598C /* Info.plist */,
 				B563865E1DB96A5E00A0598C /* main.m */,
 			);
@@ -1031,7 +1032,6 @@
 				B5693E8E1FABD16A00307FA4 /* LaunchScreen.xib in Resources */,
 				B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */,
 				B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */,
-				16FAA79F20A8FB350001246E /* GoogleService-Info.plist in Resources */,
 				B56386511DB9693800A0598C /* Assets.xcassets in Resources */,
 				5024DD2C1ACA4DF494A1CCB1 /* Entypo.ttf in Resources */,
 				E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */,

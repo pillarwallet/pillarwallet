@@ -46,7 +46,7 @@ export default class ReceiveModal extends React.Component<Props> {
     } = this.props;
 
     return (
-      <SlideModal title="receive." isVisible={isVisible} onModalHide={onModalHide}>
+      <SlideModal title="receive" isVisible={isVisible} onModalHide={onModalHide}>
         <Container flex={4}>
           <QRCode value={address} blockHeight={5} />
           <Text style={{ textAlign: 'center', marginTop: 20, color: 'gray' }}>
