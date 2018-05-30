@@ -67,15 +67,14 @@ export default class ReceiveModal extends React.Component<Props, State> {
     },
     () => Share.share({ title: 'Public address', message: address })
       .then(({ action }) => {
-        if (action === Share.dismissedAction) {
-          this.setState({
-            isVisible: true,
-            address,
-            token,
-            tokenName,
-            onModalHide,
-          });
-        }
+        if (action !== Share.dismissedAction) return;
+        this.setState({
+          isVisible: true,
+          address,
+          token,
+          tokenName,
+          onModalHide,
+        });
       }),
     );
   };
