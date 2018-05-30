@@ -61,7 +61,7 @@ export const registerWalletAction = () => {
       payload: wallet,
     });
     // STEP 4: Initialize SDK annd register user
-    await api.init(wallet.privateKey);
+    api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const user = await api.registerOnBackend(fcmToken);
@@ -118,7 +118,7 @@ export const registerOnBackendAction = () => {
       payload: API_REGISTRATION_STARTED,
     });
     await delay(1000);
-    await api.init(wallet.privateKey);
+    api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const user = await api.registerOnBackend(fcmToken);
