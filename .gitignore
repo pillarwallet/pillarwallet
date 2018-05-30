@@ -84,3 +84,13 @@ android/captures/
 #### Pods
 ios/Pods
 ios/Podfile.lock
+
+### Gems
+ios/.bundle/
+ios/Gemfile
+ios/Gemfile.lock
+ios/vendor/
+
+##Fastlane
+ios/fastlane/README.md
+ios/fastlane/report.xml

@@ -1,26 +1,95 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/pillar
-    docker:
-      - image: circleci/node:8.9.4
+    working_directory: ~/pillarwallet
+    macos:
+      xcode: "9.3.0"
+    environment:
+      FL_OUTPUT_DIR: output
+    shell: /bin/bash --login -o pipefail
+
     steps:
       - checkout
       - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: node-{{ checksum "./yarn.lock" }}
       - run:
           name: install
           command: yarn install
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: node-{{ checksum "./yarn.lock" }}
           paths:
-            - ./node_modules
+            - ~/nodes_modules
       - run:
-          name: validate
-          command: yarn validate
+          name: install Expo cli tool
+          command: yarn global add global exp
       - run:
-          name: generate coverage stats
-          command:  yarn test:coverage
+          name: setting .expo/PATH
+          command: exp path
+      - restore_cache:
+          key: pods-{{ checksum "./ios/Podfile.lock" }}
+      - run:
+          name: Fetch CocoaPods Specs
+          command: |
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+      - run:
+          name: Install CocoaPods
+          command: cd ios && pod install --verbose
+      - save_cache:
+          key: pods-{{ checksum "./ios/Podfile.lock" }}
+          paths:
+            - ./ios/Pods
+      - run:
+          name: Install Bundler
+          command: sudo gem install bundler
+      - run:
+          name: Creating Gemfile in ios dir
+          command: cd ios && bundle init
+      - run:
+          name: Login to exp
+          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
+      - run:
+          name: publishing resources bundle to expo server
+          command: exp publish
+      - run:
+          name: Installing fastlane gem
+          command: echo 'gem "fastlane"' >> ./ios/Gemfile
+      - restore_cache:
+          key: gems-{{ checksum "./ios/Gemfile" }}
+      - run:
+          name: Create vendor/bundle for gem dependencies
+          command: cd ios && bundle check || bundle install --path vendor/bundle
+      - run:
+          name: To install fastlane defined as a dependency
+          command: cd ios && sudo bundle update
+      - save_cache:
+          key: gems-{{ checksum "./ios/Gemfile" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: show fastlane environment setup
+          command: cd ios && fastlane env
+      - run:
+          name: Build and run tests
+          command: cd ios && bundle exec fastlane test_flight
+          environment:
+            SCAN_DEVICE: iPhone 8
+      - run:
+          name: cat error log so we can see it
+          command: cat /Users/distiller/pillarwallet/ios/output/buildlogs/gym/pillar-wallet-pillar-wallet.log
+      - store_test_results:
+          path: output/scan
       - store_artifacts:
-          path: ./reports/
-          destination: reports
+          path: ~/pillarwallet/ios/output/gym/pillar-wallet.ipa
+      - store_artifacts:
+          path: output
+      - run:
+          name: upload ipa file to Artifactory
+          command: curl -u jameshughes7:monkey_bars710 -T ~/pillarwallet/ios/output/gym/pillar-wallet.ipa "https://pillarproject.jfrog.io/pillarproject/generic-local/ipa/pillar-wallet-$CIRCLE_BUILD_NUM.ipa"
+workflows:
+  version: 2
+  build_test_and_publish_deploy:
+    jobs:
+      - build
+        filters:
+            branches:
+              only: ios_build_via_circleCI
