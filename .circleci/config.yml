@@ -90,6 +90,3 @@ workflows:
   build_test_and_publish_deploy:
     jobs:
       - build
-        filters:
-            branches:
-              only: ios_build_via_circleCI
