@@ -4,7 +4,7 @@
 
 
 ; Ignore shim
-<PROJECT_ROOT>/shim.js
+<PROJECT_ROOT>/src/utils/shim.js
 
 ; Ignore ios
 <PROJECT_ROOT>/ios/.*
