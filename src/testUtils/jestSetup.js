@@ -16,3 +16,6 @@ jest.setMock('cryptocompare', {
     return Promise.resolve({});
   },
 });
+jest.setMock('react-native-device-info', {
+  getUniqueID: () => '1x1x1x1x',
+});

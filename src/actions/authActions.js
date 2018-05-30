@@ -1,6 +1,7 @@
 // @flow
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
+import DeviceInfo from 'react-native-device-info';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -21,9 +22,9 @@ export const loginAction = (pin: string) => {
       payload: DECRYPTING,
     });
     await delay(100);
-
+    const saltedPin = pin + DeviceInfo.getUniqueID();
     try {
-      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
+      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       await api.init(wallet.privateKey);
       dispatch({
         type: DECRYPT_WALLET,

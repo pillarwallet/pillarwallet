@@ -3,6 +3,7 @@ import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
+import DeviceInfo from 'react-native-device-info';
 import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
@@ -47,8 +48,8 @@ export const registerWalletAction = () => {
       payload: ENCRYPTING,
     });
     await delay(50);
-
-    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 8192 } })
+    const saltedPin = pin + DeviceInfo.getUniqueID();
+    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 1024 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
