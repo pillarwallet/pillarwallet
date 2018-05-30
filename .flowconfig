@@ -2,10 +2,6 @@
 ; We fork some components by platform
 .*/*[.]android.js
 
-
-; Ignore shim
-<PROJECT_ROOT>/src/utils/shim.js
-
 ; Ignore ios
 <PROJECT_ROOT>/ios/.*
 
