@@ -2,6 +2,8 @@
 import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { StackNavigator, SwitchNavigator } from 'react-navigation';
+import BackButton from 'components/BackButton';
+import { baseColors } from 'utils/variables';
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
@@ -14,9 +16,6 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
-
-// components
-import Header from 'components/Header';
 
 import {
   APP_FLOW,
@@ -37,16 +36,15 @@ import {
 
 import AppFlow from './appNavigation';
 
-const renderHeader = ({ navigation, ...rest }) => {
-  return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
-};
-
 const StackNavigatorConfig = {
   headerMode: 'screen',
-  navigationOptions: {
-    header: renderHeader,
-    gesturesEnabled: false,
-  },
+  navigationOptions: ({ navigation }) => ({
+    headerStyle: {
+      backgroundColor: baseColors.white,
+      borderBottomWidth: 0,
+    },
+    headerLeft: <BackButton navigation={navigation} />,
+  }),
 };
 
 const onBoardingFlow = StackNavigator({
