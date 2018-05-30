@@ -45,6 +45,9 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 ios/*/Supporting/GoogleService-Info.plist
+ios/*/Supporting/EXBuildConstants.json
+ios/*/Supporting/EXBuildConstants.plist
+ios/*/Supporting/EXBuildConstants.plist.bak
 #### Android/IntelliJ
 
 # Built application files

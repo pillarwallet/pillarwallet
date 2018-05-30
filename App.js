@@ -1,7 +1,7 @@
 // @flow
+import 'utils/shim.js';
 import * as React from 'react';
 import { addNavigationHelpers } from 'react-navigation';
-import { AppState } from 'react-native';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
@@ -13,10 +13,6 @@ import StorybookUI from './storybook';
 
 const store = configureStore();
 const addListener = createReduxBoundAddListener('root');
-const SLEEP_TIMEOUT = 20000;
-const BACKGROUND_APP_STATE = 'background';
-const INACTIVE_APP_STATE = 'inactive';
-const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
 type State = {
   isFetched: boolean
@@ -31,8 +27,6 @@ type Props = {
 
 
 class App extends React.Component<Props, State> {
-  timer: any | TimeoutID;
-
   state = {
     isFetched: false,
   };
@@ -43,23 +37,9 @@ class App extends React.Component<Props, State> {
     };
   }
 
-  componentWillUnmount() {
-    AppState.removeEventListener('change', this.handleAppStateChange);
-  }
-
   componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
-    AppState.addEventListener('change', this.handleAppStateChange);
     fetchAppSettingsAndRedirect();
-  }
-
-  handleAppStateChange = (nextAppState) => {
-    const { fetchAppSettingsAndRedirect } = this.props;
-    if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
-      return;
-    }
-    clearTimeout(this.timer);
   }
 
   render() {
