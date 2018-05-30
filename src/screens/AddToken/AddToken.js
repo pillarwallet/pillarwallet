@@ -7,7 +7,7 @@ import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
@@ -111,7 +111,7 @@ class AddToken extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <ScrollWrapper padding>
           <CloseButton
             icon="md-close"
             onPress={this.handleScreenDissmisal}
@@ -125,7 +125,7 @@ class AddToken extends React.Component<Props, State> {
           <List>
             {this.generateAddTokenListItems()}
           </List>
-        </Wrapper>
+        </ScrollWrapper>
       </Container>
     );
   }

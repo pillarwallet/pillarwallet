@@ -2,18 +2,19 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Label } from 'components/Typography';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 const MnemonicPhraseWrapper = styled.View`
   flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
-  height: 320px;
+  height: 280px;
   width: 100%;
 `;
 
 const MnemonicPhraseItem = styled.View`
   width: 40%;
-  margin: 0 5% 10px;
+  margin: 0 5% 5px;
   flex-direction: row;
   align-items: center;
   align-content: center;
@@ -25,11 +26,11 @@ const MnemonicPhraseIndex = styled.Text`
 `;
 
 const MnemonicPhraseWord = styled.Text`
-  background-color: #f2f2f2;
+  background-color: ${baseColors.lightGray};
   font-weight: bold;
-  font-size: 14px;
+  font-size: ${fontSizes.small};
   width: 100%;
-  border-color: #d6d7da;
+  border-color: ${UIColors.defaultBorderColor};
   border-style: dashed;
   border-width: 1;
   border-radius: 6;

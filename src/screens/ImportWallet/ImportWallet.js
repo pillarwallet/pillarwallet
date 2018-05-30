@@ -12,7 +12,7 @@ import {
   IMPORT_ERROR,
 } from 'constants/walletConstants';
 import HeaderLink from 'components/HeaderLink';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
 import Input from 'components/Input';
@@ -85,10 +85,10 @@ class ImportWallet extends React.Component<Props, State> {
     return (
       <Container>
         {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
-        <Wrapper padding>
+        <ScrollWrapper padding>
           <Title title="restore wallet" />
           <Paragraph>
-            Import your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
+              Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
           </Paragraph>
 
           <Label>Enter your 12 word backup phrase.</Label>
@@ -105,9 +105,7 @@ class ImportWallet extends React.Component<Props, State> {
             value={privateKey}
             onChangeText={text => this.setState({ privateKey: text })}
           />
-        </Wrapper>
-
-
+        </ScrollWrapper>
       </Container>
     );
   }
