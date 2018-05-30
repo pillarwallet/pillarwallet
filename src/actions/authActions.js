@@ -22,7 +22,8 @@ export const loginAction = (pin: string) => {
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = pin + DeviceInfo.getUniqueID();
+    const uniqueId = DeviceInfo.getUniqueID();
+    const saltedPin = uniqueId + pin + uniqueId.slice(0, 5);
     try {
       const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       await api.init(wallet.privateKey);

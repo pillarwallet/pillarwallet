@@ -48,7 +48,8 @@ export const registerWalletAction = () => {
       payload: ENCRYPTING,
     });
     await delay(50);
-    const saltedPin = pin + DeviceInfo.getUniqueID();
+    const uniqueId = DeviceInfo.getUniqueID();
+    const saltedPin = uniqueId + pin + uniqueId.slice(0, 5);
     const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 1024 } })
       .then(JSON.parse)
       .catch(() => ({}));
