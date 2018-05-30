@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { KeyboardAvoidingView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
 import HeaderLink from 'components/HeaderLink';
 import { Paragraph, Label } from 'components/Typography';
@@ -32,7 +32,7 @@ class NewProfile extends React.Component<Props> {
         enabled
       >
         <Container>
-          <Wrapper padding>
+          <ScrollWrapper padding>
             <Title title="create profile" />
             <Paragraph>Fill our your profile.</Paragraph>
             <LoginForm>
@@ -44,7 +44,7 @@ class NewProfile extends React.Component<Props> {
               <Label>Full Name</Label>
               <InputField />
             </LoginForm>
-          </Wrapper>
+          </ScrollWrapper>
         </Container>
       </KeyboardAvoidingView>
     );
