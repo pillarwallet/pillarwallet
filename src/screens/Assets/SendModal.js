@@ -230,7 +230,7 @@ class SendModal extends React.Component<Props, State> {
     } = this.state;
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: token });
     const isFilled = hasAllValues(value);
-    const qrScannnerComponent = (
+    const qrScannerComponent = (
       <QRCodeScanner
         validator={ETHValidator}
         dataFormatter={decodeETHAddress}
@@ -244,7 +244,7 @@ class SendModal extends React.Component<Props, State> {
         title="send."
         isVisible={isVisible}
         onModalHide={onModalHide}
-        fullScreenComponent={qrScannnerComponent}
+        fullScreenComponent={qrScannerComponent}
       >
         <Container>
           <Form
