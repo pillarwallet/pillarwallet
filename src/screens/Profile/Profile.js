@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { AsyncStorage } from 'react-native';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Label } from 'components/Typography';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { Grid, Row, Column } from 'components/Grid';
 import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
 import Title from 'components/Title';
@@ -62,7 +62,7 @@ export default class Profile extends React.Component<{}> {
   render() {
     return (
       <Container>
-        <Wrapper>
+        <ScrollWrapper>
           <ProfileHeader>
             <Title title="profile" />
             <ProfileCard name="David Bowie" email="johndoe@email.com" />
@@ -192,7 +192,7 @@ export default class Profile extends React.Component<{}> {
               </Right>
             </ListItem>
           </List>
-        </Wrapper>
+        </ScrollWrapper>
       </Container>
     );
   }
