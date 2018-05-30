@@ -23,6 +23,7 @@ const AVERAGE_NUMBER_OF_MATRIX_ROWS = 30;
 
 const Container = styled.View`
   height: ${props => props.height || 200}px;
+  margin-bottom: 20px;
 `;
 
 const QRWrapper = styled.View`
@@ -73,7 +74,13 @@ export default class QRCode extends React.Component<Props, State> {
 
   async generateQRCode() {
     const { value } = this.props;
-    await delay(800);
+    let timeDelay = 800;
+
+    if (value) {
+      timeDelay = 0;
+    }
+
+    await delay(timeDelay);
     const qrCodeSrc = await qrcode.create(value);
     const arr = qrCodeSrc.modules.data;
     const sqrMatrix = this.generateSquareMatrix(arr);

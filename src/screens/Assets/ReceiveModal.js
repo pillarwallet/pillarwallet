@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Share, Clipboard } from 'react-native';
 import { Paragraph } from 'components/Typography';
+import { Center, Footer } from 'components/Layout';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -15,50 +16,92 @@ type Props = {
   isVisible: boolean,
 }
 
-const Container = styled.View`
-  flex: ${props => props.flex};
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-`;
+type State = {
+  isVisible: boolean,
+  address: string,
+  onModalHide: Function,
+  token: string,
+  tokenName: string,
+}
 
 const Address = styled.Text`
   font-size: 11px;
 `;
 
-export default class ReceiveModal extends React.Component<Props> {
+export default class ReceiveModal extends React.Component<Props, State> {
+  state = {
+    isVisible: false,
+    address: '',
+    onModalHide: () => {},
+    token: '',
+    tokenName: '',
+  }
+
+  static getDerivedStateFromProps(props: Props) {
+    return {
+      isVisible: props.isVisible,
+      address: props.address,
+      onModalHide: props.onModalHide,
+      token: props.token,
+      tokenName: props.tokenName,
+    };
+  }
+
   handleAddressClipboardSet = () => {
-    const { address } = this.props;
+    const {
+      address,
+    } = this.state;
     Clipboard.setString(address);
   };
 
   handleAddressShare = () => {
-    const { address } = this.props;
-    Share.share({ title: 'Public address', message: address });
+    const {
+      address,
+      token,
+      tokenName,
+      onModalHide,
+    } = this.state;
+
+    this.setState({
+      isVisible: false,
+    },
+    () => Share.share({ title: 'Public address', message: address })
+      .then(({ action }) => {
+        if (action === Share.dismissedAction) {
+          this.setState({
+            isVisible: true,
+            address,
+            token,
+            tokenName,
+            onModalHide,
+          });
+        }
+      }),
+    );
   };
 
   render() {
     const {
-      address,
       isVisible,
+      address,
       token,
       tokenName,
       onModalHide,
-    } = this.props;
+    } = this.state;
 
     return (
-      <SlideModal title="receive" isVisible={isVisible} onModalHide={onModalHide}>
-        <Container flex={4}>
+      <SlideModal style={{ zIndex: -10 }} title="receive" isVisible={isVisible} onModalHide={onModalHide}>
+        <Center>
           <QRCode value={address} blockHeight={5} />
           <Paragraph center>
             This is your ROPSTEN {tokenName} address, use for transfering ROPSTEN {token} only!
           </Paragraph>
-        </Container>
-        <Container flex={3}>
           <Address>{address}</Address>
           <Button secondary marginBottom="20px" title="Copy Address" onPress={this.handleAddressClipboardSet} />
-          <Button title="Share Address" onPress={this.handleAddressShare} />
-        </Container>
+        </Center>
+        <Footer>
+          <Button block title="Share Address" onPress={this.handleAddressShare} />
+        </Footer>
       </SlideModal>
     );
   }
