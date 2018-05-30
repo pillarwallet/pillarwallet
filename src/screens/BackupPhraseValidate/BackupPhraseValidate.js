@@ -166,7 +166,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
               <WordInputText>{enteredWords[i] || ''}</WordInputText>
             </WordInput>
             {enteredWords.length === (i + 1) &&
-              <RemoveWordButtonIcon icon="close" onPress={this.handleLastWordRemoval} fontSize={fontSizes.extraExtraLarge} />
+              <RemoveWordButtonIcon
+                icon="close"
+                onPress={this.handleLastWordRemoval}
+                fontSize={fontSizes.extraExtraLarge}
+              />
             }
           </WordInputWrapper>
         );
