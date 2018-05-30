@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { KeyboardAvoidingView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import {
   importWalletFromTWordsPhraseAction,
@@ -13,7 +12,7 @@ import {
   IMPORT_ERROR,
 } from 'constants/walletConstants';
 import HeaderLink from 'components/HeaderLink';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph, Label } from 'components/Typography';
 import Title from 'components/Title';
 import Input from 'components/Input';
@@ -84,37 +83,30 @@ class ImportWallet extends React.Component<Props, State> {
     const { privateKey, tWordsPhrase } = this.state;
 
     return (
+      <Container>
+        {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
+        <ScrollWrapper padding>
+          <Title title="restore wallet" />
+          <Paragraph>
+              Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
+          </Paragraph>
 
-      <KeyboardAvoidingView
-        behavior="position"
-        keyboardVerticalOffset={-60}
-        enabled
-      >
-        <Container>
-          {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
-          <Wrapper padding>
-            <Title title="restore wallet" />
-            <Paragraph>
-                Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
-            </Paragraph>
-
-            <Label>Enter your 12 word backup phrase.</Label>
-            <Input
-              value={tWordsPhrase}
-              height={80}
-              width="100%"
-              multiline
-              onChangeText={text => this.setState({ tWordsPhrase: text })}
-            />
-            <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
-            <Label>Use your Private Key</Label>
-            <Input
-              value={privateKey}
-              onChangeText={text => this.setState({ privateKey: text })}
-            />
-          </Wrapper>
-        </Container>
-      </KeyboardAvoidingView>
+          <Label>Enter your 12 word backup phrase.</Label>
+          <Input
+            value={tWordsPhrase}
+            height={80}
+            width="100%"
+            multiline
+            onChangeText={text => this.setState({ tWordsPhrase: text })}
+          />
+          <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
+          <Label>Use your Private Key</Label>
+          <Input
+            value={privateKey}
+            onChangeText={text => this.setState({ privateKey: text })}
+          />
+        </ScrollWrapper>
+      </Container>
     );
   }
 }

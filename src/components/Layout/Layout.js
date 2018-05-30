@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { baseColors } from 'utils/variables';
 
 type ContainerProps = {
@@ -32,7 +33,12 @@ export const Container = (props: ContainerProps) => {
   );
 };
 
-export const Wrapper = styled.ScrollView`
+export const Wrapper = styled.View`
+  padding: ${props => (props.padding ? '0 20px' : '0')};
+  flex: 1;
+`;
+
+export const ScrollWrapper = styled(KeyboardAwareScrollView)`
   padding: ${props => (props.padding ? '0 20px' : '0')};
   flex: 1;
 `;

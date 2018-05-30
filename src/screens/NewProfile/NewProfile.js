@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { KeyboardAvoidingView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
@@ -25,21 +26,27 @@ class NewProfile extends React.Component<Props> {
 
   render() {
     return (
-      <Container>
-        <Wrapper padding>
-          <Title title="create profile" />
-          <Paragraph>Fill our your profile.</Paragraph>
-          <LoginForm>
-            <Label>Username</Label>
-            <InputField
-              isFocused
-              placeholder="@"
-            />
-            <Label>Full Name</Label>
-            <InputField />
-          </LoginForm>
-        </Wrapper>
-      </Container>
+      <KeyboardAvoidingView
+        behavior="position"
+        keyboardVerticalOffset={-100}
+        enabled
+      >
+        <Container>
+          <Wrapper padding>
+            <Title title="create profile" />
+            <Paragraph>Fill our your profile.</Paragraph>
+            <LoginForm>
+              <Label>Username</Label>
+              <InputField
+                isFocused
+                placeholder="@"
+              />
+              <Label>Full Name</Label>
+              <InputField />
+            </LoginForm>
+          </Wrapper>
+        </Container>
+      </KeyboardAvoidingView>
     );
   }
 }
