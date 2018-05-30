@@ -4,7 +4,7 @@ import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Container, Center } from 'components/Layout';
-import { Title } from 'components/Typography';
+import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 
 import { setPinForNewWalletAction } from 'actions/walletActions';
@@ -47,13 +47,14 @@ class SetWalletPinCode extends React.Component<Props, State> {
     return (
       <Container>
         <Center>
-          <Title>Enter Passcode</Title>
+          <Title center title="create pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}
-          pageInstructions="Setup your Passcode"
+          pageInstructions="Setup your Pincode"
           showForgotButton={false}
+          showNewPincodeText
         />
         {!!this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
       </Container>

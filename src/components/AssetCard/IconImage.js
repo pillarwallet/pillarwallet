@@ -1,11 +1,11 @@
 // @flow
 import styled from 'styled-components/native';
 
-const Icon = styled.Image`
+const IconImage = styled.Image`
   align-self: flex-end;
   height: 40;
   width: 40;
   margin: 20px;
 `;
 
-export default Icon;
+export default IconImage;

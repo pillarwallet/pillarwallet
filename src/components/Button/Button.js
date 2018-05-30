@@ -10,6 +10,8 @@ type Props = {
   secondary?: boolean,
   marginBottom?: string,
   marginTop?: string,
+  marginLeft?: string,
+  marginRight?: string,
   light?: boolean,
   width?: string,
   block?: boolean,
@@ -54,6 +56,8 @@ const Button = (props: Props) => {
       block={props.block}
       marginTop={props.marginTop}
       marginBottom={props.marginBottom}
+      marginLeft={props.marginLeft}
+      marginRight={props.marginRight}
       noPadding={props.noPadding}
       onPress={props.onPress}
       width={props.width}

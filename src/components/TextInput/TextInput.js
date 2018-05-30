@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item, Input, Label } from 'native-base';
+import { fontSizes, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 
 type inputPropsType = {
@@ -21,7 +22,8 @@ type Props = {
   iconColor?: string,
   errorMessage?: string,
   onIconPress?: Function,
-  inputProps: inputPropsType
+  inputProps: inputPropsType,
+  inputType: string,
 }
 
 type State = {
@@ -31,6 +33,19 @@ type State = {
 type EventLike = {
   nativeEvent: Object,
 }
+
+const inputTypes = {
+  default: {
+    fontSize: fontSizes.medium,
+    fontWeight: fontWeights.book,
+    textAlign: 'left',
+  },
+  amount: {
+    fontSize: fontSizes.extraExtraLarge,
+    fontWeight: fontWeights.bold,
+    textAlign: 'right',
+  },
+};
 
 const FloatingButton = styled(ButtonIcon)`
   position:absolute;
@@ -56,10 +71,20 @@ const PostFix = styled.Text`
   right: 0;
 `;
 
+const InputField = styled(Input)`
+  font-size: ${props => props.inputType.fontSize};
+  font-weight: ${props => props.inputType.fontWeight};
+  text-align: ${props => props.inputType.textAlign};
+`;
+
 class TextInput extends React.Component<Props, State> {
   state = {
     value: '',
   }
+
+  static defaultProps = {
+    inputType: 'default',
+  };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.inputProps.value !== prevState.value) {
@@ -100,21 +125,19 @@ class TextInput extends React.Component<Props, State> {
       inputProps,
       errorMessage,
       inlineLabel,
-      alignRight,
     } = this.props;
     const { value } = this.state;
+    const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     return (
       <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>
         <Label>{label}</Label>
-        <Input
+        <InputField
           {...inputProps}
           onChange={this.handleChange}
           onBlur={this.handleBlur}
           value={value}
-          style={{
-            textAlign: alignRight ? 'right' : 'left',
-          }}
+          inputType={inputType}
         />
         {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
         {!!postfix && <PostFix>{postfix}</PostFix>}

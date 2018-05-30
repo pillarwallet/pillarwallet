@@ -7,13 +7,14 @@ import {
   TabNavigator,
   TabBarBottom,
 } from 'react-navigation';
+import { Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import BackButton from 'components/BackButton';
 
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
-import SigninScreen from 'screens/Signin';
-import SignupScreen from 'screens/Signup';
+import NewProfileScreen from 'screens/NewProfile';
 import AssetsScreen from 'screens/Assets';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -24,17 +25,13 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
-import OTPScreen from 'screens/OTP';
-import OTPStatusScreen from 'screens/OTPStatus';
 import ProfileScreen from 'screens/Profile';
 import AddTokenScreen from 'screens/AddToken';
-
-// components
-import Header from 'components/Header';
+import SendTokenAmountScreen from 'screens/SendTokenAmount';
+import SendTokenContactsScreen from 'screens/SendTokenContacts';
 
 import {
   APP_FLOW,
-  SIGN_UP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
   ASSETS,
@@ -42,8 +39,7 @@ import {
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
-  SIGN_IN,
-  SIGN_UP,
+  NEW_PROFILE,
   LEGAL_TERMS,
   ICO,
   IMPORT_WALLET,
@@ -51,26 +47,43 @@ import {
   PIN_CODE_UNLOCK,
   ONBOARDING_HOME,
   WELCOME,
-  OTP,
-  OTP_STATUS,
   PROFILE,
   ADD_TOKEN,
   TAB_NAVIGATION,
+  SEND_TOKEN_FLOW,
+  SEND_TOKEN_AMOUNT,
+  SEND_TOKEN_CONTACTS,
 } from 'constants/navigationConstants';
-
-const renderHeader = ({ navigation, ...rest }) => {
-  return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
-};
+import { UIColors, baseColors } from 'utils/variables';
 
 const StackNavigatorConfig = {
   headerMode: 'screen',
+  navigationOptions: ({ navigation }) => ({
+    headerStyle: {
+      backgroundColor: baseColors.white,
+      borderBottomWidth: 0,
+    },
+    headerLeft: <BackButton navigation={navigation} />,
+  }),
+};
+
+const StackNavigatorModalConfig = {
+  headerMode: 'float',
+  mode: 'modal',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
   navigationOptions: {
-    header: renderHeader,
-    gesturesEnabled: false,
+    header: false,
   },
 };
 
 const onBoardingFlow = StackNavigator({
+  [WELCOME]: WelcomeScreen,
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
@@ -83,16 +96,14 @@ const onBoardingFlow = StackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [NEW_PROFILE]: NewProfileScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
 }, StackNavigatorConfig);
 
-const signupFlow = StackNavigator({
-  [WELCOME]: WelcomeScreen,
-  [SIGN_IN]: SigninScreen,
-  [OTP]: OTPScreen,
-  [SIGN_UP]: SignupScreen,
-  [OTP_STATUS]: OTPStatusScreen,
-}, StackNavigatorConfig);
+const sendTokenFlow = StackNavigator({
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+}, StackNavigatorModalConfig);
 
 const authFlow = StackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
@@ -112,6 +123,7 @@ const appFlow = StackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
+    [SEND_TOKEN_FLOW]: sendTokenFlow,
   }, {
     mode: 'modal',
     navigationOptions: {
@@ -121,7 +133,6 @@ const appFlow = StackNavigator(
 );
 
 const RootSwitch: SwitchNavigatorType = SwitchNavigator({
-  [SIGN_UP_FLOW]: signupFlow,
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: appFlow,
@@ -151,17 +162,16 @@ function getBottomNavigationOptions() {
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'blue',
-      inactiveTintColor: 'gray',
-      activeBackgroundColor: 'white',
-      inactiveBackgroundColor: 'white',
+      activeTintColor: UIColors.primary,
+      inactiveTintColor: baseColors.mediumGray,
+      activeBackgroundColor: baseColors.white,
+      inactiveBackgroundColor: baseColors.white,
       style: {
-        backgroundColor: 'white',
+        backgroundColor: baseColors.white,
       },
     },
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
-    animationEnabled: true,
-    swipeEnabled: false,
+    animationEnabled: false,
   };
 }

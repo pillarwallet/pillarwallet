@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Container, Center } from 'components/Layout';
-import { Title } from 'components/Typography';
+import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
@@ -48,12 +48,12 @@ class PinCodeConfirmation extends React.Component<Props, State> {
       <Container>
         {!!this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <Center>
-          <Title>Confirm Passcode</Title>
+          <Title center title="confirm pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}
-          pageInstructions="Confirm your Passcode"
+          pageInstructions="Confirm your Pincode"
           showForgotButton={false}
         />
       </Container>

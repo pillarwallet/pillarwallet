@@ -2,12 +2,14 @@
 import * as React from 'react';
 import styled from 'styled-components/native/index';
 import KeyPad from 'components/KeyPad';
+import { Wrapper } from 'components/Layout';
+import { Paragraph } from 'components/Typography';
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import PinDots from './PinDots';
 
 const PASS_CODE_LENGTH = 6;
 
-const PinWrapper = styled.View`
+const PageWrapper = styled.View`
   flex: 1;
   justify-content: space-between;
 `;
@@ -17,6 +19,7 @@ type Props = {
   onPinChanged?: Function,
   onForgotPin?: Function,
   pageInstructions?: string,
+  showNewPincodeText?: boolean,
   showForgotButton?: boolean,
 };
 
@@ -80,14 +83,24 @@ export default class PinCode extends React.Component<Props, State> {
   };
 
   render() {
-    const { showForgotButton } = this.props;
+    const { showForgotButton, showNewPincodeText } = this.props;
     const numActiveDots = this.state.passCode.length;
 
     return (
-      <PinWrapper>
-        <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
+      <PageWrapper>
+        <Wrapper padding>
+          <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
+          {showNewPincodeText &&
+            <Paragraph
+              light
+              center
+            >
+              Please create a pincode to secure access to your wallet and for signing of transactions.
+            </Paragraph>
+          }
+        </Wrapper>
         <KeyPad type="pincode" options={{ showForgotButton }} onKeyPress={this.handleButtonPressed} />
-      </PinWrapper>
+      </PageWrapper>
     );
   }
 }

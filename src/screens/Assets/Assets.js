@@ -1,14 +1,13 @@
 // @flow
 import * as React from 'react';
 import { Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
-import { Paragraph } from 'components/Typography';
 import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import type { NavigationScreenProp } from 'react-navigation';
 import Button from 'components/Button';
 import {
   fetchInitialAssetsAction,
@@ -20,19 +19,16 @@ import AssetButtons from 'components/AssetButtons';
 import { Container, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
-import PopModal from 'components/Modals/PopModal';
+import TransactionSentModal from 'components/TransactionSentModal';
 import { formatMoney } from 'utils/common';
-import { FETCH_INITIAL_FAILED } from 'constants/assetsConstants';
-import { ADD_TOKEN } from 'constants/navigationConstants';
+import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
+import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
-import SendModal from './SendModal';
-
 
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 const defaultAssetColor = '#4C4E5E';
 const pillarLogoSource = require('assets/images/header-pillar-logo.png');
-const tokenSentConfirmationImage = require('assets/images/token-sent-confirmation-image.png');
 
 const assetColors = {
   ETH: baseColors.darkGray,
@@ -58,6 +54,7 @@ type Props = {
   rates: Object,
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
+  baseFiatCurrency: string,
 }
 
 type State = {
@@ -138,11 +135,16 @@ class AssetsScreen extends React.Component<Props, State> {
     const headerHeightValue = this.state.isCardActive ? 120 : 150;
     const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
 
+    const {
+      animHeaderHeight,
+      animHeaderTextOpacity,
+    } = this.state;
+
     Animated.parallel([
-      Animated.spring(this.state.animHeaderHeight, {
+      Animated.spring(animHeaderHeight, {
         toValue: headerHeightValue,
       }),
-      Animated.spring(this.state.animHeaderTextOpacity, {
+      Animated.spring(animHeaderTextOpacity, {
         toValue: headerTextOpacityValue,
       }),
     ]).start();
@@ -159,15 +161,29 @@ class AssetsScreen extends React.Component<Props, State> {
 
   goToAddTokenPage = () => {
     this.props.navigation.navigate(ADD_TOKEN);
-  };
+  }
+
+  goToSendTokenFlow = (asset: Object) => {
+    this.props.navigation.navigate(SEND_TOKEN_FLOW, {
+      asset,
+    });
+  }
 
   renderAssets() {
-    const { wallet, assets, rates } = this.props;
+    const {
+      wallet,
+      assets,
+      rates,
+      baseFiatCurrency,
+    } = this.props;
+
     const {
       history,
       activeCard,
       isCardActive,
     } = this.state;
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return Object.keys(assets)
       .map(id => assets[id])
@@ -175,14 +191,12 @@ class AssetsScreen extends React.Component<Props, State> {
         const {
           name,
           symbol,
-          address: contractAddress,
         } = asset;
         const balance = asset.balance || 0;
-        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : formatMoney(0);
+        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
-        const sendModalOptions = { token: symbol, totalBalance: balance, contractAddress };
         const assetColor = assetColors[symbol] || defaultAssetColor;
         const defaultCardPositionTop = index * 140;
 
@@ -195,17 +209,16 @@ class AssetsScreen extends React.Component<Props, State> {
             name={name || symbol}
             token={symbol}
             amount={displayAmount}
-            balanceInFiat={{ amount: balanceInFiat, currency: 'USD' }}
+            balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
             color={assetColor}
             onTap={this.handleCardTap}
             defaultPositionY={defaultCardPositionTop}
             history={assetHistory}
             address={wallet.address}
           >
-
             <AssetButtons
-              recieveOnPress={() => { this.setState({ activeModal: { type: 'SEND', opts: sendModalOptions } }); }}
-              sendOnPress={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
+              onPressReceive={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
+              onPressSend={() => this.goToSendTokenFlow(asset)}
             />
 
           </AssetCard>
@@ -225,6 +238,11 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsState,
       fetchInitialAssets,
     } = this.props;
+
+    const headerBorderColor = animHeaderTextOpacity.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['rgba(0, 0, 0, 0)', UIColors.defaultBorderColor],
+    });
 
     if (!Object.keys(assets).length) {
       return (
@@ -273,7 +291,7 @@ class AssetsScreen extends React.Component<Props, State> {
               borderBottomWidth: 1,
               borderStyle: 'solid',
               backgroundColor: baseColors.white,
-              borderColor: UIColors.defaultBorderColor,
+              borderColor: headerBorderColor,
               padding: 20,
               flexDirection: 'row',
             }}
@@ -323,25 +341,11 @@ class AssetsScreen extends React.Component<Props, State> {
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           {...opts}
         />
-        <SendModal
-          isVisible={activeModalType === 'SEND'}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-          {...opts}
-        />
-        <PopModal
+
+        <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-          headerImage={tokenSentConfirmationImage}
-        >
-          <Title
-            title="Your transaction is pending"
-            center
-            maxWidth={200}
-          />
-          <Paragraph light center style={{ marginBottom: 20 }}>
-            The process may take up to 10 minutes to complete. please check your transaction history.
-          </Paragraph>
-        </PopModal>
+        />
 
       </Container>
     );
@@ -352,11 +356,13 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, assetsState },
   rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
   assets,
   assetsState,
   rates,
+  baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
