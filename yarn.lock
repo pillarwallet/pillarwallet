@@ -658,12 +658,11 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.0.1-225":
-  version "1.0.1-225"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.0.1-225.tgz#c13e1ec2a1c966bdb051ebc5b34ada4890a8d991"
+"@pillarwallet/pillarwallet-nodejs-sdk@1.1.0-254":
+  version "1.1.0-254"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.1.0-254.tgz#64db7e4595ac44ab56a94df87205f2aa7012aa2d"
   dependencies:
-    "@pillarwallet/plr-auth-sdk" "^0.1.0-55"
-    "@types/ajv" "1.0.0"
+    "@pillarwallet/plr-auth-sdk" "^0.1.0"
     "@types/node" "9.6.6"
     "@types/request" "2.47.0"
     "@types/request-promise" "4.1.41"
@@ -677,7 +676,7 @@
     secp256k1 "3.5.0"
     tslint-config-airbnb "5.8.0"
 
-"@pillarwallet/plr-auth-sdk@^0.1.0-55":
+"@pillarwallet/plr-auth-sdk@^0.1.0":
   version "0.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/plr-auth-sdk/-/@pillarwallet/plr-auth-sdk-0.1.0.tgz#8f1f27b4608553f6e200d8c776f81465f44e98ce"
   dependencies:
@@ -909,12 +908,6 @@
     Base64 "~0.2.0"
     inherits "~2.0.1"
 
-"@types/ajv@1.0.0":
-  version "1.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/ajv/-/ajv-1.0.0.tgz?dl=https://registry.yarnpkg.com/@types/ajv/-/ajv-1.0.0.tgz#4fb2440742f2f6c30e7fb0797b839fc6f696682a"
-  dependencies:
-    ajv "*"
-
 "@types/bluebird@*":
   version "3.5.20"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/bluebird/-/bluebird-3.5.20.tgz?dl=https://registry.yarnpkg.com/@types/bluebird/-/bluebird-3.5.20.tgz#f6363172add6f4eabb8cada53ca9af2781e8d6a1"
@@ -946,8 +939,8 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/minimatch/-/minimatch-3.0.3.tgz?dl=https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
 
 "@types/node@*":
-  version "10.1.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.1.3.tgz?dl=https://registry.yarnpkg.com/@types/node/-/node-10.1.3.tgz#5c16980936c4e3c83ce64e8ed71fb37bd7aea135"
+  version "10.1.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.1.4.tgz?dl=https://registry.yarnpkg.com/@types/node/-/node-10.1.4.tgz#606651d3f8a8bec08b8cb262161aab9209f4a29d"
 
 "@types/node@9.6.6":
   version "9.6.6"
@@ -1064,15 +1057,6 @@ ajv-keywords@^2.1.0:
   version "2.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ajv-keywords/-/ajv-keywords-2.1.1.tgz?dl=https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-2.1.1.tgz#617997fc5f60576894c435f940d819e135b80762"
 
-ajv@*, ajv@^6.0.1, ajv@^6.1.0:
-  version "6.5.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ajv/-/ajv-6.5.0.tgz?dl=https://registry.yarnpkg.com/ajv/-/ajv-6.5.0.tgz#4c8affdf80887d8f132c9c52ab8a2dc4d0b7b24c"
-  dependencies:
-    fast-deep-equal "^2.0.1"
-    fast-json-stable-stringify "^2.0.0"
-    json-schema-traverse "^0.3.0"
-    uri-js "^4.2.1"
-
 ajv@6.4.0:
   version "6.4.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ajv/-/ajv-6.4.0.tgz?dl=https://registry.yarnpkg.com/ajv/-/ajv-6.4.0.tgz#d3aff78e9277549771daf0164cff48482b754fc6"
@@ -1090,6 +1074,15 @@ ajv@^5.0.0, ajv@^5.1.0, ajv@^5.2.2, ajv@^5.2.3, ajv@^5.3.0:
     fast-deep-equal "^1.0.0"
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.3.0"
+
+ajv@^6.0.1, ajv@^6.1.0:
+  version "6.5.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ajv/-/ajv-6.5.0.tgz?dl=https://registry.yarnpkg.com/ajv/-/ajv-6.5.0.tgz#4c8affdf80887d8f132c9c52ab8a2dc4d0b7b24c"
+  dependencies:
+    fast-deep-equal "^2.0.1"
+    fast-json-stable-stringify "^2.0.0"
+    json-schema-traverse "^0.3.0"
+    uri-js "^4.2.1"
 
 align-text@^0.1.1, align-text@^0.1.3:
   version "0.1.4"
@@ -1361,8 +1354,8 @@ ast-types@0.9.6:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ast-types/-/ast-types-0.9.6.tgz?dl=https://registry.yarnpkg.com/ast-types/-/ast-types-0.9.6.tgz#102c9e9e9005d3e7e3829bf0c4fa24ee862ee9b9"
 
 ast-types@0.x.x:
-  version "0.11.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ast-types/-/ast-types-0.11.4.tgz?dl=https://registry.yarnpkg.com/ast-types/-/ast-types-0.11.4.tgz#76f930930e9571851ba282a9a0f6923f29f6be2f"
+  version "0.11.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ast-types/-/ast-types-0.11.5.tgz?dl=https://registry.yarnpkg.com/ast-types/-/ast-types-0.11.5.tgz#9890825d660c03c28339f315e9fa0a360e31ec28"
 
 astral-regex@^1.0.0:
   version "1.0.0"
@@ -2568,8 +2561,8 @@ bcrypt-pbkdf@^1.0.0:
     tweetnacl "^0.14.3"
 
 big-integer@^1.6.17, big-integer@^1.6.7:
-  version "1.6.28"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/big-integer/-/big-integer-1.6.28.tgz?dl=https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.28.tgz#8cef0fda3ccde8759c2c66efcfacc35aea658283"
+  version "1.6.30"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/big-integer/-/big-integer-1.6.30.tgz?dl=https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.30.tgz#7796f04acdd6ba56345f19049c8fffd427f09d16"
 
 big.js@^3.1.3:
   version "3.2.0"
@@ -2829,24 +2822,24 @@ btoa@1.1.2:
   version "1.1.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/btoa/-/btoa-1.1.2.tgz?dl=https://registry.yarnpkg.com/btoa/-/btoa-1.1.2.tgz#3e40b81663f81d2dd6596a4cb714a8dc16cfabe0"
 
-buffer-alloc-unsafe@^0.1.0:
-  version "0.1.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-alloc-unsafe/-/buffer-alloc-unsafe-0.1.1.tgz?dl=https://registry.yarnpkg.com/buffer-alloc-unsafe/-/buffer-alloc-unsafe-0.1.1.tgz#ffe1f67551dd055737de253337bfe853dfab1a6a"
+buffer-alloc-unsafe@^1.1.0:
+  version "1.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-alloc-unsafe/-/buffer-alloc-unsafe-1.1.0.tgz?dl=https://registry.yarnpkg.com/buffer-alloc-unsafe/-/buffer-alloc-unsafe-1.1.0.tgz#bd7dc26ae2972d0eda253be061dba992349c19f0"
 
 buffer-alloc@^1.1.0:
-  version "1.1.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-alloc/-/buffer-alloc-1.1.0.tgz?dl=https://registry.yarnpkg.com/buffer-alloc/-/buffer-alloc-1.1.0.tgz#05514d33bf1656d3540c684f65b1202e90eca303"
+  version "1.2.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-alloc/-/buffer-alloc-1.2.0.tgz?dl=https://registry.yarnpkg.com/buffer-alloc/-/buffer-alloc-1.2.0.tgz#890dd90d923a873e08e10e5fd51a57e5b7cce0ec"
   dependencies:
-    buffer-alloc-unsafe "^0.1.0"
-    buffer-fill "^0.1.0"
+    buffer-alloc-unsafe "^1.1.0"
+    buffer-fill "^1.0.0"
 
 buffer-equal-constant-time@1.0.1:
   version "1.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz?dl=https://registry.yarnpkg.com/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz#f8e71132f7ffe6e01a5c9697a4c6f3e48d5cc819"
 
-buffer-fill@^0.1.0:
-  version "0.1.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-fill/-/buffer-fill-0.1.1.tgz?dl=https://registry.yarnpkg.com/buffer-fill/-/buffer-fill-0.1.1.tgz#76d825c4d6e50e06b7a31eb520c04d08cc235071"
+buffer-fill@^1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-fill/-/buffer-fill-1.0.0.tgz?dl=https://registry.yarnpkg.com/buffer-fill/-/buffer-fill-1.0.0.tgz#f8f78b76789888ef39f205cd637f68e702122b2c"
 
 buffer-from@0.1.1:
   version "0.1.1"
@@ -2855,8 +2848,8 @@ buffer-from@0.1.1:
     is-array-buffer-x "^1.0.13"
 
 buffer-from@^1.0.0:
-  version "1.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-from/-/buffer-from-1.0.0.tgz?dl=https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.0.0.tgz#4cb8832d23612589b0406e9e2956c17f06fdf531"
+  version "1.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/buffer-from/-/buffer-from-1.1.0.tgz?dl=https://registry.yarnpkg.com/buffer-from/-/buffer-from-1.1.0.tgz#87fcaa3a298358e0ade6e442cfce840740d1ad04"
 
 buffer-indexof-polyfill@~1.0.0:
   version "1.0.1"
@@ -3451,8 +3444,8 @@ cookie@0.3.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/cookie/-/cookie-0.3.1.tgz?dl=https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
 
 cookiejar@^2.1.0:
-  version "2.1.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/cookiejar/-/cookiejar-2.1.1.tgz?dl=https://registry.yarnpkg.com/cookiejar/-/cookiejar-2.1.1.tgz#41ad57b1b555951ec171412a81942b1e8200d34a"
+  version "2.1.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/cookiejar/-/cookiejar-2.1.2.tgz?dl=https://registry.yarnpkg.com/cookiejar/-/cookiejar-2.1.2.tgz#dd8a235530752f988f9a0844f3fc589e3111125c"
 
 copy-concurrently@^1.0.0:
   version "1.0.5"
@@ -3739,8 +3732,8 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
     cssom "0.3.x"
 
 csstype@^2.2.0:
-  version "2.5.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/csstype/-/csstype-2.5.2.tgz?dl=https://registry.yarnpkg.com/csstype/-/csstype-2.5.2.tgz#4534308476ceede8fbe148b9b99f9baf1c80fa06"
+  version "2.5.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/csstype/-/csstype-2.5.3.tgz?dl=https://registry.yarnpkg.com/csstype/-/csstype-2.5.3.tgz#2504152e6e1cc59b32098b7f5d6a63f16294c1f7"
 
 ctx-polyfill@lifaon74/ctx-polyfill:
   version "1.1.4"
@@ -4295,8 +4288,8 @@ es-to-primitive@^1.1.1:
     is-symbol "^1.0.1"
 
 es5-ext@^0.10.14, es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14:
-  version "0.10.43"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es5-ext/-/es5-ext-0.10.43.tgz?dl=https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.43.tgz#c705e645253210233a270869aa463a2333b7ca64"
+  version "0.10.44"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es5-ext/-/es5-ext-0.10.44.tgz?dl=https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.44.tgz#7a877e994bb190aebd4718aa2d62784a12e2ca20"
   dependencies:
     es6-iterator "~2.0.3"
     es6-symbol "~3.1.1"
@@ -4452,8 +4445,8 @@ eslint-plugin-flowtype-errors@^3.5.1:
     slash "^2.0.0"
 
 eslint-plugin-flowtype@^2.46.1:
-  version "2.47.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.47.1.tgz?dl=https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.47.1.tgz#1be0d6b855dbf8f253fcf49ea3d44bf6c23ff984"
+  version "2.48.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.48.0.tgz?dl=https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.48.0.tgz#e447dc27dcb99d68e2a705fd9c1046c32aae2ca1"
   dependencies:
     lodash "^4.17.10"
 
@@ -9942,8 +9935,8 @@ react-native-maps@0.21.0:
     babel-preset-react-native "1.9.0"
 
 react-native-modal@^6.0.0:
-  version "6.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-modal/-/react-native-modal-6.0.0.tgz?dl=https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-6.0.0.tgz#72b829454cde207848e4323a96a440c152f7508e"
+  version "6.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-modal/-/react-native-modal-6.1.0.tgz?dl=https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-6.1.0.tgz#cc63946bd62cebfb8e531aa125796e26f5acd9c3"
   dependencies:
     prop-types "^15.6.1"
     react-native-animatable "^1.2.4"
@@ -11957,8 +11950,8 @@ trim-x@^3.0.0:
     trim-right-x "^3.0.0"
 
 tslib@^1.0.0, tslib@^1.7.1, tslib@^1.8.1:
-  version "1.9.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tslib/-/tslib-1.9.1.tgz?dl=https://registry.yarnpkg.com/tslib/-/tslib-1.9.1.tgz#a5d1f0532a49221c87755cfcc89ca37197242ba7"
+  version "1.9.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tslib/-/tslib-1.9.2.tgz?dl=https://registry.yarnpkg.com/tslib/-/tslib-1.9.2.tgz#8be0cc9a1f6dc7727c38deb16c2ebd1a2892988e"
 
 tslint-config-airbnb@5.8.0:
   version "5.8.0"
@@ -12047,8 +12040,8 @@ uglify-es@^3.1.9, uglify-es@^3.3.4:
     source-map "~0.6.1"
 
 uglify-js@3.3.x:
-  version "3.3.27"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uglify-js/-/uglify-js-3.3.27.tgz?dl=https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.27.tgz#eb8c3c9429969f86ff5b0a2422ffc78c3cea8cc0"
+  version "3.3.28"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uglify-js/-/uglify-js-3.3.28.tgz?dl=https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.3.28.tgz#0efb9a13850e11303361c1051f64d2ec68d9be06"
   dependencies:
     commander "~2.15.0"
     source-map "~0.6.1"
