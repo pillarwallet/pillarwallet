@@ -230,7 +230,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: asset.symbol });
 
-    const qrScannnerComponent = (
+    const qrScannerComponent = (
       <QRCodeScanner
         validator={ETHValidator}
         dataFormatter={decodeETHAddress}
@@ -289,7 +289,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             />
           </Wrapper>
         </Container>
-        {qrScannnerComponent}
+        {qrScannerComponent}
         {confirmationModal}
       </React.Fragment>
     );
