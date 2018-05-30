@@ -5,6 +5,8 @@ import Adapter from 'enzyme-adapter-react-16';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
+jest.mock('NativeAnimatedHelper');
+
 Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
 const AsyncStorage = new StorageMock(storageCache);
