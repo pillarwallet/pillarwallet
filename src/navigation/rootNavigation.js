@@ -9,6 +9,7 @@ import {
 } from 'react-navigation';
 import { Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import BackButton from 'components/BackButton';
 
 // screens
 import OnboardingScreen from 'screens/Onboarding';
@@ -28,9 +29,6 @@ import ProfileScreen from 'screens/Profile';
 import AddTokenScreen from 'screens/AddToken';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendTokenContacts';
-
-// components
-import Header from 'components/Header';
 
 import {
   APP_FLOW,
@@ -58,16 +56,15 @@ import {
 } from 'constants/navigationConstants';
 import { UIColors, baseColors } from 'utils/variables';
 
-const renderHeader = ({ navigation, ...rest }) => {
-  return <Header {...rest} stateKey={navigation.state.key} onBack={navigation.goBack} />;
-};
-
 const StackNavigatorConfig = {
   headerMode: 'screen',
-  navigationOptions: {
-    header: renderHeader,
-    gesturesEnabled: false,
-  },
+  navigationOptions: ({ navigation }) => ({
+    headerStyle: {
+      backgroundColor: baseColors.white,
+      borderBottomWidth: 0,
+    },
+    headerLeft: <BackButton navigation={navigation} />,
+  }),
 };
 
 const StackNavigatorModalConfig = {
@@ -175,7 +172,6 @@ function getBottomNavigationOptions() {
     },
     tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
-    animationEnabled: true,
-    swipeEnabled: false,
+    animationEnabled: false,
   };
 }

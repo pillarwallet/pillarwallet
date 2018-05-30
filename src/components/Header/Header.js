@@ -1,11 +1,14 @@
 // @flow
 import * as React from 'react';
-import { Header as NBHeader, Left } from 'native-base';
+import { Header as NBHeader, Left, Right } from 'native-base';
+import { TextLink } from 'components/Typography';
 import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
   onBack: Function,
+  onNextPress?: Function,
+  nextText?: string,
   index?: number,
 }
 
@@ -20,7 +23,12 @@ const BackIcon = styled(ButtonIcon)`
 `;
 
 const Header = (props: Props) => {
-  const { onBack, index } = props;
+  const {
+    onBack,
+    index,
+    nextText,
+    onNextPress,
+  } = props;
 
   if (!index) return null;
 
@@ -29,6 +37,13 @@ const Header = (props: Props) => {
       <Left>
         <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
       </Left>
+      {nextText && (
+        <Right>
+          <TextLink onPress={onNextPress}>
+            {nextText}
+          </TextLink>
+        </Right>
+      )}
     </Wrapper>
   );
 };
