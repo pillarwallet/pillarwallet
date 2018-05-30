@@ -75,7 +75,6 @@ const ShuffledWordWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  margin: 20px 0;
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
