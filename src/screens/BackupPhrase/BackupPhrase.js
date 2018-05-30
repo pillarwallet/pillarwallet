@@ -37,19 +37,17 @@ class BackupPhrase extends React.Component<Props, {}> {
     if (!wallet.mnemonic) return null;
 
     return (
-      <React.Fragment>
-        <Container>
-          <Wrapper padding>
-            <Title title="backup phrase" />
-            <Paragraph>Carefully write down your 12 word backup phrase in the correct order.</Paragraph>
-            <Paragraph light>
-              Keep it secure as it&#39;s the only way to recover your account in an emergency.
-              Don&#39;t email or screenshot it.
-            </Paragraph>
-            <MnemonicPhrase phrase={wallet.mnemonic.original} />
-          </Wrapper>
-        </Container>
-      </React.Fragment>
+      <Container>
+        <Wrapper padding>
+          <Title title="backup phrase" />
+          <Paragraph>Carefully write down your 12 word backup phrase in the correct order.</Paragraph>
+          <Paragraph light>
+            Keep it secure as it&#39;s the only way to recover your account in an emergency.
+            Don&#39;t email or screenshot it.
+          </Paragraph>
+          <MnemonicPhrase phrase={wallet.mnemonic.original} />
+        </Wrapper>
+      </Container>
     );
   }
 }
