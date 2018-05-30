@@ -256,7 +256,7 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           )}
           {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={fetchInitialAssets(wallet.address)} />
+            <Button title="Try again" onPress={() => fetchInitialAssets(wallet.address)} />
           )}
         </Container>
       );

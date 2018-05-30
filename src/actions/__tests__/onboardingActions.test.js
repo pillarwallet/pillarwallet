@@ -1,4 +1,5 @@
 // @flow
+
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
@@ -10,16 +11,26 @@ import {
 import { ASSETS, NEW_WALLET, APP_FLOW } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
-import { initialAssets } from 'fixtures/assets';
+import { SET_USER, REGISTERED } from 'constants/userConstants';
+import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
+import PillarSdk from 'services/api';
+
+type SDK = {
+  registerOnBackend: Function,
+  getInitialAssets: Function,
+};
 
 const NAVIGATE = 'Navigation/NAVIGATE';
-const mockStore = configureMockStore([thunk]);
+const pillarSdk: SDK = new PillarSdk();
+pillarSdk.registerOnBackend = jest.fn(() => ({ id: 1 }));
+pillarSdk.getInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
+const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
 const mockWallet: Object = {
   address: '0x9c',
-  privateKey: '',
+  privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
 };
 const mockOnboarding: Object = {
   confirmedPin: '',
@@ -69,8 +80,9 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: SET_USER, payload: { state: REGISTERED, user: { id: 1 } } },
       { type: SET_RATES, payload: mockExchangeRates },
-      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(initialAssets) },
+      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
         type: NAVIGATE,
         routeName: APP_FLOW,
@@ -100,8 +112,9 @@ describe('Wallet actions', () => {
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: SET_USER, payload: { state: REGISTERED, user: { id: 1 } } },
       { type: SET_RATES, payload: mockExchangeRates },
-      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(initialAssets) },
+      { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
         type: NAVIGATE,
         routeName: APP_FLOW,

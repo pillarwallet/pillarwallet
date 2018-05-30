@@ -5,6 +5,7 @@ import walletReducer from './walletReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
+import userReducer from './userReducer';
 
 export default combineReducers({
   navigation: navigationReducer,
@@ -12,4 +13,5 @@ export default combineReducers({
   assets: assetsReducer,
   appSettings: appSettingsReducer,
   rates: ratesReducer,
+  user: userReducer,
 });
