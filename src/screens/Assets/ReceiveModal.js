@@ -89,7 +89,7 @@ export default class ReceiveModal extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <SlideModal style={{ zIndex: -10 }} title="receive" isVisible={isVisible} onModalHide={onModalHide}>
+      <SlideModal title="receive" isVisible={isVisible} onModalHide={onModalHide}>
         <Center>
           <QRCode value={address} blockHeight={5} />
           <Paragraph center>
