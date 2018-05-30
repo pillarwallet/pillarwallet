@@ -83,6 +83,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     enteredWords: [],
   };
 
+  constructor(props: Props) {
+    super(props);
+    props.navigation.setParams({
+      isFormValid: false,
+    });
+  }
+
   static navigationOptions = ({ navigation }) => ({
     headerRight: (
       <HeaderLink
@@ -94,12 +101,6 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     ),
   });
 
-  constructor(props: Props) {
-    super(props);
-    props.navigation.setParams({
-      isFormValid: false,
-    });
-  }
 
   handleWordSetting = (word) => {
     let { enteredWords } = this.state;
