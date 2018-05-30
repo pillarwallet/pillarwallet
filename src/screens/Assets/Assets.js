@@ -22,7 +22,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import PopModal from 'components/Modals/PopModal';
 import { formatMoney } from 'utils/common';
-import { FETCH_INITIAL_FAILED } from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
@@ -56,6 +56,7 @@ type Props = {
   rates: Object,
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
+  baseFiatCurrency: string,
 }
 
 type State = {
@@ -171,12 +172,20 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   renderAssets() {
-    const { wallet, assets, rates } = this.props;
+    const {
+      wallet,
+      assets,
+      rates,
+      baseFiatCurrency,
+    } = this.props;
+
     const {
       history,
       activeCard,
       isCardActive,
     } = this.state;
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return Object.keys(assets)
       .map(id => assets[id])
@@ -186,7 +195,7 @@ class AssetsScreen extends React.Component<Props, State> {
           symbol,
         } = asset;
         const balance = asset.balance || 0;
-        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol].USD) : formatMoney(0);
+        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const activeModalOptions = { address: wallet.address };
@@ -202,7 +211,7 @@ class AssetsScreen extends React.Component<Props, State> {
             name={name || symbol}
             token={symbol}
             amount={displayAmount}
-            balanceInFiat={{ amount: balanceInFiat, currency: 'USD' }}
+            balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
             color={assetColor}
             onTap={this.handleCardTap}
             defaultPositionY={defaultCardPositionTop}
@@ -359,11 +368,13 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, assetsState },
   rates: { data: rates },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
   assets,
   assetsState,
   rates,
+  baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
