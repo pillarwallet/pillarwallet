@@ -1,6 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 export const Title = styled.Text`
   font-size: ${fontSizes.extraLarge};
@@ -15,6 +15,13 @@ export const Paragraph = styled.Text`
   margin-bottom: 10;
   color: ${props => props.light ? baseColors.mediumGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
+`;
+
+export const TextLink = styled.Text`
+  font-size: ${fontSizes.medium};
+  margin-right: 10px;
+  font-weight: ${fontWeights.bold};
+  color: ${UIColors.primary};
 `;
 
 export const Label = styled.Text`

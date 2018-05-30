@@ -95,7 +95,7 @@ export default class PinCode extends React.Component<Props, State> {
               light
               center
             >
-              Please create a pin code to secure access to your wallet and for signing of transactions.
+              Please create a pincode to secure access to your wallet and for signing of transactions.
             </Paragraph>
           }
         </Wrapper>

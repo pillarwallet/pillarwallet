@@ -48,12 +48,12 @@ class PinCodeConfirmation extends React.Component<Props, State> {
       <Container>
         {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <Center>
-          <Title center title="confirm passcode" />
+          <Title center title="confirm pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}
-          pageInstructions="Confirm your Passcode"
+          pageInstructions="Confirm your Pincode"
           showForgotButton={false}
         />
       </Container>
