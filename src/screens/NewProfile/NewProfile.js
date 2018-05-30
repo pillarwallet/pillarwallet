@@ -26,7 +26,7 @@ class NewProfile extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="create profile" />
           <Paragraph>Fill our your profile.</Paragraph>
           <LoginForm>

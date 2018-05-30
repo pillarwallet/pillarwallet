@@ -204,14 +204,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           </WordInputFields>
           <ShuffledWordWrapper>
             {this.renderShuffledWordList()}
-            __DEV__ && (
+            {!!__DEV__ && (
             <MnemonicPhraseWord
               key="automagical"
               onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
             >
               <MnemonicPhraseWordText>debugskip</MnemonicPhraseWordText>
             </MnemonicPhraseWord>
-            )
+            )}
           </ShuffledWordWrapper>
 
         </Wrapper>

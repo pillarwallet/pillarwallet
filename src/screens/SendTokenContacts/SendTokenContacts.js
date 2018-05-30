@@ -277,7 +277,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           symbol={asset.symbol}
         />
         <Container>
-          <Wrapper padding>
+          <Wrapper regularPadding>
             <Title title="choose contact" />
             <Form
               ref={node => { this._form = node; }}
