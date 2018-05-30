@@ -46,7 +46,7 @@ const ModalHeader = styled.View`
 `;
 
 const ModalContent = styled.View`
-  height: ${window.height - modalOffset};
+  height: ${window.height - 200};
 `;
 
 const ModalOverflow = styled.View`
