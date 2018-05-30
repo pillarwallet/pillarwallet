@@ -23,6 +23,9 @@ const PillarLogo = styled.Image`
 `;
 
 class Welcome extends React.Component<Props> {
+  static navigationOptions = {
+    header: null,
+  }
   loginAction = () => {
     this.props.navigation.navigate(ONBOARDING_HOME);
   };

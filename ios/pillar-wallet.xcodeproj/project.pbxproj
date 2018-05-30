@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */; };
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
@@ -14,6 +13,7 @@
 		16874E8E20BB3BE00034548E /* libExpoKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E8D20BB3BE00034548E /* libExpoKit.a */; };
 		16877D5F20BEE57800A7AD1D /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16877D5E20BEE57800A7AD1D /* libReact.a */; };
 		16877D8620BEE80500A7AD1D /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168C48F920BDB29B00A0E98F /* libRCTActionSheet.a */; };
+		168C491D20BDB2A000A0E98F /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168C48F920BDB29B00A0E98F /* libRCTActionSheet.a */; };
 		16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16EF832620BA1B8200CDDE12 /* libGPUImage.a */; };
 		16F1DC5D20BC029800A8F843 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DC4F20BC01CF00A8F843 /* libRCTText.a */; };
 		16F1DCA320BC035F00A8F843 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DCA020BC034D00A8F843 /* libRCTNetwork.a */; };
@@ -404,7 +404,20 @@
 				52E89B24A5A54CB2881789EF /* libTcpSockets.a in Frameworks */,
 				05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */,
 				16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */,
+				168C491D20BDB2A000A0E98F /* libRCTActionSheet.a in Frameworks */,
 				FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */,
+				16F1DCB820BC061D00A8F843 /* libRCTAnimation.a in Frameworks */,
+				16F1DCA320BC035F00A8F843 /* libRCTNetwork.a in Frameworks */,
+				16F1DC5D20BC029800A8F843 /* libRCTText.a in Frameworks */,
+				16874E8220BB3B6E0034548E /* libRCTWebSocket.a in Frameworks */,
+				16874E8C20BB3BBB0034548E /* libRCTImage.a in Frameworks */,
+				16874E8E20BB3BE00034548E /* libExpoKit.a in Frameworks */,
+				3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */,
+				B8CED6E293D24607AA6B21C6 /* libRNRandomBytes.a in Frameworks */,
+				1A8BCB2497E14E5C939C8EA3 /* libRNOS.a in Frameworks */,
+				52E89B24A5A54CB2881789EF /* libTcpSockets.a in Frameworks */,
+				05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */,
+				16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

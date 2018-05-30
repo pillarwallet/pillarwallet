@@ -3735,7 +3735,7 @@ csstype@^2.2.0:
   version "2.5.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/csstype/-/csstype-2.5.3.tgz?dl=https://registry.yarnpkg.com/csstype/-/csstype-2.5.3.tgz#2504152e6e1cc59b32098b7f5d6a63f16294c1f7"
 
-ctx-polyfill@lifaon74/ctx-polyfill:
+"ctx-polyfill@github:lifaon74/ctx-polyfill":
   version "1.1.4"
   resolved "https://codeload.github.com/lifaon74/ctx-polyfill/tar.gz/f39f2d22be29dc87f211e1c363edb324bee173b4"
 
@@ -9917,7 +9917,7 @@ react-native-iphone-x-helper@^1.0.1, react-native-iphone-x-helper@^1.0.2:
   version "1.0.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.0.3.tgz?dl=https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.0.3.tgz#7a2f1e0574e899a0f1d426e6167fd98990083214"
 
-react-native-keyboard-aware-scroll-view@0.5.0:
+react-native-keyboard-aware-scroll-view@0.5.0, react-native-keyboard-aware-scroll-view@^0.5.0:
   version "0.5.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-keyboard-aware-scroll-view/-/react-native-keyboard-aware-scroll-view-0.5.0.tgz?dl=https://registry.yarnpkg.com/react-native-keyboard-aware-scroll-view/-/react-native-keyboard-aware-scroll-view-0.5.0.tgz#57ab933089375bf62f4324797e8be949ad97849d"
   dependencies:

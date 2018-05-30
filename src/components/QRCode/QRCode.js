@@ -23,6 +23,7 @@ const AVERAGE_NUMBER_OF_MATRIX_ROWS = 30;
 
 const Container = styled.View`
   height: ${props => props.height || 200}px;
+  margin-bottom: 20px;
 `;
 
 const QRWrapper = styled.View`
