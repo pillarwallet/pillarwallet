@@ -25,18 +25,10 @@ class Onboarding extends React.Component<Props> {
   render() {
     return (
       <Container>
-<<<<<<< HEAD
         <Wrapper regularPadding>
-          <Title title="wallet" />
-          <Paragraph>Welcome to the Pillar Wallet! Pillar is a next-generation digital wallet
-            and application for personal data management. Your unique invitation code
-            allows you to participate in exlusive ICO offerings.
-=======
-        <Wrapper padding>
           <Title title="welcome" />
           <Paragraph>Pillar is a next-generation digital wallet
             and application for personal data management.
->>>>>>> fbabe62ad0f7f285de8e3bf166430b5f9dab639e
           </Paragraph>
           <Paragraph light>Please keep in mind that Pillar does not
             store any personal information other than what
