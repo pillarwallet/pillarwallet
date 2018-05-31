@@ -12,6 +12,7 @@ import TextInput from 'components/TextInput';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { updateLocalUserAction } from 'actions/userActions';
+import { isValidFullname } from 'utils/validators';
 
 const { Form } = t.form;
 
@@ -55,9 +56,17 @@ function InputTemplate(locals) {
   );
 }
 
+const FullName = t.refinement(t.String, (fullName): boolean => {
+  return isValidFullname(fullName);
+});
+
+FullName.getValidationErrorMessage = (): string => {
+  return 'Please provide your full name';
+};
+
 const formStructure = t.struct({
   username: t.String,
-  fullName: t.String,
+  fullName: FullName,
 });
 
 const formOptions = {
@@ -73,7 +82,6 @@ const formOptions = {
     },
     fullName: {
       template: InputTemplate,
-      error: 'Please provide full name',
       config: {
         inputProps: {
           autoCapitalize: 'words',
