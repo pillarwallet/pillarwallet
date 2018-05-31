@@ -16,15 +16,9 @@ jobs:
       - run:
             name: set Registry to use Artifactory
             command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: Install node dependencies
           command: yarn install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - ./node_modules
       - run:
           name: Run validation
           command: yarn validate
