@@ -90,7 +90,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-device-info|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -125,6 +125,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-27.0.2.tar.gz",
     "react-native-canvas": "^0.1.20",
     "react-native-crypto": "^2.1.0",
+    "react-native-device-info": "^0.21.5",
     "react-native-firebase": "^4.1.0",
     "react-native-level-fs": "^3.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",

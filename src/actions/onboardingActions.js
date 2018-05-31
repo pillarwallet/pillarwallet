@@ -3,6 +3,7 @@ import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
+import { getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
@@ -47,8 +48,8 @@ export const registerWalletAction = () => {
       payload: ENCRYPTING,
     });
     await delay(50);
-
-    const encryptedWallet = await wallet.encrypt(pin, { scrypt: { N: 8192 } })
+    const saltedPin = getSaltedPin(pin);
+    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 1024 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
@@ -59,7 +60,7 @@ export const registerWalletAction = () => {
       payload: wallet,
     });
     // STEP 4: Initialize SDK annd register user
-    await api.init(wallet.privateKey);
+    api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const user = await api.registerOnBackend(fcmToken);
@@ -116,7 +117,7 @@ export const registerOnBackendAction = () => {
       payload: API_REGISTRATION_STARTED,
     });
     await delay(1000);
-    await api.init(wallet.privateKey);
+    api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const user = await api.registerOnBackend(fcmToken);
