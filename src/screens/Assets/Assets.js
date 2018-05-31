@@ -15,7 +15,6 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import AssetButtons from 'components/AssetButtons';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
@@ -58,10 +57,6 @@ type Props = {
 }
 
 type State = {
-  animHeaderHeight: Animated.Value,
-  animHeaderTextOpacity: Animated.Value,
-  isCardActive: boolean,
-  activeCard: string,
   history: Transaction[],
   activeModal: {
     type: string | null,
@@ -76,10 +71,6 @@ type State = {
 
 class AssetsScreen extends React.Component<Props, State> {
   state = {
-    animHeaderHeight: new Animated.Value(150),
-    animHeaderTextOpacity: new Animated.Value(1),
-    isCardActive: false,
-    activeCard: '',
     activeModal: activeModalResetState,
     history: [],
   };
@@ -131,32 +122,8 @@ class AssetsScreen extends React.Component<Props, State> {
       });
   }
 
-  animateHeaderHeight = () => {
-    const headerHeightValue = this.state.isCardActive ? 120 : 150;
-    const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
+  handleCardTap = () => {
 
-    const {
-      animHeaderHeight,
-      animHeaderTextOpacity,
-    } = this.state;
-
-    Animated.parallel([
-      Animated.spring(animHeaderHeight, {
-        toValue: headerHeightValue,
-      }),
-      Animated.spring(animHeaderTextOpacity, {
-        toValue: headerTextOpacityValue,
-      }),
-    ]).start();
-  };
-
-  handleCardTap = (id: string) => {
-    this.setState({
-      isCardActive: !this.state.isCardActive,
-      activeCard: id,
-    }, () => {
-      this.animateHeaderHeight();
-    });
   };
 
   goToAddTokenPage = () => {
@@ -179,8 +146,6 @@ class AssetsScreen extends React.Component<Props, State> {
 
     const {
       history,
-      activeCard,
-      isCardActive,
     } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -196,32 +161,21 @@ class AssetsScreen extends React.Component<Props, State> {
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
-        const activeModalOptions = { address: wallet.address };
         const assetColor = assetColors[symbol] || defaultAssetColor;
-        const defaultCardPositionTop = index * 140;
 
         return (
           <AssetCard
             key={index}
             id={symbol}
-            isCardActive={isCardActive}
-            activeCardId={activeCard}
             name={name || symbol}
             token={symbol}
             amount={displayAmount}
             balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
             color={assetColor}
             onTap={this.handleCardTap}
-            defaultPositionY={defaultCardPositionTop}
             history={assetHistory}
             address={wallet.address}
-          >
-            <AssetButtons
-              onPressReceive={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
-              onPressSend={() => this.goToSendTokenFlow(asset)}
-            />
-
-          </AssetCard>
+          />
         );
       });
   }
@@ -229,8 +183,6 @@ class AssetsScreen extends React.Component<Props, State> {
   render() {
     const {
       activeModal: { type: activeModalType, opts },
-      animHeaderHeight,
-      animHeaderTextOpacity,
     } = this.state;
     const {
       assets,
@@ -238,11 +190,6 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsState,
       fetchInitialAssets,
     } = this.props;
-
-    const headerBorderColor = animHeaderTextOpacity.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['rgba(0, 0, 0, 0)', UIColors.defaultBorderColor],
-    });
 
     if (!Object.keys(assets).length) {
       return (
@@ -287,11 +234,10 @@ class AssetsScreen extends React.Component<Props, State> {
         >
           <Animated.View
             style={{
-              height: animHeaderHeight,
               borderBottomWidth: 1,
               borderStyle: 'solid',
               backgroundColor: baseColors.white,
-              borderColor: headerBorderColor,
+              borderColor: UIColors.defaultBorderColor,
               padding: 20,
               flexDirection: 'row',
             }}
@@ -301,7 +247,6 @@ class AssetsScreen extends React.Component<Props, State> {
                 <Animated.Image
                   source={pillarLogoSource}
                   style={{
-                    opacity: animHeaderTextOpacity,
                     height: 35,
                     width: 71,
                   }}
@@ -314,14 +259,14 @@ class AssetsScreen extends React.Component<Props, State> {
                     justifyContent: 'space-between',
                   }}
                 >
-                  <Animated.View style={{ opacity: animHeaderTextOpacity }}>
+                  <Animated.View>
                     <PortfolioBalance />
                   </Animated.View>
                 </Column>
               </Row>
             </Grid>
           </Animated.View>
-          <Wrapper padding>
+          <Wrapper padding style={{ backgroundColor: baseColors.white }}>
             <Grid>
               <Row>
                 <Column>
