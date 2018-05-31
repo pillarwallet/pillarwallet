@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { connect } from 'react-redux';
 import { AsyncStorage } from 'react-native';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Label } from 'components/Typography';
@@ -50,7 +51,11 @@ const ListItemText = styled.Text`
 
 const leftColumnSize = '0 0 100px';
 
-export default class Profile extends React.Component<{}> {
+type Props = {
+  user: Object,
+}
+
+class Profile extends React.Component<Props> {
   clearLocalStorage() {
     AsyncStorage.clear();
     Toast.show({
@@ -60,12 +65,13 @@ export default class Profile extends React.Component<{}> {
   }
 
   render() {
+    const { user } = this.props;
     return (
       <Container>
         <ScrollWrapper>
           <ProfileHeader>
             <Title title="profile" />
-            <ProfileCard name="David Bowie" email="johndoe@email.com" />
+            <ProfileCard name={`${user.firstName} ${user.lastName}`} email="johndoe@email.com" />
           </ProfileHeader>
           <ProfileInfoItem>
             <Grid>
@@ -197,3 +203,9 @@ export default class Profile extends React.Component<{}> {
     );
   }
 }
+
+const mapStateToProps = ({ user: { data: user } }) => ({
+  user,
+});
+
+export default connect(mapStateToProps)(Profile);
