@@ -103,6 +103,7 @@ preBuild.dependsOn exponentPrebuildStep
 
 
 dependencies {
+    compile project(':react-native-device-info')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
     compile project(':react-native-os')

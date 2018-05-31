@@ -11,6 +11,10 @@
 ; Ignore RN jest
 <PROJECT_ROOT>/node_modules/react-native/jest/.*
 
+; Ignore metro
+<PROJECT_ROOT>/node_modules/metro/.*
+
+
 ; Ignore RNTester
 <PROJECT_ROOT>/node_modules/react-native/RNTester/.*
 
