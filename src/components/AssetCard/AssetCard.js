@@ -69,8 +69,6 @@ const AssetCard = (props: Props) => {
           color={linearGradientColorStart}
           style={[{
             height: 120,
-            marginLeft: 20,
-            marginRight: 20,
             marginBottom: 20,
           }]}
         >
