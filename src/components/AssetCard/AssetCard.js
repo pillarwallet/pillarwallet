@@ -22,7 +22,7 @@ type Props = {
   token: string,
   amount: string,
   color: string,
-  onTap: Function,
+  onPress: Function,
   address: string,
   history: Transaction[],
   children?: React.Node,
@@ -41,6 +41,7 @@ const AssetCard = (props: Props) => {
     amount,
     token,
     balanceInFiat,
+    onPress,
   } = props;
   const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
@@ -54,6 +55,7 @@ const AssetCard = (props: Props) => {
 
 
       <TouchableWithoutFeedback
+        onPress={onPress}
         style={{
           position: 'absolute',
           top: 0,

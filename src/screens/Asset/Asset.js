@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
+import { View, Image, Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
@@ -16,7 +16,7 @@ import {
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
@@ -211,7 +211,7 @@ class AssetScreen extends React.Component<Props, State> {
             amount={displayAmount}
             balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
             color={assetColor}
-            onTap={this.handleCardTap}
+            onPress={this.handleCardTap}
             defaultPositionY={defaultCardPositionTop}
             history={assetHistory}
             address={wallet.address}
@@ -229,8 +229,6 @@ class AssetScreen extends React.Component<Props, State> {
   render() {
     const {
       activeModal: { type: activeModalType, opts },
-      animHeaderHeight,
-      animHeaderTextOpacity,
     } = this.state;
     const {
       assets,
@@ -238,11 +236,6 @@ class AssetScreen extends React.Component<Props, State> {
       assetsState,
       fetchInitialAssets,
     } = this.props;
-
-    const headerBorderColor = animHeaderTextOpacity.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['rgba(0, 0, 0, 0)', UIColors.defaultBorderColor],
-    });
 
     if (!Object.keys(assets).length) {
       return (
@@ -264,7 +257,41 @@ class AssetScreen extends React.Component<Props, State> {
 
     return (
       <Container>
+        <View
+          style={{
+            borderBottomWidth: 1,
+            borderStyle: 'solid',
+            backgroundColor: baseColors.white,
+            borderColor: UIColors.defaultBorderColor,
+            padding: 20,
+            height: 150,
+            flexDirection: 'row',
+          }}
+        >
+          <Grid>
+            <Row>
+              <Image
+                source={pillarLogoSource}
+                style={{
+                  height: 35,
+                  width: 71,
+                }}
+              />
+            </Row>
+            <Row>
+              <Column
+                style={{
+                  alignSelf: 'flex-end',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <PortfolioBalance />
+              </Column>
+            </Row>
+          </Grid>
+        </View>
         <ScrollWrapper
+          padding
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -278,61 +305,27 @@ class AssetScreen extends React.Component<Props, State> {
               }}
             />
           }
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            backgroundColor: baseColors.lightGray,
-          }}
         >
-          <Animated.View
-            style={{
-              height: animHeaderHeight,
-              borderBottomWidth: 1,
-              borderStyle: 'solid',
-              backgroundColor: baseColors.white,
-              borderColor: headerBorderColor,
-              padding: 20,
-              flexDirection: 'row',
-            }}
-          >
-            <Grid>
-              <Row>
-                <Animated.Image
-                  source={pillarLogoSource}
-                  style={{
-                    opacity: animHeaderTextOpacity,
-                    height: 35,
-                    width: 71,
-                  }}
+          <Grid>
+            <Row>
+              <Column>
+                <Title title="assets" />
+              </Column>
+              <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
+                <Button
+                  secondary
+                  noPadding
+                  marginTop="20px"
+                  marginBottom="20px"
+                  onPress={this.goToAddTokenPage}
+                  title="Add Token+"
                 />
-              </Row>
-              <Row>
-                <Column
-                  style={{
-                    alignSelf: 'flex-end',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Animated.View style={{ opacity: animHeaderTextOpacity }}>
-                    <PortfolioBalance />
-                  </Animated.View>
-                </Column>
-              </Row>
-            </Grid>
-          </Animated.View>
-          <Wrapper padding>
-            <Grid>
-              <Row>
-                <Column>
-                  <Title title="assets" />
-                </Column>
-                <Column style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                  <Button secondary noPadding marginBottom="20px" onPress={this.goToAddTokenPage} title="Add Token+" />
-                </Column>
-              </Row>
-            </Grid>
-          </Wrapper>
+              </Column>
+            </Row>
+          </Grid>
+
+          {this.renderAssets()}
+          {this.renderAssets()}
           {this.renderAssets()}
 
         </ScrollWrapper>

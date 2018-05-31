@@ -15,13 +15,13 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
-import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
 // TODO: Replace me with real address or pass in with Redux
@@ -123,7 +123,7 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   handleCardTap = () => {
-
+    this.props.navigation.navigate(ASSET);
   };
 
   goToAddTokenPage = () => {
@@ -172,7 +172,7 @@ class AssetsScreen extends React.Component<Props, State> {
             amount={displayAmount}
             balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
             color={assetColor}
-            onTap={this.handleCardTap}
+            onPress={this.handleCardTap}
             history={assetHistory}
             address={wallet.address}
           />
@@ -266,7 +266,14 @@ class AssetsScreen extends React.Component<Props, State> {
                 <Title title="assets" />
               </Column>
               <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                <Button secondary noPadding marginTop="20px" marginBottom="20px" onPress={this.goToAddTokenPage} title="Add Token+" />
+                <Button
+                  secondary
+                  noPadding
+                  marginTop="20px"
+                  marginBottom="20px"
+                  onPress={this.goToAddTokenPage}
+                  title="Add Token+"
+                />
               </Column>
             </Row>
           </Grid>
