@@ -119,4 +119,4 @@ workflows:
             - build
           filters:
             branches:
-              only: ios_build_via_circleCI
+              only: master
