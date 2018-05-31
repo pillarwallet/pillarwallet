@@ -10,20 +10,55 @@ jobs:
 
     steps:
       - checkout
+      - run:
+            name: Authenticate with Artifactory
+            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install node dependencies
+          command: yarn install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Run validation
+          command: yarn validate
+      - run:
+          name: Run unit test and generate coverage stats
+          command:  yarn test:coverage
+      - store_artifacts:
+          path: ./reports/
+          destination: reports
+
+  deploy:
+    working_directory: ~/pillarwallet
+    macos:
+      xcode: "9.3.0"
+    environment:
+      FL_OUTPUT_DIR: output
+    shell: /bin/bash --login -o pipefail
+
+    steps:
+      - checkout
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
-          name: install
+          name: Install node dependencies
           command: yarn install
       - save_cache:
           key: node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/nodes_modules
       - run:
-          name: install Expo cli tool
+          name: Install Expo cli
           command: yarn global add global exp
       - run:
-          name: setting .expo/PATH
+          name: Setting .expo/PATH
           command: exp path
       - restore_cache:
           key: pods-{{ checksum "./ios/Podfile.lock" }}
@@ -45,37 +80,31 @@ jobs:
           name: Creating Gemfile in ios dir
           command: cd ios && bundle init
       - run:
-          name: Login to exp
+          name: Login to Expo
           command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
       - run:
-          name: publishing resources bundle to expo server
+          name: Publish resources bundle to Expo server
           command: exp publish
       - run:
-          name: Installing fastlane gem
+          name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./ios/Gemfile
       - restore_cache:
           key: gems-{{ checksum "./ios/Gemfile" }}
       - run:
-          name: Create vendor/bundle for gem dependencies
+          name: Create Vendor/bundle for gem dependencies
           command: cd ios && bundle check || bundle install --path vendor/bundle
       - run:
-          name: To install fastlane defined as a dependency
+          name: Install fastlane as a dependency
           command: cd ios && sudo bundle update
       - save_cache:
           key: gems-{{ checksum "./ios/Gemfile" }}
           paths:
             - vendor/bundle
       - run:
-          name: show fastlane environment setup
-          command: cd ios && fastlane env
-      - run:
-          name: Build and run tests
+          name: Execute Fastlane deployment to TestFlight
           command: cd ios && bundle exec fastlane test_flight
           environment:
             SCAN_DEVICE: iPhone 8
-      - run:
-          name: cat error log so we can see it
-          command: cat /Users/distiller/pillarwallet/ios/output/buildlogs/gym/pillar-wallet-pillar-wallet.log
       - store_test_results:
           path: output/scan
       - store_artifacts:
@@ -83,10 +112,17 @@ jobs:
       - store_artifacts:
           path: output
       - run:
-          name: upload ipa file to Artifactory
+          name: Upload ipa file to Artifactory
           command: curl -u jameshughes7:monkey_bars710 -T ~/pillarwallet/ios/output/gym/pillar-wallet.ipa "https://pillarproject.jfrog.io/pillarproject/generic-local/ipa/pillar-wallet-$CIRCLE_BUILD_NUM.ipa"
+
 workflows:
   version: 2
-  build_test_and_publish_deploy:
+  build_and_deploy:
     jobs:
       - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: ios_build_via_circleCI
