@@ -3,7 +3,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { SET_USER, PENDING } from 'constants/userConstants';
+import { UPDATE_USER, PENDING } from 'constants/userConstants';
 import { initAppAndRedirectAction, fetchUserAction } from '../appActions';
 
 const mockStore = configureMockStore([thunk]);
@@ -28,7 +28,7 @@ describe('App actions', () => {
   });
   it('fetchUserAction - should fetch the user and update redux store', () => {
     const expectedActions = [
-      { type: SET_USER, payload: { state: PENDING, user: {} } },
+      { type: UPDATE_USER, payload: { state: PENDING, user: {} } },
     ];
 
     return store.dispatch(fetchUserAction())

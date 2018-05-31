@@ -1,5 +1,6 @@
 // @flow
-import { SET_USER } from 'constants/userConstants';
+import { UPDATE_USER } from 'constants/userConstants';
+import merge from 'lodash.merge';
 
 export type UserReducerState = {
   data: Object,
@@ -21,11 +22,11 @@ export default function assetsReducer(
   action: UserReducerAction,
 ) {
   switch (action.type) {
-    case SET_USER:
+    case UPDATE_USER:
       const { state: userState, user } = action.payload;
       return {
         ...state,
-        data: user,
+        data: merge({}, { ...state.data }, user),
         userState,
       };
     default:
