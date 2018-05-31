@@ -44,6 +44,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+
 #### Android/IntelliJ
 
 # Built application files

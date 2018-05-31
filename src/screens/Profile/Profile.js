@@ -1,10 +1,11 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { connect } from 'react-redux';
 import { AsyncStorage } from 'react-native';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Label } from 'components/Typography';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { Grid, Row, Column } from 'components/Grid';
 import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
 import Title from 'components/Title';
@@ -50,7 +51,11 @@ const ListItemText = styled.Text`
 
 const leftColumnSize = '0 0 100px';
 
-export default class Profile extends React.Component<{}> {
+type Props = {
+  user: Object,
+}
+
+class Profile extends React.Component<Props> {
   clearLocalStorage() {
     AsyncStorage.clear();
     Toast.show({
@@ -60,12 +65,13 @@ export default class Profile extends React.Component<{}> {
   }
 
   render() {
+    const { user } = this.props;
     return (
       <Container>
-        <Wrapper>
+        <ScrollWrapper>
           <ProfileHeader>
             <Title title="profile" />
-            <ProfileCard name="David Bowie" email="johndoe@email.com" />
+            <ProfileCard name={`${user.firstName} ${user.lastName}`} email="johndoe@email.com" />
           </ProfileHeader>
           <ProfileInfoItem>
             <Grid>
@@ -192,8 +198,14 @@ export default class Profile extends React.Component<{}> {
               </Right>
             </ListItem>
           </List>
-        </Wrapper>
+        </ScrollWrapper>
       </Container>
     );
   }
 }
+
+const mapStateToProps = ({ user: { data: user } }) => ({
+  user,
+});
+
+export default connect(mapStateToProps)(Profile);

@@ -5,8 +5,9 @@ import Adapter from 'enzyme-adapter-react-16';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
-Enzyme.configure({ adapter: new Adapter() });
+jest.mock('NativeAnimatedHelper');
 
+Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
 const AsyncStorage = new StorageMock(storageCache);
 
@@ -16,4 +17,7 @@ jest.setMock('cryptocompare', {
   priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
     return Promise.resolve({});
   },
+});
+jest.setMock('react-native-device-info', {
+  getUniqueID: () => '1x1x1x1x1x1x1',
 });
