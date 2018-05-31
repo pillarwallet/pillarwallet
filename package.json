@@ -105,7 +105,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
-    "@pillarwallet/pillarwallet-nodejs-sdk": "1.1.0-254",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "1.1.0-264",
     "@tradle/react-native-http": "^2.0.0",
     "asyncstorage-down": "^4.0.1",
     "browserify-zlib": "~0.1.4",
@@ -127,8 +127,8 @@
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^0.21.5",
     "react-native-firebase": "^4.1.0",
-    "react-native-level-fs": "^3.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
+    "react-native-level-fs": "^3.0.0",
     "react-native-modal": "^6.0.0",
     "react-native-os": "^1.0.1",
     "react-native-randombytes": "3.2.0",

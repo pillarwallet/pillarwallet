@@ -15,7 +15,7 @@ import {
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
-import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
+import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
 
@@ -25,6 +25,7 @@ export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
     const currentState = getState();
     const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
+    const { user } = await storage.get('user');
     const mnemonicPhrase = mnemonic.original;
 
     // STEP 1: navigate to the new wallet screen
@@ -63,13 +64,20 @@ export const registerWalletAction = () => {
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
-    const user = await api.registerOnBackend(fcmToken);
-    await storage.save('user', { user });
-    const userState = Object.keys(user).length ? REGISTERED : PENDING;
+    const sdkWallet = await api.registerOnBackend(fcmToken);
+    const updatedUser = await api.updateUser({
+      walletId: sdkWallet.walletId,
+      userId: sdkWallet.userId,
+      ...user,
+    });
+    if (Object.keys(updatedUser).length) {
+      await storage.save('user', { user: updatedUser });
+    }
+    const userState = Object.keys(updatedUser).length ? REGISTERED : PENDING;
     dispatch({
-      type: SET_USER,
+      type: UPDATE_USER,
       payload: {
-        user,
+        user: updatedUser,
         state: userState,
       },
     });
@@ -83,7 +91,7 @@ export const registerWalletAction = () => {
     }
 
     // STEP 5: get&store initial assets
-    const initialAssets = await api.getInitialAssets(user.walletId);
+    const initialAssets = await api.getInitialAssets(updatedUser.walletId);
     const rates = await getExchangeRates(Object.keys(initialAssets));
 
     dispatch({
@@ -116,17 +124,25 @@ export const registerOnBackendAction = () => {
       type: UPDATE_WALLET_STATE,
       payload: API_REGISTRATION_STARTED,
     });
+    const { user } = await storage.get('user');
     await delay(1000);
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
-    const user = await api.registerOnBackend(fcmToken);
-    await storage.save('user', { user });
-    const userState = Object.keys(user).length ? REGISTERED : PENDING;
+    const sdkWallet = await api.registerOnBackend(fcmToken);
+    const updatedUser = await api.updateUser({
+      walletId: sdkWallet.walletId,
+      userId: sdkWallet.userId,
+      ...user,
+    });
+    if (Object.keys(updatedUser).length) {
+      await storage.save('user', { user: updatedUser });
+    }
+    const userState = Object.keys(updatedUser).length ? REGISTERED : PENDING;
     dispatch({
-      type: SET_USER,
+      type: UPDATE_USER,
       payload: {
-        user,
+        user: updatedUser,
         state: userState,
       },
     });

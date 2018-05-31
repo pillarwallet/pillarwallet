@@ -4,7 +4,7 @@ import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import Storage from 'services/storage';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
-import { SET_USER, REGISTERED, PENDING } from 'constants/userConstants';
+import { UPDATE_USER, REGISTERED, PENDING } from 'constants/userConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -29,7 +29,7 @@ export const fetchUserAction = () => {
     user = user || {};
     const userState = Object.keys(user).length ? REGISTERED : PENDING;
     dispatch({
-      type: SET_USER,
+      type: UPDATE_USER,
       payload: {
         user,
         state: userState,
