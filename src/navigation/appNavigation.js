@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 // screens
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
+import AssetScreen from 'screens/Asset';
 import ICOScreen from 'screens/ICO';
 import ProfileScreen from 'screens/Profile';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
@@ -17,6 +18,7 @@ import SendTokenContactsScreen from 'screens/SendTokenContacts';
 import {
   ADD_TOKEN,
   ASSETS,
+  ASSET,
   ICO,
   PROFILE,
   TAB_NAVIGATION,
@@ -38,10 +40,31 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
+const StackNavigatorModalConfig = {
+  headerMode: 'float',
+  mode: 'modal',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+  navigationOptions: {
+    header: false,
+  },
+};
+
+// ASSETS FLOW
+const assetsFlow = StackNavigator({
+  [ASSETS]: AssetsScreen,
+  [ASSET]: AssetScreen,
+}, StackNavigatorModalConfig);
+
 // TAB NAVIGATION FLOW
 const tabNavigation = TabNavigator(
   {
-    [ASSETS]: AssetsScreen,
+    [ASSETS]: assetsFlow,
     [ICO]: ICOScreen,
     [PROFILE]: ProfileScreen,
   }, {
@@ -81,25 +104,11 @@ const tabNavigation = TabNavigator(
 );
 
 // SEND TOKEN FLOW
-const StackNavigatorModalConfig = {
-  headerMode: 'float',
-  mode: 'modal',
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
-  navigationOptions: {
-    header: false,
-  },
-};
-
 const sendTokenFlow = StackNavigator({
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
 }, StackNavigatorModalConfig);
+
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = StackNavigator(
