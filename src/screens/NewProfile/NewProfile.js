@@ -38,11 +38,11 @@ function InputTemplate(locals) {
     onBlur: locals.onBlur,
     value: locals.value,
     keyboardType: locals.keyboardType,
-    autoCapitalize: 'none',
     style: {
       fontSize: 24,
       lineHeight: 0,
     },
+    ...locals.config.inputProps,
   };
 
   return (
@@ -65,10 +65,20 @@ const formOptions = {
     username: {
       template: InputTemplate,
       error: 'Please specify username',
+      config: {
+        inputProps: {
+          autoCapitalize: 'none',
+        },
+      },
     },
     fullName: {
       template: InputTemplate,
       error: 'Please provide full name',
+      config: {
+        inputProps: {
+          autoCapitalize: 'words',
+        },
+      },
     },
   },
 };
@@ -108,11 +118,11 @@ class NewProfile extends React.Component<Props, State> {
     const { navigation, updateUser } = this.props;
     const value = this._form.getValue();
     if (!value) return;
-    const [firstName, lastName] = value.fullName.split(' ');
+    const [firstName, ...lastName] = value.fullName.split(' ');
     updateUser({
       username: value.username,
       firstName,
-      lastName,
+      lastName: lastName.join(' '),
     });
     navigation.navigate(LEGAL_TERMS);
   }
