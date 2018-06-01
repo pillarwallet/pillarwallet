@@ -5,8 +5,12 @@ export const APP_FLOW = 'APP_FLOW';
 export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
 export const ICO = 'ICO';
-export const PROFILE = 'PROFILE';
 export const ADD_TOKEN = 'ADD_TOKEN';
+
+// PROFILE FLOW
+export const PROFILE = 'PROFILE';
+export const PROFILE_SCREEN = 'PROFILE_SCREEN';
+export const CHANGE_PIN = 'CHANGE_PIN';
 
 // ONBOARDING FLOW
 export const ONBOARDING_FLOW = 'ONBOARDING_FLOW';

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation';
+import { StackNavigator, TabBarBottom, TabNavigator, SwitchNavigator } from 'react-navigation';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +10,7 @@ import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import ICOScreen from 'screens/ICO';
 import ProfileScreen from 'screens/Profile';
+import ChangePinScreen from 'screens/ChangePin';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendTokenContacts';
 
@@ -19,6 +20,8 @@ import {
   ASSETS,
   ICO,
   PROFILE,
+  PROFILE_SCREEN,
+  // CHANGE_PIN,
   TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
@@ -38,12 +41,22 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
+const ProfileFlow = SwitchNavigator(
+  {
+    [PROFILE_SCREEN]: ProfileScreen,
+    // [CHANGE_PIN]: ChangePinScreen,
+  },
+  {
+    initialRouteName: PROFILE_SCREEN,
+  },
+);
+
 // TAB NAVIGATION FLOW
 const tabNavigation = TabNavigator(
   {
     [ASSETS]: AssetsScreen,
     [ICO]: ICOScreen,
-    [PROFILE]: ProfileScreen,
+    [PROFILE]: ProfileFlow,
   }, {
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
