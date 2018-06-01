@@ -56,11 +56,25 @@ const StackNavigatorModalConfig = {
   },
 };
 
+const FluidNavigatorConfig = {
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+  navigationOptions: {
+    header: null,
+    gesturesEnabled: false,
+  },
+};
+
 // ASSETS FLOW
 const assetsFlow = FluidNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
-}, StackNavigatorModalConfig);
+}, FluidNavigatorConfig);
 
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
