@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 // screens
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
+import AssetScreen from 'screens/Asset';
 import ICOScreen from 'screens/ICO';
 import ProfileScreen from 'screens/Profile';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
@@ -17,6 +19,7 @@ import SendTokenContactsScreen from 'screens/SendTokenContacts';
 import {
   ADD_TOKEN,
   ASSETS,
+  ASSET,
   ICO,
   PROFILE,
   TAB_NAVIGATION,
@@ -38,10 +41,31 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
+const StackNavigatorModalConfig = {
+  headerMode: 'float',
+  mode: 'modal',
+  transitionConfig: () => ({
+    transitionSpec: {
+      duration: 0,
+      timing: Animated.timing,
+      easing: Easing.step0,
+    },
+  }),
+  navigationOptions: {
+    header: false,
+  },
+};
+
+// ASSETS FLOW
+const assetsFlow = FluidNavigator({
+  [ASSETS]: AssetsScreen,
+  [ASSET]: AssetScreen,
+}, StackNavigatorModalConfig);
+
 // TAB NAVIGATION FLOW
-const tabNavigation = TabNavigator(
+const tabNavigation = createBottomTabNavigator(
   {
-    [ASSETS]: AssetsScreen,
+    [ASSETS]: assetsFlow,
     [ICO]: ICOScreen,
     [PROFILE]: ProfileScreen,
   }, {
@@ -73,7 +97,6 @@ const tabNavigation = TabNavigator(
         backgroundColor: 'white',
       },
     },
-    tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
     animationEnabled: true,
     swipeEnabled: false,
@@ -81,28 +104,14 @@ const tabNavigation = TabNavigator(
 );
 
 // SEND TOKEN FLOW
-const StackNavigatorModalConfig = {
-  headerMode: 'float',
-  mode: 'modal',
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
-  navigationOptions: {
-    header: false,
-  },
-};
-
-const sendTokenFlow = StackNavigator({
+const sendTokenFlow = createStackNavigator({
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
 }, StackNavigatorModalConfig);
 
+
 // APP NAVIGATION FLOW
-const AppFlowNavigation = StackNavigator(
+const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,

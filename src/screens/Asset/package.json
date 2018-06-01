@@ -1,0 +1,6 @@
+{
+  "name": "Asset",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./Asset.js"
+}

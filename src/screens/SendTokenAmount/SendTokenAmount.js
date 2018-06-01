@@ -34,7 +34,7 @@ type Props = {
 
 type State = {
   isScanning: boolean,
-  asset: Object,
+  assetData: Object,
   value: ?{
     amount: ?number
   },
@@ -113,12 +113,12 @@ export default class SendTokenAmount extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const asset = this.props.navigation.getParam('asset', {});
+    const assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
       isScanning: false,
       value: null,
-      formStructure: getFormStructure(asset.balance),
-      asset,
+      formStructure: getFormStructure(assetData.balance),
+      assetData,
     };
   }
 
@@ -135,7 +135,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       contractAddress,
       navigation,
     } = this.props;
-    const { asset } = this.state;
+    const { assetData } = this.state;
 
     if (!value) return;
 
@@ -147,15 +147,15 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       symbol: token,
       contractAddress,
     };
-    navigation.push(SEND_TOKEN_CONTACTS, {
-      asset,
+    navigation.navigate(SEND_TOKEN_CONTACTS, {
+      assetData,
       transactionPayload,
       sendAsset,
     });
   };
 
   useMaxValue = () => {
-    const maxValue = this.state.asset.balance - 0.0004;
+    const maxValue = this.state.assetData.balance - 0.0004;
     this.setState({
       value: {
         amount: maxValue,
@@ -186,9 +186,9 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       value,
       isScanning,
       formStructure,
-      asset,
+      assetData,
     } = this.state;
-    const formOptions = generateFormOptions({ currency: asset.symbol });
+    const formOptions = generateFormOptions({ currency: assetData.symbol });
 
     const qrScannerComponent = (
       <QRCodeScanner
@@ -204,8 +204,8 @@ export default class SendTokenAmount extends React.Component<Props, State> {
         <SendTokenAmountHeader
           onBack={this.props.navigation.goBack}
           nextOnPress={this.handleFormSubmit}
-          balanceAmount={asset.balance.toString()}
-          symbol={asset.symbol}
+          balanceAmount={assetData.balance.toString()}
+          symbol={assetData.symbol}
         />
         <Container>
           <Wrapper padding>
