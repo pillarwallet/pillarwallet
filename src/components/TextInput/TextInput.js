@@ -24,6 +24,7 @@ type Props = {
   onIconPress?: Function,
   inputProps: inputPropsType,
   inputType: string,
+  trim: boolean,
 }
 
 type State = {
@@ -84,6 +85,7 @@ class TextInput extends React.Component<Props, State> {
 
   static defaultProps = {
     inputType: 'default',
+    trim: true,
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -96,8 +98,8 @@ class TextInput extends React.Component<Props, State> {
   }
 
   handleBlur = (e: EventLike) => {
-    const { inputProps: { onBlur } } = this.props;
-    const value = e.nativeEvent.text;
+    const { inputProps: { onBlur }, trim } = this.props;
+    const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
     this.setState({ value }, () => {
       if (onBlur) {
         onBlur(value);
