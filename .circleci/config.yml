@@ -39,6 +39,12 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: Install Expo cli
+          command: yarn global add global exp
+      - run:
+          name: Setting .expo/PATH
+          command: exp path
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -54,12 +60,6 @@ jobs:
           key: node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/nodes_modules
-      - run:
-          name: Install Expo cli
-          command: yarn global add exp
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
       - restore_cache:
           key: pods-{{ checksum "./ios/Podfile.lock" }}
       - run:
@@ -125,6 +125,12 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: Install Expo cli
+          command: yarn global add global exp
+      - run:
+          name: Setting .expo/PATH
+          command: exp path
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -140,12 +146,6 @@ jobs:
           key: node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/nodes_modules
-      - run:
-          name: Install Expo cli
-          command: yarn global add exp
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
       - restore_cache:
           key: pods-{{ checksum "./ios/Podfile.lock" }}
       - run:
