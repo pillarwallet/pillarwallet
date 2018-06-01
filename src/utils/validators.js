@@ -31,7 +31,7 @@ export function hasAllValues(object: ?Object) {
 
 export function isValidFullname(fullName: string): boolean {
   if (!fullName) return false;
-  const hasMoreThanOnePart = fullName.split(' ').length > 1;
+  const hasMoreThanOnePart = fullName.includes(' ');
   if (!hasMoreThanOnePart) return false;
   return true;
 }
