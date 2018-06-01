@@ -23,7 +23,6 @@ import TransactionSentModal from 'components/TransactionSentModal';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
-import ReceiveModal from './ReceiveModal';
 
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
@@ -194,7 +193,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      activeModal: { type: activeModalType, opts },
+      activeModal: { type: activeModalType },
     } = this.state;
     const {
       assets,
@@ -296,11 +295,7 @@ class AssetsScreen extends React.Component<Props, State> {
           {this.renderAssets()}
 
         </ScrollWrapper>
-        <ReceiveModal
-          isVisible={activeModalType === 'RECEIVE'}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-          {...opts}
-        />
+
 
         <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}

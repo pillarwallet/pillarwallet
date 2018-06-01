@@ -32,7 +32,7 @@ export default class ReceiveModal extends React.Component<Props, State> {
   state = {
     isVisible: false,
     address: '',
-    onModalHide: () => {},
+    onModalHide: () => { },
     token: '',
     tokenName: '',
   }
@@ -97,10 +97,8 @@ export default class ReceiveModal extends React.Component<Props, State> {
           </Paragraph>
           <Address>{address}</Address>
           <Button secondary marginBottom="20px" title="Copy Address" onPress={this.handleAddressClipboardSet} />
+          <Button title="Share Address" onPress={this.handleAddressShare} />
         </Center>
-        <Footer>
-          <Button block title="Share Address" onPress={this.handleAddressShare} />
-        </Footer>
       </SlideModal>
     );
   }
