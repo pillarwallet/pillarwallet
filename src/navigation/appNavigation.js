@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing } from 'react-native';
@@ -63,7 +63,7 @@ const assetsFlow = FluidNavigator({
 }, StackNavigatorModalConfig);
 
 // TAB NAVIGATION FLOW
-const tabNavigation = TabNavigator(
+const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: assetsFlow,
     [ICO]: ICOScreen,
@@ -97,7 +97,6 @@ const tabNavigation = TabNavigator(
         backgroundColor: 'white',
       },
     },
-    tabBarComponent: TabBarBottom,
     tabBarPosition: 'bottom',
     animationEnabled: true,
     swipeEnabled: false,
@@ -105,14 +104,14 @@ const tabNavigation = TabNavigator(
 );
 
 // SEND TOKEN FLOW
-const sendTokenFlow = StackNavigator({
+const sendTokenFlow = createStackNavigator({
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
 }, StackNavigatorModalConfig);
 
 
 // APP NAVIGATION FLOW
-const AppFlowNavigation = StackNavigator(
+const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
