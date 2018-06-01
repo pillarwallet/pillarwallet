@@ -42,6 +42,12 @@ jobs:
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
+            name: Authenticate with Artifactory
+            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - run:
           name: Install node dependencies
           command: yarn install
       - save_cache:
@@ -121,6 +127,12 @@ jobs:
       - checkout
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
+      - run:
+            name: Authenticate with Artifactory
+            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
       - run:
           name: Install node dependencies
           command: yarn install
