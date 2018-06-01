@@ -226,16 +226,19 @@ class AssetsScreen extends React.Component<Props, State> {
       <Container>
         <View
           style={{
-            borderBottomWidth: 1,
-            borderStyle: 'solid',
-            backgroundColor: baseColors.white,
-            borderColor: UIColors.defaultBorderColor,
-            padding: 20,
+            width: '100%',
             height: 150,
             flexDirection: 'row',
           }}
         >
-          <Grid>
+          <Grid
+            style={{
+              padding: 20,
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              borderBottomColor: UIColors.defaultBorderColor,
+            }}
+          >
             <Row>
               <Image
                 source={pillarLogoSource}
@@ -305,7 +308,7 @@ class AssetsScreen extends React.Component<Props, State> {
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
 
-      </Container>
+      </Container >
     );
   }
 }
