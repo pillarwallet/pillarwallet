@@ -97,12 +97,14 @@ class ImportWallet extends React.Component<Props, State> {
             height={80}
             width="100%"
             multiline
+            underlineColorAndroid="transparent"
             onChangeText={text => this.setState({ tWordsPhrase: text })}
           />
           <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
           <Label>Use your Private Key</Label>
           <Input
             value={privateKey}
+            underlineColorAndroid="transparent"
             onChangeText={text => this.setState({ privateKey: text })}
           />
         </Wrapper>
