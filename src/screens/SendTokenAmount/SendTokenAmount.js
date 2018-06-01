@@ -122,7 +122,6 @@ export default class SendTokenAmount extends React.Component<Props, State> {
     };
   }
 
-
   handleChange = (value: Object) => {
     this.setState({ value });
   };

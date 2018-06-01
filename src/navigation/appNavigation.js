@@ -52,7 +52,7 @@ const StackNavigatorModalConfig = {
     },
   }),
   navigationOptions: {
-    header: false,
+    header: null,
   },
 };
 
