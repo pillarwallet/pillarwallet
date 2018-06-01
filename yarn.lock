@@ -658,11 +658,11 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.1.0-254":
-  version "1.1.0-254"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.1.0-254.tgz#64db7e4595ac44ab56a94df87205f2aa7012aa2d"
+"@pillarwallet/pillarwallet-nodejs-sdk@1.1.0-264":
+  version "1.1.0-264"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.1.0-264.tgz#e791497813e9a7b2ea4b5a5e46568bd93bacbcde"
   dependencies:
-    "@pillarwallet/plr-auth-sdk" "^0.1.0"
+    "@pillarwallet/plr-auth-sdk" "1.0.0-70"
     "@types/node" "9.6.6"
     "@types/request" "2.47.0"
     "@types/request-promise" "4.1.41"
@@ -676,9 +676,9 @@
     secp256k1 "3.5.0"
     tslint-config-airbnb "5.8.0"
 
-"@pillarwallet/plr-auth-sdk@^0.1.0":
-  version "0.1.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/plr-auth-sdk/-/@pillarwallet/plr-auth-sdk-0.1.0.tgz#8f1f27b4608553f6e200d8c776f81465f44e98ce"
+"@pillarwallet/plr-auth-sdk@1.0.0-70":
+  version "1.0.0-70"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/plr-auth-sdk/-/@pillarwallet/plr-auth-sdk-1.0.0-70.tgz#f31257e7433ab33e610fd860c51cada78c1d57e7"
   dependencies:
     elliptic "^6.4.0"
     jest "^22.4.3"

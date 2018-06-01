@@ -21,7 +21,7 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string) {
     .catch(() => ({}))
     .then(() => ({
       walletId: '123-123-123',
-      usedId: '321-321-321',
+      userId: '321-321-321',
     })); // MUST BE REMOVED ONCE EVERYONE HAVE A SETUP PLATFORM
 };
 
@@ -32,4 +32,11 @@ SDKWrapper.prototype.getInitialAssets = function (walletId: string) {
     .catch(() => [])
     .then(() => initialAssets) // MUST BE REMOVED ONCE EVERYONE HAVE A SETUP PLATFORM
     .then(transformAssetsToObject);
+};
+
+
+SDKWrapper.prototype.updateUser = function (user: Object) {
+  return Promise.resolve(() => this.pillarWalletSdk.user.update(user))
+    .catch(() => ({}))
+    .then(() => user); // MUST BE REMOVED ONCE EVERYONE HAVE A SETUP PLATFORM
 };
