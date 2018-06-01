@@ -28,3 +28,10 @@ export function hasAllValues(object: ?Object) {
   const values = Object.values(object).filter((value) => value !== undefined && value !== '');
   return keys.length === values.length;
 }
+
+export function isValidFullname(fullName: string): boolean {
+  if (!fullName) return false;
+  const hasMoreThanOnePart = fullName.includes(' ');
+  if (!hasMoreThanOnePart) return false;
+  return true;
+}
