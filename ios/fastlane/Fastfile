@@ -28,6 +28,7 @@ platform :ios do
     build_app(clean: true,
               workspace: "pillar-wallet.xcworkspace",
               scheme: "pillar-wallet",
+              configuration: "Debug",
               export_method: "app-store"
             )
   end
@@ -39,9 +40,10 @@ platform :ios do
           readonly: true)
     disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
     build_app(clean: true,
-      workspace: "pillar-wallet.xcworkspace",
-      scheme: "pillar-wallet",
-      export_method: "app-store"
+              workspace: "pillar-wallet.xcworkspace",
+              scheme: "pillar-wallet",
+              configuration: "Release",
+              export_method: "app-store"
     )
     commit = last_git_commit
      upload_to_testflight(changelog: commit[:message],
