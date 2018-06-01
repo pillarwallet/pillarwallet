@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { StackNavigator, TabBarBottom, TabNavigator } from 'react-navigation';
+import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -56,7 +57,7 @@ const StackNavigatorModalConfig = {
 };
 
 // ASSETS FLOW
-const assetsFlow = StackNavigator({
+const assetsFlow = FluidNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
 }, StackNavigatorModalConfig);
