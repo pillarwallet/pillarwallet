@@ -105,7 +105,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
-    "@pillarwallet/pillarwallet-nodejs-sdk": "1.1.0-254",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "1.1.0-264",
     "@tradle/react-native-http": "^2.0.0",
     "asyncstorage-down": "^4.0.1",
     "browserify-zlib": "~0.1.4",

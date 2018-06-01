@@ -48,7 +48,7 @@ class ImportWallet extends React.Component<Props, State> {
   static navigationOptions = ({ navigation }) => ({
     headerRight: (
       <HeaderLink
-        onPress={() => navigation.state.params.handleImportSubmit}
+        onPress={() => navigation.state.params.handleImportSubmit()}
       >
       Import
       </HeaderLink>

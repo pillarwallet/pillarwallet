@@ -1,5 +1,5 @@
 // @flow
-import 'utils/shim.js';
+import 'utils/setup';
 import * as React from 'react';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';

@@ -11,7 +11,7 @@ import {
 import { ASSETS, NEW_WALLET, APP_FLOW } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
-import { SET_USER, REGISTERED } from 'constants/userConstants';
+import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
@@ -24,7 +24,7 @@ type SDK = {
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const pillarSdk: SDK = new PillarSdk();
-pillarSdk.registerOnBackend = jest.fn(() => ({ id: 1 }));
+pillarSdk.registerOnBackend = jest.fn(() => ({ userId: 1, walletId: 2 }));
 pillarSdk.getInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
@@ -80,7 +80,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: SET_USER, payload: { state: REGISTERED, user: { id: 1 } } },
+      { type: UPDATE_USER, payload: { state: REGISTERED, user: { userId: 1, walletId: 2 } } },
       { type: SET_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
@@ -112,7 +112,7 @@ describe('Wallet actions', () => {
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: SET_USER, payload: { state: REGISTERED, user: { id: 1 } } },
+      { type: UPDATE_USER, payload: { state: REGISTERED, user: { userId: 1, walletId: 2 } } },
       { type: SET_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {

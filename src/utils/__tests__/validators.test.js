@@ -1,5 +1,5 @@
 // @flow
-import { validatePin, isValidETHAddress, hasAllValues } from '../validators';
+import { validatePin, isValidETHAddress, hasAllValues, isValidFullname } from '../validators';
 
 describe('Validators', () => {
   describe('validatePin', () => {
@@ -36,6 +36,24 @@ describe('Validators', () => {
     it('should return false for an object without all values', () => {
       const object = { foo: 1, bar: false, baz: '' };
       expect(hasAllValues(object)).toBeFalsy();
+    });
+  });
+
+  describe('isValidFullname', () => {
+    it('should return false if fullName is not present', () => {
+      const fullName = '';
+      expect(isValidFullname(fullName)).toBeFalsy();
+    });
+
+    it('should return false if fullName has only one part', () => {
+      const fullName = 'Jon';
+      expect(isValidFullname(fullName)).toBeFalsy();
+    });
+
+    it('should return true for a valid fullname', () => {
+      // minimal critera to contain two parts
+      const fullName = 'Jon Snow';
+      expect(isValidFullname(fullName)).toBeTruthy();
     });
   });
 });
