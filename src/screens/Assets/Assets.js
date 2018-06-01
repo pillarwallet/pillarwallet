@@ -176,9 +176,8 @@ class AssetsScreen extends React.Component<Props, State> {
           address: wallet.address,
         };
         return (
-          <Transition shared={assetData.name}>
+          <Transition key={index} shared={assetData.name}>
             <AssetCard
-              key={index}
               id={symbol}
               name={assetData.name}
               token={assetData.token}
