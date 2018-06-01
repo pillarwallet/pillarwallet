@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
-import { View, Image, Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
+import { View, Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
 import { UIColors, baseColors } from 'utils/variables';
 import { BCX_URL } from 'react-native-dotenv';
-import type { Transaction } from 'models/Transaction';
+// import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import {
@@ -15,25 +15,15 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import AssetButtons from 'components/AssetButtons';
 import { Container, ScrollWrapper } from 'components/Layout';
-import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
-import { formatMoney } from 'utils/common';
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED } from 'constants/assetsConstants';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
 // TODO: Replace me with real address or pass in with Redux
 const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
-const defaultAssetColor = '#4C4E5E';
-const pillarLogoSource = require('assets/images/header-pillar-logo.png');
-
-const assetColors = {
-  ETH: baseColors.darkGray,
-  PLR: baseColors.clearBlue,
-};
 
 const activeModalResetState = {
   type: null,
@@ -61,8 +51,7 @@ type State = {
   animHeaderHeight: Animated.Value,
   animHeaderTextOpacity: Animated.Value,
   isCardActive: boolean,
-  activeCard: string,
-  history: Transaction[],
+  // history: Transaction[],
   activeModal: {
     type: string | null,
     opts: {
@@ -79,9 +68,8 @@ class AssetScreen extends React.Component<Props, State> {
     animHeaderHeight: new Animated.Value(150),
     animHeaderTextOpacity: new Animated.Value(1),
     isCardActive: false,
-    activeCard: '',
     activeModal: activeModalResetState,
-    history: [],
+    // history: [],
   };
 
   componentDidMount() {
@@ -121,11 +109,11 @@ class AssetScreen extends React.Component<Props, State> {
     })
       .then(res => res.json())
       .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
-      .then((txHistory) => {
-        this.setState({
-          history: txHistory,
-        });
-      })
+      // .then((txHistory) => {
+      //   this.setState({
+      //     history: txHistory,
+      //   });
+      // })
       .catch(() => {
         // TODO: Use proper error handling
       });
@@ -150,13 +138,7 @@ class AssetScreen extends React.Component<Props, State> {
     ]).start();
   };
 
-  handleCardTap = (id: string) => {
-    this.setState({
-      isCardActive: !this.state.isCardActive,
-      activeCard: id,
-    }, () => {
-      this.animateHeaderHeight();
-    });
+  handleCardTap = () => {
   };
 
   goToAddTokenPage = () => {
@@ -169,67 +151,14 @@ class AssetScreen extends React.Component<Props, State> {
     });
   }
 
-  renderAssets() {
-    const {
-      wallet,
-      assets,
-      rates,
-      baseFiatCurrency,
-    } = this.props;
-
-    const {
-      history,
-      activeCard,
-      isCardActive,
-    } = this.state;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    return Object.keys(assets)
-      .map(id => assets[id])
-      .map((asset, index) => {
-        const {
-          name,
-          symbol,
-        } = asset;
-        const balance = asset.balance || 0;
-        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
-        const displayAmount = formatMoney(balance, 4);
-        const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
-        const activeModalOptions = { address: wallet.address };
-        const assetColor = assetColors[symbol] || defaultAssetColor;
-        const defaultCardPositionTop = index * 140;
-
-        return (
-          <AssetCard
-            key={index}
-            id={symbol}
-            isCardActive={isCardActive}
-            activeCardId={activeCard}
-            name={name || symbol}
-            token={symbol}
-            amount={displayAmount}
-            balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
-            color={assetColor}
-            onPress={this.handleCardTap}
-            defaultPositionY={defaultCardPositionTop}
-            history={assetHistory}
-            address={wallet.address}
-          >
-            <AssetButtons
-              onPressReceive={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
-              onPressSend={() => this.goToSendTokenFlow(asset)}
-            />
-
-          </AssetCard>
-        );
-      });
-  }
 
   render() {
     const {
       activeModal: { type: activeModalType, opts },
     } = this.state;
+
+    const { assetData } = this.props.navigation.state.params;
+
     const {
       assets,
       wallet,
@@ -264,32 +193,10 @@ class AssetScreen extends React.Component<Props, State> {
             backgroundColor: baseColors.white,
             borderColor: UIColors.defaultBorderColor,
             padding: 20,
-            height: 150,
+            height: 60,
             flexDirection: 'row',
           }}
-        >
-          <Grid>
-            <Row>
-              <Image
-                source={pillarLogoSource}
-                style={{
-                  height: 35,
-                  width: 71,
-                }}
-              />
-            </Row>
-            <Row>
-              <Column
-                style={{
-                  alignSelf: 'flex-end',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <PortfolioBalance />
-              </Column>
-            </Row>
-          </Grid>
-        </View>
+        />
         <ScrollWrapper
           padding
           refreshControl={
@@ -324,9 +231,17 @@ class AssetScreen extends React.Component<Props, State> {
             </Row>
           </Grid>
 
-          {this.renderAssets()}
-          {this.renderAssets()}
-          {this.renderAssets()}
+
+          <AssetCard
+            id={assetData.symbol}
+            name={assetData.name}
+            token={assetData.token}
+            amount={assetData.displayAmount}
+            balanceInFiat={assetData.balanceInFiat}
+            color={assetData.color}
+            onPress={this.handleCardTap}
+            address={assetData.address}
+          />
 
         </ScrollWrapper>
         <ReceiveModal

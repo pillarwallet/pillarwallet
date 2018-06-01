@@ -122,8 +122,10 @@ class AssetsScreen extends React.Component<Props, State> {
       });
   }
 
-  handleCardTap = () => {
-    this.props.navigation.navigate(ASSET);
+  handleCardTap = (assetData: Object) => {
+    this.props.navigation.navigate(ASSET, {
+      assetData,
+    });
   };
 
   goToAddTokenPage = () => {
@@ -162,19 +164,26 @@ class AssetsScreen extends React.Component<Props, State> {
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
         const assetColor = assetColors[symbol] || defaultAssetColor;
-
+        const assetData = {
+          name: name || symbol,
+          token: symbol,
+          amount: displayAmount,
+          balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
+          color: assetColor,
+          history: assetHistory,
+          address: wallet.address,
+        };
         return (
           <AssetCard
             key={index}
             id={symbol}
-            name={name || symbol}
-            token={symbol}
-            amount={displayAmount}
-            balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
-            color={assetColor}
-            onPress={this.handleCardTap}
-            history={assetHistory}
-            address={wallet.address}
+            name={assetData.name}
+            token={assetData.token}
+            amount={assetData.amount}
+            balanceInFiat={assetData.balanceInFiat}
+            color={assetData.color}
+            onPress={() => this.handleCardTap(assetData)}
+            address={assetData.address}
           />
         );
       });

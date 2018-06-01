@@ -7,7 +7,6 @@ import {
 } from 'react-native';
 import { baseColors } from 'utils/variables';
 import { lighten } from 'polished';
-import type { Transaction } from 'models/Transaction';
 import { getCurrencySymbol } from 'utils/common';
 import IconImage from './IconImage';
 import IconWrapper from './IconWrapper';
@@ -24,7 +23,6 @@ type Props = {
   color: string,
   onPress: Function,
   address: string,
-  history: Transaction[],
   children?: React.Node,
   balanceInFiat: {
     amount: string | number,
