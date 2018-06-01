@@ -2,21 +2,23 @@
 import * as React from 'react';
 import { View, Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { Grid, Row, Column } from 'components/Grid';
-import { UIColors, baseColors } from 'utils/variables';
-import { BCX_URL } from 'react-native-dotenv';
-// import type { Transaction } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
-import Button from 'components/Button';
 import {
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
+import { UIColors, baseColors } from 'utils/variables';
+import { BCX_URL } from 'react-native-dotenv';
+import type { Transaction } from 'models/Transaction';
+import type { Assets } from 'models/Asset';
+import Button from 'components/Button';
 import AssetCard from 'components/AssetCard';
-import { Container, ScrollWrapper } from 'components/Layout';
-import Title from 'components/Title';
+import AssetButtons from 'components/AssetButtons';
+import TXHistory from 'components/TXHistory';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Paragraph } from 'components/Typography';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { FETCH_INITIAL_FAILED } from 'constants/assetsConstants';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
@@ -51,7 +53,7 @@ type State = {
   animHeaderHeight: Animated.Value,
   animHeaderTextOpacity: Animated.Value,
   isCardActive: boolean,
-  // history: Transaction[],
+  history: Transaction[],
   activeModal: {
     type: string | null,
     opts: {
@@ -69,7 +71,7 @@ class AssetScreen extends React.Component<Props, State> {
     animHeaderTextOpacity: new Animated.Value(1),
     isCardActive: false,
     activeModal: activeModalResetState,
-    // history: [],
+    history: [],
   };
 
   componentDidMount() {
@@ -109,11 +111,11 @@ class AssetScreen extends React.Component<Props, State> {
     })
       .then(res => res.json())
       .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
-      // .then((txHistory) => {
-      //   this.setState({
-      //     history: txHistory,
-      //   });
-      // })
+      .then((txHistory) => {
+        this.setState({
+          history: txHistory,
+        });
+      })
       .catch(() => {
         // TODO: Use proper error handling
       });
@@ -139,15 +141,16 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   handleCardTap = () => {
+    this.props.navigation.goBack();
   };
 
   goToAddTokenPage = () => {
     this.props.navigation.navigate(ADD_TOKEN);
   }
 
-  goToSendTokenFlow = (asset: Object) => {
+  goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FLOW, {
-      asset,
+      assetData,
     });
   }
 
@@ -155,6 +158,7 @@ class AssetScreen extends React.Component<Props, State> {
   render() {
     const {
       activeModal: { type: activeModalType, opts },
+      history,
     } = this.state;
 
     const { assetData } = this.props.navigation.state.params;
@@ -186,19 +190,7 @@ class AssetScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <View
-          style={{
-            borderBottomWidth: 1,
-            borderStyle: 'solid',
-            backgroundColor: baseColors.white,
-            borderColor: UIColors.defaultBorderColor,
-            padding: 20,
-            height: 60,
-            flexDirection: 'row',
-          }}
-        />
         <ScrollWrapper
-          padding
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -212,38 +204,61 @@ class AssetScreen extends React.Component<Props, State> {
               }}
             />
           }
+          style={{
+            backgroundColor: baseColors.lightGray,
+          }}
         >
-          <Grid>
-            <Row>
-              <Column>
-                <Title title="assets" />
-              </Column>
-              <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                <Button
-                  secondary
-                  noPadding
-                  marginTop="20px"
-                  marginBottom="20px"
-                  onPress={this.goToAddTokenPage}
-                  title="Add Token+"
-                />
-              </Column>
-            </Row>
-          </Grid>
 
-
-          <AssetCard
-            id={assetData.symbol}
-            name={assetData.name}
-            token={assetData.token}
-            amount={assetData.displayAmount}
-            balanceInFiat={assetData.balanceInFiat}
-            color={assetData.color}
-            onPress={this.handleCardTap}
-            address={assetData.address}
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              backgroundColor: baseColors.white,
+              borderColor: UIColors.defaultBorderColor,
+              padding: 20,
+              height: 60,
+              marginBottom: -30,
+              flexDirection: 'row',
+            }}
           />
+          <Wrapper
+            padding
+            style={{
+              backgroundColor: baseColors.white,
+            }}
+          >
 
+
+            <Transition shared={assetData.name}>
+              <AssetCard
+                id={assetData.symbol}
+                name={assetData.name}
+                token={assetData.token}
+                amount={assetData.amount}
+                balanceInFiat={assetData.balanceInFiat}
+                color={assetData.color}
+                onPress={this.handleCardTap}
+                address={assetData.address}
+              />
+            </Transition>
+            <Paragraph light>
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+              Reiciendis cum recusandae neque numquam corporis quibusdam tenetur expedita tempora aut harum.
+            </Paragraph>
+            <AssetButtons
+              onPressReceive={
+                () => { this.setState({ activeModal: { type: 'RECEIVE', opts: { address: assetData.address } } }); }
+              }
+              onPressSend={() => this.goToSendTokenFlow(assetData)}
+            />
+          </Wrapper>
+          <TXHistory
+            history={history}
+            address={assetData.address}
+            token={assetData.token}
+          />
         </ScrollWrapper>
+
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}

@@ -14,7 +14,7 @@ const AssetButtonsWrapper = styled.View`
   flex-direction: row;
   flex: 1;
   justify-content: center;
-  margin-top: 80px;
+  margin: 20px 0;
 `;
 
 const AssetButton = styled.TouchableOpacity`

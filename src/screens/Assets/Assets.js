@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { RefreshControl, View, Image, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
 import { UIColors, baseColors } from 'utils/variables';
@@ -168,23 +169,26 @@ class AssetsScreen extends React.Component<Props, State> {
           name: name || symbol,
           token: symbol,
           amount: displayAmount,
+          balance,
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           color: assetColor,
           history: assetHistory,
           address: wallet.address,
         };
         return (
-          <AssetCard
-            key={index}
-            id={symbol}
-            name={assetData.name}
-            token={assetData.token}
-            amount={assetData.amount}
-            balanceInFiat={assetData.balanceInFiat}
-            color={assetData.color}
-            onPress={() => this.handleCardTap(assetData)}
-            address={assetData.address}
-          />
+          <Transition shared={assetData.name}>
+            <AssetCard
+              key={index}
+              id={symbol}
+              name={assetData.name}
+              token={assetData.token}
+              amount={assetData.amount}
+              balanceInFiat={assetData.balanceInFiat}
+              color={assetData.color}
+              onPress={() => this.handleCardTap(assetData)}
+              address={assetData.address}
+            />
+          </Transition>
         );
       });
   }
@@ -287,8 +291,6 @@ class AssetsScreen extends React.Component<Props, State> {
             </Row>
           </Grid>
 
-          {this.renderAssets()}
-          {this.renderAssets()}
           {this.renderAssets()}
 
         </ScrollWrapper>
