@@ -147,7 +147,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       symbol: token,
       contractAddress,
     };
-    navigation.push(SEND_TOKEN_CONTACTS, {
+    navigation.navigate(SEND_TOKEN_CONTACTS, {
       asset,
       transactionPayload,
       sendAsset,

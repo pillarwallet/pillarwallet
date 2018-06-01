@@ -1,7 +1,6 @@
 // @flow
 import 'utils/shim.js';
 import * as React from 'react';
-import { addNavigationHelpers } from 'react-navigation';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
@@ -49,11 +48,11 @@ class App extends React.Component<Props, State> {
 
     return (
       <RootNavigation
-        navigation={addNavigationHelpers({
+        navigation={{
           dispatch,
           state: navigation,
           addListener,
-        })}
+        }}
       />
     );
   }
