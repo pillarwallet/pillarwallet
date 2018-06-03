@@ -194,7 +194,7 @@ class Profile extends React.Component<Props> {
             </ListSeparator>
             <ListItem noBorder onPress={this.clearLocalStorage}>
               <Body>
-              <ListItemText>Clear Local Storage</ListItemText>
+                <ListItemText>Clear Local Storage</ListItemText>
               </Body>
               <Right>
                 <Icon name="arrow-forward" />
