@@ -5,7 +5,7 @@ import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
-import { loginAction } from 'actions/authActions';
+import { checkPinAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import { CloseButton } from 'components/Button/CloseButton';
 import Title from 'components/Title';
@@ -93,7 +93,7 @@ const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   login: (pin: string) => {
-    dispatch(loginAction(pin));
+    dispatch(checkPinAction(pin));
   },
 });
 

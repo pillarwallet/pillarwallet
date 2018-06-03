@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { loginAction } from 'actions/authActions';
+import { checkPinAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
@@ -86,7 +86,7 @@ const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   login: (pin: string) => {
-    dispatch(loginAction(pin));
+    dispatch(checkPinAction(pin));
   },
 });
 

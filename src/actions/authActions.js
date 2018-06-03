@@ -14,7 +14,7 @@ import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
 
-export const loginAction = (pin: string, onValidPin?: Function) => {
+export const checkPinAction = (pin: string, onValidPin?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const encryptedWallet = await storage.get('wallet');
     dispatch({
