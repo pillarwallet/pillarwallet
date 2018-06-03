@@ -15,7 +15,7 @@ import { UIColors } from 'utils/variables';
 import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
-  login: (pin: string, onValidPin: Function) => Function,
+  checkPin: (pin: string, onValidPin: Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
 }
@@ -41,8 +41,8 @@ class CurrentPin extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const { login, navigation } = this.props;
-    login(pin, () => navigation.navigate(CHANGE_PIN_NEW_PIN));
+    const { checkPin, navigation } = this.props;
+    checkPin(pin, () => navigation.navigate(CHANGE_PIN_NEW_PIN));
   };
 
   handleScreenDissmisal = () => {
@@ -95,7 +95,7 @@ class CurrentPin extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string, onValidPin: Function) => {
+  checkPin: (pin: string, onValidPin: Function) => {
     dispatch(checkPinAction(pin, onValidPin));
   },
 });
