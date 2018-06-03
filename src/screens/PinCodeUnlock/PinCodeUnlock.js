@@ -32,7 +32,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (walletState === INVALID_PASSWORD) {
       return {
         ...prevState,
-        pinError: 'Invalid password',
+        pinError: 'Invalid pincode',
       };
     }
     return null;
