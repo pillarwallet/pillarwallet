@@ -62,5 +62,5 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
 
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
   const promises = assets.map(({ symbol }) => BCX.getBalance({ address, asset: symbol }));
-  return Promise.all(promises).then(transformAssetsToObject).catch(() => []);
+  return Promise.all(promises).catch(() => []);
 };
