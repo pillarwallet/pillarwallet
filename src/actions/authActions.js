@@ -7,6 +7,8 @@ import {
   UPDATE_WALLET_STATE,
   DECRYPTING,
   INVALID_PASSWORD,
+  ENCRYPTING,
+  GENERATE_ENCRYPTED_WALLET,
 } from 'constants/walletConstants';
 import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
@@ -49,5 +51,29 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
         payload: INVALID_PASSWORD,
       });
     }
+  };
+};
+
+export const changePinAction = (pin: string) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    const { wallet: { data: wallet } } = getState();
+
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: ENCRYPTING,
+    });
+    await delay(50);
+
+    const saltedPin = getSaltedPin(pin);
+    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 1024 } })
+      .then(JSON.parse)
+      .catch(() => ({}));
+
+    await storage.save('wallet', encryptedWallet);
+
+    dispatch({
+      type: GENERATE_ENCRYPTED_WALLET,
+      payload: wallet,
+    });
   };
 };
