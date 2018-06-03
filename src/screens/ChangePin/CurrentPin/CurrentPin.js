@@ -41,10 +41,8 @@ class CurrentPin extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const { login } = this.props;
-    login(pin, () => {
-      this.props.navigation.navigate(CHANGE_PIN_NEW_PIN);
-    });
+    const { login, navigation } = this.props;
+    login(pin, () => navigation.navigate(CHANGE_PIN_NEW_PIN));
   };
 
   handleScreenDissmisal = () => {
