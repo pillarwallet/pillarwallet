@@ -6,6 +6,8 @@ import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
+import historyReducer from './historyReducer';
+
 
 export default combineReducers({
   navigation: navigationReducer,
@@ -14,4 +16,5 @@ export default combineReducers({
   appSettings: appSettingsReducer,
   rates: ratesReducer,
   user: userReducer,
+  history: historyReducer,
 });
