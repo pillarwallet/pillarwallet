@@ -1,6 +1,7 @@
 // @flow
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
+import { getSaltedPin } from 'utils/wallet';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -14,16 +15,17 @@ import Storage from 'services/storage';
 const storage = Storage.getInstance('db');
 
 export const loginAction = (pin: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
     const encryptedWallet = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
     });
     await delay(100);
-
+    const saltedPin = getSaltedPin(pin);
     try {
-      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), pin);
+      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      api.init(wallet.privateKey);
       dispatch({
         type: DECRYPT_WALLET,
         payload: wallet,

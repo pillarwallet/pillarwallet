@@ -31,8 +31,8 @@ class Welcome extends React.Component<Props> {
   };
 
   render() {
-    const { isFetched, OTP } = this.props;
-    if (!isFetched || OTP) return null;
+    const { isFetched } = this.props;
+    if (!isFetched) return null;
     return (
       <Container center>
         <AnimatedBackground />
@@ -46,9 +46,8 @@ class Welcome extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ appSettings: { isFetched, data: { OTP } } }) => ({
+const mapStateToProps = ({ appSettings: { isFetched } }) => ({
   isFetched,
-  OTP,
 });
 
 export default connect(mapStateToProps)(Welcome);

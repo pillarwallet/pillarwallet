@@ -7,12 +7,11 @@ import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getSupportedAssets } from 'services/api';
 
 const tokenIcons = {};
 
@@ -66,15 +65,6 @@ class AddToken extends React.Component<Props, State> {
     supportedAssets: [],
   }
 
-  componentDidMount() {
-    // move to redux actions once SDK added
-    getSupportedAssets().then((supportedAssets) => {
-      this.setState({
-        supportedAssets,
-      });
-    }).catch(() => []);
-  }
-
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
     if (enabled) {
@@ -121,7 +111,7 @@ class AddToken extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <Wrapper regularPadding>
+        <ScrollWrapper regularPadding>
           <CloseButton
             icon="md-close"
             onPress={this.handleScreenDissmisal}
@@ -135,7 +125,7 @@ class AddToken extends React.Component<Props, State> {
           <List>
             {this.generateAddTokenListItems()}
           </List>
-        </Wrapper>
+        </ScrollWrapper>
       </Container>
     );
   }

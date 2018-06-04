@@ -1,6 +1,6 @@
 // @flow
 
-export default class FirebaseMock {
+class FirebaseMock {
   notifications = () => ({
     onNotification: (cb: Function) => {
       cb({}); // message
@@ -13,5 +13,8 @@ export default class FirebaseMock {
   messaging = () => ({
     requestPermission: () => Promise.resolve(),
     hasPermission: () => Promise.resolve(1),
+    getToken: () => Promise.resolve('12x2342x212'),
   })
 }
+
+export default new FirebaseMock();

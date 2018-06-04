@@ -16,7 +16,7 @@ import {
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
@@ -256,7 +256,7 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           )}
           {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={fetchInitialAssets(wallet.address)} />
+            <Button title="Try again" onPress={() => fetchInitialAssets(wallet.address)} />
           )}
         </Container>
       );
@@ -264,7 +264,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Wrapper
+        <ScrollWrapper
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -335,7 +335,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Wrapper>
           {this.renderAssets()}
 
-        </Wrapper>
+        </ScrollWrapper>
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}

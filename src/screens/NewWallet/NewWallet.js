@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import { API_REGISTRATION_FAILED } from 'constants/walletConstants';
-import { ASSETS } from 'constants/navigationConstants';
+import { APP_FLOW } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -24,7 +24,7 @@ const NewWallet = (props: Props) => {
   let note = null;
 
   const tryToReRegister = () => {
-    props.navigation.navigate(ASSETS);
+    props.navigation.navigate(APP_FLOW);
   };
 
   if (walletState === API_REGISTRATION_FAILED) {

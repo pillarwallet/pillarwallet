@@ -3,7 +3,7 @@
    LastUpgradeVersion = "0900"
    version = "1.3">
    <BuildAction
-      parallelizeBuildables = "NO"
+      parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C7DCDB7B42CA2781CD32C731CE1583A0"
+               BlueprintIdentifier = "DFB0AD14D37584B0C85D4A951D192DD0"
                BuildableName = "libReact.a"
                BlueprintName = "React"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">

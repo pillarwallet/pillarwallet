@@ -1,5 +1,5 @@
 // Copyright 2015-present 650 Industries. All rights reserved.
-#import <Firebase.h> 
+#import "Firebase.h" 
 #import "AppDelegate.h"
 #import "ExpoKit.h"
 #import "EXViewController.h"
@@ -27,8 +27,6 @@
     
     return YES;
 }
-
-
 
 #pragma mark - Handling URLs
 
