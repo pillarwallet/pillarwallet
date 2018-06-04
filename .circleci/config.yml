@@ -116,7 +116,7 @@ jobs:
           path: output
       - run:
           name: Upload ipa file to Artifactory
-          command: curl -u jameshughes7:monkey_bars710 -T ~/pillarwallet/ios/output/gym/pillar-wallet.ipa "https://pillarproject.jfrog.io/pillarproject/generic-local/ipa/pillar-wallet-$CIRCLE_BUILD_NUM.ipa"
+          command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD -T ~/pillarwallet/ios/output/gym/pillar-wallet.ipa "https://pillarproject.jfrog.io/pillarproject/generic-local/ipa/pillar-wallet-$CIRCLE_BUILD_NUM.ipa"
 
   deploy:
     working_directory: ~/pillarwallet
