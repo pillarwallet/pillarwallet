@@ -28,7 +28,7 @@ platform :ios do
     build_app(clean: true,
               workspace: "pillar-wallet.xcworkspace",
               scheme: "pillar-wallet",
-              configuration: "Debug",
+              configuration: "Release",
               export_method: "app-store"
             )
   end
