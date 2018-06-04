@@ -6,8 +6,14 @@ export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
 export const ASSET = 'ASSET';
 export const ICO = 'ICO';
-export const PROFILE = 'PROFILE';
 export const ADD_TOKEN = 'ADD_TOKEN';
+export const PROFILE = 'PROFILE';
+
+// CHANGE PIN FLOW
+export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';
+export const CHANGE_PIN_CURRENT_PIN = 'CHANGE_PIN_CURRENT_PIN';
+export const CHANGE_PIN_NEW_PIN = 'CHANGE_PIN_NEW_PIN';
+export const CHANGE_PIN_CONFIRM_NEW_PIN = 'CHANGE_PIN_CONFIRM_NEW_PIN';
 
 // ONBOARDING FLOW
 export const ONBOARDING_FLOW = 'ONBOARDING_FLOW';

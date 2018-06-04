@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { AsyncStorage } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Label } from 'components/Typography';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -10,6 +11,7 @@ import { Grid, Row, Column } from 'components/Grid';
 import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
 import Title from 'components/Title';
 import CurrencySelector from 'components/ProfileSettings/CurrencySelector';
+import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
 import ProfileHeader from './ProfileHeader';
 import ProfileCard from './ProfileCard';
 
@@ -53,6 +55,7 @@ const leftColumnSize = '0 0 100px';
 
 type Props = {
   user: Object,
+  navigation: NavigationScreenProp<*>,
 }
 
 class Profile extends React.Component<Props> {
@@ -97,7 +100,7 @@ class Profile extends React.Component<Props> {
               </Row>
             </Grid>
           </ProfileInfoItem>
-          <ProfileInfoItem noBorder>
+          <ProfileInfoItem>
             <Grid>
               <Row>
                 <Column size={leftColumnSize}>
@@ -110,21 +113,7 @@ class Profile extends React.Component<Props> {
             </Grid>
           </ProfileInfoItem>
           <List>
-            <ListSeparator>
-              <ListSeparatorText>DEBUG</ListSeparatorText>
-            </ListSeparator>
-            <ListItem noBorder onPress={this.clearLocalStorage}>
-              <Body>
-                <ListItemText>Clear Local Storage</ListItemText>
-              </Body>
-              <Right>
-                <Icon name="arrow-forward" />
-              </Right>
-            </ListItem>
-            <ListSeparator>
-              <ListSeparatorText lastSynced>Last Synced 00:01:02 Feb 2, 2018</ListSeparatorText>
-            </ListSeparator>
-            <ListItem noBorder>
+            <ListItem>
               <Body>
                 <ListItemText>Manage Account</ListItemText>
               </Body>
@@ -159,7 +148,10 @@ class Profile extends React.Component<Props> {
                 <ListItemText>Change Pin</ListItemText>
               </Body>
               <Right>
-                <Icon name="arrow-forward" />
+                <Icon
+                  name="arrow-forward"
+                  onPress={() => this.props.navigation.navigate(CHANGE_PIN_FLOW)}
+                />
               </Right>
             </ListItem>
             <ListItem noBorder>
@@ -197,6 +189,20 @@ class Profile extends React.Component<Props> {
                 <Icon name="arrow-forward" />
               </Right>
             </ListItem>
+            <ListSeparator>
+              <ListSeparatorText>DEBUG</ListSeparatorText>
+            </ListSeparator>
+            <ListItem noBorder onPress={this.clearLocalStorage}>
+              <Body>
+                <ListItemText>Clear Local Storage</ListItemText>
+              </Body>
+              <Right>
+                <Icon name="arrow-forward" />
+              </Right>
+            </ListItem>
+            <ListSeparator>
+              <ListSeparatorText lastSynced>Last Synced 00:01:02 Feb 2, 2018</ListSeparatorText>
+            </ListSeparator>
           </List>
         </ScrollWrapper>
       </Container>

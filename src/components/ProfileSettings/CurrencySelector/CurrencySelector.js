@@ -33,7 +33,7 @@ class CurrencySelector extends React.Component<Props, State> {
         mode="dropdown"
         selectedValue={selectedCurrency}
         onValueChange={this.onCurrencyChanged}
-        iosIcon={<Icon name="arrow-forward" />}
+        iosIcon={<Icon name="arrow-forward" style={{ color: '#c9c8cd' }} />}
       >
         {supportedFiatCurrencies.map(el => <Picker.Item label={el} value={el} key={el} />)}
       </Picker>
