@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */; };
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
@@ -51,7 +52,6 @@
 		B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047F1F3A684600E91581 /* shell-app.bundle */; };
 		B666863B0A07408B887D99ED /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CDF7B322B74120A8501540 /* Roboto.ttf */; };
 		B8CED6E293D24607AA6B21C6 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9B6B06506C48CBA2AC547B /* libRNRandomBytes.a */; };
-		BF6097FE20AEDE99000F2330 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF6097FB20AEDE99000F2330 /* GoogleService-Info.plist */; };
 		D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 809C8F6F2C484692B42E92AE /* MaterialCommunityIcons.ttf */; };
 		DE488ED3D5684B76A0C40B8C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ABE6DAB20184465D8E053C80 /* Ionicons.ttf */; };
 		E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */; };
@@ -381,7 +381,6 @@
 		BB597A9C1A5B42FDA30549CE /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		BCE4860CBACC4A99B26705F0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		BE9C8A714CA544BB85EFA109 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
-		BF6097FB20AEDE99000F2330 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CBF04378DC6E4D29AC2400A2 /* TcpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = TcpSockets.xcodeproj; path = "../node_modules/react-native-tcp/ios/TcpSockets.xcodeproj"; sourceTree = "<group>"; };
 		CE658B24F3194D0A90335341 /* libTcpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libTcpSockets.a; sourceTree = "<group>"; };
 		DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -638,7 +637,6 @@
 		B56386381DB9693800A0598C = {
 			isa = PBXGroup;
 			children = (
-				BF6097FB20AEDE99000F2330 /* GoogleService-Info.plist */,
 				B56386431DB9693800A0598C /* pillar-wallet */,
 				B56386421DB9693800A0598C /* Products */,
 				69BE83450974470B970EB9BA /* Libraries */,
@@ -1105,7 +1103,6 @@
 				5F1F067D48844591B2A659A9 /* Foundation.ttf in Resources */,
 				2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */,
 				D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */,
-				BF6097FE20AEDE99000F2330 /* GoogleService-Info.plist in Resources */,
 				3BE522D36D0E44CB973ECA16 /* MaterialIcons.ttf in Resources */,
 				308F1777F22140319410B3D5 /* Octicons.ttf in Resources */,
 				4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */,
