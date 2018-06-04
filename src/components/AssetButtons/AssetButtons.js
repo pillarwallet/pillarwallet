@@ -14,7 +14,7 @@ const AssetButtonsWrapper = styled.View`
   flex-direction: row;
   flex: 1;
   justify-content: center;
-  margin-top: 80px;
+  margin: 20px 0;
 `;
 
 const AssetButton = styled.TouchableOpacity`
@@ -35,14 +35,13 @@ const AssetButtonText = styled.Text`
 const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
-      <AssetButton onPress={props.onPressReceive}>
-        <AssetButtonImage source={imageReceive} />
-        <AssetButtonText>Receive</AssetButtonText>
-      </AssetButton>
-
       <AssetButton onPress={props.onPressSend}>
         <AssetButtonImage source={imageSend} />
         <AssetButtonText>Send</AssetButtonText>
+      </AssetButton>
+      <AssetButton onPress={props.onPressReceive}>
+        <AssetButtonImage source={imageReceive} />
+        <AssetButtonText>Receive</AssetButtonText>
       </AssetButton>
     </AssetButtonsWrapper>
   );

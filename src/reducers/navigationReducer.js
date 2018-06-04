@@ -5,7 +5,7 @@ import { NavigationActions } from 'react-navigation';
 import RootSwitch from 'navigation/rootNavigation';
 import { WELCOME } from '../constants/navigationConstants';
 
-const initialState: NavigationState = RootSwitch.router.getStateForAction(NavigationActions.reset({
+const initialState: NavigationState = RootSwitch.router.getStateForAction(NavigationActions.init({
   index: 0,
   actions: [
     NavigationActions.navigate({
