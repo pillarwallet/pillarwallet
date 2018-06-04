@@ -39,12 +39,6 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: Install Expo cli
-          command: yarn global add global exp
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -53,6 +47,15 @@ jobs:
       - run:
             name: set Registry to use Artifactory
             command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - run:
+            name: set Yarn to use Artifactory
+            command: echo 'registry "https://my-registry.corp"' >> ~/pillarwallet/.yarnrc
+      - run:
+          name: Install Expo cli
+          command: yarn global add global exp
+      - run:
+          name: Setting .expo/PATH
+          command: exp path
       - run:
           name: Install node dependencies
           command: yarn install
