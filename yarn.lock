@@ -939,8 +939,8 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/minimatch/-/minimatch-3.0.3.tgz?dl=https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
 
 "@types/node@*":
-  version "10.1.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.1.4.tgz?dl=https://registry.yarnpkg.com/@types/node/-/node-10.1.4.tgz#606651d3f8a8bec08b8cb262161aab9209f4a29d"
+  version "10.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.3.0.tgz?dl=https://registry.yarnpkg.com/@types/node/-/node-10.3.0.tgz#078516315a84d56216b5d4fed8f75d59d3b16cac"
 
 "@types/node@9.6.6":
   version "9.6.6"
@@ -1032,8 +1032,8 @@ acorn@^4.0.3:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/acorn/-/acorn-4.0.13.tgz?dl=https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
 acorn@^5.0.0, acorn@^5.3.0, acorn@^5.5.0:
-  version "5.5.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/acorn/-/acorn-5.5.3.tgz?dl=https://registry.yarnpkg.com/acorn/-/acorn-5.5.3.tgz#f473dd47e0277a08e28e9bec5aeeb04751f0b8c9"
+  version "5.6.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/acorn/-/acorn-5.6.1.tgz?dl=https://registry.yarnpkg.com/acorn/-/acorn-5.6.1.tgz#c9e50c3e3717cf897f1b071ceadbb543bbc0a8d4"
 
 address@1.0.3, address@^1.0.1:
   version "1.0.3"
@@ -1894,8 +1894,8 @@ babel-plugin-transform-class-properties@^6.18.0, babel-plugin-transform-class-pr
     babel-template "^6.24.1"
 
 babel-plugin-transform-decorators-legacy@^1.3.4:
-  version "1.3.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babel-plugin-transform-decorators-legacy/-/babel-plugin-transform-decorators-legacy-1.3.4.tgz?dl=https://registry.yarnpkg.com/babel-plugin-transform-decorators-legacy/-/babel-plugin-transform-decorators-legacy-1.3.4.tgz#741b58f6c5bce9e6027e0882d9c994f04f366925"
+  version "1.3.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babel-plugin-transform-decorators-legacy/-/babel-plugin-transform-decorators-legacy-1.3.5.tgz?dl=https://registry.yarnpkg.com/babel-plugin-transform-decorators-legacy/-/babel-plugin-transform-decorators-legacy-1.3.5.tgz#0e492dffa0edd70529072887f8aa86d4dd8b40a1"
   dependencies:
     babel-plugin-syntax-decorators "^6.1.18"
     babel-runtime "^6.2.0"
@@ -2994,12 +2994,12 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000846"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-db/-/caniuse-db-1.0.30000846.tgz?dl=https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000846.tgz#d9c86f914738db4da098eeded997413c44561bd2"
+  version "1.0.30000847"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-db/-/caniuse-db-1.0.30000847.tgz?dl=https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000847.tgz#ff4072a5468809fec0ae9ac3b4035ef891e5b144"
 
 caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000805, caniuse-lite@^1.0.30000844:
-  version "1.0.30000846"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-lite/-/caniuse-lite-1.0.30000846.tgz?dl=https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000846.tgz#2092911eecad71a89dae1faa62bcc202fde7f959"
+  version "1.0.30000847"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-lite/-/caniuse-lite-1.0.30000847.tgz?dl=https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000847.tgz#be77f439be29bbc57ae08004b1e470b653b1ec1d"
 
 capture-exit@^1.2.0:
   version "1.2.0"
@@ -3735,7 +3735,7 @@ csstype@^2.2.0:
   version "2.5.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/csstype/-/csstype-2.5.3.tgz?dl=https://registry.yarnpkg.com/csstype/-/csstype-2.5.3.tgz#2504152e6e1cc59b32098b7f5d6a63f16294c1f7"
 
-ctx-polyfill@lifaon74/ctx-polyfill:
+"ctx-polyfill@github:lifaon74/ctx-polyfill":
   version "1.1.4"
   resolved "https://codeload.github.com/lifaon74/ctx-polyfill/tar.gz/f39f2d22be29dc87f211e1c363edb324bee173b4"
 
@@ -3995,7 +3995,7 @@ doctrine@^0.7.2:
     esutils "^1.1.6"
     isarray "0.0.1"
 
-doctrine@^2.0.2, doctrine@^2.1.0:
+doctrine@^2.1.0:
   version "2.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/doctrine/-/doctrine-2.1.0.tgz?dl=https://registry.yarnpkg.com/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
   dependencies:
@@ -4270,8 +4270,8 @@ errorhandler@^1.5.0:
     escape-html "~1.0.3"
 
 es-abstract@^1.4.3, es-abstract@^1.5.1, es-abstract@^1.6.1, es-abstract@^1.7.0:
-  version "1.11.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es-abstract/-/es-abstract-1.11.0.tgz?dl=https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.11.0.tgz#cce87d518f0496893b1a30cd8461835535480681"
+  version "1.12.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es-abstract/-/es-abstract-1.12.0.tgz?dl=https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.12.0.tgz#9dbbdd27c6856f0001421ca18782d786bf8a6165"
   dependencies:
     es-to-primitive "^1.1.1"
     function-bind "^1.1.1"
@@ -4288,8 +4288,8 @@ es-to-primitive@^1.1.1:
     is-symbol "^1.0.1"
 
 es5-ext@^0.10.14, es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14:
-  version "0.10.44"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es5-ext/-/es5-ext-0.10.44.tgz?dl=https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.44.tgz#7a877e994bb190aebd4718aa2d62784a12e2ca20"
+  version "0.10.45"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es5-ext/-/es5-ext-0.10.45.tgz?dl=https://registry.yarnpkg.com/es5-ext/-/es5-ext-0.10.45.tgz#0bfdf7b473da5919d5adf3bd25ceb754fccc3653"
   dependencies:
     es6-iterator "~2.0.3"
     es6-symbol "~3.1.1"
@@ -4445,8 +4445,8 @@ eslint-plugin-flowtype-errors@^3.5.1:
     slash "^2.0.0"
 
 eslint-plugin-flowtype@^2.46.1:
-  version "2.48.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.48.0.tgz?dl=https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.48.0.tgz#e447dc27dcb99d68e2a705fd9c1046c32aae2ca1"
+  version "2.49.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.49.3.tgz?dl=https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-2.49.3.tgz#ccca6ee5ba2027eb3ed36bc2ec8c9a842feee841"
   dependencies:
     lodash "^4.17.10"
 
@@ -4496,13 +4496,13 @@ eslint-plugin-react-native@^3.2.1:
     eslint-plugin-react-native-globals "^0.1.1"
 
 eslint-plugin-react@^7.7.0:
-  version "7.8.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-react/-/eslint-plugin-react-7.8.2.tgz?dl=https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.8.2.tgz#e95c9c47fece55d2303d1a67c9d01b930b88a51d"
+  version "7.9.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-react/-/eslint-plugin-react-7.9.1.tgz?dl=https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.9.1.tgz#101aadd15e7c7b431ed025303ac7b421a8e3dc15"
   dependencies:
-    doctrine "^2.0.2"
-    has "^1.0.1"
+    doctrine "^2.1.0"
+    has "^1.0.2"
     jsx-ast-utils "^2.0.1"
-    prop-types "^15.6.0"
+    prop-types "^15.6.1"
 
 eslint-restricted-globals@^0.1.1:
   version "0.1.1"
@@ -4610,8 +4610,8 @@ etag@~1.8.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/etag/-/etag-1.8.1.tgz?dl=https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
 
 ethers@^3.0.9:
-  version "3.0.17"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethers/-/ethers-3.0.17.tgz?dl=https://registry.yarnpkg.com/ethers/-/ethers-3.0.17.tgz#b24cbca4d5faaf738efcbab00e916f3f49def434"
+  version "3.0.19"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethers/-/ethers-3.0.19.tgz?dl=https://registry.yarnpkg.com/ethers/-/ethers-3.0.19.tgz#10ec4624e21f77b404291294c0c768b8c96f33a4"
   dependencies:
     aes-js "3.0.0"
     bn.js "^4.4.0"
@@ -5380,8 +5380,8 @@ glamor@^2.20.40:
     through "^2.3.8"
 
 glamorous@^4.12.1:
-  version "4.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/glamorous/-/glamorous-4.13.0.tgz?dl=https://registry.yarnpkg.com/glamorous/-/glamorous-4.13.0.tgz#4ac5cb05633aa49a0396d409f665dd9b614f1b5a"
+  version "4.13.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/glamorous/-/glamorous-4.13.1.tgz?dl=https://registry.yarnpkg.com/glamorous/-/glamorous-4.13.1.tgz#8909afcbc7f09133c6eb26bedcc1250c1f774312"
   dependencies:
     brcast "^3.0.0"
     csstype "^2.2.0"
@@ -5638,11 +5638,11 @@ has-values@^1.0.0:
     is-number "^3.0.0"
     kind-of "^4.0.0"
 
-has@^1.0.1:
-  version "1.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/has/-/has-1.0.1.tgz?dl=https://registry.yarnpkg.com/has/-/has-1.0.1.tgz#8461733f538b0837c9361e39a9ab9e9704dc2f28"
+has@^1.0.1, has@^1.0.2:
+  version "1.0.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/has/-/has-1.0.2.tgz?dl=https://registry.yarnpkg.com/has/-/has-1.0.2.tgz#1a64bfe4b52e67fb87b9822503d97c019fb6ba42"
   dependencies:
-    function-bind "^1.0.2"
+    function-bind "^1.1.1"
 
 hasbin@^1.2.3:
   version "1.2.3"
@@ -6572,8 +6572,8 @@ istanbul-lib-source-maps@^1.2.1:
     source-map "^0.5.3"
 
 istanbul-lib-source-maps@^1.2.4:
-  version "1.2.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/istanbul-lib-source-maps/-/istanbul-lib-source-maps-1.2.4.tgz?dl=https://registry.yarnpkg.com/istanbul-lib-source-maps/-/istanbul-lib-source-maps-1.2.4.tgz#cc7ccad61629f4efff8e2f78adb8c522c9976ec7"
+  version "1.2.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/istanbul-lib-source-maps/-/istanbul-lib-source-maps-1.2.5.tgz?dl=https://registry.yarnpkg.com/istanbul-lib-source-maps/-/istanbul-lib-source-maps-1.2.5.tgz#ffe6be4e7ab86d3603e4290d54990b14506fc9b1"
   dependencies:
     debug "^3.1.0"
     istanbul-lib-coverage "^1.2.0"
@@ -6944,8 +6944,8 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/js-tokens/-/js-tokens-3.0.2.tgz?dl=https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
 js-yaml@^3.4.3, js-yaml@^3.7.0, js-yaml@^3.9.0, js-yaml@^3.9.1:
-  version "3.11.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/js-yaml/-/js-yaml-3.11.0.tgz?dl=https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.11.0.tgz#597c1a8bd57152f26d622ce4117851a51f5ebaef"
+  version "3.12.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/js-yaml/-/js-yaml-3.12.0.tgz?dl=https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.0.tgz#eaed656ec8344f10f527c6bfa1b6e2244de167d1"
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
@@ -7819,13 +7819,17 @@ miller-rabin@^4.0.0:
     bn.js "^4.0.0"
     brorand "^1.0.1"
 
-"mime-db@>= 1.33.0 < 2", mime-db@~1.33.0:
-  version "1.33.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/mime-db/-/mime-db-1.33.0.tgz?dl=https://registry.yarnpkg.com/mime-db/-/mime-db-1.33.0.tgz#a3492050a5cb9b63450541e39d9788d2272783db"
+"mime-db@>= 1.33.0 < 2":
+  version "1.34.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/mime-db/-/mime-db-1.34.0.tgz?dl=https://registry.yarnpkg.com/mime-db/-/mime-db-1.34.0.tgz#452d0ecff5c30346a6dc1e64b1eaee0d3719ff9a"
 
 mime-db@~1.23.0:
   version "1.23.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/mime-db/-/mime-db-1.23.0.tgz?dl=https://registry.yarnpkg.com/mime-db/-/mime-db-1.23.0.tgz#a31b4070adaea27d732ea333740a64d0ec9a6659"
+
+mime-db@~1.33.0:
+  version "1.33.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/mime-db/-/mime-db-1.33.0.tgz?dl=https://registry.yarnpkg.com/mime-db/-/mime-db-1.33.0.tgz#a3492050a5cb9b63450541e39d9788d2272783db"
 
 mime-types@2.1.11:
   version "2.1.11"
@@ -7941,8 +7945,8 @@ mkdirp@*, mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~
     minimist "0.0.8"
 
 moment@2.x.x, moment@^2.10.6:
-  version "2.22.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/moment/-/moment-2.22.1.tgz?dl=https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
+  version "2.22.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/moment/-/moment-2.22.2.tgz?dl=https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 morgan@^1.9.0:
   version "1.9.0"
@@ -9804,8 +9808,8 @@ react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.2:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz?dl=https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
 react-modal@^3.3.2:
-  version "3.4.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-modal/-/react-modal-3.4.4.tgz?dl=https://registry.yarnpkg.com/react-modal/-/react-modal-3.4.4.tgz#e9dde25e9e85a59c76831f2a2b468712a546aded"
+  version "3.4.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-modal/-/react-modal-3.4.5.tgz?dl=https://registry.yarnpkg.com/react-modal/-/react-modal-3.4.5.tgz#75a7eefb8f4c8247278d5ce1c41249d7785d9f69"
   dependencies:
     exenv "^1.2.0"
     prop-types "^15.5.10"
@@ -9813,8 +9817,8 @@ react-modal@^3.3.2:
     warning "^3.0.0"
 
 react-native-animatable@^1.2.4:
-  version "1.2.4"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-animatable/-/react-native-animatable-1.2.4.tgz?dl=https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.2.4.tgz#b5fb7657e8f6edadbc26697057a327fb920b3039"
+  version "1.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-animatable/-/react-native-animatable-1.3.0.tgz?dl=https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.3.0.tgz#b5c3940fc758cfd9b2fe54613a457c4b6962b46e"
   dependencies:
     prop-types "^15.5.10"
 
@@ -10118,8 +10122,8 @@ react-native-web-maps@^0.1.0:
     yargs "^9.0.0"
 
 react-navigation-redux-helpers@^1.0.5:
-  version "1.1.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-redux-helpers/-/react-navigation-redux-helpers-1.1.1.tgz?dl=https://registry.yarnpkg.com/react-navigation-redux-helpers/-/react-navigation-redux-helpers-1.1.1.tgz#6832c831e3fa47fb030012fac8ebdf37e45bda9f"
+  version "1.1.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-redux-helpers/-/react-navigation-redux-helpers-1.1.2.tgz?dl=https://registry.yarnpkg.com/react-navigation-redux-helpers/-/react-navigation-redux-helpers-1.1.2.tgz#13013230ac74aa125a5505eefc005db3801f9e07"
   dependencies:
     invariant "^2.2.2"
 
@@ -11410,8 +11414,8 @@ stream-each@^1.1.0:
     stream-shift "^1.0.0"
 
 stream-http@^2.7.2:
-  version "2.8.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/stream-http/-/stream-http-2.8.2.tgz?dl=https://registry.yarnpkg.com/stream-http/-/stream-http-2.8.2.tgz#4126e8c6b107004465918aa2fc35549e77402c87"
+  version "2.8.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/stream-http/-/stream-http-2.8.3.tgz?dl=https://registry.yarnpkg.com/stream-http/-/stream-http-2.8.3.tgz#b2d242469288a5a27ec4fe8933acf623de6514fc"
   dependencies:
     builtin-status-codes "^3.0.0"
     inherits "^2.0.1"
@@ -11519,8 +11523,8 @@ style-loader@^0.20.3:
     schema-utils "^0.4.5"
 
 styled-components@^3.2.5:
-  version "3.3.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/styled-components/-/styled-components-3.3.0.tgz?dl=https://registry.yarnpkg.com/styled-components/-/styled-components-3.3.0.tgz#335b1b2b673b416cd5ec012010e237ed1f877fe9"
+  version "3.3.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/styled-components/-/styled-components-3.3.2.tgz?dl=https://registry.yarnpkg.com/styled-components/-/styled-components-3.3.2.tgz#087b96830ee3d60d9a8b5ef17c132b4f29cc71df"
   dependencies:
     buffer "^5.0.3"
     css-to-react-native "^2.0.3"
@@ -12248,11 +12252,17 @@ util.promisify@^1.0.0:
     define-properties "^1.1.2"
     object.getownpropertydescriptors "^2.0.3"
 
-util@0.10.3, util@^0.10.3, util@~0.10.3:
+util@0.10.3:
   version "0.10.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/util/-/util-0.10.3.tgz?dl=https://registry.yarnpkg.com/util/-/util-0.10.3.tgz#7afb1afe50805246489e3db7fe0ed379336ac0f9"
   dependencies:
     inherits "2.0.1"
+
+util@^0.10.3, util@~0.10.3:
+  version "0.10.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/util/-/util-0.10.4.tgz?dl=https://registry.yarnpkg.com/util/-/util-0.10.4.tgz#3aa0125bfe668a4672de58857d3ace27ecb76901"
+  dependencies:
+    inherits "2.0.3"
 
 utila@~0.3:
   version "0.3.3"
