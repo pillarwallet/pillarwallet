@@ -1384,7 +1384,6 @@
 					"\"${PODS_ROOT}/Headers/Public/FirebaseRemoteConfig\"",
 					"\"${PODS_ROOT}/Headers/Public/FirebaseStorage\"",
 					"\"${PODS_ROOT}/Headers/Public/FirebaseSwizzlingUtilities\"",
-					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase\"",
 					"\"${PODS_ROOT}/Headers/Public/Folly\"",
 					"\"${PODS_ROOT}/Headers/Public/GPUImage\"",
 					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
