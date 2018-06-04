@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
+import { View, Share, Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -25,7 +25,6 @@ import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
 // TODO: Replace me with real address or pass in with Redux
-const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 
 const activeModalResetState = {
   type: null,
@@ -81,11 +80,14 @@ class AssetScreen extends React.Component<Props, State> {
       fetchExchangeRates,
       assets,
       wallet,
+      navigation,
     } = this.props;
+
+    const { assetData } = navigation.state.params;
 
     fetchAssetsBalances(assets, wallet.address);
     fetchExchangeRates(assets);
-    this.getTransactionHistory();
+    this.getTransactionHistory(assetData);
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
@@ -93,10 +95,10 @@ class AssetScreen extends React.Component<Props, State> {
   }
 
   // TODO: Move this into Redux and pass in with rest of asset DATA
-  getTransactionHistory() {
+  getTransactionHistory(assetData: Object) {
     // TODO: Needs to use this.props.wallet.data.address
     const queryParams = [
-      `address1=${address}`,
+      `address1=${assetData.address}`,
       'address2=ALL',
       'asset=ALL',
       'batchNb=0', // show 10 latest transactions only
@@ -143,6 +145,10 @@ class AssetScreen extends React.Component<Props, State> {
   handleCardTap = () => {
     this.props.navigation.goBack();
   };
+
+  handleOpenShareDialog = (address: string) => {
+    Share.share({ title: 'Public address', message: address });
+  }
 
   goToAddTokenPage = () => {
     this.props.navigation.navigate(ADD_TOKEN);
@@ -265,7 +271,7 @@ class AssetScreen extends React.Component<Props, State> {
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
-
+          handleOpenShareDialog={this.handleOpenShareDialog}
         />
 
         <TransactionSentModal

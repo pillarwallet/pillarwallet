@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Share, Clipboard } from 'react-native';
+import { Clipboard } from 'react-native';
 import { Paragraph } from 'components/Typography';
 import { Center } from 'components/Layout';
 import styled from 'styled-components/native';
@@ -11,6 +11,7 @@ import QRCode from 'components/QRCode';
 type Props = {
   address: string,
   onModalHide: Function,
+  handleOpenShareDialog: Function,
   token: string,
   tokenName: string,
   isVisible: boolean,
@@ -54,29 +55,17 @@ export default class ReceiveModal extends React.Component<Props, State> {
     Clipboard.setString(address);
   };
 
+  handleOpenShareModal = () => {
+
+  }
+
   handleAddressShare = () => {
     const {
+      handleOpenShareDialog,
       address,
-      token,
-      tokenName,
-      onModalHide,
-    } = this.state;
+    } = this.props;
 
-    this.setState({
-      isVisible: false,
-    },
-    () => Share.share({ title: 'Public address', message: address })
-      .then(({ action }) => {
-        if (action !== Share.dismissedAction) return;
-        this.setState({
-          isVisible: true,
-          address,
-          token,
-          tokenName,
-          onModalHide,
-        });
-      }),
-    );
+    handleOpenShareDialog(address);
   };
 
   render() {
