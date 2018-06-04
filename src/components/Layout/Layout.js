@@ -35,12 +35,10 @@ export const Container = (props: ContainerProps) => {
 
 export const Wrapper = styled.View`
   padding: ${props => (props.padding ? '0 20px' : '0')};
-  flex: 1;
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
   padding: ${props => (props.padding ? '0 20px' : '0')};
-  flex: 1;
 `;
 
 export const Footer = styled.View`

@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import { StackNavigator, SwitchNavigator } from 'react-navigation';
+import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import BackButton from 'components/BackButton';
 import { baseColors } from 'utils/variables';
 // screens
@@ -47,7 +47,7 @@ const StackNavigatorConfig = {
   }),
 };
 
-const onBoardingFlow = StackNavigator({
+const onBoardingFlow = createStackNavigator({
   [WELCOME]: WelcomeScreen,
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
@@ -65,11 +65,11 @@ const onBoardingFlow = StackNavigator({
   [LEGAL_TERMS]: LegalTermsScreen,
 }, StackNavigatorConfig);
 
-const authFlow = StackNavigator({
+const authFlow = createStackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
 }, StackNavigatorConfig);
 
-const RootSwitch: SwitchNavigatorType = SwitchNavigator({
+const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
