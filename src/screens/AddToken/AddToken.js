@@ -8,9 +8,9 @@ import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
-import ButtonIcon from 'components/ButtonIcon';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
+import { CloseButton } from 'components/Button/CloseButton';
 import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 const tokenIcons = {};
@@ -38,13 +38,6 @@ const TokenSymbol = styled.Text`
 
 const TokenListItem = styled(ListItem)`
   margin: 0;
-`;
-
-const CloseButton = styled(ButtonIcon)`
-  position: absolute;
-  right: 0;
-  top: 5px;
-  zIndex: 5;
 `;
 
 type Props = {
