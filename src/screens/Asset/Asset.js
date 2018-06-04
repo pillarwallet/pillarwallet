@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Share, Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
+import { View, Share, RefreshControl, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -49,9 +49,6 @@ type Props = {
 }
 
 type State = {
-  animHeaderHeight: Animated.Value,
-  animHeaderTextOpacity: Animated.Value,
-  isCardActive: boolean,
   history: Transaction[],
   activeModal: {
     type: string | null,
@@ -66,9 +63,6 @@ type State = {
 
 class AssetScreen extends React.Component<Props, State> {
   state = {
-    animHeaderHeight: new Animated.Value(150),
-    animHeaderTextOpacity: new Animated.Value(1),
-    isCardActive: false,
     activeModal: activeModalResetState,
     history: [],
   };
@@ -122,25 +116,6 @@ class AssetScreen extends React.Component<Props, State> {
         // TODO: Use proper error handling
       });
   }
-
-  animateHeaderHeight = () => {
-    const headerHeightValue = this.state.isCardActive ? 120 : 150;
-    const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
-
-    const {
-      animHeaderHeight,
-      animHeaderTextOpacity,
-    } = this.state;
-
-    Animated.parallel([
-      Animated.spring(animHeaderHeight, {
-        toValue: headerHeightValue,
-      }),
-      Animated.spring(animHeaderTextOpacity, {
-        toValue: headerTextOpacityValue,
-      }),
-    ]).start();
-  };
 
   handleCardTap = () => {
     this.props.navigation.goBack();
