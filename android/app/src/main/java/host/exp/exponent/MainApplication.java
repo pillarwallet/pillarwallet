@@ -8,6 +8,8 @@ import java.util.List;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.RNFirebasePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
@@ -30,12 +32,14 @@ public class MainApplication extends ExpoApplication {
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new RNFirebasePackage(),
+            new RNFirebasePackage(),
             new RNDeviceInfo(),
             new UdpSocketsModule(),
             new TcpSocketsModule(),
             new RNOSModule(),
             new RandomBytesPackage()
-            //new RNFirebasePackage()
+//            new RNFirebasePackage()
     );
   }
 

@@ -43,3 +43,8 @@ allprojects {
 task clean(type: Delete) {
   delete rootProject.buildDir
 }
+
+
+ext {
+  googlePlayServicesVersion = "9.8.0"
+}

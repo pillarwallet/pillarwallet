@@ -92,17 +92,7 @@ android {
 //   }
 // }
 
-
-task exponentPrebuildStep(type: Exec) {
-  workingDir '../'
-  if (System.getProperty('os.name').toLowerCase().contains('windows')) {
-    commandLine 'cmd', '/c', '.\\detach-scripts\\prepare-detached-build.bat'
-  } else {
-    commandLine './detach-scripts/prepare-detached-build.sh'
-  }
-}
-preBuild.dependsOn exponentPrebuildStep
-
+apply from: 'expo.gradle'
 
 dependencies {
     compile project(':react-native-device-info')
@@ -173,7 +163,7 @@ dependencies {
   androidTestCompile 'com.google.code.findbugs:jsr305:3.0.0'
   androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
   androidTestCompile 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
-  compile('host.exp.exponent:expoview:26.0.0@aar') {
+  compile('host.exp.exponent:expoview:27.0.0@aar') {
     transitive = true
   }
 }
