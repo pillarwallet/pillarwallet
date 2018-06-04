@@ -130,7 +130,7 @@ const sendTokenFlow = createStackNavigator({
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
 }, StackNavigatorModalConfig);
 
-const changePinFlow = StackNavigator(
+const changePinFlow = createStackNavigator(
   {
     [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
     [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
