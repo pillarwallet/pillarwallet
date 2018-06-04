@@ -157,7 +157,7 @@ class AssetScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      activeModal: { type: activeModalType, opts },
+      activeModal: { type: activeModalType },
       history,
     } = this.state;
 
@@ -262,7 +262,10 @@ class AssetScreen extends React.Component<Props, State> {
         <ReceiveModal
           isVisible={activeModalType === 'RECEIVE'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-          {...opts}
+          address={assetData.address}
+          token={assetData.token}
+          tokenName={assetData.name}
+
         />
 
         <TransactionSentModal

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Share, Clipboard } from 'react-native';
 import { Paragraph } from 'components/Typography';
-import { Center, Footer } from 'components/Layout';
+import { Center } from 'components/Layout';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
