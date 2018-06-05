@@ -11,12 +11,12 @@ import {
   FETCH_INITIAL_FAILED,
   ETH,
 } from 'constants/assetsConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import {
   transferETH,
   transferERC20,
   getExchangeRates,
-  fetchAssetBalances,
 } from 'services/assets';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
@@ -56,14 +56,13 @@ export const sendAssetAction = ({
 };
 
 export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING,
     });
 
-    const balances = await fetchAssetBalances(assets, walletAddress);
-    // once API provided from SDK, there won't be need to merge
+    const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
     const updatedAssets = merge({}, assets, transformAssetsToObject(balances));
     const rates = await getExchangeRates(Object.keys(updatedAssets));
     await storage.save('assets', { assets: updatedAssets });
@@ -71,6 +70,16 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     dispatch({
       type: UPDATE_ASSETS,
       payload: updatedAssets,
+    });
+  };
+};
+
+export const fetchTransactionsHistoryAction = (walletAddress: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const history = await api.fetchHistory({ address1: walletAddress });
+    dispatch({
+      type: SET_HISTORY,
+      payload: history,
     });
   };
 };
@@ -115,8 +124,7 @@ export const fetchInitialAssetsAction = (walletAddress: string) => {
       payload: rates,
     });
 
-    const balances = await fetchAssetBalances(initialAssets, walletAddress);
-    // once API provided from SDK, there won't be need to merge
+    const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(initialAssets) });
     const updatedAssets = merge({}, initialAssets, transformAssetsToObject(balances));
     await storage.save('assets', { assets: updatedAssets });
     dispatch({
