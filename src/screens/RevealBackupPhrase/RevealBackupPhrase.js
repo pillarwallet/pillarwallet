@@ -8,12 +8,11 @@ import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
 import { Container, Center, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import { CloseButton } from 'components/Button/CloseButton';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import MnemonicPhrase from 'components/MnemonicPhrase';
+import FullScreenModal from 'components/Modals/FullScreenModal';
 import PinCode from 'components/PinCode';
-import { UIColors } from 'utils/variables';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
@@ -48,12 +47,9 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     checkPin(pin, () => this.setState({ pinIsValid: true }));
   };
 
-  handleScreenDissmisal = () => {
-    this.props.navigation.goBack(null);
-  };
-
   render() {
     const { pinError, pinIsValid } = this.state;
+    const { navigation } = this.props;
 
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     const { walletState, data: walletData } = this.props.wallet;
@@ -72,15 +68,9 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     }
 
     return (
-      <Container>
-        <CloseButton
-          icon="md-close"
-          onPress={this.handleScreenDissmisal}
-          color={UIColors.primary}
-          fontSize={32}
-        />
+      <FullScreenModal navigation={navigation}>
         {pinIsValid && (
-          <Wrapper style={{ marginTop: 40 }} padding>
+          <Wrapper style={{ marginTop: 40 }}>
             <Title title="backup phrase" />
             <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
             <Paragraph light>
@@ -104,7 +94,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
             />
           </Wrapper>
         )}
-      </Container>
+      </FullScreenModal>
     );
   }
 }
