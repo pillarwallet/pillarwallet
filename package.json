@@ -108,7 +108,7 @@
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.1.0-264",
     "@tradle/react-native-http": "^2.0.0",
     "asyncstorage-down": "^4.0.1",
-    "blockchain-explorer-sdk": "^0.1.0-51",
+    "blockchain-explorer-sdk": "^0.1.0-60",
     "browserify-zlib": "~0.1.4",
     "cryptocompare": "^0.5.0",
     "dns.js": "^1.0.1",

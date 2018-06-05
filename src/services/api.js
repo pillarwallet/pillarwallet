@@ -42,7 +42,8 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string) {
 SDKWrapper.prototype.getInitialAssets = function (walletId: string) {
   // Promise.resolve is temporary here, if schema validation fails
   // the error is getting thrown outside the promise scope
-  return Promise.resolve(() => this.pillarWalletSdk.asset.defaults({ walletId }))
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
     .catch(() => [])
     .then(() => initialAssets) // MUST BE REMOVED ONCE EVERYONE HAVE A SETUP PLATFORM
     .then(transformAssetsToObject);
@@ -50,7 +51,8 @@ SDKWrapper.prototype.getInitialAssets = function (walletId: string) {
 
 
 SDKWrapper.prototype.updateUser = function (user: Object) {
-  return Promise.resolve(() => this.pillarWalletSdk.user.update(user))
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.update(user))
     .catch(() => ({}))
     .then(() => user); // MUST BE REMOVED ONCE EVERYONE HAVE A SETUP PLATFORM
 };
