@@ -1,5 +1,5 @@
 // @flow
-import { delay, formatETHAmount, decodeETHAddress, pipe } from '../common';
+import { delay, formatETHAmount, decodeETHAddress, pipe, parseNumber } from '../common';
 
 describe('Common utils', () => {
   describe('delay', () => {
@@ -37,6 +37,17 @@ describe('Common utils', () => {
       const expectedOutput = 'pillar';
       const func = pipe(emptyJoin, toLower);
       expect(func(['PILLAR'])).toBe(expectedOutput);
+    });
+  });
+
+  describe('parseNumber', () => {
+    it('should convert a comma seperated number (as string) to a decimal seperated number', () => {
+      const expectedValue = 12.34;
+      expect(parseNumber('12,34')).toBe(expectedValue);
+    });
+    it('should convert a decimal seperated number (as string) to the exact same number', () => {
+      const expectedValue = 23.45;
+      expect(parseNumber('23.45')).toBe(expectedValue);
     });
   });
 });
