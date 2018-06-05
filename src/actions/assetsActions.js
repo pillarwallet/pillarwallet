@@ -74,12 +74,15 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
   };
 };
 
-export const fetchTransactionsHistoryAction = (walletAddress: string) => {
+export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL') => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const history = await api.fetchHistory({ address1: walletAddress });
+    const history = await api.fetchHistory({ address1: walletAddress, asset });
     dispatch({
       type: SET_HISTORY,
-      payload: history,
+      payload: {
+        transactions: history,
+        asset,
+      },
     });
   };
 };
