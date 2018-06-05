@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
-import { Animated, RefreshControl, Text, ActivityIndicator } from 'react-native';
+import { RefreshControl, View, Image, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
 import { UIColors, baseColors } from 'utils/variables';
@@ -15,15 +16,13 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import AssetButtons from 'components/AssetButtons';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
-import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
-import ReceiveModal from './ReceiveModal';
+import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 
 const defaultAssetColor = '#4C4E5E';
 const pillarLogoSource = require('assets/images/header-pillar-logo.png');
@@ -58,10 +57,6 @@ type Props = {
 }
 
 type State = {
-  animHeaderHeight: Animated.Value,
-  animHeaderTextOpacity: Animated.Value,
-  isCardActive: boolean,
-  activeCard: string,
   activeModal: {
     type: string | null,
     opts: {
@@ -75,10 +70,6 @@ type State = {
 
 class AssetsScreen extends React.Component<Props, State> {
   state = {
-    animHeaderHeight: new Animated.Value(150),
-    animHeaderTextOpacity: new Animated.Value(1),
-    isCardActive: false,
-    activeCard: '',
     activeModal: activeModalResetState,
   };
 
@@ -101,31 +92,9 @@ class AssetsScreen extends React.Component<Props, State> {
     }
   }
 
-  animateHeaderHeight = () => {
-    const headerHeightValue = this.state.isCardActive ? 120 : 150;
-    const headerTextOpacityValue = this.state.isCardActive ? 0 : 1;
-
-    const {
-      animHeaderHeight,
-      animHeaderTextOpacity,
-    } = this.state;
-
-    Animated.parallel([
-      Animated.spring(animHeaderHeight, {
-        toValue: headerHeightValue,
-      }),
-      Animated.spring(animHeaderTextOpacity, {
-        toValue: headerTextOpacityValue,
-      }),
-    ]).start();
-  };
-
-  handleCardTap = (id: string) => {
-    this.setState({
-      isCardActive: !this.state.isCardActive,
-      activeCard: id,
-    }, () => {
-      this.animateHeaderHeight();
+  handleCardTap = (assetData: Object) => {
+    this.props.navigation.navigate(ASSET, {
+      assetData,
     });
   };
 
@@ -148,11 +117,6 @@ class AssetsScreen extends React.Component<Props, State> {
       history,
     } = this.props;
 
-    const {
-      activeCard,
-      isCardActive,
-    } = this.state;
-
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return Object.keys(assets)
@@ -166,41 +130,37 @@ class AssetsScreen extends React.Component<Props, State> {
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
         const assetHistory = history.filter(({ asset: assetName }) => assetName === symbol);
-        const activeModalOptions = { address: wallet.address };
         const assetColor = assetColors[symbol] || defaultAssetColor;
-        const defaultCardPositionTop = index * 140;
-
+        const assetData = {
+          name: name || symbol,
+          token: symbol,
+          amount: displayAmount,
+          balance,
+          balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
+          color: assetColor,
+          history: assetHistory,
+          address: wallet.address,
+        };
         return (
-          <AssetCard
-            key={index}
-            id={symbol}
-            isCardActive={isCardActive}
-            activeCardId={activeCard}
-            name={name || symbol}
-            token={symbol}
-            amount={displayAmount}
-            balanceInFiat={{ amount: balanceInFiat, currency: fiatCurrency }}
-            color={assetColor}
-            onTap={this.handleCardTap}
-            defaultPositionY={defaultCardPositionTop}
-            history={assetHistory}
-            address={wallet.address}
-          >
-            <AssetButtons
-              onPressReceive={() => { this.setState({ activeModal: { type: 'RECEIVE', opts: activeModalOptions } }); }}
-              onPressSend={() => this.goToSendTokenFlow(asset)}
+          <Transition key={index} shared={assetData.name}>
+            <AssetCard
+              id={symbol}
+              name={assetData.name}
+              token={assetData.token}
+              amount={assetData.amount}
+              balanceInFiat={assetData.balanceInFiat}
+              color={assetData.color}
+              onPress={() => this.handleCardTap(assetData)}
+              address={assetData.address}
             />
-
-          </AssetCard>
+          </Transition>
         );
       });
   }
 
   render() {
     const {
-      activeModal: { type: activeModalType, opts },
-      animHeaderHeight,
-      animHeaderTextOpacity,
+      activeModal: { type: activeModalType },
     } = this.state;
     const {
       assets,
@@ -208,11 +168,6 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsState,
       fetchInitialAssets,
     } = this.props;
-
-    const headerBorderColor = animHeaderTextOpacity.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['rgba(0, 0, 0, 0)', UIColors.defaultBorderColor],
-    });
 
     if (!Object.keys(assets).length) {
       return (
@@ -234,7 +189,44 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <Container>
+        <View
+          style={{
+            width: '100%',
+            height: 150,
+            flexDirection: 'row',
+          }}
+        >
+          <Grid
+            style={{
+              padding: 20,
+              borderBottomWidth: 1,
+              borderStyle: 'solid',
+              borderBottomColor: UIColors.defaultBorderColor,
+            }}
+          >
+            <Row>
+              <Image
+                source={pillarLogoSource}
+                style={{
+                  height: 35,
+                  width: 71,
+                }}
+              />
+            </Row>
+            <Row>
+              <Column
+                style={{
+                  alignSelf: 'flex-end',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <PortfolioBalance />
+              </Column>
+            </Row>
+          </Grid>
+        </View>
         <ScrollWrapper
+          padding
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -250,76 +242,36 @@ class AssetsScreen extends React.Component<Props, State> {
               }}
             />
           }
-          style={{
-            position: 'relative',
-            width: '100%',
-            height: '100%',
-            backgroundColor: baseColors.lightGray,
-          }}
         >
-          <Animated.View
-            style={{
-              height: animHeaderHeight,
-              borderBottomWidth: 1,
-              borderStyle: 'solid',
-              backgroundColor: baseColors.white,
-              borderColor: headerBorderColor,
-              padding: 20,
-              flexDirection: 'row',
-            }}
-          >
-            <Grid>
-              <Row>
-                <Animated.Image
-                  source={pillarLogoSource}
-                  style={{
-                    opacity: animHeaderTextOpacity,
-                    height: 35,
-                    width: 71,
-                  }}
+          <Grid>
+            <Row>
+              <Column>
+                <Title title="assets" />
+              </Column>
+              <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
+                <Button
+                  secondary
+                  noPadding
+                  marginTop="20px"
+                  marginBottom="20px"
+                  onPress={this.goToAddTokenPage}
+                  title="Add Token+"
                 />
-              </Row>
-              <Row>
-                <Column
-                  style={{
-                    alignSelf: 'flex-end',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Animated.View style={{ opacity: animHeaderTextOpacity }}>
-                    <PortfolioBalance />
-                  </Animated.View>
-                </Column>
-              </Row>
-            </Grid>
-          </Animated.View>
-          <Wrapper padding>
-            <Grid>
-              <Row>
-                <Column>
-                  <Title title="assets" />
-                </Column>
-                <Column style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                  <Button secondary noPadding marginBottom="20px" onPress={this.goToAddTokenPage} title="Add Token+" />
-                </Column>
-              </Row>
-            </Grid>
-          </Wrapper>
+              </Column>
+            </Row>
+          </Grid>
+
           {this.renderAssets()}
 
         </ScrollWrapper>
-        <ReceiveModal
-          isVisible={activeModalType === 'RECEIVE'}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-          {...opts}
-        />
+
 
         <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
 
-      </Container>
+      </Container >
     );
   }
 }
