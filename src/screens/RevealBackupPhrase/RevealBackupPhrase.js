@@ -7,12 +7,13 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
 import { Container, Center, Wrapper } from 'components/Layout';
+import { Paragraph } from 'components/Typography';
 import { CloseButton } from 'components/Button/CloseButton';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
+import MnemonicPhrase from 'components/MnemonicPhrase';
 import PinCode from 'components/PinCode';
 import { UIColors } from 'utils/variables';
-import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
@@ -22,11 +23,13 @@ type Props = {
 
 type State = {
   pinError: string,
+  pinIsValid: boolean,
 };
 
-class CurrentPin extends React.Component<Props, State> {
+class RevealBackupPhrase extends React.Component<Props, State> {
   state = {
     pinError: '',
+    pinIsValid: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -41,8 +44,8 @@ class CurrentPin extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const { checkPin, navigation } = this.props;
-    checkPin(pin, () => navigation.navigate(CHANGE_PIN_NEW_PIN));
+    const { checkPin } = this.props;
+    checkPin(pin, () => this.setState({ pinIsValid: true }));
   };
 
   handleScreenDissmisal = () => {
@@ -50,10 +53,10 @@ class CurrentPin extends React.Component<Props, State> {
   };
 
   render() {
-    const { pinError } = this.state;
+    const { pinError, pinIsValid } = this.state;
 
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
-    const { walletState } = this.props.wallet;
+    const { walletState, data: walletData } = this.props.wallet;
 
     if (walletState === DECRYPTING) {
       return (
@@ -76,17 +79,31 @@ class CurrentPin extends React.Component<Props, State> {
           color={UIColors.primary}
           fontSize={32}
         />
-        <Wrapper style={{ marginTop: 40 }}>
-          {showError}
-          <Center>
-            <Title center title="enter current pincode" />
-          </Center>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            pageInstructions=""
-            showForgotButton={false}
-          />
-        </Wrapper>
+        {pinIsValid && (
+          <Wrapper style={{ marginTop: 40 }} padding>
+            <Title title="backup phrase" />
+            <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
+            <Paragraph light>
+            Keep it secure as it&#39;s the only way to recover your account in an emergency.
+            Don&#39;t email or screenshot it.
+            </Paragraph>
+
+            <MnemonicPhrase phrase={walletData.mnemonic} />
+          </Wrapper>
+        )}
+        {!pinIsValid && (
+          <Wrapper style={{ marginTop: 40 }}>
+            {showError}
+            <Center>
+              <Title center title="enter pincode" />
+            </Center>
+            <PinCode
+              onPinEntered={this.handlePinSubmit}
+              pageInstructions=""
+              showForgotButton={false}
+            />
+          </Wrapper>
+        )}
       </Container>
     );
   }
@@ -100,4 +117,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CurrentPin);
+export default connect(mapStateToProps, mapDispatchToProps)(RevealBackupPhrase);
