@@ -44,10 +44,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-ios/*/Supporting/GoogleService-Info.plist
-ios/*/Supporting/EXBuildConstants.json
-ios/*/Supporting/EXBuildConstants.plist
-ios/*/Supporting/EXBuildConstants.plist.bak
+
 #### Android/IntelliJ
 
 # Built application files
@@ -87,3 +84,13 @@ android/captures/
 #### Pods
 ios/Pods
 ios/Podfile.lock
+
+### Gems
+ios/.bundle/
+ios/Gemfile
+ios/Gemfile.lock
+ios/vendor/
+
+##Fastlane
+ios/fastlane/README.md
+ios/fastlane/report.xml

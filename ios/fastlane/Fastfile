@@ -1,0 +1,63 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+default_platform(:ios)
+
+platform :ios do
+
+  before_all do
+    setup_circle_ci
+  end
+
+  desc "Create a new beta build"
+  lane :beta do
+    match(type: "appstore",
+          readonly: true)
+    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
+    build_app(clean: true,
+              workspace: "pillar-wallet.xcworkspace",
+              scheme: "pillar-wallet",
+              export_method: "app-store"
+            )
+  end
+
+  desc "Upload a new build to TestFlight"
+  lane :test_flight do
+    sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillar-wallet/Supporting/Info.plist\"")
+    match(type: "appstore",
+          readonly: true)
+    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
+    build_app(clean: true,
+      workspace: "pillar-wallet.xcworkspace",
+      scheme: "pillar-wallet",
+      export_method: "app-store"
+    )
+    commit = last_git_commit
+     upload_to_testflight(changelog: commit[:message],
+     skip_waiting_for_build_processing: true
+   )
+  end
+end
+
+    # Other parameter options for increment_build_number
+      # build_number: latest_testflight_build_number + 1,
+      # xcodeproj: "pillar-wallet.xcodeproj"
+    # clean_build_artifacts
+    # commits changes incremented build number
+    # ci_skip (skips build when pushing to repo)
+    # commit_version_bump(
+    #                     message: "Fastlane iOS: Released new build #{lane_context[SharedValues::BUILD_NUMBER]} [ci skip]"
+    #                     xcodeproj: "pillar-wallet.xcodeproj",
+    #                     force: true
+    #                     )

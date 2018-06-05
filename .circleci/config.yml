@@ -2,31 +2,121 @@ version: 2
 jobs:
   build:
     working_directory: ~/pillarwallet
-    docker:
-      - image: circleci/node:8.9.4
+    macos:
+      xcode: "9.3.0"
+    environment:
+      FL_OUTPUT_DIR: output
+    shell: /bin/bash --login -o pipefail
+
     steps:
       - checkout
       - run:
-            name: Authenticate with registry
+            name: Authenticate with Artifactory
             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
-            name: set Registry
+            name: set Registry to use Artifactory
             command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Install
+          name: Install node dependencies
           command: yarn install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - ./node_modules
       - run:
-          name: validate
+          name: Run validation
           command: yarn validate
       - run:
-          name: generate coverage stats
+          name: Run unit test and generate coverage stats
           command:  yarn test:coverage
       - store_artifacts:
           path: ./reports/
           destination: reports
+
+  deploy:
+    working_directory: ~/pillarwallet
+    macos:
+      xcode: "9.3.0"
+    environment:
+      FL_OUTPUT_DIR: output
+    shell: /bin/bash --login -o pipefail
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: node-{{ checksum "./yarn.lock" }}
+      - run:
+          name: Install node dependencies
+          command: yarn install
+      - save_cache:
+          key: node-{{ checksum "./yarn.lock" }}
+          paths:
+            - ~/nodes_modules
+      - run:
+          name: Install Expo cli
+          command: yarn global add global exp
+      - run:
+          name: Setting .expo/PATH
+          command: exp path
+      - restore_cache:
+          key: pods-{{ checksum "./ios/Podfile.lock" }}
+      - run:
+          name: Fetch CocoaPods Specs
+          command: |
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+      - run:
+          name: Install CocoaPods
+          command: cd ios && pod install --verbose
+      - save_cache:
+          key: pods-{{ checksum "./ios/Podfile.lock" }}
+          paths:
+            - ./ios/Pods
+      - run:
+          name: Install Bundler
+          command: sudo gem install bundler
+      - run:
+          name: Creating Gemfile in ios dir
+          command: cd ios && bundle init
+      - run:
+          name: Login to Expo
+          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
+      - run:
+          name: Publish resources bundle to Expo server
+          command: exp publish
+      - run:
+          name: Install fastlane gem
+          command: echo 'gem "fastlane"' >> ./ios/Gemfile
+      - restore_cache:
+          key: gems-{{ checksum "./ios/Gemfile" }}
+      - run:
+          name: Create Vendor/bundle for gem dependencies
+          command: cd ios && bundle check || bundle install --path vendor/bundle
+      - run:
+          name: Install fastlane as a dependency
+          command: cd ios && sudo bundle update
+      - save_cache:
+          key: gems-{{ checksum "./ios/Gemfile" }}
+          paths:
+            - vendor/bundle
+      - run:
+          name: Execute Fastlane deployment to TestFlight
+          command: cd ios && bundle exec fastlane test_flight
+          environment:
+            SCAN_DEVICE: iPhone 8
+      - store_test_results:
+          path: output/scan
+      - store_artifacts:
+          path: ~/pillarwallet/ios/output/gym/pillar-wallet.ipa
+      - store_artifacts:
+          path: output
+      - run:
+          name: Upload ipa file to Artifactory
+          command: curl -u jameshughes7:monkey_bars710 -T ~/pillarwallet/ios/output/gym/pillar-wallet.ipa "https://pillarproject.jfrog.io/pillarproject/generic-local/ipa/pillar-wallet-$CIRCLE_BUILD_NUM.ipa"
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
