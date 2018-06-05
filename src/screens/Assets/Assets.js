@@ -6,7 +6,6 @@ import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
 import { UIColors, baseColors } from 'utils/variables';
-import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
@@ -14,6 +13,7 @@ import {
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
   fetchExchangeRatesAction,
+  fetchTransactionsHistoryAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -24,8 +24,6 @@ import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 
-// TODO: Replace me with real address or pass in with Redux
-const address = '0x77215198488f31ad467c5c4d2c5AD9a06586Dfcf';
 const defaultAssetColor = '#4C4E5E';
 const pillarLogoSource = require('assets/images/header-pillar-logo.png');
 
@@ -48,6 +46,8 @@ type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
+  fetchTransactionsHistory: (walletAddress: string) => Function,
+  history: Transaction[],
   assets: Object,
   wallet: Object,
   rates: Object,
@@ -57,7 +57,6 @@ type Props = {
 }
 
 type State = {
-  history: Transaction[],
   activeModal: {
     type: string | null,
     opts: {
@@ -72,7 +71,6 @@ type State = {
 class AssetsScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
-    history: [],
   };
 
   componentDidMount() {
@@ -80,46 +78,18 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
       fetchAssetsBalances,
       fetchExchangeRates,
+      fetchTransactionsHistory,
       assets,
       wallet,
     } = this.props;
 
     fetchAssetsBalances(assets, wallet.address);
     fetchExchangeRates(assets);
-    this.getTransactionHistory();
+    fetchTransactionsHistory(wallet.address);
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
-  }
-
-  // TODO: Move this into Redux and pass in with rest of asset DATA
-  getTransactionHistory() {
-    // TODO: Needs to use this.props.wallet.data.address
-    const queryParams = [
-      `address1=${address}`,
-      'address2=ALL',
-      'asset=ALL',
-      'batchNb=0', // show 10 latest transactions only
-    ];
-
-    fetch(`${BCX_URL}/wallet-client/txhistory?${queryParams.join('&')}`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
-      .then((txHistory) => {
-        this.setState({
-          history: txHistory,
-        });
-      })
-      .catch(() => {
-        // TODO: Use proper error handling
-      });
   }
 
   handleCardTap = (assetData: Object) => {
@@ -144,11 +114,8 @@ class AssetsScreen extends React.Component<Props, State> {
       assets,
       rates,
       baseFiatCurrency,
-    } = this.props;
-
-    const {
       history,
-    } = this.state;
+    } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -267,8 +234,10 @@ class AssetsScreen extends React.Component<Props, State> {
                 const {
                   fetchAssetsBalances,
                   fetchExchangeRates,
+                  fetchTransactionsHistory,
                 } = this.props;
                 fetchAssetsBalances(assets, wallet.address);
+                fetchTransactionsHistory(wallet.address);
                 fetchExchangeRates(assets);
               }}
             />
@@ -310,6 +279,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, assetsState },
   rates: { data: rates },
+  history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
@@ -317,6 +287,7 @@ const mapStateToProps = ({
   assetsState,
   rates,
   baseFiatCurrency,
+  history,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -328,6 +299,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   fetchExchangeRates: (assets) => {
     dispatch(fetchExchangeRatesAction(assets));
+  },
+  fetchTransactionsHistory: (walletAddress) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress));
   },
 });
 
