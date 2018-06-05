@@ -11,9 +11,11 @@ import {
 } from 'constants/assetsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import type { Assets } from 'models/Asset';
+import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
 
-const mockStore = configureMockStore([thunk]);
+const pillarSdk = new PillarSdk();
+const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 const mockWallet: Object = {
   address: '0x9c',
 };
