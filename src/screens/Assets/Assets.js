@@ -6,14 +6,12 @@ import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
 import { UIColors, baseColors } from 'utils/variables';
-import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import {
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
   fetchExchangeRatesAction,
-  fetchTransactionsHistoryAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import { Container, ScrollWrapper } from 'components/Layout';
