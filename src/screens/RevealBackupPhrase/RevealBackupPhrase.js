@@ -67,21 +67,9 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       );
     }
 
-    return (
-      <FullScreenModal navigation={navigation}>
-        {pinIsValid && (
-          <Wrapper style={{ marginTop: 40 }}>
-            <Title title="backup phrase" />
-            <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
-            <Paragraph light>
-            Keep it secure as it&#39;s the only way to recover your account in an emergency.
-            Don&#39;t email or screenshot it.
-            </Paragraph>
-
-            <MnemonicPhrase phrase={walletData.mnemonic} />
-          </Wrapper>
-        )}
-        {!pinIsValid && (
+    if (!pinIsValid) {
+      return (
+        <FullScreenModal navigation={navigation}>
           <Wrapper style={{ marginTop: 40 }}>
             {showError}
             <Center>
@@ -93,7 +81,22 @@ class RevealBackupPhrase extends React.Component<Props, State> {
               showForgotButton={false}
             />
           </Wrapper>
-        )}
+        </FullScreenModal>
+      );
+    }
+
+    return (
+      <FullScreenModal navigation={navigation}>
+        <Wrapper style={{ marginTop: 40 }}>
+          <Title title="backup phrase" />
+          <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
+          <Paragraph light>
+            Keep it secure as it&#39;s the only way to recover your account in an emergency.
+            Don&#39;t email or screenshot it.
+          </Paragraph>
+
+          <MnemonicPhrase phrase={walletData.mnemonic} />
+        </Wrapper>
       </FullScreenModal>
     );
   }
