@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import { Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { Container, Center } from 'components/Layout';
 import Title from 'components/Title';
 import PinCode from 'components/PinCode';
+import ErrorMessage from 'components/ErrorMessage';
 
 import { setPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
@@ -16,12 +16,12 @@ type Props = {
 };
 
 type State = {
-  errorMessage: string,
+  error: string,
 };
 
 class SetWalletPinCode extends React.Component<Props, State> {
   state = {
-    errorMessage: '',
+    error: '',
   };
 
   handlePinSubmit = (pin: string) => {
@@ -29,7 +29,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
 
     if (validationError) {
       this.setState({
-        errorMessage: validationError,
+        error: validationError,
       });
       return;
     }
@@ -39,13 +39,15 @@ class SetWalletPinCode extends React.Component<Props, State> {
 
   handlePinChange = () => {
     this.setState({
-      errorMessage: '',
+      error: '',
     });
   };
 
   render() {
+    const { error } = this.state;
     return (
       <Container>
+        {!!error && <ErrorMessage>{error}</ErrorMessage>}
         <Center>
           <Title center title="create pincode" />
         </Center>
@@ -56,7 +58,6 @@ class SetWalletPinCode extends React.Component<Props, State> {
           showForgotButton={false}
           showNewPincodeText
         />
-        {!!this.state.errorMessage && <Text>{this.state.errorMessage}</Text>}
       </Container>
     );
   }

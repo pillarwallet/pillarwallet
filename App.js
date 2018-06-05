@@ -1,7 +1,7 @@
 // @flow
 import 'utils/setup';
 import * as React from 'react';
-import { addNavigationHelpers, NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import { BackHandler } from 'react-native';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
@@ -65,11 +65,11 @@ class App extends React.Component<Props, State> {
 
     return (
       <RootNavigation
-        navigation={addNavigationHelpers({
+        navigation={{
           dispatch,
           state: navigation,
           addListener,
-        })}
+        }}
       />
     );
   }
