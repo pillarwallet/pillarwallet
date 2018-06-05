@@ -139,7 +139,7 @@ class Profile extends React.Component<Props> {
             {wallet.mnemonic && (
               <ListItem>
                 <Body>
-                <ListItemText>Backup Wallet</ListItemText>
+                  <ListItemText>Backup Wallet</ListItemText>
                 </Body>
                 <Right>
                   <Icon
