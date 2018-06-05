@@ -1,10 +1,10 @@
 // @flow
 import * as React from 'react';
 import { FlatList } from 'react-native';
-import styled from 'styled-components/native';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { formatETHAmount } from 'utils/common';
+import { baseColors } from 'utils/variables';
 import Item from './Item';
 import Icon from './Icon';
 import Amount from './Amount';
@@ -23,16 +23,10 @@ type Props = {
   onRefresh: Function
 }
 
-const Container = styled.View`
-  backgroundColor: rgb(246, 246, 246);
-  flex: 1;
-  flexDirection: row;
-`;
-
 const flatListStyles = {
   justifyContent: 'flex-start',
   flex: 1,
-  backgroundColor: 'rgb(246, 246, 246)',
+  backgroundColor: baseColors.lightGray,
   padding: 20,
 };
 
@@ -42,7 +36,7 @@ const RECEIVED = 'Received';
 export default class TXHistory extends React.Component<Props> {
   static defaultProps = {
     history: [],
-    onRefresh: () => {},
+    onRefresh: () => { },
   };
 
   renderTransaction = ({ item: transaction }: { item: Transaction }) => {
@@ -78,18 +72,16 @@ export default class TXHistory extends React.Component<Props> {
   render() {
     const { history, address, onRefresh } = this.props;
     return (
-      <Container>
-        <FlatList
-          refreshing={false}
-          onRefresh={onRefresh}
-          ListHeaderComponent={<Title title="activity" />}
-          data={history}
-          extraData={address}
-          renderItem={this.renderTransaction}
-          keyExtractor={(({ _id }) => _id)}
-          contentContainerStyle={flatListStyles}
-        />
-      </Container>
+      <FlatList
+        refreshing={false}
+        onRefresh={onRefresh}
+        ListHeaderComponent={<Title title="activity" />}
+        data={history}
+        extraData={address}
+        renderItem={this.renderTransaction}
+        keyExtractor={(({ _id }) => _id)}
+        contentContainerStyle={flatListStyles}
+      />
     );
   }
 }
