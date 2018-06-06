@@ -22,7 +22,7 @@ platform :ios do
 
   desc "Create a new beta build"
   lane :build_simulator do
-    match(type: "appstore",
+    match(type: "development",
           readonly: true)
     disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
     xcodebuild(
@@ -33,6 +33,10 @@ platform :ios do
               export_method: "development",
               buildlog_path: "build.log"
             )
+            puts "#{App GUID}"
+    zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData/#{App GUID}/Build/Products/Debug-iphonesimulator/pillar-wallet",
+        output_path: "./build/pillar-wallet.app.zip"
+        )
   end
 
   desc "Upload a new build to TestFlight"

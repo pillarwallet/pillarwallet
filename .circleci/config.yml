@@ -108,9 +108,9 @@ jobs:
           command: cd ios && bundle exec fastlane build_simulator
           environment:
             SCAN_DEVICE: iPhone 8
-      - run:
-          name: show everything
-          command: ls -alR
+      - store_artifacts:
+          path: ./ios/build
+          destination: app_build
 
   deploy:
     working_directory: ~/pillarwallet
@@ -200,6 +200,3 @@ workflows:
           filters:
             branches:
               only: split_IPA_and_testflight_steps
-      - deploy:
-          requires:
-            - test
