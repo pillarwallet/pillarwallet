@@ -22,8 +22,8 @@ android {
   defaultConfig {
     applicationId 'com.pillarproject.wallet'
     targetSdkVersion 25
-    versionCode System.getenv('CIRCLE_BUILD_NUM') ? System.getenv('CIRCLE_BUILD_NUM') : 1
-    versionName '0.0.1'
+    versionCode 1
+    versionName '0.0.2'
     ndk {
       abiFilters 'armeabi-v7a', 'x86'
     }
@@ -48,20 +48,14 @@ android {
     devRemoteKernel {
       minSdkVersion 21
     }
+    dev19 {
+      // For debugging / development on older SDK versions. Increases build
+      // time so use 'dev' if not running on older SDKs.
+      minSdkVersion 19
+    }
     prod {
       // The actual minSdkVersion for the application.
-      minSdkVersion 21
-    }
-  }
-  signingConfigs {
-    debug {
-      storeFile file('../debug.keystore')
-    }
-    release {
-//      keyAlias '-'
-//      keyPassword '-'
-//      storeFile file('-')
-//      storePassword '-'
+      minSdkVersion 19
     }
   }
   buildTypes {
@@ -72,7 +66,11 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
-      signingConfig signingConfigs.release
+    }
+  }
+  signingConfigs {
+    debug {
+      storeFile file('../debug.keystore')
     }
   }
   lintOptions {
@@ -92,22 +90,27 @@ android {
 //   }
 // }
 
+
 apply from: 'expo.gradle'
 
+
 dependencies {
-    compile project(':react-native-device-info')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
-    compile project(':react-native-os')
     compile project(':react-native-randombytes')
-  // TODO: implement external firebase library
-  //  compile(project(':react-native-firebase')) {
-  //        transitive = false
-  //    }
+    compile project(':react-native-os')
+    compile project(':react-native-firebase')
+    compile project(':react-native-device-info')
   compile fileTree(dir: 'libs', include: ['*.jar'])
+
   compile 'com.android.support:multidex:1.0.1'
+
   // Our dependencies
   compile 'com.android.support:appcompat-v7:26.0.1'
+  compile "com.google.android.gms:play-services-base:15.0.0"
+  compile "com.google.firebase:firebase-core:15.0.2"
+
+
   // Our dependencies from ExpoView
   // DON'T ADD ANYTHING HERE THAT ISN'T IN EXPOVIEW. ONLY COPY THINGS FROM EXPOVIEW TO HERE.
   compile 'com.android.support:appcompat-v7:26.0.1'
@@ -118,20 +121,19 @@ dependencies {
   provided 'org.glassfish:javax.annotation:3.1.1'
   compile 'com.jakewharton:butterknife:7.0.1'
   compile 'de.greenrobot:eventbus:2.4.0'
-  compile 'com.amplitude:android-sdk:2.9.2'
-  // Be careful when upgrading! Upgrading might break experience scoping. Check with Jesse. See Analytics.resetAmplitudeDatabaseHelper
+  compile 'com.amplitude:android-sdk:2.9.2' // Be careful when upgrading! Upgrading might break experience scoping. Check with Jesse. See Analytics.resetAmplitudeDatabaseHelper
   compile 'com.squareup.picasso:picasso:2.5.2'
-  compile 'com.google.android.gms:play-services-gcm:9.8.0'
-  compile 'com.google.android.gms:play-services-analytics:9.8.0'
-  compile 'com.google.android.gms:play-services-maps:9.8.0'
-  compile 'com.google.android.gms:play-services-auth:9.8.0'
-  compile 'com.google.android.gms:play-services-location:9.8.0'
-  compile 'com.google.android.gms:play-services-ads:9.8.0'
+  compile 'com.google.android.gms:play-services-gcm:15.0.0'
+  compile 'com.google.android.gms:play-services-analytics:15.0.0'
+  compile 'com.google.android.gms:play-services-maps:15.0.0'
+  compile 'com.google.android.gms:play-services-auth:15.0.0'
+  compile 'com.google.android.gms:play-services-location:15.0.0'
+//  compile 'com.google.android.gms:play-services-ads:15.0.0'
   apt 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
-  compile 'com.raizlabs.android:DBFlow-Core:2.2.1'
-  compile 'com.raizlabs.android:DBFlow:2.2.1'
-  compile 'com.madgag.spongycastle:core:1.53.0.0'
-  compile 'com.madgag.spongycastle:prov:1.53.0.0'
+  compile "com.raizlabs.android:DBFlow-Core:2.2.1"
+  compile "com.raizlabs.android:DBFlow:2.2.1"
+  compile "com.madgag.spongycastle:core:1.53.0.0"
+  compile "com.madgag.spongycastle:prov:1.53.0.0"
   debugCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
   // debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta1'
   releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
@@ -155,6 +157,7 @@ dependencies {
   compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
   compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
   compile 'com.squareup.okio:okio:1.9.0'
+
   // Testing
   androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
   // We use a modified build of com.android.support.test:runner:1.0.1. Explanation in maven-test/README
@@ -163,8 +166,23 @@ dependencies {
   androidTestCompile 'com.google.code.findbugs:jsr305:3.0.0'
   androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
   androidTestCompile 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
+
+
+  
   compile('host.exp.exponent:expoview:27.0.0@aar') {
     transitive = true
+  }
+  
+}
+
+configurations.all {
+  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+    def requested = details.requested
+    if (requested.group == 'com.android.support') {
+      if (!requested.name.startsWith("multidex")) {
+        details.useVersion '26.0.1'
+      }
+    }
   }
 }
 
