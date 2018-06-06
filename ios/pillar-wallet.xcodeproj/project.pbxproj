@@ -56,6 +56,7 @@
 		DE488ED3D5684B76A0C40B8C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ABE6DAB20184465D8E053C80 /* Ionicons.ttf */; };
 		E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */; };
 		E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */; };
+		EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */; };
 		FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
 /* End PBXBuildFile section */
 
@@ -388,6 +389,7 @@
 		E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		E95F3AE135154DC384D6FE21 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -637,6 +639,7 @@
 		B56386381DB9693800A0598C = {
 			isa = PBXGroup;
 			children = (
+				EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */,
 				B56386431DB9693800A0598C /* pillar-wallet */,
 				B56386421DB9693800A0598C /* Products */,
 				69BE83450974470B970EB9BA /* Libraries */,
@@ -1083,6 +1086,7 @@
 				B5693E8E1FABD16A00307FA4 /* LaunchScreen.xib in Resources */,
 				B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */,
 				B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */,
+				EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */,
 				B56386511DB9693800A0598C /* Assets.xcassets in Resources */,
 				5024DD2C1ACA4DF494A1CCB1 /* Entypo.ttf in Resources */,
 				E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */,

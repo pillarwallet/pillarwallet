@@ -642,17 +642,18 @@
     pouchdb-collections "^1.0.1"
     tiny-queue "^0.2.1"
 
-"@fimbul/bifrost@^0.6.0":
-  version "0.6.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@fimbul/bifrost/-/bifrost-0.6.0.tgz?dl=https://registry.yarnpkg.com/@fimbul/bifrost/-/bifrost-0.6.0.tgz#5150302b63e1bd37ff95f561c3605949cb7e3770"
+"@fimbul/bifrost@^0.9.0":
+  version "0.9.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@fimbul/bifrost/-/bifrost-0.9.0.tgz?dl=https://registry.yarnpkg.com/@fimbul/bifrost/-/bifrost-0.9.0.tgz#75c7d7ad0c5464f22603b715324ec89c1f50138f"
   dependencies:
-    "@fimbul/ymir" "^0.6.0"
+    "@fimbul/ymir" "^0.9.0"
     get-caller-file "^1.0.2"
     tslib "^1.8.1"
+    tsutils "^2.24.0"
 
-"@fimbul/ymir@^0.6.0":
-  version "0.6.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@fimbul/ymir/-/ymir-0.6.0.tgz?dl=https://registry.yarnpkg.com/@fimbul/ymir/-/ymir-0.6.0.tgz#537cb15d361b7c993fe953b48c898ecdf4f671b8"
+"@fimbul/ymir@^0.9.0":
+  version "0.9.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@fimbul/ymir/-/ymir-0.9.0.tgz?dl=https://registry.yarnpkg.com/@fimbul/ymir/-/ymir-0.9.0.tgz#64bb9c658a48b584c070e830911c3675dc8e81da"
   dependencies:
     inversify "^4.10.0"
     reflect-metadata "^0.1.12"
@@ -902,8 +903,8 @@
     react-treebeard "^2.1.0"
 
 "@tradle/react-native-http@^2.0.0":
-  version "2.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@tradle/react-native-http/-/react-native-http-2.0.0.tgz?dl=https://registry.yarnpkg.com/@tradle/react-native-http/-/react-native-http-2.0.0.tgz#50a5c7f29f7689a99296eaf7c73d85752937e9cd"
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@tradle/react-native-http/-/react-native-http-2.0.1.tgz?dl=https://registry.yarnpkg.com/@tradle/react-native-http/-/react-native-http-2.0.1.tgz#af19e240e1e580bfa249563924d1be472686f48b"
   dependencies:
     Base64 "~0.2.0"
     inherits "~2.0.1"
@@ -939,8 +940,8 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/minimatch/-/minimatch-3.0.3.tgz?dl=https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
 
 "@types/node@*":
-  version "10.3.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.3.0.tgz?dl=https://registry.yarnpkg.com/@types/node/-/node-10.3.0.tgz#078516315a84d56216b5d4fed8f75d59d3b16cac"
+  version "10.3.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.3.1.tgz?dl=https://registry.yarnpkg.com/@types/node/-/node-10.3.1.tgz#51092fbacaed768a122a293814474fbf6e5e8b6d"
 
 "@types/node@9.6.6":
   version "9.6.6"
@@ -1032,8 +1033,8 @@ acorn@^4.0.3:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/acorn/-/acorn-4.0.13.tgz?dl=https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
 acorn@^5.0.0, acorn@^5.3.0, acorn@^5.5.0:
-  version "5.6.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/acorn/-/acorn-5.6.1.tgz?dl=https://registry.yarnpkg.com/acorn/-/acorn-5.6.1.tgz#c9e50c3e3717cf897f1b071ceadbb543bbc0a8d4"
+  version "5.6.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/acorn/-/acorn-5.6.2.tgz?dl=https://registry.yarnpkg.com/acorn/-/acorn-5.6.2.tgz#b1da1d7be2ac1b4a327fb9eab851702c5045b4e7"
 
 address@1.0.3, address@^1.0.1:
   version "1.0.3"
@@ -1720,8 +1721,8 @@ babel-plugin-jest-hoist@^22.4.4:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-22.4.4.tgz?dl=https://registry.yarnpkg.com/babel-plugin-jest-hoist/-/babel-plugin-jest-hoist-22.4.4.tgz#b9851906eab34c7bf6f8c895a2b08bea1a844c0b"
 
 babel-plugin-macros@^2.2.0:
-  version "2.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babel-plugin-macros/-/babel-plugin-macros-2.2.1.tgz?dl=https://registry.yarnpkg.com/babel-plugin-macros/-/babel-plugin-macros-2.2.1.tgz#7cc0f84735aa86f776b51860793a98928f43a7fa"
+  version "2.2.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/babel-plugin-macros/-/babel-plugin-macros-2.2.2.tgz?dl=https://registry.yarnpkg.com/babel-plugin-macros/-/babel-plugin-macros-2.2.2.tgz#049c93f4b934453688a6ec38bba529c55bf0fa1f"
   dependencies:
     cosmiconfig "^4.0.0"
 
@@ -2994,12 +2995,12 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000847"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-db/-/caniuse-db-1.0.30000847.tgz?dl=https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000847.tgz#ff4072a5468809fec0ae9ac3b4035ef891e5b144"
+  version "1.0.30000849"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-db/-/caniuse-db-1.0.30000849.tgz?dl=https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000849.tgz#d452f53d7dcfb84e7f5fd34c077c30ad2b7b9c7b"
 
 caniuse-lite@^1.0.30000792, caniuse-lite@^1.0.30000805, caniuse-lite@^1.0.30000844:
-  version "1.0.30000847"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-lite/-/caniuse-lite-1.0.30000847.tgz?dl=https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000847.tgz#be77f439be29bbc57ae08004b1e470b653b1ec1d"
+  version "1.0.30000849"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-lite/-/caniuse-lite-1.0.30000849.tgz?dl=https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000849.tgz#7e1aa48e6d58917dcd70aabf7e7a33514a258f91"
 
 capture-exit@^1.2.0:
   version "1.2.0"
@@ -4902,8 +4903,8 @@ fast-levenshtein@~2.0.4:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz?dl=https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
 
 fast-memoize@^2.2.7:
-  version "2.3.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fast-memoize/-/fast-memoize-2.3.2.tgz?dl=https://registry.yarnpkg.com/fast-memoize/-/fast-memoize-2.3.2.tgz#f6b9eb8e06a754029cca25b4cd3945f2f6242c90"
+  version "2.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fast-memoize/-/fast-memoize-2.4.0.tgz?dl=https://registry.yarnpkg.com/fast-memoize/-/fast-memoize-2.4.0.tgz#2f79eca41c41112b0b70cf53ac3940e206574648"
 
 fastparse@^1.1.1:
   version "1.1.1"
@@ -5639,8 +5640,8 @@ has-values@^1.0.0:
     kind-of "^4.0.0"
 
 has@^1.0.1, has@^1.0.2:
-  version "1.0.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/has/-/has-1.0.2.tgz?dl=https://registry.yarnpkg.com/has/-/has-1.0.2.tgz#1a64bfe4b52e67fb87b9822503d97c019fb6ba42"
+  version "1.0.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/has/-/has-1.0.3.tgz?dl=https://registry.yarnpkg.com/has/-/has-1.0.3.tgz#722d7cbfc1f6aa8241f16dd814e011e1f41e8796"
   dependencies:
     function-bind "^1.1.1"
 
@@ -9521,6 +9522,10 @@ pseudomap@^1.0.1, pseudomap@^1.0.2:
   version "1.0.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/pseudomap/-/pseudomap-1.0.2.tgz?dl=https://registry.yarnpkg.com/pseudomap/-/pseudomap-1.0.2.tgz#f052a28da70e618917ef0a8ac34c1ae5a68286b3"
 
+psl@^1.1.24:
+  version "1.1.27"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/psl/-/psl-1.1.27.tgz?dl=https://registry.yarnpkg.com/psl/-/psl-1.1.27.tgz#2b2c77019db86855170d903532400bf71ee085b6"
+
 public-encrypt@^4.0.0:
   version "4.0.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/public-encrypt/-/public-encrypt-4.0.2.tgz?dl=https://registry.yarnpkg.com/public-encrypt/-/public-encrypt-4.0.2.tgz#46eb9107206bf73489f8b85b69d91334c6610994"
@@ -11910,7 +11915,14 @@ toposort@^1.0.0:
   version "1.0.7"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/toposort/-/toposort-1.0.7.tgz?dl=https://registry.yarnpkg.com/toposort/-/toposort-1.0.7.tgz#2e68442d9f64ec720b8cc89e6443ac6caa950029"
 
-tough-cookie@>=2.3.3, tough-cookie@^2.3.3, tough-cookie@~2.3.3:
+tough-cookie@>=2.3.3, tough-cookie@^2.3.3:
+  version "2.4.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tough-cookie/-/tough-cookie-2.4.2.tgz?dl=https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.4.2.tgz#aa9133154518b494efab98a58247bfc38818c00c"
+  dependencies:
+    psl "^1.1.24"
+    punycode "^1.4.1"
+
+tough-cookie@~2.3.3:
   version "2.3.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tough-cookie/-/tough-cookie-2.3.4.tgz?dl=https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.3.4.tgz#ec60cee38ac675063ffc97a5c18970578ee83655"
   dependencies:
@@ -11970,12 +11982,12 @@ tslint-config-airbnb@5.8.0:
     tslint-microsoft-contrib "~5.0.1"
 
 tslint-consistent-codestyle@^1.10.0:
-  version "1.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tslint-consistent-codestyle/-/tslint-consistent-codestyle-1.13.0.tgz?dl=https://registry.yarnpkg.com/tslint-consistent-codestyle/-/tslint-consistent-codestyle-1.13.0.tgz#82abf230bf39e01159b4e9af721d489dd5ae0e6c"
+  version "1.13.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tslint-consistent-codestyle/-/tslint-consistent-codestyle-1.13.1.tgz?dl=https://registry.yarnpkg.com/tslint-consistent-codestyle/-/tslint-consistent-codestyle-1.13.1.tgz#7996913453f369f7321c5b49776c2bcf837461aa"
   dependencies:
-    "@fimbul/bifrost" "^0.6.0"
+    "@fimbul/bifrost" "^0.9.0"
     tslib "^1.7.1"
-    tsutils "^2.24.0"
+    tsutils "^2.27.0"
 
 tslint-eslint-rules@^4.1.1:
   version "4.1.1"
@@ -11995,7 +12007,7 @@ tsutils@^1.4.0:
   version "1.9.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tsutils/-/tsutils-1.9.1.tgz?dl=https://registry.yarnpkg.com/tsutils/-/tsutils-1.9.1.tgz#b9f9ab44e55af9681831d5f28d0aeeaf5c750cb0"
 
-tsutils@^2.12.1, tsutils@^2.24.0:
+tsutils@^2.12.1, tsutils@^2.24.0, tsutils@^2.27.0:
   version "2.27.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/tsutils/-/tsutils-2.27.1.tgz?dl=https://registry.yarnpkg.com/tsutils/-/tsutils-2.27.1.tgz#ab0276ac23664f36ce8fd4414daec4aebf4373ee"
   dependencies:
@@ -12211,8 +12223,8 @@ url-parse-lax@^1.0.0:
     prepend-http "^1.0.1"
 
 url-parse@^1.1.8, url-parse@^1.1.9, url-parse@~1.4.0:
-  version "1.4.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/url-parse/-/url-parse-1.4.0.tgz?dl=https://registry.yarnpkg.com/url-parse/-/url-parse-1.4.0.tgz#6bfdaad60098c7fe06f623e42b22de62de0d3d75"
+  version "1.4.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/url-parse/-/url-parse-1.4.1.tgz?dl=https://registry.yarnpkg.com/url-parse/-/url-parse-1.4.1.tgz#4dec9dad3dc8585f862fed461d2e19bbf623df30"
   dependencies:
     querystringify "^2.0.0"
     requires-port "^1.0.0"

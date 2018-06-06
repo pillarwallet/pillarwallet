@@ -104,19 +104,13 @@ jobs:
           paths:
             - vendor/bundle
       - run:
-          name: Execute Fastlane deployment to TestFlight
-          command: cd ios && bundle exec fastlane beta
+          name: Execute Fastlane Build for Simulator testing
+          command: cd ios && bundle exec fastlane build_simulator
           environment:
             SCAN_DEVICE: iPhone 8
-      - store_test_results:
-          path: output/scan
-      - store_artifacts:
-          path: ~/pillarwallet/ios/output/gym/pillar-wallet.ipa
-      - store_artifacts:
-          path: output
       - run:
-          name: Upload ipa file to Artifactory
-          command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD -T ~/pillarwallet/ios/output/gym/pillar-wallet.ipa "https://pillarproject.jfrog.io/pillarproject/generic-local/ipa/pillar-wallet-$CIRCLE_BUILD_NUM.ipa"
+          name: show everything
+          command: ls -alR
 
   deploy:
     working_directory: ~/pillarwallet
@@ -191,7 +185,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Execute Fastlane deployment to TestFlight
-          command: cd ios && bundle exec fastlane test_flight
+          command: cd ios && bundle exec fastlane build_test_flight
           environment:
             SCAN_DEVICE: iPhone 8
 
@@ -200,9 +194,12 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - deploy:
+      - test:
           requires:
             - build
           filters:
             branches:
               only: split_IPA_and_testflight_steps
+      - deploy:
+          requires:
+            - test

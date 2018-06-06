@@ -21,20 +21,22 @@ platform :ios do
   end
 
   desc "Create a new beta build"
-  lane :beta do
+  lane :build_simulator do
     match(type: "appstore",
           readonly: true)
     disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
-    build_app(clean: true,
+    xcodebuild(
               workspace: "pillar-wallet.xcworkspace",
               scheme: "pillar-wallet",
-              configuration: "Release",
-              export_method: "app-store"
+              configuration: "Debug",
+              xcargs: "-sdk 'iphonesimulator11.3' -destination 'generic/platform=iOS Simulator'",
+              export_method: "development",
+              buildlog_path: "build.log"
             )
   end
 
   desc "Upload a new build to TestFlight"
-  lane :test_flight do
+  lane :build_test_flight do
     sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillar-wallet/Supporting/Info.plist\"")
     match(type: "appstore",
           readonly: true)
@@ -51,15 +53,3 @@ platform :ios do
    )
   end
 end
-
-    # Other parameter options for increment_build_number
-      # build_number: latest_testflight_build_number + 1,
-      # xcodeproj: "pillar-wallet.xcodeproj"
-    # clean_build_artifacts
-    # commits changes incremented build number
-    # ci_skip (skips build when pushing to repo)
-    # commit_version_bump(
-    #                     message: "Fastlane iOS: Released new build #{lane_context[SharedValues::BUILD_NUMBER]} [ci skip]"
-    #                     xcodeproj: "pillar-wallet.xcodeproj",
-    #                     force: true
-    #                     )
