@@ -3,28 +3,24 @@ import * as React from 'react';
 
 import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
 import { Container, Center, Wrapper } from 'components/Layout';
-import { CloseButton } from 'components/Button/CloseButton';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
-import { UIColors } from 'utils/variables';
-import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
   wallet: Object,
-  navigation: NavigationScreenProp<*>,
+  onPinValid: Function,
 }
 
 type State = {
   pinError: string,
 };
 
-class CurrentPin extends React.Component<Props, State> {
+class CheckPin extends React.Component<Props, State> {
   state = {
     pinError: '',
   };
@@ -41,12 +37,8 @@ class CurrentPin extends React.Component<Props, State> {
   }
 
   handlePinSubmit = (pin: string) => {
-    const { checkPin, navigation } = this.props;
-    checkPin(pin, () => navigation.navigate(CHANGE_PIN_NEW_PIN));
-  };
-
-  handleScreenDissmisal = () => {
-    this.props.navigation.goBack(null);
+    const { checkPin, onPinValid } = this.props;
+    checkPin(pin, () => onPinValid());
   };
 
   render() {
@@ -69,25 +61,17 @@ class CurrentPin extends React.Component<Props, State> {
     }
 
     return (
-      <Container>
-        <CloseButton
-          icon="md-close"
-          onPress={this.handleScreenDissmisal}
-          color={UIColors.primary}
-          fontSize={32}
+      <Wrapper>
+        {showError}
+        <Center>
+          <Title center title="enter pincode" />
+        </Center>
+        <PinCode
+          onPinEntered={this.handlePinSubmit}
+          pageInstructions=""
+          showForgotButton={false}
         />
-        <Wrapper style={{ marginTop: 40 }}>
-          {showError}
-          <Center>
-            <Title center title="enter current pincode" />
-          </Center>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            pageInstructions=""
-            showForgotButton={false}
-          />
-        </Wrapper>
-      </Container>
+      </Wrapper>
     );
   }
 }
@@ -100,4 +84,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(CurrentPin);
+export default connect(mapStateToProps, mapDispatchToProps)(CheckPin);

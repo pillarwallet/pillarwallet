@@ -15,10 +15,18 @@ import ProfileScreen from 'screens/Profile';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
+import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendTokenContacts';
 
 // components
+import RetryApiRegistration from 'components/RetryApiRegistration';
+
+// actions
+import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
+import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
+
+// constants
 import {
   ADD_TOKEN,
   ASSETS,
@@ -33,14 +41,8 @@ import {
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
   SEND_TOKEN_FLOW,
+  REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
-import RetryApiRegistration from 'components/RetryApiRegistration';
-
-// actions
-import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
-import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
-
-// constants
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
 const SLEEP_TIMEOUT = 20000;
@@ -149,6 +151,7 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
+    [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
   }, {
     mode: 'modal',
     navigationOptions: {
