@@ -5,15 +5,17 @@ import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
-import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { checkPinAction } from 'actions/authActions';
-import { Container, Center } from 'components/Layout';
+import { Container, Center, Wrapper } from 'components/Layout';
+import { CloseButton } from 'components/Button/CloseButton';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
+import { UIColors } from 'utils/variables';
+import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
-  login: (pin: string) => Function,
+  checkPin: (pin: string, onValidPin: Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
 }
@@ -22,7 +24,7 @@ type State = {
   pinError: string,
 };
 
-class PinCodeUnlock extends React.Component<Props, State> {
+class CurrentPin extends React.Component<Props, State> {
   state = {
     pinError: '',
   };
@@ -32,19 +34,19 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (walletState === INVALID_PASSWORD) {
       return {
         ...prevState,
-        pinError: 'Invalid pincode',
+        pinError: 'Invalid password',
       };
     }
     return null;
   }
 
   handlePinSubmit = (pin: string) => {
-    const { login } = this.props;
-    login(pin);
+    const { checkPin, navigation } = this.props;
+    checkPin(pin, () => navigation.navigate(CHANGE_PIN_NEW_PIN));
   };
 
-  handleForgotPasscode = () => {
-    this.props.navigation.navigate(ONBOARDING_FLOW);
+  handleScreenDissmisal = () => {
+    this.props.navigation.goBack(null);
   };
 
   render() {
@@ -56,7 +58,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (walletState === DECRYPTING) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
+          <Text style={{ marginBottom: 20 }}>Checking</Text>
           <ActivityIndicator
             animating
             color="#111"
@@ -68,15 +70,23 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
     return (
       <Container>
-        {showError}
-        <Center>
-          <Title center title="enter pincode" />
-        </Center>
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          pageInstructions=""
-          onForgotPin={this.handleForgotPasscode}
+        <CloseButton
+          icon="md-close"
+          onPress={this.handleScreenDissmisal}
+          color={UIColors.primary}
+          fontSize={32}
         />
+        <Wrapper style={{ marginTop: 40 }}>
+          {showError}
+          <Center>
+            <Title center title="enter current pincode" />
+          </Center>
+          <PinCode
+            onPinEntered={this.handlePinSubmit}
+            pageInstructions=""
+            showForgotButton={false}
+          />
+        </Wrapper>
       </Container>
     );
   }
@@ -85,9 +95,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string) => {
-    dispatch(checkPinAction(pin));
+  checkPin: (pin: string, onValidPin: Function) => {
+    dispatch(checkPinAction(pin, onValidPin));
   },
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentPin);
