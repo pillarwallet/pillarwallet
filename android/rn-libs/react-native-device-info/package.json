@@ -1,0 +1,127 @@
+{
+  "_from": "react-native-device-info@^0.21.5",
+  "_id": "react-native-device-info@0.21.5",
+  "_inBundle": false,
+  "_integrity": "sha1-mUeKLWgYLgEil/LWPyvRt4gQbe4=",
+  "_location": "/react-native-device-info",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "react-native-device-info@^0.21.5",
+    "name": "react-native-device-info",
+    "escapedName": "react-native-device-info",
+    "rawSpec": "^0.21.5",
+    "saveSpec": null,
+    "fetchSpec": "^0.21.5"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-device-info/-/react-native-device-info-0.21.5.tgz?dl=https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-0.21.5.tgz",
+  "_shasum": "99478a2d68182e012297f2d63f2bd1b788106dee",
+  "_spec": "react-native-device-info@^0.21.5",
+  "_where": "/Users/deimantas/Documents/PROJEKTAI/pillar/app_reactnative/pillarwallet",
+  "author": {
+    "name": "Rebecca Hughes",
+    "email": "rebecca@learnium.net",
+    "url": "https://github.com/rebeccahughes"
+  },
+  "bugs": {
+    "url": "https://github.com/rebeccahughes/react-native-device-info/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [
+    {
+      "name": "Gant Laborde",
+      "email": "gant@infinite.red",
+      "url": "https://github.com/gantman"
+    },
+    {
+      "name": "Mehdi Achour",
+      "email": "machour@gmail.com",
+      "url": "https://github.com/machour"
+    }
+  ],
+  "deprecated": false,
+  "description": "Get device information using react-native",
+  "devDependencies": {
+    "np": "^2.16.0",
+    "prettier": "^1.10.2"
+  },
+  "homepage": "https://github.com/rebeccahughes/react-native-device-info#readme",
+  "keywords": [
+    "react-component",
+    "react-native",
+    "ios",
+    "android",
+    "windows",
+    "device",
+    "events",
+    "cocoapod"
+  ],
+  "license": "MIT",
+  "main": "deviceinfo.js",
+  "name": "react-native-device-info",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rebeccahughes/react-native-device-info.git"
+  },
+  "scripts": {
+    "shipit": "np"
+  },
+  "typings": "./deviceinfo.d.ts",
+  "version": "0.21.5",
+  "react-native": {
+    "zlib": "browserify-zlib",
+    "console": "console-browserify",
+    "constants": "constants-browserify",
+    "crypto": "react-native-crypto",
+    "dns": "dns.js",
+    "net": "react-native-tcp",
+    "domain": "domain-browser",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os",
+    "path": "path-browserify",
+    "querystring": "querystring-es3",
+    "fs": "react-native-level-fs",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "dgram": "react-native-udp",
+    "stream": "stream-browserify",
+    "timers": "timers-browserify",
+    "tty": "tty-browserify",
+    "vm": "vm-browserify",
+    "tls": false
+  },
+  "browser": {
+    "zlib": "browserify-zlib",
+    "console": "console-browserify",
+    "constants": "constants-browserify",
+    "crypto": "react-native-crypto",
+    "dns": "dns.js",
+    "net": "react-native-tcp",
+    "domain": "domain-browser",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "os": "react-native-os",
+    "path": "path-browserify",
+    "querystring": "querystring-es3",
+    "fs": "react-native-level-fs",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "dgram": "react-native-udp",
+    "stream": "stream-browserify",
+    "timers": "timers-browserify",
+    "tty": "tty-browserify",
+    "vm": "vm-browserify",
+    "tls": false
+  }
+}
