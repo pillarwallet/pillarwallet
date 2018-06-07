@@ -124,7 +124,7 @@ jobs:
       - checkout
       - run:
           name: Install Expo cli
-          command: yarn global add global exp
+          command: yarn global add exp
       - run:
           name: Setting .expo/PATH
           command: exp path
