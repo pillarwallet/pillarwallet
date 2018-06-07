@@ -200,6 +200,3 @@ workflows:
           filters:
             branches:
               only: split_IPA_and_testflight_steps
-      - deploy:
-          requires:
-            - test
