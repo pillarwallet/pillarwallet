@@ -19,11 +19,9 @@ platform :ios do
               export_method: "development",
               buildlog_path: "build.log"
     )
-            # puts "#{lane_context[SharedValues]}"
-    # zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData",
-    #   {App GUID}/Build/Products/Debug-iphonesimulator/pillar-wallet"
-    #     output_path: "./build/pillar-wallet.app.zip"
-    #   )
+    zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData",
+        output_path: "./build/pillar-wallet.app.zip"
+      )
   end
 
   desc "Upload a new build to TestFlight"
