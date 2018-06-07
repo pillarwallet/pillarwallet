@@ -226,7 +226,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Grid>
         </View>
         <ScrollWrapper
-          gerullarPadding
+          regularPadding
           refreshControl={
             <RefreshControl
               refreshing={false}
