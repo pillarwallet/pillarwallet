@@ -14,16 +14,16 @@ platform :ios do
     xcodebuild(
               workspace: "pillar-wallet.xcworkspace",
               scheme: "pillar-wallet",
-              configuration: "Debug",
+              configuration: "Release",
               xcargs: "-sdk 'iphonesimulator11.3' -destination 'generic/platform=iOS Simulator'",
               export_method: "development",
               buildlog_path: "build.log"
     )
-            puts "#{lane_context[SharedValues]}"
-    zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData",
-      # {App GUID}/Build/Products/Debug-iphonesimulator/pillar-wallet"
-        output_path: "./build/pillar-wallet.app.zip"
-      )
+            # puts "#{lane_context[SharedValues]}"
+    # zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData",
+    #   {App GUID}/Build/Products/Debug-iphonesimulator/pillar-wallet"
+    #     output_path: "./build/pillar-wallet.app.zip"
+    #   )
   end
 
   desc "Upload a new build to TestFlight"
