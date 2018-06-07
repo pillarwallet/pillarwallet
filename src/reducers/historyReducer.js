@@ -23,11 +23,13 @@ export default function assetsReducer(
 ) {
   switch (action.type) {
     case SET_HISTORY:
-      const updatedState = { data: action.payload, isFetched: true };
+      const transactions = state.data
+        .filter(({ asset }) => asset !== action.payload.asset)
+        .concat(action.payload.transactions);
       return Object.assign(
         {},
         state,
-        updatedState,
+        { isFetched: true, data: transactions },
       );
     default:
       return state;

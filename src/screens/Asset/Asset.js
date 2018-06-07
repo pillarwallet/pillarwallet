@@ -1,26 +1,23 @@
 // @flow
 import * as React from 'react';
-import { View, Share, RefreshControl, Text, ActivityIndicator } from 'react-native';
+import { View, Share, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import {
-  fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
   fetchExchangeRatesAction,
+  fetchTransactionsHistoryAction,
 } from 'actions/assetsActions';
 import { UIColors, baseColors } from 'utils/variables';
-import { BCX_URL } from 'react-native-dotenv';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import Button from 'components/Button';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import TransactionSentModal from 'components/TransactionSentModal';
-import { FETCH_INITIAL_FAILED } from 'constants/assetsConstants';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
@@ -37,9 +34,10 @@ const activeModalResetState = {
 
 
 type Props = {
-  fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
+  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  history: Transaction[],
   assets: Object,
   wallet: Object,
   rates: Object,
@@ -49,7 +47,6 @@ type Props = {
 }
 
 type State = {
-  history: Transaction[],
   activeModal: {
     type: string | null,
     opts: {
@@ -64,57 +61,17 @@ type State = {
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
-    history: [],
   };
 
   componentDidMount() {
     const {
-      fetchInitialAssets,
-      fetchAssetsBalances,
-      fetchExchangeRates,
-      assets,
+      fetchTransactionsHistory,
       wallet,
       navigation,
     } = this.props;
 
     const { assetData } = navigation.state.params;
-
-    fetchAssetsBalances(assets, wallet.address);
-    fetchExchangeRates(assets);
-    this.getTransactionHistory(assetData);
-
-    if (!Object.keys(assets).length) {
-      fetchInitialAssets(wallet.address);
-    }
-  }
-
-  // TODO: Move this into Redux and pass in with rest of asset DATA
-  getTransactionHistory(assetData: Object) {
-    // TODO: Needs to use this.props.wallet.data.address
-    const queryParams = [
-      `address1=${assetData.address}`,
-      'address2=ALL',
-      'asset=ALL',
-      'batchNb=0', // show 10 latest transactions only
-    ];
-
-    fetch(`${BCX_URL}/wallet-client/txhistory?${queryParams.join('&')}`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(res => res.json())
-      .then(res => res.txHistory && Array.isArray(res.txHistory) ? res.txHistory : [])
-      .then((txHistory) => {
-        this.setState({
-          history: txHistory,
-        });
-      })
-      .catch(() => {
-        // TODO: Use proper error handling
-      });
+    fetchTransactionsHistory(wallet.address, assetData.token);
   }
 
   handleCardTap = () => {
@@ -135,40 +92,17 @@ class AssetScreen extends React.Component<Props, State> {
     });
   }
 
-
   render() {
     const {
       activeModal: { type: activeModalType },
-      history,
     } = this.state;
 
     const { assetData } = this.props.navigation.state.params;
-
     const {
       assets,
       wallet,
-      assetsState,
-      fetchInitialAssets,
     } = this.props;
-
-    if (!Object.keys(assets).length) {
-      return (
-        <Container center>
-          <Text style={{ marginBottom: 20 }}>Loading default assets</Text>
-          {assetsState !== FETCH_INITIAL_FAILED && (
-            <ActivityIndicator
-              animating
-              color="#111"
-              size="large"
-            />
-          )}
-          {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={() => fetchInitialAssets(wallet.address)} />
-          )}
-        </Container>
-      );
-    }
-
+    const history = this.props.history.filter(({ asset }) => asset === assetData.token);
     return (
       <Container>
         <ScrollWrapper
@@ -185,11 +119,8 @@ class AssetScreen extends React.Component<Props, State> {
               }}
             />
           }
-          style={{
-            backgroundColor: baseColors.lightGray,
-          }}
+          style={{ backgroundColor: baseColors.lightGray }}
         >
-
           <View
             style={{
               borderBottomWidth: 1,
@@ -206,13 +137,12 @@ class AssetScreen extends React.Component<Props, State> {
             padding
             style={{
               backgroundColor: baseColors.white,
+              height: 350,
             }}
           >
-
-
             <Transition shared={assetData.name}>
               <AssetCard
-                id={assetData.symbol}
+                id={assetData.token}
                 name={assetData.name}
                 token={assetData.token}
                 amount={assetData.amount}
@@ -263,6 +193,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, assetsState },
   rates: { data: rates },
+  history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
@@ -270,17 +201,18 @@ const mapStateToProps = ({
   assetsState,
   rates,
   baseFiatCurrency,
+  history,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchInitialAssets: (walletAddress) => {
-    dispatch(fetchInitialAssetsAction(walletAddress));
-  },
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
   fetchExchangeRates: (assets) => {
     dispatch(fetchExchangeRatesAction(assets));
+  },
+  fetchTransactionsHistory: (walletAddress, asset) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
   },
 });
 
