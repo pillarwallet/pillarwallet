@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { Item, Input, Label } from 'native-base';
 import { fontSizes, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
+import { View } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -62,7 +63,11 @@ const Error = styled.Text`
   color: tomato;
   position: absolute;
   left: 0;
-  bottom: -25px;
+  bottom: 0;
+  flex: 1;
+  padding-left: 2;
+  padding-right: 2;
+  marginBottom: 10;
 `;
 
 const PostFix = styled.Text`
@@ -105,7 +110,7 @@ class TextInput extends React.Component<Props, State> {
         onBlur(value);
       }
     });
-  }
+  };
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
@@ -115,7 +120,7 @@ class TextInput extends React.Component<Props, State> {
         onChange(value);
       }
     });
-  }
+  };
 
   render() {
     const {
@@ -132,19 +137,23 @@ class TextInput extends React.Component<Props, State> {
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     return (
-      <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>
-        <Label>{label}</Label>
-        <InputField
-          {...inputProps}
-          onChange={this.handleChange}
-          onBlur={this.handleBlur}
-          value={value}
-          inputType={inputType}
-        />
-        {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
-        {!!postfix && <PostFix>{postfix}</PostFix>}
+      <View style={{ paddingBottom: 10 }}>
+        <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>
+          <Label>{label}</Label>
+          <InputField
+            {...inputProps}
+            onChange={this.handleChange}
+            // onBlur={this.handleBlur}
+            onEndEditing={() => this.handleBlur}
+            value={value}
+            inputType={inputType}
+            style={{ fontSize: 22 }}
+          />
+          {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
+          {!!postfix && <PostFix>{postfix}</PostFix>}
+        </Item>
         {!!errorMessage && <Error>{errorMessage}</Error>}
-      </Item>
+      </View>
     );
   }
 }
