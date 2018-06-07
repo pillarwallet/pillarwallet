@@ -19,7 +19,7 @@ platform :ios do
               export_method: "development",
               buildlog_path: "build.log"
     )
-    zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData/pillar-wallet*/Build/Products/Release-iphonesimulator/pillar-wallet",
+    zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData/pillar-wallet*/Build/Products/Release-iphonesimulator",
         output_path: "./build/pillar-wallet.app.zip"
       )
   end
