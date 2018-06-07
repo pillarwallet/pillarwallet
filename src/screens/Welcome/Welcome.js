@@ -25,17 +25,35 @@ const PillarLogo = styled.Image`
 class Welcome extends React.Component<Props> {
   static navigationOptions = {
     header: null,
-  }
+  };
+
+  state = {
+    shouldAnimate: true,
+  };
+
   loginAction = () => {
     this.props.navigation.navigate(ONBOARDING_HOME);
   };
+
+  componentDidMount() {
+    this.listeners = [
+      this.props.navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
+      this.props.navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
+    ];
+  }
+
+  componentWillUnmount() {
+    this.listeners.forEach((listener) => {
+      listener.remove();
+    });
+  }
 
   render() {
     const { isFetched } = this.props;
     if (!isFetched) return null;
     return (
       <Container center>
-        <AnimatedBackground />
+        <AnimatedBackground shouldAnimate={ this.state.shouldAnimate }/>
         <PillarLogo source={pillarLogoSource} />
         <Footer>
           <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />

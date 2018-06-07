@@ -144,7 +144,7 @@ class NewProfile extends React.Component<Props, State> {
         enabled
       >
         <Container>
-          <ScrollWrapper padding>
+          <ScrollWrapper regularPadding>
             <Title title="create profile" />
             <Paragraph>Fill out your profile.</Paragraph>
             <LoginForm
