@@ -137,26 +137,24 @@ class Profile extends React.Component<Props> {
               <ListSeparatorText>SECURITY</ListSeparatorText>
             </ListSeparator>
             {wallet.mnemonic && (
-              <ListItem>
+              <ListItem onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}>
                 <Body>
                   <ListItemText>Backup Wallet</ListItemText>
                 </Body>
                 <Right>
                   <Icon
                     name="arrow-forward"
-                    onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
                   />
                 </Right>
               </ListItem>
             )}
-            <ListItem>
+            <ListItem onPress={() => this.props.navigation.navigate(CHANGE_PIN_FLOW)}>
               <Body>
                 <ListItemText>Change Pin</ListItemText>
               </Body>
               <Right>
                 <Icon
                   name="arrow-forward"
-                  onPress={() => this.props.navigation.navigate(CHANGE_PIN_FLOW)}
                 />
               </Right>
             </ListItem>
