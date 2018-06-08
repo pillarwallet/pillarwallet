@@ -7,7 +7,7 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 let notificationsListener = null;
 
 export const startListeningNotificationsAction = () => {
-  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
+  return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet } } = getState();
     // check if permissions enabled
     const enabled = await firebase.messaging().hasPermission();
