@@ -11,7 +11,7 @@ import { Grid, Row, Column } from 'components/Grid';
 import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
 import Title from 'components/Title';
 import CurrencySelector from 'components/ProfileSettings/CurrencySelector';
-import { CHANGE_PIN_FLOW } from 'constants/navigationConstants';
+import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import ProfileHeader from './ProfileHeader';
 import ProfileCard from './ProfileCard';
 
@@ -55,6 +55,7 @@ const leftColumnSize = '0 0 100px';
 
 type Props = {
   user: Object,
+  wallet: Object,
   navigation: NavigationScreenProp<*>,
 }
 
@@ -68,7 +69,7 @@ class Profile extends React.Component<Props> {
   }
 
   render() {
-    const { user } = this.props;
+    const { user, wallet } = this.props;
     return (
       <Container>
         <ScrollWrapper>
@@ -135,14 +136,19 @@ class Profile extends React.Component<Props> {
             <ListSeparator>
               <ListSeparatorText>SECURITY</ListSeparatorText>
             </ListSeparator>
-            <ListItem>
-              <Body>
-                <ListItemText>Backup Wallet</ListItemText>
-              </Body>
-              <Right>
-                <Icon name="arrow-forward" />
-              </Right>
-            </ListItem>
+            {wallet.mnemonic && (
+              <ListItem>
+                <Body>
+                  <ListItemText>Backup Wallet</ListItemText>
+                </Body>
+                <Right>
+                  <Icon
+                    name="arrow-forward"
+                    onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
+                  />
+                </Right>
+              </ListItem>
+            )}
             <ListItem>
               <Body>
                 <ListItemText>Change Pin</ListItemText>
@@ -210,8 +216,9 @@ class Profile extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user } }) => ({
+const mapStateToProps = ({ user: { data: user }, wallet: { data: wallet } }) => ({
   user,
+  wallet,
 });
 
 export default connect(mapStateToProps)(Profile);

@@ -146,7 +146,7 @@ class NewProfile extends React.Component<Props, State> {
         <Container>
           <ScrollWrapper padding>
             <Title title="create profile" />
-            <Paragraph>Fill our your profile.</Paragraph>
+            <Paragraph>Fill out your profile.</Paragraph>
             <LoginForm
               innerRef={node => { this._form = node; }}
               type={formStructure}
