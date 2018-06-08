@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Share, RefreshControl } from 'react-native';
+import { Animated, Easing, View, Share, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -62,6 +62,14 @@ class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
   };
+
+  static navigationOptions = {
+    transitionConfig: {
+      duration: 300,
+      timing: Animated.timing,
+      easing: Easing.easing,
+    },
+  }
 
   componentDidMount() {
     const {

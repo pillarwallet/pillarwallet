@@ -5,7 +5,7 @@ import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
-import { Container, Center, Wrapper } from 'components/Layout';
+import { Container, Center } from 'components/Layout';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -14,6 +14,7 @@ type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
   wallet: Object,
   onPinValid: Function,
+  title?: string,
 }
 
 type State = {
@@ -43,6 +44,7 @@ class CheckPin extends React.Component<Props, State> {
 
   render() {
     const { pinError } = this.state;
+    const { title } = this.props;
 
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     const { walletState } = this.props.wallet;
@@ -61,17 +63,17 @@ class CheckPin extends React.Component<Props, State> {
     }
 
     return (
-      <Wrapper>
+      <React.Fragment>
         {showError}
         <Center>
-          <Title center title="enter pincode" />
+          <Title center title={title || 'enter pincode'} />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""
           showForgotButton={false}
         />
-      </Wrapper>
+      </React.Fragment>
     );
   }
 }
