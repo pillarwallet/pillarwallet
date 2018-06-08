@@ -49,5 +49,9 @@ describe('Common utils', () => {
       const expectedValue = 23.45;
       expect(parseNumber('23.45')).toBe(expectedValue);
     });
+    it('should convert a value with multiple decimal seperators', () => {
+      const expectedValue = 5678.91;
+      expect(parseNumber('5,678.91')).toBe(expectedValue);
+    });
   });
 });
