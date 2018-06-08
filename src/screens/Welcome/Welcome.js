@@ -15,7 +15,7 @@ type Props = {
   OTP: boolean | number,
 }
 
-const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
+const pillarLogoSource = require('../../assets/images/landing-pillar-logo.png');
 
 const PillarLogo = styled.Image`
   height: 60;

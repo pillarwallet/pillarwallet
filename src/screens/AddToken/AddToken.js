@@ -15,15 +15,15 @@ import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'ac
 
 const tokenIcons = {};
 
-tokenIcons.PLR = require('assets/images/tokens/PLR/icon.png');
-tokenIcons.QTM = require('assets/images/tokens/QTM/icon.png');
-tokenIcons.OMG = require('assets/images/tokens/OMG/icon.png');
-tokenIcons.ICX = require('assets/images/tokens/ICX/icon.png');
-tokenIcons.STORJ = require('assets/images/tokens/STORJ/icon.png');
-tokenIcons.BAT = require('assets/images/tokens/BAT/icon.png');
-tokenIcons.GNT = require('assets/images/tokens/GNT/icon.png');
-tokenIcons.PPT = require('assets/images/tokens/PPT/icon.png');
-tokenIcons.SALT = require('assets/images/tokens/SALT/icon.png');
+tokenIcons.PLR = require('../../assets/images/tokens/PLR/icon.png');
+tokenIcons.QTM = require('../../assets/images/tokens/QTM/icon.png');
+tokenIcons.OMG = require('../../assets/images/tokens/OMG/icon.png');
+tokenIcons.ICX = require('../../assets/images/tokens/ICX/icon.png');
+tokenIcons.STORJ = require('../../assets/images/tokens/STORJ/icon.png');
+tokenIcons.BAT = require('../../assets/images/tokens/BAT/icon.png');
+tokenIcons.GNT = require('../../assets/images/tokens/GNT/icon.png');
+tokenIcons.PPT = require('../../assets/images/tokens/PPT/icon.png');
+tokenIcons.SALT = require('../../assets/images/tokens/SALT/icon.png');
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.medium};
