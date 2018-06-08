@@ -71,7 +71,7 @@ FullName.getValidationErrorMessage = (): string => {
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
-    return 'Username should be less than ' + maxUsernameLength + ' characters.';
+    return `Username should be less than ${maxUsernameLength} characters.`;
   }
   return 'Please specify username.';
 };
