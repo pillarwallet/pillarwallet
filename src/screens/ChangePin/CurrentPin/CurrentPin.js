@@ -6,12 +6,11 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
-import { Container, Center, Wrapper } from 'components/Layout';
-import { CloseButton } from 'components/Button/CloseButton';
+import { Container, Center } from 'components/Layout';
+import ModalHeader from 'components/ModalHeader';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
-import { UIColors } from 'utils/variables';
 import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
@@ -70,23 +69,19 @@ class CurrentPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <CloseButton
-          icon="md-close"
-          onPress={this.handleScreenDissmisal}
-          color={UIColors.primary}
-          fontSize={32}
+        <ModalHeader
+          onClose={this.handleScreenDissmisal}
         />
-        <Wrapper style={{ marginTop: 40 }}>
-          {showError}
-          <Center>
-            <Title center title="enter current pincode" />
-          </Center>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            pageInstructions=""
-            showForgotButton={false}
-          />
-        </Wrapper>
+
+        {showError}
+        <Center>
+          <Title center title="enter current pincode" />
+        </Center>
+        <PinCode
+          onPinEntered={this.handlePinSubmit}
+          pageInstructions=""
+          showForgotButton={false}
+        />
       </Container>
     );
   }

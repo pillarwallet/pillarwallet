@@ -5,7 +5,7 @@ import { Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
-import { Container, Center, Wrapper } from 'components/Layout';
+import { Container, Center } from 'components/Layout';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -61,7 +61,7 @@ class CheckPin extends React.Component<Props, State> {
     }
 
     return (
-      <Wrapper>
+      <React.Fragment>
         {showError}
         <Center>
           <Title center title="enter pincode" />
@@ -71,7 +71,7 @@ class CheckPin extends React.Component<Props, State> {
           pageInstructions=""
           showForgotButton={false}
         />
-      </Wrapper>
+      </React.Fragment>
     );
   }
 }

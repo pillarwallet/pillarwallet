@@ -32,9 +32,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     if (!pinIsValid) {
       return (
         <FullScreenModal navigation={navigation}>
-          <Wrapper style={{ marginTop: 40 }}>
-            <CheckPin onPinValid={() => this.setState({ pinIsValid: true })} />
-          </Wrapper>
+          <CheckPin onPinValid={() => this.setState({ pinIsValid: true })} />
         </FullScreenModal>
       );
     }

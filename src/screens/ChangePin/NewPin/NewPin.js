@@ -1,11 +1,10 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Center, Wrapper } from 'components/Layout';
-import { CloseButton } from 'components/Button/CloseButton';
+import { Container, Center } from 'components/Layout';
+import ModalHeader from 'components/ModalHeader';
 import Title from 'components/Title';
 import PinCode from 'components/PinCode';
-import { UIColors } from 'utils/variables';
 import { CHANGE_PIN_CONFIRM_NEW_PIN } from 'constants/navigationConstants';
 
 type Props = {
@@ -24,22 +23,17 @@ export default class NewPin extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <CloseButton
-          icon="md-close"
-          onPress={this.handleScreenDissmisal}
-          color={UIColors.primary}
-          fontSize={32}
+        <ModalHeader
+          onClose={this.handleScreenDissmisal}
         />
-        <Wrapper style={{ marginTop: 40 }}>
-          <Center>
-            <Title center title="enter new pincode" />
-          </Center>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            pageInstructions=""
-            showForgotButton={false}
-          />
-        </Wrapper>
+        <Center>
+          <Title center title="enter new pincode" />
+        </Center>
+        <PinCode
+          onPinEntered={this.handlePinSubmit}
+          pageInstructions=""
+          showForgotButton={false}
+        />
       </Container>
     );
   }

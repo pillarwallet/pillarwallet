@@ -187,7 +187,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       formStructure,
       assetData,
     } = this.state;
-    const formOptions = generateFormOptions({ currency: assetData.symbol });
+    const formOptions = generateFormOptions({ currency: assetData.token });
 
     const qrScannerComponent = (
       <QRCodeScanner

@@ -8,7 +8,7 @@ import { ENCRYPTING, CREATED } from 'constants/walletConstants';
 import { PROFILE } from 'constants/navigationConstants';
 import { changePinAction } from 'actions/authActions';
 import { Container, Center, Wrapper } from 'components/Layout';
-import { CloseButton } from 'components/Button/CloseButton';
+import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -88,7 +88,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <CloseButton
+        <ButtonIcon
           icon="md-close"
           onPress={this.handleScreenDissmisal}
           color={UIColors.primary}

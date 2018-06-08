@@ -25,7 +25,7 @@ const BalanceLabel = styled.Text`
 `;
 
 const BalanceAmount = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   font-weight: ${fontWeights.bold};
 `;
 

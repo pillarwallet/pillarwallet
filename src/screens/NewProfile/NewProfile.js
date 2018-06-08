@@ -60,12 +60,23 @@ const FullName = t.refinement(t.String, (fullName): boolean => {
   return isValidFullname(fullName);
 });
 
+const Username = t.refinement(t.String, (username): boolean => {
+  return username != null && username.length <= 60;
+});
+
 FullName.getValidationErrorMessage = (): string => {
   return 'Please provide your full name';
 };
 
+Username.getValidationErrorMessage = (username): string => {
+  if (username != null && username.length > 60) {
+    return 'Username should be less than 60 characters.';
+  }
+  return 'Please specify username.';
+};
+
 const formStructure = t.struct({
-  username: t.String,
+  username: Username,
   fullName: FullName,
 });
 
@@ -73,7 +84,6 @@ const formOptions = {
   fields: {
     username: {
       template: InputTemplate,
-      error: 'Please specify username',
       config: {
         inputProps: {
           autoCapitalize: 'none',
