@@ -23,9 +23,7 @@ export default class NewPin extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <ModalHeader
-          onClose={this.handleScreenDissmisal}
-        />
+        <ModalHeader onClose={this.handleScreenDissmisal} />
         <Center>
           <Title center title="enter new pincode" />
         </Center>

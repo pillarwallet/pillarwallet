@@ -69,10 +69,7 @@ class CurrentPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <ModalHeader
-          onClose={this.handleScreenDissmisal}
-        />
-
+        <ModalHeader onClose={this.handleScreenDissmisal} />
         {showError}
         <Center>
           <Title center title="enter current pincode" />

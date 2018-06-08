@@ -7,13 +7,12 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
 import { PROFILE } from 'constants/navigationConstants';
 import { changePinAction } from 'actions/authActions';
-import { Container, Center, Wrapper } from 'components/Layout';
-import ButtonIcon from 'components/ButtonIcon';
+import { Container, Center } from 'components/Layout';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import Button from 'components/Button';
-import { UIColors } from 'utils/variables';
+import ModalHeader from 'components/ModalHeader';
 import { validatePin } from 'utils/validators';
 
 type Props = {
@@ -88,24 +87,17 @@ class ConfirmNewPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <ButtonIcon
-          icon="md-close"
-          onPress={this.handleScreenDissmisal}
-          color={UIColors.primary}
-          fontSize={32}
+        <ModalHeader onClose={this.handleScreenDissmisal} />
+        {showError}
+        <Center>
+          <Title center title="confirm new pincode" />
+        </Center>
+        <PinCode
+          onPinEntered={this.handlePinSubmit}
+          onPinChanged={this.handlePinChange}
+          pageInstructions=""
+          showForgotButton={false}
         />
-        <Wrapper style={{ marginTop: 40 }}>
-          {showError}
-          <Center>
-            <Title center title="confirm new pincode" />
-          </Center>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            onPinChanged={this.handlePinChange}
-            pageInstructions=""
-            showForgotButton={false}
-          />
-        </Wrapper>
       </Container>
     );
   }
