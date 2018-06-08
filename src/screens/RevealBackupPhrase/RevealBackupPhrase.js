@@ -3,12 +3,13 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import FullScreenModal from 'components/Modals/FullScreenModal';
 import CheckPin from 'components/CheckPin';
+import ModalHeader from 'components/ModalHeader';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
@@ -25,31 +26,35 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     pinIsValid: false,
   };
 
+  handleScreenDissmisal = () => {
+    this.props.navigation.goBack(null);
+  };
+
   render() {
     const { pinIsValid } = this.state;
-    const { navigation, wallet } = this.props;
+    const { wallet } = this.props;
 
     if (!pinIsValid) {
       return (
-        <FullScreenModal navigation={navigation}>
+        <Container>
+          <ModalHeader onClose={this.handleScreenDissmisal} />
           <CheckPin onPinValid={() => this.setState({ pinIsValid: true })} />
-        </FullScreenModal>
+        </Container>
       );
     }
 
     return (
-      <FullScreenModal navigation={navigation}>
-        <Wrapper style={{ marginTop: 40 }}>
-          <Title title="backup phrase" />
-          <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
-          <Paragraph light>
-            Keep it secure as it&#39;s the only way to recover your account in an emergency.
-            Don&#39;t email or screenshot it.
-          </Paragraph>
+      <Container>
+        <ModalHeader onClose={this.handleScreenDissmisal} />
+        <Title title="backup phrase" />
+        <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
+        <Paragraph light>
+          Keep it secure as it&#39;s the only way to recover your account in an emergency.
+          Don&#39;t email or screenshot it.
+        </Paragraph>
 
-          <MnemonicPhrase phrase={wallet.mnemonic} />
-        </Wrapper>
-      </FullScreenModal>
+        <MnemonicPhrase phrase={wallet.mnemonic} />
+      </Container>
     );
   }
 }

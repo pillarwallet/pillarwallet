@@ -14,6 +14,7 @@ type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
   wallet: Object,
   onPinValid: Function,
+  title?: string,
 }
 
 type State = {
@@ -43,6 +44,7 @@ class CheckPin extends React.Component<Props, State> {
 
   render() {
     const { pinError } = this.state;
+    const { title } = this.props;
 
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     const { walletState } = this.props.wallet;
@@ -64,7 +66,7 @@ class CheckPin extends React.Component<Props, State> {
       <React.Fragment>
         {showError}
         <Center>
-          <Title center title="enter pincode" />
+          <Title center title={title || 'enter pincode'} />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
