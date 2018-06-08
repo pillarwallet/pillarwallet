@@ -7,7 +7,6 @@ import { Container } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import MnemonicPhrase from 'components/MnemonicPhrase';
-import FullScreenModal from 'components/Modals/FullScreenModal';
 import CheckPin from 'components/CheckPin';
 import ModalHeader from 'components/ModalHeader';
 
