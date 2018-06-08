@@ -23,7 +23,7 @@ import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConst
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 
 const defaultAssetColor = '#4C4E5E';
-const pillarLogoSource = require('assets/images/header-pillar-logo.png');
+const pillarLogoSource = require('../../assets/images/header-pillar-logo.png');
 
 const assetColors = {
   ETH: baseColors.darkGray,

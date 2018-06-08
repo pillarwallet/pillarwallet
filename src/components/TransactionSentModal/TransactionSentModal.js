@@ -4,7 +4,7 @@ import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import PopModal from 'components/Modals/PopModal';
 
-const tokenSentConfirmationImage = require('assets/images/token-sent-confirmation-image.png');
+const tokenSentConfirmationImage = require('../../assets/images/token-sent-confirmation-image.png');
 
 type Props = {
   isVisible: boolean,
