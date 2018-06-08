@@ -15,6 +15,7 @@ import { updateLocalUserAction } from 'actions/userActions';
 import { isValidFullname } from 'utils/validators';
 
 const { Form } = t.form;
+const maxUsernameLength = 60;
 
 const LoginForm = styled(Form)`
   margin: 10px 0 40px;
@@ -61,7 +62,7 @@ const FullName = t.refinement(t.String, (fullName): boolean => {
 });
 
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null && username.length <= 60;
+  return username != null && username.length <= maxUsernameLength;
 });
 
 FullName.getValidationErrorMessage = (): string => {
@@ -69,8 +70,8 @@ FullName.getValidationErrorMessage = (): string => {
 };
 
 Username.getValidationErrorMessage = (username): string => {
-  if (username != null && username.length > 60) {
-    return 'Username should be less than 60 characters.';
+  if (username != null && username.length > maxUsernameLength) {
+    return 'Username should be less than ' + maxUsernameLength + ' characters.';
   }
   return 'Please specify username.';
 };
