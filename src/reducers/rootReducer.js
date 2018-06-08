@@ -7,6 +7,7 @@ import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
 import historyReducer from './historyReducer';
+import notificationsReducer from './notificationsReducer';
 
 
 export default combineReducers({
@@ -17,4 +18,5 @@ export default combineReducers({
   rates: ratesReducer,
   user: userReducer,
   history: historyReducer,
+  notifications: notificationsReducer,
 });

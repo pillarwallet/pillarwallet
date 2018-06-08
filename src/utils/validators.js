@@ -22,12 +22,6 @@ export function isValidETHAddress(address: string): boolean {
   return result;
 }
 
-export function validBcxTransaction(transaction: ?Object): boolean {
-  if (!transaction || !transaction.from || !transaction.to) return false;
-  if (!transaction.status || !transaction.asset) return false;
-  return true;
-}
-
 export function hasAllValues(object: ?Object) {
   // No param reassign makes eslint sad
   object = object || {}; // eslint-disable-line
