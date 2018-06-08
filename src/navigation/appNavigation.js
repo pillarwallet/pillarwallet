@@ -26,6 +26,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 // actions
 import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
 import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
+import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
 
 // constants
 import {
@@ -45,8 +46,9 @@ import {
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
-import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from '../actions/assetsActions';
-import type { Assets } from '../models/Asset';
+
+// models
+import type { Assets } from 'models/Asset';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
