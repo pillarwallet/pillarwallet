@@ -85,6 +85,7 @@ const formOptions = {
   fields: {
     username: {
       template: InputTemplate,
+      maxLength: maxUsernameLength,
       config: {
         inputProps: {
           autoCapitalize: 'none',
