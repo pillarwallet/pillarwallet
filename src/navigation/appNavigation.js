@@ -71,13 +71,6 @@ const StackNavigatorModalConfig = {
 };
 
 const FluidNavigatorConfig = {
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
   navigationOptions: {
     header: null,
     gesturesEnabled: false,
