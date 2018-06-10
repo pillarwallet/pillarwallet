@@ -1,11 +1,14 @@
 // @flow
 
 import firebase from 'react-native-firebase';
+import { processNotification } from 'utils/notifications';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
 let notificationsListener = null;
 
 export const startListeningNotificationsAction = () => {
-  return async (dispatch: Function) => { // eslint-disable-line
+  return async (dispatch: Function, getState: Function) => {
+    const { wallet: { data: wallet } } = getState();
     // check if permissions enabled
     const enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
@@ -17,7 +20,10 @@ export const startListeningNotificationsAction = () => {
     await firebase.messaging().getToken();
     if (notificationsListener) return;
     notificationsListener = firebase.messaging().onMessage((message) => {
-      console.log(message);
+      if (!message._data || !Object.keys(message._data).length) return;
+      const notification = processNotification(message._data, wallet.address.toUpperCase());
+      if (!notification) return;
+      dispatch({ type: ADD_NOTIFICATION, payload: notification });
     });
   };
 };
