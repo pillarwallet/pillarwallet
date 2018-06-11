@@ -27,7 +27,7 @@ type Props = {
 type State = {
   isScanning: boolean,
   transactionPayload: Object,
-  asset: Object,
+  assetData: Object,
   showConfirmModal: boolean,
   value: {
     address: string,
@@ -155,14 +155,14 @@ class SendTokenContacts extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
-    const asset = this.props.navigation.getParam('asset', {});
+    const assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
       isScanning: false,
       value: { address: '' },
       showConfirmModal: false,
       formStructure: getFormStructure(),
       transactionPayload,
-      asset,
+      assetData,
     };
   }
 
@@ -172,7 +172,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   openConfirmationModal = () => {
     const value = this._form.getValue();
-    const assetData = this.props.navigation.getParam('assetData', {});
+    const { assetData } = this.state;
     const { transactionPayload } = this.state;
 
     if (!value) return;
@@ -182,7 +182,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       amount: transactionPayload.amount,
       gasLimit: transactionPayload.gasLimit,
       gasPrice: transactionPayload.gasPrice,
-      symbol: assetData.symbol,
+      symbol: assetData.token,
       contractAddress: assetData.contractAddress,
     };
 
@@ -214,13 +214,15 @@ class SendTokenContacts extends React.Component<Props, State> {
     const {
       isScanning,
       transactionPayload,
-      asset,
+      assetData,
       formStructure,
       showConfirmModal,
       value,
     } = this.state;
 
-    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: asset.symbol });
+    const formOptions = generateFormOptions(
+      { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
+    );
 
     const qrScannerComponent = (
       <QRCodeScanner
@@ -244,7 +246,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </ModalItem>
           <ModalItem>
             <ModalLabel>Amount</ModalLabel>
-            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol></ModalValue>
+            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
           </ModalItem>
           <ModalItem noBorder>
             <ModalLabel>Fee</ModalLabel>
@@ -266,7 +268,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onBack={this.props.navigation.goBack}
           onNext={this.openConfirmationModal}
           amount={transactionPayload.amount}
-          symbol={asset.symbol}
+          symbol={assetData.token}
         />
         <Container>
           <Wrapper padding>
