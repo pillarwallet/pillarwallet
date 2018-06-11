@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
+import { ASSET } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
@@ -194,6 +195,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     this.props.sendAsset(this.state.transactionPayload);
+    this.props.navigation.navigate(ASSET, { initialModalState: 'SEND_CONFIRMATION' });
   };
 
   handleToggleQRScanningState = () => {
