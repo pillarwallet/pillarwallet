@@ -151,6 +151,7 @@ const ModalParagraph = styled(Paragraph)`
 
 const ModalFooter = styled.View`
   flex: 2;
+  margin-bottom: 40;
   justify-content: flex-end;
 `;
 

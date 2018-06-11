@@ -63,6 +63,10 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
 };
 
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
-  const promises = assets.map(({ symbol }) => BCX.getBalance({ address, asset: symbol }));
+  const promises = assets.map(async ({ symbol, address: contractAddress }) => {
+    const payload = { contractAddress, address, asset: symbol };
+    const { balance: response } = await BCX.getBalance(payload);
+    return { balance: response.balance, symbol: response.ticker };
+  });
   return Promise.all(promises).catch(() => []);
 };
