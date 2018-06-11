@@ -105,7 +105,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Execute Fastlane Build for Simulator testing
-          command: cd ios && bundle exec fastlane build_simulator
+          command: cd ios && bundle exec fastlane build_ios_simulator
           environment:
             SCAN_DEVICE: iPhone 8
       - store_artifacts:
