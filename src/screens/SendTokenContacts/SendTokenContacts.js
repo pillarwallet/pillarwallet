@@ -20,14 +20,8 @@ import { pipe, decodeETHAddress } from 'utils/common';
 import SendTokenContactsHeader from './SendTokenContactsHeader';
 
 type Props = {
-  token: string,
-  address: string,
-  totalBalance: number,
-  contractAddress: string,
   navigation: NavigationScreenProp<*>,
-  isVisible: boolean,
   sendAsset: Function,
-  formValues?: Object,
 }
 
 type State = {
@@ -178,10 +172,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   openConfirmationModal = () => {
     const value = this._form.getValue();
-    const {
-      token,
-      contractAddress,
-    } = this.props;
+    const assetData = this.props.navigation.getParam('assetData', {});
     const { transactionPayload } = this.state;
 
     if (!value) return;
@@ -191,8 +182,8 @@ class SendTokenContacts extends React.Component<Props, State> {
       amount: transactionPayload.amount,
       gasLimit: transactionPayload.gasLimit,
       gasPrice: transactionPayload.gasPrice,
-      symbol: token,
-      contractAddress,
+      symbol: assetData.symbol,
+      contractAddress: assetData.contractAddress,
     };
 
     this.setState({
