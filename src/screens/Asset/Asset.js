@@ -69,6 +69,17 @@ class AssetScreen extends React.Component<Props, State> {
     },
   }
 
+  static getDerivedStateFromProps(props) {
+    const { initialModalState } = props.navigation.state.params;
+
+    const activeModalInitialState = {
+      type: initialModalState,
+      opts: {},
+    };
+
+    return { activeModal: activeModalInitialState };
+  }
+
   componentDidMount() {
     const {
       fetchTransactionsHistory,
@@ -77,20 +88,6 @@ class AssetScreen extends React.Component<Props, State> {
     } = this.props;
     const { assetData } = navigation.state.params;
     fetchTransactionsHistory(wallet.address, assetData.token);
-  }
-
-  componentDidUpdate(prevProps) {
-    const { initialModalState } = this.props.navigation.state.params;
-    const { initialModalState: prevInitialModalState } = prevProps.navigation.state.params;
-    if (initialModalState === prevInitialModalState) return;
-
-    const activeModalInitialState = {
-      type: initialModalState,
-      opts: {},
-    };
-    this.setState({ // eslint-disable-line
-      activeModal: activeModalInitialState,
-    });
   }
 
   handleCardTap = () => {
