@@ -30,7 +30,6 @@ const activeModalResetState = {
   },
 };
 
-
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
@@ -69,15 +68,20 @@ class AssetScreen extends React.Component<Props, State> {
     },
   }
 
-  static getDerivedStateFromProps(props) {
+  static getDerivedStateFromProps(props, prevState: State) {
     const { initialModalState } = props.navigation.state.params;
-
     const activeModalInitialState = {
       type: initialModalState,
       opts: {},
     };
 
-    return { activeModal: activeModalInitialState };
+    if (initialModalState !== prevState.activeModal) {
+      return {
+        ...prevState,
+        activeModal: activeModalInitialState,
+      };
+    }
+    return null;
   }
 
   componentDidMount() {
