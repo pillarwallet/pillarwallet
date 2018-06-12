@@ -21,8 +21,6 @@ import TransactionSentModal from 'components/TransactionSentModal';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
-// TODO: Replace me with real address or pass in with Redux
-
 const activeModalResetState = {
   type: null,
   opts: {
@@ -31,7 +29,6 @@ const activeModalResetState = {
     tokenName: '',
   },
 };
-
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -71,13 +68,28 @@ class AssetScreen extends React.Component<Props, State> {
     },
   }
 
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { initialModalState } = nextProps.navigation.state.params;
+    const activeModalInitialState = {
+      type: initialModalState,
+      opts: {},
+    };
+
+    if (initialModalState !== prevState.activeModal) {
+      return {
+        ...prevState,
+        activeModal: activeModalInitialState,
+      };
+    }
+    return null;
+  }
+
   componentDidMount() {
     const {
       fetchTransactionsHistory,
       wallet,
       navigation,
     } = this.props;
-
     const { assetData } = navigation.state.params;
     fetchTransactionsHistory(wallet.address, assetData.token);
   }
@@ -101,10 +113,6 @@ class AssetScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      activeModal: { type: activeModalType },
-    } = this.state;
-
     const { assetData } = this.props.navigation.state.params;
     const {
       assets,
@@ -179,7 +187,7 @@ class AssetScreen extends React.Component<Props, State> {
         </ScrollWrapper>
 
         <ReceiveModal
-          isVisible={activeModalType === 'RECEIVE'}
+          isVisible={this.state.activeModal.type === 'RECEIVE'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           address={assetData.address}
           token={assetData.token}
@@ -188,7 +196,7 @@ class AssetScreen extends React.Component<Props, State> {
         />
 
         <TransactionSentModal
-          isVisible={activeModalType === 'SEND_CONFIRMATION'}
+          isVisible={this.state.activeModal.type === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
 
