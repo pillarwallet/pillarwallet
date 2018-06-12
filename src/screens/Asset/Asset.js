@@ -22,7 +22,7 @@ import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
 const activeModalResetState = {
-  type: '',
+  type: null,
   opts: {
     address: '',
     token: '',
@@ -58,7 +58,7 @@ type State = {
 
 class AssetScreen extends React.Component<Props, State> {
   state = {
-    activeModal: { type: '', opts: {} },
+    activeModal: activeModalResetState,
   };
 
   static navigationOptions = {
