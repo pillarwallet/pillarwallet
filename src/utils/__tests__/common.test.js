@@ -1,5 +1,12 @@
 // @flow
-import { delay, formatETHAmount, decodeETHAddress, pipe, parseNumber } from '../common';
+import {
+  delay,
+  formatETHAmount,
+  decodeETHAddress,
+  pipe,
+  parseNumber,
+  formatMoney,
+} from '../common';
 
 describe('Common utils', () => {
   describe('delay', () => {
@@ -52,6 +59,17 @@ describe('Common utils', () => {
     it('should convert a value with multiple decimal seperators', () => {
       const expectedValue = 5678.91;
       expect(parseNumber('5,678.91')).toBe(expectedValue);
+    });
+  });
+
+  describe('formatMoney', () => {
+    it('should strip trailing zeros from number 12.0300', () => {
+      const expectedValue = '12.03';
+      expect(formatMoney('12.0300')).toBe(expectedValue);
+    });
+    it('should strip trailing zeros and a dot from number 12.00', () => {
+      const expectedValue = '12';
+      expect(formatMoney('12.00')).toBe(expectedValue);
     });
   });
 });
