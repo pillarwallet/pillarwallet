@@ -20,6 +20,7 @@ import SendTokenAmountHeader from './SendTokenAmountHeader';
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
 const { Form } = t.form;
+const transactionFee = 0.0004;
 
 type Props = {
   token: string,
@@ -45,12 +46,14 @@ type State = {
 const getFormStructure = (totalBalance) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
     amount = parseNumber(amount.toString());
-    return amount > 0 && amount <= totalBalance;
+    return amount > 0 && amount < totalBalance - transactionFee;
   });
 
   Amount.getValidationErrorMessage = (amount): string => {
     if (amount > totalBalance) {
       return 'Amount should not exceed the total balance.';
+    } else if (amount > totalBalance - transactionFee) {
+      return 'Not enough funds to process transaction fee';
     }
     return 'Amount should be specified.';
   };
