@@ -5,12 +5,12 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
-import { baseColors, fontWeights, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
-import { CloseButton } from 'components/Button/CloseButton';
+import ModalHeader from 'components/ModalHeader';
 import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 const tokenIcons = {};
@@ -104,13 +104,8 @@ class AddToken extends React.Component<Props, State> {
   render() {
     return (
       <Container>
+        <ModalHeader onClose={this.handleScreenDissmisal} />
         <ScrollWrapper padding>
-          <CloseButton
-            icon="md-close"
-            onPress={this.handleScreenDissmisal}
-            color={UIColors.primary}
-            fontSize={32}
-          />
           <Title title="add token" />
           <Paragraph>
             Toggle ERC-20 tokens your wallet should display.

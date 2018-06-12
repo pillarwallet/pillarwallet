@@ -23,5 +23,5 @@ jest.setMock('react-native-device-info', {
 });
 jest.setMock('blockchain-explorer-sdk', ({
   txHistory: () => Promise.resolve({ txHistory: { txHistory: [] } }),
-  getBalance: () => Promise.resolve({ symbol: 'ETH', balance: 1 }),
+  getBalance: () => Promise.resolve({ balance: { ticker: 'ETH', balance: 1 } }),
 }));

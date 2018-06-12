@@ -1,4 +1,5 @@
 // @flow
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
 type Notification = {
   title: string,
@@ -24,6 +25,8 @@ export default function notificationsReducer(
   action: NotificationReducerAction,
 ) {
   switch (action.type) {
+    case ADD_NOTIFICATION:
+      return { ...state, data: [...state.data, action.payload] };
     default:
       return state;
   }
