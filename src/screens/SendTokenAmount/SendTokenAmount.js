@@ -28,7 +28,6 @@ type Props = {
   contractAddress: string,
   navigation: NavigationScreenProp<*>,
   isVisible: boolean,
-  sendAsset: Function,
   formValues?: Object,
 }
 
@@ -130,9 +129,6 @@ export default class SendTokenAmount extends React.Component<Props, State> {
   handleFormSubmit = () => {
     const value = this._form.getValue();
     const {
-      sendAsset,
-      token,
-      contractAddress,
       navigation,
     } = this.props;
     const { assetData } = this.state;
@@ -144,13 +140,12 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       amount: parseNumber(value.amount),
       gasLimit: 1500000,
       gasPrice: 20000000000,
-      symbol: token,
-      contractAddress,
+      symbol: assetData.symbol,
+      contractAddress: assetData.contractAddress,
     };
     navigation.navigate(SEND_TOKEN_CONTACTS, {
       assetData,
       transactionPayload,
-      sendAsset,
     });
   };
 
