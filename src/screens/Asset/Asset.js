@@ -68,8 +68,8 @@ class AssetScreen extends React.Component<Props, State> {
     },
   }
 
-  static getDerivedStateFromProps(props, prevState: State) {
-    const { initialModalState } = props.navigation.state.params;
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { initialModalState } = nextProps.navigation.state.params;
     const activeModalInitialState = {
       type: initialModalState,
       opts: {},
