@@ -659,7 +659,7 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.2.365":
+"@pillarwallet/pillarwallet-nodejs-sdk@1.2.365":
   version "1.2.365"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.2.365.tgz#8e3ec97312a89514bea93e88c88632bd6a03ad24"
   dependencies:
