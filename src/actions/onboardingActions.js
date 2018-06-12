@@ -30,7 +30,7 @@ export const registerWalletAction = () => {
     const mnemonicPhrase = mnemonic.original;
 
     // STEP 0: Clear local storage
-    AsyncStorage.clear();
+    await AsyncStorage.clear();
 
     // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
