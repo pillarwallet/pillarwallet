@@ -199,7 +199,7 @@ workflows:
             - build
           filters:
             branches:
-              only: split_IPA_and_testflight_steps
+              only: master
       - deploy:
           requires:
             - test

@@ -6,24 +6,6 @@ platform :ios do
     setup_circle_ci
   end
 
-  desc "Create a new beta build"
-  lane :build_simulator do
-    match(type: "development",
-          readonly: true)
-    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
-    xcodebuild(
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
-              configuration: "Release",
-              xcargs: "-sdk 'iphonesimulator11.3' -destination 'generic/platform=iOS Simulator'",
-              export_method: "development",
-              buildlog_path: "build.log"
-    )
-    zip(path: "/Users/distiller/Library/Developer/Xcode/DerivedData",
-        output_path: "./build/pillar-wallet.app.zip"
-      )
-  end
-
   desc "Create ios simulator build"
   lane :build_ios_simulator do
   match(type: "development",
