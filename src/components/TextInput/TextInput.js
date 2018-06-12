@@ -7,7 +7,7 @@ import ButtonIcon from 'components/ButtonIcon';
 
 type inputPropsType = {
   placeholder?: string,
-  onChange?: Function,
+  onChange: Function,
   onBlur?: Function,
   value?: ?string
 }
@@ -18,7 +18,7 @@ type Props = {
   alignRight?: boolean,
   postfix?: string,
   label: string,
-  id: string,
+  id?: string,
   iconColor?: string,
   errorMessage?: string,
   onIconPress?: Function,
@@ -89,7 +89,7 @@ class TextInput extends React.Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.inputProps.value !== prevState.value) {
+    if (nextProps.inputProps && nextProps.inputProps.value !== prevState.value) {
       return {
         value: nextProps.inputProps.value,
       };
@@ -132,12 +132,17 @@ class TextInput extends React.Component<Props, State> {
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     return (
-      <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>
+      <Item
+        inlineLabel={inlineLabel}
+        stackedLabel={!inlineLabel}
+        style={{ marginBottom: 20 }}
+        error={!!errorMessage}
+      >
         <Label>{label}</Label>
         <InputField
           {...inputProps}
-          onChange={this.handleChange}
-          onBlur={this.handleBlur}
+          onChange={inputProps && inputProps.onChange && this.handleChange}
+          onBlur={inputProps && inputProps.onBlur && this.handleBlur}
           value={value}
           inputType={inputType}
         />

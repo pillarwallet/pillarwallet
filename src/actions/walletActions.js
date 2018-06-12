@@ -31,7 +31,8 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
         type: SET_WALLET_ERROR,
         payload: {
           code: IMPORT_ERROR,
-          message: e.toString(),
+          message: e.reason.toString(),
+          type: e.arg.toString(),
         },
       });
     }
@@ -53,7 +54,8 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         type: SET_WALLET_ERROR,
         payload: {
           code: IMPORT_ERROR,
-          message: e.toString(),
+          message: e.reason.toString(),
+          type: e.arg.toString(),
         },
       });
     }
