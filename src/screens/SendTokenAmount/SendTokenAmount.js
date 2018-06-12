@@ -44,7 +44,7 @@ type State = {
 
 
 const getFormStructure = (totalBalance) => {
-  const Amount = t.refinement(t.String, (amount): boolean => {
+  const Amount = t.refinement(t.Number, (amount): boolean => {
     amount = parseNumber(amount.toString());
     return amount > 0 && amount < totalBalance - transactionFee;
   });
@@ -158,10 +158,12 @@ export default class SendTokenAmount extends React.Component<Props, State> {
   };
 
   useMaxValue = () => {
-    const maxValue = this.state.assetData.balance - 0.0004;
+    if (this.state.assetData.balance < transactionFee) return;
+
+    const maxValue = (this.state.assetData.balance - transactionFee).toFixed(6);
     this.setState({
       value: {
-        amount: maxValue,
+        amount: Number(maxValue),
       },
     });
   };
