@@ -35,11 +35,12 @@ export function noop() { }
 /**
  * formatMoney(n, x, s, c)
  *
- * @param src Mixed  number to format
- * @param n   Integer length of decimal
- * @param x   Integer length of whole part
- * @param s   Mixed   sections delimiter
- * @param c   Mixed   decimal delimiter
+ * @param src         Mixed  number to format
+ * @param n           Integer length of decimal
+ * @param x           Integer length of whole part
+ * @param s           Mixed   sections delimiter
+ * @param c           Mixed   decimal delimiter
+ * @param stripZeros  Boolean set true to strip trailing zeros
  */
 export function formatMoney(
   src: number | string,
@@ -47,9 +48,14 @@ export function formatMoney(
   x: number = 3,
   s: ?string = ',',
   c: ?string = '.',
+  stripZeros: ?boolean = true,
 ): string {
   const re = `\\d(?=(\\d{${x || 3}})+${n > 0 ? '\\D' : '$'})`;
-  const num = Number(src).toFixed(Math.max(0, Math.floor(n)));
+  let num = Number(src).toFixed(Math.max(0, Math.floor(n)));
+
+  if (stripZeros) {
+    num = Number(num).toString();
+  }
 
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
 }
