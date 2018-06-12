@@ -1,6 +1,7 @@
 // @flow
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
+import { AsyncStorage } from 'react-native';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
 import { getSaltedPin } from 'utils/wallet';
@@ -27,6 +28,9 @@ export const registerWalletAction = () => {
     const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
     const { user } = await storage.get('user');
     const mnemonicPhrase = mnemonic.original;
+
+    // STEP 0: Clear local storage
+    AsyncStorage.clear();
 
     // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
