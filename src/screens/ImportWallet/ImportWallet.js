@@ -60,7 +60,8 @@ class ImportWallet extends React.Component<Props, State> {
 
     const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR;
     const errorMessage = showError && error.message;
-    const errorType = showError && error.type;
+    const errorType = showError ? error.type : '';
+    // alert(errorMessage);
 
     return {
       ...prevState,
@@ -71,7 +72,6 @@ class ImportWallet extends React.Component<Props, State> {
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-
     if (this.state.privateKey) {
       importWalletFromPrivateKey(this.state.privateKey);
     } else if (this.state.tWordsPhrase) {
@@ -81,7 +81,7 @@ class ImportWallet extends React.Component<Props, State> {
     }
   };
 
-  getError(errorType: string) {
+  getError = (errorType: string) => {
     if (errorType === this.state.errorType) {
       return this.state.errorMessage;
     }
@@ -90,8 +90,8 @@ class ImportWallet extends React.Component<Props, State> {
 
   render() {
     const { privateKey, tWordsPhrase } = this.state;
-
-
+    const errorMessageTWordsPhrase = this.state.errorType === 'tWordsPhrase' ? this.state.errorMessage : '';
+    const errorMessagePrivateKey = this.state.errorType === 'privateKey' ? this.state.errorMessage : '';
     return (
       <Container>
         <ScrollWrapper padding>
@@ -101,22 +101,22 @@ class ImportWallet extends React.Component<Props, State> {
           </Paragraph>
           <TextInput
             label="Enter your 12 word backup phrase."
-
             inputProps={{
               onChange: (text) => this.setState({ tWordsPhrase: text }),
+              // onChange: function noop() {},
               value: tWordsPhrase,
             }}
-            errorMessage={this.getError('tWordsPhrase')}
+            errorMessage={errorMessageTWordsPhrase}
           />
           <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
           <TextInput
             label="Use your Private Key"
-
             inputProps={{
               onChange: (text) => this.setState({ privateKey: text }),
+              // onChange: function noop() {},
               value: privateKey,
             }}
-            errorMessage={this.getError('privateKey')}
+            errorMessage={errorMessagePrivateKey}
           />
         </ScrollWrapper>
       </Container>

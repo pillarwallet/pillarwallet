@@ -9,7 +9,7 @@ type inputPropsType = {
   placeholder?: string,
   onChange: Function,
   onBlur?: Function,
-  value?: ?string
+  value: ?string
 }
 
 type Props = {
@@ -58,7 +58,7 @@ const FloatingButton = styled(ButtonIcon)`
   padding: 0;
 `;
 
-const Error = styled.Text`
+const ErrorMessage = styled.Text`
   color: tomato;
   position: absolute;
   left: 0;
@@ -117,6 +117,23 @@ class TextInput extends React.Component<Props, State> {
     });
   }
 
+  renderErrorMessage = () => {
+    if (this.props.errorMessage) {
+      return (
+        <ErrorMessage>
+          {this.props.errorMessage}
+        </ErrorMessage>
+      );
+    }
+  }
+
+  hasError = () => {
+    if (this.props.errorMessage && this.props.errorMessage.length > 0) {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     const {
       icon,
@@ -130,13 +147,12 @@ class TextInput extends React.Component<Props, State> {
     } = this.props;
     const { value } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
-
     return (
       <Item
         inlineLabel={inlineLabel}
         stackedLabel={!inlineLabel}
         style={{ marginBottom: 20 }}
-        error={!!errorMessage}
+        error={this.hasError()}
       >
         <Label>{label}</Label>
         <InputField
@@ -148,7 +164,7 @@ class TextInput extends React.Component<Props, State> {
         />
         {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
         {postfix && <PostFix>{postfix}</PostFix>}
-        {errorMessage && <Error>{errorMessage}</Error>}
+        {this.renderErrorMessage()}
       </Item>
     );
   }
