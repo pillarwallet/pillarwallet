@@ -135,6 +135,7 @@ class AssetsScreen extends React.Component<Props, State> {
           name: name || symbol,
           token: symbol,
           amount: displayAmount,
+          contractAddress: asset.address,
           balance,
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           color: assetColor,
