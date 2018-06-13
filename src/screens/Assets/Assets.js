@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { RefreshControl, View, Image, Text, ActivityIndicator } from 'react-native';
+import { Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -69,6 +69,14 @@ class AssetsScreen extends React.Component<Props, State> {
     activeModal: activeModalResetState,
     assetsMedia: {}
   };
+
+  static navigationOptions = {
+    transitionConfig: {
+      duration: 300,
+      timing: Animated.timing,
+      easing: Easing.easing,
+    },
+  }
 
   componentDidMount() {
     const {
@@ -140,6 +148,7 @@ class AssetsScreen extends React.Component<Props, State> {
           name: name || symbol,
           token: symbol,
           amount: displayAmount,
+          contractAddress: asset.address,
           balance,
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           color: assetColor,

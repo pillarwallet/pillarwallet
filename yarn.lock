@@ -659,7 +659,7 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.2.365":
+"@pillarwallet/pillarwallet-nodejs-sdk@1.2.365":
   version "1.2.365"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.2.365.tgz#8e3ec97312a89514bea93e88c88632bd6a03ad24"
   dependencies:
@@ -10127,7 +10127,7 @@ react-native-easy-grid@0.1.17:
   dependencies:
     lodash "^4.11.1"
 
-react-native-firebase@^4.1.0:
+react-native-firebase@^4.2.0:
   version "4.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-firebase/-/react-native-firebase-4.2.0.tgz?dl=https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-4.2.0.tgz#d44b1e5b5149d65936045c0398e0acc2ebb4c7e9"
   dependencies:

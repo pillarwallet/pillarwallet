@@ -1,5 +1,12 @@
 // @flow
-import { delay, formatETHAmount, decodeETHAddress, pipe } from '../common';
+import {
+  delay,
+  formatETHAmount,
+  decodeETHAddress,
+  pipe,
+  parseNumber,
+  formatMoney,
+} from '../common';
 
 describe('Common utils', () => {
   describe('delay', () => {
@@ -37,6 +44,32 @@ describe('Common utils', () => {
       const expectedOutput = 'pillar';
       const func = pipe(emptyJoin, toLower);
       expect(func(['PILLAR'])).toBe(expectedOutput);
+    });
+  });
+
+  describe('parseNumber', () => {
+    it('should convert a comma seperated number (as string) to a decimal seperated number', () => {
+      const expectedValue = 12.34;
+      expect(parseNumber('12,34')).toBe(expectedValue);
+    });
+    it('should convert a decimal seperated number (as string) to the exact same number', () => {
+      const expectedValue = 23.45;
+      expect(parseNumber('23.45')).toBe(expectedValue);
+    });
+    it('should convert a value with multiple decimal seperators', () => {
+      const expectedValue = 5678.91;
+      expect(parseNumber('5,678.91')).toBe(expectedValue);
+    });
+  });
+
+  describe('formatMoney', () => {
+    it('should strip trailing zeros from number 12.0300', () => {
+      const expectedValue = '12.03';
+      expect(formatMoney('12.0300')).toBe(expectedValue);
+    });
+    it('should strip trailing zeros and a dot from number 12.00', () => {
+      const expectedValue = '12';
+      expect(formatMoney('12.00')).toBe(expectedValue);
     });
   });
 });
