@@ -25,7 +25,7 @@ class Onboarding extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="welcome" />
           <Paragraph>Pillar is a next-generation digital wallet
             and application for personal data management.

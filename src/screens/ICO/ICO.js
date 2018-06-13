@@ -85,7 +85,7 @@ class ICO extends React.Component<Props, State> {
     const { assets: { data: assets, assetsState } } = this.props;
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title>ICOs</Title>
           <ScrollView
             contentInset={{ bottom: 49 }}
@@ -117,7 +117,7 @@ class ICO extends React.Component<Props, State> {
               onRequestClose={this.handlePopupState}
             >
               <Container>
-                <Wrapper padding>
+                <Wrapper regularPadding>
                   <Title>Participate in ICO</Title>
                   <Form
                     ref={(node) => {

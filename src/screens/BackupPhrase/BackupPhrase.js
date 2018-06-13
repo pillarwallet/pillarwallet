@@ -38,7 +38,7 @@ class BackupPhrase extends React.Component<Props, {}> {
 
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="backup phrase" />
           <Paragraph>Carefully write down your 12 word backup phrase in the correct order.</Paragraph>
           <Paragraph light>

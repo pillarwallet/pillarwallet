@@ -244,7 +244,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Grid>
         </View>
         <ScrollWrapper
-          padding
+          regularPadding
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -276,13 +276,11 @@ class AssetsScreen extends React.Component<Props, State> {
               </Column>
             </Row>
           </Grid>
-
           { Object.keys(this.state.assetsMedia).length !== 0 ? this.renderAssets() : <ActivityIndicator animating
                                                                                                         color="#111"
                                                                                                         size="large"/> }
-
+          {this.renderAssets()}
         </ScrollWrapper>
-
 
         <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
