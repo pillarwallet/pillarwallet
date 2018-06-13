@@ -32,7 +32,6 @@ const activeModalResetState = {
   },
 };
 
-
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
@@ -150,6 +149,8 @@ class AssetScreen extends React.Component<Props, State> {
                 color={assetData.color}
                 onPress={this.handleCardTap}
                 address={assetData.address}
+                iconUri={assetData.icon}
+                backgroundUri={assetData.background}
               />
             </Transition>
             <Paragraph light>
