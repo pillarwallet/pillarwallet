@@ -13,8 +13,8 @@ import Status from './Status';
 import Direction from './Direction';
 import Section from './Section';
 
-const iconUp = require('assets/icons/up.png');
-const iconDown = require('assets/icons/down.png');
+const iconUp = require('../../assets/icons/up.png');
+const iconDown = require('../../assets/icons/down.png');
 
 type Props = {
   history: Transaction[],

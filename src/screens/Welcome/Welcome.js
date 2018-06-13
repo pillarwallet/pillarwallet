@@ -20,7 +20,6 @@ type State = {
   shouldAnimate: boolean
 }
 
-
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
 const PillarLogo = styled.Image`

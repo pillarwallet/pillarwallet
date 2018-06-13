@@ -30,7 +30,7 @@ type Props = {
   },
 }
 
-const iconETH = require('assets/tokens/ETH/icon-ETH.png');
+const iconETH = require('../../assets/tokens/ETH/icon-ETH.png');
 
 const AssetCard = (props: Props) => {
   const {
