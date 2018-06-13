@@ -1,12 +1,11 @@
 // @flow
-import React, { Component } from 'react';
+import React from 'react';
 import {
   Animated,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import { baseColors } from 'utils/variables';
-import { lighten } from 'polished';
 import { getCurrencySymbol } from 'utils/common';
 import FastImage from 'react-native-fast-image';
 
@@ -43,8 +42,7 @@ type State = {
   showAsset: boolean;
 }
 
-export default class AssetCard extends Component {
-
+export default class AssetCard extends React.Component<Props, State> {
   state = {
     showAsset: false,
   }
