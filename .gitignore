@@ -83,7 +83,6 @@ android/captures/
 
 #### Pods
 ios/Pods
-ios/Podfile.lock
 
 ### Gems
 ios/.bundle/
