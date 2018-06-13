@@ -44,7 +44,7 @@ class App extends React.Component<Props, State> {
   componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
     fetchAppSettingsAndRedirect();
-    StatusBar.setBarStyle("dark-content");
+    StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
   }
 

@@ -67,7 +67,7 @@ type State = {
 class AssetsScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
-    assetsMedia: {}
+    assetsMedia: {},
   };
 
   static navigationOptions = {
@@ -98,7 +98,7 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   fetchAssetsMedia = async () => {
-    const response = await fetch("https://api.myjson.com/bins/1a83sm");
+    const response = await fetch('https://api.myjson.com/bins/1a83sm');
     const json = await response.json();
     this.setState({
       assetsMedia: json,
@@ -276,10 +276,7 @@ class AssetsScreen extends React.Component<Props, State> {
               </Column>
             </Row>
           </Grid>
-          { Object.keys(this.state.assetsMedia).length !== 0 ? this.renderAssets() : <ActivityIndicator animating
-                                                                                                        color="#111"
-                                                                                                        size="large"/> }
-          {this.renderAssets()}
+          { Object.keys(this.state.assetsMedia).length !== 0 ? this.renderAssets() : <ActivityIndicator animating /> }
         </ScrollWrapper>
 
         <TransactionSentModal

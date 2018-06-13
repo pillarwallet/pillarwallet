@@ -8,13 +8,13 @@ import {
 import { baseColors } from 'utils/variables';
 import { getCurrencySymbol } from 'utils/common';
 import FastImage from 'react-native-fast-image';
+import styled from 'styled-components/native';
 
 import IconWrapper from './IconWrapper';
 import IconCircle from './IconCircle';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
 import { Amount, AmountToken, FiatAmount } from './Amount';
-import styled from "styled-components/native";
 
 type Props = {
   id: string,
@@ -49,7 +49,7 @@ export default class AssetCard extends React.Component<Props, State> {
     showAsset: false,
   }
 
-  handleBackgroundDownload() {
+  handleBackgroundDownload = () => {
     this.setState({ showAsset: true });
   }
 
@@ -110,7 +110,7 @@ export default class AssetCard extends React.Component<Props, State> {
                   priority: FastImage.priority.high,
                 }}
                 resizeMode={FastImage.resizeMode.cover}
-                onLoad={this.handleBackgroundDownload.bind(this)}
+                onLoad={this.handleBackgroundDownload}
               />
               <DetailsWrapper>
                 <Name>{name}</Name>
@@ -145,4 +145,4 @@ export default class AssetCard extends React.Component<Props, State> {
       </View>
     );
   }
-};
+}
