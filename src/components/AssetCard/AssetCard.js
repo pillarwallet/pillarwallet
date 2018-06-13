@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import {
   Animated,
   TouchableWithoutFeedback,
@@ -14,7 +14,7 @@ import IconCircle from './IconCircle';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
 import { Amount, AmountToken, FiatAmount } from './Amount';
-import styled from "styled-components/native/index";
+import styled from "styled-components/native";
 
 type Props = {
   id: string,
@@ -29,6 +29,8 @@ type Props = {
     amount: string | number,
     currency: string,
   },
+  iconUri: string,
+  backgroundUri: string,
 }
 
 const BackgroundHolder = styled(View)`
