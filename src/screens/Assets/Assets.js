@@ -226,7 +226,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Grid>
         </View>
         <ScrollWrapper
-          padding
+          regularPadding
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -258,7 +258,6 @@ class AssetsScreen extends React.Component<Props, State> {
               </Column>
             </Row>
           </Grid>
-
           {this.renderAssets()}
 
         </ScrollWrapper>

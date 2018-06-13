@@ -11,14 +11,15 @@ import host.exp.exponent.Constants;
 @DoNotStrip
 public class AppConstants {
 
-  public static final String VERSION_NAME = "2.4.0";
-  public static String INITIAL_URL = "exp://exp.host/@rostislavcn/pillar-wallet";
+  public static final String VERSION_NAME = "2.5.3";
+  public static String INITIAL_URL = "exp://exp.host/@deimantas/pillar-wallet";
   public static final boolean IS_DETACHED = true;
   public static final String SHELL_APP_SCHEME = "exp38a4bbfce2ec45389ca2f4a5178939d6";
   public static final String RELEASE_CHANNEL = "default";
   public static boolean SHOW_LOADING_VIEW_IN_SHELL_APP = true;
   public static boolean ARE_REMOTE_UPDATES_ENABLED = true;
   public static final List<Constants.EmbeddedResponse> EMBEDDED_RESPONSES;
+  public static boolean FCM_ENABLED = false;
 
   static {
     List<Constants.EmbeddedResponse> embeddedResponses = new ArrayList<>();
@@ -44,6 +45,7 @@ public class AppConstants {
     constants.ARE_REMOTE_UPDATES_ENABLED = ARE_REMOTE_UPDATES_ENABLED;
     constants.EMBEDDED_RESPONSES = EMBEDDED_RESPONSES;
     constants.ANDROID_VERSION_CODE = BuildConfig.VERSION_CODE;
+    constants.FCM_ENABLED = FCM_ENABLED;
     return constants;
   }
 }
