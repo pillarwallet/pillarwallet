@@ -103,8 +103,8 @@ class ImportWallet extends React.Component<Props, State> {
             label="Enter your 12 word backup phrase."
             inputProps={{
               onChange: (text) => this.setState({ tWordsPhrase: text }),
-              // onChange: function noop() {},
               value: tWordsPhrase,
+              multiline: true,
             }}
             errorMessage={errorMessageTWordsPhrase}
           />
@@ -113,7 +113,6 @@ class ImportWallet extends React.Component<Props, State> {
             label="Use your Private Key"
             inputProps={{
               onChange: (text) => this.setState({ privateKey: text }),
-              // onChange: function noop() {},
               value: privateKey,
             }}
             errorMessage={errorMessagePrivateKey}

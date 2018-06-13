@@ -9,7 +9,8 @@ type inputPropsType = {
   placeholder?: string,
   onChange: Function,
   onBlur?: Function,
-  value: ?string
+  value: ?string,
+  multiline?: boolean,
 }
 
 type Props = {
@@ -125,6 +126,7 @@ class TextInput extends React.Component<Props, State> {
         </ErrorMessage>
       );
     }
+    return null;
   }
 
   hasError = () => {
@@ -142,7 +144,6 @@ class TextInput extends React.Component<Props, State> {
       onIconPress,
       iconColor = '#2077FD',
       inputProps,
-      errorMessage,
       inlineLabel,
     } = this.props;
     const { value } = this.state;
@@ -151,8 +152,15 @@ class TextInput extends React.Component<Props, State> {
       <Item
         inlineLabel={inlineLabel}
         stackedLabel={!inlineLabel}
-        style={{ marginBottom: 20 }}
         error={this.hasError()}
+        style={
+          this.props.inputProps.multiline ?
+          {
+            height: 112,
+            marginBottom: 20,
+          }
+          : { marginBottom: 20 }
+        }
       >
         <Label>{label}</Label>
         <InputField
