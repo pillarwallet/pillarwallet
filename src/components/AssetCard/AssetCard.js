@@ -33,7 +33,7 @@ type Props = {
   backgroundUri: string,
 }
 
-  const BackgroundHolder = styled(View)`
+const BackgroundHolder = styled(View)`
   flex: 1;
   flex-direction: row;
   border-radius: 20px;
