@@ -173,12 +173,17 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             >
               title
             </Text>
-            <View
+            <Text
+              accessible={true}
+              allowFontScaling={true}
+              ellipsizeMode="tail"
               style={
                 Array [
                   Object {
                     "alignSelf": "flex-end",
                     "backgroundColor": "#00bfff",
+                    "color": "#2077fd",
+                    "fontSize": 9,
                     "height": 4,
                     "left": 6,
                     "position": "relative",

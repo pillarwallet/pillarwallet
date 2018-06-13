@@ -88,7 +88,7 @@ export default class PinCode extends React.Component<Props, State> {
 
     return (
       <PageWrapper>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
           {showNewPincodeText &&
             <Paragraph
@@ -99,7 +99,12 @@ export default class PinCode extends React.Component<Props, State> {
             </Paragraph>
           }
         </Wrapper>
-        <KeyPad type="pincode" options={{ showForgotButton }} onKeyPress={this.handleButtonPressed} />
+        <KeyPad
+          type="pincode"
+          options={{ showForgotButton }}
+          onKeyPress={this.handleButtonPressed}
+          style={{ marginBottom: 10 }}
+        />
       </PageWrapper>
     );
   }

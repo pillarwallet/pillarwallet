@@ -203,7 +203,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
           symbol={assetData.symbol}
         />
         <Container>
-          <Wrapper padding>
+          <Wrapper regularPadding>
             <Title title="send" />
             <Form
               ref={node => { this._form = node; }}

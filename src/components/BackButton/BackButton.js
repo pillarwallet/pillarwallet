@@ -17,11 +17,12 @@ const BackButton = (props: Props) => {
     <TouchableOpacity
       onPress={() => navigation.goBack()}
       style={{
-        marginLeft: 20,
+        marginLeft: 10,
       }}
     >
       <Icon
-        name="arrow-back"
+        name="chevron-left"
+        type="Feather"
         style={{
           color: UIColors.primary,
           fontSize: fontSizes.extraExtraLarge,

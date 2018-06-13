@@ -13,7 +13,11 @@ type Item = {
 }
 
 type State = {
-  animatedBackgroundItemList: Item[]
+  animatedBackgroundItemList: Item[],
+}
+
+type Props = {
+  shouldAnimate: boolean,
 }
 
 const window = Dimensions.get('window');
@@ -34,45 +38,53 @@ const colors = [
   'rgb(80,227,194)',
 ];
 
-export default class AnimatedBackground extends React.Component<{}, State> {
-  interval: IntervalID;
+export default class AnimatedBackground extends React.Component<Props, State> {
+  timer: IntervalID;
 
-  state = {
-    animatedBackgroundItemList: [],
-  };
+  constructor(props: Props) {
+    super(props);
+    this.timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
+    this.state = {
+      animatedBackgroundItemList: [],
+    };
+  }
 
-  componentDidMount() {
-    this.generateAnimatedBackgroundItemList();
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.shouldAnimate === prevProps.shouldAnimate) return;
+    if (this.props.shouldAnimate) {
+      this.timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
+    } else {
+      clearInterval(this.timer);
+    }
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval(this.timer);
   }
 
-  generateAnimatedBackgroundItemList() {
-    let { animatedBackgroundItemList } = this.state;
-    this.interval = setInterval(() => {
-      const newPositionX = getRandomInt(0, window.width);
-      const newPositionY = getRandomInt(0, window.height - 50);
-      const newSize = getRandomInt(15, 40);
-      const newColor = colors[getRandomInt(0, colors.length - 1)];
-      if (animatedBackgroundItemList.length >= 50) {
-        animatedBackgroundItemList = animatedBackgroundItemList.slice(1);
-      }
-      animatedBackgroundItemList = animatedBackgroundItemList.concat({
-        positionX: newPositionX,
-        positionY: newPositionY,
-        size: newSize,
-        color: newColor,
-      });
-      this.setState({
-        animatedBackgroundItemList,
-      });
-    }, 200);
-  }
+  generateAnimatedBackgroundItemList = () => {
+    let animatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
+    const newPositionX = getRandomInt(0, window.width);
+    const newPositionY = getRandomInt(0, window.height - 50);
+    const newSize = getRandomInt(15, 40);
+    const newColor = colors[getRandomInt(0, colors.length - 1)];
+    if (animatedBackgroundItemList.length >= 25) {
+      animatedBackgroundItemList = animatedBackgroundItemList.slice(1);
+    }
+    animatedBackgroundItemList = animatedBackgroundItemList.concat({
+      positionX: newPositionX,
+      positionY: newPositionY,
+      size: newSize,
+      color: newColor,
+    });
+    this.setState({
+      animatedBackgroundItemList,
+    });
+  };
 
   render() {
     const { animatedBackgroundItemList } = this.state;
+
     return (
       <Wrapper>
         {animatedBackgroundItemList.map(({
