@@ -13,7 +13,13 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isFetched: boolean,
   OTP: boolean | number,
+  listeners: Object[]
 }
+
+type State = {
+  shouldAnimate: boolean
+}
+
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
@@ -22,7 +28,15 @@ const PillarLogo = styled.Image`
   width: 120;
 `;
 
-class Welcome extends React.Component<Props> {
+class Welcome extends React.Component<Props, State> {
+  listeners: Object[];
+
+  constructor(props: Props) {
+    super(props);
+    this.listeners = [];
+  }
+
+
   static navigationOptions = {
     header: null,
   };
@@ -43,8 +57,8 @@ class Welcome extends React.Component<Props> {
   }
 
   componentWillUnmount() {
-    this.listeners.forEach((listener) => {
-      listener.remove();
+    this.listeners.forEach((listenerItem) => {
+      listenerItem.remove();
     });
   }
 
@@ -53,7 +67,7 @@ class Welcome extends React.Component<Props> {
     if (!isFetched) return null;
     return (
       <Container center>
-        <AnimatedBackground shouldAnimate={ this.state.shouldAnimate }/>
+        <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
         <PillarLogo source={pillarLogoSource} />
         <Footer>
           <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />

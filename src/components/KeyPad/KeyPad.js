@@ -41,7 +41,7 @@ type Props = {
   type: string,
   options?: Object,
   onKeyPress: Function,
-  style?: StyleSheet.Styles,
+  style?: Object,
   inputColor?: string
 }
 
@@ -54,7 +54,7 @@ export default class KeyPad extends React.Component<Props> {
     this.props.onKeyPress(pressedKey);
   };
 
-  renderKeys(buttons, inputColor) {
+  renderKeys(buttons: any, inputColor: any) {
     return buttons.map(({ label, value }: KeyPadButton) => {
       if (value) {
         if (Platform.OS === 'ios') {

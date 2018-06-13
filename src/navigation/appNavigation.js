@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing } from 'react-native';
@@ -15,10 +16,19 @@ import ProfileScreen from 'screens/Profile';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
+import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendTokenContacts';
 
 // components
+import RetryApiRegistration from 'components/RetryApiRegistration';
+
+// actions
+import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
+import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
+import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
+
+// constants
 import {
   ADD_TOKEN,
   ASSETS,
@@ -33,15 +43,12 @@ import {
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
   SEND_TOKEN_FLOW,
+  REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
-import RetryApiRegistration from 'components/RetryApiRegistration';
-
-// actions
-import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
-import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
-
-// constants
 import { PENDING, REGISTERED } from 'constants/userConstants';
+
+// models
+import type { Assets } from 'models/Asset';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
@@ -64,13 +71,6 @@ const StackNavigatorModalConfig = {
 };
 
 const FluidNavigatorConfig = {
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
   navigationOptions: {
     header: null,
     gesturesEnabled: false,
@@ -149,6 +149,7 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
+    [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
   }, {
     mode: 'modal',
     navigationOptions: {
@@ -163,6 +164,11 @@ type Props = {
   fetchUser: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
+  fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
+  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  notifications: Object[],
+  wallet: Object,
+  assets: Object,
 }
 
 class AppFlow extends React.Component<Props, {}> {
@@ -175,6 +181,29 @@ class AppFlow extends React.Component<Props, {}> {
     }
     startListeningNotifications();
     AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const {
+      notifications,
+      fetchAssetsBalances,
+      fetchTransactionsHistory,
+      assets,
+      wallet,
+    } = this.props;
+    const { notifications: prevNotifications } = prevProps;
+
+    if (notifications.length !== prevNotifications.length) {
+      const lastNotification = notifications[notifications.length - 1];
+
+      Toast.show({
+        text: lastNotification.message,
+        buttonText: '',
+      });
+
+      fetchAssetsBalances(assets, wallet.address);
+      fetchTransactionsHistory(wallet.address, lastNotification.asset);
+    }
   }
 
   componentWillUnmount() {
@@ -202,8 +231,16 @@ class AppFlow extends React.Component<Props, {}> {
   }
 }
 
-const mapStateToProps = ({ user: { userState } }) => ({
+const mapStateToProps = ({
+  user: { userState },
+  notifications: { data: notifications },
+  assets: { data: assets },
+  wallet: { data: wallet },
+}) => ({
   userState,
+  notifications,
+  assets,
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -211,6 +248,12 @@ const mapDispatchToProps = (dispatch) => ({
   fetchUser: () => dispatch(fetchUserAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
+  fetchAssetsBalances: (assets, walletAddress) => {
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
+  },
+  fetchTransactionsHistory: (walletAddress, asset) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

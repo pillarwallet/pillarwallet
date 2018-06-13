@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
+import { ASSET } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
@@ -20,20 +21,14 @@ import { pipe, decodeETHAddress } from 'utils/common';
 import SendTokenContactsHeader from './SendTokenContactsHeader';
 
 type Props = {
-  token: string,
-  address: string,
-  totalBalance: number,
-  contractAddress: string,
   navigation: NavigationScreenProp<*>,
-  isVisible: boolean,
   sendAsset: Function,
-  formValues?: Object,
 }
 
 type State = {
   isScanning: boolean,
   transactionPayload: Object,
-  asset: Object,
+  assetData: Object,
   showConfirmModal: boolean,
   value: {
     address: string,
@@ -151,6 +146,7 @@ const ModalParagraph = styled(Paragraph)`
 
 const ModalFooter = styled.View`
   flex: 2;
+  margin-bottom: 40;
   justify-content: flex-end;
 `;
 
@@ -160,14 +156,14 @@ class SendTokenContacts extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
-    const asset = this.props.navigation.getParam('asset', {});
+    const assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
       isScanning: false,
       value: { address: '' },
       showConfirmModal: false,
       formStructure: getFormStructure(),
       transactionPayload,
-      asset,
+      assetData,
     };
   }
 
@@ -177,10 +173,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   openConfirmationModal = () => {
     const value = this._form.getValue();
-    const {
-      token,
-      contractAddress,
-    } = this.props;
+    const { assetData } = this.state;
     const { transactionPayload } = this.state;
 
     if (!value) return;
@@ -190,8 +183,8 @@ class SendTokenContacts extends React.Component<Props, State> {
       amount: transactionPayload.amount,
       gasLimit: transactionPayload.gasLimit,
       gasPrice: transactionPayload.gasPrice,
-      symbol: token,
-      contractAddress,
+      symbol: assetData.token,
+      contractAddress: assetData.contractAddress,
     };
 
     this.setState({
@@ -202,6 +195,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     this.props.sendAsset(this.state.transactionPayload);
+    this.props.navigation.navigate(ASSET, { initialModalState: 'SEND_CONFIRMATION' });
   };
 
   handleToggleQRScanningState = () => {
@@ -222,13 +216,15 @@ class SendTokenContacts extends React.Component<Props, State> {
     const {
       isScanning,
       transactionPayload,
-      asset,
+      assetData,
       formStructure,
       showConfirmModal,
       value,
     } = this.state;
 
-    const formOptions = generateFormOptions({ onIconPress: this.handleToggleQRScanningState, currency: asset.symbol });
+    const formOptions = generateFormOptions(
+      { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
+    );
 
     const qrScannerComponent = (
       <QRCodeScanner
@@ -252,7 +248,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </ModalItem>
           <ModalItem>
             <ModalLabel>Amount</ModalLabel>
-            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{asset.symbol}</ModalValueSymbol></ModalValue>
+            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
           </ModalItem>
           <ModalItem noBorder>
             <ModalLabel>Fee</ModalLabel>
@@ -274,7 +270,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onBack={this.props.navigation.goBack}
           onNext={this.openConfirmationModal}
           amount={transactionPayload.amount}
-          symbol={asset.symbol}
+          symbol={assetData.token}
         />
         <Container>
           <Wrapper regularPadding>

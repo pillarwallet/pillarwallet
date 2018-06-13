@@ -14,8 +14,10 @@ type Item = {
 
 type State = {
   animatedBackgroundItemList: Item[],
+}
+
+type Props = {
   shouldAnimate: boolean,
-  timer: number
 }
 
 const window = Dimensions.get('window');
@@ -36,39 +38,32 @@ const colors = [
   'rgb(80,227,194)',
 ];
 
-export default class AnimatedBackground extends React.Component<{}, State> {
-  constructor(props) {
+export default class AnimatedBackground extends React.Component<Props, State> {
+  timer: IntervalID;
+
+  constructor(props: Props) {
     super(props);
-    this.generateAnimatedBackgroundItemList = this.generateAnimatedBackgroundItemList.bind(this);
+    this.timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
     this.state = {
       animatedBackgroundItemList: [],
-      shouldAnimate: true,
-      timer: null,
     };
   }
 
-  componentDidMount() {
-    const timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
-    this.setState({ timer });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.shouldAnimate !== this.props.shouldAnimate) {
-      if (this.props.shouldAnimate) {
-        const newTimer = setInterval(this.generateAnimatedBackgroundItemList.bind(this), 500);
-        this.setState({ timer: newTimer });
-      } else {
-        clearInterval(this.state.timer);
-      }
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.shouldAnimate === prevProps.shouldAnimate) return;
+    if (this.props.shouldAnimate) {
+      this.timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
+    } else {
+      clearInterval(this.timer);
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.timer);
+    clearInterval(this.timer);
   }
 
-  generateAnimatedBackgroundItemList() {
-    let animatedBackgroundItemList = this.state.animatedBackgroundItemList;
+  generateAnimatedBackgroundItemList = () => {
+    let animatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
     const newPositionX = getRandomInt(0, window.width);
     const newPositionY = getRandomInt(0, window.height - 50);
     const newSize = getRandomInt(15, 40);
@@ -85,7 +80,7 @@ export default class AnimatedBackground extends React.Component<{}, State> {
     this.setState({
       animatedBackgroundItemList,
     });
-  }
+  };
 
   render() {
     const { animatedBackgroundItemList } = this.state;

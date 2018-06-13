@@ -12,7 +12,7 @@ import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
-import { pipe, decodeETHAddress } from 'utils/common';
+import { pipe, parseNumber, decodeETHAddress } from 'utils/common';
 import { baseColors, fontSizes } from 'utils/variables';
 import SendTokenAmountHeader from './SendTokenAmountHeader';
 
@@ -28,7 +28,6 @@ type Props = {
   contractAddress: string,
   navigation: NavigationScreenProp<*>,
   isVisible: boolean,
-  sendAsset: Function,
   formValues?: Object,
 }
 
@@ -43,7 +42,8 @@ type State = {
 
 
 const getFormStructure = (totalBalance) => {
-  const Amount = t.refinement(t.Number, (amount): boolean => {
+  const Amount = t.refinement(t.String, (amount): boolean => {
+    amount = parseNumber(amount.toString());
     return amount > 0 && amount <= totalBalance;
   });
 
@@ -69,7 +69,7 @@ function AmountInputTemplate(locals) {
     placeholder: '0.00',
     value: locals.value,
     ellipsizeMode: 'middle',
-    keyboardType: locals.keyboardType,
+    keyboardType: 'numeric',
     textAlign: 'right',
     style: {
       paddingRight: 40,
@@ -129,9 +129,6 @@ export default class SendTokenAmount extends React.Component<Props, State> {
   handleFormSubmit = () => {
     const value = this._form.getValue();
     const {
-      sendAsset,
-      token,
-      contractAddress,
       navigation,
     } = this.props;
     const { assetData } = this.state;
@@ -140,16 +137,15 @@ export default class SendTokenAmount extends React.Component<Props, State> {
 
     const transactionPayload: TransactionPayload = {
       to: '',
-      amount: value.amount,
+      amount: parseNumber(value.amount),
       gasLimit: 1500000,
       gasPrice: 20000000000,
-      symbol: token,
-      contractAddress,
+      symbol: assetData.symbol,
+      contractAddress: assetData.contractAddress,
     };
     navigation.navigate(SEND_TOKEN_CONTACTS, {
       assetData,
       transactionPayload,
-      sendAsset,
     });
   };
 
@@ -187,7 +183,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       formStructure,
       assetData,
     } = this.state;
-    const formOptions = generateFormOptions({ currency: assetData.symbol });
+    const formOptions = generateFormOptions({ currency: assetData.token });
 
     const qrScannerComponent = (
       <QRCodeScanner
