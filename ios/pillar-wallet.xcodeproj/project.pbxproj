@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */; };
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
@@ -51,11 +52,11 @@
 		B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047F1F3A684600E91581 /* shell-app.bundle */; };
 		B666863B0A07408B887D99ED /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CDF7B322B74120A8501540 /* Roboto.ttf */; };
 		B8CED6E293D24607AA6B21C6 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9B6B06506C48CBA2AC547B /* libRNRandomBytes.a */; };
-		BF6097FE20AEDE99000F2330 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BF6097FB20AEDE99000F2330 /* GoogleService-Info.plist */; };
 		D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 809C8F6F2C484692B42E92AE /* MaterialCommunityIcons.ttf */; };
 		DE488ED3D5684B76A0C40B8C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ABE6DAB20184465D8E053C80 /* Ionicons.ttf */; };
 		E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */; };
 		E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */; };
+		EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */; };
 		FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
 /* End PBXBuildFile section */
 
@@ -312,6 +313,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		EE03A31120C54DF3009DA27F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16F1DC5E20BC030C00A8F843 /* React.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 83CBBA2D1A601D0E00E9B192;
+			remoteInfo = React;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -333,7 +341,7 @@
 		16F1DC9A20BC034D00A8F843 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		16F1DCAF20BC061100A8F843 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
-		1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "pillar-wallet/Supporting/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		209ECA9FD3A147FF82955E48 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		26CDF7B322B74120A8501540 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
@@ -374,7 +382,6 @@
 		BB597A9C1A5B42FDA30549CE /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		BCE4860CBACC4A99B26705F0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		BE9C8A714CA544BB85EFA109 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
-		BF6097FB20AEDE99000F2330 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CBF04378DC6E4D29AC2400A2 /* TcpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = TcpSockets.xcodeproj; path = "../node_modules/react-native-tcp/ios/TcpSockets.xcodeproj"; sourceTree = "<group>"; };
 		CE658B24F3194D0A90335341 /* libTcpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libTcpSockets.a; sourceTree = "<group>"; };
 		DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -382,6 +389,7 @@
 		E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		E95F3AE135154DC384D6FE21 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -631,7 +639,7 @@
 		B56386381DB9693800A0598C = {
 			isa = PBXGroup;
 			children = (
-				BF6097FB20AEDE99000F2330 /* GoogleService-Info.plist */,
+				EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */,
 				B56386431DB9693800A0598C /* pillar-wallet */,
 				B56386421DB9693800A0598C /* Products */,
 				69BE83450974470B970EB9BA /* Libraries */,
@@ -703,10 +711,12 @@
 				B563863F1DB9693800A0598C /* Resources */,
 				7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */,
 				830CB5A0008124C5799759EC /* [CP] Embed Pods Frameworks */,
+				EE4E73BD20D122990008F745 /* Bundle Expo assets */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				EE03A31220C54DF3009DA27F /* PBXTargetDependency */,
 			);
 			name = "pillar-wallet";
 			productName = "pillar-wallet";
@@ -725,7 +735,7 @@
 					B56386401DB9693800A0598C = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = J9DEY3FGPD;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1077,6 +1087,7 @@
 				B5693E8E1FABD16A00307FA4 /* LaunchScreen.xib in Resources */,
 				B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */,
 				B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */,
+				EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */,
 				B56386511DB9693800A0598C /* Assets.xcassets in Resources */,
 				5024DD2C1ACA4DF494A1CCB1 /* Entypo.ttf in Resources */,
 				E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */,
@@ -1097,7 +1108,6 @@
 				5F1F067D48844591B2A659A9 /* Foundation.ttf in Resources */,
 				2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */,
 				D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */,
-				BF6097FE20AEDE99000F2330 /* GoogleService-Info.plist in Resources */,
 				3BE522D36D0E44CB973ECA16 /* MaterialIcons.ttf in Resources */,
 				308F1777F22140319410B3D5 /* Octicons.ttf in Resources */,
 				4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */,
@@ -1203,6 +1213,20 @@
 			shellPath = /bin/bash;
 			shellScript = "set -eo pipefail\n\npushd ${SRCROOT}/..\nvalue=$(cat ~/.expo/PATH)\nPATH=\"$PATH:$value\" exp prepare-detached-build --platform ios\npopd\n";
 		};
+		EE4E73BD20D122990008F745 /* Bundle Expo assets */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle Expo assets";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -eo pipefail\nif [ \"$CONFIGURATION\" == \"Debug\" ]; then\necho \"Skipping asset bundling in debug mode.\"\nexit 0\nfi\npushd ${SRCROOT}/..\nvalue=$(cat ~/.expo/PATH)\ndest=$CONFIGURATION_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH\nPATH=\"$PATH:$value\" exp bundle-assets --platform ios --dest \"$dest\"\npopd";
+		};
 		F3E5A62CE080FA06FEE72A56 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1234,6 +1258,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EE03A31220C54DF3009DA27F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = React;
+			targetProxy = EE03A31120C54DF3009DA27F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B56386561DB9693800A0598C /* Debug */ = {
@@ -1345,7 +1377,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1384,7 +1416,6 @@
 					"\"${PODS_ROOT}/Headers/Public/FirebaseRemoteConfig\"",
 					"\"${PODS_ROOT}/Headers/Public/FirebaseStorage\"",
 					"\"${PODS_ROOT}/Headers/Public/FirebaseSwizzlingUtilities\"",
-					"\"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase\"",
 					"\"${PODS_ROOT}/Headers/Public/Folly\"",
 					"\"${PODS_ROOT}/Headers/Public/GPUImage\"",
 					"\"${PODS_ROOT}/Headers/Public/GTMSessionFetcher\"",
@@ -1426,8 +1457,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.pillarproject.wallet 1526897369";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -1437,8 +1469,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1518,8 +1550,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet 1526587087";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
