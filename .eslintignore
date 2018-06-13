@@ -3,4 +3,5 @@
 node_modules
 storybook
 flow-typed
+android/
 src/utils/shim.js

@@ -26,7 +26,11 @@ const Text = styled.Text`
   width: ${props => props.center ? '100%' : 'auto'};
 `;
 
-const BlueDot = styled.View`
+const BlueDot = styled.Text`
+  color: ${baseColors.clearBlue};
+  font-size: ${fontSizes.extraSmall};
+  // TODO: replace or remove font Symbol, it causes issues on Android
+  // font-family: Symbol;
   background-color: ${baseColors.brightSkyBlue};
   height: 4px;
   width: 4px;

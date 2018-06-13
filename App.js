@@ -1,6 +1,8 @@
 // @flow
 import 'utils/setup';
 import * as React from 'react';
+import { NavigationActions } from 'react-navigation';
+import { BackHandler } from 'react-native';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
@@ -36,10 +38,25 @@ class App extends React.Component<Props, State> {
     };
   }
 
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
+  }
+
   componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
     fetchAppSettingsAndRedirect();
+    BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
   }
+
+  onBackPress = () => {
+    const { dispatch, navigation } = this.props;
+    const { routes, index } = navigation;
+    if (routes[index].index === 0) {
+      return false;
+    }
+    dispatch(NavigationActions.back());
+    return true;
+  };
 
   render() {
     const { dispatch, navigation } = this.props;

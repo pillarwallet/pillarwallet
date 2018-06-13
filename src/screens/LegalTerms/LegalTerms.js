@@ -89,7 +89,7 @@ class LegalTerms extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="review" />
           <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Paragraph>
           <CheckboxItem marginBottom>

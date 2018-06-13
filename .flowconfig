@@ -5,6 +5,9 @@
 ; Ignore ios
 <PROJECT_ROOT>/ios/.*
 
+; Ignore android
+<PROJECT_ROOT>/android/.*
+
 ; Ignore templates for 'react-native init'
 <PROJECT_ROOT>/node_modules/react-native/local-cli/templates/.*
 
