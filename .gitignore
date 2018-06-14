@@ -47,6 +47,14 @@ project.xcworkspace
 
 #### Android/IntelliJ
 
+android/.idea/
+android/app/.idea/
+android/app/app.iml
+android/app/gradle/
+android/app/gradlew
+android/app/gradlew.bat
+android/rn-libs/
+
 # Built application files
 *.apk
 *.ap_
