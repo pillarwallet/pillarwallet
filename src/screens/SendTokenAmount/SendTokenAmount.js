@@ -1,20 +1,22 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { Text, Keyboard, TouchableOpacity } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
 import Title from 'components/Title';
 import ButtonIcon from 'components/ButtonIcon';
 import TextInput from 'components/TextInput';
-import type { NavigationScreenProp } from 'react-navigation';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import QRCodeScanner from 'components/QRCodeScanner';
 import type { TransactionPayload } from 'models/Transaction';
+import type { Assets } from 'models/Asset';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, parseNumber, decodeETHAddress, formatMoney, formatAmount } from 'utils/common';
 import { baseColors, fontSizes } from 'utils/variables';
@@ -26,17 +28,17 @@ const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isVal
 const { Form } = t.form;
 const gasLimit = 21000;
 
-const getFormStructure = (maxAmount: number) => {
+const getFormStructure = (maxAmount: number, enoughForFee) => {
   const Amount = t.refinement(t.Number, (amount): boolean => {
     amount = parseNumber(amount.toString());
-    return amount > 0 && amount <= maxAmount;
+    return enoughForFee && amount > 0 && amount <= maxAmount;
   });
 
   Amount.getValidationErrorMessage = (amount): string => {
     if (amount >= maxAmount) {
       return 'Amount should not exceed the total balance.';
-    // } else if (amount > totalBalance - transactionFee) {
-    //   return 'Not enough funds to process transaction fee';
+    } else if (!enoughForFee) {
+      return 'Not enough eth to process the transaction fee';
     }
     return 'Amount should be specified.';
   };
@@ -103,6 +105,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isVisible: boolean,
   formValues?: Object,
+  assets: Object,
 }
 
 type State = {
@@ -114,7 +117,7 @@ type State = {
   txFeeInWei: ?Object, // BigNumber
 }
 
-export default class SendTokenAmount extends React.Component<Props, State> {
+class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
   gasPrice: Object; // BigNumber
@@ -126,7 +129,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
     this.state = {
       isScanning: false,
       value: null,
-      formStructure: getFormStructure(this.assetData.balance),
+      formStructure: getFormStructure(this.assetData.balance, false),
       txFeeInWei: null,
     };
   }
@@ -138,12 +141,14 @@ export default class SendTokenAmount extends React.Component<Props, State> {
         this.gasPriceFetched = true;
         this.gasPrice = gasPrice;
         const { token, balance } = this.assetData;
+        const { assets } = this.props;
         const txFeeInWei = gasPrice.mul(gasLimit);
         const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
+        const enoughForFee = this.checkIfEnoughForFee(assets, txFeeInWei);
 
         this.setState({
           txFeeInWei,
-          formStructure: getFormStructure(maxAmount),
+          formStructure: getFormStructure(maxAmount, enoughForFee),
         });
       })
       .catch(() => {});
@@ -186,7 +191,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
-  calculateMaxAmount = (token: string, balance: number, txFeeInWei: ?Object): number => {
+  calculateMaxAmount(token: string, balance: number, txFeeInWei: ?Object): number {
     if (token !== ETH) {
       return balance;
     }
@@ -194,7 +199,14 @@ export default class SendTokenAmount extends React.Component<Props, State> {
     const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
     if (maxAmount.lt(0)) return 0;
     return new BigNumber(utils.formatEther(maxAmount)).toNumber();
-  };
+  }
+
+  checkIfEnoughForFee(assets: Assets, txFeeInWei): boolean {
+    if (!assets[ETH]) return false;
+    const ethBalance = assets[ETH].balance;
+    const balanceInWei = utils.parseUnits(ethBalance, 'ether');
+    return balanceInWei.gte(txFeeInWei);
+  }
 
   openFeeInfoModal = () => {
     // Add fee modal logic in here
@@ -221,7 +233,8 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       formStructure,
       txFeeInWei,
     } = this.state;
-    const formOptions = generateFormOptions({ currency: this.assetData.token });
+    const { token, balance } = this.assetData;
+    const formOptions = generateFormOptions({ currency: token });
 
     const qrScannerComponent = (
       <QRCodeScanner
@@ -237,8 +250,8 @@ export default class SendTokenAmount extends React.Component<Props, State> {
         <SendTokenAmountHeader
           onBack={this.props.navigation.goBack}
           nextOnPress={this.handleFormSubmit}
-          balanceAmount={formatMoney(this.assetData.balance, 6)}
-          symbol={this.assetData.symbol}
+          balanceAmount={formatMoney(balance, 6)}
+          symbol={token}
         />
         <Container>
           <Wrapper padding>
@@ -274,3 +287,9 @@ export default class SendTokenAmount extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = ({ assets: { data: assets } }) => ({
+  assets,
+});
+
+export default connect(mapStateToProps)(SendTokenAmount);
