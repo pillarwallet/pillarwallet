@@ -56,7 +56,7 @@ export const registerWalletAction = () => {
     const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 1024 } })
       .then(JSON.parse)
       .catch(() => ({}));
-    
+
     await storage.save('wallet', { wallet: encryptedWallet });
     await storage.save('app_settings', { appSettings: { wallet: +new Date() } });
     dispatch({

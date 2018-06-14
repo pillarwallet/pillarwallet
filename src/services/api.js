@@ -2,9 +2,8 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+// import { SDK_PROVIDER } from 'react-native-dotenv'; SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
-import { initialAssets } from 'fixtures/assets'; // MUST BE REMOVED ONCE EVERYONE HAVE A SETUP PLATFORM
 
 type HistoryPayload = {
   address1: string,
