@@ -59,7 +59,8 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
   return BCX.txHistory(payload)
-    .then(({ txHistory: { txHistory } }) => txHistory);
+    .then(({ txHistory: { txHistory } }) => txHistory)
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
