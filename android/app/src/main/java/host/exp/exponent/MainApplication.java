@@ -15,6 +15,8 @@ import com.peel.react.TcpSocketsModule;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
 import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 
 public class MainApplication extends ExpoApplication {
@@ -37,6 +39,7 @@ public class MainApplication extends ExpoApplication {
             new RandomBytesPackage(),
             new RNOSModule(),
             new RNFirebasePackage(),
+            new RNFirebaseMessagingPackage(),
             new RNDeviceInfo()
     );
   }
