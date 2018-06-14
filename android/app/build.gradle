@@ -18,7 +18,17 @@ repositories {
 android {
   compileSdkVersion 26
   buildToolsVersion '26.0.1'
-
+  signingConfigs {
+    debug {
+      storeFile file('../debug.keystore')
+    }
+    release {
+      keyAlias 'pillarbeta'
+      keyPassword 'icecube100'
+      storeFile file('../pillarbeta.jks')
+      storePassword 'icecube100'
+    }
+  }
   defaultConfig {
     applicationId 'com.pillarproject.wallet'
     targetSdkVersion 25
@@ -66,11 +76,7 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
-    }
-  }
-  signingConfigs {
-    debug {
-      storeFile file('../debug.keystore')
+      signingConfig signingConfigs.release
     }
   }
   lintOptions {
