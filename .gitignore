@@ -93,6 +93,11 @@ android/captures/
 #### Pods
 ios/Pods
 
+### Expo
+ios/pillar-wallet/Supporting/EXBuildConstants.json
+ios/pillar-wallet/Supporting/EXBuildConstants.plist
+ios/pillar-wallet/Supporting/EXBuildConstants.plist.bak
+
 ### Gems
 ios/.bundle/
 ios/Gemfile
