@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build_ios:
+  build:
     working_directory: ~/pillarwallet
     macos:
       xcode: "9.3.0"
@@ -247,10 +247,10 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build_ios
+      - build
       - test_ios:
           requires:
-            - build_ios
+            - build
           filters:
             branches:
               only:
@@ -262,3 +262,9 @@ workflows:
           filters:
             branches:
               only: master
+      - build_android:
+          requires:
+            - build
+          filters:
+            branches:
+              only: android_fastlane_circle
