@@ -19,13 +19,15 @@ import PillarSdk from 'services/api';
 
 type SDK = {
   registerOnBackend: Function,
-  getInitialAssets: Function,
+  fetchInitialAssets: Function,
+  updateUser: Function,
 };
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const pillarSdk: SDK = new PillarSdk();
 pillarSdk.registerOnBackend = jest.fn(() => ({ userId: 1, walletId: 2 }));
-pillarSdk.getInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
+pillarSdk.updateUser = jest.fn(() => ({ username: 'snow', walletId: 2 }));
+pillarSdk.fetchInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
 const mockWallet: Object = {
@@ -80,7 +82,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: UPDATE_USER, payload: { state: REGISTERED, user: { userId: 1, walletId: 2 } } },
+      { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: SET_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
@@ -112,7 +114,7 @@ describe('Wallet actions', () => {
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
-      { type: UPDATE_USER, payload: { state: REGISTERED, user: { userId: 1, walletId: 2 } } },
+      { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: SET_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
