@@ -9,15 +9,12 @@ import {
   SET_INITIAL_ASSETS,
   FETCHED,
   FETCHED_INITIAL,
-  UPDATE_SUPPORTED_ASSETS,
 } from 'constants/assetsConstants';
 import { transformAssetsToObject } from 'utils/assets';
-import type { Asset } from 'models/Asset';
 import merge from 'lodash.merge';
 
 export type AssetsReducerState = {
   data: Object,
-  supportedAssets: Asset[],
   assetsState: ?string,
 };
 
@@ -28,7 +25,6 @@ export type AssetsReducerAction = {
 
 const initialState = {
   data: {},
-  supportedAssets: [],
   assetsState: null,
 };
 
@@ -49,8 +45,6 @@ export default function assetsReducer(
         state,
         updatedState,
       );
-    case UPDATE_SUPPORTED_ASSETS:
-      return { ...state, supportedAssets: action.payload };
     case UPDATE_ASSETS:
       return { ...state, data: action.payload, assetsState: FETCHED };
     case ADD_ASSET:
