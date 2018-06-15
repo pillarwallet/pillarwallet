@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, Keyboard, TouchableOpacity } from 'react-native';
+import { Text, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -50,7 +50,7 @@ const getFormStructure = (maxAmount: number, enoughForFee) => {
 };
 
 function AmountInputTemplate(locals) {
-  const { config: { currency } } = locals;
+  const { config: { currency, useMaxValue } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     autoFocus: true,
@@ -77,6 +77,9 @@ function AmountInputTemplate(locals) {
       id="amount"
       label={locals.label}
       inputProps={inputProps}
+      inlineLabel
+      footerAddonText="Use Max"
+      footerAddonAction={useMaxValue}
     />
   );
 }
@@ -88,14 +91,9 @@ const generateFormOptions = (config: Object): Object => ({
 });
 
 const ActionsWrapper = styled.View`
-  margin-top: 10px;
-  margin-bottom: 20px;
-`;
-
-const UseMaxValueButton = styled.Text`
-  color: ${baseColors.clearBlue};
-  width: 100%;
-  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
 `;
 
 type Props = {
@@ -234,7 +232,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       txFeeInWei,
     } = this.state;
     const { token, balance } = this.assetData;
-    const formOptions = generateFormOptions({ currency: token });
+    const formOptions = generateFormOptions({ currency: token, useMaxValue: this.useMaxValue });
 
     const qrScannerComponent = (
       <QRCodeScanner
@@ -263,22 +261,19 @@ class SendTokenAmount extends React.Component<Props, State> {
               value={value}
               onChange={this.handleChange}
             />
-            <TouchableOpacity onPress={this.useMaxValue}>
-              <UseMaxValueButton>Use Max</UseMaxValueButton>
-            </TouchableOpacity>
             <ActionsWrapper>
-              <Text>
+              <Text style={{ marginTop: 14 }}>
                 Fee:
-                <Text style={{ fontWeight: 'bold', color: '#000' }}>
-                  {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}
-                  <ButtonIcon
-                    icon="alert"
-                    color={baseColors.clearBlue}
-                    fontSize={fontSizes.large}
-                    onPress={this.openFeeInfoModal}
-                  />
-                </Text>
               </Text>
+              <Text style={{ fontWeight: 'bold', color: '#000', marginTop: 14 }}>
+                {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}
+              </Text>
+              <ButtonIcon
+                icon="alert"
+                color={baseColors.clearBlue}
+                fontSize={fontSizes.large}
+                onPress={this.openFeeInfoModal}
+              />
             </ActionsWrapper>
           </Wrapper>
         </Container>

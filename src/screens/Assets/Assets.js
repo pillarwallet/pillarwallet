@@ -61,7 +61,7 @@ type State = {
       formValues?: Object
     }
   },
-  assetsMedia: Object
+  assetsMedia: Object,
 }
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -76,7 +76,7 @@ class AssetsScreen extends React.Component<Props, State> {
       timing: Animated.timing,
       easing: Easing.easing,
     },
-  }
+  };
 
   componentDidMount() {
     const {
@@ -113,13 +113,13 @@ class AssetsScreen extends React.Component<Props, State> {
 
   goToAddTokenPage = () => {
     this.props.navigation.navigate(ADD_TOKEN);
-  }
+  };
 
   goToSendTokenFlow = (asset: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FLOW, {
       asset,
     });
-  }
+  };
 
   renderAssets() {
     const {
@@ -276,9 +276,8 @@ class AssetsScreen extends React.Component<Props, State> {
               </Column>
             </Row>
           </Grid>
-          { Object.keys(this.state.assetsMedia).length !== 0 ? this.renderAssets() : <ActivityIndicator animating /> }
+          { Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating /> }
         </ScrollWrapper>
-
         <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
