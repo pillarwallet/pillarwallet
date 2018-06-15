@@ -3,8 +3,7 @@ import styled from 'styled-components/native';
 
 const Details = styled.View`
   flex: 3;
-  justify-content: flex-start;
-  flex-direction: column;
+  justify-content: space-between;
 `;
 
 export default Details;
