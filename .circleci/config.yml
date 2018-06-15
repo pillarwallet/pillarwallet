@@ -201,11 +201,33 @@ jobs:
       - checkout
       - restore_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
-      - restore_cache:
-          key: gems-{{ checksum "Gemfile.lock" }}
       - run:
-          name: Download Ruby Dependencies
-          command: bundle check || bundle install --path vendor/bundle
+          name: Install Bundler
+          command: sudo gem install bundler
+      - run:
+          name: Creating Gemfile in android dir
+          command: cd android && bundle init
+      - run:
+          name: Login to Expo
+          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
+      - run:
+          name: Publish resources bundle to Expo server
+          command: exp publish
+      - run:
+          name: Install fastlane gem
+          command: echo 'gem "fastlane"' >> ./android/Gemfile
+      - restore_cache:
+          key: gems-{{ checksum "./android/Gemfile" }}
+      - run:
+          name: Create Vendor/bundle for gem dependencies
+          command: cd android && bundle check || bundle install --path vendor/bundle
+      - run:
+          name: Install fastlane as a dependency
+          command: cd android && sudo bundle update
+      - save_cache:
+          key: gems-{{ checksum "./android/Gemfile" }}
+          paths:
+            - vendor/bundle
       - run:
           name: Download Android Dependencies
           command: ./gradlew androidDependencies
