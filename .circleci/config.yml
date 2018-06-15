@@ -232,7 +232,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+          key: jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
       - run:
           name: Creating Gemfile in android dir
           command: cd android && bundle init
@@ -253,37 +253,37 @@ jobs:
             - vendor/bundle
       - run:
           name: Download Android Dependencies
-          command: ./gradlew androidDependencies
+          command: ./android/gradlew androidDependencies
       - run:
           name: Bundle install
           command: bundle install
           environment:
-            BUNDLE_PATH: vendor/bundle
+            BUNDLE_PATH: ./android/vendor/bundle
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies
+          command: ./android/gradlew androidDependencies
       - save_cache:
-          key: jars-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: jars-{{ checksum "./android/gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
           paths:
-            - ~/.gradle
+            - ~/android/.gradle
             - ~/.m2
       - save_cache:
           key: gems-{{ checksum "Gemfile.lock" }}
           paths:
-            - vendor/bundle
+            - ./android/vendor/bundle
       - run:
           name: Run Tests
-          command: ./gradlew lint test
+          command: ./android/gradlew lint test
       - store_artifacts:
-          path: app/build/reports
+          path: ./android/app/build/reports
           destination: reports
       - store_test_results:
-          path: app/build/test-results
+          path: ./android/app/build/test-results
       - run:
           name: Initial build
-          command: ./gradlew clean assembleRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+          command: ./android/gradlew clean assembleRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
       - store_artifacts:
-          path: app/build/outputs/apk
+          path: ./android/app/build/outputs/apk
           destination: apks
 
 workflows:
