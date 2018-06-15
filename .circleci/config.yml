@@ -32,7 +32,8 @@ jobs:
   publish_expo:
     working_directory: ~/pillarwallet
     docker:
-      image: circleci/node:8.9.4
+      - image: circleci/node:8.9.4
+
     steps:
       - checkout
       - run:
