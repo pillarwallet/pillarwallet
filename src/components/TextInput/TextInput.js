@@ -2,9 +2,9 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item, Input, Label } from 'native-base';
-import { fontSizes, fontWeights } from 'utils/variables';
+import { fontSizes, fontWeights, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
-import { View } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -26,6 +26,8 @@ type Props = {
   inputProps: inputPropsType,
   inputType: string,
   trim: boolean,
+  footerAddonText?: string,
+  footerAddonAction?: Function,
 }
 
 type State = {
@@ -51,30 +53,24 @@ const inputTypes = {
 
 const FloatingButton = styled(ButtonIcon)`
   position:absolute;
-  right: -15px;
+  right: 0;
   top: 20px;
   justifyContent: center;
   width: 60px;
+  height: 60px;
   margin: 0;
   padding: 0;
 `;
 
 const Error = styled.Text`
   color: tomato;
-  position: absolute;
-  left: 0;
-  bottom: 0;
   flex: 1;
-  padding-left: 2;
-  padding-right: 2;
-  marginBottom: 10;
 `;
 
 const PostFix = styled.Text`
-  fontWeight: 900;
-  position: absolute;
-  bottom: 0;
-  right: 0;
+  font-weight: 900;
+  line-height: 22px;
+  margin-top: 8px;
 `;
 
 const InputField = styled(Input)`
@@ -83,10 +79,24 @@ const InputField = styled(Input)`
   text-align: ${props => props.inputType.textAlign};
 `;
 
+const InputFooter = styled(View)`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  margin-top: 6px;
+`;
+
+const AddonText = styled.Text`
+  color: ${baseColors.clearBlue};
+  width: 100%;
+  text-align: right;
+`;
+
 class TextInput extends React.Component<Props, State> {
   state = {
     value: '',
-  }
+  };
 
   static defaultProps = {
     inputType: 'default',
@@ -132,13 +142,15 @@ class TextInput extends React.Component<Props, State> {
       inputProps,
       errorMessage,
       inlineLabel,
+      footerAddonText,
+      footerAddonAction,
     } = this.props;
     const { value } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     return (
       <View style={{ paddingBottom: 10 }}>
-        <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} style={{ marginBottom: 20 }} error={!!errorMessage}>
+        <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} error={!!errorMessage}>
           <Label>{label}</Label>
           <InputField
             {...inputProps}
@@ -151,8 +163,14 @@ class TextInput extends React.Component<Props, State> {
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
-        </Item>
-        {!!errorMessage && <Error>{errorMessage}</Error>}
+        </Item >
+        <InputFooter>
+          {errorMessage ? <Error>{errorMessage}</Error> : <View />}
+          {!!footerAddonText &&
+          <TouchableOpacity onPress={footerAddonAction}>
+            <AddonText>{footerAddonText}</AddonText>
+          </TouchableOpacity>}
+        </InputFooter>
       </View>
     );
   }

@@ -50,8 +50,6 @@ const AssetCard = (props: Props) => {
         backgroundColor: baseColors.white,
       }}
     >
-
-
       <TouchableWithoutFeedback
         onPress={onPress}
         style={{
@@ -63,8 +61,6 @@ const AssetCard = (props: Props) => {
           zIndex: 10,
         }}
       >
-
-
         <Animated.View
           color={linearGradientColorStart}
           style={[{
