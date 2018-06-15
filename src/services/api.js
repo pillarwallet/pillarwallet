@@ -2,7 +2,7 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
-// import { SDK_PROVIDER } from 'react-native-dotenv'; SDK_PROVIDER, ONLY if you have platform running locally
+import { SDK_PROVIDER } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 
 type HistoryPayload = {
@@ -25,7 +25,7 @@ export default function SDKWrapper() {
 SDKWrapper.prototype.init = function (privateKey: string) {
   this.pillarWalletSdk = new PillarSdk({
     privateKey: privateKey.slice(2),
-    // apiUrl: SDK_PROVIDER, ONLY if you have platform running locally
+    apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
   });
 };
 

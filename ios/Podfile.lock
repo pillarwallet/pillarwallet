@@ -148,6 +148,7 @@ PODS:
   - FirebaseSwizzlingUtilities/ISASwizzling (2.0.0)
   - FirebaseSwizzlingUtilities/MethodSwizzling (2.0.0):
     - FirebaseCore (~> 5.0)
+  - FLAnimatedImage (1.0.12)
   - Folly (2016.09.26.00):
     - boost-for-react-native
     - DoubleConversion
@@ -227,6 +228,11 @@ PODS:
   - Protobuf (3.5.0)
   - React (0.55.2):
     - React/Core (= 0.55.2)
+  - react-native-fast-image (4.0.14):
+    - FLAnimatedImage
+    - React
+    - SDWebImage/Core
+    - SDWebImage/GIF
   - React/ART (0.55.2):
     - React/Core
   - React/Core (0.55.2):
@@ -280,6 +286,10 @@ PODS:
     - React
   - RNVectorIcons (4.5.0):
     - React
+  - SDWebImage/Core (4.4.1)
+  - SDWebImage/GIF (4.4.1):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
   - yoga (0.55.2.React)
 
 DEPENDENCIES:
@@ -299,6 +309,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -328,6 +339,8 @@ EXTERNAL SOURCES:
     :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
   React:
     :path: ../node_modules/react-native
+  react-native-fast-image:
+    :path: ../node_modules/react-native-fast-image
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
   RNVectorIcons:
@@ -371,6 +384,7 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfig: 3c57e4644bd6976b671ae0b725cd709f198bd1f5
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
   FirebaseSwizzlingUtilities: 6c22677c50d0b6f5f0dc637c1233f13694a3003f
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Folly: 211775e49d8da0ca658aebc8eab89d642935755c
   glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
   Google-Maps-iOS-Utils: c32891ff472eaaa1fca032beedafa1a013af7875
@@ -395,10 +409,12 @@ SPEC CHECKSUMS:
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   React: 977e1cdf18a3047a35d321b34ffb678d79d19076
+  react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
+  SDWebImage: 47e9b5b925cbce75946c23f0c42dd19464189af4
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: deabab6a9bfb2ff0b61ea572c47c01e0ed733455
+PODFILE CHECKSUM: ea68c3bfcab47f82e0f82655c3d782984451f6bb
 
 COCOAPODS: 1.4.0
