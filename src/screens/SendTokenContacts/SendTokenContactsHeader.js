@@ -1,10 +1,11 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontSizes, fontWeights, baseColors } from 'utils/variables';
-import { Header as NBHeader, Body, Left, Right } from 'native-base';
+import { fontSizes, UIColors } from 'utils/variables';
+import { Header as NBHeader, Body, Left, Right, Icon } from 'native-base';
 import Button from 'components/Button';
-import ButtonIcon from 'components/ButtonIcon';
+import { TouchableOpacity } from 'react-native';
+
 
 type Props = {
   onBack: Function,
@@ -17,22 +18,20 @@ type Props = {
 const Header = styled(NBHeader)`
   background-color: #fff;
   border-bottom-width: 0;
+  elevation: 0;
 `;
 
 const BalanceLabel = styled.Text`
   font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.bold};
-  margin-top: 20px;
+  align-self: center;
+  line-height: 12px;
+  margin-top: 8px;
 `;
 
 const BalanceAmount = styled.Text`
   font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold};
-`;
-
-const BackIcon = styled(ButtonIcon)`
-  position: relative;
-  top: 10px;
+  align-self: center;
+  line-height: 20px;
 `;
 
 const SendTokenAmountHeader = (props: Props) => {
@@ -45,14 +44,24 @@ const SendTokenAmountHeader = (props: Props) => {
 
   return (
     <Header>
-      <Left>
-        <BackIcon icon="arrow-back" color={baseColors.clearBlue} onPress={() => onBack(null)} fontSize={28} />
+      <Left style={{ flex: 1 }}>
+        <TouchableOpacity onPress={onBack}>
+          <Icon
+            name="chevron-left"
+            type="Feather"
+            style={{
+              color: UIColors.primary,
+              fontSize: fontSizes.extraExtraLarge,
+            }}
+            onPress={() => onBack(null)}
+          />
+        </TouchableOpacity>
       </Left>
-      <Body>
+      <Body style={{ flex: 1 }}>
         <BalanceLabel>Send</BalanceLabel>
         <BalanceAmount>{amount} {symbol}</BalanceAmount>
       </Body>
-      <Right>
+      <Right style={{ flex: 1 }}>
         <Button
           secondary
           small

@@ -10,7 +10,7 @@ const storage = Storage.getInstance('db');
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function) => {
-    const { appSettings = {} } = await storage.get('app_settings');
+    const appSettings = await storage.get('app_settings');
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     if (appSettings.wallet) {
       let { assets } = await storage.get('assets');

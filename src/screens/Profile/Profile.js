@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import Storage from 'services/storage';
+import { AsyncStorage } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Label } from 'components/Typography';
@@ -14,8 +14,6 @@ import CurrencySelector from 'components/ProfileSettings/CurrencySelector';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import ProfileHeader from './ProfileHeader';
 import ProfileCard from './ProfileCard';
-
-const storage = new Storage('db');
 
 const ProfileInfoItem = styled.View`
   margin-left: 20px;
@@ -63,7 +61,7 @@ type Props = {
 
 class Profile extends React.Component<Props> {
   clearLocalStorage() {
-    storage.removeAll();
+    AsyncStorage.clear();
     Toast.show({
       text: 'Cleared',
       buttonText: '',
