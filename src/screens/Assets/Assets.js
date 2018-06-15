@@ -43,7 +43,7 @@ type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
-  assets: Object,
+  assets: Assets,
   wallet: Object,
   rates: Object,
   assetsState: ?string,
