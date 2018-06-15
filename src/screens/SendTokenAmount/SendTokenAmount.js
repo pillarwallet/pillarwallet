@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Text, Keyboard, TouchableOpacity } from 'react-native';
+import { Text, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -87,6 +87,9 @@ function AmountInputTemplate(locals) {
       id="amount"
       label={locals.label}
       inputProps={inputProps}
+      inlineLabel
+      footerAddonText="Use Max"
+      footerAddonAction={this.useMaxValue}
     />
   );
 }
@@ -98,14 +101,9 @@ const generateFormOptions = (config: Object): Object => ({
 });
 
 const ActionsWrapper = styled.View`
-  margin-top: 10px;
-  margin-bottom: 20px;
-`;
-
-const UseMaxValueButton = styled.Text`
-  color: ${baseColors.clearBlue};
-  width: 100%;
-  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
 `;
 
 export default class SendTokenAmount extends React.Component<Props, State> {
@@ -183,6 +181,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
       formStructure,
       assetData,
     } = this.state;
+
     const formOptions = generateFormOptions({ currency: assetData.token });
 
     const qrScannerComponent = (
@@ -200,7 +199,7 @@ export default class SendTokenAmount extends React.Component<Props, State> {
           onBack={this.props.navigation.goBack}
           nextOnPress={this.handleFormSubmit}
           balanceAmount={assetData.balance.toString()}
-          symbol={assetData.symbol}
+          symbol={assetData.token}
         />
         <Container>
           <Wrapper regularPadding>
@@ -212,23 +211,19 @@ export default class SendTokenAmount extends React.Component<Props, State> {
               value={value}
               onChange={this.handleChange}
             />
-            <TouchableOpacity onPress={this.useMaxValue}>
-              <UseMaxValueButton>Use Max</UseMaxValueButton>
-            </TouchableOpacity>
             <ActionsWrapper>
-              <Text>
+              <Text style={{ marginTop: 14 }}>
                 Fee:
-                <Text style={{ fontWeight: 'bold', color: '#000' }}>
-                  0.0004 ETH
-                  <ButtonIcon
-                    icon="alert"
-                    color={baseColors.clearBlue}
-                    fontSize={fontSizes.large}
-                    onPress={this.openFeeInfoModal}
-
-                  />
-                </Text>
               </Text>
+              <Text style={{ fontWeight: 'bold', color: '#000', marginTop: 14 }}>
+                0.0004 ETH
+              </Text>
+              <ButtonIcon
+                icon="alert"
+                color={baseColors.clearBlue}
+                fontSize={fontSizes.large}
+                onPress={this.openFeeInfoModal}
+              />
             </ActionsWrapper>
           </Wrapper>
         </Container>
