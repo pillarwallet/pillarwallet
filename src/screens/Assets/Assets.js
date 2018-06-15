@@ -23,7 +23,7 @@ import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConst
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 
 const defaultAssetColor = '#4C4E5E';
-const pillarLogoSource = require('assets/images/header-pillar-logo.png');
+const pillarLogoSource = require('../../assets/images/header-pillar-logo.png');
 
 const assetColors = {
   ETH: baseColors.darkGray,
@@ -226,7 +226,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Grid>
         </View>
         <ScrollWrapper
-          padding
+          regularPadding
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -258,7 +258,6 @@ class AssetsScreen extends React.Component<Props, State> {
               </Column>
             </Row>
           </Grid>
-
           {this.renderAssets()}
 
         </ScrollWrapper>

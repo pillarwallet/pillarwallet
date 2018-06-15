@@ -159,7 +159,7 @@ class AssetScreen extends React.Component<Props, State> {
             }}
           />
           <Wrapper
-            padding
+            regularPadding
             style={{
               backgroundColor: baseColors.white,
               height: 350,

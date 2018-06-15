@@ -15,7 +15,7 @@ public class MainActivity extends DetachActivity {
 
   @Override
   public String publishedUrl() {
-    return "exp://exp.host/@rostislavcn/pillar-wallet";
+    return "exp://exp.host/@deimantas/pillar-wallet";
   }
 
   @Override
@@ -25,7 +25,7 @@ public class MainActivity extends DetachActivity {
 
   @Override
   public List<String> sdkVersions() {
-    return new ArrayList<>(Arrays.asList("26.0.0"));
+    return new ArrayList<>(Arrays.asList("27.0.0"));
   }
 
   @Override

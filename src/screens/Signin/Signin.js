@@ -61,7 +61,7 @@ class Signin extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <Wrapper padding>
+        <Wrapper regularPadding>
           <Title title="login" />
           <Paragraph>Please enter the mobile number associated with your account.</Paragraph>
           <LoginForm>

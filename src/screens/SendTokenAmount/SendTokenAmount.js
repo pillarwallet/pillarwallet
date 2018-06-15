@@ -254,7 +254,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           symbol={token}
         />
         <Container>
-          <Wrapper padding>
+          <Wrapper regularPadding>
             <Title title="send" />
             <Form
               ref={node => { this._form = node; }}

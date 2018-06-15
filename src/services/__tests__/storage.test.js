@@ -1,5 +1,5 @@
 // @flow
-import Storage from '../storage';
+import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db-test.db');
 const docID = 'encryptedWallet';
@@ -14,5 +14,11 @@ describe('Storage service', () => {
   it('should retrieve a doc from PouchDB service', async () => {
     const { address } = await storage.get(docID);
     expect(address).toBe(mockEncryptedWallet.address);
+  });
+
+  it('should clear the storage', async () => {
+    await storage.removeAll();
+    const wallet = await storage.get(docID);
+    expect(wallet).toEqual({});
   });
 });

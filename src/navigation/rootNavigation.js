@@ -42,6 +42,7 @@ const StackNavigatorConfig = {
     headerStyle: {
       backgroundColor: baseColors.white,
       borderBottomWidth: 0,
+      elevation: 0,
     },
     headerLeft: <BackButton navigation={navigation} />,
   }),

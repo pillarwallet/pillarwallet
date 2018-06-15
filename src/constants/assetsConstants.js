@@ -11,6 +11,7 @@ export const UPDATE_ASSETS_BALANCES = 'UPDATE_ASSETS_BALANCES';
 export const ADD_ASSET = 'ADD_ASSET';
 export const REMOVE_ASSET = 'REMOVE_ASSET';
 export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
+export const UPDATE_SUPPORTED_ASSETS = 'UPDATE_SUPPORTED_ASSETS';
 export const ETH = 'ETH';
 export const PLR = 'PLR';
 export const EUR = 'EUR';
