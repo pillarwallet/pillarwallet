@@ -12,7 +12,6 @@ type Props = {
 const Wrapper = styled(NBHeader)`
   background-color: #fff;
   border-bottom-width: 0;
-  elevation: 0;
 `;
 
 

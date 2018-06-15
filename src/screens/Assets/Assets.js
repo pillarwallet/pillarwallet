@@ -14,7 +14,7 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import { ScrollWrapper, Container } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
@@ -39,12 +39,11 @@ const activeModalResetState = {
   },
 };
 
-
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
-  assets: Object,
+  assets: Assets,
   wallet: Object,
   rates: Object,
   assetsState: ?string,
@@ -61,12 +60,14 @@ type State = {
       tokenName?: string,
       formValues?: Object
     }
-  }
+  },
+  assetsMedia: Object
 }
 
 class AssetsScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
+    assetsMedia: {},
   };
 
   static navigationOptions = {
@@ -92,7 +93,17 @@ class AssetsScreen extends React.Component<Props, State> {
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
+
+    this.fetchAssetsMedia();
   }
+
+  fetchAssetsMedia = async () => {
+    const response = await fetch('https://api.myjson.com/bins/dqsvy');
+    const json = await response.json();
+    this.setState({
+      assetsMedia: json,
+    });
+  };
 
   handleCardTap = (assetData: Object) => {
     this.props.navigation.navigate(ASSET, {
@@ -118,6 +129,8 @@ class AssetsScreen extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
+    const { assetsMedia } = this.state;
+
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return Object.keys(assets)
@@ -140,11 +153,14 @@ class AssetsScreen extends React.Component<Props, State> {
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           color: assetColor,
           address: wallet.address,
+          icon: assetsMedia[symbol].icon,
+          background: assetsMedia[symbol].background,
         };
+
         return (
           <Transition key={index} shared={assetData.name}>
             <AssetCard
-              id={symbol}
+              id={assetData.token}
               name={assetData.name}
               token={assetData.token}
               amount={assetData.amount}
@@ -152,6 +168,8 @@ class AssetsScreen extends React.Component<Props, State> {
               color={assetData.color}
               onPress={() => this.handleCardTap(assetData)}
               address={assetData.address}
+              iconUri={assetData.icon}
+              backgroundUri={assetData.background}
             />
           </Transition>
         );
@@ -225,52 +243,47 @@ class AssetsScreen extends React.Component<Props, State> {
             </Row>
           </Grid>
         </View>
-        <View style={{
-          width: '100%',
-          paddingLeft: 20,
-          paddingRight: 20,
-        }}
+        <ScrollWrapper
+          regularPadding
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                const {
+                  fetchAssetsBalances,
+                  fetchExchangeRates,
+                } = this.props;
+                fetchAssetsBalances(assets, wallet.address);
+                fetchExchangeRates(assets);
+              }}
+            />
+          }
         >
-          <ScrollWrapper
-            // regularPadding
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const {
-                    fetchAssetsBalances,
-                    fetchExchangeRates,
-                  } = this.props;
-                  fetchAssetsBalances(assets, wallet.address);
-                  fetchExchangeRates(assets);
-                }}
-              />
-            }
-          >
-            <Grid>
-              <Row>
-                <Column>
-                  <Title title="assets" />
-                </Column>
-                <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                  <Button
-                    secondary
-                    noPadding
-                    marginTop="20px"
-                    marginBottom="20px"
-                    onPress={this.goToAddTokenPage}
-                    title="Add Token+"
-                  />
-                </Column>
-              </Row>
-            </Grid>
-            {this.renderAssets()}
-          </ScrollWrapper>
-        </View>
+          <Grid>
+            <Row>
+              <Column>
+                <Title title="assets" />
+              </Column>
+              <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
+                <Button
+                  secondary
+                  noPadding
+                  marginTop="20px"
+                  marginBottom="20px"
+                  onPress={this.goToAddTokenPage}
+                  title="Add Token+"
+                />
+              </Column>
+            </Row>
+          </Grid>
+          { Object.keys(this.state.assetsMedia).length !== 0 ? this.renderAssets() : <ActivityIndicator animating /> }
+        </ScrollWrapper>
+
         <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
+
       </Container >
     );
   }
