@@ -98,7 +98,7 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   fetchAssetsMedia = async () => {
-    const response = await fetch('https://api.myjson.com/bins/1a83sm');
+    const response = await fetch('https://api.myjson.com/bins/dqsvy');
     const json = await response.json();
     this.setState({
       assetsMedia: json,
