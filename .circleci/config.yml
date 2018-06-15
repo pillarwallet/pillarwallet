@@ -40,6 +40,9 @@ jobs:
           name: Install Expo cli
           command: yarn global add exp
       - run:
+          name: Setting .expo/PATH
+          command: exp path
+      - run:
             name: Authenticate with Artifactory
             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
@@ -51,9 +54,6 @@ jobs:
       - run:
           name: Install node dependencies
           command: yarn install
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
       - run:
           name: Login to Expo
           command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
