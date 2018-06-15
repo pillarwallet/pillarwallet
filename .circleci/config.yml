@@ -253,7 +253,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Bundle install
-          command: bundle install
+          command: cd android && bundle install
           environment:
             BUNDLE_PATH: ./android/vendor/bundle
       - run:
