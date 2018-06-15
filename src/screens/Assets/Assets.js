@@ -283,7 +283,6 @@ class AssetsScreen extends React.Component<Props, State> {
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
-
       </Container >
     );
   }
