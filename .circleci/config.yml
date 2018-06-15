@@ -252,16 +252,13 @@ jobs:
           paths:
             - vendor/bundle
       - run:
-          name: Download Android Dependencies
-          command: ./android/gradlew androidDependencies
-      - run:
           name: Bundle install
           command: bundle install
           environment:
             BUNDLE_PATH: ./android/vendor/bundle
       - run:
           name: Download Dependencies
-          command: ./android/gradlew androidDependencies
+          command: cd android && ./gradlew androidDependencies
       - save_cache:
           key: jars-{{ checksum "./android/gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
           paths:
