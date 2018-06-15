@@ -6,12 +6,11 @@ import {
   View,
 } from 'react-native';
 import { baseColors } from 'utils/variables';
+import { lighten } from 'polished';
 import { getCurrencySymbol } from 'utils/common';
-import FastImage from 'react-native-fast-image';
-import styled from 'styled-components/native';
-
+import IconImage from './IconImage';
 import IconWrapper from './IconWrapper';
-import IconCircle from './IconCircle';
+import Background from './Background';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
 import { Amount, AmountToken, FiatAmount } from './Amount';
@@ -29,25 +28,22 @@ type Props = {
     amount: string | number,
     currency: string,
   },
-  iconUri: string,
-  backgroundUri: string,
 }
 
-const BackgroundHolder = styled(View)`
-  flex: 1;
-  flex-direction: row;
-  border-radius: 20px;
-  overflow: hidden;
-`;
+const iconETH = require('../../assets/tokens/ETH/icon-ETH.png');
 
-type State = {
-  showAsset: boolean;
-}
+const AssetCard = (props: Props) => {
+  const {
+    color: linearGradientColorStart,
+    name,
+    amount,
+    token,
+    balanceInFiat,
+    onPress,
+  } = props;
+  const linearGradientColorEnd = lighten(0.2, linearGradientColorStart);
+  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
-export default class AssetCard extends React.Component<Props, State> {
-  state = {
-    showAsset: false,
-  }
   return (
     <View
       style={{
@@ -57,7 +53,12 @@ export default class AssetCard extends React.Component<Props, State> {
       <TouchableWithoutFeedback
         onPress={onPress}
         style={{
-          backgroundColor: baseColors.white,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 10,
         }}
       >
         <Animated.View
@@ -65,64 +66,24 @@ export default class AssetCard extends React.Component<Props, State> {
           style={[{
             height: 120,
             marginBottom: 20,
+          }]}
         >
-          <Animated.View
-            color={linearGradientColorStart}
-            style={[{
-              height: 120,
-              marginBottom: 20,
-            }]}
-          >
-            <BackgroundHolder>
-              <FastImage
-                style={{
-                  width: '100%',
-                  height: 200,
-                  position: 'absolute',
-                  display: 'flex',
-                  top: 0,
-                  left: 0,
-                  bottom: 0,
-                  right: 0,
-                }}
-                source={{
-                  uri: backgroundUri,
-                  priority: FastImage.priority.high,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-                onLoad={this.handleBackgroundDownload}
-              />
-              <DetailsWrapper>
-                <Name>{name}</Name>
-                <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
-                <FiatAmount>
-                  {currencySymbol}{balanceInFiat.amount}
-                </FiatAmount>
-              </DetailsWrapper>
-              <IconWrapper>
-                <IconCircle>
-                  <FastImage
-                    style={{
-                      alignSelf: 'flex-end',
-                      height: 24,
-                      width: 24,
-                      position: 'absolute',
-                      top: 8,
-                      left: 8,
-                      opacity: this.state.showAsset ? 1 : 0,
-                    }}
-                    source={{
-                      uri: iconUri,
-                      priority: FastImage.priority.low,
-                    }}
-                    resizeMode={FastImage.resizeMode.cover}
-                  />
-                </IconCircle>
-              </IconWrapper>
-            </BackgroundHolder>
-          </Animated.View>
-        </TouchableWithoutFeedback>
-      </View>
-    );
-  }
-}
+          <Background colors={[linearGradientColorStart, linearGradientColorEnd]} start={[0, 1]} end={[1, 0]}>
+            <DetailsWrapper>
+              <Name>{name}</Name>
+              <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
+              <FiatAmount>
+                {currencySymbol}{balanceInFiat.amount}
+              </FiatAmount>
+            </DetailsWrapper>
+            <IconWrapper>
+              <IconImage source={iconETH} />
+            </IconWrapper>
+          </Background>
+        </Animated.View>
+      </TouchableWithoutFeedback>
+    </View>
+  );
+};
+
+export default AssetCard;

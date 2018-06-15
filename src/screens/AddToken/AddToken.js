@@ -11,12 +11,7 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import ModalHeader from 'components/ModalHeader';
-import {
-  addAssetAction,
-  removeAssetAction,
-  fetchAssetsBalancesAction,
-  fetchSupportedAssetsAction,
-} from 'actions/assetsActions';
+import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 const tokenIcons = {};
 
@@ -47,19 +42,20 @@ const TokenListItem = styled(ListItem)`
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  supportedAssets: Asset[],
   assets: Assets,
   wallet: Object,
   fetchAssetsBalances: Function,
-  fetchSupportedAssets: Function,
   addAsset: Function,
   removeAsset: Function,
 }
 
-class AddToken extends React.Component<Props> {
-  componentDidMount() {
-    const { fetchSupportedAssets } = this.props;
-    fetchSupportedAssets();
+type State = {
+  supportedAssets: Asset[],
+}
+
+class AddToken extends React.Component<Props, State> {
+  state = {
+    supportedAssets: [],
   }
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
@@ -72,7 +68,8 @@ class AddToken extends React.Component<Props> {
   }
 
   generateAddTokenListItems() {
-    const { assets, supportedAssets } = this.props;
+    const { assets } = this.props;
+    const { supportedAssets } = this.state;
     return supportedAssets.map(({ symbol, name, ...rest }) => {
       const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
       return (
@@ -122,8 +119,7 @@ class AddToken extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { data: wallet } }) => ({
-  supportedAssets,
+const mapStateToProps = ({ assets: { data: assets }, wallet: { data: wallet } }) => ({
   assets,
   wallet,
 });
@@ -131,8 +127,6 @@ const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { 
 const mapDispatchToProps = (dispatch) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchSupportedAssets: () =>
-    dispatch(fetchSupportedAssetsAction()),
   fetchAssetsBalances: (assets, walletAddress) =>
     dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
 });

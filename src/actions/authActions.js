@@ -18,7 +18,7 @@ const storage = Storage.getInstance('db');
 
 export const checkPinAction = (pin: string, onValidPin?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { wallet: encryptedWallet } = await storage.get('wallet');
+    const encryptedWallet = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
@@ -69,7 +69,7 @@ export const changePinAction = (pin: string) => {
       .then(JSON.parse)
       .catch(() => ({}));
 
-    await storage.save('wallet', { wallet: encryptedWallet });
+    await storage.save('wallet', encryptedWallet);
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,

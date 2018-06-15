@@ -11,7 +11,7 @@ const NAVIGATE = 'Navigation/NAVIGATE';
 const mockStore = configureMockStore([thunk]);
 const store = mockStore({});
 describe('Signup actions', () => {
-  xit('should expect series of actions to be dispatch on confirmOTPAction execution including storage update', () => {
+  it('should expect series of actions to be dispatch on confirmOTPAction execution including storage update', () => {
     const expectedActions = [
       { type: NAVIGATE, routeName: ONBOARDING_FLOW },
     ];
