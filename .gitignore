@@ -104,6 +104,10 @@ ios/.bundle/
 ios/Gemfile
 ios/Gemfile.lock
 ios/vendor/
+android/.bundle/
+android/Gemfile
+android/Gemfile.lock
+android/vendor/
 
 ##Fastlane
 ios/fastlane/README.md
