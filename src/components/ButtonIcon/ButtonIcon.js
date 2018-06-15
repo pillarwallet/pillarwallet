@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { StyleSheet, Platform, TouchableNativeFeedback, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Icon, Button } from 'native-base';
 
 type Props = {
@@ -19,29 +19,10 @@ const ButtonIcon = (props: Props) => {
     color,
     style,
   } = props;
-
-  if (Platform.OS === 'ios') {
-    return (
-      <Button transparent iconLeft={0} onPress={onPress} style={style}>
-        <Icon active={false} name={icon} style={{ fontSize, color }} />
-      </Button>
-    );
-  }
-
   return (
-    <TouchableNativeFeedback
-      onPress={onPress}
-      style={style}
-      background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
-    >
-      <View style={{
-        padding: 12,
-        alignSelf: 'center',
-      }}
-      >
-        <Icon active={false} name={icon} style={[{ alignSelf: 'center' }, { fontSize, color }]} />
-      </View>
-    </TouchableNativeFeedback>
+    <Button transparent iconLeft={0} onPress={onPress} style={style}>
+      <Icon active={false} name={icon} style={{ fontSize, color }} />
+    </Button>
   );
 };
 
