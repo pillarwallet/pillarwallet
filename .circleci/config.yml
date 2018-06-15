@@ -246,7 +246,7 @@ jobs:
           command: cd android && bundle check || bundle install --path vendor/bundle
       - run:
           name: Install fastlane as a dependency
-          command: cd android && sudo bundle update
+          command: cd android && bundle update
       - save_cache:
           key: gems-{{ checksum "./android/Gemfile" }}
           paths:
