@@ -22,6 +22,7 @@ import { pipe, parseNumber, decodeETHAddress, formatMoney, formatAmount } from '
 import { baseColors, fontSizes } from 'utils/variables';
 import SendTokenAmountHeader from './SendTokenAmountHeader';
 
+const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
@@ -135,7 +136,6 @@ class SendTokenAmount extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
     provider.getGasPrice()
       .then(gasPrice => {
         this.gasPriceFetched = true;
