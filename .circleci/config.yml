@@ -257,6 +257,9 @@ jobs:
           environment:
             BUNDLE_PATH: ./android/vendor/bundle
       - run:
+          name: Chmod permissions #if permission for Gradlew Dependencies fail, use this.
+          command: sudo chmod +x ./android/gradlew
+      - run:
           name: Download Dependencies
           command: cd android && ./gradlew androidDependencies
       - save_cache:
