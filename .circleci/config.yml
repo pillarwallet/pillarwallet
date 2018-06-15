@@ -29,6 +29,37 @@ jobs:
           path: ./reports/
           destination: reports
 
+  publish_expo:
+    working_directory: ~/pillarwallet
+    docker:
+      image: circleci/node:8.9.4
+    steps:
+      - checkout
+      - run:
+          name: Install Expo cli
+          command: yarn global add exp
+      - run:
+            name: Authenticate with Artifactory
+            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - run:
+            name: set Yarn to use Artifactory
+            command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+      - run:
+          name: Install node dependencies
+          command: yarn install
+      - run:
+          name: Setting .expo/PATH
+          command: exp path
+      - run:
+          name: Login to Expo
+          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
+      - run:
+          name: Publish resources bundle to Expo server
+          command: exp publish
+
   test_ios:
     working_directory: ~/pillarwallet
     macos:
@@ -205,18 +236,6 @@ jobs:
           name: Creating Gemfile in android dir
           command: cd android && bundle init
       - run:
-          name: Install Expo cli
-          command: yarn global add exp
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
-      - run:
-          name: Login to Expo
-          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
-      - run:
-          name: Publish resources bundle to Expo server
-          command: exp publish
-      - run:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./android/Gemfile
       - restore_cache:
@@ -285,9 +304,15 @@ workflows:
           filters:
             branches:
               only: master
-      - build_android:
+      - publish_expo
           requires:
             - build
+          filters:
+            branches:
+              only: android_fastlane_circle
+      - build_android:
+          requires:
+            - publish_expo
           filters:
             branches:
               only: android_fastlane_circle
