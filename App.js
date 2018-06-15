@@ -1,8 +1,8 @@
 // @flow
 import 'utils/setup';
 import * as React from 'react';
-import { StatusBar, BackHandler } from 'react-native';
 import { NavigationActions } from 'react-navigation';
+import { BackHandler } from 'react-native';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
 import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
@@ -26,6 +26,7 @@ type Props = {
   fetchAppSettingsAndRedirect: Function,
 }
 
+
 class App extends React.Component<Props, State> {
   state = {
     isFetched: false,
@@ -44,7 +45,6 @@ class App extends React.Component<Props, State> {
   componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
     fetchAppSettingsAndRedirect();
-    StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
   }
 

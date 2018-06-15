@@ -42,8 +42,10 @@ export default class AsyncStorageMock {
     });
   }));
 
-  getAllKeys = mock(jest.fn((cb) => {
-    cb(null, Object.keys(this.storageCache));
+  getAllKeys = mock(jest.fn(() => {
+    return new Promise((resolve) => {
+      resolve(Object.keys(this.storageCache));
+    });
   }));
 
   multiSet = mock(jest.fn((items) => {
@@ -55,12 +57,9 @@ export default class AsyncStorageMock {
     });
   }));
 
-  multiGet = mock(jest.fn((keys) => {
+  multiGet = mock(jest.fn(() => {
     return new Promise((resolve) => {
-      const res = Object.keys(this.storageCache)
-        .filter(k => keys.includes(k))
-        .map(k => [k, this.storageCache[k]]);
-      resolve(res);
+      resolve([]);
     });
   }));
 }

@@ -20,14 +20,6 @@ Storage.prototype.save = function (id: string, data: Object) {
   }).catch(() => this.db.post({ _id: id, ...data }));
 };
 
-Storage.prototype.removeAll = function () {
-  return this.db.allDocs().then(result => {
-    return Promise.all(result.rows.map(row => {
-      return this.db.remove(row.id, row.value.rev);
-    }));
-  });
-};
-
 Storage.getInstance = function (name: string, opts: ?Object) {
   if (!this._instances) {
     this._instances = {};
