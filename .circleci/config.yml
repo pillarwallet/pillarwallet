@@ -304,7 +304,7 @@ workflows:
           filters:
             branches:
               only: master
-      - publish_expo
+      - publish_expo:
           requires:
             - build
           filters:
