@@ -65,13 +65,6 @@ const ErrorMessage = styled.Text`
   position: absolute;
   left: 0;
   bottom: -25px;
-  /*
-  bottom: 0;
-  flex: 1;
-  padding-left: 2;
-  padding-right: 2;
-  marginBottom: 10;
-   */
 `;
 
 const PostFix = styled.Text`
