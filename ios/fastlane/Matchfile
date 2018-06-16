@@ -1,0 +1,11 @@
+git_url("git@github.com:pillarwallet/fastlane_ios_certificates.git")
+
+type("appstore") # The default type, can be: appstore, adhoc, enterprise or development
+
+username("automation@pillarproject.io") # Your Apple Developer Portal username
+
+# app_identifier(["tools.fastlane.app", "tools.fastlane.app2"])
+
+
+# For all available options run `fastlane match --help`
+# Remove the # in the beginning of the line to enable the other options

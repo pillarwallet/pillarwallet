@@ -94,7 +94,7 @@ class ImportWallet extends React.Component<Props, State> {
     const errorMessagePrivateKey = this.state.errorType === 'privateKey' ? this.state.errorMessage : '';
     return (
       <Container>
-        <ScrollWrapper padding>
+        <ScrollWrapper regularPadding>
           <Title title="restore wallet" />
           <Paragraph>
               Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
@@ -107,6 +107,7 @@ class ImportWallet extends React.Component<Props, State> {
               multiline: true,
             }}
             errorMessage={errorMessageTWordsPhrase}
+            underlineColorAndroid="transparent"
           />
           <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
           <TextInput
@@ -116,6 +117,7 @@ class ImportWallet extends React.Component<Props, State> {
               value: privateKey,
             }}
             errorMessage={errorMessagePrivateKey}
+            underlineColorAndroid="transparent"
           />
         </ScrollWrapper>
       </Container>

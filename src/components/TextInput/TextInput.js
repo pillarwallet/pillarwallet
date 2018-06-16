@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { Item, Input, Label } from 'native-base';
 import { fontSizes, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
+import { View } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -64,6 +65,13 @@ const ErrorMessage = styled.Text`
   position: absolute;
   left: 0;
   bottom: -25px;
+  /*
+  bottom: 0;
+  flex: 1;
+  padding-left: 2;
+  padding-right: 2;
+  marginBottom: 10;
+   */
 `;
 
 const PostFix = styled.Text`
@@ -106,7 +114,7 @@ class TextInput extends React.Component<Props, State> {
         onBlur(value);
       }
     });
-  }
+  };
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
@@ -116,7 +124,7 @@ class TextInput extends React.Component<Props, State> {
         onChange(value);
       }
     });
-  }
+  };
 
   renderErrorMessage = () => {
     if (this.props.errorMessage) {
@@ -127,14 +135,14 @@ class TextInput extends React.Component<Props, State> {
       );
     }
     return null;
-  }
+  };
 
   hasError = () => {
     if (this.props.errorMessage && this.props.errorMessage.length > 0) {
       return true;
     }
     return false;
-  }
+  };
 
   render() {
     const {
@@ -149,31 +157,35 @@ class TextInput extends React.Component<Props, State> {
     const { value } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
     return (
-      <Item
-        inlineLabel={inlineLabel}
-        stackedLabel={!inlineLabel}
-        error={this.hasError()}
-        style={
-          this.props.inputProps.multiline ?
-          {
-            height: 112,
-            marginBottom: 20,
+      <View style={{ paddingBottom: 10 }}>
+        <Item
+          inlineLabel={inlineLabel}
+          stackedLabel={!inlineLabel}
+          error={this.hasError()}
+          style={
+            this.props.inputProps.multiline ?
+            {
+              height: 112,
+              marginBottom: 20,
+            }
+            : { marginBottom: 20 }
           }
-          : { marginBottom: 20 }
-        }
-      >
-        <Label>{label}</Label>
-        <InputField
-          {...inputProps}
-          onChange={inputProps && inputProps.onChange && this.handleChange}
-          onBlur={inputProps && inputProps.onBlur && this.handleBlur}
-          value={value}
-          inputType={inputType}
-        />
-        {icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
-        {postfix && <PostFix>{postfix}</PostFix>}
-        {this.renderErrorMessage()}
-      </Item>
+        >
+          <Label>{label}</Label>
+          <InputField
+            {...inputProps}
+            onChange={inputProps && inputProps.onChange && this.handleChange}
+            onBlur={inputProps && inputProps.onBlur && this.handleBlur}
+            onEndEditing={() => this.handleBlur}
+            value={value}
+            inputType={inputType}
+            style={{ fontSize: 22 }}
+          />
+          {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
+          {!!postfix && <PostFix>{postfix}</PostFix>}
+          {this.renderErrorMessage()}
+        </Item>
+      </View>
     );
   }
 }

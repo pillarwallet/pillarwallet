@@ -21,8 +21,6 @@ import TransactionSentModal from 'components/TransactionSentModal';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
-// TODO: Replace me with real address or pass in with Redux
-
 const activeModalResetState = {
   type: null,
   opts: {
@@ -32,13 +30,12 @@ const activeModalResetState = {
   },
 };
 
-
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchExchangeRates: (assets: Assets) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   history: Transaction[],
-  assets: Object,
+  assets: Assets,
   wallet: Object,
   rates: Object,
   assetsState: ?string,
@@ -69,6 +66,22 @@ class AssetScreen extends React.Component<Props, State> {
       timing: Animated.timing,
       easing: Easing.easing,
     },
+  };
+
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { initialModalState } = nextProps.navigation.state.params;
+    const activeModalInitialState = {
+      type: initialModalState,
+      opts: {},
+    };
+
+    if (initialModalState !== prevState.activeModal) {
+      return {
+        ...prevState,
+        activeModal: activeModalInitialState,
+      };
+    }
+    return null;
   }
 
   componentDidMount() {
@@ -77,7 +90,6 @@ class AssetScreen extends React.Component<Props, State> {
       wallet,
       navigation,
     } = this.props;
-
     const { assetData } = navigation.state.params;
     fetchTransactionsHistory(wallet.address, assetData.token);
   }
@@ -88,23 +100,28 @@ class AssetScreen extends React.Component<Props, State> {
 
   handleOpenShareDialog = (address: string) => {
     Share.share({ title: 'Public address', message: address });
-  }
+  };
 
   goToAddTokenPage = () => {
     this.props.navigation.navigate(ADD_TOKEN);
-  }
+  };
 
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FLOW, {
       assetData,
     });
-  }
+  };
+
+  openReceiveTokenModal = (assetData) => {
+    this.setState({
+      activeModal: {
+        type: 'RECEIVE',
+        opts: { address: assetData.address },
+      },
+    });
+  };
 
   render() {
-    const {
-      activeModal: { type: activeModalType },
-    } = this.state;
-
     const { assetData } = this.props.navigation.state.params;
     const {
       assets,
@@ -142,7 +159,7 @@ class AssetScreen extends React.Component<Props, State> {
             }}
           />
           <Wrapper
-            padding
+            regularPadding
             style={{
               backgroundColor: baseColors.white,
               height: 350,
@@ -158,6 +175,8 @@ class AssetScreen extends React.Component<Props, State> {
                 color={assetData.color}
                 onPress={this.handleCardTap}
                 address={assetData.address}
+                iconUri={assetData.icon}
+                backgroundUri={assetData.background}
               />
             </Transition>
             <Paragraph light>
@@ -165,9 +184,7 @@ class AssetScreen extends React.Component<Props, State> {
               Reiciendis cum recusandae neque numquam corporis quibusdam tenetur expedita tempora aut harum.
             </Paragraph>
             <AssetButtons
-              onPressReceive={
-                () => { this.setState({ activeModal: { type: 'RECEIVE', opts: { address: assetData.address } } }); }
-              }
+              onPressReceive={() => this.openReceiveTokenModal(assetData)}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
             />
           </Wrapper>
@@ -179,7 +196,7 @@ class AssetScreen extends React.Component<Props, State> {
         </ScrollWrapper>
 
         <ReceiveModal
-          isVisible={activeModalType === 'RECEIVE'}
+          isVisible={this.state.activeModal.type === 'RECEIVE'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           address={assetData.address}
           token={assetData.token}
@@ -188,7 +205,7 @@ class AssetScreen extends React.Component<Props, State> {
         />
 
         <TransactionSentModal
-          isVisible={activeModalType === 'SEND_CONFIRMATION'}
+          isVisible={this.state.activeModal.type === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
         />
 

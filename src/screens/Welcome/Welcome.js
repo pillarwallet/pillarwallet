@@ -13,6 +13,11 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isFetched: boolean,
   OTP: boolean | number,
+  listeners: Object[]
+}
+
+type State = {
+  shouldAnimate: boolean
 }
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
@@ -22,20 +27,46 @@ const PillarLogo = styled.Image`
   width: 120;
 `;
 
-class Welcome extends React.Component<Props> {
+class Welcome extends React.Component<Props, State> {
+  listeners: Object[];
+
+  constructor(props: Props) {
+    super(props);
+    this.listeners = [];
+  }
+
+
   static navigationOptions = {
     header: null,
-  }
+  };
+
+  state = {
+    shouldAnimate: true,
+  };
+
   loginAction = () => {
     this.props.navigation.navigate(ONBOARDING_HOME);
   };
+
+  componentDidMount() {
+    this.listeners = [
+      this.props.navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
+      this.props.navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
+    ];
+  }
+
+  componentWillUnmount() {
+    this.listeners.forEach((listenerItem) => {
+      listenerItem.remove();
+    });
+  }
 
   render() {
     const { isFetched } = this.props;
     if (!isFetched) return null;
     return (
       <Container center>
-        <AnimatedBackground />
+        <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
         <PillarLogo source={pillarLogoSource} />
         <Footer>
           <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />

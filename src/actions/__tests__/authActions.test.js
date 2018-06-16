@@ -36,7 +36,7 @@ describe('Wallet actions', () => {
 
   beforeAll(() => {
     const storage = Storage.getInstance('db');
-    return storage.save('wallet', mockWallet);
+    return storage.save('wallet', { wallet: mockWallet });
   });
 
   beforeEach(() => {

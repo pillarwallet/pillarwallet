@@ -91,32 +91,28 @@ android {
 // }
 
 
-task exponentPrebuildStep(type: Exec) {
-  workingDir '../'
-  if (System.getProperty('os.name').toLowerCase().contains('windows')) {
-    commandLine 'cmd', '/c', '.\\detach-scripts\\prepare-detached-build.bat'
-  } else {
-    commandLine './detach-scripts/prepare-detached-build.sh'
-  }
-}
-preBuild.dependsOn exponentPrebuildStep
+apply from: 'expo.gradle'
 
 
 dependencies {
-    compile project(':react-native-device-info')
+    compile project(':react-native-fast-image')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
-    compile project(':react-native-os')
     compile project(':react-native-randombytes')
+    compile project(':react-native-os')
     compile(project(':react-native-firebase')) {
         transitive = false
     }
+    compile project(':react-native-device-info')
   compile fileTree(dir: 'libs', include: ['*.jar'])
 
   compile 'com.android.support:multidex:1.0.1'
 
   // Our dependencies
   compile 'com.android.support:appcompat-v7:26.0.1'
+  compile "com.google.android.gms:play-services-base:15.0.0"
+  compile "com.google.firebase:firebase-core:15.0.2"
+
 
   // Our dependencies from ExpoView
   // DON'T ADD ANYTHING HERE THAT ISN'T IN EXPOVIEW. ONLY COPY THINGS FROM EXPOVIEW TO HERE.
@@ -130,12 +126,12 @@ dependencies {
   compile 'de.greenrobot:eventbus:2.4.0'
   compile 'com.amplitude:android-sdk:2.9.2' // Be careful when upgrading! Upgrading might break experience scoping. Check with Jesse. See Analytics.resetAmplitudeDatabaseHelper
   compile 'com.squareup.picasso:picasso:2.5.2'
-  compile 'com.google.android.gms:play-services-gcm:9.8.0'
-  compile 'com.google.android.gms:play-services-analytics:9.8.0'
-  compile 'com.google.android.gms:play-services-maps:9.8.0'
-  compile 'com.google.android.gms:play-services-auth:9.8.0'
-  compile 'com.google.android.gms:play-services-location:9.8.0'
-  compile 'com.google.android.gms:play-services-ads:9.8.0'
+  compile 'com.google.android.gms:play-services-gcm:15.0.0'
+  compile 'com.google.android.gms:play-services-analytics:15.0.0'
+  compile 'com.google.android.gms:play-services-maps:15.0.0'
+  compile 'com.google.android.gms:play-services-auth:15.0.0'
+  compile 'com.google.android.gms:play-services-location:15.0.0'
+//  compile 'com.google.android.gms:play-services-ads:15.0.0'
   apt 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
   compile "com.raizlabs.android:DBFlow-Core:2.2.1"
   compile "com.raizlabs.android:DBFlow:2.2.1"
@@ -176,11 +172,21 @@ dependencies {
 
 
   
-  compile('host.exp.exponent:expoview:26.0.0@aar') {
+  compile('host.exp.exponent:expoview:27.0.0@aar') {
     transitive = true
   }
   
-  
+}
+
+configurations.all {
+  resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+    def requested = details.requested
+    if (requested.group == 'com.android.support') {
+      if (!requested.name.startsWith("multidex")) {
+        details.useVersion '26.0.1'
+      }
+    }
+  }
 }
 
 // This has to be down here for some reason

@@ -1,7 +1,6 @@
 // @flow
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import { AsyncStorage } from 'react-native';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
 import { getSaltedPin } from 'utils/wallet';
@@ -30,7 +29,7 @@ export const registerWalletAction = () => {
     const mnemonicPhrase = mnemonic.original;
 
     // STEP 0: Clear local storage
-    AsyncStorage.clear();
+    await storage.removeAll();
 
     // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -58,8 +57,8 @@ export const registerWalletAction = () => {
       .then(JSON.parse)
       .catch(() => ({}));
 
-    await storage.save('wallet', encryptedWallet);
-    await storage.save('app_settings', { wallet: +new Date() });
+    await storage.save('wallet', { wallet: encryptedWallet });
+    await storage.save('app_settings', { appSettings: { wallet: +new Date() } });
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
@@ -71,7 +70,6 @@ export const registerWalletAction = () => {
     const sdkWallet = await api.registerOnBackend(fcmToken);
     const updatedUser = await api.updateUser({
       walletId: sdkWallet.walletId,
-      userId: sdkWallet.userId,
       ...user,
     });
     if (Object.keys(updatedUser).length) {
@@ -95,7 +93,7 @@ export const registerWalletAction = () => {
     }
 
     // STEP 5: get&store initial assets
-    const initialAssets = await api.getInitialAssets(updatedUser.walletId);
+    const initialAssets = await api.fetchInitialAssets(updatedUser.walletId);
     const rates = await getExchangeRates(Object.keys(initialAssets));
 
     dispatch({
@@ -136,7 +134,6 @@ export const registerOnBackendAction = () => {
     const sdkWallet = await api.registerOnBackend(fcmToken);
     const updatedUser = await api.updateUser({
       walletId: sdkWallet.walletId,
-      userId: sdkWallet.userId,
       ...user,
     });
     if (Object.keys(updatedUser).length) {

@@ -6,14 +6,17 @@ import com.facebook.react.ReactPackage;
 import java.util.Arrays;
 import java.util.List;
 
+import expolib_v1.okhttp3.OkHttpClient;
+
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.dylanvann.fastimage.FastImageViewPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
-import com.peel.react.rnos.RNOSModule;
 import com.bitgo.randombytes.RandomBytesPackage;
+import com.peel.react.rnos.RNOSModule;
 import io.invertase.firebase.RNFirebasePackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 
 public class MainApplication extends ExpoApplication {
 
@@ -30,12 +33,13 @@ public class MainApplication extends ExpoApplication {
 
         // Needed for `react-native link`
         // new MainReactPackage(),
-            new RNDeviceInfo(),
+            new FastImageViewPackage(),
             new UdpSocketsModule(),
             new TcpSocketsModule(),
-            new RNOSModule(),
             new RandomBytesPackage(),
-            new RNFirebasePackage()
+            new RNOSModule(),
+            new RNFirebasePackage(),
+            new RNDeviceInfo()
     );
   }
 
@@ -47,5 +51,10 @@ public class MainApplication extends ExpoApplication {
   @Override
   public boolean shouldUseInternetKernel() {
     return BuildVariantConstants.USE_INTERNET_KERNEL;
+  }
+
+  public static OkHttpClient.Builder okHttpClientBuilder(OkHttpClient.Builder builder) {
+    // Customize/override OkHttp client here
+    return builder;
   }
 }

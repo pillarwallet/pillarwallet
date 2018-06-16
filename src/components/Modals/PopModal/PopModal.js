@@ -110,8 +110,8 @@ export default class PopModal extends React.Component<Props, State> {
         <ModalWrapper>
           <ModalBackground>
             <ModalContent>
-              {headerImage && <ModalHeaderImage source={headerImage} />}
-              {title && <Title title={title} />}
+              {!!headerImage && <ModalHeaderImage source={headerImage} />}
+              {!!title && <Title title={title} />}
               {isVisible && children}
               <Button block title="Dismiss" onPress={this.hideModal} />
             </ModalContent>
