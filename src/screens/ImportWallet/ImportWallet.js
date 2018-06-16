@@ -9,6 +9,8 @@ import {
 import {
   WALLET_ERROR,
   IMPORT_ERROR,
+  IMPORT_WALLET_PRIVATE_KEY,
+  IMPORT_WALLET_TWORDS_PHRASE,
 } from 'constants/walletConstants';
 import HeaderLink from 'components/HeaderLink';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -27,7 +29,7 @@ type State = {
   privateKey: string,
   tWordsPhrase: string,
   errorMessage: string,
-  errorType: string,
+  errorField: string,
 };
 
 class ImportWallet extends React.Component<Props, State> {
@@ -35,7 +37,7 @@ class ImportWallet extends React.Component<Props, State> {
     privateKey: '',
     tWordsPhrase: '',
     errorMessage: '',
-    errorType: '',
+    errorField: '',
   };
 
   constructor(props: Props) {
@@ -58,16 +60,14 @@ class ImportWallet extends React.Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { walletState, error } = nextProps.wallet;
 
-    const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR;
-    const errorMessage = showError && error.message;
-    const errorType = showError ? error.type : '';
-    // alert(errorMessage);
-
-    return {
-      ...prevState,
-      errorMessage,
-      errorType,
-    };
+    if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
+      return {
+        ...prevState,
+        errorMessage: error.message,
+        errorField: error.field,
+      };
+    }
+    return null;
   }
 
   handleImportSubmit = () => {
@@ -77,21 +77,21 @@ class ImportWallet extends React.Component<Props, State> {
     } else if (this.state.tWordsPhrase) {
       importWalletFromTWordsPhrase(this.state.tWordsPhrase);
     } else {
-      this.setState({ errorMessage: '' });
+      this.setState({ errorField: '' });
     }
   };
 
-  getError = (errorType: string) => {
-    if (errorType === this.state.errorType) {
+  getError = (errorField: string) => {
+    if (errorField === this.state.errorField) {
       return this.state.errorMessage;
     }
     return '';
-  }
+  };
 
   render() {
     const { privateKey, tWordsPhrase } = this.state;
-    const errorMessageTWordsPhrase = this.state.errorType === 'tWordsPhrase' ? this.state.errorMessage : '';
-    const errorMessagePrivateKey = this.state.errorType === 'privateKey' ? this.state.errorMessage : '';
+    const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
+    const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
     return (
       <Container>
         <ScrollWrapper regularPadding>
@@ -102,7 +102,7 @@ class ImportWallet extends React.Component<Props, State> {
           <TextInput
             label="Enter your 12 word backup phrase."
             inputProps={{
-              onChange: (text) => this.setState({ tWordsPhrase: text }),
+              onChange: (value) => this.setState({ tWordsPhrase: value }),
               value: tWordsPhrase,
               multiline: true,
             }}
@@ -113,7 +113,7 @@ class ImportWallet extends React.Component<Props, State> {
           <TextInput
             label="Use your Private Key"
             inputProps={{
-              onChange: (text) => this.setState({ privateKey: text }),
+              onChange: (value) => this.setState({ privateKey: value }),
               value: privateKey,
             }}
             errorMessage={errorMessagePrivateKey}

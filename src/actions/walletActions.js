@@ -8,6 +8,8 @@ import {
   SET_WALLET_ERROR,
   NEW_WALLET_SET_PIN,
   NEW_WALLET_CONFIRM_PIN,
+  IMPORT_WALLET_PRIVATE_KEY,
+  IMPORT_WALLET_TWORDS_PHRASE,
 } from 'constants/walletConstants';
 import {
   NEW_PROFILE,
@@ -31,8 +33,8 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
         type: SET_WALLET_ERROR,
         payload: {
           code: IMPORT_ERROR,
-          message: e.reason.toString(),
-          type: e.arg.toString(),
+          message: e.toString(),
+          field: IMPORT_WALLET_TWORDS_PHRASE,
         },
       });
     }
@@ -55,7 +57,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         payload: {
           code: IMPORT_ERROR,
           message: e.reason.toString(),
-          type: e.arg.toString(),
+          field: IMPORT_WALLET_PRIVATE_KEY,
         },
       });
     }

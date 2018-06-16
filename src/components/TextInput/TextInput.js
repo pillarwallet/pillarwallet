@@ -54,7 +54,7 @@ const FloatingButton = styled(ButtonIcon)`
   position:absolute;
   right: -15px;
   top: 20px;
-  justifyContent: center;
+  justify-content: center;
   width: 60px;
   margin: 0;
   padding: 0;
@@ -75,7 +75,7 @@ const ErrorMessage = styled.Text`
 `;
 
 const PostFix = styled.Text`
-  fontWeight: 900;
+  font-weight: 900;
   position: absolute;
   bottom: 0;
   right: 0;
@@ -90,7 +90,7 @@ const InputField = styled(Input)`
 class TextInput extends React.Component<Props, State> {
   state = {
     value: '',
-  }
+  };
 
   static defaultProps = {
     inputType: 'default',
@@ -126,24 +126,6 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
-  renderErrorMessage = () => {
-    if (this.props.errorMessage) {
-      return (
-        <ErrorMessage>
-          {this.props.errorMessage}
-        </ErrorMessage>
-      );
-    }
-    return null;
-  };
-
-  hasError = () => {
-    if (this.props.errorMessage && this.props.errorMessage.length > 0) {
-      return true;
-    }
-    return false;
-  };
-
   render() {
     const {
       icon,
@@ -153,29 +135,32 @@ class TextInput extends React.Component<Props, State> {
       iconColor = '#2077FD',
       inputProps,
       inlineLabel,
+      errorMessage,
     } = this.props;
     const { value } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
+
     return (
       <View style={{ paddingBottom: 10 }}>
         <Item
           inlineLabel={inlineLabel}
           stackedLabel={!inlineLabel}
-          error={this.hasError()}
+          error={!!errorMessage}
           style={
-            this.props.inputProps.multiline ?
+            inputProps.multiline ?
             {
               height: 112,
               marginBottom: 20,
+            } : {
+              marginBottom: 20,
             }
-            : { marginBottom: 20 }
           }
         >
           <Label>{label}</Label>
           <InputField
             {...inputProps}
-            onChange={inputProps && inputProps.onChange && this.handleChange}
-            onBlur={inputProps && inputProps.onBlur && this.handleBlur}
+            onChange={this.handleChange}
+            onBlur={this.handleBlur}
             onEndEditing={() => this.handleBlur}
             value={value}
             inputType={inputType}
@@ -183,7 +168,7 @@ class TextInput extends React.Component<Props, State> {
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
-          {this.renderErrorMessage()}
+          {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </Item>
       </View>
     );
