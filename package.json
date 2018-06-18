@@ -90,7 +90,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-device-info|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-firebase|react-native-fast-image|react-native-animatable|react-native-vector-icons|react-native-device-info|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -108,6 +108,7 @@
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.1.445",
     "@tradle/react-native-http": "^2.0.0",
     "asyncstorage-down": "^4.0.1",
+    "bignumber.js": "^7.2.1",
     "blockchain-explorer-sdk": "^0.1.0-60",
     "browserify-zlib": "~0.1.4",
     "cryptocompare": "^0.5.0",
@@ -127,6 +128,7 @@
     "react-native-canvas": "^0.1.20",
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^0.21.5",
+    "react-native-fast-image": "^4.0.14",
     "react-native-firebase": "^4.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
