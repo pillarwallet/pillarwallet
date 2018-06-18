@@ -224,7 +224,7 @@ jobs:
   deploy_android:
     working_directory: ~/code/android
     docker:
-      - image: circleci/android:api-26-alpha
+      - image: circleci/android:api-26-node8-alpha
     environment:
       TERM: dumb
       # JVM_OPTS: -Xmx3200m
