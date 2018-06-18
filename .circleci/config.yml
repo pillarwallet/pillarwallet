@@ -227,7 +227,7 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       TERM: dumb
-      JVM_OPTS: -Xmx3200m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+      JVM_OPTS: -Xmx4G
       GRADLE_OPTS: '-Xmx9216M -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
