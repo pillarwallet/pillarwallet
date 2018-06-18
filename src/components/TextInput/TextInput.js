@@ -155,15 +155,7 @@ class TextInput extends React.Component<Props, State> {
           inlineLabel={inlineLabel}
           stackedLabel={!inlineLabel}
           error={!!errorMessage}
-          style={
-            inputProps.multiline ?
-            {
-              height: 112,
-              marginBottom: 20,
-            } : {
-              marginBottom: 20,
-            }
-          }
+          style={inputProps.multiline && { height: 112 }}
         >
           <Label>{label}</Label>
           <InputField
@@ -179,7 +171,7 @@ class TextInput extends React.Component<Props, State> {
           {!!postfix && <PostFix>{postfix}</PostFix>}
         </Item>
         <InputFooter>
-          {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+          {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
           {!!footerAddonText &&
           <TouchableOpacity onPress={footerAddonAction}>
             <AddonText>{footerAddonText}</AddonText>
