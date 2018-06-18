@@ -27,16 +27,16 @@ android {
       storeFile file('../debug.keystore')
     }
     release {
-      keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS') : keystoreProperties['keyAlias']
-      keyPassword System.getenv('ANDROID_KEY_PASSWORD') ? System.getenv('ANDROID_KEY_PASSWORD') : keystoreProperties['keyPassword']
+      keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS').toString() : keystoreProperties['keyAlias']
+      keyPassword System.getenv('ANDROID_KEY_PASSWORD') ? System.getenv('ANDROID_KEY_PASSWORD').toString() : keystoreProperties['keyPassword']
       storeFile file('../upload.keystore')
-      storePassword System.getenv('ANDROID_STORE_PASSWORD') ? System.getenv('ANDROID_STORE_PASSWORD') : keystoreProperties['storePassword']
+      storePassword System.getenv('ANDROID_STORE_PASSWORD') ? System.getenv('ANDROID_STORE_PASSWORD').toString() : keystoreProperties['storePassword']
     }
   }
   defaultConfig {
     applicationId 'com.pillarproject.wallet'
     targetSdkVersion 26
-    versionCode System.getenv('CIRCLE_BUILD_NUM') ? System.getenv('CIRCLE_BUILD_NUM') : 1
+    versionCode System.getenv('CIRCLE_BUILD_NUM') ? System.getenv('CIRCLE_BUILD_NUM').toInteger() : 1
     versionName '0.0.2'
     ndk {
       abiFilters 'armeabi-v7a', 'x86'
