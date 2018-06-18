@@ -105,11 +105,14 @@ apply from: 'expo.gradle'
 
 
 dependencies {
+    compile project(':react-native-fast-image')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
     compile project(':react-native-randombytes')
     compile project(':react-native-os')
-    compile project(':react-native-firebase')
+    compile(project(':react-native-firebase')) {
+        transitive = false
+    }
     compile project(':react-native-device-info')
   compile fileTree(dir: 'libs', include: ['*.jar'])
 

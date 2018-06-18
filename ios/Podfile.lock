@@ -15,11 +15,9 @@ PODS:
   - BoringSSL/Implementation (10.0.3):
     - BoringSSL/Interface (= 10.0.3)
   - BoringSSL/Interface (10.0.3)
-  - Branch (0.14.12):
-    - Branch/Core (= 0.14.12)
-    - Branch/without-IDFA (= 0.14.12)
-  - Branch/Core (0.14.12)
-  - Branch/without-IDFA (0.14.12)
+  - Branch (0.24.2):
+    - Branch/Core (= 0.24.2)
+  - Branch/Core (0.24.2)
   - CocoaLumberjack (3.2.1):
     - CocoaLumberjack/Default (= 3.2.1)
     - CocoaLumberjack/Extensions (= 3.2.1)
@@ -29,15 +27,15 @@ PODS:
   - Crashlytics (3.10.2):
     - Fabric (~> 1.7.7)
   - DoubleConversion (1.1.5)
-  - ExpoKit/Core (2.5.10):
+  - ExpoKit/Core (2.6.5):
     - Amplitude-iOS (~> 3.8)
     - Analytics (~> 3.5)
     - AppAuth (~> 0.4)
-    - Branch (~> 0.14.12)
+    - Branch (~> 0.24.2)
     - CocoaLumberjack (~> 3.2.1)
     - Crashlytics (~> 3.8)
     - Fabric (~> 1.6)
-    - FBAudienceNetwork (~> 4.24)
+    - FBAudienceNetwork (= 4.28.1)
     - FBSDKCoreKit (~> 4.28)
     - FBSDKLoginKit (~> 4.28)
     - FBSDKShareKit (~> 4.28)
@@ -47,11 +45,11 @@ PODS:
     - GoogleSignIn (~> 3.0)
     - GPUImage (~> 0.1.7)
     - JKBigInteger2 (= 0.0.5)
-    - lottie-ios (~> 2.1.3)
+    - lottie-ios (~> 2.5.0)
     - React
-  - ExpoKit/CPP (2.5.10):
+  - ExpoKit/CPP (2.6.5):
     - ExpoKit/Core
-  - ExpoKit/GL (2.5.10):
+  - ExpoKit/GL (2.6.5):
     - ExpoKit/CPP
   - Fabric (1.7.7)
   - FBAudienceNetwork (4.28.1)
@@ -150,6 +148,7 @@ PODS:
   - FirebaseSwizzlingUtilities/ISASwizzling (2.0.0)
   - FirebaseSwizzlingUtilities/MethodSwizzling (2.0.0):
     - FirebaseCore (~> 5.0)
+  - FLAnimatedImage (1.0.12)
   - Folly (2016.09.26.00):
     - boost-for-react-native
     - DoubleConversion
@@ -220,7 +219,7 @@ PODS:
   - GTMSessionFetcher/Core (1.1.15)
   - JKBigInteger2 (0.0.5)
   - leveldb-library (1.20)
-  - lottie-ios (2.1.5)
+  - lottie-ios (2.5.0)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
@@ -229,6 +228,11 @@ PODS:
   - Protobuf (3.5.0)
   - React (0.55.2):
     - React/Core (= 0.55.2)
+  - react-native-fast-image (4.0.14):
+    - FLAnimatedImage
+    - React
+    - SDWebImage/Core
+    - SDWebImage/GIF
   - React/ART (0.55.2):
     - React/Core
   - React/Core (0.55.2):
@@ -282,13 +286,17 @@ PODS:
     - React
   - RNVectorIcons (4.5.0):
     - React
+  - SDWebImage/Core (4.4.1)
+  - SDWebImage/GIF (4.4.1):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
   - yoga (0.55.2.React)
 
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
-  - ExpoKit/Core (from `http://github.com/expo/expo.git`, tag `ios/2.5.10`)
-  - ExpoKit/CPP (from `http://github.com/expo/expo.git`, tag `ios/2.5.10`)
-  - ExpoKit/GL (from `http://github.com/expo/expo.git`, tag `ios/2.5.10`)
+  - ExpoKit/Core (from `http://github.com/expo/expo.git`, tag `ios/2.6.5`)
+  - ExpoKit/CPP (from `http://github.com/expo/expo.git`, tag `ios/2.6.5`)
+  - ExpoKit/GL (from `http://github.com/expo/expo.git`, tag `ios/2.6.5`)
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Core (~> 5.0.0)
@@ -301,6 +309,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -323,13 +332,15 @@ EXTERNAL SOURCES:
     :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
   ExpoKit:
     :git: http://github.com/expo/expo.git
-    :tag: ios/2.5.10
+    :tag: ios/2.6.5
   Folly:
     :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
   glog:
     :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
   React:
     :path: ../node_modules/react-native
+  react-native-fast-image:
+    :path: ../node_modules/react-native-fast-image
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
   RNVectorIcons:
@@ -340,7 +351,7 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   ExpoKit:
     :git: http://github.com/expo/expo.git
-    :tag: ios/2.5.10
+    :tag: ios/2.6.5
 
 SPEC CHECKSUMS:
   Amplitude-iOS: 4a3c8807b2ea5369dc11e87e23825bff01e5a922
@@ -349,11 +360,11 @@ SPEC CHECKSUMS:
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BoringSSL: c46efb47593135382bc0934196f16d2f726f5f36
-  Branch: f63d9cf82ac09747349a73184a0b739d28781c4d
+  Branch: 0d98d22745a9b68bcb4fa6dc1c6a92b64d4fdd7b
   CocoaLumberjack: 2800c03334042fe80589423c8d80e582dcaec482
   Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
   DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
-  ExpoKit: ba3ef8465f7e54487ba06e8176ed6bd4fb195aee
+  ExpoKit: 441d1c7592f0715a5c81ac2346d7e743ac50428e
   Fabric: bda89e242bce1b7b8ab264248cf3407774ce0095
   FBAudienceNetwork: c0cda151bb2f7b55d1e045e59ebc81f3153989b2
   FBSDKCoreKit: 572b047a7e029bc44542bcf8a59414e7ff2b543e
@@ -373,6 +384,7 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfig: 3c57e4644bd6976b671ae0b725cd709f198bd1f5
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
   FirebaseSwizzlingUtilities: 6c22677c50d0b6f5f0dc637c1233f13694a3003f
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Folly: 211775e49d8da0ca658aebc8eab89d642935755c
   glog: 1de0bb937dccdc981596d3b5825ebfb765017ded
   Google-Maps-iOS-Utils: c32891ff472eaaa1fca032beedafa1a013af7875
@@ -393,14 +405,16 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
   JKBigInteger2: e91672035c42328c48b7dd015b66812ddf40ca9b
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
-  lottie-ios: 836cdbba92f62f3c6a00e37a4ce485321fe317cf
+  lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   React: 977e1cdf18a3047a35d321b34ffb678d79d19076
+  react-native-fast-image: cba3d9bf9c2cf8ddb643d887a686c53a5dd90a2c
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
+  SDWebImage: 47e9b5b925cbce75946c23f0c42dd19464189af4
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: ba2ee62076d8a34bf550fc0985d85b8c8dd84721
+PODFILE CHECKSUM: ea68c3bfcab47f82e0f82655c3d782984451f6bb
 
 COCOAPODS: 1.4.0
