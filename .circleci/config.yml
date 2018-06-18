@@ -227,8 +227,8 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       TERM: dumb
-      JVM_OPTS: -Xmx4G
-      GRADLE_OPTS: '-Xmx9216M -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8'
+      JVM_OPTS: -Xmx3200m
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
     steps:
