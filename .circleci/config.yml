@@ -281,7 +281,7 @@ jobs:
           path: ./android/app/build/test-results
       - run:
           name: Initial build
-          command: ./android/gradlew clean assembleRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+          command: ./android/gradlew clean assembleProdRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
       - store_artifacts:
           path: ./android/app/build/outputs/apk
           destination: apks
