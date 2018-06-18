@@ -224,11 +224,12 @@ jobs:
   build_android:
     working_directory: ~/code
     docker:
-      - image: circleci/android:api-27-alpha
+      - image: circleci/android:api-26-alpha
     environment:
       TERM: dumb
-      JVM_OPTS: -Xmx3200m
-
+      JVM_OPTS: -Xmx3200m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+      GRADLE_OPTS: '-Xmx9216M -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8'
+    resource_class: large
     steps:
       - checkout
       - restore_cache:
