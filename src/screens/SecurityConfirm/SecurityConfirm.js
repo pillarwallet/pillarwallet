@@ -60,13 +60,13 @@ export default class SecurityConfirm extends React.Component<Props, State> {
           >
             <Checkbox toggleCheckbox={this.toggleCheckBox} tag="checkbox" checked={!confirmButtonDisabled} />
             <CheckboxText>
-              I have read, understand, and agree to the Terms of Use.
+              I understand that if I lose my passphrase, I will be unable to recover access to my account.
             </CheckboxText>
           </CheckboxItem>
           <Divider />
           <Button
             block
-            title="Confirm and Finish"
+            title="Continue"
             onPress={this.handleConfirm}
             disabled={confirmButtonDisabled}
             marginBottom="20px"
