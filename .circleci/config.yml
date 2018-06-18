@@ -221,7 +221,7 @@ jobs:
           environment:
             SCAN_DEVICE: iPhone 8
 
-  build_android:
+  deploy_android:
     working_directory: ~/code/android
     docker:
       - image: circleci/android:api-26-alpha
@@ -239,7 +239,35 @@ jobs:
       - checkout:
           path: ~/code
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: node-{{ checksum "../yarn.lock" }}
+      - run:
+          name: Install Expo cli
+          command: cd .. && sudo yarn global add exp
+      - run:
+          name: Setting .expo/PATH
+          command: cd .. && exp path
+      - run:
+            name: Authenticate with Artifactory
+            command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: cd .. && npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - run:
+            name: set Yarn to use Artifactory
+            command: cd .. && echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+      - run:
+          name: Install node dependencies
+          command: cd .. && yarn install
+      - run:
+          name: Login to Expo
+          command: cd .. && exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
+      - run:
+          name: Publish resources bundle to Expo server
+          command: cd .. && exp publish
+      - save_cache:
+          key: node-{{ checksum "../yarn.lock" }}
+          paths:
+            - ~/code/nodes_modules
       - run:
           name: Creating Gemfile in android dir
           command: bundle init
@@ -255,6 +283,8 @@ jobs:
           key: gems-{{ checksum "Gemfile" }}
           paths:
             - vendor/bundle
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
@@ -300,15 +330,9 @@ workflows:
           filters:
             branches:
               only: master
-      - publish_expo:
+      - deploy_android:
           requires:
             - build
-          filters:
-            branches:
-              only: android_fastlane_circle
-      - build_android:
-          requires:
-            - publish_expo
           filters:
             branches:
               only: android_fastlane_circle
