@@ -1,6 +1,6 @@
 include ':app'
-include ':react-native-fast-image'
-project(':react-native-fast-image').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fast-image/android')
+//include ':react-native-fast-image'
+//project(':react-native-fast-image').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fast-image/android')
 include ':react-native-udp'
 project(':react-native-udp').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-udp/android')
 include ':react-native-tcp'

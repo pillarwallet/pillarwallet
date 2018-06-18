@@ -15,7 +15,7 @@ repositories {
   maven { url 'https://maven.fabric.io/public' }
 }
 
-def keystorePropertiesFile = rootProject.file("keystore2.properties")
+def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
@@ -105,7 +105,7 @@ apply from: 'expo.gradle'
 
 
 dependencies {
-    compile project(':react-native-fast-image')
+//    compile project(':react-native-fast-image')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
     compile project(':react-native-randombytes')
