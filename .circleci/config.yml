@@ -222,9 +222,9 @@ jobs:
             SCAN_DEVICE: iPhone 8
 
   deploy_android:
-    working_directory: ~/code/android
+    working_directory: ~/pillarwallet/android
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-26-alpha
     environment:
       TERM: dumb
       # JVM_OPTS: -Xmx3200m
@@ -237,7 +237,7 @@ jobs:
       LANG: en_US.UTF-8
     steps:
       - checkout:
-          path: ~/code
+          path: ~/pillarwallet
       - restore_cache:
           key: node-{{ checksum "../yarn.lock" }}
       - run:
@@ -267,7 +267,7 @@ jobs:
       - save_cache:
           key: node-{{ checksum "../yarn.lock" }}
           paths:
-            - ~/code/nodes_modules
+            - ~/pillarwallet/nodes_modules
       - run:
           name: Creating Gemfile in android dir
           command: bundle init
