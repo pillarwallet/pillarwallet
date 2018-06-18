@@ -222,7 +222,7 @@ jobs:
             SCAN_DEVICE: iPhone 8
 
   build_android:
-    working_directory: ~/code
+    working_directory: ~/code/android
     docker:
       - image: circleci/android:api-26-alpha
     environment:
@@ -232,60 +232,49 @@ jobs:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
     steps:
-      - checkout
+      - checkout:
+          path: ~/code
       - restore_cache:
-          key: jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
           name: Creating Gemfile in android dir
-          command: cd android && bundle init
+          command: bundle init
       - run:
           name: Install fastlane gem
-          command: echo 'gem "fastlane"' >> ./android/Gemfile
+          command: echo 'gem "fastlane"' >> Gemfile
       - restore_cache:
-          key: gems-{{ checksum "./android/Gemfile" }}
+          key: gems-{{ checksum "Gemfile" }}
       - run:
-          name: Create Vendor/bundle for gem dependencies
-          command: cd android && bundle check || bundle install --path vendor/bundle
-      - run:
-          name: Install fastlane as a dependency
-          command: cd android && bundle update
+          name: Bundle install
+          command: bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: gems-{{ checksum "./android/Gemfile" }}
+          key: gems-{{ checksum "Gemfile" }}
           paths:
             - vendor/bundle
       - run:
-          name: Bundle install
-          command: cd android && bundle install
-          environment:
-            BUNDLE_PATH: ./android/vendor/bundle
-      - run:
-          name: Chmod permissions #if permission for Gradlew Dependencies fail, use this.
-          command: sudo chmod +x ./android/gradlew
+          name: Chmod permissions
+          command: sudo chmod +x ./gradlew
       - run:
           name: Download Dependencies
-          command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace
+          command: ./gradlew androidDependencies --no-daemon --stacktrace
       - save_cache:
-          key: jars-{{ checksum "./android/gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
           paths:
-            - ~/android/.gradle
+            - ~/.gradle
             - ~/.m2
-      - save_cache:
-          key: gems-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ./android/vendor/bundle
       - run:
           name: Run Tests
-          command: ./android/gradlew lint test
+          command: ./gradlew lint test
       - store_artifacts:
-          path: ./android/app/build/reports
+          path: app/build/reports
           destination: reports
       - store_test_results:
-          path: ./android/app/build/test-results
+          path: app/build/test-results
       - run:
           name: Initial build
-          command: ./android/gradlew clean assembleProdRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+          command: ./gradlew clean assembleProdRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
       - store_artifacts:
-          path: ./android/app/build/outputs/apk
+          path: app/build/outputs/apk
           destination: apks
 
 workflows:
