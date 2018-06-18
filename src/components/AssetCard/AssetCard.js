@@ -66,6 +66,7 @@ export default class AssetCard extends React.Component<Props, State> {
     } = this.props;
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
+
     return (
       <View
         style={{

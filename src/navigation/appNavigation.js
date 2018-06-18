@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing } from 'react-native';
+import { AppState, Animated, Easing, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 // screens
@@ -55,8 +55,24 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
+// NAVIGATION OPTIONS FOR ANDROID AND IOS
+let navigationOpts;
+
+if (Platform.OS === 'ios') {
+  navigationOpts = {
+    header: null,
+  };
+} else {
+  navigationOpts = {
+    headerStyle: {
+      borderBottomWidth: 0,
+      elevation: 0,
+      height: 0,
+    },
+  };
+}
+
 const StackNavigatorModalConfig = {
-  headerMode: 'float',
   mode: 'modal',
   transitionConfig: () => ({
     transitionSpec: {
@@ -152,9 +168,7 @@ const AppFlowNavigation = createStackNavigator(
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
   }, {
     mode: 'modal',
-    navigationOptions: {
-      header: null,
-    },
+    navigationOptions: navigationOpts,
   },
 );
 
