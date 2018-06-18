@@ -13,7 +13,6 @@ import CheckboxText from 'components/CheckboxText';
 
 
 type Props = {
-  generateEncryptedWallet: () => Function,
   navigation: NavigationScreenProp<*>,
 };
 
@@ -27,10 +26,8 @@ export default class SecurityConfirm extends React.Component<Props, State> {
   };
 
   toggleCheckBox = () => {
-    this.setState((prevState) => {
-      return {
-        confirmButtonDisabled: !prevState.confirmButtonDisabled,
-      };
+    this.setState({
+      confirmButtonDisabled: !this.state.confirmButtonDisabled,
     });
   };
 
