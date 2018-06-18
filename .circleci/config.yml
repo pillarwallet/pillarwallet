@@ -227,8 +227,12 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       TERM: dumb
-      JVM_OPTS: -Xmx3200m
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+      # JVM_OPTS: -Xmx3200m
+      # GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+      # _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
+      # GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+      _JAVA_OPTIONS: "-Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
     steps:
@@ -256,7 +260,7 @@ jobs:
           command: sudo chmod +x ./gradlew
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies --no-daemon --stacktrace
+          command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
           paths:
@@ -272,7 +276,7 @@ jobs:
           path: app/build/test-results
       - run:
           name: Initial build
-          command: ./gradlew clean assembleProdRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+          command: ./android/gradlew clean assembleProdRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
       - store_artifacts:
           path: app/build/outputs/apk
           destination: apks
