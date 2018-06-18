@@ -227,8 +227,9 @@ jobs:
       - image: circleci/android:api-26-alpha
     environment:
       TERM: dumb
-      JVM_OPTS: -Xmx3200m
-
+      JVM_OPTS: -Xmx3200m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+      GRADLE_OPTS: '-Xmx9216M -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8'
+    resource_class: large
     steps:
       - checkout
       - restore_cache:
@@ -261,7 +262,7 @@ jobs:
           command: sudo chmod +x ./android/gradlew
       - run:
           name: Download Dependencies
-          command: cd android && ./gradlew androidDependencies
+          command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace
       - save_cache:
           key: jars-{{ checksum "./android/gradle/wrapper/gradle-wrapper.properties" }}-{{ checksum "./android/build.gradle" }}-{{ checksum "./android/app/build.gradle" }}
           paths:
