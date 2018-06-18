@@ -229,7 +229,8 @@ jobs:
       TERM: dumb
       JVM_OPTS: -Xmx3200m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2 -XX:ParallelGCThreads=2 -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
       GRADLE_OPTS: '-Xmx9216M -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8'
-    resource_class: large
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
     steps:
       - checkout
       - restore_cache:
