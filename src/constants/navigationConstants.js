@@ -33,6 +33,7 @@ export const AUTH_FLOW = 'AUTH_FLOW';
 export const PIN_CODE_UNLOCK = 'PIN_CODE_UNLOCK';
 
 // SIGNUP/OTP FLOW
+export const SECURITY_CONFIRM = 'SECURITY_CONFIRM';
 export const SIGN_UP_FLOW = 'SIGN_UP_FLOW';
 export const WELCOME = 'WELCOME';
 export const SIGN_IN = 'SIGN_IN';
