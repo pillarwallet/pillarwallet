@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, Keyboard } from 'react-native';
+import { Text } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -14,18 +14,14 @@ import ButtonIcon from 'components/ButtonIcon';
 import TextInput from 'components/TextInput';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import QRCodeScanner from 'components/QRCodeScanner';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import { isValidETHAddress } from 'utils/validators';
-import { pipe, parseNumber, decodeETHAddress, formatMoney, formatAmount } from 'utils/common';
+import { parseNumber, formatMoney, formatAmount } from 'utils/common';
 import { baseColors, fontSizes } from 'utils/variables';
 import SendTokenAmountHeader from './SendTokenAmountHeader';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
-// make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
 const { Form } = t.form;
 const gasLimit = 21000;
 
@@ -108,7 +104,6 @@ type Props = {
 }
 
 type State = {
-  isScanning: boolean,
   value: ?{
     amount: ?number
   },
@@ -126,7 +121,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
-      isScanning: false,
       value: null,
       formStructure: getFormStructure(this.assetData.balance, false),
       txFeeInWei: null,
@@ -158,8 +152,8 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     const value = this._form.getValue();
-    const { navigation } = this.props;
     const { txFeeInWei } = this.state;
+    const { navigation } = this.props;
 
     if (!value || !this.gasPriceFetched) return;
 
@@ -195,8 +189,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     if (token !== ETH) {
       return balance;
     }
-
-    const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
+    const maxAmount = utils.parseUnits(balance.toString(), 'ether').sub(txFeeInWei);
     if (maxAmount.lt(0)) return 0;
     return new BigNumber(utils.formatEther(maxAmount)).toNumber();
   }
@@ -204,7 +197,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   checkIfEnoughForFee(assets: Assets, txFeeInWei): boolean {
     if (!assets[ETH]) return false;
     const ethBalance = assets[ETH].balance;
-    const balanceInWei = utils.parseUnits(ethBalance, 'ether');
+    const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }
 
@@ -212,39 +205,14 @@ class SendTokenAmount extends React.Component<Props, State> {
     // Add fee modal logic in here
   };
 
-  handleToggleQRScanningState = () => {
-    this.setState({
-      isScanning: !this.state.isScanning,
-    }, () => {
-      if (this.state.isScanning) {
-        Keyboard.dismiss();
-      }
-    });
-  };
-
-  handleQRRead = (address: string) => {
-    this.setState({ value: { ...this.state.value, address }, isScanning: false });
-  };
-
   render() {
     const {
       value,
-      isScanning,
       formStructure,
       txFeeInWei,
     } = this.state;
     const { token, balance } = this.assetData;
     const formOptions = generateFormOptions({ currency: token, useMaxValue: this.useMaxValue });
-
-    const qrScannerComponent = (
-      <QRCodeScanner
-        validator={ETHValidator}
-        dataFormatter={decodeETHAddress}
-        isActive={isScanning}
-        onDismiss={this.handleToggleQRScanningState}
-        onRead={this.handleQRRead}
-      />
-    );
     return (
       <React.Fragment>
         <SendTokenAmountHeader
@@ -279,7 +247,6 @@ class SendTokenAmount extends React.Component<Props, State> {
             </ActionsWrapper>
           </Wrapper>
         </Container>
-        {qrScannerComponent}
       </React.Fragment>
     );
   }
