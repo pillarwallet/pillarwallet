@@ -41,7 +41,7 @@ type EventLike = {
 
 const inputTypes = {
   default: {
-    fontSize: fontSizes.medium,
+    fontSize: fontSizes.small,
     fontWeight: fontWeights.book,
     textAlign: 'left',
   },
@@ -165,7 +165,6 @@ class TextInput extends React.Component<Props, State> {
             onEndEditing={() => this.handleBlur}
             value={value}
             inputType={inputType}
-            style={{ fontSize: 22 }}
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}

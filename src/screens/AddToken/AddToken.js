@@ -31,13 +31,13 @@ tokenIcons.PPT = require('../../assets/images/tokens/PPT/icon.png');
 tokenIcons.SALT = require('../../assets/images/tokens/SALT/icon.png');
 
 const TokenName = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   font-weight: ${fontWeights.bold};
 `;
 
 const TokenSymbol = styled.Text`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   font-weight: ${fontWeights.light};
 `;
 

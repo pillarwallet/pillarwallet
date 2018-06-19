@@ -61,12 +61,6 @@ function AmountInputTemplate(locals) {
     ellipsizeMode: 'middle',
     keyboardType: 'numeric',
     textAlign: 'right',
-    style: {
-      paddingRight: 40,
-      fontSize: 36,
-      fontWeight: '700',
-      lineHeight: 0,
-    },
   };
 
   return (

@@ -22,14 +22,14 @@ const Header = styled(NBHeader)`
 `;
 
 const BalanceLabel = styled.Text`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
   align-self: center;
   line-height: 12px;
   margin-top: 8px;
 `;
 
 const BalanceAmount = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   align-self: center;
   line-height: 20px;
 `;

@@ -11,28 +11,28 @@ export const Title = styled.Text`
 `;
 
 export const Paragraph = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   margin-bottom: 10;
-  color: ${props => props.light ? baseColors.mediumGray : UIColors.defaultTextColor};
+  color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
 `;
 
 export const TextLink = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   margin-right: 10px;
   font-weight: ${fontWeights.bold};
   color: ${UIColors.primary};
 `;
 
 export const Label = styled.Text`
-  font-size: ${fontSizes.small};
-  color: ${baseColors.mediumGray};
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.darkGray};
   margin-bottom: 10;
   align-self: flex-start;
 `;
 
 export const HelpText = styled.Text`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
   padding: 10px;
   color: grey;
 `;

@@ -31,7 +31,7 @@ const ProfileInfoLabel = styled(Label)`
 `;
 
 const ProfileInfoValue = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   text-align: right;
 `;
 
@@ -49,7 +49,7 @@ const ListSeparatorText = styled.Text`
 `;
 
 const ListItemText = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   margin: 10px 4px;
 `;
 

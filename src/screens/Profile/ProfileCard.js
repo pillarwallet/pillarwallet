@@ -41,7 +41,7 @@ const ProfileCardName = styled.Text`
 `;
 
 const ProfileCardEmail = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   color: ${UIColors.defaultTextColor};
 `;
 

@@ -52,10 +52,7 @@ function AddressInputTemplate(locals) {
     keyboardType: locals.keyboardType,
     textAlign: 'right',
     maxLength: 42,
-    style: {
-      paddingRight: 40,
-      fontSize: 12,
-    },
+    fontSize: fontSizes.small,
   };
   return (
     <TextInput
@@ -122,7 +119,7 @@ const ModalValue = styled(Paragraph)`
   flex: 1;
   text-align: right;
   flex-wrap: wrap;
-  font-size: ${props => props.large ? fontSizes.large : fontSizes.medium};
+  font-size: ${props => props.large ? fontSizes.large : fontSizes.small};
   font-weight: ${props => props.large ? fontWeights.bold : fontWeights.book};
   color: ${props => props.large ? baseColors.slateBlack : baseColors.darkGray};
 `;
@@ -131,13 +128,13 @@ const ModalAddressValue = styled(Paragraph)`
   flex: 1;
   text-align: left;
   flex-wrap: wrap;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
   font-weight: ${fontWeights.book};
   color: ${baseColors.darkGray};
 `;
 
 const ModalValueSymbol = styled.Text`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
   font-weight: ${fontWeights.bold};
 `;
 
