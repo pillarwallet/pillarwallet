@@ -9,7 +9,7 @@ type Props = {
 }
 
 const ProfileCardWrapper = styled.View`
-  background-color: ${baseColors.white};
+  background-color: ${baseColors.snowWhite};
   border-radius: 12px;
   border: 1px solid ${UIColors.defaultBorderColor};
   width: 100%;
@@ -31,7 +31,7 @@ const ProfileCardAvatar = styled.View`
 const ProfileCardAvatarText = styled.Text`
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.bold};
-  color: ${baseColors.white};
+  color: ${baseColors.snowWhite};
 `;
 
 const ProfileCardName = styled.Text`

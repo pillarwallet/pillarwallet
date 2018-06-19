@@ -27,7 +27,7 @@ const pillarLogoSource = require('../../assets/images/header-pillar-logo.png');
 
 const assetColors = {
   ETH: baseColors.darkGray,
-  PLR: baseColors.clearBlue,
+  PLR: baseColors.electricBlue,
 };
 
 const activeModalResetState = {

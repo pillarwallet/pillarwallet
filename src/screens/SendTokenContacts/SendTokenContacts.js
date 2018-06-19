@@ -124,7 +124,7 @@ const ModalValue = styled(Paragraph)`
   flex-wrap: wrap;
   font-size: ${props => props.large ? fontSizes.large : fontSizes.medium};
   font-weight: ${props => props.large ? fontWeights.bold : fontWeights.book};
-  color: ${props => props.large ? baseColors.black : baseColors.darkGray};
+  color: ${props => props.large ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
 const ModalAddressValue = styled(Paragraph)`

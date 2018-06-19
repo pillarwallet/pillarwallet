@@ -27,7 +27,7 @@ const Text = styled.Text`
 `;
 
 const BlueDot = styled.Text`
-  color: ${baseColors.clearBlue};
+  color: ${baseColors.electricBlue};
   font-size: ${fontSizes.extraSmall};
   // TODO: replace or remove font Symbol, it causes issues on Android
   // font-family: Symbol;

@@ -150,7 +150,7 @@ class AssetScreen extends React.Component<Props, State> {
             style={{
               borderBottomWidth: 1,
               borderStyle: 'solid',
-              backgroundColor: baseColors.white,
+              backgroundColor: baseColors.snowWhite,
               borderColor: UIColors.defaultBorderColor,
               padding: 20,
               height: 60,
@@ -161,7 +161,7 @@ class AssetScreen extends React.Component<Props, State> {
           <Wrapper
             regularPadding
             style={{
-              backgroundColor: baseColors.white,
+              backgroundColor: baseColors.snowWhite,
               height: 350,
             }}
           >

@@ -89,7 +89,7 @@ const InputFooter = styled(View)`
 `;
 
 const AddonText = styled.Text`
-  color: ${baseColors.clearBlue};
+  color: ${baseColors.electricBlue};
   width: 100%;
   text-align: right;
 `;

@@ -70,7 +70,7 @@ export default class AssetCard extends React.Component<Props, State> {
     return (
       <View
         style={{
-          backgroundColor: baseColors.white,
+          backgroundColor: baseColors.snowWhite,
         }}
       >
 

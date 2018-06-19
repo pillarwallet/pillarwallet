@@ -272,7 +272,7 @@ class SendTokenAmount extends React.Component<Props, State> {
               </Text>
               <ButtonIcon
                 icon="alert"
-                color={baseColors.clearBlue}
+                color={baseColors.electricBlue}
                 fontSize={fontSizes.large}
                 onPress={this.openFeeInfoModal}
               />

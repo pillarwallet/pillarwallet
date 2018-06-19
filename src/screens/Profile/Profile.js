@@ -44,7 +44,7 @@ const ListSeparator = styled.View`
 `;
 
 const ListSeparatorText = styled.Text`
-  color: ${props => props.lastSynced ? baseColors.lightGreen : baseColors.darkGray};
+  color: ${props => props.lastSynced ? baseColors.freshEucalyptus : baseColors.darkGray};
   text-align: ${props => props.lastSynced ? 'center' : 'left'};
 `;
 
