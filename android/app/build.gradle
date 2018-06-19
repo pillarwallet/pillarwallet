@@ -29,7 +29,7 @@ android {
     release {
       keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS').toString() : keystoreProperties['keyAlias']
       keyPassword System.getenv('ANDROID_KEY_PASSWORD') ? System.getenv('ANDROID_KEY_PASSWORD').toString() : keystoreProperties['keyPassword']
-      storeFile file('../upload.keystore')
+      storeFile file('../release.keystore')
       storePassword System.getenv('ANDROID_STORE_PASSWORD') ? System.getenv('ANDROID_STORE_PASSWORD').toString() : keystoreProperties['storePassword']
     }
   }
