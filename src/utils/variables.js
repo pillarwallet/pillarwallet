@@ -27,6 +27,7 @@ export const UIColors = {
   danger: baseColors.burningFire,
   disabled: baseColors.mediumGray,
   defaultTextColor: baseColors.slateBlack,
+  defaultBackgroundColor: baseColors.snowWhite,
   defaultBorderColor: 'rgba(0, 0, 0, 0.25)',
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
 };

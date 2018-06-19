@@ -6,7 +6,7 @@ import keyPadTypes from './keyPadTypes';
 
 const KeyInput = styled.View`
   justify-content: center;
-  width: 120;
+  width: 33.3333%;
   height: 55;
 `;
 
@@ -14,8 +14,8 @@ const Wrapper = styled.View`
   flex-wrap: wrap;
   flex-direction: row;
   align-self: center;
-  width: 360;
   justify-content: flex-end;
+  width: 100%;
 `;
 
 const ButtonText = styled.Text`
