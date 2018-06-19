@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
+import { utils } from 'ethers';
 import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
@@ -160,7 +161,6 @@ class SendTokenContacts extends React.Component<Props, State> {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
     const assetData = this.props.navigation.getParam('assetData', {});
-    const txFeeInEther = this.props.navigation.getParam('txFeeInEther', null);
     this.state = {
       isScanning: false,
       value: { address: '' },
@@ -170,7 +170,6 @@ class SendTokenContacts extends React.Component<Props, State> {
       formStructure: getFormStructure(),
       transactionPayload,
       assetData,
-      txFeeInEther,
     };
   }
 
@@ -192,13 +191,14 @@ class SendTokenContacts extends React.Component<Props, State> {
       gasPrice: transactionPayload.gasPrice,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
+      txFeeInWei: transactionPayload.txFeeInWei,
     };
 
     this.setState({
       showConfirmModal: true,
       transactionPayload: transactionPayloadWithAddress,
     });
-  }
+  };
 
   handleFormSubmit = () => {
     this.props.sendAsset(this.state.transactionPayload);
@@ -226,7 +226,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleBackNavigation = () => {
-    this.props.navigation.dismiss();
+    if (this.props.navigation) this.props.navigation.dismiss();
   };
 
   handleQRRead = (address: string) => {
@@ -242,8 +242,8 @@ class SendTokenContacts extends React.Component<Props, State> {
       showConfirmModal,
       showTranscationPendingModal,
       value,
-      txFeeInEther,
     } = this.state;
+    const { txFeeInWei, amount } = transactionPayload;
     const formOptions = generateFormOptions(
       { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
     );
@@ -270,11 +270,13 @@ class SendTokenContacts extends React.Component<Props, State> {
           </ModalItem>
           <ModalItem>
             <ModalLabel>Amount</ModalLabel>
-            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
+            <ModalValue>{amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
           </ModalItem>
           <ModalItem noBorder>
             <ModalLabel>Fee</ModalLabel>
-            <ModalValue>{txFeeInEther} <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
+            <ModalValue>
+              {txFeeInWei && `${utils.formatEther(txFeeInWei.toString())}`} <ModalValueSymbol>ETH</ModalValueSymbol>
+            </ModalValue>
           </ModalItem>
         </ModalItemWrapper>
         <ModalFooter>
@@ -291,7 +293,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         <SendTokenContactsHeader
           onBack={this.props.navigation.goBack}
           onNext={this.openConfirmationModal}
-          amount={transactionPayload.amount}
+          amount={amount}
           symbol={assetData.token}
         />
         <Container>

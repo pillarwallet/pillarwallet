@@ -20,6 +20,7 @@ export type TransactionPayload = {
   amount: number,
   to: string,
   gasPrice: number,
+  txFeeInWei: number,
   symbol: string,
   contractAddress: ?string,
 }

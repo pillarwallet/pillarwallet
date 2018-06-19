@@ -154,6 +154,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const value = this._form.getValue();
     const { txFeeInWei } = this.state;
     const { navigation } = this.props;
+    const { txFeeInWei } = this.state;
 
     if (!value || !this.gasPriceFetched) return;
 
@@ -162,6 +163,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       amount: parseNumber(value.amount),
       gasLimit,
       gasPrice: this.gasPrice.toNumber(),
+      txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
       symbol: this.assetData.symbol,
       contractAddress: this.assetData.contractAddress,
     };

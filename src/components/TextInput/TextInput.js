@@ -8,9 +8,10 @@ import { View, TouchableOpacity } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
-  onChange?: Function,
+  onChange: Function,
   onBlur?: Function,
-  value?: ?string
+  value: ?string,
+  multiline?: boolean,
 }
 
 type Props = {
@@ -19,7 +20,7 @@ type Props = {
   alignRight?: boolean,
   postfix?: string,
   label: string,
-  id: string,
+  id?: string,
   iconColor?: string,
   errorMessage?: string,
   onIconPress?: Function,
@@ -55,14 +56,14 @@ const FloatingButton = styled(ButtonIcon)`
   position:absolute;
   right: 0;
   top: 20px;
-  justifyContent: center;
+  justify-content: center;
   width: 60px;
   height: 60px;
   margin: 0;
   padding: 0;
 `;
 
-const Error = styled.Text`
+const ErrorMessage = styled.Text`
   color: tomato;
   flex: 1;
 `;
@@ -104,7 +105,7 @@ class TextInput extends React.Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.inputProps.value !== prevState.value) {
+    if (nextProps.inputProps && nextProps.inputProps.value !== prevState.value) {
       return {
         value: nextProps.inputProps.value,
       };
@@ -140,8 +141,8 @@ class TextInput extends React.Component<Props, State> {
       onIconPress,
       iconColor = '#2077FD',
       inputProps,
-      errorMessage,
       inlineLabel,
+      errorMessage,
       footerAddonText,
       footerAddonAction,
     } = this.props;
@@ -150,12 +151,17 @@ class TextInput extends React.Component<Props, State> {
 
     return (
       <View style={{ paddingBottom: 10 }}>
-        <Item inlineLabel={inlineLabel} stackedLabel={!inlineLabel} error={!!errorMessage}>
+        <Item
+          inlineLabel={inlineLabel}
+          stackedLabel={!inlineLabel}
+          error={!!errorMessage}
+          style={inputProps.multiline && { height: 112 }}
+        >
           <Label>{label}</Label>
           <InputField
             {...inputProps}
             onChange={this.handleChange}
-            // onBlur={this.handleBlur}
+            onBlur={this.handleBlur}
             onEndEditing={() => this.handleBlur}
             value={value}
             inputType={inputType}
@@ -163,9 +169,9 @@ class TextInput extends React.Component<Props, State> {
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
-        </Item >
+        </Item>
         <InputFooter>
-          {errorMessage ? <Error>{errorMessage}</Error> : <View />}
+          {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
           {!!footerAddonText &&
           <TouchableOpacity onPress={footerAddonAction}>
             <AddonText>{footerAddonText}</AddonText>
