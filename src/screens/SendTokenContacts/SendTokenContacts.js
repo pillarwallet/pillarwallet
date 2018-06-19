@@ -33,7 +33,6 @@ type State = {
   assetData: Object,
   showTranscationPendingModal: boolean,
   showConfirmModal: boolean,
-  txFeeInEther: string,
   value: {
     address: string,
   },
@@ -95,7 +94,7 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const ConfirmationModal = styled(SlideModal) `
+const ConfirmationModal = styled(SlideModal)`
   align-items: flex-start;
 `;
 
@@ -115,13 +114,13 @@ const ModalItem = styled.View`
   border-color: ${UIColors.defaultBorderColor};
 `;
 
-const ModalLabel = styled(Paragraph) `
+const ModalLabel = styled(Paragraph)`
   flex: 0 0 60px;
   font-weight: ${fontWeights.bold};
   color: ${baseColors.mediumGray};
 `;
 
-const ModalValue = styled(Paragraph) `
+const ModalValue = styled(Paragraph)`
   flex: 1;
   text-align: right;
   flex-wrap: wrap;
@@ -130,7 +129,7 @@ const ModalValue = styled(Paragraph) `
   color: ${props => props.large ? baseColors.black : baseColors.darkGray};
 `;
 
-const ModalAddressValue = styled(Paragraph) `
+const ModalAddressValue = styled(Paragraph)`
   flex: 1;
   text-align: left;
   flex-wrap: wrap;
@@ -226,7 +225,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleBackNavigation = () => {
-    if (this.props.navigation) this.props.navigation.dismiss();
+    this.props.navigation.dismiss();
   };
 
   handleQRRead = (address: string) => {

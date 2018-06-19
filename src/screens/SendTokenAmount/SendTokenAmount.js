@@ -154,7 +154,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const value = this._form.getValue();
     const { txFeeInWei } = this.state;
     const { navigation } = this.props;
-    const { txFeeInWei } = this.state;
 
     if (!value || !this.gasPriceFetched) return;
 
@@ -170,7 +169,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_CONTACTS, {
       assetData: this.assetData,
       transactionPayload,
-      txFeeInEther: utils.formatEther(txFeeInWei.toString()),
     });
   };
 
