@@ -65,20 +65,16 @@ describe('Common utils', () => {
 
   describe('isValidNumber', () => {
     it('should fail on string with non numerical symbols', () => {
-      const expectedValue = false;
-      expect(isValidNumber('a12,3m4')).toBe(expectedValue);
+      expect(isValidNumber('a12,3m4')).toBeFalsy();
     });
     it('should fail on string with two dots', () => {
-      const expectedValue = false;
-      expect(isValidNumber('2.3.45')).toBe(expectedValue);
+      expect(isValidNumber('2.3.45')).toBeFalsy();
     });
     it('should fail on string with two commas', () => {
-      const expectedValue = false;
-      expect(isValidNumber('5,678,91')).toBe(expectedValue);
+      expect(isValidNumber('5,678,91')).toBeFalsy();
     });
     it('should allow to have a dot and a comma', () => {
-      const expectedValue = true;
-      expect(isValidNumber('5,678.91')).toBe(expectedValue);
+      expect(isValidNumber('5,678.91')).toBeTruthy();
     });
   });
 
