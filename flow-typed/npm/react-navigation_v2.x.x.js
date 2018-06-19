@@ -528,7 +528,7 @@ declare module 'react-navigation' {
       action?: NavigationNavigateAction
     ) => boolean,
     reset?: (actions: NavigationAction[], index: number) => boolean,
-    dismiss?: () => boolean,
+    dismiss: () => boolean,
     // DrawerRouter action creators
     openDrawer?: () => boolean,
     closeDrawer?: () => boolean,
