@@ -17,6 +17,7 @@ import {
   fetchAssetsBalancesAction,
   fetchSupportedAssetsAction,
 } from 'actions/assetsActions';
+import { ETH } from 'constants/assetsConstants';
 
 const tokenIcons = {};
 
@@ -73,28 +74,30 @@ class AddToken extends React.Component<Props> {
       return;
     }
     removeAsset(asset);
-  }
+  };
 
   generateAddTokenListItems() {
     const { assets, supportedAssets } = this.props;
-    return supportedAssets.map(({ symbol, name, ...rest }) => {
-      const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
-      return (
-        <TokenListItem key={symbol}>
-          <Thumbnail square size={80} source={tokenIcons[symbol]} />
-          <Body style={{ marginLeft: 20 }}>
-            <TokenName>{name}</TokenName>
-            <TokenSymbol>{symbol}</TokenSymbol>
-          </Body>
-          <Right>
-            <Switch
-              onValueChange={boundAssetToggleHandler}
-              value={!!assets[symbol]}
-            />
-          </Right>
-        </TokenListItem>
-      );
-    });
+    return supportedAssets
+      .filter(({ symbol }) => symbol !== ETH)
+      .map(({ symbol, name, ...rest }) => {
+        const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+        return (
+          <TokenListItem key={symbol}>
+            <Thumbnail square size={80} source={tokenIcons[symbol]} />
+            <Body style={{ marginLeft: 20 }}>
+              <TokenName>{name}</TokenName>
+              <TokenSymbol>{symbol}</TokenSymbol>
+            </Body>
+            <Right>
+              <Switch
+                onValueChange={boundAssetToggleHandler}
+                value={!!assets[symbol]}
+              />
+            </Right>
+          </TokenListItem>
+        );
+      });
   }
 
   handleScreenDissmisal = () => {
@@ -106,7 +109,7 @@ class AddToken extends React.Component<Props> {
     } = this.props;
     fetchAssetsBalances(assets, wallet.address);
     navigation.goBack(null);
-  }
+  };
 
   render() {
     return (
