@@ -31,7 +31,7 @@ type State = {
   isSubmitted: boolean,
   transactionPayload: Object,
   assetData: Object,
-  showTranscationPendingModal: boolean,
+  showTransactionPendingModal: boolean,
   showConfirmModal: boolean,
   value: {
     address: string,
@@ -165,7 +165,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       value: { address: '' },
       showConfirmModal: false,
       isSubmitted: false,
-      showTranscationPendingModal: false,
+      showTransactionPendingModal: false,
       formStructure: getFormStructure(),
       transactionPayload,
       assetData,
@@ -210,9 +210,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   handleOpenPendingTransaction = () => {
     if (!this.state.isSubmitted) return;
     this.setState({
-      showTranscationPendingModal: true,
+      showTransactionPendingModal: true,
     });
-  }
+  };
 
   handleToggleQRScanningState = () => {
     this.setState({
@@ -239,7 +239,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       assetData,
       formStructure,
       showConfirmModal,
-      showTranscationPendingModal,
+      showTransactionPendingModal,
       value,
     } = this.state;
     const { txFeeInWei, amount } = transactionPayload;
@@ -311,7 +311,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         {qrScannerComponent}
         {confirmationModal}
         <TransactionSentModal
-          isVisible={showTranscationPendingModal}
+          isVisible={showTransactionPendingModal}
           onModalHide={this.handleBackNavigation}
         />
       </React.Fragment>
