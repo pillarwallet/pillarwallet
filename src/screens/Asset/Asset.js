@@ -18,7 +18,6 @@ import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';

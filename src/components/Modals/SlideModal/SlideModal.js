@@ -41,6 +41,7 @@ const ModalBackground = styled.View`
 const ModalHeader = styled.View`
   flex-direction: row;
   width: 100%;
+  margin-bottom: 20px;
   align-items: center;
   justify-content: space-between;
 `;
