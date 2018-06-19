@@ -2,10 +2,9 @@
 import styled from 'styled-components/native';
 import { fontSizes, baseColors } from 'utils/variables';
 
-const Status = styled.Text`
-  text-align: right;
-  color: ${baseColors.mediumGray};
+const Timestamp = styled.Text`
   font-size: ${fontSizes.small};
+  color: ${baseColors.mediumGray};
 `;
 
-export default Status;
+export default Timestamp;

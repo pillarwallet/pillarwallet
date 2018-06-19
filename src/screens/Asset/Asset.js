@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Animated, Easing, View, Share, RefreshControl } from 'react-native';
+import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -17,6 +18,7 @@ import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
+import SlideModal from 'components/Modals/SlideModal';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
@@ -54,6 +56,11 @@ type State = {
     }
   }
 }
+
+const AssetCardWrapper = styled(Wrapper)`
+  background-color: ${baseColors.lightGray};
+  height: 350;
+`;
 
 class AssetScreen extends React.Component<Props, State> {
   state = {
@@ -158,13 +165,7 @@ class AssetScreen extends React.Component<Props, State> {
               flexDirection: 'row',
             }}
           />
-          <Wrapper
-            regularPadding
-            style={{
-              backgroundColor: baseColors.white,
-              height: 350,
-            }}
-          >
+          <AssetCardWrapper regularPadding>
             <Transition shared={assetData.name}>
               <AssetCard
                 id={assetData.token}
@@ -187,7 +188,7 @@ class AssetScreen extends React.Component<Props, State> {
               onPressReceive={() => this.openReceiveTokenModal(assetData)}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
             />
-          </Wrapper>
+          </AssetCardWrapper>
           <TXHistory
             history={history}
             address={assetData.address}
