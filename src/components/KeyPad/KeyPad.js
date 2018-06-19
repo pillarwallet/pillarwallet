@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Button, Platform, TouchableNativeFeedback } from 'react-native';
+import { Platform, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native';
 import { UIColors, fontSizes } from 'utils/variables';
 import keyPadTypes from './keyPadTypes';
@@ -67,7 +67,7 @@ export default class KeyPad extends React.Component<Props> {
     this.props.onKeyPress(pressedKey);
   };
 
-  renderKeys(buttons: any, inputColor: any) {
+  renderKeys(buttons: any) {
     return buttons.map(({ label, value }: KeyPadButton) => {
       if (value) {
         if (Platform.OS === 'ios') {
@@ -101,7 +101,6 @@ export default class KeyPad extends React.Component<Props> {
   render() {
     const {
       style,
-      inputColor,
       type,
       customButtons,
       options,
@@ -110,7 +109,7 @@ export default class KeyPad extends React.Component<Props> {
 
     return (
       <Wrapper style={style}>
-        {this.renderKeys(buttons, inputColor)}
+        {this.renderKeys(buttons)}
       </Wrapper>
     );
   }

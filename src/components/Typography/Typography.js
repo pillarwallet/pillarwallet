@@ -1,6 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 export const Title = styled.Text`
   font-size: ${fontSizes.extraLarge};
@@ -20,7 +20,6 @@ export const Paragraph = styled.Text`
 export const TextLink = styled.Text`
   font-size: ${fontSizes.small};
   margin-right: 10px;
-  font-weight: ${fontWeights.bold};
   color: ${UIColors.primary};
 `;
 

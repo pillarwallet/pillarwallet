@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator } from 'react-native';
+import { TouchableOpacity, Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
-import { UIColors, baseColors } from 'utils/variables';
+import { TextLink } from 'components/Typography';
+import { baseColors } from 'utils/variables';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import {
@@ -212,14 +213,17 @@ class AssetsScreen extends React.Component<Props, State> {
             width: '100%',
             height: 150,
             flexDirection: 'row',
+            backgroundColor: 'white',
+            shadowColor: 'black',
+            shadowOpacity: 0.07,
+            shadowRadius: 0,
+            shadowOffset: { width: 0, height: 1 },
           }}
         >
           <Grid
             style={{
               padding: 20,
-              borderBottomWidth: 1,
-              borderStyle: 'solid',
-              borderBottomColor: UIColors.defaultBorderColor,
+
             }}
           >
             <Row>
@@ -265,18 +269,15 @@ class AssetsScreen extends React.Component<Props, State> {
                 <Title title="assets" />
               </Column>
               <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                <Button
-                  secondary
-                  noPadding
-                  marginTop="20px"
-                  marginBottom="20px"
-                  onPress={this.goToAddTokenPage}
-                  title="Add Token+"
-                />
+                <TouchableOpacity onPress={this.goToAddTokenPage} >
+                  <TextLink>
+                    Add token
+                  </TextLink>
+                </TouchableOpacity>
               </Column>
             </Row>
           </Grid>
-          { Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating /> }
+          {Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating />}
         </ScrollWrapper>
         <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}

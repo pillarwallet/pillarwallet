@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { baseColors } from 'utils/variables';
 import ButtonWrapper from './ButtonWrapper';
 import ButtonText from './ButtonText';
 
@@ -20,19 +21,19 @@ type Props = {
 
 const themes = {
   primary: {
-    background: '#2077fd',
+    background: baseColors.electricBlue,
     underlay: '#80dfff',
     color: '#ffffff',
   },
   secondary: {
     background: 'rgba(0,0,0,0)',
     underlay: 'rgba(0,0,0,0)',
-    color: '#2077fd',
+    color: baseColors.electricBlue,
   },
   disabled: {
-    background: '#d8d8d8',
-    underlay: '#a9a9a9',
-    color: '#808080',
+    background: baseColors.lightGray,
+    underlay: baseColors.mediumGray,
+    color: baseColors.darkGray,
   },
 };
 

@@ -36,7 +36,7 @@ type Props = {
 const BackgroundHolder = styled(View)`
   flex: 1;
   flex-direction: row;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
 `;
 
@@ -91,7 +91,7 @@ export default class AssetCard extends React.Component<Props, State> {
             color={linearGradientColorStart}
             style={[{
               height: 120,
-              marginBottom: 20,
+              marginBottom: 12,
             }]}
           >
             <BackgroundHolder>
