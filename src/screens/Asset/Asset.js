@@ -17,7 +17,6 @@ import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import TransactionSentModal from 'components/TransactionSentModal';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
@@ -203,12 +202,6 @@ class AssetScreen extends React.Component<Props, State> {
           tokenName={assetData.name}
           handleOpenShareDialog={this.handleOpenShareDialog}
         />
-
-        <TransactionSentModal
-          isVisible={this.state.activeModal.type === 'SEND_CONFIRMATION'}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-        />
-
       </Container>
     );
   }

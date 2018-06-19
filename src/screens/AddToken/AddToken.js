@@ -20,6 +20,8 @@ import {
 
 const tokenIcons = {};
 
+
+// ALL SHOULD BE REMOVED FROM THE BUNDLED ONCE ALL ASSETS UPLOADED ON CDN
 tokenIcons.PLR = require('../../assets/images/tokens/PLR/icon.png');
 tokenIcons.QTM = require('../../assets/images/tokens/QTM/icon.png');
 tokenIcons.OMG = require('../../assets/images/tokens/OMG/icon.png');
@@ -29,6 +31,8 @@ tokenIcons.BAT = require('../../assets/images/tokens/BAT/icon.png');
 tokenIcons.GNT = require('../../assets/images/tokens/GNT/icon.png');
 tokenIcons.PPT = require('../../assets/images/tokens/PPT/icon.png');
 tokenIcons.SALT = require('../../assets/images/tokens/SALT/icon.png');
+tokenIcons.ETH = require('../../assets/images/tokens/ETH/icon.png');
+tokenIcons.EOS = require('../../assets/images/tokens/EOS/icon.png');
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.medium};
