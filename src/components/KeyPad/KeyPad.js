@@ -2,25 +2,38 @@
 import * as React from 'react';
 import { Button, Platform, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native';
+import { UIColors, fontSizes } from 'utils/variables';
 import keyPadTypes from './keyPadTypes';
 
 const KeyInput = styled.View`
   justify-content: center;
-  width: 33.3333%;
-  height: 55;
+  width: 30%;
+  height: 70;
 `;
 
 const Wrapper = styled.View`
   flex-wrap: wrap;
   flex-direction: row;
+  align-self: flex-end;
+  justify-content: center;
+`;
+
+const PinButton = styled.TouchableOpacity`
   align-self: center;
-  justify-content: flex-end;
+  height: 120px;
   width: 100%;
+  align-items: center;
+`;
+
+const PinButtonText = styled.Text`
+  color: ${UIColors.defaultTextColor};
+  font-size: ${fontSizes.extraLarge};
+  line-height: 56;
 `;
 
 const ButtonText = styled.Text`
-  color: rgb(32,119,253);
-  font-size: 18;
+  color: ${UIColors.defaultTextColor};
+  font-size: ${fontSizes.extraExtraLarge};
   align-self: center;
   line-height: 56;
 `;
@@ -60,7 +73,9 @@ export default class KeyPad extends React.Component<Props> {
         if (Platform.OS === 'ios') {
           return (
             <KeyInput key={value}>
-              <Button color={inputColor} title={label} onPress={this.handleKeyPress(value)} />
+              <PinButton onPress={this.handleKeyPress(value)}>
+                <PinButtonText>{label}</PinButtonText>
+              </PinButton>
             </KeyInput>
           );
         }
