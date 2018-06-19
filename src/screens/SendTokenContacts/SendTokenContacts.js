@@ -5,6 +5,7 @@ import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { ASSET } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
+import { utils } from 'ethers';
 import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
@@ -185,13 +186,14 @@ class SendTokenContacts extends React.Component<Props, State> {
       gasPrice: transactionPayload.gasPrice,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
+      txFeeInWei: transactionPayload.txFeeInWei,
     };
 
     this.setState({
       showConfirmModal: true,
       transactionPayload: transactionPayloadWithAddress,
     });
-  }
+  };
 
   handleFormSubmit = () => {
     this.props.sendAsset(this.state.transactionPayload);
@@ -221,7 +223,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       showConfirmModal,
       value,
     } = this.state;
-
+    const { txFeeInWei, amount } = transactionPayload;
     const formOptions = generateFormOptions(
       { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
     );
@@ -248,11 +250,13 @@ class SendTokenContacts extends React.Component<Props, State> {
           </ModalItem>
           <ModalItem>
             <ModalLabel>Amount</ModalLabel>
-            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
+            <ModalValue>{amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
           </ModalItem>
           <ModalItem noBorder>
             <ModalLabel>Fee</ModalLabel>
-            <ModalValue>0.0004 <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
+            <ModalValue>
+              {txFeeInWei && `${utils.formatEther(txFeeInWei.toString())}`} <ModalValueSymbol>ETH</ModalValueSymbol>
+            </ModalValue>
           </ModalItem>
         </ModalItemWrapper>
         <ModalFooter>
@@ -269,7 +273,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         <SendTokenContactsHeader
           onBack={this.props.navigation.goBack}
           onNext={this.openConfirmationModal}
-          amount={transactionPayload.amount}
+          amount={amount}
           symbol={assetData.token}
         />
         <Container>
