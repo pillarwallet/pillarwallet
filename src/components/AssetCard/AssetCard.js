@@ -33,11 +33,19 @@ type Props = {
   backgroundUri: string,
 }
 
-const BackgroundHolder = styled(View)`
+const BackgroundHolder = styled.View`
   flex: 1;
   flex-direction: row;
   border-radius: 12px;
   overflow: hidden;
+`;
+
+const AmountWrapper = styled.View`
+  height: 40;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-left: 14px;
+  justify-content: flex-end;
 `;
 
 type State = {
@@ -90,7 +98,7 @@ export default class AssetCard extends React.Component<Props, State> {
           <Animated.View
             color={linearGradientColorStart}
             style={[{
-              height: 120,
+              height: 130,
               marginBottom: 12,
             }]}
           >
@@ -115,7 +123,10 @@ export default class AssetCard extends React.Component<Props, State> {
               />
               <DetailsWrapper>
                 <Name>{name}</Name>
-                <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
+                <AmountWrapper>
+                  <Amount>{amount}</Amount>
+                  <AmountToken> {token}</AmountToken>
+                </AmountWrapper>
                 <FiatAmount>
                   {currencySymbol}{balanceInFiat.amount}
                 </FiatAmount>
