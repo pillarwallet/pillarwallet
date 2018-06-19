@@ -119,7 +119,6 @@ dependencies {
   compile 'com.android.support:multidex:1.0.1'
 
   // Our dependencies
-  compile 'com.android.support:appcompat-v7:26.0.1'
   compile "com.google.android.gms:play-services-base:15.0.0"
   compile "com.google.firebase:firebase-core:15.0.2"
 
