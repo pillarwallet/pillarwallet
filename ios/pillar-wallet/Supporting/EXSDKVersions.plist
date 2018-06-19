@@ -5,13 +5,13 @@
 	<key>detachedNativeVersions</key>
 	<dict>
 		<key>kernel</key>
-		<string>27.0.0</string>
+		<string>28.0.0</string>
 		<key>shell</key>
-		<string>27.0.0</string>
+		<string>28.0.0</string>
 	</dict>
 	<key>sdkVersions</key>
 	<array>
-		<string>27.0.0</string>
+		<string>28.0.0</string>
 	</array>
 </dict>
 </plist>

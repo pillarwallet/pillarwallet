@@ -49,6 +49,8 @@ class Welcome extends React.Component<Props, State> {
   };
 
   componentDidMount() {
+    console.log(this.props.navigation.navigate);
+
     this.listeners = [
       this.props.navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
       this.props.navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
