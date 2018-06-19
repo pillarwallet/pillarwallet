@@ -5,6 +5,7 @@ import {
   decodeETHAddress,
   pipe,
   parseNumber,
+  isValidNumber,
   formatMoney,
 } from '../common';
 
@@ -48,17 +49,36 @@ describe('Common utils', () => {
   });
 
   describe('parseNumber', () => {
-    it('should convert a comma seperated number (as string) to a decimal seperated number', () => {
+    it('should convert a comma separated number (as string) to a decimal separated number', () => {
       const expectedValue = 12.34;
       expect(parseNumber('12,34')).toBe(expectedValue);
     });
-    it('should convert a decimal seperated number (as string) to the exact same number', () => {
+    it('should convert a decimal separated number (as string) to the exact same number', () => {
       const expectedValue = 23.45;
       expect(parseNumber('23.45')).toBe(expectedValue);
     });
-    it('should convert a value with multiple decimal seperators', () => {
+    it('should convert a value with multiple decimal separators', () => {
       const expectedValue = 5678.91;
       expect(parseNumber('5,678.91')).toBe(expectedValue);
+    });
+  });
+
+  describe('isValidNumber', () => {
+    it('should fail on string with non numerical symbols', () => {
+      const expectedValue = false;
+      expect(isValidNumber('a12,3m4')).toBe(expectedValue);
+    });
+    it('should fail on string with two dots', () => {
+      const expectedValue = false;
+      expect(isValidNumber('2.3.45')).toBe(expectedValue);
+    });
+    it('should fail on string with two commas', () => {
+      const expectedValue = false;
+      expect(isValidNumber('5,678,91')).toBe(expectedValue);
+    });
+    it('should allow to have a dot and a comma', () => {
+      const expectedValue = true;
+      expect(isValidNumber('5,678.91')).toBe(expectedValue);
     });
   });
 
