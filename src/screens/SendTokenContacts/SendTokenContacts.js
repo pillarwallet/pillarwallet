@@ -3,8 +3,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import { ASSET } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
+import { utils } from 'ethers';
 import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
@@ -14,6 +14,7 @@ import TextInput from 'components/TextInput';
 import SlideModal from 'components/Modals/SlideModal';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
+import TransactionSentModal from 'components/TransactionSentModal';
 import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
@@ -27,8 +28,10 @@ type Props = {
 
 type State = {
   isScanning: boolean,
+  isSubmitted: boolean,
   transactionPayload: Object,
   assetData: Object,
+  showTransactionPendingModal: boolean,
   showConfirmModal: boolean,
   value: {
     address: string,
@@ -161,6 +164,8 @@ class SendTokenContacts extends React.Component<Props, State> {
       isScanning: false,
       value: { address: '' },
       showConfirmModal: false,
+      isSubmitted: false,
+      showTransactionPendingModal: false,
       formStructure: getFormStructure(),
       transactionPayload,
       assetData,
@@ -185,17 +190,28 @@ class SendTokenContacts extends React.Component<Props, State> {
       gasPrice: transactionPayload.gasPrice,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
+      txFeeInWei: transactionPayload.txFeeInWei,
     };
 
     this.setState({
       showConfirmModal: true,
       transactionPayload: transactionPayloadWithAddress,
     });
-  }
+  };
 
   handleFormSubmit = () => {
     this.props.sendAsset(this.state.transactionPayload);
-    this.props.navigation.navigate(ASSET, { initialModalState: 'SEND_CONFIRMATION' });
+    this.setState({
+      showConfirmModal: false,
+      isSubmitted: true,
+    });
+  };
+
+  handleOpenPendingTransaction = () => {
+    if (!this.state.isSubmitted) return;
+    this.setState({
+      showTransactionPendingModal: true,
+    });
   };
 
   handleToggleQRScanningState = () => {
@@ -206,6 +222,10 @@ class SendTokenContacts extends React.Component<Props, State> {
         Keyboard.dismiss();
       }
     });
+  };
+
+  handleBackNavigation = () => {
+    this.props.navigation.dismiss();
   };
 
   handleQRRead = (address: string) => {
@@ -219,9 +239,10 @@ class SendTokenContacts extends React.Component<Props, State> {
       assetData,
       formStructure,
       showConfirmModal,
+      showTransactionPendingModal,
       value,
     } = this.state;
-
+    const { txFeeInWei, amount } = transactionPayload;
     const formOptions = generateFormOptions(
       { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
     );
@@ -235,10 +256,10 @@ class SendTokenContacts extends React.Component<Props, State> {
         onRead={this.handleQRRead}
       />
     );
-
     const confirmationModal = (
       <ConfirmationModal
         isVisible={showConfirmModal}
+        onModalHide={this.handleOpenPendingTransaction}
         title="confirm"
       >
         <ModalItemWrapper>
@@ -248,16 +269,18 @@ class SendTokenContacts extends React.Component<Props, State> {
           </ModalItem>
           <ModalItem>
             <ModalLabel>Amount</ModalLabel>
-            <ModalValue>{transactionPayload.amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
+            <ModalValue>{amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
           </ModalItem>
           <ModalItem noBorder>
             <ModalLabel>Fee</ModalLabel>
-            <ModalValue>0.0004 <ModalValueSymbol>ETH</ModalValueSymbol></ModalValue>
+            <ModalValue>
+              {txFeeInWei && `${utils.formatEther(txFeeInWei.toString())}`} <ModalValueSymbol>ETH</ModalValueSymbol>
+            </ModalValue>
           </ModalItem>
         </ModalItemWrapper>
         <ModalFooter>
           <ModalParagraph light>
-          The process may take up to 10 minutes to complete. Please check your transaction history.
+            The process may take up to 10 minutes to complete. Please check your transaction history.
           </ModalParagraph>
           <Button title="Confirm Transaction" onPress={this.handleFormSubmit} />
         </ModalFooter>
@@ -269,7 +292,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         <SendTokenContactsHeader
           onBack={this.props.navigation.goBack}
           onNext={this.openConfirmationModal}
-          amount={transactionPayload.amount}
+          amount={amount}
           symbol={assetData.token}
         />
         <Container>
@@ -287,6 +310,10 @@ class SendTokenContacts extends React.Component<Props, State> {
         </Container>
         {qrScannerComponent}
         {confirmationModal}
+        <TransactionSentModal
+          isVisible={showTransactionPendingModal}
+          onModalHide={this.handleBackNavigation}
+        />
       </React.Fragment>
     );
   }
