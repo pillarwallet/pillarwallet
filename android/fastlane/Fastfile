@@ -1,0 +1,33 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Deploy a new version to the Google Play Internal"
+  lane :deploy do
+    changelog_from_git_commits(
+     merge_commit_filtering: 'exclude_merges'
+    )
+    upload_to_play_store(
+      track: 'internal',
+      apk: 'app/build/outputs/apk/app-prod-release.apk',
+      json_key_data: ENV['GOOGLE_JSON_DATA'],
+      skip_upload_aab: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end
