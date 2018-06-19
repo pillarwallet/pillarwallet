@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Text } from 'react-native';
 import renderer from 'react-test-renderer';
 import { shallow } from 'enzyme';
-import ReactTestUtils from 'react-dom/test-utils';
 import SlideModal from '../SlideModal';
 
 describe('Slide Modal', () => {

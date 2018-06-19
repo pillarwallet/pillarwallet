@@ -82,7 +82,7 @@ export default class SlideModal extends React.Component<Props, State> {
     }
     return null;
   }
-  
+
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     return this.state.isVisible !== nextState.isVisible;
   }
