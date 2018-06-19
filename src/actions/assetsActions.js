@@ -38,7 +38,7 @@ export const sendAssetAction = ({
   return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet } } = getState();
     if (symbol === ETH) {
-      transferETH({
+      await transferETH({
         gasLimit,
         gasPrice,
         to,
@@ -47,7 +47,7 @@ export const sendAssetAction = ({
       });
       return;
     }
-    transferERC20({
+    await transferERC20({
       to,
       amount,
       contractAddress,
