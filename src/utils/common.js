@@ -75,6 +75,15 @@ export function parseNumber(amount: string = '0') {
   return parseFloat(strg);
 }
 
+export function isValidNumber(amount: string = '0') {
+  const strg = amount.toString() || '';
+  const numericalSymbols = strg.replace(/[^0-9$.,]/g, '');
+  if (numericalSymbols.length !== strg.length) return false;
+  if ((strg.match(new RegExp('\\.', 'g')) || []).length > 1) return false;
+  if ((strg.match(new RegExp(',', 'g')) || []).length > 1) return false;
+  return true;
+}
+
 export function formatAmount(amount: string | number): number {
   return Number(new BigNumber(amount).toFixed(6, 1)); // 1 = ROUND_DOWN
 }
