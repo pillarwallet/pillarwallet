@@ -306,7 +306,7 @@ jobs:
       #     path: app/build/test-results
       - run:
           name: Initial build
-          command: ./gradlew clean assembleProdRelease --no-daemon --stacktrace -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+          command: ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
       - store_artifacts:
           path: app/build/outputs/apk
           destination: apks
