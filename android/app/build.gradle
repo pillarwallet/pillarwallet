@@ -49,7 +49,7 @@ android {
     ]
   }
   dexOptions {
-    javaMaxHeapSize System.getenv("DISABLE_DEX_MAX_HEAP") ? null : "8g"
+    javaMaxHeapSize "1G"
   }
   productFlavors {
     // Define separate dev and prod product flavors.
