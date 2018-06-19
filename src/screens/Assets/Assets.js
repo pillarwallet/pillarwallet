@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator } from 'react-native';
+import { Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator, ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
@@ -243,8 +243,8 @@ class AssetsScreen extends React.Component<Props, State> {
             </Row>
           </Grid>
         </View>
-        <ScrollWrapper
-          regularPadding
+        <ScrollView
+          contentContainerStyle={{paddingHorizontal: 20}}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -277,7 +277,7 @@ class AssetsScreen extends React.Component<Props, State> {
             </Row>
           </Grid>
           { Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating /> }
-        </ScrollWrapper>
+        </ScrollView>
         <TransactionSentModal
           isVisible={activeModalType === 'SEND_CONFIRMATION'}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}

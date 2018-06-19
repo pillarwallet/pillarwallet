@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import { baseColors } from 'utils/variables';
 import { getCurrencySymbol } from 'utils/common';
-import FastImage from 'react-native-fast-image';
 import styled from 'styled-components/native';
+import { Image } from 'react-native-expo-image-cache';
 
 import IconWrapper from './IconWrapper';
 import IconCircle from './IconCircle';
@@ -38,15 +38,44 @@ const BackgroundHolder = styled(View)`
   flex-direction: row;
   border-radius: 20px;
   overflow: hidden;
+  width: 100%;
+  position: relative;
 `;
 
 type State = {
   showAsset: boolean;
+  cardBackgroundUri: string,
+  cardIconUri: string,
 }
+
+function cacheImages(images) {
+  return images.map(image => {
+    if (typeof image === 'string') {
+      return Image.prefetch(image);
+    } else {
+      return Asset.fromModule(image).downloadAsync();
+    }
+  });
+}
+
 
 export default class AssetCard extends React.Component<Props, State> {
   state = {
     showAsset: false,
+    cardBackgroundUri: undefined,
+    cardIconUri: undefined,
+  }
+
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    if (nextProps.backgroundUri !== prevState.cardBackgroundUri) {
+      return {
+        cardBackgroundUri: nextProps.backgroundUri,
+        cardIconUri: nextProps.iconUri,
+        showAsset: true,
+      };
+    }
+
+    return null;
   }
 
   handleBackgroundDownload = () => {
@@ -61,11 +90,14 @@ export default class AssetCard extends React.Component<Props, State> {
       token,
       balanceInFiat,
       onPress,
-      iconUri,
-      backgroundUri,
     } = this.props;
-    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
+    const {
+      cardBackgroundUri,
+      cardIconUri,
+    } = this.state;
+
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
     return (
       <View
@@ -95,7 +127,7 @@ export default class AssetCard extends React.Component<Props, State> {
             }]}
           >
             <BackgroundHolder>
-              <FastImage
+              <Image
                 style={{
                   width: '100%',
                   height: 200,
@@ -106,12 +138,10 @@ export default class AssetCard extends React.Component<Props, State> {
                   bottom: 0,
                   right: 0,
                 }}
-                source={{
-                  uri: backgroundUri,
-                  priority: FastImage.priority.high,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
+                {... { uri: cardBackgroundUri }}
+                resizeMode="cover"
                 onLoad={this.handleBackgroundDownload}
+                transitionDuration={0}
               />
               <DetailsWrapper>
                 <Name>{name}</Name>
@@ -122,7 +152,7 @@ export default class AssetCard extends React.Component<Props, State> {
               </DetailsWrapper>
               <IconWrapper>
                 <IconCircle>
-                  <FastImage
+                  <Image
                     style={{
                       alignSelf: 'flex-end',
                       height: 24,
@@ -132,11 +162,8 @@ export default class AssetCard extends React.Component<Props, State> {
                       left: 8,
                       opacity: this.state.showAsset ? 1 : 0,
                     }}
-                    source={{
-                      uri: iconUri,
-                      priority: FastImage.priority.low,
-                    }}
-                    resizeMode={FastImage.resizeMode.cover}
+                    {...{ uri: cardIconUri }}
+                    resizeMode="cover"
                   />
                 </IconCircle>
               </IconWrapper>
