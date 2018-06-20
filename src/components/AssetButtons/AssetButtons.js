@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { baseColors } from 'utils/variables';
 
 type Props = {
   onPressReceive: Function,
@@ -19,15 +20,21 @@ const AssetButtonsWrapper = styled.View`
 
 const AssetButton = styled.TouchableOpacity`
   margin: 0 20px;
+  width: 48px;
+  height: 48px;
+  background: ${baseColors.snowWhite};
+  border-radius: 2px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const AssetButtonImage = styled.Image`
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
 `;
 
 const AssetButtonText = styled.Text`
-  color: #2077fd;
+  color: ${baseColors.electricBlue};
   text-align: center;
   margin-top: 10px;
 `;
