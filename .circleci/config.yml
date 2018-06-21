@@ -291,14 +291,6 @@ jobs:
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
-      - run:
-          name: Fastlane deploy
-          command: |
-            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-            bundle exec fastlane supply init --json_key_data="$GOOGLE_JSON_DATA"
-            bundle exec fastlane deploy_alpha --verbose
-          environment:
-            BUNDLE_PATH: vendor/bundle
       - save_cache:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
           paths:
