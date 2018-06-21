@@ -1,20 +1,5 @@
 // @flow
-import type { NavigationAction, NavigationState } from 'react-navigation';
-import { NavigationActions } from 'react-navigation';
+import { createNavigationReducer } from 'react-navigation-redux-helpers';
+import RootNavigation from 'navigation/rootNavigation';
 
-import RootSwitch from 'navigation/rootNavigation';
-import { WELCOME } from '../constants/navigationConstants';
-
-const initialState: NavigationState = RootSwitch.router.getStateForAction(NavigationActions.init({
-  index: 0,
-  actions: [
-    NavigationActions.navigate({
-      routeName: WELCOME,
-    }),
-  ],
-}));
-
-export default function navReducer(state: NavigationState = initialState, action: NavigationAction) {
-  const nextState = RootSwitch.router.getStateForAction(action, state);
-  return nextState || state;
-}
+export default createNavigationReducer(RootNavigation);

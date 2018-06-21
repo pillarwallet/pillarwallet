@@ -8,6 +8,7 @@ import { baseColors } from 'utils/variables';
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
 import NewProfileScreen from 'screens/NewProfile';
+import SecurityConfirmScreen from 'screens/SecurityConfirm';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import LegalTermsScreen from 'screens/LegalTerms';
@@ -21,6 +22,7 @@ import {
   APP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
+  SECURITY_CONFIRM,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
@@ -58,6 +60,7 @@ const onBoardingFlow = createStackNavigator({
     },
   },
   [IMPORT_WALLET]: ImportWalletScreen,
+  [SECURITY_CONFIRM]: SecurityConfirmScreen,
   [BACKUP_PHRASE]: BackupPhraseScreen,
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,

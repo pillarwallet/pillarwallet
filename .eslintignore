@@ -1,7 +1,10 @@
 .idea
+.circleci
 .vscode
 node_modules
+ios
 storybook
 flow-typed
 android/
 src/utils/shim.js
+reports

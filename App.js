@@ -5,7 +5,7 @@ import { StatusBar, BackHandler } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
-import { createReduxBoundAddListener } from 'react-navigation-redux-helpers';
+import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { SHOW_STORYBOOK } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -13,7 +13,7 @@ import configureStore from './src/configureStore';
 import StorybookUI from './storybook';
 
 const store = configureStore();
-const addListener = createReduxBoundAddListener('root');
+const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
 
 type State = {
   isFetched: boolean
@@ -59,18 +59,12 @@ class App extends React.Component<Props, State> {
   };
 
   render() {
-    const { dispatch, navigation } = this.props;
     const { isFetched } = this.state;
+    const { navigation, dispatch } = this.props;
     if (!isFetched) return null;
 
     return (
-      <RootNavigation
-        navigation={{
-          dispatch,
-          state: navigation,
-          addListener,
-        }}
-      />
+      <ReduxifiedRootNavigation state={navigation} dispatch={dispatch} />
     );
   }
 }
