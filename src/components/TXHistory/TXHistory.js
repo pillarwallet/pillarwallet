@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { FlatList, Text, Linking } from 'react-native';
+import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { Icon } from 'native-base';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
@@ -21,8 +22,6 @@ import Section from './Section';
 const iconUp = require('../../assets/icons/up.png');
 const iconDown = require('../../assets/icons/down.png');
 
-const blockchainExplorerURL = 'https://ropsten.etherscan.io/tx/';
-
 type Props = {
   history: Transaction[],
   token: string,
@@ -34,6 +33,7 @@ type State = {
   showModal: boolean,
   selectedTransaction: {
     hash: string,
+    date: string | null,
     token: string | null,
     amount: number | null,
     recepient: string | null,
@@ -64,6 +64,7 @@ export default class TXHistory extends React.Component<Props, State> {
     showModal: false,
     selectedTransaction: {
       hash: '',
+      date: null,
       token: null,
       amount: null,
       recepient: null,
@@ -111,15 +112,19 @@ export default class TXHistory extends React.Component<Props, State> {
       asset,
       nbConfirmations,
       hash,
+      tmstmp,
+      transaction: innerTransaction,
     } = transaction;
+    const datetime = new Date(tmstmp);
 
     this.setState({
       selectedTransaction: {
         hash,
+        date: this.getDate(datetime),
         token: asset,
         amount: formatETHAmount(value),
         recepient: `${to.slice(0, 7)}…${to.slice(-7)}`,
-        fee: 0.04,
+        fee: innerTransaction.gas.toFixed(6),
         note: null,
         confirmations: nbConfirmations,
         status: status.charAt(0).toUpperCase() + status.slice(1),
@@ -129,7 +134,7 @@ export default class TXHistory extends React.Component<Props, State> {
   }
 
   viewTransactionOnBlockchain = (hash: string) => {
-    Linking.openURL(blockchainExplorerURL + hash);
+    Linking.openURL(TX_DETAILS_URL + hash);
   }
 
   renderTransaction = ({ item: transaction }: { item: Transaction }) => {
@@ -191,6 +196,12 @@ export default class TXHistory extends React.Component<Props, State> {
                 <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
               </Column>
             </Row>
+            <Row size="0 0 40px">
+              <Column><Label>Date</Label></Column>
+              <Column>
+                <Text>{selectedTransaction.date}</Text>
+              </Column>
+            </Row>
 
             <Row size="0 0 40px">
               <Column><Label>Recepient</Label></Column>
@@ -204,6 +215,7 @@ export default class TXHistory extends React.Component<Props, State> {
                 <Text>{selectedTransaction.fee}</Text>
               </Column>
             </Row>
+
             {selectedTransaction.note &&
               <Row size="0 0 80px">
                 <Column><Label>Note</Label></Column>
