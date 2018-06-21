@@ -124,14 +124,13 @@ export default class ProfileSettingsItem extends React.Component<Props> {
         <ItemLabel>{label}</ItemLabel>
         <Switch
           onValueChange={onPress}
-          value={value}
+          value={processedValue}
         />
       </ItemLabelHolder>
     );
   }
   render() {
     const {
-      label,
       onPress,
       toggle,
       value,
