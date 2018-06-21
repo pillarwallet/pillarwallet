@@ -28,7 +28,7 @@
     "flow-bin": "0.70.0",
     "flow-typed": "^2.4.0",
     "jest": "^22.4.3",
-    "jest-expo": "27.0.0",
+    "jest-expo": "28.0.0",
     "jest-html-reporter": "2.0.0",
     "jest-styled-components": "^5.0.1",
     "npm-run-all": "^4.1.2",
@@ -90,7 +90,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-device-info|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-firebase|react-native-fast-image|react-native-animatable|react-native-vector-icons|react-native-device-info|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -105,15 +105,17 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
-    "@pillarwallet/pillarwallet-nodejs-sdk": "1.2.365",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "1.1.445",
     "@tradle/react-native-http": "^2.0.0",
+    "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
+    "bignumber.js": "^7.2.1",
     "blockchain-explorer-sdk": "^0.1.0-60",
     "browserify-zlib": "~0.1.4",
     "cryptocompare": "^0.5.0",
     "dns.js": "^1.0.1",
     "ethers": "^3.0.9",
-    "expo": "^27.0.0",
+    "expo": "^28.0.0",
     "https-browserify": "~0.0.0",
     "lodash.merge": "^4.6.1",
     "native-base": "^2.4.2",
@@ -123,10 +125,11 @@
     "qrcode": "^1.2.0",
     "querystring-es3": "~0.2.0",
     "react": "16.3.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-27.0.2.tar.gz",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-28.0.0.tar.gz",
     "react-native-canvas": "^0.1.20",
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^0.21.5",
+    "react-native-fast-image": "^4.0.14",
     "react-native-firebase": "^4.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
@@ -135,9 +138,9 @@
     "react-native-randombytes": "3.2.0",
     "react-native-tcp": "^3.2.1",
     "react-native-udp": "^2.1.0",
-    "react-navigation": "2.0.4",
+    "react-navigation": "2.3.1",
     "react-navigation-fluid-transitions": "^0.2.0",
-    "react-navigation-redux-helpers": "^1.0.5",
+    "react-navigation-redux-helpers": "2.0.1",
     "react-redux": "^5.0.7",
     "readable-stream": "1.0.33",
     "redux": "^3.7.2",
@@ -150,7 +153,8 @@
     "tcomb-form-native": "^0.6.11",
     "timers-browserify": "^1.0.1",
     "url": "~0.10.1",
-    "util": "~0.10.3"
+    "util": "~0.10.3",
+    "yarn": "^1.7.0"
   },
   "react-native": {
     "fs": "react-native-level-fs",

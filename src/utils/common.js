@@ -1,4 +1,6 @@
 // @flow
+import { BigNumber } from 'bignumber.js';
+
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
     const timeout = setTimeout(() => {
@@ -51,7 +53,7 @@ export function formatMoney(
   stripZeros: ?boolean = true,
 ): string {
   const re = `\\d(?=(\\d{${x || 3}})+${n > 0 ? '\\D' : '$'})`;
-  let num = Number(src).toFixed(Math.max(0, Math.floor(n)));
+  let num = new BigNumber(src).toFixed(Math.max(0, Math.floor(n)), 1);
 
   if (stripZeros) {
     num = Number(num).toString();
@@ -71,6 +73,19 @@ export function parseNumber(amount: string = '0') {
   strg = strg.replace(new RegExp(`[^0-9$${decimal}]`, 'g'), '');
   strg = strg.replace(',', '.');
   return parseFloat(strg);
+}
+
+export function isValidNumber(amount: string = '0') {
+  const strg = amount.toString() || '';
+  const numericalSymbols = strg.replace(/[^0-9$.,]/g, '');
+  if (numericalSymbols.length !== strg.length) return false;
+  if ((strg.match(new RegExp('\\.', 'g')) || []).length > 1) return false;
+  if ((strg.match(new RegExp(',', 'g')) || []).length > 1) return false;
+  return true;
+}
+
+export function formatAmount(amount: string | number): number {
+  return Number(new BigNumber(amount).toFixed(6, 1)); // 1 = ROUND_DOWN
 }
 
 export function getCurrencySymbol(currency: string): string {

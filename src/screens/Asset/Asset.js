@@ -17,7 +17,6 @@ import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import TransactionSentModal from 'components/TransactionSentModal';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import ReceiveModal from './ReceiveModal';
 
@@ -35,7 +34,7 @@ type Props = {
   fetchExchangeRates: (assets: Assets) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   history: Transaction[],
-  assets: Object,
+  assets: Assets,
   wallet: Object,
   rates: Object,
   assetsState: ?string,
@@ -66,7 +65,7 @@ class AssetScreen extends React.Component<Props, State> {
       timing: Animated.timing,
       easing: Easing.easing,
     },
-  }
+  };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { initialModalState } = nextProps.navigation.state.params;
@@ -100,17 +99,26 @@ class AssetScreen extends React.Component<Props, State> {
 
   handleOpenShareDialog = (address: string) => {
     Share.share({ title: 'Public address', message: address });
-  }
+  };
 
   goToAddTokenPage = () => {
     this.props.navigation.navigate(ADD_TOKEN);
-  }
+  };
 
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FLOW, {
       assetData,
     });
-  }
+  };
+
+  openReceiveTokenModal = (assetData) => {
+    this.setState({
+      activeModal: {
+        type: 'RECEIVE',
+        opts: { address: assetData.address },
+      },
+    });
+  };
 
   render() {
     const { assetData } = this.props.navigation.state.params;
@@ -166,6 +174,8 @@ class AssetScreen extends React.Component<Props, State> {
                 color={assetData.color}
                 onPress={this.handleCardTap}
                 address={assetData.address}
+                iconUri={assetData.icon}
+                backgroundUri={assetData.background}
               />
             </Transition>
             <Paragraph light>
@@ -173,9 +183,7 @@ class AssetScreen extends React.Component<Props, State> {
               Reiciendis cum recusandae neque numquam corporis quibusdam tenetur expedita tempora aut harum.
             </Paragraph>
             <AssetButtons
-              onPressReceive={
-                () => { this.setState({ activeModal: { type: 'RECEIVE', opts: { address: assetData.address } } }); }
-              }
+              onPressReceive={() => this.openReceiveTokenModal(assetData)}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
             />
           </Wrapper>
@@ -194,12 +202,6 @@ class AssetScreen extends React.Component<Props, State> {
           tokenName={assetData.name}
           handleOpenShareDialog={this.handleOpenShareDialog}
         />
-
-        <TransactionSentModal
-          isVisible={this.state.activeModal.type === 'SEND_CONFIRMATION'}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-        />
-
       </Container>
     );
   }

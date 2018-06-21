@@ -11,10 +11,18 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import ModalHeader from 'components/ModalHeader';
-import { addAssetAction, removeAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import {
+  addAssetAction,
+  removeAssetAction,
+  fetchAssetsBalancesAction,
+  fetchSupportedAssetsAction,
+} from 'actions/assetsActions';
+import { ETH } from 'constants/assetsConstants';
 
 const tokenIcons = {};
 
+
+// ALL SHOULD BE REMOVED FROM THE BUNDLED ONCE ALL ASSETS UPLOADED ON CDN
 tokenIcons.PLR = require('../../assets/images/tokens/PLR/icon.png');
 tokenIcons.QTM = require('../../assets/images/tokens/QTM/icon.png');
 tokenIcons.OMG = require('../../assets/images/tokens/OMG/icon.png');
@@ -24,6 +32,8 @@ tokenIcons.BAT = require('../../assets/images/tokens/BAT/icon.png');
 tokenIcons.GNT = require('../../assets/images/tokens/GNT/icon.png');
 tokenIcons.PPT = require('../../assets/images/tokens/PPT/icon.png');
 tokenIcons.SALT = require('../../assets/images/tokens/SALT/icon.png');
+tokenIcons.ETH = require('../../assets/images/tokens/ETH/icon.png');
+tokenIcons.EOS = require('../../assets/images/tokens/EOS/icon.png');
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.medium};
@@ -42,20 +52,19 @@ const TokenListItem = styled(ListItem)`
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  supportedAssets: Asset[],
   assets: Assets,
   wallet: Object,
   fetchAssetsBalances: Function,
+  fetchSupportedAssets: Function,
   addAsset: Function,
   removeAsset: Function,
 }
 
-type State = {
-  supportedAssets: Asset[],
-}
-
-class AddToken extends React.Component<Props, State> {
-  state = {
-    supportedAssets: [],
+class AddToken extends React.Component<Props> {
+  componentDidMount() {
+    const { fetchSupportedAssets } = this.props;
+    fetchSupportedAssets();
   }
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
@@ -65,29 +74,30 @@ class AddToken extends React.Component<Props, State> {
       return;
     }
     removeAsset(asset);
-  }
+  };
 
   generateAddTokenListItems() {
-    const { assets } = this.props;
-    const { supportedAssets } = this.state;
-    return supportedAssets.map(({ symbol, name, ...rest }) => {
-      const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
-      return (
-        <TokenListItem key={symbol}>
-          <Thumbnail square size={80} source={tokenIcons[symbol]} />
-          <Body style={{ marginLeft: 20 }}>
-            <TokenName>{name}</TokenName>
-            <TokenSymbol>{symbol}</TokenSymbol>
-          </Body>
-          <Right>
-            <Switch
-              onValueChange={boundAssetToggleHandler}
-              value={!!assets[symbol]}
-            />
-          </Right>
-        </TokenListItem>
-      );
-    });
+    const { assets, supportedAssets } = this.props;
+    return supportedAssets
+      .filter(({ symbol }) => symbol !== ETH)
+      .map(({ symbol, name, ...rest }) => {
+        const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+        return (
+          <TokenListItem key={symbol}>
+            <Thumbnail square size={80} source={tokenIcons[symbol]} />
+            <Body style={{ marginLeft: 20 }}>
+              <TokenName>{name}</TokenName>
+              <TokenSymbol>{symbol}</TokenSymbol>
+            </Body>
+            <Right>
+              <Switch
+                onValueChange={boundAssetToggleHandler}
+                value={!!assets[symbol]}
+              />
+            </Right>
+          </TokenListItem>
+        );
+      });
   }
 
   handleScreenDissmisal = () => {
@@ -99,7 +109,7 @@ class AddToken extends React.Component<Props, State> {
     } = this.props;
     fetchAssetsBalances(assets, wallet.address);
     navigation.goBack(null);
-  }
+  };
 
   render() {
     return (
@@ -119,7 +129,8 @@ class AddToken extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ assets: { data: assets }, wallet: { data: wallet } }) => ({
+const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { data: wallet } }) => ({
+  supportedAssets,
   assets,
   wallet,
 });
@@ -127,6 +138,8 @@ const mapStateToProps = ({ assets: { data: assets }, wallet: { data: wallet } })
 const mapDispatchToProps = (dispatch) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  fetchSupportedAssets: () =>
+    dispatch(fetchSupportedAssetsAction()),
   fetchAssetsBalances: (assets, walletAddress) =>
     dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
 });
