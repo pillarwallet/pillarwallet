@@ -9,8 +9,10 @@ export const baseColors = {
   clearBlue: '#2077fd',
   white: '#ffffff',
   lightGray: '#f6f6f6',
+  lighterGray: '#fafafa',
   mediumGray: '#777777',
   darkGray: '#4a4a4a',
+  coolGrey: '#8b939e',
   black: '#000000',
 };
 
@@ -35,6 +37,7 @@ export const fontSizes = {
   extraExtraSmall: 6,
   extraSmall: 9,
   small: 12,
+  semiSmall: 14,
   medium: 16,
   large: 22,
   extraLarge: 24,

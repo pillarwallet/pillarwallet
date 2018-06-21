@@ -237,7 +237,7 @@ class AssetsScreen extends React.Component<Props, State> {
                   justifyContent: 'space-between',
                 }}
               >
-                <PortfolioBalance />
+                <PortfolioBalance label="Total Portfolio" />
               </Column>
             </Row>
           </Grid>
