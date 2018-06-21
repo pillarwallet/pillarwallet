@@ -189,7 +189,6 @@ class AssetScreen extends React.Component<Props, State> {
           </AssetCardWrapper>
           <TXHistory
             history={history}
-            address={assetData.address}
             token={assetData.token}
           />
         </ScrollWrapper>

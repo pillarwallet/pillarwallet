@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import { FlatList, Text, Linking } from 'react-native';
+import { connect } from 'react-redux';
+import { FlatList, Text, Linking, Image } from 'react-native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
-import { Icon } from 'native-base';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { Grid, Row, Column } from 'components/Grid';
@@ -19,28 +19,29 @@ import Timestamp from './Timestamp';
 import Section from './Section';
 
 
-const iconUp = require('../../assets/icons/up.png');
-const iconDown = require('../../assets/icons/down.png');
+const iconUp = require('assets/icons/up.png');
+const iconDown = require('assets/icons/down.png');
 
 type Props = {
   history: Transaction[],
   token: string,
-  address: string,
-  onRefresh: Function
+  onRefresh: Function,
+  wallet: Object,
 }
 
 type State = {
   showModal: boolean,
   selectedTransaction: {
     hash: string,
-    date: string | null,
-    token: string | null,
-    amount: number | null,
-    recepient: string | null,
-    note: string | null,
-    fee: number | null,
-    confirmations: number | null,
-    status: string | null,
+    date: ?string,
+    token: ?string,
+    amount: ?number,
+    recipient: ?string,
+    note: ?string,
+    fee: ?number,
+    confirmations: ?number,
+    status: ?string,
+    direction: ?string,
   }
 }
 
@@ -54,7 +55,7 @@ const flatListStyles = {
 const SENT = 'Sent';
 const RECEIVED = 'Received';
 
-export default class TXHistory extends React.Component<Props, State> {
+class TXHistory extends React.Component<Props, State> {
   static defaultProps = {
     history: [],
     onRefresh: () => { },
@@ -67,13 +68,14 @@ export default class TXHistory extends React.Component<Props, State> {
       date: null,
       token: null,
       amount: null,
-      recepient: null,
+      recipient: null,
       fee: null,
       note: null,
       confirmations: null,
       status: null,
+      direction: null,
     },
-  }
+  };
 
   getDirectionSymbol = (direction: string) => {
     if (direction === SENT) {
@@ -109,13 +111,15 @@ export default class TXHistory extends React.Component<Props, State> {
       status,
       value,
       to,
+      from,
       asset,
       nbConfirmations,
       hash,
-      tmstmp,
-      transaction: innerTransaction,
+      timestamp,
+      gasUsed,
     } = transaction;
-    const datetime = new Date(tmstmp);
+    const datetime = new Date(timestamp);
+    const myAddress = this.props.wallet.address;
 
     this.setState({
       selectedTransaction: {
@@ -123,19 +127,20 @@ export default class TXHistory extends React.Component<Props, State> {
         date: this.getDate(datetime),
         token: asset,
         amount: formatETHAmount(value),
-        recepient: `${to.slice(0, 7)}…${to.slice(-7)}`,
-        fee: innerTransaction.gas.toFixed(6),
+        recipient: `${to.slice(0, 7)}…${to.slice(-7)}`,
+        fee: gasUsed.toFixed(6),
         note: null,
         confirmations: nbConfirmations,
         status: status.charAt(0).toUpperCase() + status.slice(1),
+        direction: myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED,
       },
       showModal: true,
     });
-  }
+  };
 
   viewTransactionOnBlockchain = (hash: string) => {
     Linking.openURL(TX_DETAILS_URL + hash);
-  }
+  };
 
   renderTransaction = ({ item: transaction }: { item: Transaction }) => {
     const {
@@ -145,18 +150,16 @@ export default class TXHistory extends React.Component<Props, State> {
       to,
       _id: id,
       asset,
-      tmstmp,
+      timestamp,
     } = transaction;
-    const { address } = this.props;
-    const direction = address.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
-    const datetime = new Date(tmstmp);
-    const icon = direction === SENT ? iconDown : iconUp;
+    const myAddress = this.props.wallet.address;
+    const direction = myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
+    const datetime = new Date(timestamp);
+    const icon = direction === SENT ? iconUp : iconDown;
     const senderRecipientAddress = direction === SENT ? to : from;
     return (
       <Item key={id} onPress={() => this.selectTransaction(transaction)}>
-        <Section small>
-          <Icon source={icon} />
-        </Section>
+        <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
         <Section>
           <Hash>{senderRecipientAddress.slice(0, 7)}…{senderRecipientAddress.slice(-7)}</Hash>
           <Timestamp>{this.getDate(datetime)}</Timestamp>
@@ -170,7 +173,7 @@ export default class TXHistory extends React.Component<Props, State> {
   };
 
   render() {
-    const { history, address, onRefresh } = this.props;
+    const { history, onRefresh } = this.props;
     const { showModal, selectedTransaction } = this.state;
     return (
       <React.Fragment>
@@ -179,7 +182,6 @@ export default class TXHistory extends React.Component<Props, State> {
           onRefresh={onRefresh}
           ListHeaderComponent={<Title title="activity" />}
           data={history}
-          extraData={address}
           renderItem={this.renderTransaction}
           keyExtractor={(({ _id }) => _id)}
           contentContainerStyle={flatListStyles}
@@ -191,7 +193,9 @@ export default class TXHistory extends React.Component<Props, State> {
         >
           <Grid>
             <Row size="0 0 40px">
-              <Column><Label>You sent</Label></Column>
+              <Column>
+                <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
+              </Column>
               <Column>
                 <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
               </Column>
@@ -204,15 +208,15 @@ export default class TXHistory extends React.Component<Props, State> {
             </Row>
 
             <Row size="0 0 40px">
-              <Column><Label>Recepient</Label></Column>
+              <Column><Label>Recipient</Label></Column>
               <Column>
-                <Text>{selectedTransaction.recepient}</Text>
+                <Text>{selectedTransaction.recipient}</Text>
               </Column>
             </Row>
             <Row size="0 0 40px">
               <Column><Label>Transaction fee</Label></Column>
               <Column>
-                <Text>{selectedTransaction.fee}</Text>
+                <Text>{selectedTransaction.fee} ETH</Text>
               </Column>
             </Row>
 
@@ -246,9 +250,14 @@ export default class TXHistory extends React.Component<Props, State> {
               </Column>
             </Row>
           </Grid>
-
         </SlideModal>
       </React.Fragment>
     );
   }
 }
+
+const mapStateToProps = ({ wallet: { data: wallet } }) => ({
+  wallet,
+});
+
+export default connect(mapStateToProps)(TXHistory);
