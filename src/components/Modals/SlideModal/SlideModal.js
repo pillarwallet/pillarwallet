@@ -138,7 +138,7 @@ export default class SlideModal extends React.Component<Props, State> {
             <ModalOverflow />
           </ModalBackground>
         </ModalWrapper>
-        {fullScreenComponent}
+        {isVisible && fullScreenComponent}
       </Modal>
     );
   }

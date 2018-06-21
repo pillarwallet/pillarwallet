@@ -100,7 +100,7 @@ class AddToken extends React.Component<Props> {
       });
   }
 
-  handleScreenDissmisal = () => {
+  handleScreenDismissal = () => {
     const {
       navigation,
       fetchAssetsBalances,
@@ -114,7 +114,7 @@ class AddToken extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <ModalHeader onClose={this.handleScreenDissmisal} />
+        <ModalHeader onClose={this.handleScreenDismissal} />
         <ScrollWrapper regularPadding>
           <Title title="add token" />
           <Paragraph>
