@@ -4,14 +4,19 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import Storage from 'services/storage';
 import type { NavigationScreenProp } from 'react-navigation';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
+import { changeRequestPinForTransactionAction } from 'actions/profileActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { Label } from 'components/Typography';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Grid, Row, Column } from 'components/Grid';
-import { List, ListItem, Icon, Body, Right, Switch, Toast } from 'native-base';
 import Title from 'components/Title';
 import CurrencySelector from 'components/ProfileSettings/CurrencySelector';
+import SlideModal from 'components/Modals/SlideModal';
+import CheckPin from 'components/CheckPin';
+import ModalHeader from 'components/ModalHeader';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import ProfileHeader from './ProfileHeader';
 import ProfileCard from './ProfileCard';
 
@@ -55,13 +60,50 @@ const ListItemText = styled.Text`
 
 const leftColumnSize = '0 0 100px';
 
+const CheckPinModal = styled(SlideModal)`
+  align-items: flex-start;
+`;
+
 type Props = {
   user: Object,
   wallet: Object,
+  appSettings: Object,
   navigation: NavigationScreenProp<*>,
-}
+  changeRequestPinForTransaction: (value: boolean) => Function,
+  resetIncorrectPassword: () => Function,
+};
 
-class Profile extends React.Component<Props> {
+type State = {
+  requestPinForTransaction: boolean,
+  showCheckPinModal: boolean,
+};
+
+class Profile extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+
+    let { requestPinForTransaction } = props.appSettings;
+    if (requestPinForTransaction === undefined) {
+      requestPinForTransaction = false;
+    }
+
+    this.state = {
+      requestPinForTransaction,
+      showCheckPinModal: false,
+    };
+  }
+
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const { requestPinForTransaction } = nextProps.appSettings;
+    if (requestPinForTransaction !== undefined && requestPinForTransaction !== prevState.requestPinForTransaction) {
+      return {
+        ...prevState,
+        requestPinForTransaction,
+      };
+    }
+    return null;
+  }
+
   clearLocalStorage() {
     storage.removeAll();
     Toast.show({
@@ -70,8 +112,23 @@ class Profile extends React.Component<Props> {
     });
   }
 
+  handleChangeRequestPinForTransaction = (value) => {
+    const { changeRequestPinForTransaction } = this.props;
+    changeRequestPinForTransaction(value);
+    this.setState({
+      showCheckPinModal: false,
+    });
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal: false });
+  };
+
   render() {
     const { user, wallet } = this.props;
+    const { requestPinForTransaction, showCheckPinModal } = this.state;
     return (
       <Container>
         <ScrollWrapper>
@@ -144,9 +201,7 @@ class Profile extends React.Component<Props> {
                   <ListItemText>Backup Wallet</ListItemText>
                 </Body>
                 <Right>
-                  <Icon
-                    name="arrow-forward"
-                  />
+                  <Icon name="arrow-forward" />
                 </Right>
               </ListItem>
             )}
@@ -155,9 +210,7 @@ class Profile extends React.Component<Props> {
                 <ListItemText>Change Pin</ListItemText>
               </Body>
               <Right>
-                <Icon
-                  name="arrow-forward"
-                />
+                <Icon name="arrow-forward" />
               </Right>
             </ListItem>
             <ListItem noBorder>
@@ -165,9 +218,22 @@ class Profile extends React.Component<Props> {
                 <ListItemText>Request Pin for Transaction</ListItemText>
               </Body>
               <Right>
-                <Switch value={false} />
+                <Switch
+                  value={requestPinForTransaction}
+                  onValueChange={() => this.setState({ showCheckPinModal: true })}
+                />
               </Right>
             </ListItem>
+            <CheckPinModal
+              isVisible={showCheckPinModal}
+              title="confirm"
+              fullScreenComponent={(
+                <Container>
+                  <ModalHeader onClose={this.handleCheckPinModalClose} />
+                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+                </Container>
+              )}
+            />
             <ListSeparator>
               <ListSeparatorText>ABOUT</ListSeparatorText>
             </ListSeparator>
@@ -216,9 +282,21 @@ class Profile extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user }, wallet: { data: wallet } }) => ({
+const mapStateToProps = ({
+  user: { data: user },
+  wallet: { data: wallet },
+  appSettings: { data: appSettings },
+}) => ({
   user,
   wallet,
+  appSettings,
 });
 
-export default connect(mapStateToProps)(Profile);
+const mapDispatchToProps = (dispatch: Function) => ({
+  changeRequestPinForTransaction: (value) => {
+    dispatch(changeRequestPinForTransactionAction(value));
+  },
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
