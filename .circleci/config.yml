@@ -29,38 +29,6 @@ jobs:
           path: ./reports/
           destination: reports
 
-  publish_expo:
-    working_directory: ~/pillarwallet
-    docker:
-      - image: circleci/node:8.9.4
-
-    steps:
-      - checkout
-      - run:
-          name: Install Expo cli
-          command: sudo yarn global add exp
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
-      - run:
-            name: Authenticate with Artifactory
-            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-      - run:
-            name: set Registry to use Artifactory
-            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-      - run:
-            name: set Yarn to use Artifactory
-            command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
-      - run:
-          name: Install node dependencies
-          command: yarn install
-      - run:
-          name: Login to Expo
-          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
-      - run:
-          name: Publish resources bundle to Expo server
-          command: exp publish
-
   test_ios:
     working_directory: ~/pillarwallet
     macos:
@@ -227,10 +195,6 @@ jobs:
       - image: circleci/android:api-26-node8-alpha
     environment:
       TERM: dumb
-      # JVM_OPTS: -Xmx3200m
-      # GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
-      # _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
-      # GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
       _JAVA_OPTIONS: "-Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
@@ -338,10 +302,12 @@ workflows:
             - test_ios
           filters:
             branches:
-              only: master
+              only:
+                  - master
       - deploy_android:
           requires:
             - build
           filters:
             branches:
-              only: develop
+              only:
+                  - master
