@@ -16,8 +16,9 @@
 default_platform(:android)
 
 platform :android do
-  desc "Deploy a new version to the Google Play Internal"
-  lane :deploy do
+
+  desc "Deploy a new version to the Google Play Internal Test Track"
+  lane :deploy_internal do
     changelog_from_git_commits(
      merge_commit_filtering: 'exclude_merges'
     )
@@ -30,4 +31,35 @@ platform :android do
       skip_upload_screenshots: true
     )
   end
+
+  desc "Deploy a new alpha version to the Google Play Store Alpha Track"
+  lane :deploy_alpha do
+  changelog_from_git_commits(
+   merge_commit_filtering: 'exclude_merges'
+  )
+	upload_to_play_store(
+		track: "alpha",
+    apk: 'app/build/outputs/apk/app-prod-release.apk',
+    json_key_data: ENV['GOOGLE_JSON_DATA'],
+    skip_upload_aab: true,
+    skip_upload_images: true,
+    skip_upload_screenshots: true
+	)
+  end
+
+  desc "Deploy a new beta version to the Google Play Store Beta Track"
+  lane :deploy_beta do
+  changelog_from_git_commits(
+   merge_commit_filtering: 'exclude_merges'
+  )
+  upload_to_play_store(
+    track: "beta",
+    apk: 'app/build/outputs/apk/app-prod-release.apk',
+    json_key_data: ENV['GOOGLE_JSON_DATA'],
+    skip_upload_aab: true,
+    skip_upload_images: true,
+    skip_upload_screenshots: true
+  )
+  end
+
 end
