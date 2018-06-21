@@ -25,7 +25,6 @@ const iconDown = require('assets/icons/down.png');
 type Props = {
   history: Transaction[],
   token: string,
-  onRefresh: Function,
   wallet: Object,
 }
 
@@ -58,7 +57,6 @@ const RECEIVED = 'Received';
 class TXHistory extends React.Component<Props, State> {
   static defaultProps = {
     history: [],
-    onRefresh: () => { },
   };
 
   state = {
@@ -173,13 +171,12 @@ class TXHistory extends React.Component<Props, State> {
   };
 
   render() {
-    const { history, onRefresh } = this.props;
+    const { history } = this.props;
     const { showModal, selectedTransaction } = this.state;
     return (
       <React.Fragment>
         <FlatList
           refreshing={false}
-          onRefresh={onRefresh}
           ListHeaderComponent={<Title title="activity" />}
           data={history}
           renderItem={this.renderTransaction}
