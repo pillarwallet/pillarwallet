@@ -15,3 +15,15 @@ export const saveBaseFiatCurrencyAction = (currency: string) => {
     });
   };
 };
+
+export const changeRequestPinForTransactionAction = (value: boolean) => {
+  return async (dispatch: Function) => {
+    await storage.save('app_settings', { appSettings: { requestPinForTransaction: value } });
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: {
+        requestPinForTransaction: value,
+      },
+    });
+  };
+};
