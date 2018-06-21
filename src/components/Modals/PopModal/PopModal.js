@@ -13,6 +13,10 @@ type Props = {
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   isVisible: boolean,
+  animationOutTiming: number,
+  animationInTiming: number,
+  backdropTransitionInTiming: number,
+  backdropTransitionOutTiming: number,
 };
 
 type State = {
@@ -55,6 +59,10 @@ const ModalContent = styled.View`
 export default class PopModal extends React.Component<Props, State> {
   static defaultProps = {
     fullScreenComponent: null,
+    animationInTiming: 400,
+    animationOutTiming: 400,
+    backdropTransitionInTiming: 300,
+    backdropTransitionOutTiming: 300,
   };
 
   constructor(props: Props) {
@@ -89,9 +97,11 @@ export default class PopModal extends React.Component<Props, State> {
       fullScreenComponent,
       onModalHide,
       headerImage,
+      animationInTiming,
+      animationOutTiming,
+      backdropTransitionInTiming,
+      backdropTransitionOutTiming,
     } = this.props;
-    const animationInTiming = 800;
-    const animationOutTiming = 400;
     return (
       <Modal
         isVisible={isVisible}
@@ -100,8 +110,10 @@ export default class PopModal extends React.Component<Props, State> {
         onBackdropPress={this.hideModal}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}
-        animationIn="bounceInUp"
-        animationOut="bounceOutDown"
+        backdropTransitionInTiming={backdropTransitionInTiming}
+        backdropTransitionOutTiming={backdropTransitionOutTiming}
+        animationIn="zoomIn"
+        animationOut="zoomOut"
         swipeDirection="down"
         style={{
           margin: 0,
