@@ -90,9 +90,6 @@ android/.navigation/
 # Android Studio captures folder
 android/captures/
 
-# Android Keystore properties for local builds
-android/keystore.properties
-
 #### Pods
 ios/Pods
 
