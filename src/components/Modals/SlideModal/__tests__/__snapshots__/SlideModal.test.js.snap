@@ -129,6 +129,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "alignItems": "center",
                 "flexDirection": "row",
                 "justifyContent": "space-between",
+                "marginBottom": 20,
                 "width": "100%",
               },
               undefined,

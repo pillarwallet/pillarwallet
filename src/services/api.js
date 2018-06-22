@@ -29,8 +29,8 @@ SDKWrapper.prototype.init = function (privateKey: string) {
   });
 };
 
-SDKWrapper.prototype.registerOnBackend = function (fcm: string) {
-  return this.pillarWalletSdk.wallet.register({ fcmToken: fcm })
+SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string) {
+  return this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username })
     .then(({ data }) => data)
     .catch(() => ({}));
 };
