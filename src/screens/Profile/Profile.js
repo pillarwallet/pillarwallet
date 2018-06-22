@@ -272,7 +272,7 @@ class Profile extends React.Component<Props, State> {
               paddingBottom: 10,
               paddingTop: 10,
               display: 'flex',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
             >
               <Picker

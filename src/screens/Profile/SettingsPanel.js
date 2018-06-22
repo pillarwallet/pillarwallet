@@ -9,6 +9,7 @@ const SettingsPanelIOS = styled.View`
   padding-top: 20px;
   background-color: #f2f2f2;
   border-radius: 10px;
+  overflow: hidden;
 `;
 
 const SettingsPanelAndroid = styled.View`
