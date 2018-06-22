@@ -78,11 +78,11 @@ type Props = {
   label: string,
   onPress?: ?Function,
   toggle?: ?boolean,
-  value?: string | number | boolean,
+  value?: ?string | ?boolean,
 }
 
 export default class ProfileSettingsItem extends React.Component<Props> {
-  renderContent(processedValue: string | boolean | number) {
+  renderContent(processedValue: ?string | ?boolean) {
     const {
       label,
       toggle,
@@ -145,7 +145,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
         processedValue = '';
       }
     } else {
-      processedValue = Boolean(Number(value));
+      processedValue = value;
     }
 
     if (!toggle) {

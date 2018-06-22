@@ -14,13 +14,18 @@ import t from 'tcomb-form-native';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import SlideModal from 'components/Modals/SlideModal';
+import CheckPin from 'components/CheckPin';
+import ModalHeader from 'components/ModalHeader';
 
-import { saveBaseFiatCurrencyAction } from 'actions/profileActions';
+import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
 import SettingsPanel from './SettingsPanel';
+
 
 const storage = new Storage('db');
 
@@ -58,17 +63,28 @@ const ListSeparatorText = styled.Text`
   font-size: ${fontSizes.small};
 `;
 
+const CheckPinModal = styled(SlideModal)`
+  align-items: flex-start;
+`;
+
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
-  saveBaseFiatCurrency: (currency: string) => Function,
+  saveBaseFiatCurrency: (currency: ?string) => Function,
+  baseFiatCurrency: ?string,
+  requestPinForTransaction: ?boolean,
+  wallet: Object,
+  appSettings: Object,
+  changeRequestPinForTransaction: (value: boolean) => Function,
+  resetIncorrectPassword: () => Function,
 }
 
 type State = {
   visibleModal: string | null,
   value: Object,
-  selectedCurrency: string,
+  selectedCurrency: ?string,
+  requestPinForTransaction: ?boolean,
+  showCheckPinModal: boolean,
 }
 
 const { Form } = t.form;
@@ -117,7 +133,22 @@ class Profile extends React.Component<Props, State> {
       visibleModal: null,
       value: {},
       selectedCurrency: props.baseFiatCurrency || defaultFiatCurrency,
+      requestPinForTransaction: props.requestPinForTransaction || false,
+      showCheckPinModal: false,
     };
+  }
+
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    if (nextProps.appSettings) {
+      const { requestPinForTransaction } = nextProps.appSettings;
+      if (requestPinForTransaction !== undefined && requestPinForTransaction !== prevState.requestPinForTransaction) {
+        return {
+          ...prevState,
+          requestPinForTransaction,
+        };
+      }
+    }
+    return null;
   }
 
   onCurrencyChanged = (value?: string) => {
@@ -158,9 +189,24 @@ class Profile extends React.Component<Props, State> {
     this.setState({ value });
   };
 
+  handleChangeRequestPinForTransaction = () => {
+    const { changeRequestPinForTransaction } = this.props;
+    changeRequestPinForTransaction(!this.state.requestPinForTransaction);
+    this.setState({
+      requestPinForTransaction: !this.state.requestPinForTransaction,
+      showCheckPinModal: false,
+    });
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal: false });
+  };
+
   render() {
-    const { user } = this.props;
-    const { selectedCurrency } = this.state;
+    const { user, wallet } = this.props;
+    const { selectedCurrency, requestPinForTransaction, showCheckPinModal } = this.state;
 
     return (
       <Container>
@@ -354,11 +400,11 @@ class Profile extends React.Component<Props, State> {
                 this.setState({ visibleModal: 'baseCurrency' })}
             />
 
-            <ProfileSettingsItem
+            {wallet.mnemonic && (<ProfileSettingsItem
               key="backupWallet"
               label="Backup wallet"
               onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
-            />
+            />)}
 
             <ProfileSettingsItem
               key="changePin"
@@ -369,9 +415,20 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="requestPin"
               label="Request PIN for transaction"
-              value={1}
+              value={requestPinForTransaction}
               toggle
-              onPress={null}
+              onPress={() => this.setState({ showCheckPinModal: true })}
+            />
+
+            <CheckPinModal
+              isVisible={showCheckPinModal}
+              title="confirm"
+              fullScreenComponent={(
+                <Container>
+                  <ModalHeader onClose={this.handleCheckPinModalClose} />
+                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction()} />
+                </Container>
+              )}
             />
 
             <ListSeparator />
@@ -401,14 +458,22 @@ class Profile extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
+  wallet: { data: wallet },
+  appSettings: { data: { requestPinForTransaction } },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   user,
+  wallet,
+  requestPinForTransaction,
   baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
+  changeRequestPinForTransaction: (value) => {
+    dispatch(changeRequestPinForTransactionAction(value));
+  },
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
