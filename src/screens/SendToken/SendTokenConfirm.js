@@ -1,17 +1,14 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard, Text, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
-import { ASSET } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { utils } from 'ethers';
-import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
-import { Paragraph, SubtTitle } from 'components/Typography';
-import Button, { ButtonMini } from 'components/Button';
+import { SubtTitle } from 'components/Typography';
+import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
-import SlideModal from 'components/Modals/SlideModal';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { isValidETHAddress } from 'utils/validators';
@@ -30,7 +27,6 @@ type State = {
   isScanning: boolean,
   transactionPayload: Object,
   assetData: Object,
-  showConfirmModal: boolean,
   value: {
     address: string,
   },
@@ -88,65 +84,6 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const ConfirmationModal = styled(SlideModal)`
-  align-items: flex-start;
-`;
-
-const ModalItemWrapper = styled.View`
-  justify-content: flex-start;
-  align-items: flex-start;
-  flex: 1;
-`;
-
-const ModalItem = styled.View`
-  height: ${props => props.large ? '60px' : '30px'};
-  margin-bottom: 10px;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  border-bottom-width: ${props => props.noBorder ? '0' : '1px'};
-  border-color: ${UIColors.defaultBorderColor};
-`;
-
-const ModalLabel = styled(Paragraph)`
-  flex: 0 0 60px;
-  font-weight: ${fontWeights.bold};
-  color: ${baseColors.mediumGray};
-`;
-
-const ModalValue = styled(Paragraph)`
-  flex: 1;
-  text-align: right;
-  flex-wrap: wrap;
-  font-size: ${props => props.large ? fontSizes.large : fontSizes.small};
-  font-weight: ${props => props.large ? fontWeights.bold : fontWeights.book};
-  color: ${props => props.large ? baseColors.slateBlack : baseColors.darkGray};
-`;
-
-const ModalAddressValue = styled(Paragraph)`
-  flex: 1;
-  text-align: left;
-  flex-wrap: wrap;
-  font-size: ${fontSizes.extraSmall};
-  font-weight: ${fontWeights.book};
-  color: ${baseColors.darkGray};
-`;
-
-const ModalValueSymbol = styled.Text`
-  font-size: ${fontSizes.extraSmall};
-  font-weight: ${fontWeights.bold};
-`;
-
-const ModalParagraph = styled(Paragraph)`
-  margin-bottom: 20px;
-`;
-
-const ModalFooter = styled.View`
-  flex: 2;
-  margin-bottom: 40;
-  justify-content: flex-end;
-`;
-
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   flex: 1;
   position: absolute;
@@ -173,7 +110,6 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.state = {
       isScanning: false,
       value: { address: '' },
-      showConfirmModal: false,
       formStructure: getFormStructure(),
       transactionPayload,
       assetData,
@@ -202,14 +138,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     };
 
     this.setState({
-      showConfirmModal: true,
       transactionPayload: transactionPayloadWithAddress,
     });
   };
 
   handleFormSubmit = () => {
     this.props.sendAsset(this.state.transactionPayload);
-    this.props.navigation.navigate(ASSET, { initialModalState: 'SEND_CONFIRMATION' });
   };
 
   handleToggleQRScanningState = () => {
@@ -222,6 +156,10 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   };
 
+  handleBackNavigation = () => {
+    this.props.navigation.dismiss();
+  };
+
   handleQRRead = (address: string) => {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });
   };
@@ -229,13 +167,10 @@ class SendTokenContacts extends React.Component<Props, State> {
   render() {
     const {
       isScanning,
-      transactionPayload,
       assetData,
       formStructure,
-      showConfirmModal,
       value,
     } = this.state;
-    const { txFeeInWei, amount } = transactionPayload;
     const formOptions = generateFormOptions(
       { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
     );
@@ -248,36 +183,6 @@ class SendTokenContacts extends React.Component<Props, State> {
         onDismiss={this.handleToggleQRScanningState}
         onRead={this.handleQRRead}
       />
-    );
-
-    const confirmationModal = (
-      <ConfirmationModal
-        isVisible={showConfirmModal}
-        title="confirm"
-      >
-        <ModalItemWrapper>
-          <ModalItem large>
-            <ModalLabel>To</ModalLabel>
-            <ModalAddressValue>{value.address}</ModalAddressValue>
-          </ModalItem>
-          <ModalItem>
-            <ModalLabel>Amount</ModalLabel>
-            <ModalValue>{amount} <ModalValueSymbol>{assetData.token}</ModalValueSymbol></ModalValue>
-          </ModalItem>
-          <ModalItem noBorder>
-            <ModalLabel>Fee</ModalLabel>
-            <ModalValue>
-              {txFeeInWei && `${utils.formatEther(txFeeInWei.toString())}`} <ModalValueSymbol>ETH</ModalValueSymbol>
-            </ModalValue>
-          </ModalItem>
-        </ModalItemWrapper>
-        <ModalFooter>
-          <ModalParagraph light>
-            The process may take up to 10 minutes to complete. Please check your transaction history.
-          </ModalParagraph>
-          <Button title="Confirm Transaction" onPress={this.handleFormSubmit} />
-        </ModalFooter>
-      </ConfirmationModal>
     );
 
     return (
@@ -301,10 +206,9 @@ class SendTokenContacts extends React.Component<Props, State> {
           </Wrapper>
         </Container>
         {qrScannerComponent}
-        {confirmationModal}
         <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={20}>
           <FooterWrapper>
-            <ButtonMini title="Next" onPress={this.openConfirmationModal} />
+            <Button title="Confirm"/>
           </FooterWrapper>
         </KeyboardAvoidingView>
       </React.Fragment>

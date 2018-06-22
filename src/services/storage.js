@@ -1,5 +1,6 @@
 // @flow
 import PouchDB from 'pouchdb-react-native';
+import merge from 'lodash.merge';
 
 function Storage(name: string, opts: ?Object) {
   this.db = new PouchDB(name, opts);
@@ -11,12 +12,16 @@ Storage.prototype.get = function (id: string) {
 
 Storage.prototype.save = function (id: string, data: Object) {
   return this.db.get(id).then((doc) => {
-    return this.db.put({
-      ...doc,
-      _id: id,
-      _rev: doc._rev,
-      ...data,
-    });
+    const record = merge(
+      {},
+      doc,
+      {
+        _id: id,
+        _rev: doc._rev,
+      },
+      data,
+    );
+    return this.db.put(record);
   }).catch(() => this.db.post({ _id: id, ...data }));
 };
 

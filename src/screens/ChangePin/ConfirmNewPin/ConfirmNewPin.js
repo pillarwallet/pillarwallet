@@ -53,7 +53,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     });
   };
 
-  handleScreenDissmisal = () => {
+  handleScreenDismissal = () => {
     this.props.navigation.goBack(null);
   };
 
@@ -87,7 +87,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <ModalHeader onClose={this.handleScreenDissmisal} />
+        <ModalHeader onClose={this.handleScreenDismissal} />
         {showError}
         <Center>
           <Title center title="confirm new pincode" />

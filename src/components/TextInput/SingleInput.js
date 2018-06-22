@@ -21,7 +21,7 @@ type Props = {
   postfix?: string,
   innerImageURI?: string,
   outterImageURI?: string,
-  outterImageText: string,
+  outterImageText?: string,
   label?: string,
   id?: string,
   iconColor?: string,

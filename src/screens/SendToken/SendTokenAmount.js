@@ -16,7 +16,7 @@ import { ETH } from 'constants/assetsConstants';
 import { SubtTitle, TextLink, Paragraph } from 'components/Typography';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import { parseNumber, formatAmount } from 'utils/common';
+import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
 import SendTokenHeader from './SendTokenHeader';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
@@ -25,12 +25,19 @@ const { Form } = t.form;
 const gasLimit = 21000;
 
 const getFormStructure = (maxAmount: number, enoughForFee) => {
-  const Amount = t.refinement(t.Number, (amount): boolean => {
+  const Amount = t.refinement(t.String, (amount): boolean => {
+    if (!isValidNumber(amount.toString())) return false;
+
     amount = parseNumber(amount.toString());
     return enoughForFee && amount > 0 && amount <= maxAmount;
   });
 
   Amount.getValidationErrorMessage = (amount): string => {
+    if (!isValidNumber(amount.toString())) {
+      return 'Incorrect number entered.';
+    }
+
+    amount = parseNumber(amount.toString());
     if (amount >= maxAmount) {
       return 'Amount should not exceed the total balance.';
     } else if (!enoughForFee) {
@@ -71,7 +78,14 @@ function AmountInputTemplate(locals) {
 
 const generateFormOptions = (config: Object): Object => ({
   fields: {
-    amount: { template: AmountInputTemplate, config },
+    amount: {
+      template: AmountInputTemplate,
+      config,
+      transformer: {
+        parse: (str = '') => str.toString(),
+        format: (value = '') => value.toString(),
+      },
+    },
   },
 });
 
@@ -158,8 +172,8 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     const value = this._form.getValue();
-    const { navigation } = this.props;
     const { txFeeInWei } = this.state;
+    const { navigation } = this.props;
 
     if (!value || !this.gasPriceFetched) return;
 
@@ -195,8 +209,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     if (token !== ETH) {
       return balance;
     }
-
-    const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
+    const maxAmount = utils.parseUnits(balance.toString(), 'ether').sub(txFeeInWei);
     if (maxAmount.lt(0)) return 0;
     return new BigNumber(utils.formatEther(maxAmount)).toNumber();
   }
@@ -204,7 +217,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   checkIfEnoughForFee(assets: Assets, txFeeInWei): boolean {
     if (!assets[ETH]) return false;
     const ethBalance = assets[ETH].balance;
-    const balanceInWei = utils.parseUnits(ethBalance, 'ether');
+    const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }
 
