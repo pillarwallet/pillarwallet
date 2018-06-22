@@ -24,7 +24,6 @@ import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConst
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 
 const defaultAssetColor = '#4C4E5E';
-const pillarLogoSource = require('../../assets/images/header-pillar-logo.png');
 
 const assetColors = {
   ETH: baseColors.darkGray,
@@ -211,7 +210,7 @@ class AssetsScreen extends React.Component<Props, State> {
         <View
           style={{
             width: '100%',
-            height: 150,
+            height: 180,
             flexDirection: 'row',
             backgroundColor: 'white',
             shadowColor: 'black',
@@ -220,21 +219,19 @@ class AssetsScreen extends React.Component<Props, State> {
             shadowOffset: { width: 0, height: 1 },
           }}
         >
-          <Grid
-            style={{
-              padding: 20,
-
-            }}
-          >
-            <Row>
-              <Image
-                source={pillarLogoSource}
-                style={{
-                  height: 35,
-                  width: 71,
-                }}
-              />
-            </Row>
+          <Grid style={{ padding: 20 }}>
+            <View style={{ alignItems: 'center', height: 80, flexDirection: 'row', justifyContent: 'space-between'} }>
+              <View>
+                <Title title="assets" />
+              </View>
+              <View>
+                <TouchableOpacity onPress={this.goToAddTokenPage} >
+                  <TextLink>
+                    Add token
+                  </TextLink>
+                </TouchableOpacity>
+              </View>
+            </View>
             <Row>
               <Column
                 style={{
@@ -263,20 +260,6 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           }
         >
-          <Grid>
-            <Row>
-              <Column>
-                <Title title="assets" />
-              </Column>
-              <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                <TouchableOpacity onPress={this.goToAddTokenPage} >
-                  <TextLink>
-                    Add token
-                  </TextLink>
-                </TouchableOpacity>
-              </Column>
-            </Row>
-          </Grid>
           {Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating />}
         </ScrollWrapper>
         <TransactionSentModal
