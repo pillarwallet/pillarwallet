@@ -3,11 +3,11 @@
 // APP FLOW
 export const APP_FLOW = 'APP_FLOW';
 export const TAB_NAVIGATION = 'TAB_NAVIGATION';
-export const ASSETS = 'ASSETS';
+export const ASSETS = 'Assets';
 export const ASSET = 'ASSET';
-export const ICO = 'ICO';
+export const ICO = 'Ico';
 export const ADD_TOKEN = 'ADD_TOKEN';
-export const PROFILE = 'PROFILE';
+export const PROFILE = 'Profile';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';
 
 // CHANGE PIN FLOW

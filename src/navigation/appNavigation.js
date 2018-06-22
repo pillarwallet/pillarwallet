@@ -4,8 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppState, Animated, Easing, Platform, Image } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -50,6 +49,8 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 // models
 import type { Assets } from 'models/Asset';
 
+import { UIColors } from 'utils/variables';
+
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
@@ -71,6 +72,10 @@ if (Platform.OS === 'ios') {
     },
   };
 }
+
+const iconWallet = require('../assets/icons/icon_wallet.png');
+const iconProfile = require('../assets/icons/icon_profile.png');
+const iconIco = require('../assets/icons/icon_ico.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -109,29 +114,60 @@ const tabNavigation = createBottomTabNavigator(
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
-        let iconName;
 
         switch (routeName) {
           case ASSETS:
-            iconName = `ios-albums${focused ? '' : '-outline'}`; break;
+            return (<Image
+              style={{
+                width: 22,
+                height: 22,
+                tintColor: focused ? tintColor : '#b2b8bf',
+              }}
+              source={iconWallet}
+            />);
           case ICO:
-            iconName = `ios-jet${focused ? '' : '-outline'}`; break;
+            return (<Image
+              style={{
+                width: 22,
+                height: 22,
+                tintColor: focused ? tintColor : '#b2b8bf',
+              }}
+              source={iconIco}
+            />);
           case PROFILE:
-            iconName = `ios-contact${focused ? '' : '-outline'}`; break;
+            return (<Image
+              style={{
+                width: 22,
+                height: 22,
+                tintColor: focused ? tintColor : '#b2b8bf',
+              }}
+              source={iconProfile}
+            />);
           default:
             return '';
         }
-
-        return <Ionicons name={iconName} size={25} color={tintColor} />;
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'blue',
+      activeTintColor: UIColors.primary,
       inactiveTintColor: 'gray',
       activeBackgroundColor: 'white',
       inactiveBackgroundColor: 'white',
       style: {
         backgroundColor: 'white',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        borderTopColor: 'transparent',
+        padding: 5,
+        height: 66,
+      },
+      labelStyle: {
+        fontSize: 14,
+        marginBottom: 4,
+        marginTop: 4,
       },
     },
     tabBarPosition: 'bottom',
