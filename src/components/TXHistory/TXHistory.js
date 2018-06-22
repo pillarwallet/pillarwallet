@@ -1,26 +1,47 @@
 // @flow
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { connect } from 'react-redux';
+import { FlatList, Text, Linking, Image } from 'react-native';
+import { TX_DETAILS_URL } from 'react-native-dotenv';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
+import { Grid, Row, Column } from 'components/Grid';
+import { Label } from 'components/Typography';
+import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
 import { baseColors } from 'utils/variables';
+import SlideModal from 'components/Modals/SlideModal';
 import Item from './Item';
-import Icon from './Icon';
 import Amount from './Amount';
 import Hash from './Hash';
 import Status from './Status';
-import Direction from './Direction';
+import Timestamp from './Timestamp';
 import Section from './Section';
 
-const iconUp = require('../../assets/icons/up.png');
-const iconDown = require('../../assets/icons/down.png');
+
+const iconUp = require('assets/icons/up.png');
+const iconDown = require('assets/icons/down.png');
 
 type Props = {
   history: Transaction[],
   token: string,
-  address: string,
-  onRefresh: Function
+  wallet: Object,
+}
+
+type State = {
+  showModal: boolean,
+  selectedTransaction: {
+    hash: string,
+    date: ?string,
+    token: ?string,
+    amount: ?number,
+    recipient: ?string,
+    note: ?string,
+    fee: ?number,
+    confirmations: ?number,
+    status: ?string,
+    direction: ?string,
+  }
 }
 
 const flatListStyles = {
@@ -33,10 +54,90 @@ const flatListStyles = {
 const SENT = 'Sent';
 const RECEIVED = 'Received';
 
-export default class TXHistory extends React.Component<Props> {
+class TXHistory extends React.Component<Props, State> {
   static defaultProps = {
     history: [],
-    onRefresh: () => { },
+  };
+
+  state = {
+    showModal: false,
+    selectedTransaction: {
+      hash: '',
+      date: null,
+      token: null,
+      amount: null,
+      recipient: null,
+      fee: null,
+      note: null,
+      confirmations: null,
+      status: null,
+      direction: null,
+    },
+  };
+
+  getDirectionSymbol = (direction: string) => {
+    if (direction === SENT) {
+      return '-';
+    } else if (direction === RECEIVED) {
+      return '+';
+    }
+    return null;
+  };
+
+  getDate = (datetime: number) => {
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
+    ];
+    const date: Date = new Date(0);
+    date.setUTCSeconds(datetime);
+    return `${months[date.getMonth()]} ${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  };
+
+  selectTransaction = (transaction: Object) => {
+    const {
+      status,
+      value,
+      to,
+      from,
+      asset,
+      nbConfirmations,
+      hash,
+      timestamp,
+      gasUsed,
+    } = transaction;
+    const datetime = new Date(timestamp);
+    const myAddress = this.props.wallet.address;
+
+    this.setState({
+      selectedTransaction: {
+        hash,
+        date: this.getDate(datetime),
+        token: asset,
+        amount: formatETHAmount(value),
+        recipient: `${to.slice(0, 7)}…${to.slice(-7)}`,
+        fee: gasUsed.toFixed(6),
+        note: null,
+        confirmations: nbConfirmations,
+        status: status.charAt(0).toUpperCase() + status.slice(1),
+        direction: myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED,
+      },
+      showModal: true,
+    });
+  };
+
+  viewTransactionOnBlockchain = (hash: string) => {
+    Linking.openURL(TX_DETAILS_URL + hash);
   };
 
   renderTransaction = ({ item: transaction }: { item: Transaction }) => {
@@ -47,22 +148,22 @@ export default class TXHistory extends React.Component<Props> {
       to,
       _id: id,
       asset,
+      timestamp,
     } = transaction;
-    const { address } = this.props;
-    const direction = address.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
-    const icon = direction === SENT ? iconDown : iconUp;
+    const myAddress = this.props.wallet.address;
+    const direction = myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
+    const datetime = new Date(timestamp);
+    const icon = direction === SENT ? iconUp : iconDown;
     const senderRecipientAddress = direction === SENT ? to : from;
     return (
-      <Item key={id}>
-        <Section small>
-          <Icon source={icon} />
-        </Section>
+      <Item key={id} onPress={() => this.selectTransaction(transaction)}>
+        <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
         <Section>
-          <Direction>{direction}</Direction>
           <Hash>{senderRecipientAddress.slice(0, 7)}…{senderRecipientAddress.slice(-7)}</Hash>
+          <Timestamp>{this.getDate(datetime)}</Timestamp>
         </Section>
         <Section>
-          <Amount>{formatETHAmount(value)} {asset}</Amount>
+          <Amount direction={direction}>{this.getDirectionSymbol(direction)} {formatETHAmount(value)} {asset}</Amount>
           <Status>{status.toUpperCase()}</Status>
         </Section>
       </Item>
@@ -70,18 +171,90 @@ export default class TXHistory extends React.Component<Props> {
   };
 
   render() {
-    const { history, address, onRefresh } = this.props;
+    const { history } = this.props;
+    const { showModal, selectedTransaction } = this.state;
     return (
-      <FlatList
-        refreshing={false}
-        onRefresh={onRefresh}
-        ListHeaderComponent={<Title title="activity" />}
-        data={history}
-        extraData={address}
-        renderItem={this.renderTransaction}
-        keyExtractor={(({ _id }) => _id)}
-        contentContainerStyle={flatListStyles}
-      />
+      <React.Fragment>
+        <FlatList
+          refreshing={false}
+          ListHeaderComponent={<Title title="activity" />}
+          data={history}
+          renderItem={this.renderTransaction}
+          keyExtractor={(({ _id }) => _id)}
+          contentContainerStyle={flatListStyles}
+        />
+        <SlideModal
+          isVisible={showModal}
+          title="transaction details"
+          onModalHide={() => { this.setState({ showModal: false }); }}
+        >
+          <Grid>
+            <Row size="0 0 40px">
+              <Column>
+                <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
+              </Column>
+              <Column>
+                <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
+              </Column>
+            </Row>
+            <Row size="0 0 40px">
+              <Column><Label>Date</Label></Column>
+              <Column>
+                <Text>{selectedTransaction.date}</Text>
+              </Column>
+            </Row>
+
+            <Row size="0 0 40px">
+              <Column><Label>Recipient</Label></Column>
+              <Column>
+                <Text>{selectedTransaction.recipient}</Text>
+              </Column>
+            </Row>
+            <Row size="0 0 40px">
+              <Column><Label>Transaction fee</Label></Column>
+              <Column>
+                <Text>{selectedTransaction.fee} ETH</Text>
+              </Column>
+            </Row>
+
+            {selectedTransaction.note &&
+              <Row size="0 0 80px">
+                <Column><Label>Note</Label></Column>
+                <Column>
+                  <Text>{selectedTransaction.note}</Text>
+                </Column>
+              </Row>
+            }
+            <Row size="0 0 40px">
+              <Column><Label>Confirmations</Label></Column>
+              <Column>
+                <Text>{selectedTransaction.confirmations}</Text>
+              </Column>
+            </Row>
+            <Row size="0 0 40px">
+              <Column><Label>Status</Label></Column>
+              <Column>
+                <Text>{selectedTransaction.status}</Text>
+              </Column>
+            </Row>
+            <Row>
+              <Column>
+                <Button
+                  style={{ marginBottom: 20, marginTop: 20 }}
+                  title="View on the blockchain"
+                  onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
+                />
+              </Column>
+            </Row>
+          </Grid>
+        </SlideModal>
+      </React.Fragment>
     );
   }
 }
+
+const mapStateToProps = ({ wallet: { data: wallet } }) => ({
+  wallet,
+});
+
+export default connect(mapStateToProps)(TXHistory);

@@ -659,18 +659,17 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.1.445":
-  version "1.1.445"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.1.445.tgz#f60cb789a08bc897798127e4508cedf2db2d6e54"
+"@pillarwallet/pillarwallet-nodejs-sdk@1.1.491":
+  version "1.1.491"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.1.491.tgz#6858cbea0af7a04199bf8d0da6bd8d5f5ca228ae"
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
+    "@types/ethereumjs-util" "5.1.1"
     "@types/node" "9.6.6"
     ajv "6.4.0"
     ajv-keywords "3.2.0"
     axios "0.18.0"
-    elliptic "6.4.0"
-    js-sha3 "0.7.0"
-    secp256k1 "3.5.0"
+    ethereumjs-util "5.2.0"
     tslint-config-airbnb "5.8.0"
 
 "@pillarwallet/plr-auth-sdk@1.1.2-84":
@@ -910,6 +909,12 @@
   dependencies:
     Base64 "~0.2.0"
     inherits "~2.0.1"
+
+"@types/ethereumjs-util@5.1.1":
+  version "5.1.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/ethereumjs-util/-/ethereumjs-util-5.1.1.tgz#a074780ebbc0abb6de42aac99ea597fd0b157dcf"
+  dependencies:
+    "@types/node" "*"
 
 "@types/events@*":
   version "1.2.0"
@@ -2746,7 +2751,7 @@ blueimp-md5@^2.5.0:
   version "2.10.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blueimp-md5/-/blueimp-md5-2.10.0.tgz#02f0843921f90dca14f5b8920a38593201d6964d"
 
-bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.11.3, bn.js@^4.4.0:
+bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.1.1, bn.js@^4.11.0, bn.js@^4.11.3, bn.js@^4.4.0:
   version "4.11.8"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/bn.js/-/bn.js-4.11.8.tgz#2cde09eb5ee341f484746bb0309b3253b1b1442f"
 
@@ -4758,6 +4763,18 @@ etag@~1.8.1:
   version "1.8.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
 
+ethereumjs-util@5.2.0:
+  version "5.2.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethereumjs-util/-/ethereumjs-util-5.2.0.tgz#3e0c0d1741471acf1036052d048623dee54ad642"
+  dependencies:
+    bn.js "^4.11.0"
+    create-hash "^1.1.2"
+    ethjs-util "^0.1.3"
+    keccak "^1.0.2"
+    rlp "^2.0.0"
+    safe-buffer "^5.1.1"
+    secp256k1 "^3.0.1"
+
 ethers@^3.0.9:
   version "3.0.22"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethers/-/ethers-3.0.22.tgz#7fab1ea16521705837aa43c15831877b2716b436"
@@ -4772,6 +4789,13 @@ ethers@^3.0.9:
     setimmediate "1.0.4"
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
+
+ethjs-util@^0.1.3:
+  version "0.1.6"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethjs-util/-/ethjs-util-0.1.6.tgz#f308b62f185f9fe6237132fb2a9818866a5cd536"
+  dependencies:
+    is-hex-prefixed "1.0.0"
+    strip-hex-prefix "1.0.0"
 
 event-emitter@~0.3.5:
   version "0.3.5"
@@ -6452,6 +6476,10 @@ is-glob@^4.0.0:
   dependencies:
     is-extglob "^2.1.1"
 
+is-hex-prefixed@1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/is-hex-prefixed/-/is-hex-prefixed-1.0.0.tgz#7d8d37e6ad77e5d127148913c573e082d777f554"
+
 is-index-x@^1.0.0:
   version "1.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/is-index-x/-/is-index-x-1.1.0.tgz#43dac97b3a04f30191530833f45ac35001682ee2"
@@ -7304,6 +7332,15 @@ jws@^3.1.4:
   dependencies:
     jwa "^1.1.5"
     safe-buffer "^5.0.1"
+
+keccak@^1.0.2:
+  version "1.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/keccak/-/keccak-1.4.0.tgz#572f8a6dbee8e7b3aa421550f9e6408ca2186f80"
+  dependencies:
+    bindings "^1.2.1"
+    inherits "^2.0.3"
+    nan "^2.2.1"
+    safe-buffer "^5.1.0"
 
 keycode@^2.1.9:
   version "2.2.0"
@@ -11009,6 +11046,10 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
+rlp@^2.0.0:
+  version "2.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rlp/-/rlp-2.0.0.tgz#9db384ff4b89a8f61563d92395d8625b18f3afb0"
+
 rn-nodeify@tradle/rn-nodeify:
   version "10.0.0"
   resolved "https://codeload.github.com/tradle/rn-nodeify/tar.gz/f871fadfed6edef6e208bb3293e66f27466122da"
@@ -11150,7 +11191,7 @@ scrypt-js@2.0.3:
   version "2.0.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/scrypt-js/-/scrypt-js-2.0.3.tgz#bb0040be03043da9a012a2cea9fc9f852cfc87d4"
 
-secp256k1@3.5.0:
+secp256k1@^3.0.1:
   version "3.5.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/secp256k1/-/secp256k1-3.5.0.tgz#677d3b8a8e04e1a5fa381a1ae437c54207b738d0"
   dependencies:
@@ -11741,6 +11782,12 @@ strip-bom@^2.0.0:
 strip-eof@^1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/strip-eof/-/strip-eof-1.0.0.tgz#bb43ff5598a6eb05d89b59fcd129c983313606bf"
+
+strip-hex-prefix@1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/strip-hex-prefix/-/strip-hex-prefix-1.0.0.tgz#0c5f155fef1151373377de9dbb588da05500e36f"
+  dependencies:
+    is-hex-prefixed "1.0.0"
 
 strip-json-comments@~2.0.1:
   version "2.0.1"
