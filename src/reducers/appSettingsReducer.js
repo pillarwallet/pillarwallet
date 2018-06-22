@@ -17,7 +17,7 @@ const initialState = {
   isFetched: false,
 };
 
-export default function assetsReducer(
+export default function appSettingsReducer(
   state: AppSettingsReducerState = initialState,
   action: AppSettingsReducerAction,
 ) {
