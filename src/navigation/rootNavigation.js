@@ -42,7 +42,7 @@ const StackNavigatorConfig = {
   headerMode: 'screen',
   navigationOptions: ({ navigation }) => ({
     headerStyle: {
-      backgroundColor: baseColors.snowWhite,
+      backgroundColor: '#fff',
       borderBottomWidth: 0,
       elevation: 0,
     },

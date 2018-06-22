@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
+import { Button as NBButton } from 'native-base';
 import ButtonWrapper from './ButtonWrapper';
 import ButtonText from './ButtonText';
 
@@ -73,3 +75,31 @@ const Button = (props: Props) => {
 };
 
 export default Button;
+
+
+type ButtonMiniProps = {
+  onPress: Function,
+  title: string,
+};
+
+const ButtonMiniWrapper = styled(NBButton)`
+  padding: 10px 20px;
+  background-color: ${baseColors.electricBlue};
+  border-radius: 17;
+  box-shadow: 0px .5px .5px ${baseColors.electricBlue};
+  height: 34px;
+  width: auto;
+`;
+
+const ButtonMiniText = styled.Text`
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3;
+  color: #fff;
+`;
+
+export const ButtonMini = (props: ButtonMiniProps) => (
+  <ButtonMiniWrapper onPress={props.onPress}>
+    <ButtonMiniText>{props.title}</ButtonMiniText>
+  </ButtonMiniWrapper>
+);

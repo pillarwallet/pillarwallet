@@ -10,6 +10,15 @@ export const Title = styled.Text`
   text-align: ${props => (props.align || 'left')};
 `;
 
+export const SubtTitle = styled.Text`
+  font-size: ${fontSizes.mediumLarge};
+  font-weight: 400;
+  color: ${UIColors.primary};
+  text-align: ${props => (props.align || 'left')};
+  line-height: 24px;
+  margin: 0 0 20px;
+`;
+
 export const Paragraph = styled.Text`
   font-size: ${fontSizes.small};
   margin-bottom: 10;
@@ -19,15 +28,12 @@ export const Paragraph = styled.Text`
 
 export const TextLink = styled.Text`
   font-size: ${fontSizes.small};
-  margin-right: 10px;
   color: ${UIColors.primary};
 `;
 
 export const Label = styled.Text`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
-  margin-bottom: 10;
-  align-self: flex-start;
 `;
 
 export const HelpText = styled.Text`

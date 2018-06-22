@@ -1,17 +1,16 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, Text, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { ASSET } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { fontWeights, fontSizes, baseColors, UIColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
-import Title from 'components/Title';
-import Button from 'components/Button';
-import TextInput from 'components/TextInput';
+import { Paragraph, SubtTitle } from 'components/Typography';
+import Button, { ButtonMini } from 'components/Button';
+import SingleInput from 'components/TextInput/SingleInput';
 import SlideModal from 'components/Modals/SlideModal';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -19,7 +18,8 @@ import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
-import SendTokenContactsHeader from './SendTokenContactsHeader';
+
+import SendTokenHeader from './SendTokenHeader';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -50,15 +50,14 @@ function AddressInputTemplate(locals) {
     placeholder: 'Ethereum Address',
     value: locals.value,
     keyboardType: locals.keyboardType,
-    textAlign: 'right',
+    align: 'left',
     maxLength: 42,
     fontSize: fontSizes.small,
   };
   return (
-    <TextInput
+    <SingleInput
       errorMessage={errorMessage}
       id="address"
-      label={locals.label}
       icon="ios-qr-scanner"
       onIconPress={onIconPress}
       inputProps={inputProps}
@@ -146,6 +145,22 @@ const ModalFooter = styled.View`
   flex: 2;
   margin-bottom: 40;
   justify-content: flex-end;
+`;
+
+const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
+  flex: 1;
+  position: absolute;
+  bottom: 80;
+  left: 0;
+  width: 100%;
+`;
+
+const FooterWrapper = styled.View`
+  flexDirection: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
@@ -258,7 +273,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         </ModalItemWrapper>
         <ModalFooter>
           <ModalParagraph light>
-          The process may take up to 10 minutes to complete. Please check your transaction history.
+            The process may take up to 10 minutes to complete. Please check your transaction history.
           </ModalParagraph>
           <Button title="Confirm Transaction" onPress={this.handleFormSubmit} />
         </ModalFooter>
@@ -267,15 +282,14 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <SendTokenContactsHeader
+        <SendTokenHeader
           onBack={this.props.navigation.goBack}
-          onNext={this.openConfirmationModal}
-          amount={amount}
-          symbol={assetData.token}
+          dismiss={this.props.navigation.dismiss}
+          rightLabelText="STEP 2 OF 3"
         />
         <Container>
           <Wrapper regularPadding>
-            <Title title="choose contact" />
+            <SubtTitle style={{ width: '60%' }}>To whom you would like to send?</SubtTitle>
             <Form
               ref={node => { this._form = node; }}
               type={formStructure}
@@ -288,6 +302,11 @@ class SendTokenContacts extends React.Component<Props, State> {
         </Container>
         {qrScannerComponent}
         {confirmationModal}
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={20}>
+          <FooterWrapper>
+            <ButtonMini title="Next" onPress={this.openConfirmationModal} />
+          </FooterWrapper>
+        </KeyboardAvoidingView>
       </React.Fragment>
     );
   }

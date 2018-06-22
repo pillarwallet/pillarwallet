@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, Keyboard } from 'react-native';
+import { Text, TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -9,23 +9,18 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
-import Title from 'components/Title';
-import ButtonIcon from 'components/ButtonIcon';
-import TextInput from 'components/TextInput';
+import SingleInput from 'components/TextInput/SingleInput';
+import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import QRCodeScanner from 'components/QRCodeScanner';
+import { SubtTitle, TextLink, Paragraph } from 'components/Typography';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import { isValidETHAddress } from 'utils/validators';
-import { pipe, parseNumber, decodeETHAddress, formatMoney, formatAmount } from 'utils/common';
-import { baseColors, fontSizes } from 'utils/variables';
-import SendTokenAmountHeader from './SendTokenAmountHeader';
+import { parseNumber, formatAmount } from 'utils/common';
+import SendTokenHeader from './SendTokenHeader';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
-// make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
 const { Form } = t.form;
 const gasLimit = 21000;
 
@@ -50,7 +45,7 @@ const getFormStructure = (maxAmount: number, enoughForFee) => {
 };
 
 function AmountInputTemplate(locals) {
-  const { config: { currency, useMaxValue } } = locals;
+  const { config: { icon } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     autoFocus: true,
@@ -64,16 +59,12 @@ function AmountInputTemplate(locals) {
   };
 
   return (
-    <TextInput
-      inputType="amount"
-      postfix={currency}
+    <SingleInput
+      innerImageURI={icon}
       errorMessage={errorMessage}
       id="amount"
-      label={locals.label}
       inputProps={inputProps}
       inlineLabel
-      footerAddonText="Use Max"
-      footerAddonAction={useMaxValue}
     />
   );
 }
@@ -84,14 +75,31 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
+const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
+  flex: 1;
+  position: absolute;
+  bottom: 80;
+  left: 0;
+  width: 100%;
+`;
+
 const ActionsWrapper = styled.View`
   display: flex;
   flex-direction: row;
-  align-content: center;
+  justify-content: flex-end;
+`;
+
+const FooterWrapper = styled.View`
+  flexDirection: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
 `;
 
 type Props = {
-  token: string,
+  token: string;
+
   address: string,
   totalBalance: number,
   contractAddress: string,
@@ -102,7 +110,6 @@ type Props = {
 }
 
 type State = {
-  isScanning: boolean,
   value: ?{
     amount: ?number
   },
@@ -120,7 +127,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
-      isScanning: false,
       value: null,
       formStructure: getFormStructure(this.assetData.balance, false),
       txFeeInWei: null,
@@ -143,7 +149,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           formStructure: getFormStructure(maxAmount, enoughForFee),
         });
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   handleChange = (value: Object) => {
@@ -202,54 +208,25 @@ class SendTokenAmount extends React.Component<Props, State> {
     return balanceInWei.gte(txFeeInWei);
   }
 
-  openFeeInfoModal = () => {
-    // Add fee modal logic in here
-  };
-
-  handleToggleQRScanningState = () => {
-    this.setState({
-      isScanning: !this.state.isScanning,
-    }, () => {
-      if (this.state.isScanning) {
-        Keyboard.dismiss();
-      }
-    });
-  };
-
-  handleQRRead = (address: string) => {
-    this.setState({ value: { ...this.state.value, address }, isScanning: false });
-  };
-
   render() {
     const {
       value,
-      isScanning,
       formStructure,
       txFeeInWei,
     } = this.state;
-    const { token, balance } = this.assetData;
-    const formOptions = generateFormOptions({ currency: token, useMaxValue: this.useMaxValue });
-
-    const qrScannerComponent = (
-      <QRCodeScanner
-        validator={ETHValidator}
-        dataFormatter={decodeETHAddress}
-        isActive={isScanning}
-        onDismiss={this.handleToggleQRScanningState}
-        onRead={this.handleQRRead}
-      />
-    );
+    const { token, icon, balance } = this.assetData;
+    const formOptions = generateFormOptions({ icon, currency: token });
     return (
       <React.Fragment>
-        <SendTokenAmountHeader
+        <SendTokenHeader
           onBack={this.props.navigation.goBack}
-          nextOnPress={this.handleFormSubmit}
-          balanceAmount={formatMoney(balance, 6)}
-          symbol={token}
+          dismiss={this.props.navigation.dismiss}
+          isFirstScreen
+          rightLabelText="STEP 1 OF 3"
         />
         <Container>
           <Wrapper regularPadding>
-            <Title title="send" />
+            <SubtTitle style={{ width: '60%' }}>How much {token} would you like to send?</SubtTitle>
             <Form
               ref={node => { this._form = node; }}
               type={formStructure}
@@ -258,22 +235,19 @@ class SendTokenAmount extends React.Component<Props, State> {
               onChange={this.handleChange}
             />
             <ActionsWrapper>
-              <Text style={{ marginTop: 14 }}>
-                Fee:
-              </Text>
-              <Text style={{ fontWeight: 'bold', color: '#000', marginTop: 14 }}>
-                {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}
-              </Text>
-              <ButtonIcon
-                icon="alert"
-                color={baseColors.electricBlue}
-                fontSize={fontSizes.large}
-                onPress={this.openFeeInfoModal}
-              />
+              <Paragraph style={{ marginRight: 24 }}>Balance {balance} {token}</Paragraph>
+              <TouchableOpacity onPress={this.useMaxValue}>
+                <TextLink>Send All</TextLink>
+              </TouchableOpacity>
             </ActionsWrapper>
           </Wrapper>
         </Container>
-        {qrScannerComponent}
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={20}>
+          <FooterWrapper>
+            <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
+            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+          </FooterWrapper>
+        </KeyboardAvoidingView>
       </React.Fragment>
     );
   }

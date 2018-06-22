@@ -14,7 +14,7 @@ export const Center = styled.View`
 `;
 
 const ContainerOuter = styled.SafeAreaView`
-  background-color: ${baseColors.snowWhite};
+  background-color: #fff;
 `;
 
 const ContainerInner = styled.View`

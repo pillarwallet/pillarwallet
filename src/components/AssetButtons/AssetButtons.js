@@ -8,8 +8,8 @@ type Props = {
   onPressSend: Function,
 }
 
-const imageSend = require('../../assets/images/btn_iconSend.png');
-const imageReceive = require('../../assets/images/btn_iconReceive.png');
+const imageSend = require('assets/images/btn_iconSend.png');
+const imageReceive = require('assets/images/qr.png');
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
