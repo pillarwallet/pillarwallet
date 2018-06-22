@@ -1,40 +1,87 @@
-## Pillar Wallet
-To get started clone repo and run
+# Pillar Wallet
+To get started clone the repo and run
 
-`npm install`
+`yarn install`
 
-This will download all the necessary packages to build the project. The project can be deployed using the simple command of `npm start`. This will get your project running in development mode.
-
-**Debugging**
-
-Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devices, you will see the in-app developer menu. Tap “Debug JS Remotely”. The Chrome debugger will be opened automatically. You still need to open Developer Tools in Chrome manually. Open source files in the Sources tab, you can set breakpoints here. [READ MORE](https://codeburst.io/react-native-debugging-tools-3a24e4e40e4)
-
-This can also be referenced via [react-devtools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools)
+This will download all the necessary packages to build the project. The project can be deployed using the simple command of `yarn start`. This will get your project running in development mode.
 
 **Running on iOS:**
 
 The project may be run from the directory using 
 
-`npm run ios`
-
-This will launch the simulator, for instructions on debuggin via Chrome please see [React Dev-Tools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools) to get started.
+`yarn ios`
 
 
 **Running on Android:**
 
-Like npm start, but also attempts to open your app in the iOS Simulator if you're on a Mac and have it installed.
+Like yarn start, but also attempts to open your app in the iOS Simulator if you're on a Mac and have it installed.
 
-`npm run android`
+`yarn android`
 
----
+## Debugging
+
+First, you need to install the [React Native Debugger](https://github.com/jhen0409/react-native-debugger)
+`brew update && brew cask install react-native-debugger`
+
+Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devices, you will see the in-app developer menu. Tap “Debug JS Remotely”. The React Native Debugger will be opened automatically. Open source files in the Sources tab, you can set breakpoints here. 
+
+**Network Requests**
+
+If you head to the `Network` and find your XHR requests are not being logged, you will notice that you are unable to see any. 
+You must first enable them by right clicking in the `React Devtools` or `Redux Devtools` section and clicking `Enable Network Inspect`.
+
+**Useful Links on Debugging:**
+* [A Better Way To Debug React Native Redux Apps](https://www.codementor.io/ilovett/a-better-way-to-debug-react-native-redux-apps-gwbmkbq4v)
+* [React Native Debugging tools](https://codeburst.io/react-native-debugging-tools-3a24e4e40e4)
+* [react-devtools](https://github.com/facebook/react-devtools/tree/master/packages/react-devtools)
+
+
+## App configuration
+
+Add your app configuration in an **.env** file.
+
+```
+API_KEY=lorem
+ANOTHER_CONFIG=foobar
+```
+
+Now you can import it in your **.js** file.
+
+```js
+import { API_KEY, ANOTHER_CONFIG } from 'react-native-dotenv'
+
+ApiClient.init(API_KEY, ANOTHER_CONFIG)
+```
+
+**How does it works?**
+
+As you can see, it's implemented as a babel plugin. All referenced imported members are replaced as the values specified in the **.env** file.
+
+The example above will get compiled as below.
+
+```js
+ApiClient.init('lorem', 'foobar')
+```
+
+**In Production**
+
+Simply create a separate **.env.production** file and the default release process of react-native will pickup the right config.
 
 **Resource Links:**
 
-[Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
+* [Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
+* [Configuration](https://github.com/zetachang/react-native-dotenv)
 
 
+### React Storybook
 
+- Run storybook: `yarn storybook`
+- Set `SHOW_STORYBOOK=true` setting in `.env` file (or in `.env.development`)
+- Run the app
+- Note: RN runner likes to cache the `.env` file, so sometimes you need to restart the packager and clear the cache (`Shift + R`)
+- Open in browser `http://localhost:7007`
 
+## Old CRNA Readme
 
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
 

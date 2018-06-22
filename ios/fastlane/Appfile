@@ -1,0 +1,8 @@
+app_identifier("com.pillarproject.wallet") # The bundle identifier of your app
+apple_id("automation@pillarproject.io") # Your Apple email address
+
+itc_team_id("118878535") # iTunes Connect Team ID
+team_id("J9DEY3FGPD") # Developer Portal Team ID
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
