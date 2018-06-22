@@ -16,6 +16,7 @@ import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
 import PillarSdk from 'services/api';
+import Storage from 'services/storage';
 
 type SDK = {
   registerOnBackend: Function,
@@ -40,6 +41,8 @@ const mockOnboarding: Object = {
   mnemonic: { original: '', shuffled: '', wordsToValidate: [] },
   pin: '',
 };
+
+const storage = Storage.getInstance('db');
 
 const mockExchangeRates = {
   ETH: {
@@ -68,6 +71,7 @@ describe('Wallet actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore({});
+    return storage.save('user', { user: { username: 'asd' } });
   });
 
   it(`should expect series of actions with payload to be dispatch 
