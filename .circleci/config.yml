@@ -310,4 +310,4 @@ workflows:
           filters:
             branches:
               only:
-                  - android_fastlane_circle
+                  - master
