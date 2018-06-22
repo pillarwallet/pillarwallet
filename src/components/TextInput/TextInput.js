@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { Item, Input, Label } from 'native-base';
 import { fontSizes, fontWeights, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Platform } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -114,6 +114,10 @@ class TextInput extends React.Component<Props, State> {
   }
 
   handleBlur = (e: EventLike) => {
+    if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
+      return;
+    }
+
     const { inputProps: { onBlur }, trim } = this.props;
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
     this.setState({ value }, () => {

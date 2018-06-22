@@ -9,6 +9,7 @@ import {
   INVALID_PASSWORD,
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
+  DECRYPTED,
 } from 'constants/walletConstants';
 import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
@@ -74,6 +75,15 @@ export const changePinAction = (pin: string) => {
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
+    });
+  };
+};
+
+export const resetIncorrectPasswordAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: DECRYPTED,
     });
   };
 };
