@@ -7,12 +7,17 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Toast } from 'native-base';
-import { Text, TouchableHighlight, Modal, View} from 'react-native';
+import { Platform } from 'react-native';
+import Modal from 'react-native-modal';
+import t from 'tcomb-form-native';
+
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import PortfolioBalance from 'components/PortfolioBalance';
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
+import SettingsPanel from './SettingsPanel';
+
 
 const storage = new Storage('db');
 
@@ -56,12 +61,53 @@ type Props = {
 }
 
 type State = {
-  modalVisible: boolean
+  visibleModal: string | null,
+  value: Object,
 }
 
+const { Form } = t.form;
+const SettingsInputString = t.struct({
+  stringInput: t.String,
+});
+
+const formOptions = {
+  fields: {
+    stringInput: {
+      config: {
+        inputProps: {
+          autoCapitalize: 'words',
+        },
+      },
+      error: 'Please insert required information',
+    },
+  },
+};
+
+t.form.Form.stylesheet.textbox.normal.color = '#000000';
+t.form.Form.stylesheet.textbox.normal.backgroundColor = '#ffffff';
+t.form.Form.stylesheet.textbox.error.backgroundColor = '#ffffff';
+t.form.Form.stylesheet.textbox.normal.borderRadius = 0;
+t.form.Form.stylesheet.textbox.error.borderRadius = 0;
+
+if (Platform.OS === 'android') {
+  t.form.Form.stylesheet.textbox.normal.borderWidth = 0;
+  t.form.Form.stylesheet.textbox.error.borderWidth = 0;
+  t.form.Form.stylesheet.textbox.normal.borderRadius = 0;
+  t.form.Form.stylesheet.textbox.error.borderRadius = 0;
+  t.form.Form.stylesheet.textbox.normal.borderBottomWidth = 1;
+  t.form.Form.stylesheet.textbox.error.borderBottomWidth = 1;
+}
+
+
+t.form.Form.stylesheet.controlLabel.normal.display = 'none';
+t.form.Form.stylesheet.controlLabel.error.display = 'none';
+
 class Profile extends React.Component<Props, State> {
+  _form: t.form;
+
   state = {
-    modalVisible: false,
+    visibleModal: null,
+    value: {},
   };
 
   clearLocalStorage() {
@@ -72,9 +118,16 @@ class Profile extends React.Component<Props, State> {
     });
   }
 
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
-  }
+  handleSettingsChange = () => {
+    const value = this._form.getValue();
+    if (value) {
+      this.setState({ visibleModal: null });
+    }
+  };
+
+  onChange = (value) => {
+    this.setState({ value });
+  };
 
   render() {
     // user, wallet
@@ -82,28 +135,95 @@ class Profile extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            alert('Modal has been closed.');
-          }}
-        >
-          <View style={{ marginTop: 22 }}>
-            <View>
-              <Text>Hello World!</Text>
 
-              <TouchableHighlight
-                onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}
-              >
-                <Text>Hide Modal</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
+        <Modal
+          isVisible={this.state.visibleModal === 'country'}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          backdropOpacity={0.4}
+          style={{ padding: 30 }}
+        >
+          <SettingsPanel
+            panelTitle="Enter country"
+            handleOK={() => this.handleSettingsChange()}
+            handleCancel={() => this.setState({ visibleModal: null })}
+          >
+            <Form
+              ref={node => { this._form = node; }}
+              type={SettingsInputString}
+              options={formOptions}
+              value={this.state.value}
+              onChange={this.onChange}
+            />
+          </SettingsPanel>
         </Modal>
+
+        <Modal
+          isVisible={this.state.visibleModal === 'city'}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          backdropOpacity={0.4}
+          style={{ padding: 30 }}
+        >
+          <SettingsPanel
+            panelTitle="Enter city name"
+            handleOK={() => this.handleSettingsChange()}
+            handleCancel={() => this.setState({ visibleModal: null })}
+          >
+            <Form
+              ref={node => { this._form = node; }}
+              type={SettingsInputString}
+              options={formOptions}
+              value={this.state.value}
+              onChange={this.onChange}
+            />
+          </SettingsPanel>
+        </Modal>
+
+        <Modal
+          isVisible={this.state.visibleModal === 'email'}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          backdropOpacity={0.4}
+          style={{ padding: 30 }}
+        >
+          <SettingsPanel
+            panelTitle="Enter email"
+            handleOK={() => this.handleSettingsChange()}
+            handleCancel={() => this.setState({ visibleModal: null })}
+          >
+            <Form
+              ref={node => { this._form = node; }}
+              type={SettingsInputString}
+              options={formOptions}
+              value={this.state.value}
+              onChange={this.onChange}
+            />
+          </SettingsPanel>
+        </Modal>
+
+        <Modal
+          isVisible={this.state.visibleModal === 'phone'}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          backdropOpacity={0.4}
+          style={{ padding: 30 }}
+        >
+          <SettingsPanel
+            panelTitle="Enter phone number"
+            handleOK={() => this.handleSettingsChange()}
+            handleCancel={() => this.setState({ visibleModal: null })}
+          >
+            <Form
+              ref={node => { this._form = node; }}
+              type={SettingsInputString}
+              options={formOptions}
+              value={this.state.value}
+              onChange={this.onChange}
+            />
+          </SettingsPanel>
+        </Modal>
+
         <ScrollWrapper>
           <ProfileHeader>
             <FlexRowSpaced>
@@ -122,28 +242,32 @@ class Profile extends React.Component<Props, State> {
               key="country"
               label="Country"
               value={user.country}
-              onPress={() => { this.setModalVisible(!this.state.modalVisible); }}
+              onPress={() =>
+                this.setState({ visibleModal: 'country' })}
             />
 
             <ProfileSettingsItem
               key="city"
               label="City"
               value={user.city}
-              onPress={() => { this.setModalVisible(!this.state.modalVisible); }}
+              onPress={() =>
+                this.setState({ visibleModal: 'city' })}
             />
 
             <ProfileSettingsItem
               key="email"
               label="Email"
               value={user.email}
-              onPress={() => { this.setModalVisible(!this.state.modalVisible); }}
+              onPress={() =>
+                this.setState({ visibleModal: 'email' })}
             />
 
             <ProfileSettingsItem
               key="phone"
               label="Phone"
               value={user.phone}
-              onPress={() => { this.setModalVisible(!this.state.modalVisible); }}
+              onPress={() =>
+                this.setState({ visibleModal: 'phone' })}
             />
 
             <ListSeparator>
@@ -154,7 +278,7 @@ class Profile extends React.Component<Props, State> {
               key="baseCurrency"
               label="Base currency"
               value="GBP"
-              onPress={() => { this.setModalVisible(!this.state.modalVisible); }}
+              onPress={null}
             />
 
             <ProfileSettingsItem
@@ -182,7 +306,7 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="aboutWallet"
               label="About Pillar wallet"
-              onPress={() => { this.setModalVisible(!this.state.modalVisible); }}
+              onPress={null}
             />
 
             <ListSeparator>

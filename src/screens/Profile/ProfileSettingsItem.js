@@ -86,7 +86,6 @@ export default class ProfileSettingsItem extends React.Component<Props> {
   renderContent(processedValue: string | boolean | number) {
     const {
       label,
-      value,
       toggle,
       onPress,
     } = this.props;
