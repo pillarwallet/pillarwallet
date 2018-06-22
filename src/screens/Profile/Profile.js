@@ -16,6 +16,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 
 import { saveBaseFiatCurrencyAction } from 'actions/profileActions';
+
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
@@ -140,10 +141,16 @@ class Profile extends React.Component<Props, State> {
     });
   }
 
-  handleSettingsChange = () => {
+  handleSettingsChange = (property) => {
     const value = this._form.getValue();
     if (value) {
-      this.setState({ visibleModal: null });
+      switch (property) {
+        case 'country':
+          this.setState({ visibleModal: null });
+          break;
+        default:
+          this.setState({ visibleModal: null });
+      }
     }
   };
 
@@ -157,7 +164,6 @@ class Profile extends React.Component<Props, State> {
 
     return (
       <Container>
-
         <Modal
           isVisible={this.state.visibleModal === 'country'}
           animationIn="fadeIn"
@@ -167,7 +173,7 @@ class Profile extends React.Component<Props, State> {
         >
           <SettingsPanel
             panelTitle="Enter country"
-            handleOK={() => this.handleSettingsChange()}
+            handleOK={() => this.handleSettingsChange('country')}
             handleCancel={() => this.setState({ visibleModal: null })}
             headerMarginIOS
           >
@@ -266,7 +272,7 @@ class Profile extends React.Component<Props, State> {
               paddingBottom: 10,
               paddingTop: 10,
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'center'
             }}
             >
               <Picker
@@ -393,7 +399,6 @@ class Profile extends React.Component<Props, State> {
   }
 }
 
-
 const mapStateToProps = ({
   user: { data: user },
   appSettings: { data: { baseFiatCurrency } },
@@ -401,16 +406,6 @@ const mapStateToProps = ({
   user,
   baseFiatCurrency,
 });
-
-// const mapStateToProps = ({
-//   user: { data: user },
-//   wallet: { data: wallet },
-//   appSettings: { data: { baseFiatCurrency } },
-// }) => ({
-//   user,
-//   wallet,
-//   baseFiatCurrency,
-// });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
