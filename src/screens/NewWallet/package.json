@@ -1,0 +1,6 @@
+{
+  "name": "NewWallet",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./NewWallet.js"
+}
