@@ -7,17 +7,19 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Toast } from 'native-base';
-import { Platform } from 'react-native';
+import { Platform, Picker, View } from 'react-native';
 import Modal from 'react-native-modal';
 import t from 'tcomb-form-native';
 
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import PortfolioBalance from 'components/PortfolioBalance';
+import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+
+import { saveBaseFiatCurrencyAction } from 'actions/profileActions';
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
 import SettingsPanel from './SettingsPanel';
-
 
 const storage = new Storage('db');
 
@@ -58,11 +60,14 @@ const ListSeparatorText = styled.Text`
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
+  baseFiatCurrency: string,
+  saveBaseFiatCurrency: (currency: string) => Function,
 }
 
 type State = {
   visibleModal: string | null,
   value: Object,
+  selectedCurrency: string,
 }
 
 const { Form } = t.form;
@@ -105,9 +110,26 @@ t.form.Form.stylesheet.controlLabel.error.display = 'none';
 class Profile extends React.Component<Props, State> {
   _form: t.form;
 
-  state = {
-    visibleModal: null,
-    value: {},
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      visibleModal: null,
+      value: {},
+      selectedCurrency: props.baseFiatCurrency || defaultFiatCurrency,
+    };
+  }
+
+  onCurrencyChanged = (value?: string) => {
+    if (value) {
+      this.setState({
+        selectedCurrency: value,
+      });
+    } else {
+      this.props.saveBaseFiatCurrency(this.state.selectedCurrency);
+      this.setState({
+        visibleModal: null,
+      });
+    }
   };
 
   clearLocalStorage() {
@@ -130,8 +152,8 @@ class Profile extends React.Component<Props, State> {
   };
 
   render() {
-    // user, wallet
     const { user } = this.props;
+    const { selectedCurrency } = this.state;
 
     return (
       <Container>
@@ -147,6 +169,7 @@ class Profile extends React.Component<Props, State> {
             panelTitle="Enter country"
             handleOK={() => this.handleSettingsChange()}
             handleCancel={() => this.setState({ visibleModal: null })}
+            headerMarginIOS
           >
             <Form
               ref={node => { this._form = node; }}
@@ -169,6 +192,7 @@ class Profile extends React.Component<Props, State> {
             panelTitle="Enter city name"
             handleOK={() => this.handleSettingsChange()}
             handleCancel={() => this.setState({ visibleModal: null })}
+            headerMarginIOS
           >
             <Form
               ref={node => { this._form = node; }}
@@ -191,6 +215,7 @@ class Profile extends React.Component<Props, State> {
             panelTitle="Enter email"
             handleOK={() => this.handleSettingsChange()}
             handleCancel={() => this.setState({ visibleModal: null })}
+            headerMarginIOS
           >
             <Form
               ref={node => { this._form = node; }}
@@ -213,6 +238,7 @@ class Profile extends React.Component<Props, State> {
             panelTitle="Enter phone number"
             handleOK={() => this.handleSettingsChange()}
             handleCancel={() => this.setState({ visibleModal: null })}
+            headerMarginIOS
           >
             <Form
               ref={node => { this._form = node; }}
@@ -221,6 +247,46 @@ class Profile extends React.Component<Props, State> {
               value={this.state.value}
               onChange={this.onChange}
             />
+          </SettingsPanel>
+        </Modal>
+
+        <Modal
+          isVisible={this.state.visibleModal === 'baseCurrency'}
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          backdropOpacity={0.4}
+          style={{ padding: 30 }}
+        >
+          <SettingsPanel
+            panelTitle="Pick the base currency"
+            handleOK={() => this.onCurrencyChanged()}
+            handleCancel={() => this.setState({ visibleModal: null })}
+          >
+            <View style={{
+              paddingBottom: 10,
+              paddingTop: 10,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            >
+              <Picker
+                selectedValue={selectedCurrency}
+                style={{
+                  ...Platform.select({
+                    ios: {
+                      height: 180,
+                    },
+                    android: {
+                      height: 50,
+                    },
+                  }),
+                  width: '100%',
+                }}
+                onValueChange={(itemValue) => this.onCurrencyChanged(itemValue)}
+              >
+                {supportedFiatCurrencies.map(el => <Picker.Item label={el} value={el} key={el} />)}
+              </Picker>
+            </View>
           </SettingsPanel>
         </Modal>
 
@@ -277,8 +343,9 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="baseCurrency"
               label="Base currency"
-              value="GBP"
-              onPress={null}
+              value={selectedCurrency}
+              onPress={() =>
+                this.setState({ visibleModal: 'baseCurrency' })}
             />
 
             <ProfileSettingsItem
@@ -326,9 +393,27 @@ class Profile extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user }, wallet: { data: wallet } }) => ({
+
+const mapStateToProps = ({
+  user: { data: user },
+  appSettings: { data: { baseFiatCurrency } },
+}) => ({
   user,
-  wallet,
+  baseFiatCurrency,
 });
 
-export default connect(mapStateToProps)(Profile);
+// const mapStateToProps = ({
+//   user: { data: user },
+//   wallet: { data: wallet },
+//   appSettings: { data: { baseFiatCurrency } },
+// }) => ({
+//   user,
+//   wallet,
+//   baseFiatCurrency,
+// });
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

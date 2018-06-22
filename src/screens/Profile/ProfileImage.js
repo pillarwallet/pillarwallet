@@ -30,22 +30,21 @@ type Props = {
   userName: string,
 }
 
-export default class ProfileImage extends React.Component<Props> {
-  render() {
-    const { uri, userName } = this.props;
+const ProfileImage = (props: Props) => {
+  const { uri, userName } = props;
 
-    const initials = userName
-      .split(' ')
-      .map(name => name.substring(0, 1))
-      .join('')
-      .toUpperCase();
+  const initials = userName
+    .split(' ')
+    .map(name => name.substring(0, 1))
+    .join('')
+    .toUpperCase();
 
-    return (
-      <ImageTouchable>
-        {!uri && <AvatarText>{initials}</AvatarText>}
-        {!!uri && <CircleImage source={{ uri }} />}
-      </ImageTouchable>
-    );
-  }
-}
+  return (
+    <ImageTouchable>
+      {!uri && <AvatarText>{initials}</AvatarText>}
+      {!!uri && <CircleImage source={{ uri }} />}
+    </ImageTouchable>
+  );
+};
 
+export default ProfileImage;

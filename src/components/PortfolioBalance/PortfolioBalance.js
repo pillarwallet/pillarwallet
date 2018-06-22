@@ -46,7 +46,12 @@ class PortfolioBalance extends React.Component<Props, {}> {
   }
 
   render() {
-    const { assets, rates, baseFiatCurrency, label } = this.props;
+    const {
+      assets,
+      rates,
+      baseFiatCurrency,
+      label,
+    } = this.props;
 
     if (!Object.keys(rates).length || !Object.keys(assets).length) {
       return null;
