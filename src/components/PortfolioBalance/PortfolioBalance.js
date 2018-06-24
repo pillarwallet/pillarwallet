@@ -61,7 +61,8 @@ class PortfolioBalance extends React.Component<Props, {}> {
         <Text style={{
           color: baseColors.darkGray,
           fontSize: fontSizes.small,
-          }}
+          paddingTop: 10,
+        }}
         >
           Total Portfolio
         </Text>
