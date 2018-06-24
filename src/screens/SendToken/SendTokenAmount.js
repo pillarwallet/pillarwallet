@@ -13,7 +13,7 @@ import SingleInput from 'components/TextInput/SingleInput';
 import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import { SubtTitle, TextLink, Paragraph } from 'components/Typography';
+import { SubTitle, TextLink, Paragraph } from 'components/Typography';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
@@ -92,7 +92,7 @@ const generateFormOptions = (config: Object): Object => ({
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   flex: 1;
   position: absolute;
-  bottom: 80;
+  bottom: 40;
   left: 0;
   width: 100%;
 `;
@@ -220,7 +220,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }
-
   render() {
     const {
       value,
@@ -239,7 +238,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         />
         <Container>
           <Wrapper regularPadding>
-            <SubtTitle style={{ width: '60%' }}>How much {token} would you like to send?</SubtTitle>
+            <SubTitle>How much {token} would you like to send?</SubTitle>
             <Form
               ref={node => { this._form = node; }}
               type={formStructure}
@@ -255,7 +254,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             </ActionsWrapper>
           </Wrapper>
         </Container>
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={20}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
           <FooterWrapper>
             <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />

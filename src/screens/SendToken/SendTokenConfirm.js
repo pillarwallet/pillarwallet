@@ -1,22 +1,21 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
-import t from 'tcomb-form-native';
-import { fontSizes } from 'utils/variables';
+import FastImage from 'react-native-fast-image';
 import { Container, Wrapper } from 'components/Layout';
-import { SubtTitle } from 'components/Typography';
+import TransactionSentModal from 'components/TransactionSentModal';
+import { SubTitle } from 'components/Typography';
 import Button from 'components/Button';
-import SingleInput from 'components/TextInput/SingleInput';
+import { baseColors, fontSizes } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
-import QRCodeScanner from 'components/QRCodeScanner';
-import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
-import { pipe, decodeETHAddress } from 'utils/common';
-
+import { utils } from 'ethers';
 import SendTokenHeader from './SendTokenHeader';
+
+const imageSend = require('assets/images/confirm-send.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -24,135 +23,75 @@ type Props = {
 }
 
 type State = {
-  isScanning: boolean,
   transactionPayload: Object,
   assetData: Object,
-  value: {
-    address: string,
-  },
-  formStructure: t.struct,
+  isSubmitted: boolean,
 }
-
-// make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
-const { Form } = t.form;
-
-function AddressInputTemplate(locals) {
-  const { config: { onIconPress } } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    placeholder: 'Ethereum Address',
-    value: locals.value,
-    keyboardType: locals.keyboardType,
-    align: 'left',
-    maxLength: 42,
-    fontSize: fontSizes.small,
-  };
-  return (
-    <SingleInput
-      errorMessage={errorMessage}
-      id="address"
-      icon="ios-qr-scanner"
-      onIconPress={onIconPress}
-      inputProps={inputProps}
-    />
-  );
-}
-
-const getFormStructure = () => {
-  const Address = t.refinement(t.String, (address): boolean => {
-    return address.length && isValidETHAddress(address);
-  });
-
-  Address.getValidationErrorMessage = (address): string => {
-    if (!isValidETHAddress(address)) {
-      return 'Invalid Ethereum Address.';
-    }
-    return 'Address must be provided.';
-  };
-
-  return t.struct({
-    address: Address,
-  });
-};
-
-const generateFormOptions = (config: Object): Object => ({
-  fields: {
-    address: { template: AddressInputTemplate, config, label: 'To' },
-  },
-});
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   flex: 1;
   position: absolute;
-  bottom: 80;
+  bottom: 40;
   left: 0;
   width: 100%;
 `;
 
 const FooterWrapper = styled.View`
   flexDirection: row;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   padding: 0 20px;
   width: 100%;
 `;
 
+const LabeledRow = styled.View`
+  margin: 10px 0;
+`;
+
+// EXTRA TO TYPOGRAPHY ONCE ALL AGREED
+const Label = styled.Text`
+  color: ${baseColors.darkGray};
+  font-size: ${fontSizes.extraSmall};
+  letter-spacing: 0.5;
+  font-weight: 600;
+  line-height: 24px;
+`;
+
+const Value = styled.Text`
+  font-weight: 700;
+  font-size: ${fontSizes.medium}
+`;
+
+const Image = styled(FastImage)`
+  width: 100px;
+  height: 100px;
+`;
+
+const ImageHolder = styled.View`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin: 20px 0;
+`;
+
+
 class SendTokenContacts extends React.Component<Props, State> {
-  _form: t.form;
 
   constructor(props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
     const assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
-      isScanning: false,
-      value: { address: '' },
-      formStructure: getFormStructure(),
       transactionPayload,
       assetData,
+      isSubmitted: false,
     };
   }
 
-  handleChange = (value: Object) => {
-    this.setState({ value });
-  };
-
-  openConfirmationModal = () => {
-    const value = this._form.getValue();
-    const { assetData } = this.state;
-    const { transactionPayload } = this.state;
-
-    if (!value) return;
-
-    const transactionPayloadWithAddress: TransactionPayload = {
-      to: value.address,
-      amount: transactionPayload.amount,
-      gasLimit: transactionPayload.gasLimit,
-      gasPrice: transactionPayload.gasPrice,
-      symbol: assetData.token,
-      contractAddress: assetData.contractAddress,
-      txFeeInWei: transactionPayload.txFeeInWei,
-    };
-
-    this.setState({
-      transactionPayload: transactionPayloadWithAddress,
-    });
-  };
-
   handleFormSubmit = () => {
     this.props.sendAsset(this.state.transactionPayload);
-  };
-
-  handleToggleQRScanningState = () => {
     this.setState({
-      isScanning: !this.state.isScanning,
-    }, () => {
-      if (this.state.isScanning) {
-        Keyboard.dismiss();
-      }
+      isSubmitted: true,
     });
   };
 
@@ -160,57 +99,49 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.props.navigation.dismiss();
   };
 
-  handleQRRead = (address: string) => {
-    this.setState({ value: { ...this.state.value, address }, isScanning: false });
-  };
-
   render() {
     const {
-      isScanning,
       assetData,
-      formStructure,
-      value,
+      transactionPayload: {
+        amount,
+        to,
+        txFeeInWei,
+      },
+      isSubmitted,
     } = this.state;
-    const formOptions = generateFormOptions(
-      { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
-    );
-
-    const qrScannerComponent = (
-      <QRCodeScanner
-        validator={ETHValidator}
-        dataFormatter={decodeETHAddress}
-        isActive={isScanning}
-        onDismiss={this.handleToggleQRScanningState}
-        onRead={this.handleQRRead}
-      />
-    );
-
     return (
       <React.Fragment>
         <SendTokenHeader
           onBack={this.props.navigation.goBack}
           dismiss={this.props.navigation.dismiss}
-          rightLabelText="STEP 2 OF 3"
+          rightLabelText="step 3 of 3"
         />
         <Container>
           <Wrapper regularPadding>
-            <SubtTitle style={{ width: '60%' }}>To whom you would like to send?</SubtTitle>
-            <Form
-              ref={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              onChange={this.handleChange}
-              onBlur={this.handleChange}
-              value={value}
-            />
+            <SubTitle>Review and confirm</SubTitle>
+            <ImageHolder>
+              <Image source={imageSend} />
+            </ImageHolder>
+            <LabeledRow>
+              <Label>AMOUNT</Label>
+              <Value>{amount} {assetData.token}</Value>
+            </LabeledRow>
+            <LabeledRow>
+              <Label>RECIPIENT</Label>
+              <Value>{to}</Value>
+            </LabeledRow>
+            <LabeledRow>
+              <Label>TRANSACTION FEE</Label>
+              <Value>{utils.formatEther(txFeeInWei.toString())}</Value>
+            </LabeledRow>
           </Wrapper>
         </Container>
-        {qrScannerComponent}
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={20}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
           <FooterWrapper>
-            <Button title="Confirm"/>
+            <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
         </KeyboardAvoidingView>
+        <TransactionSentModal isVisible={isSubmitted} onModalHide={this.props.navigation.dismiss} />
       </React.Fragment>
     );
   }

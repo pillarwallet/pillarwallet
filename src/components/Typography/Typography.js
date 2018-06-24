@@ -10,13 +10,14 @@ export const Title = styled.Text`
   text-align: ${props => (props.align || 'left')};
 `;
 
-export const SubtTitle = styled.Text`
+export const SubTitle = styled.Text`
   font-size: ${fontSizes.mediumLarge};
   font-weight: 400;
   color: ${UIColors.primary};
   text-align: ${props => (props.align || 'left')};
   line-height: 24px;
   margin: 0 0 20px;
+  width: 70%;
 `;
 
 export const Paragraph = styled.Text`

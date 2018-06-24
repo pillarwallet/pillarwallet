@@ -19,23 +19,34 @@ const AssetButtonsWrapper = styled.View`
 `;
 
 const AssetButton = styled.TouchableOpacity`
-  margin: 0 20px;
-  width: 48px;
-  height: 48px;
-  background: ${baseColors.snowWhite};
-  border-radius: 2px;
   justify-content: center;
   align-items: center;
+  margin: 0 20px;
+`;
+
+const ImageHolder = styled.View`
+  border-radius: 50;
+  width: 64px;
+  height: 64px;
+  background: ${baseColors.lightGray};
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-shadow: .5px 1px 1px ${baseColors.mediumGray};
 `;
 
 const AssetButtonImage = styled.Image`
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  display: flex;
 `;
 
 const AssetButtonText = styled.Text`
   color: ${baseColors.electricBlue};
   text-align: center;
+  font-weight: 600;
   margin-top: 10px;
 `;
 
@@ -43,12 +54,16 @@ const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
       <AssetButton onPress={props.onPressSend}>
-        <AssetButtonImage source={imageSend} />
-        <AssetButtonText>Send</AssetButtonText>
+        <ImageHolder>
+          <AssetButtonImage source={imageSend} />
+        </ImageHolder>
+        <AssetButtonText>SEND</AssetButtonText>
       </AssetButton>
       <AssetButton onPress={props.onPressReceive}>
-        <AssetButtonImage source={imageReceive} />
-        <AssetButtonText>Receive</AssetButtonText>
+        <ImageHolder>
+          <AssetButtonImage source={imageReceive} />
+        </ImageHolder>
+        <AssetButtonText>RECEIVE</AssetButtonText>
       </AssetButton>
     </AssetButtonsWrapper>
   );

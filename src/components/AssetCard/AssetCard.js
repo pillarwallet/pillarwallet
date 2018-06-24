@@ -21,7 +21,6 @@ type Props = {
   name: string,
   token: string,
   amount: string,
-  color: string,
   onPress: Function,
   address: string,
   children?: React.Node,
@@ -63,7 +62,6 @@ export default class AssetCard extends React.Component<Props, State> {
 
   render() {
     const {
-      color: linearGradientColorStart,
       name,
       amount,
       token,
@@ -96,7 +94,6 @@ export default class AssetCard extends React.Component<Props, State> {
         >
 
           <Animated.View
-            color={linearGradientColorStart}
             style={[{
               height: 130,
               marginBottom: 12,

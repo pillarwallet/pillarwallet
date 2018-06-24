@@ -161,7 +161,7 @@ class AssetScreen extends React.Component<Props, State> {
             regularPadding
             style={{
               backgroundColor: baseColors.snowWhite,
-              height: 350,
+              height: 370,
             }}
           >
             <Transition shared={assetData.name}>

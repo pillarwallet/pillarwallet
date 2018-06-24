@@ -7,7 +7,7 @@ import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
-import { SubtTitle } from 'components/Typography';
+import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -91,7 +91,7 @@ const generateFormOptions = (config: Object): Object => ({
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   flex: 1;
   position: absolute;
-  bottom: 80;
+  bottom: 40;
   left: 0;
   width: 100%;
 `;
@@ -130,7 +130,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { assetData, transactionPayload } = this.state;
     this.props.navigation.navigate(SEND_TOKEN_CONFIRM, {
       assetData,
-      transactionPayload,
+      transactionPayload: { ...transactionPayload, to: value.address },
     });
   };
 
@@ -177,7 +177,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         />
         <Container>
           <Wrapper regularPadding>
-            <SubtTitle style={{ width: '60%' }}>To whom you would like to send?</SubtTitle>
+            <SubTitle>To whom you would like to send?</SubTitle>
             <Form
               ref={node => { this._form = node; }}
               type={formStructure}
@@ -189,7 +189,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </Wrapper>
         </Container>
         {qrScannerComponent}
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={20}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
           <FooterWrapper>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />
           </FooterWrapper>

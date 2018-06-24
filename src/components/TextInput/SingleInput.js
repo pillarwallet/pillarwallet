@@ -21,7 +21,7 @@ type Props = {
   postfix?: string,
   innerImageURI?: string,
   outterImageURI?: string,
-  outterImageText?: string,
+  outterImageText: string,
   label?: string,
   id?: string,
   iconColor?: string,
@@ -41,15 +41,18 @@ type EventLike = {
 }
 
 const Wrapper = styled.View`
-  margin: 40px 0 20px;
+  margin: 20px 0 20px;
+`;
+
+const Item = styled.View`
+  height: 60px;
+  flex: 2;
   display: flex;
-  flex-direction: row;
 `;
 
 const InputHolder = styled.View`
-  height: 60;
-  flex: 2;
   display: flex;
+  flex-direction: row;
 `;
 
 const FloatImage = styled(FastImage)`
@@ -82,7 +85,7 @@ const ErrorMessage = styled.Text`
   color: tomato;
   display: flex;
   justify-content: flex-end;
-  text-align: right;
+  text-align: left;
   height: 30px;
 `;
 
@@ -104,6 +107,7 @@ class SingleInput extends React.Component<Props, State> {
   static defaultProps = {
     inputType: 'default',
     innerImageURI: '',
+    outterImageText: '',
     trim: true,
   };
 
@@ -160,27 +164,28 @@ class SingleInput extends React.Component<Props, State> {
         {label && <Label>{label}</Label>}
         <ErrorMessage>{errorMessage}</ErrorMessage>
         <InputHolder>
-          <InputField
-            {...inputProps}
-            error={!!errorMessage}
-            onChange={this.handleChange}
-            onBlur={this.handleBlur}
-            onEndEditing={this.handleBlur}
-            value={value}
-          />
-          {innerImageURI && <FloatImage
-            source={this.resolveAssetSource(innerImageURI)}
-          />}
+          <Item>
+            <InputField
+              {...inputProps}
+              error={!!errorMessage}
+              onChange={this.handleChange}
+              onBlur={this.handleBlur}
+              value={value}
+            />
+            {innerImageURI && <FloatImage
+              source={this.resolveAssetSource(innerImageURI)}
+            />}
+          </Item>
+          {outterImageURI &&
+            (
+              <ImageHolder onPress={onPress}>
+                <Image
+                  source={this.resolveAssetSource(outterImageURI)}
+                />
+                <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
+              </ImageHolder>
+            )}
         </InputHolder>
-        {outterImageURI &&
-          (
-            <ImageHolder onPress={onPress}>
-              <Image
-                source={this.resolveAssetSource(outterImageURI)}
-              />
-              <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
-            </ImageHolder>
-          )}
       </Wrapper>
     );
   }
