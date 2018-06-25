@@ -17,9 +17,12 @@ import {
   fetchAssetsBalancesAction,
   fetchSupportedAssetsAction,
 } from 'actions/assetsActions';
+import { ETH } from 'constants/assetsConstants';
 
 const tokenIcons = {};
 
+
+// ALL SHOULD BE REMOVED FROM THE BUNDLED ONCE ALL ASSETS UPLOADED ON CDN
 tokenIcons.PLR = require('../../assets/images/tokens/PLR/icon.png');
 tokenIcons.QTM = require('../../assets/images/tokens/QTM/icon.png');
 tokenIcons.OMG = require('../../assets/images/tokens/OMG/icon.png');
@@ -29,6 +32,8 @@ tokenIcons.BAT = require('../../assets/images/tokens/BAT/icon.png');
 tokenIcons.GNT = require('../../assets/images/tokens/GNT/icon.png');
 tokenIcons.PPT = require('../../assets/images/tokens/PPT/icon.png');
 tokenIcons.SALT = require('../../assets/images/tokens/SALT/icon.png');
+tokenIcons.ETH = require('../../assets/images/tokens/ETH/icon.png');
+tokenIcons.EOS = require('../../assets/images/tokens/EOS/icon.png');
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.medium};
@@ -69,31 +74,33 @@ class AddToken extends React.Component<Props> {
       return;
     }
     removeAsset(asset);
-  }
+  };
 
   generateAddTokenListItems() {
     const { assets, supportedAssets } = this.props;
-    return supportedAssets.map(({ symbol, name, ...rest }) => {
-      const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
-      return (
-        <TokenListItem key={symbol}>
-          <Thumbnail square size={80} source={tokenIcons[symbol]} />
-          <Body style={{ marginLeft: 20 }}>
-            <TokenName>{name}</TokenName>
-            <TokenSymbol>{symbol}</TokenSymbol>
-          </Body>
-          <Right>
-            <Switch
-              onValueChange={boundAssetToggleHandler}
-              value={!!assets[symbol]}
-            />
-          </Right>
-        </TokenListItem>
-      );
-    });
+    return supportedAssets
+      .filter(({ symbol }) => symbol !== ETH)
+      .map(({ symbol, name, ...rest }) => {
+        const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+        return (
+          <TokenListItem key={symbol}>
+            <Thumbnail square size={80} source={tokenIcons[symbol]} />
+            <Body style={{ marginLeft: 20 }}>
+              <TokenName>{name}</TokenName>
+              <TokenSymbol>{symbol}</TokenSymbol>
+            </Body>
+            <Right>
+              <Switch
+                onValueChange={boundAssetToggleHandler}
+                value={!!assets[symbol]}
+              />
+            </Right>
+          </TokenListItem>
+        );
+      });
   }
 
-  handleScreenDissmisal = () => {
+  handleScreenDismissal = () => {
     const {
       navigation,
       fetchAssetsBalances,
@@ -102,12 +109,12 @@ class AddToken extends React.Component<Props> {
     } = this.props;
     fetchAssetsBalances(assets, wallet.address);
     navigation.goBack(null);
-  }
+  };
 
   render() {
     return (
       <Container>
-        <ModalHeader onClose={this.handleScreenDissmisal} />
+        <ModalHeader onClose={this.handleScreenDismissal} />
         <ScrollWrapper regularPadding>
           <Title title="add token" />
           <Paragraph>

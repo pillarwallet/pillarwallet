@@ -15,14 +15,28 @@ repositories {
   maven { url 'https://maven.fabric.io/public' }
 }
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
   compileSdkVersion 26
   buildToolsVersion '26.0.1'
-
+  signingConfigs {
+    debug {
+      storeFile file('../debug.keystore')
+    }
+    release {
+      keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS').toString() : keystoreProperties['keyAlias']
+      keyPassword System.getenv('ANDROID_KEY_PASSWORD') ? System.getenv('ANDROID_KEY_PASSWORD').toString() : keystoreProperties['keyPassword']
+      storeFile file('../release.keystore')
+      storePassword System.getenv('ANDROID_STORE_PASSWORD') ? System.getenv('ANDROID_STORE_PASSWORD').toString() : keystoreProperties['storePassword']
+    }
+  }
   defaultConfig {
     applicationId 'com.pillarproject.wallet'
-    targetSdkVersion 25
-    versionCode 1
+    targetSdkVersion 26
+    versionCode System.getenv('CIRCLE_BUILD_NUM') ? System.getenv('CIRCLE_BUILD_NUM').toInteger() : 9
     versionName '0.0.2'
     ndk {
       abiFilters 'armeabi-v7a', 'x86'
@@ -35,7 +49,7 @@ android {
     ]
   }
   dexOptions {
-    javaMaxHeapSize System.getenv("DISABLE_DEX_MAX_HEAP") ? null : "8g"
+    javaMaxHeapSize "1G"
   }
   productFlavors {
     // Define separate dev and prod product flavors.
@@ -66,11 +80,7 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
-    }
-  }
-  signingConfigs {
-    debug {
-      storeFile file('../debug.keystore')
+      signingConfig signingConfigs.release
     }
   }
   lintOptions {
@@ -108,7 +118,6 @@ dependencies {
   compile 'com.android.support:multidex:1.0.1'
 
   // Our dependencies
-  compile 'com.android.support:appcompat-v7:26.0.1'
   compile "com.google.android.gms:play-services-base:15.0.0"
   compile "com.google.firebase:firebase-core:15.0.2"
 
@@ -170,11 +179,11 @@ dependencies {
   androidTestCompile 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
 
 
-  
-  compile('host.exp.exponent:expoview:27.0.0@aar') {
+
+  compile('host.exp.exponent:expoview:28.0.0@aar') {
     transitive = true
   }
-  
+
 }
 
 configurations.all {

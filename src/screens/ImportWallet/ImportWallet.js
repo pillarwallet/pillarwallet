@@ -6,17 +6,17 @@ import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
 } from 'actions/walletActions';
-
 import {
   WALLET_ERROR,
   IMPORT_ERROR,
+  IMPORT_WALLET_PRIVATE_KEY,
+  IMPORT_WALLET_TWORDS_PHRASE,
 } from 'constants/walletConstants';
 import HeaderLink from 'components/HeaderLink';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Paragraph, Label } from 'components/Typography';
+import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
-import Input from 'components/Input';
-import ErrorMessage from 'components/ErrorMessage';
+import TextInput from 'components/TextInput';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -29,6 +29,7 @@ type State = {
   privateKey: string,
   tWordsPhrase: string,
   errorMessage: string,
+  errorField: string,
 };
 
 class ImportWallet extends React.Component<Props, State> {
@@ -36,6 +37,7 @@ class ImportWallet extends React.Component<Props, State> {
     privateKey: '',
     tWordsPhrase: '',
     errorMessage: '',
+    errorField: '',
   };
 
   constructor(props: Props) {
@@ -58,54 +60,64 @@ class ImportWallet extends React.Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { walletState, error } = nextProps.wallet;
 
-    const showError = walletState === WALLET_ERROR && error.code === IMPORT_ERROR;
-    const errorMessage = showError && error.message;
-
-    return {
-      ...prevState,
-      errorMessage,
-    };
+    if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
+      return {
+        ...prevState,
+        errorMessage: error.message,
+        errorField: error.field,
+      };
+    }
+    return null;
   }
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-
     if (this.state.privateKey) {
       importWalletFromPrivateKey(this.state.privateKey);
     } else if (this.state.tWordsPhrase) {
       importWalletFromTWordsPhrase(this.state.tWordsPhrase);
     } else {
-      this.setState({ errorMessage: '' });
+      this.setState({ errorField: '' });
     }
+  };
+
+  getError = (errorField: string) => {
+    if (errorField === this.state.errorField) {
+      return this.state.errorMessage;
+    }
+    return '';
   };
 
   render() {
     const { privateKey, tWordsPhrase } = this.state;
-
+    const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
+    const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
     return (
       <Container>
-        {this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <ScrollWrapper regularPadding>
           <Title title="restore wallet" />
           <Paragraph>
               Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
           </Paragraph>
-
-          <Label>Enter your 12 word backup phrase.</Label>
-          <Input
-            value={tWordsPhrase}
-            height={80}
-            width="100%"
-            multiline
+          <TextInput
+            label="Enter your 12 word backup phrase."
+            inputProps={{
+              onChange: (value) => this.setState({ tWordsPhrase: value }),
+              value: tWordsPhrase,
+              multiline: true,
+            }}
+            errorMessage={errorMessageTWordsPhrase}
             underlineColorAndroid="transparent"
-            onChangeText={text => this.setState({ tWordsPhrase: text })}
           />
           <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
-          <Label>Use your Private Key</Label>
-          <Input
-            value={privateKey}
+          <TextInput
+            label="Use your Private Key"
+            inputProps={{
+              onChange: (value) => this.setState({ privateKey: value }),
+              value: privateKey,
+            }}
+            errorMessage={errorMessagePrivateKey}
             underlineColorAndroid="transparent"
-            onChangeText={text => this.setState({ privateKey: text })}
           />
         </ScrollWrapper>
       </Container>

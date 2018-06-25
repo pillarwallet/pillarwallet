@@ -19,7 +19,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { formatMoney } from 'utils/common';
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency } from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED, defaultFiatCurrency, ETH, FETCHED } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 
 const defaultAssetColor = '#4C4E5E';
@@ -155,7 +155,6 @@ class AssetsScreen extends React.Component<Props, State> {
           address: wallet.address,
           background: assetsMedia[symbol].background,
         };
-
         return (
           <Transition key={index} shared={assetData.name}>
             <AssetCard
@@ -185,7 +184,7 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
     } = this.props;
 
-    if (!Object.keys(assets).length) {
+    if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
         <Container center>
           <Text style={{ marginBottom: 20 }}>Loading default assets</Text>

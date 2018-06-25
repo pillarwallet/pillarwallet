@@ -2,7 +2,7 @@
 import * as React from 'react';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import { BACKUP_PHRASE, IMPORT_WALLET } from 'constants/navigationConstants';
+import { SECURITY_CONFIRM, IMPORT_WALLET } from 'constants/navigationConstants';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Title from 'components/Title';
 import { Paragraph, HelpText } from 'components/Typography';
@@ -15,7 +15,7 @@ type Props = {
 
 class Onboarding extends React.Component<Props> {
   createNewWallet = () => {
-    this.props.navigation.navigate(BACKUP_PHRASE);
+    this.props.navigation.navigate(SECURITY_CONFIRM);
   };
 
   importOldWallet = () => {

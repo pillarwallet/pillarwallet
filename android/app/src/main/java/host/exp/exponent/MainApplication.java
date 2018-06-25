@@ -15,6 +15,8 @@ import com.peel.react.TcpSocketsModule;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
 import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 

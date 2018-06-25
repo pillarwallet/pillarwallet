@@ -6,7 +6,7 @@ export type Transaction = {
   hash: string,
   to: string,
   from: string,
-  tmstmp: Date,
+  timestamp: Date,
   asset: string,
   nbConfirmations: number,
   status: string,
@@ -20,6 +20,7 @@ export type TransactionPayload = {
   amount: number,
   to: string,
   gasPrice: number,
+  txFeeInWei: number,
   symbol: string,
   contractAddress: ?string,
 }

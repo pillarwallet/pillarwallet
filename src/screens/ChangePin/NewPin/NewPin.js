@@ -16,14 +16,14 @@ export default class NewPin extends React.Component<Props> {
     this.props.navigation.navigate(CHANGE_PIN_CONFIRM_NEW_PIN, { pin });
   };
 
-  handleScreenDissmisal = () => {
+  handleScreenDismissal = () => {
     this.props.navigation.goBack(null);
   };
 
   render() {
     return (
       <Container>
-        <ModalHeader onClose={this.handleScreenDissmisal} />
+        <ModalHeader onClose={this.handleScreenDismissal} />
         <Center>
           <Title center title="enter new pincode" />
         </Center>

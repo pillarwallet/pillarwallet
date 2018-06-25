@@ -41,6 +41,7 @@ const ModalBackground = styled.View`
 const ModalHeader = styled.View`
   flex-direction: row;
   width: 100%;
+  margin-bottom: 20px;
   align-items: center;
   justify-content: space-between;
 `;
@@ -81,6 +82,10 @@ export default class SlideModal extends React.Component<Props, State> {
       };
     }
     return null;
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    return this.state.isVisible !== nextState.isVisible;
   }
 
   hideModal = () => {
@@ -133,7 +138,7 @@ export default class SlideModal extends React.Component<Props, State> {
             <ModalOverflow />
           </ModalBackground>
         </ModalWrapper>
-        {fullScreenComponent}
+        {isVisible && fullScreenComponent}
       </Modal>
     );
   }
