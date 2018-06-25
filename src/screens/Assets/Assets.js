@@ -153,7 +153,7 @@ class AssetsScreen extends React.Component<Props, State> {
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           color: assetColor,
           address: wallet.address,
-          background: assetsMedia[symbol].background,
+          background: assetsMedia[symbol] ? assetsMedia[symbol].background : assetsMedia[ETH].background,
         };
         return (
           <Transition key={index} shared={assetData.name}>
