@@ -4,11 +4,12 @@ import {
   Animated,
   TouchableWithoutFeedback,
   View,
+  Image,
 } from 'react-native';
 import { baseColors } from 'utils/variables';
 import { getCurrencySymbol } from 'utils/common';
 import styled from 'styled-components/native';
-import { Image } from 'react-native-expo-image-cache';
+import { Image as ImageCache } from 'react-native-expo-image-cache';
 
 import IconWrapper from './IconWrapper';
 import IconCircle from './IconCircle';
@@ -29,7 +30,6 @@ type Props = {
     amount: string | number,
     currency: string,
   },
-  iconUri: string,
   backgroundUri: string,
 }
 
@@ -43,43 +43,45 @@ const BackgroundHolder = styled(View)`
 `;
 
 type State = {
-  showAsset: boolean;
   cardBackgroundUri: string,
-  cardIconUri: string,
 }
 
-function cacheImages(images) {
-  return images.map(image => {
-    if (typeof image === 'string') {
-      return Image.prefetch(image);
-    } else {
-      return Asset.fromModule(image).downloadAsync();
-    }
-  });
-}
+// function cacheImages(images) {
+//   return images.map(image => {
+//     if (typeof image === 'string') {
+//       return Image.prefetch(image);
+//     } else {
+//       return Asset.fromModule(image).downloadAsync();
+//     }
+//   });
+// }
 
+const tokenPNGIcons = {};
+
+tokenPNGIcons.ETH = require('../../assets/images/tokens/ETH/ETH.png');
+tokenPNGIcons.PLR = require('../../assets/images/tokens/PLR/PLR.png');
+tokenPNGIcons.QTM = require('../../assets/images/tokens/QTM/QTUM.png');
+tokenPNGIcons.OMG = require('../../assets/images/tokens/OMG/OMG.png');
+tokenPNGIcons.ICX = require('../../assets/images/tokens/ICX/ICX.png');
+tokenPNGIcons.STORJ = require('../../assets/images/tokens/STORJ/icon.png');
+tokenPNGIcons.BAT = require('../../assets/images/tokens/BAT/BAT.png');
+tokenPNGIcons.GNT = require('../../assets/images/tokens/GNT/GNT.png');
+tokenPNGIcons.PPT = require('../../assets/images/tokens/PPT/PPT.png');
+tokenPNGIcons.SALT = require('../../assets/images/tokens/SALT/SALT.png');
 
 export default class AssetCard extends React.Component<Props, State> {
   state = {
-    showAsset: false,
-    cardBackgroundUri: undefined,
-    cardIconUri: undefined,
+    cardBackgroundUri: '',
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.backgroundUri !== prevState.cardBackgroundUri) {
       return {
         cardBackgroundUri: nextProps.backgroundUri,
-        cardIconUri: nextProps.iconUri,
-        showAsset: true,
       };
     }
 
     return null;
-  }
-
-  handleBackgroundDownload = () => {
-    this.setState({ showAsset: true });
   }
 
   render() {
@@ -94,7 +96,6 @@ export default class AssetCard extends React.Component<Props, State> {
 
     const {
       cardBackgroundUri,
-      cardIconUri,
     } = this.state;
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
@@ -105,7 +106,6 @@ export default class AssetCard extends React.Component<Props, State> {
           backgroundColor: baseColors.white,
         }}
       >
-
         <TouchableWithoutFeedback
           onPress={onPress}
           style={{
@@ -115,7 +115,6 @@ export default class AssetCard extends React.Component<Props, State> {
             width: '100%',
             height: '100%',
             zIndex: 10,
-            opacity: this.state.showAsset ? 1 : 0,
           }}
         >
 
@@ -127,7 +126,7 @@ export default class AssetCard extends React.Component<Props, State> {
             }]}
           >
             <BackgroundHolder>
-              <Image
+              <ImageCache
                 style={{
                   width: '100%',
                   height: 200,
@@ -140,7 +139,6 @@ export default class AssetCard extends React.Component<Props, State> {
                 }}
                 {... { uri: cardBackgroundUri }}
                 resizeMode="cover"
-                onLoad={this.handleBackgroundDownload}
                 transitionDuration={0}
               />
               <DetailsWrapper>
@@ -151,6 +149,7 @@ export default class AssetCard extends React.Component<Props, State> {
                 </FiatAmount>
               </DetailsWrapper>
               <IconWrapper>
+                {!!tokenPNGIcons[token] &&
                 <IconCircle>
                   <Image
                     style={{
@@ -160,12 +159,11 @@ export default class AssetCard extends React.Component<Props, State> {
                       position: 'absolute',
                       top: 8,
                       left: 8,
-                      opacity: this.state.showAsset ? 1 : 0,
                     }}
-                    {...{ uri: cardIconUri }}
-                    resizeMode="cover"
+                    source={tokenPNGIcons[token]}
+                    resizeMode="contain"
                   />
-                </IconCircle>
+                </IconCircle>}
               </IconWrapper>
             </BackgroundHolder>
           </Animated.View>

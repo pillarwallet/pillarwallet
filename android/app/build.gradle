@@ -95,7 +95,6 @@ apply from: 'expo.gradle'
 
 
 dependencies {
-    compile project(':react-native-fast-image')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
     compile project(':react-native-randombytes')

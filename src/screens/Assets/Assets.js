@@ -153,7 +153,6 @@ class AssetsScreen extends React.Component<Props, State> {
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           color: assetColor,
           address: wallet.address,
-          icon: assetsMedia[symbol].icon,
           background: assetsMedia[symbol].background,
         };
 
@@ -168,7 +167,6 @@ class AssetsScreen extends React.Component<Props, State> {
               color={assetData.color}
               onPress={() => this.handleCardTap(assetData)}
               address={assetData.address}
-              iconUri={assetData.icon}
               backgroundUri={assetData.background}
             />
           </Transition>
@@ -244,7 +242,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Grid>
         </View>
         <ScrollView
-          contentContainerStyle={{paddingHorizontal: 20}}
+          contentContainerStyle={{ paddingHorizontal: 20 }}
           refreshControl={
             <RefreshControl
               refreshing={false}
