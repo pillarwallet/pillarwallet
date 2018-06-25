@@ -28,7 +28,7 @@ const PinButton = styled.TouchableOpacity`
 
 const ButtonText = styled.Text`
   color: ${baseColors.slateBlack};
-  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraLarge};
+  font-size: ${props => props.fontSize || fontSizes.extraLarge};
   align-self: center;
   line-height: 56;
 `;
@@ -51,6 +51,7 @@ const Image = styled(FastImage)`
   top: 15px;
   right: 3px;
 `;
+
 
 const IMAGE = 'image';
 const STRING = 'string';
