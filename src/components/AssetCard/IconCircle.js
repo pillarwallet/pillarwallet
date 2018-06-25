@@ -10,7 +10,7 @@ const IconCircle = styled.View`
   position: relative;
   align-self: flex-end;
   margin-top: 20px;
-  margin-right: 20px;
+  margin-right: 14px;
 `;
 
 export default IconCircle;

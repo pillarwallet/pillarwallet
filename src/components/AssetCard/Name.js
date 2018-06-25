@@ -1,11 +1,13 @@
 // @flow
 import styled from 'styled-components/native';
+import { fontSizes, fontWeights, fontTrackings } from 'utils/variables';
 
 const Name = styled.Text`
-  font-size: 20px;
-  line-height: 22px;
-  margin: 20px 0 0 20px;
-  font-weight: 700;
+  font-size: ${fontSizes.mediumLarge};
+  font-weight: ${fontWeights.bold};
+  letter-spacing: ${fontTrackings.medium};
+  line-height: ${fontSizes.mediumLarge};
+  margin: 20px 0 0 14px;
   color: white;
 `;
 

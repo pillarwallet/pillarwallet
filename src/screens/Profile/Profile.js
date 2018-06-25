@@ -36,7 +36,7 @@ const ProfileInfoLabel = styled(Label)`
 `;
 
 const ProfileInfoValue = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   text-align: right;
 `;
 
@@ -49,12 +49,12 @@ const ListSeparator = styled.View`
 `;
 
 const ListSeparatorText = styled.Text`
-  color: ${props => props.lastSynced ? baseColors.lightGreen : baseColors.darkGray};
+  color: ${props => props.lastSynced ? baseColors.freshEucalyptus : baseColors.darkGray};
   text-align: ${props => props.lastSynced ? 'center' : 'left'};
 `;
 
 const ListItemText = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   margin: 10px 4px;
 `;
 
