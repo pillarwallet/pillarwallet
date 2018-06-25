@@ -6,7 +6,7 @@ import styled from 'styled-components/native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
-import { Grid, Row, Column } from 'components/Grid';
+import { Row, Column } from 'components/Grid';
 import { Label } from 'components/Typography';
 import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
