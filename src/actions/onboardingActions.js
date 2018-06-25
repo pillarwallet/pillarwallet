@@ -59,6 +59,7 @@ export const registerWalletAction = () => {
 
     await storage.save('wallet', { wallet: encryptedWallet });
     await storage.save('app_settings', { appSettings: { wallet: +new Date() } });
+    await storage.save('user', { user });
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
