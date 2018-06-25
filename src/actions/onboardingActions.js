@@ -67,7 +67,7 @@ export const registerWalletAction = () => {
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
-    const sdkWallet = await api.registerOnBackend(fcmToken);
+    const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const updatedUser = await api.updateUser({
       walletId: sdkWallet.walletId,
       ...user,
@@ -131,7 +131,7 @@ export const registerOnBackendAction = () => {
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
-    const sdkWallet = await api.registerOnBackend(fcmToken);
+    const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const updatedUser = await api.updateUser({
       walletId: sdkWallet.walletId,
       ...user,
