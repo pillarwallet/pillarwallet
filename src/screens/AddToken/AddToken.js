@@ -113,18 +113,19 @@ class AddToken extends React.Component<Props> {
 
   render() {
     return (
-      <Container>
-        <ModalHeader onClose={this.handleScreenDismissal} />
-        <ScrollWrapper regularPadding>
-          <Title title="add token" />
-          <Paragraph>
-            Toggle ERC-20 tokens your wallet should display.
-          </Paragraph>
-          <List>
-            {this.generateAddTokenListItems()}
-          </List>
-        </ScrollWrapper>
-      </Container>
+      <React.Fragment>
+        <ModalHeader title="add token" onClose={this.handleScreenDismissal} />
+        <Container>
+          <ScrollWrapper regularPadding>
+            <Paragraph>
+              Toggle ERC-20 tokens your wallet should display.
+            </Paragraph>
+            <List>
+              {this.generateAddTokenListItems()}
+            </List>
+          </ScrollWrapper>
+        </Container>
+      </React.Fragment>
     );
   }
 }

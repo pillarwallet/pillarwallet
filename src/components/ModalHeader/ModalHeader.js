@@ -1,38 +1,82 @@
 // @flow
 import * as React from 'react';
-import { Header as NBHeader, Right } from 'native-base';
-import { UIColors } from 'utils/variables';
-import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native';
+import { UIColors, baseColors } from 'utils/variables';
+import { TouchableWithoutFeedback, View } from 'react-native';
+import { Header as NBHeader, Left as NBLeft, Right as NBRight } from 'native-base';
+import { Label } from 'components/Typography';
+import ButtonIcon from 'components/ButtonIcon';
+import Title from 'components/Title';
+import { noop } from 'utils/common';
 
 type Props = {
+  onBack?: Function,
   onClose: Function,
+  title: string,
+  rightLabelText?: string,
 }
 
-const Wrapper = styled(NBHeader)`
+const Header = styled(NBHeader)`
   background-color: #fff;
   border-bottom-width: 0;
-  elevation: 0;
+  height: auto;
+  padding: 20px 20px 0;
+  display: flex;
+`;
+
+const Left = styled(NBLeft)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 
-const Header = (props: Props) => {
+const Right = styled(NBRight)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const BackIcon = styled(ButtonIcon)`
+  margin-right: 5px;
+`;
+
+const CloseButton = styled(ButtonIcon)`
+  position: relative;
+  bottom: 3px;
+`;
+
+const SendTokenAmountHeader = (props: Props) => {
   const {
+    onBack,
     onClose,
+    title,
+    rightLabelText = '',
   } = props;
 
   return (
-    <Wrapper>
+    <Header>
+      <Left>
+        <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            {onBack
+              && <BackIcon icon="arrow-back" onPress={() => onBack(null)} color={UIColors.primary} fontSize={28} />
+            }
+            {title && <Title title={title} />}
+          </View>
+        </TouchableWithoutFeedback>
+      </Left>
       <Right>
-        <ButtonIcon
-          icon="md-close"
+        <Label>{rightLabelText.toUpperCase()}</Label>
+        <CloseButton
+          icon="close"
           onPress={onClose}
-          color={UIColors.primary}
-          fontSize={32}
+          fontSize={36}
+          color={baseColors.darkGray}
         />
       </Right>
-    </Wrapper>
+    </Header>
   );
 };
 
-export default Header;
+export default SendTokenAmountHeader;

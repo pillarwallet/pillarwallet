@@ -8,12 +8,12 @@ import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { SubTitle } from 'components/Typography';
 import Button from 'components/Button';
+import ModalHeader from 'components/ModalHeader';
 import { baseColors, fontSizes } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { utils } from 'ethers';
-import SendTokenHeader from './SendTokenHeader';
 
 const imageSend = require('assets/images/confirm-send.png');
 
@@ -110,9 +110,10 @@ class SendTokenContacts extends React.Component<Props, State> {
     } = this.state;
     return (
       <React.Fragment>
-        <SendTokenHeader
+        <ModalHeader
           onBack={this.props.navigation.goBack}
-          dismiss={this.props.navigation.dismiss}
+          onClose={this.props.navigation.dismiss}
+          title="send"
           rightLabelText="step 3 of 3"
         />
         <Container>
