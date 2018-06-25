@@ -47,6 +47,15 @@ project.xcworkspace
 
 #### Android/IntelliJ
 
+android/.idea/
+android/app/.idea/
+android/app/app.iml
+android/app/gradle/
+android/app/gradlew
+android/app/gradlew.bat
+android/rn-libs/
+android/*.jks
+
 # Built application files
 *.apk
 *.ap_
@@ -81,14 +90,27 @@ android/.navigation/
 # Android Studio captures folder
 android/captures/
 
+# Android Keystore properties for local builds
+android/keystore.properties
+
 #### Pods
 ios/Pods
+
+### Expo
+ios/pillar-wallet/Supporting/EXBuildConstants.json
+ios/pillar-wallet/Supporting/EXBuildConstants.plist
+ios/pillar-wallet/Supporting/EXBuildConstants.plist.bak
+
 
 ### Gems
 ios/.bundle/
 ios/Gemfile
 ios/Gemfile.lock
 ios/vendor/
+android/.bundle/
+android/Gemfile
+android/Gemfile.lock
+android/vendor/
 
 ##Fastlane
 ios/fastlane/README.md

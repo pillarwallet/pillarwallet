@@ -5,14 +5,14 @@ import { fontSizes } from 'utils/variables';
 export const Amount = styled.Text`
   font-size: ${fontSizes.extraLarge};
   line-height: ${fontSizes.extraLarge};
-  color: white;
+  color: #fff;
   font-weight: 300;
 `;
 
 export const FiatAmount = styled.Text`
   font-size: 14px;
   line-height: 14px;
-  color: white;
+  color: #fff;
   font-weight: 300;
   position: absolute;
   bottom: 20px;
@@ -22,6 +22,6 @@ export const FiatAmount = styled.Text`
 export const AmountToken = styled.Text`
   font-size: ${fontSizes.medium};
   line-height: ${fontSizes.extraLarge};
-  color: white;
+  color: #fff;
   font-weight: 700;
 `;

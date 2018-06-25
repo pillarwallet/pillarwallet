@@ -3,6 +3,7 @@ export const baseColors = {
   sunYellow: '#f8e71c',
   burningFire: '#F56C07',
   periwinkle: '#9191ff',
+  fireEngineRed: '#ff0005',
   electricBlue: '#007AFF',
   brightSkyBlue: '#00bfff',
   aquaMarine: '#50e3c2',
@@ -12,6 +13,11 @@ export const baseColors = {
   mediumGray: '#C6CACD',
   darkGray: '#8B939E',
   slateBlack: '#0A1427',
+  lightGreen: '#82bc40',
+  jadeGreen: '#2aa157',
+  clearBlue: '#2077fd',
+  white: '#ffffff',
+  black: '#000000',
 };
 
 export const brandColors = [
