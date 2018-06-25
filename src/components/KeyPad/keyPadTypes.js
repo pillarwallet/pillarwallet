@@ -22,7 +22,11 @@ const numbers = [
 
 const getPincode = (props: Object): KeyPadButton[] => {
   const finalRow = [
-    props.showForgotButton ? { label: 'Forgot?', type: 'string', value: KEYPAD_BUTTON_FORGOT } : { label: '', value: '' },
+    props.showForgotButton ? {
+      label: 'Forgot?',
+      type: 'string',
+      value: KEYPAD_BUTTON_FORGOT,
+    } : { label: '', value: '' },
     { label: '0', value: '0' },
     {
       label: '⌫',
