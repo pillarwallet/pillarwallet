@@ -10097,12 +10097,6 @@ react-native-easy-grid@0.1.17:
   dependencies:
     lodash "^4.11.1"
 
-react-native-fast-image@^4.0.14:
-  version "4.0.14"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-fast-image/-/react-native-fast-image-4.0.14.tgz#1e84c9a01b1471793e294ef4e7c3cc20e09562a0"
-  dependencies:
-    prop-types "^15.5.10"
-
 react-native-firebase@^4.2.0:
   version "4.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-firebase/-/react-native-firebase-4.2.0.tgz#d44b1e5b5149d65936045c0398e0acc2ebb4c7e9"
