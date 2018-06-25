@@ -1,6 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 export const Title = styled.Text`
   font-size: ${fontSizes.extraLarge};
@@ -10,29 +10,35 @@ export const Title = styled.Text`
   text-align: ${props => (props.align || 'left')};
 `;
 
+export const SubTitle = styled.Text`
+  font-size: ${fontSizes.mediumLarge};
+  font-weight: 400;
+  color: ${UIColors.primary};
+  text-align: ${props => (props.align || 'left')};
+  line-height: 24px;
+  margin: ${props => props.margin || '0 0 20px'};
+  width: 70%;
+`;
+
 export const Paragraph = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   margin-bottom: 10;
-  color: ${props => props.light ? baseColors.mediumGray : UIColors.defaultTextColor};
+  color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
 `;
 
 export const TextLink = styled.Text`
-  font-size: ${fontSizes.medium};
-  margin-right: 10px;
-  font-weight: ${fontWeights.bold};
+  font-size: ${fontSizes.small};
   color: ${UIColors.primary};
 `;
 
 export const Label = styled.Text`
-  font-size: ${fontSizes.small};
-  color: ${baseColors.mediumGray};
-  margin-bottom: 10;
-  align-self: flex-start;
+  font-size: ${fontSizes.extraSmall};
+  color: ${props => props.color || baseColors.darkGray};
 `;
 
 export const HelpText = styled.Text`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
   padding: 10px;
   color: grey;
 `;

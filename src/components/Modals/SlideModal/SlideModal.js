@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Dimensions } from 'react-native';
 import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
@@ -19,14 +18,9 @@ type State = {
   isVisible: boolean,
 };
 
-const window = Dimensions.get('window');
-const modalOffset = 300;
-
 const ModalWrapper = styled.View`
   position: absolute;
   width: 100%;
-  height: 60%;
-  align-items: stretch;
 `;
 
 const ModalBackground = styled.View`
@@ -35,23 +29,20 @@ const ModalBackground = styled.View`
   border-top-left-radius: 20;
   border-top-right-radius: 20;
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
-  height: ${(window.height * 2) - modalOffset};
 `;
 
 const ModalHeader = styled.View`
   flex-direction: row;
   width: 100%;
-  margin-bottom: 20px;
   align-items: center;
   justify-content: space-between;
 `;
 
 const ModalContent = styled.View`
-  height: ${window.height - 200};
+  padding: 10px 0px;
 `;
 
 const ModalOverflow = styled.View`
-  height: ${window.height};
   width: 100%;
   background-color: #FFFFFF;
 `;
@@ -119,6 +110,7 @@ export default class SlideModal extends React.Component<Props, State> {
         swipeDirection="down"
         style={{
           margin: 0,
+          justifyContent: 'flex-end',
         }}
       >
         <ModalWrapper>
@@ -129,7 +121,7 @@ export default class SlideModal extends React.Component<Props, State> {
                 icon="close"
                 onPress={this.hideModal}
                 fontSize={36}
-                color={baseColors.clearBlue}
+                color={baseColors.electricBlue}
               />
             </ModalHeader>
             <ModalContent>

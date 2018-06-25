@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text } from 'react-native';
+import { Text, TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -9,16 +9,15 @@ import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
-import Title from 'components/Title';
-import ButtonIcon from 'components/ButtonIcon';
-import TextInput from 'components/TextInput';
+import SingleInput from 'components/TextInput/SingleInput';
+import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
+import { SubTitle, TextLink, Paragraph } from 'components/Typography';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
-import { parseNumber, formatMoney, formatAmount, isValidNumber } from 'utils/common';
-import { baseColors, fontSizes } from 'utils/variables';
-import SendTokenAmountHeader from './SendTokenAmountHeader';
+import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
+import SendTokenHeader from './SendTokenHeader';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -53,7 +52,7 @@ const getFormStructure = (maxAmount: number, enoughForFee) => {
 };
 
 function AmountInputTemplate(locals) {
-  const { config: { currency, useMaxValue } } = locals;
+  const { config: { icon } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     autoFocus: true,
@@ -64,25 +63,15 @@ function AmountInputTemplate(locals) {
     ellipsizeMode: 'middle',
     keyboardType: 'numeric',
     textAlign: 'right',
-    style: {
-      paddingRight: 40,
-      fontSize: 36,
-      fontWeight: '700',
-      lineHeight: 0,
-    },
   };
 
   return (
-    <TextInput
-      inputType="amount"
-      postfix={currency}
+    <SingleInput
+      innerImageURI={icon}
       errorMessage={errorMessage}
       id="amount"
-      label={locals.label}
       inputProps={inputProps}
       inlineLabel
-      footerAddonText="Use Max"
-      footerAddonAction={useMaxValue}
     />
   );
 }
@@ -100,14 +89,31 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
+const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
+  flex: 1;
+  position: absolute;
+  bottom: 40;
+  left: 0;
+  width: 100%;
+`;
+
 const ActionsWrapper = styled.View`
   display: flex;
   flex-direction: row;
-  align-content: center;
+  justify-content: flex-end;
+`;
+
+const FooterWrapper = styled.View`
+  flexDirection: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
 `;
 
 type Props = {
-  token: string,
+  token: string;
+
   address: string,
   totalBalance: number,
   contractAddress: string,
@@ -157,7 +163,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           formStructure: getFormStructure(maxAmount, enoughForFee),
         });
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 
   handleChange = (value: Object) => {
@@ -214,30 +220,25 @@ class SendTokenAmount extends React.Component<Props, State> {
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }
-
-  openFeeInfoModal = () => {
-    // Add fee modal logic in here
-  };
-
   render() {
     const {
       value,
       formStructure,
       txFeeInWei,
     } = this.state;
-    const { token, balance } = this.assetData;
-    const formOptions = generateFormOptions({ currency: token, useMaxValue: this.useMaxValue });
+    const { token, icon, balance } = this.assetData;
+    const formOptions = generateFormOptions({ icon, currency: token });
     return (
       <React.Fragment>
-        <SendTokenAmountHeader
+        <SendTokenHeader
           onBack={this.props.navigation.goBack}
-          nextOnPress={this.handleFormSubmit}
-          balanceAmount={formatMoney(balance, 6)}
-          symbol={token}
+          dismiss={this.props.navigation.dismiss}
+          isFirstScreen
+          rightLabelText="STEP 1 OF 3"
         />
         <Container>
           <Wrapper regularPadding>
-            <Title title="send" />
+            <SubTitle>How much {token} would you like to send?</SubTitle>
             <Form
               ref={node => { this._form = node; }}
               type={formStructure}
@@ -246,21 +247,19 @@ class SendTokenAmount extends React.Component<Props, State> {
               onChange={this.handleChange}
             />
             <ActionsWrapper>
-              <Text style={{ marginTop: 14 }}>
-                Fee:
-              </Text>
-              <Text style={{ fontWeight: 'bold', color: '#000', marginTop: 14 }}>
-                {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}
-              </Text>
-              <ButtonIcon
-                icon="alert"
-                color={baseColors.clearBlue}
-                fontSize={fontSizes.large}
-                onPress={this.openFeeInfoModal}
-              />
+              <Paragraph style={{ marginRight: 24 }}>Balance {balance} {token}</Paragraph>
+              <TouchableOpacity onPress={this.useMaxValue}>
+                <TextLink>Send All</TextLink>
+              </TouchableOpacity>
             </ActionsWrapper>
           </Wrapper>
         </Container>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
+          <FooterWrapper>
+            <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
+            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+          </FooterWrapper>
+        </KeyboardAvoidingView>
       </React.Fragment>
     );
   }
