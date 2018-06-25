@@ -36,7 +36,7 @@ const FooterWrapper = styled.View`
 `;
 
 const ContentWrapper = styled.View`
-  height: ${window.height / 2.2};
+  height: ${window.height / 2};
   justify-content: space-around;
 `;
 

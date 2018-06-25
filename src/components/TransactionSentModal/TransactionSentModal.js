@@ -22,7 +22,6 @@ const TransactionSentModal = (props: Props) => {
       <Title
         title="Your transaction is pending"
         center
-        maxWidth={200}
       />
       <Paragraph light center style={{ marginBottom: 30 }}>
         The process may take up to 10 minutes to complete. please check your transaction history.

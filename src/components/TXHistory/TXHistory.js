@@ -240,7 +240,6 @@ class TXHistory extends React.Component<Props, State> {
             <Row customPadding="20px 0 0">
               <Column>
                 <Button
-                  style={{ marginBottom: 20, marginTop: 20 }}
                   title="View on the blockchain"
                   onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
                 />
