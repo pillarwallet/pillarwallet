@@ -189,7 +189,7 @@ class TXHistory extends React.Component<Props, State> {
           onModalHide={() => { this.setState({ showModal: false }); }}
         >
           <Grid>
-            <Row size="0 0 40px">
+            <Row customPadding="5px 0" size="0 0 40px">
               <Column>
                 <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
               </Column>
@@ -197,20 +197,20 @@ class TXHistory extends React.Component<Props, State> {
                 <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
               </Column>
             </Row>
-            <Row size="0 0 40px">
+            <Row customPadding="5px 0" size="0 0 40px">
               <Column><Label>Date</Label></Column>
               <Column>
                 <Text>{selectedTransaction.date}</Text>
               </Column>
             </Row>
 
-            <Row size="0 0 40px">
+            <Row customPadding="5px 0" size="0 0 40px">
               <Column><Label>Recipient</Label></Column>
               <Column>
                 <Text>{selectedTransaction.recipient}</Text>
               </Column>
             </Row>
-            <Row size="0 0 40px">
+            <Row customPadding="5px 0" size="0 0 40px">
               <Column><Label>Transaction fee</Label></Column>
               <Column>
                 <Text>{selectedTransaction.fee} ETH</Text>
@@ -225,19 +225,19 @@ class TXHistory extends React.Component<Props, State> {
                 </Column>
               </Row>
             }
-            <Row size="0 0 40px">
+            <Row customPadding="5px 0" size="0 0 40px">
               <Column><Label>Confirmations</Label></Column>
               <Column>
                 <Text>{selectedTransaction.confirmations}</Text>
               </Column>
             </Row>
-            <Row size="0 0 40px">
+            <Row customPadding="5px 0" size="0 0 40px">
               <Column><Label>Status</Label></Column>
               <Column>
                 <Text>{selectedTransaction.status}</Text>
               </Column>
             </Row>
-            <Row>
+            <Row customPadding="20px 0 0">
               <Column>
                 <Button
                   style={{ marginBottom: 20, marginTop: 20 }}
