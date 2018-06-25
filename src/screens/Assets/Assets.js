@@ -180,12 +180,20 @@ class AssetsScreen extends React.Component<Props, State> {
             backgroundColor: 'white',
             shadowColor: 'black',
             shadowOpacity: 0.07,
+            marginTop: -10,
             shadowRadius: 0,
             shadowOffset: { width: 0, height: 1 },
           }}
         >
           <Grid style={{ paddingRight: 20, paddingLeft: 20, paddingBottom: 40 }}>
-            <View style={{ alignItems: 'center', height: 80, flexDirection: 'row', justifyContent: 'space-between'} }>
+            <View
+              style={{
+                alignItems: 'center',
+                height: 80,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
+            >
               <View>
                 <Title title="assets" />
               </View>

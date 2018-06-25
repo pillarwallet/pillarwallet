@@ -48,7 +48,7 @@ export const fontTrackings = {
   small: 0.2,
   medium: 0.3,
   large: 0.5,
-}
+};
 
 export const fontWeights = {
   thin: '100',

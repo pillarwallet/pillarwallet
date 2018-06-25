@@ -59,7 +59,9 @@ const SendTokenAmountHeader = (props: Props) => {
       <Left>
         <TouchableWithoutFeedback onPress={() => onBack(null)}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            {!isFirstScreen && <BackIcon icon="arrow-back" onPress={() => onBack(null)} color={UIColors.primary} fontSize={28} />}
+            {!isFirstScreen
+              && <BackIcon icon="arrow-back" onPress={() => onBack(null)} color={UIColors.primary} fontSize={28} />
+            }
             <Title title="send" />
           </View>
         </TouchableWithoutFeedback>

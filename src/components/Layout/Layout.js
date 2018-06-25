@@ -2,7 +2,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { baseColors } from 'utils/variables';
 
 type ContainerProps = {
   children?: React.Node,

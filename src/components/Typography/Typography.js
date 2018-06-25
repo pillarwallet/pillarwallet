@@ -16,7 +16,7 @@ export const SubTitle = styled.Text`
   color: ${UIColors.primary};
   text-align: ${props => (props.align || 'left')};
   line-height: 24px;
-  margin: 0 0 20px;
+  margin: ${props => props.margin || '0 0 20px'};
   width: 70%;
 `;
 
@@ -34,7 +34,7 @@ export const TextLink = styled.Text`
 
 export const Label = styled.Text`
   font-size: ${fontSizes.extraSmall};
-  color: ${baseColors.darkGray};
+  color: ${props => props.color || baseColors.darkGray};
 `;
 
 export const HelpText = styled.Text`

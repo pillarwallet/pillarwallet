@@ -76,7 +76,6 @@ const ImageHolder = styled.View`
 
 
 class SendTokenContacts extends React.Component<Props, State> {
-
   constructor(props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
