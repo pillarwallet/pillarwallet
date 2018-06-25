@@ -1,6 +1,8 @@
 // @flow
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT, KEYPAD_BUTTON_DOT } from 'constants/keyPadButtonsConstants';
 
+const backspaceIMG = require('assets/icons/backspace.png');
+
 type KeyPadButton = {
   label: string,
   value: string,
@@ -20,9 +22,18 @@ const numbers = [
 
 const getPincode = (props: Object): KeyPadButton[] => {
   const finalRow = [
-    props.showForgotButton ? { label: 'Forgot?', value: KEYPAD_BUTTON_FORGOT } : { label: '', value: '' },
+    props.showForgotButton ? {
+      label: 'Forgot?',
+      type: 'string',
+      value: KEYPAD_BUTTON_FORGOT,
+    } : { label: '', value: '' },
     { label: '0', value: '0' },
-    { label: '⌫', value: KEYPAD_BUTTON_DELETE },
+    {
+      label: '⌫',
+      value: KEYPAD_BUTTON_DELETE,
+      type: 'image',
+      image: backspaceIMG,
+    },
   ];
 
   return numbers.concat(finalRow);
@@ -32,7 +43,12 @@ const getNumeric = (): KeyPadButton[] => {
   const finalRow = [
     { label: '.', value: KEYPAD_BUTTON_DOT },
     { label: '0', value: '0' },
-    { label: '⌫', value: KEYPAD_BUTTON_DELETE },
+    {
+      label: '⌫',
+      value: KEYPAD_BUTTON_DELETE,
+      type: 'image',
+      image: backspaceIMG,
+    },
   ];
   return numbers.concat(finalRow);
 };
