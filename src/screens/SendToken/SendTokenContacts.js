@@ -56,7 +56,7 @@ function AddressInputTemplate(locals) {
   return (
     <SingleInput
       errorMessage={errorMessage}
-      outterImageText="Send"
+      outterImageText="Scan"
       outterImageURI={qrCode}
       id="address"
       onPress={onIconPress}
