@@ -1,6 +1,15 @@
 // @flow
 import * as React from 'react';
-import { TouchableOpacity, Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator, ScrollView } from 'react-native';
+import {
+  TouchableOpacity,
+  Animated,
+  Easing,
+  RefreshControl,
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';

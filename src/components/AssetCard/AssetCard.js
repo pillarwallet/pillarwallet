@@ -39,7 +39,7 @@ const BackgroundHolder = styled.View`
   overflow: hidden;
   width: 100%;
   position: relative;
-  backgroundColor: ${props => (props.cardColor)};
+  background-color: ${props => (props.cardColor)};
 `;
 
 const AmountWrapper = styled.View`
@@ -59,7 +59,7 @@ const defautlCardColor = '#ACBCCD';
 export default class AssetCard extends React.Component<Props, State> {
   state = {
     cardIcon: '',
-  }
+  };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     if (nextProps.icon !== prevState.cardIcon) {
@@ -81,9 +81,7 @@ export default class AssetCard extends React.Component<Props, State> {
       onPress,
     } = this.props;
 
-    const {
-      cardIcon,
-    } = this.state;
+    const { cardIcon } = this.state;
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
@@ -134,7 +132,7 @@ export default class AssetCard extends React.Component<Props, State> {
                     top: 28,
                     right: 28,
                   }}
-                  {... { uri: cardIcon }}
+                  uri={cardIcon}
                   resizeMode="contain"
                 />
               </IconWrapper>}
