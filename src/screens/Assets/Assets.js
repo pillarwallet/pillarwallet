@@ -32,16 +32,16 @@ import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants
 
 // TODO: change to actual token colors that is fetch with the asset
 const tokenColor = {};
-tokenColor.ETH = '#00985A';
-tokenColor.PLR = '#F26C08';
-tokenColor.QTM = '#0824FC';
-tokenColor.OMG = '#008FB7';
-tokenColor.ICX = '#DA003D';
-tokenColor.STORJ = '#0D7EC6';
-tokenColor.BAT = '#FB106E';
-tokenColor.GNT = '#5A49A0';
-tokenColor.PPT = '#0655BB';
-tokenColor.SALT = '#DF62CD';
+tokenColor.ETH = '#3c3c3d';
+tokenColor.PLR = '#00bfff';
+tokenColor.QTM = '#1297d7';
+tokenColor.OMG = '#1a56f0';
+tokenColor.ICX = '#1aaaba';
+tokenColor.STORJ = '#2683FF';
+tokenColor.BAT = '#ff5500';
+tokenColor.GNT = '#282f41';
+tokenColor.PPT = '#5a9ef6';
+tokenColor.SALT = '#85C884';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
