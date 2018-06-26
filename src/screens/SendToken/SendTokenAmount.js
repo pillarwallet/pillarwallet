@@ -14,7 +14,7 @@ import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { SubTitle, TextLink, Paragraph } from 'components/Typography';
-import ModalHeader from 'components/ModalHeader';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
@@ -230,7 +230,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ icon, currency: token });
     return (
       <React.Fragment>
-        <ModalHeader
+        <ModalScreenHeader
           onClose={this.props.navigation.dismiss}
           rightLabelText="step 1 of 3"
           title="send"

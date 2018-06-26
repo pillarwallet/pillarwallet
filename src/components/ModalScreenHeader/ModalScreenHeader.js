@@ -46,7 +46,7 @@ const CloseButton = styled(ButtonIcon)`
   bottom: 3px;
 `;
 
-const SendTokenAmountHeader = (props: Props) => {
+const ModalScreenHeader = (props: Props) => {
   const {
     onBack,
     onClose,
@@ -79,4 +79,4 @@ const SendTokenAmountHeader = (props: Props) => {
   );
 };
 
-export default SendTokenAmountHeader;
+export default ModalScreenHeader;

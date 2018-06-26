@@ -12,7 +12,7 @@ import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
-import ModalHeader from 'components/ModalHeader';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import { isValidETHAddress } from 'utils/validators';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
@@ -170,7 +170,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
     return (
       <React.Fragment>
-        <ModalHeader
+        <ModalScreenHeader
           onBack={this.props.navigation.goBack}
           onClose={this.props.navigation.dismiss}
           rightLabelText="step 2 of 3"

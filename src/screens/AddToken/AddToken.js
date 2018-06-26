@@ -9,7 +9,7 @@ import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import ModalHeader from 'components/ModalHeader';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import {
   addAssetAction,
   removeAssetAction,
@@ -113,7 +113,7 @@ class AddToken extends React.Component<Props> {
   render() {
     return (
       <React.Fragment>
-        <ModalHeader title="add token" onClose={this.handleScreenDismissal} />
+        <ModalScreenHeader title="add token" onClose={this.handleScreenDismissal} />
         <Container>
           <ScrollWrapper regularPadding>
             <Paragraph>

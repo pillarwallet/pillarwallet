@@ -8,7 +8,7 @@ import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { SubTitle } from 'components/Typography';
 import Button from 'components/Button';
-import ModalHeader from 'components/ModalHeader';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import { baseColors, fontSizes } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload } from 'models/Transaction';
@@ -110,7 +110,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     } = this.state;
     return (
       <React.Fragment>
-        <ModalHeader
+        <ModalScreenHeader
           onBack={this.props.navigation.goBack}
           onClose={this.props.navigation.dismiss}
           title="send"

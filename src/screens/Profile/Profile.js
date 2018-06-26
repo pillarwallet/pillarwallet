@@ -14,7 +14,7 @@ import Title from 'components/Title';
 import CurrencySelector from 'components/ProfileSettings/CurrencySelector';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
-import ModalHeader from 'components/ModalHeader';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import ProfileHeader from './ProfileHeader';
@@ -229,7 +229,7 @@ class Profile extends React.Component<Props, State> {
               title="confirm"
               fullScreenComponent={(
                 <Container>
-                  <ModalHeader onClose={this.handleCheckPinModalClose} />
+                  <ModalScreenHeader onClose={this.handleCheckPinModalClose} />
                   <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
                 </Container>
               )}
