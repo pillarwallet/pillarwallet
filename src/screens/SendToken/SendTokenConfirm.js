@@ -1,10 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView as RNKeyboardAvoidingView, Image as RNImage } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import FastImage from 'react-native-fast-image';
 import { utils } from 'ethers';
 import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
@@ -75,7 +74,7 @@ const Value = styled.Text`
   font-size: ${fontSizes.medium}
 `;
 
-const Image = styled(FastImage)`
+const Image = styled(RNImage)`
   width: 100px;
   height: 100px;
 `;
