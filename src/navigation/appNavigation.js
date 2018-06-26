@@ -101,32 +101,37 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
+const tabNavigationIcon = (iconName, focused) => `${iconName}${focused ? '' : '-outline'}`;
+
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
-    [ASSETS]: assetsFlow,
-    [ICO]: ICOScreen,
-    [PROFILE]: ProfileScreen,
+    [ASSETS]: {
+      screen: assetsFlow,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-albums', focused)} size={25} color={tintColor} />
+        ),
+      }),
+    },
+    [ICO]: {
+      screen: ICOScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-cart', focused)} size={25} color={tintColor} />
+        ),
+        tabBarLabel: 'ICO MARKETPLACE',
+      }),
+    },
+    [PROFILE]: {
+      screen: ProfileScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-contact', focused)} size={25} color={tintColor} />
+        ),
+      }),
+    },
   }, {
-    navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, tintColor }) => {
-        const { routeName } = navigation.state;
-        let iconName;
-
-        switch (routeName) {
-          case ASSETS:
-            iconName = `ios-albums${focused ? '' : '-outline'}`; break;
-          case ICO:
-            iconName = `ios-jet${focused ? '' : '-outline'}`; break;
-          case PROFILE:
-            iconName = `ios-contact${focused ? '' : '-outline'}`; break;
-          default:
-            return '';
-        }
-
-        return <Ionicons name={iconName} size={25} color={tintColor} />;
-      },
-    }),
     tabBarOptions: {
       activeTintColor: 'blue',
       inactiveTintColor: 'gray',
