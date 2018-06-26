@@ -137,7 +137,7 @@ export default class AssetCard extends React.Component<Props, State> {
                   bottom: 0,
                   right: 0,
                 }}
-                {... { uri: cardBackgroundUri }}
+                uri={cardBackgroundUri}
                 resizeMode="cover"
                 transitionDuration={0}
               />
