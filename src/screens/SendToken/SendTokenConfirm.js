@@ -109,10 +109,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   isNeedToCheckPinCode(appSettings: Object): boolean {
-    let { requestPinForTransaction } = appSettings;
-    if (requestPinForTransaction === undefined) {
-      requestPinForTransaction = true;
-    }
+    const { requestPinForTransaction = true } = appSettings;
     return requestPinForTransaction;
   }
 
