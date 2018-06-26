@@ -118,7 +118,7 @@ const tabNavigation = createBottomTabNavigator(
       screen: ICOScreen,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-cart', focused)} size={25} color={tintColor} />
+          <Ionicons name={tabNavigationIcon('ios-pricetags', focused)} size={25} color={tintColor} />
         ),
         tabBarLabel: 'ICO MARKETPLACE',
       }),
