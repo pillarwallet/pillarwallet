@@ -39,6 +39,7 @@ const ListWrapper = styled.View`
   background-color: ${baseColors.lighterGray};
 `;
 
+
 const FlexRowSpaced = styled.View`
   display: flex;
   flex: 1;
@@ -58,7 +59,7 @@ const ListSeparator = styled.View`
 
 const ListSeparatorText = styled.Text`
   margin-top: 30px;
-  color: ${props => props.lastSynced ? baseColors.lightGreen : baseColors.darkGray};
+  color: ${props => props.lastSynced ? baseColors.freshEucalyptus : baseColors.darkGray};
   text-align: ${props => props.lastSynced ? 'center' : 'left'};
   font-size: ${fontSizes.small};
 `;

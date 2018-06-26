@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList, Text, Linking, Image } from 'react-native';
+import { FlatList, Text, Linking, Image, Dimensions } from 'react-native';
+import styled from 'styled-components/native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
-import { Grid, Row, Column } from 'components/Grid';
+import { Row, Column } from 'components/Grid';
 import { Label } from 'components/Typography';
 import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
@@ -18,9 +19,22 @@ import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
 
-
+const window = Dimensions.get('window');
 const iconUp = require('assets/icons/up.png');
 const iconDown = require('assets/icons/down.png');
+
+const ContentWrapper = styled.View`
+  height: ${window.height / 2.5};
+  justify-content: space-around;
+  display: flex;
+`;
+
+const Holder = styled.View`
+  display: flex;
+  flex-direction:column;
+  justify-content: space-around;
+  align-items: center;
+`;
 
 type Props = {
   history: Transaction[],
@@ -188,65 +202,64 @@ class TXHistory extends React.Component<Props, State> {
           title="transaction details"
           onModalHide={() => { this.setState({ showModal: false }); }}
         >
-          <Grid>
-            <Row size="0 0 40px">
-              <Column>
-                <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
-              </Column>
-              <Column>
-                <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
-              </Column>
-            </Row>
-            <Row size="0 0 40px">
-              <Column><Label>Date</Label></Column>
-              <Column>
-                <Text>{selectedTransaction.date}</Text>
-              </Column>
-            </Row>
-
-            <Row size="0 0 40px">
-              <Column><Label>Recipient</Label></Column>
-              <Column>
-                <Text>{selectedTransaction.recipient}</Text>
-              </Column>
-            </Row>
-            <Row size="0 0 40px">
-              <Column><Label>Transaction fee</Label></Column>
-              <Column>
-                <Text>{selectedTransaction.fee} ETH</Text>
-              </Column>
-            </Row>
-
-            {selectedTransaction.note &&
-              <Row size="0 0 80px">
-                <Column><Label>Note</Label></Column>
+          <ContentWrapper>
+            <Holder>
+              <Row customPadding="2px 0" size="0 0 40px">
                 <Column>
-                  <Text>{selectedTransaction.note}</Text>
+                  <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
+                </Column>
+                <Column>
+                  <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
                 </Column>
               </Row>
-            }
-            <Row size="0 0 40px">
-              <Column><Label>Confirmations</Label></Column>
-              <Column>
-                <Text>{selectedTransaction.confirmations}</Text>
-              </Column>
-            </Row>
-            <Row size="0 0 40px">
-              <Column><Label>Status</Label></Column>
-              <Column>
-                <Text>{selectedTransaction.status}</Text>
-              </Column>
-            </Row>
-            <Row>
-              <Column>
-                <Button
-                  style={{ marginBottom: 20, marginTop: 20 }}
-                  title="View on the blockchain"
-                  onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
-                />
-              </Column>
-            </Row>
-          </Grid>
+              <Row customPadding="2px 0" size="0 0 40px">
+                <Column><Label>Date</Label></Column>
+                <Column>
+                  <Text>{selectedTransaction.date}</Text>
+                </Column>
+              </Row>
+
+              <Row customPadding="2px 0" size="0 0 40px">
+                <Column><Label>Recipient</Label></Column>
+                <Column>
+                  <Text>{selectedTransaction.recipient}</Text>
+                </Column>
+              </Row>
+              <Row customPadding="2px 0" size="0 0 40px">
+                <Column><Label>Transaction fee</Label></Column>
+                <Column>
+                  <Text>{selectedTransaction.fee} ETH</Text>
+                </Column>
+              </Row>
+
+              {selectedTransaction.note &&
+                <Row size="0 0 80px">
+                  <Column><Label>Note</Label></Column>
+                  <Column>
+                    <Text>{selectedTransaction.note}</Text>
+                  </Column>
+                </Row>
+              }
+              <Row customPadding="2px 0" size="0 0 40px">
+                <Column><Label>Confirmations</Label></Column>
+                <Column>
+                  <Text>{selectedTransaction.confirmations}</Text>
+                </Column>
+              </Row>
+              <Row customPadding="2px 0" size="0 0 40px">
+                <Column><Label>Status</Label></Column>
+                <Column>
+                  <Text>{selectedTransaction.status}</Text>
+                </Column>
+              </Row>
+            </Holder>
+            <Holder>
+              <Button
+                title="View on the blockchain"
+                onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
+              />
+            </Holder>
+          </ContentWrapper>
         </SlideModal>
       </React.Fragment>
     );

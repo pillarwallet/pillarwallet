@@ -46,7 +46,7 @@ const ItemLabel = styled.Text`
 `;
 
 const ItemValue = styled.Text`
-  font-size: ${fontSizes.semiSmall};
+  font-size: ${fontSizes.small};
   color: ${baseColors.coolGrey};
   line-height: ${fontSizes.medium};
 `;

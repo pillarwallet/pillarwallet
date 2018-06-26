@@ -108,7 +108,7 @@ class NewProfile extends React.Component<Props, State> {
 
   state = {
     value: null,
-  }
+  };
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<*> }) => {
     const { params = {} } = navigation.state;
@@ -132,7 +132,7 @@ class NewProfile extends React.Component<Props, State> {
     this.setState({
       value,
     });
-  }
+  };
 
   handleSubmit = () => {
     const { navigation, updateUser } = this.props;
@@ -145,7 +145,7 @@ class NewProfile extends React.Component<Props, State> {
       lastName: lastName.join(' '),
     });
     navigation.navigate(LEGAL_TERMS);
-  }
+  };
 
   render() {
     const { value } = this.state;
@@ -174,7 +174,7 @@ class NewProfile extends React.Component<Props, State> {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  updateUser: (user: Object) => dispatch(updateLocalUserAction(user)),
+  updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
 });
 
 export default connect(null, mapDispatchToProps)(NewProfile);

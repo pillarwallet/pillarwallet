@@ -1,14 +1,15 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { baseColors } from 'utils/variables';
 
 type Props = {
   onPressReceive: Function,
   onPressSend: Function,
 }
 
-const imageSend = require('../../assets/images/btn_iconSend.png');
-const imageReceive = require('../../assets/images/btn_iconReceive.png');
+const imageSend = require('assets/images/btn_iconSend.png');
+const imageReceive = require('assets/images/qr.png');
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
@@ -18,30 +19,51 @@ const AssetButtonsWrapper = styled.View`
 `;
 
 const AssetButton = styled.TouchableOpacity`
+  justify-content: center;
+  align-items: center;
   margin: 0 20px;
 `;
 
+const ImageHolder = styled.View`
+  border-radius: 50;
+  width: 54px;
+  height: 54px;
+  background: ${baseColors.lightGray};
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-shadow: .5px 1px 1px ${baseColors.mediumGray};
+`;
+
 const AssetButtonImage = styled.Image`
-  width: 50px;
-  height: 50px;
+  width: 27px;
+  height: 27px;
+  justify-content: center;
+  display: flex;
 `;
 
 const AssetButtonText = styled.Text`
-  color: #2077fd;
+  color: ${baseColors.electricBlue};
   text-align: center;
+  font-weight: 600;
   margin-top: 10px;
 `;
 
 const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
-      <AssetButton onPress={props.onPressSend}>
-        <AssetButtonImage source={imageSend} />
-        <AssetButtonText>Send</AssetButtonText>
-      </AssetButton>
       <AssetButton onPress={props.onPressReceive}>
-        <AssetButtonImage source={imageReceive} />
-        <AssetButtonText>Receive</AssetButtonText>
+        <ImageHolder>
+          <AssetButtonImage source={imageReceive} />
+        </ImageHolder>
+        <AssetButtonText>RECEIVE</AssetButtonText>
+      </AssetButton>
+      <AssetButton onPress={props.onPressSend}>
+        <ImageHolder>
+          <AssetButtonImage source={imageSend} />
+        </ImageHolder>
+        <AssetButtonText>SEND</AssetButtonText>
       </AssetButton>
     </AssetButtonsWrapper>
   );
