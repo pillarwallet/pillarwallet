@@ -6,11 +6,11 @@ const IconCircle = styled.View`
   height: 40px;
   border-radius: 20px;
   background-color: #FFFFFF;
-  opacity: 0.4;
+  opacity: 0.3;
   position: relative;
   align-self: flex-end;
   margin-top: 20px;
-  margin-right: 20px;
+  margin-right: 14px;
 `;
 
 export default IconCircle;

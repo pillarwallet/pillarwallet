@@ -28,7 +28,7 @@ const MnemonicPhraseIndex = styled.Text`
 const MnemonicPhraseWord = styled.Text`
   background-color: ${baseColors.lightGray};
   font-weight: bold;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
   width: 100%;
   border-color: ${UIColors.defaultBorderColor};
   border-style: dashed;

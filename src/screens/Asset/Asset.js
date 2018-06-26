@@ -155,7 +155,7 @@ class AssetScreen extends React.Component<Props, State> {
             style={{
               borderBottomWidth: 1,
               borderStyle: 'solid',
-              backgroundColor: baseColors.white,
+              backgroundColor: baseColors.snowWhite,
               borderColor: UIColors.defaultBorderColor,
               padding: 20,
               height: 60,
@@ -174,8 +174,7 @@ class AssetScreen extends React.Component<Props, State> {
                 color={assetData.color}
                 onPress={this.handleCardTap}
                 address={assetData.address}
-                iconUri={assetData.icon}
-                backgroundUri={assetData.background}
+                icon={assetData.icon}
               />
             </Transition>
             <Paragraph light>

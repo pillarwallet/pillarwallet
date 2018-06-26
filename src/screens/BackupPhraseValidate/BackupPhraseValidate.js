@@ -32,7 +32,7 @@ const MnemonicPhraseWord = styled.TouchableHighlight`
 
 const MnemonicPhraseWordText = styled.Text`
   font-weight: bold;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
   color: #ffffff;
 `;
 

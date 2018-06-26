@@ -18,6 +18,7 @@ import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 public class MainApplication extends ExpoApplication {
 
@@ -34,7 +35,6 @@ public class MainApplication extends ExpoApplication {
 
         // Needed for `react-native link`
         // new MainReactPackage(),
-//            new FastImageViewPackage(),
             new UdpSocketsModule(),
             new TcpSocketsModule(),
             new RandomBytesPackage(),

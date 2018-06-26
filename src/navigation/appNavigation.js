@@ -17,8 +17,9 @@ import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
-import SendTokenAmountScreen from 'screens/SendTokenAmount';
-import SendTokenContactsScreen from 'screens/SendTokenContacts';
+import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
+import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
+import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -42,6 +43,7 @@ import {
   TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
+  SEND_TOKEN_CONFIRM,
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
@@ -99,32 +101,37 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
+const tabNavigationIcon = (iconName, focused) => `${iconName}${focused ? '' : '-outline'}`;
+
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
-    [ASSETS]: assetsFlow,
-    [ICO]: ICOScreen,
-    [PROFILE]: ProfileScreen,
+    [ASSETS]: {
+      screen: assetsFlow,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-albums', focused)} size={25} color={tintColor} />
+        ),
+      }),
+    },
+    [ICO]: {
+      screen: ICOScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-pricetags', focused)} size={25} color={tintColor} />
+        ),
+        tabBarLabel: 'ICO MARKETPLACE',
+      }),
+    },
+    [PROFILE]: {
+      screen: ProfileScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-contact', focused)} size={25} color={tintColor} />
+        ),
+      }),
+    },
   }, {
-    navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, tintColor }) => {
-        const { routeName } = navigation.state;
-        let iconName;
-
-        switch (routeName) {
-          case ASSETS:
-            iconName = `ios-albums${focused ? '' : '-outline'}`; break;
-          case ICO:
-            iconName = `ios-jet${focused ? '' : '-outline'}`; break;
-          case PROFILE:
-            iconName = `ios-contact${focused ? '' : '-outline'}`; break;
-          default:
-            return '';
-        }
-
-        return <Ionicons name={iconName} size={25} color={tintColor} />;
-      },
-    }),
     tabBarOptions: {
       activeTintColor: 'blue',
       inactiveTintColor: 'gray',
@@ -144,6 +151,7 @@ const tabNavigation = createBottomTabNavigator(
 const sendTokenFlow = createStackNavigator({
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 
 const changePinFlow = createStackNavigator(
