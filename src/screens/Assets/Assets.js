@@ -1,6 +1,15 @@
 // @flow
 import * as React from 'react';
-import { TouchableOpacity, Animated, Easing, RefreshControl, View, Text, ActivityIndicator } from 'react-native';
+import {
+  TouchableOpacity,
+  Animated,
+  Easing,
+  RefreshControl,
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -14,12 +23,26 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, ETH, FETCHED } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+
+// TODO: change to actual token colors that is fetch with the asset
+const tokenColor = {};
+tokenColor.ETH = '#3c3c3d';
+tokenColor.PLR = '#00bfff';
+tokenColor.QTM = '#1297d7';
+tokenColor.EOS = '#443f53';
+tokenColor.OMG = '#1a56f0';
+tokenColor.ICX = '#1aaaba';
+tokenColor.STORJ = '#2683FF';
+tokenColor.BAT = '#ff5500';
+tokenColor.GNT = '#282f41';
+tokenColor.PPT = '#5a9ef6';
+tokenColor.SALT = '#85C884';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
@@ -68,9 +91,9 @@ class AssetsScreen extends React.Component<Props, State> {
 
     this.fetchAssetsMedia();
   }
-
+  // TODO: change to the asset icon that is fetched with the asset
   fetchAssetsMedia = async () => {
-    const response = await fetch('https://api.myjson.com/bins/dqsvy');
+    const response = await fetch('https://api.myjson.com/bins/19uwn2');
     const json = await response.json();
     this.setState({
       assetsMedia: json,
@@ -115,6 +138,12 @@ class AssetsScreen extends React.Component<Props, State> {
         const balance = asset.balance || 0;
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
+
+        // @TODO: remove this, use the color that the backend returns
+        const cardColor = assetsMedia[symbol] && assetsMedia[symbol].bgColor
+          ? assetsMedia[symbol].bgColor
+          : tokenColor[symbol];
+
         const assetData = {
           name: name || symbol,
           token: symbol,
@@ -124,7 +153,7 @@ class AssetsScreen extends React.Component<Props, State> {
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           address: wallet.address,
           icon: assetsMedia[symbol] ? assetsMedia[symbol].icon : assetsMedia[ETH].icon,
-          background: assetsMedia[symbol] ? assetsMedia[symbol].background : assetsMedia[ETH].background,
+          color: cardColor,
         };
         return (
           <Transition key={index} shared={assetData.name}>
@@ -134,10 +163,10 @@ class AssetsScreen extends React.Component<Props, State> {
               token={assetData.token}
               amount={assetData.amount}
               balanceInFiat={assetData.balanceInFiat}
+              color={assetData.color}
               onPress={() => this.handleCardTap(assetData)}
               address={assetData.address}
-              iconUri={assetData.icon}
-              backgroundUri={assetData.background}
+              icon={assetData.icon}
             />
           </Transition>
         );
@@ -206,8 +235,7 @@ class AssetsScreen extends React.Component<Props, State> {
               </View>
             </View>
             <Row>
-              <Column
-                style={{
+              <Column style={{
                   alignSelf: 'flex-end',
                   justifyContent: 'space-between',
                 }}
@@ -217,8 +245,8 @@ class AssetsScreen extends React.Component<Props, State> {
             </Row>
           </Grid>
         </View>
-        <ScrollWrapper
-          regularPadding
+        <ScrollView
+          contentContainerStyle={{ paddingHorizontal: 20 }}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -233,8 +261,8 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           }
         >
-          {Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating />}
-        </ScrollWrapper>
+          { Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating /> }
+        </ScrollView>
       </Container >
     );
   }

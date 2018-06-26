@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { Input, Label } from 'native-base';
 import { TextLink } from 'components/Typography';
 import { fontSizes, fontWeights } from 'utils/variables';
-import FastImage from 'react-native-fast-image';
+import { Image as RNImage } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -55,7 +55,7 @@ const InputHolder = styled.View`
   flex-direction: row;
 `;
 
-const FloatImage = styled(FastImage)`
+const FloatImage = styled(RNImage)`
   position: absolute;
   height: 30px;
   width: 30px;
@@ -71,7 +71,7 @@ const ImageHolder = styled.TouchableOpacity`
   margin: 0 10px 0 20px;
 `;
 
-const Image = styled(FastImage)`
+const Image = styled(RNImage)`
   height: 24px;
   width: 24px;
   margin-bottom: 5px;
@@ -144,7 +144,6 @@ class SingleInput extends React.Component<Props, State> {
     if (typeof uri === 'number') return uri;
     return {
       uri,
-      priority: FastImage.priority.low,
     };
   }
 
