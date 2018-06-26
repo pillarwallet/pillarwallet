@@ -35,6 +35,7 @@ const tokenColor = {};
 tokenColor.ETH = '#3c3c3d';
 tokenColor.PLR = '#00bfff';
 tokenColor.QTM = '#1297d7';
+tokenColor.EOS = '#443f53';
 tokenColor.OMG = '#1a56f0';
 tokenColor.ICX = '#1aaaba';
 tokenColor.STORJ = '#2683FF';
