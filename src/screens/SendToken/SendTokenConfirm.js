@@ -11,14 +11,12 @@ import { SubTitle } from 'components/Typography';
 import Button from 'components/Button';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import SlideModal from 'components/Modals/SlideModal';
-import ModalHeader from 'components/ModalHeader';
 import CheckPin from 'components/CheckPin';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
 import { delay } from 'utils/common';
-import SendTokenHeader from './SendTokenHeader';
 
 const imageSend = require('assets/images/confirm-send.png');
 
@@ -188,7 +186,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           title="confirm"
           fullScreenComponent={(
             <Container>
-              <ModalHeader onClose={this.handleCheckPinModalClose} />
+              <ModalScreenHeader onClose={this.handleCheckPinModalClose} />
               <CheckPin onPinValid={this.makeTransaction} />
             </Container>
           )}
