@@ -12,7 +12,7 @@ import { noop } from 'utils/common';
 type Props = {
   onBack?: Function,
   onClose: Function,
-  title: string,
+  title?: string,
   rightLabelText?: string,
 }
 

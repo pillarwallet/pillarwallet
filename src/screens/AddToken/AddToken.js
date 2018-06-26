@@ -9,7 +9,6 @@ import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import Title from 'components/Title';
 import ModalHeader from 'components/ModalHeader';
 import {
   addAssetAction,
