@@ -1,8 +1,7 @@
 // @flow
 import * as React from 'react';
-import { Platform, TouchableNativeFeedback } from 'react-native';
+import { Platform, TouchableNativeFeedback, Image as RNImage } from 'react-native';
 import styled from 'styled-components/native';
-import FastImage from 'react-native-fast-image';
 import { fontSizes, baseColors } from 'utils/variables';
 import keyPadTypes from './keyPadTypes';
 
@@ -44,7 +43,7 @@ const ImageHolder = styled.View`
   height: 25px;
 `;
 
-const Image = styled(FastImage)`
+const Image = styled(RNImage)`
   width: 100%;
   height: 100%;
   position: absolute;
