@@ -17,8 +17,9 @@ import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
-import SendTokenAmountScreen from 'screens/SendTokenAmount';
-import SendTokenContactsScreen from 'screens/SendTokenContacts';
+import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
+import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
+import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -42,6 +43,7 @@ import {
   TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
+  SEND_TOKEN_CONFIRM,
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
@@ -144,6 +146,7 @@ const tabNavigation = createBottomTabNavigator(
 const sendTokenFlow = createStackNavigator({
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 
 const changePinFlow = createStackNavigator(

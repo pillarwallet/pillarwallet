@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator, ScrollView } from 'react-native';
+import { TouchableOpacity, Animated, Easing, RefreshControl, View, Image, Text, ActivityIndicator, ScrollView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { Grid, Row, Column } from 'components/Grid';
-import { UIColors, baseColors } from 'utils/variables';
+import { TextLink } from 'components/Typography';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import {
@@ -17,27 +17,9 @@ import AssetCard from 'components/AssetCard';
 import { Container } from 'components/Layout';
 import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
-import TransactionSentModal from 'components/TransactionSentModal';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, ETH, FETCHED } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
-
-const defaultAssetColor = '#4C4E5E';
-const pillarLogoSource = require('../../assets/images/header-pillar-logo.png');
-
-const assetColors = {
-  ETH: baseColors.darkGray,
-  PLR: baseColors.clearBlue,
-};
-
-const activeModalResetState = {
-  type: null,
-  opts: {
-    address: '',
-    token: '',
-    tokenName: '',
-  },
-};
 
 // TODO: change to actual token colors that is fetch with the asset
 const tokenColor = {};
@@ -52,7 +34,6 @@ tokenColor.BAT = '#FB106E';
 tokenColor.GNT = '#5A49A0';
 tokenColor.PPT = '#0655BB';
 tokenColor.SALT = '#DF62CD';
-
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -66,21 +47,11 @@ type Props = {
 }
 
 type State = {
-  activeModal: {
-    type: string | null,
-    opts: {
-      address?: string,
-      token?: string,
-      tokenName?: string,
-      formValues?: Object
-    }
-  },
   assetsMedia: Object,
 }
 
 class AssetsScreen extends React.Component<Props, State> {
   state = {
-    activeModal: activeModalResetState,
     assetsMedia: {},
   };
 
@@ -157,7 +128,6 @@ class AssetsScreen extends React.Component<Props, State> {
         const balance = asset.balance || 0;
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
-        const assetColor = assetColors[symbol] || defaultAssetColor;
         const assetData = {
           name: name || symbol,
           token: symbol,
@@ -165,7 +135,6 @@ class AssetsScreen extends React.Component<Props, State> {
           contractAddress: asset.address,
           balance,
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
-          color: assetColor,
           address: wallet.address,
           icon: assetsMedia[symbol] ? assetsMedia[symbol].icon : assetsMedia[ETH].icon,
         };
@@ -189,9 +158,6 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const {
-      activeModal: { type: activeModalType },
-    } = this.state;
     const {
       assets,
       wallet,
@@ -222,30 +188,38 @@ class AssetsScreen extends React.Component<Props, State> {
         <View
           style={{
             width: '100%',
-            height: 150,
+            height: 140,
             flexDirection: 'row',
+            backgroundColor: 'white',
+            shadowColor: 'black',
+            shadowOpacity: 0.07,
+            marginTop: -10,
+            shadowRadius: 0,
+            shadowOffset: { width: 0, height: 1 },
           }}
         >
-          <Grid
-            style={{
-              padding: 20,
-              borderBottomWidth: 1,
-              borderStyle: 'solid',
-              borderBottomColor: UIColors.defaultBorderColor,
-            }}
-          >
+          <Grid style={{ paddingRight: 20, paddingLeft: 20, paddingBottom: 40 }}>
+            <View
+              style={{
+                alignItems: 'center',
+                height: 80,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+              }}
+            >
+              <View>
+                <Title title="assets" />
+              </View>
+              <View>
+                <TouchableOpacity onPress={this.goToAddTokenPage} >
+                  <TextLink>
+                    Add token
+                  </TextLink>
+                </TouchableOpacity>
+              </View>
+            </View>
             <Row>
-              <Image
-                source={pillarLogoSource}
-                style={{
-                  height: 35,
-                  width: 71,
-                }}
-              />
-            </Row>
-            <Row>
-              <Column
-                style={{
+              <Column style={{
                   alignSelf: 'flex-end',
                   justifyContent: 'space-between',
                 }}
@@ -271,29 +245,8 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           }
         >
-          <Grid>
-            <Row>
-              <Column>
-                <Title title="assets" />
-              </Column>
-              <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
-                <Button
-                  secondary
-                  noPadding
-                  marginTop="20px"
-                  marginBottom="20px"
-                  onPress={this.goToAddTokenPage}
-                  title="Add Token+"
-                />
-              </Column>
-            </Row>
-          </Grid>
           { Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating /> }
         </ScrollView>
-        <TransactionSentModal
-          isVisible={activeModalType === 'SEND_CONFIRMATION'}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
-        />
       </Container >
     );
   }

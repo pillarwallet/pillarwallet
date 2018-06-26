@@ -12,8 +12,7 @@ type Props = {
 };
 
 const Wrapper = styled.View`
-  align-self: flex-start;
-  flex-wrap: wrap;
+  height: 30px;
   margin: ${props => props.noMargin ? '0' : '20px 0'};
   width: ${props => props.maxWidth ? props.maxWidth : 'auto'};
   align-self: ${props => props.center ? 'center' : 'flex-start'};
@@ -27,8 +26,8 @@ const Text = styled.Text`
 `;
 
 const BlueDot = styled.Text`
-  color: ${baseColors.clearBlue};
-  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.extraExtraSmall};
   // TODO: replace or remove font Symbol, it causes issues on Android
   // font-family: Symbol;
   background-color: ${baseColors.brightSkyBlue};

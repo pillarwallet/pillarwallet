@@ -21,7 +21,6 @@ type Props = {
   name: string,
   token: string,
   amount: string,
-  color: string,
   onPress: Function,
   address: string,
   children?: React.Node,
@@ -30,16 +29,25 @@ type Props = {
     currency: string,
   },
   icon: string,
+  color: string
 }
 
-const BackgroundHolder = styled(View)`
+const BackgroundHolder = styled.View`
   flex: 1;
   flex-direction: row;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
   width: 100%;
   position: relative;
   backgroundColor: ${props => (props.cardColor)};
+`;
+
+const AmountWrapper = styled.View`
+  height: 40;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-left: 14px;
+  justify-content: flex-end;
 `;
 
 type State = {
@@ -82,7 +90,7 @@ export default class AssetCard extends React.Component<Props, State> {
     return (
       <View
         style={{
-          backgroundColor: baseColors.white,
+          backgroundColor: baseColors.snowWhite,
         }}
       >
         <TouchableWithoutFeedback
@@ -98,14 +106,17 @@ export default class AssetCard extends React.Component<Props, State> {
         >
           <Animated.View
             style={[{
-              height: 120,
-              marginBottom: 20,
+              height: 130,
+              marginBottom: 12,
             }]}
           >
             <BackgroundHolder cardColor={color || defautlCardColor}>
               <DetailsWrapper>
                 <Name>{name}</Name>
-                <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
+                <AmountWrapper>
+                  <Amount>{amount}</Amount>
+                  <AmountToken> {token}</AmountToken>
+                </AmountWrapper>
                 <FiatAmount>
                   {currencySymbol}{balanceInFiat.amount}
                 </FiatAmount>

@@ -3,7 +3,6 @@ import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import BackButton from 'components/BackButton';
-import { baseColors } from 'utils/variables';
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
@@ -42,7 +41,7 @@ const StackNavigatorConfig = {
   headerMode: 'screen',
   navigationOptions: ({ navigation }) => ({
     headerStyle: {
-      backgroundColor: baseColors.white,
+      backgroundColor: '#fff',
       borderBottomWidth: 0,
       elevation: 0,
     },

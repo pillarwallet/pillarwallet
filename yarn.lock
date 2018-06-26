@@ -5485,7 +5485,7 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
 
-fsevents@^1.2.2, fsevents@^1.2.3:
+fsevents@^1.0.0, fsevents@^1.2.2, fsevents@^1.2.3:
   version "1.2.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fsevents/-/fsevents-1.2.4.tgz#f41dcb1af2582af3692da36fc55cbd8e1041c426"
   dependencies:
@@ -10192,7 +10192,6 @@ react-native-easy-grid@0.1.17:
 react-native-expo-image-cache@^3.1.1:
   version "3.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-expo-image-cache/-/react-native-expo-image-cache-3.1.1.tgz#3138f49e214224bf18f6cec659be37f05c3f8aec"
-
   dependencies:
     babel-cli "^6.26.0"
     babel-preset-react-native "^4.0.0"

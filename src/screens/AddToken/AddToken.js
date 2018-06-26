@@ -36,13 +36,13 @@ tokenIcons.ETH = require('../../assets/images/tokens/ETH/icon.png');
 tokenIcons.EOS = require('../../assets/images/tokens/EOS/icon.png');
 
 const TokenName = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   font-weight: ${fontWeights.bold};
 `;
 
 const TokenSymbol = styled.Text`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   font-weight: ${fontWeights.light};
 `;
 
