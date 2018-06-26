@@ -32,7 +32,6 @@ import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants
 
 // TODO: change to actual token colors that is fetch with the asset
 const tokenColor = {};
-
 tokenColor.ETH = '#00985A';
 tokenColor.PLR = '#F26C08';
 tokenColor.QTM = '#0824FC';
@@ -43,6 +42,7 @@ tokenColor.BAT = '#FB106E';
 tokenColor.GNT = '#5A49A0';
 tokenColor.PPT = '#0655BB';
 tokenColor.SALT = '#DF62CD';
+
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
