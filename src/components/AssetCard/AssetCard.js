@@ -148,23 +148,23 @@ export default class AssetCard extends React.Component<Props, State> {
                   {currencySymbol}{balanceInFiat.amount}
                 </FiatAmount>
               </DetailsWrapper>
+              {!!tokenPNGIcons[token] &&
               <IconWrapper>
-                {!!tokenPNGIcons[token] &&
-                <IconCircle>
-                  <Image
-                    style={{
-                      alignSelf: 'flex-end',
-                      height: 24,
-                      width: 24,
-                      position: 'absolute',
-                      top: 8,
-                      left: 8,
-                    }}
-                    source={tokenPNGIcons[token]}
-                    resizeMode="contain"
-                  />
-                </IconCircle>}
-              </IconWrapper>
+                <IconCircle />
+                <Image
+                  style={{
+                    alignSelf: 'flex-end',
+                    height: 24,
+                    width: 24,
+                    position: 'absolute',
+                    top: 28,
+                    right: 28,
+                  }}
+                  source={tokenPNGIcons[token]}
+                  resizeMode="contain"
+                />
+              </IconWrapper>}
+
             </BackgroundHolder>
           </Animated.View>
         </TouchableWithoutFeedback>
