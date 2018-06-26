@@ -28,7 +28,6 @@ const window = Dimensions.get('window');
 const ModalWrapper = styled.View`
   position: absolute;
   width: 100%;
-  height: 100%;
   align-items: center;
   justify-content: center;
 `;
@@ -43,14 +42,12 @@ const ModalBackground = styled.View`
   padding: 20px;
   border-radius: 20;
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
-  height: ${window.height / 2};
   width: ${window.width - 40};
   overflow: hidden;
 `;
 
 const ModalContent = styled.View`
   flex: 1;
-  height: ${window.height};
   align-items: center;
   justify-content: space-around;
 `;
@@ -59,7 +56,7 @@ const ModalContent = styled.View`
 export default class PopModal extends React.Component<Props, State> {
   static defaultProps = {
     fullScreenComponent: null,
-    animationInTiming: 400,
+    animationInTiming: 300,
     animationOutTiming: 400,
     backdropTransitionInTiming: 300,
     backdropTransitionOutTiming: 300,
