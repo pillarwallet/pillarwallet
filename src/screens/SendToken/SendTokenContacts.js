@@ -97,7 +97,7 @@ const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
 `;
 
 const FooterWrapper = styled.View`
-  flexDirection: row;
+  flex-direction: row;
   justify-content: flex-end;
   align-items: center;
   padding: 0 20px;
