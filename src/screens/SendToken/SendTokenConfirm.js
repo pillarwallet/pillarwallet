@@ -1,31 +1,39 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView as RNKeyboardAvoidingView, Image as RNImage } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import FastImage from 'react-native-fast-image';
+import { utils } from 'ethers';
 import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { SubTitle } from 'components/Typography';
 import Button from 'components/Button';
 import ModalScreenHeader from 'components/ModalScreenHeader';
-import { baseColors, fontSizes } from 'utils/variables';
-import type { NavigationScreenProp } from 'react-navigation';
+import SlideModal from 'components/Modals/SlideModal';
+import ModalHeader from 'components/ModalHeader';
+import CheckPin from 'components/CheckPin';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
-import { utils } from 'ethers';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { baseColors, fontSizes } from 'utils/variables';
+import { delay } from 'utils/common';
+import SendTokenHeader from './SendTokenHeader';
 
 const imageSend = require('assets/images/confirm-send.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   sendAsset: Function,
+  appSettings: Object,
+  resetIncorrectPassword: () => Function,
 }
 
 type State = {
   transactionPayload: Object,
   assetData: Object,
   isSubmitted: boolean,
+  showCheckPinModal: boolean,
 }
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
@@ -37,7 +45,7 @@ const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
 `;
 
 const FooterWrapper = styled.View`
-  flexDirection: row;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   padding: 0 20px;
@@ -47,6 +55,11 @@ const FooterWrapper = styled.View`
 const LabeledRow = styled.View`
   margin: 10px 0;
 `;
+
+const CheckPinModal = styled(SlideModal)`
+  align-items: flex-start;
+`;
+
 
 // EXTRA TO TYPOGRAPHY ONCE ALL AGREED
 const Label = styled.Text`
@@ -62,7 +75,7 @@ const Value = styled.Text`
   font-size: ${fontSizes.medium}
 `;
 
-const Image = styled(FastImage)`
+const Image = styled(RNImage)`
   width: 100px;
   height: 100px;
 `;
@@ -84,18 +97,45 @@ class SendTokenContacts extends React.Component<Props, State> {
       transactionPayload,
       assetData,
       isSubmitted: false,
+      showCheckPinModal: false,
     };
   }
 
   handleFormSubmit = () => {
-    this.props.sendAsset(this.state.transactionPayload);
-    this.setState({
-      isSubmitted: true,
-    });
+    const needToCheckPinCode = this.isNeedToCheckPinCode(this.props.appSettings);
+    if (!needToCheckPinCode) {
+      this.makeTransaction();
+      return;
+    }
+    this.setState({ showCheckPinModal: true });
   };
+
+  isNeedToCheckPinCode(appSettings: Object): boolean {
+    let { requestPinForTransaction } = appSettings;
+    if (requestPinForTransaction === undefined) {
+      requestPinForTransaction = true;
+    }
+    return requestPinForTransaction;
+  }
 
   handleBackNavigation = () => {
     this.props.navigation.dismiss();
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal: false });
+  };
+
+  makeTransaction = () => {
+    this.props.sendAsset(this.state.transactionPayload);
+    this.setState({
+      showCheckPinModal: false,
+    }, async () => {
+      await delay(400);
+      this.setState({ isSubmitted: true });
+    });
   };
 
   render() {
@@ -107,6 +147,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         txFeeInWei,
       },
       isSubmitted,
+      showCheckPinModal,
     } = this.state;
     return (
       <React.Fragment>
@@ -142,13 +183,29 @@ class SendTokenContacts extends React.Component<Props, State> {
           </FooterWrapper>
         </KeyboardAvoidingView>
         <TransactionSentModal isVisible={isSubmitted} onModalHide={this.props.navigation.dismiss} />
+        <CheckPinModal
+          isVisible={showCheckPinModal}
+          title="confirm"
+          fullScreenComponent={(
+            <Container>
+              <ModalHeader onClose={this.handleCheckPinModalClose} />
+              <CheckPin onPinValid={this.makeTransaction} />
+            </Container>
+          )}
+        />
+
       </React.Fragment>
     );
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
+const mapStateToProps = ({ appSettings: { data: appSettings } }) => ({
+  appSettings,
 });
 
-export default connect(null, mapDispatchToProps)(SendTokenContacts);
+const mapDispatchToProps = (dispatch) => ({
+  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);

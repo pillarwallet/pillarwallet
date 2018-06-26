@@ -84,7 +84,7 @@ class Profile extends React.Component<Props, State> {
 
     let { requestPinForTransaction } = props.appSettings;
     if (requestPinForTransaction === undefined) {
-      requestPinForTransaction = false;
+      requestPinForTransaction = true;
     }
 
     this.state = {
