@@ -54,7 +54,7 @@ type State = {
   cardIcon: string,
 }
 
-const defautlCardColor = '#ACBCCD';
+const defaultCardColor = '#ACBCCD';
 
 export default class AssetCard extends React.Component<Props, State> {
   state = {
@@ -108,7 +108,7 @@ export default class AssetCard extends React.Component<Props, State> {
               marginBottom: 12,
             }]}
           >
-            <BackgroundHolder cardColor={color || defautlCardColor}>
+            <BackgroundHolder cardColor={color || defaultCardColor}>
               <DetailsWrapper>
                 <Name>{name}</Name>
                 <AmountWrapper>
