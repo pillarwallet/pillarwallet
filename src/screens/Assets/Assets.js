@@ -137,6 +137,12 @@ class AssetsScreen extends React.Component<Props, State> {
         const balance = asset.balance || 0;
         const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
         const displayAmount = formatMoney(balance, 4);
+
+        // @TODO: remove this, use the color that the backend returns
+        const cardColor = assetsMedia[symbol] && assetsMedia[symbol].bgColor
+          ? assetsMedia[symbol].bgColor
+          : tokenColor[symbol];
+
         const assetData = {
           name: name || symbol,
           token: symbol,
@@ -146,6 +152,7 @@ class AssetsScreen extends React.Component<Props, State> {
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           address: wallet.address,
           icon: assetsMedia[symbol] ? assetsMedia[symbol].icon : assetsMedia[ETH].icon,
+          color: cardColor,
         };
         return (
           <Transition key={index} shared={assetData.name}>
@@ -155,8 +162,7 @@ class AssetsScreen extends React.Component<Props, State> {
               token={assetData.token}
               amount={assetData.amount}
               balanceInFiat={assetData.balanceInFiat}
-              // color={assetData.color}
-              color={tokenColor[assetData.token]}
+              color={assetData.color}
               onPress={() => this.handleCardTap(assetData)}
               address={assetData.address}
               icon={assetData.icon}
