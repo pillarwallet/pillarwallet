@@ -39,6 +39,20 @@ const activeModalResetState = {
   },
 };
 
+// TODO: change to actual token colors that is fetch with the asset
+const tokenColor = {};
+
+tokenColor.ETH = '#00985A';
+tokenColor.PLR = '#F26C08';
+tokenColor.QTM = '#0824FC';
+tokenColor.OMG = '#008FB7';
+tokenColor.ICX = '#DA003D';
+tokenColor.STORJ = '#0D7EC6';
+tokenColor.BAT = '#FB106E';
+tokenColor.GNT = '#5A49A0';
+tokenColor.PPT = '#0655BB';
+tokenColor.SALT = '#DF62CD';
+
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -96,9 +110,9 @@ class AssetsScreen extends React.Component<Props, State> {
 
     this.fetchAssetsMedia();
   }
-
+  // TODO: change to the asset icon that is fetched with the asset
   fetchAssetsMedia = async () => {
-    const response = await fetch('https://api.myjson.com/bins/dqsvy');
+    const response = await fetch('https://api.myjson.com/bins/19uwn2');
     const json = await response.json();
     this.setState({
       assetsMedia: json,
@@ -153,7 +167,7 @@ class AssetsScreen extends React.Component<Props, State> {
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           color: assetColor,
           address: wallet.address,
-          background: assetsMedia[symbol] ? assetsMedia[symbol].background : assetsMedia[ETH].background,
+          icon: assetsMedia[symbol] ? assetsMedia[symbol].icon : assetsMedia[ETH].icon,
         };
         return (
           <Transition key={index} shared={assetData.name}>
@@ -163,10 +177,11 @@ class AssetsScreen extends React.Component<Props, State> {
               token={assetData.token}
               amount={assetData.amount}
               balanceInFiat={assetData.balanceInFiat}
-              color={assetData.color}
+              // color={assetData.color}
+              color={tokenColor[assetData.token]}
               onPress={() => this.handleCardTap(assetData)}
               address={assetData.address}
-              backgroundUri={assetData.background}
+              icon={assetData.icon}
             />
           </Transition>
         );
