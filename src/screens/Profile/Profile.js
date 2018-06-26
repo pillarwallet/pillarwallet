@@ -81,12 +81,7 @@ type State = {
 class Profile extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-
-    let { requestPinForTransaction } = props.appSettings;
-    if (requestPinForTransaction === undefined) {
-      requestPinForTransaction = true;
-    }
-
+    const { requestPinForTransaction = true } = props.appSettings;
     this.state = {
       requestPinForTransaction,
       showCheckPinModal: false,
