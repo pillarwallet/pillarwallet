@@ -129,8 +129,8 @@ export default class AssetCard extends React.Component<Props, State> {
                     height: 24,
                     width: 24,
                     position: 'absolute',
-                    top: 28,
-                    right: 28,
+                    top: 27,
+                    right: 22,
                   }}
                   uri={cardIcon}
                   resizeMode="contain"
