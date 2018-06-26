@@ -58,16 +58,16 @@ type State = {
 
 const tokenPNGIcons = {};
 
-tokenPNGIcons.ETH = require('../../assets/images/tokens/ETH/ETH.png');
-tokenPNGIcons.PLR = require('../../assets/images/tokens/PLR/PLR.png');
-tokenPNGIcons.QTM = require('../../assets/images/tokens/QTM/QTUM.png');
-tokenPNGIcons.OMG = require('../../assets/images/tokens/OMG/OMG.png');
-tokenPNGIcons.ICX = require('../../assets/images/tokens/ICX/ICX.png');
-tokenPNGIcons.STORJ = require('../../assets/images/tokens/STORJ/icon.png');
-tokenPNGIcons.BAT = require('../../assets/images/tokens/BAT/BAT.png');
-tokenPNGIcons.GNT = require('../../assets/images/tokens/GNT/GNT.png');
-tokenPNGIcons.PPT = require('../../assets/images/tokens/PPT/PPT.png');
-tokenPNGIcons.SALT = require('../../assets/images/tokens/SALT/SALT.png');
+tokenPNGIcons.ETH = require('assets/images/tokens/ETH/ETH.png');
+tokenPNGIcons.PLR = require('assets/images/tokens/PLR/PLR.png');
+tokenPNGIcons.QTM = require('assets/images/tokens/QTM/QTUM.png');
+tokenPNGIcons.OMG = require('assets/images/tokens/OMG/OMG.png');
+tokenPNGIcons.ICX = require('assets/images/tokens/ICX/ICX.png');
+tokenPNGIcons.STORJ = require('assets/images/tokens/STORJ/icon.png');
+tokenPNGIcons.BAT = require('assets/images/tokens/BAT/BAT.png');
+tokenPNGIcons.GNT = require('assets/images/tokens/GNT/GNT.png');
+tokenPNGIcons.PPT = require('assets/images/tokens/PPT/PPT.png');
+tokenPNGIcons.SALT = require('assets/images/tokens/SALT/SALT.png');
 
 export default class AssetCard extends React.Component<Props, State> {
   state = {
