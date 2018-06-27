@@ -2751,9 +2751,9 @@ blob-polyfill@2.0.20171115:
   version "2.0.20171115"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blob-polyfill/-/blob-polyfill-2.0.20171115.tgz#8e5c2659dda443365fafd6dd421517653f1d5ffd"
 
-blockchain-explorer-sdk@^0.1.0-60:
-  version "0.1.0-60"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blockchain-explorer-sdk/-/blockchain-explorer-sdk-0.1.0-60.tgz#a51974f449cc1543c1c8b7f8e9f90da7b25c09c2"
+blockchain-explorer-sdk@^0.1.99:
+  version "0.1.99"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blockchain-explorer-sdk/-/blockchain-explorer-sdk-0.1.99.tgz#6aee1c683281fe08fbea6fae967417d9cd1349cf"
   dependencies:
     convict "^4.2.0"
     dotenv "^5.0.1"

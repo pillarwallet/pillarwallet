@@ -124,7 +124,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   makeTransaction = () => {
-    this.props.sendAsset(this.state.transactionPayload);
+    const { transactionPayload, assetData: { token } } = this.state;
+    this.props.sendAsset({ ...transactionPayload, symbol: token });
     this.setState({
       showCheckPinModal: false,
     }, async () => {
