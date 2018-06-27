@@ -189,9 +189,9 @@ class Profile extends React.Component<Props, State> {
     this.setState({ value });
   };
 
-  handleChangeRequestPinForTransaction = () => {
+  handleChangeRequestPinForTransaction = (value) => {
     const { changeRequestPinForTransaction } = this.props;
-    changeRequestPinForTransaction(!this.state.requestPinForTransaction);
+    changeRequestPinForTransaction(value);
     this.setState({
       requestPinForTransaction: !this.state.requestPinForTransaction,
       showCheckPinModal: false,

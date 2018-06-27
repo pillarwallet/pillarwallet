@@ -107,8 +107,6 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
-const tabNavigationIcon = (iconName, focused) => `${iconName}${focused ? '' : '-outline'}`;
-
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
