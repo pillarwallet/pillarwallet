@@ -128,7 +128,7 @@ class Profile extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { requestPinForTransaction = true } = props.appSettings;
+    const { requestPinForTransaction = true } = props.appSettings || true;
     this.state = {
       visibleModal: null,
       value: {},
