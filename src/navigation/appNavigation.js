@@ -5,7 +5,6 @@ import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing, Platform, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 
 // screens
@@ -117,28 +116,48 @@ const tabNavigation = createBottomTabNavigator(
       screen: assetsFlow,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-albums', focused)} size={25} color={tintColor} />
-          // <Image style={{width: 22, height: 22, tintColor: focused ? tintColor : '#b2b8bf',}} source={iconWallet}/>
+          <Image
+            style={{
+            width: 22,
+            height: 22,
+            tintColor: focused ? tintColor : '#b2b8bf',
+          }}
+            source={iconWallet}
+          />
         ),
+        tabBarLabel: 'Assets',
       }),
     },
     [ICO]: {
       screen: ICOScreen,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-pricetags', focused)} size={25} color={tintColor} />
-          // <Image style={{ width: 22, height: 22, tintColor: focused ? tintColor : '#b2b8bf' }} source={iconIco} />
+          <Image
+            style={{
+              width: 22,
+              height: 22,
+              tintColor: focused ? tintColor : '#b2b8bf',
+            }}
+            source={iconIco}
+          />
         ),
-        tabBarLabel: 'ICO MARKETPLACE',
+        tabBarLabel: 'Ico marketplace',
       }),
     },
     [PROFILE]: {
       screen: ProfileScreen,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-contact', focused)} size={25} color={tintColor} />
-          // <Image style={{ width: 22, height: 22, tintColor: focused ? tintColor : '#b2b8bf' }} source={iconProfile} />
+          <Image
+            style={{
+              width: 22,
+              height: 22,
+              tintColor: focused ? tintColor : '#b2b8bf',
+            }}
+            source={iconProfile}
+          />
         ),
+        tabBarLabel: 'Profile',
       }),
     },
   }, {
