@@ -14,10 +14,10 @@ import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { SubTitle, TextLink, Paragraph } from 'components/Typography';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
-import SendTokenHeader from './SendTokenHeader';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -230,11 +230,10 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ icon, currency: token });
     return (
       <React.Fragment>
-        <SendTokenHeader
-          onBack={this.props.navigation.goBack}
-          dismiss={this.props.navigation.dismiss}
-          isFirstScreen
-          rightLabelText="STEP 1 OF 3"
+        <ModalScreenHeader
+          onClose={this.props.navigation.dismiss}
+          rightLabelText="step 1 of 3"
+          title="send"
         />
         <Container>
           <Wrapper regularPadding>
@@ -254,7 +253,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             </ActionsWrapper>
           </Wrapper>
         </Container>
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
             <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />
