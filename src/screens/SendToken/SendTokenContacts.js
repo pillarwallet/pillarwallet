@@ -190,7 +190,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </Wrapper>
         </Container>
         {qrScannerComponent}
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />
           </FooterWrapper>

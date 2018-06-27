@@ -172,7 +172,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             </LabeledRow>
           </Wrapper>
         </Container>
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
             <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
