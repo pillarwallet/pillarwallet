@@ -14,13 +14,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import { isValidETHAddress } from 'utils/validators';
-import type { TransactionPayload } from 'models/Transaction';
-import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: Function,
 }
 
 type State = {
@@ -107,7 +104,7 @@ const FooterWrapper = styled.View`
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
     const assetData = this.props.navigation.getParam('assetData', {});
@@ -200,8 +197,4 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
-});
-
-export default connect(null, mapDispatchToProps)(SendTokenContacts);
+export default SendTokenContacts;
