@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native/index';
 import KeyPad from 'components/KeyPad';
-import { Wrapper } from 'components/Layout';
+import { Wrapper, Container } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import PinDots from './PinDots';
@@ -88,9 +88,9 @@ export default class PinCode extends React.Component<Props, State> {
 
     return (
       <PageWrapper>
-        <Wrapper>
+        <Wrapper regularPadding>
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
-          {showNewPincodeText &&
+          {true &&
             <Paragraph
               light
               center
