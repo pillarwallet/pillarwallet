@@ -3,7 +3,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
-import { KeyboardAvoidingView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
