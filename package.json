@@ -110,7 +110,7 @@
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
     "bignumber.js": "^7.2.1",
-    "blockchain-explorer-sdk": "^0.1.0-60",
+    "blockchain-explorer-sdk": "^0.1.99",
     "browserify-zlib": "~0.1.4",
     "cryptocompare": "^0.5.0",
     "dns.js": "^1.0.1",
