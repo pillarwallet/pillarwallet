@@ -128,7 +128,7 @@ class Profile extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { requestPinForTransaction = true } = props.appSettings || true;
+    const { requestPinForTransaction = true } = props;
     this.state = {
       visibleModal: null,
       value: {},
@@ -459,8 +459,7 @@ class Profile extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { data: wallet },
-  appSettings: { data: { requestPinForTransaction } },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { requestPinForTransaction, baseFiatCurrency } },
 }) => ({
   user,
   wallet,
