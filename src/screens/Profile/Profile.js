@@ -16,11 +16,9 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
-import ModalHeader from 'components/ModalHeader';
-
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
@@ -130,11 +128,7 @@ class Profile extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    let { requestPinForTransaction } = props.appSettings;
-    if (requestPinForTransaction === undefined) {
-      requestPinForTransaction = true;
-    }
-
+    const { requestPinForTransaction = true } = props.appSettings;
     this.state = {
       visibleModal: null,
       value: {},
@@ -431,8 +425,8 @@ class Profile extends React.Component<Props, State> {
               title="confirm"
               fullScreenComponent={(
                 <Container>
-                  <ModalHeader onClose={this.handleCheckPinModalClose} />
-                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction()} />
+                  <ModalScreenHeader onClose={this.handleCheckPinModalClose} />
+                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
                 </Container>
               )}
             />

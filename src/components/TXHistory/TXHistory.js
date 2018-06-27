@@ -204,7 +204,7 @@ class TXHistory extends React.Component<Props, State> {
         >
           <ContentWrapper>
             <Holder>
-              <Row customPadding="2px 0" size="0 0 40px">
+              <Row size="0 0 30px">
                 <Column>
                   <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
                 </Column>
@@ -212,20 +212,20 @@ class TXHistory extends React.Component<Props, State> {
                   <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
                 </Column>
               </Row>
-              <Row customPadding="2px 0" size="0 0 40px">
+              <Row size="0 0 30px">
                 <Column><Label>Date</Label></Column>
                 <Column>
                   <Text>{selectedTransaction.date}</Text>
                 </Column>
               </Row>
 
-              <Row customPadding="2px 0" size="0 0 40px">
+              <Row size="0 0 30px">
                 <Column><Label>Recipient</Label></Column>
                 <Column>
                   <Text>{selectedTransaction.recipient}</Text>
                 </Column>
               </Row>
-              <Row customPadding="2px 0" size="0 0 40px">
+              <Row size="0 0 30px">
                 <Column><Label>Transaction fee</Label></Column>
                 <Column>
                   <Text>{selectedTransaction.fee} ETH</Text>
@@ -240,13 +240,13 @@ class TXHistory extends React.Component<Props, State> {
                   </Column>
                 </Row>
               }
-              <Row customPadding="2px 0" size="0 0 40px">
+              <Row size="0 0 30px">
                 <Column><Label>Confirmations</Label></Column>
                 <Column>
                   <Text>{selectedTransaction.confirmations}</Text>
                 </Column>
               </Row>
-              <Row customPadding="2px 0" size="0 0 40px">
+              <Row size="0 0 30px">
                 <Column><Label>Status</Label></Column>
                 <Column>
                   <Text>{selectedTransaction.status}</Text>

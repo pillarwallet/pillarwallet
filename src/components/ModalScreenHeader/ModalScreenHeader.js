@@ -7,13 +7,13 @@ import { Header as NBHeader, Left as NBLeft, Right as NBRight } from 'native-bas
 import { Label } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
-
+import { noop } from 'utils/common';
 
 type Props = {
-  onBack: Function,
-  dismiss: Function,
-  isFirstScreen?: boolean,
-  rightLabelText: string,
+  onBack?: Function,
+  onClose: Function,
+  title?: string,
+  rightLabelText?: string,
 }
 
 const Header = styled(NBHeader)`
@@ -46,23 +46,23 @@ const CloseButton = styled(ButtonIcon)`
   bottom: 3px;
 `;
 
-const SendTokenAmountHeader = (props: Props) => {
+const ModalScreenHeader = (props: Props) => {
   const {
     onBack,
-    dismiss,
-    rightLabelText,
-    isFirstScreen,
+    onClose,
+    title,
+    rightLabelText = '',
   } = props;
 
   return (
     <Header>
       <Left>
-        <TouchableWithoutFeedback onPress={() => onBack(null)}>
+        <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            {!isFirstScreen
+            {onBack
               && <BackIcon icon="arrow-back" onPress={() => onBack(null)} color={UIColors.primary} fontSize={28} />
             }
-            <Title title="send" />
+            {title && <Title title={title} />}
           </View>
         </TouchableWithoutFeedback>
       </Left>
@@ -70,7 +70,7 @@ const SendTokenAmountHeader = (props: Props) => {
         <Label>{rightLabelText.toUpperCase()}</Label>
         <CloseButton
           icon="close"
-          onPress={dismiss}
+          onPress={onClose}
           fontSize={36}
           color={baseColors.darkGray}
         />
@@ -79,4 +79,4 @@ const SendTokenAmountHeader = (props: Props) => {
   );
 };
 
-export default SendTokenAmountHeader;
+export default ModalScreenHeader;

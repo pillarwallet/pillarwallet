@@ -121,7 +121,7 @@ export default class SlideModal extends React.Component<Props, State> {
                 icon="close"
                 onPress={this.hideModal}
                 fontSize={36}
-                color={baseColors.electricBlue}
+                color={baseColors.darkGray}
               />
             </ModalHeader>
             <ModalContent>
