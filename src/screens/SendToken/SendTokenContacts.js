@@ -2,7 +2,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
-import { connect } from 'react-redux';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes } from 'utils/variables';
