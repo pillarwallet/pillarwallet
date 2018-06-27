@@ -150,25 +150,19 @@ class NewProfile extends React.Component<Props, State> {
   render() {
     const { value } = this.state;
     return (
-      <KeyboardAvoidingView
-        behavior="position"
-        keyboardVerticalOffset={-100}
-        enabled
-      >
-        <Container>
-          <ScrollWrapper regularPadding>
-            <Title title="create profile" />
-            <Paragraph>Fill out your profile.</Paragraph>
-            <LoginForm
-              innerRef={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleChange}
-            />
-          </ScrollWrapper>
-        </Container>
-      </KeyboardAvoidingView>
+      <Container>
+        <ScrollWrapper regularPadding>
+          <Title title="create profile" />
+          <Paragraph>Fill out your profile.</Paragraph>
+          <LoginForm
+            innerRef={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            value={value}
+            onChange={this.handleChange}
+          />
+        </ScrollWrapper>
+      </Container>
     );
   }
 }
