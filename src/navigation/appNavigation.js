@@ -5,6 +5,8 @@ import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing, Platform, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -106,50 +108,40 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
+const tabNavigationIcon = (iconName, focused) => `${iconName}${focused ? '' : '-outline'}`;
+
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
-    [ASSETS]: assetsFlow,
-    [ICO]: ICOScreen,
-    [PROFILE]: ProfileScreen,
+    [ASSETS]: {
+      screen: assetsFlow,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-albums', focused)} size={25} color={tintColor} />
+          // <Image style={{width: 22, height: 22, tintColor: focused ? tintColor : '#b2b8bf',}} source={iconWallet}/>
+        ),
+      }),
+    },
+    [ICO]: {
+      screen: ICOScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-pricetags', focused)} size={25} color={tintColor} />
+          // <Image style={{ width: 22, height: 22, tintColor: focused ? tintColor : '#b2b8bf' }} source={iconIco} />
+        ),
+        tabBarLabel: 'ICO MARKETPLACE',
+      }),
+    },
+    [PROFILE]: {
+      screen: ProfileScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Ionicons name={tabNavigationIcon('ios-contact', focused)} size={25} color={tintColor} />
+          // <Image style={{ width: 22, height: 22, tintColor: focused ? tintColor : '#b2b8bf' }} source={iconProfile} />
+        ),
+      }),
+    },
   }, {
-    navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, tintColor }) => {
-        const { routeName } = navigation.state;
-
-        switch (routeName) {
-          case ASSETS:
-            return (<Image
-              style={{
-                width: 22,
-                height: 22,
-                tintColor: focused ? tintColor : '#b2b8bf',
-              }}
-              source={iconWallet}
-            />);
-          case ICO:
-            return (<Image
-              style={{
-                width: 22,
-                height: 22,
-                tintColor: focused ? tintColor : '#b2b8bf',
-              }}
-              source={iconIco}
-            />);
-          case PROFILE:
-            return (<Image
-              style={{
-                width: 22,
-                height: 22,
-                tintColor: focused ? tintColor : '#b2b8bf',
-              }}
-              source={iconProfile}
-            />);
-          default:
-            return '';
-        }
-      },
-    }),
     tabBarOptions: {
       activeTintColor: UIColors.primary,
       inactiveTintColor: 'gray',

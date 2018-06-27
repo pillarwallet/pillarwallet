@@ -130,11 +130,16 @@ class Profile extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    let { requestPinForTransaction } = props.appSettings;
+    if (requestPinForTransaction === undefined) {
+      requestPinForTransaction = true;
+    }
+
     this.state = {
       visibleModal: null,
       value: {},
       selectedCurrency: props.baseFiatCurrency || defaultFiatCurrency,
-      requestPinForTransaction: props.requestPinForTransaction || false,
+      requestPinForTransaction,
       showCheckPinModal: false,
     };
   }
