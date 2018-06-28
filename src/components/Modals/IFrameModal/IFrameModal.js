@@ -65,15 +65,15 @@ export default class IFrameModal extends React.Component<Props, State> {
     } = this.props;
 
     const { isIFrameLoaded } = this.state;
-    const animationInTiming = 800;
-    const animationOutTiming = 400;
+    const animationInTiming = 300;
+    const animationOutTiming = 300;
     return (
       <Modal
         isVisible={isVisible}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}
-        animationIn="bounceInUp"
-        animationOut="bounceOutDown"
+        animationIn="fadeIn"
+        animationOut="fadeOut"
         onBackButtonPress={modalHide}
         onModalHide={this.handleModalClose}
         style={{
