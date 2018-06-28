@@ -28,13 +28,11 @@ const ModalHeader = styled.View`
   width: 100%;
   align-items: center;
   justify-content: flex-end;
-  padding: 10px 20px 0 20px;
+  padding: 0 10px;
 `;
 
 const CloseButton = styled(ButtonIcon)`
   position: relative;
-  top: -15px;
-  right: -10px;
 `;
 
 export default class IFrameModal extends React.Component<Props, State> {
