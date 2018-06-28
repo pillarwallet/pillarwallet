@@ -52,7 +52,7 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 // models
 import type { Assets } from 'models/Asset';
 
-import { UIColors } from 'utils/variables';
+import { UIColors, baseColors } from 'utils/variables';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
@@ -118,7 +118,7 @@ const tabNavigation = createBottomTabNavigator(
             style={{
             width: 22,
             height: 22,
-            tintColor: focused ? tintColor : '#b2b8bf',
+            tintColor: focused ? tintColor : baseColors.mediumGray,
           }}
             source={iconWallet}
           />
@@ -134,7 +134,7 @@ const tabNavigation = createBottomTabNavigator(
             style={{
               width: 22,
               height: 22,
-              tintColor: focused ? tintColor : '#b2b8bf',
+              tintColor: focused ? tintColor : baseColors.mediumGray,
             }}
             source={iconIco}
           />
@@ -150,7 +150,7 @@ const tabNavigation = createBottomTabNavigator(
             style={{
               width: 22,
               height: 22,
-              tintColor: focused ? tintColor : '#b2b8bf',
+              tintColor: focused ? tintColor : baseColors.mediumGray,
             }}
             source={iconProfile}
           />
