@@ -73,7 +73,6 @@ type Props = {
   baseFiatCurrency: ?string,
   requestPinForTransaction: ?boolean,
   wallet: Object,
-  appSettings: Object,
   changeRequestPinForTransaction: (value: boolean) => Function,
   resetIncorrectPassword: () => Function,
 }
@@ -139,14 +138,12 @@ class Profile extends React.Component<Props, State> {
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.appSettings) {
-      const { requestPinForTransaction } = nextProps.appSettings;
-      if (requestPinForTransaction !== undefined && requestPinForTransaction !== prevState.requestPinForTransaction) {
-        return {
-          ...prevState,
-          requestPinForTransaction,
-        };
-      }
+    const { requestPinForTransaction } = nextProps;
+    if (requestPinForTransaction !== undefined && requestPinForTransaction !== prevState.requestPinForTransaction) {
+      return {
+        ...prevState,
+        requestPinForTransaction,
+      };
     }
     return null;
   }
