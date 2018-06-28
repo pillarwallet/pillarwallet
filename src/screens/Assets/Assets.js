@@ -204,23 +204,23 @@ class AssetsScreen extends React.Component<Props, State> {
         <View
           style={{
             width: '100%',
-            height: 140,
             flexDirection: 'row',
             backgroundColor: 'white',
             shadowColor: 'black',
             shadowOpacity: 0.07,
-            marginTop: -10,
             shadowRadius: 0,
             shadowOffset: { width: 0, height: 1 },
           }}
         >
-          <Grid style={{ paddingRight: 20, paddingLeft: 20, paddingBottom: 40 }}>
+          <View style={{ padding: 20, flex: 1 }}>
             <View
               style={{
                 alignItems: 'center',
-                height: 80,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
+                marginBottom: 20,
+                marginTop: 10,
+                flex: 1,
               }}
             >
               <View>
@@ -234,16 +234,8 @@ class AssetsScreen extends React.Component<Props, State> {
                 </TouchableOpacity>
               </View>
             </View>
-            <Row>
-              <Column style={{
-                  alignSelf: 'flex-end',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <PortfolioBalance />
-              </Column>
-            </Row>
-          </Grid>
+            <PortfolioBalance />
+          </View>
         </View>
         <ScrollView
           contentContainerStyle={{ paddingHorizontal: 20 }}
