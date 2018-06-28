@@ -21,6 +21,7 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
+  margin-top: 20px;
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
