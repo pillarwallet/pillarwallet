@@ -76,9 +76,9 @@ if (Platform.OS === 'ios') {
   };
 }
 
-const iconWallet = require('../assets/icons/icon_wallet.png');
-const iconProfile = require('../assets/icons/icon_profile.png');
-const iconIco = require('../assets/icons/icon_ico.png');
+const iconWallet = require('assets/icons/icon_wallet.png');
+const iconProfile = require('assets/icons/icon_profile.png');
+const iconIco = require('assets/icons/icon_ico.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
