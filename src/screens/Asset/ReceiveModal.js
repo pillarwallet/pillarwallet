@@ -1,14 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Clipboard, Dimensions } from 'react-native';
+import { Clipboard } from 'react-native';
 import { SubTitle, TextLink, Label } from 'components/Typography';
 import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import QRCode from 'components/QRCode';
-
-const window = Dimensions.get('window');
 
 type Props = {
   address: string,
@@ -33,11 +31,6 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: 0 10px;
   width: 100%;
-`;
-
-const ContentWrapper = styled.View`
-  height: ${window.height / 2};
-  justify-content: space-around;
 `;
 
 const TouchableOpacity = styled.TouchableOpacity`
@@ -98,20 +91,24 @@ export default class ReceiveModal extends React.Component<Props, State> {
     return (
       <SlideModal title="receive" isVisible={isVisible} onModalHide={onModalHide}>
         <SubTitle>Share your wallet address to receive {tokenName} ({token})</SubTitle>
-        <ContentWrapper>
-          <Holder>
-            <QRCode value={address} blockHeight={5} />
-            <Button title="Share Address" onPress={this.handleAddressShare} />
-          </Holder>
-          <Holder>
-            <FooterWrapper>
-              <Label color={baseColors.slateBlack}>{address}</Label>
-              <TouchableOpacity onPress={this.handleAddressClipboardSet}>
-                <TextLink>Copy wallet address to clipboard</TextLink>
-              </TouchableOpacity>
-            </FooterWrapper>
-          </Holder>
-        </ContentWrapper>
+        <Holder>
+          <QRCode value={address} blockHeight={5} />
+          <Button
+            style={{
+              marginBottom: 20,
+            }}
+            title="Share Address"
+            onPress={this.handleAddressShare}
+          />
+        </Holder>
+        <Holder>
+          <FooterWrapper>
+            <Label color={baseColors.slateBlack}>{address}</Label>
+            <TouchableOpacity onPress={this.handleAddressClipboardSet}>
+              <TextLink>Copy wallet address to clipboard</TextLink>
+            </TouchableOpacity>
+          </FooterWrapper>
+        </Holder>
       </SlideModal>
     );
   }
