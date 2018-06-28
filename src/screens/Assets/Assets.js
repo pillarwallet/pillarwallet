@@ -246,7 +246,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Grid>
         </View>
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20 }}
+          contentContainerStyle={{ padding: 20 }}
           refreshControl={
             <RefreshControl
               refreshing={false}
