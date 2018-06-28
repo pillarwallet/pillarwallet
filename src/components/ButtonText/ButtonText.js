@@ -27,8 +27,8 @@ const ButtonText = (props: Props) => {
       background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
     >
       <View style={{
-        padding: 12,
         alignSelf: 'center',
+        margin: 0,
       }}
       >
         <ButtonLabel>{buttonText}</ButtonLabel>
