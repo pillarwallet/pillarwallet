@@ -132,7 +132,9 @@ class AssetScreen extends React.Component<Props, State> {
       assets,
       wallet,
     } = this.props;
-    const history = this.props.history.filter(({ asset }) => asset === assetData.token);
+    const history = this.props.history
+      .filter(({ asset }) => asset === assetData.token)
+      .sort((a, b) => b.timestamp - a.timestamp);
     return (
       <Container>
         <ScrollWrapper
