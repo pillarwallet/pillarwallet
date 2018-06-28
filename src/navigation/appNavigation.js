@@ -172,7 +172,8 @@ const tabNavigation = createBottomTabNavigator(
         shadowOpacity: 0.8,
         shadowRadius: 2,
         borderTopColor: 'transparent',
-        padding: 5,
+        paddingTop: 5,
+        paddingBottom: 5,
         height: 66,
       },
       labelStyle: {
