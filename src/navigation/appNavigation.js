@@ -139,7 +139,7 @@ const tabNavigation = createBottomTabNavigator(
             source={iconIco}
           />
         ),
-        tabBarLabel: 'Ico marketplace',
+        tabBarLabel: 'Marketplace',
       }),
     },
     [PROFILE]: {
