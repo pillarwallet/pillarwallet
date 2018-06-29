@@ -20,7 +20,7 @@ const mockWallet: Object = {
   address: '0x9c',
 };
 
-const mockTranscation: Object = {
+const mockTransaction: Object = {
   gasLimit: 2000000,
   amount: 0.5,
   address: '000x124',
@@ -75,7 +75,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS_STATE, payload: FETCHED },
     ];
 
-    return store.dispatch(sendAssetAction(mockTranscation))
+    return store.dispatch(sendAssetAction(mockTransaction))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
