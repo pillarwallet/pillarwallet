@@ -182,8 +182,7 @@ class AssetScreen extends React.Component<Props, State> {
               />
             </Transition>
             <Paragraph light>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              Reiciendis cum recusandae neque numquam corporis quibusdam tenetur expedita tempora aut harum.
+              {assetData.description}
             </Paragraph>
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal(assetData)}
