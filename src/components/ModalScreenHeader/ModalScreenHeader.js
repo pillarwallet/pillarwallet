@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import { TouchableWithoutFeedback, View, Platform } from 'react-native';
 import { Header as NBHeader, Left as NBLeft, Right as NBRight } from 'native-base';
 import { Label } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
@@ -20,8 +20,8 @@ const Header = styled(NBHeader)`
   background-color: #fff;
   border-bottom-width: 0;
   height: auto;
-  padding: 20px 20px 0;
   display: flex;
+  padding: 0 20px;
 `;
 
 const Left = styled(NBLeft)`
@@ -54,13 +54,21 @@ const ModalScreenHeader = (props: Props) => {
     rightLabelText = '',
   } = props;
 
+  const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
+
   return (
-    <Header>
+    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20 }}>
       <Left>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            {onBack
-              && <BackIcon icon="arrow-back" onPress={() => onBack(null)} color={UIColors.primary} fontSize={28} />
+            {onBack &&
+            <BackIcon
+              icon="chevron-left"
+              type="Feather"
+              onPress={() => onBack(null)}
+              color={UIColors.primary}
+              fontSize={28}
+            />
             }
             {title && <Title title={title} />}
           </View>
@@ -71,7 +79,7 @@ const ModalScreenHeader = (props: Props) => {
         <CloseButton
           icon="close"
           onPress={onClose}
-          fontSize={36}
+          fontSize={Platform.OS === 'ios' ? 36 : 30}
           color={baseColors.darkGray}
         />
       </Right>
