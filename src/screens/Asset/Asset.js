@@ -145,9 +145,11 @@ class AssetScreen extends React.Component<Props, State> {
                 const {
                   fetchAssetsBalances,
                   fetchExchangeRates,
+                  fetchTransactionsHistory,
                 } = this.props;
                 fetchAssetsBalances(assets, wallet.address);
                 fetchExchangeRates(assets);
+                fetchTransactionsHistory(wallet.address, assetData.token);
               }}
             />
           }

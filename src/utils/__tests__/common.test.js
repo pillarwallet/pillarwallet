@@ -94,7 +94,7 @@ describe('Common utils', () => {
     it('should return uniq items by key', () => {
       const expected = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }];
       const input = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }, { id: 2, name: 'Snow' }];
-      expect(uniqBy(input, 'id')).toBe(expected);
+      expect(uniqBy(input, 'id')).toEqual(expected);
     });
   });
 });
