@@ -61,6 +61,8 @@ const FloatImage = styled(RNImage)`
   width: 30px;
   left: 14px;
   top: 14px;
+  tintColor: black;
+  resizeMode: contain;
 `;
 
 const ImageHolder = styled.TouchableOpacity`
@@ -96,7 +98,7 @@ const InputField = styled(Input)`
   background: #FFFFFF;
   border: ${props => `1px solid ${props.error ? 'tomato' : '#EBEBEB'}`};
   border-radius: 4;
-  padding: 0 12px;
+  padding: 0 12px 0 42px;
 `;
 
 class SingleInput extends React.Component<Props, State> {
