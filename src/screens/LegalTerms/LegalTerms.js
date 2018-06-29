@@ -87,7 +87,7 @@ class LegalTerms extends React.Component<Props, State> {
 
   toggleTermsConditionsModal = () => {
     this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
-  }
+  };
 
   togglePrivacyPolicyModal = () => {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
@@ -160,13 +160,13 @@ class LegalTerms extends React.Component<Props, State> {
         <IFrameModal
           isVisible={showTermsConditionsModal}
           modalHide={this.toggleTermsConditionsModal}
-          uri="https://pillarproject.io/en/legal/terms-of-use"
+          uri="https://pillarproject.io/en/legal/terms-of-use/"
         />
 
         <IFrameModal
           isVisible={showPrivacyPolicyModal}
           modalHide={this.togglePrivacyPolicyModal}
-          uri="https://pillarproject.io/en/legal/privacy"
+          uri="https://pillarproject.io/en/legal/privacy/"
         />
       </Container>
     );
