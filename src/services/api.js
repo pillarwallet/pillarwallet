@@ -2,7 +2,7 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
-import { SDK_PROVIDER } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
+import { SDK_PROVIDER, BCX_URL } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 
 type HistoryPayload = {
@@ -17,6 +17,8 @@ type BalancePayload = {
   address: string,
   assets: Asset[],
 };
+
+const BCXSdk = new BCX({ apiUrl: BCX_URL });
 
 export default function SDKWrapper() {
   this.pillarWalletSdk = null;
@@ -50,6 +52,21 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
     .catch(() => ({}));
 };
 
+SDKWrapper.prototype.userInfo = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.info({ walletId }))
+    .then(({ data }) => ({ ...data, walletId }))
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.usernameSearch = function (username: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
+    .then(({ data }) => data)
+    .catch(() => ({}));
+  // TODO: handle 404 and other errors in different ways (e.response.status === 404)
+};
+
 SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.list({ walletId }))
@@ -58,7 +75,7 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
 };
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
-  return BCX.txHistory(payload)
+  return BCXSdk.txHistory(payload)
     .then(({ txHistory: { txHistory } }) => txHistory)
     .catch(() => []);
 };
@@ -66,7 +83,7 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
   const promises = assets.map(async ({ symbol, address: contractAddress }) => {
     const payload = { contractAddress, address, asset: symbol };
-    const { balance: response } = await BCX.getBalance(payload);
+    const { balance: response } = await BCXSdk.getBalance(payload);
     return { balance: response.balance, symbol: response.ticker };
   });
   return Promise.all(promises).catch(() => []);
