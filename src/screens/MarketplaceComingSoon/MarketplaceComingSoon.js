@@ -28,19 +28,6 @@ const MarketplaceComingSoon = () => {
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>
       <Wrapper center regularPadding>
-
-        <Paragraph style={{ marginTop: 80 }}>
-          Guarenteed trusted ICOs
-        </Paragraph>
-        <Paragraph>
-          Store purchased tokens in wallet
-        </Paragraph>
-        <Paragraph>
-          Sell tokens when you like it
-        </Paragraph>
-        <Paragraph>
-          Safer connections with others
-        </Paragraph>
       </Wrapper>
     </Container>
   );
