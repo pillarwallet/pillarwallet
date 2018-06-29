@@ -19,6 +19,7 @@ import CheckPin from 'components/CheckPin';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import ModalScreenHeader from 'components/ModalScreenHeader';
+import IFrameModal from 'components/Modals/IFrameModal';
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
@@ -83,6 +84,9 @@ type State = {
   selectedCurrency: ?string,
   requestPinForTransaction: ?boolean,
   showCheckPinModal: boolean,
+  showTermsConditionsModal: boolean,
+  showPrivacyPolicyModal: boolean,
+  showSupportCenterModal: boolean,
 }
 
 const { Form } = t.form;
@@ -134,6 +138,9 @@ class Profile extends React.Component<Props, State> {
       selectedCurrency: props.baseFiatCurrency || defaultFiatCurrency,
       requestPinForTransaction,
       showCheckPinModal: false,
+      showTermsConditionsModal: false,
+      showPrivacyPolicyModal: false,
+      showSupportCenterModal: false,
     };
   }
 
@@ -201,9 +208,28 @@ class Profile extends React.Component<Props, State> {
     this.setState({ showCheckPinModal: false });
   };
 
+  toggleTermsConditionsModal = () => {
+    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
+  };
+
+  togglePrivacyPolicyModal = () => {
+    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
+  };
+
+  toggleSupportCenterModal = () => {
+    this.setState({ showSupportCenterModal: !this.state.showSupportCenterModal });
+  };
+
   render() {
     const { user, wallet } = this.props;
-    const { selectedCurrency, requestPinForTransaction, showCheckPinModal } = this.state;
+    const {
+      selectedCurrency,
+      requestPinForTransaction,
+      showCheckPinModal,
+      showTermsConditionsModal,
+      showPrivacyPolicyModal,
+      showSupportCenterModal,
+    } = this.state;
 
     return (
       <Container>
@@ -428,12 +454,44 @@ class Profile extends React.Component<Props, State> {
               )}
             />
 
-            <ListSeparator />
+            <ListSeparator>
+              <ListSeparatorText>About</ListSeparatorText>
+            </ListSeparator>
 
             <ProfileSettingsItem
-              key="aboutWallet"
-              label="About Pillar wallet"
-              onPress={null}
+              key="termsOfUse"
+              label="Terms of Use"
+              onPress={this.toggleTermsConditionsModal}
+            />
+
+            <ProfileSettingsItem
+              key="supportCenter"
+              label="Support Center"
+              onPress={this.toggleSupportCenterModal}
+            />
+
+            <ProfileSettingsItem
+              key="privacyPolicy"
+              label="Privacy Policy"
+              onPress={this.togglePrivacyPolicyModal}
+            />
+
+            <IFrameModal
+              isVisible={showTermsConditionsModal}
+              modalHide={this.toggleTermsConditionsModal}
+              uri="https://pillarproject.io/en/legal/terms-of-use/"
+            />
+
+            <IFrameModal
+              isVisible={showSupportCenterModal}
+              modalHide={this.toggleSupportCenterModal}
+              uri="https://help.pillarproject.io/getting-started-with-the-alpha-beta-wallet"
+            />
+
+            <IFrameModal
+              isVisible={showPrivacyPolicyModal}
+              modalHide={this.togglePrivacyPolicyModal}
+              uri="https://pillarproject.io/en/legal/privacy/"
             />
 
             <ListSeparator>
