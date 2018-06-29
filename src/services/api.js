@@ -52,6 +52,13 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
     .catch(() => ({}));
 };
 
+SDKWrapper.prototype.userInfo = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.info({ walletId }))
+    .then(({ data }) => ({ ...data, walletId }))
+    .catch(() => ({}));
+};
+
 SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.list({ walletId }))
