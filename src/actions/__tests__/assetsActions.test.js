@@ -33,6 +33,7 @@ const mockAssets: Assets = {
     name: 'ethereum',
     balance: 1,
     address: '',
+    description: '',
   },
 };
 
