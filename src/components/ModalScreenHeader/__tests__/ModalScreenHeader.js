@@ -1,10 +1,10 @@
 // @flow
 import * as React from 'react';
 import renderer from 'react-test-renderer';
-import ModalHeader from '../ModalHeader';
+import ModalHeader from '../ModalScreenHeader';
 
 describe('Header', () => {
-  it('should render ModalHeader correctly', () => {
+  it('should render ModalScreenHeader correctly', () => {
     const component = renderer.create(<ModalHeader onClose={() => {}} />).toJSON();
     expect(component).toMatchSnapshot();
   });

@@ -6,12 +6,15 @@ import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Divider from 'components/Divider';
-import HyperLink from 'components/HyperLink';
 import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
 import CheckboxText from 'components/CheckboxText';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
+import IFrameModal from 'components/Modals/IFrameModal';
+import ButtonText from 'components/ButtonText';
+import { View } from 'react-native';
+
 
 type Props = {
   generateEncryptedWallet: () => Function,
@@ -23,6 +26,8 @@ type State = {
   box02: boolean,
   box03: boolean,
   confirmButtonDisabled: boolean,
+  showTermsConditionsModal: boolean,
+  showPrivacyPolicyModal: boolean,
 };
 
 class LegalTerms extends React.Component<Props, State> {
@@ -32,6 +37,8 @@ class LegalTerms extends React.Component<Props, State> {
     box02: false,
     box03: false,
     confirmButtonDisabled: true,
+    showTermsConditionsModal: false,
+    showPrivacyPolicyModal: false,
   };
 
   toggleCheckBox = (checkbox: boolean, tag: any) => {
@@ -78,6 +85,14 @@ class LegalTerms extends React.Component<Props, State> {
     this.props.generateEncryptedWallet();
   };
 
+  toggleTermsConditionsModal = () => {
+    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
+  };
+
+  togglePrivacyPolicyModal = () => {
+    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
+  };
+
   render() {
     const {
       termsViewVisible,
@@ -85,6 +100,8 @@ class LegalTerms extends React.Component<Props, State> {
       box02,
       box03,
       confirmButtonDisabled,
+      showTermsConditionsModal,
+      showPrivacyPolicyModal,
     } = this.state;
 
     return (
@@ -126,15 +143,31 @@ class LegalTerms extends React.Component<Props, State> {
               disabled={confirmButtonDisabled}
               marginBottom="20px"
             />
-
-            <Paragraph>
-              <HyperLink url="https://pillarproject.io/en/terms-of-use/">Terms of Use </HyperLink>
-              and
-              <HyperLink url="https://pillarproject.io/en/legal/privacy/"> Privacy Policy</HyperLink>
-            </Paragraph>
-
+            <View style={{
+              flex: 1,
+              alignContent: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
+            }}
+            >
+              <ButtonText buttonText="Terms of Use" onPress={this.toggleTermsConditionsModal} />
+              <Paragraph style={{ marginRight: 4, marginLeft: 4, marginBottom: 0 }}>and</Paragraph>
+              <ButtonText buttonText="Privacy Policy" onPress={this.togglePrivacyPolicyModal} />
+            </View>
           </MultiButtonWrapper>
         </Footer>
+
+        <IFrameModal
+          isVisible={showTermsConditionsModal}
+          modalHide={this.toggleTermsConditionsModal}
+          uri="https://pillarproject.io/en/legal/terms-of-use/"
+        />
+
+        <IFrameModal
+          isVisible={showPrivacyPolicyModal}
+          modalHide={this.togglePrivacyPolicyModal}
+          uri="https://pillarproject.io/en/legal/privacy/"
+        />
       </Container>
     );
   }

@@ -9,15 +9,14 @@ import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { SubTitle } from 'components/Typography';
 import Button from 'components/Button';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import SlideModal from 'components/Modals/SlideModal';
-import ModalHeader from 'components/ModalHeader';
 import CheckPin from 'components/CheckPin';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
 import { delay } from 'utils/common';
-import SendTokenHeader from './SendTokenHeader';
 
 const imageSend = require('assets/images/confirm-send.png');
 
@@ -110,10 +109,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   isNeedToCheckPinCode(appSettings: Object): boolean {
-    let { requestPinForTransaction } = appSettings;
-    if (requestPinForTransaction === undefined) {
-      requestPinForTransaction = true;
-    }
+    const { requestPinForTransaction = true } = appSettings;
     return requestPinForTransaction;
   }
 
@@ -128,7 +124,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   makeTransaction = () => {
-    this.props.sendAsset(this.state.transactionPayload);
+    const { transactionPayload, assetData: { token } } = this.state;
+    this.props.sendAsset({ ...transactionPayload, symbol: token });
     this.setState({
       showCheckPinModal: false,
     }, async () => {
@@ -150,9 +147,10 @@ class SendTokenContacts extends React.Component<Props, State> {
     } = this.state;
     return (
       <React.Fragment>
-        <SendTokenHeader
+        <ModalScreenHeader
           onBack={this.props.navigation.goBack}
-          dismiss={this.props.navigation.dismiss}
+          onClose={this.props.navigation.dismiss}
+          title="send"
           rightLabelText="step 3 of 3"
         />
         <Container>
@@ -175,7 +173,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             </LabeledRow>
           </Wrapper>
         </Container>
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
             <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
@@ -186,7 +184,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           title="confirm"
           fullScreenComponent={(
             <Container>
-              <ModalHeader onClose={this.handleCheckPinModalClose} />
+              <ModalScreenHeader onClose={this.handleCheckPinModalClose} />
               <CheckPin onPinValid={this.makeTransaction} />
             </Container>
           )}

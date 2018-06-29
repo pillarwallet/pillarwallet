@@ -2,7 +2,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
-import { connect } from 'react-redux';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes } from 'utils/variables';
@@ -12,15 +11,12 @@ import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import { isValidETHAddress } from 'utils/validators';
-import type { TransactionPayload } from 'models/Transaction';
-import { sendAssetAction } from 'actions/assetsActions';
 import { pipe, decodeETHAddress } from 'utils/common';
-import SendTokenHeader from './SendTokenHeader';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: Function,
 }
 
 type State = {
@@ -107,7 +103,7 @@ const FooterWrapper = styled.View`
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
     const assetData = this.props.navigation.getParam('assetData', {});
@@ -170,10 +166,11 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
     return (
       <React.Fragment>
-        <SendTokenHeader
+        <ModalScreenHeader
           onBack={this.props.navigation.goBack}
-          dismiss={this.props.navigation.dismiss}
-          rightLabelText="STEP 2 OF 3"
+          onClose={this.props.navigation.dismiss}
+          rightLabelText="step 2 of 3"
+          title="send"
         />
         <Container>
           <Wrapper regularPadding>
@@ -189,7 +186,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           </Wrapper>
         </Container>
         {qrScannerComponent}
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={40}>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />
           </FooterWrapper>
@@ -199,8 +196,4 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
-});
-
-export default connect(null, mapDispatchToProps)(SendTokenContacts);
+export default SendTokenContacts;
