@@ -88,7 +88,7 @@ export default class PinCode extends React.Component<Props, State> {
 
     return (
       <PageWrapper>
-        <Wrapper>
+        <Wrapper regularPadding>
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
           {showNewPincodeText &&
             <Paragraph

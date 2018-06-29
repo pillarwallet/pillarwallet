@@ -4,6 +4,7 @@ export type Asset = {
   name: string,
   balance: number,
   address: string,
+  description: string,
 };
 
 export type Assets = {
