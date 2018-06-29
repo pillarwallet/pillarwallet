@@ -43,14 +43,12 @@ const ButtonIcon = (props: Props) => {
   return (
     <TouchableNativeFeedback
       onPress={onPress}
-      style={style}
       background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
     >
-      <View style={{
+      <View style={[{
         padding: 8,
         alignSelf: 'center',
-
-      }}
+      }, style]}
       >
         <CustomIcon />
       </View>
