@@ -27,9 +27,9 @@ const MarketplaceComingSoon = () => {
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>
-      <Wrapper regularPadding>
+      <Wrapper center regularPadding>
 
-        <Paragraph>
+        <Paragraph style={{ marginTop: 80 }}>
           Guarenteed trusted ICOs
         </Paragraph>
         <Paragraph>
