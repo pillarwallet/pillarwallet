@@ -289,18 +289,10 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - test_ios:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                  - develop
-                  - master
       - deploy_ios:
           requires:
-            - test_ios
-          filters:
+            - build
+	  filters:
             branches:
               only:
                   - master
