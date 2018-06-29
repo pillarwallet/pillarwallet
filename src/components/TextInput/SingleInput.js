@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { Input, Label } from 'native-base';
 import { TextLink } from 'components/Typography';
 import { fontSizes, fontWeights } from 'utils/variables';
-import { Image as RNImage } from 'react-native';
+import { Image as RNImage, Platform } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -121,6 +121,9 @@ class SingleInput extends React.Component<Props, State> {
   }
 
   handleBlur = (e: EventLike) => {
+    if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
+      return;
+    }
     const { inputProps: { onBlur }, trim } = this.props;
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
     this.setState({ value }, () => {
