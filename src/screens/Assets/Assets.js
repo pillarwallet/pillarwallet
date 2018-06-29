@@ -211,15 +211,12 @@ class AssetsScreen extends React.Component<Props, State> {
             shadowOffset: { width: 0, height: 1 },
           }}
         >
-          <View style={{ padding: 20, flex: 1 }}>
+          <View style={{ padding: 20, paddingTop: 0, flex: 1 }}>
             <View
               style={{
-                alignItems: 'center',
                 flexDirection: 'row',
+                alignItems: 'center',
                 justifyContent: 'space-between',
-                marginBottom: 20,
-                marginTop: 10,
-                flex: 1,
               }}
             >
               <View>
