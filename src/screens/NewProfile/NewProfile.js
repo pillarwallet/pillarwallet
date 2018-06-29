@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
+import merge from 'lodash.merge';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
@@ -11,7 +12,8 @@ import TextInput from 'components/TextInput';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { updateLocalUserAction } from 'actions/userActions';
-import { isValidFullname } from 'utils/validators';
+import { validateUserDetailsAction } from 'actions/onboardingActions';
+import { USERNAME_EXISTS, USERNAME_OK } from 'constants/walletConstants';
 
 const { Form } = t.form;
 const maxUsernameLength = 60;
@@ -23,13 +25,15 @@ const LoginForm = styled(Form)`
 type Props = {
   navigation: NavigationScreenProp<*>,
   updateUser: Function,
+  validateUserDetails: Function,
+  walletState: ?string,
 }
 
 type State = {
   value: ?{
     username: ?string,
-    fullName: ?string,
   },
+  formOptions: Object,
 }
 
 function InputTemplate(locals) {
@@ -56,17 +60,9 @@ function InputTemplate(locals) {
   );
 }
 
-const FullName = t.refinement(t.String, (fullName): boolean => {
-  return isValidFullname(fullName);
-});
-
 const Username = t.refinement(t.String, (username): boolean => {
   return username != null && username.length <= maxUsernameLength;
 });
-
-FullName.getValidationErrorMessage = (): string => {
-  return 'Please provide your full name';
-};
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
@@ -77,10 +73,9 @@ Username.getValidationErrorMessage = (username): string => {
 
 const formStructure = t.struct({
   username: Username,
-  fullName: FullName,
 });
 
-const formOptions = {
+const defaultFormOptions = {
   fields: {
     username: {
       template: InputTemplate,
@@ -88,14 +83,6 @@ const formOptions = {
       config: {
         inputProps: {
           autoCapitalize: 'none',
-        },
-      },
-    },
-    fullName: {
-      template: InputTemplate,
-      config: {
-        inputProps: {
-          autoCapitalize: 'words',
         },
       },
     },
@@ -107,6 +94,7 @@ class NewProfile extends React.Component<Props, State> {
 
   state = {
     value: null,
+    formOptions: defaultFormOptions,
   };
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<*> }) => {
@@ -134,20 +122,39 @@ class NewProfile extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
-    const { navigation, updateUser } = this.props;
+    const { validateUserDetails } = this.props;
     const value = this._form.getValue();
     if (!value) return;
-    const [firstName, ...lastName] = value.fullName.split(' ');
-    updateUser({
-      username: value.username,
-      firstName,
-      lastName: lastName.join(' '),
-    });
-    navigation.navigate(LEGAL_TERMS);
+    validateUserDetails({ username: value.username });
   };
 
+  componentDidUpdate(prevProps: Props) {
+    const { walletState } = this.props;
+    if (prevProps.walletState === walletState) return;
+
+    if (walletState === USERNAME_EXISTS) {
+      this.setState({ // eslint-disable-line
+        formOptions: merge({}, this.state.formOptions, {
+          fields: {
+            username: {
+              hasError: true,
+              error: 'Username taken',
+            },
+          },
+        }),
+      });
+    }
+
+    if (walletState === USERNAME_OK) {
+      const { navigation, updateUser } = this.props;
+      const value = this._form.getValue();
+      updateUser({ username: value.username });
+      navigation.navigate(LEGAL_TERMS);
+    }
+  }
+
   render() {
-    const { value } = this.state;
+    const { value, formOptions } = this.state;
     return (
       <Container>
         <ScrollWrapper regularPadding>
@@ -166,8 +173,11 @@ class NewProfile extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({ wallet: { walletState } }) => ({ walletState });
+
 const mapDispatchToProps = (dispatch) => ({
   updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
+  validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
 });
 
-export default connect(null, mapDispatchToProps)(NewProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
