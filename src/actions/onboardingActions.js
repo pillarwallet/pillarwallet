@@ -11,6 +11,8 @@ import {
   UPDATE_WALLET_STATE,
   API_REGISTRATION_STARTED,
   API_REGISTRATION_FAILED,
+  USERNAME_EXISTS,
+  USERNAME_OK,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
@@ -163,5 +165,27 @@ export const registerOnBackendAction = () => {
     });
 
     dispatch(navigateToAssetsAction);
+  };
+};
+
+export const validateUserDetailsAction = ({ username }: Object) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const currentState = getState();
+    const { mnemonic, importedWallet } = currentState.wallet.onboarding;
+    const mnemonicPhrase = mnemonic.original;
+
+    let wallet = importedWallet;
+    if (!wallet) {
+      wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
+    }
+
+    api.init(wallet.privateKey);
+    const response = await api.usernameSearch(username);
+    const usernameExists = !!Object.keys(response).length;
+    const usernameSatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: usernameSatus,
+    });
   };
 };
