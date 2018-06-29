@@ -98,7 +98,7 @@ const InputField = styled(Input)`
   background: #FFFFFF;
   border: ${props => `1px solid ${props.error ? 'tomato' : '#EBEBEB'}`};
   border-radius: 4;
-  padding: 0 12px 0 42px;
+  padding: 0 12px;
 `;
 
 class SingleInput extends React.Component<Props, State> {
@@ -175,20 +175,20 @@ class SingleInput extends React.Component<Props, State> {
               onChange={this.handleChange}
               onBlur={this.handleBlur}
               value={value}
+              style={{ paddingLeft: innerImageURI ? 54 : 12 }}
             />
-            {innerImageURI && <FloatImage
+            {!!innerImageURI && <FloatImage
               source={this.resolveAssetSource(innerImageURI)}
             />}
           </Item>
           {outterImageURI &&
-            (
-              <ImageHolder onPress={onPress}>
-                <Image
-                  source={this.resolveAssetSource(outterImageURI)}
-                />
-                <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
-              </ImageHolder>
-            )}
+            <ImageHolder onPress={onPress}>
+              <Image
+                source={this.resolveAssetSource(outterImageURI)}
+              />
+              <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
+            </ImageHolder>
+          }
         </InputHolder>
       </Wrapper>
     );
