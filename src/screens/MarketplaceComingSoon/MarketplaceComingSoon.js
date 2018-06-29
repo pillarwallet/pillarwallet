@@ -2,7 +2,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 
@@ -27,8 +26,7 @@ const MarketplaceComingSoon = () => {
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>
-      <Wrapper center regularPadding>
-      </Wrapper>
+      <Wrapper center regularPadding />
     </Container>
   );
 };
