@@ -11,7 +11,7 @@ import { AppState, Animated, Easing, Platform, Image } from 'react-native';
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ICOScreen from 'screens/ICO';
+import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -127,7 +127,7 @@ const tabNavigation = createBottomTabNavigator(
       }),
     },
     [ICO]: {
-      screen: ICOScreen,
+      screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
           <Image
