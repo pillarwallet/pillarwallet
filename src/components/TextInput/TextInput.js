@@ -157,10 +157,9 @@ class TextInput extends React.Component<Props, State> {
       errorMessage,
       footerAddonText,
       footerAddonAction,
-      type,
     } = this.props;
     const { value } = this.state;
-    const inputType = inputTypes[type] || inputTypes.default;
+    const inputType = inputTypes[this.props.inputType] || inputTypes.default;
 
     return (
       <View style={{ paddingBottom: 10 }}>

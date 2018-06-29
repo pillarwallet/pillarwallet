@@ -13,7 +13,6 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { Grid, Row, Column } from 'components/Grid';
 import { TextLink } from 'components/Typography';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
