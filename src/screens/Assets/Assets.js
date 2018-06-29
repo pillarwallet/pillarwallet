@@ -209,6 +209,7 @@ class AssetsScreen extends React.Component<Props, State> {
             shadowOpacity: 0.07,
             shadowRadius: 0,
             shadowOffset: { width: 0, height: 1 },
+            elevation: 1,
           }}
         >
           <View style={{ padding: 20, paddingTop: 0, flex: 1 }}>
