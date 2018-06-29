@@ -11,7 +11,6 @@ import TextInput from 'components/TextInput';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { updateLocalUserAction } from 'actions/userActions';
-import { isValidFullname } from 'utils/validators';
 
 const { Form } = t.form;
 const maxUsernameLength = 60;
@@ -28,7 +27,6 @@ type Props = {
 type State = {
   value: ?{
     username: ?string,
-    fullName: ?string,
   },
 }
 
@@ -56,17 +54,9 @@ function InputTemplate(locals) {
   );
 }
 
-const FullName = t.refinement(t.String, (fullName): boolean => {
-  return isValidFullname(fullName);
-});
-
 const Username = t.refinement(t.String, (username): boolean => {
   return username != null && username.length <= maxUsernameLength;
 });
-
-FullName.getValidationErrorMessage = (): string => {
-  return 'Please provide your full name';
-};
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
@@ -77,7 +67,6 @@ Username.getValidationErrorMessage = (username): string => {
 
 const formStructure = t.struct({
   username: Username,
-  fullName: FullName,
 });
 
 const formOptions = {
@@ -88,14 +77,6 @@ const formOptions = {
       config: {
         inputProps: {
           autoCapitalize: 'none',
-        },
-      },
-    },
-    fullName: {
-      template: InputTemplate,
-      config: {
-        inputProps: {
-          autoCapitalize: 'words',
         },
       },
     },
@@ -137,12 +118,7 @@ class NewProfile extends React.Component<Props, State> {
     const { navigation, updateUser } = this.props;
     const value = this._form.getValue();
     if (!value) return;
-    const [firstName, ...lastName] = value.fullName.split(' ');
-    updateUser({
-      username: value.username,
-      firstName,
-      lastName: lastName.join(' '),
-    });
+    updateUser({ username: value.username });
     navigation.navigate(LEGAL_TERMS);
   };
 
