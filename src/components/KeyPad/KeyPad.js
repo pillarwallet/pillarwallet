@@ -17,7 +17,7 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-self: flex-end;
   justify-content: center;
-    align-items: center;
+  align-items: center;
 `;
 
 const PinButton = styled.TouchableOpacity`
