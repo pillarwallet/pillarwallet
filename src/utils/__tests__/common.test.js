@@ -73,6 +73,12 @@ describe('Common utils', () => {
     it('should fail on string with two commas', () => {
       expect(isValidNumber('5,678,91')).toBeFalsy();
     });
+    it('should fail on string with ,. going side by side', () => {
+      expect(isValidNumber('5,.678')).toBeFalsy();
+    });
+    it('should fail on string with ., going side by side', () => {
+      expect(isValidNumber('5.,678')).toBeFalsy();
+    });
     it('should allow to have a dot and a comma', () => {
       expect(isValidNumber('5,678.91')).toBeTruthy();
     });

@@ -78,6 +78,7 @@ export function parseNumber(amount: string = '0') {
 export function isValidNumber(amount: string = '0') {
   const strg = amount.toString() || '';
   const numericalSymbols = strg.replace(/[^0-9$.,]/g, '');
+  if (numericalSymbols.includes(',.') || numericalSymbols.includes('.,')) return false;
   if (numericalSymbols.length !== strg.length) return false;
   if ((strg.match(new RegExp('\\.', 'g')) || []).length > 1) return false;
   if ((strg.match(new RegExp(',', 'g')) || []).length > 1) return false;

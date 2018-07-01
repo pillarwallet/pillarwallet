@@ -24,12 +24,16 @@ const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 const { Form } = t.form;
 const gasLimit = 21000;
 
-const getFormStructure = (maxAmount: number, enoughForFee) => {
+const getFormStructure = (maxAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
+    if (amount.toString() === '' && !formSubmitted) return true;
     if (!isValidNumber(amount.toString())) return false;
 
     amount = parseNumber(amount.toString());
-    return enoughForFee && amount > 0 && amount <= maxAmount;
+    const isValid = enoughForFee && amount <= maxAmount;
+
+    if (formSubmitted) return isValid && amount > 0;
+    return isValid;
   });
 
   Amount.getValidationErrorMessage = (amount): string => {
@@ -41,7 +45,7 @@ const getFormStructure = (maxAmount: number, enoughForFee) => {
     if (amount >= maxAmount) {
       return 'Amount should not exceed the total balance.';
     } else if (!enoughForFee) {
-      return 'Not enough eth to process the transaction fee';
+      return 'Not enough ETH to process the transaction fee';
     }
     return 'Amount should be specified.';
   };
@@ -136,13 +140,17 @@ class SendTokenAmount extends React.Component<Props, State> {
   assetData: Object;
   gasPrice: Object; // BigNumber
   gasPriceFetched: boolean = false;
+  maxAmount: number;
+  formSubmitted: boolean = false;
+  enoughForFee: boolean = false;
 
   constructor(props: Props) {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
+    this.maxAmount = this.assetData.balance;
     this.state = {
       value: null,
-      formStructure: getFormStructure(this.assetData.balance, false),
+      formStructure: getFormStructure(this.assetData.balance, this.enoughForFee, this.formSubmitted),
       txFeeInWei: null,
     };
   }
@@ -155,40 +163,46 @@ class SendTokenAmount extends React.Component<Props, State> {
         const { token, balance } = this.assetData;
         const { assets } = this.props;
         const txFeeInWei = gasPrice.mul(gasLimit);
-        const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-        const enoughForFee = this.checkIfEnoughForFee(assets, txFeeInWei);
+        this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
+        this.enoughForFee = this.checkIfEnoughForFee(assets, txFeeInWei);
 
         this.setState({
           txFeeInWei,
-          formStructure: getFormStructure(maxAmount, enoughForFee),
+          formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
         });
       })
       .catch(() => { });
   }
 
   handleChange = (value: Object) => {
+    this._form.getValue(); // NOTE: validate on every change
     this.setState({ value });
   };
 
   handleFormSubmit = () => {
-    const value = this._form.getValue();
-    const { txFeeInWei } = this.state;
-    const { navigation } = this.props;
+    this.formSubmitted = true;
+    this.setState({
+      formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
+    }, () => {
+      const value = this._form.getValue();
+      const { txFeeInWei } = this.state;
+      const { navigation } = this.props;
 
-    if (!value || !this.gasPriceFetched) return;
+      if (!value || !this.gasPriceFetched) return;
 
-    const transactionPayload: TransactionPayload = {
-      to: '',
-      amount: parseNumber(value.amount),
-      gasLimit,
-      gasPrice: this.gasPrice.toNumber(),
-      txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
-      symbol: this.assetData.symbol,
-      contractAddress: this.assetData.contractAddress,
-    };
-    navigation.navigate(SEND_TOKEN_CONTACTS, {
-      assetData: this.assetData,
-      transactionPayload,
+      const transactionPayload: TransactionPayload = {
+        to: '',
+        amount: parseNumber(value.amount),
+        gasLimit,
+        gasPrice: this.gasPrice.toNumber(),
+        txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
+        symbol: this.assetData.symbol,
+        contractAddress: this.assetData.contractAddress,
+      };
+      navigation.navigate(SEND_TOKEN_CONTACTS, {
+        assetData: this.assetData,
+        transactionPayload,
+      });
     });
   };
 
