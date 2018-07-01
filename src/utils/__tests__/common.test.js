@@ -50,8 +50,8 @@ describe('Common utils', () => {
 
   describe('parseNumber', () => {
     it('should convert a comma separated number (as string) to a decimal separated number', () => {
-      const expectedValue = 12.34;
-      expect(parseNumber('12,34')).toBe(expectedValue);
+      const expectedValue = 12.345;
+      expect(parseNumber('12,345')).toBe(expectedValue);
     });
     it('should convert a decimal separated number (as string) to the exact same number', () => {
       const expectedValue = 23.45;
