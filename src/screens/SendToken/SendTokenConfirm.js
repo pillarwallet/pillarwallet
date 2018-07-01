@@ -16,7 +16,6 @@ import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
-import { delay } from 'utils/common';
 
 const imageSend = require('assets/images/confirm-send.png');
 
@@ -126,8 +125,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   handlePendingNotifcationOpen = () => {
     const { isSubmitted } = this.state;
-    console.log(isSubmitted);
-    if(!isSubmitted) return;
+    if (!isSubmitted) return;
     this.setState({ showTransactionPendingModal: true });
   };
 
@@ -154,7 +152,6 @@ class SendTokenContacts extends React.Component<Props, State> {
         to,
         txFeeInWei,
       },
-      isSubmitted,
       showCheckPinModal,
       showTransactionPendingModal,
     } = this.state;
