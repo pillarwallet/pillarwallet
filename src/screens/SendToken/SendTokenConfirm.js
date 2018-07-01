@@ -106,6 +106,10 @@ class SendTokenContacts extends React.Component<Props, State> {
     const needToCheckPinCode = this.isNeedToCheckPinCode(this.props.appSettings);
     if (!needToCheckPinCode) {
       this.makeTransaction();
+      this.setState({
+        showTransactionPendingModal: true,
+        isSubmitted: true,
+      });
       return;
     }
     this.setState({ showCheckPinModal: true });
