@@ -34,6 +34,7 @@ type State = {
   assetData: Object,
   isSubmitted: boolean,
   showCheckPinModal: boolean,
+  showTransactionPendingModal: boolean,
 }
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
@@ -98,6 +99,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       assetData,
       isSubmitted: false,
       showCheckPinModal: false,
+      showTransactionPendingModal: false,
     };
   }
 
@@ -122,9 +124,11 @@ class SendTokenContacts extends React.Component<Props, State> {
     fetchTransactionsHistory(wallet.address, assetData.token);
   };
 
-  handlePendingNotifcationOpen = async () => {
-    await delay(1200);
-    this.setState({ isSubmitted: true });
+  handlePendingNotifcationOpen = () => {
+    const { isSubmitted } = this.state;
+    console.log(isSubmitted);
+    if(!isSubmitted) return;
+    this.setState({ showTransactionPendingModal: true });
   };
 
   handleCheckPinModalClose = () => {
@@ -138,6 +142,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.props.sendAsset({ ...transactionPayload, symbol: token });
     this.setState({
       showCheckPinModal: false,
+      isSubmitted: true,
     });
   };
 
@@ -151,6 +156,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       },
       isSubmitted,
       showCheckPinModal,
+      showTransactionPendingModal,
     } = this.state;
     return (
       <React.Fragment>
@@ -185,11 +191,11 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
         </KeyboardAvoidingView>
-        <TransactionSentModal isVisible={isSubmitted} onModalHide={this.handleModalDismissal} />
+        <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
         <CheckPinModal
           isVisible={showCheckPinModal}
           title="confirm"
-          onModalHide={() => this.setState({ isSubmitted: true })}
+          onModalHide={this.handlePendingNotifcationOpen}
           fullScreenComponent={(
             <Container>
               <ModalScreenHeader onClose={this.handleCheckPinModalClose} />
