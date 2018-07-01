@@ -131,6 +131,9 @@ class AssetScreen extends React.Component<Props, State> {
     const {
       assets,
       wallet,
+      fetchAssetsBalances,
+      fetchExchangeRates,
+      fetchTransactionsHistory,
     } = this.props;
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
@@ -142,11 +145,6 @@ class AssetScreen extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                const {
-                  fetchAssetsBalances,
-                  fetchExchangeRates,
-                  fetchTransactionsHistory,
-                } = this.props;
                 fetchAssetsBalances(assets, wallet.address);
                 fetchExchangeRates(assets);
                 fetchTransactionsHistory(wallet.address, assetData.token);
