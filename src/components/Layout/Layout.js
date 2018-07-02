@@ -34,6 +34,8 @@ export const Container = (props: ContainerProps) => {
 
 export const Wrapper = styled.View`
   padding: ${props => (props.regularPadding ? '0 16px' : '0')};
+  align-items: ${props => (props.center ? 'center' : 'stretch')};
+  justify-content: ${props => (props.center ? 'center' : 'flex-start')};
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
