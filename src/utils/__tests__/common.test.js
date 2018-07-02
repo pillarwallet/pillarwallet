@@ -51,8 +51,8 @@ describe('Common utils', () => {
 
   describe('parseNumber', () => {
     it('should convert a comma separated number (as string) to a decimal separated number', () => {
-      const expectedValue = 12.34;
-      expect(parseNumber('12,34')).toBe(expectedValue);
+      const expectedValue = 12.345;
+      expect(parseNumber('12,345')).toBe(expectedValue);
     });
     it('should convert a decimal separated number (as string) to the exact same number', () => {
       const expectedValue = 23.45;
@@ -73,6 +73,12 @@ describe('Common utils', () => {
     });
     it('should fail on string with two commas', () => {
       expect(isValidNumber('5,678,91')).toBeFalsy();
+    });
+    it('should fail on string with ,. going side by side', () => {
+      expect(isValidNumber('5,.678')).toBeFalsy();
+    });
+    it('should fail on string with ., going side by side', () => {
+      expect(isValidNumber('5.,678')).toBeFalsy();
     });
     it('should allow to have a dot and a comma', () => {
       expect(isValidNumber('5,678.91')).toBeTruthy();
