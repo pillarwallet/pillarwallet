@@ -184,10 +184,19 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     api.init(wallet.privateKey);
     const response = await api.usernameSearch(username);
     const usernameExists = !!Object.keys(response).length;
-    const usernameSatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
     dispatch({
       type: UPDATE_WALLET_STATE,
-      payload: usernameSatus,
+      payload: usernameStatus,
+    });
+  };
+};
+
+export const resetWalletStateAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: '',
     });
   };
 };

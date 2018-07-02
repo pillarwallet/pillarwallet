@@ -12,7 +12,7 @@ import TextInput from 'components/TextInput';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { updateLocalUserAction } from 'actions/userActions';
-import { validateUserDetailsAction } from 'actions/onboardingActions';
+import { validateUserDetailsAction, resetWalletStateAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK } from 'constants/walletConstants';
 
 const { Form } = t.form;
@@ -26,6 +26,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   updateUser: Function,
   validateUserDetails: Function,
+  resetWalletState: Function,
   walletState: ?string,
 }
 
@@ -68,7 +69,7 @@ Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
     return `Username should be less than ${maxUsernameLength} characters.`;
   }
-  return 'Please specify username.';
+  return 'Please specify the username.';
 };
 
 const formStructure = t.struct({
@@ -146,9 +147,10 @@ class NewProfile extends React.Component<Props, State> {
     }
 
     if (walletState === USERNAME_OK) {
-      const { navigation, updateUser } = this.props;
+      const { navigation, updateUser, resetWalletState } = this.props;
       const value = this._form.getValue();
       updateUser({ username: value.username });
+      resetWalletState();
       navigation.navigate(LEGAL_TERMS);
     }
   }
@@ -178,6 +180,7 @@ const mapStateToProps = ({ wallet: { walletState } }) => ({ walletState });
 const mapDispatchToProps = (dispatch) => ({
   updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
+  resetWalletState: () => dispatch(resetWalletStateAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
