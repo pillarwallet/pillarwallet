@@ -368,8 +368,8 @@ class Profile extends React.Component<Props, State> {
         <ScrollWrapper>
           <ProfileHeader>
             <FlexRowSpaced>
-              <ProfileName>{`${user.firstName} ${user.lastName}`}</ProfileName>
-              <ProfileImage uri={user.profileImage} userName={`${user.firstName} ${user.lastName}`} />
+              <ProfileName>{user.username}</ProfileName>
+              <ProfileImage uri={user.profileImage} userName={user.username} />
             </FlexRowSpaced>
             <PortfolioBalance />
           </ProfileHeader>
