@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import MnemonicPhrase from 'components/MnemonicPhrase';
@@ -44,15 +44,20 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     return (
       <Container>
-        <ModalScreenHeader onClose={this.handleScreenDismissal} />
-        <Title title="backup phrase" />
-        <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
-        <Paragraph light>
-          Keep it secure as it&#39;s the only way to recover your account in an emergency.
-          Don&#39;t email or screenshot it.
-        </Paragraph>
+        <ModalScreenHeader
+          title="backup phrase"
+          onClose={this.handleScreenDismissal}
+        />
+        <Wrapper regularPadding>
 
-        <MnemonicPhrase phrase={wallet.mnemonic} />
+          <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
+          <Paragraph light>
+            Keep it secure as it&#39;s the only way to recover your account in an emergency.
+            Don&#39;t email or screenshot it.
+          </Paragraph>
+
+          <MnemonicPhrase phrase={wallet.mnemonic} />
+        </Wrapper>
       </Container>
     );
   }
