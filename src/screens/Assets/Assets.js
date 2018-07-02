@@ -149,6 +149,7 @@ class AssetsScreen extends React.Component<Props, State> {
           token: symbol,
           amount: displayAmount,
           contractAddress: asset.address,
+          description: asset.description,
           balance,
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           address: wallet.address,
@@ -240,7 +241,7 @@ class AssetsScreen extends React.Component<Props, State> {
                   justifyContent: 'space-between',
                 }}
               >
-                <PortfolioBalance />
+                <PortfolioBalance label="Total Portfolio" />
               </Column>
             </Row>
           </Grid>
