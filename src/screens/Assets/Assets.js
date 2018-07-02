@@ -214,7 +214,7 @@ class AssetsScreen extends React.Component<Props, State> {
             shadowOffset: { width: 0, height: 1 },
           }}
         >
-          <Grid style={{ paddingRight: 20, paddingLeft: 20, paddingBottom: 40 }}>
+          <Grid style={{ paddingRight: 16, paddingLeft: 16, paddingBottom: 40 }}>
             <View
               style={{
                 alignItems: 'center',
@@ -246,7 +246,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </Grid>
         </View>
         <ScrollView
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ padding: 16 }}
           refreshControl={
             <RefreshControl
               refreshing={false}
