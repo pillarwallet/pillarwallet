@@ -7,6 +7,7 @@ import {
   parseNumber,
   isValidNumber,
   formatMoney,
+  uniqBy,
 } from '../common';
 
 describe('Common utils', () => {
@@ -16,7 +17,7 @@ describe('Common utils', () => {
       let value;
       delay(timeout).then(() => {
         value = true;
-      }).catch(() => {});
+      }).catch(() => { });
       expect(value).toBeUndefined();
       setTimeout(() => {
         expect(value).not.toBeUndefined();
@@ -86,6 +87,14 @@ describe('Common utils', () => {
     it('should strip trailing zeros and a dot from number 12.00', () => {
       const expectedValue = '12';
       expect(formatMoney('12.00')).toBe(expectedValue);
+    });
+  });
+
+  describe('uniqBy', () => {
+    it('should return uniq items by key', () => {
+      const expected = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }];
+      const input = [{ id: 1, name: 'Jon' }, { id: 2, name: 'Snow' }, { id: 2, name: 'Snow' }];
+      expect(uniqBy(input, 'id')).toEqual(expected);
     });
   });
 });
