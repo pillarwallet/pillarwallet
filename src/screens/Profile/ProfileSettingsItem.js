@@ -89,7 +89,7 @@ const ButtonWrapper = ({ onPress, children }) => {
 
 type Props = {
   label: string,
-  notificationsCount?: number, 
+  notificationsCount?: number,
   onPress?: ?Function,
   toggle?: ?boolean,
   value?: ?string | ?boolean,

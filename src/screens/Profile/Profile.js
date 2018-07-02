@@ -22,8 +22,6 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import IFrameModal from 'components/Modals/IFrameModal';
 
-import type { Notification } from 'models/Notification';
-
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
@@ -234,7 +232,7 @@ class Profile extends React.Component<Props, State> {
       showPrivacyPolicyModal,
       showSupportCenterModal,
     } = this.state;
-    
+
     return (
       <Container>
         <Modal
