@@ -159,11 +159,6 @@ class Profile extends React.Component<Props, State> {
     return null;
   }
 
-  componentDidMount() {
-    const { user: { username } } = this.props;
-    Intercom.registerIdentifiedUser({ userId: username });
-  }
-
   onCurrencyChanged = (value?: string) => {
     if (value) {
       this.setState({

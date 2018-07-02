@@ -9,7 +9,10 @@ let notificationsListener = null;
 let intercomNotificationsListener = null;
 
 export const startListeningIntercomNotificationsAction = () => {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
+    const { user: { username } } = getState();
+    Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
+    Intercom.registerIdentifiedUser({ userId: username });
     intercomNotificationsListener = ({ count }) => dispatch({
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
       payload: count,
@@ -25,6 +28,7 @@ export const startListeningIntercomNotificationsAction = () => {
 export const stopListeningIntercomNotificationsAction = () => {
   return () => {
     if (!intercomNotificationsListener) return;
+    Intercom.reset();
     Intercom.removeEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
   };
 };
