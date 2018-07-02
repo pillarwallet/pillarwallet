@@ -12,7 +12,7 @@ import TextInput from 'components/TextInput';
 import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { updateLocalUserAction } from 'actions/userActions';
-import { validateUserDetailsAction, resetWalletStateAction } from 'actions/onboardingActions';
+import { validateUserDetailsAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK } from 'constants/walletConstants';
 
 const { Form } = t.form;
@@ -147,10 +147,9 @@ class NewProfile extends React.Component<Props, State> {
     }
 
     if (walletState === USERNAME_OK) {
-      const { navigation, updateUser, resetWalletState } = this.props;
+      const { navigation, updateUser } = this.props;
       const value = this._form.getValue();
       updateUser({ username: value.username });
-      resetWalletState();
       navigation.navigate(LEGAL_TERMS);
     }
   }
@@ -180,7 +179,6 @@ const mapStateToProps = ({ wallet: { walletState } }) => ({ walletState });
 const mapDispatchToProps = (dispatch) => ({
   updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
-  resetWalletState: () => dispatch(resetWalletStateAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);

@@ -14,6 +14,7 @@ import {
   API_REGISTRATION_FAILED,
   USERNAME_EXISTS,
   USERNAME_OK,
+  CHECKING_USERNAME,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
@@ -173,6 +174,10 @@ export const registerOnBackendAction = () => {
 export const validateUserDetailsAction = ({ username }: Object) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const currentState = getState();
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: CHECKING_USERNAME,
+    });
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
 
@@ -188,15 +193,6 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: usernameStatus,
-    });
-  };
-};
-
-export const resetWalletStateAction = () => {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: '',
     });
   };
 };
