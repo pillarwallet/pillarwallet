@@ -29,7 +29,11 @@ public class MainApplication extends ExpoApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    Intercom.initialize(this, "android_sdk-8c4a15ada22af46599f62d1bef70c7c121957dd7", "xbjzrshe");
+    if (isDebug()) {
+      Intercom.initialize(this, "android_sdk-8c4a15ada22af46599f62d1bef70c7c121957dd7", "xbjzrshe");
+    } else {
+      Intercom.initialize(this, "android_sdk-f210e1d785d4c0e64ab3ba0f529d64c47da59186", "s70dqvb2");
+    }
   }
 
 

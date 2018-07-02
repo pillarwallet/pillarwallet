@@ -5,6 +5,7 @@ import { StatusBar, BackHandler } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Root as NBRoot } from 'native-base';
 import { Provider, connect } from 'react-redux';
+import Intercom from 'react-native-intercom';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { SHOW_STORYBOOK } from 'react-native-dotenv';
@@ -46,6 +47,7 @@ class App extends React.Component<Props, State> {
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
+    Intercom.setInAppMessageVisibility('GONE');
   }
 
   onBackPress = () => {

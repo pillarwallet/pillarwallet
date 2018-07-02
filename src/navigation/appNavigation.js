@@ -26,7 +26,12 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 
 // actions
 import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
-import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
+import {
+  stopListeningNotificationsAction,
+  startListeningNotificationsAction,
+  startListeningIntercomNotificationsAction,
+  stopListeningIntercomNotificationsAction,
+} from 'actions/notificationsActions';
 import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
 
 // constants
@@ -107,54 +112,38 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
+
+const tabBarIcon = (icon) => ({ focused, tintColor }) => (
+  <Image
+    style={{
+      width: 22,
+      height: 22,
+      tintColor: focused ? tintColor : baseColors.mediumGray,
+    }}
+    source={icon}
+  />
+);
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: {
       screen: assetsFlow,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused, tintColor }) => (
-          <Image
-            style={{
-            width: 22,
-            height: 22,
-            tintColor: focused ? tintColor : baseColors.mediumGray,
-          }}
-            source={iconWallet}
-          />
-        ),
+        tabBarIcon: tabBarIcon(iconWallet),
         tabBarLabel: 'Assets',
       }),
     },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused, tintColor }) => (
-          <Image
-            style={{
-              width: 22,
-              height: 22,
-              tintColor: focused ? tintColor : baseColors.mediumGray,
-            }}
-            source={iconIco}
-          />
-        ),
+        tabBarIcon: tabBarIcon(iconIco),
         tabBarLabel: 'Marketplace',
       }),
     },
     [PROFILE]: {
       screen: ProfileScreen,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused, tintColor }) => (
-          <Image
-            style={{
-              width: 22,
-              height: 22,
-              tintColor: focused ? tintColor : baseColors.mediumGray,
-            }}
-            source={iconProfile}
-          />
-        ),
+        tabBarIcon: tabBarIcon(iconProfile),
         tabBarLabel: 'Profile',
       }),
     },
@@ -227,6 +216,8 @@ type Props = {
   fetchUser: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
+  startListeningIntercomNotifications: Function,
+  stopListeningIntercomNotifications: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   notifications: Object[],
@@ -238,11 +229,17 @@ class AppFlow extends React.Component<Props, {}> {
   timer: any | TimeoutID;
 
   componentDidMount() {
-    const { fetchUser, userState, startListeningNotifications } = this.props;
+    const {
+      fetchUser,
+      userState,
+      startListeningNotifications,
+      startListeningIntercomNotifications,
+    } = this.props;
     if (userState !== REGISTERED) {
       fetchUser();
     }
     startListeningNotifications();
+    startListeningIntercomNotifications();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
@@ -270,8 +267,9 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    const { stopListeningNotifications } = this.props;
+    const { stopListeningNotifications, stopListeningIntercomNotifications } = this.props;
     stopListeningNotifications();
+    stopListeningIntercomNotifications();
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
@@ -311,6 +309,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchUser: () => dispatch(fetchUserAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
+  stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
+  startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },

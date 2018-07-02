@@ -21,11 +21,13 @@ import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import IFrameModal from 'components/Modals/IFrameModal';
+
+import type { Notification } from 'models/Notification';
+
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
 import SettingsPanel from './SettingsPanel';
-
 
 const storage = new Storage('db');
 
@@ -75,6 +77,7 @@ type Props = {
   baseFiatCurrency: ?string,
   requestPinForTransaction: ?boolean,
   wallet: Object,
+  intercomNotificationsCount: number,
   changeRequestPinForTransaction: (value: boolean) => Function,
   resetIncorrectPassword: () => Function,
 }
@@ -157,12 +160,8 @@ class Profile extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { user: { username, firstName, lastName } } = this.props;
+    const { user: { username } } = this.props;
     Intercom.registerIdentifiedUser({ userId: username });
-    Intercom.updateUser({
-      user_id: username,
-      name: `${firstName} ${lastName}`,
-    });
   }
 
   onCurrencyChanged = (value?: string) => {
@@ -231,7 +230,7 @@ class Profile extends React.Component<Props, State> {
   };
 
   render() {
-    const { user, wallet } = this.props;
+    const { user, wallet, intercomNotificationsCount } = this.props;
     const {
       selectedCurrency,
       requestPinForTransaction,
@@ -240,7 +239,7 @@ class Profile extends React.Component<Props, State> {
       showPrivacyPolicyModal,
       showSupportCenterModal,
     } = this.state;
-
+    
     return (
       <Container>
         <Modal
@@ -477,7 +476,7 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="supportCenter"
               label="Support Center"
-              onPress={this.toggleSupportCenterModal}
+              onPress={() => Intercom.displayHelpCenter()}
             />
 
             <ProfileSettingsItem
@@ -489,6 +488,7 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="chat"
               label="Chat with us"
+              notificationsCount={intercomNotificationsCount}
               onPress={() => Intercom.displayMessageComposer()}
             />
 
@@ -531,11 +531,13 @@ const mapStateToProps = ({
   user: { data: user },
   wallet: { data: wallet },
   appSettings: { data: { requestPinForTransaction, baseFiatCurrency } },
+  notifications: { intercomNotificationsCount },
 }) => ({
   user,
   wallet,
   requestPinForTransaction,
   baseFiatCurrency,
+  intercomNotificationsCount,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

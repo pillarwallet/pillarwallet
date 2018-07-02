@@ -1,10 +1,33 @@
 // @flow
 
 import firebase from 'react-native-firebase';
+import Intercom from 'react-native-intercom';
 import { processNotification } from 'utils/notifications';
-import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { ADD_NOTIFICATION, UPDATE_INTERCOM_NOTIFICATIONS_COUNT } from 'constants/notificationConstants';
 
 let notificationsListener = null;
+let intercomNotificationsListener = null;
+
+export const startListeningIntercomNotificationsAction = () => {
+  return (dispatch: Function) => {
+    intercomNotificationsListener = ({ count }) => dispatch({
+      type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+      payload: count,
+    });
+    Intercom.getUnreadConversationCount()
+      .then(count => ({ count }))
+      .then(intercomNotificationsListener)
+      .catch(() => { });
+    Intercom.addEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
+  };
+};
+
+export const stopListeningIntercomNotificationsAction = () => {
+  return () => {
+    if (!intercomNotificationsListener) return;
+    Intercom.removeEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
+  };
+};
 
 export const startListeningNotificationsAction = () => {
   return async (dispatch: Function, getState: Function) => {
