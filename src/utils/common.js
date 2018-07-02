@@ -102,3 +102,9 @@ export function partial(fn: Function, ...fixedArgs: any) {
     return fn.apply(null, [...fixedArgs, ...rest]);
   };
 }
+
+export function uniqBy(collection: Object[] = [], key: string): Object[] {
+  return collection.filter((item, i, arr) => {
+    return arr.map(it => it[key]).indexOf(item[key]) === i;
+  });
+}
