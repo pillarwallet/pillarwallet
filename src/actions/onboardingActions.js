@@ -3,6 +3,7 @@ import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
+import Intercom from 'react-native-intercom';
 import { getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
@@ -70,9 +71,9 @@ export const registerWalletAction = () => {
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
+    await Intercom.sendTokenToIntercom(fcmToken);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
-
     const userInfo = await api.userInfo(sdkWallet.walletId);
     if (Object.keys(userInfo).length) {
       await storage.save('user', { user: userInfo });
@@ -134,6 +135,7 @@ export const registerOnBackendAction = () => {
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
+    await Intercom.sendTokenToIntercom(fcmToken);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
 

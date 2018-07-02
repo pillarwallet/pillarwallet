@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import Storage from 'services/storage';
 import type { NavigationScreenProp } from 'react-navigation';
+import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Toast } from 'native-base';
@@ -153,6 +154,15 @@ class Profile extends React.Component<Props, State> {
       };
     }
     return null;
+  }
+
+  componentDidMount() {
+    const { user: { username, firstName, lastName } } = this.props;
+    Intercom.registerIdentifiedUser({ userId: username });
+    Intercom.updateUser({
+      user_id: username,
+      name: `${firstName} ${lastName}`,
+    });
   }
 
   onCurrencyChanged = (value?: string) => {
@@ -474,6 +484,12 @@ class Profile extends React.Component<Props, State> {
               key="privacyPolicy"
               label="Privacy Policy"
               onPress={this.togglePrivacyPolicyModal}
+            />
+
+            <ProfileSettingsItem
+              key="chat"
+              label="Chat with us"
+              onPress={() => Intercom.displayMessageComposer()}
             />
 
             <IFrameModal
