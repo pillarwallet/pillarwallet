@@ -4,14 +4,14 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppState, Animated, Easing, Platform, Image } from 'react-native';
+
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ICOScreen from 'screens/ICO';
+import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -52,6 +52,8 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 // models
 import type { Assets } from 'models/Asset';
 
+import { UIColors, baseColors } from 'utils/variables';
+
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
@@ -73,6 +75,10 @@ if (Platform.OS === 'ios') {
     },
   };
 }
+
+const iconWallet = require('assets/icons/icon_wallet.png');
+const iconProfile = require('assets/icons/icon_profile.png');
+const iconIco = require('assets/icons/icon_ico.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -101,8 +107,6 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
-const tabNavigationIcon = (iconName, focused) => `${iconName}${focused ? '' : '-outline'}`;
-
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
@@ -110,35 +114,72 @@ const tabNavigation = createBottomTabNavigator(
       screen: assetsFlow,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-albums', focused)} size={25} color={tintColor} />
+          <Image
+            style={{
+            width: 22,
+            height: 22,
+            tintColor: focused ? tintColor : baseColors.mediumGray,
+          }}
+            source={iconWallet}
+          />
         ),
+        tabBarLabel: 'Assets',
       }),
     },
     [ICO]: {
-      screen: ICOScreen,
+      screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-pricetags', focused)} size={25} color={tintColor} />
+          <Image
+            style={{
+              width: 22,
+              height: 22,
+              tintColor: focused ? tintColor : baseColors.mediumGray,
+            }}
+            source={iconIco}
+          />
         ),
-        tabBarLabel: 'ICO MARKETPLACE',
+        tabBarLabel: 'Marketplace',
       }),
     },
     [PROFILE]: {
       screen: ProfileScreen,
       navigationOptions: () => ({
         tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-contact', focused)} size={25} color={tintColor} />
+          <Image
+            style={{
+              width: 22,
+              height: 22,
+              tintColor: focused ? tintColor : baseColors.mediumGray,
+            }}
+            source={iconProfile}
+          />
         ),
+        tabBarLabel: 'Profile',
       }),
     },
   }, {
     tabBarOptions: {
-      activeTintColor: 'blue',
+      activeTintColor: UIColors.primary,
       inactiveTintColor: 'gray',
       activeBackgroundColor: 'white',
       inactiveBackgroundColor: 'white',
       style: {
         backgroundColor: 'white',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        borderTopColor: 'transparent',
+        paddingTop: 5,
+        paddingBottom: 5,
+        height: 66,
+      },
+      labelStyle: {
+        fontSize: 14,
+        marginBottom: 4,
+        marginTop: 4,
       },
     },
     tabBarPosition: 'bottom',
