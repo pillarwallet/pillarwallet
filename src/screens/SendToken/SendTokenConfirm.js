@@ -121,10 +121,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   handleModalDismissal = () => {
-    const { fetchTransactionsHistory, navigation, wallet } = this.props;
-    const { assetData } = this.state;
+    const { navigation } = this.props;
     navigation.dismiss();
-    fetchTransactionsHistory(wallet.address, assetData.token);
   };
 
   handlePendingNotifcationOpen = () => {
@@ -163,7 +161,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       <React.Fragment>
         <ModalScreenHeader
           onBack={this.props.navigation.goBack}
-          onClose={this.props.navigation.dismiss}
+          onClose={this.handleModalDismissal}
           title="send"
           rightLabelText="step 3 of 3"
         />
