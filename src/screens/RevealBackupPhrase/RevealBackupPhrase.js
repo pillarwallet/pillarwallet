@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import Title from 'components/Title';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckPin from 'components/CheckPin';
 import ModalScreenHeader from 'components/ModalScreenHeader';
