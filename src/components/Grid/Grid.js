@@ -9,6 +9,7 @@ export const Grid = styled.View`
 export const Row = styled.View`
   flex-direction: row;
   flex: ${props => props.size ? props.size : 1};
+  padding: ${props => props.customPadding || 0};
 `;
 
 export const Column = styled.View`

@@ -4,21 +4,22 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppState, Animated, Easing, Platform, Image } from 'react-native';
+
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ICOScreen from 'screens/ICO';
+import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
-import SendTokenAmountScreen from 'screens/SendTokenAmount';
-import SendTokenContactsScreen from 'screens/SendTokenContacts';
+import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
+import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
+import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -42,6 +43,7 @@ import {
   TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
+  SEND_TOKEN_CONFIRM,
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
@@ -49,6 +51,8 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 
 // models
 import type { Assets } from 'models/Asset';
+
+import { UIColors, baseColors } from 'utils/variables';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
@@ -71,6 +75,10 @@ if (Platform.OS === 'ios') {
     },
   };
 }
+
+const iconWallet = require('assets/icons/icon_wallet.png');
+const iconProfile = require('assets/icons/icon_profile.png');
+const iconIco = require('assets/icons/icon_ico.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -102,36 +110,76 @@ const assetsFlow = FluidNavigator({
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
-    [ASSETS]: assetsFlow,
-    [ICO]: ICOScreen,
-    [PROFILE]: ProfileScreen,
+    [ASSETS]: {
+      screen: assetsFlow,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Image
+            style={{
+            width: 22,
+            height: 22,
+            tintColor: focused ? tintColor : baseColors.mediumGray,
+          }}
+            source={iconWallet}
+          />
+        ),
+        tabBarLabel: 'Assets',
+      }),
+    },
+    [ICO]: {
+      screen: MarketplaceComingSoonScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Image
+            style={{
+              width: 22,
+              height: 22,
+              tintColor: focused ? tintColor : baseColors.mediumGray,
+            }}
+            source={iconIco}
+          />
+        ),
+        tabBarLabel: 'Marketplace',
+      }),
+    },
+    [PROFILE]: {
+      screen: ProfileScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Image
+            style={{
+              width: 22,
+              height: 22,
+              tintColor: focused ? tintColor : baseColors.mediumGray,
+            }}
+            source={iconProfile}
+          />
+        ),
+        tabBarLabel: 'Profile',
+      }),
+    },
   }, {
-    navigationOptions: ({ navigation }) => ({
-      tabBarIcon: ({ focused, tintColor }) => {
-        const { routeName } = navigation.state;
-        let iconName;
-
-        switch (routeName) {
-          case ASSETS:
-            iconName = `ios-albums${focused ? '' : '-outline'}`; break;
-          case ICO:
-            iconName = `ios-jet${focused ? '' : '-outline'}`; break;
-          case PROFILE:
-            iconName = `ios-contact${focused ? '' : '-outline'}`; break;
-          default:
-            return '';
-        }
-
-        return <Ionicons name={iconName} size={25} color={tintColor} />;
-      },
-    }),
     tabBarOptions: {
-      activeTintColor: 'blue',
+      activeTintColor: UIColors.primary,
       inactiveTintColor: 'gray',
       activeBackgroundColor: 'white',
       inactiveBackgroundColor: 'white',
       style: {
         backgroundColor: 'white',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        borderTopColor: 'transparent',
+        paddingTop: 5,
+        paddingBottom: 5,
+        height: 66,
+      },
+      labelStyle: {
+        fontSize: 14,
+        marginBottom: 4,
+        marginTop: 4,
       },
     },
     tabBarPosition: 'bottom',
@@ -144,6 +192,7 @@ const tabNavigation = createBottomTabNavigator(
 const sendTokenFlow = createStackNavigator({
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 
 const changePinFlow = createStackNavigator(

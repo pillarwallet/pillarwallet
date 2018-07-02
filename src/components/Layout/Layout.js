@@ -2,7 +2,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { baseColors } from 'utils/variables';
 
 type ContainerProps = {
   children?: React.Node,
@@ -14,7 +13,7 @@ export const Center = styled.View`
 `;
 
 const ContainerOuter = styled.SafeAreaView`
-  background-color: ${baseColors.white};
+  background-color: #fff;
 `;
 
 const ContainerInner = styled.View`
@@ -34,11 +33,13 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.View`
-  padding: ${props => (props.regularPadding ? '0 20px' : '0')};
+  padding: ${props => (props.regularPadding ? '0 16px' : '0')};
+  align-items: ${props => (props.center ? 'center' : 'stretch')};
+  justify-content: ${props => (props.center ? 'center' : 'flex-start')};
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
-  padding: ${props => (props.regularPadding ? '0 20px' : '0')};
+  padding: ${props => (props.regularPadding ? '0 16px' : '0')};
 `;
 
 export const Footer = styled.View`
@@ -46,7 +47,7 @@ export const Footer = styled.View`
   align-items: center;
   width: 100%;
   justify-content: flex-end;
-  padding: 20px;
+  padding: 16px;
   position: absolute;
   bottom: 0;
 `;

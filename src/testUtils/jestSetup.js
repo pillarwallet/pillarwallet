@@ -21,7 +21,12 @@ jest.setMock('cryptocompare', {
 jest.setMock('react-native-device-info', {
   getUniqueID: () => '1x1x1x1x1x1x1',
 });
-jest.setMock('blockchain-explorer-sdk', ({
-  txHistory: () => Promise.resolve({ txHistory: { txHistory: [] } }),
-  getBalance: () => Promise.resolve({ balance: { ticker: 'ETH', balance: 1 } }),
-}));
+
+function BCXSDK() {
+  return {
+    txHistory: () => Promise.resolve({ txHistory: { txHistory: [] } }),
+    getBalance: () => Promise.resolve({ balance: { ticker: 'ETH', balance: 1 } }),
+  };
+}
+
+jest.setMock('blockchain-explorer-sdk', BCXSDK);

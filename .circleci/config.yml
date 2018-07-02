@@ -29,7 +29,7 @@ jobs:
           path: ./reports/
           destination: reports
 
-  test:
+  test_ios:
     working_directory: ~/pillarwallet
     macos:
       xcode: "9.3.0"
@@ -112,7 +112,7 @@ jobs:
           path: ./ios/build
           destination: app_build
 
-  deploy:
+  deploy_ios:
     working_directory: ~/pillarwallet
     macos:
       xcode: "9.3.0"
@@ -189,22 +189,117 @@ jobs:
           environment:
             SCAN_DEVICE: iPhone 8
 
+  deploy_android:
+    working_directory: ~/pillarwallet/android
+    docker:
+      - image: circleci/android:api-26-node8-alpha
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -Dfile.encoding=UTF-8"'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+    steps:
+      - checkout:
+          path: ~/pillarwallet
+      - restore_cache:
+          key: node-{{ checksum "../yarn.lock" }}
+      - run:
+          name: Install Expo cli
+          command: cd .. && sudo yarn global add exp
+      - run:
+          name: Setting .expo/PATH
+          command: cd .. && exp path
+      - run:
+            name: Authenticate with Artifactory
+            command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: cd .. && npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - run:
+            name: set Yarn to use Artifactory
+            command: cd .. && echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+      - run:
+          name: Install node dependencies
+          command: cd .. && yarn install
+      - run:
+          name: Login to Expo
+          command: cd .. && exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
+      - run:
+          name: Publish resources bundle to Expo server
+          command: cd .. && exp publish
+      - save_cache:
+          key: node-{{ checksum "../yarn.lock" }}
+          paths:
+            - ~/pillarwallet/nodes_modules
+      - run:
+          name: Creating Gemfile in android dir
+          command: bundle init
+      - run:
+          name: Install fastlane gem
+          command: echo 'gem "fastlane"' >> Gemfile
+      - restore_cache:
+          key: gems-{{ checksum "Gemfile" }}
+      - run:
+          name: Bundle install
+          command: bundle check || bundle install --path vendor/bundle
+      - save_cache:
+          key: gems-{{ checksum "Gemfile" }}
+          paths:
+            - vendor/bundle
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+      - run:
+          name: Chmod permissions
+          command: sudo chmod +x ./gradlew
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+      - save_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          paths:
+            - ~/.gradle
+            - ~/.m2
+      # - run:
+      #     name: Run Tests
+      #     command: ./gradlew lint test
+      # - store_artifacts:
+      #     path: app/build/reports
+      #     destination: reports
+      # - store_test_results:
+      #     path: app/build/test-results
+      - run:
+          name: Initial build
+          command: ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+
+      - run:
+          name: Fastlane deploy to Google Play
+          command: |
+            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
+            bundle exec fastlane supply init --json_key_data="$GOOGLE_JSON_DATA"
+            bundle exec fastlane deploy_internal --verbose
+          environment:
+            BUNDLE_PATH: vendor/bundle
+      - store_artifacts:
+          path: app/build/outputs/apk
+          destination: apks
+
 workflows:
   version: 2
   build_and_deploy:
     jobs:
       - build
-      - test:
+      - deploy_ios:
           requires:
             - build
           filters:
             branches:
               only:
-                  - develop
                   - master
-      - deploy:
+      - deploy_android:
           requires:
-            - test
+            - build
           filters:
             branches:
-              only: master
+              only:
+                  - master

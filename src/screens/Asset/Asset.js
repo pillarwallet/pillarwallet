@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Animated, Easing, View, Share, RefreshControl } from 'react-native';
+import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -53,6 +54,11 @@ type State = {
     }
   }
 }
+
+const AssetCardWrapper = styled(Wrapper)`
+  background-color: ${baseColors.lightGray};
+  height: 350;
+`;
 
 class AssetScreen extends React.Component<Props, State> {
   state = {
@@ -126,7 +132,9 @@ class AssetScreen extends React.Component<Props, State> {
       assets,
       wallet,
     } = this.props;
-    const history = this.props.history.filter(({ asset }) => asset === assetData.token);
+    const history = this.props.history
+      .filter(({ asset }) => asset === assetData.token)
+      .sort((a, b) => b.timestamp - a.timestamp);
     return (
       <Container>
         <ScrollWrapper
@@ -149,7 +157,7 @@ class AssetScreen extends React.Component<Props, State> {
             style={{
               borderBottomWidth: 1,
               borderStyle: 'solid',
-              backgroundColor: baseColors.white,
+              backgroundColor: baseColors.snowWhite,
               borderColor: UIColors.defaultBorderColor,
               padding: 20,
               height: 60,
@@ -157,13 +165,7 @@ class AssetScreen extends React.Component<Props, State> {
               flexDirection: 'row',
             }}
           />
-          <Wrapper
-            regularPadding
-            style={{
-              backgroundColor: baseColors.white,
-              height: 350,
-            }}
-          >
+          <AssetCardWrapper regularPadding>
             <Transition shared={assetData.name}>
               <AssetCard
                 id={assetData.token}
@@ -174,22 +176,19 @@ class AssetScreen extends React.Component<Props, State> {
                 color={assetData.color}
                 onPress={this.handleCardTap}
                 address={assetData.address}
-                iconUri={assetData.icon}
-                backgroundUri={assetData.background}
+                icon={assetData.icon}
               />
             </Transition>
             <Paragraph light>
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              Reiciendis cum recusandae neque numquam corporis quibusdam tenetur expedita tempora aut harum.
+              {assetData.description}
             </Paragraph>
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal(assetData)}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
             />
-          </Wrapper>
+          </AssetCardWrapper>
           <TXHistory
             history={history}
-            address={assetData.address}
             token={assetData.token}
           />
         </ScrollWrapper>

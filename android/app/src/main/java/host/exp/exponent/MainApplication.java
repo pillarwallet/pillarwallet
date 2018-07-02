@@ -10,7 +10,6 @@ import expolib_v1.okhttp3.OkHttpClient;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
-import com.dylanvann.fastimage.FastImageViewPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import com.bitgo.randombytes.RandomBytesPackage;
@@ -19,6 +18,7 @@ import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 public class MainApplication extends ExpoApplication {
 
@@ -35,7 +35,6 @@ public class MainApplication extends ExpoApplication {
 
         // Needed for `react-native link`
         // new MainReactPackage(),
-            new FastImageViewPackage(),
             new UdpSocketsModule(),
             new TcpSocketsModule(),
             new RandomBytesPackage(),

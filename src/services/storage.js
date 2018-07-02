@@ -10,18 +10,21 @@ Storage.prototype.get = function (id: string) {
   return this.db.get(id).catch(() => ({}));
 };
 
-Storage.prototype.save = function (id: string, data: Object) {
+Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
   return this.db.get(id).then((doc) => {
-    const record = merge(
-      {},
-      doc,
-      {
-        _id: id,
-        _rev: doc._rev,
-      },
-      data,
-    );
-    return this.db.put(record);
+    const options = { force: forceRewrite };
+    const record = forceRewrite
+      ? { _id: id, _rev: doc._rev, ...data }
+      : merge(
+        {},
+        doc,
+        {
+          _id: id,
+          _rev: doc._rev,
+        },
+        data,
+      );
+    return this.db.put(record, options);
   }).catch(() => this.db.post({ _id: id, ...data }));
 };
 

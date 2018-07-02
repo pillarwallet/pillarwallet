@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import { baseColors } from 'utils/variables';
 import { getCurrencySymbol } from 'utils/common';
-import FastImage from 'react-native-fast-image';
 import styled from 'styled-components/native';
+import { Image as ImageCache } from 'react-native-expo-image-cache';
 
 import IconWrapper from './IconWrapper';
 import IconCircle from './IconCircle';
@@ -21,7 +21,6 @@ type Props = {
   name: string,
   token: string,
   amount: string,
-  color: string,
   onPress: Function,
   address: string,
   children?: React.Node,
@@ -29,51 +28,69 @@ type Props = {
     amount: string | number,
     currency: string,
   },
-  iconUri: string,
-  backgroundUri: string,
+  icon: string,
+  color: string
 }
 
-const BackgroundHolder = styled(View)`
+const BackgroundHolder = styled.View`
   flex: 1;
   flex-direction: row;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
+  width: 100%;
+  position: relative;
+  background-color: ${props => (props.cardColor)};
+`;
+
+const AmountWrapper = styled.View`
+  height: 40;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  margin-left: 14px;
+  justify-content: flex-end;
 `;
 
 type State = {
-  showAsset: boolean;
+  cardIcon: string,
 }
+
+const defaultCardColor = '#ACBCCD';
 
 export default class AssetCard extends React.Component<Props, State> {
   state = {
-    showAsset: false,
-  }
+    cardIcon: '',
+  };
 
-  handleBackgroundDownload = () => {
-    this.setState({ showAsset: true });
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    if (nextProps.icon !== prevState.cardIcon) {
+      return {
+        cardIcon: nextProps.icon,
+      };
+    }
+
+    return null;
   }
 
   render() {
     const {
-      color: linearGradientColorStart,
+      color,
       name,
       amount,
       token,
       balanceInFiat,
       onPress,
-      iconUri,
-      backgroundUri,
     } = this.props;
-    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
+    const { cardIcon } = this.state;
+
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
     return (
       <View
         style={{
-          backgroundColor: baseColors.white,
+          backgroundColor: baseColors.snowWhite,
         }}
       >
-
         <TouchableWithoutFeedback
           onPress={onPress}
           style={{
@@ -83,63 +100,42 @@ export default class AssetCard extends React.Component<Props, State> {
             width: '100%',
             height: '100%',
             zIndex: 10,
-            opacity: this.state.showAsset ? 1 : 0,
           }}
         >
-
           <Animated.View
-            color={linearGradientColorStart}
             style={[{
-              height: 120,
-              marginBottom: 20,
+              height: 130,
+              marginBottom: 12,
             }]}
           >
-            <BackgroundHolder>
-              <FastImage
-                style={{
-                  width: '100%',
-                  height: 200,
-                  position: 'absolute',
-                  display: 'flex',
-                  top: 0,
-                  left: 0,
-                  bottom: 0,
-                  right: 0,
-                }}
-                source={{
-                  uri: backgroundUri,
-                  priority: FastImage.priority.high,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-                onLoad={this.handleBackgroundDownload}
-              />
+            <BackgroundHolder cardColor={color || defaultCardColor}>
               <DetailsWrapper>
                 <Name>{name}</Name>
-                <Amount>{amount}<AmountToken> {token}</AmountToken></Amount>
+                <AmountWrapper>
+                  <Amount>{amount}</Amount>
+                  <AmountToken> {token}</AmountToken>
+                </AmountWrapper>
                 <FiatAmount>
                   {currencySymbol}{balanceInFiat.amount}
                 </FiatAmount>
               </DetailsWrapper>
+              {!!cardIcon &&
               <IconWrapper>
-                <IconCircle>
-                  <FastImage
-                    style={{
-                      alignSelf: 'flex-end',
-                      height: 24,
-                      width: 24,
-                      position: 'absolute',
-                      top: 8,
-                      left: 8,
-                      opacity: this.state.showAsset ? 1 : 0,
-                    }}
-                    source={{
-                      uri: iconUri,
-                      priority: FastImage.priority.low,
-                    }}
-                    resizeMode={FastImage.resizeMode.cover}
-                  />
-                </IconCircle>
-              </IconWrapper>
+                <IconCircle />
+                <ImageCache
+                  key={token}
+                  style={{
+                    alignSelf: 'flex-end',
+                    height: 24,
+                    width: 24,
+                    position: 'absolute',
+                    top: 27,
+                    right: 22,
+                  }}
+                  uri={cardIcon}
+                  resizeMode="contain"
+                />
+              </IconWrapper>}
             </BackgroundHolder>
           </Animated.View>
         </TouchableWithoutFeedback>

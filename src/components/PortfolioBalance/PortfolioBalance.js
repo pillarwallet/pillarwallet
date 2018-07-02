@@ -16,7 +16,8 @@ type Rates = {
 type Props = {
   assets: Assets,
   rates: Rates,
-  baseFiatCurrency: string
+  baseFiatCurrency: string,
+  label?: string;
 };
 
 class PortfolioBalance extends React.Component<Props, {}> {
@@ -45,7 +46,12 @@ class PortfolioBalance extends React.Component<Props, {}> {
   }
 
   render() {
-    const { assets, rates, baseFiatCurrency } = this.props;
+    const {
+      assets,
+      rates,
+      baseFiatCurrency,
+      label,
+    } = this.props;
 
     if (!Object.keys(rates).length || !Object.keys(assets).length) {
       return null;
@@ -58,13 +64,15 @@ class PortfolioBalance extends React.Component<Props, {}> {
 
     return (
       <View>
+        {!!label &&
         <Text style={{
-          color: baseColors.mediumGray,
-          fontSize: fontSizes.medium,
-          }}
+          color: baseColors.darkGray,
+          fontSize: fontSizes.small,
+          paddingTop: 10,
+        }}
         >
-          Total Portfolio
-        </Text>
+          {label}
+        </Text>}
         <Text style={{
           color: UIColors.defaultTextColor,
           fontSize: fontSizes.extraExtraLarge,

@@ -1,44 +1,61 @@
 // @flow
 export const baseColors = {
-  periwinkle: '#9191ff',
   sunYellow: '#f8e71c',
+  burningFire: '#F56C07',
+  periwinkle: '#9191ff',
   fireEngineRed: '#ff0005',
+  electricBlue: '#007AFF',
   brightSkyBlue: '#00bfff',
   aquaMarine: '#50e3c2',
+  freshEucalyptus: '#2AA057',
+  snowWhite: '#fafafa',
+  lightGray: '#f5f5f5',
+  lighterGray: '#fafafa',
+  mediumGray: '#C6CACD',
+  darkGray: '#8B939E',
+  coolGrey: '#8b939e',
+  slateBlack: '#0A1427',
   lightGreen: '#82bc40',
+  jadeGreen: '#2aa157',
   clearBlue: '#2077fd',
   white: '#ffffff',
-  lightGray: '#f6f6f6',
-  mediumGray: '#777777',
-  darkGray: '#4a4a4a',
   black: '#000000',
 };
 
 export const brandColors = [
   baseColors.periwinkle,
   baseColors.sunYellow,
-  baseColors.fireEngineRed,
+  baseColors.burningFire,
   baseColors.brightSkyBlue,
   baseColors.aquaMarine,
 ];
 
 export const UIColors = {
-  primary: baseColors.clearBlue,
-  danger: baseColors.fireEngineRed,
+  primary: baseColors.electricBlue,
+  danger: baseColors.burningFire,
   disabled: baseColors.mediumGray,
-  defaultTextColor: baseColors.black,
+  defaultTextColor: baseColors.slateBlack,
+  defaultBackgroundColor: baseColors.snowWhite,
   defaultBorderColor: 'rgba(0, 0, 0, 0.25)',
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
 };
 
 export const fontSizes = {
-  extraExtraSmall: 6,
-  extraSmall: 9,
-  small: 12,
+  extraExtraSmall: 10,
+  extraSmall: 12,
+  small: 14,
   medium: 16,
+  mediumLarge: 18,
   large: 22,
   extraLarge: 24,
   extraExtraLarge: 32,
+  giant: 36,
+};
+
+export const fontTrackings = {
+  small: 0.2,
+  medium: 0.3,
+  large: 0.5,
 };
 
 export const fontWeights = {
