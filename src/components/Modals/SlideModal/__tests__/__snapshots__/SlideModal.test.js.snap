@@ -274,6 +274,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   },
                 ]
               }
+              type="Ionicons"
               virtual={undefined}
             >
               

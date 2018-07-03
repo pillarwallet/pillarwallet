@@ -19,23 +19,18 @@ const ButtonIcon = (props: Props) => {
     fontSize,
     color,
     style,
-    type,
+    type = 'Ionicons',
   } = props;
-  const CustomIcon = () => {
-    if (type) {
-      return (
-        <Icon active={false} type={type} name={icon} style={{ fontSize, color }} />
-      );
-    }
-    return (
-      <Icon active={false} name={icon} style={{ fontSize, color }} />
-    );
+  const iconParams = {
+    active: false,
+    name: icon,
+    style: { fontSize, color },
+    type,
   };
-
   if (Platform.OS === 'ios') {
     return (
       <Button transparent iconLeft={0} onPress={onPress} style={style}>
-        <CustomIcon />
+        <Icon {...iconParams} />
       </Button>
     );
   }
@@ -50,7 +45,7 @@ const ButtonIcon = (props: Props) => {
         alignSelf: 'center',
       }, style]}
       >
-        <CustomIcon />
+        <Icon {...iconParams} />
       </View>
     </TouchableNativeFeedback>
   );
