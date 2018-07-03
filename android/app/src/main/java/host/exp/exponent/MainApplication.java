@@ -10,7 +10,6 @@ import expolib_v1.okhttp3.OkHttpClient;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
-import com.robinpowered.react.Intercom.IntercomPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import com.bitgo.randombytes.RandomBytesPackage;
@@ -29,7 +28,7 @@ public class MainApplication extends ExpoApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    if (isDebug()) {
+    if (BuildConfig.DEBUG) {
       Intercom.initialize(this, "android_sdk-8c4a15ada22af46599f62d1bef70c7c121957dd7", "xbjzrshe");
     } else {
       Intercom.initialize(this, "android_sdk-f210e1d785d4c0e64ab3ba0f529d64c47da59186", "s70dqvb2");
