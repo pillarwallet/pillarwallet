@@ -96,7 +96,7 @@ export default class SlideModal extends React.Component<Props, State> {
       onModalHide,
     } = this.props;
     const animationInTiming = 800;
-    const animationOutTiming = 400;
+    const animationOutTiming = 1600;
     return (
       <Modal
         isVisible={isVisible}
@@ -125,7 +125,7 @@ export default class SlideModal extends React.Component<Props, State> {
               />
             </ModalHeader>
             <ModalContent>
-              {isVisible && children}
+              {children}
             </ModalContent>
             <ModalOverflow />
           </ModalBackground>
