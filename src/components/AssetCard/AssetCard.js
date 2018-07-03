@@ -3,9 +3,7 @@ import * as React from 'react';
 import {
   Animated,
   TouchableWithoutFeedback,
-  View,
 } from 'react-native';
-import { baseColors } from 'utils/variables';
 import { getCurrencySymbol } from 'utils/common';
 import styled from 'styled-components/native';
 import { Image as ImageCache } from 'react-native-expo-image-cache';
@@ -86,60 +84,54 @@ export default class AssetCard extends React.Component<Props, State> {
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
     return (
-      <View
+      <TouchableWithoutFeedback
+        onPress={onPress}
         style={{
-          backgroundColor: baseColors.snowWhite,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 10,
         }}
       >
-        <TouchableWithoutFeedback
-          onPress={onPress}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            zIndex: 10,
-          }}
+        <Animated.View
+          style={[{
+            height: 130,
+            marginBottom: 12,
+          }]}
         >
-          <Animated.View
-            style={[{
-              height: 130,
-              marginBottom: 12,
-            }]}
-          >
-            <BackgroundHolder cardColor={color || defaultCardColor}>
-              <DetailsWrapper>
-                <Name>{name}</Name>
-                <AmountWrapper>
-                  <Amount>{amount}</Amount>
-                  <AmountToken> {token}</AmountToken>
-                </AmountWrapper>
-                <FiatAmount>
-                  {currencySymbol}{balanceInFiat.amount}
-                </FiatAmount>
-              </DetailsWrapper>
-              {!!cardIcon &&
-              <IconWrapper>
-                <IconCircle />
-                <ImageCache
-                  key={token}
-                  style={{
-                    alignSelf: 'flex-end',
-                    height: 24,
-                    width: 24,
-                    position: 'absolute',
-                    top: 27,
-                    right: 22,
-                  }}
-                  uri={cardIcon}
-                  resizeMode="contain"
-                />
-              </IconWrapper>}
-            </BackgroundHolder>
-          </Animated.View>
-        </TouchableWithoutFeedback>
-      </View>
+          <BackgroundHolder cardColor={color || defaultCardColor}>
+            <DetailsWrapper>
+              <Name>{name}</Name>
+              <AmountWrapper>
+                <Amount>{amount}</Amount>
+                <AmountToken> {token}</AmountToken>
+              </AmountWrapper>
+              <FiatAmount>
+                {currencySymbol}{balanceInFiat.amount}
+              </FiatAmount>
+            </DetailsWrapper>
+            {!!cardIcon &&
+            <IconWrapper>
+              <IconCircle />
+              <ImageCache
+                key={token}
+                style={{
+                  alignSelf: 'flex-end',
+                  height: 24,
+                  width: 24,
+                  position: 'absolute',
+                  top: 27,
+                  right: 22,
+                }}
+                uri={cardIcon}
+                resizeMode="contain"
+              />
+            </IconWrapper>}
+          </BackgroundHolder>
+        </Animated.View>
+      </TouchableWithoutFeedback>
     );
   }
 }

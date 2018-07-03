@@ -9,27 +9,28 @@ const MnemonicPhraseWrapper = styled.View`
   justify-content: space-around;
   flex-wrap: wrap;
   height: 280px;
+  margin: 20px 0;
   width: 100%;
 `;
 
 const MnemonicPhraseItem = styled.View`
-  width: 40%;
-  margin: 0 5% 5px;
+  width: 50%;
+  margin: 0 0 5px 0;
+  padding-right: 10px;
   flex-direction: row;
   align-items: center;
-  align-content: center;
-  justify-content: space-around;
+  justify-content: flex-start;
 `;
 
 const MnemonicPhraseIndex = styled.Text`
-  margin-right: 30px;
+  flex: 0 0 20px;
 `;
 
 const MnemonicPhraseWord = styled.Text`
   background-color: ${baseColors.lightGray};
   font-weight: bold;
   font-size: ${fontSizes.extraSmall};
-  width: 100%;
+  flex: 1;
   border-color: ${UIColors.defaultBorderColor};
   border-style: dashed;
   border-width: 1;
