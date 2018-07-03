@@ -132,7 +132,6 @@ class TXHistory extends React.Component<Props, State> {
     } = transaction;
     const datetime = new Date(timestamp);
     const myAddress = this.props.wallet.address;
-
     this.setState({
       selectedTransaction: {
         hash,
@@ -140,7 +139,7 @@ class TXHistory extends React.Component<Props, State> {
         token: asset,
         amount: formatETHAmount(value),
         recipient: `${to.slice(0, 7)}…${to.slice(-7)}`,
-        fee: gasUsed.toFixed(6),
+        fee: gasUsed ? gasUsed.toFixed(6) : 0,
         note: null,
         confirmations: nbConfirmations,
         status: status.charAt(0).toUpperCase() + status.slice(1),

@@ -11,6 +11,8 @@ import {
   UPDATE_WALLET_STATE,
   API_REGISTRATION_STARTED,
   API_REGISTRATION_FAILED,
+  USERNAME_EXISTS,
+  USERNAME_OK,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
@@ -69,22 +71,22 @@ export const registerWalletAction = () => {
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
-    const updatedUser = await api.updateUser({
-      walletId: sdkWallet.walletId,
-      ...user,
-    });
-    if (Object.keys(updatedUser).length) {
-      await storage.save('user', { user: updatedUser });
+    const registrationSucceed = !!Object.keys(sdkWallet).length;
+
+    const userInfo = await api.userInfo(sdkWallet.walletId);
+    if (Object.keys(userInfo).length) {
+      await storage.save('user', { user: userInfo });
     }
-    const userState = Object.keys(updatedUser).length ? REGISTERED : PENDING;
+    const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
       type: UPDATE_USER,
       payload: {
-        user: updatedUser,
+        user: userInfo,
         state: userState,
       },
     });
-    if (userState === PENDING) {
+
+    if (!registrationSucceed) {
       await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
@@ -94,7 +96,7 @@ export const registerWalletAction = () => {
     }
 
     // STEP 5: get&store initial assets
-    const initialAssets = await api.fetchInitialAssets(updatedUser.walletId);
+    const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
     const rates = await getExchangeRates(Object.keys(initialAssets));
 
     dispatch({
@@ -133,23 +135,22 @@ export const registerOnBackendAction = () => {
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
-    const updatedUser = await api.updateUser({
-      walletId: sdkWallet.walletId,
-      ...user,
-    });
-    if (Object.keys(updatedUser).length) {
-      await storage.save('user', { user: updatedUser });
+    const registrationSucceed = !!Object.keys(sdkWallet).length;
+
+    const userInfo = await api.userInfo(sdkWallet.walletId);
+    if (Object.keys(userInfo).length) {
+      await storage.save('user', { user: userInfo });
     }
-    const userState = Object.keys(updatedUser).length ? REGISTERED : PENDING;
+    const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
       type: UPDATE_USER,
       payload: {
-        user: updatedUser,
+        user: userInfo,
         state: userState,
       },
     });
 
-    if (userState === PENDING) {
+    if (!registrationSucceed) {
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: API_REGISTRATION_FAILED,
@@ -164,5 +165,27 @@ export const registerOnBackendAction = () => {
     });
 
     dispatch(navigateToAssetsAction);
+  };
+};
+
+export const validateUserDetailsAction = ({ username }: Object) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const currentState = getState();
+    const { mnemonic, importedWallet } = currentState.wallet.onboarding;
+    const mnemonicPhrase = mnemonic.original;
+
+    let wallet = importedWallet;
+    if (!wallet) {
+      wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
+    }
+
+    api.init(wallet.privateKey);
+    const response = await api.usernameSearch(username);
+    const usernameExists = !!Object.keys(response).length;
+    const usernameSatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: usernameSatus,
+    });
   };
 };

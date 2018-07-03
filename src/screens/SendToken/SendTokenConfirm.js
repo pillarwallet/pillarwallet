@@ -13,10 +13,9 @@ import ModalScreenHeader from 'components/ModalScreenHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import type { TransactionPayload } from 'models/Transaction';
-import { sendAssetAction } from 'actions/assetsActions';
+import { sendAssetAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
-import { delay } from 'utils/common';
 
 const imageSend = require('assets/images/confirm-send.png');
 
@@ -25,6 +24,8 @@ type Props = {
   sendAsset: Function,
   appSettings: Object,
   resetIncorrectPassword: () => Function,
+  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  wallet: Object,
 }
 
 type State = {
@@ -32,6 +33,7 @@ type State = {
   assetData: Object,
   isSubmitted: boolean,
   showCheckPinModal: boolean,
+  showTransactionPendingModal: boolean,
 }
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
@@ -96,6 +98,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       assetData,
       isSubmitted: false,
       showCheckPinModal: false,
+      showTransactionPendingModal: false,
     };
   }
 
@@ -103,6 +106,10 @@ class SendTokenContacts extends React.Component<Props, State> {
     const needToCheckPinCode = this.isNeedToCheckPinCode(this.props.appSettings);
     if (!needToCheckPinCode) {
       this.makeTransaction();
+      this.setState({
+        showTransactionPendingModal: true,
+        isSubmitted: true,
+      });
       return;
     }
     this.setState({ showCheckPinModal: true });
@@ -113,8 +120,15 @@ class SendTokenContacts extends React.Component<Props, State> {
     return requestPinForTransaction;
   }
 
-  handleBackNavigation = () => {
-    this.props.navigation.dismiss();
+  handleModalDismissal = () => {
+    const { navigation } = this.props;
+    navigation.dismiss();
+  };
+
+  handlePendingNotifcationOpen = () => {
+    const { isSubmitted } = this.state;
+    if (!isSubmitted) return;
+    this.setState({ showTransactionPendingModal: true });
   };
 
   handleCheckPinModalClose = () => {
@@ -124,12 +138,11 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   makeTransaction = () => {
-    this.props.sendAsset(this.state.transactionPayload);
+    const { transactionPayload, assetData: { token } } = this.state;
+    this.props.sendAsset({ ...transactionPayload, symbol: token });
     this.setState({
       showCheckPinModal: false,
-    }, async () => {
-      await delay(400);
-      this.setState({ isSubmitted: true });
+      isSubmitted: true,
     });
   };
 
@@ -141,14 +154,14 @@ class SendTokenContacts extends React.Component<Props, State> {
         to,
         txFeeInWei,
       },
-      isSubmitted,
       showCheckPinModal,
+      showTransactionPendingModal,
     } = this.state;
     return (
       <React.Fragment>
         <ModalScreenHeader
           onBack={this.props.navigation.goBack}
-          onClose={this.props.navigation.dismiss}
+          onClose={this.handleModalDismissal}
           title="send"
           rightLabelText="step 3 of 3"
         />
@@ -177,10 +190,11 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
         </KeyboardAvoidingView>
-        <TransactionSentModal isVisible={isSubmitted} onModalHide={this.props.navigation.dismiss} />
+        <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
         <CheckPinModal
           isVisible={showCheckPinModal}
           title="confirm"
+          onModalHide={this.handlePendingNotifcationOpen}
           fullScreenComponent={(
             <Container>
               <ModalScreenHeader onClose={this.handleCheckPinModalClose} />
@@ -194,13 +208,21 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appSettings: { data: appSettings } }) => ({
+const mapStateToProps = ({
+  appSettings: { data: appSettings },
+  wallet: { data: wallet },
+}) => ({
   appSettings,
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  fetchTransactionsHistory: (walletAddress, asset) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
+  },
 });
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);
