@@ -20,7 +20,21 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
+import com.robinpowered.react.Intercom.IntercomPackage;
+import io.intercom.android.sdk.Intercom;
+
 public class MainApplication extends ExpoApplication {
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    if (BuildConfig.DEBUG) {
+      Intercom.initialize(this, "android_sdk-8c4a15ada22af46599f62d1bef70c7c121957dd7", "xbjzrshe");
+    } else {
+      Intercom.initialize(this, "android_sdk-f210e1d785d4c0e64ab3ba0f529d64c47da59186", "s70dqvb2");
+    }
+  }
+
 
   @Override
   public boolean isDebug() {
@@ -35,6 +49,7 @@ public class MainApplication extends ExpoApplication {
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new IntercomPackage(),
             new UdpSocketsModule(),
             new TcpSocketsModule(),
             new RandomBytesPackage(),
