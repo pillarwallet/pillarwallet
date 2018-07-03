@@ -15,8 +15,10 @@ export const startListeningIntercomNotificationsAction = () => {
   return async (dispatch: Function) => {
     const { user } = await storage.get('user');
     if (!user) return;
+    const { username } = user;
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
-    Intercom.registerIdentifiedUser({ userId: user.username });
+    Intercom.registerIdentifiedUser({ userId: username });
+    Intercom.updateUser({ user_id: username, name: username });
     intercomNotificationsListener = ({ count }) => dispatch({
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
       payload: count,
