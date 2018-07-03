@@ -482,7 +482,7 @@ class Profile extends React.Component<Props, State> {
               key="chat"
               label="Chat with us"
               notificationsCount={intercomNotificationsCount}
-              onPress={() => Intercom.displayMessageComposer()}
+              onPress={() => Intercom.displayMessenger()}
             />
 
             <IFrameModal
