@@ -213,7 +213,7 @@ class AssetsScreen extends React.Component<Props, State> {
             elevation: 1,
           }}
         >
-          <View style={{ padding: 20, paddingTop: 0, flex: 1 }}>
+          <View style={{ paddingRight: 16, paddingLeft: 16, paddingBottom: 40 }}>
             <View
               style={{
                 flexDirection: 'row',
@@ -236,7 +236,7 @@ class AssetsScreen extends React.Component<Props, State> {
           </View>
         </View>
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20 }}
+          contentContainerStyle={{ padding: 16 }}
           refreshControl={
             <RefreshControl
               refreshing={false}
