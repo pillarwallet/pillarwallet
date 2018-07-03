@@ -80,6 +80,7 @@ exports[`Button Icon should render Button Icon correctly 1`] = `
         },
       ]
     }
+    type="Ionicons"
     virtual={undefined}
   >
     

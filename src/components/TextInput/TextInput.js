@@ -41,8 +41,8 @@ type EventLike = {
 
 const inputTypes = {
   default: {
-    fontSize: fontSizes.small,
-    fontWeight: fontWeights.book,
+    fontSize: fontSizes.medium,
+    fontWeight: fontWeights.bold,
     textAlign: 'left',
   },
   amount: {
@@ -75,9 +75,9 @@ const PostFix = styled.Text`
 `;
 
 const InputField = styled(Input)`
-  font-size: ${props => props.inputType.fontSize};
   font-weight: ${props => props.inputType.fontWeight};
   text-align: ${props => props.inputType.textAlign};
+  padding: 0;
 `;
 
 const InputFooter = styled(View)`
@@ -92,6 +92,14 @@ const AddonText = styled.Text`
   color: ${baseColors.electricBlue};
   width: 100%;
   text-align: right;
+`;
+
+const CustomLabel = styled(Label)`
+  color: ${baseColors.darkGray};
+  font-size: ${fontSizes.extraSmall};
+  letter-spacing: 0.5;
+  font-weight: 600;
+  line-height: 24px;
 `;
 
 class TextInput extends React.Component<Props, State> {
@@ -161,7 +169,7 @@ class TextInput extends React.Component<Props, State> {
           error={!!errorMessage}
           style={inputProps.multiline && { height: 112 }}
         >
-          <Label>{label}</Label>
+          <CustomLabel>{label.toUpperCase()}</CustomLabel>
           <InputField
             {...inputProps}
             onChange={this.handleChange}
@@ -169,6 +177,7 @@ class TextInput extends React.Component<Props, State> {
             onEndEditing={() => this.handleBlur}
             value={value}
             inputType={inputType}
+            style={{ fontSize: inputType.fontSize }}
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
