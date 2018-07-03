@@ -455,7 +455,7 @@ class Profile extends React.Component<Props, State> {
             />
 
             <ListSeparator>
-              <ListSeparatorText>About</ListSeparatorText>
+              <ListSeparatorText>ABOUT</ListSeparatorText>
             </ListSeparator>
 
             <ProfileSettingsItem

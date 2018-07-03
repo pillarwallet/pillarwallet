@@ -9,6 +9,7 @@ type Props = {
   onPress?: Function,
   fontSize?: number,
   style?: StyleSheet.Styles,
+  type?: string,
 }
 
 const ButtonIcon = (props: Props) => {
@@ -18,12 +19,18 @@ const ButtonIcon = (props: Props) => {
     fontSize,
     color,
     style,
+    type = 'Ionicons',
   } = props;
-
+  const iconParams = {
+    active: false,
+    name: icon,
+    style: { fontSize, color },
+    type,
+  };
   if (Platform.OS === 'ios') {
     return (
       <Button transparent iconLeft={0} onPress={onPress} style={style}>
-        <Icon active={false} name={icon} style={{ fontSize, color }} />
+        <Icon {...iconParams} />
       </Button>
     );
   }
@@ -31,15 +38,14 @@ const ButtonIcon = (props: Props) => {
   return (
     <TouchableNativeFeedback
       onPress={onPress}
-      style={style}
       background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
     >
-      <View style={{
-        padding: 12,
+      <View style={[{
+        padding: 8,
         alignSelf: 'center',
-      }}
+      }, style]}
       >
-        <Icon active={false} name={icon} style={[{ alignSelf: 'center' }, { fontSize, color }]} />
+        <Icon {...iconParams} />
       </View>
     </TouchableNativeFeedback>
   );
