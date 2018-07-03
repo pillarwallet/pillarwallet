@@ -213,7 +213,13 @@ class AssetsScreen extends React.Component<Props, State> {
             elevation: 1,
           }}
         >
-          <View style={{ paddingRight: 16, paddingLeft: 16, paddingBottom: 40 }}>
+          <View style={{
+            flex: 1,
+            paddingRight: 16,
+            paddingLeft: 16,
+            paddingBottom: 40,
+          }}
+          >
             <View
               style={{
                 flexDirection: 'row',
@@ -221,16 +227,12 @@ class AssetsScreen extends React.Component<Props, State> {
                 justifyContent: 'space-between',
               }}
             >
-              <View>
-                <Title title="assets" />
-              </View>
-              <View>
-                <TouchableOpacity onPress={this.goToAddTokenPage} >
-                  <TextLink>
-                    Add token
-                  </TextLink>
-                </TouchableOpacity>
-              </View>
+              <Title title="assets" />
+              <TouchableOpacity onPress={this.goToAddTokenPage} >
+                <TextLink>
+                  Add token
+                </TextLink>
+              </TouchableOpacity>
             </View>
             <PortfolioBalance />
           </View>

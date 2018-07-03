@@ -20,6 +20,7 @@ const Header = styled(NBHeader)`
   background-color: #fff;
   border-bottom-width: 0;
   height: auto;
+  padding: 20px 16px 0;
   display: flex;
   padding: 0 20px;
 `;
