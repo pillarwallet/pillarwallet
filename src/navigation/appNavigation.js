@@ -13,6 +13,7 @@ import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
+import PeopleScreen from 'screens/People';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -36,6 +37,7 @@ import {
   ASSET,
   ICO,
   PROFILE,
+  PEOPLE,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -124,6 +126,22 @@ const tabNavigation = createBottomTabNavigator(
           />
         ),
         tabBarLabel: 'Assets',
+      }),
+    },
+    [PEOPLE]: {
+      screen: PeopleScreen,
+      navigationOptions: () => ({
+        tabBarIcon: ({ focused, tintColor }) => (
+          <Image
+            style={{
+            width: 22,
+            height: 22,
+            tintColor: focused ? tintColor : baseColors.mediumGray,
+          }}
+            source={iconWallet}
+          />
+        ),
+        tabBarLabel: 'People',
       }),
     },
     [ICO]: {
