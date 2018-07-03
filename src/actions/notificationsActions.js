@@ -3,16 +3,20 @@
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { processNotification } from 'utils/notifications';
+import Storage from 'services/storage';
 import { ADD_NOTIFICATION, UPDATE_INTERCOM_NOTIFICATIONS_COUNT } from 'constants/notificationConstants';
+
+const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
 let intercomNotificationsListener = null;
 
 export const startListeningIntercomNotificationsAction = () => {
-  return (dispatch: Function, getState: Function) => {
-    const { user: { username } } = getState();
+  return async (dispatch: Function) => {
+    const { user } = await storage.get('user');
+    if (!user) return;
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
-    Intercom.registerIdentifiedUser({ userId: username });
+    Intercom.registerIdentifiedUser({ userId: user.username });
     intercomNotificationsListener = ({ count }) => dispatch({
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
       payload: count,
