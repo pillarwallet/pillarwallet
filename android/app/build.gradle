@@ -105,6 +105,7 @@ apply from: 'expo.gradle'
 
 
 dependencies {
+    compile project(':react-native-intercom')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
     compile project(':react-native-randombytes')
