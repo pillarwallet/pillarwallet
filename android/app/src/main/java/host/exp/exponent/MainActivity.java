@@ -15,7 +15,7 @@ public class MainActivity extends DetachActivity {
 
   @Override
   public String publishedUrl() {
-    return "exp://exp.host/@deimantas/pillar-wallet";
+    return "exp://exp.host/@pillarbot/pillar-wallet";
   }
 
   @Override
