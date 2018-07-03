@@ -6,6 +6,7 @@ import styled from 'styled-components/native';
 const ContactCardWrapper = styled.View`
   background: ${baseColors.white};
   border: 1px solid ${baseColors.lightGray};
+  margin-bottom: -4px;
   height: 75px;
   padding: 14px;
   border-radius: 4px;
