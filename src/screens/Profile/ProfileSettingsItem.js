@@ -118,7 +118,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
             top: 2,
           }}
           >
-            {notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
+            {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             <Icon
               name="chevron-right"
               type="Feather"
