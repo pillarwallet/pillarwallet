@@ -216,6 +216,7 @@ PODS:
     - gRPC-Core (= 1.12.0)
     - gRPC-RxLibrary (= 1.12.0)
   - GTMSessionFetcher/Core (1.1.15)
+  - Intercom (5.0.3)
   - JKBigInteger2 (0.0.5)
   - leveldb-library (1.20)
   - lottie-ios (2.5.0)
@@ -227,6 +228,9 @@ PODS:
   - Protobuf (3.6.0)
   - React (0.55.4):
     - React/Core (= 0.55.4)
+  - react-native-intercom (11.0.0):
+    - Intercom (~> 5.0.2)
+    - React/Core
   - React/ART (0.55.4):
     - React/Core
   - React/Core (0.55.4):
@@ -296,6 +300,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - react-native-intercom (from `../node_modules/react-native-intercom`)
   - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
   - React/CxxBridge (from `../node_modules/react-native`)
@@ -325,6 +330,8 @@ EXTERNAL SOURCES:
     :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
   React:
     :path: ../node_modules/react-native
+  react-native-intercom:
+    :path: ../node_modules/react-native-intercom
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
   RNVectorIcons:
@@ -386,16 +393,18 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: a1bd56fb1991a8dae4581250d7259eddabb66779
   gRPC-RxLibrary: 1ed5314e8b38cd6e55c9bfa048387136ae925ce9
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
+  Intercom: 93ebb0bd49fcb2c4c1efaec7638e0b447e4452c4
   JKBigInteger2: e91672035c42328c48b7dd015b66812ddf40ca9b
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
   React: aa2040dbb6f317b95314968021bd2888816e03d5
+  react-native-intercom: 50fa177c55a5bd8135742afb38867a485b3fda2d
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 08a18851a7eaa920ef9ae16a191853bf1571cab7
+PODFILE CHECKSUM: 642c53a08f1b7b37ed4710247c061b7ea1e9dae2
 
 COCOAPODS: 1.4.0

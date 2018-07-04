@@ -7,6 +7,7 @@ import keyPadTypes from './keyPadTypes';
 
 const KeyInput = styled.View`
   justify-content: center;
+  align-items: center;
   width: 30%;
   height: 70;
 `;
@@ -16,13 +17,17 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-self: flex-end;
   justify-content: center;
+  align-items: center;
 `;
 
 const PinButton = styled.TouchableOpacity`
   align-self: center;
   height: 120px;
   width: 100%;
+  flex: 1;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
 `;
 
 const ButtonText = styled.Text`
@@ -34,21 +39,24 @@ const ButtonText = styled.Text`
 
 const RippleSizer = styled.View`
    height: 55;
-   width: 55;
+   width: 100%;
    align-self: center;
 `;
 
 const ImageHolder = styled.View`
-  width: 32px;
-  height: 25px;
+  width: 100%;
+  height: 56px;
+  align-self: center;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Image = styled(RNImage)`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 15px;
-  right: 3px;
+  width: 32px;
+  height: 25px;
+  align-self: center;
 `;
 
 

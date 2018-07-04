@@ -659,9 +659,9 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.1.491":
-  version "1.1.491"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.1.491.tgz#6858cbea0af7a04199bf8d0da6bd8d5f5ca228ae"
+"@pillarwallet/pillarwallet-nodejs-sdk@1.2.519":
+  version "1.2.519"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.2.519.tgz#9dfb03fe34138c1412acbce1d8a6d72ae49c6ad4"
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
@@ -10214,6 +10214,10 @@ react-native-gesture-handler@1.0.4:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
+
+react-native-intercom@^11.0.0:
+  version "11.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-11.0.0.tgz#6421cd9ec1a38ded85edb4273011a68868ca6541"
 
 react-native-iphone-x-helper@^1.0.1, react-native-iphone-x-helper@^1.0.2:
   version "1.0.3"
