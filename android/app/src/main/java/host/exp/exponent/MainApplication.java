@@ -29,9 +29,9 @@ public class MainApplication extends ExpoApplication {
   public void onCreate() {
     super.onCreate();
     if (BuildConfig.DEBUG) {
-      Intercom.initialize(this, "android_sdk-8c4a15ada22af46599f62d1bef70c7c121957dd7", "xbjzrshe");
+      Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
     } else {
-      Intercom.initialize(this, "android_sdk-f210e1d785d4c0e64ab3ba0f529d64c47da59186", "s70dqvb2");
+      Intercom.initialize(this, "android_sdk-b989462efb366f8046f5ca1a12c75d67ecb7592c", "s70dqvb2");
     }
   }
 
