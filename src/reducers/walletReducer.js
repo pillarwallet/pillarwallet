@@ -14,6 +14,7 @@ import {
   NEW_WALLET_CONFIRM_PIN,
   PIN_SET,
   PIN_CONFIRMED,
+  SET_API_USER,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -49,6 +50,7 @@ const initialState = {
     pin: '',
     confirmedPin: '',
     importedWallet: null,
+    apiUser: {},
   },
   walletState: null,
   error: null,
@@ -81,7 +83,10 @@ export default function newWalletReducer(
         state, { onboarding: { confirmedPin: action.payload }, walletState: PIN_CONFIRMED },
       );
     case IMPORT_WALLET:
-      return merge({}, state, { onboarding: { importedWallet: action.payload } });
+      const { importedWallet, apiUser } = action.payload;
+      return merge({}, state, { onboarding: { importedWallet, apiUser } });
+    case SET_API_USER:
+      return merge({}, state, { onboarding: { apiUser: action.payload } });
     default:
       return state;
   }

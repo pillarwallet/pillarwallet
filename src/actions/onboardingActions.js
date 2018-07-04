@@ -14,6 +14,8 @@ import {
   API_REGISTRATION_FAILED,
   USERNAME_EXISTS,
   USERNAME_OK,
+  CHECKING_USERNAME,
+  SET_API_USER,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
@@ -27,8 +29,13 @@ const storage = Storage.getInstance('db');
 export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
     const currentState = getState();
-    const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
-    const { user } = await storage.get('user');
+    const {
+      mnemonic,
+      pin,
+      importedWallet,
+      apiUser: user,
+    } = currentState.wallet.onboarding;
+
     const mnemonicPhrase = mnemonic.original;
 
     // STEP 0: Clear local storage
@@ -173,6 +180,10 @@ export const registerOnBackendAction = () => {
 export const validateUserDetailsAction = ({ username }: Object) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const currentState = getState();
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: CHECKING_USERNAME,
+    });
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
 
@@ -182,12 +193,20 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     }
 
     api.init(wallet.privateKey);
-    const response = await api.usernameSearch(username);
-    const usernameExists = !!Object.keys(response).length;
-    const usernameSatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    const apiUser = await api.usernameSearch(username);
+    const usernameExists = !!Object.keys(apiUser).length;
+    const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+
+    if (apiUser.username) {
+      dispatch({
+        type: SET_API_USER,
+        payload: apiUser,
+      });
+    }
+
     dispatch({
       type: UPDATE_WALLET_STATE,
-      payload: usernameSatus,
+      payload: usernameStatus,
     });
   };
 };
