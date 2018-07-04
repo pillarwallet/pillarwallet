@@ -20,12 +20,21 @@ import shuffle from 'shuffle-array';
 import { generateWordsToValidate } from 'utils/wallet';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
     try {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
+
+      api.init(importedWallet.privateKey);
+      const apiUser = await api.validateAddress(importedWallet.address);
+
+      const payload = {
+        importedWallet,
+        apiUser,
+      };
+
       dispatch({
         type: IMPORT_WALLET,
-        payload: importedWallet,
+        payload,
       });
       dispatch(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
     } catch (e) {
@@ -42,13 +51,21 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
 };
 
 export const importWalletFromPrivateKeyAction = (privateKey: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
     const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
+
+      api.init(importedWallet.privateKey);
+      const apiUser = await api.validateAddress(importedWallet.address);
+      const payload = {
+        importedWallet,
+        apiUser,
+      };
+
       dispatch({
         type: IMPORT_WALLET,
-        payload: importedWallet,
+        payload,
       });
       dispatch(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
     } catch (e) {
