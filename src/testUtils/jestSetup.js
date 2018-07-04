@@ -22,6 +22,16 @@ jest.setMock('react-native-device-info', {
   getUniqueID: () => '1x1x1x1x1x1x1',
 });
 
+jest.setMock('react-native-intercom', {
+  addListener: () => {},
+  removeListener: () => {},
+  registerIdentifiedUser: () => {},
+  Notifications: { UNREAD_COUNT: 'UNREAD_COUNT' },
+  reset: () => {},
+  setInAppMessageVisibility: () => {},
+  sendTokenToIntercom: () => Promise.resolve(),
+});
+
 function BCXSDK() {
   return {
     txHistory: () => Promise.resolve({ txHistory: { txHistory: [] } }),

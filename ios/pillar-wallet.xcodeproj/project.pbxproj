@@ -5,9 +5,11 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */; };
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
+		163AF94320E6DA3000C0E17A /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 163AF92820E6DA2A00C0E17A /* libRCTVibration.a */; };
 		16874E8220BB3B6E0034548E /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E7B20BB3B470034548E /* libRCTWebSocket.a */; };
 		16874E8C20BB3BBB0034548E /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E8920BB3B950034548E /* libRCTImage.a */; };
 		16874E8E20BB3BE00034548E /* libExpoKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E8D20BB3BE00034548E /* libExpoKit.a */; };
@@ -60,6 +62,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		163AF92720E6DA2A00C0E17A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 163AF91A20E6DA2A00C0E17A /* RCTVibration.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 832C81801AAF6DEF007FA2F7;
+			remoteInfo = RCTVibration;
+		};
 		16570B6B20BA04B400CB6BE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ABDB1B80C02F4F8CAF10338E /* RNRandomBytes.xcodeproj */;
@@ -326,6 +335,7 @@
 		091E87CFB7B878842C4CB7F5 /* Pods-pillar-wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillar-wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet.release.xcconfig"; sourceTree = "<group>"; };
 		0A919F81462B49BEADFD1CBD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		1625638A20A8F7EA00E77868 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		163AF91A20E6DA2A00C0E17A /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
 		16874E7320BB3B450034548E /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		16874E8320BB3B950034548E /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		16874E8D20BB3BE00034548E /* libExpoKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libExpoKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -397,6 +407,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				163AF94320E6DA3000C0E17A /* libRCTVibration.a in Frameworks */,
 				16877D5F20BEE57800A7AD1D /* libReact.a in Frameworks */,
 				16F1DCB820BC061D00A8F843 /* libRCTAnimation.a in Frameworks */,
 				16877D8620BEE80500A7AD1D /* libRCTActionSheet.a in Frameworks */,
@@ -431,6 +442,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		163AF91B20E6DA2A00C0E17A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				163AF92820E6DA2A00C0E17A /* libRCTVibration.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		16570B6720BA04B400CB6BE6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -618,6 +637,7 @@
 		69BE83450974470B970EB9BA /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				163AF91A20E6DA2A00C0E17A /* RCTVibration.xcodeproj */,
 				168C48F420BDB29A00A0E98F /* RCTActionSheet.xcodeproj */,
 				16F1DCAF20BC061100A8F843 /* RCTAnimation.xcodeproj */,
 				16F1DC9A20BC034D00A8F843 /* RCTNetwork.xcodeproj */,
@@ -779,6 +799,10 @@
 					ProjectRef = 16F1DC4720BC01CF00A8F843 /* RCTText.xcodeproj */;
 				},
 				{
+					ProductGroup = 163AF91B20E6DA2A00C0E17A /* Products */;
+					ProjectRef = 163AF91A20E6DA2A00C0E17A /* RCTVibration.xcodeproj */;
+				},
+				{
 					ProductGroup = 16874E7420BB3B450034548E /* Products */;
 					ProjectRef = 16874E7320BB3B450034548E /* RCTWebSocket.xcodeproj */;
 				},
@@ -819,6 +843,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		163AF92820E6DA2A00C0E17A /* libRCTVibration.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTVibration.a;
+			remoteRef = 163AF92720E6DA2A00C0E17A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		16570B6C20BA04B400CB6BE6 /* libRNRandomBytes.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1137,6 +1168,8 @@
 				"${PODS_ROOT}/GoogleAuthUtilities/Frameworks/frameworks/GoogleAuthUtilities.framework/Resources/GTMOAuth2ViewTouch.xib",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				"${PODS_ROOT}/Intercom/Intercom/Intercom.framework/Versions/A/Resources/Intercom.bundle",
+				"${PODS_ROOT}/Intercom/Intercom/Intercom.framework/Versions/A/Resources/IntercomTranslations.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
@@ -1165,6 +1198,8 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GTMOAuth2ViewTouch.nib",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Intercom.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/IntercomTranslations.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
