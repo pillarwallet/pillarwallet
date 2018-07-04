@@ -60,7 +60,7 @@ const formStructure = t.struct({
   username: Username,
 });
 
-const defaultFormOptions = {
+const getDefaultFormOptions = (inputDisabled: boolean) => ({
   fields: {
     username: {
       template: InputTemplate,
@@ -68,11 +68,12 @@ const defaultFormOptions = {
       config: {
         inputProps: {
           autoCapitalize: 'none',
+          disabled: inputDisabled,
         },
       },
     },
   },
-};
+});
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -80,6 +81,7 @@ type Props = {
   validateUserDetails: Function,
   resetWalletState: Function,
   walletState: ?string,
+  apiUser: Object,
 };
 
 type State = {
@@ -92,10 +94,18 @@ type State = {
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
 
-  state = {
-    value: null,
-    formOptions: defaultFormOptions,
-  };
+  constructor(props: Props) {
+    super(props);
+
+    const { apiUser } = props;
+    const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
+    const inputDisabled = !!(apiUser && apiUser.id);
+
+    this.state = {
+      value,
+      formOptions: getDefaultFormOptions(inputDisabled),
+    };
+  }
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<*> }) => {
     const { params = {} } = navigation.state;
@@ -128,7 +138,11 @@ class NewProfile extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
-    const { validateUserDetails } = this.props;
+    const { validateUserDetails, apiUser } = this.props;
+    if (apiUser && apiUser.id) {
+      this.goToNextScreen();
+      return;
+    }
     const value = this._form.getValue();
     if (!value) return;
     validateUserDetails({ username: value.username });
@@ -151,11 +165,13 @@ class NewProfile extends React.Component<Props, State> {
     }
 
     if (walletState === USERNAME_OK) {
-      const { navigation, updateUser } = this.props;
-      const value = this._form.getValue();
-      updateUser({ username: value.username });
-      navigation.navigate(LEGAL_TERMS);
+      this.goToNextScreen();
     }
+  }
+
+  goToNextScreen() {
+    const { navigation } = this.props;
+    navigation.navigate(LEGAL_TERMS);
   }
 
   render() {
@@ -177,7 +193,7 @@ class NewProfile extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet: { walletState } }) => ({ walletState });
+const mapStateToProps = ({ wallet: { walletState, onboarding: { apiUser } } }) => ({ walletState, apiUser });
 
 const mapDispatchToProps = (dispatch) => ({
   updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
