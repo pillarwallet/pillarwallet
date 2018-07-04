@@ -40,7 +40,12 @@ const mockWallet: Object = {
 const mockOnboarding: Object = {
   confirmedPin: '',
   importedWallet: null,
-  mnemonic: { original: '', shuffled: '', wordsToValidate: [] },
+  mnemonic: {
+    original: '',
+    shuffled: '',
+    wordsToValidate: [],
+  },
+  apiUser: { username: 'asd' },
   pin: '',
 };
 

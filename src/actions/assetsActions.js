@@ -12,7 +12,7 @@ import {
   FETCH_INITIAL_FAILED,
   ETH,
 } from 'constants/assetsConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
+import { SET_HISTORY, ADD_TRANSACTION } from 'constants/historyConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import {
   transferETH,
@@ -24,6 +24,7 @@ import type { Assets } from 'models/Asset';
 import Storage from 'services/storage';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay } from 'utils/common';
+import { buildHistoryTransaction } from 'utils/history';
 
 const storage = Storage.getInstance('db');
 
@@ -38,20 +39,29 @@ export const sendAssetAction = ({
   return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet } } = getState();
     if (symbol === ETH) {
-      await transferETH({
+      const ETHTrx = await transferETH({
         gasLimit,
         gasPrice,
         to,
         amount,
         wallet,
       });
+      dispatch({
+        type: ADD_TRANSACTION,
+        payload: buildHistoryTransaction({ ...ETHTrx, asset: symbol }),
+      });
       return;
     }
-    await transferERC20({
+
+    const ERC20Trx = await transferERC20({
       to,
       amount,
       contractAddress,
       wallet,
+    });
+    dispatch({
+      type: ADD_TRANSACTION,
+      payload: buildHistoryTransaction({ ...ERC20Trx, asset: symbol }),
     });
   };
 };
