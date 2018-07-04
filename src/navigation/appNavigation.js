@@ -4,14 +4,14 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { AppState, Animated, Easing, Platform, Image } from 'react-native';
+
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ICOScreen from 'screens/ICO';
+import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -26,7 +26,12 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 
 // actions
 import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
-import { stopListeningNotificationsAction, startListeningNotificationsAction } from 'actions/notificationsActions';
+import {
+  stopListeningNotificationsAction,
+  startListeningNotificationsAction,
+  startListeningIntercomNotificationsAction,
+  stopListeningIntercomNotificationsAction,
+} from 'actions/notificationsActions';
 import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
 
 // constants
@@ -52,6 +57,8 @@ import { PENDING, REGISTERED } from 'constants/userConstants';
 // models
 import type { Assets } from 'models/Asset';
 
+import { UIColors, baseColors } from 'utils/variables';
+
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
@@ -73,6 +80,10 @@ if (Platform.OS === 'ios') {
     },
   };
 }
+
+const iconWallet = require('assets/icons/icon_wallet.png');
+const iconProfile = require('assets/icons/icon_profile.png');
+const iconIco = require('assets/icons/icon_ico.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -101,44 +112,63 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
-const tabNavigationIcon = (iconName, focused) => `${iconName}${focused ? '' : '-outline'}`;
 
+const tabBarIcon = (icon) => ({ focused, tintColor }) => (
+  <Image
+    style={{
+      width: 22,
+      height: 22,
+      tintColor: focused ? tintColor : baseColors.mediumGray,
+    }}
+    source={icon}
+  />
+);
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: {
       screen: assetsFlow,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-albums', focused)} size={25} color={tintColor} />
-        ),
+        tabBarIcon: tabBarIcon(iconWallet),
+        tabBarLabel: 'Assets',
       }),
     },
     [ICO]: {
-      screen: ICOScreen,
+      screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-pricetags', focused)} size={25} color={tintColor} />
-        ),
-        tabBarLabel: 'ICO MARKETPLACE',
+        tabBarIcon: tabBarIcon(iconIco),
+        tabBarLabel: 'Marketplace',
       }),
     },
     [PROFILE]: {
       screen: ProfileScreen,
       navigationOptions: () => ({
-        tabBarIcon: ({ focused, tintColor }) => (
-          <Ionicons name={tabNavigationIcon('ios-contact', focused)} size={25} color={tintColor} />
-        ),
+        tabBarIcon: tabBarIcon(iconProfile),
+        tabBarLabel: 'Profile',
       }),
     },
   }, {
     tabBarOptions: {
-      activeTintColor: 'blue',
+      activeTintColor: UIColors.primary,
       inactiveTintColor: 'gray',
       activeBackgroundColor: 'white',
       inactiveBackgroundColor: 'white',
       style: {
         backgroundColor: 'white',
+        elevation: 6,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        borderTopColor: 'transparent',
+        paddingTop: 5,
+        paddingBottom: 5,
+        height: 66,
+      },
+      labelStyle: {
+        fontSize: 14,
+        marginBottom: 4,
+        marginTop: 4,
       },
     },
     tabBarPosition: 'bottom',
@@ -186,6 +216,8 @@ type Props = {
   fetchUser: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
+  startListeningIntercomNotifications: Function,
+  stopListeningIntercomNotifications: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   notifications: Object[],
@@ -197,11 +229,17 @@ class AppFlow extends React.Component<Props, {}> {
   timer: any | TimeoutID;
 
   componentDidMount() {
-    const { fetchUser, userState, startListeningNotifications } = this.props;
+    const {
+      fetchUser,
+      userState,
+      startListeningNotifications,
+      startListeningIntercomNotifications,
+    } = this.props;
     if (userState !== REGISTERED) {
       fetchUser();
     }
     startListeningNotifications();
+    startListeningIntercomNotifications();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
@@ -229,8 +267,9 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    const { stopListeningNotifications } = this.props;
+    const { stopListeningNotifications, stopListeningIntercomNotifications } = this.props;
     stopListeningNotifications();
+    stopListeningIntercomNotifications();
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
@@ -270,6 +309,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchUser: () => dispatch(fetchUserAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
+  stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
+  startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },

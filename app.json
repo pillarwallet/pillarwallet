@@ -30,6 +30,7 @@
     "scheme": "exp38a4bbfce2ec45389ca2f4a5178939d6",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "orientation": "portrait"
   }
 }

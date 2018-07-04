@@ -21,6 +21,7 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
+  margin-top: 20px;
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
@@ -57,7 +58,7 @@ const WordInputPrefix = styled.View`
   flex: 0 0 20px;
   height: 42px;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const WordInputNumber = styled(Label)`
@@ -182,11 +183,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     const { enteredWords } = this.state;
     const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
-    return shuffledMnemonicList.map((word: string) => {
+    return shuffledMnemonicList.map((word: string, index: number) => {
       const isEntered = enteredWords.indexOf(word) > -1;
       return (
         <MnemonicPhraseWord
-          key={word}
+          key={`${word}${index}`}
           onPress={() => this.handleWordSetting(word)}
           entered={isEntered}
         >

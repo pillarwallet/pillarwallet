@@ -65,11 +65,11 @@ android {
     dev19 {
       // For debugging / development on older SDK versions. Increases build
       // time so use 'dev' if not running on older SDKs.
-      minSdkVersion 19
+      minSdkVersion 21
     }
     prod {
       // The actual minSdkVersion for the application.
-      minSdkVersion 19
+      minSdkVersion 21
     }
   }
   buildTypes {
@@ -89,6 +89,12 @@ android {
   packagingOptions {
     pickFirst "**"
   }
+  // hotfix for lottie lib and Java 8 issue
+  configurations.all {
+    resolutionStrategy {
+      force 'com.airbnb.android:lottie:2.5.5'
+    }
+  }
 }
 
 // Don't use modern jsc-android since it still has some critical bugs that
@@ -105,6 +111,7 @@ apply from: 'expo.gradle'
 
 
 dependencies {
+    compile project(':react-native-intercom')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
     compile project(':react-native-randombytes')

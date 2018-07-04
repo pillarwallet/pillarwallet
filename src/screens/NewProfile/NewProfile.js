@@ -8,29 +8,18 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
 import HeaderLink from 'components/HeaderLink';
 import TextInput from 'components/TextInput';
-import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { updateLocalUserAction } from 'actions/userActions';
-import { isValidFullname } from 'utils/validators';
+import { validateUserDetailsAction } from 'actions/onboardingActions';
+import { USERNAME_EXISTS, USERNAME_OK } from 'constants/walletConstants';
+import NextButton from './NextButton';
 
 const { Form } = t.form;
-const maxUsernameLength = 60;
+const maxUsernameLength = 20;
 
 const LoginForm = styled(Form)`
   margin: 10px 0 40px;
 `;
-
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  updateUser: Function,
-}
-
-type State = {
-  value: ?{
-    username: ?string,
-    fullName: ?string,
-  },
-}
 
 function InputTemplate(locals) {
   const errorMessage = locals.error;
@@ -56,31 +45,22 @@ function InputTemplate(locals) {
   );
 }
 
-const FullName = t.refinement(t.String, (fullName): boolean => {
-  return isValidFullname(fullName);
-});
-
 const Username = t.refinement(t.String, (username): boolean => {
   return username != null && username.length <= maxUsernameLength;
 });
-
-FullName.getValidationErrorMessage = (): string => {
-  return 'Please provide your full name';
-};
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
     return `Username should be less than ${maxUsernameLength} characters.`;
   }
-  return 'Please specify username.';
+  return 'Please specify the username.';
 };
 
 const formStructure = t.struct({
   username: Username,
-  fullName: FullName,
 });
 
-const formOptions = {
+const getDefaultFormOptions = (inputDisabled: boolean) => ({
   fields: {
     username: {
       template: InputTemplate,
@@ -88,33 +68,51 @@ const formOptions = {
       config: {
         inputProps: {
           autoCapitalize: 'none',
-        },
-      },
-    },
-    fullName: {
-      template: InputTemplate,
-      config: {
-        inputProps: {
-          autoCapitalize: 'words',
+          disabled: inputDisabled,
         },
       },
     },
   },
+});
+
+type Props = {
+  navigation: NavigationScreenProp<*>,
+  updateUser: Function,
+  validateUserDetails: Function,
+  resetWalletState: Function,
+  walletState: ?string,
+  apiUser: Object,
+};
+
+type State = {
+  value: ?{
+    username: ?string,
+  },
+  formOptions: Object,
 };
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
 
-  state = {
-    value: null,
-  };
+  constructor(props: Props) {
+    super(props);
+
+    const { apiUser } = props;
+    const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
+    const inputDisabled = !!(apiUser && apiUser.id);
+
+    this.state = {
+      value,
+      formOptions: getDefaultFormOptions(inputDisabled),
+    };
+  }
 
   static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<*> }) => {
     const { params = {} } = navigation.state;
     return {
       headerRight: (
         <HeaderLink onPress={params.handleSubmit}>
-          Next
+          <NextButton />
         </HeaderLink>
       ),
     };
@@ -128,31 +126,60 @@ class NewProfile extends React.Component<Props, State> {
   }
 
   handleChange = (value: Object) => {
-    this.setState({
-      value,
+    const options = t.update(this.state.formOptions, {
+      fields: {
+        username: {
+          hasError: { $set: false },
+          error: { $set: '' },
+        },
+      },
     });
+    this.setState({ formOptions: options, value });
   };
 
   handleSubmit = () => {
-    const { navigation, updateUser } = this.props;
+    const { validateUserDetails, apiUser } = this.props;
+    if (apiUser && apiUser.id) {
+      this.goToNextScreen();
+      return;
+    }
     const value = this._form.getValue();
     if (!value) return;
-    const [firstName, ...lastName] = value.fullName.split(' ');
-    updateUser({
-      username: value.username,
-      firstName,
-      lastName: lastName.join(' '),
-    });
-    navigation.navigate(LEGAL_TERMS);
+    validateUserDetails({ username: value.username });
   };
 
+  componentDidUpdate(prevProps: Props) {
+    const { walletState } = this.props;
+    if (prevProps.walletState === walletState) return;
+
+    if (walletState === USERNAME_EXISTS) {
+      const options = t.update(this.state.formOptions, {
+        fields: {
+          username: {
+            hasError: { $set: true },
+            error: { $set: 'Username taken' },
+          },
+        },
+      });
+      this.setState({ formOptions: options });// eslint-disable-line
+    }
+
+    if (walletState === USERNAME_OK) {
+      this.goToNextScreen();
+    }
+  }
+
+  goToNextScreen() {
+    const { navigation } = this.props;
+    navigation.navigate(LEGAL_TERMS);
+  }
+
   render() {
-    const { value } = this.state;
+    const { value, formOptions } = this.state;
     return (
       <Container>
         <ScrollWrapper regularPadding>
-          <Title title="create profile" />
-          <Paragraph>Fill out your profile.</Paragraph>
+          <Title title="choose your username" />
           <LoginForm
             innerRef={node => { this._form = node; }}
             type={formStructure}
@@ -166,8 +193,11 @@ class NewProfile extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({ wallet: { walletState, onboarding: { apiUser } } }) => ({ walletState, apiUser });
+
 const mapDispatchToProps = (dispatch) => ({
   updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
+  validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
 });
 
-export default connect(null, mapDispatchToProps)(NewProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);

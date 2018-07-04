@@ -13,7 +13,6 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { Grid, Row, Column } from 'components/Grid';
 import { TextLink } from 'components/Typography';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
@@ -149,6 +148,7 @@ class AssetsScreen extends React.Component<Props, State> {
           token: symbol,
           amount: displayAmount,
           contractAddress: asset.address,
+          description: asset.description,
           balance,
           balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
           address: wallet.address,
@@ -204,49 +204,41 @@ class AssetsScreen extends React.Component<Props, State> {
         <View
           style={{
             width: '100%',
-            height: 140,
             flexDirection: 'row',
             backgroundColor: 'white',
             shadowColor: 'black',
             shadowOpacity: 0.07,
-            marginTop: -10,
             shadowRadius: 0,
             shadowOffset: { width: 0, height: 1 },
+            elevation: 1,
           }}
         >
-          <Grid style={{ paddingRight: 20, paddingLeft: 20, paddingBottom: 40 }}>
+          <View style={{
+            flex: 1,
+            paddingRight: 16,
+            paddingLeft: 16,
+            paddingBottom: 40,
+          }}
+          >
             <View
               style={{
-                alignItems: 'center',
-                height: 80,
                 flexDirection: 'row',
+                alignItems: 'center',
                 justifyContent: 'space-between',
               }}
             >
-              <View>
-                <Title title="assets" />
-              </View>
-              <View>
-                <TouchableOpacity onPress={this.goToAddTokenPage} >
-                  <TextLink>
-                    Add token
-                  </TextLink>
-                </TouchableOpacity>
-              </View>
+              <Title title="assets" />
+              <TouchableOpacity onPress={this.goToAddTokenPage} >
+                <TextLink>
+                  Add token
+                </TextLink>
+              </TouchableOpacity>
             </View>
-            <Row>
-              <Column style={{
-                  alignSelf: 'flex-end',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <PortfolioBalance />
-              </Column>
-            </Row>
-          </Grid>
+            <PortfolioBalance />
+          </View>
         </View>
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: 20 }}
+          contentContainerStyle={{ padding: 16 }}
           refreshControl={
             <RefreshControl
               refreshing={false}

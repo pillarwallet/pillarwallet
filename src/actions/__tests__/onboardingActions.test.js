@@ -22,12 +22,14 @@ type SDK = {
   registerOnBackend: Function,
   fetchInitialAssets: Function,
   updateUser: Function,
+  userInfo: Function,
 };
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const pillarSdk: SDK = new PillarSdk();
 pillarSdk.registerOnBackend = jest.fn(() => ({ userId: 1, walletId: 2 }));
 pillarSdk.updateUser = jest.fn(() => ({ username: 'snow', walletId: 2 }));
+pillarSdk.userInfo = jest.fn(() => ({ username: 'snow', walletId: 2 }));
 pillarSdk.fetchInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
@@ -38,7 +40,12 @@ const mockWallet: Object = {
 const mockOnboarding: Object = {
   confirmedPin: '',
   importedWallet: null,
-  mnemonic: { original: '', shuffled: '', wordsToValidate: [] },
+  mnemonic: {
+    original: '',
+    shuffled: '',
+    wordsToValidate: [],
+  },
+  apiUser: { username: 'asd' },
   pin: '',
 };
 
