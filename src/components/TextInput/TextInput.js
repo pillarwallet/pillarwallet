@@ -19,7 +19,7 @@ type Props = {
   inlineLabel?: boolean,
   alignRight?: boolean,
   postfix?: string,
-  label: string,
+  label?: string,
   id?: string,
   iconColor?: string,
   errorMessage?: string,
@@ -161,7 +161,9 @@ class TextInput extends React.Component<Props, State> {
           error={!!errorMessage}
           style={inputProps.multiline && { height: 112 }}
         >
-          <Label>{label}</Label>
+          {!!label &&
+            <Label>{label}</Label>
+          }
           <InputField
             {...inputProps}
             onChange={this.handleChange}
@@ -176,9 +178,9 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
           {!!footerAddonText &&
-          <TouchableOpacity onPress={footerAddonAction}>
-            <AddonText>{footerAddonText}</AddonText>
-          </TouchableOpacity>}
+            <TouchableOpacity onPress={footerAddonAction}>
+              <AddonText>{footerAddonText}</AddonText>
+            </TouchableOpacity>}
         </InputFooter>
       </View>
     );
