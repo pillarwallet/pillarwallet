@@ -21,7 +21,8 @@ const AssetButtonsWrapper = styled.View`
 const AssetButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
-  margin: 0 20px;
+  margin: 0 14px;
+  padding: 0 6px;
 `;
 
 const ImageHolder = styled.View`
@@ -34,6 +35,7 @@ const ImageHolder = styled.View`
   flex-direction: row;
   align-items: center;
   box-shadow: .5px 1px 1px ${baseColors.mediumGray};
+  elevation: 6;
 `;
 
 const AssetButtonImage = styled.Image`

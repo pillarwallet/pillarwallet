@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { Input, Label } from 'native-base';
 import { TextLink } from 'components/Typography';
 import { fontSizes, fontWeights } from 'utils/variables';
-import { Image as RNImage } from 'react-native';
+import { Image as RNImage, Platform } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -61,6 +61,8 @@ const FloatImage = styled(RNImage)`
   width: 30px;
   left: 14px;
   top: 14px;
+  tintColor: black;
+  resizeMode: contain;
 `;
 
 const ImageHolder = styled.TouchableOpacity`
@@ -121,6 +123,9 @@ class SingleInput extends React.Component<Props, State> {
   }
 
   handleBlur = (e: EventLike) => {
+    if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
+      return;
+    }
     const { inputProps: { onBlur }, trim } = this.props;
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
     this.setState({ value }, () => {
@@ -170,20 +175,20 @@ class SingleInput extends React.Component<Props, State> {
               onChange={this.handleChange}
               onBlur={this.handleBlur}
               value={value}
+              style={{ paddingLeft: innerImageURI ? 54 : 12 }}
             />
-            {innerImageURI && <FloatImage
+            {!!innerImageURI && <FloatImage
               source={this.resolveAssetSource(innerImageURI)}
             />}
           </Item>
           {outterImageURI &&
-            (
-              <ImageHolder onPress={onPress}>
-                <Image
-                  source={this.resolveAssetSource(outterImageURI)}
-                />
-                <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
-              </ImageHolder>
-            )}
+            <ImageHolder onPress={onPress}>
+              <Image
+                source={this.resolveAssetSource(outterImageURI)}
+              />
+              <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
+            </ImageHolder>
+          }
         </InputHolder>
       </Wrapper>
     );
