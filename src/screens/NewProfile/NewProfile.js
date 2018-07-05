@@ -11,8 +11,7 @@ import TextInput from 'components/TextInput';
 import Title from 'components/Title';
 import { updateLocalUserAction } from 'actions/userActions';
 import { validateUserDetailsAction } from 'actions/onboardingActions';
-import { USERNAME_EXISTS, USERNAME_OK } from 'constants/walletConstants';
-import NextButton from './NextButton';
+import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
 const maxUsernameLength = 20;
@@ -91,12 +90,15 @@ type State = {
   formOptions: Object,
 };
 
+const mapStateToPropsHeaderLink = ({ wallet: { walletState } }) => ({ isLoading: walletState === CHECKING_USERNAME });
+
+const ConnectedHeaderLink = connect(mapStateToPropsHeaderLink, null)(HeaderLink);
+
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
 
   constructor(props: Props) {
     super(props);
-
     const { apiUser } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
     const inputDisabled = !!(apiUser && apiUser.id);
@@ -111,9 +113,9 @@ class NewProfile extends React.Component<Props, State> {
     const { params = {} } = navigation.state;
     return {
       headerRight: (
-        <HeaderLink onPress={params.handleSubmit}>
-          <NextButton />
-        </HeaderLink>
+        <ConnectedHeaderLink onPress={params.handleSubmit}>
+          Next
+        </ConnectedHeaderLink>
       ),
     };
   };
