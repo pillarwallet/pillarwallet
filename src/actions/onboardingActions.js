@@ -186,7 +186,7 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     });
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
-
+    await delay(200);
     let wallet = importedWallet;
     if (!wallet) {
       wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
