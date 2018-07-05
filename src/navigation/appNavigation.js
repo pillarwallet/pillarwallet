@@ -12,6 +12,7 @@ import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
+import PeopleScreen from 'screens/People';
 import ProfileScreen from 'screens/Profile';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
@@ -40,6 +41,7 @@ import {
   ASSETS,
   ASSET,
   ICO,
+  PEOPLE,
   PROFILE,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -131,6 +133,13 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWallet),
         tabBarLabel: 'Assets',
+      }),
+    },
+    [PEOPLE]: {
+      screen: PeopleScreen,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconWallet),
+        tabBarLabel: 'People',
       }),
     },
     [ICO]: {

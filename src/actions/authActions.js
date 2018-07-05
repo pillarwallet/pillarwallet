@@ -11,7 +11,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
+import { ASSETS, APP_FLOW, PEOPLE } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
 
