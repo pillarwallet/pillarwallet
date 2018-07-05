@@ -47,6 +47,11 @@ const defaultFormOptions = {
   fields: {
     query: {
       template: InputTemplate,
+      config: {
+        inputProps: {
+          autoCapitalize: 'none',
+        },
+      },
     },
   },
 };
