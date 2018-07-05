@@ -44,11 +44,12 @@ const InputFieldWrapper = styled.View`
 const InputField = styled.TextInput`
   flex: 1;
   height: 40px;
-  padding: 0 20px;
+  padding-left: 20px;
 `;
 
 const InputIcon = styled(Icon)`
   flex: 0 0 20px;
+  padding-right: 40px;
   font-size: ${fontSizes.large};
   color: ${baseColors.darkGray};
 `;
