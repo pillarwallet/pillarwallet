@@ -11,6 +11,7 @@ import { AppState, Animated, Easing, Platform, Image } from 'react-native';
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
+import ContactScreen from 'screens/Contact';
 import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import PeopleScreen from 'screens/People';
 import ProfileScreen from 'screens/Profile';
@@ -43,6 +44,7 @@ import {
   ICO,
   PEOPLE,
   PROFILE,
+  CONTACT,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -86,6 +88,7 @@ if (Platform.OS === 'ios') {
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconProfile = require('assets/icons/icon_profile.png');
 const iconIco = require('assets/icons/icon_ico.png');
+const iconPeople = require('assets/icons/icon_people.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -114,6 +117,11 @@ const assetsFlow = FluidNavigator({
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
+// PEOPLE FLOW
+const peopleFlow = createStackNavigator({
+  [PEOPLE]: PeopleScreen,
+  [CONTACT]: ContactScreen,
+});
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
@@ -136,9 +144,9 @@ const tabNavigation = createBottomTabNavigator(
       }),
     },
     [PEOPLE]: {
-      screen: PeopleScreen,
+      screen: peopleFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconWallet),
+        tabBarIcon: tabBarIcon(iconPeople),
         tabBarLabel: 'People',
       }),
     },

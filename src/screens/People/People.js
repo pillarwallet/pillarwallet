@@ -1,15 +1,18 @@
 // @flow
 import * as React from 'react';
+import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
-import styled from 'styled-components/native';
+// import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
 import { usersSearchAction } from 'actions/userActions';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { CONTACT } from 'constants/navigationConstants';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Title from 'components/Title';
-import TextInput from 'components/TextInput';
+import ContactCard from 'components/ContactCard';
+import SearchBar from 'components/SearchBar';
 
-
+/*
 const { Form } = t.form;
 const SearchForm = styled(Form)`
   margin: 10px 0 40px;
@@ -55,26 +58,25 @@ const defaultFormOptions = {
     },
   },
 };
-
+*/
 
 type Props = {
+  navigation: NavigationScreenProp<*>,
   searchForUsers: (query: string) => Function,
   searchResults: [],
 }
 
 type State = {
-  formValue: ?{
-    query: ?string,
-  },
-  formOptions: Object,
+  query: string,
+  // formOptions: Object,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
   _form: t.form;
 
   state = {
-    formValue: null,
-    formOptions: defaultFormOptions,
+    query: '',
+    // formOptions: defaultFormOptions,
   };
 
   constructor(props: Props) {
@@ -82,31 +84,53 @@ class PeopleScreen extends React.Component<Props, State> {
     this.searchForUsers = debounce(this.searchForUsers, 500);
   }
 
-  handleChange = (formValue: Object) => {
-    this.setState({ formValue });
-    this.searchForUsers(formValue.query);
+  handleSearchChange = (formValue: any) => {
+    console.log('formValue', formValue);
+    // this.setState({ formValue });
+    // this.searchForUsers(formValue.query);
   };
 
   searchForUsers = (query: string) => {
     this.props.searchForUsers(query);
   };
 
+  handleContactCardPress = () => {
+    this.props.navigation.navigate(CONTACT);
+  };
+
   render() {
-    const { formValue, formOptions } = this.state;
+    const { query } = this.state;
     const { searchResults } = this.props;
     console.log('searchResults', searchResults);
     return (
       <Container>
-        <ScrollWrapper regularPadding>
+        <Wrapper regularPadding>
           <Title title="people" />
-          <SearchForm
-            innerRef={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={formValue}
-            onChange={this.handleChange}
+          <SearchBar
+            inputProps={{
+              onChange: this.handleSearchChange,
+              value: query,
+            }}
           />
-        </ScrollWrapper>
+          <ScrollWrapper>
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+            <ContactCard onPress={this.handleContactCardPress} />
+          </ScrollWrapper>
+        </Wrapper>
       </Container>
     );
   }
