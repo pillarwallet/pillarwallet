@@ -4,11 +4,15 @@
 export const APP_FLOW = 'APP_FLOW';
 export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
+export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
 export const ICO = 'ICO';
 export const ADD_TOKEN = 'ADD_TOKEN';
 export const PROFILE = 'PROFILE';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';
+
+// PEOPLE FLOW
+export const CONTACT = 'CONTACT';
 
 // CHANGE PIN FLOW
 export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';
