@@ -123,7 +123,6 @@ const peopleFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
 });
 
-
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
     style={{
