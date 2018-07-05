@@ -186,7 +186,7 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     });
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
-
+    await delay(200);
     let wallet = importedWallet;
     if (!wallet) {
       wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
@@ -197,12 +197,10 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     const usernameExists = !!Object.keys(apiUser).length;
     const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
 
-    if (apiUser.username) {
-      dispatch({
-        type: SET_API_USER,
-        payload: apiUser,
-      });
-    }
+    dispatch({
+      type: SET_API_USER,
+      payload: usernameExists ? apiUser : { username },
+    });
 
     dispatch({
       type: UPDATE_WALLET_STATE,
