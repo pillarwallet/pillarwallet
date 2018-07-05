@@ -87,7 +87,7 @@ jobs:
           command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
       - run:
           name: Publish resources bundle to Expo server
-          command: exp publish --release-channel staging
+          command: exp publish
       - run:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./ios/Gemfile
@@ -167,7 +167,7 @@ jobs:
           command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
       - run:
           name: Publish resources bundle to Expo server
-          command: exp publish --release-channel prod
+          command: exp publish
       - run:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./ios/Gemfile
@@ -227,7 +227,7 @@ jobs:
           command: cd .. && exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
       - run:
           name: Publish resources bundle to Expo server
-          command: cd .. && exp publish --release-channel prod
+          command: cd .. && exp publish
       - save_cache:
           key: node-{{ checksum "../yarn.lock" }}
           paths:
