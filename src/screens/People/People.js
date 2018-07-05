@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
+import { usersSearchAction } from 'actions/userActions';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Title from 'components/Title';
 import TextInput from 'components/TextInput';
@@ -52,10 +53,12 @@ const defaultFormOptions = {
 
 
 type Props = {
+  searchForUsers: (query: string) => Function,
+  searchResults: [],
 }
 
 type State = {
-  value: ?{
+  formValue: ?{
     query: ?string,
   },
   formOptions: Object,
@@ -65,26 +68,28 @@ class PeopleScreen extends React.Component<Props, State> {
   _form: t.form;
 
   state = {
-    value: null,
+    formValue: null,
     formOptions: defaultFormOptions,
   };
 
   constructor(props: Props) {
     super(props);
-    this.searchForUser = debounce(this.searchForUser, 500);
+    this.searchForUsers = debounce(this.searchForUsers, 500);
   }
 
-  handleChange = (value: Object) => {
-    this.setState({ value });
-    this.searchForUser(value.query);
+  handleChange = (formValue: Object) => {
+    this.setState({ formValue });
+    this.searchForUsers(formValue.query);
   };
 
-  searchForUser = (query: string) => {
-    // this.props.searchForUser(query);
+  searchForUsers = (query: string) => {
+    this.props.searchForUsers(query);
   };
 
   render() {
-    const { value, formOptions } = this.state;
+    const { formValue, formOptions } = this.state;
+    const { searchResults } = this.props;
+    console.log('searchResults', searchResults);
     return (
       <Container>
         <ScrollWrapper regularPadding>
@@ -93,7 +98,7 @@ class PeopleScreen extends React.Component<Props, State> {
             innerRef={node => { this._form = node; }}
             type={formStructure}
             options={formOptions}
-            value={value}
+            value={formValue}
             onChange={this.handleChange}
           />
         </ScrollWrapper>
@@ -102,11 +107,12 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({
-}) => ({
+const mapStateToProps = ({ user: { searchResults } }) => ({
+  searchResults,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
+  searchForUsers: (query) => dispatch(usersSearchAction(query)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);
