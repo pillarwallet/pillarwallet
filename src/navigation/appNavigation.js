@@ -6,7 +6,6 @@ import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing, Platform, Image } from 'react-native';
 
-
 // screens
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
@@ -20,6 +19,8 @@ import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
+import ChatListScreen from 'screens/Chat/ChatList';
+import ChatScreen from 'screens/Chat/Chat';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -51,6 +52,8 @@ import {
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
+  CHAT_LIST,
+  CHAT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -113,6 +116,16 @@ const assetsFlow = FluidNavigator({
 }, FluidNavigatorConfig);
 
 
+const StackNavigatorConfig = {
+  headerMode: 'none',
+};
+
+// CHAT FLOW
+const chatFlow = createStackNavigator({
+  [CHAT_LIST]: ChatListScreen,
+  [CHAT]: ChatScreen,
+}, StackNavigatorConfig);
+
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
     style={{
@@ -145,6 +158,13 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconProfile),
         tabBarLabel: 'Profile',
+      }),
+    },
+    [CHAT_LIST]: {
+      screen: chatFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconProfile),
+        tabBarLabel: 'Chat',
       }),
     },
   }, {
