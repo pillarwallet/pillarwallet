@@ -11,6 +11,9 @@ type Props = {
   notificationCount?: number,
   showActions?: boolean,
   status?: string,
+  onAcceptInvitationPress?: Function,
+  onRejectInvitationPress?: Function,
+  onCancelInvitationPress?: Function,
 }
 
 const ContactCardWrapper = styled.TouchableHighlight`
@@ -64,11 +67,11 @@ const StatusText = styled.Text`
 `;
 
 const ActionButton = styled(ButtonIcon)`
-  height: 40px;
-  width: 40px;
-  border-radius: 20px;
+  height: 34px;
+  width: 34px;
+  border-radius: 17px;
   padding: 0;
-  margin: 0 0 0 16px;
+  margin: 0;
   justify-content: center;
   align-items: center;
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
@@ -78,8 +81,23 @@ const ButtonIconWrapper = styled.View`
   flex-direction: row;
 `;
 
+const CancelActionWrapper = styled.TouchableOpacity`
+  margin-left: auto;
+`;
+
+const CancelActionText = styled.Text`
+  color: ${baseColors.fireEngineRed};
+  font-size: ${fontSizes.small};
+`;
+
 export default class ContactCard extends React.Component<Props> {
-  getActionsOrStatus = (status: string) => {
+  getActionsOrStatus = (status: string, onPressActions: Object) => {
+    const {
+      onAcceptInvitationPress,
+      onRejectInvitationPress,
+      onCancelInvitationPress,
+    } = onPressActions;
+
     if (status === 'ACCEPTED') {
       return (
         <StatusText>ACCEPTED</StatusText>
@@ -95,18 +113,29 @@ export default class ContactCard extends React.Component<Props> {
             color={baseColors.darkGray}
             margin={0}
             icon="close"
-            fontSize={40}
+            fontSize={32}
+            onPress={onRejectInvitationPress}
           />
           <ActionButton
             color={baseColors.white}
             margin={0}
             accept
             icon="ios-checkmark"
-            fontSize={40}
+            fontSize={32}
+            onPress={onAcceptInvitationPress}
           />
         </ButtonIconWrapper>
       );
+    } else if (status === 'SENT') {
+      return (
+        <CancelActionWrapper onPress={onCancelInvitationPress}>
+          <CancelActionText>
+            Cancel
+          </CancelActionText>
+        </CancelActionWrapper>
+      );
     }
+    return null;
   }
 
   render() {
@@ -115,7 +144,16 @@ export default class ContactCard extends React.Component<Props> {
       name,
       showActions,
       status,
+      onAcceptInvitationPress,
+      onRejectInvitationPress,
+      onCancelInvitationPress,
     } = this.props;
+
+    const onPressActions = {
+      onAcceptInvitationPress,
+      onRejectInvitationPress,
+      onCancelInvitationPress,
+    };
     return (
       <ContactCardWrapper
         onPress={this.props.onPress}
@@ -130,7 +168,7 @@ export default class ContactCard extends React.Component<Props> {
             <ContactCardNotificationCircle>2</ContactCardNotificationCircle>
           }
           {!!showActions && !!status &&
-            this.getActionsOrStatus(status)
+            this.getActionsOrStatus(status, onPressActions)
           }
         </ContactCardInner>
       </ContactCardWrapper>
