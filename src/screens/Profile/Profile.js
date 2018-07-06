@@ -20,7 +20,6 @@ import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from
 import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
-import CountryPicker from 'components/CountryPicker';
 
 import countries from 'utils/countries.json';
 
@@ -253,7 +252,6 @@ class Profile extends React.Component<Props, State> {
             renderItem={this.renderListItem}
             keyExtractor={({ name }) => name}
           />
-          <CountryPicker onSelect={(country) => this.handleUserFieldUpdate({ country })} />
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'city'}
