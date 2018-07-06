@@ -1,0 +1,6 @@
+{
+  "name": "SystemInfoModal",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./SystemInfoModal.js"
+}

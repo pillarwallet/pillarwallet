@@ -83,7 +83,7 @@ export const registerWalletAction = () => {
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);
     if (Object.keys(userInfo).length) {
-      await storage.save('user', { user: userInfo });
+      await storage.save('user', { user: userInfo }, true);
     }
     const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
@@ -148,7 +148,7 @@ export const registerOnBackendAction = () => {
 
     const userInfo = await api.userInfo(sdkWallet.walletId);
     if (Object.keys(userInfo).length) {
-      await storage.save('user', { user: userInfo });
+      await storage.save('user', { user: userInfo }, true);
     }
     const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
