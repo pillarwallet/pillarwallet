@@ -1,10 +1,13 @@
 // @flow
 import * as React from 'react';
 import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
+import NotificationCircle from 'components/NotificationCircle';
 import styled from 'styled-components/native';
 
 type Props = {
   onPress: Function,
+  name: string,
+  notificationCount?: number,
 }
 
 const ContactCardWrapper = styled.TouchableHighlight`
@@ -21,7 +24,6 @@ const ContactCardWrapper = styled.TouchableHighlight`
 `;
 
 const ContactCardInner = styled.View`
-  justify-content: flex-start;
   flex-direction: row;
   align-items: center;
 `;
@@ -48,8 +50,16 @@ const ContactCardName = styled.Text`
   font-weight: ${fontWeights.bold};
 `;
 
+const ContactCardNotificationCircle = styled(NotificationCircle)`
+  margin-left: auto;
+`;
+
 export default class ContactCard extends React.Component<Props> {
   render() {
+    const {
+      notificationCount,
+      name,
+    } = this.props;
     return (
       <ContactCardWrapper
         onPress={this.props.onPress}
@@ -59,7 +69,10 @@ export default class ContactCard extends React.Component<Props> {
           <ContactCardAvatarWrapper>
             <ContactCardAvatar />
           </ContactCardAvatarWrapper>
-          <ContactCardName>John Doe</ContactCardName>
+          <ContactCardName>{name}</ContactCardName>
+          {!!notificationCount && notificationCount > 0 &&
+            <ContactCardNotificationCircle>2</ContactCardNotificationCircle>
+          }
         </ContactCardInner>
       </ContactCardWrapper>
     );

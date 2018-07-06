@@ -44,7 +44,7 @@ const InputFieldWrapper = styled.View`
 const InputField = styled.TextInput`
   flex: 1;
   height: 40px;
-  padding-left: 20px;
+  padding-left: 14px;
 `;
 
 const InputIcon = styled(Icon)`
@@ -108,6 +108,7 @@ class SearchBar extends React.Component<Props, State> {
             {...inputProps}
             onChange={this.handleChange}
             value={value}
+            placeholder="Search or add new contact"
           />
           <InputIcon
             name="search"
