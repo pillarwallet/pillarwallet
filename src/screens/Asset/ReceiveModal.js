@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Clipboard } from 'react-native';
-import { SubTitle, TextLink, Label } from 'components/Typography';
+import { TextLink, Label } from 'components/Typography';
 import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
@@ -89,8 +89,12 @@ export default class ReceiveModal extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <SlideModal title="receive" isVisible={isVisible} onModalHide={onModalHide}>
-        <SubTitle>Share your wallet address to receive {tokenName} ({token})</SubTitle>
+      <SlideModal
+        title="receive"
+        isVisible={isVisible}
+        onModalHide={onModalHide}
+        subtitle={`Share your wallet address to receive ${tokenName} (${token})`}
+      >
         <Holder>
           <QRCode value={address} blockHeight={5} />
           <Button

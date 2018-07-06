@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { SubTitle } from 'components/Typography';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import {
   addAssetAction,
@@ -116,9 +116,9 @@ class AddToken extends React.Component<Props> {
         <ModalScreenHeader title="add token" onClose={this.handleScreenDismissal} />
         <Container>
           <ScrollWrapper regularPadding>
-            <Paragraph>
+            <SubTitle>
               Toggle ERC-20 tokens your wallet should display.
-            </Paragraph>
+            </SubTitle>
             <List>
               {this.generateAddTokenListItems()}
             </List>
