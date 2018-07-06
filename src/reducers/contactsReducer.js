@@ -2,9 +2,12 @@
 import { UPDATE_CONTACTS, UPDATE_SEARCH_RESULTS } from 'constants/contactsConstants';
 
 export type ContactsReducerState = {
-  data: [],
+  data: Object[],
   contactState: ?string,
-  searchResults: [],
+  searchResults: {
+    apiUsers: Object[], // TODO: type this
+    localContacts: Object[], // TODO: type this
+  },
 }
 
 export type ContactsReducerAction = {
@@ -15,7 +18,10 @@ export type ContactsReducerAction = {
 const initialState = {
   data: [],
   contactState: null,
-  searchResults: [],
+  searchResults: {
+    apiUsers: [],
+    localContacts: [],
+  },
 };
 
 export default function contactsReducer(
