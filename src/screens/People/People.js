@@ -1,5 +1,7 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
+import { UIColors, fontSizes } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CONTACT } from 'constants/navigationConstants';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
@@ -14,6 +16,23 @@ type Props = {
 type State = {
   value: string,
 }
+
+const ConnectionRequestBanner = styled.View`
+  height: 60px;
+  padding-left: 30px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${UIColors.defaultBorderColor};
+  justify-content: center;
+`;
+
+const ConnectionRequestBannerText = styled.Text`
+  font-size: ${fontSizes.medium};
+`;
+
+const ContactCardList = styled(ScrollWrapper)`
+  padding: 16px;
+`;
 
 export default class People extends React.Component<Props, State> {
   state = {
@@ -39,25 +58,30 @@ export default class People extends React.Component<Props, State> {
               value: this.state.value,
             }}
           />
-          <ScrollWrapper>
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-            <ContactCard onPress={this.handleContactCardPress} />
-          </ScrollWrapper>
         </Wrapper>
+        <ConnectionRequestBanner>
+          <ConnectionRequestBannerText>Connection requests</ConnectionRequestBannerText>
+        </ConnectionRequestBanner>
+        <ContactCardList
+          contentInset={{ bottom: 46 }}
+        >
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+          <ContactCard onPress={this.handleContactCardPress} />
+        </ContactCardList>
       </Container>
     );
   }

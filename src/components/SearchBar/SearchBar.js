@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { View } from 'react-native';
 
 type inputPropsType = {
@@ -35,7 +35,7 @@ const InputFieldWrapper = styled.View`
   height: 40px;
   border-width: 1px;
   border-radius: 20px;
-  border-color: ${baseColors.mediumGray};
+  border-color: ${UIColors.defaultBorderColor};
   align-items: center;
   justify-content: space-around;
   flex-direction: row;

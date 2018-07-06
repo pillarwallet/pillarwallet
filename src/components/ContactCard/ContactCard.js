@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
 import styled from 'styled-components/native';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 
 const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
-  border: 1px solid ${baseColors.mediumGray};
+  border: 1px solid ${UIColors.defaultBorderColor};
   margin-bottom: -4px;
   height: 75px;
   padding: 14px;
