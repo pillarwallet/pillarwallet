@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CONTACT } from 'constants/navigationConstants';
+import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Title from 'components/Title';
 import ContactCard from 'components/ContactCard';
@@ -62,7 +62,7 @@ export default class People extends React.Component<Props, State> {
   }
 
   handleConnectionsRequestBannerPress = () => {
-    this.props.navigation.navigate(CONTACT);
+    this.props.navigation.navigate(CONNECTION_REQUESTS);
   }
 
   render() {

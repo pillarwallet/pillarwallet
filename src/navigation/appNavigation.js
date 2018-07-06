@@ -15,6 +15,7 @@ import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ContactScreen from 'screens/Contact';
+import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -45,6 +46,7 @@ import {
   PROFILE,
   PEOPLE,
   CONTACT,
+  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -121,6 +123,7 @@ const assetsFlow = FluidNavigator({
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
+  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
 });
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
