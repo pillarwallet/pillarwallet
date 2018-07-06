@@ -60,7 +60,7 @@ SDKWrapper.prototype.userInfo = function (walletId: string) {
     .catch(() => ({}));
 };
 
-SDKWrapper.prototype.search = function (query: string, walletId: string) {
+SDKWrapper.prototype.userSearch = function (query: string, walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.search({ query, walletId }))
     .then(({ data }) => data)
