@@ -39,6 +39,13 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: Append circleCI build number to version
+          command: |
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            echo 'BUILD_NUMBER=$(node -e "console.log(require('./package.json').version);")' >> .env
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -123,6 +130,13 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Append circleCI build number to version
+          command: |
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            echo 'BUILD_NUMBER=$(node -e "console.log(require('./package.json').version);")' >> .env
+      - run:
           name: Install Expo cli
           command: yarn global add exp
       - run:
@@ -202,6 +216,13 @@ jobs:
     steps:
       - checkout:
           path: ~/pillarwallet
+      - run:
+          name: Append circleCI build number to version
+          command: |
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            echo 'BUILD_NUMBER=$(node -e "console.log(require('./package.json').version);")' >> .env
       - restore_cache:
           key: node-{{ checksum "../yarn.lock" }}
       - run:
