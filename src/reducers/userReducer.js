@@ -1,11 +1,10 @@
 // @flow
-import { UPDATE_USER, UPDATE_SEARCH_RESULTS } from 'constants/userConstants';
+import { UPDATE_USER } from 'constants/userConstants';
 import merge from 'lodash.merge';
 
 export type UserReducerState = {
   data: Object,
   userState: ?string,
-  searchResults: [],
 }
 
 export type UserReducerAction = {
@@ -16,10 +15,9 @@ export type UserReducerAction = {
 const initialState = {
   data: {},
   userState: null,
-  searchResults: [],
 };
 
-export default function assetsReducer(
+export default function userReducer(
   state: UserReducerState = initialState,
   action: UserReducerAction,
 ) {
@@ -31,8 +29,6 @@ export default function assetsReducer(
         data: merge({}, { ...state.data }, user),
         userState,
       };
-    case UPDATE_SEARCH_RESULTS:
-      return { ...state, searchResults: action.payload };
     default:
       return state;
   }

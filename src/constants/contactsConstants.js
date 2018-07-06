@@ -1,0 +1,4 @@
+// @flow
+
+export const UPDATE_CONTACTS = 'UPDATE_CONTACTS';
+export const UPDATE_SEARCH_RESULTS = 'UPDATE_SEARCH_RESULTS';

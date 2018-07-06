@@ -3,10 +3,6 @@ import * as React from 'react';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import styled from 'styled-components/native';
 
-type Props = {
-  onPress: Function,
-}
-
 const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
   border: 1px solid ${baseColors.mediumGray};
@@ -48,20 +44,24 @@ const ContactCardName = styled.Text`
   font-weight: ${fontWeights.bold};
 `;
 
-export default class ContactCard extends React.Component<Props> {
-  render() {
-    return (
-      <ContactCardWrapper
-        onPress={this.props.onPress}
-        underlayColor={baseColors.lightGray}
-      >
-        <ContactCardInner>
-          <ContactCardAvatarWrapper>
-            <ContactCardAvatar />
-          </ContactCardAvatarWrapper>
-          <ContactCardName>John Doe</ContactCardName>
-        </ContactCardInner>
-      </ContactCardWrapper>
-    );
-  }
+type Props = {
+  onPress: Function,
 }
+
+const ContactCard = (props: Props) => {
+  return (
+    <ContactCardWrapper
+      onPress={props.onPress}
+      underlayColor={baseColors.lightGray}
+    >
+      <ContactCardInner>
+        <ContactCardAvatarWrapper>
+          <ContactCardAvatar />
+        </ContactCardAvatarWrapper>
+        <ContactCardName>John Doe</ContactCardName>
+      </ContactCardInner>
+    </ContactCardWrapper>
+  );
+};
+
+export default ContactCard;
