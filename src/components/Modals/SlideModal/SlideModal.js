@@ -6,7 +6,7 @@ import styled from 'styled-components/native';
 import Title from 'components/Title';
 import { SubTitle } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
-import { Platform, Dimensions } from 'react-native';
+import { Platform, Dimensions, Keyboard } from 'react-native';
 
 const { height } = Dimensions.get('window');
 
@@ -15,7 +15,7 @@ type Props = {
   children?: React.Node,
   subtitle?: string,
   fullScreenComponent?: ?React.Node,
-  onModalHide?: Function,
+  onModalHide: Function,
   fullScreen?: boolean,
   isVisible: boolean,
 };
@@ -94,9 +94,16 @@ export default class SlideModal extends React.Component<Props, State> {
   }
 
   hideModal = () => {
+    Keyboard.dismiss();
     this.setState({
       isVisible: false,
     });
+  }
+
+  handleModalHide = () => {
+    const { onModalHide } = this.props;
+    Keyboard.dismiss();
+    onModalHide();
   }
 
   render() {
@@ -107,7 +114,6 @@ export default class SlideModal extends React.Component<Props, State> {
       children,
       title,
       fullScreenComponent,
-      onModalHide,
       fullScreen,
       subtitle,
     } = this.props;
@@ -117,7 +123,7 @@ export default class SlideModal extends React.Component<Props, State> {
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
-        onModalHide={onModalHide}
+        onModalHide={this.handleModalHide}
         onBackdropPress={this.hideModal}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}

@@ -6,11 +6,10 @@ import Storage from 'services/storage';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { Container, ScrollWrapper } from 'components/Layout';
-import { Toast } from 'native-base';
-import { Platform, Picker, View } from 'react-native';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
+import { Toast, ListItem, Left, Right, Icon } from 'native-base';
+import { Platform, Picker, View, FlatList } from 'react-native';
 import Modal from 'react-native-modal';
-import t from 'tcomb-form-native';
 
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import PortfolioBalance from 'components/PortfolioBalance';
@@ -18,14 +17,19 @@ import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsCo
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
+import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import ModalScreenHeader from 'components/ModalScreenHeader';
 import IFrameModal from 'components/Modals/IFrameModal';
+import CountryPicker from 'components/CountryPicker';
+
+import countries from 'utils/countries.json';
 
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
 import SettingsPanel from './SettingsPanel';
+import ProfileForm from './ProfileForm';
+
 
 const storage = new Storage('db');
 
@@ -68,6 +72,37 @@ const CheckPinModal = styled(SlideModal)`
   align-items: flex-start;
 `;
 
+const ListValue = styled.Text`
+  font-size: ${fontSizes.small};
+  padding-left: 20px;
+`;
+
+const cityFormFields = [{
+  label: 'City',
+  name: 'city',
+  type: 'string',
+  config: { placeholder: 'London' },
+}];
+
+const emailFormFields = [{
+  label: 'Email',
+  name: 'email',
+  type: 'string',
+  config: { placeholder: 'user@example.com', autoCapitalize: false },
+}];
+
+const fullNameFormFields = [{
+  label: 'First name',
+  name: 'firstName',
+  type: 'string',
+  config: { placeholder: 'First name' },
+}, {
+  label: 'Last name',
+  name: 'lastName',
+  type: 'string',
+  config: { placeholder: 'Last name' },
+}];
+
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
@@ -77,6 +112,7 @@ type Props = {
   wallet: Object,
   intercomNotificationsCount: number,
   changeRequestPinForTransaction: (value: boolean) => Function,
+  updateUser: (walletId: string, field: Object) => Function,
   resetIncorrectPassword: () => Function,
 }
 
@@ -88,49 +124,9 @@ type State = {
   showCheckPinModal: boolean,
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
-  showSupportCenterModal: boolean,
 }
-
-const { Form } = t.form;
-const SettingsInputString = t.struct({
-  stringInput: t.String,
-});
-
-const formOptions = {
-  fields: {
-    stringInput: {
-      config: {
-        inputProps: {
-          autoCapitalize: 'words',
-        },
-      },
-      error: 'Please insert required information',
-    },
-  },
-};
-
-t.form.Form.stylesheet.textbox.normal.color = '#000000';
-t.form.Form.stylesheet.textbox.normal.backgroundColor = '#ffffff';
-t.form.Form.stylesheet.textbox.error.backgroundColor = '#ffffff';
-t.form.Form.stylesheet.textbox.normal.borderRadius = 0;
-t.form.Form.stylesheet.textbox.error.borderRadius = 0;
-
-if (Platform.OS === 'android') {
-  t.form.Form.stylesheet.textbox.normal.borderWidth = 0;
-  t.form.Form.stylesheet.textbox.error.borderWidth = 0;
-  t.form.Form.stylesheet.textbox.normal.borderRadius = 0;
-  t.form.Form.stylesheet.textbox.error.borderRadius = 0;
-  t.form.Form.stylesheet.textbox.normal.borderBottomWidth = 1;
-  t.form.Form.stylesheet.textbox.error.borderBottomWidth = 1;
-}
-
-
-t.form.Form.stylesheet.controlLabel.normal.display = 'none';
-t.form.Form.stylesheet.controlLabel.error.display = 'none';
 
 class Profile extends React.Component<Props, State> {
-  _form: t.form;
-
   constructor(props: Props) {
     super(props);
     const { requestPinForTransaction = true } = props;
@@ -142,7 +138,6 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal: false,
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
-      showSupportCenterModal: false,
     };
   }
 
@@ -178,22 +173,13 @@ class Profile extends React.Component<Props, State> {
     });
   }
 
-  handleSettingsChange = (property) => {
-    const value = this._form.getValue();
-    if (value) {
-      switch (property) {
-        case 'country':
-          this.setState({ visibleModal: null });
-          break;
-        default:
-          this.setState({ visibleModal: null });
-      }
-    }
+
+  toggleSlideModalOpen = (visibleModal: ?string) => {
+    this.setState({
+      visibleModal,
+    });
   };
 
-  onChange = (value) => {
-    this.setState({ value });
-  };
 
   handleChangeRequestPinForTransaction = (value) => {
     const { changeRequestPinForTransaction } = this.props;
@@ -218,9 +204,31 @@ class Profile extends React.Component<Props, State> {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
   };
 
-  toggleSupportCenterModal = () => {
-    this.setState({ showSupportCenterModal: !this.state.showSupportCenterModal });
+  handleUserFieldUpdate = (field: Object) => {
+    const { updateUser, user } = this.props;
+    updateUser(user.walletId, field);
+    this.toggleSlideModalOpen(null);
   };
+
+  renderListItem = ({ item: { name } }: Object) => {
+    return (
+      <ListItem key={name} onPress={() => this.handleUserFieldUpdate({ country: name })}>
+        <Left>
+          <ListValue>{name}</ListValue>
+        </Left>
+        <Right>
+          <Icon
+            name="chevron-right"
+            type="Feather"
+            style={{
+              fontSize: 22,
+              color: baseColors.coolGrey,
+            }}
+          />
+        </Right>
+      </ListItem>
+    );
+  }
 
   render() {
     const { user, wallet, intercomNotificationsCount } = this.props;
@@ -230,103 +238,68 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal,
       showTermsConditionsModal,
       showPrivacyPolicyModal,
-      showSupportCenterModal,
     } = this.state;
-
     return (
       <Container>
-        <Modal
+        <SlideModal
           isVisible={this.state.visibleModal === 'country'}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
-          backdropOpacity={0.4}
-          style={{ padding: 30 }}
+          title="personal details"
+          subtitle="Choose your country"
+          fullScreen
+          onModalHide={() => this.toggleSlideModalOpen(null)}
         >
-          <SettingsPanel
-            panelTitle="Enter country"
-            handleOK={() => this.handleSettingsChange('country')}
-            handleCancel={() => this.setState({ visibleModal: null })}
-            headerMarginIOS
-          >
-            <Form
-              ref={node => { this._form = node; }}
-              type={SettingsInputString}
-              options={formOptions}
-              value={this.state.value}
-              onChange={this.onChange}
-            />
-          </SettingsPanel>
-        </Modal>
-
-        <Modal
+          <FlatList
+            data={countries}
+            renderItem={this.renderListItem}
+            keyExtractor={({ name }) => name}
+          />
+          <CountryPicker onSelect={(country) => this.handleUserFieldUpdate({ country })} />
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'city'}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
-          backdropOpacity={0.4}
-          style={{ padding: 30 }}
+          title="personal details"
+          subtitle="Enter city name"
+          fullScreen
+          onModalHide={() => this.toggleSlideModalOpen(null)}
         >
-          <SettingsPanel
-            panelTitle="Enter city name"
-            handleOK={() => this.handleSettingsChange()}
-            handleCancel={() => this.setState({ visibleModal: null })}
-            headerMarginIOS
-          >
-            <Form
-              ref={node => { this._form = node; }}
-              type={SettingsInputString}
-              options={formOptions}
-              value={this.state.value}
-              onChange={this.onChange}
+          <Wrapper regularPadding>
+            <ProfileForm
+              fields={cityFormFields}
+              onSubmit={this.handleUserFieldUpdate}
+              value={{ city: user.city }}
             />
-          </SettingsPanel>
-        </Modal>
-
-        <Modal
+          </Wrapper>
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'email'}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
-          backdropOpacity={0.4}
-          style={{ padding: 30 }}
+          title="personal details"
+          subtitle="Enter your email"
+          fullScreen
+          onModalHide={() => this.toggleSlideModalOpen(null)}
         >
-          <SettingsPanel
-            panelTitle="Enter email"
-            handleOK={() => this.handleSettingsChange()}
-            handleCancel={() => this.setState({ visibleModal: null })}
-            headerMarginIOS
-          >
-            <Form
-              ref={node => { this._form = node; }}
-              type={SettingsInputString}
-              options={formOptions}
-              value={this.state.value}
-              onChange={this.onChange}
+          <Wrapper regularPadding>
+            <ProfileForm
+              fields={emailFormFields}
+              onSubmit={this.handleUserFieldUpdate}
+              value={{ email: user.email }}
             />
-          </SettingsPanel>
-        </Modal>
-
-        <Modal
-          isVisible={this.state.visibleModal === 'phone'}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
-          backdropOpacity={0.4}
-          style={{ padding: 30 }}
+          </Wrapper>
+        </SlideModal>
+        <SlideModal
+          isVisible={this.state.visibleModal === 'fullName'}
+          title="personal details"
+          subtitle="Enter your full name"
+          fullScreen
+          onModalHide={() => this.toggleSlideModalOpen(null)}
         >
-          <SettingsPanel
-            panelTitle="Enter phone number"
-            handleOK={() => this.handleSettingsChange()}
-            handleCancel={() => this.setState({ visibleModal: null })}
-            headerMarginIOS
-          >
-            <Form
-              ref={node => { this._form = node; }}
-              type={SettingsInputString}
-              options={formOptions}
-              value={this.state.value}
-              onChange={this.onChange}
+          <Wrapper regularPadding>
+            <ProfileForm
+              fields={fullNameFormFields}
+              onSubmit={this.handleUserFieldUpdate}
+              value={{ firstName: user.firstName, lastName: user.lastName }}
             />
-          </SettingsPanel>
-        </Modal>
-
+          </Wrapper>
+        </SlideModal>
         <Modal
           isVisible={this.state.visibleModal === 'baseCurrency'}
           animationIn="fadeIn"
@@ -385,32 +358,28 @@ class Profile extends React.Component<Props, State> {
               key="country"
               label="Country"
               value={user.country}
-              onPress={() =>
-                this.setState({ visibleModal: 'country' })}
+              onPress={() => this.toggleSlideModalOpen('country')}
             />
 
             <ProfileSettingsItem
               key="city"
               label="City"
               value={user.city}
-              onPress={() =>
-                this.setState({ visibleModal: 'city' })}
+              onPress={() => this.toggleSlideModalOpen('city')}
             />
 
             <ProfileSettingsItem
               key="email"
               label="Email"
               value={user.email}
-              onPress={() =>
-                this.setState({ visibleModal: 'email' })}
+              onPress={() => this.toggleSlideModalOpen('email')}
             />
 
             <ProfileSettingsItem
-              key="phone"
-              label="Phone"
-              value={user.phone}
-              onPress={() =>
-                this.setState({ visibleModal: 'phone' })}
+              key="fullName"
+              label="Full name"
+              value={user.firstName ? `${user.firstName} ${user.lastName}` : null}
+              onPress={() => this.toggleSlideModalOpen('fullName')}
             />
 
             <ListSeparator>
@@ -448,22 +417,21 @@ class Profile extends React.Component<Props, State> {
             <CheckPinModal
               isVisible={showCheckPinModal}
               title="confirm"
-              fullScreenComponent={(
-                <Container>
-                  <ModalScreenHeader onClose={this.handleCheckPinModalClose} />
-                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
-                </Container>
-              )}
-            />
+              onClose={this.handleCheckPinModalClose}
+              fullScreen
+            >
+              <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+            </CheckPinModal>
 
             <ListSeparator>
               <ListSeparatorText>ABOUT</ListSeparatorText>
             </ListSeparator>
 
             <ProfileSettingsItem
-              key="termsOfUse"
-              label="Terms of Use"
-              onPress={this.toggleTermsConditionsModal}
+              key="chat"
+              label="Chat with us"
+              notificationsCount={intercomNotificationsCount}
+              onPress={() => Intercom.displayMessenger()}
             />
 
             <ProfileSettingsItem
@@ -473,28 +441,21 @@ class Profile extends React.Component<Props, State> {
             />
 
             <ProfileSettingsItem
-              key="privacyPolicy"
-              label="Privacy Policy"
-              onPress={this.togglePrivacyPolicyModal}
+              key="termsOfUse"
+              label="Terms of Use"
+              onPress={this.toggleTermsConditionsModal}
             />
 
             <ProfileSettingsItem
-              key="chat"
-              label="Chat with us"
-              notificationsCount={intercomNotificationsCount}
-              onPress={() => Intercom.displayMessenger()}
+              key="privacyPolicy"
+              label="Privacy Policy"
+              onPress={this.togglePrivacyPolicyModal}
             />
 
             <IFrameModal
               isVisible={showTermsConditionsModal}
               modalHide={this.toggleTermsConditionsModal}
               uri="https://pillarproject.io/en/legal/terms-of-use/"
-            />
-
-            <IFrameModal
-              isVisible={showSupportCenterModal}
-              modalHide={this.toggleSupportCenterModal}
-              uri="https://help.pillarproject.io/getting-started-with-the-alpha-beta-wallet"
             />
 
             <IFrameModal
@@ -515,7 +476,7 @@ class Profile extends React.Component<Props, State> {
           </ListWrapper>
 
         </ScrollWrapper>
-      </Container>
+      </Container >
     );
   }
 }
@@ -539,6 +500,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
     dispatch(changeRequestPinForTransactionAction(value));
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+  updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
