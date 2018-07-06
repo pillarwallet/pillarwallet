@@ -11127,6 +11127,10 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
+rn-signal-protocol-messaging@^1.0.5:
+  version "1.0.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.5.tgz#a7753ef5ee29055bfc059e398ff6626d8734c52e"
+
 rst-selector-parser@^2.2.3:
   version "2.2.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rst-selector-parser/-/rst-selector-parser-2.2.3.tgz#81b230ea2fcc6066c89e3472de794285d9b03d91"

@@ -147,6 +147,7 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
+    "rn-signal-protocol-messaging": "^1.0.5",
     "shuffle-array": "^1.0.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
