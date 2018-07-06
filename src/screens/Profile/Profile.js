@@ -7,13 +7,12 @@ import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import { Toast, ListItem, Left, Right, Icon } from 'native-base';
-import { Platform, Picker, View, FlatList } from 'react-native';
-import Modal from 'react-native-modal';
+import { Toast, ListItem as NBListItem, Left, Right, Icon } from 'native-base';
+import { FlatList } from 'react-native';
 
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import PortfolioBalance from 'components/PortfolioBalance';
-import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
@@ -26,10 +25,9 @@ import countries from 'utils/countries.json';
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
-import SettingsPanel from './SettingsPanel';
 import ProfileForm from './ProfileForm';
 
-
+const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
 
 const ProfileName = styled.Text`
@@ -41,7 +39,6 @@ const ListWrapper = styled.View`
   padding-bottom: 40px;
   background-color: ${baseColors.lighterGray};
 `;
-
 
 const FlexRowSpaced = styled.View`
   display: flex;
@@ -74,6 +71,15 @@ const CheckPinModal = styled(SlideModal)`
 const ListValue = styled.Text`
   font-size: ${fontSizes.small};
   padding-left: 20px;
+`;
+
+const ListItem = styled(NBListItem)`
+  margin: 5px 0; 
+`;
+
+const ListIcon = styled(Icon)`
+  fontSize: 22px;
+  color: ${baseColors.coolGrey};
 `;
 
 const cityFormFields = [{
@@ -118,7 +124,6 @@ type Props = {
 type State = {
   visibleModal: string | null,
   value: Object,
-  selectedCurrency: ?string,
   requestPinForTransaction: ?boolean,
   showCheckPinModal: boolean,
   showTermsConditionsModal: boolean,
@@ -132,7 +137,6 @@ class Profile extends React.Component<Props, State> {
     this.state = {
       visibleModal: null,
       value: {},
-      selectedCurrency: props.baseFiatCurrency || defaultFiatCurrency,
       requestPinForTransaction,
       showCheckPinModal: false,
       showTermsConditionsModal: false,
@@ -151,19 +155,6 @@ class Profile extends React.Component<Props, State> {
     return null;
   }
 
-  onCurrencyChanged = (value?: string) => {
-    if (value) {
-      this.setState({
-        selectedCurrency: value,
-      });
-    } else {
-      this.props.saveBaseFiatCurrency(this.state.selectedCurrency);
-      this.setState({
-        visibleModal: null,
-      });
-    }
-  };
-
   clearLocalStorage() {
     storage.removeAll();
     Toast.show({
@@ -179,6 +170,13 @@ class Profile extends React.Component<Props, State> {
     });
   };
 
+  toggleTermsConditionsModal = () => {
+    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
+  };
+
+  togglePrivacyPolicyModal = () => {
+    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
+  };
 
   handleChangeRequestPinForTransaction = (value) => {
     const { changeRequestPinForTransaction } = this.props;
@@ -195,34 +193,28 @@ class Profile extends React.Component<Props, State> {
     this.setState({ showCheckPinModal: false });
   };
 
-  toggleTermsConditionsModal = () => {
-    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
-  };
-
-  togglePrivacyPolicyModal = () => {
-    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
-  };
-
   handleUserFieldUpdate = (field: Object) => {
     const { updateUser, user } = this.props;
     updateUser(user.walletId, field);
     this.toggleSlideModalOpen(null);
   };
 
-  renderListItem = ({ item: { name } }: Object) => {
+  handleCurrencyUpdate = ({ currency }: Object) => {
+    const { saveBaseFiatCurrency } = this.props;
+    saveBaseFiatCurrency(currency);
+    this.toggleSlideModalOpen(null);
+  };
+
+  renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
     return (
-      <ListItem key={name} onPress={() => this.handleUserFieldUpdate({ country: name })}>
+      <ListItem key={name} onPress={() => onSelect({ [field]: name })}>
         <Left>
           <ListValue>{name}</ListValue>
         </Left>
         <Right>
-          <Icon
+          <ListIcon
             name="chevron-right"
             type="Feather"
-            style={{
-              fontSize: 22,
-              color: baseColors.coolGrey,
-            }}
           />
         </Right>
       </ListItem>
@@ -230,9 +222,13 @@ class Profile extends React.Component<Props, State> {
   }
 
   render() {
-    const { user, wallet, intercomNotificationsCount } = this.props;
     const {
-      selectedCurrency,
+      user,
+      wallet,
+      intercomNotificationsCount,
+      baseFiatCurrency,
+    } = this.props;
+    const {
       requestPinForTransaction,
       showCheckPinModal,
       showTermsConditionsModal,
@@ -249,7 +245,7 @@ class Profile extends React.Component<Props, State> {
         >
           <FlatList
             data={countries}
-            renderItem={this.renderListItem}
+            renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
@@ -298,46 +294,19 @@ class Profile extends React.Component<Props, State> {
             />
           </Wrapper>
         </SlideModal>
-        <Modal
+        <SlideModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
-          backdropOpacity={0.4}
-          style={{ padding: 30 }}
+          title="Preferences"
+          subtitle="Choose your base currency"
+          fullScreen
+          onModalHide={() => this.toggleSlideModalOpen(null)}
         >
-          <SettingsPanel
-            panelTitle="Pick the base currency"
-            handleOK={() => this.onCurrencyChanged()}
-            handleCancel={() => this.setState({ visibleModal: null })}
-          >
-            <View style={{
-              paddingBottom: 10,
-              paddingTop: 10,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            >
-              <Picker
-                selectedValue={selectedCurrency}
-                style={{
-                  ...Platform.select({
-                    ios: {
-                      height: 180,
-                    },
-                    android: {
-                      height: 50,
-                    },
-                  }),
-                  width: '100%',
-                }}
-                onValueChange={(itemValue) => this.onCurrencyChanged(itemValue)}
-              >
-                {supportedFiatCurrencies.map(el => <Picker.Item label={el} value={el} key={el} />)}
-              </Picker>
-            </View>
-          </SettingsPanel>
-        </Modal>
-
+          <FlatList
+            data={currencies}
+            renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
+            keyExtractor={({ name }) => name}
+          />
+        </SlideModal>
         <ScrollWrapper>
           <ProfileHeader>
             <FlexRowSpaced>
@@ -387,7 +356,7 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="baseCurrency"
               label="Base currency"
-              value={selectedCurrency}
+              value={baseFiatCurrency}
               onPress={() =>
                 this.setState({ visibleModal: 'baseCurrency' })}
             />
