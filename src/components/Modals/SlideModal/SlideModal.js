@@ -15,7 +15,7 @@ type Props = {
   children?: React.Node,
   subtitle?: string,
   fullScreenComponent?: ?React.Node,
-  onModalHide: Function,
+  onModalHide?: Function,
   fullScreen?: boolean,
   isVisible: boolean,
 };
@@ -93,17 +93,15 @@ export default class SlideModal extends React.Component<Props, State> {
     return this.state.isVisible !== nextState.isVisible;
   }
 
+  componentDidUpdate() {
+    Keyboard.dismiss();
+  }
+
   hideModal = () => {
     Keyboard.dismiss();
     this.setState({
       isVisible: false,
     });
-  }
-
-  handleModalHide = () => {
-    const { onModalHide } = this.props;
-    Keyboard.dismiss();
-    onModalHide();
   }
 
   render() {
@@ -114,6 +112,7 @@ export default class SlideModal extends React.Component<Props, State> {
       children,
       title,
       fullScreenComponent,
+      onModalHide,
       fullScreen,
       subtitle,
     } = this.props;
@@ -123,7 +122,7 @@ export default class SlideModal extends React.Component<Props, State> {
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
-        onModalHide={this.handleModalHide}
+        onModalHide={onModalHide}
         onBackdropPress={this.hideModal}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}

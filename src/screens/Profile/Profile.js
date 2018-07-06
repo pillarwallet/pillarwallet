@@ -87,7 +87,7 @@ const emailFormFields = [{
   label: 'Email',
   name: 'email',
   type: 'string',
-  config: { placeholder: 'user@example.com', autoCapitalize: false },
+  config: { placeholder: 'user@example.com', autoCapitalize: 'none' },
 }];
 
 const fullNameFormFields = [{
