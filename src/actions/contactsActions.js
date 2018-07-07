@@ -1,10 +1,15 @@
 // @flow
-import { UPDATE_SEARCH_RESULTS } from 'constants/contactsConstants';
+import { UPDATE_SEARCH_RESULTS, FETCHING, UPDATE_CONTACTS_STATE } from 'constants/contactsConstants';
 import { excludeLocalContacts } from 'utils/contacts';
 
 export const contactsSearchAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: { walletId } }, contacts: { data: localContacts } } = getState();
+
+    dispatch({
+      type: UPDATE_CONTACTS_STATE,
+      payload: FETCHING,
+    });
 
     let apiUsers = await api.userSearch(query, walletId);
     apiUsers = excludeLocalContacts(apiUsers, localContacts);

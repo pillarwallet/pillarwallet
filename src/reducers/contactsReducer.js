@@ -1,5 +1,10 @@
 // @flow
-import { UPDATE_CONTACTS, UPDATE_SEARCH_RESULTS } from 'constants/contactsConstants';
+import {
+  UPDATE_CONTACTS,
+  UPDATE_SEARCH_RESULTS,
+  UPDATE_CONTACTS_STATE,
+  FETCHED,
+} from 'constants/contactsConstants';
 
 export type ContactsReducerState = {
   data: Object[],
@@ -29,10 +34,12 @@ export default function contactsReducer(
   action: ContactsReducerAction,
 ) {
   switch (action.type) {
+    case UPDATE_CONTACTS_STATE:
+      return { ...state, contactState: action.payload };
     case UPDATE_CONTACTS:
       return { ...state, data: action.payload };
     case UPDATE_SEARCH_RESULTS:
-      return { ...state, searchResults: action.payload };
+      return { ...state, searchResults: action.payload, contactState: FETCHED };
     default:
       return state;
   }

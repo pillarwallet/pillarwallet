@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
@@ -7,12 +8,14 @@ import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { contactsSearchAction } from 'actions/contactsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
+import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Title from 'components/Title';
 import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
+import PeopleSearchResults from 'components/PeopleSearchResults';
 
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
@@ -47,7 +50,11 @@ const ContactCardList = styled(ScrollWrapper)`
 type Props = {
   navigation: NavigationScreenProp<*>,
   doSearch: (query: string) => Function,
-  searchResults: [],
+  searchResults: {
+    apiUsers: Object[],
+    localContacts: Object[],
+  },
+  contactState: ?string,
 }
 
 type State = {
@@ -65,7 +72,6 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   handleSearchChange = (query: any) => {
-    console.log('query', query);
     this.setState({ query });
     this.doSearch(query);
   };
@@ -88,8 +94,8 @@ class PeopleScreen extends React.Component<Props, State> {
 
   render() {
     const { query } = this.state;
-    const { searchResults } = this.props;
-    console.log('searchResults', searchResults);
+    const { searchResults, contactState } = this.props;
+
     return (
       <Container>
         <Wrapper regularPadding>
@@ -116,32 +122,54 @@ class PeopleScreen extends React.Component<Props, State> {
             <ConnectionRequestBannerIcon name="arrow-forward" />
           </React.Fragment>
         </ConnectionRequestBanner>
-        <ContactCardList contentInset={{ bottom: 40 }}>
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="John Doe"
+
+        {query !== '' && contactState === FETCHING &&
+          <ActivityIndicator
+            animating
+            color="#111"
+            size="large"
           />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="David Bowie"
-            notificationCount={4}
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="Vitalik Satoshi"
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="Beta Alpha"
-          />
-        </ContactCardList>
+        }
+
+        {query !== '' && contactState === FETCHED &&
+          <PeopleSearchResults searchResults={searchResults} />
+        }
+
+        {(query === '' || !contactState) &&
+          <ContactCardList contentInset={{ bottom: 40 }}>
+            <ContactCard
+              onPress={this.handleContactCardPress}
+              name="John Doe"
+            />
+            <ContactCard
+              onPress={this.handleContactCardPress}
+              name="David Bowie"
+              notificationCount={4}
+            />
+            <ContactCard
+              onPress={this.handleContactCardPress}
+              name="Vitalik Satoshi"
+            />
+            <ContactCard
+              onPress={this.handleContactCardPress}
+              name="Beta Alpha"
+            />
+          </ContactCardList>
+        }
       </Container>
     );
   }
 }
 
-const mapStateToProps = ({ contacts: { searchResults, data: localContacts } }) => ({
+const mapStateToProps = ({
+  contacts: {
+    searchResults,
+    contactState,
+    data: localContacts,
+  },
+}) => ({
   searchResults,
+  contactState,
   localContacts,
 });
 

@@ -1,4 +1,7 @@
 // @flow
 
 export const UPDATE_CONTACTS = 'UPDATE_CONTACTS';
+export const FETCHING = 'FETCHING';
+export const FETCHED = 'FETCHED';
+export const UPDATE_CONTACTS_STATE = 'UPDATE_CONTACTS_STATE';
 export const UPDATE_SEARCH_RESULTS = 'UPDATE_SEARCH_RESULTS';
