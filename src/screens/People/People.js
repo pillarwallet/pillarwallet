@@ -66,7 +66,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
   handleSearchChange = (query: any) => {
     console.log('query', query);
-    // this.setState({ query });
+    this.setState({ query });
     this.doSearch(query);
   };
 
@@ -116,9 +116,7 @@ class PeopleScreen extends React.Component<Props, State> {
             <ConnectionRequestBannerIcon name="arrow-forward" />
           </React.Fragment>
         </ConnectionRequestBanner>
-        <ContactCardList
-          contentInset={{ bottom: 40 }}
-        >
+        <ContactCardList contentInset={{ bottom: 40 }}>
           <ContactCard
             onPress={this.handleContactCardPress}
             name="John Doe"
@@ -136,7 +134,6 @@ class PeopleScreen extends React.Component<Props, State> {
             onPress={this.handleContactCardPress}
             name="Beta Alpha"
           />
-
         </ContactCardList>
       </Container>
     );
