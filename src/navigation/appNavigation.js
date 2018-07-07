@@ -11,10 +11,11 @@ import { AppState, Animated, Easing, Platform, Image } from 'react-native';
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import ContactScreen from 'screens/Contact';
 import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
-import PeopleScreen from 'screens/People';
 import ProfileScreen from 'screens/Profile';
+import PeopleScreen from 'screens/People';
+import ContactScreen from 'screens/Contact';
+import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -42,9 +43,10 @@ import {
   ASSETS,
   ASSET,
   ICO,
-  PEOPLE,
   PROFILE,
+  PEOPLE,
   CONTACT,
+  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -86,9 +88,9 @@ if (Platform.OS === 'ios') {
 }
 
 const iconWallet = require('assets/icons/icon_wallet.png');
+const iconPeople = require('assets/icons/icon_people.png');
 const iconProfile = require('assets/icons/icon_profile.png');
 const iconIco = require('assets/icons/icon_ico.png');
-const iconPeople = require('assets/icons/icon_people.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -121,6 +123,7 @@ const assetsFlow = FluidNavigator({
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
+  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
 });
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (

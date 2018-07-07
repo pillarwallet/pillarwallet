@@ -1,11 +1,24 @@
 // @flow
 import * as React from 'react';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
+import NotificationCircle from 'components/NotificationCircle';
+import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native';
+
+type Props = {
+  onPress: Function,
+  name: string,
+  notificationCount?: number,
+  showActions?: boolean,
+  status?: string,
+  onAcceptInvitationPress?: Function,
+  onRejectInvitationPress?: Function,
+  onCancelInvitationPress?: Function,
+}
 
 const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
-  border: 1px solid ${baseColors.mediumGray};
+  border: 1px solid ${UIColors.defaultBorderColor};
   margin-bottom: -4px;
   height: 75px;
   padding: 14px;
@@ -17,7 +30,6 @@ const ContactCardWrapper = styled.TouchableHighlight`
 `;
 
 const ContactCardInner = styled.View`
-  justify-content: flex-start;
   flex-direction: row;
   align-items: center;
 `;
@@ -44,24 +56,123 @@ const ContactCardName = styled.Text`
   font-weight: ${fontWeights.bold};
 `;
 
-type Props = {
-  onPress: Function,
+const ContactCardNotificationCircle = styled(NotificationCircle)`
+  margin-left: auto;
+`;
+
+const StatusText = styled.Text`
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.darkGray};
+  margin-left: auto;
+`;
+
+const ActionButton = styled(ButtonIcon)`
+  height: 34px;
+  width: 34px;
+  border-radius: 17px;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+  background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
+`;
+const ButtonIconWrapper = styled.View`
+  margin-left: auto;
+  flex-direction: row;
+`;
+
+const CancelActionWrapper = styled.TouchableOpacity`
+  margin-left: auto;
+`;
+
+const CancelActionText = styled.Text`
+  color: ${baseColors.fireEngineRed};
+  font-size: ${fontSizes.small};
+`;
+
+export default class ContactCard extends React.Component<Props> {
+  getActionsOrStatus = (status: string, onPressActions: Object) => {
+    const {
+      onAcceptInvitationPress,
+      onRejectInvitationPress,
+      onCancelInvitationPress,
+    } = onPressActions;
+
+    if (status === 'ACCEPTED') {
+      return (
+        <StatusText>ACCEPTED</StatusText>
+      );
+    } else if (status === 'DECLINED') {
+      return (
+        <StatusText>DECLINED</StatusText>
+      );
+    } else if (status === 'RECEIVED') {
+      return (
+        <ButtonIconWrapper>
+          <ActionButton
+            color={baseColors.darkGray}
+            margin={0}
+            icon="close"
+            fontSize={32}
+            onPress={onRejectInvitationPress}
+          />
+          <ActionButton
+            color={baseColors.white}
+            margin={0}
+            accept
+            icon="ios-checkmark"
+            fontSize={32}
+            onPress={onAcceptInvitationPress}
+          />
+        </ButtonIconWrapper>
+      );
+    } else if (status === 'SENT') {
+      return (
+        <CancelActionWrapper onPress={onCancelInvitationPress}>
+          <CancelActionText>
+            Cancel
+          </CancelActionText>
+        </CancelActionWrapper>
+      );
+    }
+    return null;
+  }
+
+  render() {
+    const {
+      notificationCount,
+      name,
+      showActions,
+      status,
+      onAcceptInvitationPress,
+      onRejectInvitationPress,
+      onCancelInvitationPress,
+    } = this.props;
+
+    const onPressActions = {
+      onAcceptInvitationPress,
+      onRejectInvitationPress,
+      onCancelInvitationPress,
+    };
+    return (
+      <ContactCardWrapper
+        onPress={this.props.onPress}
+        underlayColor={baseColors.lightGray}
+      >
+        <ContactCardInner>
+          <ContactCardAvatarWrapper>
+            <ContactCardAvatar />
+          </ContactCardAvatarWrapper>
+          <ContactCardName>{name}</ContactCardName>
+          {!!notificationCount && notificationCount > 0 &&
+            <ContactCardNotificationCircle>2</ContactCardNotificationCircle>
+          }
+          {!!showActions && !!status &&
+            this.getActionsOrStatus(status, onPressActions)
+          }
+        </ContactCardInner>
+      </ContactCardWrapper>
+    );
+  }
 }
 
-const ContactCard = (props: Props) => {
-  return (
-    <ContactCardWrapper
-      onPress={props.onPress}
-      underlayColor={baseColors.lightGray}
-    >
-      <ContactCardInner>
-        <ContactCardAvatarWrapper>
-          <ContactCardAvatar />
-        </ContactCardAvatarWrapper>
-        <ContactCardName>John Doe</ContactCardName>
-      </ContactCardInner>
-    </ContactCardWrapper>
-  );
-};
-
-export default ContactCard;

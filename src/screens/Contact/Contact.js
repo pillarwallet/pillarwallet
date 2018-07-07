@@ -42,6 +42,7 @@ const ContactHeaderAvatarWrapper = styled.View`
 `;
 
 const ContactHeaderAvatar = styled.Image`
+
 `;
 
 const Contact = () => {
