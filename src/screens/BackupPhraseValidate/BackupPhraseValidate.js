@@ -21,6 +21,7 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
+  margin-top: 20px;
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
@@ -57,7 +58,7 @@ const WordInputPrefix = styled.View`
   flex: 0 0 20px;
   height: 42px;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const WordInputNumber = styled(Label)`

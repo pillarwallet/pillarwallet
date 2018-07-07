@@ -3,6 +3,7 @@ import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
+import Intercom from 'react-native-intercom';
 import { getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
@@ -13,6 +14,8 @@ import {
   API_REGISTRATION_FAILED,
   USERNAME_EXISTS,
   USERNAME_OK,
+  CHECKING_USERNAME,
+  SET_API_USER,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
@@ -26,8 +29,13 @@ const storage = Storage.getInstance('db');
 export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
     const currentState = getState();
-    const { mnemonic, pin, importedWallet } = currentState.wallet.onboarding;
-    const { user } = await storage.get('user');
+    const {
+      mnemonic,
+      pin,
+      importedWallet,
+      apiUser: user,
+    } = currentState.wallet.onboarding;
+
     const mnemonicPhrase = mnemonic.original;
 
     // STEP 0: Clear local storage
@@ -70,12 +78,12 @@ export const registerWalletAction = () => {
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
+    await Intercom.sendTokenToIntercom(fcmToken);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
-
     const userInfo = await api.userInfo(sdkWallet.walletId);
     if (Object.keys(userInfo).length) {
-      await storage.save('user', { user: userInfo });
+      await storage.save('user', { user: userInfo }, true);
     }
     const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
@@ -134,12 +142,13 @@ export const registerOnBackendAction = () => {
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
+    await Intercom.sendTokenToIntercom(fcmToken);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
 
     const userInfo = await api.userInfo(sdkWallet.walletId);
     if (Object.keys(userInfo).length) {
-      await storage.save('user', { user: userInfo });
+      await storage.save('user', { user: userInfo }, true);
     }
     const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
@@ -171,21 +180,31 @@ export const registerOnBackendAction = () => {
 export const validateUserDetailsAction = ({ username }: Object) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const currentState = getState();
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: CHECKING_USERNAME,
+    });
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
     const mnemonicPhrase = mnemonic.original;
-
+    await delay(200);
     let wallet = importedWallet;
     if (!wallet) {
       wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
     }
 
     api.init(wallet.privateKey);
-    const response = await api.usernameSearch(username);
-    const usernameExists = !!Object.keys(response).length;
-    const usernameSatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    const apiUser = await api.usernameSearch(username);
+    const usernameExists = !!Object.keys(apiUser).length;
+    const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+
+    dispatch({
+      type: SET_API_USER,
+      payload: usernameExists ? apiUser : { username },
+    });
+
     dispatch({
       type: UPDATE_WALLET_STATE,
-      payload: usernameSatus,
+      payload: usernameStatus,
     });
   };
 };

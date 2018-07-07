@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
-import { Icon, Switch } from 'native-base';
+import { Icon, Switch, Badge as NBBadge } from 'native-base';
 
 import { Platform, View, StyleSheet, TouchableNativeFeedback } from 'react-native';
 
@@ -40,6 +40,19 @@ const ItemLabelHolder = styled.View`
   align-items: center;
 `;
 
+const Badge = styled(NBBadge)`
+  position: absolute;
+  top: -3px;
+  right: 24px;
+  width: 24px;
+  height: 24px;
+`;
+
+const BadgeText = styled.Text`
+  color: #fff;
+  font-size: ${fontSizes.extraExtraSmall};
+  text-align: center;
+`;
 
 const ItemLabel = styled.Text`
   font-size: ${fontSizes.medium};
@@ -76,6 +89,7 @@ const ButtonWrapper = ({ onPress, children }) => {
 
 type Props = {
   label: string,
+  notificationsCount?: number,
   onPress?: ?Function,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
@@ -87,8 +101,8 @@ export default class ProfileSettingsItem extends React.Component<Props> {
       label,
       toggle,
       onPress,
+      notificationsCount,
     } = this.props;
-
     if (!toggle) {
       return (
         <View style={{ flex: 1, paddingRight: 20, position: 'relative' }}>
@@ -104,6 +118,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
             top: 2,
           }}
           >
+            {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             <Icon
               name="chevron-right"
               type="Feather"

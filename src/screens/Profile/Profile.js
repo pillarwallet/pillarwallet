@@ -4,8 +4,9 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import Storage from 'services/storage';
 import type { NavigationScreenProp } from 'react-navigation';
+import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Toast } from 'native-base';
 import { Platform, Picker, View } from 'react-native';
 import Modal from 'react-native-modal';
@@ -20,11 +21,12 @@ import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import IFrameModal from 'components/Modals/IFrameModal';
+import SystemInfoModal from 'components/SystemInfoModal';
+
 import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
 import SettingsPanel from './SettingsPanel';
-
 
 const storage = new Storage('db');
 
@@ -67,6 +69,11 @@ const CheckPinModal = styled(SlideModal)`
   align-items: flex-start;
 `;
 
+const SystemInfoModalWrapper = styled(SlideModal)`
+  align-items: flex-start;
+`;
+
+
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
@@ -74,6 +81,7 @@ type Props = {
   baseFiatCurrency: ?string,
   requestPinForTransaction: ?boolean,
   wallet: Object,
+  intercomNotificationsCount: number,
   changeRequestPinForTransaction: (value: boolean) => Function,
   resetIncorrectPassword: () => Function,
 }
@@ -87,6 +95,7 @@ type State = {
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSupportCenterModal: boolean,
+  showSystemInfoModal: boolean,
 }
 
 const { Form } = t.form;
@@ -141,6 +150,7 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSupportCenterModal: false,
+      showSystemInfoModal: false,
     };
   }
 
@@ -221,7 +231,7 @@ class Profile extends React.Component<Props, State> {
   };
 
   render() {
-    const { user, wallet } = this.props;
+    const { user, wallet, intercomNotificationsCount } = this.props;
     const {
       selectedCurrency,
       requestPinForTransaction,
@@ -229,6 +239,7 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSupportCenterModal,
+      showSystemInfoModal,
     } = this.state;
 
     return (
@@ -455,7 +466,7 @@ class Profile extends React.Component<Props, State> {
             />
 
             <ListSeparator>
-              <ListSeparatorText>About</ListSeparatorText>
+              <ListSeparatorText>ABOUT</ListSeparatorText>
             </ListSeparator>
 
             <ProfileSettingsItem
@@ -467,13 +478,20 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="supportCenter"
               label="Support Center"
-              onPress={this.toggleSupportCenterModal}
+              onPress={() => Intercom.displayHelpCenter()}
             />
 
             <ProfileSettingsItem
               key="privacyPolicy"
               label="Privacy Policy"
               onPress={this.togglePrivacyPolicyModal}
+            />
+
+            <ProfileSettingsItem
+              key="chat"
+              label="Chat with us"
+              notificationsCount={intercomNotificationsCount}
+              onPress={() => Intercom.displayMessenger()}
             />
 
             <IFrameModal
@@ -494,14 +512,43 @@ class Profile extends React.Component<Props, State> {
               uri="https://pillarproject.io/en/legal/privacy/"
             />
 
+
+            {!!__DEV__ && (
+              <React.Fragment>
+                <ListSeparator>
+                  <ListSeparatorText>DEBUG</ListSeparatorText>
+                </ListSeparator>
+
+                <ProfileSettingsItem
+                  key="clearStorage"
+                  label="Clear Local Storage"
+                  onPress={() => { this.clearLocalStorage(); }}
+                />
+              </React.Fragment>
+              )
+            }
+
             <ListSeparator>
-              <ListSeparatorText>DEBUG</ListSeparatorText>
+              <ListSeparatorText>SYSTEM INFO</ListSeparatorText>
             </ListSeparator>
 
             <ProfileSettingsItem
-              key="clearStorage"
-              label="Clear Local Storage"
-              onPress={() => { this.clearLocalStorage(); }}
+              key="systemInfo"
+              label="System Info"
+              onPress={() => this.setState({ showSystemInfoModal: true })}
+            />
+
+            <SystemInfoModalWrapper
+              isVisible={showSystemInfoModal}
+              title=""
+              fullScreenComponent={(
+                <Container>
+                  <ModalScreenHeader onClose={() => this.setState({ showSystemInfoModal: false })} />
+                  <Wrapper regularPadding>
+                    <SystemInfoModal />
+                  </Wrapper>
+                </Container>
+              )}
             />
           </ListWrapper>
 
@@ -515,11 +562,13 @@ const mapStateToProps = ({
   user: { data: user },
   wallet: { data: wallet },
   appSettings: { data: { requestPinForTransaction, baseFiatCurrency } },
+  notifications: { intercomNotificationsCount },
 }) => ({
   user,
   wallet,
   requestPinForTransaction,
   baseFiatCurrency,
+  intercomNotificationsCount,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
