@@ -94,7 +94,8 @@ class PeopleScreen extends React.Component<Props, State> {
 
   render() {
     const { query } = this.state;
-    const { searchResults, contactState } = this.props;
+    const { searchResults, contactState, navigation } = this.props;
+    const inSearchMode = (query !== '' && !!contactState);
 
     return (
       <Container>
@@ -108,6 +109,8 @@ class PeopleScreen extends React.Component<Props, State> {
             }}
           />
         </Wrapper>
+
+        {!inSearchMode &&
         <ConnectionRequestBanner
           onPress={this.handleConnectionsRequestBannerPress}
           underlayColor={baseColors.lightGray}
@@ -119,42 +122,43 @@ class PeopleScreen extends React.Component<Props, State> {
             <ConnectionRequestNotificationCircle>
               5
             </ConnectionRequestNotificationCircle>
-            <ConnectionRequestBannerIcon name="arrow-forward" />
+            <ConnectionRequestBannerIcon name="arrow-forward"/>
           </React.Fragment>
         </ConnectionRequestBanner>
+        }
 
         {query !== '' && contactState === FETCHING &&
-          <ActivityIndicator
-            animating
-            color="#111"
-            size="large"
-          />
+        <ActivityIndicator
+          animating
+          color="#111"
+          size="large"
+        />
         }
 
         {query !== '' && contactState === FETCHED &&
-          <PeopleSearchResults searchResults={searchResults} />
+        <PeopleSearchResults searchResults={searchResults} navigation={navigation} />
         }
 
-        {(query === '' || !contactState) &&
-          <ContactCardList contentInset={{ bottom: 40 }}>
-            <ContactCard
-              onPress={this.handleContactCardPress}
-              name="John Doe"
-            />
-            <ContactCard
-              onPress={this.handleContactCardPress}
-              name="David Bowie"
-              notificationCount={4}
-            />
-            <ContactCard
-              onPress={this.handleContactCardPress}
-              name="Vitalik Satoshi"
-            />
-            <ContactCard
-              onPress={this.handleContactCardPress}
-              name="Beta Alpha"
-            />
-          </ContactCardList>
+        {!inSearchMode &&
+        <ContactCardList contentInset={{ bottom: 40 }}>
+          <ContactCard
+            onPress={this.handleContactCardPress}
+            name="John Doe"
+          />
+          <ContactCard
+            onPress={this.handleContactCardPress}
+            name="David Bowie"
+            notificationCount={4}
+          />
+          <ContactCard
+            onPress={this.handleContactCardPress}
+            name="Vitalik Satoshi"
+          />
+          <ContactCard
+            onPress={this.handleContactCardPress}
+            name="Beta Alpha"
+          />
+        </ContactCardList>
         }
       </Container>
     );
