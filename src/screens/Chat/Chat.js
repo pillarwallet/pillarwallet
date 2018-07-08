@@ -11,6 +11,9 @@ import {
   InputToolbar,
   Send,
 } from 'react-native-gifted-chat';
+import ChatService from 'services/chat';
+
+const chat = new ChatService();
 
 type Props = {
   navigation: NavigationScreenProp<*>,
