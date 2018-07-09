@@ -55,10 +55,10 @@ export default class PeopleSearchResults extends React.Component<Props, State> {
     this.props.navigation.navigate(CONTACT);
   };
 
-  handleSendInvitationPress = (user: ApiUser) => () => {
+  handleSendInvitationPress = (user: ApiUser) => () => { // eslint-disable-line
   };
 
-  handleReceiveInvitationPress = (user: ApiUser) => () => {
+  handleReceiveInvitationPress = (user: ApiUser) => () => { // eslint-disable-line
   };
 
   render() {
