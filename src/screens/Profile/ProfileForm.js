@@ -7,6 +7,7 @@ import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
+import { isValidEmail } from 'utils/validators';
 
 type Field = {
   name: string,
@@ -68,9 +69,14 @@ function InputTemplate(locals) {
 
 const { Form } = t.form;
 
+const EmailStruct = t.refinement(t.String, (email: string): boolean => {
+  return !!email.length && isValidEmail(email);
+});
+
 const defaultTypes = {
   string: t.String,
   number: t.Number,
+  email: EmailStruct,
 };
 
 const getFormStructure = (fields: Field[]) => {

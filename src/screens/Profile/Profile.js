@@ -92,8 +92,8 @@ const cityFormFields = [{
 const emailFormFields = [{
   label: 'Email',
   name: 'email',
-  type: 'string',
-  config: { placeholder: 'user@example.com', autoCapitalize: 'none' },
+  type: 'email',
+  config: { placeholder: 'user@example.com', autoCapitalize: 'none', error: 'Please specify valid email' },
 }];
 
 const fullNameFormFields = [{
@@ -163,8 +163,7 @@ class Profile extends React.Component<Props, State> {
     });
   }
 
-
-  toggleSlideModalOpen = (visibleModal: ?string) => {
+  toggleSlideModalOpen = (visibleModal: ?string = null) => {
     this.setState({
       visibleModal,
     });
@@ -241,7 +240,7 @@ class Profile extends React.Component<Props, State> {
           title="personal details"
           subtitle="Choose your country"
           fullScreen
-          onModalHide={() => this.toggleSlideModalOpen(null)}
+          onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
             data={countries}
@@ -254,7 +253,7 @@ class Profile extends React.Component<Props, State> {
           title="personal details"
           subtitle="Enter city name"
           fullScreen
-          onModalHide={() => this.toggleSlideModalOpen(null)}
+          onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
             <ProfileForm
@@ -269,7 +268,7 @@ class Profile extends React.Component<Props, State> {
           title="personal details"
           subtitle="Enter your email"
           fullScreen
-          onModalHide={() => this.toggleSlideModalOpen(null)}
+          onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
             <ProfileForm
@@ -284,7 +283,7 @@ class Profile extends React.Component<Props, State> {
           title="personal details"
           subtitle="Enter your full name"
           fullScreen
-          onModalHide={() => this.toggleSlideModalOpen(null)}
+          onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
             <ProfileForm
@@ -296,10 +295,10 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          title="Preferences"
+          title="preferences"
           subtitle="Choose your base currency"
           fullScreen
-          onModalHide={() => this.toggleSlideModalOpen(null)}
+          onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
             data={currencies}
@@ -384,7 +383,7 @@ class Profile extends React.Component<Props, State> {
             <CheckPinModal
               isVisible={showCheckPinModal}
               title="confirm"
-              onClose={this.handleCheckPinModalClose}
+              onModalHide={this.handleCheckPinModalClose}
               fullScreen
             >
               <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
