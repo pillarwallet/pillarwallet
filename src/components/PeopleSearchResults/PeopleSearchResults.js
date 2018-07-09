@@ -62,6 +62,8 @@ export default class PeopleSearchResults extends React.Component<Props, State> {
 
   render() {
     const { activeTab } = this.state;
+    const { searchResults } = this.props;
+
     // TODO: handle when nothing found
     return (
       <React.Fragment>
@@ -84,42 +86,18 @@ export default class PeopleSearchResults extends React.Component<Props, State> {
         <ContactCardList
           contentInset={{ bottom: 40 }}
         >
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="John Doe"
-            status="RECEIVED"
-            showActions
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="David Bowie"
-            status="ACCEPTED"
-            showActions
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="Vitalik Satoshi"
-            status="DECLINED"
-            showActions
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="Beta Alpha"
-            status="SENT"
-            showActions
-          />
+          {searchResults.apiUsers.map((user, index) => (
+            <ContactCard
+              onPress={this.handleContactCardPress}
+              onAcceptInvitationPress={this.handleAcceptInvitationPress}
+              onRejectInvitationPress={this.handleRejectInvitatonPress}
+              onCancelInvitationPress={this.handleCancelInvitationPress}
+              name={user.username}
+              key={user.id}
+              status={index % 2 === 0 ? 'INVITE' : 'RECEIVE'}
+              showActions
+            />
+          ))}
         </ContactCardList>
       </React.Fragment>
     );

@@ -90,6 +90,16 @@ const CancelActionText = styled.Text`
   font-size: ${fontSizes.small};
 `;
 
+const ConnectActionText = styled.Text`
+  color: ${baseColors.freshEucalyptus};
+  font-size: ${fontSizes.small};
+`;
+
+const ReceiveActionText = styled.Text`
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.small};
+`;
+
 export default class ContactCard extends React.Component<Props> {
   getActionsOrStatus = (status: string, onPressActions: Object) => {
     const {
@@ -134,9 +144,25 @@ export default class ContactCard extends React.Component<Props> {
           </CancelActionText>
         </CancelActionWrapper>
       );
+    } else if (status === 'INVITE') {
+      return (
+        <CancelActionWrapper onPress={onCancelInvitationPress}>
+          <ConnectActionText>
+            Connect
+          </ConnectActionText>
+        </CancelActionWrapper>
+      );
+    } else if (status === 'RECEIVE') {
+      return (
+        <CancelActionWrapper onPress={onCancelInvitationPress}>
+          <ReceiveActionText>
+            Receive invite
+          </ReceiveActionText>
+        </CancelActionWrapper>
+      );
     }
     return null;
-  }
+  };
 
   render() {
     const {
