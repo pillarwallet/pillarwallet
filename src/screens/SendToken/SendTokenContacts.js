@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { Permissions } from 'expo';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes } from 'utils/variables';
@@ -14,6 +15,8 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
+
+const PERMISSION_GRANTED = 'GRANTED';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -130,13 +133,20 @@ class SendTokenContacts extends React.Component<Props, State> {
     });
   };
 
-  handleToggleQRScanningState = () => {
+  handleQRScannerOpen = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({
-      isScanning: !this.state.isScanning,
+      isScanning: status.toUpperCase() === PERMISSION_GRANTED,
     }, () => {
       if (this.state.isScanning) {
         Keyboard.dismiss();
       }
+    });
+  };
+
+  handleQRScannerClose = () => {
+    this.setState({
+      isScanning: false,
     });
   };
 
@@ -152,7 +162,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       value,
     } = this.state;
     const formOptions = generateFormOptions(
-      { onIconPress: this.handleToggleQRScanningState, currency: assetData.token },
+      { onIconPress: this.handleQRScannerOpen, currency: assetData.token },
     );
 
     const qrScannerComponent = (
@@ -160,19 +170,19 @@ class SendTokenContacts extends React.Component<Props, State> {
         validator={ETHValidator}
         dataFormatter={decodeETHAddress}
         isActive={isScanning}
-        onDismiss={this.handleToggleQRScanningState}
+        onDismiss={this.handleQRScannerClose}
         onRead={this.handleQRRead}
       />
     );
     return (
       <React.Fragment>
-        <ModalScreenHeader
-          onBack={this.props.navigation.goBack}
-          onClose={this.props.navigation.dismiss}
-          rightLabelText="step 2 of 3"
-          title="send"
-        />
         <Container>
+          <ModalScreenHeader
+            onBack={this.props.navigation.goBack}
+            onClose={this.props.navigation.dismiss}
+            rightLabelText="step 2 of 3"
+            title="send"
+          />
           <Wrapper regularPadding>
             <SubTitle>To whom you would like to send?</SubTitle>
             <Form

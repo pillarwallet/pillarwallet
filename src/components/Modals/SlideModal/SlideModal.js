@@ -4,14 +4,19 @@ import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import Title from 'components/Title';
+import { SubTitle } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
-import { Platform } from 'react-native';
+import { Platform, Dimensions, Keyboard } from 'react-native';
+
+const { height } = Dimensions.get('window');
 
 type Props = {
-  title: string,
+  title?: string,
   children?: React.Node,
+  subtitle?: string,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
+  fullScreen?: boolean,
   isVisible: boolean,
 };
 
@@ -22,14 +27,16 @@ type State = {
 const ModalWrapper = styled.View`
   position: absolute;
   width: 100%;
+  ${props => props.fullScreen && `height: ${height};`}
 `;
 
 const ModalBackground = styled.View`
   background-color: white;
-  padding: 20px;
-  border-top-left-radius: 20;
-  border-top-right-radius: 20;
+  border-top-left-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
+  border-top-right-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
+  padding: ${(props) => props.fullScreen ? '60px 0 80px' : '20px'};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
+  ${props => props.fullScreen && 'height: 100%;'}
 `;
 
 const ModalHeader = styled.View`
@@ -37,10 +44,15 @@ const ModalHeader = styled.View`
   width: 100%;
   align-items: center;
   justify-content: space-between;
+  ${props => props.fullScreen && 'padding: 0 20px;'}
+`;
+
+const ModalSubtitle = styled(SubTitle)`
+  padding: ${(props) => props.fullScreen ? '20px 20px 0' : '20px 0'};
 `;
 
 const ModalContent = styled.View`
-  padding: 10px 0px;
+  ${props => props.fullScreen && 'height: 100%;'}
 `;
 
 const ModalOverflow = styled.View`
@@ -51,7 +63,7 @@ const ModalOverflow = styled.View`
 
 const CloseButton = styled(ButtonIcon)`
   position: absolute;
-  right: -10px;
+  right: ${(props) => props.fullScreen ? 8 : -8}px;
   top: -10px;
 `;
 
@@ -80,7 +92,12 @@ export default class SlideModal extends React.Component<Props, State> {
     return this.state.isVisible !== nextState.isVisible;
   }
 
+  componentDidUpdate() {
+    Keyboard.dismiss();
+  }
+
   hideModal = () => {
+    Keyboard.dismiss();
     this.setState({
       isVisible: false,
     });
@@ -95,9 +112,11 @@ export default class SlideModal extends React.Component<Props, State> {
       title,
       fullScreenComponent,
       onModalHide,
+      fullScreen,
+      subtitle,
     } = this.props;
     const animationInTiming = 800;
-    const animationOutTiming = 1600;
+    const animationOutTiming = 400;
     return (
       <Modal
         isVisible={isVisible}
@@ -109,23 +128,26 @@ export default class SlideModal extends React.Component<Props, State> {
         animationIn="bounceInUp"
         animationOut="bounceOutDown"
         swipeDirection="down"
+        hideModalContentWhileAnimating
         style={{
           margin: 0,
           justifyContent: 'flex-end',
         }}
       >
-        <ModalWrapper>
-          <ModalBackground>
-            <ModalHeader>
+        <ModalWrapper fullScreen={fullScreen}>
+          <ModalBackground fullScreen={fullScreen}>
+            <ModalHeader fullScreen={fullScreen}>
               <Title noMargin title={title} />
               <CloseButton
                 icon="close"
                 onPress={this.hideModal}
                 fontSize={Platform.OS === 'ios' ? 36 : 30}
                 color={baseColors.darkGray}
+                fullScreen={fullScreen}
               />
             </ModalHeader>
-            <ModalContent>
+            <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
+            <ModalContent fullScreen={fullScreen}>
               {children}
             </ModalContent>
             <ModalOverflow />

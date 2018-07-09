@@ -36,3 +36,8 @@ export function isValidFullname(fullName: string): boolean {
   if (!hasMoreThanOnePart) return false;
   return true;
 }
+
+export function isValidEmail(email: string) {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}

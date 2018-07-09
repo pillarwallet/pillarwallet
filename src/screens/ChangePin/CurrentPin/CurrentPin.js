@@ -13,20 +13,22 @@ type Props = {
 
 export default class CurrentPin extends React.Component<Props> {
   handleScreenDismissal = () => {
-    this.props.navigation.goBack(null);
+    this.props.navigation.dismiss();
   };
 
   render() {
     const { navigation } = this.props;
 
     return (
-      <Container>
-        <ModalScreenHeader onClose={this.handleScreenDismissal} />
-        <CheckPin
-          onPinValid={() => navigation.navigate(CHANGE_PIN_NEW_PIN)}
-          title="enter current pincode"
-        />
-      </Container>
+      <React.Fragment>
+        <Container>
+          <ModalScreenHeader onClose={this.handleScreenDismissal} />
+          <CheckPin
+            onPinValid={() => navigation.navigate(CHANGE_PIN_NEW_PIN)}
+            title="enter current pincode"
+          />
+        </Container>
+      </React.Fragment >
     );
   }
 }
