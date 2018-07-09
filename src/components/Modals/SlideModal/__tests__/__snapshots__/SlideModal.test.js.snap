@@ -4,7 +4,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
 <Modal
   animationType="none"
   hardwareAccelerated={false}
-  hideModalContentWhileAnimating={false}
+  hideModalContentWhileAnimating={true}
   onModalHide={[Function]}
   onRequestClose={[Function]}
   onSwipe={[Function]}
@@ -48,7 +48,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
   />
   <View
     collapsable={undefined}
-    hideModalContentWhileAnimating={false}
+    hideModalContentWhileAnimating={true}
     onModalHide={[Function]}
     onMoveShouldSetResponder={[Function]}
     onMoveShouldSetResponderCapture={[Function]}
@@ -86,6 +86,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
     swipeThreshold={100}
   >
     <View
+      fullScreen={undefined}
       style={
         Array [
           Object {
@@ -97,6 +98,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
       }
     >
       <View
+        fullScreen={undefined}
         style={
           Array [
             Object {
@@ -120,6 +122,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         }
       >
         <View
+          fullScreen={undefined}
           style={
             Array [
               Object {
@@ -228,7 +231,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "paddingBottom": 6,
                 "paddingTop": 6,
                 "position": "absolute",
-                "right": -10,
+                "right": -8,
                 "shadowColor": null,
                 "shadowOffset": null,
                 "shadowOpacity": null,
@@ -281,15 +284,42 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             </Text>
           </View>
         </View>
-        <View
+        <Text
+          accessible={true}
+          allowFontScaling={true}
+          ellipsizeMode="tail"
+          fullScreen={undefined}
           style={
             Array [
               Object {
-                "paddingBottom": 10,
-                "paddingLeft": 0,
-                "paddingRight": 0,
-                "paddingTop": 10,
+                "color": "#007AFF",
+                "fontSize": 18,
+                "fontWeight": "400",
+                "lineHeight": 24,
+                "marginBottom": 20,
+                "marginLeft": 0,
+                "marginRight": 0,
+                "marginTop": 0,
+                "textAlign": "left",
+                "width": "70%",
               },
+              Array [
+                Object {
+                  "paddingBottom": 20,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 20,
+                },
+                undefined,
+              ],
+            ]
+          }
+        />
+        <View
+          fullScreen={undefined}
+          style={
+            Array [
+              Object {},
               undefined,
             ]
           }

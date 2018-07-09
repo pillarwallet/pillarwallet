@@ -1,5 +1,5 @@
 // @flow
-import { validatePin, isValidETHAddress, hasAllValues, isValidFullname } from '../validators';
+import { validatePin, isValidETHAddress, hasAllValues, isValidFullname, isValidEmail } from '../validators';
 
 describe('Validators', () => {
   describe('validatePin', () => {
@@ -54,6 +54,18 @@ describe('Validators', () => {
       // minimal critera to contain two parts
       const fullName = 'Jon Snow';
       expect(isValidFullname(fullName)).toBeTruthy();
+    });
+  });
+
+  describe('validateEmail', () => {
+    it('should return false if email isn\'t valid', () => {
+      const email = 'jon@';
+      expect(isValidEmail(email)).toBeFalsy();
+    });
+
+    it('should return true if email is valid', () => {
+      const email = 'jon@snow.com';
+      expect(isValidEmail(email)).toBeTruthy();
     });
   });
 });
