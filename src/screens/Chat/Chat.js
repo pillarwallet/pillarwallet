@@ -44,6 +44,10 @@ const chat = new ChatService();
 type Props = {
   navigation: NavigationScreenProp<*>,
   receiver: string,
+  receiverAvatar: string,
+  user: Object,
+  isVisible: boolean,
+  modalHide: Function,
 }
 
 type State = {

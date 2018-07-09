@@ -58,11 +58,11 @@ export default class ChatListScreen extends React.Component<Props, State> {
     });
   };
 
-  openChat = (receiver, receiverAvatar) => {
+  openChat = (receiver: string, receiverAvatar: string) => {
     this.setState({
       showChat: true,
       receiver,
-      receiverAvatar
+      receiverAvatar,
     });
   };
 

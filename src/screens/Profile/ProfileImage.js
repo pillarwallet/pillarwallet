@@ -31,6 +31,10 @@ const AvatarText = styled.Text`
 type Props = {
   uri?: string,
   userName: string,
+  containerStyle?: Object,
+  textStyle?: Object,
+  imageStyle?: Object,
+  onPress?: Function,
 }
 
 const ProfileImage = (props: Props) => {
