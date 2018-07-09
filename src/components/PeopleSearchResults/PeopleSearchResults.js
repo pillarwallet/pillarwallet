@@ -6,6 +6,7 @@ import { CONTACT } from 'constants/navigationConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
+import type { SearchResults } from 'models/Contacts';
 
 const ContactCardList = styled(ScrollWrapper)`
   padding: 16px;
@@ -32,10 +33,7 @@ const TabItemText = styled.Text`
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  searchResults: {
-    apiUsers: Object[],
-    localContacts: Object[],
-  },
+  searchResults: SearchResults,
 };
 
 type State = {

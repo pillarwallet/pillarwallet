@@ -16,6 +16,7 @@ import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
+import type { SearchResults } from 'models/Contacts';
 
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
@@ -50,10 +51,7 @@ const ContactCardList = styled(ScrollWrapper)`
 type Props = {
   navigation: NavigationScreenProp<*>,
   doSearch: (query: string) => Function,
-  searchResults: {
-    apiUsers: Object[],
-    localContacts: Object[],
-  },
+  searchResults: SearchResults,
   contactState: ?string,
 }
 
@@ -122,7 +120,7 @@ class PeopleScreen extends React.Component<Props, State> {
             <ConnectionRequestNotificationCircle>
               5
             </ConnectionRequestNotificationCircle>
-            <ConnectionRequestBannerIcon name="arrow-forward"/>
+            <ConnectionRequestBannerIcon name="arrow-forward" />
           </React.Fragment>
         </ConnectionRequestBanner>
         }

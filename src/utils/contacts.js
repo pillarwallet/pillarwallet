@@ -1,5 +1,7 @@
 // @flow
-export function excludeLocalContacts(globalContacts: Object[] = [], localContacts: Object[] = []): Object[] {
+import type { ApiUser } from 'models/Contacts';
+
+export function excludeLocalContacts(globalContacts: ApiUser[] = [], localContacts: Object[] = []): Object[] {
   const localContactsIds = localContacts.map(contact => contact.id);
 
   return globalContacts.filter((globalContact) => {
