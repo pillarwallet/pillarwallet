@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
-import { View, Platform, TouchableOpacity, Text } from 'react-native';
+import { View, Platform, ActivityIndicator } from 'react-native';
+import { Container } from 'components/Layout';
+import { LinearGradient } from 'expo';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Icon } from 'native-base';
 import {
@@ -10,8 +12,20 @@ import {
   Composer,
   InputToolbar,
   Send,
+  Day,
+  Time,
 } from 'react-native-gifted-chat';
 import ChatService from 'services/chat';
+import { baseColors } from 'utils/variables';
+import ButtonIcon from 'components/ButtonIcon';
+import styled from 'styled-components/native/index';
+
+const CloseButton = styled(ButtonIcon)`
+  position: absolute;
+  right: 0;
+  top: -10px;
+  z-index: 14;
+`;
 
 const chat = new ChatService();
 
@@ -39,15 +53,17 @@ export default class ChatScreen extends React.Component<Props, State> {
         {...props}
         textStyle={{
           left: {
-            color: '#ffffff',
+            color: baseColors.darkGray,
+            fontSize: 14,
           },
           right: {
             color: '#ffffff',
+            fontSize: 14,
           },
         }}
         wrapperStyle={{
           left: {
-            backgroundColor: '#49729f',
+            backgroundColor: baseColors.lightGray,
             borderRadius: 5,
             padding: 20,
             paddingTop: 2,
@@ -56,7 +72,7 @@ export default class ChatScreen extends React.Component<Props, State> {
             paddingRight: 2,
           },
           right: {
-            backgroundColor: '#212a35',
+            backgroundColor: baseColors.electricBlue,
             borderRadius: 5,
             paddingTop: 2,
             paddingRight: 6,
@@ -74,8 +90,6 @@ export default class ChatScreen extends React.Component<Props, State> {
         {...props}
         imageStyle={{
           left: {
-            borderWidth: 0.8,
-            borderColor: '#d6d7da',
             height: 34,
             width: 34,
             borderRadius: 17,
@@ -147,6 +161,47 @@ export default class ChatScreen extends React.Component<Props, State> {
     );
   };
 
+  renderDay = (props: Props) => {
+    return (
+      <Day
+        {...props}
+        containerStyle={{
+          marginTop: 30,
+          marginBottom: 36,
+        }}
+        textStyle={{
+          color: baseColors.darkGray,
+          fontWeight: '300',
+          fontSize: 14,
+        }}
+        dateFormat='LL'
+      />
+    );
+  };
+
+  renderTime = (props: Props) => {
+    return (
+      <Time
+        {...props}
+        textStyle={{
+          color: baseColors.darkGray,
+        }}
+      />
+    );
+  };
+
+  renderLoading = () => {
+    return (
+      <Container center>
+        <ActivityIndicator
+          animating
+          color="#111"
+          size="large"
+        />
+      </Container>
+    );
+  };
+
   componentWillMount() {
     this.setState({
       messages: [
@@ -181,7 +236,7 @@ export default class ChatScreen extends React.Component<Props, State> {
         },
         {
           _id: 4,
-          text: 'Hello developer',
+          text: 'Hello developer iewdi iodjwiwejd miwdmiewm micmweicmeiw mpmcpewmcviw mopcmidwcmiw mpcmpmewpmc',
           user: {
             _id: 1,
             name: 'React Native',
@@ -290,10 +345,25 @@ export default class ChatScreen extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={{ flex: 1, backgroundColor: '#2b3744', paddingTop: 30 }}>
-        <TouchableOpacity onPress={this.goBackToChatListScreen}>
-          <Text>To chat</Text>
-        </TouchableOpacity>
+      <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
+        <LinearGradient
+          colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}
+          locations={[0.2, 0.6, 1.0]}
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 20,
+            height: 80,
+            zIndex: 11,
+          }}
+        />
+        <CloseButton
+          icon="close"
+          onPress={this.goBackToChatListScreen}
+          fontSize={Platform.OS === 'ios' ? 36 : 30}
+          color={baseColors.darkGray}
+        />
         <GiftedChat
           messages={this.state.messages}
           onSend={messages => this.onSend(messages)}
@@ -305,6 +375,9 @@ export default class ChatScreen extends React.Component<Props, State> {
           renderAvatar={this.renderAvatar}
           renderComposer={this.renderComposer}
           renderInputToolbar={this.renderInputToolbar}
+          renderDay={this.renderDay}
+          renderTime={this.renderTime}
+          renderLoading={this.renderLoading}
         />
       </View>
     );

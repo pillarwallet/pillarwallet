@@ -87,6 +87,7 @@ if (Platform.OS === 'ios') {
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconProfile = require('assets/icons/icon_profile.png');
 const iconIco = require('assets/icons/icon_ico.png');
+const iconChat = require('assets/icons/icon_chat.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -163,7 +164,7 @@ const tabNavigation = createBottomTabNavigator(
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconProfile),
+        tabBarIcon: tabBarIcon(iconChat),
         tabBarLabel: 'Chat',
       }),
     },
