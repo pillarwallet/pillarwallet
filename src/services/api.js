@@ -42,6 +42,7 @@ SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
     .then(({ data }) => data)
+    .catch(() => [])
     .then(transformAssetsToObject);
 };
 
