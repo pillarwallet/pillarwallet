@@ -104,3 +104,14 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   });
   return Promise.all(promises).catch(() => []);
 };
+
+SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.invite({
+      accessKey,
+      targetUserId,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch((e) => { console.log(e); return {}; });
+};

@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { CONTACT } from 'constants/navigationConstants';
@@ -7,6 +8,7 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import type { SearchResults, ApiUser } from 'models/Contacts';
+import { sendInvitationAction } from 'actions/invitationsActions';
 
 const ContactCardList = styled(ScrollWrapper)`
   padding: 16px;
@@ -38,6 +40,7 @@ const tabs = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   searchResults: SearchResults,
+  sendInvitation: Function,
 };
 
 type State = {
@@ -46,7 +49,7 @@ type State = {
 
 // NOTE: this is temporary file until new design will be ready
 // NOTE: code was copy&pasted from the ConnectionRequests screen
-export default class PeopleSearchResults extends React.Component<Props, State> {
+class PeopleSearchResults extends React.Component<Props, State> {
   state = {
     activeTab: tabs.allUsers,
   };
@@ -55,7 +58,8 @@ export default class PeopleSearchResults extends React.Component<Props, State> {
     this.props.navigation.navigate(CONTACT);
   };
 
-  handleSendInvitationPress = (user: ApiUser) => () => { // eslint-disable-line
+  handleSendInvitationPress = (user: ApiUser) => () => {
+    this.props.sendInvitation(user);
   };
 
   handleReceiveInvitationPress = (user: ApiUser) => () => { // eslint-disable-line
@@ -103,3 +107,9 @@ export default class PeopleSearchResults extends React.Component<Props, State> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  sendInvitation: (user) => dispatch(sendInvitationAction(user)),
+});
+
+export default connect(null, mapDispatchToProps)(PeopleSearchResults);

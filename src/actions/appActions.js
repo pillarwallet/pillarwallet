@@ -6,6 +6,7 @@ import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_USER, REGISTERED, PENDING } from 'constants/userConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -19,6 +20,9 @@ export const initAppAndRedirectAction = () => {
 
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
+
+      const { invitations = [] } = await storage.get('invitations');
+      dispatch({ type: UPDATE_INVITATIONS, payload: invitations });
 
       dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
