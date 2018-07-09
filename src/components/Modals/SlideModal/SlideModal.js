@@ -11,7 +11,7 @@ import { Platform, Dimensions, Keyboard } from 'react-native';
 const { height } = Dimensions.get('window');
 
 type Props = {
-  title: string,
+  title?: string,
   children?: React.Node,
   subtitle?: string,
   fullScreenComponent?: ?React.Node,

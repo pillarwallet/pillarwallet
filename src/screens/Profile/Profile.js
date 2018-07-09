@@ -20,7 +20,6 @@ import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
-import ModalScreenHeader from 'components/ModalScreenHeader';
 
 import countries from 'utils/countries.json';
 
@@ -66,10 +65,6 @@ const ListSeparatorText = styled.Text`
   font-size: ${fontSizes.small};
 `;
 
-const CheckPinModal = styled(SlideModal)`
-  align-items: flex-start;
-`;
-
 const ListValue = styled.Text`
   font-size: ${fontSizes.small};
   padding-left: 20px;
@@ -109,10 +104,12 @@ const fullNameFormFields = [{
   type: 'string',
   config: { placeholder: 'Last name' },
 }];
-const SystemInfoModalWrapper = styled(SlideModal)`
-  align-items: flex-start;
-`;
 
+const CheckPinWrapper = styled.View`
+  display: flex;
+  height: 100%;
+  padding-bottom: 40px;
+`;
 
 type Props = {
   user: Object,
@@ -389,15 +386,17 @@ class Profile extends React.Component<Props, State> {
               onPress={() => this.setState({ showCheckPinModal: true })}
             />
 
-            <CheckPinModal
+            <SlideModal
               isVisible={showCheckPinModal}
               onModalHide={this.handleCheckPinModalClose}
               fullScreen
             >
               <Container>
-                <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+                <CheckPinWrapper>
+                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+                </CheckPinWrapper>
               </Container>
-            </CheckPinModal>
+            </SlideModal>
 
             <ListSeparator>
               <ListSeparatorText>ABOUT</ListSeparatorText>
@@ -453,8 +452,7 @@ class Profile extends React.Component<Props, State> {
                   onPress={() => { this.clearLocalStorage(); }}
                 />
               </React.Fragment>
-              )
-            }
+            )}
 
             <ListSeparator>
               <ListSeparatorText>SYSTEM INFO</ListSeparatorText>
@@ -466,18 +464,17 @@ class Profile extends React.Component<Props, State> {
               onPress={() => this.setState({ showSystemInfoModal: true })}
             />
 
-            <SystemInfoModalWrapper
+            <SlideModal
               isVisible={showSystemInfoModal}
-              title=""
-              fullScreenComponent={(
-                <Container>
-                  <ModalScreenHeader onClose={() => this.setState({ showSystemInfoModal: false })} />
-                  <Wrapper regularPadding>
-                    <SystemInfoModal />
-                  </Wrapper>
-                </Container>
-              )}
-            />
+              fullScreen
+              onModalHide={() => this.setState({ showSystemInfoModal: false })}
+            >
+              <Container>
+                <Wrapper regularPadding>
+                  <SystemInfoModal />
+                </Wrapper>
+              </Container>
+            </SlideModal>
           </ListWrapper>
 
         </ScrollWrapper>
