@@ -21,7 +21,9 @@ import { baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native/index';
 import Modal from 'react-native-modal';
-import {connect} from "react-redux";
+import { connect } from 'react-redux';
+import ProfileImage from 'screens/Profile/ProfileImage';
+
 
 const CloseButton = Platform.OS === 'ios' ?
   styled(ButtonIcon)`
@@ -103,17 +105,33 @@ class ChatScreen extends React.Component<Props, State> {
     );
   };
 
+  renderCustomAvatar = () => {
+    return (
+      <ProfileImage
+        uri={this.props.receiverAvatar}
+        userName={this.props.receiver}
+        containerStyle={{
+          height: 34,
+          width: 34,
+          borderRadius: 17,
+        }}
+        imageStyle={{
+          height: 34,
+          width: 34,
+          borderRadius: 17,
+        }}
+        textStyle={{
+          fontSize: 16,
+        }}
+      />
+    );
+  }
+
   renderAvatar = (props: Props) => {
     return (
       <Avatar
         {...props}
-        imageStyle={{
-          left: {
-            height: 34,
-            width: 34,
-            borderRadius: 17,
-          },
-        }}
+        renderAvatar={this.renderCustomAvatar}
         containerStyle={{
           left: {
             marginRight: 2,
@@ -233,7 +251,8 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   handleChatOpen = () => {
-    // TODO: get conversation with this.props.receiver and setState({messages: result})
+    // TODO: get conversation with this.props.receiver and setState({messages: result});
+    // TODO: append user avatar to each message from chat receiver (this.props.receiverAvatar).
 
     this.setState({
       showLoadEarlierButton: true, // if not all previous messages are shown
@@ -243,9 +262,9 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -253,18 +272,18 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
           _id: 3,
           text: 'Hello developer',
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -272,8 +291,8 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer iewdi iodjwiwejd miwdmiewm micmweicmeiw mpmcpewmcviw mopcmidwcmiw mpcmpmewpmc',
           user: {
             _id: this.props.user.username,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -281,9 +300,9 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -291,9 +310,9 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -302,8 +321,8 @@ class ChatScreen extends React.Component<Props, State> {
           createdAt: new Date(),
           user: {
             _id: this.props.user.username,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -311,9 +330,9 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -322,8 +341,8 @@ class ChatScreen extends React.Component<Props, State> {
           createdAt: new Date(),
           user: {
             _id: this.props.user.username,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -331,9 +350,9 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -341,9 +360,9 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -351,9 +370,9 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
         {
@@ -361,38 +380,40 @@ class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
+            _id: this.props.receiver,
+            name: this.props.receiver,
+            avatar: this.props.receiverAvatar,
           },
         },
       ],
     });
-  }
+  };
 
   loadEarlier = () => {
     // TODO: get more messages of conversation with this.props.receiver
-  }
+  };
 
   onSend = (messages: Array<mixed> = []) => {
     // TODO: send message as this.props.user
 
+    console.log(this.props.receiver)
+
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }));
-  }
+  };
 
   render() {
     const {
       isVisible,
       modalHide,
     } = this.props;
-    
+
     const animationInTiming = 300;
     const animationOutTiming = 300;
 
-    const animateIn = Platform.OS === 'ios' ? 'slideInRight' : 'slideInUp'
-    const animateOut = Platform.OS === 'ios' ? 'slideOutRight' : 'slideOutDown'
+    const animateIn = Platform.OS === 'ios' ? 'slideInRight' : 'slideInUp';
+    const animateOut = Platform.OS === 'ios' ? 'slideOutRight' : 'slideOutDown';
 
     return (
       <Modal

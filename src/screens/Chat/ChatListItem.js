@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native/index';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import ProfileImage from 'screens/Profile/ProfileImage';
 
 type Props = {
   userName: string,
@@ -31,12 +32,6 @@ const AvatarWrapper = styled.View`
   shadowRadius: 2px;
   elevation: 5;
   margin-top: 4px;
-`;
-
-const Avatar = styled.Image`
-  width: 44px;
-  height: 44px;
-  border-radius: 22px;
 `;
 
 const UserWrapper = styled.View`
@@ -92,7 +87,7 @@ type State = {}
 
 export default class ChatListItem extends React.Component<Props, State> {
   _onPress = () => {
-    this.props.onPress(this.props.userName);
+    this.props.onPress(this.props.userName, this.props.avatar);
   };
 
   render() {
@@ -102,12 +97,25 @@ export default class ChatListItem extends React.Component<Props, State> {
       message,
       timeSent,
       unreadCount,
-    } = this.props
+    } = this.props;
 
     const item = (
       <ItemRow>
         <AvatarWrapper style={{ shadowOffset: { width: 1, height: 1 } }}>
-          <Avatar source={{ uri: avatar }} />
+          <ProfileImage
+            uri={avatar}
+            userName={userName}
+            containerStyle={{
+              height: 44,
+              width: 44,
+              borderRadius: 22,
+            }}
+            imageStyle={{
+              height: 44,
+              width: 44,
+              borderRadius: 22,
+            }}
+          />
         </AvatarWrapper>
         <UserWrapper>
           <UserName>

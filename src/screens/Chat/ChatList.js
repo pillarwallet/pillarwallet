@@ -19,6 +19,7 @@ type Props = {
 type State = {
   showChat: boolean,
   receiver: string,
+  receiverAvatar: string,
   contacts: Array<Object>
 }
 
@@ -28,6 +29,7 @@ export default class ChatListScreen extends React.Component<Props, State> {
   state = {
     showChat: false,
     receiver: '',
+    receiverAvatar: '',
     contacts: [
       {
         _id: 1,
@@ -41,7 +43,7 @@ export default class ChatListScreen extends React.Component<Props, State> {
       {
         _id: 2,
         userName: 'otherUser',
-        avatar: 'https://placeimg.com/140/140/any',
+        avatar: '',
         timeSent: '14:24',
         message: 'You can also fly to a destination',
         unreadCount: 0,
@@ -56,10 +58,11 @@ export default class ChatListScreen extends React.Component<Props, State> {
     });
   };
 
-  openChat = (receiver) => {
+  openChat = (receiver, receiverAvatar) => {
     this.setState({
       showChat: true,
-      receiver
+      receiver,
+      receiverAvatar
     });
   };
 
@@ -86,13 +89,14 @@ export default class ChatListScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { showChat, receiver } = this.state;
+    const { showChat, receiver, receiverAvatar } = this.state;
     return (
       <Container>
         <ChatScreen
           isVisible={showChat}
           modalHide={this.closeChat}
           receiver={receiver}
+          receiverAvatar={receiverAvatar}
         />
         <View style={{
           paddingLeft: 12,
