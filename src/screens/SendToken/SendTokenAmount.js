@@ -244,12 +244,12 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ icon, currency: token });
     return (
       <React.Fragment>
-        <ModalScreenHeader
-          onClose={this.props.navigation.dismiss}
-          rightLabelText="step 1 of 3"
-          title="send"
-        />
         <Container>
+          <ModalScreenHeader
+            onClose={this.props.navigation.dismiss}
+            rightLabelText="step 1 of 3"
+            title="send"
+          />
           <Wrapper regularPadding>
             <SubTitle>How much {token} would you like to send?</SubTitle>
             <Form

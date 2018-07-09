@@ -36,7 +36,7 @@ const FooterWrapper = styled.View`
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   position: absolute;
-  bottom: 140px;
+  bottom: 40px;
   left: 0;
   width: 100%;
 `;

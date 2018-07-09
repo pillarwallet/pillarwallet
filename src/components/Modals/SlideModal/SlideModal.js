@@ -34,9 +34,8 @@ const ModalBackground = styled.View`
   background-color: white;
   border-top-left-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
   border-top-right-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
-  padding: ${(props) => props.fullScreen ? 0 : 20}px;
+  padding: ${(props) => props.fullScreen ? '60px 0 80px' : '20px'};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
-  ${props => props.fullScreen && 'padding-top: 60px;'}
   ${props => props.fullScreen && 'height: 100%;'}
 `;
 

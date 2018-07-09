@@ -3,7 +3,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
 import { TouchableWithoutFeedback, View, Platform } from 'react-native';
-import { Header as NBHeader, Left as NBLeft, Right as NBRight } from 'native-base';
 import { Label } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
@@ -16,26 +15,25 @@ type Props = {
   rightLabelText?: string,
 }
 
-const Header = styled(NBHeader)`
+const Header = styled.View`
   background-color: #fff;
-  border-bottom-width: 0;
-  height: auto;
-  padding: 20px 16px 0;
-  display: flex;
-  padding: 0 20px;
-`;
-
-const Left = styled(NBLeft)`
+  height: 80px;
+  padding: 0 16px;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
 `;
 
-
-const Right = styled(NBRight)`
+const Left = styled.View`
   display: flex;
   flex-direction: row;
-  align-items: center;
+`;
+
+
+const Right = styled.View`
+  display: flex;
+  flex-direction: row;
 `;
 
 const BackIcon = styled(ButtonIcon)`
@@ -71,7 +69,7 @@ const ModalScreenHeader = (props: Props) => {
               fontSize={28}
             />
             }
-            {title && <Title title={title} />}
+            <Title title={title} />
           </View>
         </TouchableWithoutFeedback>
       </Left>

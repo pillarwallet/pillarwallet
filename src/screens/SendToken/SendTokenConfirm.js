@@ -159,13 +159,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     } = this.state;
     return (
       <React.Fragment>
-        <ModalScreenHeader
-          onBack={this.props.navigation.goBack}
-          onClose={this.handleModalDismissal}
-          title="send"
-          rightLabelText="step 3 of 3"
-        />
         <Container>
+          <ModalScreenHeader
+            onBack={this.props.navigation.goBack}
+            onClose={this.handleModalDismissal}
+            title="send"
+            rightLabelText="step 3 of 3"
+          />
           <Wrapper regularPadding>
             <SubTitle>Review and confirm</SubTitle>
             <ImageHolder>

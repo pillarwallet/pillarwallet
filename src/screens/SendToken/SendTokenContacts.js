@@ -166,13 +166,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
     return (
       <React.Fragment>
-        <ModalScreenHeader
-          onBack={this.props.navigation.goBack}
-          onClose={this.props.navigation.dismiss}
-          rightLabelText="step 2 of 3"
-          title="send"
-        />
         <Container>
+          <ModalScreenHeader
+            onBack={this.props.navigation.goBack}
+            onClose={this.props.navigation.dismiss}
+            rightLabelText="step 2 of 3"
+            title="send"
+          />
           <Wrapper regularPadding>
             <SubTitle>To whom you would like to send?</SubTitle>
             <Form

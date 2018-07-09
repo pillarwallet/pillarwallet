@@ -29,6 +29,7 @@ type Props = {
   trim: boolean,
   footerAddonText?: string,
   footerAddonAction?: Function,
+  autoCorrect?: boolean,
 }
 
 type State = {
@@ -115,6 +116,7 @@ class TextInput extends React.Component<Props, State> {
 
   static defaultProps = {
     inputType: 'default',
+    autoCorrect: false,
     trim: true,
   };
 
@@ -169,6 +171,7 @@ class TextInput extends React.Component<Props, State> {
       errorMessage,
       footerAddonText,
       footerAddonAction,
+      autoCorrect,
     } = this.props;
     const { value, isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
@@ -190,6 +193,7 @@ class TextInput extends React.Component<Props, State> {
             onFocus={this.handleFocus}
             value={value}
             inputType={inputType}
+            autoCorrect={autoCorrect}
             style={{ fontSize: inputType.fontSize }}
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}

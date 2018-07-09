@@ -382,11 +382,12 @@ class Profile extends React.Component<Props, State> {
 
             <CheckPinModal
               isVisible={showCheckPinModal}
-              title="confirm"
               onModalHide={this.handleCheckPinModalClose}
               fullScreen
             >
-              <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+              <Container>
+                <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+              </Container>
             </CheckPinModal>
 
             <ListSeparator>
