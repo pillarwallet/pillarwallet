@@ -257,140 +257,25 @@ class ChatScreen extends React.Component<Props, State> {
   handleChatOpen = () => {
     // TODO: get conversation with this.props.receiver and setState({messages: result});
     // TODO: append user avatar to each message from chat receiver (this.props.receiverAvatar).
-
-    this.setState({
-      showLoadEarlierButton: true, // if not all previous messages are shown
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
+    chat.client.getReceivedMessagesByContact(this.props.receiver).then((receivedMessages) => {
+      const messages = [];
+      receivedMessages.forEach(([key, value]) => {
+        messages.push({
+          _id: key,
+          text: value.content,
           createdAt: new Date(),
           user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
+            _id: value.username,
+            name: value.username,
+            avatar: value.username === this.props.receiver ? this.props.receiverAvatar : this.props.receiverAvatar,
           },
-        },
-        {
-          _id: 2,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 3,
-          text: 'Hello developer',
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 4,
-          text: 'Hello developer iewdi iodjwiwejd miwdmiewm micmweicmeiw mpmcpewmcviw mopcmidwcmiw mpcmpmewpmc',
-          user: {
-            _id: this.props.user.username,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 5,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 6,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 7,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.user.username,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 8,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 9,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.user.username,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 10,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 11,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 12,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-        {
-          _id: 13,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: this.props.receiver,
-            name: this.props.receiver,
-            avatar: this.props.receiverAvatar,
-          },
-        },
-      ],
-    });
+        });
+      });
+      this.setState({
+        showLoadEarlierButton: false, // if not all previous messages are shown
+        messages,
+      });
+    }).catch(() => {});
   };
 
   loadEarlier = () => {
@@ -398,10 +283,7 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   onSend = (messages: Array<mixed> = []) => {
-    // TODO: send message as this.props.user
-
-    console.log(this.props.receiver)
-
+    chat.client.sendMessage(this.props.receiver, messages);
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }));
