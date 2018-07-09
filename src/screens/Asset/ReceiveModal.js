@@ -2,11 +2,11 @@
 import * as React from 'react';
 import { Clipboard, Dimensions } from 'react-native';
 import { TextLink, Label } from 'components/Typography';
+import QRCode from 'react-native-qrcode';
 import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import QRCode from 'components/QRCode';
 
 const { height } = Dimensions.get('window');
 
@@ -49,6 +49,11 @@ const Holder = styled.View`
   flex-direction:column;
   justify-content: space-around;
   align-items: center;
+`;
+
+const QRCodeWrapper = styled.View`
+  display: flex;
+  margin-bottom: 30px;
 `;
 
 export default class ReceiveModal extends React.Component<Props, State> {
@@ -104,11 +109,10 @@ export default class ReceiveModal extends React.Component<Props, State> {
       >
         <ContentWrapper>
           <Holder>
-            <QRCode value={address} blockHeight={5} />
+            <QRCodeWrapper>
+              <QRCode value={address} size={180} />
+            </QRCodeWrapper>
             <Button
-              style={{
-                marginBottom: 20,
-              }}
               title="Share Address"
               onPress={this.handleAddressShare}
             />
