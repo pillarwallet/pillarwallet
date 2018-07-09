@@ -1,12 +1,19 @@
 // @flow
 import * as React from 'react';
-import { Clipboard } from 'react-native';
+import { Clipboard, Dimensions } from 'react-native';
 import { TextLink, Label } from 'components/Typography';
 import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import QRCode from 'components/QRCode';
+
+const { height } = Dimensions.get('window');
+
+const ContentWrapper = styled.View`
+  height: ${height / 2.4};
+  justify-content: space-around;
+`;
 
 type Props = {
   address: string,
@@ -95,24 +102,26 @@ export default class ReceiveModal extends React.Component<Props, State> {
         onModalHide={onModalHide}
         subtitle={`Share your wallet address to receive ${tokenName} (${token})`}
       >
-        <Holder>
-          <QRCode value={address} blockHeight={5} />
-          <Button
-            style={{
-              marginBottom: 20,
-            }}
-            title="Share Address"
-            onPress={this.handleAddressShare}
-          />
-        </Holder>
-        <Holder>
-          <FooterWrapper>
-            <Label color={baseColors.slateBlack}>{address}</Label>
-            <TouchableOpacity onPress={this.handleAddressClipboardSet}>
-              <TextLink>Copy wallet address to clipboard</TextLink>
-            </TouchableOpacity>
-          </FooterWrapper>
-        </Holder>
+        <ContentWrapper>
+          <Holder>
+            <QRCode value={address} blockHeight={5} />
+            <Button
+              style={{
+                marginBottom: 20,
+              }}
+              title="Share Address"
+              onPress={this.handleAddressShare}
+            />
+          </Holder>
+          <Holder>
+            <FooterWrapper>
+              <Label color={baseColors.slateBlack}>{address}</Label>
+              <TouchableOpacity onPress={this.handleAddressClipboardSet}>
+                <TextLink>Copy wallet address to clipboard</TextLink>
+              </TouchableOpacity>
+            </FooterWrapper>
+          </Holder>
+        </ContentWrapper>
       </SlideModal>
     );
   }
