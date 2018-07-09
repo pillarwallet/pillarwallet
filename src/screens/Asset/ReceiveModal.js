@@ -11,7 +11,7 @@ import QRCode from 'components/QRCode';
 const { height } = Dimensions.get('window');
 
 const ContentWrapper = styled.View`
-  height: ${height / 2.4};
+  height: ${height / 2.2};
   justify-content: space-around;
 `;
 
