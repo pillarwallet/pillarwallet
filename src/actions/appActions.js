@@ -28,7 +28,7 @@ export const fetchUserAction = () => {
   return async (dispatch: Function) => {
     let { user } = await storage.get('user');
     user = user || {};
-    const userState = Object.keys(user).length ? REGISTERED : PENDING;
+    const userState = user.walletId ? REGISTERED : PENDING;
     dispatch({
       type: UPDATE_USER,
       payload: {

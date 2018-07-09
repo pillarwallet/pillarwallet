@@ -19,6 +19,8 @@ import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from
 import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
+import SystemInfoModal from 'components/SystemInfoModal';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 
 import countries from 'utils/countries.json';
 
@@ -107,6 +109,10 @@ const fullNameFormFields = [{
   type: 'string',
   config: { placeholder: 'Last name' },
 }];
+const SystemInfoModalWrapper = styled(SlideModal)`
+  align-items: flex-start;
+`;
+
 
 type Props = {
   user: Object,
@@ -128,6 +134,7 @@ type State = {
   showCheckPinModal: boolean,
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
+  showSystemInfoModal: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -141,6 +148,7 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal: false,
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
+      showSystemInfoModal: false,
     };
   }
 
@@ -232,6 +240,7 @@ class Profile extends React.Component<Props, State> {
       showCheckPinModal,
       showTermsConditionsModal,
       showPrivacyPolicyModal,
+      showSystemInfoModal,
     } = this.state;
     return (
       <Container>
@@ -431,14 +440,43 @@ class Profile extends React.Component<Props, State> {
               uri="https://pillarproject.io/en/legal/privacy/"
             />
 
+
+            {!!__DEV__ && (
+              <React.Fragment>
+                <ListSeparator>
+                  <ListSeparatorText>DEBUG</ListSeparatorText>
+                </ListSeparator>
+
+                <ProfileSettingsItem
+                  key="clearStorage"
+                  label="Clear Local Storage"
+                  onPress={() => { this.clearLocalStorage(); }}
+                />
+              </React.Fragment>
+              )
+            }
+
             <ListSeparator>
-              <ListSeparatorText>DEBUG</ListSeparatorText>
+              <ListSeparatorText>SYSTEM INFO</ListSeparatorText>
             </ListSeparator>
 
             <ProfileSettingsItem
-              key="clearStorage"
-              label="Clear Local Storage"
-              onPress={() => { this.clearLocalStorage(); }}
+              key="systemInfo"
+              label="System Info"
+              onPress={() => this.setState({ showSystemInfoModal: true })}
+            />
+
+            <SystemInfoModalWrapper
+              isVisible={showSystemInfoModal}
+              title=""
+              fullScreenComponent={(
+                <Container>
+                  <ModalScreenHeader onClose={() => this.setState({ showSystemInfoModal: false })} />
+                  <Wrapper regularPadding>
+                    <SystemInfoModal />
+                  </Wrapper>
+                </Container>
+              )}
             />
           </ListWrapper>
 
