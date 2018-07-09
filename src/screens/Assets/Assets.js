@@ -126,7 +126,6 @@ class AssetsScreen extends React.Component<Props, State> {
     const { assetsMedia } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    console.log(assets);
     return Object.keys(assets)
       .map(id => assets[id])
       .map(({ symbol, balance = 0, ...rest }) => ({
