@@ -6,7 +6,7 @@ import { CONTACT } from 'constants/navigationConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
-import type { SearchResults } from 'models/Contacts';
+import type { SearchResults, ApiUser } from 'models/Contacts';
 
 const ContactCardList = styled(ScrollWrapper)`
   padding: 16px;
@@ -30,6 +30,10 @@ const TabItemText = styled.Text`
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
+const tabs = {
+  contacts: 'CONTACTS',
+  allUsers: 'ALL_USERS',
+};
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -44,20 +48,17 @@ type State = {
 // NOTE: code was copy&pasted from the ConnectionRequests screen
 export default class PeopleSearchResults extends React.Component<Props, State> {
   state = {
-    activeTab: 'RECEIVED',
+    activeTab: tabs.allUsers,
   };
 
   handleContactCardPress = () => {
     this.props.navigation.navigate(CONTACT);
   };
 
-  handleAcceptInvitationPress = () => {
+  handleSendInvitationPress = (user: ApiUser) => () => {
   };
 
-  handleRejectInvitatonPress = () => {
-  };
-
-  handleCancelInvitationPress = () => {
+  handleReceiveInvitationPress = (user: ApiUser) => () => {
   };
 
   render() {
@@ -70,16 +71,16 @@ export default class PeopleSearchResults extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <TabWrapper>
             <TabItem
-              active={activeTab === 'RECEIVED'}
-              onPress={() => this.setState({ activeTab: 'RECEIVED' })}
+              active={activeTab === tabs.allUsers}
+              onPress={() => this.setState({ activeTab: tabs.allUsers })}
             >
-              <TabItemText active={activeTab === 'RECEIVED'}>Received</TabItemText>
+              <TabItemText active={activeTab === 'RECEIVED'}>All users</TabItemText>
             </TabItem>
             <TabItem
-              active={activeTab === 'SENT'}
-              onPress={() => this.setState({ activeTab: 'SENT' })}
+              active={activeTab === tabs.contacts}
+              onPress={() => this.setState({ activeTab: tabs.contacts })}
             >
-              <TabItemText>Sent</TabItemText>
+              <TabItemText>My contacts</TabItemText>
             </TabItem>
           </TabWrapper>
         </Wrapper>
@@ -89,9 +90,8 @@ export default class PeopleSearchResults extends React.Component<Props, State> {
           {searchResults.apiUsers.map((user, index) => (
             <ContactCard
               onPress={this.handleContactCardPress}
-              onAcceptInvitationPress={this.handleAcceptInvitationPress}
-              onRejectInvitationPress={this.handleRejectInvitatonPress}
-              onCancelInvitationPress={this.handleCancelInvitationPress}
+              onSendInvitationPress={this.handleSendInvitationPress(user)}
+              onReceiveInvitationPress={this.handleReceiveInvitationPress(user)}
               name={user.username}
               key={user.id}
               status={index % 2 === 0 ? 'INVITE' : 'RECEIVE'}
