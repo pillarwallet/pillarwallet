@@ -28,16 +28,20 @@ const Header = styled.View`
 const Left = styled.View`
   display: flex;
   flex-direction: row;
+  align-items: center;
 `;
 
 
 const Right = styled.View`
   display: flex;
   flex-direction: row;
+  align-items: center;
 `;
 
 const BackIcon = styled(ButtonIcon)`
-  margin-right: 5px;
+  position: relative;
+  top: 10px;
+  margin: 0 -10px;
 `;
 
 const CloseButton = styled(ButtonIcon)`
@@ -66,7 +70,7 @@ const ModalScreenHeader = (props: Props) => {
               type="Feather"
               onPress={() => onBack(null)}
               color={UIColors.primary}
-              fontSize={28}
+              fontSize={32}
             />
             }
             <Title title={title} />
