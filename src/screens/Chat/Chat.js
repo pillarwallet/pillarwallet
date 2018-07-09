@@ -21,6 +21,7 @@ import { baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native/index';
 import Modal from 'react-native-modal';
+import {connect} from "react-redux";
 
 const CloseButton = Platform.OS === 'ios' ?
   styled(ButtonIcon)`
@@ -49,7 +50,7 @@ type State = {
   showLoadEarlierButton: boolean,
 }
 
-export default class ChatScreen extends React.Component<Props, State> {
+class ChatScreen extends React.Component<Props, State> {
   state = {
     messages: [],
     isLoadingMore: false,
@@ -270,7 +271,7 @@ export default class ChatScreen extends React.Component<Props, State> {
           _id: 4,
           text: 'Hello developer iewdi iodjwiwejd miwdmiewm micmweicmeiw mpmcpewmcviw mopcmidwcmiw mpcmpmewpmc',
           user: {
-            _id: 1,
+            _id: this.props.user.username,
             name: 'React Native',
             avatar: 'https://placeimg.com/140/140/any',
           },
@@ -300,7 +301,7 @@ export default class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 1,
+            _id: this.props.user.username,
             name: 'React Native',
             avatar: 'https://placeimg.com/140/140/any',
           },
@@ -320,7 +321,7 @@ export default class ChatScreen extends React.Component<Props, State> {
           text: 'Hello developer',
           createdAt: new Date(),
           user: {
-            _id: 1,
+            _id: this.props.user.username,
             name: 'React Native',
             avatar: 'https://placeimg.com/140/140/any',
           },
@@ -386,7 +387,7 @@ export default class ChatScreen extends React.Component<Props, State> {
       isVisible,
       modalHide,
     } = this.props;
-
+    
     const animationInTiming = 300;
     const animationOutTiming = 300;
 
@@ -431,7 +432,7 @@ export default class ChatScreen extends React.Component<Props, State> {
             messages={this.state.messages}
             onSend={messages => this.onSend(messages)}
             user={{
-              _id: 1,
+              _id: this.props.user.username,
             }}
             style={{ backgroundColor: 'red' }}
             renderBubble={this.renderBubble}
@@ -451,3 +452,7 @@ export default class ChatScreen extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = ({ user: { data: user } }) => ({ user });
+
+export default connect(mapStateToProps)(ChatScreen);
