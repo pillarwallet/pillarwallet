@@ -126,16 +126,23 @@ class AssetsScreen extends React.Component<Props, State> {
     const { assetsMedia } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
     return Object.keys(assets)
       .map(id => assets[id])
-      .map((asset, index) => {
+      .map(({ symbol, balance = 0, ...rest }) => ({
+        balance,
+        symbol,
+        balanceInFiat: rates[symbol] ? balance * rates[symbol][fiatCurrency] : 0,
+        ...rest,
+      }))
+      .sort((a, b) => b.balanceInFiat - a.balanceInFiat)
+      .map((asset) => {
         const {
           name,
           symbol,
+          balanceInFiat,
+          balance,
         } = asset;
-        const balance = asset.balance || 0;
-        const balanceInFiat = rates[symbol] ? formatMoney(balance * rates[symbol][fiatCurrency]) : formatMoney(0);
+        const formattedBalanceInFiat = formatMoney(balanceInFiat);
         const displayAmount = formatMoney(balance, 4);
 
         // @TODO: remove this, use the color that the backend returns
@@ -150,13 +157,13 @@ class AssetsScreen extends React.Component<Props, State> {
           contractAddress: asset.address,
           description: asset.description,
           balance,
-          balanceInFiat: { amount: balanceInFiat, currency: fiatCurrency },
+          balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
           address: wallet.address,
           icon: assetsMedia[symbol] ? assetsMedia[symbol].icon : assetsMedia[ETH].icon,
           color: cardColor,
         };
         return (
-          <Transition key={index} shared={assetData.name}>
+          <Transition key={assetData.name} shared={assetData.name}>
             <AssetCard
               id={assetData.token}
               name={assetData.name}
