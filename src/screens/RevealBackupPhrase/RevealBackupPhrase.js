@@ -2,7 +2,6 @@
 import * as React from 'react';
 
 import { connect } from 'react-redux';
-import { View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
