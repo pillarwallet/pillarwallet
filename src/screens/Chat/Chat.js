@@ -14,16 +14,25 @@ import {
   Send,
   Day,
   Time,
+  LoadEarlier,
 } from 'react-native-gifted-chat';
 import ChatService from 'services/chat';
 import { baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native/index';
+import Modal from 'react-native-modal';
 
-const CloseButton = styled(ButtonIcon)`
+const CloseButton = Platform.OS === 'ios' ?
+  styled(ButtonIcon)`
   position: absolute;
   right: 0;
-  top: -10px;
+  top: 10px;
+  z-index: 14;
+` :
+  styled(ButtonIcon)`
+  position: absolute;
+  right: 6px;
+  top: 0;
   z-index: 14;
 `;
 
@@ -31,20 +40,29 @@ const chat = new ChatService();
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  receiver: string,
 }
 
 type State = {
-  messages: Array<mixed>
+  messages: Array<mixed>,
+  isLoadingMore: boolean,
+  showLoadEarlierButton: boolean,
 }
 
 export default class ChatScreen extends React.Component<Props, State> {
   state = {
     messages: [],
+    isLoadingMore: false,
+    showLoadEarlierButton: false,
   };
 
-  goBackToChatListScreen = () => {
-    this.props.navigation.goBack();
-  };
+  handleChatClose = () => {
+    this.setState({
+      messages: [],
+      showLoadEarlierButton: false,
+      isLoadingMore: false,
+    });
+  }
 
   // chat elements
   renderBubble = (props: Props) => {
@@ -174,7 +192,7 @@ export default class ChatScreen extends React.Component<Props, State> {
           fontWeight: '300',
           fontSize: 14,
         }}
-        dateFormat='LL'
+        dateFormat="LL"
       />
     );
   };
@@ -185,6 +203,17 @@ export default class ChatScreen extends React.Component<Props, State> {
         {...props}
         textStyle={{
           color: baseColors.darkGray,
+        }}
+      />
+    );
+  };
+
+  renderLoadEarlier = (props: Props) => {
+    return (
+      <LoadEarlier
+        {...props}
+        containerStyle={{
+          marginTop: 70,
         }}
       />
     );
@@ -202,8 +231,11 @@ export default class ChatScreen extends React.Component<Props, State> {
     );
   };
 
-  componentWillMount() {
+  handleChatOpen = () => {
+    // TODO: get conversation with this.props.receiver and setState({messages: result})
+
     this.setState({
+      showLoadEarlierButton: true, // if not all previous messages are shown
       messages: [
         {
           _id: 1,
@@ -337,49 +369,85 @@ export default class ChatScreen extends React.Component<Props, State> {
     });
   }
 
-  onSend(messages: Array<mixed> = []) {
+  loadEarlier = () => {
+    // TODO: get more messages of conversation with this.props.receiver
+  }
+
+  onSend = (messages: Array<mixed> = []) => {
+    // TODO: send message as this.props.user
+
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }));
   }
 
   render() {
+    const {
+      isVisible,
+      modalHide,
+    } = this.props;
+
+    const animationInTiming = 300;
+    const animationOutTiming = 300;
+
+    const animateIn = Platform.OS === 'ios' ? 'slideInRight' : 'slideInUp'
+    const animateOut = Platform.OS === 'ios' ? 'slideOutRight' : 'slideOutDown'
+
     return (
-      <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
-        <LinearGradient
-          colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}
-          locations={[0.2, 0.6, 1.0]}
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 20,
-            height: 80,
-            zIndex: 11,
-          }}
-        />
-        <CloseButton
-          icon="close"
-          onPress={this.goBackToChatListScreen}
-          fontSize={Platform.OS === 'ios' ? 36 : 30}
-          color={baseColors.darkGray}
-        />
-        <GiftedChat
-          messages={this.state.messages}
-          onSend={messages => this.onSend(messages)}
-          user={{
-            _id: 1,
-          }}
-          style={{ backgroundColor: 'red' }}
-          renderBubble={this.renderBubble}
-          renderAvatar={this.renderAvatar}
-          renderComposer={this.renderComposer}
-          renderInputToolbar={this.renderInputToolbar}
-          renderDay={this.renderDay}
-          renderTime={this.renderTime}
-          renderLoading={this.renderLoading}
-        />
-      </View>
+      <Modal
+        isVisible={isVisible}
+        animationInTiming={animationInTiming}
+        animationOutTiming={animationOutTiming}
+        animationIn={animateIn}
+        animationOut={animateOut}
+        onBackButtonPress={modalHide}
+        onModalShow={this.handleChatOpen}
+        onModalHide={this.handleChatClose}
+        style={{
+          margin: 0,
+          justifyContent: 'flex-start',
+        }}
+      >
+        <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
+          <LinearGradient
+            colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}
+            locations={[0.2, 0.6, 1.0]}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 20,
+              height: 80,
+              zIndex: 11,
+            }}
+          />
+          <CloseButton
+            icon="close"
+            onPress={modalHide}
+            fontSize={Platform.OS === 'ios' ? 36 : 30}
+            color={baseColors.darkGray}
+          />
+          <GiftedChat
+            messages={this.state.messages}
+            onSend={messages => this.onSend(messages)}
+            user={{
+              _id: 1,
+            }}
+            style={{ backgroundColor: 'red' }}
+            renderBubble={this.renderBubble}
+            renderAvatar={this.renderAvatar}
+            renderComposer={this.renderComposer}
+            renderInputToolbar={this.renderInputToolbar}
+            renderDay={this.renderDay}
+            renderTime={this.renderTime}
+            renderLoading={this.renderLoading}
+            loadEarlier={this.state.showLoadEarlierButton}
+            isLoadingEarlier={this.state.isLoadingMore}
+            onLoadEarlier={this.loadEarlier}
+            renderLoadEarlier={this.renderLoadEarlier}
+          />
+        </View>
+      </Modal>
     );
   }
 }

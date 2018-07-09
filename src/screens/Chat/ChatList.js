@@ -1,11 +1,13 @@
 // @flow
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, Button } from 'react-native';
 import { Container } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
 import ChatListItem from './ChatListItem';
 import { baseColors } from '../../utils/variables';
+import ChatService from 'services/chat';
+import ChatScreen from "./Chat";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -15,11 +17,17 @@ type Props = {
 }
 
 type State = {
+  showChat: boolean,
+  receiver: string,
   contacts: Array<Object>
 }
 
+const chat = new ChatService();
+
 export default class ChatListScreen extends React.Component<Props, State> {
   state = {
+    showChat: false,
+    receiver: '',
     contacts: [
       {
         _id: 1,
@@ -41,9 +49,18 @@ export default class ChatListScreen extends React.Component<Props, State> {
     ],
   };
 
-  goToChatScreen = (userName: string) => {
-    this.props.navigation.navigate(CHAT);
-    console.log(userName);
+  closeChat = () => {
+    this.setState({
+      showChat: false,
+      receiver: '',
+    });
+  };
+
+  openChat = (receiver) => {
+    this.setState({
+      showChat: true,
+      receiver
+    });
   };
 
   keyExtractor = (item: Object) => item._id.toString();
@@ -51,13 +68,12 @@ export default class ChatListScreen extends React.Component<Props, State> {
   renderItem = ({ item }: Object) => (
     <ChatListItem
       keyExtractor={this.keyExtractor}
-      onPressItem={this.goToChatScreen}
       userName={item.userName}
       avatar={item.avatar}
       message={item.message}
       timeSent={item.timeSent}
       unreadCount={item.unreadCount}
-      onPress={this.goToChatScreen}
+      onPress={this.openChat}
     />
   );
 
@@ -70,8 +86,14 @@ export default class ChatListScreen extends React.Component<Props, State> {
   }
 
   render() {
+    const { showChat, receiver } = this.state;
     return (
       <Container>
+        <ChatScreen
+          isVisible={showChat}
+          modalHide={this.closeChat}
+          receiver={receiver}
+        />
         <View style={{
           paddingLeft: 12,
           paddingTop: 18,

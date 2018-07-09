@@ -95,7 +95,6 @@ export default class ChatListItem extends React.Component<Props, State> {
     this.props.onPress(this.props.userName);
   };
 
-
   render() {
     const {
       userName,
