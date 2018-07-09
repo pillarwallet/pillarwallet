@@ -53,6 +53,7 @@ type Props = {
   doSearch: (query: string) => Function,
   searchResults: SearchResults,
   contactState: ?string,
+  invitations: Object[],
 }
 
 type State = {
@@ -92,7 +93,12 @@ class PeopleScreen extends React.Component<Props, State> {
 
   render() {
     const { query } = this.state;
-    const { searchResults, contactState, navigation } = this.props;
+    const {
+      searchResults,
+      contactState,
+      navigation,
+      invitations,
+    } = this.props;
     const inSearchMode = (query !== '' && !!contactState);
 
     return (
@@ -108,7 +114,7 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         </Wrapper>
 
-        {!inSearchMode &&
+        {!inSearchMode && invitations.length &&
         <ConnectionRequestBanner
           onPress={this.handleConnectionsRequestBannerPress}
           underlayColor={baseColors.lightGray}
@@ -118,7 +124,7 @@ class PeopleScreen extends React.Component<Props, State> {
               Connection requests
             </ConnectionRequestBannerText>
             <ConnectionRequestNotificationCircle>
-              5
+              {invitations.length}
             </ConnectionRequestNotificationCircle>
             <ConnectionRequestBannerIcon name="arrow-forward" />
           </React.Fragment>
@@ -169,10 +175,12 @@ const mapStateToProps = ({
     contactState,
     data: localContacts,
   },
+  invitations: { data: invitations },
 }) => ({
   searchResults,
   contactState,
   localContacts,
+  invitations,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
