@@ -204,17 +204,11 @@ const sendTokenFlow = createStackNavigator({
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 
-const changePinFlow = createStackNavigator(
-  {
-    [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
-    [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
-    [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
-  }, {
-    navigationOptions: {
-      header: null,
-    },
-  },
-);
+const changePinFlow = createStackNavigator({
+  [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
+  [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
+  [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
+}, StackNavigatorModalConfig);
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(

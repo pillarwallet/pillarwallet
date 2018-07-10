@@ -13,11 +13,10 @@ const storage = Storage.getInstance('db');
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function) => {
     const { appSettings = {} } = await storage.get('app_settings');
-    dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     if (appSettings.wallet) {
       const { assets = {} } = await storage.get('assets');
+      dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
       dispatch({ type: UPDATE_ASSETS, payload: assets });
-
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
 
@@ -27,6 +26,7 @@ export const initAppAndRedirectAction = () => {
       dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
     }
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

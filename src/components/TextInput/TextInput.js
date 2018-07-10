@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Item, Input, Label } from 'native-base';
+import { Item as NBItem, Input, Label } from 'native-base';
 import { fontSizes, fontWeights, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import { View, TouchableOpacity, Platform } from 'react-native';
@@ -29,10 +29,12 @@ type Props = {
   trim: boolean,
   footerAddonText?: string,
   footerAddonAction?: Function,
+  autoCorrect?: boolean,
 }
 
 type State = {
-  value: ?string
+  value: ?string,
+  isFocused: boolean,
 }
 
 type EventLike = {
@@ -80,6 +82,10 @@ const InputField = styled(Input)`
   padding: 0;
 `;
 
+const Item = styled(NBItem)`
+  border-bottom-color: ${props => props.isFocused ? baseColors.electricBlue : baseColors.mediumGray};
+`;
+
 const InputFooter = styled(View)`
   display: flex;
   flex-direction: row;
@@ -105,10 +111,12 @@ const CustomLabel = styled(Label)`
 class TextInput extends React.Component<Props, State> {
   state = {
     value: '',
+    isFocused: false,
   };
 
   static defaultProps = {
     inputType: 'default',
+    autoCorrect: false,
     trim: true,
   };
 
@@ -128,7 +136,7 @@ class TextInput extends React.Component<Props, State> {
 
     const { inputProps: { onBlur }, trim } = this.props;
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
-    this.setState({ value }, () => {
+    this.setState({ value, isFocused: false }, () => {
       if (onBlur) {
         onBlur(value);
       }
@@ -145,6 +153,12 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
+  handleFocus = () => {
+    this.setState({
+      isFocused: true,
+    });
+  };
+
   render() {
     const {
       icon,
@@ -157,10 +171,10 @@ class TextInput extends React.Component<Props, State> {
       errorMessage,
       footerAddonText,
       footerAddonAction,
+      autoCorrect,
     } = this.props;
-    const { value } = this.state;
+    const { value, isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
-
     return (
       <View style={{ paddingBottom: 10 }}>
         <Item
@@ -168,17 +182,18 @@ class TextInput extends React.Component<Props, State> {
           stackedLabel={!inlineLabel}
           error={!!errorMessage}
           style={inputProps.multiline && { height: 112 }}
+          isFocused={isFocused}
         >
-          {!!label &&
-            <CustomLabel>{label.toUpperCase()}</CustomLabel>
-          }
+          {!!label && <CustomLabel>{label.toUpperCase()}</CustomLabel>}
           <InputField
             {...inputProps}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             onEndEditing={() => this.handleBlur}
+            onFocus={this.handleFocus}
             value={value}
             inputType={inputType}
+            autoCorrect={autoCorrect}
             style={{ fontSize: inputType.fontSize }}
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}

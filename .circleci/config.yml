@@ -39,6 +39,14 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: Append circleCI build number to version
+          command: |
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            sed -i.bak s/_build_number_/$buildNumber/g .env
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -123,6 +131,14 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Append circleCI build number to version
+          command: |
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            sed -i.bak s/_build_number_/$buildNumber/g .env
+      - run:
           name: Install Expo cli
           command: yarn global add exp
       - run:
@@ -188,6 +204,11 @@ jobs:
           command: cd ios && bundle exec fastlane build_test_flight
           environment:
             SCAN_DEVICE: iPhone 8
+      - run:
+          name: Announce Deployment
+          command: |
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "TestFlight"
 
   deploy_android:
     working_directory: ~/pillarwallet/android
@@ -202,6 +223,15 @@ jobs:
     steps:
       - checkout:
           path: ~/pillarwallet
+      - run:
+          name: Append circleCI build number to version
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            sed -i 's/_build_number_/$buildNumber/g' .env
       - restore_cache:
           key: node-{{ checksum "../yarn.lock" }}
       - run:
@@ -283,6 +313,11 @@ jobs:
       - store_artifacts:
           path: app/build/outputs/apk
           destination: apks
+      - run:
+          name: Announce Deployment
+          command: |
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "Google Play Store"
 
 workflows:
   version: 2

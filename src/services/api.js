@@ -6,6 +6,8 @@ import { SDK_PROVIDER, BCX_URL } from 'react-native-dotenv'; // SDK_PROVIDER, ON
 import type { Asset } from 'models/Asset';
 import { uniqBy } from 'utils/common';
 
+import { fetchAssetBalances } from 'services/assets';
+
 type HistoryPayload = {
   address1: string,
   address2?: string,
@@ -97,12 +99,14 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
 };
 
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
-  const promises = assets.map(async ({ symbol, address: contractAddress }) => {
-    const payload = { contractAddress, address, asset: symbol };
-    const { balance: response } = await BCXSdk.getBalance(payload);
-    return { balance: response.balance, symbol: response.ticker };
-  });
-  return Promise.all(promises).catch(() => []);
+  // TEMPORARY FETCH FROM BLOCKCHAIN DIRECTLY
+  return fetchAssetBalances(assets, address);
+  // const promises = assets.map(async ({ symbol, address: contractAddress }) => {
+  //   const payload = { contractAddress, address, asset: symbol };
+  //   const { balance: response } = await BCXSdk.getBalance(payload);
+  //   return { balance: response.balance, symbol: response.ticker };
+  // });
+  // return Promise.all(promises).catch(() => []);
 };
 
 SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
