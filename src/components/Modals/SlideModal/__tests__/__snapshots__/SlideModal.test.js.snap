@@ -231,7 +231,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "paddingBottom": 6,
                 "paddingTop": 6,
                 "position": "absolute",
-                "right": -8,
+                "right": 0,
                 "shadowColor": null,
                 "shadowOffset": null,
                 "shadowOpacity": null,
