@@ -35,7 +35,6 @@ export default class ChatListScreen extends React.Component<Props, State> {
 
   componentWillMount = () => {
     // TODO: get receivers list with the last message and unread messages. Set state.
-    console.log('will mount');
     this.setState({
       contacts: [
         {
@@ -129,10 +128,14 @@ export default class ChatListScreen extends React.Component<Props, State> {
 
   renderSeparator = () => {
     return (
-      <View style={{ paddingLeft: 64 }}>
+      <View style={{ paddingLeft: 76, paddingRight: 18 }}>
         <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
       </View>
     );
+  }
+
+  connectWithUser = () => {
+    chat.client.addContact('dd').then((resp) => {console.log(resp)}).catch((err) => {console.log(err)});
   }
 
   render() {
@@ -159,6 +162,8 @@ export default class ChatListScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             style={{ flex: 1 }}
           />
+
+          <Button title={'Connect with dd'} onPress={this.connectWithUser}></Button>
         </View>
       </Container>
     );

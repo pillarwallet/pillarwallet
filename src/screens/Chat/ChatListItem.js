@@ -40,15 +40,17 @@ const UserWrapper = styled.View`
 `;
 
 const UserName = styled.Text`
-  color: ${baseColors.slateBlack}
-  font-size: ${fontSizes.medium}
-  font-weight: ${fontWeights.bold}
+  color: ${baseColors.slateBlack};
+  font-size: ${fontSizes.medium};
+  font-weight: ${fontWeights.bold};
+  letter-spacing: 0.2px;
 `;
 
 const Message = styled.Text`
-  color: ${baseColors.darkGray}
-  font-size: ${fontSizes.small}
-  line-height: ${fontSizes.medium}
+  color: ${baseColors.darkGray};
+  font-size: ${fontSizes.small};
+  line-height: ${fontSizes.medium};
+  letter-spacing: 0.1px;
 `;
 
 const DetailsWrapper = styled.View`
@@ -151,7 +153,8 @@ export default class ChatListItem extends React.Component<Props, State> {
         :
         <TouchableNativeFeedback
           onPress={this._onPress}
-          background={TouchableNativeFeedback.SelectableBackground()}>
+          background={TouchableNativeFeedback.SelectableBackground()}
+        >
           {item}
         </TouchableNativeFeedback>
     );
