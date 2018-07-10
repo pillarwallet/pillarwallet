@@ -1,5 +1,6 @@
 // @flow
 import { BigNumber } from 'bignumber.js';
+import { Dimensions, Platform } from 'react-native';
 
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -106,4 +107,14 @@ export function uniqBy(collection: Object[] = [], key: string): Object[] {
   return collection.filter((item, i, arr) => {
     return arr.map(it => it[key]).indexOf(item[key]) === i;
   });
+}
+
+
+export const isIphoneX = () => {
+  let d = Dimensions.get('window');
+  const { height, width } = d;
+
+  return (
+    Platform.OS === 'ios' && (height === 812 || width === 812)
+  );
 }

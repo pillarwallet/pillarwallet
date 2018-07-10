@@ -17,9 +17,7 @@ type Props = {
 const ItemRow = styled.View`
   flex-direction: row;
   align-items: flex-start;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  padding-left: 6px;
+  padding: 6px 18px 10px 18px;
 `;
 
 const AvatarWrapper = styled.View`
@@ -98,6 +96,12 @@ export default class ChatListItem extends React.Component<Props, State> {
       timeSent,
       unreadCount,
     } = this.props;
+    let customUnreadCount;
+    if (unreadCount > 9) {
+      customUnreadCount = '..';
+    } else {
+      customUnreadCount = unreadCount;
+    }
 
     const item = (
       <ItemRow>
@@ -132,7 +136,7 @@ export default class ChatListItem extends React.Component<Props, State> {
           {!!unreadCount &&
           <UnreadCounter>
             <UnreadNumber>
-              {unreadCount}
+              {customUnreadCount}
             </UnreadNumber>
           </UnreadCounter>}
         </DetailsWrapper>

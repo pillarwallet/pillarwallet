@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Platform, ActivityIndicator } from 'react-native';
+import { View, Platform, ActivityIndicator, StatusBar } from 'react-native';
 import { Container } from 'components/Layout';
 import { LinearGradient } from 'expo';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -15,6 +15,7 @@ import {
   Day,
   Time,
   LoadEarlier,
+  Message,
 } from 'react-native-gifted-chat';
 import ChatService from 'services/chat';
 import { baseColors } from 'utils/variables';
@@ -23,13 +24,14 @@ import styled from 'styled-components/native/index';
 import Modal from 'react-native-modal';
 import { connect } from 'react-redux';
 import ProfileImage from 'screens/Profile/ProfileImage';
+import { isIphoneX } from 'utils/common';
 
 
 const CloseButton = Platform.OS === 'ios' ?
   styled(ButtonIcon)`
   position: absolute;
   right: 0;
-  top: 10px;
+  top: ${isIphoneX ? 20 : 10}px;
   z-index: 14;
 ` :
   styled(ButtonIcon)`
@@ -69,7 +71,7 @@ class ChatScreen extends React.Component<Props, State> {
       showLoadEarlierButton: false,
       isLoadingMore: false,
     });
-  }
+  };
 
   // chat elements
   renderBubble = (props: Props) => {
@@ -198,6 +200,9 @@ class ChatScreen extends React.Component<Props, State> {
         primaryStyle={{
           justifyContent: 'center',
         }}
+        containerStyle={{
+          bottom: 2,
+        }}
       />
     );
   };
@@ -254,7 +259,25 @@ class ChatScreen extends React.Component<Props, State> {
     );
   };
 
+  renderMessage = (props: Props) => {
+    return (
+      <Message
+        {...props}
+        containerStyle={{
+          left: {
+            paddingLeft: 10,
+          },
+          right: {
+            paddingRight: 10,
+          },
+        }}
+      />
+    );
+  }
+
   handleChatOpen = () => {
+    StatusBar.setBarStyle('dark-content');
+
     // TODO: get conversation with this.props.receiver and setState({messages: result});
     // TODO: append user avatar to each message from chat receiver (this.props.receiverAvatar).
     chat.client.getReceivedMessagesByContact(this.props.receiver).then((receivedMessages) => {
@@ -353,6 +376,8 @@ class ChatScreen extends React.Component<Props, State> {
             isLoadingEarlier={this.state.isLoadingMore}
             onLoadEarlier={this.loadEarlier}
             renderLoadEarlier={this.renderLoadEarlier}
+            renderMessage={this.renderMessage}
+            minInputToolbarHeight={52}
           />
         </View>
       </Modal>
