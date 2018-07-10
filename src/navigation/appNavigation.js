@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform, Image } from 'react-native';
+import { AppState, Animated, Easing, Image } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -67,22 +67,9 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
-// NAVIGATION OPTIONS FOR ANDROID AND IOS
-let navigationOpts;
-
-if (Platform.OS === 'ios') {
-  navigationOpts = {
-    header: null,
-  };
-} else {
-  navigationOpts = {
-    headerStyle: {
-      borderBottomWidth: 0,
-      elevation: 0,
-      height: 0,
-    },
-  };
-}
+const navigationOpts = {
+  header: null,
+};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconProfile = require('assets/icons/icon_profile.png');
