@@ -26,6 +26,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   border-bottom-width: 1px;
   border-color: ${UIColors.defaultBorderColor};
   align-items: center;
+  margin-bottom: 9px;
   flex-direction: row;
 `;
 
@@ -48,6 +49,25 @@ const ContactCardList = styled(ScrollWrapper)`
   padding: 16px;
 `;
 
+const EmptySectionTextWrapper = styled.View`
+  width: 230px;
+  margin-top: -200px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const EmptySectionTitle = styled.Text`
+  font-size: ${fontSizes.large};
+  color: ${baseColors.slateBlack};
+  margin-bottom: 6px;
+`;
+
+const EmptySectionText = styled.Text`
+  font-size: ${fontSizes.small};
+  color: ${baseColors.darkGray};
+  text-align: center;
+`;
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   doSearch: (query: string) => Function,
@@ -58,11 +78,13 @@ type Props = {
 
 type State = {
   query: string,
+  emptyList: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
   state = {
     query: '',
+    emptyList: false,
   };
 
   constructor(props: Props) {
@@ -92,7 +114,7 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { query } = this.state;
+    const { query, emptyList } = this.state;
     const {
       searchResults,
       contactState,
@@ -143,7 +165,7 @@ class PeopleScreen extends React.Component<Props, State> {
         <PeopleSearchResults searchResults={searchResults} navigation={navigation} />
         }
 
-        {!inSearchMode &&
+        {!inSearchMode && !emptyList &&
         <ContactCardList contentInset={{ bottom: 40 }}>
           <ContactCard
             onPress={this.handleContactCardPress}
@@ -163,6 +185,16 @@ class PeopleScreen extends React.Component<Props, State> {
             name="Beta Alpha"
           />
         </ContactCardList>
+        }
+        {!!emptyList && !inSearchMode &&
+          <Wrapper center fullScreen>
+            <EmptySectionTextWrapper>
+              <EmptySectionTitle>Nobody is here</EmptySectionTitle>
+              <EmptySectionText>
+              Start building your connection list by inviting friends or by searching for someone
+            </EmptySectionText>
+            </EmptySectionTextWrapper>
+          </Wrapper>
         }
       </Container>
     );

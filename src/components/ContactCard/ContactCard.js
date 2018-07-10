@@ -55,7 +55,7 @@ const StatusText = styled.Text`
   margin-left: auto;
 `;
 
-const ActionButton = styled(ButtonIcon)`
+const ActionCircleButton = styled(ButtonIcon)`
   height: 34px;
   width: 34px;
   border-radius: 17px;
@@ -79,15 +79,21 @@ const CancelActionText = styled.Text`
   font-size: ${fontSizes.small};
 `;
 
-const ConnectActionText = styled.Text`
-  color: ${baseColors.freshEucalyptus};
-  font-size: ${fontSizes.small};
+const ActionButton = styled.View`
+  background: ${baseColors.clearBlue};
+  padding: 0 20px;
+  height: 33px;
+  border-radius: 17px;
+  justify-content: center;
+  align-items: center;
 `;
 
-const ReceiveActionText = styled.Text`
-  color: ${baseColors.electricBlue};
+const ActionButtonText = styled.Text`
   font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.bold};
+  color: ${baseColors.white};
 `;
+
 
 type Props = {
   onPress: Function,
@@ -124,14 +130,14 @@ export default class ContactCard extends React.Component<Props> {
     } else if (status === 'RECEIVED') {
       return (
         <ButtonIconWrapper>
-          <ActionButton
+          <ActionCircleButton
             color={baseColors.darkGray}
             margin={0}
             icon="close"
             fontSize={32}
             onPress={onRejectInvitationPress}
           />
-          <ActionButton
+          <ActionCircleButton
             color={baseColors.white}
             margin={0}
             accept
@@ -152,17 +158,21 @@ export default class ContactCard extends React.Component<Props> {
     } else if (status === 'INVITE') {
       return (
         <ActionTextWrapper onPress={onSendInvitationPress}>
-          <ConnectActionText>
-            Connect
-          </ConnectActionText>
+          <ActionButton>
+            <ActionButtonText>
+              CONNECT
+            </ActionButtonText>
+          </ActionButton>
         </ActionTextWrapper>
       );
     } else if (status === 'RECEIVE') {
       return (
         <ActionTextWrapper onPress={onReceiveInvitationPress}>
-          <ReceiveActionText>
-            Receive invite
-          </ReceiveActionText>
+          <ActionButton>
+            <ActionButtonText>
+              RECEIVE INVITE
+            </ActionButtonText>
+          </ActionButton>
         </ActionTextWrapper>
       );
     }
@@ -200,7 +210,7 @@ export default class ContactCard extends React.Component<Props> {
           </ContactCardAvatarWrapper>
           <ContactCardName>{name}</ContactCardName>
           {!!notificationCount && notificationCount > 0 &&
-            <ContactCardNotificationCircle>2</ContactCardNotificationCircle>
+            <ContactCardNotificationCircle gray>2</ContactCardNotificationCircle>
           }
           {!!showActions && !!status &&
             this.getActionsOrStatus(status, onPressActions)
