@@ -50,7 +50,7 @@ const StackNavigatorConfig = {
       paddingTop: 0,
       marginTop: Platform.OS === 'ios' ? 0 : -25,
     },
-    headerLeft: <BackButton navigation={navigation} />,
+    headerLeft: () => <BackButton navigation={navigation} />,
   }),
 };
 
