@@ -4,7 +4,6 @@ set -euo pipefail
 applicationName=$1
 targetEnvironment=$2
 
-
 payload=$(
 cat <<EOM
 {
