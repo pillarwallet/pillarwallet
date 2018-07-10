@@ -23,6 +23,7 @@ import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
+import HomeScreen from 'screens/Home';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -46,6 +47,7 @@ import {
   PROFILE,
   PEOPLE,
   CONTACT,
+  HOME,
   CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -90,6 +92,7 @@ if (Platform.OS === 'ios') {
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconProfile = require('assets/icons/icon_profile.png');
+const iconHome = require('assets/icons/icon_home.png');
 const iconIco = require('assets/icons/icon_ico.png');
 // const iconPeople = require('assets/icons/icon_people.png');
 // const iconChat = require('assets/icons/icon_chat.png');
@@ -155,18 +158,18 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: 'People',
       }),
     },
+    [HOME]: {
+      screen: HomeScreen,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconHome),
+        tabBarLabel: 'Home',
+      }),
+    },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
         tabBarLabel: 'Marketplace',
-      }),
-    },
-    [PROFILE]: {
-      screen: ProfileScreen,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconProfile),
-        tabBarLabel: 'Profile',
       }),
     },
   }, {
@@ -188,7 +191,7 @@ const tabNavigation = createBottomTabNavigator(
         height: 66,
       },
       labelStyle: {
-        fontSize: 14,
+        fontSize: 12,
         marginBottom: 4,
         marginTop: 4,
         color: baseColors.mediumGray,
