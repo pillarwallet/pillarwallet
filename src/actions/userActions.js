@@ -17,6 +17,7 @@ export const updateLocalUserAction = (user: Object, forceRewrite: boolean = fals
 export const updateUserAction = (walletId: string, field: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const user = await api.updateUser({ walletId, ...field });
+    if (!Object.keys(user).length) return;
     await storage.save('user', { user }, true);
     dispatch({
       type: UPDATE_USER,

@@ -48,7 +48,7 @@ const ModalHeader = styled.View`
 `;
 
 const ModalSubtitle = styled(SubTitle)`
-  padding: ${(props) => props.fullScreen ? '20px 20px 0' : '20px 0'};
+  padding: ${(props) => props.fullScreen ? '20px 20px 0' : '10px 0'};
 `;
 
 const ModalContent = styled.View`
