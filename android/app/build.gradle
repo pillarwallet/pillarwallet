@@ -37,7 +37,7 @@ android {
     applicationId 'com.pillarproject.wallet'
     targetSdkVersion 26
     versionCode System.getenv('CIRCLE_BUILD_NUM') ? System.getenv('CIRCLE_BUILD_NUM').toInteger() : 9
-    versionName '0.0.2'
+    versionName System.getenv('buildNumber') ? System.getenv('buildNumber') : 0.0.0
     ndk {
       abiFilters 'armeabi-v7a', 'x86'
     }
