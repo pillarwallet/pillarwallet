@@ -108,7 +108,6 @@ const fullNameFormFields = [{
 const CheckPinWrapper = styled.View`
   display: flex;
   height: 100%;
-  padding-bottom: 40px;
 `;
 
 type Props = {
