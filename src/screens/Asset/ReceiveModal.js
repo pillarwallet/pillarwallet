@@ -11,7 +11,7 @@ import Button from 'components/Button';
 const { height } = Dimensions.get('window');
 
 const ContentWrapper = styled.View`
-  height: ${height / 2.2};
+  height: ${height / 2};
   justify-content: space-around;
 `;
 
@@ -115,6 +115,9 @@ export default class ReceiveModal extends React.Component<Props, State> {
             <Button
               title="Share Address"
               onPress={this.handleAddressShare}
+              style={{
+                marginBottom: 20,
+              }}
             />
           </Holder>
           <Holder>
