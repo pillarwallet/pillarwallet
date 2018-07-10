@@ -280,20 +280,21 @@ class ChatScreen extends React.Component<Props, State> {
 
     // TODO: get conversation with this.props.receiver and setState({messages: result});
     // TODO: append user avatar to each message from chat receiver (this.props.receiverAvatar).
-    chat.client.getReceivedMessagesByContact(this.props.receiver).then((receivedMessages) => {
+    chat.client.getChatByContact(this.props.receiver).then((receivedMessagesString) => {
       const messages = [];
-      receivedMessages.forEach(([key, value]) => {
-        messages.push({
-          _id: key,
-          text: value.content,
-          createdAt: new Date(),
-          user: {
-            _id: value.username,
-            name: value.username,
-            avatar: value.username === this.props.receiver ? this.props.receiverAvatar : this.props.receiverAvatar,
-          },
+      const receivedMessages = JSON.parse(receivedMessagesString);
+        receivedMessages.forEach((obj, key) => {
+            messages.push({
+              _id: key,
+              text: obj.content,
+              createdAt: new Date(),
+              user: {
+                _id: obj.username,
+                name: obj.username,
+                avatar: obj.username === this.props.receiver ? this.props.receiverAvatar : this.props.receiverAvatar,
+              },
+            });
         });
-      });
       this.setState({
         showLoadEarlierButton: false, // if not all previous messages are shown
         messages,
@@ -306,7 +307,7 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   onSend = (messages: Array<mixed> = []) => {
-    chat.client.sendMessage(this.props.receiver, messages);
+    chat.client.sendMessageByContact(this.props.receiver, messages[0].text);
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }));

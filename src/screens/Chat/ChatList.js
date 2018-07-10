@@ -39,61 +39,13 @@ export default class ChatListScreen extends React.Component<Props, State> {
       contacts: [
         {
           _id: 1,
-          userName: 'userName',
+          userName: 'vy1',
           avatar: 'https://placeimg.com/140/140/people',
           timeSent: '14:24',
           message: 'If you have never experienced cruising before, ' +
           'a chartered experience is a great way to get your feet wet',
           unreadCount: 2,
-        },
-        {
-          _id: 2,
-          userName: 'otherUser',
-          avatar: '',
-          timeSent: '14:24',
-          message: 'You can also fly to a destination',
-          unreadCount: 0,
-        },
-        {
-          _id: 3,
-          userName: 'userNumberThree',
-          avatar: 'https://placeimg.com/140/140/people',
-          timeSent: '14:24',
-          message: 'Your yacht is your hotel that travels with you',
-          unreadCount: 10,
-        },
-        {
-          _id: 4,
-          userName: 'someOtherUser',
-          avatar: 'https://placeimg.com/140/140/people',
-          timeSent: '14:24',
-          message: 'Find out how many people are affected',
-          unreadCount: 0,
-        },
-        {
-          _id: 5,
-          userName: 'sameHere',
-          avatar: '',
-          timeSent: '14:24',
-          message: 'There are charters that can be rented for as few as two people',
-          unreadCount: 0,
-        },
-        {
-          _id: 6,
-          userName: 'andHere',
-          avatar: 'https://placeimg.com/140/140/people',
-          timeSent: '14:24',
-          message: 'This could be a place close to home and sail in one area or start and finish at two different ports',
-          unreadCount: 3,
-        },
-        {
-          _id: 7,
-          userName: 'justAnotheruser',
-          avatar: 'https://placeimg.com/140/140/people',
-          timeSent: '14:24',
-          message: 'Determining the type of cruise is another aspect of planning a chartered yachting trip',
-          unreadCount: 0,
-        },
+        }
       ],
     });
   };
@@ -135,7 +87,7 @@ export default class ChatListScreen extends React.Component<Props, State> {
   }
 
   connectWithUser = () => {
-    chat.client.addContact('dd').then((resp) => {console.log(resp)}).catch((err) => {console.log(err)});
+    chat.client.addContact('vy1').then((resp) => {console.log(resp)}).catch((err) => {console.log(err)});
   }
 
   render() {
@@ -163,7 +115,7 @@ export default class ChatListScreen extends React.Component<Props, State> {
             style={{ flex: 1 }}
           />
 
-          <Button title={'Connect with dd'} onPress={this.connectWithUser}></Button>
+          <Button title={'Connect with vy1'} onPress={this.connectWithUser}></Button>
         </View>
       </Container>
     );
