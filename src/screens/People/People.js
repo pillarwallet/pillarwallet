@@ -191,8 +191,8 @@ class PeopleScreen extends React.Component<Props, State> {
             <EmptySectionTextWrapper>
               <EmptySectionTitle>Nobody is here</EmptySectionTitle>
               <EmptySectionText>
-              Start building your connection list by inviting friends or by searching for someone
-            </EmptySectionText>
+                Start building your connection list by inviting friends or by searching for someone
+              </EmptySectionText>
             </EmptySectionTextWrapper>
           </Wrapper>
         }
