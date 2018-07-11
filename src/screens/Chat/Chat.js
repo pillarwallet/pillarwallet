@@ -1,10 +1,9 @@
 // @flow
 import * as React from 'react';
-import { View, Platform, ActivityIndicator, StatusBar } from 'react-native';
+import { View, Platform, ActivityIndicator, StatusBar, Image } from 'react-native';
 import { Container } from 'components/Layout';
 import { LinearGradient } from 'expo';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Icon } from 'native-base';
 import {
   GiftedChat,
   Bubble,
@@ -26,7 +25,6 @@ import { connect } from 'react-redux';
 import ProfileImage from 'screens/Profile/ProfileImage';
 import { isIphoneX } from 'utils/common';
 
-
 const CloseButton = Platform.OS === 'ios' ?
   styled(ButtonIcon)`
   position: absolute;
@@ -40,6 +38,8 @@ const CloseButton = Platform.OS === 'ios' ?
   top: 0;
   z-index: 14;
 `;
+
+const iconSend = require('assets/icons/icon_sendMessage.png');
 
 const chat = new ChatService();
 
@@ -177,16 +177,15 @@ class ChatScreen extends React.Component<Props, State> {
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          height: 52,
+          height: 54,
         }}
       >
-        <Icon
-          ios="ios-send-outline"
-          android="md-send"
+        <Image
           style={{
-            fontSize: Platform.OS === 'ios' ? 36 : 30,
-            color: '#1a9fff',
+            width: 24,
+            height: 24,
           }}
+          source={iconSend}
         />
       </Send>
     );
