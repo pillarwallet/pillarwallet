@@ -316,6 +316,7 @@ jobs:
       - run:
           name: Announce Deployment
           command: |
+            cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Google Play Store"
 
