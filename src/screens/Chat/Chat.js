@@ -276,28 +276,28 @@ class ChatScreen extends React.Component<Props, State> {
 
   handleChatOpen = () => {
     StatusBar.setBarStyle('dark-content');
-
-    // TODO: get conversation with this.props.receiver and setState({messages: result});
     // TODO: append user avatar to each message from chat receiver (this.props.receiverAvatar).
-    chat.client.getChatByContact(this.props.receiver).then((receivedMessagesString) => {
-      const messages = [];
-      const receivedMessages = JSON.parse(receivedMessagesString);
-        receivedMessages.forEach((obj, key) => {
+    chat.client.receiveNewMessagesByContact(this.props.receiver).then(() => {
+      chat.client.getChatByContact(this.props.receiver).then((receivedMessagesString) => {
+        const messages = [];
+        const receivedMessages = JSON.parse(receivedMessagesString);
+          receivedMessages.forEach((obj, key) => {
             messages.push({
               _id: key,
               text: obj.content,
-              createdAt: new Date(),
+              createdAt: new Date(obj.savedTimestamp*1000),
               user: {
                 _id: obj.username,
                 name: obj.username,
                 avatar: obj.username === this.props.receiver ? this.props.receiverAvatar : this.props.receiverAvatar,
               },
             });
-        });
-      this.setState({
-        showLoadEarlierButton: false, // if not all previous messages are shown
-        messages,
-      });
+          });
+          this.setState({
+            showLoadEarlierButton: false, // if not all previous messages are shown
+            messages,
+          });
+      }).catch(() => {});
     }).catch(() => {});
   };
 
