@@ -82,30 +82,55 @@ export default class ActivityFeed extends React.Component<Props, State> {
     activeTab: 'ALL',
   }
 
+
   renderActivityFeedItem = (item: Object) => {
     const isEven = item.index % 2 === 0;
-    const msg = JSON.parse(item.item.payload.data.msg);
-    const received = msg.value > 0;
-    const fromAddress = `${msg.fromAddress.slice(0, 7)}…${msg.fromAddress.slice(-7)}`;
-    const displayName = msg.username ? msg.username : fromAddress;
-    return (
-      <ActivityFeedItem isEven={isEven} key={item.index}>
-        <ActivityFeedItemCol fixedWidth="42px">
-          <ActivityFeedItemAvatarWrapper />
-        </ActivityFeedItemCol>
+    const { data } = item.item.payload;
 
-        <ActivityFeedItemCol>
-          <ActivityFeedItemLabel>Sent Jul 15</ActivityFeedItemLabel>
-          <ActivityFeedItemName>{displayName}</ActivityFeedItemName>
-        </ActivityFeedItemCol>
-        <ActivityFeedItemCol flexEnd>
-          <ActivityFeedItemAmount received={received}>
-            {msg.value} {msg.asset}
-          </ActivityFeedItemAmount>
-        </ActivityFeedItemCol>
-      </ActivityFeedItem>
-    );
-  };
+    const { type } = item.item;
+
+
+    if (type === 'transactionEvent') {
+      const msg = JSON.parse(data.msg);
+      const received = msg.value > 0;
+      const fromAddress = `${msg.fromAddress.slice(0, 7)}…${msg.fromAddress.slice(-7)}`;
+      const displayName = msg.username ? msg.username : fromAddress;
+
+      return (
+        <ActivityFeedItem isEven={isEven} key={item.index}>
+
+          <ActivityFeedItemCol fixedWidth="42px">
+            <ActivityFeedItemAvatarWrapper />
+          </ActivityFeedItemCol>
+          <ActivityFeedItemCol>
+            <ActivityFeedItemLabel>Sent · Jul 15</ActivityFeedItemLabel>
+            <ActivityFeedItemName>{displayName}</ActivityFeedItemName>
+          </ActivityFeedItemCol>
+          <ActivityFeedItemCol flexEnd>
+            <ActivityFeedItemAmount received={received}>
+              {msg.value} {msg.asset}
+            </ActivityFeedItemAmount>
+          </ActivityFeedItemCol>
+        </ActivityFeedItem>
+      );
+    } else if (type === 'social') {
+      return (
+        <ActivityFeedItem isEven={isEven} key={item.index}>
+
+          <ActivityFeedItemCol fixedWidth="42px">
+            <ActivityFeedItemAvatarWrapper />
+          </ActivityFeedItemCol>
+          <ActivityFeedItemCol>
+            <ActivityFeedItemLabel>{data.label}</ActivityFeedItemLabel>
+            <ActivityFeedItemName>{data.connection}</ActivityFeedItemName>
+          </ActivityFeedItemCol>
+          <ActivityFeedItemCol flexEnd />
+        </ActivityFeedItem>
+
+      );
+    }
+  }
+
 
   render() {
     return (

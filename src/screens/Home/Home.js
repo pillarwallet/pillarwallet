@@ -34,7 +34,7 @@ const dummyHistory = [
     },
   },
   {
-    type: 'transactionEvent',
+    type: 'social',
     meta: {
       recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
     },
@@ -44,8 +44,8 @@ const dummyHistory = [
         body: 'You received 10 ETH',
       },
       data: {
-        type: 'BCX',
-        msg: '{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH","value":"0.5","status":"pending"}',
+        label: 'New chat started',
+        connection: 'michael',
       },
     },
   },
