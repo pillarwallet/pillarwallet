@@ -235,35 +235,52 @@ const RecentConnections = styled.View`
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${UIColors.defaultBorderColor};
-  padding: 16px;
+  // padding: 16px;
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView`
 
 `;
 
+const RecentConnectionsSubHeading = styled(SubHeading)`
+  margin: 16px;
+`;
+
 
 const RecentConnectionsItem = styled.View`
+  align-items: center;
+  width: 84px;
 `;
 
 const RecentConnectionsItemAvatarWrapper = styled.View`
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
+  background-color: ${baseColors.darkGray};
+  border: 2px solid white;
+  shadow-color: ${baseColors.black};
+  shadow-offset: 0 0;
+  shadow-radius: 2px     ;
+  shadow-opacity: 0.1;
+  margin-bottom: 10px;
 `;
 
 const RecentConnectionsItemAvatarImage = styled.Image`
 `;
 
 const RecentConnectionsItemName = styled.Text`
-
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.darkGray};
 `;
 
 export default class PeopleScreen extends React.Component<Props, State> {
   renderRecentConnections = () => {
-    Object.keys(dummyRecentConnections).map((item) => (
+    return Object.keys(dummyRecentConnections).map((item) => (
       <RecentConnectionsItem>
         <RecentConnectionsItemAvatarWrapper>
           <RecentConnectionsItemAvatarImage />
         </RecentConnectionsItemAvatarWrapper>
-        <RecentConnectionsItemName>{dummyRecentConnections[item]}</RecentConnectionsItemName>
+        <RecentConnectionsItemName numberOfLines={1}>{item}</RecentConnectionsItemName>
       </RecentConnectionsItem>
     ));
   }
@@ -278,7 +295,7 @@ export default class PeopleScreen extends React.Component<Props, State> {
           </HomeHeader>
         </Wrapper>
         <RecentConnections>
-          <SubHeading>RECENT CONNECTIONS</SubHeading>
+          <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
           <RecentConnectionsScrollView horizontal>
             {this.renderRecentConnections()}
           </RecentConnectionsScrollView>
