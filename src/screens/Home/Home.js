@@ -4,6 +4,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
+import { SubHeading } from 'components/Typography';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 
@@ -15,6 +16,27 @@ type Props = {
 type State = {
 
 }
+
+const dummyRecentConnections = {
+  paragramm: {
+    name: 'paragramm',
+  },
+  burningfiat: {
+    name: 'burningfiat',
+  },
+  johndoe: {
+    name: 'johndoe',
+  },
+  lewisflude: {
+    name: 'lewisflude',
+  },
+  pilalrwallet: {
+    name: 'pilalrwallet',
+  },
+  carlosrossi: {
+    name: 'carlosrossi',
+  },
+};
 
 const dummyHistory = [
   {
@@ -47,6 +69,74 @@ const dummyHistory = [
         label: 'New chat started',
         connection: 'michael',
         status: 'MESSAGE_RECEIVED',
+      },
+    },
+  },
+  {
+    type: 'social',
+    meta: {
+      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
+    },
+    payload: {
+      notification: {
+        title: 'Pillar',
+        body: 'You received 10 ETH',
+      },
+      data: {
+        label: 'Incoming connection',
+        connection: 'anna',
+        status: 'RECEIVED',
+      },
+    },
+  },
+  {
+    type: 'social',
+    meta: {
+      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
+    },
+    payload: {
+      notification: {
+        title: 'Pillar',
+        body: 'You received 10 ETH',
+      },
+      data: {
+        label: 'Connection request sent',
+        connection: 'brandon',
+        status: 'SENT',
+      },
+    },
+  },
+  {
+    type: 'social',
+    meta: {
+      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
+    },
+    payload: {
+      notification: {
+        title: 'Pillar',
+        body: 'You received 10 ETH',
+      },
+      data: {
+        label: 'Incoming connection',
+        connection: 'michael',
+        status: 'ACCEPTED',
+      },
+    },
+  },
+  {
+    type: 'social',
+    meta: {
+      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
+    },
+    payload: {
+      notification: {
+        title: 'Pillar',
+        body: 'You received 10 ETH',
+      },
+      data: {
+        label: 'Incoming connection',
+        connection: 'michael',
+        status: 'DISMISSED',
       },
     },
   },
@@ -145,10 +235,39 @@ const RecentConnections = styled.View`
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${UIColors.defaultBorderColor};
-  padding: 0 16px;
+  padding: 16px;
+`;
+
+const RecentConnectionsScrollView = styled.ScrollView`
+
+`;
+
+
+const RecentConnectionsItem = styled.View`
+`;
+
+const RecentConnectionsItemAvatarWrapper = styled.View`
+`;
+
+const RecentConnectionsItemAvatarImage = styled.Image`
+`;
+
+const RecentConnectionsItemName = styled.Text`
+
 `;
 
 export default class PeopleScreen extends React.Component<Props, State> {
+  renderRecentConnections = () => {
+    Object.keys(dummyRecentConnections).map((item) => (
+      <RecentConnectionsItem>
+        <RecentConnectionsItemAvatarWrapper>
+          <RecentConnectionsItemAvatarImage />
+        </RecentConnectionsItemAvatarWrapper>
+        <RecentConnectionsItemName>{dummyRecentConnections[item]}</RecentConnectionsItemName>
+      </RecentConnectionsItem>
+    ));
+  }
+
   render() {
     return (
       <Container>
@@ -158,7 +277,12 @@ export default class PeopleScreen extends React.Component<Props, State> {
             <HomeHeaderUsername>johndoe</HomeHeaderUsername>
           </HomeHeader>
         </Wrapper>
-        <RecentConnections />
+        <RecentConnections>
+          <SubHeading>RECENT CONNECTIONS</SubHeading>
+          <RecentConnectionsScrollView horizontal>
+            {this.renderRecentConnections()}
+          </RecentConnectionsScrollView>
+        </RecentConnections>
         <ActivityFeed history={dummyHistory} />
       </Container>
     );

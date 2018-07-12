@@ -3,13 +3,17 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
+import { SubHeading } from 'components/Typography';
 
 const ActivityFeedWrapper = styled.View`
-
+  flex: 1;
 `;
 
 const ActivityFeedList = styled.FlatList`
-  height: 100%;
+`;
+
+const ActivityFeedHeader = styled.View`
+  padding: 40px 16px 0;
 `;
 
 const ActivityFeedItem = styled.View`
@@ -52,7 +56,7 @@ const ActivityFeedItemCol = styled.View`
 
 const TabWrapper = styled.View`
   flex-direction: row;
-  margin: 20px 16px 20px;
+  margin: 10px 16px 20px;
 `;
 
 const TabItem = styled.TouchableOpacity`
@@ -75,7 +79,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   width: 34px;
   border-radius: 17px;
   padding: 0;
-  margin: 0;
+  margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
@@ -94,10 +98,16 @@ const ActionText = styled.Text`
   font-size: ${fontSizes.small};
 `;
 
+const LabelText = styled.Text`
+  font-size: ${fontSizes.small};
+  color: ${baseColors.darkGray};
+  margin-left: auto;
+`;
+
 const ActionButton = styled.View`
   background: ${baseColors.clearBlue};
   padding: 0 20px;
-  height: 33px;
+  height: 34px;
   border-radius: 17px;
   justify-content: center;
   align-items: center;
@@ -129,23 +139,69 @@ export default class ActivityFeed extends React.Component<Props, State> {
     const { data } = item.item.payload;
     const { type } = item.item;
 
-    getSocialAction = (status: string) => {
+    function getSocialAction(status: string) {
       if (status === 'MESSAGE_RECEIVED') {
         return (
-          <ActionTextWrapper >
-            <ActionText>
-              Reply
+          <ActionTextWrapper>
+            <ActionButton>
+              <ActionButtonText>
+                REPLY
+              </ActionButtonText>
+            </ActionButton>
+          </ActionTextWrapper>
+        );
+      }
+      if (status === 'RECEIVED') {
+        return (
+          <ButtonIconWrapper>
+            <ActionCircleButton
+              color={baseColors.darkGray}
+              margin={0}
+              icon="close"
+              fontSize={32}
+            />
+            <ActionCircleButton
+              color={baseColors.white}
+              margin={0}
+              accept
+              icon="ios-checkmark"
+              fontSize={32}
+            />
+          </ButtonIconWrapper>
+        );
+      }
+      if (status === 'SENT') {
+        return (
+          <ActionTextWrapper>
+            <ActionText red>
+              Cancel
             </ActionText>
           </ActionTextWrapper>
         );
       }
-    };
+      if (status === 'ACCEPTED') {
+        return (
+          <LabelText>
+            ACCEPTED
+          </LabelText>
+        );
+      }
+      if (status === 'DISMISSED') {
+        return (
+          <LabelText>
+            DISMISSED
+          </LabelText>
+        );
+      }
+      return null;
+    }
 
     if (type === 'transactionEvent') {
       const msg = JSON.parse(data.msg);
       const received = msg.value > 0;
       const fromAddress = `${msg.fromAddress.slice(0, 7)}…${msg.fromAddress.slice(-7)}`;
       const displayName = msg.username ? msg.username : fromAddress;
+      const directionSymbol = received ? '+' : '-';
 
       return (
         <ActivityFeedItem isEven={isEven} key={item.index}>
@@ -159,7 +215,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
           </ActivityFeedItemCol>
           <ActivityFeedItemCol flexEnd>
             <ActivityFeedItemAmount received={received}>
-              {msg.value} {msg.asset}
+              {directionSymbol} {msg.value} {msg.asset}
             </ActivityFeedItemAmount>
           </ActivityFeedItemCol>
         </ActivityFeedItem>
@@ -182,12 +238,16 @@ export default class ActivityFeed extends React.Component<Props, State> {
 
       );
     }
+    return null;
   }
 
 
   render() {
     return (
       <ActivityFeedWrapper>
+        <ActivityFeedHeader>
+          <SubHeading>ACTIVITY</SubHeading>
+        </ActivityFeedHeader>
         <TabWrapper>
           <TabItem
             active={this.state.activeTab === 'TRANSACTIONS'}
@@ -209,7 +269,6 @@ export default class ActivityFeed extends React.Component<Props, State> {
           </TabItem>
         </TabWrapper>
         <ActivityFeedList
-
           data={this.props.history}
           renderItem={this.renderActivityFeedItem}
         />
