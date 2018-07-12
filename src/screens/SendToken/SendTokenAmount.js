@@ -205,8 +205,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({
       formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
     }, () => {
-      // const value = this._form.getValue();
-      const value = 3;
+      const value = this._form.getValue();
       const { txFeeInWei } = this.state;
       const { navigation } = this.props;
 

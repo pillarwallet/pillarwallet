@@ -6,7 +6,8 @@ import { TouchableWithoutFeedback, View, Platform } from 'react-native';
 import { Label } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
-import { noop } from 'utils/common';
+import { noop, isIphoneX } from 'utils/common';
+
 
 type Props = {
   onBack?: Function,
@@ -66,7 +67,7 @@ const ModalScreenHeader = (props: Props) => {
     };
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 16 }}>
+    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20, paddingTop: isIphoneX ? 16 : 0 }}>
       <View>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
