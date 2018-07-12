@@ -193,7 +193,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
             active={this.state.activeTab === 'TRANSACTIONS'}
             onPress={() => this.setState({ activeTab: 'TRANSACTIONS' })}
           >
-            <TabItemText>Assets</TabItemText>
+            <TabItemText>Transactions</TabItemText>
           </TabItem>
           <TabItem
             active={this.state.activeTab === 'SOCIAL'}
@@ -205,7 +205,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
             active={this.state.activeTab === 'SYSTEM'}
             onPress={() => this.setState({ activeTab: 'SYSTEM' })}
           >
-            <TabItemText>Other</TabItemText>
+            <TabItemText>System</TabItemText>
           </TabItem>
         </TabWrapper>
         <ActivityFeedList
