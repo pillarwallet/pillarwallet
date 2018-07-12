@@ -18,24 +18,20 @@ type Props = {
 const Header = styled.View`
   background-color: #fff;
   height: 80px;
-  padding: 0 16px;
+  padding: 0 14px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 `;
 
-const Left = styled.View`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-
 const Right = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
+  margin-top: ${Platform.OS === 'ios' ? 0 : 5}
+  margin-right: ${Platform.OS === 'ios' ? -13 : -8}
 `;
 
 const BackIcon = styled(ButtonIcon)`
@@ -57,13 +53,23 @@ const ModalScreenHeader = (props: Props) => {
     rightLabelText = '',
   } = props;
 
-  const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
+  const onBackLeftPadding = Platform.OS === 'ios' ? 2 : 0;
+
+  const additionalStyle = Platform.OS === 'ios' ?
+    {
+      marginBottom: 10,
+    }
+    :
+    {
+      marginBottom: 15,
+      paddingLeft: 15,
+    };
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20 }}>
-      <Left>
+    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 16 }}>
+      <View>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
             {onBack &&
             <BackIcon
               icon="chevron-left"
@@ -71,14 +77,15 @@ const ModalScreenHeader = (props: Props) => {
               onPress={() => onBack(null)}
               color={UIColors.primary}
               fontSize={32}
+              style={additionalStyle}
             />
             }
             <Title title={title} />
           </View>
         </TouchableWithoutFeedback>
-      </Left>
+      </View>
       <Right>
-        <Label>{rightLabelText.toUpperCase()}</Label>
+        <Label style={{ lineHeight: 20 }}>{rightLabelText.toUpperCase()}</Label>
         <CloseButton
           icon="close"
           onPress={onClose}

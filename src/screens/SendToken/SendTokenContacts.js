@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, View } from 'react-native';
 import { Permissions } from 'expo';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes } from 'utils/variables';
-import { Container, Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
@@ -89,18 +89,23 @@ const generateFormOptions = (config: Object): Object => ({
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   flex: 1;
-  position: absolute;
-  bottom: 40;
-  left: 0;
   width: 100%;
+  justify-content: space-between;
+  padding-bottom: 30px;
+`;
+
+const BodyWrapper = styled.View`
+  padding: 0 16px;
 `;
 
 const FooterWrapper = styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 15px;
   width: 100%;
+  margin-bottom: 20px;
+  margin-top: 30px;
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
@@ -177,30 +182,32 @@ class SendTokenContacts extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <ModalScreenHeader
-            onBack={this.props.navigation.goBack}
-            onClose={this.props.navigation.dismiss}
-            rightLabelText="step 2 of 3"
-            title="send"
-          />
-          <Wrapper regularPadding>
-            <SubTitle>To whom you would like to send?</SubTitle>
-            <Form
-              ref={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              onChange={this.handleChange}
-              onBlur={this.handleChange}
-              value={value}
-            />
-          </Wrapper>
+          <KeyboardAvoidingView behavior="padding">
+            <View>
+              <ModalScreenHeader
+                onBack={this.props.navigation.goBack}
+                onClose={this.props.navigation.dismiss}
+                rightLabelText="step 2 of 3"
+                title="send"
+              />
+              <BodyWrapper>
+                <SubTitle>To whom you would like to send?</SubTitle>
+                <Form
+                  ref={node => { this._form = node; }}
+                  type={formStructure}
+                  options={formOptions}
+                  onChange={this.handleChange}
+                  onBlur={this.handleChange}
+                  value={value}
+                />
+                {qrScannerComponent}
+              </BodyWrapper>
+            </View>
+            <FooterWrapper>
+              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+            </FooterWrapper>
+          </KeyboardAvoidingView>
         </Container>
-        {qrScannerComponent}
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
-          <FooterWrapper>
-            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-          </FooterWrapper>
-        </KeyboardAvoidingView>
       </React.Fragment>
     );
   }

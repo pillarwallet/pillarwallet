@@ -1,14 +1,14 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { Text, TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView, View } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import SingleInput from 'components/TextInput/SingleInput';
 import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
@@ -67,6 +67,7 @@ function AmountInputTemplate(locals) {
     ellipsizeMode: 'middle',
     keyboardType: 'numeric',
     textAlign: 'right',
+    autoCapitalize: 'none',
   };
 
   return (
@@ -95,10 +96,13 @@ const generateFormOptions = (config: Object): Object => ({
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   flex: 1;
-  position: absolute;
-  bottom: 40;
-  left: 0;
   width: 100%;
+  justify-content: space-between;
+  padding-bottom: 30px;
+`;
+
+const BodyWrapper = styled.View`
+  padding: 0 16px;
 `;
 
 const ActionsWrapper = styled.View`
@@ -111,7 +115,9 @@ const FooterWrapper = styled.View`
   flexDirection: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 15px;
+  margin-bottom: 20px;
+  margin-top: 30px;
   width: 100%;
 `;
 
@@ -245,34 +251,36 @@ class SendTokenAmount extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <ModalScreenHeader
-            onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
-            title="send"
-          />
-          <Wrapper regularPadding>
-            <SubTitle>How much {token} would you like to send?</SubTitle>
-            <Form
-              ref={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleChange}
-            />
-            <ActionsWrapper>
-              <Paragraph style={{ marginRight: 24 }}>Balance {balance} {token}</Paragraph>
-              <TouchableOpacity onPress={this.useMaxValue}>
-                <TextLink>Send All</TextLink>
-              </TouchableOpacity>
-            </ActionsWrapper>
-          </Wrapper>
+          <KeyboardAvoidingView behavior="padding">
+            <View>
+              <ModalScreenHeader
+                onClose={this.props.navigation.dismiss}
+                rightLabelText="step 1 of 3"
+                title="send"
+              />
+              <BodyWrapper>
+                <SubTitle>How much {token} would you like to send?</SubTitle>
+                <Form
+                  ref={node => { this._form = node; }}
+                  type={formStructure}
+                  options={formOptions}
+                  value={value}
+                  onChange={this.handleChange}
+                />
+                <ActionsWrapper>
+                  <Paragraph style={{ marginRight: 24 }}>Balance {balance} {token}</Paragraph>
+                  <TouchableOpacity onPress={this.useMaxValue}>
+                    <TextLink>Send All</TextLink>
+                  </TouchableOpacity>
+                </ActionsWrapper>
+              </BodyWrapper>
+            </View>
+            <FooterWrapper>
+              <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
+              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+            </FooterWrapper>
+          </KeyboardAvoidingView>
         </Container>
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
-          <FooterWrapper>
-            <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
-            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-          </FooterWrapper>
-        </KeyboardAvoidingView>
       </React.Fragment>
     );
   }
