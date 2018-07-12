@@ -46,6 +46,7 @@ const dummyHistory = [
       data: {
         label: 'New chat started',
         connection: 'michael',
+        status: 'MESSAGE_RECEIVED',
       },
     },
   },
