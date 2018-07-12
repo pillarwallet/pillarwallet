@@ -5,6 +5,7 @@ import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import { SubHeading } from 'components/Typography';
+import ButtonIcon from 'components/ButtonIcon';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 
@@ -18,8 +19,8 @@ type State = {
 }
 
 const dummyRecentConnections = {
-  paragramm: {
-    name: 'paragramm',
+  paragramm1234567: {
+    name: 'paragramm1234567',
   },
   burningfiat: {
     name: 'burningfiat',
@@ -222,10 +223,19 @@ const HomeHeaderAvatar = styled.View`
   background-color: ${baseColors.darkGray};
 `;
 
-
 const HomeHeaderUsername = styled.Text`
   font-size: ${fontSizes.extraLarge};
   font-weight: ${fontWeights.bold};
+`;
+
+const HomeHeaderButtons = styled.View`
+  margin-left: auto;
+  flex-direction: row;
+  align-items: flex-end;
+`;
+
+const HomeHeaderButton = styled(ButtonIcon)`
+  margin-left: 10px;
 `;
 
 const RecentConnections = styled.View`
@@ -235,7 +245,6 @@ const RecentConnections = styled.View`
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${UIColors.defaultBorderColor};
-  // padding: 16px;
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView`
@@ -249,7 +258,8 @@ const RecentConnectionsSubHeading = styled(SubHeading)`
 
 const RecentConnectionsItem = styled.View`
   align-items: center;
-  width: 84px;
+  width: 64px;
+  margin: 0 8px;
 `;
 
 const RecentConnectionsItemAvatarWrapper = styled.View`
@@ -292,6 +302,21 @@ export default class PeopleScreen extends React.Component<Props, State> {
           <HomeHeader>
             <HomeHeaderAvatar />
             <HomeHeaderUsername>johndoe</HomeHeaderUsername>
+            <HomeHeaderButtons>
+              <HomeHeaderButton
+                icon="question-circle-o"
+                type="FontAwesome"
+                color={baseColors.darkGray}
+                fontSize={24}
+              />
+              <HomeHeaderButton
+                icon="cog"
+                type="FontAwesome"
+                color={baseColors.darkGray}
+                fontSize={24}
+              />
+
+            </HomeHeaderButtons>
           </HomeHeader>
         </Wrapper>
         <RecentConnections>
