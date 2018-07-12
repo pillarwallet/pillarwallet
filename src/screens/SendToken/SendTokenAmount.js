@@ -1,14 +1,14 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView, View } from 'react-native';
+import { Text, TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import SingleInput from 'components/TextInput/SingleInput';
 import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
@@ -94,11 +94,19 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
+const KeyboardAvoidingView = Platform.OS === 'ios' ?
+  styled(RNKeyboardAvoidingView)`
+  flex: 1;
+  position: absolute;
+  bottom: 40;
+  left: 0;
+  width: 100%;
+` :
+  styled(RNKeyboardAvoidingView)`
   flex: 1;
   width: 100%;
   justify-content: space-between;
-  padding-bottom: 30px;
+  padding-bottom: 50px;
 `;
 
 const BodyWrapper = styled.View`
@@ -111,16 +119,23 @@ const ActionsWrapper = styled.View`
   justify-content: flex-end;
 `;
 
-const FooterWrapper = styled.View`
-  flexDirection: row;
+const FooterWrapper = Platform.OS === 'ios' ?
+  styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
+` :
+  styled.View`
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   padding: 0 16px;
+  width: 100%;
   margin-bottom: 20px;
   margin-top: 30px;
-  width: 100%;
 `;
-
 type Props = {
   token: string;
 
@@ -190,7 +205,8 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.setState({
       formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
     }, () => {
-      const value = this._form.getValue();
+      // const value = this._form.getValue();
+      const value = 3;
       const { txFeeInWei } = this.state;
       const { navigation } = this.props;
 
@@ -248,8 +264,42 @@ class SendTokenAmount extends React.Component<Props, State> {
     } = this.state;
     const { token, icon, balance } = this.assetData;
     const formOptions = generateFormOptions({ icon, currency: token });
-    return (
-      <React.Fragment>
+
+    const layout = Platform.OS === 'ios' ?
+      (
+        <View>
+          <ModalScreenHeader
+            onClose={this.props.navigation.dismiss}
+            rightLabelText="step 1 of 3"
+            title="send"
+          />
+          <Container>
+            <Wrapper regularPadding>
+              <SubTitle>How much {token} would you like to send?</SubTitle>
+              <Form
+                ref={node => { this._form = node; }}
+                type={formStructure}
+                options={formOptions}
+                value={value}
+                onChange={this.handleChange}
+              />
+              <ActionsWrapper>
+                <Paragraph style={{ marginRight: 24 }}>Balance {balance} {token}</Paragraph>
+                <TouchableOpacity onPress={this.useMaxValue}>
+                  <TextLink>Send All</TextLink>
+                </TouchableOpacity>
+              </ActionsWrapper>
+            </Wrapper>
+          </Container>
+          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
+            <FooterWrapper>
+              <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
+              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+            </FooterWrapper>
+          </KeyboardAvoidingView>
+        </View>
+      ) :
+      (
         <Container>
           <KeyboardAvoidingView behavior="padding">
             <View>
@@ -281,6 +331,10 @@ class SendTokenAmount extends React.Component<Props, State> {
             </FooterWrapper>
           </KeyboardAvoidingView>
         </Container>
+      );
+    return (
+      <React.Fragment>
+        {layout}
       </React.Fragment>
     );
   }
