@@ -115,7 +115,7 @@ const FooterWrapper = styled.View`
   flexDirection: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px;
+  padding: 0 16px;
   margin-bottom: 20px;
   margin-top: 30px;
   width: 100%;
