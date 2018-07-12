@@ -20,6 +20,7 @@ import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
+import KeyboardAvoidModal from 'components/Modals/KeyboardAvoidModal';
 
 import countries from 'utils/countries.json';
 
@@ -27,7 +28,6 @@ import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileImage from './ProfileImage';
 import ProfileForm from './ProfileForm';
-import KeyboardAvoidModal from '../../components/Modals/KeyboardAvoidModal';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
