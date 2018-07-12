@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { CONTACT } from 'constants/navigationConstants';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import Title from 'components/Title';
@@ -38,6 +38,7 @@ const TabItem = styled.TouchableOpacity`
 const TabItemText = styled.Text`
   font-size: ${fontSizes.medium};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
+  font-weight: ${props => props.active ? fontWeights.bold : fontWeights.book};
 `;
 
 export default class ConnectionRequests extends React.Component<Props, State> {
