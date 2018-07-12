@@ -55,8 +55,8 @@ const Rectangle = styled.View`
 
 const CloseButton = styled(ButtonIcon)`
   position: absolute;
-  right: 5px;
-  top: 5px;
+  right: 10px;
+  top: 20px;
   zIndex: 5;
 `;
 

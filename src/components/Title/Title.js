@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 type Props = {
-  title: string,
+  title?: string,
   style?: Object,
   noMargin?: boolean,
   center?: boolean,
@@ -42,7 +42,7 @@ const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} center={props.center} maxWidth={props.maxWidth}>
       <Text center={props.center}>{props.title}</Text>
-      <BlueDot />
+      {!!props.title && <BlueDot />}
     </Wrapper>
   );
 };

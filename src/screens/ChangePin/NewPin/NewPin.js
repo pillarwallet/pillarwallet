@@ -17,7 +17,7 @@ export default class NewPin extends React.Component<Props> {
   };
 
   handleScreenDismissal = () => {
-    this.props.navigation.goBack(null);
+    this.props.navigation.dismiss();
   };
 
   render() {

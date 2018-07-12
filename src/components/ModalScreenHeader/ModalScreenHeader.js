@@ -3,7 +3,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
 import { TouchableWithoutFeedback, View, Platform } from 'react-native';
-import { Header as NBHeader, Left as NBLeft, Right as NBRight } from 'native-base';
 import { Label } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
@@ -16,30 +15,33 @@ type Props = {
   rightLabelText?: string,
 }
 
-const Header = styled(NBHeader)`
+const Header = styled.View`
   background-color: #fff;
-  border-bottom-width: 0;
-  height: auto;
-  padding: 20px 16px 0;
+  height: 80px;
+  padding: 0 16px;
   display: flex;
-  padding: 0 20px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
-const Left = styled(NBLeft)`
+const Left = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
 `;
 
 
-const Right = styled(NBRight)`
+const Right = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
 `;
 
 const BackIcon = styled(ButtonIcon)`
-  margin-right: 5px;
+  position: relative;
+  top: 10px;
+  margin: 0 -10px;
 `;
 
 const CloseButton = styled(ButtonIcon)`
@@ -68,10 +70,10 @@ const ModalScreenHeader = (props: Props) => {
               type="Feather"
               onPress={() => onBack(null)}
               color={UIColors.primary}
-              fontSize={28}
+              fontSize={32}
             />
             }
-            {title && <Title title={title} />}
+            <Title title={title} />
           </View>
         </TouchableWithoutFeedback>
       </Left>

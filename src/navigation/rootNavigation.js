@@ -45,7 +45,7 @@ const StackNavigatorConfig = {
       borderBottomWidth: 0,
       elevation: 0,
     },
-    headerLeft: <BackButton navigation={navigation} />,
+    headerLeft: () => <BackButton navigation={navigation} />,
   }),
 };
 
