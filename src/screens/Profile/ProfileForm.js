@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView as RNKeyboardAvoidingView, Platform, View } from 'react-native';
 import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
@@ -34,12 +34,19 @@ const FooterWrapper = styled.View`
   width: 100%;
 `;
 
-const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
+const KeyboardAvoidingView = Platform.OS === 'ios' ?
+  styled(RNKeyboardAvoidingView)`
   position: absolute;
   bottom: 40px;
   left: 0;
   width: 100%;
-`;
+`
+  :
+  styled(RNKeyboardAvoidingView)`
+  width: 100%;
+  flex: 1;
+  justify-content: space-between;
+  padding-bottom: 40px;`;
 
 function InputTemplate(locals) {
   const { config } = locals;
@@ -118,7 +125,7 @@ export default class ProfileForm extends React.Component<Props, State> {
     const value = this._form.getValue();
     if (!value) return;
     onSubmit(value);
-  }
+  };
 
 
   handleChange = (value: Object) => {
@@ -130,20 +137,40 @@ export default class ProfileForm extends React.Component<Props, State> {
     const { fields } = this.props;
     const formOptions = generateFormOptions(fields);
     const formStructure = getFormStructure(fields);
-    return (
-      <Container>
-        <Form
-          ref={node => { this._form = node; }}
-          type={formStructure}
-          options={formOptions}
-          value={value}
-          onChange={this.handleChange}
-        />
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={180}>
-          <FooterWrapper>
+
+    const content = Platform.OS === 'ios' ?
+      (
+        <View style={{ flex: 1 }}>
+          <Form
+            ref={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            value={value}
+            onChange={this.handleChange}
+          />
+          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={180}>
+            <FooterWrapper style={{ paddingTop: 20 }}>
+              <Button onPress={this.handleSubmit} title="Save" />
+            </FooterWrapper>
+          </KeyboardAvoidingView>
+        </View>)
+      :
+      (
+        <KeyboardAvoidingView behavior="padding">
+          <Form
+            ref={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            value={value}
+            onChange={this.handleChange}
+          />
+          <FooterWrapper style={{ marginBottom: 40 }}>
             <Button onPress={this.handleSubmit} title="Save" />
           </FooterWrapper>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView>);
+    return (
+      <Container>
+        {content}
       </Container>
     );
   }
