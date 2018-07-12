@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
+import ButtonIcon from 'components/ButtonIcon';
 
 const ActivityFeedWrapper = styled.View`
 
@@ -69,6 +70,46 @@ const TabItemText = styled.Text`
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
+const ActionCircleButton = styled(ButtonIcon)`
+  height: 34px;
+  width: 34px;
+  border-radius: 17px;
+  padding: 0;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+  background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
+`;
+const ButtonIconWrapper = styled.View`
+  margin-left: auto;
+  flex-direction: row;
+`;
+
+const ActionTextWrapper = styled.TouchableOpacity`
+  margin-left: auto;
+`;
+
+const ActionText = styled.Text`
+  color: ${props => props.red ? baseColors.fireEngineRed : baseColors.clearBlue};
+  font-size: ${fontSizes.small};
+`;
+
+const ActionButton = styled.View`
+  background: ${baseColors.clearBlue};
+  padding: 0 20px;
+  height: 33px;
+  border-radius: 17px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ActionButtonText = styled.Text`
+  font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.bold};
+  color: ${baseColors.white};
+`;
+
+
 type Props = {
   history: Array<*>,
 }
@@ -79,16 +120,26 @@ type State = {
 
 export default class ActivityFeed extends React.Component<Props, State> {
   state = {
-    activeTab: 'ALL',
+    activeTab: 'TRANSACTIONS',
   }
 
 
   renderActivityFeedItem = (item: Object) => {
     const isEven = item.index % 2 === 0;
     const { data } = item.item.payload;
-
     const { type } = item.item;
 
+    getSocialAction = (status: string) => {
+      if (status === 'MESSAGE_RECEIVED') {
+        return (
+          <ActionTextWrapper >
+            <ActionText>
+              Reply
+            </ActionText>
+          </ActionTextWrapper>
+        );
+      }
+    };
 
     if (type === 'transactionEvent') {
       const msg = JSON.parse(data.msg);
@@ -114,9 +165,9 @@ export default class ActivityFeed extends React.Component<Props, State> {
         </ActivityFeedItem>
       );
     } else if (type === 'social') {
+      const { status } = data;
       return (
         <ActivityFeedItem isEven={isEven} key={item.index}>
-
           <ActivityFeedItemCol fixedWidth="42px">
             <ActivityFeedItemAvatarWrapper />
           </ActivityFeedItemCol>
@@ -124,7 +175,9 @@ export default class ActivityFeed extends React.Component<Props, State> {
             <ActivityFeedItemLabel>{data.label}</ActivityFeedItemLabel>
             <ActivityFeedItemName>{data.connection}</ActivityFeedItemName>
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol flexEnd />
+          <ActivityFeedItemCol flexEnd>
+            { getSocialAction(status) }
+          </ActivityFeedItemCol>
         </ActivityFeedItem>
 
       );
@@ -137,14 +190,8 @@ export default class ActivityFeed extends React.Component<Props, State> {
       <ActivityFeedWrapper>
         <TabWrapper>
           <TabItem
-            active={this.state.activeTab === 'ALL'}
-            onPress={() => this.setState({ activeTab: 'ALL' })}
-          >
-            <TabItemText active={this.state.activeTab === 'ALL'}>All</TabItemText>
-          </TabItem>
-          <TabItem
-            active={this.state.activeTab === 'ASSETS'}
-            onPress={() => this.setState({ activeTab: 'ASSETS' })}
+            active={this.state.activeTab === 'TRANSACTIONS'}
+            onPress={() => this.setState({ activeTab: 'TRANSACTIONS' })}
           >
             <TabItemText>Assets</TabItemText>
           </TabItem>
@@ -155,8 +202,8 @@ export default class ActivityFeed extends React.Component<Props, State> {
             <TabItemText>Social</TabItemText>
           </TabItem>
           <TabItem
-            active={this.state.activeTab === 'OTHER'}
-            onPress={() => this.setState({ activeTab: 'OTHER' })}
+            active={this.state.activeTab === 'SYSTEM'}
+            onPress={() => this.setState({ activeTab: 'SYSTEM' })}
           >
             <TabItemText>Other</TabItemText>
           </TabItem>
