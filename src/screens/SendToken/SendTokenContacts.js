@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
 import { Permissions } from 'expo';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
@@ -87,20 +87,41 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
+const KeyboardAvoidingView = Platform.OS === 'ios' ?
+  styled(RNKeyboardAvoidingView)`
   flex: 1;
   position: absolute;
   bottom: 40;
   left: 0;
   width: 100%;
+` :
+  styled(RNKeyboardAvoidingView)`
+  flex: 1;
+  width: 100%;
+  justify-content: space-between;
+  padding-bottom: 50px;
 `;
 
-const FooterWrapper = styled.View`
+const BodyWrapper = styled.View`
+  padding: 0 16px;
+`;
+
+const FooterWrapper = Platform.OS === 'ios' ?
+  styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
   padding: 0 20px;
   width: 100%;
+` :
+  styled.View`
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 16px;
+  width: 100%;
+  margin-bottom: 20px;
+  margin-top: 30px;
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
@@ -174,33 +195,69 @@ class SendTokenContacts extends React.Component<Props, State> {
         onRead={this.handleQRRead}
       />
     );
-    return (
-      <React.Fragment>
-        <Container>
+
+    const layout = Platform.OS === 'ios' ?
+      (
+        <View>
           <ModalScreenHeader
             onBack={this.props.navigation.goBack}
             onClose={this.props.navigation.dismiss}
             rightLabelText="step 2 of 3"
             title="send"
           />
-          <Wrapper regularPadding>
-            <SubTitle>To whom you would like to send?</SubTitle>
-            <Form
-              ref={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              onChange={this.handleChange}
-              onBlur={this.handleChange}
-              value={value}
-            />
-          </Wrapper>
+          <Container>
+            <Wrapper regularPadding>
+              <SubTitle>To whom you would like to send?</SubTitle>
+              <Form
+                ref={node => { this._form = node; }}
+                type={formStructure}
+                options={formOptions}
+                onChange={this.handleChange}
+                onBlur={this.handleChange}
+                value={value}
+              />
+            </Wrapper>
+          </Container>
+          {qrScannerComponent}
+          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
+            <FooterWrapper>
+              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+            </FooterWrapper>
+          </KeyboardAvoidingView>
+        </View>
+      ) :
+      (
+        <Container>
+          <KeyboardAvoidingView behavior="padding">
+            <View>
+              <ModalScreenHeader
+                onBack={this.props.navigation.goBack}
+                onClose={this.props.navigation.dismiss}
+                rightLabelText="step 2 of 3"
+                title="send"
+              />
+              <BodyWrapper>
+                <SubTitle>To whom you would like to send?</SubTitle>
+                <Form
+                  ref={node => { this._form = node; }}
+                  type={formStructure}
+                  options={formOptions}
+                  onChange={this.handleChange}
+                  onBlur={this.handleChange}
+                  value={value}
+                />
+                {qrScannerComponent}
+              </BodyWrapper>
+            </View>
+            <FooterWrapper>
+              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+            </FooterWrapper>
+          </KeyboardAvoidingView>
         </Container>
-        {qrScannerComponent}
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
-          <FooterWrapper>
-            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-          </FooterWrapper>
-        </KeyboardAvoidingView>
+      );
+    return (
+      <React.Fragment>
+        {layout}
       </React.Fragment>
     );
   }
