@@ -3,11 +3,12 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { View } from 'react-native';
+import { Text, Animated, Keyboard } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
-  onChange: Function,
+  onChange?: Function,
+  onBlur?: Function,
   value: ?string,
 }
 
@@ -18,28 +19,43 @@ type Props = {
 }
 
 type State = {
-  value: ?string
+  value: ?string,
+  animFadeIn: Object,
+  animShrink: Object,
 }
 
 type EventLike = {
   nativeEvent: Object,
 }
 
-const ErrorMessage = styled.Text`
-  color: tomato;
-  flex: 1;
-`;
-
-
-const InputFieldWrapper = styled.View`
-  height: 40px;
-  border-width: 1px;
-  border-radius: 20px;
-  border-color: ${UIColors.defaultBorderColor};
-  align-items: center;
-  justify-content: space-around;
+const SearchHolder = styled.View`
+  padding-bottom: 20px;
+  display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 `;
+
+
+const CancelButton = styled.TouchableOpacity`
+  margin: 0 5px 0 10px;
+;`;
+
+const cancelButtonWrapperStyles = {
+  position: 'absolute',
+  height: '100%',
+  right: 0,
+};
+
+const animatedInputFieldStyles = {
+  height: 40,
+  borderWidth: 1,
+  borderRadius: 20,
+  borderColor: UIColors.defaultBorderColor,
+  alignItems: 'center',
+  justifyContent: 'space-around',
+  flexDirection: 'row',
+};
 
 const InputField = styled.TextInput`
   flex: 1;
@@ -54,18 +70,11 @@ const InputIcon = styled(Icon)`
   color: ${baseColors.darkGray};
 `;
 
-const InputFooter = styled(View)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin-bottom: 6px;
-  margin-top: 6px;
-`;
-
-
 class SearchBar extends React.Component<Props, State> {
   state = {
     value: '',
+    animFadeIn: new Animated.Value(0),
+    animShrink: new Animated.Value(100),
   };
 
   static defaultProps = {
@@ -82,7 +91,6 @@ class SearchBar extends React.Component<Props, State> {
     return null;
   }
 
-
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
     const value = e.nativeEvent.text;
@@ -93,31 +101,78 @@ class SearchBar extends React.Component<Props, State> {
     });
   };
 
+  handleBlur = (e: EventLike) => {
+    const { inputProps: { onBlur } } = this.props;
+    const value = e.nativeEvent.text;
+    this.handleCancel();
+    this.setState({ value }, () => {
+      if (onBlur) {
+        onBlur(value);
+      }
+    });
+  };
+
+  handleCancel = () => {
+    Keyboard.dismiss();
+    Animated.parallel([
+      Animated.timing(this.state.animFadeIn, {
+        toValue: 0,
+        duration: 200,
+      }),
+      Animated.timing(this.state.animShrink, {
+        toValue: 100,
+        duration: 250,
+      }),
+    ]).start();
+  }
+
+  handleFocus = () => {
+    Animated.parallel([
+      Animated.timing(this.state.animFadeIn, {
+        toValue: 1,
+        duration: 200,
+      }),
+      Animated.timing(this.state.animShrink, {
+        toValue: 80,
+        duration: 250,
+      }),
+    ]).start();
+  }
+
   render() {
     const {
       inputProps,
-      errorMessage,
     } = this.props;
-    const { value } = this.state;
-
+    const { value, animFadeIn, animShrink } = this.state;
     return (
-      <View style={{ paddingBottom: 10 }}>
-
-        <InputFieldWrapper>
+      <SearchHolder>
+        <Animated.View
+          style={{
+            ...animatedInputFieldStyles,
+            width: animShrink.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0%', '1%'],
+            }),
+          }}
+        >
           <InputField
+            onFocus={this.handleFocus}
             {...inputProps}
             onChange={this.handleChange}
+            onBlur={this.handleBlur}
             value={value}
             placeholder="Search or add new contact"
           />
           <InputIcon
             name="search"
           />
-        </InputFieldWrapper>
-        <InputFooter>
-          {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
-        </InputFooter>
-      </View>
+        </Animated.View>
+        <Animated.View style={{ ...cancelButtonWrapperStyles, opacity: animFadeIn }}>
+          <CancelButton onPress={this.handleCancel}>
+            <Text style={{ color: baseColors.electricBlue }}>Cancel</Text>
+          </CancelButton>
+        </Animated.View>
+      </SearchHolder>
     );
   }
 }
