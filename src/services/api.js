@@ -2,11 +2,16 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
-import { SDK_PROVIDER, BCX_URL } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
+import {
+  SDK_PROVIDER,
+  BCX_URL,
+  NOTIFICATIONS_URL,
+} from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import { uniqBy } from 'utils/common';
-
+import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
+import { utils } from 'ethers';
 
 type HistoryPayload = {
   address1: string,
@@ -31,6 +36,7 @@ SDKWrapper.prototype.init = function (privateKey: string) {
   this.pillarWalletSdk = new PillarSdk({
     privateKey: privateKey.slice(2),
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
+    notificationsUrl: NOTIFICATIONS_URL,
   });
 };
 
@@ -87,6 +93,21 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
   return BCXSdk.txHistory(payload)
     .then(({ txHistory: { txHistory } }) => uniqBy(txHistory, 'hash'))
+    .then(history => {
+      return history.map(({
+        fromAddress,
+        toAddress,
+        txHash,
+        value,
+        ...rest
+      }): Transaction => ({
+        to: toAddress,
+        from: fromAddress,
+        hash: txHash,
+        value: utils.formatUnits(utils.bigNumberify(value.toString())),
+        ...rest,
+      }));
+    })
     .catch(() => []);
 };
 
