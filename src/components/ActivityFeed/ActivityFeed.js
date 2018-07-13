@@ -65,14 +65,14 @@ const TabItem = styled.TouchableOpacity`
   height: 44px;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  flex: ${props => props.flex ? props.flex : 1};
   border-color: ${props => props.active ? baseColors.electricBlue : baseColors.lightGray};
   border-bottom-width: 2px;
 
 `;
 
 const TabItemText = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   font-weight: ${props => props.active ? fontWeights.bold : fontWeights.book};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;
@@ -195,10 +195,10 @@ export default class ActivityFeed extends React.Component<Props, State> {
   }
 
 
-  renderActivityFeedItem = (item: Object) => {
-    const isEven = item.index % 2 === 0;
-    const { data } = item.item.payload;
-    const { type } = item.item;
+  renderActivityFeedItem = (item: Object, index: number) => {
+    const isEven = index % 2 === 0;
+    const { data } = item.payload;
+    const { type } = item;
 
     if (type === 'transactionEvent') {
       const msg = JSON.parse(data.msg);
@@ -208,7 +208,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
       const directionSymbol = received ? '+' : '-';
 
       return (
-        <ActivityFeedItem isEven={isEven} key={item.index}>
+        <ActivityFeedItem isEven={isEven} key={index}>
 
           <ActivityFeedItemCol fixedWidth="42px">
             <ActivityFeedItemAvatarWrapper />
@@ -245,6 +245,14 @@ export default class ActivityFeed extends React.Component<Props, State> {
     return null;
   }
 
+  renderActivityFeedItems = (history: Array<*>) => {
+    const activityFeedItems = [];
+    history.map((item: Object, index: number) => {
+      activityFeedItems.push(this.renderActivityFeedItem(item, index));
+    });
+    return activityFeedItems;
+  };
+
 
   render() {
     return (
@@ -256,26 +264,26 @@ export default class ActivityFeed extends React.Component<Props, State> {
           <TabItem
             active={this.state.activeTab === 'ALL'}
             onPress={() => this.setState({ activeTab: 'ALL' })}
+            flex={1}
           >
             <TabItemText active={this.state.activeTab === 'ALL'}>All</TabItemText>
           </TabItem>
           <TabItem
             active={this.state.activeTab === 'TRANSACTIONS'}
             onPress={() => this.setState({ activeTab: 'TRANSACTIONS' })}
+            flex={1}
           >
             <TabItemText active={this.state.activeTab === 'TRANSACTIONS'}>Transactions</TabItemText>
           </TabItem>
           <TabItem
             active={this.state.activeTab === 'SOCIAL'}
             onPress={() => this.setState({ activeTab: 'SOCIAL' })}
+            flex={1}
           >
             <TabItemText active={this.state.activeTab === 'SOCIAL'}>Social</TabItemText>
           </TabItem>
         </TabWrapper>
-        <ActivityFeedList
-          data={this.props.history}
-          renderItem={this.renderActivityFeedItem}
-        />
+        {this.renderActivityFeedItems(this.props.history)}
       </ActivityFeedWrapper>
     );
   }

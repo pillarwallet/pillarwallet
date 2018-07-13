@@ -4,7 +4,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { PROFILE } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
+import Intercom from 'react-native-intercom';
 import { SubHeading } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
 
@@ -212,7 +213,11 @@ const dummyHistory = [
 
 const HomeHeader = styled.View`
   height: 120px;
+  padding: 0 16px;
   align-content: space-between;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${UIColors.defaultBorderColor};
 `;
 
 const HomeHeaderRow = styled.View`
@@ -248,7 +253,6 @@ const HomeHeaderButton = styled(ButtonIcon)`
 const RecentConnections = styled.View`
   height: 140px;
   background-color: ${baseColors.lightGray};
-  border-top-width: 1px;
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${UIColors.defaultBorderColor};
@@ -309,40 +313,41 @@ export default class PeopleScreen extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <Wrapper regularPadding>
-          <HomeHeader>
-            <HomeHeaderRow>
-              <HomeHeaderAvatar />
-              <HomeHeaderUsername>johndoe</HomeHeaderUsername>
-              <HomeHeaderButtons>
-                <HomeHeaderButton
-                  icon="question-circle-o"
-                  type="FontAwesome"
-                  color={baseColors.darkGray}
-                  fontSize={24}
-                />
-                <HomeHeaderButton
-                  icon="cog"
-                  type="FontAwesome"
-                  color={baseColors.darkGray}
-                  fontSize={24}
-                  onPress={() => this.goToProfile()}
-                />
+        <HomeHeader>
+          <HomeHeaderRow>
+            <HomeHeaderAvatar />
+            <HomeHeaderUsername>johndoe</HomeHeaderUsername>
+            <HomeHeaderButtons>
+              <HomeHeaderButton
+                icon="question-circle-o"
+                type="FontAwesome"
+                color={baseColors.darkGray}
+                fontSize={24}
+                onPress={() => Intercom.displayMessenger()}
+              />
+              <HomeHeaderButton
+                icon="cog"
+                type="FontAwesome"
+                color={baseColors.darkGray}
+                fontSize={24}
+                onPress={() => this.goToProfile()}
+              />
 
-              </HomeHeaderButtons>
-            </HomeHeaderRow>
-            <HomeHeaderRow>
-              <PortfolioBalance />
-            </HomeHeaderRow>
-          </HomeHeader>
-        </Wrapper>
-        <RecentConnections>
-          <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
-          <RecentConnectionsScrollView horizontal>
-            {this.renderRecentConnections()}
-          </RecentConnectionsScrollView>
-        </RecentConnections>
-        <ActivityFeed history={dummyHistory} />
+            </HomeHeaderButtons>
+          </HomeHeaderRow>
+          <HomeHeaderRow>
+            <PortfolioBalance />
+          </HomeHeaderRow>
+        </HomeHeader>
+        <ScrollWrapper>
+          <RecentConnections>
+            <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
+            <RecentConnectionsScrollView horizontal>
+              {this.renderRecentConnections()}
+            </RecentConnectionsScrollView>
+          </RecentConnections>
+          <ActivityFeed history={dummyHistory} />
+        </ScrollWrapper>
       </Container>
     );
   }
