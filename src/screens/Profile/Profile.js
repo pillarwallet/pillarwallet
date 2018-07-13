@@ -217,7 +217,7 @@ class Profile extends React.Component<Props, State> {
       showSystemInfoModal,
     } = this.state;
     return (
-      <Container gray>
+      <Container color={baseColors.snowWhite}>
         <Header gray title="settings" onBack={navigation.goBack} index={1} />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
