@@ -5,6 +5,7 @@ export type Asset = {
   balance: number,
   address: string,
   description: string,
+  iconUrl: string,
 };
 
 export type Assets = {

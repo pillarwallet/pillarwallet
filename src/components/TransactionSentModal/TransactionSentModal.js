@@ -20,7 +20,7 @@ const TransactionSentModal = (props: Props) => {
       headerImage={tokenSentConfirmationImage}
     >
       <Title
-        title="your transaction is currently pending"
+        title="your transaction is pending"
         center
       />
       <Paragraph light center style={{ marginBottom: 30 }}>

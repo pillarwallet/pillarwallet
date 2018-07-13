@@ -17,22 +17,7 @@ import {
   fetchSupportedAssetsAction,
 } from 'actions/assetsActions';
 import { ETH } from 'constants/assetsConstants';
-
-const tokenIcons = {};
-
-
-// ALL SHOULD BE REMOVED FROM THE BUNDLED ONCE ALL ASSETS UPLOADED ON CDN
-tokenIcons.PLR = require('../../assets/images/tokens/PLR/icon.png');
-tokenIcons.QTM = require('../../assets/images/tokens/QTM/icon.png');
-tokenIcons.OMG = require('../../assets/images/tokens/OMG/icon.png');
-tokenIcons.ICX = require('../../assets/images/tokens/ICX/icon.png');
-tokenIcons.STORJ = require('../../assets/images/tokens/STORJ/icon.png');
-tokenIcons.BAT = require('../../assets/images/tokens/BAT/icon.png');
-tokenIcons.GNT = require('../../assets/images/tokens/GNT/icon.png');
-tokenIcons.PPT = require('../../assets/images/tokens/PPT/icon.png');
-tokenIcons.SALT = require('../../assets/images/tokens/SALT/icon.png');
-tokenIcons.ETH = require('../../assets/images/tokens/ETH/icon.png');
-tokenIcons.EOS = require('../../assets/images/tokens/EOS/icon.png');
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.small};
@@ -76,14 +61,20 @@ class AddToken extends React.Component<Props> {
   };
 
   generateAddTokenListItems() {
-    const { assets, supportedAssets } = this.props;
+    const {
+      assets,
+      supportedAssets,
+    } = this.props;
     return supportedAssets
       .filter(({ symbol }) => symbol !== ETH)
-      .map(({ symbol, name, ...rest }) => {
+      .map(({
+        symbol, name, iconUrl, ...rest
+      }) => {
         const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+        const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}`;
         return (
           <TokenListItem key={symbol}>
-            <Thumbnail square size={80} source={tokenIcons[symbol]} />
+            <Thumbnail square size={80} source={{ uri: fullIconUrl }} />
             <Body style={{ marginLeft: 20 }}>
               <TokenName>{name}</TokenName>
               <TokenSymbol>{symbol}</TokenSymbol>
