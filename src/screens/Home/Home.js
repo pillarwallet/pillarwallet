@@ -267,7 +267,7 @@ const RecentConnectionsSubHeading = styled(SubHeading)`
 `;
 
 
-const RecentConnectionsItem = styled.View`
+const RecentConnectionsItem = styled.TouchableOpacity`
   align-items: center;
   width: 64px;
   margin: 0 8px;
