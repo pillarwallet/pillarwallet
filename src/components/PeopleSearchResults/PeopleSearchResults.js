@@ -1,16 +1,19 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { CONTACT } from 'constants/navigationConstants';
+import { TYPE_INVITE, TYPE_SENT } from 'constants/invitationsConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Wrapper, ScrollWrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import type { SearchResults, ApiUser } from 'models/Contacts';
-import { sendInvitationAction } from 'actions/invitationsActions';
+import { sendInvitationAction, acceptInvitationAction, cancelInvitationAction } from 'actions/invitationsActions';
+import { TYPE_ACCEPTED } from '../../constants/invitationsConstants';
 
-const ContactCardList = styled(ScrollWrapper)`
+const ContactCardList = styled.FlatList`
   padding: 16px;
 `;
 
@@ -41,14 +44,16 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   searchResults: SearchResults,
   sendInvitation: Function,
+  acceptInvitation: Function,
+  cancelInvitation: Function,
+  invitations: Object[],
+  localContacts: Object[]
 };
 
 type State = {
   activeTab: string,
 };
 
-// NOTE: this is temporary file until new design will be ready
-// NOTE: code was copy&pasted from the ConnectionRequests screen
 class PeopleSearchResults extends React.Component<Props, State> {
   state = {
     activeTab: tabs.allUsers,
@@ -62,14 +67,48 @@ class PeopleSearchResults extends React.Component<Props, State> {
     this.props.sendInvitation(user);
   };
 
-  handleReceiveInvitationPress = (user: ApiUser) => () => { // eslint-disable-line
+  handleAcceptInvitationPress = (user: ApiUser) => () => {
+    this.props.acceptInvitation(user);
+  };
+
+  handleCancelInvitationPress = (user: ApiUser) => () => {
+    const { cancelInvitation, invitations } = this.props;
+    const invitation = invitations.find(({ id }) => id === user.id);
+    cancelInvitation(invitation);
+  };
+
+  renderContact = ({ item: user }) => {
+    const { invitations, localContacts } = this.props;
+    const localContactsIds = localContacts.map(({ id }) => id);
+    const invitationsIds = invitations.map(({ id }) => id);
+    let status = TYPE_INVITE;
+    if (invitationsIds.includes(user.id)) {
+      status = TYPE_SENT;
+    }
+    if (localContactsIds.includes(user.id)) {
+      status = TYPE_ACCEPTED;
+    }
+    return (
+      <ContactCard
+        onPress={this.handleContactCardPress}
+        onSendInvitationPress={this.handleSendInvitationPress(user)}
+        onAcceptInvitationPress={this.handleAcceptInvitationPress(user)}
+        onCancelInvitationPress={this.handleCancelInvitationPress(user)}
+        name={user.username}
+        key={user.id}
+        status={status}
+        showActions
+      />
+    );
   };
 
   render() {
     const { activeTab } = this.state;
-    const { searchResults } = this.props;
-
-    // TODO: handle when nothing found
+    const { searchResults, invitations, localContacts } = this.props;
+    const users = {
+      [tabs.allUsers]: searchResults.apiUsers,
+      [tabs.contacts]: searchResults.localContacts,
+    };
     return (
       <React.Fragment>
         <Wrapper regularPadding>
@@ -78,7 +117,7 @@ class PeopleSearchResults extends React.Component<Props, State> {
               active={activeTab === tabs.allUsers}
               onPress={() => this.setState({ activeTab: tabs.allUsers })}
             >
-              <TabItemText active={activeTab === 'RECEIVED'}>All users</TabItemText>
+              <TabItemText active={activeTab === tabs.allUsers}>All users</TabItemText>
             </TabItem>
             <TabItem
               active={activeTab === tabs.contacts}
@@ -90,19 +129,11 @@ class PeopleSearchResults extends React.Component<Props, State> {
         </Wrapper>
         <ContactCardList
           contentInset={{ bottom: 40 }}
-        >
-          {searchResults.apiUsers.map((user, index) => (
-            <ContactCard
-              onPress={this.handleContactCardPress}
-              onSendInvitationPress={this.handleSendInvitationPress(user)}
-              onReceiveInvitationPress={this.handleReceiveInvitationPress(user)}
-              name={user.username}
-              key={user.id}
-              status={index % 2 === 0 ? 'INVITE' : 'RECEIVE'}
-              showActions
-            />
-          ))}
-        </ContactCardList>
+          data={users[activeTab]}
+          renderItem={this.renderContact}
+          onScroll={() => Keyboard.dismiss()}
+          keyExtractor={({ username }) => username}
+        />
       </React.Fragment>
     );
   }
@@ -110,6 +141,8 @@ class PeopleSearchResults extends React.Component<Props, State> {
 
 const mapDispatchToProps = (dispatch: Function) => ({
   sendInvitation: (user) => dispatch(sendInvitationAction(user)),
+  acceptInvitation: (user) => dispatch(acceptInvitationAction(user)),
+  cancelInvitation: (user) => dispatch(cancelInvitationAction(user)),
 });
 
 export default connect(null, mapDispatchToProps)(PeopleSearchResults);

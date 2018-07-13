@@ -2,14 +2,25 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 import { baseColors, fontSizes } from 'utils/variables';
 import { CONTACT } from 'constants/navigationConstants';
+import { TYPE_RECEIVED, TYPE_SENT } from 'constants/invitationsConstants';
+import {
+  cancelInvitationAction,
+  acceptInvitationAction,
+  rejectInvitationAction,
+} from 'actions/invitationsActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
-import Title from 'components/Title';
+import ScreenHeader from 'components/ScreenHeader';
 import ContactCard from 'components/ContactCard';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  invitations: Object[],
+  cancelInvitation: Function,
+  rejectInvitation: Function,
+  acceptInvitation: Function,
 }
 
 type State = {
@@ -40,95 +51,90 @@ const TabItemText = styled.Text`
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
-export default class ConnectionRequests extends React.Component<Props, State> {
+class ConnectionRequests extends React.Component<Props, State> {
   state = {
-    activeTab: 'RECEIVED',
+    activeTab: TYPE_SENT,
   }
-
-  handleSearchChange = () => {
-
-  };
 
   handleContactCardPress = () => {
     this.props.navigation.navigate(CONTACT);
-  }
+  };
 
-  handleConnectionsRequestBannerPress = () => {
-    this.props.navigation.navigate(CONTACT);
-  }
+  handleAcceptInvitationPress = (invitation) => () => {
+    const { acceptInvitation } = this.props;
+    acceptInvitation(invitation);
+  };
 
-  handleAcceptInvitationPress = () => {
-  }
+  handleRejectInvitatonPress = (invitation) => () => {
+    const { rejectInvitation } = this.props;
+    rejectInvitation(invitation);
+  };
 
-  handleRejectInvitatonPress = () => {
-  }
+  handleCancelInvitationPress = (invitation) => () => {
+    const { cancelInvitation } = this.props;
+    cancelInvitation(invitation);
+  };
 
-  handleCancelInvitationPress = () => {
-  }
-
+  renderInvitations = () => {
+    const { invitations } = this.props;
+    const { activeTab } = this.state;
+    return invitations
+      .filter(({ invitationType }) => invitationType === activeTab)
+      .map(invitation => (
+        <ContactCard
+          key={invitation.id}
+          onPress={this.handleContactCardPress}
+          onAcceptInvitationPress={this.handleAcceptInvitationPress(invitation)}
+          onRejectInvitationPress={this.handleRejectInvitatonPress(invitation)}
+          onCancelInvitationPress={this.handleCancelInvitationPress(invitation)}
+          name={invitation.username}
+          status={invitation.invitationType}
+          showActions
+        />
+      ));
+  };
 
   render() {
+    const { activeTab } = this.state;
     return (
       <Container>
+        <ScreenHeader title="connection requests" onBack={this.props.navigation.goBack} />
         <Wrapper regularPadding>
-          <Title title="connection requests" />
           <TabWrapper>
             <TabItem
-              active={this.state.activeTab === 'RECEIVED'}
-              onPress={() => this.setState({ activeTab: 'RECEIVED' })}
-            >
-              <TabItemText active={this.state.activeTab === 'RECEIVED'}>Received</TabItemText>
-            </TabItem>
-            <TabItem
-              active={this.state.activeTab === 'SENT'}
-              onPress={() => this.setState({ activeTab: 'SENT' })}
+              active={activeTab === TYPE_SENT}
+              onPress={() => this.setState({ activeTab: TYPE_SENT })}
             >
               <TabItemText>Sent</TabItemText>
+            </TabItem>
+            <TabItem
+              active={activeTab === TYPE_RECEIVED}
+              onPress={() => this.setState({ activeTab: TYPE_RECEIVED })}
+            >
+              <TabItemText active={activeTab === TYPE_RECEIVED}>Received</TabItemText>
             </TabItem>
           </TabWrapper>
         </Wrapper>
         <ContactCardList
           contentInset={{ bottom: 40 }}
         >
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="John Doe"
-            status="RECEIVED"
-            showActions
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="David Bowie"
-            status="ACCEPTED"
-            showActions
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="Vitalik Satoshi"
-            status="DECLINED"
-            showActions
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            onAcceptInvitationPress={this.handleAcceptInvitationPress}
-            onRejectInvitationPress={this.handleRejectInvitatonPress}
-            onCancelInvitationPress={this.handleCancelInvitationPress}
-            name="Beta Alpha"
-            status="SENT"
-            showActions
-          />
-
+          {this.renderInvitations()}
         </ContactCardList>
       </Container>
     );
   }
 }
+
+const mapStateTopProps = ({
+  invitations: { data: invitations },
+}) => ({
+  invitations,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
+  acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
+  rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
+});
+
+export default connect(mapStateTopProps, mapDispatchToProps)(ConnectionRequests);
