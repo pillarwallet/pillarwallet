@@ -659,9 +659,9 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.2.519":
-  version "1.2.519"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.2.519.tgz#9dfb03fe34138c1412acbce1d8a6d72ae49c6ad4"
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.4.622":
+  version "1.4.622"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.4.622.tgz#b9930e9580a9fab928b36edcd6da9ede0380b18f"
   dependencies:
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
     "@types/ethereumjs-util" "5.1.1"
