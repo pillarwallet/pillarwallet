@@ -4,6 +4,7 @@ import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import ButtonIcon from 'components/ButtonIcon';
+import { noop } from 'utils/common';
 import styled from 'styled-components/native';
 
 const ContactCardWrapper = styled.TouchableHighlight`
@@ -57,7 +58,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   width: 34px;
   border-radius: 17px;
   padding: 0;
-  margin: 0;
+  margin: 0 5px 0 0;
   justify-content: center;
   align-items: center;
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
@@ -93,7 +94,7 @@ const ActionButtonText = styled.Text`
 
 
 type Props = {
-  onPress: Function,
+  onPress?: Function,
   name: string,
   notificationCount?: number,
   showActions?: boolean,
@@ -106,6 +107,10 @@ type Props = {
 
 // TODO: convert into dumb component
 export default class ContactCard extends React.Component<Props> {
+  static defaultProps = {
+    onPress: noop,
+  }
+
   renderActions = () => {
     const {
       onAcceptInvitationPress,
@@ -167,13 +172,14 @@ export default class ContactCard extends React.Component<Props> {
 
   render() {
     const {
-      notificationCount,
+      notificationCount = 0,
       name,
+      onPress,
     } = this.props;
 
     return (
       <ContactCardWrapper
-        onPress={this.props.onPress}
+        onPress={onPress}
         underlayColor={baseColors.lightGray}
       >
         <ContactCardInner>
@@ -181,8 +187,8 @@ export default class ContactCard extends React.Component<Props> {
             <ContactCardAvatar />
           </ContactCardAvatarWrapper>
           <ContactCardName>{name}</ContactCardName>
-          {!!notificationCount && notificationCount > 0 &&
-            <ContactCardNotificationCircle gray>2</ContactCardNotificationCircle>
+          {notificationCount > 0 &&
+            <ContactCardNotificationCircle gray>{notificationCount}</ContactCardNotificationCircle>
           }
           {this.renderActions()}
         </ContactCardInner>

@@ -124,7 +124,7 @@ const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
-});
+}, FluidNavigatorConfig);
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image

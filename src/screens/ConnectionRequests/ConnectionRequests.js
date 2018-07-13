@@ -4,7 +4,6 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes } from 'utils/variables';
-import { CONTACT } from 'constants/navigationConstants';
 import { TYPE_RECEIVED, TYPE_SENT } from 'constants/invitationsConstants';
 import {
   cancelInvitationAction,
@@ -56,10 +55,6 @@ class ConnectionRequests extends React.Component<Props, State> {
     activeTab: TYPE_SENT,
   }
 
-  handleContactCardPress = () => {
-    this.props.navigation.navigate(CONTACT);
-  };
-
   handleAcceptInvitationPress = (invitation) => () => {
     const { acceptInvitation } = this.props;
     acceptInvitation(invitation);
@@ -79,16 +74,15 @@ class ConnectionRequests extends React.Component<Props, State> {
     const { invitations } = this.props;
     const { activeTab } = this.state;
     return invitations
-      .filter(({ invitationType }) => invitationType === activeTab)
+      .filter(({ type }) => type === activeTab)
       .map(invitation => (
         <ContactCard
           key={invitation.id}
-          onPress={this.handleContactCardPress}
           onAcceptInvitationPress={this.handleAcceptInvitationPress(invitation)}
           onRejectInvitationPress={this.handleRejectInvitatonPress(invitation)}
           onCancelInvitationPress={this.handleCancelInvitationPress(invitation)}
           name={invitation.username}
-          status={invitation.invitationType}
+          status={invitation.type}
           showActions
         />
       ));

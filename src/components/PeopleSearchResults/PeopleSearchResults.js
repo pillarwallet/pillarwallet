@@ -4,13 +4,17 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { CONTACT } from 'constants/navigationConstants';
-import { TYPE_INVITE, TYPE_SENT } from 'constants/invitationsConstants';
+import { TYPE_INVITE } from 'constants/invitationsConstants';
 import { baseColors, fontSizes } from 'utils/variables';
-import { Wrapper, ScrollWrapper } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import type { SearchResults, ApiUser } from 'models/Contacts';
-import { sendInvitationAction, acceptInvitationAction, cancelInvitationAction } from 'actions/invitationsActions';
+import {
+  sendInvitationAction,
+  acceptInvitationAction,
+  cancelInvitationAction,
+  rejectInvitationAction,
+} from 'actions/invitationsActions';
 import { TYPE_ACCEPTED } from '../../constants/invitationsConstants';
 
 const ContactCardList = styled.FlatList`
@@ -46,6 +50,7 @@ type Props = {
   sendInvitation: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
+  rejectInvitation: Function,
   invitations: Object[],
   localContacts: Object[]
 };
@@ -59,16 +64,14 @@ class PeopleSearchResults extends React.Component<Props, State> {
     activeTab: tabs.allUsers,
   };
 
-  handleContactCardPress = () => {
-    this.props.navigation.navigate(CONTACT);
-  };
-
   handleSendInvitationPress = (user: ApiUser) => () => {
     this.props.sendInvitation(user);
   };
 
   handleAcceptInvitationPress = (user: ApiUser) => () => {
-    this.props.acceptInvitation(user);
+    const { acceptInvitation, invitations } = this.props;
+    const invitation = invitations.find(({ id }) => id === user.id);
+    acceptInvitation(invitation);
   };
 
   handleCancelInvitationPress = (user: ApiUser) => () => {
@@ -77,23 +80,29 @@ class PeopleSearchResults extends React.Component<Props, State> {
     cancelInvitation(invitation);
   };
 
+  handleRejectInvitationPress = (user: ApiUser) => () => {
+    const { rejectInvitation, invitations } = this.props;
+    const invitation = invitations.find(({ id }) => id === user.id);
+    rejectInvitation(invitation);
+  };
+
   renderContact = ({ item: user }) => {
     const { invitations, localContacts } = this.props;
     const localContactsIds = localContacts.map(({ id }) => id);
-    const invitationsIds = invitations.map(({ id }) => id);
+    const invitation = invitations.find(({ id }) => id === user.id);
     let status = TYPE_INVITE;
-    if (invitationsIds.includes(user.id)) {
-      status = TYPE_SENT;
+    if (invitation) {
+      status = invitation.type;
     }
     if (localContactsIds.includes(user.id)) {
       status = TYPE_ACCEPTED;
     }
     return (
       <ContactCard
-        onPress={this.handleContactCardPress}
         onSendInvitationPress={this.handleSendInvitationPress(user)}
         onAcceptInvitationPress={this.handleAcceptInvitationPress(user)}
         onCancelInvitationPress={this.handleCancelInvitationPress(user)}
+        onRejectInvitationPress={this.handleRejectInvitationPress(user)}
         name={user.username}
         key={user.id}
         status={status}
@@ -104,7 +113,7 @@ class PeopleSearchResults extends React.Component<Props, State> {
 
   render() {
     const { activeTab } = this.state;
-    const { searchResults, invitations, localContacts } = this.props;
+    const { searchResults } = this.props;
     const users = {
       [tabs.allUsers]: searchResults.apiUsers,
       [tabs.contacts]: searchResults.localContacts,
@@ -143,6 +152,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   sendInvitation: (user) => dispatch(sendInvitationAction(user)),
   acceptInvitation: (user) => dispatch(acceptInvitationAction(user)),
   cancelInvitation: (user) => dispatch(cancelInvitationAction(user)),
+  rejectInvitation: (user) => dispatch(rejectInvitationAction(user)),
 });
 
 export default connect(null, mapDispatchToProps)(PeopleSearchResults);

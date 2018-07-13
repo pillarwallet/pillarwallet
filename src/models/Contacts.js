@@ -2,7 +2,7 @@
 export type ApiUser = {
   id: string,
   username: string,
-  accessKey: string,
+  connectionKey: string,
 };
 
 export type SearchResults = {

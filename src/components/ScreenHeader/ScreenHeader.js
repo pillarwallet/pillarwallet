@@ -14,8 +14,7 @@ type Props = {
 
 const Header = styled.View`
   background-color: #fff;
-  height: 80px;
-  padding: 40px 16px 40px;
+  padding: 40px 16px 0;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -47,13 +46,13 @@ const ScreenHeader = (props: Props) => {
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             {onBack &&
-            <BackIcon
-              icon="chevron-left"
-              type="Feather"
-              onPress={() => onBack(null)}
-              color={UIColors.primary}
-              fontSize={32}
-            />
+              <BackIcon
+                icon="chevron-left"
+                type="Feather"
+                onPress={() => onBack(null)}
+                color={UIColors.primary}
+                fontSize={32}
+              />
             }
             <Title title={title} />
           </View>

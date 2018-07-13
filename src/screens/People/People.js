@@ -99,7 +99,7 @@ class PeopleScreen extends React.Component<Props, State> {
   componentDidMount() {
     const { fetchInviteNotifications } = this.props;
     fetchInviteNotifications();
-  };
+  }
 
   handleSearchChange = (query: any) => {
     this.setState({ query });
@@ -143,70 +143,68 @@ class PeopleScreen extends React.Component<Props, State> {
     } = this.props;
     const inSearchMode = (query !== '' && !!contactState);
     return (
-      <React.Fragment>
+      <Container>
         <ScreenHeader title="people" />
-        <Container>
-          <Wrapper regularPadding>
-            <SearchBar
-              inputProps={{
-                onChange: this.handleSearchChange,
-                value: query,
-                autoCapitalize: 'none',
-              }}
-            />
-          </Wrapper>
+        <Wrapper regularPadding>
+          <SearchBar
+            inputProps={{
+              onChange: this.handleSearchChange,
+              value: query,
+              autoCapitalize: 'none',
+            }}
+          />
+        </Wrapper>
 
-          {!inSearchMode && invitations.length &&
-            <ConnectionRequestBanner
-              onPress={this.handleConnectionsRequestBannerPress}
-              underlayColor={baseColors.lightGray}
-            >
-              <React.Fragment>
-                <ConnectionRequestBannerText>
-                  Connection requests
+        {!inSearchMode && invitations.length &&
+          <ConnectionRequestBanner
+            onPress={this.handleConnectionsRequestBannerPress}
+            underlayColor={baseColors.lightGray}
+          >
+            <React.Fragment>
+              <ConnectionRequestBannerText>
+                Connection requests
               </ConnectionRequestBannerText>
-                <ConnectionRequestNotificationCircle>
-                  {invitations.length}
-                </ConnectionRequestNotificationCircle>
-                <ConnectionRequestBannerIcon name="arrow-forward" />
-              </React.Fragment>
-            </ConnectionRequestBanner>
-          }
+              <ConnectionRequestNotificationCircle>
+                {invitations.length}
+              </ConnectionRequestNotificationCircle>
+              <ConnectionRequestBannerIcon name="arrow-forward" />
+            </React.Fragment>
+          </ConnectionRequestBanner>
+        }
 
-          {query && contactState === FETCHING &&
-            <ActivityIndicator
-              animating
-              color="#111"
-              size="large"
-            />
-          }
+        {query && contactState === FETCHING &&
+          <ActivityIndicator
+            animating
+            color="#111"
+            size="large"
+          />
+        }
 
-          {query.length >= 2 && contactState === FETCHED &&
-            <PeopleSearchResults
-              searchResults={searchResults}
-              navigation={navigation}
-              invitations={invitations}
-              localContacts={localContacts}
-            />
-          }
+        {query.length >= 2 && contactState === FETCHED &&
+          <PeopleSearchResults
+            searchResults={searchResults}
+            navigation={navigation}
+            invitations={invitations}
+            localContacts={localContacts}
+          />
+        }
 
-          {!inSearchMode && !emptyList &&
-            <ContactCardList contentInset={{ bottom: 40 }}>
-              {this.renderLocalContacts()}
-            </ContactCardList>
-          }
-          {!!emptyList && !inSearchMode &&
-            <Wrapper center fullScreen>
-              <EmptySectionTextWrapper>
-                <EmptySectionTitle>Nobody is here</EmptySectionTitle>
-                <EmptySectionText>
-                  Start building your connection list by inviting friends or by searching for someone
-                </EmptySectionText>
-              </EmptySectionTextWrapper>
-            </Wrapper>
-          }
-        </Container>
-      </React.Fragment>
+        {!inSearchMode && !emptyList &&
+          <ContactCardList contentInset={{ bottom: 40 }}>
+            {this.renderLocalContacts()}
+          </ContactCardList>
+        }
+        {!!emptyList && !inSearchMode &&
+          <Wrapper center fullScreen>
+            <EmptySectionTextWrapper>
+              <EmptySectionTitle>Nobody is here</EmptySectionTitle>
+              <EmptySectionText>
+                Start building your connection list by inviting friends or by searching for someone
+              </EmptySectionText>
+            </EmptySectionTextWrapper>
+          </Wrapper>
+        }
+      </Container>
     );
   }
 }
