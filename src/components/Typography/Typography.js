@@ -28,7 +28,7 @@ export const SubHeading = styled.Text`
 `;
 
 export const Paragraph = styled.Text`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium};
   margin-bottom: 10;
   color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};
