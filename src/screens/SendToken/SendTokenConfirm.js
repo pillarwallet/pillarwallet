@@ -16,6 +16,7 @@ import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
+import WarningBanner from 'components/WarningBanner';
 
 const imageSend = require('assets/images/confirm-send.png');
 
@@ -166,11 +167,9 @@ class SendTokenContacts extends React.Component<Props, State> {
             title="send"
             rightLabelText="step 3 of 3"
           />
+          <WarningBanner/>
           <Wrapper regularPadding>
             <SubTitle>Review and confirm</SubTitle>
-            <ImageHolder>
-              <Image source={imageSend} />
-            </ImageHolder>
             <LabeledRow>
               <Label>AMOUNT</Label>
               <Value>{amount} {assetData.token}</Value>

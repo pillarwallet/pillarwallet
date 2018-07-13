@@ -7735,7 +7735,7 @@ lottie-ios@^2.5.0:
   version "2.5.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-ios/-/lottie-ios-2.5.0.tgz#55c808e785d4a6933b0c10b395530b17098b05de"
 
-lottie-react-native@2.5.0:
+lottie-react-native@2.5.0, lottie-react-native@^2.5.0:
   version "2.5.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-react-native/-/lottie-react-native-2.5.0.tgz#0711b8b34bec7741552c24b71efd3d4cab347571"
   dependencies:
