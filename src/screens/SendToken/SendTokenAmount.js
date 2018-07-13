@@ -62,7 +62,7 @@ function AmountInputTemplate(locals) {
     autoFocus: true,
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: '0.00',
+    placeholder: '0',
     value: locals.value,
     ellipsizeMode: 'middle',
     keyboardType: Platform.OS === 'ios' ? 'numeric' : 'default',
