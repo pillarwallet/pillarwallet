@@ -117,6 +117,7 @@
     "ethers": "^3.0.9",
     "expo": "^28.0.0",
     "https-browserify": "~0.0.0",
+    "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
     "native-base": "^2.4.2",
     "polished": "^1.9.2",
@@ -155,6 +156,7 @@
     "timers-browserify": "^1.0.1",
     "url": "~0.10.1",
     "util": "~0.10.3",
+    "uuid": "^3.3.2",
     "yarn": "^1.7.0"
   },
   "react-native": {

@@ -18,7 +18,7 @@ const initialState = {
   isFetched: false,
 };
 
-export default function assetsReducer(
+export default function historyReducer(
   state: HistoryReducerState = initialState,
   action: HistoryReducerAction,
 ): HistoryReducerState {

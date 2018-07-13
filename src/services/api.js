@@ -50,6 +50,7 @@ SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
     .then(({ data }) => data)
+    .catch(() => [])
     .then(transformAssetsToObject);
 };
 
@@ -66,6 +67,13 @@ SDKWrapper.prototype.userInfo = function (walletId: string) {
     .then(() => this.pillarWalletSdk.user.info({ walletId }))
     .then(({ data }) => ({ ...data, walletId }))
     .catch(() => ({}));
+};
+
+SDKWrapper.prototype.userSearch = function (query: string, walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.search({ query, walletId }))
+    .then(({ data }) => data)
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.usernameSearch = function (username: string) {
@@ -120,4 +128,15 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   //   return { balance: response.balance, symbol: response.ticker };
   // });
   // return Promise.all(promises).catch(() => []);
+};
+
+SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.invite({
+      accessKey,
+      targetUserId,
+      walletId,
+    }))
+    .then(({ data }) => data)
+    .catch((e) => { console.log(e); return {}; });
 };

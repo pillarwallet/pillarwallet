@@ -13,6 +13,9 @@ import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
+import PeopleScreen from 'screens/People';
+import ContactScreen from 'screens/Contact';
+import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -20,6 +23,7 @@ import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
+import HomeScreen from 'screens/Home';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -41,6 +45,10 @@ import {
   ASSET,
   ICO,
   PROFILE,
+  PEOPLE,
+  CONTACT,
+  HOME,
+  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -82,7 +90,8 @@ if (Platform.OS === 'ios') {
 }
 
 const iconWallet = require('assets/icons/icon_wallet.png');
-const iconProfile = require('assets/icons/icon_profile.png');
+const iconPeople = require('assets/icons/icon_people.png');
+const iconHome = require('assets/icons/icon_home.png');
 const iconIco = require('assets/icons/icon_ico.png');
 // const iconPeople = require('assets/icons/icon_people.png');
 // const iconChat = require('assets/icons/icon_chat.png');
@@ -108,12 +117,32 @@ const FluidNavigatorConfig = {
   },
 };
 
+const StackNavigatorConfig = {
+  navigationOptions: {
+    header: null,
+    gesturesEnabled: false,
+  },
+};
+
 // ASSETS FLOW
 const assetsFlow = FluidNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
+// PEOPLE FLOW
+const peopleFlow = createStackNavigator({
+  [PEOPLE]: PeopleScreen,
+  [CONTACT]: ContactScreen,
+  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
+}, StackNavigatorConfig);
+
+// HOME FLOW
+
+const homeFlow = createStackNavigator({
+  [HOME]: HomeScreen,
+  [PROFILE]: ProfileScreen,
+}, StackNavigatorConfig);
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
@@ -135,18 +164,25 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: 'Assets',
       }),
     },
+    [PEOPLE]: {
+      screen: peopleFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconPeople),
+        tabBarLabel: 'People',
+      }),
+    },
+    [HOME]: {
+      screen: homeFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconHome),
+        tabBarLabel: 'Home',
+      }),
+    },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
         tabBarLabel: 'Marketplace',
-      }),
-    },
-    [PROFILE]: {
-      screen: ProfileScreen,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconProfile),
-        tabBarLabel: 'Profile',
       }),
     },
   }, {
@@ -168,7 +204,7 @@ const tabNavigation = createBottomTabNavigator(
         height: 66,
       },
       labelStyle: {
-        fontSize: 14,
+        fontSize: 12,
         marginBottom: 4,
         marginTop: 4,
         color: baseColors.mediumGray,

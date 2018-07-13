@@ -4,6 +4,7 @@
 export const APP_FLOW = 'APP_FLOW';
 export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
+export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
 export const ICO = 'ICO';
 export const ADD_TOKEN = 'ADD_TOKEN';
@@ -46,3 +47,10 @@ export const SEND_TOKEN_FLOW = 'SEND_TOKEN_FLOW';
 export const SEND_TOKEN_AMOUNT = 'SEND_TOKEN_AMOUNT';
 export const SEND_TOKEN_CONTACTS = 'SEND_TOKEN_CONTACTS';
 export const SEND_TOKEN_CONFIRM = 'SEND_TOKEN_CONFIRM';
+
+// PEOPLE FLOW
+export const CONTACT = 'CONTACT';
+export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
+
+// HOME FLOW
+export const HOME = 'HOME';
