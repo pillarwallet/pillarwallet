@@ -13,7 +13,7 @@ const ActivityFeedList = styled.FlatList`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 40px 16px 0;
+  padding: 16px 16px 0;
 `;
 
 const ActivityFeedItem = styled.View`
@@ -58,7 +58,7 @@ const ActivityFeedItemCol = styled.View`
 
 const TabWrapper = styled.View`
   flex-direction: row;
-  margin: 10px 16px 20px;
+  margin: 10px 16px 10px;
 `;
 
 const TabItem = styled.TouchableOpacity`
@@ -180,14 +180,14 @@ export default class ActivityFeed extends React.Component<Props, State> {
     if (status === 'ACCEPTED') {
       return (
         <LabelText>
-          ACCEPTED
+          Accepted
         </LabelText>
       );
     }
     if (status === 'DISMISSED') {
       return (
         <LabelText>
-          DISMISSED
+          Dismissed
         </LabelText>
       );
     }
@@ -203,7 +203,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
     if (type === 'transactionEvent') {
       const msg = JSON.parse(data.msg);
       const received = msg.value > 0;
-      const fromAddress = `${msg.fromAddress.slice(0, 7)}…${msg.fromAddress.slice(-7)}`;
+      const fromAddress = `${msg.fromAddress.slice(0, 5)}…${msg.fromAddress.slice(-5)}`;
       const displayName = msg.username ? msg.username : fromAddress;
       const directionSymbol = received ? '+' : '-';
 
@@ -219,7 +219,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
           </ActivityFeedItemCol>
           <ActivityFeedItemCol flexEnd>
             <ActivityFeedItemAmount received={received}>
-              {directionSymbol} {msg.value} {msg.asset}
+              {directionSymbol}{msg.value} {msg.asset}
             </ActivityFeedItemAmount>
           </ActivityFeedItemCol>
         </ActivityFeedItem>
