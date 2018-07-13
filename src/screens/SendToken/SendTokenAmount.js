@@ -65,7 +65,7 @@ function AmountInputTemplate(locals) {
     placeholder: '0.00',
     value: locals.value,
     ellipsizeMode: 'middle',
-    keyboardType: 'numeric',
+    keyboardType: Platform.OS === 'ios' ? 'numeric' : 'default',
     textAlign: 'right',
     autoCapitalize: 'none',
   };
