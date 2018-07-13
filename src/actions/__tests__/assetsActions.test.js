@@ -35,6 +35,8 @@ const mockAssets: Assets = {
     address: '',
     description: '',
     iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
   },
 };
 

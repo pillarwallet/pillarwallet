@@ -6,6 +6,8 @@ export type Asset = {
   address: string,
   description: string,
   iconUrl: string,
+  iconMonoUrl: string,
+  wallpaperUrl: string,
 };
 
 export type Assets = {

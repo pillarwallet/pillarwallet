@@ -21,13 +21,13 @@ type Props = {
   amount: string,
   onPress: Function,
   address: string,
+  wallpaper: string,
   children?: React.Node,
   balanceInFiat: {
     amount: string | number,
     currency: string,
   },
   icon: string,
-  color: string
 }
 
 const BackgroundHolder = styled.View`
@@ -38,6 +38,12 @@ const BackgroundHolder = styled.View`
   width: 100%;
   position: relative;
   background-color: ${props => (props.cardColor)};
+`;
+
+const BackgroundImage = styled.ImageBackground`
+  width: 100%;
+  height: 100%;
+  flex-direction: row;
 `;
 
 const AmountWrapper = styled.View`
@@ -71,12 +77,12 @@ export default class AssetCard extends React.Component<Props, State> {
 
   render() {
     const {
-      color,
       name,
       amount,
       token,
       balanceInFiat,
       onPress,
+      wallpaper,
     } = this.props;
 
     const { cardIcon } = this.state;
@@ -101,34 +107,36 @@ export default class AssetCard extends React.Component<Props, State> {
             marginBottom: 12,
           }]}
         >
-          <BackgroundHolder cardColor={color || defaultCardColor}>
-            <DetailsWrapper>
-              <Name>{name}</Name>
-              <AmountWrapper>
-                <Amount>{amount}</Amount>
-                <AmountToken> {token}</AmountToken>
-              </AmountWrapper>
-              <FiatAmount>
-                {currencySymbol}{balanceInFiat.amount}
-              </FiatAmount>
-            </DetailsWrapper>
-            {!!cardIcon &&
-            <IconWrapper>
-              <IconCircle />
-              <ImageCache
-                key={token}
-                style={{
-                  alignSelf: 'flex-end',
-                  height: 24,
-                  width: 24,
-                  position: 'absolute',
-                  top: 27,
-                  right: 22,
-                }}
-                uri={cardIcon}
-                resizeMode="contain"
-              />
-            </IconWrapper>}
+          <BackgroundHolder cardColor={defaultCardColor}>
+            <BackgroundImage source={{ url: wallpaper }}>
+              <DetailsWrapper>
+                <Name>{name}</Name>
+                <AmountWrapper>
+                  <Amount>{amount}</Amount>
+                  <AmountToken> {token}</AmountToken>
+                </AmountWrapper>
+                <FiatAmount>
+                  {currencySymbol}{balanceInFiat.amount}
+                </FiatAmount>
+              </DetailsWrapper>
+              {!!cardIcon &&
+              <IconWrapper>
+                <IconCircle />
+                <ImageCache
+                  key={token}
+                  style={{
+                    alignSelf: 'flex-end',
+                    height: 24,
+                    width: 24,
+                    position: 'absolute',
+                    top: 27,
+                    right: 22,
+                  }}
+                  uri={cardIcon}
+                  resizeMode="contain"
+                />
+              </IconWrapper>}
+            </BackgroundImage>
           </BackgroundHolder>
         </Animated.View>
       </TouchableWithoutFeedback>
