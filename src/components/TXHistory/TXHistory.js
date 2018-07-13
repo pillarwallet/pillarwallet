@@ -240,12 +240,6 @@ class TXHistory extends React.Component<Props, State> {
                 </Row>
               }
               <Row size="0 0 30px">
-                <Column><Label>Confirmations</Label></Column>
-                <Column>
-                  <Text>{selectedTransaction.confirmations}</Text>
-                </Column>
-              </Row>
-              <Row size="0 0 30px">
                 <Column><Label>Status</Label></Column>
                 <Column>
                   <Text>{selectedTransaction.status}</Text>
