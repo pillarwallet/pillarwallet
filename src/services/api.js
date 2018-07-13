@@ -2,7 +2,11 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
-import { SDK_PROVIDER, BCX_URL, NOTIFICATIONS_URL } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
+import {
+  SDK_PROVIDER,
+  BCX_URL,
+  NOTIFICATIONS_URL,
+} from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import { uniqBy } from 'utils/common';
 import type { Transaction } from 'models/Transaction';
@@ -86,7 +90,6 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
 };
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
-  BCXSdk.txHistory(payload).then(console.log)
   return BCXSdk.txHistory(payload)
     .then(({ txHistory: { txHistory } }) => uniqBy(txHistory, 'hash'))
     .then(history => {
