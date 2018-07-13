@@ -190,7 +190,7 @@ class TXHistory extends React.Component<Props, State> {
       <React.Fragment>
         <FlatList
           refreshing={false}
-          ListHeaderComponent={<Title title="activity" />}
+          ListHeaderComponent={<Title title="transactions" />}
           data={history}
           renderItem={this.renderTransaction}
           keyExtractor={(({ _id }) => _id)}
