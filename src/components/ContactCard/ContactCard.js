@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
+import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native';
@@ -12,10 +13,6 @@ const ContactCardWrapper = styled.TouchableHighlight`
   height: 75px;
   padding: 14px;
   border-radius: 4px;
-  shadow-color: ${baseColors.black};
-  shadow-offset: 0 0;
-  shadow-radius: 2px     ;
-  shadow-opacity: 0.1;
 `;
 
 const ContactCardInner = styled.View`
@@ -105,21 +102,20 @@ type Props = {
   onRejectInvitationPress?: Function,
   onCancelInvitationPress?: Function,
   onSendInvitationPress?: Function,
-  onReceiveInvitationPress?: Function,
 };
 
 // TODO: convert into dumb component
 export default class ContactCard extends React.Component<Props> {
-  getActionsOrStatus = (status: string, onPressActions: Object) => {
+  renderActions = () => {
     const {
       onAcceptInvitationPress,
       onRejectInvitationPress,
       onCancelInvitationPress,
       onSendInvitationPress,
-      onReceiveInvitationPress,
-    } = onPressActions;
+      status,
+    } = this.props;
 
-    if (status === 'ACCEPTED') {
+    if (status === TYPE_ACCEPTED) {
       return (
         <StatusText>ACCEPTED</StatusText>
       );
@@ -127,7 +123,7 @@ export default class ContactCard extends React.Component<Props> {
       return (
         <StatusText>DECLINED</StatusText>
       );
-    } else if (status === 'RECEIVED') {
+    } else if (status === TYPE_RECEIVED) {
       return (
         <ButtonIconWrapper>
           <ActionCircleButton
@@ -147,7 +143,7 @@ export default class ContactCard extends React.Component<Props> {
           />
         </ButtonIconWrapper>
       );
-    } else if (status === 'SENT') {
+    } else if (status === TYPE_SENT) {
       return (
         <ActionTextWrapper onPress={onCancelInvitationPress}>
           <CancelActionText>
@@ -155,22 +151,12 @@ export default class ContactCard extends React.Component<Props> {
           </CancelActionText>
         </ActionTextWrapper>
       );
-    } else if (status === 'INVITE') {
+    } else if (status === TYPE_INVITE) {
       return (
         <ActionTextWrapper onPress={onSendInvitationPress}>
           <ActionButton>
             <ActionButtonText>
               CONNECT
-            </ActionButtonText>
-          </ActionButton>
-        </ActionTextWrapper>
-      );
-    } else if (status === 'RECEIVE') {
-      return (
-        <ActionTextWrapper onPress={onReceiveInvitationPress}>
-          <ActionButton>
-            <ActionButtonText>
-              RECEIVE INVITE
             </ActionButtonText>
           </ActionButton>
         </ActionTextWrapper>
@@ -183,22 +169,8 @@ export default class ContactCard extends React.Component<Props> {
     const {
       notificationCount,
       name,
-      showActions,
-      status,
-      onAcceptInvitationPress,
-      onRejectInvitationPress,
-      onCancelInvitationPress,
-      onSendInvitationPress,
-      onReceiveInvitationPress,
     } = this.props;
 
-    const onPressActions = {
-      onAcceptInvitationPress,
-      onRejectInvitationPress,
-      onCancelInvitationPress,
-      onSendInvitationPress,
-      onReceiveInvitationPress,
-    };
     return (
       <ContactCardWrapper
         onPress={this.props.onPress}
@@ -212,9 +184,7 @@ export default class ContactCard extends React.Component<Props> {
           {!!notificationCount && notificationCount > 0 &&
             <ContactCardNotificationCircle gray>2</ContactCardNotificationCircle>
           }
-          {!!showActions && !!status &&
-            this.getActionsOrStatus(status, onPressActions)
-          }
+          {this.renderActions()}
         </ContactCardInner>
       </ContactCardWrapper>
     );

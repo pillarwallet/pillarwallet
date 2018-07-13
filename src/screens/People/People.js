@@ -6,16 +6,17 @@ import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { contactsSearchAction } from 'actions/contactsActions';
+import { searchContactsAction } from 'actions/contactsActions';
+import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
-import Title from 'components/Title';
 import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
+import ScreenHeader from 'components/ScreenHeader';
 import type { SearchResults } from 'models/Contacts';
 
 
@@ -70,10 +71,13 @@ const EmptySectionText = styled.Text`
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  doSearch: (query: string) => Function,
+  searchContacts: (query: string) => Function,
   searchResults: SearchResults,
   contactState: ?string,
+  user: Object,
+  fetchInviteNotifications: Function,
   invitations: Object[],
+  localContacts: Object[],
 }
 
 type State = {
@@ -89,29 +93,44 @@ class PeopleScreen extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.doSearch = debounce(this.doSearch, 500);
+    this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
   }
+
+  componentDidMount() {
+    const { fetchInviteNotifications } = this.props;
+    fetchInviteNotifications();
+  };
 
   handleSearchChange = (query: any) => {
     this.setState({ query });
-    this.doSearch(query);
+    this.handleContactsSearch(query);
   };
 
-  doSearch = (query: string) => {
+  handleContactsSearch = (query: string) => {
     if (!query || query.trim() === '' || query.length < 2) {
       return;
     }
-
-    this.props.doSearch(query);
+    this.props.searchContacts(query);
   };
 
-  handleContactCardPress = () => {
-    this.props.navigation.navigate(CONTACT);
+  handleContactCardPress = (contact: Object) => () => {
+    this.props.navigation.navigate(CONTACT, { contact });
   };
 
   handleConnectionsRequestBannerPress = () => {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
+
+  renderLocalContacts = () => {
+    const { localContacts } = this.props;
+    return localContacts.map(contact => (
+      <ContactCard
+        onPress={this.handleContactCardPress(contact)}
+        name={contact.firstName || contact.username}
+        key={contact.username}
+      />
+    ));
+  }
 
   render() {
     const { query, emptyList } = this.state;
@@ -120,83 +139,74 @@ class PeopleScreen extends React.Component<Props, State> {
       contactState,
       navigation,
       invitations,
+      localContacts,
     } = this.props;
     const inSearchMode = (query !== '' && !!contactState);
-
     return (
-      <Container>
-        <Wrapper regularPadding>
-          <Title title="people" />
-          <SearchBar
-            inputProps={{
-              onChange: this.handleSearchChange,
-              value: query,
-              autoCapitalize: 'none',
-            }}
-          />
-        </Wrapper>
-
-        {!inSearchMode && invitations.length &&
-        <ConnectionRequestBanner
-          onPress={this.handleConnectionsRequestBannerPress}
-          underlayColor={baseColors.lightGray}
-        >
-          <React.Fragment>
-            <ConnectionRequestBannerText>
-              Connection requests
-            </ConnectionRequestBannerText>
-            <ConnectionRequestNotificationCircle>
-              {invitations.length}
-            </ConnectionRequestNotificationCircle>
-            <ConnectionRequestBannerIcon name="arrow-forward" />
-          </React.Fragment>
-        </ConnectionRequestBanner>
-        }
-
-        {query !== '' && contactState === FETCHING &&
-        <ActivityIndicator
-          animating
-          color="#111"
-          size="large"
-        />
-        }
-
-        {query !== '' && contactState === FETCHED &&
-        <PeopleSearchResults searchResults={searchResults} navigation={navigation} />
-        }
-
-        {!inSearchMode && !emptyList &&
-        <ContactCardList contentInset={{ bottom: 40 }}>
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="John Doe"
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="David Bowie"
-            notificationCount={4}
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="Vitalik Satoshi"
-          />
-          <ContactCard
-            onPress={this.handleContactCardPress}
-            name="Beta Alpha"
-          />
-        </ContactCardList>
-        }
-        {!!emptyList && !inSearchMode &&
-          <Wrapper center fullScreen>
-            <EmptySectionTextWrapper>
-              <EmptySectionTitle>Nobody is here</EmptySectionTitle>
-              <EmptySectionText>
-                Start building your connection list by inviting friends or by searching for someone
-              </EmptySectionText>
-            </EmptySectionTextWrapper>
+      <React.Fragment>
+        <ScreenHeader title="people" />
+        <Container>
+          <Wrapper regularPadding>
+            <SearchBar
+              inputProps={{
+                onChange: this.handleSearchChange,
+                value: query,
+                autoCapitalize: 'none',
+              }}
+            />
           </Wrapper>
-        }
-      </Container>
+
+          {!inSearchMode && invitations.length &&
+            <ConnectionRequestBanner
+              onPress={this.handleConnectionsRequestBannerPress}
+              underlayColor={baseColors.lightGray}
+            >
+              <React.Fragment>
+                <ConnectionRequestBannerText>
+                  Connection requests
+              </ConnectionRequestBannerText>
+                <ConnectionRequestNotificationCircle>
+                  {invitations.length}
+                </ConnectionRequestNotificationCircle>
+                <ConnectionRequestBannerIcon name="arrow-forward" />
+              </React.Fragment>
+            </ConnectionRequestBanner>
+          }
+
+          {query && contactState === FETCHING &&
+            <ActivityIndicator
+              animating
+              color="#111"
+              size="large"
+            />
+          }
+
+          {query.length >= 2 && contactState === FETCHED &&
+            <PeopleSearchResults
+              searchResults={searchResults}
+              navigation={navigation}
+              invitations={invitations}
+              localContacts={localContacts}
+            />
+          }
+
+          {!inSearchMode && !emptyList &&
+            <ContactCardList contentInset={{ bottom: 40 }}>
+              {this.renderLocalContacts()}
+            </ContactCardList>
+          }
+          {!!emptyList && !inSearchMode &&
+            <Wrapper center fullScreen>
+              <EmptySectionTextWrapper>
+                <EmptySectionTitle>Nobody is here</EmptySectionTitle>
+                <EmptySectionText>
+                  Start building your connection list by inviting friends or by searching for someone
+                </EmptySectionText>
+              </EmptySectionTextWrapper>
+            </Wrapper>
+          }
+        </Container>
+      </React.Fragment>
     );
   }
 }
@@ -216,7 +226,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  doSearch: (query) => dispatch(contactsSearchAction(query)),
+  searchContacts: (query) => dispatch(searchContactsAction(query)),
+  fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

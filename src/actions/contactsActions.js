@@ -2,7 +2,7 @@
 import { UPDATE_SEARCH_RESULTS, FETCHING, UPDATE_CONTACTS_STATE } from 'constants/contactsConstants';
 import { excludeLocalContacts } from 'utils/contacts';
 
-export const contactsSearchAction = (query: string) => {
+export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: { walletId } }, contacts: { data: localContacts } } = getState();
 
