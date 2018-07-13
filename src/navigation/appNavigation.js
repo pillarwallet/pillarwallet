@@ -91,6 +91,8 @@ const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconProfile = require('assets/icons/icon_profile.png');
 const iconIco = require('assets/icons/icon_ico.png');
+// const iconPeople = require('assets/icons/icon_people.png');
+// const iconChat = require('assets/icons/icon_chat.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -129,8 +131,8 @@ const peopleFlow = createStackNavigator({
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
     style={{
-      width: 22,
-      height: 22,
+      width: 20,
+      height: 20,
       tintColor: focused ? tintColor : baseColors.mediumGray,
     }}
     source={icon}
@@ -189,6 +191,7 @@ const tabNavigation = createBottomTabNavigator(
         fontSize: 14,
         marginBottom: 4,
         marginTop: 4,
+        color: baseColors.mediumGray,
       },
     },
     tabBarPosition: 'bottom',

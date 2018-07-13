@@ -37,7 +37,7 @@ android {
     applicationId 'com.pillarproject.wallet'
     targetSdkVersion 26
     versionCode System.getenv('CIRCLE_BUILD_NUM') ? System.getenv('CIRCLE_BUILD_NUM').toInteger() : 9
-    versionName '0.0.2'
+    versionName System.getenv('buildNumber') ? System.getenv('buildNumber') : '0.0.0'
     ndk {
       abiFilters 'armeabi-v7a', 'x86'
     }
@@ -125,9 +125,9 @@ dependencies {
   compile 'com.android.support:multidex:1.0.1'
 
   // Our dependencies
-  compile "com.google.android.gms:play-services-base:15.0.0"
+  compile "com.google.android.gms:play-services-base:15.0.1"
   compile "com.google.firebase:firebase-core:15.0.2"
-
+  compile 'com.google.android.gms:play-services-vision:15.0.1'
 
   // Our dependencies from ExpoView
   // DON'T ADD ANYTHING HERE THAT ISN'T IN EXPOVIEW. ONLY COPY THINGS FROM EXPOVIEW TO HERE.
@@ -141,7 +141,7 @@ dependencies {
   compile 'de.greenrobot:eventbus:2.4.0'
   compile 'com.amplitude:android-sdk:2.9.2' // Be careful when upgrading! Upgrading might break experience scoping. Check with Jesse. See Analytics.resetAmplitudeDatabaseHelper
   compile 'com.squareup.picasso:picasso:2.5.2'
-  compile 'com.google.android.gms:play-services-gcm:15.0.0'
+  compile 'com.google.android.gms:play-services-gcm:15.0.1'
   compile 'com.google.android.gms:play-services-analytics:15.0.0'
   compile 'com.google.android.gms:play-services-maps:15.0.0'
   compile 'com.google.android.gms:play-services-auth:15.0.0'
