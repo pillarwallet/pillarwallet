@@ -9,8 +9,6 @@ const ActivityFeedWrapper = styled.View`
   flex: 1;
 `;
 
-const ActivityFeedList = styled.FlatList`
-`;
 
 const ActivityFeedHeader = styled.View`
   padding: 16px 16px 0;
@@ -248,7 +246,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
   renderActivityFeedItems = (history: Array<*>) => {
     const activityFeedItems = [];
     history.map((item: Object, index: number) => {
-      activityFeedItems.push(this.renderActivityFeedItem(item, index));
+      return activityFeedItems.push(this.renderActivityFeedItem(item, index));
     });
     return activityFeedItems;
   };
