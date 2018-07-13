@@ -1,10 +1,13 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
+import { PROFILE } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import { SubHeading } from 'components/Typography';
+import PortfolioBalance from 'components/PortfolioBalance';
+
 import ButtonIcon from 'components/ButtonIcon';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
@@ -52,7 +55,7 @@ const dummyHistory = [
       },
       data: {
         type: 'BCX',
-        msg: '{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH","value":"0.5","status":"pending"}',
+        msg: '{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH","value":"0.4345","status":"pending"}',
       },
     },
   },
@@ -153,7 +156,7 @@ const dummyHistory = [
       },
       data: {
         type: 'BCX',
-        msg: '{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH","value":"0.5","status":"pending"}',
+        msg: '{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH","value":"1234.5678","status":"pending"}',
       },
     },
   },
@@ -209,11 +212,15 @@ const dummyHistory = [
 
 const HomeHeader = styled.View`
   height: 120px;
+  align-content: space-between;
+`;
+
+const HomeHeaderRow = styled.View`
+  flex: 1;
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
 `;
-
 
 const HomeHeaderAvatar = styled.View`
   width: 40px;
@@ -284,6 +291,10 @@ const RecentConnectionsItemName = styled.Text`
 `;
 
 export default class PeopleScreen extends React.Component<Props, State> {
+  goToProfile = () => {
+    this.props.navigation.navigate(PROFILE);
+  }
+
   renderRecentConnections = () => {
     return Object.keys(dummyRecentConnections).map((item) => (
       <RecentConnectionsItem>
@@ -300,23 +311,29 @@ export default class PeopleScreen extends React.Component<Props, State> {
       <Container>
         <Wrapper regularPadding>
           <HomeHeader>
-            <HomeHeaderAvatar />
-            <HomeHeaderUsername>johndoe</HomeHeaderUsername>
-            <HomeHeaderButtons>
-              <HomeHeaderButton
-                icon="question-circle-o"
-                type="FontAwesome"
-                color={baseColors.darkGray}
-                fontSize={24}
-              />
-              <HomeHeaderButton
-                icon="cog"
-                type="FontAwesome"
-                color={baseColors.darkGray}
-                fontSize={24}
-              />
+            <HomeHeaderRow>
+              <HomeHeaderAvatar />
+              <HomeHeaderUsername>johndoe</HomeHeaderUsername>
+              <HomeHeaderButtons>
+                <HomeHeaderButton
+                  icon="question-circle-o"
+                  type="FontAwesome"
+                  color={baseColors.darkGray}
+                  fontSize={24}
+                />
+                <HomeHeaderButton
+                  icon="cog"
+                  type="FontAwesome"
+                  color={baseColors.darkGray}
+                  fontSize={24}
+                  onPress={() => this.goToProfile()}
+                />
 
-            </HomeHeaderButtons>
+              </HomeHeaderButtons>
+            </HomeHeaderRow>
+            <HomeHeaderRow>
+              <PortfolioBalance />
+            </HomeHeaderRow>
           </HomeHeader>
         </Wrapper>
         <RecentConnections>

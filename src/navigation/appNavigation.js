@@ -91,11 +91,8 @@ if (Platform.OS === 'ios') {
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
-const iconProfile = require('assets/icons/icon_profile.png');
 const iconHome = require('assets/icons/icon_home.png');
 const iconIco = require('assets/icons/icon_ico.png');
-// const iconPeople = require('assets/icons/icon_people.png');
-// const iconChat = require('assets/icons/icon_chat.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -118,6 +115,13 @@ const FluidNavigatorConfig = {
   },
 };
 
+const StackNavigatorConfig = {
+  navigationOptions: {
+    header: null,
+    gesturesEnabled: false,
+  },
+};
+
 // ASSETS FLOW
 const assetsFlow = FluidNavigator({
   [ASSETS]: AssetsScreen,
@@ -129,7 +133,13 @@ const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
-}, FluidNavigatorConfig);
+}, StackNavigatorConfig);
+
+// HOME FLOW
+const homeFlow = createStackNavigator({
+  [HOME]: HomeScreen,
+  [PROFILE]: ProfileScreen,
+}, StackNavigatorConfig);
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
@@ -159,7 +169,7 @@ const tabNavigation = createBottomTabNavigator(
       }),
     },
     [HOME]: {
-      screen: HomeScreen,
+      screen: homeFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconHome),
         tabBarLabel: 'Home',
