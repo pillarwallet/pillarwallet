@@ -116,7 +116,6 @@ const FluidNavigatorConfig = {
 };
 
 const StackNavigatorConfig = {
-  mode: 'screen',
   navigationOptions: {
     header: null,
     gesturesEnabled: false,

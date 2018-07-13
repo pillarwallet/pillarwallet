@@ -36,7 +36,7 @@ const TabItem = styled.TouchableOpacity`
 `;
 
 const TabItemText = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
   font-weight: ${props => props.active ? fontWeights.bold : fontWeights.book};
 `;
