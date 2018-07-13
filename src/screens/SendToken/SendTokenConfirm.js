@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView as RNKeyboardAvoidingView, Image as RNImage } from 'react-native';
+import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -17,8 +17,6 @@ import { sendAssetAction, fetchTransactionsHistoryAction } from 'actions/assetsA
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
 import WarningBanner from 'components/WarningBanner';
-
-const imageSend = require('assets/images/confirm-send.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -75,19 +73,6 @@ const Value = styled.Text`
   font-weight: 700;
   font-size: ${fontSizes.medium}
 `;
-
-const Image = styled(RNImage)`
-  width: 100px;
-  height: 100px;
-`;
-
-const ImageHolder = styled.View`
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  margin: 20px 0;
-`;
-
 
 class SendTokenContacts extends React.Component<Props, State> {
   constructor(props) {
@@ -167,7 +152,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             title="send"
             rightLabelText="step 3 of 3"
           />
-          <WarningBanner/>
+          <WarningBanner />
           <Wrapper regularPadding>
             <SubTitle>Review and confirm</SubTitle>
             <LabeledRow>

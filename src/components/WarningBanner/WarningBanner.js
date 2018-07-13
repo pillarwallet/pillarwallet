@@ -19,7 +19,7 @@ const WarningBannerText = styled.Text`
 `;
 
 type Props = {
-  rounded: boolean,
+  rounded?: boolean,
 }
 
 const WarningBanner = (props: Props) => {

@@ -297,7 +297,9 @@ class SendTokenAmount extends React.Component<Props, State> {
           <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
             <FooterWrapper>
               <Text>Fee
-                <TextLink> {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}</TextLink>
+                <TextLink>
+                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                </TextLink>
               </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
