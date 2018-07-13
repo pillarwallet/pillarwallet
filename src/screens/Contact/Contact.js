@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
-import Title from 'components/Title';
+import ScreenHeader from 'components/ScreenHeader';
 
 const ContactHeader = styled.View`
   height: 200px;
@@ -45,18 +46,24 @@ const ContactHeaderAvatar = styled.Image`
 
 `;
 
-const Contact = () => {
+type Props = {
+  name: string,
+  navigation: NavigationScreenProp<*>,
+}
+
+const Contact = (props: Props) => {
+  const contact = props.navigation.getParam('contact', {});
   return (
     <Container>
+      <ScreenHeader title="contact" onBack={props.navigation.goBack} />
       <Wrapper regularPadding>
-        <Title title="contact" />
         <ContactHeader>
           <ContactHeaderAvatarWrapper >
             <ContactHeaderAvatar />
           </ContactHeaderAvatarWrapper>
           <ContactHeaderBody>
             <ContactHeaderName>
-              John Doe
+              {contact.username}
             </ContactHeaderName>
           </ContactHeaderBody>
         </ContactHeader>
