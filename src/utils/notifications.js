@@ -1,37 +1,59 @@
 // @flow
-import { formatMoney } from 'utils/common';
+import { utils } from 'ethers';
+import {
+  TYPE_ACCEPTED,
+  TYPE_CANCELLED,
+  TYPE_BLOCKED,
+  TYPE_REJECTED,
+  TYPE_RECEIVED,
+} from 'constants/invitationsConstants';
 
-const parseNotification = (notificationBody: string) => {
-  let messageObj;
+
+const parseNotification = (notificationBody: string): ?Object => {
+  let messageObj = null;
   try {
     messageObj = JSON.parse(notificationBody);
   } catch (e) {
-    console.log(e); // eslint-disable-line
+    // do nothing
   }
   return messageObj;
 };
 
 const validBcxTransaction = (transaction: ?Object): boolean => {
-  if (!transaction || !transaction.from || !transaction.to) return false;
+  if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
   if (!transaction.status || !transaction.asset) return false;
   return true;
 };
 
+const connectionEvents = [
+  TYPE_ACCEPTED,
+  TYPE_CANCELLED,
+  TYPE_BLOCKED,
+  TYPE_REJECTED,
+  TYPE_RECEIVED,
+];
+
 export const processNotification = (notification: Object, myEthAddress: string): ?Object => {
   let result = null;
-
+  const parsedNotification = parseNotification(notification.msg);
+  if (!parsedNotification) return result;
+  if (connectionEvents.includes(parsedNotification.type)) {
+    result = {
+      message: 'Connection update',
+      type: 'CONNECTION',
+    };
+  }
   if (notification.type === 'BCX') {
-    const transaction = parseNotification(notification.msg);
-    if (!transaction || !validBcxTransaction(transaction)) return result;
+    if (!parsedNotification || !validBcxTransaction(parsedNotification)) return result;
 
     let message = '';
-    const sender = transaction.from.toUpperCase();
-    const receiver = transaction.to.toUpperCase();
-    const amount = formatMoney(transaction.value, 4);
-    const { asset, status } = transaction;
+    const { asset, status, value } = parsedNotification;
+    const sender = parsedNotification.fromAddress.toUpperCase();
+    const receiver = parsedNotification.toAddress.toUpperCase();
+    const amount = utils.formatUnits(utils.bigNumberify(value));
 
     if (receiver === myEthAddress && status === 'pending') {
-      message = `New incoming transaction (${amount} ${asset})`;
+      message = `New incoming transaction ${amount} ${asset}`;
     } else if (receiver === myEthAddress && status === 'confirmed') {
       message = `Transaction of ${amount} ${asset} confirmed`;
     } else if (sender === myEthAddress && status === 'pending') {
