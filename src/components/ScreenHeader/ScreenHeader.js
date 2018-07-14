@@ -7,11 +7,6 @@ import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
 
-type Props = {
-  onBack?: Function,
-  title?: string,
-}
-
 const Header = styled.View`
   background-color: #fff;
   padding: 40px 16px 0;
@@ -31,6 +26,11 @@ const BackIcon = styled(ButtonIcon)`
   position: relative;
   top: 10px;
 `;
+
+type Props = {
+  onBack?: Function,
+  title?: string,
+};
 
 const ScreenHeader = (props: Props) => {
   const {

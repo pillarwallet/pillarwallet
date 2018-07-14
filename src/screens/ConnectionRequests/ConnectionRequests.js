@@ -42,7 +42,6 @@ const TabItem = styled.TouchableOpacity`
   flex: 1;
   border-color: ${props => props.active ? baseColors.electricBlue : baseColors.lightGray};
   border-bottom-width: 2px;
-
 `;
 
 const TabItemText = styled.Text`
@@ -52,8 +51,8 @@ const TabItemText = styled.Text`
 
 class ConnectionRequests extends React.Component<Props, State> {
   state = {
-    activeTab: TYPE_SENT,
-  }
+    activeTab: TYPE_RECEIVED,
+  };
 
   handleAcceptInvitationPress = (invitation) => () => {
     const { acceptInvitation } = this.props;
@@ -96,22 +95,20 @@ class ConnectionRequests extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <TabWrapper>
             <TabItem
-              active={activeTab === TYPE_SENT}
-              onPress={() => this.setState({ activeTab: TYPE_SENT })}
-            >
-              <TabItemText>Sent</TabItemText>
-            </TabItem>
-            <TabItem
               active={activeTab === TYPE_RECEIVED}
               onPress={() => this.setState({ activeTab: TYPE_RECEIVED })}
             >
               <TabItemText active={activeTab === TYPE_RECEIVED}>Received</TabItemText>
             </TabItem>
+            <TabItem
+              active={activeTab === TYPE_SENT}
+              onPress={() => this.setState({ activeTab: TYPE_SENT })}
+            >
+              <TabItemText active={activeTab === TYPE_SENT}>Sent</TabItemText>
+            </TabItem>
           </TabWrapper>
         </Wrapper>
-        <ContactCardList
-          contentInset={{ bottom: 40 }}
-        >
+        <ContactCardList contentInset={{ bottom: 40 }}>
           {this.renderInvitations()}
         </ContactCardList>
       </Container>

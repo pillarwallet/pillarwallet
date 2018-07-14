@@ -52,6 +52,7 @@ const ContactHeader = styled.View`
   border-radius: 12px;
   align-items: center;
 `;
+
 const ContactHeaderBody = styled.View`
   height: 200px;
   margin-top: -48px;

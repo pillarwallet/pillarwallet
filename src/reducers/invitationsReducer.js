@@ -8,7 +8,7 @@ export type InvitationsReducerState = {
 
 export type InvitationsReducerAction = {
   type: string,
-  payload: any
+  payload: any,
 }
 
 const initialState = {

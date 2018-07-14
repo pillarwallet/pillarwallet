@@ -16,11 +16,13 @@ export const initAppAndRedirectAction = () => {
     if (appSettings.wallet) {
       const { assets = {} } = await storage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
+
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
 
       const { invitations = [] } = await storage.get('invitations');
       dispatch({ type: UPDATE_INVITATIONS, payload: invitations });
+
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
       dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;

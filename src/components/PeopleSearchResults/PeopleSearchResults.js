@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { TYPE_INVITE } from 'constants/invitationsConstants';
+import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
@@ -15,7 +15,6 @@ import {
   cancelInvitationAction,
   rejectInvitationAction,
 } from 'actions/invitationsActions';
-import { TYPE_ACCEPTED } from '../../constants/invitationsConstants';
 
 const ContactCardList = styled.FlatList`
   padding: 16px;

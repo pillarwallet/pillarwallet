@@ -130,7 +130,7 @@ class PeopleScreen extends React.Component<Props, State> {
         key={contact.username}
       />
     ));
-  }
+  };
 
   render() {
     const { query, emptyList } = this.state;
@@ -142,6 +142,7 @@ class PeopleScreen extends React.Component<Props, State> {
       localContacts,
     } = this.props;
     const inSearchMode = (query !== '' && !!contactState);
+
     return (
       <Container>
         <ScreenHeader title="people" />
@@ -155,7 +156,7 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         </Wrapper>
 
-        {!inSearchMode && invitations.length &&
+        {!inSearchMode && !!invitations.length &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
             underlayColor={baseColors.lightGray}
@@ -172,7 +173,7 @@ class PeopleScreen extends React.Component<Props, State> {
           </ConnectionRequestBanner>
         }
 
-        {query && contactState === FETCHING &&
+        {!!query && contactState === FETCHING &&
           <ActivityIndicator
             animating
             color="#111"
@@ -194,6 +195,7 @@ class PeopleScreen extends React.Component<Props, State> {
             {this.renderLocalContacts()}
           </ContactCardList>
         }
+
         {!!emptyList && !inSearchMode &&
           <Wrapper center fullScreen>
             <EmptySectionTextWrapper>

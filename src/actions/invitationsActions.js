@@ -20,7 +20,11 @@ const storage = Storage.getInstance('db');
 
 export const sendInvitationAction = (user: ApiUser) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { walletId } }, invitations: { data: invitations } } = getState();
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+    } = getState();
+
     const index = invitations.findIndex(el => el.id === user.id);
     if (index >= 0) {
       Toast.show({
@@ -34,7 +38,7 @@ export const sendInvitationAction = (user: ApiUser) => {
     const sentInvitation = await api.sendInvitation(user.id, accessKey, walletId);
     if (!sentInvitation) return;
     const invitation = { ...user, type: TYPE_SENT, connectionKey: accessKey };
-    await storage.save('invitations', { invitations: [...invitations, invitation] });
+    await storage.save('invitations', { invitations: [...invitations, invitation] }, true);
 
     dispatch({
       type: ADD_INVITATION,
@@ -64,6 +68,7 @@ export const acceptInvitationAction = (invitation: Object) => {
       walletId,
     );
     if (!acceptedInvitation) return;
+
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     await storage.save('invitations', { invitations: updatedInvitations }, true);
     const updatedContacts = contacts
@@ -86,7 +91,11 @@ export const acceptInvitationAction = (invitation: Object) => {
 
 export const cancelInvitationAction = (invitation: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { walletId } }, invitations: { data: invitations } } = getState();
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+    } = getState();
+
     const cancelledInvitation = await api.cancelInvitation(
       invitation.id,
       invitation.connectionKey,
@@ -109,7 +118,11 @@ export const cancelInvitationAction = (invitation: Object) => {
 
 export const rejectInvitationAction = (invitation: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { walletId } }, invitations: { data: invitations } } = getState();
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+    } = getState();
+
     const rejectedInvitation = await api.rejectInvitation(
       invitation.id,
       invitation.connectionKey,
@@ -148,6 +161,7 @@ export const fetchInviteNotificationsAction = () => {
       TYPE_REJECTED,
     ];
     const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
+
     const mappedInviteNotifications = inviteNotifications
       .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
@@ -159,12 +173,14 @@ export const fetchInviteNotificationsAction = () => {
       memo[invitation.id] = uniqGroup;
       return memo;
     }, {});
+
     const latestEventPerId = Object.keys(groupedPerUserId).map((key) => groupedPerUserId[key][0]);
     const groupedNotifications = types.reduce((memo, type) => {
       const group = latestEventPerId.filter(({ type: invType }) => invType === type);
       memo[type] = group;
       return memo;
     }, {});
+
     // CLEANUP REQUIRED
     const invitationsToExclude = [
       ...contacts,
@@ -181,8 +197,10 @@ export const fetchInviteNotificationsAction = () => {
 
     const updatedContacts = uniqBy(groupedNotifications.connectionAcceptedEvent.concat(contacts), 'id')
       .map(({ type, ...rest }) => ({ ...rest }));
+
     await storage.save('invitations', { invitations: updatedInvitations }, true);
     await storage.save('contacts', { contacts: updatedContacts }, true);
+
     dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
