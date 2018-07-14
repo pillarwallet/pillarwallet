@@ -15,7 +15,6 @@ import {
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { Toast } from 'native-base';
 import Storage from 'services/storage';
-import { Array } from 'core-js';
 
 const storage = Storage.getInstance('db');
 
@@ -168,13 +167,11 @@ export const fetchInviteNotificationsAction = () => {
     }, {});
     // CLEANUP REQUIRED
     const invitationsToExclude = [
-      contacts,
-      groupedNotifications.connectionCancelledEvent,
-      groupedNotifications.connectionRejectedEvent,
-      groupedNotifications.connectionAcceptedEvent,
-    ]
-      .reduce((memo, item) => memo.concat(item), [])
-      .map(({ id: userId }) => userId);
+      ...contacts,
+      ...groupedNotifications.connectionCancelledEvent,
+      ...groupedNotifications.connectionRejectedEvent,
+      ...groupedNotifications.connectionAcceptedEvent,
+    ].map(({ id: userId }) => userId);
 
 
     const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
