@@ -1,5 +1,5 @@
 // @flow
-import { formatMoney } from 'utils/common';
+import { utils } from 'ethers';
 import {
   TYPE_ACCEPTED,
   TYPE_CANCELLED,
@@ -10,17 +10,17 @@ import {
 
 
 const parseNotification = (notificationBody: string): ?Object => {
-  let messageObj = {};
+  let messageObj = null;
   try {
     messageObj = JSON.parse(notificationBody);
   } catch (e) {
-    messageObj = null; // eslint-disable-line
+    // do nothing
   }
   return messageObj;
 };
 
 const validBcxTransaction = (transaction: ?Object): boolean => {
-  if (!transaction || !transaction.from || !transaction.to) return false;
+  if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
   if (!transaction.status || !transaction.asset) return false;
   return true;
 };
@@ -43,17 +43,17 @@ export const processNotification = (notification: Object, myEthAddress: string):
       type: 'CONNECTION',
     };
   }
-  if (parsedNotification.type === 'BCX') {
+  if (notification.type === 'BCX') {
     if (!parsedNotification || !validBcxTransaction(parsedNotification)) return result;
 
     let message = '';
+    const { asset, status, value } = parsedNotification;
     const sender = parsedNotification.fromAddress.toUpperCase();
     const receiver = parsedNotification.toAddress.toUpperCase();
-    const amount = formatMoney(parsedNotification.value, 4);
-    const { asset, status } = parsedNotification;
+    const amount = utils.formatUnits(utils.bigNumberify(value));
 
     if (receiver === myEthAddress && status === 'pending') {
-      message = `New incoming transaction (${amount} ${asset})`;
+      message = `New incoming transaction ${amount} ${asset}`;
     } else if (receiver === myEthAddress && status === 'confirmed') {
       message = `Transaction of ${amount} ${asset} confirmed`;
     } else if (sender === myEthAddress && status === 'pending') {
