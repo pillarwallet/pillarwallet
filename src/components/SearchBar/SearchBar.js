@@ -5,29 +5,6 @@ import { Icon } from 'native-base';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Text, Animated, Keyboard } from 'react-native';
 
-type inputPropsType = {
-  placeholder?: string,
-  onChange?: Function,
-  onBlur?: Function,
-  value: ?string,
-}
-
-type Props = {
-  errorMessage?: string,
-  inputProps: inputPropsType,
-
-}
-
-type State = {
-  value: ?string,
-  animFadeIn: Object,
-  animShrink: Object,
-}
-
-type EventLike = {
-  nativeEvent: Object,
-}
-
 const SearchHolder = styled.View`
   padding-bottom: 20px;
   display: flex;
@@ -35,7 +12,6 @@ const SearchHolder = styled.View`
   justify-content: flex-start;
   align-items: center;
 `;
-
 
 const CancelButton = styled.TouchableOpacity`
   margin: 0 5px 0 10px;
@@ -70,6 +46,30 @@ const InputIcon = styled(Icon)`
   color: ${baseColors.darkGray};
 `;
 
+
+type inputPropsType = {
+  placeholder?: string,
+  onChange?: Function,
+  onBlur?: Function,
+  value: ?string,
+};
+
+type Props = {
+  errorMessage?: string,
+  inputProps: inputPropsType,
+  placeholder?: string,
+};
+
+type State = {
+  value: ?string,
+  animFadeIn: Object,
+  animShrink: Object,
+};
+
+type EventLike = {
+  nativeEvent: Object,
+};
+
 class SearchBar extends React.Component<Props, State> {
   state = {
     value: '',
@@ -80,6 +80,7 @@ class SearchBar extends React.Component<Props, State> {
   static defaultProps = {
     inputType: 'default',
     trim: true,
+    placeholder: 'Search or add new contact',
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -124,7 +125,7 @@ class SearchBar extends React.Component<Props, State> {
         duration: 250,
       }),
     ]).start();
-  }
+  };
 
   handleFocus = () => {
     Animated.parallel([
@@ -137,13 +138,12 @@ class SearchBar extends React.Component<Props, State> {
         duration: 250,
       }),
     ]).start();
-  }
+  };
 
   render() {
-    const {
-      inputProps,
-    } = this.props;
+    const { inputProps, placeholder } = this.props;
     const { value, animFadeIn, animShrink } = this.state;
+
     return (
       <SearchHolder>
         <Animated.View
@@ -161,11 +161,9 @@ class SearchBar extends React.Component<Props, State> {
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             value={value}
-            placeholder="Search or add new contact"
+            placeholder={placeholder}
           />
-          <InputIcon
-            name="search"
-          />
+          <InputIcon name="search" />
         </Animated.View>
         <Animated.View style={{ ...cancelButtonWrapperStyles, opacity: animFadeIn }}>
           <CancelButton onPress={this.handleCancel}>
