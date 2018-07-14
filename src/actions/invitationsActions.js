@@ -15,6 +15,7 @@ import {
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { Toast } from 'native-base';
 import Storage from 'services/storage';
+import { Array } from 'core-js';
 
 const storage = Storage.getInstance('db');
 
@@ -69,7 +70,7 @@ export const acceptInvitationAction = (invitation: Object) => {
     const updatedContacts = contacts
       .filter(({ id }) => id !== invitation.id)
       .concat(invitation)
-      .map(({ invitationType, ...rest }) => ({ ...rest }));
+      .map(({ ...rest }) => ({ ...rest }));
     await storage.save('contacts', { contacts: updatedContacts }, true);
 
     dispatch({
@@ -149,28 +150,40 @@ export const fetchInviteNotificationsAction = () => {
     ];
     const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
     const mappedInviteNotifications = inviteNotifications
-      .map(({ payload: { msg } }) => JSON.parse(msg))
-      .map(({ senderUserData, type }) => ({ ...senderUserData, type }));
-    const groupedNotifications = types.reduce((memo, type) => {
-      const group = mappedInviteNotifications.filter(({ type: invType }) => invType === type);
+      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
+      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
+      .sort((a, b) => b.createdAt - a.createdAt);
+
+    const groupedPerUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
+      const group = arr.filter(({ id: userId }) => userId === invitation.id);
       const uniqGroup = uniqBy(group, 'id');
-      memo[type] = uniqGroup;
+      memo[invitation.id] = uniqGroup;
+      return memo;
+    }, {});
+    const latestEventPerId = Object.keys(groupedPerUserId).map((key) => groupedPerUserId[key][0]);
+    const groupedNotifications = types.reduce((memo, type) => {
+      const group = latestEventPerId.filter(({ type: invType }) => invType === type);
+      memo[type] = group;
       return memo;
     }, {});
     // CLEANUP REQUIRED
     const invitationsToExclude = [
-      ...contacts,
-      ...groupedNotifications.connectionCancelledEvent,
-      ...groupedNotifications.connectionRejectedEvent,
-      ...groupedNotifications.connectionAcceptedEvent,
-    ].map(({ id: userId }) => userId);
+      contacts,
+      groupedNotifications.connectionCancelledEvent,
+      groupedNotifications.connectionRejectedEvent,
+      groupedNotifications.connectionAcceptedEvent,
+    ]
+      .reduce((memo, item) => memo.concat(item), [])
+      .map(({ id: userId }) => userId);
 
-    const updatedInvitations = uniqBy(mappedInviteNotifications.concat(invitations), 'id')
+
+    const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
       .filter(({ id }) => {
         return !invitationsToExclude.includes(id);
       });
 
-    const updatedContacts = uniqBy(groupedNotifications.connectionAcceptedEvent.concat(contacts), 'id');
+    const updatedContacts = uniqBy(groupedNotifications.connectionAcceptedEvent.concat(contacts), 'id')
+      .map(({ type, ...rest }) => ({ ...rest }));
     await storage.save('invitations', { invitations: updatedInvitations }, true);
     await storage.save('contacts', { contacts: updatedContacts }, true);
     dispatch({
