@@ -3,6 +3,7 @@ import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 import BackButton from 'components/BackButton';
+import { Platform } from 'react-native';
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
@@ -37,13 +38,17 @@ import {
 
 import AppFlow from './appNavigation';
 
+
+
 const StackNavigatorConfig = {
   headerMode: 'screen',
   navigationOptions: ({ navigation }) => ({
     headerStyle: {
-      backgroundColor: '#fff',
+      backgroundColor: '#ffffff',
       borderBottomWidth: 0,
       elevation: 0,
+      paddingTop: 0,
+      marginTop: Platform.OS === 'ios' ? 0 : -25,
     },
     headerLeft: () => <BackButton navigation={navigation} />,
   }),

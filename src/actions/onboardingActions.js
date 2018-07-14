@@ -4,6 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
 import Intercom from 'react-native-intercom';
+import ChatService from 'services/chat';
 import { getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
@@ -25,6 +26,7 @@ import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
 
 const storage = Storage.getInstance('db');
+const chat = new ChatService();
 
 export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
@@ -79,6 +81,11 @@ export const registerWalletAction = () => {
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     await Intercom.sendTokenToIntercom(fcmToken);
+    await chat.init({
+      username: user.username,
+      password: pin,
+    });
+    await chat.client.registerAccount();
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);

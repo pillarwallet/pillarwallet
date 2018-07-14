@@ -4,8 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform, Image } from 'react-native';
-
+import { AppState, Animated, Easing, Image } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -23,6 +22,8 @@ import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
+import ChatListScreen from 'screens/Chat/ChatList';
+import ChatScreen from 'screens/Chat/Chat';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -57,6 +58,8 @@ import {
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
+  CHAT_LIST,
+  CHAT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -70,29 +73,15 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
-// NAVIGATION OPTIONS FOR ANDROID AND IOS
-let navigationOpts;
-
-if (Platform.OS === 'ios') {
-  navigationOpts = {
-    header: null,
-  };
-} else {
-  navigationOpts = {
-    headerStyle: {
-      borderBottomWidth: 0,
-      elevation: 0,
-      height: 0,
-    },
-  };
-}
+const navigationOpts = {
+  header: null,
+};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconProfile = require('assets/icons/icon_profile.png');
 const iconIco = require('assets/icons/icon_ico.png');
-// const iconPeople = require('assets/icons/icon_people.png');
-// const iconChat = require('assets/icons/icon_chat.png');
+const iconChat = require('assets/icons/icon_chat.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -127,6 +116,16 @@ const peopleFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
 }, FluidNavigatorConfig);
+
+const StackNavigatorConfig = {
+  headerMode: 'none',
+};
+
+// CHAT FLOW
+const chatFlow = createStackNavigator({
+  [CHAT_LIST]: ChatListScreen,
+  [CHAT]: ChatScreen,
+}, StackNavigatorConfig);
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
@@ -167,6 +166,13 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconProfile),
         tabBarLabel: 'Profile',
+      }),
+    },
+    [CHAT_LIST]: {
+      screen: chatFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconChat),
+        tabBarLabel: 'Chat',
       }),
     },
   }, {

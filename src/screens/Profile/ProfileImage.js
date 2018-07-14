@@ -7,6 +7,7 @@ const CircleImage = styled.Image`
   width: 50px;
   height: 50px;
   border-radius: 25px;
+  ${props => (props.additionalImageStyle)}
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
@@ -17,21 +18,34 @@ const ImageTouchable = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   background-color: #d8d8d8;
+  ${props => (props.additionalContainerStyle)}
 `;
 
 const AvatarText = styled.Text`
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.bold};
   color: ${baseColors.white};
+  ${props => (props.additionalTextStyle)}
 `;
 
 type Props = {
   uri?: string,
   userName: string,
+  containerStyle?: Object,
+  textStyle?: Object,
+  imageStyle?: Object,
+  onPress?: Function,
 }
 
 const ProfileImage = (props: Props) => {
-  const { uri, userName } = props;
+  const {
+    uri,
+    userName,
+    containerStyle,
+    textStyle,
+    imageStyle,
+    onPress,
+  } = props;
 
   const initials = userName
     .split(' ')
@@ -40,9 +54,9 @@ const ProfileImage = (props: Props) => {
     .toUpperCase();
 
   return (
-    <ImageTouchable>
-      {!uri && <AvatarText>{initials}</AvatarText>}
-      {!!uri && <CircleImage source={{ uri }} />}
+    <ImageTouchable additionalContainerStyle={containerStyle} disabled={!onPress} onPress={onPress}>
+      {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
+      {!!uri && <CircleImage additionalImageStyle={imageStyle} source={{ uri }} />}
     </ImageTouchable>
   );
 };
