@@ -63,7 +63,7 @@ const ModalOverflow = styled.View`
 
 const CloseButton = styled(ButtonIcon)`
   position: absolute;
-  right: ${(props) => props.fullScreen ? 8 : -8}px;
+  right: ${(props) => props.fullScreen ? 16 : 0}px;
   top: -10px;
 `;
 

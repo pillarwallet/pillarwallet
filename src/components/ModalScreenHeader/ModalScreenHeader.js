@@ -38,12 +38,12 @@ const Right = styled.View`
 const BackIcon = styled(ButtonIcon)`
   position: relative;
   top: 10px;
-  margin: 0 -10px;
 `;
 
 const CloseButton = styled(ButtonIcon)`
   position: relative;
   bottom: 3px;
+  margin: 0 6px 0 10px;
 `;
 
 const ModalScreenHeader = (props: Props) => {

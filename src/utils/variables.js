@@ -4,6 +4,7 @@ export const baseColors = {
   burningFire: '#F56C07',
   periwinkle: '#9191ff',
   fireEngineRed: '#ff0005',
+  warmPurple: '#b2329c',
   electricBlue: '#007AFF',
   brightSkyBlue: '#00bfff',
   aquaMarine: '#50e3c2',
@@ -36,7 +37,7 @@ export const UIColors = {
   disabled: baseColors.mediumGray,
   defaultTextColor: baseColors.slateBlack,
   defaultBackgroundColor: baseColors.snowWhite,
-  defaultBorderColor: 'rgba(0, 0, 0, 0.25)',
+  defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
 };
 
