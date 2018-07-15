@@ -33,11 +33,7 @@ type Props = {
 };
 
 const ScreenHeader = (props: Props) => {
-  const {
-    onBack,
-    title,
-  } = props;
-
+  const { onBack, title } = props;
   const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
 
   return (
