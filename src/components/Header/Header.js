@@ -48,11 +48,9 @@ const Header = (props: Props) => {
         }
       </Body>
       <Right>
-        {nextText && (
-          <TextLink onPress={onNextPress}>
-            {nextText}
-          </TextLink>
-        )}
+        {nextText &&
+          <TextLink onPress={onNextPress}>{nextText}</TextLink>
+        }
       </Right>
 
     </Wrapper>

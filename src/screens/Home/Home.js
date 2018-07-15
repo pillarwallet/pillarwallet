@@ -12,16 +12,6 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import ButtonIcon from 'components/ButtonIcon';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
-
-type Props = {
-  navigation: NavigationScreenProp<*>,
-
-}
-
-type State = {
-
-}
-
 const dummyRecentConnections = {
   paragramm1234567: {
     name: 'paragramm1234567',
@@ -304,21 +294,26 @@ const RecentConnectionsItemName = styled.Text`
   color: ${baseColors.darkGray};
 `;
 
-export default class PeopleScreen extends React.Component<Props, State> {
+
+type Props = {
+  navigation: NavigationScreenProp<*>,
+};
+
+export default class PeopleScreen extends React.Component<Props> {
   goToProfile = () => {
     this.props.navigation.navigate(PROFILE);
-  }
+  };
 
   renderRecentConnections = () => {
-    return Object.keys(dummyRecentConnections).map((item) => (
-      <RecentConnectionsItem>
+    return Object.keys(dummyRecentConnections).map((item, index) => (
+      <RecentConnectionsItem key={index}>
         <RecentConnectionsItemAvatarWrapper>
           <RecentConnectionsItemAvatarImage />
         </RecentConnectionsItemAvatarWrapper>
         <RecentConnectionsItemName numberOfLines={1}>{item}</RecentConnectionsItemName>
       </RecentConnectionsItem>
     ));
-  }
+  };
 
   render() {
     return (
@@ -342,7 +337,6 @@ export default class PeopleScreen extends React.Component<Props, State> {
                 fontSize={24}
                 onPress={() => this.goToProfile()}
               />
-
             </HomeHeaderButtons>
           </HomeHeaderRow>
           <HomeHeaderRow>

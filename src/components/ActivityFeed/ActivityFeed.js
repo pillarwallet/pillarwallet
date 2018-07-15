@@ -9,7 +9,6 @@ const ActivityFeedWrapper = styled.View`
   flex: 1;
 `;
 
-
 const ActivityFeedHeader = styled.View`
   padding: 16px 16px 0;
 `;
@@ -66,7 +65,6 @@ const TabItem = styled.TouchableOpacity`
   flex: ${props => props.flex ? props.flex : 1};
   border-color: ${props => props.active ? baseColors.electricBlue : baseColors.lightGray};
   border-bottom-width: 2px;
-
 `;
 
 const TabItemText = styled.Text`
@@ -85,6 +83,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   align-items: center;
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
 `;
+
 const ButtonIconWrapper = styled.View`
   margin-left: auto;
   flex-direction: row;
@@ -132,8 +131,7 @@ type State = {
 export default class ActivityFeed extends React.Component<Props, State> {
   state = {
     activeTab: 'ALL',
-  }
-
+  };
 
   getSocialAction = (status: string) => {
     if (status === 'MESSAGE_RECEIVED') {
@@ -190,8 +188,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
       );
     }
     return null;
-  }
-
+  };
 
   renderActivityFeedItem = (item: Object, index: number) => {
     const isEven = index % 2 === 0;
@@ -207,7 +204,6 @@ export default class ActivityFeed extends React.Component<Props, State> {
 
       return (
         <ActivityFeedItem isEven={isEven} key={index}>
-
           <ActivityFeedItemCol fixedWidth="42px">
             <ActivityFeedItemAvatarWrapper />
           </ActivityFeedItemCol>
@@ -225,7 +221,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
     } else if (type === 'social') {
       const { status } = data;
       return (
-        <ActivityFeedItem isEven={isEven} key={item.index}>
+        <ActivityFeedItem isEven={isEven} key={index}>
           <ActivityFeedItemCol fixedWidth="42px">
             <ActivityFeedItemAvatarWrapper />
           </ActivityFeedItemCol>
@@ -241,7 +237,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
       );
     }
     return null;
-  }
+  };
 
   renderActivityFeedItems = (history: Array<*>) => {
     const activityFeedItems = [];
@@ -251,8 +247,9 @@ export default class ActivityFeed extends React.Component<Props, State> {
     return activityFeedItems;
   };
 
-
   render() {
+    const { activeTab } = this.state;
+    const { history } = this.props;
     return (
       <ActivityFeedWrapper>
         <ActivityFeedHeader>
@@ -260,28 +257,28 @@ export default class ActivityFeed extends React.Component<Props, State> {
         </ActivityFeedHeader>
         <TabWrapper>
           <TabItem
-            active={this.state.activeTab === 'ALL'}
+            active={activeTab === 'ALL'}
             onPress={() => this.setState({ activeTab: 'ALL' })}
             flex={1}
           >
-            <TabItemText active={this.state.activeTab === 'ALL'}>All</TabItemText>
+            <TabItemText active={activeTab === 'ALL'}>All</TabItemText>
           </TabItem>
           <TabItem
-            active={this.state.activeTab === 'TRANSACTIONS'}
+            active={activeTab === 'TRANSACTIONS'}
             onPress={() => this.setState({ activeTab: 'TRANSACTIONS' })}
             flex={1}
           >
-            <TabItemText active={this.state.activeTab === 'TRANSACTIONS'}>Transactions</TabItemText>
+            <TabItemText active={activeTab === 'TRANSACTIONS'}>Transactions</TabItemText>
           </TabItem>
           <TabItem
-            active={this.state.activeTab === 'SOCIAL'}
+            active={activeTab === 'SOCIAL'}
             onPress={() => this.setState({ activeTab: 'SOCIAL' })}
             flex={1}
           >
-            <TabItemText active={this.state.activeTab === 'SOCIAL'}>Social</TabItemText>
+            <TabItemText active={activeTab === 'SOCIAL'}>Social</TabItemText>
           </TabItem>
         </TabWrapper>
-        {this.renderActivityFeedItems(this.props.history)}
+        {this.renderActivityFeedItems(history)}
       </ActivityFeedWrapper>
     );
   }
