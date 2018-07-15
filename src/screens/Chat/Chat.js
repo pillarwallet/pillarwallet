@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { View, Platform, ActivityIndicator, StatusBar, Image } from 'react-native';
+import { View, ActivityIndicator, StatusBar, Image } from 'react-native';
+import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import { LinearGradient } from 'expo';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -16,60 +17,67 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import ChatService from 'services/chat';
 import { baseColors } from 'utils/variables';
-import ButtonIcon from 'components/ButtonIcon';
-import styled from 'styled-components/native/index';
-import Modal from 'react-native-modal';
-import { connect } from 'react-redux';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 import ProfileImage from 'screens/Profile/ProfileImage';
-import { isIphoneX } from 'utils/common';
-
-const CloseButton = Platform.OS === 'ios' ?
-  styled(ButtonIcon)`
-  position: absolute;
-  right: 0;
-  top: ${isIphoneX ? 20 : 10}px;
-  z-index: 14;
-` :
-  styled(ButtonIcon)`
-  position: absolute;
-  right: 6px;
-  top: 0;
-  z-index: 14;
-`;
+import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
 
-const chat = new ChatService();
-
 type Props = {
   navigation: NavigationScreenProp<*>,
-  receiver: string,
-  receiverAvatar: string,
   user: Object,
-  isVisible: boolean,
-  modalHide: Function,
+  sendMessageByContact: Function,
+  getChatByContact: Function,
+  messages: Object,
 }
 
 type State = {
-  messages: Array<mixed>,
-  isLoadingMore: boolean,
+  contact: Object,
   showLoadEarlierButton: boolean,
 }
 
 class ChatScreen extends React.Component<Props, State> {
-  state = {
-    messages: [],
-    isLoadingMore: false,
-    showLoadEarlierButton: false,
+  handleChatDismissal = () => {
+    const { navigation } = this.props;
+    navigation.goBack(null);
   };
 
-  handleChatClose = () => {
+  constructor(props) {
+    super(props);
+    const contact = props.navigation.getParam('contact', {});
+    this.state = {
+      contact,
+      showLoadEarlierButton: true, // make dynamanic depending on number of messages in memory?
+    };
+  }
+
+  componentDidMount() {
+    StatusBar.setBarStyle('dark-content');
+    const { contact } = this.state;
+    const { getChatByContact } = this.props;
+    getChatByContact(contact.username);
+  }
+
+  formatMessages = (messages: Object[] = [], contact: Object, user: Object) => {
+    return messages.map((message, index) => ({
+      _id: index,
+      text: message.content,
+      createdAt: new Date(message.savedTimestamp * 1000),
+      user: {
+        _id: message.username,
+        name: message.username,
+        avatar: message.username === contact.username ? contact.avatar : user.usernameAvatar,
+      },
+    })).sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  handleLoadEarlier = () => {
+    const { getChatByContact } = this.props;
+    const { contact } = this.state;
+    getChatByContact(contact.username, true);
     this.setState({
-      messages: [],
       showLoadEarlierButton: false,
-      isLoadingMore: false,
     });
   };
 
@@ -112,10 +120,11 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   renderCustomAvatar = () => {
+    const { contact } = this.state;
     return (
       <ProfileImage
-        uri={this.props.receiverAvatar}
-        userName={this.props.receiver}
+        uri={contact.avatar}
+        userName={contact.username}
         containerStyle={{
           height: 34,
           width: 34,
@@ -274,117 +283,71 @@ class ChatScreen extends React.Component<Props, State> {
     );
   }
 
-  handleChatOpen = () => {
-    StatusBar.setBarStyle('dark-content');
-    // TODO: append user avatar to each message from chat receiver (this.props.receiverAvatar).
-    chat.client.receiveNewMessagesByContact(this.props.receiver).then(() => {
-      chat.client.getChatByContact(this.props.receiver).then((receivedMessagesString) => {
-        const messages = [];
-        const receivedMessages = JSON.parse(receivedMessagesString);
-          receivedMessages.forEach((obj, key) => {
-            messages.push({
-              _id: key,
-              text: obj.content,
-              createdAt: new Date(obj.savedTimestamp*1000),
-              user: {
-                _id: obj.username,
-                name: obj.username,
-                avatar: obj.username === this.props.receiver ? this.props.receiverAvatar : this.props.receiverAvatar,
-              },
-            });
-          });
-          this.setState({
-            showLoadEarlierButton: false, // if not all previous messages are shown
-            messages,
-          });
-      }).catch(() => {});
-    }).catch(() => {});
-  };
-
-  loadEarlier = () => {
-    // TODO: get more messages of conversation with this.props.receiver
-  };
-
-  onSend = (messages: Array<mixed> = []) => {
-    chat.client.sendMessageByContact(this.props.receiver, messages[0].text);
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }));
+  onSend = (messages: Object[] = []) => {
+    const { sendMessageByContact } = this.props;
+    const { contact } = this.state;
+    sendMessageByContact(contact.username, messages[0]);
   };
 
   render() {
-    const {
-      isVisible,
-      modalHide,
-    } = this.props;
-
-    const animationInTiming = 300;
-    const animationOutTiming = 300;
-
-    const animateIn = Platform.OS === 'ios' ? 'slideInRight' : 'slideInUp';
-    const animateOut = Platform.OS === 'ios' ? 'slideOutRight' : 'slideOutDown';
-
+    const { messages, user } = this.props;
+    const { contact, showLoadEarlierButton } = this.state;
+    const contactMessages = this.formatMessages(messages[contact.username], contact, user);
     return (
-      <Modal
-        isVisible={isVisible}
-        animationInTiming={animationInTiming}
-        animationOutTiming={animationOutTiming}
-        animationIn={animateIn}
-        animationOut={animateOut}
-        onBackButtonPress={modalHide}
-        onModalShow={this.handleChatOpen}
-        onModalHide={this.handleChatClose}
-        style={{
-          margin: 0,
-          justifyContent: 'flex-start',
-        }}
-      >
-        <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
-          <LinearGradient
-            colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}
-            locations={[0.2, 0.6, 1.0]}
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 20,
-              height: 80,
-              zIndex: 11,
-            }}
-          />
-          <CloseButton
-            icon="close"
-            onPress={modalHide}
-            fontSize={Platform.OS === 'ios' ? 36 : 30}
-            color={baseColors.darkGray}
-          />
-          <GiftedChat
-            messages={this.state.messages}
-            onSend={messages => this.onSend(messages)}
-            user={{
-              _id: this.props.user.username,
-            }}
-            style={{ backgroundColor: 'red' }}
-            renderBubble={this.renderBubble}
-            renderAvatar={this.renderAvatar}
-            renderComposer={this.renderComposer}
-            renderInputToolbar={this.renderInputToolbar}
-            renderDay={this.renderDay}
-            renderTime={this.renderTime}
-            renderLoading={this.renderLoading}
-            loadEarlier={this.state.showLoadEarlierButton}
-            isLoadingEarlier={this.state.isLoadingMore}
-            onLoadEarlier={this.loadEarlier}
-            renderLoadEarlier={this.renderLoadEarlier}
-            renderMessage={this.renderMessage}
-            minInputToolbarHeight={52}
-          />
-        </View>
-      </Modal>
+      <React.Fragment>
+        <Container>
+          <ModalScreenHeader onClose={this.handleChatDismissal} />
+          <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
+            <LinearGradient
+              colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}
+              locations={[0.2, 0.6, 1.0]}
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 20,
+                height: 80,
+                zIndex: 11,
+              }}
+            />
+            <GiftedChat
+              messages={contactMessages}
+              onSend={msgs => this.onSend(msgs)}
+              user={{
+                _id: this.props.user.username,
+              }}
+              style={{ backgroundColor: 'red' }}
+              renderBubble={this.renderBubble}
+              renderAvatar={this.renderAvatar}
+              renderComposer={this.renderComposer}
+              renderInputToolbar={this.renderInputToolbar}
+              renderDay={this.renderDay}
+              renderTime={this.renderTime}
+              renderLoading={this.renderLoading}
+              loadEarlier={this.state.showLoadEarlierButton}
+              onLoadEarlier={this.handleLoadEarlier}
+              renderLoadEarlier={this.renderLoadEarlier}
+              renderMessage={this.renderMessage}
+              minInputToolbarHeight={52}
+            />
+          </View>
+        </Container>
+      </React.Fragment>
     );
   }
 }
 
-const mapStateToProps = ({ user: { data: user } }) => ({ user });
+const mapStateToProps = ({
+  user: { data: user },
+  chat: { data: { messages } },
+}) => ({
+  user,
+  messages,
+});
 
-export default connect(mapStateToProps)(ChatScreen);
+const mapDispatchToProps = (dispatch) => ({
+  sendMessageByContact: (username, message) => dispatch(sendMessageByContactAction(username, message)),
+  getChatByContact: (username) => dispatch(getChatByContactAction(username)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);
