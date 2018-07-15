@@ -15,7 +15,6 @@ import {
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { addChatContactAction } from 'actions/chatActions';
-import { Toast } from 'native-base';
 import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
@@ -132,7 +131,7 @@ export const rejectInvitationAction = (invitation: Object) => {
       walletId,
     );
     if (!rejectedInvitation) return;
-    
+
     dispatch(({
       type: ADD_NOTIFICATION,
       payload: { message: 'Invitation rejected!' },

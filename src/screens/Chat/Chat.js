@@ -324,7 +324,7 @@ class ChatScreen extends React.Component<Props, State> {
               renderDay={this.renderDay}
               renderTime={this.renderTime}
               renderLoading={this.renderLoading}
-              loadEarlier={this.state.showLoadEarlierButton}
+              loadEarlier={showLoadEarlierButton}
               onLoadEarlier={this.handleLoadEarlier}
               renderLoadEarlier={this.renderLoadEarlier}
               renderMessage={this.renderMessage}

@@ -38,8 +38,6 @@ import {
 
 import AppFlow from './appNavigation';
 
-
-
 const StackNavigatorConfig = {
   headerMode: 'screen',
   navigationOptions: ({ navigation }) => ({
