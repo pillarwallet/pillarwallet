@@ -9,7 +9,7 @@ import { noop } from 'utils/common';
 
 const Header = styled.View`
   background-color: #fff;
-  padding: 40px 16px 0;
+  padding: 0 16px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
