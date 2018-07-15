@@ -13,6 +13,8 @@ import {
   TYPE_RECEIVED,
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { addChatContactAction } from 'actions/chatActions';
 import { Toast } from 'native-base';
 import Storage from 'services/storage';
 
@@ -27,10 +29,10 @@ export const sendInvitationAction = (user: ApiUser) => {
 
     const index = invitations.findIndex(el => el.id === user.id);
     if (index >= 0) {
-      Toast.show({
-        text: 'Invitation has already been sent',
-        buttonText: '',
-      });
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Invitation has already been sent' },
+      }));
       return;
     }
 
@@ -44,11 +46,10 @@ export const sendInvitationAction = (user: ApiUser) => {
       type: ADD_INVITATION,
       payload: invitation,
     });
-
-    Toast.show({
-      text: 'Invitation sent!',
-      buttonText: '',
-    });
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Invitation sent!' },
+    }));
   };
 };
 
@@ -86,6 +87,7 @@ export const acceptInvitationAction = (invitation: Object) => {
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
+    addChatContactAction(invitation.username);
   };
 };
 
@@ -102,10 +104,11 @@ export const cancelInvitationAction = (invitation: Object) => {
       walletId,
     );
     if (!cancelledInvitation) return;
-    Toast.show({
-      text: 'Invitation cancelled!',
-      buttonText: '',
-    });
+
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Invitation cancelled!' },
+    }));
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     await storage.save('invitations', { invitations: updatedInvitations }, true);
@@ -129,10 +132,11 @@ export const rejectInvitationAction = (invitation: Object) => {
       walletId,
     );
     if (!rejectedInvitation) return;
-    Toast.show({
-      text: 'Invitation rejected!',
-      buttonText: '',
-    });
+    
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Invitation rejected!' },
+    }));
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     await storage.save('invitations', { invitations: updatedInvitations }, true);
