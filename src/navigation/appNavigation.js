@@ -104,6 +104,11 @@ const FluidNavigatorConfig = {
   },
 };
 
+// CHAT FLOW
+const chatFlow = createStackNavigator({
+  [CHAT_LIST]: ChatListScreen,
+}, FluidNavigatorConfig);
+
 // ASSETS FLOW
 const assetsFlow = FluidNavigator({
   [ASSETS]: AssetsScreen,
@@ -116,16 +121,6 @@ const peopleFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
 }, FluidNavigatorConfig);
-
-const StackNavigatorConfig = {
-  headerMode: 'none',
-};
-
-// CHAT FLOW
-const chatFlow = createStackNavigator({
-  [CHAT_LIST]: ChatListScreen,
-  [CHAT]: ChatScreen,
-}, StackNavigatorConfig);
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
@@ -227,6 +222,7 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
+    [CHAT]: ChatScreen,
   }, {
     mode: 'modal',
     navigationOptions: navigationOpts,

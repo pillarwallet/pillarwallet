@@ -18,8 +18,8 @@ type Props = {
 
 const Header = styled.View`
   background-color: #fff;
-  height: 80px;
-  padding: 0 14px;
+  height: 70px;
+  padding: 0 14px 12px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -32,7 +32,7 @@ const Right = styled.View`
   align-items: center;
   justify-content: flex-end;
   margin-top: ${Platform.OS === 'ios' ? 0 : 5}
-  margin-right: ${Platform.OS === 'ios' ? -13 : -8}
+  margin-right: ${Platform.OS === 'ios' ? -2 : -8}
 `;
 
 const BackIcon = styled(ButtonIcon)`

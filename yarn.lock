@@ -8324,9 +8324,9 @@ native-base-shoutem-theme@0.2.2:
     lodash "^4.10.1"
     prop-types "^15.5.10"
 
-native-base@^2.4.2:
-  version "2.5.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/native-base/-/native-base-2.5.2.tgz#62d2a0a8d4d1e0384bcc07f36845bdf256930a9f"
+native-base@2.6.1:
+  version "2.6.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/native-base/-/native-base-2.6.1.tgz#119a4152ffdb36d01055a75f370f6c19011e1970"
   dependencies:
     blueimp-md5 "^2.5.0"
     clamp "^1.0.1"
@@ -11183,9 +11183,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@^1.0.25:
-  version "1.0.25"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.25.tgz#d555a41bf79678c263c52a2b833a12eb96bd0e83"
+rn-signal-protocol-messaging@^1.0.36:
+  version "1.0.36"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.36.tgz#2c203dc4dd6f2a9a0721a5dcdec3854c13c8fefc"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -12728,7 +12728,7 @@ uuid@^2.0.1:
   version "2.0.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uuid/-/uuid-2.0.3.tgz#67e2e863797215530dff318e5bf9dcebfd47b21a"
 
-uuid@^3.3.2:
+uuid@^3.0.0, uuid@^3.0.1, uuid@^3.1.0, uuid@^3.2.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
 
