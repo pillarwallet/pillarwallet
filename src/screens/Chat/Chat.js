@@ -48,7 +48,7 @@ class ChatScreen extends React.Component<Props, State> {
     const contact = props.navigation.getParam('contact', {});
     this.state = {
       contact,
-      showLoadEarlierButton: true, // make dynamic depending on number of messages in memory?
+      showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
     };
   }
 
