@@ -8,6 +8,7 @@ import Storage from 'services/storage';
 import { ADD_NOTIFICATION, UPDATE_INTERCOM_NOTIFICATIONS_COUNT } from 'constants/notificationConstants';
 
 const CONNECTION = 'CONNECTION';
+const SIGNAL = 'SIGNAL';
 
 const storage = Storage.getInstance('db');
 
@@ -61,6 +62,9 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());
+      }
+      if (notification.type === SIGNAL) {
+        dispatch({ type: SIGNAL, payload: { message } });
       }
 
       dispatch({ type: ADD_NOTIFICATION, payload: notification });
