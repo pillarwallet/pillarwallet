@@ -216,11 +216,6 @@ const tabNavigation = createBottomTabNavigator(
         paddingBottom: 5,
         height: 49,
       },
-      labelStyle: {
-        fontSize: 12,
-        color: baseColors.mediumGray,
-        inactiveTintColor: 'gray',
-      },
     },
     tabBarPosition: 'bottom',
     animationEnabled: true,
