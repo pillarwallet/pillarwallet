@@ -1,9 +1,6 @@
 // @flow
 import * as React from 'react';
-import {
-  Text,
-  ActivityIndicator,
-} from 'react-native';
+import { Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
@@ -11,6 +8,7 @@ import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import { API_REGISTRATION_FAILED } from 'constants/walletConstants';
 import { APP_FLOW } from 'constants/navigationConstants';
+// import Spinner from 'components/Spinner';
 
 type Props = {
   navigation: NavigationScreenProp<*>,

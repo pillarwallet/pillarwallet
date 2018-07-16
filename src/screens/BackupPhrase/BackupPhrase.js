@@ -40,10 +40,9 @@ class BackupPhrase extends React.Component<Props, {}> {
       <Container>
         <Wrapper regularPadding>
           <Title title="backup phrase" />
-          <Paragraph>Carefully write down your 12 word backup phrase in the correct order.</Paragraph>
+          <Paragraph>Write down all 12 words in the order shown.</Paragraph>
           <Paragraph light>
-            Keep it secure as it&#39;s the only way to recover your account in an emergency.
-            Don&#39;t email or screenshot it.
+            Don’t take a screenshot; write them down carefully, make a few copies, and put them in different places.
           </Paragraph>
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </Wrapper>

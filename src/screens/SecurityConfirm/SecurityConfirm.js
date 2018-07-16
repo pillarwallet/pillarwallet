@@ -45,13 +45,14 @@ export default class SecurityConfirm extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <Title title="security" />
           <Paragraph>
-            Keep your backup phrase safe! It will allow you to recover your funds if your device is ever lost or stolen.
+            Keep your backup phrase safe! We don’t have it.
+            You’ll need these words if you lose your device or delete your app.
           </Paragraph>
           <Paragraph light>
-            It is important to store your backup phrase securely where only you have access to it.
-             We suggest you write down your passphrase on paper and store it
-            in a safe location and/or save it to an encrypted USB drive.
-            Multiple redundant backup options are always recommended.
+            Write down your backup phrase and  store it in several places only you know.
+            Be very careful when putting it into a digital file or USB stick -
+            always encrypt any digital version of these 12 words.
+
           </Paragraph>
         </Wrapper>
         <Footer>
@@ -60,7 +61,7 @@ export default class SecurityConfirm extends React.Component<Props, State> {
           >
             <Checkbox toggleCheckbox={this.toggleCheckBox} tag="checkbox" checked={!confirmButtonDisabled} />
             <CheckboxText>
-              I understand that if I lose my passphrase, I will be unable to recover access to my account.
+              I understand that if I lose my backup phrase, I risk losing everything stored on my wallet.
             </CheckboxText>
           </CheckboxItem>
           <Divider />

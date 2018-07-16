@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
+import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
@@ -17,22 +17,8 @@ import {
   fetchSupportedAssetsAction,
 } from 'actions/assetsActions';
 import { ETH } from 'constants/assetsConstants';
-
-const tokenIcons = {};
-
-
-// ALL SHOULD BE REMOVED FROM THE BUNDLED ONCE ALL ASSETS UPLOADED ON CDN
-tokenIcons.PLR = require('../../assets/images/tokens/PLR/icon.png');
-tokenIcons.QTM = require('../../assets/images/tokens/QTM/icon.png');
-tokenIcons.OMG = require('../../assets/images/tokens/OMG/icon.png');
-tokenIcons.ICX = require('../../assets/images/tokens/ICX/icon.png');
-tokenIcons.STORJ = require('../../assets/images/tokens/STORJ/icon.png');
-tokenIcons.BAT = require('../../assets/images/tokens/BAT/icon.png');
-tokenIcons.GNT = require('../../assets/images/tokens/GNT/icon.png');
-tokenIcons.PPT = require('../../assets/images/tokens/PPT/icon.png');
-tokenIcons.SALT = require('../../assets/images/tokens/SALT/icon.png');
-tokenIcons.ETH = require('../../assets/images/tokens/ETH/icon.png');
-tokenIcons.EOS = require('../../assets/images/tokens/EOS/icon.png');
+import { SDK_PROVIDER } from 'react-native-dotenv';
+import { Image as ImageCache } from 'react-native-expo-image-cache';
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.small};
@@ -47,6 +33,12 @@ const TokenSymbol = styled.Text`
 
 const TokenListItem = styled(ListItem)`
   margin: 0;
+`;
+
+const TokenThumbnail = styled(ImageCache)`
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
 `;
 
 type Props = {
@@ -79,11 +71,14 @@ class AddToken extends React.Component<Props> {
     const { assets, supportedAssets } = this.props;
     return supportedAssets
       .filter(({ symbol }) => symbol !== ETH)
-      .map(({ symbol, name, ...rest }) => {
+      .map(({
+        symbol, name, iconUrl, ...rest
+      }) => {
         const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+        const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
         return (
           <TokenListItem key={symbol}>
-            <Thumbnail square size={80} source={tokenIcons[symbol]} />
+            <TokenThumbnail uri={fullIconUrl} />
             <Body style={{ marginLeft: 20 }}>
               <TokenName>{name}</TokenName>
               <TokenSymbol>{symbol}</TokenSymbol>
@@ -112,19 +107,17 @@ class AddToken extends React.Component<Props> {
 
   render() {
     return (
-      <React.Fragment>
-        <Container>
-          <ModalScreenHeader title="add token" onClose={this.handleScreenDismissal} />
-          <ScrollWrapper regularPadding>
-            <SubTitle>
-              Toggle ERC-20 tokens your wallet should display.
-            </SubTitle>
-            <List>
-              {this.generateAddTokenListItems()}
-            </List>
-          </ScrollWrapper>
-        </Container>
-      </React.Fragment>
+      <Container>
+        <ModalScreenHeader title="add token" onClose={this.handleScreenDismissal} />
+        <ScrollWrapper regularPadding>
+          <SubTitle>
+            Toggle ERC-20 tokens your wallet should display.
+          </SubTitle>
+          <List>
+            {this.generateAddTokenListItems()}
+          </List>
+        </ScrollWrapper>
+      </Container>
     );
   }
 }

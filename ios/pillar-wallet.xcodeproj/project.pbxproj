@@ -16,6 +16,8 @@
 		16877D5F20BEE57800A7AD1D /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16877D5E20BEE57800A7AD1D /* libReact.a */; };
 		16877D8620BEE80500A7AD1D /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168C48F920BDB29B00A0E98F /* libRCTActionSheet.a */; };
 		168C491D20BDB2A000A0E98F /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168C48F920BDB29B00A0E98F /* libRCTActionSheet.a */; };
+		1697CB7920FB4F200085253C /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1697CB7820FB4F200085253C /* SignalProtocol.framework */; };
+		1697CB7A20FB4F200085253C /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1697CB7820FB4F200085253C /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16EF832620BA1B8200CDDE12 /* libGPUImage.a */; };
 		16F1DC5D20BC029800A8F843 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DC4F20BC01CF00A8F843 /* libRCTText.a */; };
 		16F1DCA320BC035F00A8F843 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DCA020BC034D00A8F843 /* libRCTNetwork.a */; };
@@ -26,6 +28,7 @@
 		2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */; };
 		2EC3EE0BF47A4A74940BE84E /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCE4860CBACC4A99B26705F0 /* Zocial.ttf */; };
 		308F1777F22140319410B3D5 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A53A48870B24236BA9A090E /* Octicons.ttf */; };
+		3ADFC0D3F02C4E388EDD9D5C /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DE578DE887D14A629439A249 /* libSignalMessagingSwift.a */; };
 		3BE522D36D0E44CB973ECA16 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 43399DA83DE5422CB158B171 /* MaterialIcons.ttf */; };
 		3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E57168F09C0F4E06ADD6E15F /* libRNFirebase.a */; };
 		44C758D34A0A45438D9BBC25 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE9C8A714CA544BB85EFA109 /* Foundation.ttf */; };
@@ -40,6 +43,7 @@
 		7FE0949E8E1E4A86920A222E /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */; };
 		8D2F06EA360544BDADBED075 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 06BB724CDE404052B9BE592C /* Octicons.ttf */; };
 		8FDBC48B259C41AD8BA2A002 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0A919F81462B49BEADFD1CBD /* EvilIcons.ttf */; };
+		95BD5F9120F54993001E93AA /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BD5F9020F54993001E93AA /* SwiftBridge.swift */; };
 		B501732B1DC01252003445D9 /* EXShell.plist in Resources */ = {isa = PBXBuildFile; fileRef = B501732A1DC01252003445D9 /* EXShell.plist */; };
 		B56386491DB9693800A0598C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56386481DB9693800A0598C /* AppDelegate.m */; };
 		B56386511DB9693800A0598C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B56386501DB9693800A0598C /* Assets.xcassets */; };
@@ -58,6 +62,7 @@
 		E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */; };
 		E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */; };
 		EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */; };
+		F52660EC2C5047DBADBFA3A9 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40EC5CFD374F4F00AB6AAB9D /* MaterialCommunityIcons.ttf */; };
 		FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
 /* End PBXBuildFile section */
 
@@ -321,6 +326,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		95BD5F8D20F54739001E93AA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3BE7AC9D819F4D6F964678EB /* SignalMessagingSwift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 958BF8F920F3CAD8003CF3A0;
+			remoteInfo = SignalMessagingSwift;
+		};
 		EE03A31120C54DF3009DA27F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 16F1DC5E20BC030C00A8F843 /* React.xcodeproj */;
@@ -329,6 +341,20 @@
 			remoteInfo = React;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1697CBA020FB4F200085253C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1697CB7A20FB4F200085253C /* SignalProtocol.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06BB724CDE404052B9BE592C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -342,6 +368,7 @@
 		16877D5E20BEE57800A7AD1D /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		168C48F420BDB29A00A0E98F /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		1691663120A976E400897610 /* pillar-wallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "pillar-wallet.entitlements"; sourceTree = "<group>"; };
+		1697CB7820FB4F200085253C /* SignalProtocol.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SignalProtocol.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		16CD8FB520A8DC1B00BD276F /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		16CD8FB920A8E19700BD276F /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		16EF832620BA1B8200CDDE12 /* libGPUImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libGPUImage.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -359,7 +386,9 @@
 		3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		327A307B25DC4C5299D33695 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		358C5AA222F84E91AEFA3908 /* libRNOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNOS.a; sourceTree = "<group>"; };
+		3BE7AC9D819F4D6F964678EB /* SignalMessagingSwift.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = SignalMessagingSwift.xcodeproj; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift.xcodeproj"; sourceTree = "<group>"; };
 		3D75BA9D0741449D9A94ECB8 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = UdpSockets.xcodeproj; path = "../node_modules/react-native-udp/ios/UdpSockets.xcodeproj"; sourceTree = "<group>"; };
+		40EC5CFD374F4F00AB6AAB9D /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		43399DA83DE5422CB158B171 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		462A98C765944A1BA87BDB9C /* RNOS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNOS.xcodeproj; path = "../node_modules/react-native-os/ios/RNOS.xcodeproj"; sourceTree = "<group>"; };
 		4A53A48870B24236BA9A090E /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
@@ -370,6 +399,8 @@
 		80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		809C8F6F2C484692B42E92AE /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libUdpSockets.a; sourceTree = "<group>"; };
+		95BD5F8F20F54992001E93AA /* pillar-wallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillar-wallet-Bridging-Header.h"; sourceTree = "<group>"; };
+		95BD5F9020F54993001E93AA /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		A144060C424F469E8074D840 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		ABDB1B80C02F4F8CAF10338E /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
 		ABE6DAB20184465D8E053C80 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
@@ -394,6 +425,7 @@
 		CBF04378DC6E4D29AC2400A2 /* TcpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = TcpSockets.xcodeproj; path = "../node_modules/react-native-tcp/ios/TcpSockets.xcodeproj"; sourceTree = "<group>"; };
 		CE658B24F3194D0A90335341 /* libTcpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libTcpSockets.a; sourceTree = "<group>"; };
 		DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		DE578DE887D14A629439A249 /* libSignalMessagingSwift.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSignalMessagingSwift.a; sourceTree = "<group>"; };
 		E57168F09C0F4E06ADD6E15F /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
 		E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		E95F3AE135154DC384D6FE21 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
@@ -415,6 +447,7 @@
 				16F1DC5D20BC029800A8F843 /* libRCTText.a in Frameworks */,
 				16874E8220BB3B6E0034548E /* libRCTWebSocket.a in Frameworks */,
 				16874E8C20BB3BBB0034548E /* libRCTImage.a in Frameworks */,
+				1697CB7920FB4F200085253C /* SignalProtocol.framework in Frameworks */,
 				16874E8E20BB3BE00034548E /* libExpoKit.a in Frameworks */,
 				3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */,
 				B8CED6E293D24607AA6B21C6 /* libRNRandomBytes.a in Frameworks */,
@@ -436,6 +469,7 @@
 				52E89B24A5A54CB2881789EF /* libTcpSockets.a in Frameworks */,
 				05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */,
 				16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */,
+				3ADFC0D3F02C4E388EDD9D5C /* libSignalMessagingSwift.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,6 +554,7 @@
 				358C5AA222F84E91AEFA3908 /* libRNOS.a */,
 				CE658B24F3194D0A90335341 /* libTcpSockets.a */,
 				9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */,
+				DE578DE887D14A629439A249 /* libSignalMessagingSwift.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -630,6 +665,7 @@
 				4A53A48870B24236BA9A090E /* Octicons.ttf */,
 				A144060C424F469E8074D840 /* SimpleLineIcons.ttf */,
 				BCE4860CBACC4A99B26705F0 /* Zocial.ttf */,
+				40EC5CFD374F4F00AB6AAB9D /* MaterialCommunityIcons.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -651,13 +687,23 @@
 				462A98C765944A1BA87BDB9C /* RNOS.xcodeproj */,
 				CBF04378DC6E4D29AC2400A2 /* TcpSockets.xcodeproj */,
 				3D75BA9D0741449D9A94ECB8 /* UdpSockets.xcodeproj */,
+				3BE7AC9D819F4D6F964678EB /* SignalMessagingSwift.xcodeproj */,
 			);
 			name = Libraries;
+			sourceTree = "<group>";
+		};
+		95BD5F8A20F54739001E93AA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				95BD5F8E20F54739001E93AA /* libSignalMessagingSwift.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		B56386381DB9693800A0598C = {
 			isa = PBXGroup;
 			children = (
+				1697CB7820FB4F200085253C /* SignalProtocol.framework */,
 				EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */,
 				B56386431DB9693800A0598C /* pillar-wallet */,
 				B56386421DB9693800A0598C /* Products */,
@@ -683,8 +729,10 @@
 				1691663120A976E400897610 /* pillar-wallet.entitlements */,
 				B56386471DB9693800A0598C /* AppDelegate.h */,
 				B56386481DB9693800A0598C /* AppDelegate.m */,
+				95BD5F9020F54993001E93AA /* SwiftBridge.swift */,
 				B56386501DB9693800A0598C /* Assets.xcassets */,
 				B563865B1DB96A5E00A0598C /* Supporting */,
+				95BD5F8F20F54992001E93AA /* pillar-wallet-Bridging-Header.h */,
 			);
 			path = "pillar-wallet";
 			sourceTree = "<group>";
@@ -729,8 +777,9 @@
 				B563863E1DB9693800A0598C /* Frameworks */,
 				B563863F1DB9693800A0598C /* Resources */,
 				7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */,
-				830CB5A0008124C5799759EC /* [CP] Embed Pods Frameworks */,
 				EE4E73BD20D122990008F745 /* Bundle Expo assets */,
+				863359BBB25B18EA5E2B2C8F /* [CP] Embed Pods Frameworks */,
+				1697CBA020FB4F200085253C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -754,6 +803,7 @@
 					B56386401DB9693800A0598C = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = J9DEY3FGPD;
+						LastSwiftMigration = 930;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -825,6 +875,10 @@
 				{
 					ProductGroup = 16CD8FA920A8D94C00BD276F /* Products */;
 					ProjectRef = 656DE667C19E4B64B8132FD8 /* RNVectorIcons.xcodeproj */;
+				},
+				{
+					ProductGroup = 95BD5F8A20F54739001E93AA /* Products */;
+					ProjectRef = 3BE7AC9D819F4D6F964678EB /* SignalMessagingSwift.xcodeproj */;
 				},
 				{
 					ProductGroup = 16570B7220BA0C7000CB6BE6 /* Products */;
@@ -1102,6 +1156,13 @@
 			remoteRef = 16F1DCB620BC061100A8F843 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		95BD5F8E20F54739001E93AA /* libSignalMessagingSwift.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSignalMessagingSwift.a;
+			remoteRef = 95BD5F8D20F54739001E93AA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1142,6 +1203,7 @@
 				308F1777F22140319410B3D5 /* Octicons.ttf in Resources */,
 				4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */,
 				2EC3EE0BF47A4A74940BE84E /* Zocial.ttf in Resources */,
+				F52660EC2C5047DBADBFA3A9 /* MaterialCommunityIcons.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1218,7 +1280,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		830CB5A0008124C5799759EC /* [CP] Embed Pods Frameworks */ = {
+		863359BBB25B18EA5E2B2C8F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1288,6 +1350,7 @@
 			files = (
 				B56386611DB96A5E00A0598C /* main.m in Sources */,
 				B56386491DB9693800A0598C /* AppDelegate.m in Sources */,
+				95BD5F9120F54993001E93AA /* SwiftBridge.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1409,6 +1472,7 @@
 			baseConfigurationReference = 7D0396A597875542ECE2CDF9 /* Pods-pillar-wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
@@ -1488,10 +1552,15 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"$(PROJECT_DIR)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match Development com.pillarproject.wallet 1526897369";
+				PROVISIONING_PROFILE = "56f20096-3a84-4e04-a83a-ad8a485d962a";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.pillarproject.wallet 1530870110";
+				SWIFT_OBJC_BRIDGING_HEADER = "pillar-wallet/pillar-wallet-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1502,8 +1571,9 @@
 			baseConfigurationReference = 091E87CFB7B878842C4CB7F5 /* Pods-pillar-wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				HEADER_SEARCH_PATHS = (
@@ -1581,10 +1651,14 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"$(PROJECT_DIR)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet 1526587087";
+				PROVISIONING_PROFILE = "56f20096-3a84-4e04-a83a-ad8a485d962a";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development com.pillarproject.wallet 1530870110";
+				SWIFT_OBJC_BRIDGING_HEADER = "pillar-wallet/pillar-wallet-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};

@@ -90,7 +90,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-qrcode|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-device-info|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-parsed-text|@expo/react-native-action-sheet|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -119,7 +119,7 @@
     "https-browserify": "~0.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
-    "native-base": "^2.4.2",
+    "native-base": "2.6.1",
     "polished": "^1.9.2",
     "pouchdb-react-native": "^6.4.1",
     "process": "^0.11.0",
@@ -131,6 +131,7 @@
     "react-native-device-info": "^0.21.5",
     "react-native-expo-image-cache": "^3.1.1",
     "react-native-firebase": "^4.2.0",
+    "react-native-gifted-chat": "^0.4.3",
     "react-native-intercom": "^11.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
@@ -148,6 +149,7 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
+    "rn-signal-protocol-messaging": "^1.0.40",
     "shuffle-array": "^1.0.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
