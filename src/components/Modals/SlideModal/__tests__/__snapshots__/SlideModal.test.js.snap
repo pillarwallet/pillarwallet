@@ -143,7 +143,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               Array [
                 Object {
                   "alignSelf": "flex-start",
-                  "height": 30,
                   "marginBottom": 0,
                   "marginLeft": 0,
                   "marginRight": 0,
