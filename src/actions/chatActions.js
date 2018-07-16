@@ -4,12 +4,6 @@ import { UPDATE_CHATS, ADD_MESSAGE, UPDATE_MESSAGES } from 'constants/chatConsta
 
 const chat = new ChatService();
 
-export const addChatContactAction = (username: string) => {
-  return async () => {
-    await chat.client.addContact(username).catch(() => null);
-  };
-};
-
 export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
@@ -40,6 +34,7 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
 
 export const getChatByContactAction = (username: string, loadEarlier: boolean = false) => {
   return async (dispatch: Function) => {
+    await chat.client.addContact(username).catch(() => null);
     if (loadEarlier) {
       await chat.client.receiveNewMessagesByContact(username).catch(() => null);
     }

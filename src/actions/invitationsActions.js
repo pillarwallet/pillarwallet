@@ -14,7 +14,6 @@ import {
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { addChatContactAction } from 'actions/chatActions';
 import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
@@ -49,7 +48,6 @@ export const sendInvitationAction = (user: ApiUser) => {
       type: ADD_NOTIFICATION,
       payload: { message: 'Invitation sent!' },
     }));
-    addChatContactAction(invitation.username);
   };
 };
 
@@ -87,7 +85,6 @@ export const acceptInvitationAction = (invitation: Object) => {
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
-    addChatContactAction(invitation.username);
   };
 };
 
