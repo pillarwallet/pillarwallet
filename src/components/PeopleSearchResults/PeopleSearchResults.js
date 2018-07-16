@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
@@ -106,7 +106,16 @@ class PeopleSearchResults extends React.Component<Props, State> {
         key={user.id}
         status={status}
         showActions
+        noBorder
       />
+    );
+  };
+
+  renderSeparator = () => {
+    return (
+      <View style={{ paddingLeft: 58 }}>
+        <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
+      </View>
     );
   };
 
@@ -136,11 +145,12 @@ class PeopleSearchResults extends React.Component<Props, State> {
           </TabWrapper>
         </Wrapper>
         <ContactCardList
-          contentInset={{ bottom: 40 }}
           data={users[activeTab]}
           renderItem={this.renderContact}
           onScroll={() => Keyboard.dismiss()}
           keyExtractor={({ username }) => username}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          ItemSeparatorComponent={this.renderSeparator}
         />
       </React.Fragment>
     );
