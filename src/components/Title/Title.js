@@ -12,7 +12,6 @@ type Props = {
 };
 
 const Wrapper = styled.View`
-  // height: 30px;
   margin: ${props => props.noMargin ? '0' : '16px 0'};
   width: ${props => props.maxWidth ? props.maxWidth : 'auto'};
   align-self: ${props => props.center ? 'center' : 'flex-start'};
