@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
+import { CHAT } from 'constants/navigationConstants';
 import ScreenHeader from 'components/ScreenHeader';
 
 const imageChat = require('assets/images/btn_chat.png');
@@ -103,7 +104,7 @@ const Contact = (props: Props) => {
               {contact.username}
             </ContactHeaderName>
           </ContactHeaderBody>
-          <ChatButton onPress={() => { }}>
+          <ChatButton onPress={() => { props.navigation.navigate(CHAT, { contact }); }}>
             <ImageHolder>
               <ChatButtonImage source={imageChat} />
             </ImageHolder>

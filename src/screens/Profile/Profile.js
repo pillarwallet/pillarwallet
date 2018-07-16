@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import Storage from 'services/storage';
+import ChatService from 'services/chat';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes } from 'utils/variables';
@@ -28,6 +29,7 @@ import ProfileForm from './ProfileForm';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
+const chat = new ChatService();
 
 const ListWrapper = styled.View`
   padding-bottom: 40px;
@@ -138,6 +140,7 @@ class Profile extends React.Component<Props, State> {
 
   clearLocalStorage() {
     storage.removeAll();
+    chat.client.resetAccount().catch(() => null);
     Toast.show({
       text: 'Cleared',
       buttonText: '',
