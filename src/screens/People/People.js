@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View, FlatList, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
@@ -46,7 +46,7 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
 `;
 
-const ContactCardList = styled(ScrollWrapper)`
+const ContactCardList = styled(FlatList)`
   padding: 16px;
 `;
 
@@ -120,17 +120,33 @@ class PeopleScreen extends React.Component<Props, State> {
   handleConnectionsRequestBannerPress = () => {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
-
-  renderLocalContacts = () => {
-    const { localContacts } = this.props;
-    return localContacts.map(contact => (
+  renderContact = ({ contact }) => {
+    return (
       <ContactCard
         onPress={this.handleContactCardPress(contact)}
         name={contact.firstName || contact.username}
         key={contact.username}
       />
-    ));
+    );
   };
+
+  renderSeparator = () => {
+    return (
+      <View style={{ marginTop: -4, borderRadius: 4 }}>
+        <View style={{ height: 1, width: '100%' }} />
+      </View>
+    );
+  };
+
+  keyExtractor = (item) => item.id;
+
+  renderContact = ({ item }) => (
+    <ContactCard
+      onPress={this.handleContactCardPress(item)}
+      name={item.username}
+      key={item.id}
+    />
+  );
 
   render() {
     const { query, emptyList } = this.state;
@@ -191,9 +207,13 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !emptyList &&
-          <ContactCardList contentInset={{ bottom: 40 }}>
-            {this.renderLocalContacts()}
-          </ContactCardList>
+        <ContactCardList
+          data={localContacts}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderContact}
+          ItemSeparatorComponent={this.renderSeparator}
+          onScroll={() => Keyboard.dismiss()}
+        />
         }
 
         {!!emptyList && !inSearchMode &&

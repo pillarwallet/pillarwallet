@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, Platform, View } from 'react-native';
+import { Keyboard, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
