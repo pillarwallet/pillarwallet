@@ -50,9 +50,9 @@ type State = {
       address?: string,
       token?: string,
       tokenName?: string,
-      formValues?: Object
-    }
-  }
+      formValues?: Object,
+    },
+  },
 }
 
 const AssetCardWrapper = styled(Wrapper)`
@@ -67,7 +67,7 @@ class AssetScreen extends React.Component<Props, State> {
 
   static navigationOptions = {
     transitionConfig: {
-      duration: 300,
+      duration: 200,
       timing: Animated.timing,
       easing: Easing.easing,
     },
