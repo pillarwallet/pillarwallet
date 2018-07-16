@@ -5,16 +5,17 @@ import { connect } from 'react-redux';
 import Storage from 'services/storage';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Toast, ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
 
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
-import PortfolioBalance from 'components/PortfolioBalance';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
+import Header from 'components/Header';
+import { SubHeading } from 'components/Typography';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -23,47 +24,23 @@ import SystemInfoModal from 'components/SystemInfoModal';
 import KeyboardAvoidModal from 'components/Modals/KeyboardAvoidModal';
 
 import countries from 'utils/countries.json';
-
-import ProfileHeader from './ProfileHeader';
 import ProfileSettingsItem from './ProfileSettingsItem';
-import ProfileImage from './ProfileImage';
 import ProfileForm from './ProfileForm';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
-
-const ProfileName = styled.Text`
-  font-size: ${fontSizes.extraLarge};
-  font-weight: ${fontWeights.bold}
-`;
 
 const ListWrapper = styled.View`
   padding-bottom: 40px;
   background-color: ${baseColors.lighterGray};
 `;
 
-const FlexRowSpaced = styled.View`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
 const ListSeparator = styled.View`
-  padding: 5px 30px 15px 30px;
-  border-top-width: 1px;
+  padding: 20px 16px;
+  border-top-width: ${props => props.first ? 0 : '1px'};
   border-bottom-width: 1px;
   border-color: ${baseColors.lightGray};
   background-color: ${baseColors.lighterGray};
-`;
-
-const ListSeparatorText = styled.Text`
-  margin-top: 30px;
-  color: ${props => props.lastSynced ? baseColors.freshEucalyptus : baseColors.darkGray};
-  text-align: ${props => props.lastSynced ? 'center' : 'left'};
-  font-size: ${fontSizes.small};
 `;
 
 const ListValue = styled.Text`
@@ -72,7 +49,7 @@ const ListValue = styled.Text`
 `;
 
 const ListItem = styled(NBListItem)`
-  margin: 5px 0; 
+  margin: 5px 0;
 `;
 
 const ListIcon = styled(Icon)`
@@ -231,6 +208,7 @@ class Profile extends React.Component<Props, State> {
       wallet,
       intercomNotificationsCount,
       baseFiatCurrency,
+      navigation,
     } = this.props;
     const {
       requestPinForTransaction,
@@ -240,7 +218,8 @@ class Profile extends React.Component<Props, State> {
       showSystemInfoModal,
     } = this.state;
     return (
-      <Container>
+      <Container color={baseColors.snowWhite}>
+        <Header gray title="settings" onBack={navigation.goBack} index={1} />
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'country'}
           title="personal details"
@@ -313,17 +292,9 @@ class Profile extends React.Component<Props, State> {
           />
         </KeyboardAvoidModal>
         <ScrollWrapper>
-          <ProfileHeader>
-            <FlexRowSpaced>
-              <ProfileName>{user.username}</ProfileName>
-              <ProfileImage uri={user.profileImage} userName={user.username} />
-            </FlexRowSpaced>
-            <PortfolioBalance />
-          </ProfileHeader>
-
           <ListWrapper>
-            <ListSeparator>
-              <ListSeparatorText>PROFILE SETTINGS</ListSeparatorText>
+            <ListSeparator first>
+              <SubHeading>PROFILE SETTINGS</SubHeading>
             </ListSeparator>
 
             <ProfileSettingsItem
@@ -355,7 +326,7 @@ class Profile extends React.Component<Props, State> {
             />
 
             <ListSeparator>
-              <ListSeparatorText>GENERAL SETTINGS</ListSeparatorText>
+              <SubHeading>GENERAL SETTINGS</SubHeading>
             </ListSeparator>
 
             <ProfileSettingsItem
@@ -399,7 +370,7 @@ class Profile extends React.Component<Props, State> {
             </SlideModal>
 
             <ListSeparator>
-              <ListSeparatorText>ABOUT</ListSeparatorText>
+              <SubHeading>ABOUT</SubHeading>
             </ListSeparator>
 
             <ProfileSettingsItem
@@ -443,7 +414,7 @@ class Profile extends React.Component<Props, State> {
             {!!__DEV__ && (
               <React.Fragment>
                 <ListSeparator>
-                  <ListSeparatorText>DEBUG</ListSeparatorText>
+                  <SubHeading>DEBUG</SubHeading>
                 </ListSeparator>
 
                 <ProfileSettingsItem
@@ -455,7 +426,7 @@ class Profile extends React.Component<Props, State> {
             )}
 
             <ListSeparator>
-              <ListSeparatorText>SYSTEM INFO</ListSeparatorText>
+              <SubHeading>SYSTEM INFO</SubHeading>
             </ListSeparator>
 
             <ProfileSettingsItem

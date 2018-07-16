@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT } from 'constants/invitationsConstants';
 import {
   cancelInvitationAction,
@@ -45,8 +45,9 @@ const TabItem = styled.TouchableOpacity`
 `;
 
 const TabItemText = styled.Text`
-  font-size: ${fontSizes.medium};
+  font-size: ${fontSizes.small};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
+  font-weight: ${props => props.active ? fontWeights.bold : fontWeights.book};
 `;
 
 class ConnectionRequests extends React.Component<Props, State> {

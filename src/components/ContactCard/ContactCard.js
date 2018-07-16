@@ -58,7 +58,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   width: 34px;
   border-radius: 17px;
   padding: 0;
-  margin: 0 5px 0 0;
+  margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
@@ -80,7 +80,7 @@ const CancelActionText = styled.Text`
 const ActionButton = styled.View`
   background: ${baseColors.clearBlue};
   padding: 0 20px;
-  height: 33px;
+  height: 34px;
   border-radius: 17px;
   justify-content: center;
   align-items: center;
