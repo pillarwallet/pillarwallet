@@ -1,20 +1,20 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors } from 'utils/variables';
-import { TouchableWithoutFeedback, View, Platform } from 'react-native';
+import { UIColors, baseColors } from 'utils/variables';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
 
 const Header = styled.View`
-  background-color: #fff;
-  padding: 0 16px;
-  display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  height: 97px;
+  background-color: ${baseColors.white};
+  elevation: 1;
+  padding: 0 16px;
   align-items: center;
-  padding-top: ${Platform.OS === 'ios' ? '4px' : 0};
+  justify-content: space-between;
 `;
 
 const Left = styled.View`

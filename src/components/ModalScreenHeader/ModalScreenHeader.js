@@ -19,7 +19,7 @@ type Props = {
 
 const Header = styled.View`
   background-color: #fff;
-  height: 80px;
+  height: 97px;
   padding: 0 16px;
   display: flex;
   flex-direction: row;
@@ -43,7 +43,7 @@ const BackIcon = styled(ButtonIcon)`
 
 const CloseButton = styled(ButtonIcon)`
   position: relative;
-  margin: 0 16px 0 10px;
+  margin: -2px 16px 0 10px;
   align-items: center;
   justify-content: center;
 `;
@@ -61,6 +61,8 @@ const ModalScreenHeader = (props: Props) => {
     rightLabelText = '',
   } = props;
 
+  const onBackLeftPadding = Platform.OS === 'ios' ? 2 : 0;
+
   const additionalStyle = Platform.OS === 'ios' ?
     {
       marginBottom: 10,
@@ -72,7 +74,7 @@ const ModalScreenHeader = (props: Props) => {
     };
 
   return (
-    <Header>
+    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20 }}>
       <View>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
