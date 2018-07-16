@@ -47,14 +47,15 @@
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
-    android:largeHeap="true">
+    android:largeHeap="true"
+    android:theme="@style/Theme.Exponent.Light" >
 
     <activity
       android:name=".LauncherActivity"
       android:exported="true"
       android:launchMode="singleTask"
       android:screenOrientation="portrait"
-      android:theme="@android:style/Theme.Translucent.NoTitleBar">
+      android:theme="@style/Theme.Exponent.Light">
       <!-- ADD SHELL SCHEME HERE -->
     </activity>
 
@@ -69,7 +70,7 @@
       android:name=".MainActivity"
       android:launchMode="singleTask"
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-      android:theme="@style/Theme.Exponent.Splash"
+      android:theme="@style/Theme.Exponent.Light"
       android:windowSoftInputMode="adjustResize">
       <intent-filter>
         <data android:scheme="exp38a4bbfce2ec45389ca2f4a5178939d6"/>
@@ -89,7 +90,7 @@
     <activity
       android:name=".experience.ShellAppActivity"
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-      android:theme="@style/Theme.Exponent.Splash"
+      android:theme="@style/Theme.Exponent.Light"
       android:windowSoftInputMode="adjustResize">
       <!-- ADD SHELL INTENT FILTERS HERE -->
     </activity>
@@ -99,7 +100,8 @@
       android:label="@string/app_name"
       android:launchMode="singleTask"
       android:screenOrientation="portrait"
-      android:theme="@style/Theme.Exponent.Light">
+      android:theme="@style/Theme.Exponent.Light"
+      android:windowSoftInputMode="adjustResize">
     </activity>
 
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity"/>
@@ -250,6 +252,18 @@
     </service>
 
     <!-- ADD FCM CONFIG HERE -->
+
+    <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </service>
+    <service android:name="io.invertase.firebase.messaging.RNFirebaseInstanceIdService">
+      <intent-filter>
+        <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+      </intent-filter>
+    </service>
+    <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService" />
 
     <!-- ImagePicker native module -->
     <activity

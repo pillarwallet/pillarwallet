@@ -1,50 +1,42 @@
 {
   "project_info": {
-    "project_id": "exponent-5dd6d",
-    "project_number": "367315174693",
-    "name": "Exponent Play Services"
+    "project_number": "811306482558",
+    "firebase_url": "https://pillar-project-1506420699556.firebaseio.com",
+    "project_id": "pillar-project-1506420699556",
+    "storage_bucket": "pillar-project-1506420699556.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:367315174693:android:f968efbb41d1fa7a",
-        "client_id": "android:host.exp.exponent",
-        "client_type": 1,
+        "mobilesdk_app_id": "1:811306482558:android:b11c9bc5b2ad0ff7",
         "android_client_info": {
-          "package_name": "com.pillarproject.wallet",
-          "certificate_hash": ""
+          "package_name": "com.pillarproject.wallet"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "811306482558-ofan08girk0dnqg9ot2ijfb3v8om0shn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": ""
+          "current_key": "AIzaSyAouCiwacsPhoCMMzbaSCVBf4DHWEIYbfE"
         }
       ],
       "services": {
         "analytics_service": {
-          "status": 2,
-          "analytics_property": {
-            "tracking_id": "UA-76673608-1"
-          }
-        },
-        "cloud_messaging_service": {
-          "status": 2,
-          "apns_config": []
+          "status": 1
         },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
         },
-        "google_signin_service": {
-          "status": 1
-        },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }
