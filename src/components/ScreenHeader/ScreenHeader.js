@@ -7,8 +7,9 @@ import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
 
-const HeaderA = styled.View`
-  // background-color: #fff;
+const Header = styled.View`
+  background-color: #fff;
+  padding: 0 16px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -33,15 +34,11 @@ type Props = {
 };
 
 const ScreenHeader = (props: Props) => {
-  const {
-    onBack,
-    title,
-  } = props;
-
+  const { onBack, title } = props;
   const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
 
   return (
-    <HeaderA style={{ paddingLeft: onBack ? onBackLeftPadding : 16 }}>
+    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 16 }}>
       <Left>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -58,7 +55,7 @@ const ScreenHeader = (props: Props) => {
           </View>
         </TouchableWithoutFeedback>
       </Left>
-    </HeaderA>
+    </Header>
   );
 };
 

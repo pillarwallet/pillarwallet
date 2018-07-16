@@ -16,7 +16,7 @@ import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
-import ScreenHeader from 'components/ScreenHeader';
+import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
 
 
@@ -145,8 +145,8 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <ScreenHeader title="people" />
         <Wrapper regularPadding>
+          <Title title="people" />
           <SearchBar
             inputProps={{
               onChange: this.handleSearchChange,
