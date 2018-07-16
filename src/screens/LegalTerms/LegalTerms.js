@@ -153,7 +153,15 @@ class LegalTerms extends React.Component<Props, State> {
             }}
             >
               <ButtonText buttonText="Terms of Use" onPress={this.toggleTermsConditionsModal} />
-              <Paragraph style={{ marginRight: 4, marginLeft: 4, marginBottom: 0, fontSize: fontSizes.small }}>and</Paragraph>
+              <Paragraph style={{
+                marginRight: 4,
+                marginLeft: 4,
+                marginBottom: 0,
+                fontSize: fontSizes.small,
+              }}
+              >
+                and
+              </Paragraph>
               <ButtonText buttonText="Privacy Policy" onPress={this.togglePrivacyPolicyModal} />
             </View>
           </MultiButtonWrapper>

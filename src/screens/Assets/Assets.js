@@ -57,13 +57,14 @@ type Props = {
 }
 
 const AssetsHeader = styled.View`
-  flexDirection: row;
-  backgroundColor: ${baseColors.white};
+  flex-direction: row;
+  background-color: ${baseColors.white};
   elevation: 1;
   padding: 0 16px;
-  alignItems: center;
-  justifyContent: space-between;
+  align-items: center;
+  justify-content: space-between;
 `;
+
 class AssetsScreen extends React.Component<Props> {
   static navigationOptions = {
     transitionConfig: {

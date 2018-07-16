@@ -68,10 +68,7 @@ class AddToken extends React.Component<Props> {
   };
 
   generateAddTokenListItems() {
-    const {
-      assets,
-      supportedAssets,
-    } = this.props;
+    const { assets, supportedAssets } = this.props;
     return supportedAssets
       .filter(({ symbol }) => symbol !== ETH)
       .map(({

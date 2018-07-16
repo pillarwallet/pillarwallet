@@ -49,7 +49,7 @@ const AssetButtonText = styled.Text`
   color: ${baseColors.electricBlue};
   text-align: center;
   font-weight: ${fontWeights.bold};
-  font-size: ${fontSizes.extraSmall}
+  font-size: ${fontSizes.extraSmall};
   margin-top: 10px;
 `;
 

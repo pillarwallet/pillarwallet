@@ -5,7 +5,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { SECURITY_CONFIRM, IMPORT_WALLET } from 'constants/navigationConstants';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Title from 'components/Title';
-import { Paragraph, HelpText } from 'components/Typography';
+import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import HelpTextDivider from 'components/HelpTextDivider';
 

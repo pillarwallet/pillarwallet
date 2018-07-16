@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Text } from 'react-native';
+import { Text, ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
@@ -18,7 +18,7 @@ type Props = {
 const NewWallet = (props: Props) => {
   const { walletState } = props.wallet;
   let statusMessage = walletState || '';
-  // let showSpinner = true;
+  let showSpinner = true;
   let note = null;
 
   const tryToReRegister = () => {
@@ -27,16 +27,20 @@ const NewWallet = (props: Props) => {
 
   if (walletState === API_REGISTRATION_FAILED) {
     statusMessage = 'REGISTRATION FAILED';
-    // showSpinner = false;
+    showSpinner = false;
     note = <Button title="Try again" onPress={tryToReRegister} />;
   }
 
   return (
     <Container center>
       <Text style={{ marginBottom: 20 }}>{statusMessage}</Text>
-      {/* {!!showSpinner && (
-        // <Spinner />
-      )} */}
+      {!!showSpinner && (
+        <ActivityIndicator
+          animating
+          color="#111"
+          size="large"
+        />
+      )}
       {note}
     </Container>
   );

@@ -10,9 +10,9 @@ type State = {
   progress: Animated.Value,
 }
 
-const animationSource = require('./animation.json');
+// const animationSource = require('./animation.json');
 
-export default class Spinner extends React.Component<Props, State> {
+export default class Spinner extends React.Component<Props, State> { // eslint-disable-line
   render() {
 
   }

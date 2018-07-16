@@ -257,14 +257,15 @@ class SendTokenAmount extends React.Component<Props, State> {
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }
+
   render() {
     const {
       value,
       formStructure,
       txFeeInWei,
     } = this.state;
-    const { token, icon, balance: oldBalance } = this.assetData;
-    const balance = Number(oldBalance).toFixed(8);
+    const { token, icon, balance: unformattedBalance } = this.assetData;
+    const balance = Number(unformattedBalance).toFixed(8);
     const formOptions = generateFormOptions({ icon, currency: token });
 
     const layout = Platform.OS === 'ios' ?
@@ -333,7 +334,11 @@ class SendTokenAmount extends React.Component<Props, State> {
               </BodyWrapper>
             </View>
             <FooterWrapper>
-              <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
+              <Text>Fee
+                <TextLink>
+                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                </TextLink>
+              </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
           </KeyboardAvoidingView>
