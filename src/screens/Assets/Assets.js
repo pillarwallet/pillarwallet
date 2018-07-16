@@ -56,11 +56,6 @@ type Props = {
   baseFiatCurrency: string,
 }
 
-<<<<<<< HEAD
-type State = {
-  assetsMedia: Object,
-}
-
 const AssetsHeader = styled.View`
   flexDirection: row;
   backgroundColor: ${baseColors.white};
@@ -69,15 +64,7 @@ const AssetsHeader = styled.View`
   alignItems: center;
   justifyContent: space-between;
 `;
-
-class AssetsScreen extends React.Component<Props, State> {
-  state = {
-    assetsMedia: {},
-  };
-
-=======
 class AssetsScreen extends React.Component<Props> {
->>>>>>> Pull in asset card wallpaper from API
   static navigationOptions = {
     transitionConfig: {
       duration: 300,
@@ -244,11 +231,7 @@ class AssetsScreen extends React.Component<Props> {
             />
           }
         >
-<<<<<<< HEAD
-          {Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating />}
-=======
           { this.renderAssets() }
->>>>>>> Pull in asset card wallpaper from API
         </ScrollView>
       </Container >
     );

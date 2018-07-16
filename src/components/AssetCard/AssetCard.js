@@ -121,20 +121,17 @@ export default class AssetCard extends React.Component<Props, State> {
               </DetailsWrapper>
               {!!cardIcon &&
               <IconWrapper>
-                <IconCircle />
-                <ImageCache
-                  key={token}
-                  style={{
-                    alignSelf: 'flex-end',
-                    height: 24,
-                    width: 24,
-                    position: 'absolute',
-                    top: 27,
-                    right: 22,
-                  }}
-                  uri={cardIcon}
-                  resizeMode="contain"
-                />
+                <IconCircle>
+                  <ImageCache
+                    key={token}
+                    style={{
+                      height: 40,
+                      width: 40,
+                    }}
+                    uri={cardIcon}
+                    resizeMode="contain"
+                  />
+                </IconCircle>
               </IconWrapper>}
             </BackgroundImage>
           </BackgroundHolder>
