@@ -76,7 +76,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
     const updatedAssets = merge({}, assets, transformAssetsToObject(balances));
     const rates = await getExchangeRates(Object.keys(updatedAssets));
-    await storage.save('assets', { assets: updatedAssets });
+    await storage.save('assets', { assets: updatedAssets }, true);
     dispatch({ type: SET_RATES, payload: rates });
     dispatch({
       type: UPDATE_ASSETS,

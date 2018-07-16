@@ -1,19 +1,20 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors } from 'utils/variables';
-import { TouchableWithoutFeedback, View, Platform } from 'react-native';
+import { UIColors, baseColors } from 'utils/variables';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
 
 const Header = styled.View`
-  background-color: #fff;
-  padding: 40px 16px 0;
-  display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  height: 97px;
+  background-color: ${baseColors.white};
+  elevation: 1;
+  padding: 0 16px;
   align-items: center;
+  justify-content: space-between;
 `;
 
 const Left = styled.View`
@@ -33,15 +34,10 @@ type Props = {
 };
 
 const ScreenHeader = (props: Props) => {
-  const {
-    onBack,
-    title,
-  } = props;
-
-  const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
+  const { onBack, title } = props;
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20 }}>
+    <Header>
       <Left>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

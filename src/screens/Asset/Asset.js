@@ -50,9 +50,9 @@ type State = {
       address?: string,
       token?: string,
       tokenName?: string,
-      formValues?: Object
-    }
-  }
+      formValues?: Object,
+    },
+  },
 }
 
 const AssetCardWrapper = styled(Wrapper)`
@@ -67,7 +67,7 @@ class AssetScreen extends React.Component<Props, State> {
 
   static navigationOptions = {
     transitionConfig: {
-      duration: 300,
+      duration: 200,
       timing: Animated.timing,
       easing: Easing.easing,
     },
@@ -157,7 +157,7 @@ class AssetScreen extends React.Component<Props, State> {
             style={{
               borderBottomWidth: 1,
               borderStyle: 'solid',
-              backgroundColor: baseColors.snowWhite,
+              backgroundColor: baseColors.lightGray,
               borderColor: UIColors.defaultBorderColor,
               padding: 20,
               height: 60,
@@ -177,6 +177,7 @@ class AssetScreen extends React.Component<Props, State> {
                 onPress={this.handleCardTap}
                 address={assetData.address}
                 icon={assetData.icon}
+                wallpaper={assetData.wallpaper}
               />
             </Transition>
             <Paragraph light>

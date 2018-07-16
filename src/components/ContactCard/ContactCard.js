@@ -9,10 +9,11 @@ import styled from 'styled-components/native';
 
 const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
-  border: 1px solid ${UIColors.defaultBorderColor};
-  margin-bottom: -4px;
+  border: ${props => (props.noBorder ? 0 : '1px solid')};
+  border-color: ${UIColors.defaultBorderColor};
+  // margin-bottom: -4px;
   height: 75px;
-  padding: 14px;
+  padding: ${props => (props.noBorder ? '14px 0' : '14px')};
   border-radius: 4px;
 `;
 
@@ -58,7 +59,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   width: 34px;
   border-radius: 17px;
   padding: 0;
-  margin: 0 5px 0 0;
+  margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
@@ -80,7 +81,7 @@ const CancelActionText = styled.Text`
 const ActionButton = styled.View`
   background: ${baseColors.clearBlue};
   padding: 0 20px;
-  height: 33px;
+  height: 34px;
   border-radius: 17px;
   justify-content: center;
   align-items: center;
@@ -92,7 +93,6 @@ const ActionButtonText = styled.Text`
   color: ${baseColors.white};
 `;
 
-
 type Props = {
   onPress?: Function,
   name: string,
@@ -103,6 +103,7 @@ type Props = {
   onRejectInvitationPress?: Function,
   onCancelInvitationPress?: Function,
   onSendInvitationPress?: Function,
+  noBorder?: boolean,
 };
 
 // TODO: convert into dumb component
@@ -175,12 +176,14 @@ export default class ContactCard extends React.Component<Props> {
       notificationCount = 0,
       name,
       onPress,
+      noBorder,
     } = this.props;
 
     return (
       <ContactCardWrapper
         onPress={onPress}
         underlayColor={baseColors.lightGray}
+        noBorder={noBorder}
       >
         <ContactCardInner>
           <ContactCardAvatarWrapper>

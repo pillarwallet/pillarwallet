@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
+import { CHAT } from 'constants/navigationConstants';
 import ScreenHeader from 'components/ScreenHeader';
 
 const imageChat = require('assets/images/btn_chat.png');
@@ -12,7 +13,7 @@ const ChatButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   margin: 40px 14px;
-  padding: 0 6px;
+  padding: 6px;
 `;
 
 const ImageHolder = styled.View`
@@ -26,6 +27,7 @@ const ImageHolder = styled.View`
   align-items: center;
   box-shadow: .5px 1px 1px ${baseColors.mediumGray};
   elevation: 6;
+  z-index: 2;
 `;
 
 const ChatButtonImage = styled.Image`
@@ -42,15 +44,25 @@ const ChatButtonText = styled.Text`
   margin-top: 10px;
 `;
 
+const ContactWapper = styled.View`
+  height: 218px;
+  position: relative;
+  justify-content: flex-end;
+  margin-top: 30px;
+`;
+
 const ContactHeader = styled.View`
   height: 200px;
   background: ${baseColors.electricBlue};
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
-  shadow-radius: 2px     ;
+  shadow-radius: 2px;
   shadow-opacity: 0.1;
   border-radius: 12px;
   align-items: center;
+  position: relative;
+  z-index: -1;
+  padding-top: 46px;
 `;
 
 const ContactHeaderBody = styled.View`
@@ -68,7 +80,6 @@ const ContactHeaderName = styled.Text`
 const ContactHeaderAvatarWrapper = styled.View`
   height: 64px;
   width: 64px;
-  margin-top: -16px;
   border: 2px solid ${baseColors.white};
   background: ${baseColors.mediumGray};
   border-radius: 32px;
@@ -77,6 +88,10 @@ const ContactHeaderAvatarWrapper = styled.View`
   shadow-offset: 0 0;
   shadow-radius: 2px     ;
   shadow-opacity: 0.1;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -32px;
 `;
 
 const ContactHeaderAvatar = styled.Image`
@@ -94,22 +109,25 @@ const Contact = (props: Props) => {
     <Container>
       <ScreenHeader title="contact" onBack={props.navigation.goBack} />
       <Wrapper regularPadding>
-        <ContactHeader>
+        <ContactWapper>
+          <ContactHeader>
+            <ContactHeaderBody>
+              <ContactHeaderName>
+                {contact.username}
+              </ContactHeaderName>
+            </ContactHeaderBody>
+          </ContactHeader>
           <ContactHeaderAvatarWrapper >
             <ContactHeaderAvatar />
           </ContactHeaderAvatarWrapper>
-          <ContactHeaderBody>
-            <ContactHeaderName>
-              {contact.username}
-            </ContactHeaderName>
-          </ContactHeaderBody>
-          <ChatButton onPress={() => { }}>
-            <ImageHolder>
-              <ChatButtonImage source={imageChat} />
-            </ImageHolder>
-            <ChatButtonText>CHAT</ChatButtonText>
-          </ChatButton>
-        </ContactHeader>
+        </ContactWapper>
+
+        <ChatButton onPress={() => { props.navigation.navigate(CHAT, { contact }); }}>
+          <ImageHolder>
+            <ChatButtonImage source={imageChat} />
+          </ImageHolder>
+          <ChatButtonText>CHAT</ChatButtonText>
+        </ChatButton>
       </Wrapper>
     </Container>
   );

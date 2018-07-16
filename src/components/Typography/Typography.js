@@ -1,6 +1,6 @@
 // @flow
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 export const Title = styled.Text`
   font-size: ${fontSizes.extraLarge};
@@ -11,17 +11,23 @@ export const Title = styled.Text`
 `;
 
 export const SubTitle = styled.Text`
-  font-size: ${fontSizes.mediumLarge};
+  font-size: ${fontSizes.medium};
   font-weight: 400;
   color: ${UIColors.primary};
   text-align: ${props => (props.align || 'left')};
   line-height: 24px;
   margin: ${props => props.margin || '0 0 20px'};
-  width: 70%;
+`;
+
+export const SubHeading = styled.Text`
+  font-size: ${fontSizes.extraExtraSmall};
+  font-weight: ${fontWeights.bold};
+  color: ${baseColors.darkGray};
+  letter-spacing: 0.5;
 `;
 
 export const Paragraph = styled.Text`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium};
   margin-bottom: 10;
   color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};

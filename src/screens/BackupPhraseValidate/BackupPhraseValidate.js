@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import { Platform } from 'react-native';
 import { UIColors, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -67,6 +68,9 @@ const WordInputNumber = styled(Label)`
 
 const RemoveWordButtonIcon = styled(ButtonIcon)`
   height: 42px;
+  margin-left: ${Platform.OS === 'ios' ? '14px' : '6px'};
+  margin-top: ${Platform.OS === 'ios' ? 0 : '-4px'};
+  margin-right: ${Platform.OS === 'ios' ? 0 : '-6px'};
 `;
 
 const WordInputText = styled.Text`
@@ -206,7 +210,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <Title title="verify backup phrase" />
           <Paragraph>
-            Please select the appropriate words from the list
+            Please select the appropriate words from the list.
           </Paragraph>
           <WordInputFields>
             {this.renderInputFields()}
