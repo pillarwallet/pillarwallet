@@ -4,8 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform, Image } from 'react-native';
-
+import { AppState, Animated, Easing, Image } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -24,6 +23,8 @@ import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import HomeScreen from 'screens/Home';
+import ChatListScreen from 'screens/Chat/ChatList';
+import ChatScreen from 'screens/Chat/Chat';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -59,6 +60,8 @@ import {
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
+  CHAT_LIST,
+  CHAT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -72,28 +75,15 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
-// NAVIGATION OPTIONS FOR ANDROID AND IOS
-let navigationOpts;
-
-if (Platform.OS === 'ios') {
-  navigationOpts = {
-    header: null,
-  };
-} else {
-  navigationOpts = {
-    headerStyle: {
-      borderBottomWidth: 0,
-      elevation: 0,
-      height: 0,
-    },
-  };
-}
+const navigationOpts = {
+  header: null,
+};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconHome = require('assets/icons/icon_home.png');
 const iconIco = require('assets/icons/icon_ico.png');
-// const iconChat = require('assets/icons/icon_chat.png');
+const iconChat = require('assets/icons/icon_chat.png');
 
 const StackNavigatorModalConfig = {
   mode: 'modal',
@@ -122,6 +112,11 @@ const StackNavigatorConfig = {
     gesturesEnabled: false,
   },
 };
+
+// CHAT FLOW
+const chatFlow = createStackNavigator({
+  [CHAT_LIST]: ChatListScreen,
+}, StackNavigatorConfig);
 
 // ASSETS FLOW
 const assetsFlow = FluidNavigator({
@@ -183,6 +178,13 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: 'Marketplace',
       }),
     },
+    [CHAT_LIST]: {
+      screen: chatFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconChat),
+        tabBarLabel: 'Chat',
+      }),
+    },
   }, {
     tabBarOptions: {
       activeTintColor: UIColors.primary,
@@ -198,13 +200,10 @@ const tabNavigation = createBottomTabNavigator(
         shadowRadius: 2,
         borderTopColor: 'transparent',
         paddingTop: 5,
-        paddingBottom: 5,
-        height: 66,
+        height: 49,
       },
       labelStyle: {
         fontSize: 12,
-        marginBottom: 4,
-        marginTop: 4,
         color: baseColors.mediumGray,
       },
     },
@@ -235,6 +234,7 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
+    [CHAT]: ChatScreen,
   }, {
     mode: 'modal',
     navigationOptions: navigationOpts,

@@ -35,10 +35,9 @@ type Props = {
 
 const ScreenHeader = (props: Props) => {
   const { onBack, title } = props;
-  const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 16 }}>
+    <Header>
       <Left>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
