@@ -1,15 +1,16 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
 import {
   TouchableOpacity,
   Animated,
   Easing,
   RefreshControl,
-  View,
   Text,
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import { baseColors } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -23,7 +24,6 @@ import {
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import { Container } from 'components/Layout';
-import PortfolioBalance from 'components/PortfolioBalance';
 import Title from 'components/Title';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, ETH, FETCHED } from 'constants/assetsConstants';
@@ -58,6 +58,15 @@ type Props = {
 type State = {
   assetsMedia: Object,
 }
+
+const AssetsHeader = styled.View`
+  flexDirection: row;
+  backgroundColor: ${baseColors.white};
+  elevation: 1;
+  padding: 0 16px;
+  alignItems: center;
+  justifyContent: space-between;
+`;
 
 class AssetsScreen extends React.Component<Props, State> {
   state = {
@@ -208,42 +217,15 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            backgroundColor: 'white',
-            shadowColor: 'black',
-            shadowOpacity: 0.07,
-            shadowRadius: 0,
-            shadowOffset: { width: 0, height: 1 },
-            elevation: 1,
-          }}
-        >
-          <View style={{
-            flex: 1,
-            paddingRight: 16,
-            paddingLeft: 16,
-            paddingBottom: 40,
-          }}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <Title title="assets" />
-              <TouchableOpacity onPress={this.goToAddTokenPage} >
-                <TextLink>
-                  Add token
-                </TextLink>
-              </TouchableOpacity>
-            </View>
-            <PortfolioBalance />
-          </View>
-        </View>
+
+        <AssetsHeader>
+          <Title title="assets" />
+          <TouchableOpacity onPress={this.goToAddTokenPage} >
+            <TextLink>
+              Add token
+            </TextLink>
+          </TouchableOpacity>
+        </AssetsHeader>
         <ScrollView
           contentContainerStyle={{ padding: 16 }}
           refreshControl={
@@ -260,7 +242,7 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           }
         >
-          { Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating /> }
+          {Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating />}
         </ScrollView>
       </Container >
     );

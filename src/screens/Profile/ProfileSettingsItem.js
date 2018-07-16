@@ -11,7 +11,7 @@ const StyledItemTouchable = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 25px 30px;
+  padding: 20px 16px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};
@@ -24,7 +24,7 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 30px;
+  padding: 20px 16px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};

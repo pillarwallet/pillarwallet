@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Text, View } from 'react-native';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import type { Asset, Assets } from 'models/Asset';
 import { connect } from 'react-redux';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
@@ -76,7 +76,6 @@ class PortfolioBalance extends React.Component<Props, {}> {
         <Text style={{
           color: UIColors.defaultTextColor,
           fontSize: fontSizes.extraExtraLarge,
-          fontWeight: fontWeights.bold,
         }}
         >
           {currencySymbol}{portfolioBalance}
