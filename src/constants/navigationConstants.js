@@ -53,3 +53,6 @@ export const SEND_TOKEN_CONFIRM = 'SEND_TOKEN_CONFIRM';
 // PEOPLE FLOW
 export const CONTACT = 'CONTACT';
 export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
+
+// HOME FLOW
+export const HOME = 'HOME';

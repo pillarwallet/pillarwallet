@@ -22,6 +22,7 @@ import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
+import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
 import ChatScreen from 'screens/Chat/Chat';
 
@@ -47,6 +48,7 @@ import {
   PROFILE,
   PEOPLE,
   CONTACT,
+  HOME,
   CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -79,7 +81,7 @@ const navigationOpts = {
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
-const iconProfile = require('assets/icons/icon_profile.png');
+const iconHome = require('assets/icons/icon_home.png');
 const iconIco = require('assets/icons/icon_ico.png');
 const iconChat = require('assets/icons/icon_chat.png');
 
@@ -104,10 +106,17 @@ const FluidNavigatorConfig = {
   },
 };
 
+const StackNavigatorConfig = {
+  navigationOptions: {
+    header: null,
+    gesturesEnabled: false,
+  },
+};
+
 // CHAT FLOW
 const chatFlow = createStackNavigator({
   [CHAT_LIST]: ChatListScreen,
-}, FluidNavigatorConfig);
+}, StackNavigatorConfig);
 
 // ASSETS FLOW
 const assetsFlow = FluidNavigator({
@@ -120,7 +129,13 @@ const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
-}, FluidNavigatorConfig);
+}, StackNavigatorConfig);
+
+// HOME FLOW
+const homeFlow = createStackNavigator({
+  [HOME]: HomeScreen,
+  [PROFILE]: ProfileScreen,
+}, StackNavigatorConfig);
 
 const tabBarIcon = (icon) => ({ focused, tintColor }) => (
   <Image
@@ -149,18 +164,18 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: 'People',
       }),
     },
+    [HOME]: {
+      screen: homeFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconHome),
+        tabBarLabel: 'Home',
+      }),
+    },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
         tabBarLabel: 'Marketplace',
-      }),
-    },
-    [PROFILE]: {
-      screen: ProfileScreen,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconProfile),
-        tabBarLabel: 'Profile',
       }),
     },
     [CHAT_LIST]: {
@@ -189,7 +204,7 @@ const tabNavigation = createBottomTabNavigator(
         height: 66,
       },
       labelStyle: {
-        fontSize: 14,
+        fontSize: 12,
         marginBottom: 4,
         marginTop: 4,
         color: baseColors.mediumGray,
