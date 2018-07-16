@@ -19,6 +19,15 @@ import PeopleSearchResults from 'components/PeopleSearchResults';
 import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
 
+const PeopleHeader = styled.View`
+flex-direction: row;
+height: 97px;
+background-color: ${baseColors.white};
+elevation: 1;
+padding: 0 16px;
+align-items: center;
+justify-content: space-between;
+`;
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -145,8 +154,10 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container>
+        <PeopleHeader>
+          <Title noMargin title="people" />
+        </PeopleHeader>
         <Wrapper regularPadding>
-          <Title title="people" />
           <SearchBar
             inputProps={{
               onChange: this.handleSearchChange,
@@ -154,6 +165,7 @@ class PeopleScreen extends React.Component<Props, State> {
               autoCapitalize: 'none',
             }}
           />
+
         </Wrapper>
 
         {!inSearchMode && !!invitations.length &&

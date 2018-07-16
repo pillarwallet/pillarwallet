@@ -6,6 +6,16 @@ import { Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 
+const MarketplaceHeader = styled.View`
+  flex-direction: row;
+  height: 97px;
+  background-color: ${baseColors.white};
+  elevation: 1;
+  padding: 0 16px;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const ComingSoonBanner = styled.View`
   padding: 16px;
   margin-bottom: 20px;
@@ -20,9 +30,9 @@ const ComingSoonBannerText = styled.Text`
 const MarketplaceComingSoon = () => {
   return (
     <Container>
-      <Wrapper regularPadding>
-        <Title title="marketplace" />
-      </Wrapper>
+      <MarketplaceHeader>
+        <Title noMargin title="marketplace" />
+      </MarketplaceHeader>
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>
