@@ -49,6 +49,7 @@ export const sendInvitationAction = (user: ApiUser) => {
       type: ADD_NOTIFICATION,
       payload: { message: 'Invitation sent!' },
     }));
+    addChatContactAction(invitation.username);
   };
 };
 
