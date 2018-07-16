@@ -84,8 +84,8 @@ export function isValidNumber(amount: string = '0') {
   return true;
 }
 
-export function formatAmount(amount: string | number): number {
-  return Number(new BigNumber(amount).toFixed(6, 1)); // 1 = ROUND_DOWN
+export function formatAmount(amount: string | number, precision: number = 6): number {
+  return Number(new BigNumber(amount).toFixed(precision, 1)); // 1 = ROUND_DOWN
 }
 
 export function getCurrencySymbol(currency: string): string {
