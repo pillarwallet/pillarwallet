@@ -11,7 +11,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
