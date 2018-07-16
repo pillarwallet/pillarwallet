@@ -85,7 +85,7 @@ export const registerWalletAction = () => {
       username: user.username,
       password: pin,
     });
-    await chat.client.registerAccount();
+    await chat.client.registerAccount().catch(() => null);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);

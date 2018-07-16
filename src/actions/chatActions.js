@@ -6,13 +6,13 @@ const chat = new ChatService();
 
 export const addChatContactAction = (username: string) => {
   return async () => {
-    await chat.client.addContact(username);
+    await chat.client.addContact(username).catch(() => null);
   };
 };
 
 export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
-    const chats = await chat.client.getExistingChats().then(JSON.parse);
+    const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
     dispatch({
       type: UPDATE_CHATS,
       payload: chats,
@@ -22,7 +22,7 @@ export const getExistingChatsAction = () => {
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
-    await chat.client.sendMessageByContact(username, message.text);
+    await chat.client.sendMessageByContact(username, message.text).catch(() => null);
     const timestamp = new Date(message.createdAt).getTime() / 1000;
     const msg = {
       content: message.text,
@@ -41,9 +41,9 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
 export const getChatByContactAction = (username: string, loadEarlier: boolean = false) => {
   return async (dispatch: Function) => {
     if (loadEarlier) {
-      await chat.client.receiveNewMessagesByContact(username);
+      await chat.client.receiveNewMessagesByContact(username).catch(() => null);
     }
-    const receivedMessages = await chat.client.getChatByContact(username).then(JSON.parse);
+    const receivedMessages = await chat.client.getChatByContact(username).then(JSON.parse).catch(() => null);
     dispatch({
       type: UPDATE_MESSAGES,
       payload: { messages: receivedMessages, username },

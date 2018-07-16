@@ -164,7 +164,7 @@ class Profile extends React.Component<Props, State> {
 
   clearLocalStorage() {
     storage.removeAll();
-    chat.client.resetAccount();
+    chat.client.resetAccount().catch(() => null);
     Toast.show({
       text: 'Cleared',
       buttonText: '',
