@@ -142,8 +142,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             style={
               Array [
                 Object {
-                  "alignSelf": "flex-start",
-                  "height": 30,
+                  "alignSelf": "auto",
                   "marginBottom": 0,
                   "marginLeft": 0,
                   "marginRight": 0,
@@ -272,6 +271,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       "marginLeft": undefined,
                       "marginRight": undefined,
                       "marginTop": undefined,
+                      "paddingTop": 0,
                     },
                   ],
                   Object {
@@ -297,7 +297,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             Array [
               Object {
                 "color": "#007AFF",
-                "fontSize": 18,
+                "fontSize": 16,
                 "fontWeight": "400",
                 "lineHeight": 24,
                 "marginBottom": 20,
@@ -305,7 +305,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "marginRight": 0,
                 "marginTop": 0,
                 "textAlign": "left",
-                "width": "70%",
               },
               Array [
                 Object {

@@ -19,6 +19,7 @@ type Props = {
 const Wrapper = styled(NBHeader)`
   background-color: ${props => props.gray ? baseColors.snowWhite : baseColors.white};
   border-bottom-width: 0;
+  padding: 0 16px;
 `;
 
 const BackIcon = styled(ButtonIcon)`

@@ -20,6 +20,10 @@ const mockWallet: Object = {
   privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
 };
 
+const mockUser: Object = {
+  username: 'Jon',
+};
+
 Object.defineProperty(mockWallet, 'encrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
@@ -36,6 +40,7 @@ describe('Wallet actions', () => {
 
   beforeAll(() => {
     const storage = Storage.getInstance('db');
+    storage.save('user', { user: mockUser });
     return storage.save('wallet', { wallet: mockWallet });
   });
 
