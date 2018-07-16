@@ -32,8 +32,8 @@ const Right = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  margin-top: ${Platform.OS === 'ios' ? 0 : 5}
-  margin-right: ${Platform.OS === 'ios' ? -2 : -8}
+  margin-top: ${Platform.OS === 'ios' ? 0 : 5};
+  margin-right: ${Platform.OS === 'ios' ? -2 : -8};
 `;
 
 const BackIcon = styled(ButtonIcon)`
