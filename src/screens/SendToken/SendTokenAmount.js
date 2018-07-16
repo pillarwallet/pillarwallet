@@ -179,11 +179,12 @@ class SendTokenAmount extends React.Component<Props, State> {
   componentDidMount() {
     provider.getGasPrice()
       .then(gasPrice => {
+        const increasedGasPrice = gasPrice.mul(2);
+        this.gasPrice = increasedGasPrice;
         this.gasPriceFetched = true;
-        this.gasPrice = gasPrice;
         const { token, balance } = this.assetData;
         const { assets } = this.props;
-        const txFeeInWei = gasPrice.mul(gasLimit);
+        const txFeeInWei = this.gasPrice.mul(gasLimit);
         this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
         this.enoughForFee = this.checkIfEnoughForFee(assets, txFeeInWei);
 
