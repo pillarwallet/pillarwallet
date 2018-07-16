@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors } from 'utils/variables';
-import { TouchableWithoutFeedback, View, Platform } from 'react-native';
+import { TouchableWithoutFeedback, View } from 'react-native';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
@@ -34,10 +34,9 @@ type Props = {
 
 const ScreenHeader = (props: Props) => {
   const { onBack, title } = props;
-  const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20 }}>
+    <Header>
       <Left>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

@@ -3,13 +3,13 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import Storage from 'services/storage';
+import ChatService from 'services/chat';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Toast, ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
-
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
@@ -29,6 +29,7 @@ import ProfileForm from './ProfileForm';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
+const chat = new ChatService();
 
 const ListWrapper = styled.View`
   padding-bottom: 40px;
@@ -139,6 +140,7 @@ class Profile extends React.Component<Props, State> {
 
   clearLocalStorage() {
     storage.removeAll();
+    chat.client.resetAccount().catch(() => null);
     Toast.show({
       text: 'Cleared',
       buttonText: '',
@@ -222,7 +224,6 @@ class Profile extends React.Component<Props, State> {
         <Header gray title="settings" onBack={navigation.goBack} index={1} />
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'country'}
-          title="personal details"
           subtitle="Choose your country"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -235,7 +236,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'city'}
-          title="personal details"
           subtitle="Enter city name"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -250,7 +250,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'email'}
-          title="personal details"
           subtitle="Enter your email"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -265,7 +264,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'fullName'}
-          title="personal details"
           subtitle="Enter your full name"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -280,7 +278,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          title="preferences"
           subtitle="Choose your base currency"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}

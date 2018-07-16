@@ -15,6 +15,7 @@ import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { SubTitle, TextLink, Paragraph } from 'components/Typography';
 import ModalScreenHeader from 'components/ModalScreenHeader';
+import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
@@ -62,7 +63,7 @@ function AmountInputTemplate(locals) {
     autoFocus: true,
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: '0.00',
+    placeholder: '0',
     value: locals.value,
     ellipsizeMode: 'middle',
     keyboardType: Platform.OS === 'ios' ? 'numeric' : 'default',
@@ -256,13 +257,15 @@ class SendTokenAmount extends React.Component<Props, State> {
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }
+
   render() {
     const {
       value,
       formStructure,
       txFeeInWei,
     } = this.state;
-    const { token, icon, balance } = this.assetData;
+    const { token, icon, balance: unformattedBalance } = this.assetData;
+    const balance = Number(unformattedBalance).toFixed(8);
     const formOptions = generateFormOptions({ icon, currency: token });
 
     const layout = Platform.OS === 'ios' ?
@@ -274,6 +277,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             title="send"
           />
           <Container>
+            <WarningBanner />
             <Wrapper regularPadding>
               <SubTitle>How much {token} would you like to send?</SubTitle>
               <Form
@@ -293,7 +297,11 @@ class SendTokenAmount extends React.Component<Props, State> {
           </Container>
           <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
             <FooterWrapper>
-              <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
+              <Text>Fee
+                <TextLink>
+                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                </TextLink>
+              </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
           </KeyboardAvoidingView>
@@ -326,7 +334,11 @@ class SendTokenAmount extends React.Component<Props, State> {
               </BodyWrapper>
             </View>
             <FooterWrapper>
-              <Text>Fee <TextLink> {txFeeInWei && ` ${utils.formatEther(txFeeInWei.toString())} ETH`}</TextLink></Text>
+              <Text>Fee
+                <TextLink>
+                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                </TextLink>
+              </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
           </KeyboardAvoidingView>
