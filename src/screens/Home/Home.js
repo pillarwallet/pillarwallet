@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { PROFILE } from 'constants/navigationConstants';
+import { connect } from 'react-redux';
+import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -11,27 +12,6 @@ import PortfolioBalance from 'components/PortfolioBalance';
 
 import ButtonIcon from 'components/ButtonIcon';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
-
-const dummyRecentConnections = {
-  paragramm1234567: {
-    name: 'paragramm1234567',
-  },
-  burningfiat: {
-    name: 'burningfiat',
-  },
-  johndoe: {
-    name: 'johndoe',
-  },
-  lewisflude: {
-    name: 'lewisflude',
-  },
-  pilalrwallet: {
-    name: 'pilalrwallet',
-  },
-  carlosrossi: {
-    name: 'carlosrossi',
-  },
-};
 
 const dummyHistory = [
   {
@@ -297,31 +277,39 @@ const RecentConnectionsItemName = styled.Text`
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  contacts: Object[],
+  user: Object,
 };
 
-export default class PeopleScreen extends React.Component<Props> {
+class PeopleScreen extends React.Component<Props> {
   goToProfile = () => {
-    this.props.navigation.navigate(PROFILE);
+    const { navigation } = this.props;
+    navigation.navigate(PROFILE);
   };
 
   renderRecentConnections = () => {
-    return Object.keys(dummyRecentConnections).map((item, index) => (
-      <RecentConnectionsItem key={index}>
+    const { contacts, navigation } = this.props;
+    return contacts.map(contact => (
+      <RecentConnectionsItem
+        key={contact.username}
+        onPress={() => navigation.navigate(CONTACT, { contact })}
+      >
         <RecentConnectionsItemAvatarWrapper>
           <RecentConnectionsItemAvatarImage />
         </RecentConnectionsItemAvatarWrapper>
-        <RecentConnectionsItemName numberOfLines={1}>{item}</RecentConnectionsItemName>
+        <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
       </RecentConnectionsItem>
     ));
   };
 
   render() {
+    const { user } = this.props;
     return (
       <Container>
         <HomeHeader>
           <HomeHeaderRow>
             <HomeHeaderAvatar />
-            <HomeHeaderUsername>johndoe</HomeHeaderUsername>
+            <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
             <HomeHeaderButtons>
               <HomeHeaderButton
                 icon="question-circle-o"
@@ -357,3 +345,12 @@ export default class PeopleScreen extends React.Component<Props> {
   }
 }
 
+const mapStateToProps = ({
+  contacts: { data: contacts },
+  user: { data: user },
+}) => ({
+  contacts,
+  user,
+});
+
+export default connect(mapStateToProps)(PeopleScreen);
