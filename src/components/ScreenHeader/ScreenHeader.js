@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors } from 'utils/variables';
-import { TouchableWithoutFeedback, View } from 'react-native';
+import { TouchableWithoutFeedback, View, Platform } from 'react-native';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
@@ -14,6 +14,7 @@ const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding-top: ${Platform.OS === 'ios' ? '4px' : 0};
 `;
 
 const Left = styled.View`

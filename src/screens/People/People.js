@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View, FlatList, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
@@ -11,7 +11,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
@@ -46,7 +46,7 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
 `;
 
-const ContactCardList = styled(ScrollWrapper)`
+const ContactCardList = styled(FlatList)`
   padding: 16px;
 `;
 
@@ -121,16 +121,23 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
-  renderLocalContacts = () => {
-    const { localContacts } = this.props;
-    return localContacts.map(contact => (
-      <ContactCard
-        onPress={this.handleContactCardPress(contact)}
-        name={contact.firstName || contact.username}
-        key={contact.username}
-      />
-    ));
+  renderSeparator = () => {
+    return (
+      <View style={{ marginTop: -4, borderRadius: 4 }}>
+        <View style={{ height: 1, width: '100%' }} />
+      </View>
+    );
   };
+
+  keyExtractor = (item) => item.id;
+
+  renderContact = ({ item }) => (
+    <ContactCard
+      onPress={this.handleContactCardPress(item)}
+      name={item.firstName || item.username}
+      key={item.id}
+    />
+  );
 
   render() {
     const { query, emptyList } = this.state;
@@ -168,7 +175,7 @@ class PeopleScreen extends React.Component<Props, State> {
               <ConnectionRequestNotificationCircle>
                 {invitations.length}
               </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon name="arrow-forward" />
+              <ConnectionRequestBannerIcon type="Feather" name="chevron-right" />
             </React.Fragment>
           </ConnectionRequestBanner>
         }
@@ -191,9 +198,13 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !emptyList &&
-          <ContactCardList contentInset={{ bottom: 40 }}>
-            {this.renderLocalContacts()}
-          </ContactCardList>
+        <ContactCardList
+          data={localContacts}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderContact}
+          ItemSeparatorComponent={this.renderSeparator}
+          onScroll={() => Keyboard.dismiss()}
+        />
         }
 
         {!!emptyList && !inSearchMode &&
