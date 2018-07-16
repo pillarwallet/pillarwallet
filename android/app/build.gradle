@@ -129,6 +129,8 @@ dependencies {
   compile "com.google.android.gms:play-services-base:15.0.1"
   compile "com.google.firebase:firebase-core:15.0.2"
   compile 'com.google.android.gms:play-services-vision:15.0.1'
+  compile "com.google.firebase:firebase-messaging:17.1.0"
+  compile 'me.leolin:ShortcutBadger:1.1.21@aar'
 
   // Our dependencies from ExpoView
   // DON'T ADD ANYTHING HERE THAT ISN'T IN EXPOVIEW. ONLY COPY THINGS FROM EXPOVIEW TO HERE.
