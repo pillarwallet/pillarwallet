@@ -48,7 +48,7 @@ class ChatScreen extends React.Component<Props, State> {
     const contact = props.navigation.getParam('contact', {});
     this.state = {
       contact,
-      showLoadEarlierButton: true, // make dynamanic depending on number of messages in memory?
+      showLoadEarlierButton: true, // make dynamic depending on number of messages in memory?
     };
   }
 
@@ -70,7 +70,7 @@ class ChatScreen extends React.Component<Props, State> {
         avatar: message.username === contact.username ? contact.avatar : user.usernameAvatar,
       },
     })).sort((a, b) => b.createdAt - a.createdAt);
-  }
+  };
 
   handleLoadEarlier = () => {
     const { getChatByContact } = this.props;
