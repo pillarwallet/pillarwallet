@@ -120,15 +120,6 @@ class PeopleScreen extends React.Component<Props, State> {
   handleConnectionsRequestBannerPress = () => {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
-  renderContact = ({ contact }) => {
-    return (
-      <ContactCard
-        onPress={this.handleContactCardPress(contact)}
-        name={contact.firstName || contact.username}
-        key={contact.username}
-      />
-    );
-  };
 
   renderSeparator = () => {
     return (
@@ -143,7 +134,7 @@ class PeopleScreen extends React.Component<Props, State> {
   renderContact = ({ item }) => (
     <ContactCard
       onPress={this.handleContactCardPress(item)}
-      name={item.username}
+      name={item.firstName || item.username}
       key={item.id}
     />
   );
