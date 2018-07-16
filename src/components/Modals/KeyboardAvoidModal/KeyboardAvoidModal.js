@@ -1,12 +1,9 @@
 // @flow
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import Title from 'components/Title';
-import { SubTitle } from 'components/Typography';
-import ButtonIcon from 'components/ButtonIcon';
 import { Platform, Dimensions, Keyboard } from 'react-native';
+import ModalScreenHeader from 'components/ModalScreenHeader';
 
 const { height } = Dimensions.get('window');
 
@@ -33,27 +30,9 @@ const ModalWrapper = styled.View`
   backgroundColor: #ffffff
 `;
 
-const ModalHeader = styled.View`
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  ${props => props.fullScreen && 'padding: 0 20px;'}
-`;
-
-const ModalSubtitle = styled(SubTitle)`
-  padding: ${(props) => props.fullScreen ? '20px 20px 0' : '10px 0'};
-`;
-
 const ModalOverflow = styled.View`
   width: 100%;
   background-color: #FFFFFF;
-`;
-
-const CloseButton = styled(ButtonIcon)`
-  position: absolute;
-  right: ${(props) => props.fullScreen ? 8 : -8}px;
-  top: -10px;
 `;
 
 export default class KeyboardAvoidModal extends React.Component<Props, State> {
@@ -98,10 +77,8 @@ export default class KeyboardAvoidModal extends React.Component<Props, State> {
     } = this.state;
     const {
       children,
-      title,
       fullScreenComponent,
       onModalHide,
-      fullScreen,
       subtitle,
     } = this.props;
     const animationInTiming = 800;
@@ -124,17 +101,7 @@ export default class KeyboardAvoidModal extends React.Component<Props, State> {
         }}
       >
         <ModalWrapper>
-          <ModalHeader fullScreen={fullScreen}>
-            <Title noMargin title={title} />
-            <CloseButton
-              icon="close"
-              onPress={this.hideModal}
-              fontSize={Platform.OS === 'ios' ? 36 : 30}
-              color={baseColors.darkGray}
-              fullScreen={fullScreen}
-            />
-          </ModalHeader>
-          <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
+          <ModalScreenHeader subtitle title={subtitle} onClose={this.hideModal} />
           {children}
           <ModalOverflow />
         </ModalWrapper>

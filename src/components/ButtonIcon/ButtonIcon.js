@@ -28,6 +28,7 @@ const ButtonIcon = (props: Props) => {
     active: false,
     name: icon,
     style: {
+      paddingTop: 0,
       fontSize,
       color,
       marginLeft: margin,

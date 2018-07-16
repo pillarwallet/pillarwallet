@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { List, ListItem, Body, Right, Switch, Thumbnail } from 'native-base';
+import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontWeights, fontSizes } from 'utils/variables';
@@ -18,6 +18,7 @@ import {
 } from 'actions/assetsActions';
 import { ETH } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { Image as ImageCache } from 'react-native-expo-image-cache';
 
 const TokenName = styled.Text`
   font-size: ${fontSizes.small};
@@ -32,6 +33,12 @@ const TokenSymbol = styled.Text`
 
 const TokenListItem = styled(ListItem)`
   margin: 0;
+`;
+
+const TokenThumbnail = styled(ImageCache)`
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
 `;
 
 type Props = {
@@ -74,7 +81,7 @@ class AddToken extends React.Component<Props> {
         const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
         return (
           <TokenListItem key={symbol}>
-            <Thumbnail square size={80} source={{ uri: fullIconUrl }} />
+            <TokenThumbnail uri={fullIconUrl} />
             <Body style={{ marginLeft: 20 }}>
               <TokenName>{name}</TokenName>
               <TokenSymbol>{symbol}</TokenSymbol>

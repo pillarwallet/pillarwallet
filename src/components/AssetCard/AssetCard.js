@@ -7,7 +7,6 @@ import {
 import { getCurrencySymbol } from 'utils/common';
 import styled from 'styled-components/native';
 import { Image as ImageCache } from 'react-native-expo-image-cache';
-
 import IconWrapper from './IconWrapper';
 import IconCircle from './IconCircle';
 import DetailsWrapper from './DetailsWrapper';

@@ -11,13 +11,12 @@ export const Title = styled.Text`
 `;
 
 export const SubTitle = styled.Text`
-  font-size: ${fontSizes.mediumLarge};
+  font-size: ${fontSizes.medium};
   font-weight: 400;
   color: ${UIColors.primary};
   text-align: ${props => (props.align || 'left')};
   line-height: 24px;
   margin: ${props => props.margin || '0 0 20px'};
-  width: 70%;
 `;
 
 export const SubHeading = styled.Text`

@@ -142,7 +142,7 @@ class AssetsScreen extends React.Component<Props> {
           wallpaperUrl,
         } = asset;
 
-        const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}`;
+        const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
         const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}`;
 
         const formattedBalanceInFiat = formatMoney(balanceInFiat);

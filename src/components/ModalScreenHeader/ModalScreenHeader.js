@@ -3,15 +3,16 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
 import { TouchableWithoutFeedback, View, Platform } from 'react-native';
-import { Label } from 'components/Typography';
+import { Label, SubTitle } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
-import { noop, isIphoneX } from 'utils/common';
+import { noop } from 'utils/common';
 
 
 type Props = {
   onBack?: Function,
   onClose: Function,
+  subtitle?: boolean,
   title?: string,
   rightLabelText?: string,
 }
@@ -19,7 +20,7 @@ type Props = {
 const Header = styled.View`
   background-color: #fff;
   height: 80px;
-  padding: 0 14px;
+  padding: 0 16px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -42,8 +43,13 @@ const BackIcon = styled(ButtonIcon)`
 
 const CloseButton = styled(ButtonIcon)`
   position: relative;
-  bottom: 3px;
-  margin: 0 6px 0 10px;
+  margin: 0 16px 0 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ModalSubTitle = styled(SubTitle)`
+  margin: 20px 0;
 `;
 
 const ModalScreenHeader = (props: Props) => {
@@ -51,10 +57,9 @@ const ModalScreenHeader = (props: Props) => {
     onBack,
     onClose,
     title,
+    subtitle,
     rightLabelText = '',
   } = props;
-
-  const onBackLeftPadding = Platform.OS === 'ios' ? 2 : 0;
 
   const additionalStyle = Platform.OS === 'ios' ?
     {
@@ -67,7 +72,7 @@ const ModalScreenHeader = (props: Props) => {
     };
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20, paddingTop: isIphoneX ? 16 : 0 }}>
+    <Header>
       <View>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
@@ -81,7 +86,12 @@ const ModalScreenHeader = (props: Props) => {
               style={additionalStyle}
             />
             }
-            <Title title={title} />
+            {!!subtitle &&
+              <ModalSubTitle>{title}</ModalSubTitle>
+            }
+            {!subtitle &&
+              <Title title={title} />
+            }
           </View>
         </TouchableWithoutFeedback>
       </View>
