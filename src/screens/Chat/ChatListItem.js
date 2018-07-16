@@ -25,9 +25,9 @@ const AvatarWrapper = styled.View`
   height: 48px;
   border-radius: 24px;
   border: 2px solid #ffffff;
-  shadowColor: black;
-  shadowOpacity: 0.2;
-  shadowRadius: 2px;
+  shadow-color: black;
+  shadow-opacity: 0.2;
+  shadow-radius: 2px;
   elevation: 5;
   margin-top: 4px;
 `;
@@ -36,7 +36,7 @@ const UserWrapper = styled.View`
   flex-direction: column;
   padding-left: 10px;
   padding-right: 10px;
-  flex: 4
+  flex: 4;
 `;
 
 const UserName = styled.Text`
@@ -61,13 +61,13 @@ const DetailsWrapper = styled.View`
 
 const TimeSent = styled.Text`
   color: ${baseColors.darkGray}
-  font-size: ${fontSizes.small}
+  font-size: ${fontSizes.small};
 `;
 
 const UnreadCounter = styled.View`
   height: 20px;
   width: 20px;
-  borderRadius: 10px;
+  border-radius: 10px;
   background-color: ${baseColors.darkGray}
   align-self: flex-end;
   padding: 3px 0;
@@ -83,9 +83,7 @@ const UnreadNumber = styled.Text`
   text-align: center;
 `;
 
-type State = {}
-
-export default class ChatListItem extends React.Component<Props, State> {
+export default class ChatListItem extends React.Component<Props> {
   _onPress = () => {
     this.props.onPress(this.props.userName, this.props.avatar);
   };
@@ -98,6 +96,7 @@ export default class ChatListItem extends React.Component<Props, State> {
       timeSent,
       unreadCount,
     } = this.props;
+
     let customUnreadCount;
     if (unreadCount > 9) {
       customUnreadCount = '..';
@@ -145,18 +144,17 @@ export default class ChatListItem extends React.Component<Props, State> {
       </ItemRow>
     );
 
+    if (Platform.OS === 'ios') {
+      return <TouchableOpacity onPress={this._onPress}>{item}</TouchableOpacity>;
+    }
+
     return (
-      Platform.OS === 'ios' ?
-        <TouchableOpacity onPress={this._onPress}>
-          {item}
-        </TouchableOpacity>
-        :
-        <TouchableNativeFeedback
-          onPress={this._onPress}
-          background={TouchableNativeFeedback.SelectableBackground()}
-        >
-          {item}
-        </TouchableNativeFeedback>
+      <TouchableNativeFeedback
+        onPress={this._onPress}
+        background={TouchableNativeFeedback.SelectableBackground()}
+      >
+        {item}
+      </TouchableNativeFeedback>
     );
   }
 }
