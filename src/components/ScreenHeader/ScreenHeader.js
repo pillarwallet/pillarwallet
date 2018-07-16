@@ -14,7 +14,7 @@ const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-top: ${Platform.OS === 'ios' ? '44px' : 0};
+  padding-top: ${Platform.OS === 'ios' ? '4px' : 0};
 `;
 
 const Left = styled.View`

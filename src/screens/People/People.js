@@ -168,7 +168,7 @@ class PeopleScreen extends React.Component<Props, State> {
               <ConnectionRequestNotificationCircle>
                 {invitations.length}
               </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon name="arrow-forward" />
+              <ConnectionRequestBannerIcon type="Feather" name="chevron-right" />
             </React.Fragment>
           </ConnectionRequestBanner>
         }
