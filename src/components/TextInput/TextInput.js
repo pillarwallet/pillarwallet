@@ -202,9 +202,9 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
           {!!footerAddonText &&
-          <TouchableOpacity onPress={footerAddonAction}>
-            <AddonText>{footerAddonText}</AddonText>
-          </TouchableOpacity>}
+            <TouchableOpacity onPress={footerAddonAction}>
+              <AddonText>{footerAddonText}</AddonText>
+            </TouchableOpacity>}
         </InputFooter>
       </View>
     );

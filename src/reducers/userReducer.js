@@ -17,7 +17,7 @@ const initialState = {
   userState: null,
 };
 
-export default function assetsReducer(
+export default function userReducer(
   state: UserReducerState = initialState,
   action: UserReducerAction,
 ) {
