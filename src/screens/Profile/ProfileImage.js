@@ -7,7 +7,7 @@ const CircleImage = styled.Image`
   width: 50px;
   height: 50px;
   border-radius: 25px;
-  ${props => (props.additionalImageStyle)}
+  ${props => (props.additionalImageStyle)};
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
@@ -18,14 +18,14 @@ const ImageTouchable = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   background-color: #d8d8d8;
-  ${props => (props.additionalContainerStyle)}
+  ${props => (props.additionalContainerStyle)};
 `;
 
 const AvatarText = styled.Text`
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.bold};
   color: ${baseColors.white};
-  ${props => (props.additionalTextStyle)}
+  ${props => (props.additionalTextStyle)};
 `;
 
 type Props = {

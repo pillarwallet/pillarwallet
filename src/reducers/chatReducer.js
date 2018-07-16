@@ -18,8 +18,8 @@ type Chat = {
     serverTimestamp: number,
     device: number,
     savedTimestamp: number,
-    username: string
-  }
+    username: string,
+  },
 }
 
 export type ChateducerState = {

@@ -21,7 +21,7 @@ type State = {
   showChat: boolean,
   receiver: string,
   receiverAvatar: string,
-  chatList: Array<Object>
+  chatList: Array<Object>,
 }
 
 class ChatListScreen extends React.Component<Props, State> {
@@ -56,7 +56,8 @@ class ChatListScreen extends React.Component<Props, State> {
         <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
       </View>
     );
-  }
+  };
+
   render() {
     const { contacts, chats } = this.props;
     return (
