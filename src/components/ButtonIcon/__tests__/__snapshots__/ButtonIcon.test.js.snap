@@ -75,6 +75,7 @@ exports[`Button Icon should render Button Icon correctly 1`] = `
             "marginLeft": undefined,
             "marginRight": undefined,
             "marginTop": undefined,
+            "paddingTop": 0,
           },
         ],
         Object {

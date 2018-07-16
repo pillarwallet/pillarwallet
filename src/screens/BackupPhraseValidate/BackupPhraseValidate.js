@@ -206,7 +206,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <Title title="verify backup phrase" />
           <Paragraph>
-            Please select the appropriate words from the list
+            Please select the appropriate words from the list.
           </Paragraph>
           <WordInputFields>
             {this.renderInputFields()}

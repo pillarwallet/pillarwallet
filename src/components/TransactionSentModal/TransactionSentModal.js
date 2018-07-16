@@ -20,11 +20,11 @@ const TransactionSentModal = (props: Props) => {
       headerImage={tokenSentConfirmationImage}
     >
       <Title
-        title="Your transaction is pending"
+        title="transaction is pending"
         center
       />
       <Paragraph light center style={{ marginBottom: 30 }}>
-        The process may take up to 10 minutes to complete. please check your transaction history.
+        We will let you know once it has been confirmed.
       </Paragraph>
     </PopModal>
   );

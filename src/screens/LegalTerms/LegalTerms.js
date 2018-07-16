@@ -14,6 +14,7 @@ import { registerWalletAction } from 'actions/onboardingActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import ButtonText from 'components/ButtonText';
 import { View } from 'react-native';
+import { fontSizes } from 'utils/variables';
 
 
 type Props = {
@@ -108,19 +109,20 @@ class LegalTerms extends React.Component<Props, State> {
       <Container>
         <Wrapper regularPadding>
           <Title title="review" />
-          <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet you agree that:</Paragraph>
+          <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet I understand that:</Paragraph>
           <CheckboxItem marginBottom>
             { this.buildCheckBox('box01', box01) }
             <CheckboxText>
-            I understand that my funds are held securely on this device, not by a company.
+            The assets I store on this wallet are safe on their respective blockchains and that this wallet holds
+            the private key to those assets. Pillar does not have access to my private keys.
             </CheckboxText>
           </CheckboxItem>
 
           <CheckboxItem marginBottom>
             { this.buildCheckBox('box02', box02) }
             <CheckboxText>
-            I understand that if this app is moved to a new phone or deleted,
-            the only way my funds and contacts can be recovered is by using my 12 word backup phrase.
+              If I delete or move this app to another phone,
+              the only way to recover my assets is to use the 12-word backup phrase.
             </CheckboxText>
           </CheckboxItem>
         </Wrapper>
@@ -151,7 +153,15 @@ class LegalTerms extends React.Component<Props, State> {
             }}
             >
               <ButtonText buttonText="Terms of Use" onPress={this.toggleTermsConditionsModal} />
-              <Paragraph style={{ marginRight: 4, marginLeft: 4, marginBottom: 0 }}>and</Paragraph>
+              <Paragraph style={{
+                marginRight: 4,
+                marginLeft: 4,
+                marginBottom: 0,
+                fontSize: fontSizes.small,
+              }}
+              >
+                and
+              </Paragraph>
               <ButtonText buttonText="Privacy Policy" onPress={this.togglePrivacyPolicyModal} />
             </View>
           </MultiButtonWrapper>
