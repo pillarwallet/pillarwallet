@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Image } from 'react-native';
+import { AppState, Animated, Easing, Image, Text } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -147,6 +147,19 @@ const tabBarIcon = (icon) => ({ focused, tintColor }) => (
     source={icon}
   />
 );
+
+const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
+  <Text
+    style={{
+      fontSize: 12,
+      color: focused ? tintColor : baseColors.mediumGray,
+      textAlign: 'center'
+    }}
+  >
+    {labelText}
+  </Text>
+);
+
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
@@ -154,35 +167,35 @@ const tabNavigation = createBottomTabNavigator(
       screen: assetsFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWallet),
-        tabBarLabel: 'Assets',
+        tabBarLabel: tabBarLabel('Assets'),
       }),
     },
     [PEOPLE]: {
       screen: peopleFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconPeople),
-        tabBarLabel: 'People',
+        tabBarLabel: tabBarLabel('People'),
       }),
     },
     [HOME]: {
       screen: homeFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconHome),
-        tabBarLabel: 'Home',
+        tabBarLabel: tabBarLabel('Home'),
       }),
     },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
-        tabBarLabel: 'Marketplace',
+        tabBarLabel: tabBarLabel('Marketplace'),
       }),
     },
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconChat),
-        tabBarLabel: 'Chat',
+        tabBarLabel: tabBarLabel('Chat'),
       }),
     },
   }, {
@@ -200,11 +213,13 @@ const tabNavigation = createBottomTabNavigator(
         shadowRadius: 2,
         borderTopColor: 'transparent',
         paddingTop: 5,
+        paddingBottom: 5,
         height: 49,
       },
       labelStyle: {
         fontSize: 12,
         color: baseColors.mediumGray,
+        inactiveTintColor: 'gray',
       },
     },
     tabBarPosition: 'bottom',
