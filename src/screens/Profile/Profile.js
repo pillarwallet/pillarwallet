@@ -10,7 +10,6 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Toast, ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
-
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
@@ -225,7 +224,6 @@ class Profile extends React.Component<Props, State> {
         <Header gray title="settings" onBack={navigation.goBack} index={1} />
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'country'}
-          title="personal details"
           subtitle="Choose your country"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -238,7 +236,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'city'}
-          title="personal details"
           subtitle="Enter city name"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -253,7 +250,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'email'}
-          title="personal details"
           subtitle="Enter your email"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -268,7 +264,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'fullName'}
-          title="personal details"
           subtitle="Enter your full name"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -283,7 +278,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          title="preferences"
           subtitle="Choose your base currency"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}

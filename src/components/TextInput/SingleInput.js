@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Input, Label } from 'native-base';
 import { TextLink } from 'components/Typography';
-import { fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
 import { Image as RNImage, Platform } from 'react-native';
 
 type inputPropsType = {
@@ -96,6 +96,7 @@ const InputField = styled(Input)`
   font-weight: ${props => props.fontWeight || fontWeights.bold}
   text-align: ${props => props.textAlign || 'right'};
   background: #FFFFFF;
+  color: ${UIColors.defaultTextColor};
   border: ${props => `1px solid ${props.error ? 'tomato' : '#EBEBEB'}`};
   border-radius: 4;
   padding: 0 12px;
@@ -176,6 +177,7 @@ class SingleInput extends React.Component<Props, State> {
               onBlur={this.handleBlur}
               value={value}
               style={{ paddingLeft: innerImageURI ? 54 : 12 }}
+              placeholderTextColor={baseColors.mediumGray}
             />
             {!!innerImageURI && <FloatImage
               source={this.resolveAssetSource(innerImageURI)}
