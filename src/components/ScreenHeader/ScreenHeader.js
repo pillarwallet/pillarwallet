@@ -7,13 +7,13 @@ import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
 
-const Header = styled.View`
-  background-color: #fff;
-  padding: 40px 16px 0;
+const HeaderA = styled.View`
+  // background-color: #fff;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding-top: ${Platform.OS === 'ios' ? '44px' : 0};
 `;
 
 const Left = styled.View`
@@ -41,7 +41,7 @@ const ScreenHeader = (props: Props) => {
   const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20 }}>
+    <HeaderA style={{ paddingLeft: onBack ? onBackLeftPadding : 16 }}>
       <Left>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -58,7 +58,7 @@ const ScreenHeader = (props: Props) => {
           </View>
         </TouchableWithoutFeedback>
       </Left>
-    </Header>
+    </HeaderA>
   );
 };
 
