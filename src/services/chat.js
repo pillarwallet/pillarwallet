@@ -19,6 +19,7 @@ export default class Chat {
         SIGNAL_SERVER_HOST,
       );
     }
+    credentials.host = SIGNAL_SERVER_HOST;
     return this.client.init(credentials);
   }
 }
