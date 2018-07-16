@@ -137,9 +137,9 @@ const FooterWrapper = Platform.OS === 'ios' ?
   margin-bottom: 20px;
   margin-top: 30px;
 `;
+
 type Props = {
   token: string;
-
   address: string,
   totalBalance: number,
   contractAddress: string,
@@ -151,7 +151,7 @@ type Props = {
 
 type State = {
   value: ?{
-    amount: ?number
+    amount: ?number,
   },
   formStructure: t.struct,
   txFeeInWei: ?Object, // BigNumber
@@ -265,8 +265,9 @@ class SendTokenAmount extends React.Component<Props, State> {
       txFeeInWei,
     } = this.state;
     const { token, icon, balance: unformattedBalance } = this.assetData;
-    const balance = Number(unformattedBalance).toFixed(8);
+    const balance = formatAmount(unformattedBalance);
     const formOptions = generateFormOptions({ icon, currency: token });
+    const txFeeInWeiFormatted = txFeeInWei && formatAmount(utils.formatEther(txFeeInWei.toString()), 8);
 
     const layout = Platform.OS === 'ios' ?
       (
@@ -299,7 +300,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <FooterWrapper>
               <Text>Fee
                 <TextLink>
-                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                  {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
                 </TextLink>
               </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
@@ -336,7 +337,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <FooterWrapper>
               <Text>Fee
                 <TextLink>
-                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                  {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
                 </TextLink>
               </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />

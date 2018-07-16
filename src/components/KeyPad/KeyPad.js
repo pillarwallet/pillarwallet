@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Platform, TouchableNativeFeedback, Image as RNImage } from 'react-native';
 import styled from 'styled-components/native';
 import { fontSizes, baseColors } from 'utils/variables';
+import { KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import keyPadTypes from './keyPadTypes';
 
 const KeyInput = styled.View`
@@ -93,6 +94,7 @@ export default class KeyPad extends React.Component<Props> {
       label,
       type,
       image,
+      value,
     } = btn;
     if (type === IMAGE) {
       return (
@@ -102,8 +104,13 @@ export default class KeyPad extends React.Component<Props> {
       );
     }
 
+    let buttonFontSize = type === STRING ? fontSizes.mediumLarge : null;
+    if (value === KEYPAD_BUTTON_FORGOT) {
+      buttonFontSize = fontSizes.medium;
+    }
+
     return (
-      <ButtonText fontSize={type === STRING ? fontSizes.mediumLarge : null}>
+      <ButtonText fontSize={buttonFontSize}>
         {label}
       </ButtonText>
     );
