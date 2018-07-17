@@ -23,7 +23,7 @@ class RetryApiRegistration extends React.Component<Props> {
     const { registerOnBackend, wallet: { walletState } } = this.props;
     return (
       <Container center>
-        <Text style={{ marginBottom: 20 }}>Registering on backend</Text>
+        <BaseText style={{ marginBottom: 20 }}>Registering on backend</BaseText>
         {walletState !== API_REGISTRATION_FAILED && (
           <ActivityIndicator
             animating

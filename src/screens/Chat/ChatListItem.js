@@ -2,7 +2,8 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native/index';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
+import { BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'screens/Profile/ProfileImage';
 
 type Props = {
@@ -39,14 +40,13 @@ const UserWrapper = styled.View`
   flex: 4;
 `;
 
-const UserName = styled.BaseText`
+const UserName = styled(BoldText)`
   color: ${baseColors.slateBlack};
   font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold};
   letter-spacing: 0.2px;
 `;
 
-const Message = styled.BaseText`
+const Message = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.small};
   line-height: ${fontSizes.medium};
@@ -59,7 +59,7 @@ const DetailsWrapper = styled.View`
   align-items: flex-end;
 `;
 
-const TimeSent = styled.BaseText`
+const TimeSent = styled(BaseText)`
   color: ${baseColors.darkGray}
   font-size: ${fontSizes.small};
 `;
@@ -75,7 +75,7 @@ const UnreadCounter = styled.View`
   margin-right: 1px;
 `;
 
-const UnreadNumber = styled.BaseText`
+const UnreadNumber = styled(BaseText)`
   color: #ffffff;
   font-size: 10px;
   align-self: center;

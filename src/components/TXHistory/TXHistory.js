@@ -216,26 +216,26 @@ class TXHistory extends React.Component<Props, State> {
                   <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
                 </Column>
                 <Column>
-                  <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
+                  <Text>{selectedTransaction.amount} {selectedTransaction.token}</BaseText>
                 </Column>
               </Row>
               <Row size="0 0 30px">
                 <Column><Label>Date</Label></Column>
                 <Column>
-                  <Text>{selectedTransaction.date}</Text>
+                  <Text>{selectedTransaction.date}</BaseText>
                 </Column>
               </Row>
 
               <Row size="0 0 30px">
                 <Column><Label>Recipient</Label></Column>
                 <Column>
-                  <Text>{selectedTransaction.recipient}</Text>
+                  <Text>{selectedTransaction.recipient}</BaseText>
                 </Column>
               </Row>
               <Row size="0 0 30px">
                 <Column><Label>Transaction fee</Label></Column>
                 <Column>
-                  <Text>{selectedTransaction.fee} ETH</Text>
+                  <Text>{selectedTransaction.fee} ETH</BaseText>
                 </Column>
               </Row>
 
@@ -243,14 +243,14 @@ class TXHistory extends React.Component<Props, State> {
                 <Row size="0 0 80px">
                   <Column><Label>Note</Label></Column>
                   <Column>
-                    <Text>{selectedTransaction.note}</Text>
+                    <Text>{selectedTransaction.note}</BaseText>
                   </Column>
                 </Row>
               }
               <Row size="0 0 30px">
                 <Column><Label>Status</Label></Column>
                 <Column>
-                  <Text>{selectedTransaction.status}</Text>
+                  <Text>{selectedTransaction.status}</BaseText>
                 </Column>
               </Row>
             </Holder>

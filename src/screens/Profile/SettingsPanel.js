@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
+import { BoldText } from 'components/Typography';
 
 import { Platform, StyleSheet, Text } from 'react-native';
 
@@ -23,16 +24,14 @@ const FormPlacer = styled.View`
   padding: 0 16px;
 `;
 
-const PanelHeaderIOS = styled.BaseText`
+const PanelHeaderIOS = styled(BoldText)`
   font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold}
   margin-bottom: ${props => (props.headerMarginIOS ? '40px' : '0')};;
   text-align: center;
 `;
 
-const PanelHeaderAndroid = styled.BaseText`
+const PanelHeaderAndroid = styled(BoldText)`
   font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.book};
   margin-bottom: 20px;
   text-align: left;
 `;
@@ -87,10 +86,10 @@ const SettingsPanel = (props: Props) => {
         {children}
         <ButtonGroupAndroid>
           <ButtonAndroid onPress={handleCancel}>
-            <Text style={{ textAlign: 'center', color: baseColors.clearBlue, fontSize: 17 }}>CANCEL</Text>
+            <BaseText style={{ textAlign: 'center', color: baseColors.clearBlue, fontSize: 17 }}>CANCEL</BaseText>
           </ButtonAndroid>
           <ButtonAndroid onPress={handleOK}>
-            <Text style={{ textAlign: 'center', color: baseColors.clearBlue, fontSize: 17 }}>OK</Text>
+            <BaseText style={{ textAlign: 'center', color: baseColors.clearBlue, fontSize: 17 }}>OK</BaseText>
           </ButtonAndroid>
         </ButtonGroupAndroid>
       </SettingsPanelAndroid>
@@ -109,26 +108,26 @@ const SettingsPanel = (props: Props) => {
           style={{ borderRightColor: '#c7c7c7', borderRightWidth: StyleSheet.hairlineWidth }}
           underlayColor={baseColors.lightGray}
         >
-          <Text style={{
+          <BaseText style={{
             textAlign: 'center',
             color: baseColors.clearBlue,
             fontSize: 17,
           }}
           >Cancel
-          </Text>
+          </BaseText>
         </ButtonIOS>
         <ButtonIOS
           onPress={handleOK}
           underlayColor={baseColors.lightGray}
         >
-          <Text style={{
+          <BaseText style={{
             textAlign: 'center',
             color: baseColors.clearBlue,
             fontWeight: '700',
             fontSize: 17,
           }}
           >OK
-          </Text>
+          </BaseText>
         </ButtonIOS>
       </ButtonGroupIOS>
     </SettingsPanelIOS>

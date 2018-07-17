@@ -2,15 +2,15 @@
 import styled from 'styled-components/native';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
-export const BaseText = styled.BaseText`
+export const BaseText = styled.Text`
   font-family: aktiv-grotesk-regular;
 `;
 
-export const BoldText = styled.BaseText`
+export const BoldText = styled(BaseText)`
   font-family: aktiv-grotesk-bold;
 `;
 
-export const LightText = styled.BaseText`
+export const LightText = styled(BaseText)`
   font-family: aktiv-grotesk-light;
 `;
 

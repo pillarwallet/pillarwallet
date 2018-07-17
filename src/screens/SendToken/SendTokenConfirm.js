@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
-import { SubTitle } from 'components/Typography';
+import { SubTitle, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import SlideModal from 'components/Modals/SlideModal';
@@ -62,16 +62,14 @@ const CheckPinModal = styled(SlideModal)`
 
 
 // EXTRA TO TYPOGRAPHY ONCE ALL AGREED
-const Label = styled.BaseText`
+const Label = styled(BoldText)`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.extraSmall};
   letter-spacing: 0.5;
-  font-weight: 600;
   line-height: 24px;
 `;
 
-const Value = styled.BaseText`
-  font-weight: 700;
+const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
 

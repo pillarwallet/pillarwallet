@@ -190,7 +190,7 @@ class AssetsScreen extends React.Component<Props> {
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>Loading default assets</Text>
+          <BaseText style={{ marginBottom: 20 }}>Loading default assets</BaseText>
           {assetsState !== FETCH_INITIAL_FAILED && (
             <ActivityIndicator
               animating

@@ -8,7 +8,7 @@ import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, baseColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
-import { SubTitle } from 'components/Typography';
+import { SubTitle, BaseText } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -130,7 +130,7 @@ const ContactCardList = styled.FlatList`
   padding: 16px;
 `;
 
-const ChooseButton = styled.BaseText`
+const ChooseButton = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.clearBlue};
   margin-left: auto;

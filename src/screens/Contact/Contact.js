@@ -2,8 +2,9 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, fontWeights, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
+import { BoldText } from 'components/Typography';
 import { CHAT } from 'constants/navigationConstants';
 import ScreenHeader from 'components/ScreenHeader';
 
@@ -37,10 +38,9 @@ const ChatButtonImage = styled.Image`
   display: flex;
 `;
 
-const ChatButtonText = styled.BaseText`
+const ChatButtonText = styled(BoldText)`
   color: ${baseColors.electricBlue};
   text-align: center;
-  font-weight: 600;
   margin-top: 10px;
 `;
 
@@ -71,10 +71,9 @@ const ContactHeaderBody = styled.View`
   justify-content: center;
 `;
 
-const ContactHeaderName = styled.BaseText`
+const ContactHeaderName = styled(BoldText)`
   font-size: ${fontSizes.extraExtraLarge};
   color: ${baseColors.white};
-  font-weight: ${fontWeights.bold}'
 `;
 
 const ContactHeaderAvatarWrapper = styled.View`

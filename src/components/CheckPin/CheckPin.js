@@ -52,7 +52,7 @@ class CheckPin extends React.Component<Props, State> {
     if (walletState === DECRYPTING) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>Checking</Text>
+          <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>
           <ActivityIndicator
             animating
             color="#111"

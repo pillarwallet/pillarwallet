@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Input, Label } from 'native-base';
-import { TextLink } from 'components/Typography';
+import { TextLink, BaseText } from 'components/Typography';
 import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
 import { Image as RNImage, Platform } from 'react-native';
 
@@ -83,7 +83,7 @@ const OutterImageText = styled(TextLink)`
   text-align: left;
 `;
 
-const ErrorMessage = styled.BaseText`
+const ErrorMessage = styled(BaseText)`
   color: tomato;
   display: flex;
   justify-content: flex-end;

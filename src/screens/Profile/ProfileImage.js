@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
+import { BoldText } from 'components/Typography';
 
 const CircleImage = styled.Image`
   width: 50px;
@@ -21,9 +22,8 @@ const ImageTouchable = styled.TouchableOpacity`
   ${props => (props.additionalContainerStyle)};
 `;
 
-const AvatarText = styled.BaseText`
+const AvatarText = styled(BoldText)`
   font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.bold};
   color: ${baseColors.white};
   ${props => (props.additionalTextStyle)};
 `;

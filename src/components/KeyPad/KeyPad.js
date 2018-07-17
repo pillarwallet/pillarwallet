@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Platform, TouchableNativeFeedback, Image as RNImage } from 'react-native';
 import styled from 'styled-components/native';
 import { fontSizes, baseColors } from 'utils/variables';
+import { BaseText } from 'components/Typography';
 import { KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import keyPadTypes from './keyPadTypes';
 
@@ -31,7 +32,7 @@ const PinButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-const ButtonText = styled.BaseText`
+const ButtonText = styled(BaseText)`
   color: ${baseColors.slateBlack};
   font-size: ${props => props.fontSize || fontSizes.extraLarge};
   align-self: center;

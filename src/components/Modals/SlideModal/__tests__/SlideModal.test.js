@@ -12,7 +12,7 @@ describe('Slide Modal', () => {
   });
 
   it('should render SlideModal with content', () => {
-    const ChildContent = () => <Text>Test</Text>;
+    const ChildContent = () => <Text>Test</BaseText>;
     const wrapper = shallow(<SlideModal title="title" isVisible><ChildContent /></SlideModal>);
     expect(wrapper.find(ChildContent)).toHaveLength(1);
   });

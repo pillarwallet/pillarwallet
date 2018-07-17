@@ -66,7 +66,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     if (walletState === ENCRYPTING) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
+          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
           <ActivityIndicator
             animating
             color="#111"
@@ -79,7 +79,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     if (walletState === CREATED) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>Pin changed!</Text>
+          <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
           <Button title="Continue" onPress={() => this.props.navigation.navigate(PROFILE)} />
         </Container>
       );

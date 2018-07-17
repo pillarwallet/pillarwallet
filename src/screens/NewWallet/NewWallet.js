@@ -33,7 +33,7 @@ const NewWallet = (props: Props) => {
 
   return (
     <Container center>
-      <Text style={{ marginBottom: 20 }}>{statusMessage}</Text>
+      <BaseText style={{ marginBottom: 20 }}>{statusMessage}</BaseText>
       {!!showSpinner && (
         <ActivityIndicator
           animating

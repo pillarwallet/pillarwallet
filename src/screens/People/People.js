@@ -13,6 +13,7 @@ import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
+import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
@@ -39,7 +40,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   flex-direction: row;
 `;
 
-const ConnectionRequestBannerText = styled.BaseText`
+const ConnectionRequestBannerText = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
@@ -65,13 +66,13 @@ const EmptySectionTextWrapper = styled.View`
   justify-content: center;
 `;
 
-const EmptySectionTitle = styled.BaseText`
+const EmptySectionTitle = styled(BaseText)`
   font-size: ${fontSizes.large};
   color: ${baseColors.slateBlack};
   margin-bottom: 6px;
 `;
 
-const EmptySectionText = styled.BaseText`
+const EmptySectionText = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
   text-align: center;

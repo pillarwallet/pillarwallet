@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
+import { BoldText } from 'components/Typography';
 
 type Props = {
   onPressReceive: Function,
@@ -45,10 +46,9 @@ const AssetButtonImage = styled.Image`
   display: flex;
 `;
 
-const AssetButtonText = styled.BaseText`
+const AssetButtonText = styled(BoldText)`
   color: ${baseColors.electricBlue};
   text-align: center;
-  font-weight: ${fontWeights.bold};
   font-size: ${fontSizes.extraSmall};
   margin-top: 10px;
 `;

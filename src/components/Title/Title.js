@@ -45,7 +45,7 @@ const BlueDot = styled(BoldText)`
 const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} center={props.center} maxWidth={props.maxWidth}>
-      <Text center={props.center}>{props.title}</Text>
+      <BaseText center={props.center}>{props.title}</BaseText>
       {!!props.title && <BlueDot />}
     </Wrapper>
   );

@@ -103,11 +103,11 @@ class ICO extends React.Component<Props, State> {
               />
             }
           >
-            <Text style={{ marginBottom: 20 }}>Participate in the ICO</Text>
-            <Text style={{ marginBottom: 20 }}>{address}</Text>
-            <Text style={{ marginBottom: 20 }}>
+            <BaseText style={{ marginBottom: 20 }}>Participate in the ICO</BaseText>
+            <BaseText style={{ marginBottom: 20 }}>{address}</BaseText>
+            <BaseText style={{ marginBottom: 20 }}>
               You have: {assets[ETH] && assetsState !== FETCHING ? assets[ETH].balance : '*Fetching*'} ETH
-            </Text>
+            </BaseText>
             <Button title="Participate" onPress={this.handlePopupState} />
             <Modal
               animationType="slide"
