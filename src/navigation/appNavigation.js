@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Image } from 'react-native';
+import { AppState, Animated, Easing, Image, Text, View } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -139,16 +139,44 @@ const homeFlow = createStackNavigator({
   [PROFILE]: ProfileScreen,
 }, StackNavigatorConfig);
 
-const tabBarIcon = (icon) => ({ focused, tintColor }) => (
-  <Image
-    style={{
-      width: 20,
-      height: 20,
-      tintColor: focused ? tintColor : baseColors.mediumGray,
-    }}
-    source={icon}
-  />
+const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
+  <View style={{ padding: 4 }}>
+    <Image
+      style={{
+        width: 18,
+        height: 18,
+        tintColor: focused ? tintColor : baseColors.mediumGray,
+        resizeMode: 'contain',
+      }}
+      source={icon}
+    />
+    {!!hasAddon &&
+    <View
+      style={{
+        width: 7,
+        height: 7,
+        backgroundColor: '#ffdb3c',
+        borderRadius: 3.5,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+      }}
+    />}
+  </View>
 );
+
+const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
+  <Text
+    style={{
+      fontSize: 12,
+      color: focused ? tintColor : baseColors.mediumGray,
+      textAlign: 'center',
+    }}
+  >
+    {labelText}
+  </Text>
+);
+
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
@@ -156,35 +184,35 @@ const tabNavigation = createBottomTabNavigator(
       screen: assetsFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWallet),
-        tabBarLabel: 'Assets',
+        tabBarLabel: tabBarLabel('Assets'),
       }),
     },
     [PEOPLE]: {
       screen: peopleFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconPeople),
-        tabBarLabel: 'People',
+        tabBarLabel: tabBarLabel('People'),
       }),
     },
     [HOME]: {
       screen: homeFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHome),
-        tabBarLabel: 'Home',
+        tabBarIcon: tabBarIcon(iconHome, true),
+        tabBarLabel: tabBarLabel('Home'),
       }),
     },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
-        tabBarLabel: 'Marketplace',
+        tabBarLabel: tabBarLabel('Marketplace'),
       }),
     },
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconChat),
-        tabBarLabel: 'Chat',
+        tabBarLabel: tabBarLabel('Chat'),
       }),
     },
   }, {
@@ -202,11 +230,8 @@ const tabNavigation = createBottomTabNavigator(
         shadowRadius: 2,
         borderTopColor: 'transparent',
         paddingTop: 5,
-        height: 49,
-      },
-      labelStyle: {
-        fontSize: 12,
-        color: baseColors.mediumGray,
+        paddingBottom: 5,
+        height: 54,
       },
     },
     tabBarPosition: 'bottom',
@@ -217,8 +242,8 @@ const tabNavigation = createBottomTabNavigator(
 
 // SEND TOKEN FLOW
 const sendTokenFlow = createStackNavigator({
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 

@@ -8,6 +8,7 @@ import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
+import ContactsSeparator from 'components/ContactsSeparator';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import {
   sendInvitationAction,
@@ -51,7 +52,7 @@ type Props = {
   cancelInvitation: Function,
   rejectInvitation: Function,
   invitations: Object[],
-  localContacts: Object[]
+  localContacts: Object[],
 };
 
 type State = {
@@ -106,6 +107,7 @@ class PeopleSearchResults extends React.Component<Props, State> {
         key={user.id}
         status={status}
         showActions
+        noBorder
       />
     );
   };
@@ -136,11 +138,12 @@ class PeopleSearchResults extends React.Component<Props, State> {
           </TabWrapper>
         </Wrapper>
         <ContactCardList
-          contentInset={{ bottom: 40 }}
           data={users[activeTab]}
           renderItem={this.renderContact}
           onScroll={() => Keyboard.dismiss()}
           keyExtractor={({ username }) => username}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          ItemSeparatorComponent={ContactsSeparator}
         />
       </React.Fragment>
     );

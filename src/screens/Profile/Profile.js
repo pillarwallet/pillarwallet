@@ -212,6 +212,7 @@ class Profile extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
     } = this.props;
+
     const {
       requestPinForTransaction,
       showCheckPinModal,

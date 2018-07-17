@@ -176,7 +176,7 @@ dependencies {
   compile 'com.android.support:exifinterface:26.0.1'
   compile 'com.squareup.okhttp3:okhttp:3.4.1'
   compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
-  compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
+//  compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
   compile 'com.squareup.okio:okio:1.9.0'
 
   // Testing

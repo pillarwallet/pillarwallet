@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { Text, Animated, Keyboard } from 'react-native';
+import { Text, Animated, Keyboard, Platform } from 'react-native';
 
 const SearchHolder = styled.View`
   padding-bottom: 20px;
@@ -20,7 +20,7 @@ const CancelButton = styled.TouchableOpacity`
 const cancelButtonWrapperStyles = {
   position: 'absolute',
   height: '100%',
-  right: 0,
+  right: Platform.OS === 'ios' ? 0 : 5,
 };
 
 const animatedInputFieldStyles = {
@@ -31,6 +31,7 @@ const animatedInputFieldStyles = {
   alignItems: 'center',
   justifyContent: 'space-around',
   flexDirection: 'row',
+  paddingRight: Platform.OS === 'ios' ? 30 : 36,
 };
 
 const InputField = styled.TextInput`
@@ -41,11 +42,12 @@ const InputField = styled.TextInput`
 
 const InputIcon = styled(Icon)`
   flex: 0 0 20px;
-  padding-right: 40px;
   font-size: ${fontSizes.large};
   color: ${baseColors.darkGray};
+  position: absolute;
+  right: 12px;
+  top: 8px;
 `;
-
 
 type inputPropsType = {
   placeholder?: string,
@@ -162,6 +164,7 @@ class SearchBar extends React.Component<Props, State> {
             onBlur={this.handleBlur}
             value={value}
             placeholder={placeholder}
+            underlineColorAndroid="transparent"
           />
           <InputIcon name="search" />
         </Animated.View>

@@ -58,6 +58,7 @@ type Props = {
 
 const AssetsHeader = styled.View`
   flex-direction: row;
+  height: 97px;
   background-color: ${baseColors.white};
   elevation: 1;
   padding: 0 16px;
@@ -209,7 +210,7 @@ class AssetsScreen extends React.Component<Props> {
       <Container>
 
         <AssetsHeader>
-          <Title title="assets" />
+          <Title noMargin title="assets" />
           <TouchableOpacity onPress={this.goToAddTokenPage} >
             <TextLink>
               Add token

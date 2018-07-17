@@ -11,7 +11,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
 import SingleInput from 'components/TextInput/SingleInput';
 import { ButtonMini } from 'components/Button';
-import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
+import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { SubTitle, TextLink, Paragraph } from 'components/Typography';
 import ModalScreenHeader from 'components/ModalScreenHeader';
@@ -137,9 +137,9 @@ const FooterWrapper = Platform.OS === 'ios' ?
   margin-bottom: 20px;
   margin-top: 30px;
 `;
+
 type Props = {
   token: string;
-
   address: string,
   totalBalance: number,
   contractAddress: string,
@@ -151,7 +151,7 @@ type Props = {
 
 type State = {
   value: ?{
-    amount: ?number
+    amount: ?number,
   },
   formStructure: t.struct,
   txFeeInWei: ?Object, // BigNumber
@@ -165,10 +165,12 @@ class SendTokenAmount extends React.Component<Props, State> {
   maxAmount: number;
   formSubmitted: boolean = false;
   enoughForFee: boolean = false;
+  receiver: string;
 
   constructor(props: Props) {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
+    this.receiver = this.props.navigation.getParam('receiver', '');
     this.maxAmount = this.assetData.balance;
     this.state = {
       value: null,
@@ -214,7 +216,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       if (!value || !this.gasPriceFetched) return;
 
       const transactionPayload: TransactionPayload = {
-        to: '',
+        to: this.receiver,
         amount: parseNumber(value.amount),
         gasLimit,
         gasPrice: this.gasPrice.toNumber(),
@@ -222,7 +224,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         symbol: this.assetData.symbol,
         contractAddress: this.assetData.contractAddress,
       };
-      navigation.navigate(SEND_TOKEN_CONTACTS, {
+      navigation.navigate(SEND_TOKEN_CONFIRM, {
         assetData: this.assetData,
         transactionPayload,
       });
@@ -265,15 +267,17 @@ class SendTokenAmount extends React.Component<Props, State> {
       txFeeInWei,
     } = this.state;
     const { token, icon, balance: unformattedBalance } = this.assetData;
-    const balance = Number(unformattedBalance).toFixed(8);
+    const balance = formatAmount(unformattedBalance);
     const formOptions = generateFormOptions({ icon, currency: token });
+    const txFeeInWeiFormatted = txFeeInWei && formatAmount(utils.formatEther(txFeeInWei.toString()), 8);
 
     const layout = Platform.OS === 'ios' ?
       (
         <View>
           <ModalScreenHeader
+            onBack={this.props.navigation.goBack}
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
+            rightLabelText="step 2 of 3"
             title="send"
           />
           <Container>
@@ -299,7 +303,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <FooterWrapper>
               <Text>Fee
                 <TextLink>
-                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                  {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
                 </TextLink>
               </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
@@ -312,8 +316,9 @@ class SendTokenAmount extends React.Component<Props, State> {
           <KeyboardAvoidingView behavior="padding">
             <View>
               <ModalScreenHeader
+                onBack={this.props.navigation.goBack}
                 onClose={this.props.navigation.dismiss}
-                rightLabelText="step 1 of 3"
+                rightLabelText="step 2 of 3"
                 title="send"
               />
               <BodyWrapper>
@@ -336,7 +341,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <FooterWrapper>
               <Text>Fee
                 <TextLink>
-                  {txFeeInWei && ` ${Number(utils.formatEther(txFeeInWei.toString())).toFixed(8)} ETH`}
+                  {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
                 </TextLink>
               </Text>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
