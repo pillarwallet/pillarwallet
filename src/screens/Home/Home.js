@@ -12,6 +12,7 @@ import { SubHeading } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
+import ProfileImage from 'components/ProfileImage';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import {
   cancelInvitationAction,
@@ -35,14 +36,6 @@ const HomeHeaderRow = styled.View`
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
-`;
-
-const HomeHeaderAvatar = styled.View`
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  margin-right: 10px;
-  background-color: ${baseColors.darkGray};
 `;
 
 const HomeHeaderUsername = styled.Text`
@@ -91,19 +84,16 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
   border: 2px solid white;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
-  shadow-radius: 2px     ;
+  shadow-radius: 2px;
   shadow-opacity: 0.1;
   margin-bottom: 10px;
-`;
-
-const RecentConnectionsItemAvatarImage = styled.Image`
+  elevation: 4
 `;
 
 const RecentConnectionsItemName = styled.Text`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
 `;
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -142,7 +132,11 @@ class PeopleScreen extends React.Component<Props> {
           onPress={() => navigation.navigate(CONTACT, { contact })}
         >
           <RecentConnectionsItemAvatarWrapper>
-            <RecentConnectionsItemAvatarImage />
+            <ProfileImage
+              uri={contact.avatar}
+              userName={contact.username}
+              diameter={48}
+            />
           </RecentConnectionsItemAvatarWrapper>
           <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
         </RecentConnectionsItem>
@@ -166,7 +160,14 @@ class PeopleScreen extends React.Component<Props> {
       <Container>
         <HomeHeader>
           <HomeHeaderRow>
-            <HomeHeaderAvatar />
+            <ProfileImage
+              uri={user.avatar}
+              userName={user.username}
+              diameter={40}
+              containerStyle={{
+                marginRight: 10,
+              }}
+            />
             <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
             <HomeHeaderButtons>
               <HomeHeaderButton

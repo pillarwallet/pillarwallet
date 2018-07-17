@@ -7,6 +7,7 @@ import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading } from 'components/Typography';
+import ProfileImage from 'components/ProfileImage';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -53,14 +54,6 @@ const ActivityFeedItem = styled.View`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
-`;
-
-const ActivityFeedItemAvatarWrapper = styled.View`
-  width: 32px;
-  height: 32px;
-  background: ${baseColors.darkGray};
-  border-radius: 16px;
-  margin-right: 10px;
 `;
 
 const ActivityFeedItemLabel = styled.Text`
@@ -211,7 +204,13 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
     return (
       <ActivityFeedItem isEven={isEven} key={index}>
         <ActivityFeedItemCol fixedWidth="42px">
-          <ActivityFeedItemAvatarWrapper />
+          <ProfileImage
+            uri={notification.avatar}
+            userName={notification.username}
+            diameter={32}
+            containerStyle={{ marginRight: 10 }}
+            textStyle={{ fontSize: 14 }}
+          />
         </ActivityFeedItemCol>
         <ActivityFeedItemCol >
           <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
@@ -228,7 +227,13 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
   return (
     <ActivityFeedItem isEven={isEven} key={index}>
       <ActivityFeedItemCol fixedWidth="42px">
-        <ActivityFeedItemAvatarWrapper />
+        <ProfileImage
+          uri={notification.avatar}
+          userName={notification.username}
+          diameter={32}
+          containerStyle={{ marginRight: 10 }}
+          textStyle={{ fontSize: 14 }}
+        />
       </ActivityFeedItemCol>
       <ActivityFeedItemCol>
         <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
