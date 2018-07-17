@@ -37,7 +37,9 @@ import {
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
-import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+
 
 // constants
 import {
@@ -239,8 +241,8 @@ const tabNavigation = createBottomTabNavigator(
 
 // SEND TOKEN FLOW
 const sendTokenFlow = createStackNavigator({
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 

@@ -11,7 +11,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import SingleInput from 'components/TextInput/SingleInput';
 import { ButtonMini } from 'components/Button';
-import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
+import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { SubTitle, TextLink, Paragraph } from 'components/Typography';
 import ModalScreenHeader from 'components/ModalScreenHeader';
@@ -166,10 +166,12 @@ class SendTokenAmount extends React.Component<Props, State> {
   maxAmount: number;
   formSubmitted: boolean = false;
   enoughForFee: boolean = false;
+  receiver: string;
 
   constructor(props: Props) {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
+    this.receiver = this.props.navigation.getParam('receiver', '');
     this.maxAmount = this.assetData.balance;
     this.state = {
       value: null,
@@ -215,7 +217,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       if (!value || !this.gasPriceFetched) return;
 
       const transactionPayload: TransactionPayload = {
-        to: '',
+        to: this.receiver,
         amount: parseNumber(value.amount),
         gasLimit,
         gasPrice: this.gasPrice.toNumber(),
@@ -223,7 +225,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         symbol: this.assetData.symbol,
         contractAddress: this.assetData.contractAddress,
       };
-      navigation.navigate(SEND_TOKEN_CONTACTS, {
+      navigation.navigate(SEND_TOKEN_CONFIRM, {
         assetData: this.assetData,
         transactionPayload,
       });
@@ -312,8 +314,9 @@ class SendTokenAmount extends React.Component<Props, State> {
           <KeyboardAvoidingView behavior="padding">
             <View>
               <ModalScreenHeader
+                onBack={this.props.navigation.goBack}
                 onClose={this.props.navigation.dismiss}
-                rightLabelText="step 1 of 3"
+                rightLabelText="step 2 of 3"
                 title="send"
               />
               <BodyWrapper>

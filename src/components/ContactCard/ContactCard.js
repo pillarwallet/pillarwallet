@@ -104,13 +104,14 @@ type Props = {
   onCancelInvitationPress?: Function,
   onSendInvitationPress?: Function,
   noBorder?: boolean,
+  customButton?: React.Node,
 };
 
 // TODO: convert into dumb component
 export default class ContactCard extends React.Component<Props> {
   static defaultProps = {
     onPress: noop,
-  }
+  };
 
   renderActions = () => {
     const {
@@ -119,9 +120,12 @@ export default class ContactCard extends React.Component<Props> {
       onCancelInvitationPress,
       onSendInvitationPress,
       status,
+      customButton,
     } = this.props;
 
-    if (status === TYPE_ACCEPTED) {
+    if (customButton) {
+      return customButton;
+    } else if (status === TYPE_ACCEPTED) {
       return (
         <StatusText>ACCEPTED</StatusText>
       );
