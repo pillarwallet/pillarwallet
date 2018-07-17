@@ -41,6 +41,7 @@ export const UIColors = {
   defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
   focusedBorderColor: baseColors.electricBlue,
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
+  placeholderTextColor: baseColors.darkGray,
 };
 
 export const fontSizes = {

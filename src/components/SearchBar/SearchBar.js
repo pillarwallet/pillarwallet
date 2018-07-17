@@ -37,6 +37,7 @@ const InputField = styled.TextInput`
   flex: 1;
   height: 40px;
   padding-left: 14px;
+  color: ${baseColors.slateBlack};
 `;
 
 const InputIcon = styled(Icon)`
@@ -188,6 +189,7 @@ class SearchBar extends React.Component<Props, State> {
             onBlur={this.handleBlur}
             value={value}
             placeholder={placeholder}
+            placeholderTextColor={UIColors.placeholderTextColor}
             underlineColorAndroid="transparent"
           />
           <InputIcon name="search" />
