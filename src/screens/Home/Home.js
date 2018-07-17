@@ -80,7 +80,7 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
   width: 52px;
   height: 52px;
   border-radius: 26px;
-  background-color: ${baseColors.darkGray};
+  background-color: ${baseColors.cyan};
   border: 2px solid white;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;

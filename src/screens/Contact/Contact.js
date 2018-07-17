@@ -54,7 +54,7 @@ const ContactWapper = styled.View`
 
 const ContactHeader = styled.View`
   height: 200px;
-  background: ${baseColors.brightSkyBlue};
+  background: ${baseColors.cyan};
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
   shadow-radius: 2px;
@@ -82,7 +82,7 @@ const ContactHeaderAvatarWrapper = styled.View`
   height: 64px;
   width: 64px;
   border: 2px solid ${baseColors.white};
-  background: ${baseColors.mediumGray};
+  background: ${baseColors.cyan};
   border-radius: 32px;
   margin-right: 14px;
   shadow-color: ${baseColors.black};

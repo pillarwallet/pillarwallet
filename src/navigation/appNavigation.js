@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Image, Text, View } from 'react-native';
+import { AppState, Animated, Easing, Image, Text, View, Platform } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -28,6 +28,7 @@ import ChatScreen from 'screens/Chat/Chat';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
+import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 
 // actions
 import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
@@ -177,6 +178,17 @@ const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
 );
 
 // TAB NAVIGATION FLOW
+const generateCustomBottomBar = (): Object => {
+  if (Platform.OS !== 'android') {
+    return {};
+  }
+
+  return {
+    tabBarComponent: props => <AndroidTabBarComponent {...props} />,
+    tabBarPosition: 'bottom',
+  };
+};
+
 const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: {
@@ -236,6 +248,7 @@ const tabNavigation = createBottomTabNavigator(
     tabBarPosition: 'bottom',
     animationEnabled: true,
     swipeEnabled: false,
+    ...generateCustomBottomBar(),
   },
 );
 
