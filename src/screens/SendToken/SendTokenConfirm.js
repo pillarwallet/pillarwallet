@@ -178,7 +178,6 @@ class SendTokenContacts extends React.Component<Props, State> {
         <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
         <CheckPinModal
           isVisible={showCheckPinModal}
-          title="confirm"
           onModalHide={this.handlePendingNotifcationOpen}
           fullScreen
         >
