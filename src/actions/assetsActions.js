@@ -12,7 +12,7 @@ import {
   FETCH_INITIAL_FAILED,
   ETH,
 } from 'constants/assetsConstants';
-import { SET_HISTORY, ADD_TRANSACTION } from 'constants/historyConstants';
+import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import {
   transferETH,
@@ -84,20 +84,6 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     });
   };
 };
-
-export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL') => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const history = await api.fetchHistory({ address1: walletAddress, asset });
-    dispatch({
-      type: SET_HISTORY,
-      payload: {
-        transactions: history,
-        asset,
-      },
-    });
-  };
-};
-
 
 export const fetchSupportedAssetsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
