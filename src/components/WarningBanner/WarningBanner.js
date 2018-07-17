@@ -12,7 +12,7 @@ const WarningBannerBackground = styled.View`
   border-radius: ${props => props.rounded ? '8px' : 0};
 `;
 
-const WarningBannerText = styled.Text`
+const WarningBannerText = styled.BaseText`
   color: ${baseColors.white};
   font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.small};
   font-weight: ${fontWeights.bold};

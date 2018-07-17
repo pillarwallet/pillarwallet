@@ -21,7 +21,7 @@ const ComingSoonBanner = styled.View`
   background: ${baseColors.sunYellow};
 `;
 
-const ComingSoonBannerText = styled.Text`
+const ComingSoonBannerText = styled.BaseText`
   font-size: ${fontSizes.extraLarge};
   font-weight: ${fontWeights.bold};
 `;

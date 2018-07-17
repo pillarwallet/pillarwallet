@@ -1,7 +1,7 @@
 // @flow
 import styled from 'styled-components/native';
 
-const Input = styled.TextInput`
+const Input = styled.BaseTextInput`
   background: #ffffff;
   border-width: 0.5;
   border-color: #9B9B9B;

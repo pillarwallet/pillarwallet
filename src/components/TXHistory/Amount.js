@@ -12,7 +12,7 @@ function getFontColor(direction: string) {
   return baseColors.black;
 }
 
-const Amount = styled.Text`
+const Amount = styled.BaseText`
   text-align: right;
   margin-bottom: 5px;
   font-weight: 700;

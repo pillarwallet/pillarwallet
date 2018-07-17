@@ -20,12 +20,12 @@ import { ETH } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { Image as ImageCache } from 'react-native-expo-image-cache';
 
-const TokenName = styled.Text`
+const TokenName = styled.BaseText`
   font-size: ${fontSizes.small};
   font-weight: ${fontWeights.bold};
 `;
 
-const TokenSymbol = styled.Text`
+const TokenSymbol = styled.BaseText`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.small};
   font-weight: ${fontWeights.light};

@@ -15,7 +15,7 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const Label = styled.Text`
+const Label = styled.BaseText`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.extraSmall};
   letter-spacing: 0.5;
@@ -23,7 +23,7 @@ const Label = styled.Text`
   line-height: 24px;
 `;
 
-const Value = styled.Text`
+const Value = styled.BaseText`
   font-weight: 700;
   font-size: ${fontSizes.medium}
 `;

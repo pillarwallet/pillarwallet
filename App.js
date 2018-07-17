@@ -4,6 +4,7 @@ import * as React from 'react';
 import { StatusBar, BackHandler } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Root as NBRoot } from 'native-base';
+import { Font } from 'expo';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
@@ -14,6 +15,10 @@ import StorybookUI from './storybook';
 
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
+const aktivGroteskBold = require('./src/assets/fonts/AktivGrotesk-Bold.ttf');
+const aktivGroteskMedium = require('./src/assets/fonts/AktivGrotesk-Medium.ttf');
+const aktivGroteskRegular = require('./src/assets/fonts/AktivGrotesk-Regular.ttf');
+const aktivGroteskLight = require('./src/assets/fonts/AktivGrotesk-Light.ttf');
 
 type State = {
   isFetched: boolean
@@ -43,6 +48,13 @@ class App extends React.Component<Props, State> {
 
   componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
+    Font.loadAsync({
+      'aktiv-grotesk-bold': aktivGroteskBold,
+      'aktiv-grotesk-medium': aktivGroteskMedium,
+      'aktiv-grotesk-light': aktivGroteskLight,
+      'aktiv-grotesk-regular': aktivGroteskRegular,
+
+    });
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);

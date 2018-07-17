@@ -38,7 +38,15 @@ const HomeHeaderRow = styled.View`
   flex-direction: row;
 `;
 
-const HomeHeaderUsername = styled.Text`
+const HomeHeaderAvatar = styled.View`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  margin-right: 10px;
+  background-color: ${baseColors.darkGray};
+`;
+
+const HomeHeaderUsername = styled.BaseText`
   font-size: ${fontSizes.extraLarge};
   font-weight: ${fontWeights.bold};
 `;
@@ -90,7 +98,7 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
   elevation: 4
 `;
 
-const RecentConnectionsItemName = styled.Text`
+const RecentConnectionsItemName = styled.BaseText`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
 `;

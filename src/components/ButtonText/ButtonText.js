@@ -8,7 +8,7 @@ type Props = {
   onPress: Function,
 }
 
-const ButtonLabel = styled.Text`
+const ButtonLabel = styled.BaseText`
   color: rgb(32,119,253);
 `;
 

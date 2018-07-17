@@ -31,7 +31,7 @@ const PinButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
-const ButtonText = styled.Text`
+const ButtonText = styled.BaseText`
   color: ${baseColors.slateBlack};
   font-size: ${props => props.fontSize || fontSizes.extraLarge};
   align-self: center;

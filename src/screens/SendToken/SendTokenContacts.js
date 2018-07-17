@@ -130,7 +130,7 @@ const ContactCardList = styled.FlatList`
   padding: 16px;
 `;
 
-const ChooseButton = styled.Text`
+const ChooseButton = styled.BaseText`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.clearBlue};
   margin-left: auto;

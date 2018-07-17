@@ -52,9 +52,14 @@ const LocalContactsItemAvatarWrapper = styled.View`
   border: 2px solid white;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
-  shadow-radius: 2px     ;
+  shadow-radius: 2px;
   shadow-opacity: 0.1;
   margin-bottom: 10px;
+`;
+
+const TabItemText = styled.BaseText`
+  font-size: ${fontSizes.medium};
+  color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
 const LocalContactsItemAvatarImage = styled.Image`

@@ -21,7 +21,7 @@ const ImageTouchable = styled.TouchableOpacity`
   ${props => (props.additionalContainerStyle)};
 `;
 
-const AvatarText = styled.Text`
+const AvatarText = styled.BaseText`
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.bold};
   color: ${baseColors.white};

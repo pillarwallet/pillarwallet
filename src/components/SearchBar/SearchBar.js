@@ -32,7 +32,7 @@ const animatedInputFieldStyles = {
   paddingRight: Platform.OS === 'ios' ? 30 : 36,
 };
 
-const InputField = styled.TextInput`
+const InputField = styled.BaseTextInput`
   flex: 1;
   height: 40px;
   padding-left: 14px;

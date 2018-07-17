@@ -22,11 +22,11 @@ const MnemonicPhraseItem = styled.View`
   justify-content: flex-start;
 `;
 
-const MnemonicPhraseIndex = styled.Text`
+const MnemonicPhraseIndex = styled.BaseText`
   flex: 0 0 20px;
 `;
 
-const MnemonicPhraseWord = styled.Text`
+const MnemonicPhraseWord = styled.BaseText`
   background-color: ${baseColors.lightGray};
   font-weight: bold;
   font-size: ${fontSizes.extraSmall};

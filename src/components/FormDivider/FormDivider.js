@@ -13,7 +13,7 @@ const FormDividerBackground = styled.View`
   background-color: ${baseColors.lightGray};
 `;
 
-const FormDividerText = styled.Text`
+const FormDividerText = styled.BaseText`
   color: ${baseColors.darkGray};
 `;
 

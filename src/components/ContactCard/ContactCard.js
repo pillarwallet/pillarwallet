@@ -35,7 +35,7 @@ const ContactCardAvatarWrapper = styled.View`
   shadow-opacity: 0.1;
 `;
 
-const ContactCardName = styled.Text`
+const ContactCardName = styled.BaseText`
   font-size: ${fontSizes.medium};
   font-weight: ${fontWeights.bold};
 `;
@@ -44,7 +44,7 @@ const ContactCardNotificationCircle = styled(NotificationCircle)`
   margin-left: auto;
 `;
 
-const StatusText = styled.Text`
+const StatusText = styled.BaseText`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
   margin-left: auto;
@@ -69,7 +69,7 @@ const ActionTextWrapper = styled.TouchableOpacity`
   margin-left: auto;
 `;
 
-const CancelActionText = styled.Text`
+const CancelActionText = styled.BaseText`
   color: ${baseColors.fireEngineRed};
   font-size: ${fontSizes.small};
 `;
@@ -83,7 +83,7 @@ const ActionButton = styled.View`
   align-items: center;
 `;
 
-const ActionButtonText = styled.Text`
+const ActionButtonText = styled.BaseText`
   font-size: ${fontSizes.small};
   font-weight: ${fontWeights.bold};
   color: ${baseColors.white};
