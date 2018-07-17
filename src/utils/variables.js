@@ -7,6 +7,7 @@ export const baseColors = {
   warmPurple: '#b2329c',
   electricBlue: '#007AFF',
   brightSkyBlue: '#00bfff',
+  cyan: '#00bfff',
   aquaMarine: '#50e3c2',
   freshEucalyptus: '#2AA057',
   snowWhite: '#fafafa',

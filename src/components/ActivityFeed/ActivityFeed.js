@@ -58,7 +58,7 @@ const ActivityFeedItem = styled.View`
 const ActivityFeedItemAvatarWrapper = styled.View`
   width: 32px;
   height: 32px;
-  background: ${baseColors.darkGray};
+  background: ${baseColors.cyan};
   border-radius: 16px;
   margin-right: 10px;
 `;
