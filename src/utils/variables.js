@@ -39,6 +39,7 @@ export const UIColors = {
   defaultTextColor: baseColors.slateBlack,
   defaultBackgroundColor: baseColors.snowWhite,
   defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
+  focusedBorderColor: baseColors.electricBlue,
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
 };
 

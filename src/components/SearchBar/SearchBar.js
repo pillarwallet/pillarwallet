@@ -27,7 +27,6 @@ const animatedInputFieldStyles = {
   height: 40,
   borderWidth: 1,
   borderRadius: 20,
-  borderColor: UIColors.defaultBorderColor,
   alignItems: 'center',
   justifyContent: 'space-around',
   flexDirection: 'row',
@@ -66,6 +65,7 @@ type State = {
   value: ?string,
   animFadeIn: Object,
   animShrink: Object,
+  isFocused: boolean,
 };
 
 type EventLike = {
@@ -77,6 +77,7 @@ class SearchBar extends React.Component<Props, State> {
     value: '',
     animFadeIn: new Animated.Value(0),
     animShrink: new Animated.Value(100),
+    isFocused: false,
   };
 
   static defaultProps = {
@@ -110,7 +111,10 @@ class SearchBar extends React.Component<Props, State> {
   handleBlur = (e: EventLike) => {
     const { inputProps: { onBlur } } = this.props;
     const value = e.nativeEvent.text;
-    this.setState({ value }, () => {
+    if (!value) {
+      this.hideKeyboard();
+    }
+    this.setState({ value, isFocused: false }, () => {
       if (onBlur) {
         onBlur(value);
       }
@@ -143,6 +147,7 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
+    this.setState({ isFocused: true });
     Animated.parallel([
       Animated.timing(this.state.animFadeIn, {
         toValue: 1,
@@ -157,13 +162,19 @@ class SearchBar extends React.Component<Props, State> {
 
   render() {
     const { inputProps, placeholder } = this.props;
-    const { value, animFadeIn, animShrink } = this.state;
+    const {
+      value,
+      animFadeIn,
+      animShrink,
+      isFocused,
+    } = this.state;
 
     return (
       <SearchHolder>
         <Animated.View
           style={{
             ...animatedInputFieldStyles,
+            borderColor: isFocused ? UIColors.focusedBorderColor : UIColors.defaultBorderColor,
             width: animShrink.interpolate({
               inputRange: [0, 1],
               outputRange: ['0%', '1%'],
