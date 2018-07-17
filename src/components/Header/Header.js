@@ -24,6 +24,7 @@ const Wrapper = styled(NBHeader)`
 
 const BackIcon = styled(ButtonIcon)`
   position: relative;
+  align-self: flex-start;
 `;
 
 const Header = (props: Props) => {
