@@ -206,7 +206,7 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
         <ActivityFeedItemCol fixedWidth="42px">
           <ProfileImage
             uri={notification.avatar}
-            userName={notification.username}
+            userName={displayName}
             diameter={32}
             containerStyle={{ marginRight: 10 }}
             textStyle={{ fontSize: 14 }}
