@@ -193,6 +193,7 @@ export default class ContactCard extends React.Component<Props> {
               uri={avatar}
               userName={name}
               diameter={40}
+              textStyle={{ fontSize: 18 }}
             />
           </ContactCardAvatarWrapper>
           <ContactCardName>{name}</ContactCardName>
