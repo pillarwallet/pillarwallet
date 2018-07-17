@@ -91,7 +91,7 @@ const ButtonMiniWrapper = styled(NBButton)`
   width: auto;
 `;
 
-const ButtonMiniText = styled.Text`
+const ButtonMiniText = styled.BaseText`
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.3;

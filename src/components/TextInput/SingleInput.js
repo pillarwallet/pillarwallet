@@ -83,7 +83,7 @@ const OutterImageText = styled(TextLink)`
   text-align: left;
 `;
 
-const ErrorMessage = styled.Text`
+const ErrorMessage = styled.BaseText`
   color: tomato;
   display: flex;
   justify-content: flex-end;

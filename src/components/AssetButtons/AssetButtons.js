@@ -45,7 +45,7 @@ const AssetButtonImage = styled.Image`
   display: flex;
 `;
 
-const AssetButtonText = styled.Text`
+const AssetButtonText = styled.BaseText`
   color: ${baseColors.electricBlue};
   text-align: center;
   font-weight: ${fontWeights.bold};

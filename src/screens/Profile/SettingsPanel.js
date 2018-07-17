@@ -23,14 +23,14 @@ const FormPlacer = styled.View`
   padding: 0 16px;
 `;
 
-const PanelHeaderIOS = styled.Text`
+const PanelHeaderIOS = styled.BaseText`
   font-size: ${fontSizes.medium};
   font-weight: ${fontWeights.bold}
   margin-bottom: ${props => (props.headerMarginIOS ? '40px' : '0')};;
   text-align: center;
 `;
 
-const PanelHeaderAndroid = styled.Text`
+const PanelHeaderAndroid = styled.BaseText`
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.book};
   margin-bottom: 20px;

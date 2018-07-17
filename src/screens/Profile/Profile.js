@@ -44,7 +44,7 @@ const ListSeparator = styled.View`
   background-color: ${baseColors.lighterGray};
 `;
 
-const ListValue = styled.Text`
+const ListValue = styled.BaseText`
   font-size: ${fontSizes.small};
   padding-left: 20px;
 `;

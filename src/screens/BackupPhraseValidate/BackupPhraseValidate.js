@@ -32,7 +32,7 @@ const MnemonicPhraseWord = styled.TouchableHighlight`
   margin: 5px;
 `;
 
-const MnemonicPhraseWordText = styled.Text`
+const MnemonicPhraseWordText = styled.BaseText`
   font-weight: bold;
   font-size: ${fontSizes.extraSmall};
   color: #ffffff;
@@ -73,7 +73,7 @@ const RemoveWordButtonIcon = styled(ButtonIcon)`
   margin-right: ${Platform.OS === 'ios' ? 0 : '-6px'};
 `;
 
-const WordInputText = styled.Text`
+const WordInputText = styled.BaseText`
   font-size: 14px;
   font-weight: bold;
   color: white;

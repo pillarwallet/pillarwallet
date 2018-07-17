@@ -39,7 +39,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   flex-direction: row;
 `;
 
-const ConnectionRequestBannerText = styled.Text`
+const ConnectionRequestBannerText = styled.BaseText`
   font-size: ${fontSizes.medium};
 `;
 
@@ -65,13 +65,13 @@ const EmptySectionTextWrapper = styled.View`
   justify-content: center;
 `;
 
-const EmptySectionTitle = styled.Text`
+const EmptySectionTitle = styled.BaseText`
   font-size: ${fontSizes.large};
   color: ${baseColors.slateBlack};
   margin-bottom: 6px;
 `;
 
-const EmptySectionText = styled.Text`
+const EmptySectionText = styled.BaseText`
   font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
   text-align: center;

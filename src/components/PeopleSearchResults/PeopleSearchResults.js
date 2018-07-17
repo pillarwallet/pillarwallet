@@ -34,7 +34,7 @@ const TabItem = styled.TouchableOpacity`
   border-bottom-width: 2px;
 `;
 
-const TabItemText = styled.Text`
+const TabItemText = styled.BaseText`
   font-size: ${fontSizes.medium};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;

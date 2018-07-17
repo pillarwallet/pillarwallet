@@ -65,12 +65,12 @@ const FloatingButton = styled(ButtonIcon)`
   padding: 0;
 `;
 
-const ErrorMessage = styled.Text`
+const ErrorMessage = styled.BaseText`
   color: tomato;
   flex: 1;
 `;
 
-const PostFix = styled.Text`
+const PostFix = styled.BaseText`
   font-weight: 900;
   line-height: 22px;
   margin-top: 8px;
@@ -94,7 +94,7 @@ const InputFooter = styled(View)`
   margin-top: 6px;
 `;
 
-const AddonText = styled.Text`
+const AddonText = styled.BaseText`
   color: ${baseColors.electricBlue};
   width: 100%;
   text-align: right;

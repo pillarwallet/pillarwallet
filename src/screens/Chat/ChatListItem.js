@@ -39,14 +39,14 @@ const UserWrapper = styled.View`
   flex: 4;
 `;
 
-const UserName = styled.Text`
+const UserName = styled.BaseText`
   color: ${baseColors.slateBlack};
   font-size: ${fontSizes.medium};
   font-weight: ${fontWeights.bold};
   letter-spacing: 0.2px;
 `;
 
-const Message = styled.Text`
+const Message = styled.BaseText`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.small};
   line-height: ${fontSizes.medium};
@@ -59,7 +59,7 @@ const DetailsWrapper = styled.View`
   align-items: flex-end;
 `;
 
-const TimeSent = styled.Text`
+const TimeSent = styled.BaseText`
   color: ${baseColors.darkGray}
   font-size: ${fontSizes.small};
 `;
@@ -75,7 +75,7 @@ const UnreadCounter = styled.View`
   margin-right: 1px;
 `;
 
-const UnreadNumber = styled.Text`
+const UnreadNumber = styled.BaseText`
   color: #ffffff;
   font-size: 10px;
   align-self: center;

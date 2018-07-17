@@ -48,17 +48,17 @@ const Badge = styled(NBBadge)`
   height: 24px;
 `;
 
-const BadgeText = styled.Text`
+const BadgeText = styled.BaseText`
   color: #fff;
   font-size: ${fontSizes.extraExtraSmall};
   text-align: center;
 `;
 
-const ItemLabel = styled.Text`
+const ItemLabel = styled.BaseText`
   font-size: ${fontSizes.medium};
 `;
 
-const ItemValue = styled.Text`
+const ItemValue = styled.BaseText`
   font-size: ${fontSizes.small};
   color: ${baseColors.coolGrey};
   line-height: ${fontSizes.medium};

@@ -95,6 +95,14 @@
 		<string>Zocial.ttf</string>
 		<string>Feather.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
+		<string>AktivGrotesk_A_Bd.ttf</string>
+		<string>AktivGrotesk_A_Lt.ttf</string>
+		<string>AktivGrotesk_A_Md.ttf</string>
+		<string>AktivGrotesk_A_Rg.ttf</string>
+		<string>ActivGrotesk-Light.ttf</string>
+		<string>AktivGrotesk-Bold.ttf</string>
+		<string>AktivGrotesk-Medium.ttf</string>
+		<string>AktivGrotesk-Regular.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

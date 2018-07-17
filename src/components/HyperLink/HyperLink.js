@@ -8,7 +8,7 @@ type Props = {
   url: string,
 }
 
-const HyperLinkText = styled.Text`
+const HyperLinkText = styled.BaseText`
   color: rgb(32,119,253);
 `;
 

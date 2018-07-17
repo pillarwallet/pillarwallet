@@ -45,7 +45,7 @@ const HomeHeaderAvatar = styled.View`
   background-color: ${baseColors.darkGray};
 `;
 
-const HomeHeaderUsername = styled.Text`
+const HomeHeaderUsername = styled.BaseText`
   font-size: ${fontSizes.extraLarge};
   font-weight: ${fontWeights.bold};
 `;
@@ -99,7 +99,7 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
 const RecentConnectionsItemAvatarImage = styled.Image`
 `;
 
-const RecentConnectionsItemName = styled.Text`
+const RecentConnectionsItemName = styled.BaseText`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
 `;

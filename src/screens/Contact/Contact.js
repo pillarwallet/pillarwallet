@@ -37,7 +37,7 @@ const ChatButtonImage = styled.Image`
   display: flex;
 `;
 
-const ChatButtonText = styled.Text`
+const ChatButtonText = styled.BaseText`
   color: ${baseColors.electricBlue};
   text-align: center;
   font-weight: 600;
@@ -71,7 +71,7 @@ const ContactHeaderBody = styled.View`
   justify-content: center;
 `;
 
-const ContactHeaderName = styled.Text`
+const ContactHeaderName = styled.BaseText`
   font-size: ${fontSizes.extraExtraLarge};
   color: ${baseColors.white};
   font-weight: ${fontWeights.bold}'

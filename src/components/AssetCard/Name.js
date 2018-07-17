@@ -2,7 +2,7 @@
 import styled from 'styled-components/native';
 import { fontSizes, fontWeights, fontTrackings } from 'utils/variables';
 
-const Name = styled.Text`
+const Name = styled.BaseText`
   font-size: ${fontSizes.mediumLarge};
   font-weight: ${fontWeights.bold};
   letter-spacing: ${fontTrackings.medium};

@@ -13,7 +13,7 @@ const ErrorMessageBackground = styled.View`
   background-color: #ff0005;
 `;
 
-const ErrorMessageText = styled.Text`
+const ErrorMessageText = styled.BaseText`
   color: #ffffff;
   font-size: 16px;
   font-weight: 700;
