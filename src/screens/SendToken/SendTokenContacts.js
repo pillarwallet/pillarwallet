@@ -280,13 +280,13 @@ class SendTokenContacts extends React.Component<Props, State> {
               />
               <BodyWrapper>
                 {FormContent}
-                {qrScannerComponent}
               </BodyWrapper>
             </View>
             <FooterWrapper>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
           </KeyboardAvoidingView>
+          {qrScannerComponent}
         </Container>
       );
     return (
