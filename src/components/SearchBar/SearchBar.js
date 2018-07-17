@@ -1,9 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Icon } from 'native-base';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { Text, Animated, Keyboard, Platform } from 'react-native';
+import { UIColors, baseColors } from 'utils/variables';
+import { Text, Animated, Keyboard, Platform, Image } from 'react-native';
 
 const SearchHolder = styled.View`
   padding-bottom: 20px;
@@ -40,13 +39,15 @@ const InputField = styled.TextInput`
   color: ${baseColors.slateBlack};
 `;
 
-const InputIcon = styled(Icon)`
+const searchIcon = require('assets/icons/icon_search.png');
+
+const InputIcon = styled(Image)`
   flex: 0 0 20px;
-  font-size: ${fontSizes.large};
-  color: ${baseColors.darkGray};
   position: absolute;
   right: 12px;
   top: 8px;
+  width: 24;
+  height: 24;
 `;
 
 type inputPropsType = {
@@ -186,7 +187,7 @@ class SearchBar extends React.Component<Props, State> {
             placeholderTextColor={UIColors.placeholderTextColor}
             underlineColorAndroid="transparent"
           />
-          <InputIcon name="search" />
+          <InputIcon source={searchIcon} />
         </Animated.View>
         <Animated.View style={{ ...cancelButtonWrapperStyles, opacity: animFadeIn }}>
           <CancelButton onPress={this.handleCancel}>
