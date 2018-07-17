@@ -2,6 +2,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import { RefreshControl } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
@@ -9,187 +10,16 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import Intercom from 'react-native-intercom';
 import { SubHeading } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
-
+import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
-
-const dummyHistory = [
-  {
-    type: 'transactionEvent',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        type: 'BCX',
-        msg: `{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b",
-        "toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH",
-        "value":"0.4345","status":"pending"}`,
-      },
-    },
-  },
-  {
-    type: 'social',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        label: 'New chat started',
-        connection: 'michael',
-        status: 'MESSAGE_RECEIVED',
-      },
-    },
-  },
-  {
-    type: 'social',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        label: 'Incoming connection',
-        connection: 'anna',
-        status: 'RECEIVED',
-      },
-    },
-  },
-  {
-    type: 'social',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        label: 'Connection request sent',
-        connection: 'brandon',
-        status: 'SENT',
-      },
-    },
-  },
-  {
-    type: 'social',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        label: 'Incoming connection',
-        connection: 'michael',
-        status: 'ACCEPTED',
-      },
-    },
-  },
-  {
-    type: 'social',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        label: 'Incoming connection',
-        connection: 'michael',
-        status: 'DISMISSED',
-      },
-    },
-  },
-  {
-    type: 'transactionEvent',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        type: 'BCX',
-        msg: `{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b",
-        "toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH",
-        "value":"1234.5678","status":"pending"}`,
-      },
-    },
-  },
-  {
-    type: 'transactionEvent',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        type: 'BCX',
-        msg: `{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b",
-        "toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH",
-        "value":"0.5","status":"pending"}`,
-      },
-    },
-  },
-  {
-    type: 'transactionEvent',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        type: 'BCX',
-        msg: `{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b",
-        "toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH",
-        "value":"0.5","status":"pending"}`,
-      },
-    },
-  },
-  {
-    type: 'transactionEvent',
-    meta: {
-      recipientWalletId: 'b0098c1a-2c99-46e4-841b-57e244e81660',
-    },
-    payload: {
-      notification: {
-        title: 'Pillar',
-        body: 'You received 10 ETH',
-      },
-      data: {
-        type: 'BCX',
-        msg: `{"fromAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b",
-        "toAddress":"0x6d24283AA56D2351d714Ae34EB8e6187B273eB0b","asset":"ETH",
-        "value":"0.5","status":"pending"}`,
-      },
-    },
-  },
-];
+import {
+  cancelInvitationAction,
+  acceptInvitationAction,
+  rejectInvitationAction,
+  fetchInviteNotificationsAction,
+} from 'actions/invitationsActions';
+import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
 const HomeHeader = styled.View`
   height: 120px;
@@ -278,10 +108,24 @@ const RecentConnectionsItemName = styled.Text`
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
+  invitations: Object[],
+  historyNotifications: Object[],
   user: Object,
+  fetchHistoryNotifications: Function,
+  fetchInviteNotifications: Function,
+  acceptInvitation: Function,
+  cancelInvitation: Function,
+  rejectInvitation: Function,
+  homeNotifications: Object[],
 };
 
 class PeopleScreen extends React.Component<Props> {
+  componentDidMount() {
+    const { fetchHistoryNotifications, fetchInviteNotifications } = this.props;
+    fetchHistoryNotifications();
+    fetchInviteNotifications();
+  }
+
   goToProfile = () => {
     const { navigation } = this.props;
     navigation.navigate(PROFILE);
@@ -289,21 +133,35 @@ class PeopleScreen extends React.Component<Props> {
 
   renderRecentConnections = () => {
     const { contacts, navigation } = this.props;
-    return contacts.map(contact => (
-      <RecentConnectionsItem
-        key={contact.username}
-        onPress={() => navigation.navigate(CONTACT, { contact })}
-      >
-        <RecentConnectionsItemAvatarWrapper>
-          <RecentConnectionsItemAvatarImage />
-        </RecentConnectionsItemAvatarWrapper>
-        <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
-      </RecentConnectionsItem>
-    ));
+    return contacts
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 5)
+      .map(contact => (
+        <RecentConnectionsItem
+          key={contact.username}
+          onPress={() => navigation.navigate(CONTACT, { contact })}
+        >
+          <RecentConnectionsItemAvatarWrapper>
+            <RecentConnectionsItemAvatarImage />
+          </RecentConnectionsItemAvatarWrapper>
+          <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
+        </RecentConnectionsItem>
+      ));
   };
 
   render() {
-    const { user } = this.props;
+    const {
+      user,
+      cancelInvitation,
+      acceptInvitation,
+      rejectInvitation,
+      contacts,
+      invitations,
+      historyNotifications,
+    } = this.props;
+    const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
+    const homeNotifications = [...mappedContacts, ...invitations, ...historyNotifications]
+      .sort((a, b) => b.createdAt - a.createdAt);
     return (
       <Container>
         <HomeHeader>
@@ -331,14 +189,30 @@ class PeopleScreen extends React.Component<Props> {
             <PortfolioBalance />
           </HomeHeaderRow>
         </HomeHeader>
-        <ScrollWrapper>
+        <ScrollWrapper
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                const { fetchHistoryNotifications, fetchInviteNotifications } = this.props;
+                fetchHistoryNotifications();
+                fetchInviteNotifications();
+              }}
+            />
+          }
+        >
           <RecentConnections>
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
             <RecentConnectionsScrollView horizontal>
               {this.renderRecentConnections()}
             </RecentConnectionsScrollView>
           </RecentConnections>
-          <ActivityFeed history={dummyHistory} />
+          <ActivityFeed
+            onCancelInvitation={cancelInvitation}
+            onRejectInvitation={rejectInvitation}
+            onAcceptInvitation={acceptInvitation}
+            history={homeNotifications}
+          />
         </ScrollWrapper>
       </Container>
     );
@@ -348,9 +222,21 @@ class PeopleScreen extends React.Component<Props> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
+  history: { historyNotifications },
+  invitations: { data: invitations },
 }) => ({
   contacts,
   user,
+  historyNotifications,
+  invitations,
 });
 
-export default connect(mapStateToProps)(PeopleScreen);
+const mapDispatchToProps = (dispatch) => ({
+  cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
+  acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
+  rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
+  fetchHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
+  fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

@@ -37,7 +37,9 @@ import {
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
-import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+
 
 // constants
 import {

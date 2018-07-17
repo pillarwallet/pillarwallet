@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 import {
   fetchAssetsBalancesAction,
   fetchExchangeRatesAction,
-  fetchTransactionsHistoryAction,
 } from 'actions/assetsActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { UIColors, baseColors } from 'utils/variables';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
