@@ -1,13 +1,14 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard, View } from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
+import ContactsSeparator from 'components/ContactsSeparator';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import {
   sendInvitationAction,
@@ -51,7 +52,7 @@ type Props = {
   cancelInvitation: Function,
   rejectInvitation: Function,
   invitations: Object[],
-  localContacts: Object[]
+  localContacts: Object[],
 };
 
 type State = {
@@ -111,14 +112,6 @@ class PeopleSearchResults extends React.Component<Props, State> {
     );
   };
 
-  renderSeparator = () => {
-    return (
-      <View style={{ paddingLeft: 58 }}>
-        <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
-      </View>
-    );
-  };
-
   render() {
     const { activeTab } = this.state;
     const { searchResults } = this.props;
@@ -150,7 +143,7 @@ class PeopleSearchResults extends React.Component<Props, State> {
           onScroll={() => Keyboard.dismiss()}
           keyExtractor={({ username }) => username}
           contentContainerStyle={{ paddingBottom: 40 }}
-          ItemSeparatorComponent={this.renderSeparator}
+          ItemSeparatorComponent={ContactsSeparator}
         />
       </React.Fragment>
     );
