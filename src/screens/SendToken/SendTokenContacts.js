@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
 import { Permissions } from 'expo';
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
@@ -24,8 +24,6 @@ type Props = {
 
 type State = {
   isScanning: boolean,
-  transactionPayload: Object,
-  assetData: Object,
   value: {
     address: string,
   },
@@ -126,17 +124,15 @@ const FooterWrapper = Platform.OS === 'ios' ?
 
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
+  assetData: Object;
 
   constructor(props: Props) {
     super(props);
-    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
-    const assetData = this.props.navigation.getParam('assetData', {});
+    this.assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
       isScanning: false,
       value: { address: '' },
       formStructure: getFormStructure(),
-      transactionPayload,
-      assetData,
     };
   }
 
@@ -147,10 +143,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   handleFormSubmit = () => {
     const value = this._form.getValue();
     if (!value) return;
-    const { assetData, transactionPayload } = this.state;
-    this.props.navigation.navigate(SEND_TOKEN_CONFIRM, {
-      assetData,
-      transactionPayload: { ...transactionPayload, to: value.address },
+    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+      assetData: this.assetData,
+      receiver: value.address,
     });
   };
 
@@ -178,12 +173,11 @@ class SendTokenContacts extends React.Component<Props, State> {
   render() {
     const {
       isScanning,
-      assetData,
       formStructure,
       value,
     } = this.state;
     const formOptions = generateFormOptions(
-      { onIconPress: this.handleQRScannerOpen, currency: assetData.token },
+      { onIconPress: this.handleQRScannerOpen },
     );
 
     const qrScannerComponent = (
@@ -200,9 +194,8 @@ class SendTokenContacts extends React.Component<Props, State> {
       (
         <View>
           <ModalScreenHeader
-            onBack={this.props.navigation.goBack}
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 2 of 3"
+            rightLabelText="step 1 of 3"
             title="send"
           />
           <Container>
@@ -231,9 +224,8 @@ class SendTokenContacts extends React.Component<Props, State> {
           <KeyboardAvoidingView behavior="padding">
             <View>
               <ModalScreenHeader
-                onBack={this.props.navigation.goBack}
                 onClose={this.props.navigation.dismiss}
-                rightLabelText="step 2 of 3"
+                rightLabelText="step 1 of 3"
                 title="send"
               />
               <BodyWrapper>
