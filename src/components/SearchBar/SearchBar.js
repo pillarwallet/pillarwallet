@@ -100,9 +100,6 @@ class SearchBar extends React.Component<Props, State> {
     const { inputProps: { onChange } } = this.props;
     const value = e.nativeEvent.text;
     this.setState({ value }, () => {
-      if (!value) {
-        this.hideKeyboard();
-      }
       if (onChange) {
         onChange(value);
       }
