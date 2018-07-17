@@ -38,17 +38,17 @@ const Header = (props: Props) => {
   if (!index) return null;
   return (
     <Wrapper gray={gray}>
-      <Left>
+      <Left style={{ flex: 1, justifyContent: 'flex-start' }}>
         {onBack &&
           <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
         }
       </Left>
-      <Body>
+      <Body style={{ flex: 1 }}>
         {title &&
           <Title center noMargin title={title} />
         }
       </Body>
-      <Right>
+      <Right style={{ flex: 1, justifyContent: 'flex-end' }}>
         {nextText &&
           <TextLink onPress={onNextPress}>{nextText}</TextLink>
         }

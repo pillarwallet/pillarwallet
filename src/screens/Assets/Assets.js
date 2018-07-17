@@ -60,7 +60,6 @@ const AssetsHeader = styled.View`
   flex-direction: row;
   height: 97px;
   background-color: ${baseColors.white};
-  elevation: 1;
   padding: 0 16px;
   align-items: center;
   justify-content: space-between;
