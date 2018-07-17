@@ -125,16 +125,7 @@ class ChatScreen extends React.Component<Props, State> {
       <ProfileImage
         uri={contact.avatar}
         userName={contact.username}
-        containerStyle={{
-          height: 34,
-          width: 34,
-          borderRadius: 17,
-        }}
-        imageStyle={{
-          height: 34,
-          width: 34,
-          borderRadius: 17,
-        }}
+        diameter={34}
         textStyle={{
           fontSize: 16,
         }}

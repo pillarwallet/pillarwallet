@@ -110,16 +110,7 @@ export default class ChatListItem extends React.Component<Props> {
           <ProfileImage
             uri={avatar}
             userName={userName}
-            containerStyle={{
-              height: 44,
-              width: 44,
-              borderRadius: 22,
-            }}
-            imageStyle={{
-              height: 44,
-              width: 44,
-              borderRadius: 22,
-            }}
+            diameter={44}
           />
         </AvatarWrapper>
         <UserWrapper>
