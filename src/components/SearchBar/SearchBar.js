@@ -86,7 +86,7 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.inputProps && nextProps.inputProps.value !== prevState.value) {
+    if (nextProps.inputProps.value !== prevState.value) {
       return {
         value: nextProps.inputProps.value,
       };
@@ -116,6 +116,17 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleCancel = () => {
+    const { inputProps: { onChange } } = this.props;
+    const searchValue = '';
+    this.setState({ value: searchValue }, () => {
+      if (onChange) {
+        onChange(searchValue);
+      }
+    });
+    this.exitSearchMode();
+  };
+
+  exitSearchMode = () => {
     Keyboard.dismiss();
     Animated.parallel([
       Animated.timing(this.state.animFadeIn, {
