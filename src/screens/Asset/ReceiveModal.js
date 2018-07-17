@@ -108,11 +108,11 @@ export default class ReceiveModal extends React.Component<Props, State> {
         onModalHide={onModalHide}
         subtitle={`Share your wallet address to receive ${tokenName} (${token})`}
       >
-        <WarningBanner rounded />
+        <WarningBanner rounded small />
         <ContentWrapper>
           <Holder>
             <QRCodeWrapper>
-              <QRCode value={address} size={140} />
+              <QRCode value={address} size={120} />
             </QRCodeWrapper>
             <Button
               title="Share Address"
