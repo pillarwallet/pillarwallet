@@ -104,6 +104,7 @@ class PeopleSearchResults extends React.Component<Props, State> {
         onCancelInvitationPress={this.handleCancelInvitationPress(user)}
         onRejectInvitationPress={this.handleRejectInvitationPress(user)}
         name={user.username}
+        avatar={user.avatar}
         key={user.id}
         status={status}
         showActions
