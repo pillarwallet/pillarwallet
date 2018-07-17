@@ -18,9 +18,15 @@ type State = {
   isIFrameLoaded: boolean,
 };
 
+const ActivityIndicatorWrapper = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
 const ModalWrapper = styled.View`
   flex: 1;
-  background-color: #ffffff;
+  background-color: ${baseColors.white};
 `;
 
 const ModalHeader = styled.View`
@@ -89,11 +95,13 @@ export default class IFrameModal extends React.Component<Props, State> {
             />
           </ModalHeader>
           {!isIFrameLoaded &&
+          <ActivityIndicatorWrapper>
             <ActivityIndicator
               animating
               color="#111"
               size="large"
             />
+          </ActivityIndicatorWrapper>
           }
           <WebView
             source={{ uri }}
