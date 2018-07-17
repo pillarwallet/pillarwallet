@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
+import { BoldText } from 'components/Typography';
 
 const WarningBannerBackground = styled.View`
   background-color: ${baseColors.fireEngineRed};
@@ -12,7 +13,7 @@ const WarningBannerBackground = styled.View`
   border-radius: ${props => props.rounded ? '8px' : 0};
 `;
 
-const WarningBannerText = styled.BaseText`
+const WarningBannerText = styled(BoldText)`
   color: ${baseColors.white};
   font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.small};
   font-weight: ${fontWeights.bold};

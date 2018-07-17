@@ -32,7 +32,7 @@ const animatedInputFieldStyles = {
   paddingRight: Platform.OS === 'ios' ? 30 : 36,
 };
 
-const InputField = styled.BaseTextInput`
+const InputField = styled.TextInput`
   flex: 1;
   height: 40px;
   padding-left: 14px;
@@ -191,7 +191,7 @@ class SearchBar extends React.Component<Props, State> {
         </Animated.View>
         <Animated.View style={{ ...cancelButtonWrapperStyles, opacity: animFadeIn }}>
           <CancelButton onPress={this.handleCancel}>
-            <Text style={{ color: baseColors.electricBlue }}>Cancel</Text>
+            <BaseText style={{ color: baseColors.electricBlue }}>Cancel</BaseText>
           </CancelButton>
         </Animated.View>
       </SearchHolder>

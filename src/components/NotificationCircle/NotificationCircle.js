@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
+import { BaseText } from 'components/Typography';
 
 type Props = {
   children?: React.Node,
@@ -18,7 +19,7 @@ const NotificationCircleOuter = styled.View`
   justify-content: center;
 `;
 
-const NotificationCircleText = styled.BaseText`
+const NotificationCircleText = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${props => props.gray ? baseColors.white : baseColors.black};
 `;

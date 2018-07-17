@@ -1,7 +1,8 @@
 // @flow
 import styled from 'styled-components/native';
+import { BaseText } from 'components/Typography';
 
-const FakeInput = styled.BaseText`
+const FakeInput = styled(BaseText)`
   background: #ffffff;
   border-width: 0.5;
   border-color: #efefef;

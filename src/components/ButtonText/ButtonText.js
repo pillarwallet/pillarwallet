@@ -2,13 +2,14 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback, View } from 'react-native';
 import styled from 'styled-components/native';
+import { BaseText } from 'components/Typography';
 
 type Props = {
   buttonText: string,
   onPress: Function,
 }
 
-const ButtonLabel = styled.BaseText`
+const ButtonLabel = styled(BaseText)`
   color: rgb(32,119,253);
 `;
 

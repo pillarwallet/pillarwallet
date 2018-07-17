@@ -56,7 +56,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (walletState === DECRYPTING) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
+          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
           <ActivityIndicator
             animating
             color="#111"

@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Icon, Switch, Badge as NBBadge } from 'native-base';
-
+import { BaseText } from 'components/Typography';
 import { Platform, View, StyleSheet, TouchableNativeFeedback } from 'react-native';
 
 const StyledItemTouchable = styled.TouchableHighlight`
@@ -48,17 +48,17 @@ const Badge = styled(NBBadge)`
   height: 24px;
 `;
 
-const BadgeText = styled.BaseText`
+const BadgeText = styled(BaseText)`
   color: #fff;
   font-size: ${fontSizes.extraExtraSmall};
   text-align: center;
 `;
 
-const ItemLabel = styled.BaseText`
+const ItemLabel = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
-const ItemValue = styled.BaseText`
+const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.coolGrey};
   line-height: ${fontSizes.medium};

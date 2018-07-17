@@ -3,17 +3,17 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { TYPE_RECEIVED } from 'constants/invitationsConstants';
+import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { BaseText } from 'components/Typography';
+import { TYPE_RECEIVED, TYPE_SENT } from 'constants/invitationsConstants';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
   rejectInvitationAction,
 } from 'actions/invitationsActions';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { BaseText } from 'components/Typography';
 import ScreenHeader from 'components/ScreenHeader';
 import ContactCard from 'components/ContactCard';
-import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,

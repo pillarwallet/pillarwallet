@@ -174,7 +174,7 @@ const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
     }}
   >
     {labelText}
-  </Text>
+  </BaseText>
 );
 
 // TAB NAVIGATION FLOW

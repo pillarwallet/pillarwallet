@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
 import { fontSizes, fontWeights, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
+import { BaseText, BoldText } from 'components/Typography';
 import { View, TouchableOpacity, Platform } from 'react-native';
 
 type inputPropsType = {
@@ -65,12 +66,12 @@ const FloatingButton = styled(ButtonIcon)`
   padding: 0;
 `;
 
-const ErrorMessage = styled.BaseText`
+const ErrorMessage = styled(BaseText)`
   color: tomato;
   flex: 1;
 `;
 
-const PostFix = styled.BaseText`
+const PostFix = styled(BoldText)`
   font-weight: 900;
   line-height: 22px;
   margin-top: 8px;
@@ -94,7 +95,7 @@ const InputFooter = styled(View)`
   margin-top: 6px;
 `;
 
-const AddonText = styled.BaseText`
+const AddonText = styled(BaseText)`
   color: ${baseColors.electricBlue};
   width: 100%;
   text-align: right;

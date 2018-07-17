@@ -304,7 +304,7 @@ class SendTokenAmount extends React.Component<Props, State> {
               <TextLink>
                 {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
               </TextLink>
-            </Text>
+            </BaseText>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />
           </FooterWrapper>
         </ScrollWrapper>
@@ -341,7 +341,7 @@ class SendTokenAmount extends React.Component<Props, State> {
                 <TextLink>
                   {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
                 </TextLink>
-              </Text>
+              </BaseText>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
           </KeyboardAvoidingView>

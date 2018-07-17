@@ -48,13 +48,6 @@ class App extends React.Component<Props, State> {
 
   componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
-    Font.loadAsync({
-      'aktiv-grotesk-bold': aktivGroteskBold,
-      'aktiv-grotesk-medium': aktivGroteskMedium,
-      'aktiv-grotesk-light': aktivGroteskLight,
-      'aktiv-grotesk-regular': aktivGroteskRegular,
-
-    });
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
@@ -73,6 +66,13 @@ class App extends React.Component<Props, State> {
   render() {
     const { isFetched } = this.state;
     const { navigation, dispatch } = this.props;
+    Font.loadAsync({
+      'aktiv-grotesk-bold': aktivGroteskBold,
+      'aktiv-grotesk-medium': aktivGroteskMedium,
+      'aktiv-grotesk-light': aktivGroteskLight,
+      'aktiv-grotesk-regular': aktivGroteskRegular,
+
+    });
     if (!isFetched) return null;
 
     return (
