@@ -1,4 +1,4 @@
-//@flow
+// @flow
 import {
   SET_HISTORY,
   UPDATE_HISTORY_NOTIFICATIONS,
@@ -27,8 +27,6 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const historyNotifications = await api.fetchNotifications(user.walletId, TRANSACTION_EVENT);
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
-
-    console.log(mappedHistoryNotifications);
 
     dispatch({
       type: UPDATE_HISTORY_NOTIFICATIONS,

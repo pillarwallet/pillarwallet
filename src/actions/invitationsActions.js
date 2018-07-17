@@ -127,13 +127,12 @@ export const rejectInvitationAction = (invitation: Object) => {
       user: { data: { walletId } },
       invitations: { data: invitations },
     } = getState();
-    console.log(invitation);
+
     const rejectedInvitation = await api.rejectInvitation(
       invitation.id,
       invitation.connectionKey,
       walletId,
     );
-    console.log(rejectedInvitation);
 
     if (!rejectedInvitation) return;
 
