@@ -208,9 +208,8 @@ class AssetsScreen extends React.Component<Props> {
 
     return (
       <Container>
-
         <AssetsHeader>
-          <Title noMargin title="assets" />
+          <Title center noMargin title="assets" />
           <TouchableOpacity onPress={this.goToAddTokenPage} >
             <TextLink>
               Add token

@@ -31,7 +31,7 @@ const MarketplaceComingSoon = () => {
   return (
     <Container>
       <MarketplaceHeader>
-        <Title noMargin title="marketplace" />
+        <Title center noMargin title="marketplace" />
       </MarketplaceHeader>
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>

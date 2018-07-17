@@ -8,7 +8,7 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import SingleInput from 'components/TextInput/SingleInput';
 import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONTACTS } from 'constants/navigationConstants';
@@ -19,6 +19,7 @@ import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
+import { baseColors } from 'utils/variables';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -271,13 +272,13 @@ class SendTokenAmount extends React.Component<Props, State> {
 
     const layout = Platform.OS === 'ios' ?
       (
-        <View>
-          <ModalScreenHeader
-            onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
-            title="send"
-          />
+        <ScrollWrapper color={baseColors.white}>
           <Container>
+            <ModalScreenHeader
+              onClose={this.props.navigation.dismiss}
+              rightLabelText="step 1 of 3"
+              title="send"
+            />
             <WarningBanner />
             <Wrapper regularPadding>
               <SubTitle>How much {token} would you like to send?</SubTitle>
@@ -296,17 +297,15 @@ class SendTokenAmount extends React.Component<Props, State> {
               </ActionsWrapper>
             </Wrapper>
           </Container>
-          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
-            <FooterWrapper>
-              <Text>Fee
-                <TextLink>
-                  {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
-                </TextLink>
-              </Text>
-              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-            </FooterWrapper>
-          </KeyboardAvoidingView>
-        </View>
+          <FooterWrapper>
+            <Text>Fee
+              <TextLink>
+                {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
+              </TextLink>
+            </Text>
+            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+          </FooterWrapper>
+        </ScrollWrapper>
       ) :
       (
         <Container>

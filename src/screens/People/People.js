@@ -162,7 +162,7 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <Container>
         <PeopleHeader>
-          <Title noMargin title="people" />
+          <Title center noMargin title="people" />
         </PeopleHeader>
         <Wrapper regularPadding>
           <SearchBar
