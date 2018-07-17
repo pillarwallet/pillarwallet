@@ -39,10 +39,12 @@ const BackgroundHolder = styled.View`
   background-color: ${props => (props.cardColor)};
 `;
 
-const BackgroundImage = styled.ImageBackground`
-  width: 100%;
+const BackgroundImage = styled(ImageCache)`
   height: 100%;
-  flex-direction: row;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 const AmountWrapper = styled.View`
@@ -107,32 +109,31 @@ export default class AssetCard extends React.Component<Props, State> {
           }]}
         >
           <BackgroundHolder cardColor={defaultCardColor}>
-            <BackgroundImage source={{ url: wallpaper }}>
-              <DetailsWrapper>
-                <Name>{name}</Name>
-                <AmountWrapper>
-                  <Amount>{amount}</Amount>
-                  <AmountToken> {token}</AmountToken>
-                </AmountWrapper>
-                <FiatAmount>
-                  {currencySymbol}{balanceInFiat.amount}
-                </FiatAmount>
-              </DetailsWrapper>
-              {!!cardIcon &&
-              <IconWrapper>
-                <IconCircle>
-                  <ImageCache
-                    key={token}
-                    style={{
-                      height: 40,
-                      width: 40,
-                    }}
-                    uri={cardIcon}
-                    resizeMode="contain"
-                  />
-                </IconCircle>
-              </IconWrapper>}
-            </BackgroundImage>
+            <BackgroundImage uri={wallpaper} />
+            <DetailsWrapper>
+              <Name>{name}</Name>
+              <AmountWrapper>
+                <Amount>{amount}</Amount>
+                <AmountToken> {token}</AmountToken>
+              </AmountWrapper>
+              <FiatAmount>
+                {currencySymbol}{balanceInFiat.amount}
+              </FiatAmount>
+            </DetailsWrapper>
+            {!!cardIcon &&
+            <IconWrapper>
+              <IconCircle>
+                <ImageCache
+                  key={token}
+                  style={{
+                    height: 40,
+                    width: 40,
+                  }}
+                  uri={cardIcon}
+                  resizeMode="contain"
+                />
+              </IconCircle>
+            </IconWrapper>}
           </BackgroundHolder>
         </Animated.View>
       </TouchableWithoutFeedback>

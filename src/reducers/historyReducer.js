@@ -1,10 +1,11 @@
 // @flow
-import { SET_HISTORY, ADD_TRANSACTION } from 'constants/historyConstants';
+import { SET_HISTORY, ADD_TRANSACTION, UPDATE_HISTORY_NOTIFICATIONS } from 'constants/historyConstants';
 import type { Transaction } from 'models/Transaction';
 import { uniqBy } from 'utils/common';
 
 export type HistoryReducerState = {
   data: Transaction[],
+  historyNotifications: Object[],
   isFetched: boolean,
 }
 
@@ -15,6 +16,7 @@ export type HistoryReducerAction = {
 
 const initialState = {
   data: [],
+  historyNotifications: [],
   isFetched: false,
 };
 
@@ -38,6 +40,8 @@ export default function historyReducer(
         state,
         { isFetched: true, data: transactions },
       );
+    case UPDATE_HISTORY_NOTIFICATIONS:
+      return Object.assign({}, state, { historyNotifications: action.payload });
     default:
       return state;
   }

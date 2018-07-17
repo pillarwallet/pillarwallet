@@ -28,3 +28,12 @@ export const searchContactsAction = (query: string) => {
   };
 };
 
+export const resetSearchContactsStateAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_CONTACTS_STATE,
+      payload: null,
+    });
+  };
+};
+
