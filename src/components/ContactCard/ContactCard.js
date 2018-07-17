@@ -4,6 +4,7 @@ import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import ButtonIcon from 'components/ButtonIcon';
+import ProfileImage from 'components/ProfileImage';
 import { noop } from 'utils/common';
 import styled from 'styled-components/native';
 
@@ -11,7 +12,6 @@ const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
   border: ${props => (props.noBorder ? 0 : '1px solid')};
   border-color: ${UIColors.defaultBorderColor};
-  // margin-bottom: -4px;
   height: 75px;
   padding: ${props => (props.noBorder ? '14px 0' : '14px')};
   border-radius: 4px;
@@ -20,10 +20,6 @@ const ContactCardWrapper = styled.TouchableHighlight`
 const ContactCardInner = styled.View`
   flex-direction: row;
   align-items: center;
-`;
-
-const ContactCardAvatar = styled.Image`
-
 `;
 
 const ContactCardAvatarWrapper = styled.View`
@@ -96,6 +92,7 @@ const ActionButtonText = styled.Text`
 type Props = {
   onPress?: Function,
   name: string,
+  avatar?: string,
   notificationCount?: number,
   showActions?: boolean,
   status?: string,
@@ -179,6 +176,7 @@ export default class ContactCard extends React.Component<Props> {
     const {
       notificationCount = 0,
       name,
+      avatar,
       onPress,
       noBorder,
     } = this.props;
@@ -191,7 +189,11 @@ export default class ContactCard extends React.Component<Props> {
       >
         <ContactCardInner>
           <ContactCardAvatarWrapper>
-            <ContactCardAvatar />
+            <ProfileImage
+              uri={avatar}
+              userName={name}
+              diameter={40}
+            />
           </ContactCardAvatarWrapper>
           <ContactCardName>{name}</ContactCardName>
           {notificationCount > 0 &&
