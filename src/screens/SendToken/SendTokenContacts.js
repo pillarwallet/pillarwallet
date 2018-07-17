@@ -218,6 +218,27 @@ class SendTokenContacts extends React.Component<Props, State> {
     );
 
     const { localContacts = [] } = this.props;
+    const FormContent = (
+      <React.Fragment>
+        <SubTitle>To whom you would like to send?</SubTitle>
+        <Form
+          ref={node => { this._form = node; }}
+          type={formStructure}
+          options={formOptions}
+          onChange={this.handleChange}
+          onBlur={this.handleChange}
+          value={value}
+        />
+        <ContactCardList
+          data={localContacts}
+          renderItem={this.renderContact}
+          keyExtractor={({ username }) => username}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          ItemSeparatorComponent={ContactsSeparator}
+        />
+      </React.Fragment>
+    );
+
     const layout = Platform.OS === 'ios' ?
       (
         <View>
@@ -228,22 +249,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           />
           <Container>
             <Wrapper regularPadding>
-              <SubTitle>To whom you would like to send?</SubTitle>
-              <Form
-                ref={node => { this._form = node; }}
-                type={formStructure}
-                options={formOptions}
-                onChange={this.handleChange}
-                onBlur={this.handleChange}
-                value={value}
-              />
-              <ContactCardList
-                data={localContacts}
-                renderItem={this.renderContact}
-                keyExtractor={({ username }) => username}
-                contentContainerStyle={{ paddingBottom: 40 }}
-                ItemSeparatorComponent={ContactsSeparator}
-              />
+              {FormContent}
             </Wrapper>
           </Container>
           {qrScannerComponent}
@@ -264,22 +270,7 @@ class SendTokenContacts extends React.Component<Props, State> {
                 title="send"
               />
               <BodyWrapper>
-                <SubTitle>To whom you would like to send?</SubTitle>
-                <Form
-                  ref={node => { this._form = node; }}
-                  type={formStructure}
-                  options={formOptions}
-                  onChange={this.handleChange}
-                  onBlur={this.handleChange}
-                  value={value}
-                />
-                <ContactCardList
-                  data={localContacts}
-                  renderItem={this.renderContact}
-                  keyExtractor={({ username }) => username}
-                  contentContainerStyle={{ paddingBottom: 40 }}
-                  ItemSeparatorComponent={ContactsSeparator}
-                />
+                {FormContent}
                 {qrScannerComponent}
               </BodyWrapper>
             </View>
