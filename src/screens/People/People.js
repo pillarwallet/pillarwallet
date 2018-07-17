@@ -23,7 +23,6 @@ const PeopleHeader = styled.View`
   flex-direction: row;
   height: 97px;
   background-color: ${baseColors.white};
-  elevation: 1;
   padding: 0 16px;
   align-items: center;
   justify-content: space-between;
@@ -165,7 +164,7 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <Container>
         <PeopleHeader>
-          <Title noMargin title="people" />
+          <Title center noMargin title="people" />
         </PeopleHeader>
         <Wrapper regularPadding>
           <SearchBar

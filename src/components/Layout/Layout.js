@@ -40,8 +40,10 @@ export const Wrapper = styled.View`
   height: ${props => props.fullScreen ? '100%' : 'auto'};
   width: ${props => props.fullScreen ? '100%' : 'auto'};
   padding: ${props => (props.regularPadding ? '0 16px' : '0')};
-  align-items: ${props => (props.center ? 'center' : 'stretch')};
-  justify-content: ${props => (props.center ? 'center' : 'flex-start')};
+  ${({ center }) => center && `
+    align-items: center;
+    justify-content: center;
+  `}
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
