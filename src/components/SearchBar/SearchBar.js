@@ -107,7 +107,6 @@ class SearchBar extends React.Component<Props, State> {
   handleBlur = (e: EventLike) => {
     const { inputProps: { onBlur } } = this.props;
     const value = e.nativeEvent.text;
-    this.exitSearchMode();
     this.setState({ value }, () => {
       if (onBlur) {
         onBlur(value);
@@ -123,10 +122,10 @@ class SearchBar extends React.Component<Props, State> {
         onChange(searchValue);
       }
     });
-    this.exitSearchMode();
+    this.hideKeyboard();
   };
 
-  exitSearchMode = () => {
+  hideKeyboard = () => {
     Keyboard.dismiss();
     Animated.parallel([
       Animated.timing(this.state.animFadeIn, {
