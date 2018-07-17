@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { FlatList, Text, Linking, Image, Dimensions } from 'react-native';
+import { utils } from 'ethers';
 import styled from 'styled-components/native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import Title from 'components/Title';
@@ -18,7 +19,6 @@ import Hash from './Hash';
 import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
-import { utils } from 'ethers';
 
 const window = Dimensions.get('window');
 const iconUp = require('assets/icons/up.png');
