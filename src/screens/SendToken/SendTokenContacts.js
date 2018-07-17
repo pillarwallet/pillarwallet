@@ -188,6 +188,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     return (
       <ContactCard
         name={user.username}
+        avatar={user.avatar}
         key={user.id}
         customButton={<ChooseButton>Choose</ChooseButton>}
         showActions
