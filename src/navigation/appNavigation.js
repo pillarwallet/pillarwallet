@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Image, Text } from 'react-native';
+import { AppState, Animated, Easing, Image, Text, View } from 'react-native';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -137,15 +137,30 @@ const homeFlow = createStackNavigator({
   [PROFILE]: ProfileScreen,
 }, StackNavigatorConfig);
 
-const tabBarIcon = (icon) => ({ focused, tintColor }) => (
-  <Image
-    style={{
-      width: 20,
-      height: 20,
-      tintColor: focused ? tintColor : baseColors.mediumGray,
-    }}
-    source={icon}
-  />
+const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
+  <View style={{ padding: 4 }}>
+    <Image
+      style={{
+        width: 18,
+        height: 18,
+        tintColor: focused ? tintColor : baseColors.mediumGray,
+        resizeMode: 'contain',
+      }}
+      source={icon}
+    />
+    {!!hasAddon &&
+    <View
+      style={{
+        width: 7,
+        height: 7,
+        backgroundColor: '#ffdb3c',
+        borderRadius: 3.5,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+      }}
+    />}
+  </View>
 );
 
 const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
@@ -153,7 +168,7 @@ const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
     style={{
       fontSize: 12,
       color: focused ? tintColor : baseColors.mediumGray,
-      textAlign: 'center'
+      textAlign: 'center',
     }}
   >
     {labelText}
@@ -180,7 +195,7 @@ const tabNavigation = createBottomTabNavigator(
     [HOME]: {
       screen: homeFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHome),
+        tabBarIcon: tabBarIcon(iconHome, true),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -214,7 +229,7 @@ const tabNavigation = createBottomTabNavigator(
         borderTopColor: 'transparent',
         paddingTop: 5,
         paddingBottom: 5,
-        height: 49,
+        height: 54,
       },
     },
     tabBarPosition: 'bottom',
