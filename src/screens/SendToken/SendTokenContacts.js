@@ -188,6 +188,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     return (
       <ContactCard
         name={user.username}
+        avatar={user.avatar}
         key={user.id}
         customButton={<ChooseButton>Choose</ChooseButton>}
         showActions
@@ -251,12 +252,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     const layout = Platform.OS === 'ios' ?
       (
         <View>
-          <ModalScreenHeader
-            onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
-            title="send"
-          />
           <Container>
+            <ModalScreenHeader
+              onBack={this.props.navigation.goBack}
+              onClose={this.props.navigation.dismiss}
+              rightLabelText="step 1 of 3"
+              title="send"
+            />
             <Wrapper regularPadding>
               {FormContent}
             </Wrapper>
