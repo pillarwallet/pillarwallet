@@ -11,6 +11,7 @@ import Intercom from 'react-native-intercom';
 import { SubHeading } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import ButtonIcon from 'components/ButtonIcon';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import {
@@ -111,6 +112,7 @@ type Props = {
   historyNotifications: Object[],
   user: Object,
   fetchHistoryNotifications: Function,
+  fetchInviteNotifications: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
   rejectInvitation: Function,
@@ -119,8 +121,9 @@ type Props = {
 
 class PeopleScreen extends React.Component<Props> {
   componentDidMount() {
-    const { fetchHistoryNotifications } = this.props;
+    const { fetchHistoryNotifications, fetchInviteNotifications } = this.props;
     fetchHistoryNotifications();
+    fetchInviteNotifications();
   }
 
   goToProfile = () => {
@@ -191,8 +194,9 @@ class PeopleScreen extends React.Component<Props> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                const { fetchHistoryNotifications } = this.props;
+                const { fetchHistoryNotifications, fetchInviteNotifications } = this.props;
                 fetchHistoryNotifications();
+                fetchInviteNotifications();
               }}
             />
           }
@@ -232,6 +236,7 @@ const mapDispatchToProps = (dispatch) => ({
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
+  fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

@@ -192,10 +192,8 @@ export const fetchInviteNotificationsAction = () => {
     const invitationsToExclude = [
       ...contacts,
       ...groupedNotifications.connectionCancelledEvent,
-      ...groupedNotifications.connectionRejectedEvent,
       ...groupedNotifications.connectionAcceptedEvent,
     ].map(({ id: userId }) => userId);
-
 
     const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
       .filter(({ id }) => {
