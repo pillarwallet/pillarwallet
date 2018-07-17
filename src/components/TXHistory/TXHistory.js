@@ -18,6 +18,7 @@ import Hash from './Hash';
 import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
+import { utils } from 'ethers';
 
 const window = Dimensions.get('window');
 const iconUp = require('assets/icons/up.png');
@@ -129,6 +130,7 @@ class TXHistory extends React.Component<Props, State> {
       hash,
       timestamp,
       gasUsed,
+      gasPrice,
     } = transaction;
     const datetime = new Date(timestamp);
     const myAddress = this.props.wallet.address;
@@ -139,7 +141,7 @@ class TXHistory extends React.Component<Props, State> {
         token: asset,
         amount: formatETHAmount(value),
         recipient: `${to.slice(0, 7)}…${to.slice(-7)}`,
-        fee: gasUsed ? gasUsed.toFixed(6) : 0,
+        fee: gasUsed ? gasUsed * gasPrice : 0,
         note: null,
         confirmations: nbConfirmations,
         status: status.charAt(0).toUpperCase() + status.slice(1),
@@ -224,12 +226,15 @@ class TXHistory extends React.Component<Props, State> {
                   <Text>{selectedTransaction.recipient}</Text>
                 </Column>
               </Row>
+
+              {!!selectedTransaction.fee &&
               <Row size="0 0 30px">
                 <Column><Label>Transaction fee</Label></Column>
                 <Column>
-                  <Text>{selectedTransaction.fee} ETH</Text>
+                  <Text>{utils.formatEther(selectedTransaction.fee.toString())} ETH</Text>
                 </Column>
               </Row>
+              }
 
               {selectedTransaction.note &&
                 <Row size="0 0 80px">
