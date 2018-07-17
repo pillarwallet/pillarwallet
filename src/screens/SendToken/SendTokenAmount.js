@@ -278,7 +278,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           <Container>
             <ModalScreenHeader
               onClose={this.props.navigation.dismiss}
-              rightLabelText="step 1 of 3"
+              rightLabelText="step 2 of 3"
               title="send"
             />
             <WarningBanner />

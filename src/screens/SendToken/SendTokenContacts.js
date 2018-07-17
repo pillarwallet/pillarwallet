@@ -255,7 +255,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             <ModalScreenHeader
               onBack={this.props.navigation.goBack}
               onClose={this.props.navigation.dismiss}
-              rightLabelText="step 2 of 3"
+              rightLabelText="step 1 of 3"
               title="send"
             />
             <Wrapper regularPadding>
