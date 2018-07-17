@@ -10509,7 +10509,7 @@ react-navigation-redux-helpers@2.0.1:
   dependencies:
     invariant "^2.2.2"
 
-react-navigation-tabs@0.5.1:
+react-navigation-tabs@0.5.1, react-navigation-tabs@^0.5.1:
   version "0.5.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-tabs/-/react-navigation-tabs-0.5.1.tgz#ed33bce3a3e21b92646700de25bd94b8fc570371"
   dependencies:

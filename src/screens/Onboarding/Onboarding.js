@@ -7,7 +7,6 @@ import { Container, Wrapper, Footer } from 'components/Layout';
 import Title from 'components/Title';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
-import HelpTextDivider from 'components/HelpTextDivider';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -35,9 +34,7 @@ class Onboarding extends React.Component<Props> {
           </Paragraph>
         </Wrapper>
         <Footer>
-          <Paragraph>How would you like to use the Pillar Wallet?</Paragraph>
           <Button block marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup new wallet" />
-          <HelpTextDivider title="or" />
           <Button onPress={this.importOldWallet} secondary title="Import existing wallet" />
         </Footer>
       </Container>
