@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
 import { Permissions } from 'expo';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes } from 'utils/variables';
+import { fontSizes, baseColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
@@ -13,6 +14,8 @@ import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ModalScreenHeader from 'components/ModalScreenHeader';
+import ContactCard from 'components/ContactCard';
+import ContactsSeparator from 'components/ContactsSeparator';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
@@ -20,6 +23,7 @@ const PERMISSION_GRANTED = 'GRANTED';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  localContacts: Object[],
 }
 
 type State = {
@@ -122,6 +126,16 @@ const FooterWrapper = Platform.OS === 'ios' ?
   margin-top: 30px;
 `;
 
+const ContactCardList = styled.FlatList`
+  padding: 16px;
+`;
+
+const ChooseButton = styled.Text`
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.clearBlue};
+  margin-left: auto;
+`;
+
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
@@ -170,6 +184,19 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });
   };
 
+  renderContact = ({ item: user }) => {
+    return (
+      <ContactCard
+        name={user.username}
+        key={user.id}
+        customButton={<ChooseButton>Choose</ChooseButton>}
+        showActions
+        noBorder
+        onPress={() => this.setState({ value: { ...this.state.value, address: user.ethAddress } })}
+      />
+    );
+  };
+
   render() {
     const {
       isScanning,
@@ -190,6 +217,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       />
     );
 
+    const { localContacts = [] } = this.props;
     const layout = Platform.OS === 'ios' ?
       (
         <View>
@@ -208,6 +236,13 @@ class SendTokenContacts extends React.Component<Props, State> {
                 onChange={this.handleChange}
                 onBlur={this.handleChange}
                 value={value}
+              />
+              <ContactCardList
+                data={localContacts}
+                renderItem={this.renderContact}
+                keyExtractor={({ username }) => username}
+                contentContainerStyle={{ paddingBottom: 40 }}
+                ItemSeparatorComponent={ContactsSeparator}
               />
             </Wrapper>
           </Container>
@@ -238,6 +273,13 @@ class SendTokenContacts extends React.Component<Props, State> {
                   onBlur={this.handleChange}
                   value={value}
                 />
+                <ContactCardList
+                  data={localContacts}
+                  renderItem={this.renderContact}
+                  keyExtractor={({ username }) => username}
+                  contentContainerStyle={{ paddingBottom: 40 }}
+                  ItemSeparatorComponent={ContactsSeparator}
+                />
                 {qrScannerComponent}
               </BodyWrapper>
             </View>
@@ -255,4 +297,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 }
 
-export default SendTokenContacts;
+const mapStateToProps = ({ contacts: { data: localContacts } }) => ({
+  localContacts,
+});
+
+export default connect(mapStateToProps)(SendTokenContacts);
