@@ -210,13 +210,13 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !emptyList &&
-        <ContactCardList
-          data={localContacts}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderContact}
-          ItemSeparatorComponent={this.renderSeparator}
-          onScroll={() => Keyboard.dismiss()}
-        />
+          <ContactCardList
+            data={localContacts}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderContact}
+            ItemSeparatorComponent={this.renderSeparator}
+            onScroll={() => Keyboard.dismiss()}
+          />
         }
 
         {!!emptyList && !inSearchMode &&
