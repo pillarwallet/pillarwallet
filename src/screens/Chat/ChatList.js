@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
 import { FlatList, View } from 'react-native';
 import { Container } from 'components/Layout';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
-import ScreenHeader from 'components/ScreenHeader';
+import Title from 'components/Title';
 import { baseColors } from 'utils/variables';
 import { getExistingChatsAction } from 'actions/chatActions';
 import ChatListItem from './ChatListItem';
@@ -23,6 +24,15 @@ type State = {
   receiverAvatar: string,
   chatList: Array<Object>,
 }
+
+const ChatListHeader = styled.View`
+  flex-direction: row;
+  height: 97px;
+  background-color: ${baseColors.white};
+  padding: 0 16px;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 class ChatListScreen extends React.Component<Props, State> {
   componentDidMount() {
@@ -62,7 +72,9 @@ class ChatListScreen extends React.Component<Props, State> {
     const { contacts, chats } = this.props;
     return (
       <Container>
-        <ScreenHeader title="chat" />
+        <ChatListHeader>
+          <Title center noMargin title="chat" />
+        </ChatListHeader>
         <View style={{
           paddingTop: 18,
           paddingBottom: 18,

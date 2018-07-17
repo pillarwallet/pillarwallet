@@ -88,7 +88,6 @@ const iconIco = require('assets/icons/icon_ico.png');
 const iconChat = require('assets/icons/icon_chat.png');
 
 const StackNavigatorModalConfig = {
-  mode: 'modal',
   transitionConfig: () => ({
     transitionSpec: {
       duration: 0,
