@@ -240,8 +240,8 @@ const tabNavigation = createBottomTabNavigator(
 
 // SEND TOKEN FLOW
 const sendTokenFlow = createStackNavigator({
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 
