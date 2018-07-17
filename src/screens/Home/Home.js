@@ -11,13 +11,13 @@ import Intercom from 'react-native-intercom';
 import { SubHeading } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
-import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import ButtonIcon from 'components/ButtonIcon';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
   rejectInvitationAction,
+  fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 
