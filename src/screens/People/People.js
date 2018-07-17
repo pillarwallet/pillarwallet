@@ -16,6 +16,7 @@ import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
+import EmptySpaceParagraph from 'components/EmptySpaceParagraph';
 import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
 
@@ -56,25 +57,6 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
 
 const ContactCardList = styled(FlatList)`
   padding: 16px;
-`;
-
-const EmptySectionTextWrapper = styled.View`
-  width: 230px;
-  margin-top: -200px;
-  align-items: center;
-  justify-content: center;
-`;
-
-const EmptySectionTitle = styled.Text`
-  font-size: ${fontSizes.large};
-  color: ${baseColors.slateBlack};
-  margin-bottom: 6px;
-`;
-
-const EmptySectionText = styled.Text`
-  font-size: ${fontSizes.small};
-  color: ${baseColors.darkGray};
-  text-align: center;
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -212,12 +194,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
         {inSearchMode && contactState === FETCHED && !usersFound &&
           <Wrapper center fullScreen>
-            <EmptySectionTextWrapper>
-              <EmptySectionTitle>Nobody found</EmptySectionTitle>
-              <EmptySectionText>
-                Make sure you entered the name correctly
-              </EmptySectionText>
-            </EmptySectionTextWrapper>
+            <EmptySpaceParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
           </Wrapper>
         }
 
@@ -233,12 +210,10 @@ class PeopleScreen extends React.Component<Props, State> {
 
         {!inSearchMode && !localContacts.length &&
           <Wrapper center fullScreen>
-            <EmptySectionTextWrapper>
-              <EmptySectionTitle>Nobody is here</EmptySectionTitle>
-              <EmptySectionText>
-                Start building your connection list by inviting friends or by searching for someone
-              </EmptySectionText>
-            </EmptySectionTextWrapper>
+            <EmptySpaceParagraph
+              title="Nobody is here"
+              bodyText="Start building your connection list by inviting friends or by searching for someone"
+            />
           </Wrapper>
         }
       </Container>
