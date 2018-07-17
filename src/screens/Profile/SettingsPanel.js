@@ -2,9 +2,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
-import { BoldText } from 'components/Typography';
-
-import { Platform, StyleSheet, Text } from 'react-native';
+import { BaseText, BoldText } from 'components/Typography';
+import { Platform, StyleSheet } from 'react-native';
 
 const SettingsPanelIOS = styled.View`
   padding-top: 20px;

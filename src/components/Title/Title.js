@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { BoldText } from 'components/Typography';
 
+
 type Props = {
   title?: string,
   style?: Object,
@@ -45,7 +46,7 @@ const BlueDot = styled(BoldText)`
 const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} center={props.center} maxWidth={props.maxWidth}>
-      <BaseText center={props.center}>{props.title}</BaseText>
+      <Text center={props.center}>{props.title}</Text>
       {!!props.title && <BlueDot />}
     </Wrapper>
   );

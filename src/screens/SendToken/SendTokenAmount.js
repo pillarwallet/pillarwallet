@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
+import { TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
@@ -13,7 +13,7 @@ import SingleInput from 'components/TextInput/SingleInput';
 import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import { SubTitle, TextLink, Paragraph } from 'components/Typography';
+import { SubTitle, TextLink, Paragraph, BaseText } from 'components/Typography';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
@@ -300,7 +300,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             </Wrapper>
           </Container>
           <FooterWrapper>
-            <Text>Fee
+            <BaseText>Fee
               <TextLink>
                 {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
               </TextLink>
@@ -337,7 +337,7 @@ class SendTokenAmount extends React.Component<Props, State> {
               </BodyWrapper>
             </View>
             <FooterWrapper>
-              <Text>Fee
+              <BaseText>Fee
                 <TextLink>
                   {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
                 </TextLink>

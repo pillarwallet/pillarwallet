@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
-import { Text } from 'react-native';
 import renderer from 'react-test-renderer';
+import { BaseText } from 'components/Typography';
+
 import { shallow } from 'enzyme';
 import SlideModal from '../SlideModal';
 
@@ -12,7 +13,7 @@ describe('Slide Modal', () => {
   });
 
   it('should render SlideModal with content', () => {
-    const ChildContent = () => <Text>Test</BaseText>;
+    const ChildContent = () => <BaseText>Test</BaseText>;
     const wrapper = shallow(<SlideModal title="title" isVisible><ChildContent /></SlideModal>);
     expect(wrapper.find(ChildContent)).toHaveLength(1);
   });
