@@ -89,6 +89,6 @@ exports[`Button Icon should render Button Icon correctly 1`] = `
     virtual={undefined}
   >
     
-  </BaseText>
+  </Text>
 </View>
 `;
