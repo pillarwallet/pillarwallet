@@ -145,6 +145,7 @@
     "react-navigation": "2.3.1",
     "react-navigation-fluid-transitions": "^0.2.0",
     "react-navigation-redux-helpers": "2.0.1",
+    "react-navigation-tabs": "^0.5.1",
     "react-redux": "^5.0.7",
     "readable-stream": "1.0.33",
     "redux": "^3.7.2",
