@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native/index';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
-import ProfileImage from 'screens/Profile/ProfileImage';
+import ProfileImage from 'components/ProfileImage';
 
 type Props = {
   userName: string,

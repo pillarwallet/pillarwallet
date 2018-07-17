@@ -19,7 +19,7 @@ import {
 } from 'react-native-gifted-chat';
 import { baseColors } from 'utils/variables';
 import ModalScreenHeader from 'components/ModalScreenHeader';
-import ProfileImage from 'screens/Profile/ProfileImage';
+import ProfileImage from 'components/ProfileImage';
 import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
