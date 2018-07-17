@@ -17,7 +17,7 @@ const ImageTouchable = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #d8d8d8;
+  background-color: ${baseColors.brightSkyBlue};
   ${props => (props.additionalContainerStyle)};
 `;
 
