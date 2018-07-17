@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native/index';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
-import ProfileImage from 'screens/Profile/ProfileImage';
+import ProfileImage from 'components/ProfileImage';
 
 type Props = {
   userName: string,
@@ -110,16 +110,7 @@ export default class ChatListItem extends React.Component<Props> {
           <ProfileImage
             uri={avatar}
             userName={userName}
-            containerStyle={{
-              height: 44,
-              width: 44,
-              borderRadius: 22,
-            }}
-            imageStyle={{
-              height: 44,
-              width: 44,
-              borderRadius: 22,
-            }}
+            diameter={44}
           />
         </AvatarWrapper>
         <UserWrapper>
