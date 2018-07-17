@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
 import { Permissions } from 'expo';
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes } from 'utils/variables';
+import { fontSizes, baseColors } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
@@ -13,6 +14,8 @@ import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ModalScreenHeader from 'components/ModalScreenHeader';
+import ContactCard from 'components/ContactCard';
+import ContactsSeparator from 'components/ContactsSeparator';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
@@ -20,12 +23,11 @@ const PERMISSION_GRANTED = 'GRANTED';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  localContacts: Object[],
 }
 
 type State = {
   isScanning: boolean,
-  transactionPayload: Object,
-  assetData: Object,
   value: {
     address: string,
   },
@@ -124,19 +126,27 @@ const FooterWrapper = Platform.OS === 'ios' ?
   margin-top: 30px;
 `;
 
+const ContactCardList = styled.FlatList`
+  padding: 16px;
+`;
+
+const ChooseButton = styled.Text`
+  font-size: ${fontSizes.extraSmall};
+  color: ${baseColors.clearBlue};
+  margin-left: auto;
+`;
+
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
+  assetData: Object;
 
   constructor(props: Props) {
     super(props);
-    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
-    const assetData = this.props.navigation.getParam('assetData', {});
+    this.assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
       isScanning: false,
       value: { address: '' },
       formStructure: getFormStructure(),
-      transactionPayload,
-      assetData,
     };
   }
 
@@ -147,10 +157,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   handleFormSubmit = () => {
     const value = this._form.getValue();
     if (!value) return;
-    const { assetData, transactionPayload } = this.state;
-    this.props.navigation.navigate(SEND_TOKEN_CONFIRM, {
-      assetData,
-      transactionPayload: { ...transactionPayload, to: value.address },
+    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+      assetData: this.assetData,
+      receiver: value.address,
     });
   };
 
@@ -175,15 +184,36 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({ value: { ...this.state.value, address }, isScanning: false });
   };
 
+  renderContact = ({ item: user }) => {
+    return (
+      <ContactCard
+        name={user.username}
+        key={user.id}
+        customButton={<ChooseButton>Choose</ChooseButton>}
+        showActions
+        noBorder
+        onPress={() => this.setUsersEthAddress(user.ethAddress)}
+      />
+    );
+  };
+
+  setUsersEthAddress = (ethAddress: string) => {
+    this.setState({ value: { ...this.state.value, address: ethAddress } }, () => {
+      this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+        assetData: this.assetData,
+        receiver: ethAddress,
+      });
+    });
+  };
+
   render() {
     const {
       isScanning,
-      assetData,
       formStructure,
       value,
     } = this.state;
     const formOptions = generateFormOptions(
-      { onIconPress: this.handleQRScannerOpen, currency: assetData.token },
+      { onIconPress: this.handleQRScannerOpen },
     );
 
     const qrScannerComponent = (
@@ -196,26 +226,39 @@ class SendTokenContacts extends React.Component<Props, State> {
       />
     );
 
+    const { localContacts = [] } = this.props;
+    const FormContent = (
+      <React.Fragment>
+        <SubTitle>To whom you would like to send?</SubTitle>
+        <Form
+          ref={node => { this._form = node; }}
+          type={formStructure}
+          options={formOptions}
+          onChange={this.handleChange}
+          onBlur={this.handleChange}
+          value={value}
+        />
+        <ContactCardList
+          data={localContacts}
+          renderItem={this.renderContact}
+          keyExtractor={({ username }) => username}
+          contentContainerStyle={{ paddingBottom: 40 }}
+          ItemSeparatorComponent={ContactsSeparator}
+        />
+      </React.Fragment>
+    );
+
     const layout = Platform.OS === 'ios' ?
       (
         <View>
           <ModalScreenHeader
-            onBack={this.props.navigation.goBack}
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 2 of 3"
+            rightLabelText="step 1 of 3"
             title="send"
           />
           <Container>
             <Wrapper regularPadding>
-              <SubTitle>To whom you would like to send?</SubTitle>
-              <Form
-                ref={node => { this._form = node; }}
-                type={formStructure}
-                options={formOptions}
-                onChange={this.handleChange}
-                onBlur={this.handleChange}
-                value={value}
-              />
+              {FormContent}
             </Wrapper>
           </Container>
           {qrScannerComponent}
@@ -231,21 +274,12 @@ class SendTokenContacts extends React.Component<Props, State> {
           <KeyboardAvoidingView behavior="padding">
             <View>
               <ModalScreenHeader
-                onBack={this.props.navigation.goBack}
                 onClose={this.props.navigation.dismiss}
-                rightLabelText="step 2 of 3"
+                rightLabelText="step 1 of 3"
                 title="send"
               />
               <BodyWrapper>
-                <SubTitle>To whom you would like to send?</SubTitle>
-                <Form
-                  ref={node => { this._form = node; }}
-                  type={formStructure}
-                  options={formOptions}
-                  onChange={this.handleChange}
-                  onBlur={this.handleChange}
-                  value={value}
-                />
+                {FormContent}
                 {qrScannerComponent}
               </BodyWrapper>
             </View>
@@ -263,4 +297,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 }
 
-export default SendTokenContacts;
+const mapStateToProps = ({ contacts: { data: localContacts } }) => ({
+  localContacts,
+});
+
+export default connect(mapStateToProps)(SendTokenContacts);

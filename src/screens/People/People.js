@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { ActivityIndicator, View, FlatList, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { searchContactsAction } from 'actions/contactsActions';
+import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
@@ -78,6 +78,8 @@ const EmptySectionText = styled.Text`
   text-align: center;
 `;
 
+const MIN_QUERY_LENGTH = 2;
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   searchContacts: (query: string) => Function,
@@ -85,19 +87,18 @@ type Props = {
   contactState: ?string,
   user: Object,
   fetchInviteNotifications: Function,
+  resetSearchContactsState: Function,
   invitations: Object[],
   localContacts: Object[],
 }
 
 type State = {
   query: string,
-  emptyList: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
   state = {
     query: '',
-    emptyList: false,
   };
 
   constructor(props: Props) {
@@ -116,7 +117,8 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   handleContactsSearch = (query: string) => {
-    if (!query || query.trim() === '' || query.length < 2) {
+    if (!query || query.trim() === '' || query.length < MIN_QUERY_LENGTH) {
+      this.props.resetSearchContactsState();
       return;
     }
     this.props.searchContacts(query);
@@ -149,7 +151,7 @@ class PeopleScreen extends React.Component<Props, State> {
   );
 
   render() {
-    const { query, emptyList } = this.state;
+    const { query } = this.state;
     const {
       searchResults,
       contactState,
@@ -157,7 +159,8 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       localContacts,
     } = this.props;
-    const inSearchMode = (query !== '' && !!contactState);
+    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+    const usersFound = searchResults.apiUsers.length || searchResults.localContacts.length;
 
     return (
       <Container>
@@ -172,7 +175,6 @@ class PeopleScreen extends React.Component<Props, State> {
               autoCapitalize: 'none',
             }}
           />
-
         </Wrapper>
 
         {!inSearchMode && !!invitations.length &&
@@ -200,7 +202,7 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         }
 
-        {query.length >= 2 && contactState === FETCHED &&
+        {inSearchMode && contactState === FETCHED && usersFound &&
           <PeopleSearchResults
             searchResults={searchResults}
             navigation={navigation}
@@ -209,17 +211,28 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         }
 
-        {!inSearchMode && !emptyList &&
-        <ContactCardList
-          data={localContacts}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderContact}
-          ItemSeparatorComponent={this.renderSeparator}
-          onScroll={() => Keyboard.dismiss()}
-        />
+        {inSearchMode && contactState === FETCHED && !usersFound &&
+          <Wrapper center fullScreen>
+            <EmptySectionTextWrapper>
+              <EmptySectionTitle>Nobody found</EmptySectionTitle>
+              <EmptySectionText>
+                Make sure you entered the name correctly
+              </EmptySectionText>
+            </EmptySectionTextWrapper>
+          </Wrapper>
         }
 
-        {!!emptyList && !inSearchMode &&
+        {!inSearchMode && !!localContacts.length &&
+          <ContactCardList
+            data={localContacts}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderContact}
+            ItemSeparatorComponent={this.renderSeparator}
+            onScroll={() => Keyboard.dismiss()}
+          />
+        }
+
+        {!inSearchMode && !localContacts.length &&
           <Wrapper center fullScreen>
             <EmptySectionTextWrapper>
               <EmptySectionTitle>Nobody is here</EmptySectionTitle>
@@ -250,6 +263,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   searchContacts: (query) => dispatch(searchContactsAction(query)),
+  resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
 });
 

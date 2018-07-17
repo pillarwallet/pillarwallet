@@ -66,6 +66,7 @@ export const processNotification = (notification: Object, myEthAddress: string):
       message,
       asset,
       status,
+      type: notification.type,
     };
   }
 
