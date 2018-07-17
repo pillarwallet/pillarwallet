@@ -37,7 +37,12 @@ export const sendInvitationAction = (user: ApiUser) => {
     const accessKey = generateAccessKey();
     const sentInvitation = await api.sendInvitation(user.id, accessKey, walletId);
     if (!sentInvitation) return;
-    const invitation = { ...user, type: TYPE_SENT, connectionKey: accessKey };
+    const invitation = {
+      ...user,
+      type: TYPE_SENT,
+      connectionKey: accessKey,
+      createdAt: +new Date() / 1000,
+    };
     await storage.save('invitations', { invitations: [...invitations, invitation] }, true);
 
     dispatch({
@@ -128,6 +133,7 @@ export const rejectInvitationAction = (invitation: Object) => {
       invitation.connectionKey,
       walletId,
     );
+
     if (!rejectedInvitation) return;
 
     dispatch(({
@@ -168,14 +174,14 @@ export const fetchInviteNotificationsAction = () => {
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
-    const groupedPerUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
+    const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
       const group = arr.filter(({ id: userId }) => userId === invitation.id);
       const uniqGroup = uniqBy(group, 'id');
       memo[invitation.id] = uniqGroup;
       return memo;
     }, {});
 
-    const latestEventPerId = Object.keys(groupedPerUserId).map((key) => groupedPerUserId[key][0]);
+    const latestEventPerId = Object.keys(groupedByUserId).map((key) => groupedByUserId[key][0]);
     const groupedNotifications = types.reduce((memo, type) => {
       const group = latestEventPerId.filter(({ type: invType }) => invType === type);
       memo[type] = group;
@@ -186,10 +192,8 @@ export const fetchInviteNotificationsAction = () => {
     const invitationsToExclude = [
       ...contacts,
       ...groupedNotifications.connectionCancelledEvent,
-      ...groupedNotifications.connectionRejectedEvent,
       ...groupedNotifications.connectionAcceptedEvent,
     ].map(({ id: userId }) => userId);
-
 
     const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
       .filter(({ id }) => {
