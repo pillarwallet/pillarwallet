@@ -192,7 +192,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         customButton={<ChooseButton>Choose</ChooseButton>}
         showActions
         noBorder
-        onPress={() => this.setUsersEthAddress(user.ethAddress) }
+        onPress={() => this.setUsersEthAddress(user.ethAddress)}
       />
     );
   };
