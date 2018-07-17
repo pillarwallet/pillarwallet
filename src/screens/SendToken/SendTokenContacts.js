@@ -192,9 +192,18 @@ class SendTokenContacts extends React.Component<Props, State> {
         customButton={<ChooseButton>Choose</ChooseButton>}
         showActions
         noBorder
-        onPress={() => this.setState({ value: { ...this.state.value, address: user.ethAddress } })}
+        onPress={() => this.setUsersEthAddress(user.ethAddress) }
       />
     );
+  };
+
+  setUsersEthAddress = (ethAddress: string) => {
+    this.setState({ value: { ...this.state.value, address: ethAddress } }, () => {
+      this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+        assetData: this.assetData,
+        receiver: ethAddress,
+      });
+    });
   };
 
   render() {
