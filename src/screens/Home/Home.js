@@ -8,11 +8,11 @@ import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Intercom from 'react-native-intercom';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -45,9 +45,8 @@ const HomeHeaderAvatar = styled.View`
   background-color: ${baseColors.darkGray};
 `;
 
-const HomeHeaderUsername = styled.Text`
+const HomeHeaderUsername = styled(BoldText)`
   font-size: ${fontSizes.extraLarge};
-  font-weight: ${fontWeights.bold};
 `;
 
 const HomeHeaderButtons = styled.View`
@@ -99,7 +98,7 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
 const RecentConnectionsItemAvatarImage = styled.Image`
 `;
 
-const RecentConnectionsItemName = styled.Text`
+const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
 `;

@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { BaseText } from 'components/Typography';
 import { TYPE_RECEIVED, TYPE_SENT } from 'constants/invitationsConstants';
 import {
   cancelInvitationAction,
@@ -44,7 +45,7 @@ const TabItem = styled.TouchableOpacity`
   border-bottom-width: 2px;
 `;
 
-const TabItemText = styled.Text`
+const TabItemText = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
   font-weight: ${props => props.active ? fontWeights.bold : fontWeights.book};

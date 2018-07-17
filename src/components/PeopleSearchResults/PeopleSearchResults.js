@@ -6,6 +6,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { baseColors, fontSizes } from 'utils/variables';
+import { BaseText } from 'components/Typography';
 import { Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import ContactsSeparator from 'components/ContactsSeparator';
@@ -34,7 +35,7 @@ const TabItem = styled.TouchableOpacity`
   border-bottom-width: 2px;
 `;
 
-const TabItemText = styled.Text`
+const TabItemText = styled(BaseText)`
   font-size: ${fontSizes.medium};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;

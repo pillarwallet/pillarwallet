@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
+import { BaseText } from 'components/Typography';
 
 type Props = {
   children?: React.Node,
@@ -13,7 +14,7 @@ const FormDividerBackground = styled.View`
   background-color: ${baseColors.lightGray};
 `;
 
-const FormDividerText = styled.Text`
+const FormDividerText = styled(BaseText)`
   color: ${baseColors.darkGray};
 `;
 

@@ -168,7 +168,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               }
             >
               title
-            </Text>
+            </BaseText>
             <Text
               accessible={true}
               allowFontScaling={true}
@@ -282,7 +282,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               virtual={undefined}
             >
               
-            </Text>
+            </BaseText>
           </View>
         </View>
         <Text

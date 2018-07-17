@@ -2,6 +2,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { BoldText } from 'components/Typography';
+
 
 type Props = {
   title?: string,
@@ -19,7 +21,7 @@ const Wrapper = styled.View`
   `}
 `;
 
-const Text = styled.Text`
+const Text = styled(BoldText)`
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.bold};
   ${({ center }) => center && `
@@ -28,7 +30,7 @@ const Text = styled.Text`
   `}
 `;
 
-const BlueDot = styled.Text`
+const BlueDot = styled(BoldText)`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.extraExtraSmall};
   background-color: ${baseColors.brightSkyBlue};

@@ -188,6 +188,11 @@
     "tty": "tty-browserify",
     "tls": false
   },
+  "rnpm": {
+      "assets": [
+    "./src/assets/fonts/"
+      ]
+  },
   "browser": {
     "fs": "react-native-level-fs",
     "_stream_transform": "readable-stream/transform",

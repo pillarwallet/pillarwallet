@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, brandColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, brandColors, UIColors, fontSizes } from 'utils/variables';
+import { BaseText, BoldText } from 'components/Typography';
 
 type Props = {
   name: string,
@@ -28,19 +29,18 @@ const ProfileCardAvatar = styled.View`
   justify-content: center;
 `;
 
-const ProfileCardAvatarText = styled.Text`
+const ProfileCardAvatarText = styled(BoldText)`
   font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.bold};
   color: ${baseColors.snowWhite};
 `;
 
-const ProfileCardName = styled.Text`
+const ProfileCardName = styled(BaseText)`
   font-size: ${fontSizes.large};
   color: ${UIColors.defaultTextColor};
   margin-bottom: 10px;
 `;
 
-const ProfileCardEmail = styled.Text`
+const ProfileCardEmail = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${UIColors.defaultTextColor};
 `;
