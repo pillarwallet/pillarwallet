@@ -135,3 +135,7 @@
 -keep class org.spongycastle.**
 -dontwarn org.spongycastle.jce.provider.X509LDAPCertStoreSpi
 -dontwarn org.spongycastle.x509.util.LDAPStoreHelper
+
+##### Signal #####
+-dontoptimize
+-keep class org.whispersystems.** { *; }
