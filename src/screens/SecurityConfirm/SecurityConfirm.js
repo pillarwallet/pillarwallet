@@ -6,7 +6,6 @@ import { Container, Wrapper, Footer } from 'components/Layout';
 import Title from 'components/Title';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
-import Divider from 'components/Divider';
 import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
 import CheckboxText from 'components/CheckboxText';
@@ -64,7 +63,6 @@ export default class SecurityConfirm extends React.Component<Props, State> {
               I understand that if I lose my backup phrase, I risk losing everything stored on my wallet.
             </CheckboxText>
           </CheckboxItem>
-          <Divider />
           <Button
             block
             title="Continue"

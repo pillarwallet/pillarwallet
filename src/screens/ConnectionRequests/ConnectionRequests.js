@@ -3,14 +3,13 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { TYPE_RECEIVED, TYPE_SENT } from 'constants/invitationsConstants';
+import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
   rejectInvitationAction,
 } from 'actions/invitationsActions';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import ScreenHeader from 'components/ScreenHeader';
 import ContactCard from 'components/ContactCard';
 
@@ -22,39 +21,11 @@ type Props = {
   acceptInvitation: Function,
 }
 
-type State = {
-  activeTab: string,
-}
-
-
 const ContactCardList = styled(ScrollWrapper)`
   padding: 16px;
 `;
 
-const TabWrapper = styled.View`
-  flex-direction: row;
-`;
-
-const TabItem = styled.TouchableOpacity`
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  border-color: ${props => props.active ? baseColors.electricBlue : baseColors.lightGray};
-  border-bottom-width: 2px;
-`;
-
-const TabItemText = styled.Text`
-  font-size: ${fontSizes.small};
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
-  font-weight: ${props => props.active ? fontWeights.bold : fontWeights.book};
-`;
-
-class ConnectionRequests extends React.Component<Props, State> {
-  state = {
-    activeTab: TYPE_RECEIVED,
-  };
-
+class ConnectionRequests extends React.Component<Props> {
   handleAcceptInvitationPress = (invitation) => () => {
     const { acceptInvitation } = this.props;
     acceptInvitation(invitation);
@@ -72,9 +43,8 @@ class ConnectionRequests extends React.Component<Props, State> {
 
   renderInvitations = () => {
     const { invitations } = this.props;
-    const { activeTab } = this.state;
     return invitations
-      .filter(({ type }) => type === activeTab)
+      .filter(({ type }) => type === TYPE_RECEIVED)
       .map(invitation => (
         <ContactCard
           key={invitation.id}
@@ -89,26 +59,9 @@ class ConnectionRequests extends React.Component<Props, State> {
   };
 
   render() {
-    const { activeTab } = this.state;
     return (
       <Container>
         <ScreenHeader title="connection requests" onBack={this.props.navigation.goBack} />
-        <Wrapper regularPadding>
-          <TabWrapper>
-            <TabItem
-              active={activeTab === TYPE_RECEIVED}
-              onPress={() => this.setState({ activeTab: TYPE_RECEIVED })}
-            >
-              <TabItemText active={activeTab === TYPE_RECEIVED}>Received</TabItemText>
-            </TabItem>
-            <TabItem
-              active={activeTab === TYPE_SENT}
-              onPress={() => this.setState({ activeTab: TYPE_SENT })}
-            >
-              <TabItemText active={activeTab === TYPE_SENT}>Sent</TabItemText>
-            </TabItem>
-          </TabWrapper>
-        </Wrapper>
         <ContactCardList contentInset={{ bottom: 40 }}>
           {this.renderInvitations()}
         </ContactCardList>
