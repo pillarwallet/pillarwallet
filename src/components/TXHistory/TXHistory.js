@@ -62,8 +62,14 @@ const flatListStyles = {
   justifyContent: 'flex-start',
   flex: 1,
   backgroundColor: baseColors.lightGray,
-  padding: 20,
+  paddingLeft: 16,
+  paddingRight: 16,
 };
+
+const TXHistoryHeader = styled.View`
+  align-items: flex-start;
+  padding: 10px 16px 0;
+`;
 
 const SENT = 'Sent';
 const RECEIVED = 'Received';
@@ -188,9 +194,11 @@ class TXHistory extends React.Component<Props, State> {
     const { showModal, selectedTransaction } = this.state;
     return (
       <React.Fragment>
+        <TXHistoryHeader>
+          <Title noMargin title="transactions" />
+        </TXHistoryHeader>
         <FlatList
           refreshing={false}
-          ListHeaderComponent={<Title title="transactions" />}
           data={history}
           renderItem={this.renderTransaction}
           keyExtractor={(({ _id }) => _id)}

@@ -252,12 +252,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     const layout = Platform.OS === 'ios' ?
       (
         <View>
-          <ModalScreenHeader
-            onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
-            title="send"
-          />
           <Container>
+            <ModalScreenHeader
+              onBack={this.props.navigation.goBack}
+              onClose={this.props.navigation.dismiss}
+              rightLabelText="step 1 of 3"
+              title="send"
+            />
             <Wrapper regularPadding>
               {FormContent}
             </Wrapper>
@@ -281,13 +282,13 @@ class SendTokenContacts extends React.Component<Props, State> {
               />
               <BodyWrapper>
                 {FormContent}
-                {qrScannerComponent}
               </BodyWrapper>
             </View>
             <FooterWrapper>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
           </KeyboardAvoidingView>
+          {qrScannerComponent}
         </Container>
       );
     return (
