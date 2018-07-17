@@ -107,7 +107,7 @@ class SearchBar extends React.Component<Props, State> {
   handleBlur = (e: EventLike) => {
     const { inputProps: { onBlur } } = this.props;
     const value = e.nativeEvent.text;
-    this.handleCancel();
+    this.exitSearchMode();
     this.setState({ value }, () => {
       if (onBlur) {
         onBlur(value);
