@@ -6,7 +6,6 @@ import {
   Animated,
   Easing,
   RefreshControl,
-  Text,
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
@@ -14,7 +13,7 @@ import { baseColors } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { TextLink } from 'components/Typography';
+import { TextLink, BaseText } from 'components/Typography';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import {

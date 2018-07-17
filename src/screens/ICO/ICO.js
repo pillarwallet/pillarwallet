@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import {
-  Text,
   Modal,
   RefreshControl,
   ScrollView,
@@ -10,7 +9,7 @@ import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 
 import { Container, Wrapper, Footer } from 'components/Layout';
-import { Title } from 'components/Typography';
+import { Title, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
 import { sendAssetAction, fetchAssetsBalancesAction } from 'actions/assetsActions';

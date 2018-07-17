@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import type { Asset, Assets } from 'models/Asset';
+import { BaseText } from 'components/Typography';
 import { connect } from 'react-redux';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { defaultFiatCurrency } from 'constants/assetsConstants';

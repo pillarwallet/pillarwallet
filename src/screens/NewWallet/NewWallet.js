@@ -1,10 +1,11 @@
 // @flow
 import * as React from 'react';
-import { Text, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import { Container } from 'components/Layout';
+import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { API_REGISTRATION_FAILED } from 'constants/walletConstants';
 import { APP_FLOW } from 'constants/navigationConstants';

@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, ActivityIndicator } from 'react-native';
-
+import { ActivityIndicator } from 'react-native';
+import { BaseText } from 'components/Typography';
 import { registerOnBackendAction } from 'actions/onboardingActions';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
