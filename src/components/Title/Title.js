@@ -13,27 +13,31 @@ type Props = {
 
 const Wrapper = styled.View`
   margin: ${props => props.noMargin ? '0' : '16px 0'};
-  width: ${props => props.maxWidth ? props.maxWidth : 'auto'};
-  align-self: ${props => props.center ? 'center' : 'auto'};
+  align-self: ${props => props.center ? 'center' : 'flex-start'};
+  ${({ maxWidth }) => maxWidth && `
+    width: maxWidth;
+  `}
 `;
 
 const Text = styled.Text`
   font-size: ${fontSizes.large};
   font-weight: ${fontWeights.bold};
-  text-align: ${props => props.center ? 'center' : 'left'}
-  width: ${props => props.center ? '100%' : 'auto'};
-  margin-right: 6px;
+  ${({ center }) => center && `
+    width: 100%;
+    text-align: center;
+  `}
 `;
 
 const BlueDot = styled.Text`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.extraExtraSmall};
   background-color: ${baseColors.brightSkyBlue};
+  align-self: flex-end;
   height: 4px;
   width: 4px;
-  align-self: flex-end;
   position: relative;
   top: -9px;
+  left: 6px;
 `;
 
 
