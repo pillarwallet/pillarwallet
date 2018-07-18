@@ -21,7 +21,8 @@ const aktivGroteskRegular = require('./src/assets/fonts/AktivGrotesk-Regular.ttf
 const aktivGroteskLight = require('./src/assets/fonts/AktivGrotesk-Light.ttf');
 
 type State = {
-  isFetched: boolean
+  isFetched: boolean,
+  fontLoaded: boolean,
 }
 
 type Props = {
@@ -34,6 +35,7 @@ type Props = {
 class App extends React.Component<Props, State> {
   state = {
     isFetched: false,
+    fontLoaded: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props) {
@@ -42,12 +44,24 @@ class App extends React.Component<Props, State> {
     };
   }
 
+  loadCustomFont = () => {
+    Font.loadAsync({
+      'aktiv-grotesk-bold': aktivGroteskBold,
+      'aktiv-grotesk-medium': aktivGroteskMedium,
+      'aktiv-grotesk-light': aktivGroteskLight,
+      'aktiv-grotesk-regular': aktivGroteskRegular,
+
+    });
+    this.setState({ fontLoaded: true });
+  };
+
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
+    this.loadCustomFont();
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
@@ -64,16 +78,9 @@ class App extends React.Component<Props, State> {
   };
 
   render() {
-    const { isFetched } = this.state;
+    const { isFetched, fontLoaded } = this.state;
     const { navigation, dispatch } = this.props;
-    Font.loadAsync({
-      'aktiv-grotesk-bold': aktivGroteskBold,
-      'aktiv-grotesk-medium': aktivGroteskMedium,
-      'aktiv-grotesk-light': aktivGroteskLight,
-      'aktiv-grotesk-regular': aktivGroteskRegular,
-
-    });
-    if (!isFetched) return null;
+    if (!isFetched || !fontLoaded) return null;
 
     return (
       <ReduxifiedRootNavigation state={navigation} dispatch={dispatch} />

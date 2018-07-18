@@ -3,8 +3,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { baseColors, fontSizes } from 'utils/variables';
-import { BaseText } from 'components/Typography';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import {
   cancelInvitationAction,
