@@ -8,7 +8,6 @@ import {
   NOTIFICATIONS_URL,
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
-import { uniqBy } from 'utils/common';
 import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
 import { utils } from 'ethers';

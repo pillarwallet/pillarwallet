@@ -20,7 +20,6 @@ import Hash from './Hash';
 import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
-import { toArray } from 'rxjs/operators';
 
 const window = Dimensions.get('window');
 const iconUp = require('assets/icons/up.png');
