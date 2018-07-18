@@ -99,9 +99,9 @@ class SearchBar extends React.Component<Props, State> {
     });
   };
 
-  handleBlur = (e: EventLike) => {
+  handleBlur = () => {
     const { inputProps: { onBlur } } = this.props;
-    const value = e.nativeEvent.text;
+    const { value } = this.state;
     if (!value) {
       this.hideKeyboard();
     }
