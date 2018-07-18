@@ -193,6 +193,7 @@ export const fetchInviteNotificationsAction = () => {
       ...contacts,
       ...groupedNotifications.connectionCancelledEvent,
       ...groupedNotifications.connectionAcceptedEvent,
+      ...groupedNotifications.connectionRejectedEvent,
     ].map(({ id: userId }) => userId);
 
     const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')

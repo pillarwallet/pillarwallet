@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, View, Share, RefreshControl } from 'react-native';
+import { Animated, Easing, Share, RefreshControl, Platform } from 'react-native';
+import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -10,12 +11,12 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { UIColors, baseColors } from 'utils/variables';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
+import ButtonIcon from 'components/ButtonIcon';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
@@ -55,9 +56,16 @@ type State = {
   },
 }
 
+const CloseButton = styled(ButtonIcon)`
+  margin-right: 16px;
+  margin-bottom: 4px;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+`;
+
 const AssetCardWrapper = styled(Wrapper)`
-  background-color: ${baseColors.lightGray};
-  height: 350;
+  flex: 1;
 `;
 
 class AssetScreen extends React.Component<Props, State> {
@@ -140,6 +148,12 @@ class AssetScreen extends React.Component<Props, State> {
       .sort((a, b) => b.timestamp - a.timestamp);
     return (
       <Container>
+        <CloseButton
+          icon="close"
+          onPress={this.handleCardTap}
+          fontSize={Platform.OS === 'ios' ? 36 : 30}
+          color={baseColors.black}
+        />
         <ScrollWrapper
           refreshControl={
             <RefreshControl
@@ -151,20 +165,7 @@ class AssetScreen extends React.Component<Props, State> {
               }}
             />
           }
-          style={{ backgroundColor: baseColors.lightGray }}
         >
-          <View
-            style={{
-              borderBottomWidth: 1,
-              borderStyle: 'solid',
-              backgroundColor: baseColors.lightGray,
-              borderColor: UIColors.defaultBorderColor,
-              padding: 20,
-              height: 60,
-              marginBottom: -30,
-              flexDirection: 'row',
-            }}
-          />
           <AssetCardWrapper regularPadding>
             <Transition shared={assetData.name}>
               <AssetCard

@@ -9,6 +9,7 @@ import { Icon } from 'native-base';
 import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
+import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
@@ -154,7 +155,8 @@ class PeopleScreen extends React.Component<Props, State> {
       localContacts,
     } = this.props;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
-    const usersFound = searchResults.apiUsers.length || searchResults.localContacts.length;
+    const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
+    const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
 
     return (
       <Container>
@@ -171,7 +173,7 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         </Wrapper>
 
-        {!inSearchMode && !!invitations.length &&
+        {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
             underlayColor={baseColors.lightGray}
@@ -181,7 +183,7 @@ class PeopleScreen extends React.Component<Props, State> {
                 Connection requests
               </ConnectionRequestBannerText>
               <ConnectionRequestNotificationCircle>
-                {invitations.length}
+                {pendingConnectionRequests}
               </ConnectionRequestNotificationCircle>
               <ConnectionRequestBannerIcon type="Feather" name="chevron-right" />
             </React.Fragment>
