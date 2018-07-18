@@ -7,6 +7,13 @@ const chat = new ChatService();
 export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
+    await chat.client.getUnreadMessagesCount().then((response) => {
+      const unread = JSON.parse(response);
+      chats.map((item) => {
+        item.unread = typeof unread.unreadCount[item.username] !== 'undefined' ? unread.unreadCount[item.username] : 0;
+        return item;
+      });
+    }).catch(() => null);
     dispatch({
       type: UPDATE_CHATS,
       payload: chats,
