@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, View, FlatList, Keyboard } from 'react-native';
+import { ActivityIndicator, View, FlatList, Keyboard, Image } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
@@ -59,7 +59,20 @@ const ContactCardList = styled(FlatList)`
   padding: 16px;
 `;
 
+const EmptySpaceBGWrapper = styled.View`
+  flex-direction: row;
+  justify-content: flex-start;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 16px 16px 16px;
+`;
+
+
 const MIN_QUERY_LENGTH = 2;
+
+const esBackground = require('assets/images/esLeftLong.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -209,7 +222,10 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !localContacts.length &&
-          <Wrapper center fullScreen>
+          <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+            <EmptySpaceBGWrapper>
+              <Image source={esBackground} />
+            </EmptySpaceBGWrapper>
             <EmptySpaceParagraph
               title="Nobody is here"
               bodyText="Start building your connection list by inviting friends or by searching for someone"

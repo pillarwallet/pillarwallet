@@ -126,7 +126,7 @@ const LabelText = styled.Text`
 
 const EmptySpaceBGWrapper = styled.View`
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   position: absolute;
   top: 0;
   left: 0;
