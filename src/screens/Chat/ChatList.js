@@ -44,9 +44,11 @@ class ChatListScreen extends React.Component<Props, State> {
     const { chats, navigation } = this.props;
     const existingChat = chats.find(({ username }) => contact.username === username) || {};
     const lastMessage = existingChat.lastMessage || {};
-    const timeSent = lastMessage.serverTimestamp
-      ? new Date(lastMessage.serverTimestamp).getHours() + ':' + new Date(lastMessage.serverTimestamp).getMinutes() // HH:mm
-      : '';
+    let timeSent = '';
+    if (lastMessage.serverTimestamp) {
+      const dateSent = new Date(lastMessage.serverTimestamp);
+      timeSent = `${dateSent.getHours()}:${dateSent.getMinutes()}`; // HH:mm
+    }
     return (
       <ChatListItem
         userName={contact.username}
