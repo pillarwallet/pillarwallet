@@ -6,6 +6,7 @@ import { baseColors, fontWeights, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { CHAT } from 'constants/navigationConstants';
 import ScreenHeader from 'components/ScreenHeader';
+import ProfileImage from 'components/ProfileImage';
 
 const imageChat = require('assets/images/btn_chat.png');
 
@@ -53,7 +54,7 @@ const ContactWapper = styled.View`
 
 const ContactHeader = styled.View`
   height: 200px;
-  background: ${baseColors.electricBlue};
+  background: ${baseColors.cyan};
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
   shadow-radius: 2px;
@@ -81,7 +82,7 @@ const ContactHeaderAvatarWrapper = styled.View`
   height: 64px;
   width: 64px;
   border: 2px solid ${baseColors.white};
-  background: ${baseColors.mediumGray};
+  background: ${baseColors.cyan};
   border-radius: 32px;
   margin-right: 14px;
   shadow-color: ${baseColors.black};
@@ -92,10 +93,6 @@ const ContactHeaderAvatarWrapper = styled.View`
   top: 0;
   left: 50%;
   margin-left: -32px;
-`;
-
-const ContactHeaderAvatar = styled.Image`
-
 `;
 
 type Props = {
@@ -118,7 +115,12 @@ const Contact = (props: Props) => {
             </ContactHeaderBody>
           </ContactHeader>
           <ContactHeaderAvatarWrapper >
-            <ContactHeaderAvatar />
+            <ProfileImage
+              uri={contact.avatar}
+              userName={contact.username}
+              diameter={60}
+              textStyle={{ fontSize: 32 }}
+            />
           </ContactHeaderAvatarWrapper>
         </ContactWapper>
 

@@ -5,7 +5,6 @@ import Title from 'components/Title';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
-import Divider from 'components/Divider';
 import Checkbox from 'components/Checkbox';
 import CheckboxItem from 'components/CheckboxItem';
 import CheckboxText from 'components/CheckboxText';
@@ -136,7 +135,6 @@ class LegalTerms extends React.Component<Props, State> {
               I have read, understand, and agree to the Terms of Use.
             </CheckboxText>
           </CheckboxItem>
-          <Divider />
           <MultiButtonWrapper>
             <Button
               block

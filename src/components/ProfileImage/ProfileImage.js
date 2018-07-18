@@ -4,20 +4,20 @@ import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 const CircleImage = styled.Image`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+  width: ${props => (props.diameter ? props.diameter : '50')}px;
+  height: ${props => (props.diameter ? props.diameter : '50')}px;
+  border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   ${props => (props.additionalImageStyle)};
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
+  width: ${props => (props.diameter ? props.diameter : '50')}px;
+  height: ${props => (props.diameter ? props.diameter : '50')}px;
+  border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #d8d8d8;
+  background-color: ${baseColors.brightSkyBlue};
   ${props => (props.additionalContainerStyle)};
 `;
 
@@ -35,6 +35,7 @@ type Props = {
   textStyle?: Object,
   imageStyle?: Object,
   onPress?: Function,
+  diameter?: number,
 }
 
 const ProfileImage = (props: Props) => {
@@ -45,6 +46,7 @@ const ProfileImage = (props: Props) => {
     textStyle,
     imageStyle,
     onPress,
+    diameter,
   } = props;
 
   const initials = userName
@@ -54,7 +56,7 @@ const ProfileImage = (props: Props) => {
     .toUpperCase();
 
   return (
-    <ImageTouchable additionalContainerStyle={containerStyle} disabled={!onPress} onPress={onPress}>
+    <ImageTouchable additionalContainerStyle={containerStyle} diameter={diameter} disabled={!onPress} onPress={onPress}>
       {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
       {!!uri && <CircleImage additionalImageStyle={imageStyle} source={{ uri }} />}
     </ImageTouchable>
