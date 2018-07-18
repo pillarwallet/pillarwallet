@@ -12,6 +12,7 @@ import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
 import { baseColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
+import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Item from './Item';
 import Amount from './Amount';
 import Hash from './Hash';
@@ -203,6 +204,12 @@ class TXHistory extends React.Component<Props, State> {
           renderItem={this.renderTransaction}
           keyExtractor={(({ _id }) => _id)}
           contentContainerStyle={flatListStyles}
+          ListEmptyComponent={
+            <EmptyTransactions
+              title="Make your first step"
+              bodyText="Your transactions will appear here. Send or receive tokens to start."
+            />
+          }
         />
         <SlideModal
           isVisible={showModal}

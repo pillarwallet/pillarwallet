@@ -2,14 +2,13 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { FlatList, TouchableOpacity, Image } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
-import { Wrapper } from 'components/Layout';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 
 import {
   TYPE_RECEIVED,
@@ -124,16 +123,6 @@ const LabelText = styled.Text`
   margin-left: auto;
 `;
 
-const EmptyStateBGWrapper = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 16px;
-`;
-
 type Props = {
   history: Array<*>,
   onAcceptInvitation: Function,
@@ -146,9 +135,6 @@ type State = {
   esTitle: string,
   esBody: string,
 }
-
-const esLeft = require('assets/images/esLeft.png');
-const esRight = require('assets/images/esRight.png');
 
 export default class ActivityFeed extends React.Component<Props, State> {
   state = {
@@ -266,31 +252,8 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
   );
 };
 
-renderActivityFeedEmptyState = () => {
-  const { esTitle, esBody } = this.state;
-  return (
-    <Wrapper
-      fullScreen
-      style={{
-        paddingTop: 80,
-        paddingBottom: 80,
-        alignItems: 'center',
-      }}
-    >
-      <EmptyStateBGWrapper>
-        <Image source={esLeft} />
-        <Image source={esRight} />
-      </EmptyStateBGWrapper>
-      <EmptyStateParagraph
-        title={esTitle}
-        bodyText={esBody}
-      />
-    </Wrapper>
-  );
-}
-
 render() {
-  const { activeTab } = this.state;
+  const { activeTab, esTitle, esBody } = this.state;
   const { history } = this.props;
   const filteredHistory = history.filter(({ type }) => {
     if (activeTab === TRANSACTIONS) {
@@ -345,7 +308,7 @@ render() {
         data={filteredHistory}
         renderItem={this.renderActivityFeedItem}
         keyExtractor={({ createdAt }) => createdAt.toString()}
-        ListEmptyComponent={this.renderActivityFeedEmptyState}
+        ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
       />
     </ActivityFeedWrapper>
   );
