@@ -287,7 +287,7 @@ class ChatScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <ModalScreenHeader onClose={this.handleChatDismissal} />
+          <ModalScreenHeader title={contact.username} onClose={this.handleChatDismissal} />
           <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
             <LinearGradient
               colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}
