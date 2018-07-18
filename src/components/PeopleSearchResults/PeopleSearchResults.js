@@ -7,11 +7,9 @@ import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import { BaseText } from 'components/Typography';
-import { Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import ContactsSeparator from 'components/ContactsSeparator';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText } from 'components/Typography';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import {
   sendInvitationAction,
@@ -59,15 +57,10 @@ const LocalContactsItemAvatarWrapper = styled.View`
   margin-bottom: 10px;
 `;
 
-const TabItemText = styled(BaseText)`
-  font-size: ${fontSizes.medium};
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
-`;
-
 const LocalContactsItemAvatarImage = styled.Image`
 `;
 
-const LocalContactsItemName = styled.Text`
+const LocalContactsItemName = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
 `;

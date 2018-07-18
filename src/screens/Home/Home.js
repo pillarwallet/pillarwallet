@@ -38,14 +38,6 @@ const HomeHeaderRow = styled.View`
   flex-direction: row;
 `;
 
-const HomeHeaderAvatar = styled.View`
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  margin-right: 10px;
-  background-color: ${baseColors.darkGray};
-`;
-
 const HomeHeaderUsername = styled(BoldText)`
   font-size: ${fontSizes.extraLarge};
 `;
