@@ -57,7 +57,7 @@ type State = {
 
 const AssetCardWrapper = styled(Wrapper)`
   background-color: ${baseColors.lightGray};
-  height: 350;
+  flex: 1;
 `;
 
 class AssetScreen extends React.Component<Props, State> {
