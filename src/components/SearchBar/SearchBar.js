@@ -8,12 +8,12 @@ const SearchHolder = styled.View`
   padding-bottom: 20px;
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
 `;
 
 const CancelButton = styled.TouchableOpacity`
-  margin: 0 5px 0 10px;
+  margin-right: 10px;
 `;
 
 const animatedInputFieldStyles = {
