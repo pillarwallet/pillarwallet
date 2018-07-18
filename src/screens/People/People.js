@@ -16,7 +16,7 @@ import ContactCard from 'components/ContactCard';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
-import EmptySpaceParagraph from 'components/EmptySpaceParagraph';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
 
@@ -59,7 +59,7 @@ const ContactCardList = styled(FlatList)`
   padding: 16px;
 `;
 
-const EmptySpaceBGWrapper = styled.View`
+const EmptyStateBGWrapper = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   position: absolute;
@@ -206,8 +206,8 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {inSearchMode && contactState === FETCHED && !usersFound &&
-          <Wrapper center fullScreen>
-            <EmptySpaceParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
+          <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+            <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
           </Wrapper>
         }
 
@@ -223,10 +223,10 @@ class PeopleScreen extends React.Component<Props, State> {
 
         {!inSearchMode && !localContacts.length &&
           <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-            <EmptySpaceBGWrapper>
+            <EmptyStateBGWrapper>
               <Image source={esBackground} />
-            </EmptySpaceBGWrapper>
-            <EmptySpaceParagraph
+            </EmptyStateBGWrapper>
+            <EmptyStateParagraph
               title="Nobody is here"
               bodyText="Start building your connection list by inviting friends or by searching for someone"
             />

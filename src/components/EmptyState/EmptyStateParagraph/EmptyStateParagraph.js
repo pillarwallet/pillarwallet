@@ -26,7 +26,7 @@ const EmptySectionText = styled.Text`
   text-align: center;
 `;
 
-const EmptySpaceParagraph = (props: Props) => {
+const EmptyStateParagraph = (props: Props) => {
   const {
     title,
     bodyText,
@@ -40,4 +40,4 @@ const EmptySpaceParagraph = (props: Props) => {
   );
 };
 
-export default EmptySpaceParagraph;
+export default EmptyStateParagraph;

@@ -9,7 +9,7 @@ import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import { Wrapper } from 'components/Layout';
-import EmptySpaceParagraph from 'components/EmptySpaceParagraph';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 import {
   TYPE_RECEIVED,
@@ -124,7 +124,7 @@ const LabelText = styled.Text`
   margin-left: auto;
 `;
 
-const EmptySpaceBGWrapper = styled.View`
+const EmptyStateBGWrapper = styled.View`
   flex-direction: row;
   justify-content: space-between;
   position: absolute;
@@ -266,7 +266,7 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
   );
 };
 
-renderActivityFeedEmptySpace = () => {
+renderActivityFeedEmptyState = () => {
   const { esTitle, esBody } = this.state;
   return (
     <Wrapper
@@ -277,11 +277,11 @@ renderActivityFeedEmptySpace = () => {
         alignItems: 'center',
       }}
     >
-      <EmptySpaceBGWrapper>
+      <EmptyStateBGWrapper>
         <Image source={esLeft} />
         <Image source={esRight} />
-      </EmptySpaceBGWrapper>
-      <EmptySpaceParagraph
+      </EmptyStateBGWrapper>
+      <EmptyStateParagraph
         title={esTitle}
         bodyText={esBody}
       />
@@ -345,7 +345,7 @@ render() {
         data={filteredHistory}
         renderItem={this.renderActivityFeedItem}
         keyExtractor={({ createdAt }) => createdAt.toString()}
-        ListEmptyComponent={this.renderActivityFeedEmptySpace}
+        ListEmptyComponent={this.renderActivityFeedEmptyState}
       />
     </ActivityFeedWrapper>
   );

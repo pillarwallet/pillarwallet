@@ -13,7 +13,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
-import EmptySpaceParagraph from 'components/EmptySpaceParagraph';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import {
   cancelInvitationAction,
@@ -96,7 +96,7 @@ const RecentConnectionsItemName = styled.Text`
   color: ${baseColors.darkGray};
 `;
 
-const EmptySpaceWrapper = styled.View`
+const EmptyStateWrapper = styled.View`
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -151,14 +151,14 @@ class PeopleScreen extends React.Component<Props> {
       ));
   };
 
-  renderEmptyRCSpace = () => {
+  renderEmptyRCState = () => {
     return (
-      <EmptySpaceWrapper>
-        <EmptySpaceParagraph
+      <EmptyStateWrapper>
+        <EmptyStateParagraph
           title="Chat with someone"
           bodyText="Recent contacts live here. Get quick access to encrypted chat."
         />
-      </EmptySpaceWrapper>
+      </EmptyStateWrapper>
     );
   }
 
@@ -223,7 +223,7 @@ class PeopleScreen extends React.Component<Props> {
         >
           <RecentConnections>
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
-            {!this.props.contacts.length && this.renderEmptyRCSpace()}
+            {!this.props.contacts.length && this.renderEmptyRCState()}
             {!!this.props.contacts.length &&
             <RecentConnectionsScrollView horizontal>
               {this.renderRecentConnections()}
