@@ -13,6 +13,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
+import EmptySpaceParagraph from 'components/EmptySpaceParagraph';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import {
   cancelInvitationAction,
@@ -54,7 +55,7 @@ const HomeHeaderButton = styled(ButtonIcon)`
 `;
 
 const RecentConnections = styled.View`
-  height: 140px;
+  min-height: 140px;
   background-color: ${baseColors.lightGray};
   border-bottom-width: 1px;
   border-style: solid;
@@ -93,6 +94,13 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
 const RecentConnectionsItemName = styled.Text`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
+`;
+
+const EmptySpaceWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 6px 0 8px 0;
 `;
 
 type Props = {
@@ -142,6 +150,17 @@ class PeopleScreen extends React.Component<Props> {
         </RecentConnectionsItem>
       ));
   };
+
+  renderEmptyRCSpace = () => {
+    return (
+      <EmptySpaceWrapper>
+        <EmptySpaceParagraph
+          title="Chat with someone"
+          bodyText="Recent contacts live here. Get quick access to encrypted chat."
+        />
+      </EmptySpaceWrapper>
+    );
+  }
 
   render() {
     const {
@@ -204,9 +223,11 @@ class PeopleScreen extends React.Component<Props> {
         >
           <RecentConnections>
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
+            {!this.props.contacts.length && this.renderEmptyRCSpace()}
+            {!!this.props.contacts.length &&
             <RecentConnectionsScrollView horizontal>
               {this.renderRecentConnections()}
-            </RecentConnectionsScrollView>
+            </RecentConnectionsScrollView>}
           </RecentConnections>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}

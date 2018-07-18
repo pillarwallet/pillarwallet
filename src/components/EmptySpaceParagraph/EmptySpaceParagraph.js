@@ -10,7 +10,6 @@ type Props = {
 
 const EmptySectionTextWrapper = styled.View`
   width: 230px;
-  margin-top: -200px;
   align-items: center;
   justify-content: center;
 `;

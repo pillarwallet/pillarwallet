@@ -2,12 +2,15 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, TouchableOpacity, Image } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
+import { Wrapper } from 'components/Layout';
+import EmptySpaceParagraph from 'components/EmptySpaceParagraph';
+
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -40,7 +43,7 @@ const NOTIFICATION_LABELS = {
 };
 
 const ActivityFeedWrapper = styled.View`
-  flex: 1;
+  height: 100%;
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -121,6 +124,16 @@ const LabelText = styled.Text`
   margin-left: auto;
 `;
 
+const EmptySpaceBGWrapper = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 16px;
+`;
+
 type Props = {
   history: Array<*>,
   onAcceptInvitation: Function,
@@ -130,11 +143,18 @@ type Props = {
 
 type State = {
   activeTab: string,
+  esTitle: string,
+  esBody: string,
 }
+
+const esLeft = require('assets/images/esLeft.png');
+const esRight = require('assets/images/esRight.png');
 
 export default class ActivityFeed extends React.Component<Props, State> {
   state = {
     activeTab: 'ALL',
+    esTitle: 'Make your first step',
+    esBody: 'Your activity will appear here.',
   };
 
   getSocialAction = (type: string, notification: Object) => {
@@ -246,6 +266,29 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
   );
 };
 
+renderActivityFeedEmptySpace = () => {
+  const { esTitle, esBody } = this.state;
+  return (
+    <Wrapper
+      fullScreen
+      style={{
+        paddingTop: 80,
+        paddingBottom: 80,
+        alignItems: 'center',
+      }}
+    >
+      <EmptySpaceBGWrapper>
+        <Image source={esLeft} />
+        <Image source={esRight} />
+      </EmptySpaceBGWrapper>
+      <EmptySpaceParagraph
+        title={esTitle}
+        bodyText={esBody}
+      />
+    </Wrapper>
+  );
+}
+
 render() {
   const { activeTab } = this.state;
   const { history } = this.props;
@@ -266,21 +309,33 @@ render() {
       <TabWrapper>
         <TabItem
           active={activeTab === ALL}
-          onPress={() => this.setState({ activeTab: ALL })}
+          onPress={() => this.setState({
+            activeTab: ALL,
+            esTitle: 'Make your first step',
+            esBody: 'Your activity will appear here.',
+          })}
           flex={1}
         >
           <TabItemText active={activeTab === ALL}>All</TabItemText>
         </TabItem>
         <TabItem
           active={activeTab === TRANSACTIONS}
-          onPress={() => this.setState({ activeTab: TRANSACTIONS })}
+          onPress={() => this.setState({
+            activeTab: TRANSACTIONS,
+            esTitle: 'Make your first step',
+            esBody: 'Your transactions will appear here. Send or receive tokens to start.',
+          })}
           flex={1}
         >
           <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
         </TabItem>
         <TabItem
           active={activeTab === SOCIAL}
-          onPress={() => this.setState({ activeTab: SOCIAL })}
+          onPress={() => this.setState({
+            activeTab: SOCIAL,
+            esTitle: 'Make your first step',
+            esBody: 'Information on your connections will appear here. Send a connection request to start.',
+          })}
           flex={1}
         >
           <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
@@ -290,6 +345,7 @@ render() {
         data={filteredHistory}
         renderItem={this.renderActivityFeedItem}
         keyExtractor={({ createdAt }) => createdAt.toString()}
+        ListEmptyComponent={this.renderActivityFeedEmptySpace}
       />
     </ActivityFeedWrapper>
   );
