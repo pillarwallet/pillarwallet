@@ -35,7 +35,7 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
       await chat.init({
         username: user.username,
         password: pin,
-      });
+      }).catch(() => null);
       await chat.client.registerAccount().catch(() => null);
       dispatch({
         type: DECRYPT_WALLET,
