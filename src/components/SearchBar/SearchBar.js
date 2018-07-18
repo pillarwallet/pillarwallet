@@ -14,13 +14,7 @@ const SearchHolder = styled.View`
 
 const CancelButton = styled.TouchableOpacity`
   margin: 0 5px 0 10px;
-;`;
-
-const cancelButtonWrapperStyles = {
-  position: 'absolute',
-  height: '100%',
-  right: Platform.OS === 'ios' ? 0 : 5,
-};
+`;
 
 const animatedInputFieldStyles = {
   height: 40,
@@ -65,7 +59,6 @@ type Props = {
 
 type State = {
   value: ?string,
-  animFadeIn: Object,
   animShrink: Object,
   isFocused: boolean,
 };
@@ -77,7 +70,6 @@ type EventLike = {
 class SearchBar extends React.Component<Props, State> {
   state = {
     value: '',
-    animFadeIn: new Animated.Value(0),
     animShrink: new Animated.Value(100),
     isFocused: false,
   };
@@ -129,38 +121,25 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   hideKeyboard = () => {
+    Animated.timing(this.state.animShrink, {
+      toValue: 100,
+      duration: 250,
+    }).start();
     Keyboard.dismiss();
-    Animated.parallel([
-      Animated.timing(this.state.animFadeIn, {
-        toValue: 0,
-        duration: 200,
-      }),
-      Animated.timing(this.state.animShrink, {
-        toValue: 100,
-        duration: 250,
-      }),
-    ]).start();
   };
 
   handleFocus = () => {
     this.setState({ isFocused: true });
-    Animated.parallel([
-      Animated.timing(this.state.animFadeIn, {
-        toValue: 1,
-        duration: 200,
-      }),
-      Animated.timing(this.state.animShrink, {
-        toValue: 80,
-        duration: 250,
-      }),
-    ]).start();
+    Animated.timing(this.state.animShrink, {
+      toValue: 80,
+      duration: 250,
+    }).start();
   };
 
   render() {
     const { inputProps, placeholder } = this.props;
     const {
       value,
-      animFadeIn,
       animShrink,
       isFocused,
     } = this.state;
@@ -189,11 +168,12 @@ class SearchBar extends React.Component<Props, State> {
           />
           <InputIcon source={searchIcon} />
         </Animated.View>
-        <Animated.View style={{ ...cancelButtonWrapperStyles, opacity: animFadeIn }}>
-          <CancelButton onPress={this.handleCancel}>
-            <Text style={{ color: baseColors.electricBlue }}>Cancel</Text>
-          </CancelButton>
-        </Animated.View>
+
+        {(isFocused || !!value) &&
+        <CancelButton onPress={this.handleCancel}>
+          <Text style={{ color: baseColors.electricBlue }}>Cancel</Text>
+        </CancelButton>
+        }
       </SearchHolder>
     );
   }
