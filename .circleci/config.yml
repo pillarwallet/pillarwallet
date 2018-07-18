@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.3.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -32,7 +32,7 @@ jobs:
   test_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.3.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -123,7 +123,7 @@ jobs:
   deploy_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.3.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail

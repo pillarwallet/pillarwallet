@@ -8,7 +8,6 @@ import {
   NOTIFICATIONS_URL,
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
-import { uniqBy } from 'utils/common';
 import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
 import { utils } from 'ethers';
@@ -115,7 +114,7 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
   return BCXSdk.txHistory(payload)
-    .then(({ txHistory: { txHistory } }) => uniqBy(txHistory, 'hash'))
+    .then(({ txHistory: { txHistory } }) => txHistory)
     .then(history => {
       return history.map(({
         fromAddress,
