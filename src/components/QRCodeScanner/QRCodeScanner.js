@@ -176,6 +176,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
             type={Camera.Constants.Type.back}
             ratio="16:9"
             style={{ width: screenWidth, height: Platform.OS === 'ios' ? screenHeight : cameraHeight }}
+            onBarCodeRead={this.handleQRRead}
           >
             <RectangleContainer>
               <Rectangle color={rectangleColor} />

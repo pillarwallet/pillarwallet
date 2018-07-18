@@ -66,6 +66,7 @@ const CloseButton = styled(ButtonIcon)`
 
 const AssetCardWrapper = styled(Wrapper)`
   height: 350;
+  flex: 1;
 `;
 
 class AssetScreen extends React.Component<Props, State> {
