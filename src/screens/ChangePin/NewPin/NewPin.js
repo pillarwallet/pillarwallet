@@ -25,7 +25,7 @@ export default class NewPin extends React.Component<Props> {
       <Container>
         <ModalScreenHeader onClose={this.handleScreenDismissal} />
         <Center>
-          <Title center title="enter new pincode" />
+          <Title align="center" title="enter new pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}

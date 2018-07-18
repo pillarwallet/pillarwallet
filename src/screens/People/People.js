@@ -26,20 +26,9 @@ import ContactCard from 'components/ContactCard';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
+import Header from 'components/Header';
 import PeopleSearchResults from 'components/PeopleSearchResults';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
-
-
-const PeopleHeader = styled.View`
-  flex-direction: row;
-  height: 97px;
-  background-color: ${baseColors.white};
-  padding: 0 16px;
-  align-items: center;
-  justify-content: space-between;
-`;
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -68,7 +57,7 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
 `;
 
 const ContactCardList = styled(FlatList)`
-  padding: 16px;
+  margin: 0 16px;
 `;
 
 const EmptyStateBGWrapper = styled.View`
@@ -165,9 +154,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <PeopleHeader>
-          <Title center noMargin title="people" />
-        </PeopleHeader>
+        <Header title="people" index={1} />
         <Wrapper regularPadding>
           <SearchBar
             inputProps={{
@@ -176,83 +163,73 @@ class PeopleScreen extends React.Component<Props, State> {
               autoCapitalize: 'none',
             }}
           />
+
+          {!inSearchMode && !!pendingConnectionRequests &&
+            <ConnectionRequestBanner
+              onPress={this.handleConnectionsRequestBannerPress}
+              underlayColor={baseColors.lightGray}
+            >
+              <React.Fragment>
+                <ConnectionRequestBannerText>
+                  Connection requests
+                </ConnectionRequestBannerText>
+                <ConnectionRequestNotificationCircle>
+                  {pendingConnectionRequests}
+                </ConnectionRequestNotificationCircle>
+                <ConnectionRequestBannerIcon type="Feather" name="chevron-right" />
+              </React.Fragment>
+            </ConnectionRequestBanner>
+          }
+
+          {!!query && contactState === FETCHING &&
+            <ActivityIndicator
+              animating
+              color="#111"
+              size="large"
+            />
+          }
+
+          {inSearchMode && contactState === FETCHED && usersFound &&
+            <PeopleSearchResults
+              searchResults={searchResults}
+              navigation={navigation}
+              invitations={invitations}
+              localContacts={localContacts}
+            />
+          }
+
+          {inSearchMode && contactState === FETCHED && !usersFound &&
+            <Wrapper center fullScreen>
+              <EmptySectionTextWrapper>
+                <EmptySectionTitle>Nobody found</EmptySectionTitle>
+                <EmptySectionText>
+                  Make sure you entered the name correctly
+                </EmptySectionText>
+              </EmptySectionTextWrapper>
+            </Wrapper>
+          }
+
+          {!inSearchMode && !!localContacts.length &&
+            <ContactCardList
+              data={localContacts}
+              keyExtractor={this.keyExtractor}
+              renderItem={this.renderContact}
+              ItemSeparatorComponent={this.renderSeparator}
+              onScroll={() => Keyboard.dismiss()}
+            />
+          }
+
+          {!inSearchMode && !localContacts.length &&
+            <Wrapper center fullScreen>
+              <EmptySectionTextWrapper>
+                <EmptySectionTitle>Nobody is here</EmptySectionTitle>
+                <EmptySectionText>
+                  Start building your connection list by inviting friends or by searching for someone
+                </EmptySectionText>
+              </EmptySectionTextWrapper>
+            </Wrapper>
+          }
         </Wrapper>
-        {!inSearchMode && !!pendingConnectionRequests &&
-          <ConnectionRequestBanner
-            onPress={this.handleConnectionsRequestBannerPress}
-            underlayColor={baseColors.lightGray}
-          >
-            <React.Fragment>
-              <ConnectionRequestBannerText>
-                Connection requests
-              </ConnectionRequestBannerText>
-              <ConnectionRequestNotificationCircle>
-                {pendingConnectionRequests}
-              </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon type="Feather" name="chevron-right" />
-            </React.Fragment>
-          </ConnectionRequestBanner>
-        }
-
-        {inSearchMode && contactState === FETCHED && usersFound &&
-          <PeopleSearchResults
-            searchResults={searchResults}
-            navigation={navigation}
-            invitations={invitations}
-            localContacts={localContacts}
-          />
-        }
-
-        {!inSearchMode && !!localContacts.length &&
-          <ContactCardList
-            data={localContacts}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderContact}
-            ItemSeparatorComponent={this.renderSeparator}
-            onScroll={() => Keyboard.dismiss()}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const {
-                    fetchInviteNotifications,
-                  } = this.props;
-                  fetchInviteNotifications();
-                }}
-              />
-            }
-          />
-        }
-
-        {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
-          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
-            {!!query && contactState === FETCHING &&
-              <ActivityIndicator
-                animating
-                color="#111"
-                size="large"
-              />
-            }
-
-            {inSearchMode && contactState === FETCHED && !usersFound &&
-              <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-                <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-              </Wrapper>
-            }
-
-            {!inSearchMode && !localContacts.length &&
-              <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-                <EmptyStateBGWrapper>
-                  <Image source={esBackground} />
-                </EmptyStateBGWrapper>
-                <EmptyStateParagraph
-                  title="Nobody is here"
-                  bodyText="Start building your connection list by inviting friends or by searching for someone"
-                />
-              </Wrapper>
-            }
-          </KeyboardAvoidingView>
-        }
       </Container>
     );
   }

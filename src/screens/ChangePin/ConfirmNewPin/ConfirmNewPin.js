@@ -91,7 +91,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
         <ModalScreenHeader onClose={this.handleScreenDismissal} />
         {showError}
         <Center>
-          <Title center title="confirm new pincode" />
+          <Title align="center" title="confirm new pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}

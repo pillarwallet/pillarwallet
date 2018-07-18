@@ -44,6 +44,9 @@ export const Wrapper = styled.View`
     align-items: center;
     justify-content: center;
   `}
+  ${({ flex }) => flex && `
+    flex: ${flex};
+  `}
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`

@@ -1,15 +1,12 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native';
 import {
-  TouchableOpacity,
   Animated,
   Easing,
   RefreshControl,
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { baseColors } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -22,8 +19,8 @@ import {
   fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
-import { Container } from 'components/Layout';
-import Title from 'components/Title';
+import Header from 'components/Header';
+import { Container, Wrapper } from 'components/Layout';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
@@ -54,15 +51,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
 }
-
-const AssetsHeader = styled.View`
-  flex-direction: row;
-  height: 97px;
-  background-color: ${baseColors.white};
-  padding: 0 16px;
-  align-items: center;
-  justify-content: space-between;
-`;
 
 class AssetsScreen extends React.Component<Props> {
   static navigationOptions = {
@@ -206,32 +194,31 @@ class AssetsScreen extends React.Component<Props> {
 
     return (
       <Container>
-        <AssetsHeader>
-          <Title center noMargin title="assets" />
-          <TouchableOpacity onPress={this.goToAddTokenPage} >
-            <TextLink>
-              Add token
-            </TextLink>
-          </TouchableOpacity>
-        </AssetsHeader>
-        <ScrollView
-          contentContainerStyle={{ padding: 16 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {
-                const {
-                  fetchAssetsBalances,
-                  fetchExchangeRates,
-                } = this.props;
-                fetchAssetsBalances(assets, wallet.address);
-                fetchExchangeRates(assets);
-              }}
-            />
-          }
-        >
-          { this.renderAssets() }
-        </ScrollView>
+        <Header
+          title="assets"
+          onNextPress={this.goToAddTokenPage}
+          nextText="Add token"
+          index={1}
+        />
+        <Wrapper regularPadding>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  const {
+                    fetchAssetsBalances,
+                    fetchExchangeRates,
+                  } = this.props;
+                  fetchAssetsBalances(assets, wallet.address);
+                  fetchExchangeRates(assets);
+                }}
+              />
+            }
+          >
+            { this.renderAssets() }
+          </ScrollView>
+        </Wrapper>
       </Container >
     );
   }

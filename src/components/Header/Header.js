@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { Header as NBHeader, Left, Body, Right } from 'native-base';
+import { Platform } from 'react-native';
+import { Left, Body, Right } from 'native-base';
 import { TextLink } from 'components/Typography';
 import { baseColors } from 'utils/variables';
 import Title from 'components/Title';
@@ -16,10 +17,17 @@ type Props = {
   gray?: boolean,
 }
 
-const Wrapper = styled(NBHeader)`
+const Wrapper = styled.View`
   background-color: ${props => props.gray ? baseColors.snowWhite : baseColors.white};
   border-bottom-width: 0;
   padding: 0 16px;
+  padding-top: 0;
+  height: 40px;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-direction: row;
+  margin-bottom: 20px;
+  margin-top: ${props => props.isAndroid ? '20px' : '0'};
 `;
 
 const BackIcon = styled(ButtonIcon)`
@@ -36,25 +44,30 @@ const Header = (props: Props) => {
     title,
     gray,
   } = props;
+  const showRight = nextText || onBack;
   if (!index) return null;
   return (
-    <Wrapper gray={gray}>
-      <Left style={{ flex: 1, justifyContent: 'flex-start' }}>
+    <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
+      <Left style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
         {onBack &&
           <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
         }
+        {!onBack &&
+          <Title noMargin title={title} />
+        }
       </Left>
       <Body style={{ flex: 1 }}>
-        {title &&
-          <Title center noMargin title={title} />
+        {title && onBack &&
+          <Title align="center" noMargin title={title} />
         }
       </Body>
-      <Right style={{ flex: 1, justifyContent: 'flex-end' }}>
-        {nextText &&
-          <TextLink onPress={onNextPress}>{nextText}</TextLink>
-        }
-      </Right>
-
+      {showRight &&
+        <Right style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+          {nextText &&
+            <TextLink onPress={onNextPress}>{nextText}</TextLink>
+          }
+        </Right>
+      }
     </Wrapper>
   );
 };

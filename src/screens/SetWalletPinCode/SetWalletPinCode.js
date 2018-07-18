@@ -49,7 +49,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
       <Container>
         {!!error && <ErrorMessage>{error}</ErrorMessage>}
         <Center>
-          <Title center title="create pincode" />
+          <Title align="center" title="create pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}

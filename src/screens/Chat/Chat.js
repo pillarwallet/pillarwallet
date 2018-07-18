@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, ActivityIndicator, StatusBar, Image } from 'react-native';
+import { ActivityIndicator, StatusBar, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
