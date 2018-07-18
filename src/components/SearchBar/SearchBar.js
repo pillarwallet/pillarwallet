@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { Animated, Keyboard, Platform } from 'react-native';
+import { Animated, Keyboard, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 const SearchHolder = styled.View`
