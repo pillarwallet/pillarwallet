@@ -65,7 +65,6 @@ const CloseButton = styled(ButtonIcon)`
 `;
 
 const AssetCardWrapper = styled(Wrapper)`
-  height: 350;
   flex: 1;
 `;
 
