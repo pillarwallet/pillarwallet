@@ -64,7 +64,7 @@ const ModalOverflow = styled.View`
 const CloseButton = styled(ButtonIcon)`
   position: absolute;
   right: ${(props) => props.fullScreen ? 16 : 0}px;
-  top: ${Platform.OS === 'ios' ? -10 : 0}px;
+  ${Platform.OS === 'ios' && 'top: -10px;'}
 `;
 
 export default class SlideModal extends React.Component<Props, State> {
