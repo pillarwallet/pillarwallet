@@ -64,7 +64,6 @@ type State = {
 const flatListStyles = {
   justifyContent: 'flex-start',
   flex: 1,
-  backgroundColor: baseColors.lightGray,
   paddingLeft: 16,
   paddingRight: 16,
 };
