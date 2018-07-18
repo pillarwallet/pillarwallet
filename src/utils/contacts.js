@@ -8,3 +8,10 @@ export function excludeLocalContacts(globalContacts: ApiUser[] = [], localContac
     return !localContactsIds.includes(globalContact.id);
   });
 }
+
+export function getUserName(contact: ?Object) {
+  if (!contact) {
+    return '';
+  }
+  return contact.firstName ? `${contact.firstName} ${contact.lastName}` : contact.username;
+}
