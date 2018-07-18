@@ -27,6 +27,7 @@ import countries from 'utils/countries.json';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 
+const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
 const chat = new ChatService();
@@ -62,7 +63,7 @@ const cityFormFields = [{
   label: 'City',
   name: 'city',
   type: 'string',
-  config: { placeholder: 'London' },
+  config: { placeholder: 'City' },
 }];
 
 const emailFormFields = [{
@@ -230,7 +231,7 @@ class Profile extends React.Component<Props, State> {
           onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
-            data={countries}
+            data={sortedCountries}
             renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
             keyExtractor={({ name }) => name}
           />

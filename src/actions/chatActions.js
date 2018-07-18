@@ -45,7 +45,7 @@ export const getChatByContactAction = (username: string, loadEarlier: boolean = 
     if (loadEarlier) {
       // TODO: split message loading in bunches and load earlier on lick
     }
-    await chat.client.receiveNewMessagesByContact(username);
+    await chat.client.receiveNewMessagesByContact(username).catch(() => null);
     const receivedMessages = await chat.client.getChatByContact(username).then(JSON.parse).catch(() => null);
     dispatch({
       type: UPDATE_MESSAGES,
