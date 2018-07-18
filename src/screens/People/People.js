@@ -161,7 +161,7 @@ class PeopleScreen extends React.Component<Props, State> {
       localContacts,
     } = this.props;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
-    const usersFound = searchResults.apiUsers.length || searchResults.localContacts.length;
+    const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
 
     return (
