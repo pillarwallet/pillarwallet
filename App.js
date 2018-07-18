@@ -44,13 +44,12 @@ class App extends React.Component<Props, State> {
     };
   }
 
-  loadCustomFont = () => {
-    Font.loadAsync({
+  loadCustomFont = async () => {
+    await Font.loadAsync({
       'aktiv-grotesk-bold': aktivGroteskBold,
       'aktiv-grotesk-medium': aktivGroteskMedium,
       'aktiv-grotesk-light': aktivGroteskLight,
       'aktiv-grotesk-regular': aktivGroteskRegular,
-
     });
     this.setState({ fontLoaded: true });
   };
