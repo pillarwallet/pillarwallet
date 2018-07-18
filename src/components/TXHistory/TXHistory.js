@@ -12,7 +12,6 @@ import { Label } from 'components/Typography';
 import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
 import { getUserName } from 'utils/contacts';
-import { baseColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import Item from './Item';
 import Amount from './Amount';
