@@ -308,6 +308,7 @@ render() {
         data={filteredHistory}
         renderItem={this.renderActivityFeedItem}
         keyExtractor={({ createdAt }) => createdAt.toString()}
+        contentContainerStyle={{ height: '100%' }}
         ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
       />
     </ActivityFeedWrapper>
