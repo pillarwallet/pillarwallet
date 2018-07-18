@@ -11,6 +11,7 @@ import { Row, Column } from 'components/Grid';
 import { Label } from 'components/Typography';
 import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
+import { getUserName } from 'utils/contacts';
 import { baseColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import Item from './Item';
@@ -19,6 +20,7 @@ import Hash from './Hash';
 import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
+import { toArray } from 'rxjs/operators';
 
 const window = Dimensions.get('window');
 const iconUp = require('assets/icons/up.png');
@@ -39,6 +41,7 @@ const Holder = styled.View`
 
 type Props = {
   history: Transaction[],
+  contacts: Object[],
   token: string,
   wallet: Object,
 }
@@ -138,15 +141,21 @@ class TXHistory extends React.Component<Props, State> {
       gasUsed,
       gasPrice,
     } = transaction;
+    const { contacts, wallet: { address: myAddress } } = this.props;
     const datetime = new Date(timestamp);
-    const myAddress = this.props.wallet.address;
+    const contact = contacts
+      .find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+    const recipient = to.toUpperCase() !== myAddress.toUpperCase()
+      ? (getUserName(contact) || `${to.slice(0, 7)}…${to.slice(-7)}`)
+      : null;
+
     this.setState({
       selectedTransaction: {
         hash,
         date: this.getDate(datetime),
         token: asset,
         amount: formatETHAmount(value),
-        recipient: `${to.slice(0, 7)}…${to.slice(-7)}`,
+        recipient,
         fee: gasUsed ? gasUsed * gasPrice : 0,
         note: null,
         confirmations: nbConfirmations,
@@ -171,16 +180,20 @@ class TXHistory extends React.Component<Props, State> {
       asset,
       timestamp,
     } = transaction;
-    const myAddress = this.props.wallet.address;
+    const { contacts, wallet: { address: myAddress } } = this.props;
     const direction = myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
     const datetime = new Date(timestamp);
     const icon = direction === SENT ? iconUp : iconDown;
     const senderRecipientAddress = direction === SENT ? to : from;
+    const contact = contacts
+      .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
+    const address = getUserName(contact) || `${senderRecipientAddress.slice(0, 7)}…${senderRecipientAddress.slice(-7)}`;
+
     return (
       <Item key={id} onPress={() => this.selectTransaction(transaction)}>
         <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
         <Section>
-          <Hash>{senderRecipientAddress.slice(0, 7)}…{senderRecipientAddress.slice(-7)}</Hash>
+          <Hash>{address}</Hash>
           <Timestamp>{this.getDate(datetime)}</Timestamp>
         </Section>
         <Section>
@@ -227,21 +240,21 @@ class TXHistory extends React.Component<Props, State> {
                   <Text>{selectedTransaction.date}</Text>
                 </Column>
               </Row>
-
-              <Row size="0 0 30px">
-                <Column><Label>Recipient</Label></Column>
-                <Column>
-                  <Text>{selectedTransaction.recipient}</Text>
-                </Column>
-              </Row>
-
+              {!!selectedTransaction.recipient &&
+                <Row size="0 0 30px">
+                  <Column><Label>Recipient</Label></Column>
+                  <Column>
+                    <Text>{selectedTransaction.recipient}</Text>
+                  </Column>
+                </Row>
+              }
               {!!selectedTransaction.fee &&
-              <Row size="0 0 30px">
-                <Column><Label>Transaction fee</Label></Column>
-                <Column>
-                  <Text>{utils.formatEther(selectedTransaction.fee.toString())} ETH</Text>
-                </Column>
-              </Row>
+                <Row size="0 0 30px">
+                  <Column><Label>Transaction fee</Label></Column>
+                  <Column>
+                    <Text>{utils.formatEther(selectedTransaction.fee.toString())} ETH</Text>
+                  </Column>
+                </Row>
               }
 
               {selectedTransaction.note &&
@@ -272,8 +285,12 @@ class TXHistory extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet: { data: wallet } }) => ({
+const mapStateToProps = ({
+  wallet: { data: wallet },
+  contacts: { data: contacts },
+}) => ({
   wallet,
+  contacts,
 });
 
 export default connect(mapStateToProps)(TXHistory);

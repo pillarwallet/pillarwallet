@@ -115,7 +115,7 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
   return BCXSdk.txHistory(payload)
-    .then(({ txHistory: { txHistory } }) => uniqBy(txHistory, 'hash'))
+    .then(({ txHistory: { txHistory } }) => txHistory)
     .then(history => {
       return history.map(({
         fromAddress,
