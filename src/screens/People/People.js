@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, View, FlatList, Keyboard, Image } from 'react-native';
+import { ActivityIndicator, View, FlatList, Keyboard, Image, KeyboardAvoidingView } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
@@ -20,6 +20,7 @@ import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
+
 
 const PeopleHeader = styled.View`
   flex-direction: row;
@@ -172,7 +173,6 @@ class PeopleScreen extends React.Component<Props, State> {
             }}
           />
         </Wrapper>
-
         {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
@@ -190,50 +190,53 @@ class PeopleScreen extends React.Component<Props, State> {
           </ConnectionRequestBanner>
         }
 
-        {!!query && contactState === FETCHING &&
-          <ActivityIndicator
-            animating
-            color="#111"
-            size="large"
-          />
-        }
-
         {inSearchMode && contactState === FETCHED && usersFound &&
-          <PeopleSearchResults
-            searchResults={searchResults}
-            navigation={navigation}
-            invitations={invitations}
-            localContacts={localContacts}
-          />
-        }
-
-        {inSearchMode && contactState === FETCHED && !usersFound &&
-          <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-            <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
-          </Wrapper>
+        <PeopleSearchResults
+          searchResults={searchResults}
+          navigation={navigation}
+          invitations={invitations}
+          localContacts={localContacts}
+        />
         }
 
         {!inSearchMode && !!localContacts.length &&
-          <ContactCardList
-            data={localContacts}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderContact}
-            ItemSeparatorComponent={this.renderSeparator}
-            onScroll={() => Keyboard.dismiss()}
-          />
+        <ContactCardList
+          data={localContacts}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderContact}
+          ItemSeparatorComponent={this.renderSeparator}
+          onScroll={() => Keyboard.dismiss()}
+        />
         }
 
-        {!inSearchMode && !localContacts.length &&
-          <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-            <EmptyStateBGWrapper>
-              <Image source={esBackground} />
-            </EmptyStateBGWrapper>
-            <EmptyStateParagraph
-              title="Nobody is here"
-              bodyText="Start building your connection list by inviting friends or by searching for someone"
+        {!(!!inSearchMode && !!this.props.searchResults.apiUsers.length) &&
+        <KeyboardAvoidingView behavior="padding">
+          {!!query && contactState === FETCHING &&
+            <ActivityIndicator
+              animating
+              color="#111"
+              size="large"
             />
-          </Wrapper>
-        }
+          }
+
+          {inSearchMode && contactState === FETCHED && !usersFound &&
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
+            </Wrapper>
+          }
+
+          {!inSearchMode && !localContacts.length &&
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateBGWrapper>
+                <Image source={esBackground} />
+              </EmptyStateBGWrapper>
+              <EmptyStateParagraph
+                title="Nobody is here"
+                bodyText="Start building your connection list by inviting friends or by searching for someone"
+              />
+            </Wrapper>
+          }
+        </KeyboardAvoidingView> }
       </Container>
     );
   }
