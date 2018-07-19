@@ -18,13 +18,14 @@ const ImageTouchable = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${baseColors.brightSkyBlue};
+  background-color: ${baseColors.cyan};
   ${props => (props.additionalContainerStyle)};
 `;
 
 const AvatarText = styled(BoldText)`
   font-size: ${fontSizes.large};
   color: ${baseColors.white};
+  text-align: center;
   ${props => (props.additionalTextStyle)};
 `;
 
@@ -56,7 +57,12 @@ const ProfileImage = (props: Props) => {
     .toUpperCase();
 
   return (
-    <ImageTouchable additionalContainerStyle={containerStyle} diameter={diameter} disabled={!onPress} onPress={onPress}>
+    <ImageTouchable
+      additionalContainerStyle={containerStyle}
+      diameter={diameter}
+      disabled={!onPress}
+      onPress={onPress}
+    >
       {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
       {!!uri && <CircleImage additionalImageStyle={imageStyle} source={{ uri }} />}
     </ImageTouchable>
