@@ -2,11 +2,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } from 'react-native';
 import { Permissions } from 'expo';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { Container } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
