@@ -241,7 +241,7 @@ class TXHistory extends React.Component<Props, State> {
                 <Row size="0 0 30px">
                   <Column><Label>Recipient</Label></Column>
                   <Column>
-                    <Text>{selectedTransaction.recipient}</Text>
+                    <BaseText>{selectedTransaction.recipient}</BaseText>
                   </Column>
                 </Row>
               }
@@ -249,7 +249,7 @@ class TXHistory extends React.Component<Props, State> {
                 <Row size="0 0 30px">
                   <Column><Label>Transaction fee</Label></Column>
                   <Column>
-                    <Text>{utils.formatEther(selectedTransaction.fee.toString())} ETH</Text>
+                    <BaseText>{utils.formatEther(selectedTransaction.fee.toString())} ETH</BaseText>
                   </Column>
                 </Row>
               }
