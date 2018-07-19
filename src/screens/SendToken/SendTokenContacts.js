@@ -7,7 +7,7 @@ import { Permissions } from 'expo';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, baseColors } from 'utils/variables';
-import { Container, Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
@@ -89,22 +89,15 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const KeyboardAvoidingView = Platform.OS === 'ios' ?
-  styled(RNKeyboardAvoidingView)`
+const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   flex: 1;
   position: absolute;
   bottom: 40;
   left: 0;
   width: 100%;
-` :
-  styled(RNKeyboardAvoidingView)`
-  flex: 1;
-  width: 100%;
-  justify-content: space-between;
-  padding-bottom: 50px;
 `;
 
-const BodyWrapper = styled.View`
+const FormWrapper = styled.View`
   padding: 0 16px;
 `;
 
@@ -122,18 +115,12 @@ const FooterWrapper = Platform.OS === 'ios' ?
   align-items: center;
   padding: 0 16px;
   width: 100%;
-  margin-bottom: 20px;
-  margin-top: 30px;
+  margin-bottom: 10px;
+  margin-top: 10px;
 `;
 
 const ContactCardList = styled.FlatList`
-  padding: 16px;
-`;
-
-const ChooseButton = styled.Text`
-  font-size: ${fontSizes.extraSmall};
-  color: ${baseColors.clearBlue};
-  margin-left: auto;
+  padding: 0 16px;
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
@@ -157,10 +144,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   handleFormSubmit = () => {
     const value = this._form.getValue();
     if (!value) return;
-    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
-      assetData: this.assetData,
-      receiver: value.address,
-    });
+    this.navigateToNextScreen(value.address);
   };
 
   handleQRScannerOpen = async () => {
@@ -181,7 +165,9 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleQRRead = (address: string) => {
-    this.setState({ value: { ...this.state.value, address }, isScanning: false });
+    this.setState({ value: { ...this.state.value, address }, isScanning: false }, () => {
+      this.navigateToNextScreen(address);
+    });
   };
 
   renderContact = ({ item: user }) => {
@@ -190,7 +176,6 @@ class SendTokenContacts extends React.Component<Props, State> {
         name={user.username}
         avatar={user.avatar}
         key={user.id}
-        customButton={<ChooseButton>Choose</ChooseButton>}
         showActions
         noBorder
         onPress={() => this.setUsersEthAddress(user.ethAddress)}
@@ -200,12 +185,16 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   setUsersEthAddress = (ethAddress: string) => {
     this.setState({ value: { ...this.state.value, address: ethAddress } }, () => {
-      this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
-        assetData: this.assetData,
-        receiver: ethAddress,
-      });
+      this.navigateToNextScreen(ethAddress);
     });
   };
+
+  navigateToNextScreen(ethAddress) {
+    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+      assetData: this.assetData,
+      receiver: ethAddress,
+    });
+  }
 
   render() {
     const {
@@ -230,20 +219,21 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { localContacts = [] } = this.props;
     const FormContent = (
       <React.Fragment>
-        <SubTitle>To whom you would like to send?</SubTitle>
-        <Form
-          ref={node => { this._form = node; }}
-          type={formStructure}
-          options={formOptions}
-          onChange={this.handleChange}
-          onBlur={this.handleChange}
-          value={value}
-        />
+        <FormWrapper>
+          <SubTitle margin="0px">To whom you would like to send?</SubTitle>
+          <Form
+            ref={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            onChange={this.handleChange}
+            onBlur={this.handleChange}
+            value={value}
+          />
+        </FormWrapper>
         <ContactCardList
           data={localContacts}
           renderItem={this.renderContact}
           keyExtractor={({ username }) => username}
-          contentContainerStyle={{ paddingBottom: 40 }}
           ItemSeparatorComponent={ContactsSeparator}
         />
       </React.Fragment>
@@ -251,51 +241,42 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const layout = Platform.OS === 'ios' ?
       (
-        <View>
+        <React.Fragment>
           <Container>
             <ModalScreenHeader
-              onBack={this.props.navigation.goBack}
               onClose={this.props.navigation.dismiss}
               rightLabelText="step 1 of 3"
               title="send"
             />
-            <Wrapper regularPadding>
-              {FormContent}
-            </Wrapper>
+            {FormContent}
           </Container>
           {qrScannerComponent}
           <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
+            {!!value.address.length &&
             <FooterWrapper>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
             </FooterWrapper>
+            }
           </KeyboardAvoidingView>
-        </View>
+        </React.Fragment>
       ) :
       (
         <Container>
-          <KeyboardAvoidingView behavior="padding">
-            <View>
-              <ModalScreenHeader
-                onClose={this.props.navigation.dismiss}
-                rightLabelText="step 1 of 3"
-                title="send"
-              />
-              <BodyWrapper>
-                {FormContent}
-              </BodyWrapper>
-            </View>
-            <FooterWrapper>
-              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-            </FooterWrapper>
-          </KeyboardAvoidingView>
+          <ModalScreenHeader
+            onClose={this.props.navigation.dismiss}
+            rightLabelText="step 1 of 3"
+            title="send"
+          />
+          {FormContent}
+          {!!value.address.length &&
+          <FooterWrapper>
+            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+          </FooterWrapper>
+          }
           {qrScannerComponent}
         </Container>
       );
-    return (
-      <React.Fragment>
-        {layout}
-      </React.Fragment>
-    );
+    return layout;
   }
 }
 
