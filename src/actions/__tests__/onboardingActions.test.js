@@ -9,7 +9,10 @@ import {
   ENCRYPTING,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET, APP_FLOW } from 'constants/navigationConstants';
-import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
@@ -89,6 +92,10 @@ describe('Wallet actions', () => {
       },
     });
     const expectedActions = [
+      { type: UPDATE_CONTACTS, payload: [] },
+      { type: UPDATE_INVITATIONS, payload: [] },
+      { type: UPDATE_ASSETS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
@@ -122,6 +129,10 @@ describe('Wallet actions', () => {
       },
     });
     const expectedActions = [
+      { type: UPDATE_CONTACTS, payload: [] },
+      { type: UPDATE_INVITATIONS, payload: [] },
+      { type: UPDATE_ASSETS, payload: {} },
+      { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
