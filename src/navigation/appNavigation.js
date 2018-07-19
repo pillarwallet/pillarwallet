@@ -40,9 +40,12 @@ import {
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
+import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-
+import {
+  fetchTransactionsHistoryNotificationsAction,
+  fetchTransactionsHistoryAction,
+} from 'actions/historyActions';
 
 // constants
 import {
@@ -291,7 +294,9 @@ type Props = {
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  fetchTransactionsHistory: (walletAddress: string) => Function,
+  fetchTransactionsHistoryNotifications: Function,
+  fetchInviteNotifications: Function,
   notifications: Object[],
   wallet: Object,
   assets: Object,
@@ -306,35 +311,37 @@ class AppFlow extends React.Component<Props, {}> {
       userState,
       startListeningNotifications,
       startListeningIntercomNotifications,
+      fetchTransactionsHistory,
+      fetchInviteNotifications,
+      fetchTransactionsHistoryNotifications,
+      fetchAssetsBalances,
+      assets,
+      wallet,
     } = this.props;
     if (userState !== REGISTERED) {
       fetchUser();
     }
     startListeningNotifications();
     startListeningIntercomNotifications();
+    fetchTransactionsHistory(wallet.address);
+    fetchAssetsBalances(assets, wallet.address);
+    fetchInviteNotifications();
+    fetchTransactionsHistoryNotifications();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
       notifications,
-      fetchAssetsBalances,
-      fetchTransactionsHistory,
-      assets,
-      wallet,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-
       Toast.show({
         text: lastNotification.message,
         buttonText: '',
       });
-
-      fetchAssetsBalances(assets, wallet.address);
-      fetchTransactionsHistory(wallet.address, lastNotification.asset);
     }
   }
 
@@ -386,8 +393,14 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
-  fetchTransactionsHistory: (walletAddress, asset) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
+  fetchTransactionsHistory: (walletAddress) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress));
+  },
+  fetchTransactionsHistoryNotifications: () => {
+    dispatch(fetchTransactionsHistoryNotificationsAction());
+  },
+  fetchInviteNotifications: () => {
+    dispatch(fetchInviteNotificationsAction());
   },
 });
 

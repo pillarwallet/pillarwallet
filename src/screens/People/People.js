@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, View, FlatList, Keyboard, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { ActivityIndicator, View, FlatList, Keyboard, Image, KeyboardAvoidingView, Platform, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
@@ -102,11 +102,6 @@ class PeopleScreen extends React.Component<Props, State> {
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
   }
 
-  componentDidMount() {
-    const { fetchInviteNotifications } = this.props;
-    fetchInviteNotifications();
-  }
-
   handleSearchChange = (query: any) => {
     this.setState({ query });
     this.handleContactsSearch(query);
@@ -200,13 +195,24 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !!localContacts.length &&
-        <ContactCardList
-          data={localContacts}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderContact}
-          ItemSeparatorComponent={this.renderSeparator}
-          onScroll={() => Keyboard.dismiss()}
-        />
+          <ContactCardList
+            data={localContacts}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderContact}
+            ItemSeparatorComponent={this.renderSeparator}
+            onScroll={() => Keyboard.dismiss()}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  const {
+                    fetchInviteNotifications,
+                  } = this.props;
+                  fetchInviteNotifications();
+                }}
+              />
+            }
+          />
         }
 
         {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&

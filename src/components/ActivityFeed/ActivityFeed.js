@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, TouchableOpacity, Image } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
@@ -30,7 +30,8 @@ const SOCIAL_TYPES = [
 const TRANSACTIONS = 'TRANSACTIONS';
 const SOCIAL = 'SOCIAL';
 const ALL = 'ALL';
-
+const iconUp = require('assets/icons/up.png');
+const iconDown = require('assets/icons/down.png');
 
 const NOTIFICATION_LABELS = {
   [TYPE_ACCEPTED]: 'New connection',
@@ -51,8 +52,8 @@ const ActivityFeedHeader = styled.View`
 
 const ActivityFeedItem = styled.View`
   background-color: ${props => props.isEven ? baseColors.white : baseColors.snowWhite};
-  height: 60px;
-  padding: 0 16px;
+  height: 74px;
+  padding: 0px 16px;
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
@@ -71,7 +72,7 @@ const ActivityFeedItemName = styled.Text`
 const ActivityFeedItemAmount = styled.Text`
   font-weight: ${fontWeights.bold};
   font-size: ${fontSizes.small};
-  color: ${props => props.received ? baseColors.jadeGreen : baseColors.slateBlack};
+  color: ${props => props.received ? baseColors.jadeGreen : baseColors.fireEngineRed};
 `;
 
 const ActivityFeedItemCol = styled.View`
@@ -119,7 +120,7 @@ const ButtonIconWrapper = styled.View`
 
 const LabelText = styled.Text`
   font-size: ${fontSizes.small};
-  color: ${(props) => props.button ? baseColors.electricBlue : baseColors.darkGray};
+  color: ${(props) => props.button ? baseColors.fireEngineRed : baseColors.darkGray};
   margin-left: auto;
 `;
 
@@ -128,6 +129,7 @@ type Props = {
   onAcceptInvitation: Function,
   onCancelInvitation: Function,
   onRejectInvitation: Function,
+  walletAddress: string,
 }
 
 type State = {
@@ -196,34 +198,30 @@ export default class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
-  renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
-    const isEven = index % 2 === 0;
+  renderActivityFeedItem = ({ item: notification, index }: Object) => {
+    const isEven = index % 2;
     const { type } = notification;
+    const { walletAddress } = this.props;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
     if (type === TRANSACTION_EVENT) {
-      const received = notification.value > 0;
-      const fromAddress = `${notification.fromAddress.slice(0, 7)}…${notification.fromAddress.slice(-7)}`;
-      const displayName = notification.username ? notification.username : fromAddress;
-      const directionSymbol = received ? '+' : '-';
-      const value = utils.formatUnits(utils.bigNumberify(notification.value));
-      const direction = received ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
+      const isReceived = notification.toAddress.toUpperCase() === walletAddress.toUpperCase();
+      const address = isReceived ? notification.fromAddress : notification.toAddress;
+      const directionSymbol = isReceived ? '+' : '-';
+      const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
+      const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
+      const title = notification.username || `${address.slice(0, 7)}…${address.slice(-7)}`;
+      const directionIcon = isReceived ? iconDown : iconUp;
       return (
         <ActivityFeedItem isEven={isEven} key={index}>
-          <ActivityFeedItemCol fixedWidth="42px">
-            <ProfileImage
-              uri={notification.avatar}
-              userName={displayName}
-              diameter={32}
-              containerStyle={{ marginRight: 10 }}
-              textStyle={{ fontSize: 14 }}
-            />
+          <ActivityFeedItemCol fixedWidth="44px">
+            <Image source={directionIcon} style={{ width: 36, height: 36 }} />
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol >
+          <ActivityFeedItemCol fixedWidth="200px">
+            <ActivityFeedItemName>{title}</ActivityFeedItemName>
             <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
-            <ActivityFeedItemName>{displayName}</ActivityFeedItemName>
           </ActivityFeedItemCol>
           <ActivityFeedItemCol flexEnd>
-            <ActivityFeedItemAmount received={received}>
+            <ActivityFeedItemAmount received={isReceived}>
               {directionSymbol}{value} {notification.asset}
             </ActivityFeedItemAmount>
           </ActivityFeedItemCol>
@@ -232,18 +230,17 @@ export default class ActivityFeed extends React.Component<Props, State> {
     }
     return (
       <ActivityFeedItem isEven={isEven} key={index}>
-        <ActivityFeedItemCol fixedWidth="42px">
+        <ActivityFeedItemCol fixedWidth="44px">
           <ProfileImage
             uri={notification.avatar}
             userName={notification.username}
-            diameter={32}
-            containerStyle={{ marginRight: 10 }}
+            diameter={36}
             textStyle={{ fontSize: 14 }}
           />
         </ActivityFeedItemCol>
-        <ActivityFeedItemCol>
-          <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
+        <ActivityFeedItemCol fixedWidth="200px">
           <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
+          <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
         </ActivityFeedItemCol>
         <ActivityFeedItemCol flexEnd>
           {this.getSocialAction(type, notification)}
