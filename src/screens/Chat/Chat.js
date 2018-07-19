@@ -20,6 +20,7 @@ import { baseColors } from 'utils/variables';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import ProfileImage from 'components/ProfileImage';
 import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
+import { getUserName } from 'utils/contacts';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
 
@@ -130,7 +131,7 @@ class ChatScreen extends React.Component<Props, State> {
         }}
       />
     );
-  }
+  };
 
   renderAvatar = (props: Props) => {
     return (
@@ -271,7 +272,7 @@ class ChatScreen extends React.Component<Props, State> {
         }}
       />
     );
-  }
+  };
 
   onSend = (messages: Object[] = []) => {
     const { sendMessageByContact } = this.props;
@@ -283,7 +284,7 @@ class ChatScreen extends React.Component<Props, State> {
     const { messages, user } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const contactMessages = this.formatMessages(messages[contact.username], contact, user);
-    const title = `chat with ${contact.username.toLowerCase()}`;
+    const title = `chat with ${getUserName(contact).toLowerCase()}`;
     return (
       <React.Fragment>
         <Container>
