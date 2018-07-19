@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, View, FlatList, Keyboard } from 'react-native';
+import { ActivityIndicator, View, FlatList, Keyboard, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
@@ -18,8 +18,10 @@ import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
+
 
 const PeopleHeader = styled.View`
   flex-direction: row;
@@ -60,26 +62,19 @@ const ContactCardList = styled(FlatList)`
   padding: 16px;
 `;
 
-const EmptySectionTextWrapper = styled.View`
-  width: 230px;
-  margin-top: -200px;
-  align-items: center;
-  justify-content: center;
-`;
-
-const EmptySectionTitle = styled(BaseText)`
-  font-size: ${fontSizes.large};
-  color: ${baseColors.slateBlack};
-  margin-bottom: 6px;
-`;
-
-const EmptySectionText = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  color: ${baseColors.darkGray};
-  text-align: center;
+const EmptyStateBGWrapper = styled.View`
+  flex-direction: row;
+  justify-content: flex-start;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 16px 16px 16px;
 `;
 
 const MIN_QUERY_LENGTH = 2;
+
+const esBackground = require('assets/images/esLeftLong.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -178,7 +173,6 @@ class PeopleScreen extends React.Component<Props, State> {
             }}
           />
         </Wrapper>
-
         {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
@@ -196,53 +190,53 @@ class PeopleScreen extends React.Component<Props, State> {
           </ConnectionRequestBanner>
         }
 
-        {!!query && contactState === FETCHING &&
-          <ActivityIndicator
-            animating
-            color="#111"
-            size="large"
-          />
-        }
-
         {inSearchMode && contactState === FETCHED && usersFound &&
-          <PeopleSearchResults
-            searchResults={searchResults}
-            navigation={navigation}
-            invitations={invitations}
-            localContacts={localContacts}
-          />
-        }
-
-        {inSearchMode && contactState === FETCHED && !usersFound &&
-          <Wrapper center fullScreen>
-            <EmptySectionTextWrapper>
-              <EmptySectionTitle>Nobody found</EmptySectionTitle>
-              <EmptySectionText>
-                Make sure you entered the name correctly
-              </EmptySectionText>
-            </EmptySectionTextWrapper>
-          </Wrapper>
+        <PeopleSearchResults
+          searchResults={searchResults}
+          navigation={navigation}
+          invitations={invitations}
+          localContacts={localContacts}
+        />
         }
 
         {!inSearchMode && !!localContacts.length &&
-          <ContactCardList
-            data={localContacts}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderContact}
-            ItemSeparatorComponent={this.renderSeparator}
-            onScroll={() => Keyboard.dismiss()}
-          />
+        <ContactCardList
+          data={localContacts}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderContact}
+          ItemSeparatorComponent={this.renderSeparator}
+          onScroll={() => Keyboard.dismiss()}
+        />
         }
 
-        {!inSearchMode && !localContacts.length &&
-          <Wrapper center fullScreen>
-            <EmptySectionTextWrapper>
-              <EmptySectionTitle>Nobody is here</EmptySectionTitle>
-              <EmptySectionText>
-                Start building your connection list by inviting friends or by searching for someone
-              </EmptySectionText>
-            </EmptySectionTextWrapper>
-          </Wrapper>
+        {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
+        <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
+          {!!query && contactState === FETCHING &&
+            <ActivityIndicator
+              animating
+              color="#111"
+              size="large"
+            />
+          }
+
+          {inSearchMode && contactState === FETCHED && !usersFound &&
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateParagraph title="Nobody found" bodyText="Make sure you entered the name correctly" />
+            </Wrapper>
+          }
+
+          {!inSearchMode && !localContacts.length &&
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateBGWrapper>
+                <Image source={esBackground} />
+              </EmptyStateBGWrapper>
+              <EmptyStateParagraph
+                title="Nobody is here"
+                bodyText="Start building your connection list by inviting friends or by searching for someone"
+              />
+            </Wrapper>
+          }
+        </KeyboardAvoidingView>
         }
       </Container>
     );
