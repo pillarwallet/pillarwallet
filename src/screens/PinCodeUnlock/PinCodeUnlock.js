@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react';
-
-import { Text, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { checkPinAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
+import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -56,7 +56,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (walletState === DECRYPTING) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
+          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
           <ActivityIndicator
             animating
             color="#111"

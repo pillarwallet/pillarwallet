@@ -160,10 +160,20 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "fontSize": 22,
-                    "fontWeight": "700",
+                    "fontFamily": "aktiv-grotesk-regular",
                   },
-                  undefined,
+                  Array [
+                    Object {
+                      "fontFamily": "aktiv-grotesk-bold",
+                    },
+                    Array [
+                      Object {
+                        "fontSize": 22,
+                        "fontWeight": "700",
+                      },
+                      undefined,
+                    ],
+                  ],
                 ]
               }
             >
@@ -176,17 +186,27 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "alignSelf": "flex-end",
-                    "backgroundColor": "#00bfff",
-                    "color": "#007AFF",
-                    "fontSize": 10,
-                    "height": 4,
-                    "left": 6,
-                    "position": "relative",
-                    "top": -9,
-                    "width": 4,
+                    "fontFamily": "aktiv-grotesk-regular",
                   },
-                  undefined,
+                  Array [
+                    Object {
+                      "fontFamily": "aktiv-grotesk-bold",
+                    },
+                    Array [
+                      Object {
+                        "alignSelf": "flex-end",
+                        "backgroundColor": "#00bfff",
+                        "color": "#007AFF",
+                        "fontSize": 10,
+                        "height": 4,
+                        "left": 6,
+                        "position": "relative",
+                        "top": -9,
+                        "width": 4,
+                      },
+                      undefined,
+                    ],
+                  ],
                 ]
               }
             />
@@ -293,24 +313,29 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           style={
             Array [
               Object {
-                "color": "#007AFF",
-                "fontSize": 16,
-                "fontWeight": "400",
-                "lineHeight": 24,
-                "marginBottom": 20,
-                "marginLeft": 0,
-                "marginRight": 0,
-                "marginTop": 0,
-                "textAlign": "left",
+                "fontFamily": "aktiv-grotesk-regular",
               },
               Array [
                 Object {
-                  "paddingBottom": 10,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 10,
+                  "color": "#007AFF",
+                  "fontSize": 16,
+                  "fontWeight": "400",
+                  "lineHeight": 24,
+                  "marginBottom": 20,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "textAlign": "left",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "paddingBottom": 10,
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "paddingTop": 10,
+                  },
+                  undefined,
+                ],
               ],
             ]
           }

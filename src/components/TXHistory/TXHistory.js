@@ -1,14 +1,14 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList, Text, Linking, Image, Dimensions } from 'react-native';
 import { utils } from 'ethers';
+import { FlatList, Linking, Image, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { Row, Column } from 'components/Grid';
-import { Label } from 'components/Typography';
+import { Label, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
 import { getUserName } from 'utils/contacts';
@@ -228,20 +228,20 @@ class TXHistory extends React.Component<Props, State> {
                   <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
                 </Column>
                 <Column>
-                  <Text>{selectedTransaction.amount} {selectedTransaction.token}</Text>
+                  <BaseText>{selectedTransaction.amount} {selectedTransaction.token}</BaseText>
                 </Column>
               </Row>
               <Row size="0 0 30px">
                 <Column><Label>Date</Label></Column>
                 <Column>
-                  <Text>{selectedTransaction.date}</Text>
+                  <BaseText>{selectedTransaction.date}</BaseText>
                 </Column>
               </Row>
               {!!selectedTransaction.recipient &&
                 <Row size="0 0 30px">
                   <Column><Label>Recipient</Label></Column>
                   <Column>
-                    <Text>{selectedTransaction.recipient}</Text>
+                    <BaseText>{selectedTransaction.recipient}</BaseText>
                   </Column>
                 </Row>
               }
@@ -249,7 +249,7 @@ class TXHistory extends React.Component<Props, State> {
                 <Row size="0 0 30px">
                   <Column><Label>Transaction fee</Label></Column>
                   <Column>
-                    <Text>{utils.formatEther(selectedTransaction.fee.toString())} ETH</Text>
+                    <BaseText>{utils.formatEther(selectedTransaction.fee.toString())} ETH</BaseText>
                   </Column>
                 </Row>
               }
@@ -258,14 +258,14 @@ class TXHistory extends React.Component<Props, State> {
                 <Row size="0 0 80px">
                   <Column><Label>Note</Label></Column>
                   <Column>
-                    <Text>{selectedTransaction.note}</Text>
+                    <BaseText>{selectedTransaction.note}</BaseText>
                   </Column>
                 </Row>
               }
               <Row size="0 0 30px">
                 <Column><Label>Status</Label></Column>
                 <Column>
-                  <Text>{selectedTransaction.status}</Text>
+                  <BaseText>{selectedTransaction.status}</BaseText>
                 </Column>
               </Row>
             </Holder>
