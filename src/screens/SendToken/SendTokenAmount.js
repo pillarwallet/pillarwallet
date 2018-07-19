@@ -277,6 +277,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         <ScrollWrapper color={baseColors.white}>
           <Container>
             <ModalScreenHeader
+              onBack={this.props.navigation.goBack}
               onClose={this.props.navigation.dismiss}
               rightLabelText="step 2 of 3"
               title="send"
@@ -319,6 +320,7 @@ class SendTokenAmount extends React.Component<Props, State> {
                 rightLabelText="step 2 of 3"
                 title="send"
               />
+              <WarningBanner />
               <BodyWrapper>
                 <SubTitle>How much {token} would you like to send?</SubTitle>
                 <Form
