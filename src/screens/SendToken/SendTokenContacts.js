@@ -2,11 +2,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } from 'react-native';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform, View, StatusBar } from 'react-native';
 import { Permissions } from 'expo';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes } from 'utils/variables';
+import { fontSizes, baseColors } from 'utils/variables';
 import { Container } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
@@ -33,6 +33,12 @@ type State = {
   },
   formStructure: t.struct,
 }
+
+const statusBarHeight = Platform.OS === 'ios' ?
+  20
+  :
+  StatusBar.currentHeight;
+
 
 const qrCode = require('assets/images/qr.png');
 
@@ -241,15 +247,13 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     const layout = Platform.OS === 'ios' ?
       (
-        <React.Fragment>
-          <Container>
-            <ModalScreenHeader
-              onClose={this.props.navigation.dismiss}
-              rightLabelText="step 1 of 3"
-              title="send"
-            />
-            {FormContent}
-          </Container>
+        <Container>
+          <ModalScreenHeader
+            onClose={this.props.navigation.dismiss}
+            rightLabelText="step 1 of 3"
+            title="send"
+          />
+          {FormContent}
           {qrScannerComponent}
           <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
             {!!value.address.length &&
@@ -258,7 +262,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             </FooterWrapper>
             }
           </KeyboardAvoidingView>
-        </React.Fragment>
+        </Container>
       ) :
       (
         <Container>
@@ -276,7 +280,11 @@ class SendTokenContacts extends React.Component<Props, State> {
           {qrScannerComponent}
         </Container>
       );
-    return layout;
+    return (
+      <View style={{ paddingTop: statusBarHeight, backgroundColor: baseColors.white }}>
+        {layout}
+      </View>
+    );
   }
 }
 
