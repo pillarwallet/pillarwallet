@@ -3,7 +3,6 @@ import * as React from 'react';
 import { View, ActivityIndicator, StatusBar, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
-import { LinearGradient } from 'expo';
 import type { NavigationScreenProp } from 'react-navigation';
 import {
   GiftedChat,
@@ -21,6 +20,7 @@ import { baseColors } from 'utils/variables';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import ProfileImage from 'components/ProfileImage';
 import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
+import { getUserName } from 'utils/contacts';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
 
@@ -131,7 +131,7 @@ class ChatScreen extends React.Component<Props, State> {
         }}
       />
     );
-  }
+  };
 
   renderAvatar = (props: Props) => {
     return (
@@ -272,7 +272,7 @@ class ChatScreen extends React.Component<Props, State> {
         }}
       />
     );
-  }
+  };
 
   onSend = (messages: Object[] = []) => {
     const { sendMessageByContact } = this.props;
@@ -284,23 +284,12 @@ class ChatScreen extends React.Component<Props, State> {
     const { messages, user } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const contactMessages = this.formatMessages(messages[contact.username], contact, user);
+    const title = `chat with ${getUserName(contact).toLowerCase()}`;
     return (
       <React.Fragment>
         <Container>
-          <ModalScreenHeader title={contact.username} onClose={this.handleChatDismissal} />
-          <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
-            <LinearGradient
-              colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}
-              locations={[0.2, 0.6, 1.0]}
-              style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: 20,
-                height: 80,
-                zIndex: 11,
-              }}
-            />
+          <ModalScreenHeader title={title} center onClose={this.handleChatDismissal} />
+          <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
             <GiftedChat
               messages={contactMessages}
               onSend={msgs => this.onSend(msgs)}
