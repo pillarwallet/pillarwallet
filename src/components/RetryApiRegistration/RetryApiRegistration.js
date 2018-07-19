@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Text, ActivityIndicator } from 'react-native';
-
+import { ActivityIndicator } from 'react-native';
+import { BaseText } from 'components/Typography';
 import { registerOnBackendAction } from 'actions/onboardingActions';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
@@ -23,7 +23,7 @@ class RetryApiRegistration extends React.Component<Props> {
     const { registerOnBackend, wallet: { walletState } } = this.props;
     return (
       <Container center>
-        <Text style={{ marginBottom: 20 }}>Registering on backend</Text>
+        <BaseText style={{ marginBottom: 20 }}>Registering on backend</BaseText>
         {walletState !== API_REGISTRATION_FAILED && (
           <ActivityIndicator
             animating

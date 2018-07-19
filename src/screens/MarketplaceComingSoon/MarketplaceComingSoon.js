@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 
@@ -21,7 +21,7 @@ const ComingSoonBanner = styled.View`
   background: ${baseColors.sunYellow};
 `;
 
-const ComingSoonBannerText = styled.Text`
+const ComingSoonBannerText = styled(BoldText)`
   font-size: ${fontSizes.extraLarge};
   font-weight: ${fontWeights.bold};
 `;

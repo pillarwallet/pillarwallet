@@ -4,7 +4,9 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Image, Text, View, Platform } from 'react-native';
+
+import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
+import { BaseText } from 'components/Typography';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -166,7 +168,7 @@ const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
 );
 
 const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
-  <Text
+  <BaseText
     style={{
       fontSize: 12,
       color: focused ? tintColor : baseColors.mediumGray,
@@ -174,7 +176,7 @@ const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
     }}
   >
     {labelText}
-  </Text>
+  </BaseText>
 );
 
 // TAB NAVIGATION FLOW
