@@ -5,10 +5,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
-import { baseColors, fontWeights, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { SubTitle } from 'components/Typography';
+import { SubTitle, BoldText, LightText } from 'components/Typography';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import {
   addAssetAction,
@@ -20,15 +20,13 @@ import { ETH } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { Image as ImageCache } from 'react-native-expo-image-cache';
 
-const TokenName = styled.Text`
+const TokenName = styled(BoldText)`
   font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.bold};
 `;
 
-const TokenSymbol = styled.Text`
+const TokenSymbol = styled(LightText)`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.light};
 `;
 
 const TokenListItem = styled(ListItem)`

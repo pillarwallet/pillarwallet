@@ -35,7 +35,7 @@ const ALL = 'ALL';
 const NOTIFICATION_LABELS = {
   [TYPE_ACCEPTED]: 'New connection',
   [TYPE_RECEIVED]: 'Incoming connection',
-  [TYPE_SENT]: 'Connection request sent',
+  [TYPE_SENT]: 'Request sent',
   [TYPE_REJECTED]: 'Connection rejected',
   [TRANSACTION_RECEIVED]: 'Received',
   [TRANSACTION_SENT]: 'Sent',
