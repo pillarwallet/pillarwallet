@@ -13,6 +13,8 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
+import RNCamera from 'components/RNCamera';
+import { Permissions } from 'expo';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import {
   cancelInvitationAction,
@@ -109,7 +111,21 @@ type Props = {
   homeNotifications: Object[],
 };
 
-class PeopleScreen extends React.Component<Props> {
+type State = {
+  showCamera: boolean,
+  permissionsGranted: boolean,
+}
+
+class PeopleScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      showCamera: false,
+      permissionsGranted: false,
+    };
+  }
+
+
   componentDidMount() {
     const { fetchHistoryNotifications, fetchInviteNotifications } = this.props;
     fetchHistoryNotifications();
@@ -120,6 +136,15 @@ class PeopleScreen extends React.Component<Props> {
     const { navigation } = this.props;
     navigation.navigate(PROFILE);
   };
+
+
+  toggleCamera = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    this.setState({
+      permissionsGranted: status === 'granted',
+      showCamera: !this.state.showCamera,
+    });
+  }
 
   renderRecentConnections = () => {
     const { contacts, navigation } = this.props;
@@ -153,6 +178,10 @@ class PeopleScreen extends React.Component<Props> {
       invitations,
       historyNotifications,
     } = this.props;
+    const {
+      showCamera,
+      permissionsGranted,
+    } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const homeNotifications = [...mappedContacts, ...invitations, ...historyNotifications]
       .sort((a, b) => b.createdAt - a.createdAt);
@@ -167,6 +196,7 @@ class PeopleScreen extends React.Component<Props> {
               containerStyle={{
                 marginRight: 10,
               }}
+              onPress={this.toggleCamera}
             />
             <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
             <HomeHeaderButtons>
@@ -215,6 +245,11 @@ class PeopleScreen extends React.Component<Props> {
             history={homeNotifications}
           />
         </ScrollWrapper>
+        <RNCamera
+          isVisible={showCamera}
+          modalHide={this.toggleCamera}
+          permissionsGranted={permissionsGranted}
+        />
       </Container>
     );
   }
