@@ -30,6 +30,7 @@ type Props = {
   sendMessageByContact: Function,
   getChatByContact: Function,
   messages: Object,
+  notifications: Object
 }
 
 type State = {
@@ -57,6 +58,15 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     const { getChatByContact } = this.props;
     getChatByContact(contact.username);
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    const { notifications, getChatByContact } = this.props;
+    const { contact } = this.state;
+    const { notifications: prevNotifications } = prevProps;
+    if (notifications.length !== prevNotifications.length) {
+      getChatByContact(contact.username);
+    }
   }
 
   formatMessages = (messages: Object[] = [], contact: Object, user: Object) => {
@@ -340,9 +350,11 @@ class ChatScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   chat: { data: { messages } },
+  notifications: { data: notifications },
 }) => ({
   user,
   messages,
+  notifications,
 });
 
 const mapDispatchToProps = (dispatch) => ({
