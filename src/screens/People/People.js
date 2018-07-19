@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, View, FlatList, Keyboard, Image, KeyboardAvoidingView } from 'react-native';
+import { ActivityIndicator, View, FlatList, Keyboard, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
@@ -210,7 +210,7 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!(!!inSearchMode && !!this.props.searchResults.apiUsers.length) &&
-        <KeyboardAvoidingView behavior="padding">
+        <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
           {!!query && contactState === FETCHING &&
             <ActivityIndicator
               animating
