@@ -213,7 +213,7 @@ const tabNavigation = createBottomTabNavigator(
     [HOME]: {
       screen: homeFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHome, true),
+        tabBarIcon: tabBarIcon(iconHome),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
