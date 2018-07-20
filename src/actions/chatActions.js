@@ -24,7 +24,7 @@ export const getExistingChatsAction = () => {
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
     await chat.client.sendMessageByContact(username, message.text).catch(() => null);
-    const timestamp = new Date(message.createdAt).getTime() / 1000;
+    const timestamp = new Date(message.createdAt).getTime();
     const msg = {
       content: message.text,
       savedTimestamp: timestamp,
