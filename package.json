@@ -190,9 +190,9 @@
     "tls": false
   },
   "rnpm": {
-      "assets": [
-    "./src/assets/fonts/"
-      ]
+    "assets": [
+      "./src/assets/fonts/"
+    ]
   },
   "browser": {
     "fs": "react-native-level-fs",
