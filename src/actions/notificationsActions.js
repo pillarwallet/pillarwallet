@@ -6,7 +6,7 @@ import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
-  fetchTransactionsHistoryAction
+  fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 

@@ -163,7 +163,7 @@ class PeopleScreen extends React.Component<Props> {
       </EmptyStateWrapper>
     );
   };
-  
+
   mapTransactionsHistory(history, historyNotifications, contacts) {
     const concatedHistory = history
       .map(({
@@ -219,7 +219,7 @@ class PeopleScreen extends React.Component<Props> {
             <ProfileImage
               uri={user.avatar}
               userName={user.username}
-              diameter={40}
+              diameter={42}
               containerStyle={{
                 marginRight: 10,
               }}
