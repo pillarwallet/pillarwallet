@@ -14,7 +14,7 @@ export const buildHistoryTransaction = ({
 }: TransactionEthers): Transaction => ({
   status: PENDING,
   gasUsed: parseFloat(utils.formatEther(gasPrice.mul(gasLimit))),
-  value: utils.formatEther(value),
+  value,
   from,
   hash,
   to,
