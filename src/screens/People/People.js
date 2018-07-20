@@ -1,24 +1,34 @@
 // @flow
 import * as React from 'react';
-import { ActivityIndicator } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import { ActivityIndicator, View, FlatList, Keyboard } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { searchContactsAction } from 'actions/contactsActions';
+import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
+import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
+import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
 
+const PeopleHeader = styled.View`
+  flex-direction: row;
+  height: 97px;
+  background-color: ${baseColors.white};
+  padding: 0 16px;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -31,7 +41,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   flex-direction: row;
 `;
 
-const ConnectionRequestBannerText = styled.Text`
+const ConnectionRequestBannerText = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
@@ -46,7 +56,7 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
 `;
 
-const ContactCardList = styled(ScrollWrapper)`
+const ContactCardList = styled(FlatList)`
   padding: 16px;
 `;
 
@@ -57,17 +67,19 @@ const EmptySectionTextWrapper = styled.View`
   justify-content: center;
 `;
 
-const EmptySectionTitle = styled.Text`
+const EmptySectionTitle = styled(BaseText)`
   font-size: ${fontSizes.large};
   color: ${baseColors.slateBlack};
   margin-bottom: 6px;
 `;
 
-const EmptySectionText = styled.Text`
+const EmptySectionText = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
   text-align: center;
 `;
+
+const MIN_QUERY_LENGTH = 2;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -76,19 +88,18 @@ type Props = {
   contactState: ?string,
   user: Object,
   fetchInviteNotifications: Function,
+  resetSearchContactsState: Function,
   invitations: Object[],
   localContacts: Object[],
 }
 
 type State = {
   query: string,
-  emptyList: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
   state = {
     query: '',
-    emptyList: false,
   };
 
   constructor(props: Props) {
@@ -107,7 +118,8 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   handleContactsSearch = (query: string) => {
-    if (!query || query.trim() === '' || query.length < 2) {
+    if (!query || query.trim() === '' || query.length < MIN_QUERY_LENGTH) {
+      this.props.resetSearchContactsState();
       return;
     }
     this.props.searchContacts(query);
@@ -121,19 +133,26 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
-  renderLocalContacts = () => {
-    const { localContacts } = this.props;
-    return localContacts.map(contact => (
-      <ContactCard
-        onPress={this.handleContactCardPress(contact)}
-        name={contact.firstName || contact.username}
-        key={contact.username}
-      />
-    ));
+  renderSeparator = () => {
+    return (
+      <View style={{ marginTop: -4, borderRadius: 4 }}>
+        <View style={{ height: 1, width: '100%' }} />
+      </View>
+    );
   };
 
+  keyExtractor = (item) => item.id;
+
+  renderContact = ({ item }) => (
+    <ContactCard
+      onPress={this.handleContactCardPress(item)}
+      name={item.firstName || item.username}
+      key={item.id}
+    />
+  );
+
   render() {
-    const { query, emptyList } = this.state;
+    const { query } = this.state;
     const {
       searchResults,
       contactState,
@@ -141,12 +160,16 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       localContacts,
     } = this.props;
-    const inSearchMode = (query !== '' && !!contactState);
+    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
+    const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
+    const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
 
     return (
       <Container>
+        <PeopleHeader>
+          <Title center noMargin title="people" />
+        </PeopleHeader>
         <Wrapper regularPadding>
-          <Title title="people" />
           <SearchBar
             inputProps={{
               onChange: this.handleSearchChange,
@@ -156,7 +179,7 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         </Wrapper>
 
-        {!inSearchMode && !!invitations.length &&
+        {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
             underlayColor={baseColors.lightGray}
@@ -166,9 +189,9 @@ class PeopleScreen extends React.Component<Props, State> {
                 Connection requests
               </ConnectionRequestBannerText>
               <ConnectionRequestNotificationCircle>
-                {invitations.length}
+                {pendingConnectionRequests}
               </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon name="arrow-forward" />
+              <ConnectionRequestBannerIcon type="Feather" name="chevron-right" />
             </React.Fragment>
           </ConnectionRequestBanner>
         }
@@ -181,7 +204,7 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         }
 
-        {query.length >= 2 && contactState === FETCHED &&
+        {inSearchMode && contactState === FETCHED && usersFound &&
           <PeopleSearchResults
             searchResults={searchResults}
             navigation={navigation}
@@ -190,13 +213,28 @@ class PeopleScreen extends React.Component<Props, State> {
           />
         }
 
-        {!inSearchMode && !emptyList &&
-          <ContactCardList contentInset={{ bottom: 40 }}>
-            {this.renderLocalContacts()}
-          </ContactCardList>
+        {inSearchMode && contactState === FETCHED && !usersFound &&
+          <Wrapper center fullScreen>
+            <EmptySectionTextWrapper>
+              <EmptySectionTitle>Nobody found</EmptySectionTitle>
+              <EmptySectionText>
+                Make sure you entered the name correctly
+              </EmptySectionText>
+            </EmptySectionTextWrapper>
+          </Wrapper>
         }
 
-        {!!emptyList && !inSearchMode &&
+        {!inSearchMode && !!localContacts.length &&
+          <ContactCardList
+            data={localContacts}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderContact}
+            ItemSeparatorComponent={this.renderSeparator}
+            onScroll={() => Keyboard.dismiss()}
+          />
+        }
+
+        {!inSearchMode && !localContacts.length &&
           <Wrapper center fullScreen>
             <EmptySectionTextWrapper>
               <EmptySectionTitle>Nobody is here</EmptySectionTitle>
@@ -227,6 +265,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   searchContacts: (query) => dispatch(searchContactsAction(query)),
+  resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
 });
 

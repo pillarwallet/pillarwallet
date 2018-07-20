@@ -5,9 +5,11 @@ import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
-import { baseColors, fontSizes } from 'utils/variables';
-import { Wrapper } from 'components/Layout';
+import { CONTACT } from 'constants/navigationConstants';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import ContactCard from 'components/ContactCard';
+import ContactsSeparator from 'components/ContactsSeparator';
+import { SubHeading, BaseText } from 'components/Typography';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import {
   sendInvitationAction,
@@ -20,28 +22,48 @@ const ContactCardList = styled.FlatList`
   padding: 16px;
 `;
 
-const TabWrapper = styled.View`
-  flex-direction: row;
+const LocalContacts = styled.View`
+  height: 140px;
+  background-color: ${baseColors.lightGray};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${UIColors.defaultBorderColor};
 `;
 
-const TabItem = styled.TouchableOpacity`
-  height: 44px;
+const LocalContactsScrollView = styled.ScrollView`
+`;
+
+const LocalContactsSubHeading = styled(SubHeading)`
+  margin: 16px;
+`;
+
+const LocalContactsItem = styled.TouchableOpacity`
   align-items: center;
-  justify-content: center;
-  flex: 1;
-  border-color: ${props => props.active ? baseColors.electricBlue : baseColors.lightGray};
-  border-bottom-width: 2px;
+  width: 64px;
+  margin: 0 8px;
 `;
 
-const TabItemText = styled.Text`
-  font-size: ${fontSizes.medium};
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
+const LocalContactsItemAvatarWrapper = styled.View`
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
+  background-color: ${baseColors.cyan};
+  border: 2px solid white;
+  shadow-color: ${baseColors.black};
+  shadow-offset: 0 0;
+  shadow-radius: 2px;
+  shadow-opacity: 0.1;
+  margin-bottom: 10px;
 `;
 
-const tabs = {
-  contacts: 'CONTACTS',
-  allUsers: 'ALL_USERS',
-};
+const LocalContactsItemAvatarImage = styled.Image`
+`;
+
+const LocalContactsItemName = styled(BaseText)`
+  font-size: ${fontSizes.small};
+  color: ${baseColors.darkGray};
+`;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -51,18 +73,10 @@ type Props = {
   cancelInvitation: Function,
   rejectInvitation: Function,
   invitations: Object[],
-  localContacts: Object[]
+  localContacts: Object[],
 };
 
-type State = {
-  activeTab: string,
-};
-
-class PeopleSearchResults extends React.Component<Props, State> {
-  state = {
-    activeTab: tabs.allUsers,
-  };
-
+class PeopleSearchResults extends React.Component<Props> {
   handleSendInvitationPress = (user: ApiUser) => () => {
     this.props.sendInvitation(user);
   };
@@ -103,45 +117,54 @@ class PeopleSearchResults extends React.Component<Props, State> {
         onCancelInvitationPress={this.handleCancelInvitationPress(user)}
         onRejectInvitationPress={this.handleRejectInvitationPress(user)}
         name={user.username}
+        avatar={user.avatar}
         key={user.id}
         status={status}
         showActions
+        noBorder
       />
     );
   };
 
+  renderLocalContacts = (contacts = []) => {
+    const { navigation } = this.props;
+    return contacts
+      .map(contact => (
+        <LocalContactsItem
+          key={contact.username}
+          onPress={() => navigation.navigate(CONTACT, { contact })}
+        >
+          <LocalContactsItemAvatarWrapper>
+            <LocalContactsItemAvatarImage />
+          </LocalContactsItemAvatarWrapper>
+          <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
+        </LocalContactsItem>
+      ));
+  };
+
   render() {
-    const { activeTab } = this.state;
     const { searchResults } = this.props;
-    const users = {
-      [tabs.allUsers]: searchResults.apiUsers,
-      [tabs.contacts]: searchResults.localContacts,
-    };
     return (
       <React.Fragment>
-        <Wrapper regularPadding>
-          <TabWrapper>
-            <TabItem
-              active={activeTab === tabs.allUsers}
-              onPress={() => this.setState({ activeTab: tabs.allUsers })}
-            >
-              <TabItemText active={activeTab === tabs.allUsers}>All users</TabItemText>
-            </TabItem>
-            <TabItem
-              active={activeTab === tabs.contacts}
-              onPress={() => this.setState({ activeTab: tabs.contacts })}
-            >
-              <TabItemText>My contacts</TabItemText>
-            </TabItem>
-          </TabWrapper>
-        </Wrapper>
-        <ContactCardList
-          contentInset={{ bottom: 40 }}
-          data={users[activeTab]}
-          renderItem={this.renderContact}
-          onScroll={() => Keyboard.dismiss()}
-          keyExtractor={({ username }) => username}
-        />
+        {!!searchResults.localContacts.length && (
+          <LocalContacts>
+            <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
+            <LocalContactsScrollView horizontal>
+              {this.renderLocalContacts(searchResults.localContacts)}
+            </LocalContactsScrollView>
+          </LocalContacts>
+        )}
+        {!!searchResults.apiUsers.length && (
+          <ContactCardList
+            data={searchResults.apiUsers}
+            renderItem={this.renderContact}
+            onScroll={() => Keyboard.dismiss()}
+            keyExtractor={({ username }) => username}
+            contentContainerStyle={{ paddingBottom: 40 }}
+            ListHeaderComponent={<SubHeading>ALL USERS</SubHeading>}
+            ItemSeparatorComponent={ContactsSeparator}
+          />
+        )}
       </React.Fragment>
     );
   }

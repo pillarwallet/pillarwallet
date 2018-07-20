@@ -2,8 +2,9 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native/index';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
-import ProfileImage from 'screens/Profile/ProfileImage';
+import { baseColors, fontSizes } from 'utils/variables';
+import { BaseText, BoldText } from 'components/Typography';
+import ProfileImage from 'components/ProfileImage';
 
 type Props = {
   userName: string,
@@ -39,14 +40,13 @@ const UserWrapper = styled.View`
   flex: 4;
 `;
 
-const UserName = styled.Text`
+const UserName = styled(BoldText)`
   color: ${baseColors.slateBlack};
   font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold};
   letter-spacing: 0.2px;
 `;
 
-const Message = styled.Text`
+const Message = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.small};
   line-height: ${fontSizes.medium};
@@ -59,7 +59,7 @@ const DetailsWrapper = styled.View`
   align-items: flex-end;
 `;
 
-const TimeSent = styled.Text`
+const TimeSent = styled(BaseText)`
   color: ${baseColors.darkGray}
   font-size: ${fontSizes.small};
 `;
@@ -75,7 +75,7 @@ const UnreadCounter = styled.View`
   margin-right: 1px;
 `;
 
-const UnreadNumber = styled.Text`
+const UnreadNumber = styled(BaseText)`
   color: #ffffff;
   font-size: 10px;
   align-self: center;
@@ -110,16 +110,7 @@ export default class ChatListItem extends React.Component<Props> {
           <ProfileImage
             uri={avatar}
             userName={userName}
-            containerStyle={{
-              height: 44,
-              width: 44,
-              borderRadius: 22,
-            }}
-            imageStyle={{
-              height: 44,
-              width: 44,
-              borderRadius: 22,
-            }}
+            diameter={44}
           />
         </AvatarWrapper>
         <UserWrapper>

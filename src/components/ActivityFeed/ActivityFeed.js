@@ -1,9 +1,43 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { utils } from 'ethers';
+import { FlatList, TouchableOpacity } from 'react-native';
+import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading } from 'components/Typography';
+import ProfileImage from 'components/ProfileImage';
+import {
+  TYPE_RECEIVED,
+  TYPE_ACCEPTED,
+  TYPE_REJECTED,
+  TYPE_SENT,
+} from 'constants/invitationsConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+
+const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
+const TRANSACTION_SENT = 'TRANSACTION_SENT';
+const SOCIAL_TYPES = [
+  TYPE_RECEIVED,
+  TYPE_ACCEPTED,
+  TYPE_REJECTED,
+  TYPE_SENT,
+];
+
+const TRANSACTIONS = 'TRANSACTIONS';
+const SOCIAL = 'SOCIAL';
+const ALL = 'ALL';
+
+
+const NOTIFICATION_LABELS = {
+  [TYPE_ACCEPTED]: 'New connection',
+  [TYPE_RECEIVED]: 'Incoming connection',
+  [TYPE_SENT]: 'Request sent',
+  [TYPE_REJECTED]: 'Connection rejected',
+  [TRANSACTION_RECEIVED]: 'Received',
+  [TRANSACTION_SENT]: 'Sent',
+};
 
 const ActivityFeedWrapper = styled.View`
   flex: 1;
@@ -20,14 +54,6 @@ const ActivityFeedItem = styled.View`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
-`;
-
-const ActivityFeedItemAvatarWrapper = styled.View`
-  width: 32px;
-  height: 32px;
-  background: ${baseColors.darkGray};
-  border-radius: 16px;
-  margin-right: 10px;
 `;
 
 const ActivityFeedItemLabel = styled.Text`
@@ -89,39 +115,17 @@ const ButtonIconWrapper = styled.View`
   flex-direction: row;
 `;
 
-const ActionTextWrapper = styled.TouchableOpacity`
-  margin-left: auto;
-`;
-
-const ActionText = styled.Text`
-  color: ${props => props.red ? baseColors.fireEngineRed : baseColors.clearBlue};
-  font-size: ${fontSizes.small};
-`;
-
 const LabelText = styled.Text`
   font-size: ${fontSizes.small};
-  color: ${baseColors.darkGray};
+  color: ${(props) => props.button ? baseColors.electricBlue : baseColors.darkGray};
   margin-left: auto;
 `;
-
-const ActionButton = styled.View`
-  background: ${baseColors.clearBlue};
-  padding: 0 20px;
-  height: 34px;
-  border-radius: 17px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ActionButtonText = styled.Text`
-  font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.bold};
-  color: ${baseColors.white};
-`;
-
 
 type Props = {
   history: Array<*>,
+  onAcceptInvitation: Function,
+  onCancelInvitation: Function,
+  onRejectInvitation: Function,
 }
 
 type State = {
@@ -133,153 +137,161 @@ export default class ActivityFeed extends React.Component<Props, State> {
     activeTab: 'ALL',
   };
 
-  getSocialAction = (status: string) => {
-    if (status === 'MESSAGE_RECEIVED') {
-      return (
-        <ActionTextWrapper>
-          <ActionButton>
-            <ActionButtonText>
-              REPLY
-            </ActionButtonText>
-          </ActionButton>
-        </ActionTextWrapper>
-      );
+  getSocialAction = (type: string, notification: Object) => {
+    const {
+      onCancelInvitation,
+      onAcceptInvitation,
+      onRejectInvitation,
+
+    } = this.props;
+    switch (type) {
+      case TYPE_RECEIVED:
+        return (
+          <ButtonIconWrapper>
+            <ActionCircleButton
+              color={baseColors.darkGray}
+              margin={0}
+              icon="close"
+              fontSize={32}
+              onPress={() => onRejectInvitation(notification)}
+            />
+            <ActionCircleButton
+              color={baseColors.white}
+              margin={0}
+              accept
+              icon="ios-checkmark"
+              fontSize={32}
+              onPress={() => onAcceptInvitation(notification)}
+            />
+          </ButtonIconWrapper>
+        );
+      case TYPE_ACCEPTED:
+        return (
+          <LabelText>
+            Accepted
+          </LabelText>
+        );
+      case TYPE_SENT:
+        return (
+          <TouchableOpacity
+            onPress={() => onCancelInvitation(notification)}
+          >
+            <LabelText button>
+              Cancel
+            </LabelText>
+          </TouchableOpacity >
+        );
+      default:
+        return (
+          <LabelText>
+            Dismissed
+          </LabelText>
+        );
     }
-    if (status === 'RECEIVED') {
-      return (
-        <ButtonIconWrapper>
-          <ActionCircleButton
-            color={baseColors.darkGray}
-            margin={0}
-            icon="close"
-            fontSize={32}
-          />
-          <ActionCircleButton
-            color={baseColors.white}
-            margin={0}
-            accept
-            icon="ios-checkmark"
-            fontSize={32}
-          />
-        </ButtonIconWrapper>
-      );
-    }
-    if (status === 'SENT') {
-      return (
-        <ActionTextWrapper>
-          <ActionText red>
-            Cancel
-          </ActionText>
-        </ActionTextWrapper>
-      );
-    }
-    if (status === 'ACCEPTED') {
-      return (
-        <LabelText>
-          Accepted
-        </LabelText>
-      );
-    }
-    if (status === 'DISMISSED') {
-      return (
-        <LabelText>
-          Dismissed
-        </LabelText>
-      );
-    }
-    return null;
   };
 
-  renderActivityFeedItem = (item: Object, index: number) => {
-    const isEven = index % 2 === 0;
-    const { data } = item.payload;
-    const { type } = item;
-
-    if (type === 'transactionEvent') {
-      const msg = JSON.parse(data.msg);
-      const received = msg.value > 0;
-      const fromAddress = `${msg.fromAddress.slice(0, 5)}…${msg.fromAddress.slice(-5)}`;
-      const displayName = msg.username ? msg.username : fromAddress;
-      const directionSymbol = received ? '+' : '-';
-
-      return (
-        <ActivityFeedItem isEven={isEven} key={index}>
-          <ActivityFeedItemCol fixedWidth="42px">
-            <ActivityFeedItemAvatarWrapper />
-          </ActivityFeedItemCol>
-          <ActivityFeedItemCol>
-            <ActivityFeedItemLabel>Sent · Jul 15</ActivityFeedItemLabel>
-            <ActivityFeedItemName>{displayName}</ActivityFeedItemName>
-          </ActivityFeedItemCol>
-          <ActivityFeedItemCol flexEnd>
-            <ActivityFeedItemAmount received={received}>
-              {directionSymbol}{msg.value} {msg.asset}
-            </ActivityFeedItemAmount>
-          </ActivityFeedItemCol>
-        </ActivityFeedItem>
-      );
-    } else if (type === 'social') {
-      const { status } = data;
-      return (
-        <ActivityFeedItem isEven={isEven} key={index}>
-          <ActivityFeedItemCol fixedWidth="42px">
-            <ActivityFeedItemAvatarWrapper />
-          </ActivityFeedItemCol>
-          <ActivityFeedItemCol>
-            <ActivityFeedItemLabel>{data.label}</ActivityFeedItemLabel>
-            <ActivityFeedItemName>{data.connection}</ActivityFeedItemName>
-          </ActivityFeedItemCol>
-          <ActivityFeedItemCol flexEnd>
-            { this.getSocialAction(status) }
-          </ActivityFeedItemCol>
-        </ActivityFeedItem>
-
-      );
-    }
-    return null;
-  };
-
-  renderActivityFeedItems = (history: Array<*>) => {
-    const activityFeedItems = [];
-    history.map((item: Object, index: number) => {
-      return activityFeedItems.push(this.renderActivityFeedItem(item, index));
-    });
-    return activityFeedItems;
-  };
-
-  render() {
-    const { activeTab } = this.state;
-    const { history } = this.props;
+renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
+  const isEven = index % 2 === 0;
+  const { type } = notification;
+  const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
+  if (type === TRANSACTION_EVENT) {
+    const received = notification.value > 0;
+    const fromAddress = `${notification.fromAddress.slice(0, 7)}…${notification.fromAddress.slice(-7)}`;
+    const displayName = notification.username ? notification.username : fromAddress;
+    const directionSymbol = received ? '+' : '-';
+    const value = utils.formatUnits(utils.bigNumberify(notification.value));
+    const direction = received ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
     return (
-      <ActivityFeedWrapper>
-        <ActivityFeedHeader>
-          <SubHeading>ACTIVITY</SubHeading>
-        </ActivityFeedHeader>
-        <TabWrapper>
-          <TabItem
-            active={activeTab === 'ALL'}
-            onPress={() => this.setState({ activeTab: 'ALL' })}
-            flex={1}
-          >
-            <TabItemText active={activeTab === 'ALL'}>All</TabItemText>
-          </TabItem>
-          <TabItem
-            active={activeTab === 'TRANSACTIONS'}
-            onPress={() => this.setState({ activeTab: 'TRANSACTIONS' })}
-            flex={1}
-          >
-            <TabItemText active={activeTab === 'TRANSACTIONS'}>Transactions</TabItemText>
-          </TabItem>
-          <TabItem
-            active={activeTab === 'SOCIAL'}
-            onPress={() => this.setState({ activeTab: 'SOCIAL' })}
-            flex={1}
-          >
-            <TabItemText active={activeTab === 'SOCIAL'}>Social</TabItemText>
-          </TabItem>
-        </TabWrapper>
-        {this.renderActivityFeedItems(history)}
-      </ActivityFeedWrapper>
+      <ActivityFeedItem isEven={isEven} key={index}>
+        <ActivityFeedItemCol fixedWidth="42px">
+          <ProfileImage
+            uri={notification.avatar}
+            userName={displayName}
+            diameter={32}
+            containerStyle={{ marginRight: 10 }}
+            textStyle={{ fontSize: 14 }}
+          />
+        </ActivityFeedItemCol>
+        <ActivityFeedItemCol >
+          <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
+          <ActivityFeedItemName>{displayName}</ActivityFeedItemName>
+        </ActivityFeedItemCol>
+        <ActivityFeedItemCol flexEnd>
+          <ActivityFeedItemAmount received={received}>
+            {directionSymbol}{value} {notification.asset}
+          </ActivityFeedItemAmount>
+        </ActivityFeedItemCol>
+      </ActivityFeedItem>
     );
   }
+  return (
+    <ActivityFeedItem isEven={isEven} key={index}>
+      <ActivityFeedItemCol fixedWidth="42px">
+        <ProfileImage
+          uri={notification.avatar}
+          userName={notification.username}
+          diameter={32}
+          containerStyle={{ marginRight: 10 }}
+          textStyle={{ fontSize: 14 }}
+        />
+      </ActivityFeedItemCol>
+      <ActivityFeedItemCol>
+        <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
+        <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
+      </ActivityFeedItemCol>
+      <ActivityFeedItemCol flexEnd>
+        {this.getSocialAction(type, notification)}
+      </ActivityFeedItemCol>
+    </ActivityFeedItem>
+  );
+};
+
+render() {
+  const { activeTab } = this.state;
+  const { history } = this.props;
+  const filteredHistory = history.filter(({ type }) => {
+    if (activeTab === TRANSACTIONS) {
+      return type === TRANSACTION_EVENT;
+    }
+    if (activeTab === SOCIAL) {
+      return SOCIAL_TYPES.includes(type);
+    }
+    return true;
+  });
+  return (
+    <ActivityFeedWrapper>
+      <ActivityFeedHeader>
+        <SubHeading>ACTIVITY</SubHeading>
+      </ActivityFeedHeader>
+      <TabWrapper>
+        <TabItem
+          active={activeTab === ALL}
+          onPress={() => this.setState({ activeTab: ALL })}
+          flex={1}
+        >
+          <TabItemText active={activeTab === ALL}>All</TabItemText>
+        </TabItem>
+        <TabItem
+          active={activeTab === TRANSACTIONS}
+          onPress={() => this.setState({ activeTab: TRANSACTIONS })}
+          flex={1}
+        >
+          <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
+        </TabItem>
+        <TabItem
+          active={activeTab === SOCIAL}
+          onPress={() => this.setState({ activeTab: SOCIAL })}
+          flex={1}
+        >
+          <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
+        </TabItem>
+      </TabWrapper>
+      <FlatList
+        data={filteredHistory}
+        renderItem={this.renderActivityFeedItem}
+        keyExtractor={({ createdAt }) => createdAt.toString()}
+      />
+    </ActivityFeedWrapper>
+  );
+}
 }

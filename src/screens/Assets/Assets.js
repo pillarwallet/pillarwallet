@@ -6,7 +6,6 @@ import {
   Animated,
   Easing,
   RefreshControl,
-  Text,
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
@@ -14,7 +13,7 @@ import { baseColors } from 'utils/variables';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { TextLink } from 'components/Typography';
+import { TextLink, BaseText } from 'components/Typography';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import {
@@ -26,8 +25,9 @@ import AssetCard from 'components/AssetCard';
 import { Container } from 'components/Layout';
 import Title from 'components/Title';
 import { formatMoney } from 'utils/common';
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency, ETH, FETCHED } from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // TODO: change to actual token colors that is fetch with the asset
 const tokenColor = {};
@@ -55,24 +55,16 @@ type Props = {
   baseFiatCurrency: string,
 }
 
-type State = {
-  assetsMedia: Object,
-}
-
 const AssetsHeader = styled.View`
-  flexDirection: row;
-  backgroundColor: ${baseColors.white};
-  elevation: 1;
+  flex-direction: row;
+  height: 97px;
+  background-color: ${baseColors.white};
   padding: 0 16px;
-  alignItems: center;
-  justifyContent: space-between;
+  align-items: center;
+  justify-content: space-between;
 `;
 
-class AssetsScreen extends React.Component<Props, State> {
-  state = {
-    assetsMedia: {},
-  };
-
+class AssetsScreen extends React.Component<Props> {
   static navigationOptions = {
     transitionConfig: {
       duration: 300,
@@ -96,17 +88,7 @@ class AssetsScreen extends React.Component<Props, State> {
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
-
-    this.fetchAssetsMedia();
   }
-  // TODO: change to the asset icon that is fetched with the asset
-  fetchAssetsMedia = async () => {
-    const response = await fetch('https://api.myjson.com/bins/19uwn2');
-    const json = await response.json();
-    this.setState({
-      assetsMedia: json,
-    });
-  };
 
   handleCardTap = (assetData: Object) => {
     this.props.navigation.navigate(ASSET, {
@@ -132,14 +114,20 @@ class AssetsScreen extends React.Component<Props, State> {
       baseFiatCurrency,
     } = this.props;
 
-    const { assetsMedia } = this.state;
-
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return Object.keys(assets)
       .map(id => assets[id])
-      .map(({ symbol, balance = 0, ...rest }) => ({
+      .map(({
+        symbol,
+        iconMonoUrl,
+        wallpaperUrl,
+        balance = 0,
+        ...rest
+      }) => ({
         balance,
         symbol,
+        iconMonoUrl,
+        wallpaperUrl,
         balanceInFiat: rates[symbol] ? balance * rates[symbol][fiatCurrency] : 0,
         ...rest,
       }))
@@ -150,14 +138,15 @@ class AssetsScreen extends React.Component<Props, State> {
           symbol,
           balanceInFiat,
           balance,
+          iconMonoUrl,
+          wallpaperUrl,
         } = asset;
+
+        const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
+        const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}`;
+
         const formattedBalanceInFiat = formatMoney(balanceInFiat);
         const displayAmount = formatMoney(balance, 4);
-
-        // @TODO: remove this, use the color that the backend returns
-        const cardColor = assetsMedia[symbol] && assetsMedia[symbol].bgColor
-          ? assetsMedia[symbol].bgColor
-          : tokenColor[symbol];
 
         const assetData = {
           name: name || symbol,
@@ -168,8 +157,8 @@ class AssetsScreen extends React.Component<Props, State> {
           balance,
           balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
           address: wallet.address,
-          icon: assetsMedia[symbol] ? assetsMedia[symbol].icon : assetsMedia[ETH].icon,
-          color: cardColor,
+          icon: fullIconMonoUrl,
+          wallpaper: fullIconWallpaperUrl,
         };
         return (
           <Transition key={assetData.name} shared={assetData.name}>
@@ -179,10 +168,10 @@ class AssetsScreen extends React.Component<Props, State> {
               token={assetData.token}
               amount={assetData.amount}
               balanceInFiat={assetData.balanceInFiat}
-              color={assetData.color}
               onPress={() => this.handleCardTap(assetData)}
               address={assetData.address}
               icon={assetData.icon}
+              wallpaper={assetData.wallpaper}
             />
           </Transition>
         );
@@ -200,7 +189,7 @@ class AssetsScreen extends React.Component<Props, State> {
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>Loading default assets</Text>
+          <BaseText style={{ marginBottom: 20 }}>Loading default assets</BaseText>
           {assetsState !== FETCH_INITIAL_FAILED && (
             <ActivityIndicator
               animating
@@ -217,9 +206,8 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-
         <AssetsHeader>
-          <Title title="assets" />
+          <Title center noMargin title="assets" />
           <TouchableOpacity onPress={this.goToAddTokenPage} >
             <TextLink>
               Add token
@@ -242,7 +230,7 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           }
         >
-          {Object.keys(this.state.assetsMedia).length ? this.renderAssets() : <ActivityIndicator animating />}
+          { this.renderAssets() }
         </ScrollView>
       </Container >
     );

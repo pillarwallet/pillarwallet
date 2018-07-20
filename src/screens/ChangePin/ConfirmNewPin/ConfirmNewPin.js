@@ -1,13 +1,14 @@
 // @flow
 import * as React from 'react';
 
-import { Text, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
 import { PROFILE } from 'constants/navigationConstants';
 import { changePinAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
+import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -66,7 +67,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     if (walletState === ENCRYPTING) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>{walletState}</Text>
+          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
           <ActivityIndicator
             animating
             color="#111"
@@ -79,7 +80,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     if (walletState === CREATED) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>Pin changed!</Text>
+          <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
           <Button title="Continue" onPress={() => this.props.navigation.navigate(PROFILE)} />
         </Container>
       );

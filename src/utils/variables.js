@@ -7,6 +7,7 @@ export const baseColors = {
   warmPurple: '#b2329c',
   electricBlue: '#007AFF',
   brightSkyBlue: '#00bfff',
+  cyan: '#00bfff',
   aquaMarine: '#50e3c2',
   freshEucalyptus: '#2AA057',
   snowWhite: '#fafafa',
@@ -38,7 +39,9 @@ export const UIColors = {
   defaultTextColor: baseColors.slateBlack,
   defaultBackgroundColor: baseColors.snowWhite,
   defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
+  focusedBorderColor: baseColors.electricBlue,
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
+  placeholderTextColor: baseColors.darkGray,
 };
 
 export const fontSizes = {

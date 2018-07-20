@@ -36,7 +36,7 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
       await chat.init({
         username: user.username,
         password: pin,
-      });
+      }).catch(() => null);
       const fcmToken = await firebase.messaging().getToken();
       await chat.client.registerAccount().catch(() => null);
       await chat.client.setFcmId(fcmToken).catch(() => null);

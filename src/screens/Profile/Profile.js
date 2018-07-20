@@ -10,13 +10,12 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Toast, ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
-
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText } from 'components/Typography';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -28,6 +27,7 @@ import countries from 'utils/countries.json';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 
+const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
 const chat = new ChatService();
@@ -45,7 +45,7 @@ const ListSeparator = styled.View`
   background-color: ${baseColors.lighterGray};
 `;
 
-const ListValue = styled.Text`
+const ListValue = styled(BaseText)`
   font-size: ${fontSizes.small};
   padding-left: 20px;
 `;
@@ -63,7 +63,7 @@ const cityFormFields = [{
   label: 'City',
   name: 'city',
   type: 'string',
-  config: { placeholder: 'London' },
+  config: { placeholder: 'City' },
 }];
 
 const emailFormFields = [{
@@ -213,6 +213,7 @@ class Profile extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
     } = this.props;
+
     const {
       requestPinForTransaction,
       showCheckPinModal,
@@ -225,20 +226,18 @@ class Profile extends React.Component<Props, State> {
         <Header gray title="settings" onBack={navigation.goBack} index={1} />
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'country'}
-          title="personal details"
           subtitle="Choose your country"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
-            data={countries}
+            data={sortedCountries}
             renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
             keyExtractor={({ name }) => name}
           />
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'city'}
-          title="personal details"
           subtitle="Enter city name"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -253,7 +252,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'email'}
-          title="personal details"
           subtitle="Enter your email"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -268,7 +266,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'fullName'}
-          title="personal details"
           subtitle="Enter your full name"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}
@@ -283,7 +280,6 @@ class Profile extends React.Component<Props, State> {
         </KeyboardAvoidModal>
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          title="preferences"
           subtitle="Choose your base currency"
           fullScreen
           onModalHide={this.toggleSlideModalOpen}

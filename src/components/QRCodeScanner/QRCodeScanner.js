@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Vibration, Animated, Dimensions } from 'react-native';
+import { Vibration, Animated, Dimensions, Platform } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import { noop } from 'utils/common';
 import ButtonIcon from 'components/ButtonIcon';
@@ -33,7 +33,6 @@ const Overlay = styled.View`
 `;
 
 const Scanner = styled(Camera)`
-  flex: 1;
   alignItems: center;
   justifyContent: center;
 `;
@@ -55,7 +54,7 @@ const Rectangle = styled.View`
 
 const CloseButton = styled(ButtonIcon)`
   position: absolute;
-  right: 10px;
+  right: 16px;
   top: 20px;
   zIndex: 5;
 `;
@@ -76,6 +75,10 @@ type State = {
   animFadeIn: Object,
   isActive: boolean,
 }
+
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+const cameraHeight = screenWidth * (16 / 9);
 
 export default class QRCodeScanner extends React.Component<Props, State> {
   static defaultProps = {
@@ -169,13 +172,23 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     return (
       <Wrapper>
         <Animated.View style={{ opacity: animFadeIn, height: window.height }}>
-          <Scanner type={Camera.Constants.Type.back} onBarCodeRead={this.handleQRRead}>
+          <Scanner
+            type={Camera.Constants.Type.back}
+            ratio="16:9"
+            style={{ width: screenWidth, height: Platform.OS === 'ios' ? screenHeight : cameraHeight }}
+            onBarCodeRead={this.handleQRRead}
+          >
             <RectangleContainer>
               <Rectangle color={rectangleColor} />
             </RectangleContainer>
           </Scanner>
           <Overlay />
-          <CloseButton icon="close" onPress={this.handleAnimationDismiss} color={rectangleColor} fontSize={46} />
+          <CloseButton
+            icon="close"
+            onPress={this.handleAnimationDismiss}
+            color={rectangleColor}
+            fontSize={Platform.OS === 'ios' ? 46 : 36}
+          />
         </Animated.View>
       </Wrapper>
     );

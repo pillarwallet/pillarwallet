@@ -3965,6 +3965,10 @@ data-urls@^1.0.0:
     whatwg-mimetype "^2.0.0"
     whatwg-url "^6.4.0"
 
+date-fns@^1.29.0:
+  version "1.29.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
+
 date-now@^0.1.4:
   version "0.1.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -10505,7 +10509,7 @@ react-navigation-redux-helpers@2.0.1:
   dependencies:
     invariant "^2.2.2"
 
-react-navigation-tabs@0.5.1:
+react-navigation-tabs@0.5.1, react-navigation-tabs@^0.5.1:
   version "0.5.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-tabs/-/react-navigation-tabs-0.5.1.tgz#ed33bce3a3e21b92646700de25bd94b8fc570371"
   dependencies:
@@ -11183,9 +11187,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@^1.0.36:
-  version "1.0.36"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.36.tgz#2c203dc4dd6f2a9a0721a5dcdec3854c13c8fefc"
+rn-signal-protocol-messaging@^1.0.42:
+  version "1.0.42"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.42.tgz#e716555f178fc160c33f5468e90c993b032819fa"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

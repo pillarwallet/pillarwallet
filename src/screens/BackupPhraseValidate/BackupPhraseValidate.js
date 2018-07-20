@@ -2,11 +2,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import { Platform } from 'react-native';
 import { UIColors, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import HeaderLink from 'components/HeaderLink';
-import { Paragraph, Label } from 'components/Typography';
+import { Paragraph, Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import ButtonIcon from 'components/ButtonIcon';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -31,8 +32,7 @@ const MnemonicPhraseWord = styled.TouchableHighlight`
   margin: 5px;
 `;
 
-const MnemonicPhraseWordText = styled.Text`
-  font-weight: bold;
+const MnemonicPhraseWordText = styled(BoldText)`
   font-size: ${fontSizes.extraSmall};
   color: #ffffff;
 `;
@@ -67,11 +67,13 @@ const WordInputNumber = styled(Label)`
 
 const RemoveWordButtonIcon = styled(ButtonIcon)`
   height: 42px;
+  margin-left: ${Platform.OS === 'ios' ? '14px' : '6px'};
+  margin-top: ${Platform.OS === 'ios' ? 0 : '-4px'};
+  margin-right: ${Platform.OS === 'ios' ? 0 : '-6px'};
 `;
 
-const WordInputText = styled.Text`
+const WordInputText = styled(BoldText)`
   font-size: 14px;
-  font-weight: bold;
   color: white;
 `;
 
@@ -206,7 +208,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <Title title="verify backup phrase" />
           <Paragraph>
-            Please select the appropriate words from the list
+            Please select the appropriate words from the list.
           </Paragraph>
           <WordInputFields>
             {this.renderInputFields()}

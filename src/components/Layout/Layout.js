@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-navigation';
+import { baseColors } from 'utils/variables';
 
 type ContainerProps = {
   children?: React.Node,
@@ -15,7 +16,7 @@ export const Center = styled.View`
 `;
 
 const ContainerOuter = styled(SafeAreaView)`
-  background-color: #fff;
+  background-color: ${baseColors.white};
 `;
 
 const ContainerInner = styled.View`
@@ -39,8 +40,10 @@ export const Wrapper = styled.View`
   height: ${props => props.fullScreen ? '100%' : 'auto'};
   width: ${props => props.fullScreen ? '100%' : 'auto'};
   padding: ${props => (props.regularPadding ? '0 16px' : '0')};
-  align-items: ${props => (props.center ? 'center' : 'stretch')};
-  justify-content: ${props => (props.center ? 'center' : 'flex-start')};
+  ${({ center }) => center && `
+    align-items: center;
+    justify-content: center;
+  `}
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`

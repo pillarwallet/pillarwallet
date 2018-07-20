@@ -19,7 +19,7 @@ import {
 } from 'react-native-gifted-chat';
 import { baseColors } from 'utils/variables';
 import ModalScreenHeader from 'components/ModalScreenHeader';
-import ProfileImage from 'screens/Profile/ProfileImage';
+import ProfileImage from 'components/ProfileImage';
 import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
@@ -135,16 +135,7 @@ class ChatScreen extends React.Component<Props, State> {
       <ProfileImage
         uri={contact.avatar}
         userName={contact.username}
-        containerStyle={{
-          height: 34,
-          width: 34,
-          borderRadius: 17,
-        }}
-        imageStyle={{
-          height: 34,
-          width: 34,
-          borderRadius: 17,
-        }}
+        diameter={34}
         textStyle={{
           fontSize: 16,
         }}
@@ -306,7 +297,7 @@ class ChatScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <ModalScreenHeader onClose={this.handleChatDismissal} />
+          <ModalScreenHeader title={contact.username} onClose={this.handleChatDismissal} />
           <View style={{ flex: 1, backgroundColor: '#ffffff', paddingTop: 20 }}>
             <LinearGradient
               colors={['rgba(255,255,255,1)', 'rgba(255,255,255,0.7)', 'rgba(255,255,255,0)']}

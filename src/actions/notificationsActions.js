@@ -4,11 +4,16 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
+import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import Storage from 'services/storage';
-import { ADD_NOTIFICATION, UPDATE_INTERCOM_NOTIFICATIONS_COUNT } from 'constants/notificationConstants';
+import {
+  ADD_NOTIFICATION,
+  UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+} from 'constants/notificationConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
+const BCX = 'BCX';
 
 const storage = Storage.getInstance('db');
 
@@ -60,6 +65,9 @@ export const startListeningNotificationsAction = () => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
+      if (notification.type === BCX) {
+        dispatch(fetchTransactionsHistoryNotificationsAction());
+      }
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());
       }
@@ -79,3 +87,4 @@ export const stopListeningNotificationsAction = () => {
     notificationsListener = null;
   };
 };
+

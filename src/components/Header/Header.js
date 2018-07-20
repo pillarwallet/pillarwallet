@@ -19,10 +19,12 @@ type Props = {
 const Wrapper = styled(NBHeader)`
   background-color: ${props => props.gray ? baseColors.snowWhite : baseColors.white};
   border-bottom-width: 0;
+  padding: 0 16px;
 `;
 
 const BackIcon = styled(ButtonIcon)`
   position: relative;
+  align-self: flex-start;
 `;
 
 const Header = (props: Props) => {
@@ -37,17 +39,17 @@ const Header = (props: Props) => {
   if (!index) return null;
   return (
     <Wrapper gray={gray}>
-      <Left>
+      <Left style={{ flex: 1, justifyContent: 'flex-start' }}>
         {onBack &&
           <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
         }
       </Left>
-      <Body>
+      <Body style={{ flex: 1 }}>
         {title &&
           <Title center noMargin title={title} />
         }
       </Body>
-      <Right>
+      <Right style={{ flex: 1, justifyContent: 'flex-end' }}>
         {nextText &&
           <TextLink onPress={onNextPress}>{nextText}</TextLink>
         }
