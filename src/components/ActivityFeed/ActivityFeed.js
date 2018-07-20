@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { FlatList, TouchableOpacity, Image } from 'react-native';
+import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
@@ -106,7 +106,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   height: 34px;
   width: 34px;
   border-radius: 17px;
-  padding: 0;
+  padding: ${Platform.OS === 'ios' ? 0 : 8}px;
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
@@ -160,7 +160,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
               color={baseColors.darkGray}
               margin={0}
               icon="close"
-              fontSize={32}
+              fontSize={Platform.OS === 'ios' ? 32 : 22}
               onPress={() => onRejectInvitation(notification)}
             />
             <ActionCircleButton
@@ -168,7 +168,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
               margin={0}
               accept
               icon="ios-checkmark"
-              fontSize={32}
+              fontSize={Platform.OS === 'ios' ? 32 : 26}
               onPress={() => onAcceptInvitation(notification)}
             />
           </ButtonIconWrapper>
