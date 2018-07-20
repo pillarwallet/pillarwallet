@@ -25,3 +25,10 @@ export const updateUserAction = (walletId: string, field: Object) => {
     });
   };
 };
+
+export const updateUserAvatarAction = (walletId: string, formData: any) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const user = await api.updateUserAvatar(walletId, formData); // eslint-disable-line
+  };
+};
+

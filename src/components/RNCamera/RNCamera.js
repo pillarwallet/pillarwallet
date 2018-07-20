@@ -11,19 +11,22 @@ import { Container } from 'components/Layout';
 import { Camera } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
+import { updateUserAvatarAction } from 'actions/userActions';
 
 
 type Props = {
   onModalHide?: Function,
   isVisible: boolean,
   modalHide: Function,
-  updateUser: Function,
+  updateUserAvatar: Function,
   permissionsGranted: boolean,
+  user: Object,
 };
 
 type State = {
   showResult: boolean,
   previewBase64: string,
+  currentCaptureUrl: string,
 };
 
 const ModalWrapper = styled.View`
@@ -112,6 +115,7 @@ class RNCamera extends React.Component<Props, State> {
     this.state = {
       showResult: false,
       previewBase64: '',
+      currentCaptureUrl: '',
     };
   }
 
@@ -135,6 +139,7 @@ class RNCamera extends React.Component<Props, State> {
         .then((res) => {
           this.setState({
             previewBase64: `data:image/jpg;base64,${res.base64}`,
+            currentCaptureUrl: res.uri,
             showResult: true,
           });
         })
@@ -144,16 +149,16 @@ class RNCamera extends React.Component<Props, State> {
   };
 
   setImage = () => {
-    // const data = new FormData();
-    // data.append('photo', {
-    //   uri: this.state.currentCaptureUrl,
-    //   type: 'image/jpeg',
-    //   name: 'avatar',
-    // });
+    const { user, updateUserAvatar } = this.props;
+    const data = new FormData();
+    data.append('walletId', user.walletId);
+    data.append('image', this.state.currentCaptureUrl);
+    updateUserAvatar(user.walletId, data);
+
     // this.props.updateUserPhoto(data, this.props.user.walletId);
-    this.props.modalHide();
     this.handleModalClose();
-  }
+    this.props.modalHide();
+  };
 
   renderNoPermissions = () => {
     return (
@@ -163,7 +168,7 @@ class RNCamera extends React.Component<Props, State> {
         </Text>
       </NoPermissions>
     );
-  }
+  };
 
   renderBottomBar = () => {
     return (
@@ -265,4 +270,9 @@ class RNCamera extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({ user: { data: user } }) => ({ user });
-export default connect(mapStateToProps)(RNCamera);
+const mapDispatchToProps = (dispatch: Function) => ({
+  updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RNCamera);
+
