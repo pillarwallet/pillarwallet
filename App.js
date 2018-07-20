@@ -1,7 +1,7 @@
 // @flow
 import 'utils/setup';
 import * as React from 'react';
-import { StatusBar, BackHandler } from 'react-native';
+import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Root as NBRoot } from 'native-base';
 import { Font } from 'expo';
@@ -12,6 +12,7 @@ import { SHOW_STORYBOOK } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import configureStore from './src/configureStore';
 import StorybookUI from './storybook';
+import { Toast } from 'native-base';
 
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
@@ -23,6 +24,7 @@ const aktivGroteskLight = require('./src/assets/fonts/AktivGrotesk-Light.ttf');
 type State = {
   isFetched: boolean,
   fontLoaded: boolean,
+  isOnline: boolean,
 }
 
 type Props = {
@@ -36,6 +38,7 @@ class App extends React.Component<Props, State> {
   state = {
     isFetched: false,
     fontLoaded: false,
+    isOnline: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props) {
@@ -56,6 +59,7 @@ class App extends React.Component<Props, State> {
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
+    NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
   }
 
   async componentDidMount() {
@@ -64,6 +68,7 @@ class App extends React.Component<Props, State> {
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
+    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
   }
 
   onBackPress = () => {
@@ -76,8 +81,23 @@ class App extends React.Component<Props, State> {
     return true;
   };
 
+  handleConnectivityChange = isOnline => {
+    this.setState({ isOnline });
+    if (!isOnline){
+      Toast.show({
+        type: 'danger',
+        position: 'top',
+        duration: 0,
+        text: 'No active internet connection found!',
+        buttonText: '',
+      });
+    } else {
+      Toast.toastInstance._root.closeToast();
+    }
+  };
+
   render() {
-    const { isFetched, fontLoaded } = this.state;
+    const { isFetched, fontLoaded, isOnline } = this.state;
     const { navigation, dispatch } = this.props;
     if (!isFetched || !fontLoaded) return null;
 
