@@ -63,7 +63,7 @@ class ChatScreen extends React.Component<Props, State> {
     return messages.map((message, index) => ({
       _id: index,
       text: message.content,
-      createdAt: new Date(message.savedTimestamp * 1000),
+      createdAt: new Date(message.serverTimestamp),
       user: {
         _id: message.username,
         name: message.username,
@@ -231,6 +231,7 @@ class ChatScreen extends React.Component<Props, State> {
         textStyle={{
           color: baseColors.darkGray,
         }}
+        timeFormat="HH:mm"
       />
     );
   };
