@@ -4,14 +4,20 @@ import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 export const BaseText = styled.Text`
   font-family: aktiv-grotesk-regular;
+  include-font-padding: false;
+  text-align-vertical: center;
 `;
 
 export const BoldText = styled(BaseText)`
   font-family: aktiv-grotesk-bold;
+  include-font-padding: false;
+  text-align-vertical: center;
 `;
 
 export const LightText = styled(BaseText)`
   font-family: aktiv-grotesk-light;
+  include-font-padding: false;
+  text-align-vertical: center;
 `;
 
 

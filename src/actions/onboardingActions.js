@@ -19,7 +19,10 @@ import {
   SET_API_USER,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
-import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import Storage from 'services/storage';
@@ -42,6 +45,10 @@ export const registerWalletAction = () => {
 
     // STEP 0: Clear local storage
     await storage.removeAll();
+    dispatch({ type: UPDATE_CONTACTS, payload: [] });
+    dispatch({ type: UPDATE_INVITATIONS, payload: [] });
+    dispatch({ type: UPDATE_ASSETS, payload: {} });
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));

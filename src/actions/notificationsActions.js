@@ -4,7 +4,12 @@ import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
-import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import {
+  fetchTransactionsHistoryNotificationsAction,
+  fetchTransactionsHistoryAction,
+} from 'actions/historyActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+
 import Storage from 'services/storage';
 import {
   ADD_NOTIFICATION,
@@ -50,7 +55,10 @@ export const stopListeningIntercomNotificationsAction = () => {
 
 export const startListeningNotificationsAction = () => {
   return async (dispatch: Function, getState: Function) => {
-    const { wallet: { data: wallet } } = getState();
+    const {
+      wallet: { data: wallet },
+      assets: { data: assets },
+    } = getState();
     // check if permissions enabled
     const enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
@@ -67,6 +75,8 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
+        dispatch(fetchTransactionsHistoryAction(wallet.address));
+        dispatch(fetchAssetsBalancesAction(assets, notification.asset));
       }
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());

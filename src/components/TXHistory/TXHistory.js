@@ -13,6 +13,7 @@ import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
 import { getUserName } from 'utils/contacts';
 import SlideModal from 'components/Modals/SlideModal';
+import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Item from './Item';
 import Amount from './Amount';
 import Hash from './Hash';
@@ -128,7 +129,6 @@ class TXHistory extends React.Component<Props, State> {
   selectTransaction = (transaction: Object) => {
     const {
       status,
-      value,
       to,
       from,
       asset,
@@ -137,6 +137,7 @@ class TXHistory extends React.Component<Props, State> {
       timestamp,
       gasUsed,
       gasPrice,
+      value,
     } = transaction;
     const { contacts, wallet: { address: myAddress } } = this.props;
     const datetime = new Date(timestamp);
@@ -145,13 +146,14 @@ class TXHistory extends React.Component<Props, State> {
     const recipient = to.toUpperCase() !== myAddress.toUpperCase()
       ? (getUserName(contact) || `${to.slice(0, 7)}…${to.slice(-7)}`)
       : null;
+    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
 
     this.setState({
       selectedTransaction: {
         hash,
         date: this.getDate(datetime),
         token: asset,
-        amount: formatETHAmount(value),
+        amount: formatETHAmount(amount),
         recipient,
         fee: gasUsed ? gasUsed * gasPrice : 0,
         note: null,
@@ -185,7 +187,7 @@ class TXHistory extends React.Component<Props, State> {
     const contact = contacts
       .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
     const address = getUserName(contact) || `${senderRecipientAddress.slice(0, 7)}…${senderRecipientAddress.slice(-7)}`;
-
+    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
     return (
       <Item key={id} onPress={() => this.selectTransaction(transaction)}>
         <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
@@ -194,7 +196,7 @@ class TXHistory extends React.Component<Props, State> {
           <Timestamp>{this.getDate(datetime)}</Timestamp>
         </Section>
         <Section>
-          <Amount direction={direction}>{this.getDirectionSymbol(direction)} {formatETHAmount(value)} {asset}</Amount>
+          <Amount direction={direction}>{this.getDirectionSymbol(direction)} {amount} {asset}</Amount>
           <Status>{status.toUpperCase()}</Status>
         </Section>
       </Item>
@@ -215,6 +217,12 @@ class TXHistory extends React.Component<Props, State> {
           renderItem={this.renderTransaction}
           keyExtractor={(({ _id }) => _id)}
           contentContainerStyle={flatListStyles}
+          ListEmptyComponent={
+            <EmptyTransactions
+              title="Make your first step"
+              bodyText="Your transactions will appear here. Send or receive tokens to start."
+            />
+          }
         />
         <SlideModal
           isVisible={showModal}
