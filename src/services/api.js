@@ -10,7 +10,6 @@ import {
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
-import { utils } from 'ethers';
 
 type HistoryPayload = {
   address1: string,
@@ -120,13 +119,11 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
         fromAddress,
         toAddress,
         txHash,
-        value,
         ...rest
       }): Transaction => ({
         to: toAddress,
         from: fromAddress,
         hash: txHash,
-        value: utils.formatUnits(utils.bigNumberify(value.toString())),
         ...rest,
       }));
     })
