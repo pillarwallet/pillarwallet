@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
 import Title from 'components/Title';
+import EmptyChat from 'components/EmptyState/EmptyChat';
 import { baseColors } from 'utils/variables';
 import { getExistingChatsAction } from 'actions/chatActions';
 import ChatListItem from './ChatListItem';
@@ -44,17 +45,18 @@ class ChatListScreen extends React.Component<Props, State> {
     const { chats, navigation } = this.props;
     const existingChat = chats.find(({ username }) => contact.username === username) || {};
     const lastMessage = existingChat.lastMessage || {};
-    const timeSent = lastMessage.savedTimestamp
-      ? new Date(lastMessage.savedTimestamp * 1000).toISOString().slice(11, 16) // HH:mm
-      : '';
-
+    let timeSent = '';
+    if (lastMessage.serverTimestamp) {
+      const dateSent = new Date(lastMessage.serverTimestamp);
+      timeSent = `${dateSent.getHours()}:${dateSent.getMinutes()}`; // HH:mm
+    }
     return (
       <ChatListItem
         userName={contact.username}
         avatar={contact.avatar}
         message={lastMessage.content}
         timeSent={timeSent}
-        unreadCount={existingChat.unreadCount}
+        unreadCount={existingChat.unread}
         onPress={() => navigation.navigate(CHAT, { contact })}
       />
     );
@@ -77,7 +79,7 @@ class ChatListScreen extends React.Component<Props, State> {
         </ChatListHeader>
         <View style={{
           paddingTop: 18,
-          paddingBottom: 18,
+          paddingBottom: contacts.length ? 18 : 0,
           flex: 1,
         }}
         >
@@ -87,7 +89,13 @@ class ChatListScreen extends React.Component<Props, State> {
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
             ItemSeparatorComponent={this.renderSeparator}
-            style={{ flex: 1 }}
+            style={{ height: '100%' }}
+            contentContainerStyle={{ height: '100%' }}
+            ListEmptyComponent={
+              <EmptyChat
+                title="Break the ice"
+                bodyText="Start chatting with someone. Recent chats will appear here."
+              />}
           />
         </View>
       </Container>

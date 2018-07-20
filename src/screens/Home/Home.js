@@ -8,12 +8,18 @@ import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Intercom from 'react-native-intercom';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
-import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import { uniqBy } from 'utils/common';
+import { getUserName } from 'utils/contacts';
+import {
+  fetchTransactionsHistoryNotificationsAction,
+  fetchTransactionsHistoryAction,
+} from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -21,6 +27,7 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 const HomeHeader = styled.View`
   height: 120px;
@@ -38,9 +45,8 @@ const HomeHeaderRow = styled.View`
   flex-direction: row;
 `;
 
-const HomeHeaderUsername = styled.Text`
+const HomeHeaderUsername = styled(BoldText)`
   font-size: ${fontSizes.extraLarge};
-  font-weight: ${fontWeights.bold};
 `;
 
 const HomeHeaderButtons = styled.View`
@@ -54,7 +60,7 @@ const HomeHeaderButton = styled(ButtonIcon)`
 `;
 
 const RecentConnections = styled.View`
-  height: 140px;
+  min-height: 140px;
   background-color: ${baseColors.lightGray};
   border-bottom-width: 1px;
   border-style: solid;
@@ -90,9 +96,16 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
   elevation: 4
 `;
 
-const RecentConnectionsItemName = styled.Text`
+const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
+`;
+
+const EmptyStateWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 6px 0 8px 0;
 `;
 
 type Props = {
@@ -100,9 +113,12 @@ type Props = {
   contacts: Object[],
   invitations: Object[],
   historyNotifications: Object[],
+  history: Object[],
   user: Object,
-  fetchHistoryNotifications: Function,
+  wallet: Object,
+  fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
+  fetchTransactionsHistory: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
   rejectInvitation: Function,
@@ -110,12 +126,6 @@ type Props = {
 };
 
 class PeopleScreen extends React.Component<Props> {
-  componentDidMount() {
-    const { fetchHistoryNotifications, fetchInviteNotifications } = this.props;
-    fetchHistoryNotifications();
-    fetchInviteNotifications();
-  }
-
   goToProfile = () => {
     const { navigation } = this.props;
     navigation.navigate(PROFILE);
@@ -143,6 +153,49 @@ class PeopleScreen extends React.Component<Props> {
       ));
   };
 
+  renderEmptyRCState = () => {
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateParagraph
+          title="Chat with someone"
+          bodyText="Recent contacts live here. Get quick access to encrypted chat."
+        />
+      </EmptyStateWrapper>
+    );
+  };
+
+  mapTransactionsHistory(history, historyNotifications, contacts) {
+    const concatedHistory = history
+      .map(({
+        hash,
+        from,
+        to,
+        timestamp,
+        ...rest
+      }) => ({
+        txHash: hash,
+        fromAddress: from,
+        toAddress: to,
+        type: TRANSACTION_EVENT,
+        createdAt: timestamp,
+        ...rest,
+      }))
+      .concat(historyNotifications)
+      .map(({ toAddress, fromAddress, ...rest }) => {
+        const contact = contacts.find(({ ethAddress }) => {
+          return fromAddress.toUpperCase() === ethAddress.toUpperCase()
+            || toAddress.toUpperCase() === ethAddress.toUpperCase();
+        });
+        return {
+          username: getUserName(contact),
+          toAddress,
+          fromAddress,
+          ...rest,
+        };
+      });
+    return uniqBy(concatedHistory, 'txHash');
+  }
+
   render() {
     const {
       user,
@@ -152,9 +205,12 @@ class PeopleScreen extends React.Component<Props> {
       contacts,
       invitations,
       historyNotifications,
+      history,
+      wallet: { address: walletAddress },
     } = this.props;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-    const homeNotifications = [...mappedContacts, ...invitations, ...historyNotifications]
+    const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
+    const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory]
       .sort((a, b) => b.createdAt - a.createdAt);
     return (
       <Container>
@@ -163,7 +219,7 @@ class PeopleScreen extends React.Component<Props> {
             <ProfileImage
               uri={user.avatar}
               userName={user.username}
-              diameter={40}
+              diameter={42}
               containerStyle={{
                 marginRight: 10,
               }}
@@ -195,24 +251,33 @@ class PeopleScreen extends React.Component<Props> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                const { fetchHistoryNotifications, fetchInviteNotifications } = this.props;
-                fetchHistoryNotifications();
+                const {
+                  fetchTransactionsHistoryNotifications,
+                  fetchInviteNotifications,
+                  fetchTransactionsHistory,
+                  wallet,
+                } = this.props;
+                fetchTransactionsHistoryNotifications();
                 fetchInviteNotifications();
+                fetchTransactionsHistory(wallet.address);
               }}
             />
           }
         >
           <RecentConnections>
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
+            {!this.props.contacts.length && this.renderEmptyRCState()}
+            {!!this.props.contacts.length &&
             <RecentConnectionsScrollView horizontal>
               {this.renderRecentConnections()}
-            </RecentConnectionsScrollView>
+            </RecentConnectionsScrollView>}
           </RecentConnections>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
             history={homeNotifications}
+            walletAddress={walletAddress}
           />
         </ScrollWrapper>
       </Container>
@@ -223,20 +288,24 @@ class PeopleScreen extends React.Component<Props> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
-  history: { historyNotifications },
+  history: { data: history, historyNotifications },
   invitations: { data: invitations },
+  wallet: { data: wallet },
 }) => ({
   contacts,
   user,
   historyNotifications,
+  history,
   invitations,
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
-  fetchHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
+  fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
+  fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
 });
 

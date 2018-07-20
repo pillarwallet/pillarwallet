@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Label } from 'components/Typography';
+import { Label, BaseText, BoldText } from 'components/Typography';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 const MnemonicPhraseWrapper = styled.View`
@@ -22,13 +22,12 @@ const MnemonicPhraseItem = styled.View`
   justify-content: flex-start;
 `;
 
-const MnemonicPhraseIndex = styled.Text`
+const MnemonicPhraseIndex = styled(BaseText)`
   flex: 0 0 20px;
 `;
 
-const MnemonicPhraseWord = styled.Text`
+const MnemonicPhraseWord = styled(BoldText)`
   background-color: ${baseColors.lightGray};
-  font-weight: bold;
   font-size: ${fontSizes.extraSmall};
   flex: 1;
   border-color: ${UIColors.defaultBorderColor};
