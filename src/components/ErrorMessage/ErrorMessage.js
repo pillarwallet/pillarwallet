@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { BoldText } from 'components/Typography';
 
 type Props = {
   children: React.Node,
@@ -13,10 +14,9 @@ const ErrorMessageBackground = styled.View`
   background-color: #ff0005;
 `;
 
-const ErrorMessageText = styled.Text`
+const ErrorMessageText = styled(BoldText)`
   color: #ffffff;
   font-size: 16px;
-  font-weight: 700;
 `;
 
 const ErrorMessage = (props: Props) => {

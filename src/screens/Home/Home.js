@@ -8,12 +8,13 @@ import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Intercom from 'react-native-intercom';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -38,9 +39,8 @@ const HomeHeaderRow = styled.View`
   flex-direction: row;
 `;
 
-const HomeHeaderUsername = styled.Text`
+const HomeHeaderUsername = styled(BoldText)`
   font-size: ${fontSizes.extraLarge};
-  font-weight: ${fontWeights.bold};
 `;
 
 const HomeHeaderButtons = styled.View`
@@ -54,7 +54,7 @@ const HomeHeaderButton = styled(ButtonIcon)`
 `;
 
 const RecentConnections = styled.View`
-  height: 140px;
+  min-height: 140px;
   background-color: ${baseColors.lightGray};
   border-bottom-width: 1px;
   border-style: solid;
@@ -90,9 +90,16 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
   elevation: 4
 `;
 
-const RecentConnectionsItemName = styled.Text`
+const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
+`;
+
+const EmptyStateWrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 6px 0 8px 0;
 `;
 
 type Props = {
@@ -142,6 +149,17 @@ class PeopleScreen extends React.Component<Props> {
         </RecentConnectionsItem>
       ));
   };
+
+  renderEmptyRCState = () => {
+    return (
+      <EmptyStateWrapper>
+        <EmptyStateParagraph
+          title="Chat with someone"
+          bodyText="Recent contacts live here. Get quick access to encrypted chat."
+        />
+      </EmptyStateWrapper>
+    );
+  }
 
   render() {
     const {
@@ -204,9 +222,11 @@ class PeopleScreen extends React.Component<Props> {
         >
           <RecentConnections>
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
+            {!this.props.contacts.length && this.renderEmptyRCState()}
+            {!!this.props.contacts.length &&
             <RecentConnectionsScrollView horizontal>
               {this.renderRecentConnections()}
-            </RecentConnectionsScrollView>
+            </RecentConnectionsScrollView>}
           </RecentConnections>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}

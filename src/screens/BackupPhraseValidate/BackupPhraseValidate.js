@@ -7,7 +7,7 @@ import { UIColors, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import HeaderLink from 'components/HeaderLink';
-import { Paragraph, Label } from 'components/Typography';
+import { Paragraph, Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import ButtonIcon from 'components/ButtonIcon';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -32,8 +32,7 @@ const MnemonicPhraseWord = styled.TouchableHighlight`
   margin: 5px;
 `;
 
-const MnemonicPhraseWordText = styled.Text`
-  font-weight: bold;
+const MnemonicPhraseWordText = styled(BoldText)`
   font-size: ${fontSizes.extraSmall};
   color: #ffffff;
 `;
@@ -73,9 +72,8 @@ const RemoveWordButtonIcon = styled(ButtonIcon)`
   margin-right: ${Platform.OS === 'ios' ? 0 : '-6px'};
 `;
 
-const WordInputText = styled.Text`
+const WordInputText = styled(BoldText)`
   font-size: 14px;
-  font-weight: bold;
   color: white;
 `;
 

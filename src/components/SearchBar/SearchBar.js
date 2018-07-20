@@ -2,7 +2,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
-import { Text, Animated, Keyboard, Platform, Image } from 'react-native';
+import { Animated, Keyboard, Platform, Image } from 'react-native';
+import { BaseText } from 'components/Typography';
 
 const SearchHolder = styled.View`
   padding-bottom: 20px;
@@ -168,10 +169,9 @@ class SearchBar extends React.Component<Props, State> {
           />
           <InputIcon source={searchIcon} />
         </Animated.View>
-
         {(isFocused || !!value) &&
         <CancelButton onPress={this.handleCancel}>
-          <Text style={{ color: baseColors.electricBlue }}>Cancel</Text>
+          <BaseText style={{ color: baseColors.electricBlue }}>Cancel</BaseText>
         </CancelButton>
         }
       </SearchHolder>
