@@ -45,17 +45,18 @@ class ChatListScreen extends React.Component<Props, State> {
     const { chats, navigation } = this.props;
     const existingChat = chats.find(({ username }) => contact.username === username) || {};
     const lastMessage = existingChat.lastMessage || {};
-    const timeSent = lastMessage.savedTimestamp
-      ? new Date(lastMessage.savedTimestamp * 1000).toISOString().slice(11, 16) // HH:mm
-      : '';
-
+    let timeSent = '';
+    if (lastMessage.serverTimestamp) {
+      const dateSent = new Date(lastMessage.serverTimestamp);
+      timeSent = `${dateSent.getHours()}:${dateSent.getMinutes()}`; // HH:mm
+    }
     return (
       <ChatListItem
         userName={contact.username}
         avatar={contact.avatar}
         message={lastMessage.content}
         timeSent={timeSent}
-        unreadCount={existingChat.unreadCount}
+        unreadCount={existingChat.unread}
         onPress={() => navigation.navigate(CHAT, { contact })}
       />
     );
