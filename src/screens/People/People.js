@@ -205,7 +205,7 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !!localContacts.length &&
-          <FlatList
+          <ContactCardList
             data={localContacts}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderContact}
