@@ -101,6 +101,7 @@ type Props = {
   onCancelInvitationPress?: Function,
   onSendInvitationPress?: Function,
   noBorder?: boolean,
+  disabled?: boolean,
   customButton?: React.Node,
 };
 
@@ -179,6 +180,7 @@ export default class ContactCard extends React.Component<Props> {
       avatar,
       onPress,
       noBorder,
+      disabled,
     } = this.props;
 
     return (
@@ -186,7 +188,7 @@ export default class ContactCard extends React.Component<Props> {
         onPress={onPress}
         underlayColor={baseColors.lightGray}
         noBorder={noBorder}
-        disabled={noBorder}
+        disabled={disabled}
       >
         <ContactCardInner>
           <ContactCardAvatarWrapper>

@@ -211,7 +211,7 @@ class PeopleScreen extends React.Component<Props, State> {
             renderItem={this.renderContact}
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
-            contentContainerStyle={{padding: 16, paddingTop: 0}}
+            contentContainerStyle={{ padding: 16, paddingTop: 0 }}
             refreshControl={
               <RefreshControl
                 refreshing={false}

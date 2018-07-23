@@ -49,6 +49,7 @@ class ConnectionRequests extends React.Component<Props> {
       .map(invitation => (
         <ContactCard
           noBorder
+          disabled
           key={invitation.id}
           onAcceptInvitationPress={this.handleAcceptInvitationPress(invitation)}
           onRejectInvitationPress={this.handleRejectInvitatonPress(invitation)}
