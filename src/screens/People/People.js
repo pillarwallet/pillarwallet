@@ -150,6 +150,11 @@ class PeopleScreen extends React.Component<Props, State> {
     />
   );
 
+  componentDidMount() {
+    const { fetchInviteNotifications } = this.props;
+    fetchInviteNotifications();
+  }
+
   render() {
     const { query } = this.state;
     const {
