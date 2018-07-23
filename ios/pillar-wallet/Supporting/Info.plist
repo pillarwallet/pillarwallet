@@ -103,6 +103,7 @@
 		<string>AktivGrotesk-Bold.ttf</string>
 		<string>AktivGrotesk-Medium.ttf</string>
 		<string>AktivGrotesk-Regular.ttf</string>
+		<string>AktivGrotesk-Light.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
