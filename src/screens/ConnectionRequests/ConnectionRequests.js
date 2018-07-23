@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
+import ContactsSeparator from 'components/ContactsSeparator';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -47,6 +48,7 @@ class ConnectionRequests extends React.Component<Props> {
       .filter(({ type }) => type === TYPE_RECEIVED)
       .map(invitation => (
         <ContactCard
+          noBorder
           key={invitation.id}
           onAcceptInvitationPress={this.handleAcceptInvitationPress(invitation)}
           onRejectInvitationPress={this.handleRejectInvitatonPress(invitation)}
@@ -54,6 +56,7 @@ class ConnectionRequests extends React.Component<Props> {
           name={invitation.username}
           status={invitation.type}
           showActions
+          ItemSeparatorComponent={ContactsSeparator}
         />
       ));
   };

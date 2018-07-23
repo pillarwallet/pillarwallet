@@ -67,10 +67,6 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
 `;
 
-const ContactCardList = styled(FlatList)`
-  padding: 16px;
-`;
-
 const EmptyStateBGWrapper = styled.View`
   flex-direction: row;
   justify-content: flex-start;
@@ -209,12 +205,13 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !!localContacts.length &&
-          <ContactCardList
+          <FlatList
             data={localContacts}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderContact}
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
+            contentContainerStyle={{padding: 16, paddingTop: 0}}
             refreshControl={
               <RefreshControl
                 refreshing={false}
