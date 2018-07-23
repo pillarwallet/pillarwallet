@@ -64,8 +64,6 @@ type State = {
 const flatListStyles = {
   justifyContent: 'flex-start',
   flex: 1,
-  paddingLeft: 16,
-  paddingRight: 16,
 };
 
 const TXHistoryHeader = styled.View`
@@ -125,7 +123,6 @@ class TXHistory extends React.Component<Props, State> {
     date.setUTCSeconds(datetime);
     return `${months[date.getMonth()]} ${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
   };
-
   selectTransaction = (transaction: Object) => {
     const {
       status,
@@ -169,7 +166,7 @@ class TXHistory extends React.Component<Props, State> {
     Linking.openURL(TX_DETAILS_URL + hash);
   };
 
-  renderTransaction = ({ item: transaction }: { item: Transaction }) => {
+  renderTransaction = ({ item: transaction, index }: Object) => {
     const {
       status,
       value,
@@ -188,8 +185,9 @@ class TXHistory extends React.Component<Props, State> {
       .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
     const address = getUserName(contact) || `${senderRecipientAddress.slice(0, 7)}…${senderRecipientAddress.slice(-7)}`;
     const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
+    const isEven = index % 2;
     return (
-      <Item key={id} onPress={() => this.selectTransaction(transaction)}>
+      <Item key={id} onPress={() => this.selectTransaction(transaction)} isEven={isEven}>
         <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
         <Section>
           <Hash>{address}</Hash>

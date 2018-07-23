@@ -12,6 +12,7 @@ export const baseColors = {
   freshEucalyptus: '#2AA057',
   snowWhite: '#fafafa',
   lightGray: '#f5f5f5',
+  whiteSmoke: '#f7f7f7',
   lighterGray: '#fafafa',
   mediumGray: '#C6CACD',
   darkGray: '#8B939E',
