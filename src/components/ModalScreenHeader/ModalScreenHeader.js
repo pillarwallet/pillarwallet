@@ -83,7 +83,6 @@ const ModalScreenHeader = (props: Props) => {
               type="Feather"
               onPress={() => onBack(null)}
               color={UIColors.primary}
-              fontSize={32}
               style={additionalStyle}
             />
             }

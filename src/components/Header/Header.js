@@ -41,7 +41,7 @@ const Header = (props: Props) => {
     <Wrapper gray={gray}>
       <Left style={{ flex: 1, justifyContent: 'flex-start' }}>
         {onBack &&
-          <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
+          <BackIcon icon="back" color="#000" onPress={() => onBack(null)} />
         }
       </Left>
       <Body style={{ flex: 1 }}>
