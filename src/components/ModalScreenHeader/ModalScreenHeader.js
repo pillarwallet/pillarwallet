@@ -15,6 +15,7 @@ type Props = {
   subtitle?: boolean,
   title?: string,
   rightLabelText?: string,
+  closeButtonComponent?: React.Node,
 }
 
 const Header = styled.View`
@@ -59,6 +60,7 @@ const ModalScreenHeader = (props: Props) => {
     title,
     subtitle,
     rightLabelText = '',
+    closeButtonComponent,
   } = props;
 
 
@@ -98,12 +100,14 @@ const ModalScreenHeader = (props: Props) => {
       </View>
       <Right>
         <Label style={{ lineHeight: 20 }}>{rightLabelText.toUpperCase()}</Label>
-        <CloseButton
-          icon="close"
-          onPress={onClose}
-          fontSize={Platform.OS === 'ios' ? 36 : 30}
-          color={baseColors.darkGray}
-        />
+        {!closeButtonComponent ?
+          <CloseButton
+            icon="close"
+            onPress={onClose}
+            fontSize={Platform.OS === 'ios' ? 36 : 30}
+            color={baseColors.darkGray}
+          />
+        : closeButtonComponent}
       </Right>
     </Header>
   );

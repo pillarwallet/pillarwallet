@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { TouchableOpacity } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
@@ -8,7 +9,7 @@ import { connect } from 'react-redux';
 import { baseColors, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { SubTitle, BoldText, LightText } from 'components/Typography';
+import { SubTitle, BoldText, LightText, TextLink } from 'components/Typography';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import {
   addAssetAction,
@@ -51,6 +52,8 @@ type Props = {
 }
 
 class AddToken extends React.Component<Props> {
+  formChanged: boolean = false;
+
   componentDidMount() {
     const { fetchSupportedAssets } = this.props;
     fetchSupportedAssets();
@@ -58,6 +61,7 @@ class AddToken extends React.Component<Props> {
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
+    this.formChanged = true;
     if (enabled) {
       addAsset(asset);
       return;
@@ -103,10 +107,24 @@ class AddToken extends React.Component<Props> {
     navigation.goBack(null);
   };
 
+  getCustomCloseButton = () => {
+    return (
+      <TouchableOpacity onPress={this.handleScreenDismissal} >
+        <TextLink>
+          Save
+        </TextLink>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     return (
       <Container>
-        <ModalScreenHeader title="add token" onClose={this.handleScreenDismissal} />
+        <ModalScreenHeader
+          title="add token"
+          onClose={this.handleScreenDismissal}
+          closeButtonComponent={this.formChanged ? this.getCustomCloseButton() : null}
+        />
         <ScrollWrapper regularPadding>
           <SubTitle>
             Toggle ERC-20 tokens your wallet should display.
