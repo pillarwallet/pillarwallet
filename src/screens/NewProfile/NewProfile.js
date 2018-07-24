@@ -180,7 +180,12 @@ class NewProfile extends React.Component<Props, State> {
           />
         </ScrollWrapper>
         <Footer>
-          <Button block onPress={() => params.handleSubmit()} disabled={walletState === CHECKING_USERNAME} title="Next" />
+          <Button
+            block
+            onPress={() => params.handleSubmit()}
+            disabled={walletState === CHECKING_USERNAME}
+            title="Next"
+          />
         </Footer>
       </Container>
     );

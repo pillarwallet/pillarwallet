@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import { Left, Body, Right, Icon } from 'native-base';
 import { TextLink, BaseText } from 'components/Typography';
-import { baseColors } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon';
@@ -41,6 +41,7 @@ const BackIcon = styled(ButtonIcon)`
 const CloseIconText = styled(BaseText)`
   margin-right: 10px;
   color: ${baseColors.darkGray};
+  font-size: ${fontSizes.extraSmall};
 `;
 
 const CloseIconWrapper = styled.View`
@@ -71,7 +72,7 @@ const Header = (props: Props) => {
     <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
       <Left style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
         {onBack && !!index &&
-          <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
+          <BackIcon icon="arrow-back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={28} />
         }
         {!onBack && !centerTitle &&
           <Title noMargin title={title} />
@@ -92,7 +93,7 @@ const Header = (props: Props) => {
               {onCloseText &&
                 <CloseIconText>{onCloseText}</CloseIconText>
               }
-              <CloseIcon name="ios-close" style={{ fontSize: 36 }} onPress={onClose} />
+              <CloseIcon name="ios-close" style={{ fontSize: 36, color: UIColors.primary }} onPress={onClose} />
             </CloseIconWrapper>
           }
         </Right>

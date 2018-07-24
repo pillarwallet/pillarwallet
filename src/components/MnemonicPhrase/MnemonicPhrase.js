@@ -8,14 +8,14 @@ const MnemonicPhraseWrapper = styled.View`
   flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
-  height: 320px;
+  height: 220px;
   margin: 20px 0;
   width: 100%;
 `;
 
 const MnemonicPhraseItem = styled.View`
   width: 50%;
-  margin: 0 0 10px 0;
+  margin: 0 0 5px 0;
   padding-right: 10px;
   flex-direction: row;
   align-items: center;
@@ -34,7 +34,7 @@ const MnemonicPhraseWord = styled(BoldText)`
   border-style: dashed;
   border-width: 1;
   border-radius: 6;
-  padding: 10px;
+  padding: 5px;
 `;
 
 type Props = {
