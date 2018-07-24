@@ -250,7 +250,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         <Container>
           <Header
             onClose={this.props.navigation.dismiss}
-            onCloseText="step 1 of 3"
+            onCloseText="STEP 1 OF 3"
             title="send"
             index={1}
           />
@@ -269,7 +269,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         <Container>
           <Header
             onClose={this.props.navigation.dismiss}
-            onCloseText="step 1 of 3"
+            onCloseText="STEP 1 OF 3"
             title="send"
             index={1}
           />

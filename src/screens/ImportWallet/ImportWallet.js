@@ -12,7 +12,6 @@ import {
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
 } from 'constants/walletConstants';
-import HeaderLink from 'components/HeaderLink';
 import Button from 'components/Button';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';

@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Paragraph } from 'components/Typography';
+import { Center } from 'components/Layout';
 import Title from 'components/Title';
 import PopModal from 'components/Modals/PopModal';
 
@@ -19,10 +20,12 @@ const TransactionSentModal = (props: Props) => {
       onModalHide={onModalHide}
       headerImage={tokenSentConfirmationImage}
     >
-      <Title
-        title="transaction sent"
-        center
-      />
+      <Center>
+        <Title
+          title="transaction sent"
+          center
+        />
+      </Center>
       <Paragraph light center style={{ marginBottom: 30 }}>
         We will let you know once it has been confirmed.
       </Paragraph>

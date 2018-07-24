@@ -279,7 +279,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <Header
               onBack={this.props.navigation.goBack}
               onClose={this.props.navigation.dismiss}
-              onCloseText="step 2 of 3"
+              onCloseText="STEP 2 OF 3"
               title="send"
               index={1}
             />
@@ -318,7 +318,7 @@ class SendTokenAmount extends React.Component<Props, State> {
               <Header
                 onBack={this.props.navigation.goBack}
                 onClose={this.props.navigation.dismiss}
-                onCloseText="step 2 of 3"
+                onCloseText="STEP 2 OF 3"
                 title="send"
                 index={1}
               />

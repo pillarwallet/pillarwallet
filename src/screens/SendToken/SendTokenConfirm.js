@@ -9,7 +9,7 @@ import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
 import { SubTitle, BoldText } from 'components/Typography';
 import Button from 'components/Button';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import type { TransactionPayload } from 'models/Transaction';
@@ -145,11 +145,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <ModalScreenHeader
+          <Header
             onBack={this.props.navigation.goBack}
             onClose={this.handleModalDismissal}
             title="send"
-            rightLabelText="step 3 of 3"
+            onCloseText="STEP 3 OF 3"
+            index={1}
           />
           <WarningBanner />
           <Wrapper regularPadding>

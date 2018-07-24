@@ -37,6 +37,20 @@ const BackIcon = styled(ButtonIcon)`
   align-self: flex-start;
 `;
 
+const CloseIconText = styled(BaseText)`
+  margin-right: 10px;
+  color: ${baseColors.darkGray};
+`;
+
+const CloseIconWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+const CloseIcon = styled(Icon)`
+  height: 36px;
+`;
+
 const Header = (props: Props) => {
   const {
     onBack,
@@ -69,11 +83,13 @@ const Header = (props: Props) => {
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
-          {onCloseText &&
-            <BaseText>{onCloseText}</BaseText>
-          }
           {onClose &&
-            <Icon name="close" onPress={onClose} />
+            <CloseIconWrapper>
+              {onCloseText &&
+                <CloseIconText>{onCloseText}</CloseIconText>
+              }
+              <CloseIcon name="ios-close" style={{ fontSize: 36 }} onPress={onClose} />
+            </CloseIconWrapper>
           }
         </Right>
       }
