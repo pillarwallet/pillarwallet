@@ -18,6 +18,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
 import WarningBanner from 'components/WarningBanner';
+import { getUserName } from '../../utils/contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -26,6 +27,7 @@ type Props = {
   resetIncorrectPassword: () => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   wallet: Object,
+  contacts: Object[],
 }
 
 type State = {
@@ -132,6 +134,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   render() {
+    const { contacts } = this.props;
     const {
       assetData,
       transactionPayload: {
@@ -142,6 +145,10 @@ class SendTokenContacts extends React.Component<Props, State> {
       showCheckPinModal,
       showTransactionPendingModal,
     } = this.state;
+
+    const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+    const recipient = getUserName(contact) || to;
+
     return (
       <React.Fragment>
         <Container>
@@ -160,7 +167,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             </LabeledRow>
             <LabeledRow>
               <Label>RECIPIENT</Label>
-              <Value>{to}</Value>
+              <Value>{recipient}</Value>
             </LabeledRow>
             <LabeledRow>
               <Label>TRANSACTION FEE</Label>
@@ -189,9 +196,11 @@ class SendTokenContacts extends React.Component<Props, State> {
 const mapStateToProps = ({
   appSettings: { data: appSettings },
   wallet: { data: wallet },
+  contacts: { data: contacts },
 }) => ({
   appSettings,
   wallet,
+  contacts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
