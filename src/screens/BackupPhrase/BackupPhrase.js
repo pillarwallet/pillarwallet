@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/Button';
 import { generateWalletMnemonicAction } from 'actions/walletActions';
@@ -34,8 +34,10 @@ class BackupPhrase extends React.Component<Props, {}> {
             Don’t take a screenshot; write them down carefully, make a few copies, and put them in different places.
           </Paragraph>
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
-          <Button onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
         </Wrapper>
+        <Footer>
+          <Button block onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
+        </Footer>
       </Container>
     );
   }

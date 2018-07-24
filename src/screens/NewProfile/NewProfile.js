@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
@@ -178,8 +178,10 @@ class NewProfile extends React.Component<Props, State> {
             value={value}
             onChange={this.handleChange}
           />
-          <Button onPress={() => params.handleSubmit()} disabled={walletState === CHECKING_USERNAME} title="Next" />
         </ScrollWrapper>
+        <Footer>
+          <Button block onPress={() => params.handleSubmit()} disabled={walletState === CHECKING_USERNAME} title="Next" />
+        </Footer>
       </Container>
     );
   }
