@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
 import { Container, Wrapper, Footer } from 'components/Layout';
-import Title from 'components/Title';
+import Header from 'components/Header';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
@@ -41,8 +41,8 @@ export default class SecurityConfirm extends React.Component<Props, State> {
 
     return (
       <Container>
+        <Header title="security" onBack={() => this.props.navigation.goBack(null)} index={2} />
         <Wrapper regularPadding>
-          <Title title="security" />
           <Paragraph>
             Keep your backup phrase safe! We don’t have it.
             You’ll need these words if you lose your device or delete your app.

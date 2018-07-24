@@ -8,7 +8,7 @@ import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import HeaderLink from 'components/HeaderLink';
 import { Paragraph, Label, BoldText } from 'components/Typography';
-import Title from 'components/Title';
+import Header from 'components/Header';
 import ButtonIcon from 'components/ButtonIcon';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
@@ -205,8 +205,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     return (
       <Container>
+        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} index={4} />
         <Wrapper regularPadding>
-          <Title title="verify backup phrase" />
           <Paragraph>
             Please select the appropriate words from the list.
           </Paragraph>

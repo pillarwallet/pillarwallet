@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
-import HeaderLink from 'components/HeaderLink';
 import TextInput from 'components/TextInput';
-import Title from 'components/Title';
+import Header from 'components/Header';
+import Button from 'components/Button';
 import { updateLocalUserAction } from 'actions/userActions';
 import { validateUserDetailsAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
@@ -90,9 +90,6 @@ type State = {
   formOptions: Object,
 };
 
-const mapStateToPropsHeaderLink = ({ wallet: { walletState } }) => ({ isLoading: walletState === CHECKING_USERNAME });
-
-const ConnectedHeaderLink = connect(mapStateToPropsHeaderLink, null)(HeaderLink);
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
@@ -108,17 +105,6 @@ class NewProfile extends React.Component<Props, State> {
       formOptions: getDefaultFormOptions(inputDisabled),
     };
   }
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<*> }) => {
-    const { params = {} } = navigation.state;
-    return {
-      headerRight: (
-        <ConnectedHeaderLink onPress={params.handleSubmit}>
-          Next
-        </ConnectedHeaderLink>
-      ),
-    };
-  };
 
   componentDidMount() {
     const { navigation } = this.props;
@@ -178,10 +164,13 @@ class NewProfile extends React.Component<Props, State> {
 
   render() {
     const { value, formOptions } = this.state;
+    const { walletState } = this.props;
+    const { params = {} } = this.props.navigation.state;
+
     return (
       <Container>
+        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} index={5} />
         <ScrollWrapper regularPadding>
-          <Title title="choose your username" />
           <LoginForm
             innerRef={node => { this._form = node; }}
             type={formStructure}
@@ -189,6 +178,7 @@ class NewProfile extends React.Component<Props, State> {
             value={value}
             onChange={this.handleChange}
           />
+          <Button onPress={() => params.handleSubmit()} disabled={walletState === CHECKING_USERNAME} title="Next" />
         </ScrollWrapper>
       </Container>
     );

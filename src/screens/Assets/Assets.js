@@ -10,7 +10,7 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { TextLink, BaseText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
 import {

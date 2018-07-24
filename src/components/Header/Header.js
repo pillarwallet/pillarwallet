@@ -45,11 +45,10 @@ const Header = (props: Props) => {
     gray,
   } = props;
   const showRight = nextText || onBack;
-  if (!index) return null;
   return (
     <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
       <Left style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
-        {onBack &&
+        {onBack && !!index &&
           <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
         }
         {!onBack &&
