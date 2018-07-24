@@ -7,7 +7,7 @@ import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckPin from 'components/CheckPin';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
@@ -35,8 +35,9 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     if (!pinIsValid) {
       return (
         <Container>
-          <ModalScreenHeader
+          <Header
             onClose={this.handleScreenDismissal}
+            index={1}
           />
           <CheckPin onPinValid={() => this.setState({ pinIsValid: true })} />
         </Container>
@@ -45,9 +46,10 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     return (
       <Container>
-        <ModalScreenHeader
+        <Header
           title="backup phrase"
           onClose={this.handleScreenDismissal}
+          index={1}
         />
         <Wrapper regularPadding>
           <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>

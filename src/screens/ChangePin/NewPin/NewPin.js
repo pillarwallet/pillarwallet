@@ -2,7 +2,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Center } from 'components/Layout';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 import { CHANGE_PIN_CONFIRM_NEW_PIN } from 'constants/navigationConstants';
@@ -23,7 +23,7 @@ export default class NewPin extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <ModalScreenHeader onClose={this.handleScreenDismissal} />
+        <Header onClose={this.handleScreenDismissal} index={1} />
         <Center>
           <Title align="center" title="enter new pincode" />
         </Center>
