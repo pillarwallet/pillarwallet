@@ -56,9 +56,7 @@ const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
 `;
 
-const ContactCardList = styled(FlatList)`
-  margin: 0 16px;
-`;
+const ContactCardList = styled(FlatList)``;
 
 const EmptyStateBGWrapper = styled.View`
   flex-direction: row;
