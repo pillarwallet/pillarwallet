@@ -351,11 +351,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           </KeyboardAvoidingView>
         </Container>
       );
-    return (
-      <React.Fragment>
-        {layout}
-      </React.Fragment>
-    );
+    return layout;
   }
 }
 

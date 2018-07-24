@@ -17,6 +17,7 @@ type Props = {
   index?: number,
   title?: string,
   gray?: boolean,
+  centerTitle?: boolean,
 }
 
 const Wrapper = styled.View`
@@ -60,21 +61,24 @@ const Header = (props: Props) => {
     onClose,
     onCloseText,
     title,
+    centerTitle,
     gray,
   } = props;
   const showRight = nextText || onBack || onClose;
+  const titleOnBack = title && onBack;
+  const showTitleCenter = titleOnBack || centerTitle;
   return (
     <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
       <Left style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
         {onBack && !!index &&
           <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
         }
-        {!onBack &&
+        {!onBack && !centerTitle &&
           <Title noMargin title={title} />
         }
       </Left>
       <Body style={{ flex: 1 }}>
-        {title && onBack &&
+        {showTitleCenter &&
           <Title align="center" noMargin title={title} />
         }
       </Body>
