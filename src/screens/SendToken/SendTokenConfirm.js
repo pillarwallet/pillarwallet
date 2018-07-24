@@ -147,7 +147,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     } = this.state;
 
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
-    const recipient = getUserName(contact) || to;
+    const recipientUsername = getUserName(contact);
 
     return (
       <React.Fragment>
@@ -165,9 +165,15 @@ class SendTokenContacts extends React.Component<Props, State> {
               <Label>AMOUNT</Label>
               <Value>{amount} {assetData.token}</Value>
             </LabeledRow>
+            {!!recipientUsername &&
             <LabeledRow>
-              <Label>RECIPIENT</Label>
-              <Value>{recipient}</Value>
+              <Label>RECIPIENT USERNAME</Label>
+              <Value>{recipientUsername}</Value>
+            </LabeledRow>
+            }
+            <LabeledRow>
+              <Label>RECIPIENT ADDRESS</Label>
+              <Value>{to}</Value>
             </LabeledRow>
             <LabeledRow>
               <Label>TRANSACTION FEE</Label>
