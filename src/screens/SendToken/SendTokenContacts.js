@@ -13,7 +13,7 @@ import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
 import ContactsSeparator from 'components/ContactsSeparator';
 import { isValidETHAddress } from 'utils/validators';
@@ -248,10 +248,11 @@ class SendTokenContacts extends React.Component<Props, State> {
     const layout = Platform.OS === 'ios' ?
       (
         <Container>
-          <ModalScreenHeader
+          <Header
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
+            onCloseText="step 1 of 3"
             title="send"
+            index={1}
           />
           {FormContent}
           {qrScannerComponent}
@@ -266,10 +267,11 @@ class SendTokenContacts extends React.Component<Props, State> {
       ) :
       (
         <Container>
-          <ModalScreenHeader
+          <Header
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
+            onCloseText="step 1 of 3"
             title="send"
+            index={1}
           />
           {FormContent}
           {!!value.address.length &&

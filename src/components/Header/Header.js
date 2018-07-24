@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { Left, Body, Right } from 'native-base';
-import { TextLink } from 'components/Typography';
+import { Left, Body, Right, Icon } from 'native-base';
+import { TextLink, BaseText } from 'components/Typography';
 import { baseColors } from 'utils/variables';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
@@ -10,6 +10,8 @@ import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
   onBack?: Function,
+  onClose?: Function,
+  onCloseText?: string,
   onNextPress?: Function,
   nextText?: string,
   index?: number,
@@ -41,10 +43,12 @@ const Header = (props: Props) => {
     index,
     nextText,
     onNextPress,
+    onClose,
+    onCloseText,
     title,
     gray,
   } = props;
-  const showRight = nextText || onBack;
+  const showRight = nextText || onBack || onClose;
   return (
     <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
       <Left style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
@@ -64,6 +68,12 @@ const Header = (props: Props) => {
         <Right style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
+          }
+          {onCloseText &&
+            <BaseText>{onCloseText}</BaseText>
+          }
+          {onClose &&
+            <Icon name="close" onPress={onClose} />
           }
         </Right>
       }

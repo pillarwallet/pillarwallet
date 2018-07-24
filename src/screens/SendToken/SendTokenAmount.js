@@ -14,7 +14,7 @@ import { ButtonMini } from 'components/Button';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
 import { SubTitle, TextLink, Paragraph, BaseText } from 'components/Typography';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
@@ -276,11 +276,12 @@ class SendTokenAmount extends React.Component<Props, State> {
       (
         <ScrollWrapper color={baseColors.white}>
           <Container>
-            <ModalScreenHeader
+            <Header
               onBack={this.props.navigation.goBack}
               onClose={this.props.navigation.dismiss}
-              rightLabelText="step 2 of 3"
+              onCloseText="step 2 of 3"
               title="send"
+              index={1}
             />
             <WarningBanner />
             <Wrapper regularPadding>
@@ -314,11 +315,12 @@ class SendTokenAmount extends React.Component<Props, State> {
         <Container>
           <KeyboardAvoidingView behavior="padding">
             <View>
-              <ModalScreenHeader
+              <Header
                 onBack={this.props.navigation.goBack}
                 onClose={this.props.navigation.dismiss}
-                rightLabelText="step 2 of 3"
+                onCloseText="step 2 of 3"
                 title="send"
+                index={1}
               />
               <WarningBanner />
               <BodyWrapper>
