@@ -12,6 +12,7 @@ import IconCircle from './IconCircle';
 import DetailsWrapper from './DetailsWrapper';
 import Name from './Name';
 import { Amount, AmountToken, FiatAmount } from './Amount';
+import Icon from 'components/Icon';
 
 type Props = {
   id: string,
@@ -113,7 +114,7 @@ export default class AssetCard extends React.Component<Props, State> {
             <DetailsWrapper>
               <Name>{name}</Name>
               <AmountWrapper>
-                <Amount>{amount}</Amount>
+                <Amount>{amount}<Icon name="settings"/></Amount>
                 <AmountToken> {token}</AmountToken>
               </AmountWrapper>
               <FiatAmount>

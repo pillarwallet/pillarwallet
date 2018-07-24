@@ -19,6 +19,7 @@ const aktivGroteskBold = require('./src/assets/fonts/AktivGrotesk-Bold.ttf');
 const aktivGroteskMedium = require('./src/assets/fonts/AktivGrotesk-Medium.ttf');
 const aktivGroteskRegular = require('./src/assets/fonts/AktivGrotesk-Regular.ttf');
 const aktivGroteskLight = require('./src/assets/fonts/AktivGrotesk-Light.ttf');
+const pillarIcons = require('./src/assets/fonts/PillarIcons.ttf');
 
 type State = {
   isFetched: boolean,
@@ -50,6 +51,7 @@ class App extends React.Component<Props, State> {
       'aktiv-grotesk-medium': aktivGroteskMedium,
       'aktiv-grotesk-light': aktivGroteskLight,
       'aktiv-grotesk-regular': aktivGroteskRegular,
+      'pillar-icons': pillarIcons,
     });
     this.setState({ fontLoaded: true });
   };
