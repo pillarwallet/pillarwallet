@@ -8,14 +8,14 @@ const MnemonicPhraseWrapper = styled.View`
   flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
-  height: 280px;
+  height: 320px;
   margin: 20px 0;
   width: 100%;
 `;
 
 const MnemonicPhraseItem = styled.View`
   width: 50%;
-  margin: 0 0 5px 0;
+  margin: 0 0 10px 0;
   padding-right: 10px;
   flex-direction: row;
   align-items: center;
@@ -23,7 +23,7 @@ const MnemonicPhraseItem = styled.View`
 `;
 
 const MnemonicPhraseIndex = styled(BaseText)`
-  flex: 0 0 20px;
+  flex: 0 0 30px;
 `;
 
 const MnemonicPhraseWord = styled(BoldText)`

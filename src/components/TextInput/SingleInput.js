@@ -167,7 +167,7 @@ class SingleInput extends React.Component<Props, State> {
     return (
       <Wrapper>
         {label && <Label>{label}</Label>}
-        <ErrorMessage>{errorMessage}</ErrorMessage>
+        { errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <InputHolder>
           <Item>
             <InputField

@@ -28,7 +28,7 @@ const ContainerInner = styled.View`
 
 export const Container = (props: ContainerProps) => {
   return (
-    <ContainerOuter>
+    <ContainerOuter forceInset={{ top: 'always' }}>
       <ContainerInner color={props.color} center={props.center}>
         {props.children}
       </ContainerInner>
