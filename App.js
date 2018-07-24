@@ -3,7 +3,7 @@ import 'utils/setup';
 import * as React from 'react';
 import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { Root as NBRoot } from 'native-base';
+import { Root as NBRoot, Toast } from 'native-base';
 import { Font } from 'expo';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
@@ -12,7 +12,6 @@ import { SHOW_STORYBOOK } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import configureStore from './src/configureStore';
 import StorybookUI from './storybook';
-import { Toast } from 'native-base';
 
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
@@ -24,7 +23,6 @@ const aktivGroteskLight = require('./src/assets/fonts/AktivGrotesk-Light.ttf');
 type State = {
   isFetched: boolean,
   fontLoaded: boolean,
-  isOnline: boolean,
 }
 
 type Props = {
@@ -38,7 +36,6 @@ class App extends React.Component<Props, State> {
   state = {
     isFetched: false,
     fontLoaded: false,
-    isOnline: false,
   };
 
   static getDerivedStateFromProps(nextProps: Props) {
@@ -82,8 +79,7 @@ class App extends React.Component<Props, State> {
   };
 
   handleConnectivityChange = isOnline => {
-    this.setState({ isOnline });
-    if (!isOnline){
+    if (!isOnline) {
       Toast.show({
         type: 'danger',
         position: 'top',
@@ -97,7 +93,7 @@ class App extends React.Component<Props, State> {
   };
 
   render() {
-    const { isFetched, fontLoaded, isOnline } = this.state;
+    const { isFetched, fontLoaded } = this.state;
     const { navigation, dispatch } = this.props;
     if (!isFetched || !fontLoaded) return null;
 
