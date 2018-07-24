@@ -151,7 +151,6 @@ class AssetScreen extends React.Component<Props, State> {
         <CloseButton
           icon="close"
           onPress={this.handleCardTap}
-          fontSize={Platform.OS === 'ios' ? 36 : 30}
           color={baseColors.black}
         />
         <ScrollWrapper
