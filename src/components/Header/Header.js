@@ -41,7 +41,7 @@ const BackIcon = styled(ButtonIcon)`
 const CloseIconText = styled(BaseText)`
   margin-right: 10px;
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.extraExtraSmall};
 `;
 
 const CloseIconWrapper = styled.View`
