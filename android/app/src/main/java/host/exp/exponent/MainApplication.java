@@ -1,6 +1,7 @@
 package host.exp.exponent;
 
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactPackage;
 
 import java.util.Arrays;
@@ -14,6 +15,8 @@ import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
+
+import io.fabric.sdk.android.Fabric;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
@@ -29,6 +32,10 @@ public class MainApplication extends ExpoApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    final Fabric fabric = new Fabric.Builder(this)
+            .kits(new Crashlytics())
+            .build();
+    Fabric.with(fabric);
     if (BuildConfig.DEBUG) {
       Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
     } else {

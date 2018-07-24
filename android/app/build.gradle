@@ -123,6 +123,7 @@ dependencies {
   // Our dependencies
   compile "com.google.android.gms:play-services-base:15.0.1"
   compile "com.google.firebase:firebase-core:15.0.2"
+  compile "com.google.firebase:firebase-crash:15.0.2"
   compile 'com.google.android.gms:play-services-vision:15.0.1'
   compile('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
     transitive = true
