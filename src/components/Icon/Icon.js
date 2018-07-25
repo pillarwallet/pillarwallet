@@ -1,5 +1,5 @@
 // @flow
-import { createIconSet } from 'react-native-vector-icons';
+import { createIconSet } from '@expo/vector-icons';
 
 const glyphMap = {
   'chat': '\uE801',

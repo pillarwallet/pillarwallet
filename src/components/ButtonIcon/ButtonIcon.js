@@ -23,7 +23,7 @@ const ButtonIcon = (props: Props) => {
     color,
     style,
     margin,
-    type = 'Ionicons',
+    type,
   } = props;
   const iconParams = {
     active: false,
