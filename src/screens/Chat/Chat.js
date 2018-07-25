@@ -285,7 +285,7 @@ class ChatScreen extends React.Component<Props, State> {
     const { messages, user } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const contactMessages = this.formatMessages(messages[contact.username], contact, user);
-    const title = `chat with ${getUserName(contact).toLowerCase()}`;
+    const title = `${getUserName(contact).toLowerCase()}`;
     return (
       <Container>
         <Header title={title} onClose={this.handleChatDismissal} />
