@@ -28,20 +28,6 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CE1F0C34203467B3003F1C04"
-               BuildableName = "SignalProtocol.framework"
-               BlueprintName = "libsignal-protocol-swift iOS"
-               ReferencedContainer = "container:../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/libsignal-protocol-swift-master/libsignal-protocol-swift.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "958BF8F820F3CAD8003CF3A0"
                BuildableName = "libSignalMessagingSwift.a"
                BlueprintName = "SignalMessagingSwift"
