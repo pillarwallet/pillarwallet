@@ -21,10 +21,7 @@ const TransactionSentModal = (props: Props) => {
       headerImage={tokenSentConfirmationImage}
     >
       <Center>
-        <Title
-          title="transaction sent"
-          center
-        />
+        <Title title="transaction sent" align="center" />
       </Center>
       <Paragraph light center style={{ marginBottom: 30 }}>
         We will let you know once it has been confirmed.
