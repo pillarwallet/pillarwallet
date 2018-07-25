@@ -54,6 +54,18 @@ export const fontSizes = {
   extraLarge: 24,
   extraExtraLarge: 32,
   giant: 36,
+  iosIcons: 32,
+  androidCloseIcon: 22,
+  androidCheckmarkIcon: 26,
+};
+
+export const spacingSizes = {
+  defaultHorizontalSideSpacing: 20,
+  defaultVerticalSpacing: 20,
+};
+
+export const itemSizes = {
+  avaratCircleSmall: 40,
 };
 
 export const fontTrackings = {

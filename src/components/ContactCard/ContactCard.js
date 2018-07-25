@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
-import { baseColors, UIColors, fontSizes } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, itemSizes } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import ButtonIcon from 'components/ButtonIcon';
@@ -148,7 +148,7 @@ export default class ContactCard extends React.Component<Props> {
             color={baseColors.darkGray}
             margin={0}
             icon="close"
-            fontSize={Platform.OS === 'ios' ? 32 : 22}
+            fontSize={Platform.OS === 'ios' ? fontSizes.iosIcons : fontSizes.androidCloseIcon}
             onPress={onRejectInvitationPress}
           />
           <ActionCircleButton
@@ -156,7 +156,7 @@ export default class ContactCard extends React.Component<Props> {
             margin={0}
             accept
             icon="ios-checkmark"
-            fontSize={Platform.OS === 'ios' ? 32 : 26}
+            fontSize={Platform.OS === 'ios' ? fontSizes.iosIcons : fontSizes.androidCheckmarkIcon}
             onPress={onAcceptInvitationPress}
           />
         </ButtonIconWrapper>
@@ -206,8 +206,8 @@ export default class ContactCard extends React.Component<Props> {
               <ProfileImage
                 uri={avatar}
                 userName={name}
-                diameter={40}
-                textStyle={{ fontSize: 18 }}
+                diameter={itemSizes.avaratCircleSmall}
+                textStyle={{ fontSize: fontSizes.medium }}
               />
             </ContactCardAvatarWrapper>
             <ContactCardName style={{ maxWidth: maxContactInfoWidth }}>{name}</ContactCardName>

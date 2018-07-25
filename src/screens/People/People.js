@@ -20,7 +20,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { baseColors, UIColors, fontSizes } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacingSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import ContactCard from 'components/ContactCard';
 import { BaseText } from 'components/Typography';
@@ -30,7 +30,6 @@ import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
-
 
 const PeopleHeader = styled.View`
   flex-direction: row;
@@ -211,7 +210,11 @@ class PeopleScreen extends React.Component<Props, State> {
             renderItem={this.renderContact}
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
-            contentContainerStyle={{ padding: 16, paddingTop: 0 }}
+            contentContainerStyle={{
+              horizonpadding: 16,
+              verticalpadding: spacingSizes.defaultVerticalSpacing,
+              paddingTop: 0,
+            }}
             refreshControl={
               <RefreshControl
                 refreshing={false}
