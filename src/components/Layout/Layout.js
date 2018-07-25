@@ -21,14 +21,6 @@ const ContainerOuter = styled(Platform.OS === 'ios' ? SafeAreaView : View)`
   background-color: ${props => props.color ? props.color : baseColors.white};
 `;
 
-// const ContainerOuter = Platform.OS === 'ios' ?
-//   styled(SafeAreaView)`
-//   background-color: ${props => props.color ? props.color : baseColors.white};
-// ` :
-//   styled.View`
-//   background-color: ${props => props.color ? props.color : baseColors.white};
-// `;
-
 const ContainerInner = styled.View`
   height: 100%;
   align-items: ${props => (props.center ? 'center' : 'stretch')};
