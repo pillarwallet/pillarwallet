@@ -7,6 +7,7 @@ import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon';
+import { noop } from 'utils/common';
 
 type Props = {
   onBack?: Function,
@@ -99,7 +100,7 @@ const Header = (props: Props) => {
         </HeaderBody >
       }
       {showRight &&
-        <HeaderRight onClose={onClose}>
+        <HeaderRight onClose={onClose || noop}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
