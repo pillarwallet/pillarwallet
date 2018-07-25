@@ -8,11 +8,10 @@ import ButtonIcon from 'components/ButtonIcon';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import { Container } from 'components/Layout';
-import { Camera } from 'expo';
+import { Camera, FileSystem } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
-
 
 type Props = {
   onModalHide?: Function,
@@ -123,11 +122,11 @@ class RNCamera extends React.Component<Props, State> {
     this.setState({ showResult: false });
   }
 
-  // componentDidMount() {
-  //   FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}profile`).catch(e => {
-  //     console.log(e, 'Directory exists'); // eslint-disable-line
-  //   });
-  // }
+  componentDidMount() {
+    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}profile`).catch(e => {
+      console.log(e, 'Directory exists'); // eslint-disable-line
+    });
+  }
 
   getBackToCamera = () => {
     this.setState({ showResult: false });
@@ -148,17 +147,22 @@ class RNCamera extends React.Component<Props, State> {
     return false;
   };
 
-  setImage = () => {
+  setImage = async () => {
     const { user, updateUserAvatar } = this.props;
-    const data = new FormData();
-    data.append('walletId', user.walletId);
-    data.append('image', this.state.currentCaptureUrl);
-    updateUserAvatar(user.walletId, data);
-
-    // this.props.updateUserPhoto(data, this.props.user.walletId);
+    const { currentCaptureUrl } = this.state;
+    const newImageUrl = `${FileSystem.documentDirectory}profile/${Date.now()}.jpg`;
+    await FileSystem.moveAsync({
+      from: currentCaptureUrl,
+      to: newImageUrl,
+    });
+    const formData : any = new FormData();
+    formData.append('walletId', user.walletId);
+    formData.append('image', { uri: newImageUrl, name: 'image.jpg', type: 'multipart/form-data' });
+    updateUserAvatar(user.walletId, formData);
     this.handleModalClose();
     this.props.modalHide();
   };
+
 
   renderNoPermissions = () => {
     return (
