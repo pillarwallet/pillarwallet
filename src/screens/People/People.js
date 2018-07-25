@@ -22,24 +22,15 @@ import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
+import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import Title from 'components/Title';
 import type { SearchResults } from 'models/Contacts';
 
-
-const PeopleHeader = styled.View`
-  flex-direction: row;
-  height: 97px;
-  background-color: ${baseColors.white};
-  padding: 0 16px;
-  align-items: center;
-  justify-content: space-between;
-`;
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -165,9 +156,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <PeopleHeader>
-          <Title center noMargin title="people" />
-        </PeopleHeader>
+        <Header title="people" />
         <Wrapper regularPadding>
           <SearchBar
             inputProps={{
