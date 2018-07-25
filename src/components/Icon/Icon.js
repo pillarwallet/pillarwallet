@@ -1,18 +1,18 @@
 // @flow
-import { createIconSet } from '@expo/vector-icons';
+import { createIconSet } from 'react-native-vector-icons';
 
 const glyphMap = {
-  'chat': '\uE801',
-  'back': '\uE800',
-  'close': '\uE802',
-  'help': '\uE803',
+  chat: '\uE801',
+  back: '\uE800',
+  close: '\uE802',
+  help: '\uE803',
   'down-arrow': '\uE805',
-  'remove': '\uE806',
-  'mute': '\uE804',
+  remove: '\uE806',
+  mute: '\uE804',
   'up-arrow': '\uE808',
-  'search': '\uE807',
-  'settings': '\uE809',
-  'warning': '\uE80A',
+  search: '\uE807',
+  settings: '\uE809',
+  warning: '\uE80A',
 };
 
 const Icon = createIconSet(glyphMap, 'pillar-icons');
