@@ -53,6 +53,19 @@ const CloseIcon = styled(Icon)`
   height: 36px;
 `;
 
+const HeaderLeft = styled(Left)`
+  flex: ${props => props.showTitleLeft ? 2 : 1};
+  justify-content: flex-start;
+  align-items: flex-end;
+`;
+
+
+const HeaderRight = styled(Right)`
+  flex: 1;
+  justify-content: flex-end;
+  align-items: flex-end;
+`;
+
 const Header = (props: Props) => {
   const {
     onBack,
@@ -68,23 +81,24 @@ const Header = (props: Props) => {
   const showRight = nextText || onBack || onClose;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
+  const showTitleLeft = !onBack && !centerTitle;
   return (
     <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
-      <Left style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-end' }}>
+      <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack && !!index &&
           <BackIcon icon="arrow-back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={28} />
         }
-        {!onBack && !centerTitle &&
+        {showTitleLeft &&
           <Title noMargin title={title} />
         }
-      </Left>
-      <Body style={{ flex: 1 }}>
-        {showTitleCenter &&
+      </HeaderLeft>
+      {showTitleCenter &&
+        <Body style={{ flex: 1 }}>
           <Title align="center" noMargin title={title} />
-        }
-      </Body>
+        </Body>
+      }
       {showRight &&
-        <Right style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+        <HeaderRight onClose={onClose}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
@@ -96,7 +110,7 @@ const Header = (props: Props) => {
               <CloseIcon name="ios-close" style={{ fontSize: 36, color: UIColors.primary }} onPress={onClose} />
             </CloseIconWrapper>
           }
-        </Right>
+        </HeaderRight>
       }
     </Wrapper>
   );
