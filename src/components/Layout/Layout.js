@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Platform, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-navigation';
 import { baseColors } from 'utils/variables';
@@ -15,8 +16,9 @@ export const Center = styled.View`
   align-items: center;
 `;
 
-const ContainerOuter = styled(SafeAreaView)`
-  background-color: ${baseColors.white};
+
+const ContainerOuter = styled(Platform.OS === 'ios' ? SafeAreaView : View)`
+  background-color: ${props => props.color ? props.color : baseColors.white};
 `;
 
 const ContainerInner = styled.View`
@@ -28,7 +30,7 @@ const ContainerInner = styled.View`
 
 export const Container = (props: ContainerProps) => {
   return (
-    <ContainerOuter>
+    <ContainerOuter color={props.color}>
       <ContainerInner color={props.color} center={props.center}>
         {props.children}
       </ContainerInner>
