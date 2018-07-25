@@ -12,12 +12,13 @@ import Button from 'components/Button';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
+import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
-import WarningBanner from 'components/WarningBanner';
+import { getUserName } from 'utils/contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -26,6 +27,7 @@ type Props = {
   resetIncorrectPassword: () => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   wallet: Object,
+  contacts: Object[],
 }
 
 type State = {
@@ -132,6 +134,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   render() {
+    const { contacts } = this.props;
     const {
       assetData,
       transactionPayload: {
@@ -142,6 +145,10 @@ class SendTokenContacts extends React.Component<Props, State> {
       showCheckPinModal,
       showTransactionPendingModal,
     } = this.state;
+
+    const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+    const recipientUsername = getUserName(contact);
+
     return (
       <React.Fragment>
         <Container>
@@ -158,8 +165,14 @@ class SendTokenContacts extends React.Component<Props, State> {
               <Label>AMOUNT</Label>
               <Value>{amount} {assetData.token}</Value>
             </LabeledRow>
+            {!!recipientUsername &&
             <LabeledRow>
-              <Label>RECIPIENT</Label>
+              <Label>RECIPIENT USERNAME</Label>
+              <Value>{recipientUsername}</Value>
+            </LabeledRow>
+            }
+            <LabeledRow>
+              <Label>RECIPIENT ADDRESS</Label>
               <Value>{to}</Value>
             </LabeledRow>
             <LabeledRow>
@@ -189,9 +202,11 @@ class SendTokenContacts extends React.Component<Props, State> {
 const mapStateToProps = ({
   appSettings: { data: appSettings },
   wallet: { data: wallet },
+  contacts: { data: contacts },
 }) => ({
   appSettings,
   wallet,
+  contacts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
