@@ -48,7 +48,9 @@ class ChatListScreen extends React.Component<Props, State> {
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
       const dateSent = new Date(lastMessage.serverTimestamp);
-      timeSent = `${dateSent.getHours()}:${dateSent.getMinutes()}`; // HH:mm
+      const minutes = (`0${dateSent.getMinutes()}`).slice(-2);
+      const hours = (`0${dateSent.getHours()}`).slice(-2);
+      timeSent = `${hours}:${minutes}`; // HH:mm
     }
     return (
       <ChatListItem
