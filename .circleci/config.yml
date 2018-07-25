@@ -335,7 +335,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/ios-build
+                  - master
       - deploy_android:
           requires:
             - build
