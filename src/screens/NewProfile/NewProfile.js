@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { KeyboardAvoidingView } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -106,13 +107,6 @@ class NewProfile extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    const { navigation } = this.props;
-    navigation.setParams({
-      handleSubmit: this.handleSubmit,
-    });
-  }
-
   handleChange = (value: Object) => {
     const options = t.update(this.state.formOptions, {
       fields: {
@@ -165,7 +159,6 @@ class NewProfile extends React.Component<Props, State> {
   render() {
     const { value, formOptions } = this.state;
     const { walletState } = this.props;
-    const { params = {} } = this.props.navigation.state;
 
     return (
       <Container>
@@ -179,14 +172,16 @@ class NewProfile extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
         </ScrollWrapper>
-        <Footer>
-          <Button
-            block
-            onPress={() => params.handleSubmit()}
-            disabled={walletState === CHECKING_USERNAME}
-            title="Next"
-          />
-        </Footer>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={50}>
+          <Footer>
+            <Button
+              block
+              onPress={this.handleSubmit}
+              disabled={walletState === CHECKING_USERNAME}
+              title="Next"
+            />
+          </Footer>
+        </KeyboardAvoidingView>
       </Container>
     );
   }
