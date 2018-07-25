@@ -136,7 +136,7 @@ class PeopleScreen extends React.Component<Props, State> {
   renderContact = ({ item }) => (
     <ContactCard
       onPress={this.handleContactCardPress(item)}
-      name={item.firstName || item.username}
+      name={item.username}
       key={item.id}
     />
   );

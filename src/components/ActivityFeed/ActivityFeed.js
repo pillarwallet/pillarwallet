@@ -51,7 +51,7 @@ const ActivityFeedHeader = styled.View`
 `;
 
 const ActivityFeedItem = styled.View`
-  background-color: ${props => props.isEven ? baseColors.white : baseColors.snowWhite};
+  background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};
   height: 74px;
   padding: 0px 16px;
   justify-content: flex-start;
