@@ -53,7 +53,7 @@ Username.getValidationErrorMessage = (username): string => {
     return `Username should be less than ${maxUsernameLength} characters.`;
   }
   if (username != null && !(/^[a-z0-9]+$/i.test(username))) {
-    return `Username should only contain alpha-numeric characters.`;
+    return 'Username should only contain alpha-numeric characters.';
   }
   return 'Please specify the username.';
 };
