@@ -90,7 +90,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-qrcode|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-device-info|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-parsed-text|@expo/react-native-action-sheet|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|react-navigation-fluid-transitions)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -105,7 +105,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
-    "@pillarwallet/pillarwallet-nodejs-sdk": "1.2.519",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.4.622",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
@@ -113,12 +113,14 @@
     "blockchain-explorer-sdk": "^0.1.99",
     "browserify-zlib": "~0.1.4",
     "cryptocompare": "^0.5.0",
+    "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
     "ethers": "^3.0.9",
     "expo": "^28.0.0",
     "https-browserify": "~0.0.0",
+    "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
-    "native-base": "^2.4.2",
+    "native-base": "2.6.1",
     "polished": "^1.9.2",
     "pouchdb-react-native": "^6.4.1",
     "process": "^0.11.0",
@@ -130,6 +132,7 @@
     "react-native-device-info": "^0.21.5",
     "react-native-expo-image-cache": "^3.1.1",
     "react-native-firebase": "^4.2.0",
+    "react-native-gifted-chat": "^0.4.3",
     "react-native-intercom": "^11.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
@@ -142,11 +145,13 @@
     "react-navigation": "2.3.1",
     "react-navigation-fluid-transitions": "^0.2.0",
     "react-navigation-redux-helpers": "2.0.1",
+    "react-navigation-tabs": "^0.5.1",
     "react-redux": "^5.0.7",
     "readable-stream": "1.0.33",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
+    "rn-signal-protocol-messaging": "^1.0.47",
     "shuffle-array": "^1.0.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
@@ -155,6 +160,7 @@
     "timers-browserify": "^1.0.1",
     "url": "~0.10.1",
     "util": "~0.10.3",
+    "uuid": "^3.3.2",
     "yarn": "^1.7.0"
   },
   "react-native": {
@@ -182,6 +188,11 @@
     "timers": "timers-browserify",
     "tty": "tty-browserify",
     "tls": false
+  },
+  "rnpm": {
+    "assets": [
+      "./src/assets/fonts/"
+    ]
   },
   "browser": {
     "fs": "react-native-level-fs",

@@ -107,6 +107,7 @@ apply from: 'expo.gradle'
 
 
 dependencies {
+    compile project(':rn-signal-protocol-messaging')
     compile project(':react-native-intercom')
     compile project(':react-native-udp')
     compile project(':react-native-tcp')
@@ -128,6 +129,8 @@ dependencies {
   compile('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
     transitive = true
   }
+  compile "com.google.firebase:firebase-messaging:17.1.0"
+  compile 'me.leolin:ShortcutBadger:1.1.21@aar'
 
   // Our dependencies from ExpoView
   // DON'T ADD ANYTHING HERE THAT ISN'T IN EXPOVIEW. ONLY COPY THINGS FROM EXPOVIEW TO HERE.
@@ -173,7 +176,7 @@ dependencies {
   compile 'com.android.support:exifinterface:26.0.1'
   compile 'com.squareup.okhttp3:okhttp:3.4.1'
   compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
-  compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
+//  compile 'com.squareup.okhttp3:okhttp-ws:3.4.1'
   compile 'com.squareup.okio:okio:1.9.0'
 
   // Testing

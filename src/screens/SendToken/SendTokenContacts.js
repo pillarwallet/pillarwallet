@@ -1,18 +1,21 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform, View, StatusBar } from 'react-native';
 import { Permissions } from 'expo';
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes } from 'utils/variables';
-import { Container, Wrapper } from 'components/Layout';
+import { fontSizes, baseColors } from 'utils/variables';
+import { Container } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import ModalScreenHeader from 'components/ModalScreenHeader';
+import ContactCard from 'components/ContactCard';
+import ContactsSeparator from 'components/ContactsSeparator';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
@@ -20,17 +23,22 @@ const PERMISSION_GRANTED = 'GRANTED';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  localContacts: Object[],
 }
 
 type State = {
   isScanning: boolean,
-  transactionPayload: Object,
-  assetData: Object,
   value: {
     address: string,
   },
   formStructure: t.struct,
 }
+
+const statusBarHeight = Platform.OS === 'ios' ?
+  20
+  :
+  StatusBar.currentHeight;
+
 
 const qrCode = require('assets/images/qr.png');
 
@@ -95,27 +103,43 @@ const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
   width: 100%;
 `;
 
-const FooterWrapper = styled.View`
+const FormWrapper = styled.View`
+  padding: 0 16px;
+`;
+
+const FooterWrapper = Platform.OS === 'ios' ?
+  styled.View`
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
   padding: 0 20px;
   width: 100%;
+` :
+  styled.View`
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 16px;
+  width: 100%;
+  margin-bottom: 10px;
+  margin-top: 10px;
+`;
+
+const ContactCardList = styled.FlatList`
+  padding: 0 16px;
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
+  assetData: Object;
 
   constructor(props: Props) {
     super(props);
-    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
-    const assetData = this.props.navigation.getParam('assetData', {});
+    this.assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
       isScanning: false,
       value: { address: '' },
       formStructure: getFormStructure(),
-      transactionPayload,
-      assetData,
     };
   }
 
@@ -126,11 +150,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   handleFormSubmit = () => {
     const value = this._form.getValue();
     if (!value) return;
-    const { assetData, transactionPayload } = this.state;
-    this.props.navigation.navigate(SEND_TOKEN_CONFIRM, {
-      assetData,
-      transactionPayload: { ...transactionPayload, to: value.address },
-    });
+    this.navigateToNextScreen(value.address);
   };
 
   handleQRScannerOpen = async () => {
@@ -151,18 +171,45 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleQRRead = (address: string) => {
-    this.setState({ value: { ...this.state.value, address }, isScanning: false });
+    this.setState({ value: { ...this.state.value, address }, isScanning: false }, () => {
+      this.navigateToNextScreen(address);
+    });
   };
+
+  renderContact = ({ item: user }) => {
+    return (
+      <ContactCard
+        name={user.username}
+        avatar={user.avatar}
+        key={user.id}
+        showActions
+        noBorder
+        onPress={() => this.setUsersEthAddress(user.ethAddress)}
+      />
+    );
+  };
+
+  setUsersEthAddress = (ethAddress: string) => {
+    this.setState({ value: { ...this.state.value, address: ethAddress } }, () => {
+      this.navigateToNextScreen(ethAddress);
+    });
+  };
+
+  navigateToNextScreen(ethAddress) {
+    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+      assetData: this.assetData,
+      receiver: ethAddress,
+    });
+  }
 
   render() {
     const {
       isScanning,
-      assetData,
       formStructure,
       value,
     } = this.state;
     const formOptions = generateFormOptions(
-      { onIconPress: this.handleQRScannerOpen, currency: assetData.token },
+      { onIconPress: this.handleQRScannerOpen },
     );
 
     const qrScannerComponent = (
@@ -174,36 +221,75 @@ class SendTokenContacts extends React.Component<Props, State> {
         onRead={this.handleQRRead}
       />
     );
-    return (
+
+    const { localContacts = [] } = this.props;
+    const FormContent = (
       <React.Fragment>
+        <FormWrapper>
+          <SubTitle margin="0px">To whom you would like to send?</SubTitle>
+          <Form
+            ref={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            onChange={this.handleChange}
+            onBlur={this.handleChange}
+            value={value}
+          />
+        </FormWrapper>
+        <ContactCardList
+          data={localContacts}
+          renderItem={this.renderContact}
+          keyExtractor={({ username }) => username}
+          ItemSeparatorComponent={ContactsSeparator}
+        />
+      </React.Fragment>
+    );
+
+    const layout = Platform.OS === 'ios' ?
+      (
         <Container>
           <ModalScreenHeader
-            onBack={this.props.navigation.goBack}
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 2 of 3"
+            rightLabelText="step 1 of 3"
             title="send"
           />
-          <Wrapper regularPadding>
-            <SubTitle>To whom you would like to send?</SubTitle>
-            <Form
-              ref={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              onChange={this.handleChange}
-              onBlur={this.handleChange}
-              value={value}
-            />
-          </Wrapper>
+          {FormContent}
+          {qrScannerComponent}
+          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
+            {!!value.address.length &&
+            <FooterWrapper>
+              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
+            </FooterWrapper>
+            }
+          </KeyboardAvoidingView>
         </Container>
-        {qrScannerComponent}
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
+      ) :
+      (
+        <Container>
+          <ModalScreenHeader
+            onClose={this.props.navigation.dismiss}
+            rightLabelText="step 1 of 3"
+            title="send"
+          />
+          {FormContent}
+          {!!value.address.length &&
           <FooterWrapper>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />
           </FooterWrapper>
-        </KeyboardAvoidingView>
-      </React.Fragment>
+          }
+          {qrScannerComponent}
+        </Container>
+      );
+    return (
+      <View style={{ paddingTop: statusBarHeight, backgroundColor: baseColors.white }}>
+        {layout}
+      </View>
     );
   }
 }
 
-export default SendTokenContacts;
+const mapStateToProps = ({ contacts: { data: localContacts } }) => ({
+  localContacts,
+});
+
+export default connect(mapStateToProps)(SendTokenContacts);

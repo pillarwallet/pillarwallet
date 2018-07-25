@@ -8,7 +8,9 @@ import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
 import historyReducer from './historyReducer';
 import notificationsReducer from './notificationsReducer';
-
+import contactsReducer from './contactsReducer';
+import invitationsReducer from './invitationsReducer';
+import chatReducer from './chatReducer';
 
 export default combineReducers({
   navigation: navigationReducer,
@@ -19,4 +21,7 @@ export default combineReducers({
   user: userReducer,
   history: historyReducer,
   notifications: notificationsReducer,
+  contacts: contactsReducer,
+  invitations: invitationsReducer,
+  chat: chatReducer,
 });

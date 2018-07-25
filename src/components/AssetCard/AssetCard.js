@@ -7,7 +7,6 @@ import {
 import { getCurrencySymbol } from 'utils/common';
 import styled from 'styled-components/native';
 import { Image as ImageCache } from 'react-native-expo-image-cache';
-
 import IconWrapper from './IconWrapper';
 import IconCircle from './IconCircle';
 import DetailsWrapper from './DetailsWrapper';
@@ -21,13 +20,13 @@ type Props = {
   amount: string,
   onPress: Function,
   address: string,
+  wallpaper: string,
   children?: React.Node,
   balanceInFiat: {
     amount: string | number,
     currency: string,
   },
   icon: string,
-  color: string
 }
 
 const BackgroundHolder = styled.View`
@@ -38,6 +37,14 @@ const BackgroundHolder = styled.View`
   width: 100%;
   position: relative;
   background-color: ${props => (props.cardColor)};
+`;
+
+const BackgroundImage = styled(ImageCache)`
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 const AmountWrapper = styled.View`
@@ -71,12 +78,12 @@ export default class AssetCard extends React.Component<Props, State> {
 
   render() {
     const {
-      color,
       name,
       amount,
       token,
       balanceInFiat,
       onPress,
+      wallpaper,
     } = this.props;
 
     const { cardIcon } = this.state;
@@ -101,7 +108,8 @@ export default class AssetCard extends React.Component<Props, State> {
             marginBottom: 12,
           }]}
         >
-          <BackgroundHolder cardColor={color || defaultCardColor}>
+          <BackgroundHolder cardColor={defaultCardColor}>
+            <BackgroundImage uri={wallpaper} />
             <DetailsWrapper>
               <Name>{name}</Name>
               <AmountWrapper>
@@ -114,20 +122,17 @@ export default class AssetCard extends React.Component<Props, State> {
             </DetailsWrapper>
             {!!cardIcon &&
             <IconWrapper>
-              <IconCircle />
-              <ImageCache
-                key={token}
-                style={{
-                  alignSelf: 'flex-end',
-                  height: 24,
-                  width: 24,
-                  position: 'absolute',
-                  top: 27,
-                  right: 22,
-                }}
-                uri={cardIcon}
-                resizeMode="contain"
-              />
+              <IconCircle>
+                <ImageCache
+                  key={token}
+                  style={{
+                    height: 40,
+                    width: 40,
+                  }}
+                  uri={cardIcon}
+                  resizeMode="contain"
+                />
+              </IconCircle>
             </IconWrapper>}
           </BackgroundHolder>
         </Animated.View>

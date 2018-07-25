@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
-import { Text, View } from 'react-native';
-import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { View } from 'react-native';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import type { Asset, Assets } from 'models/Asset';
+import { BaseText } from 'components/Typography';
 import { connect } from 'react-redux';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -65,22 +66,21 @@ class PortfolioBalance extends React.Component<Props, {}> {
     return (
       <View>
         {!!label &&
-        <Text style={{
+        <BaseText style={{
           color: baseColors.darkGray,
           fontSize: fontSizes.small,
           paddingTop: 10,
         }}
         >
           {label}
-        </Text>}
-        <Text style={{
+        </BaseText>}
+        <BaseText style={{
           color: UIColors.defaultTextColor,
           fontSize: fontSizes.extraExtraLarge,
-          fontWeight: fontWeights.bold,
         }}
         >
           {currencySymbol}{portfolioBalance}
-        </Text>
+        </BaseText>
       </View>
     );
   }

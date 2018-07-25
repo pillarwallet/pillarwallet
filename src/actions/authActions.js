@@ -14,8 +14,10 @@ import {
 import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
 import { delay } from 'utils/common';
 import Storage from 'services/storage';
+import ChatService from 'services/chat';
 
 const storage = Storage.getInstance('db');
+const chat = new ChatService();
 
 export const checkPinAction = (pin: string, onValidPin?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
@@ -29,6 +31,12 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
     try {
       const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       api.init(wallet.privateKey);
+      const { user } = await storage.get('user');
+      await chat.init({
+        username: user.username,
+        password: pin,
+      }).catch(() => null);
+      await chat.client.registerAccount().catch(() => null);
       dispatch({
         type: DECRYPT_WALLET,
         payload: wallet,
@@ -71,6 +79,13 @@ export const changePinAction = (pin: string) => {
       .catch(() => ({}));
 
     await storage.save('wallet', { wallet: encryptedWallet });
+
+    const { user } = await storage.get('user');
+    await chat.init({
+      username: user.username,
+      password: pin,
+    });
+    await chat.client.registerAccount().catch(() => null);
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,

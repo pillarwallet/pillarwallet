@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Icon, Switch, Badge as NBBadge } from 'native-base';
-
+import { BaseText } from 'components/Typography';
 import { Platform, View, StyleSheet, TouchableNativeFeedback } from 'react-native';
 
 const StyledItemTouchable = styled.TouchableHighlight`
@@ -11,7 +11,7 @@ const StyledItemTouchable = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 25px 30px;
+  padding: 20px 16px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};
@@ -24,7 +24,7 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 30px;
+  padding: 20px 16px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};
@@ -48,17 +48,17 @@ const Badge = styled(NBBadge)`
   height: 24px;
 `;
 
-const BadgeText = styled.Text`
+const BadgeText = styled(BaseText)`
   color: #fff;
   font-size: ${fontSizes.extraExtraSmall};
   text-align: center;
 `;
 
-const ItemLabel = styled.Text`
+const ItemLabel = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
-const ItemValue = styled.Text`
+const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.coolGrey};
   line-height: ${fontSizes.medium};

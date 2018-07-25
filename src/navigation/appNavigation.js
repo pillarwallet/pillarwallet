@@ -4,8 +4,9 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, Platform, Image } from 'react-native';
 
+import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
+import { BaseText } from 'components/Typography';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -13,6 +14,9 @@ import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
 import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
 import ProfileScreen from 'screens/Profile';
+import PeopleScreen from 'screens/People';
+import ContactScreen from 'screens/Contact';
+import ConnectionRequestsScreen from 'screens/ConnectionRequests';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -20,9 +24,13 @@ import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
+import HomeScreen from 'screens/Home';
+import ChatListScreen from 'screens/Chat/ChatList';
+import ChatScreen from 'screens/Chat/Chat';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
+import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 
 // actions
 import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
@@ -32,7 +40,12 @@ import {
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
-import { fetchAssetsBalancesAction, fetchTransactionsHistoryAction } from 'actions/assetsActions';
+import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import {
+  fetchTransactionsHistoryNotificationsAction,
+  fetchTransactionsHistoryAction,
+} from 'actions/historyActions';
 
 // constants
 import {
@@ -41,6 +54,10 @@ import {
   ASSET,
   ICO,
   PROFILE,
+  PEOPLE,
+  CONTACT,
+  HOME,
+  CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
   CHANGE_PIN_NEW_PIN,
@@ -51,6 +68,8 @@ import {
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
+  CHAT_LIST,
+  CHAT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -64,31 +83,17 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
-// NAVIGATION OPTIONS FOR ANDROID AND IOS
-let navigationOpts;
-
-if (Platform.OS === 'ios') {
-  navigationOpts = {
-    header: null,
-  };
-} else {
-  navigationOpts = {
-    headerStyle: {
-      borderBottomWidth: 0,
-      elevation: 0,
-      height: 0,
-    },
-  };
-}
+const navigationOpts = {
+  header: null,
+};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
-const iconProfile = require('assets/icons/icon_profile.png');
+const iconPeople = require('assets/icons/icon_people.png');
+const iconHome = require('assets/icons/icon_home.png');
 const iconIco = require('assets/icons/icon_ico.png');
-// const iconPeople = require('assets/icons/icon_people.png');
-// const iconChat = require('assets/icons/icon_chat.png');
+const iconChat = require('assets/icons/icon_chat.png');
 
 const StackNavigatorModalConfig = {
-  mode: 'modal',
   transitionConfig: () => ({
     transitionSpec: {
       duration: 0,
@@ -108,45 +113,122 @@ const FluidNavigatorConfig = {
   },
 };
 
+const StackNavigatorConfig = {
+  navigationOptions: {
+    header: null,
+    gesturesEnabled: false,
+  },
+};
+
+// CHAT FLOW
+const chatFlow = createStackNavigator({
+  [CHAT_LIST]: ChatListScreen,
+}, StackNavigatorConfig);
+
 // ASSETS FLOW
 const assetsFlow = FluidNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
 }, FluidNavigatorConfig);
 
+// PEOPLE FLOW
+const peopleFlow = createStackNavigator({
+  [PEOPLE]: PeopleScreen,
+  [CONTACT]: ContactScreen,
+  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
+}, StackNavigatorConfig);
 
-const tabBarIcon = (icon) => ({ focused, tintColor }) => (
-  <Image
-    style={{
-      width: 20,
-      height: 20,
-      tintColor: focused ? tintColor : baseColors.mediumGray,
-    }}
-    source={icon}
-  />
+// HOME FLOW
+const homeFlow = createStackNavigator({
+  [HOME]: HomeScreen,
+  [PROFILE]: ProfileScreen,
+}, StackNavigatorConfig);
+
+const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
+  <View style={{ padding: 4 }}>
+    <Image
+      style={{
+        width: 18,
+        height: 18,
+        tintColor: focused ? tintColor : baseColors.mediumGray,
+        resizeMode: 'contain',
+      }}
+      source={icon}
+    />
+    {!!hasAddon &&
+    <View
+      style={{
+        width: 7,
+        height: 7,
+        backgroundColor: '#ffdb3c',
+        borderRadius: 3.5,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+      }}
+    />}
+  </View>
 );
+
+const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
+  <BaseText
+    style={{
+      fontSize: 12,
+      color: focused ? tintColor : baseColors.mediumGray,
+      textAlign: 'center',
+    }}
+  >
+    {labelText}
+  </BaseText>
+);
+
 // TAB NAVIGATION FLOW
+const generateCustomBottomBar = (): Object => {
+  if (Platform.OS !== 'android') {
+    return {};
+  }
+
+  return {
+    tabBarComponent: props => <AndroidTabBarComponent {...props} />,
+    tabBarPosition: 'bottom',
+  };
+};
+
 const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: {
       screen: assetsFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconWallet),
-        tabBarLabel: 'Assets',
+        tabBarLabel: tabBarLabel('Assets'),
+      }),
+    },
+    [PEOPLE]: {
+      screen: peopleFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconPeople),
+        tabBarLabel: tabBarLabel('People'),
+      }),
+    },
+    [HOME]: {
+      screen: homeFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconHome),
+        tabBarLabel: tabBarLabel('Home'),
       }),
     },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
-        tabBarLabel: 'Marketplace',
+        tabBarLabel: tabBarLabel('Marketplace'),
       }),
     },
-    [PROFILE]: {
-      screen: ProfileScreen,
+    [CHAT_LIST]: {
+      screen: chatFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconProfile),
-        tabBarLabel: 'Profile',
+        tabBarIcon: tabBarIcon(iconChat),
+        tabBarLabel: tabBarLabel('Chat'),
       }),
     },
   }, {
@@ -165,25 +247,20 @@ const tabNavigation = createBottomTabNavigator(
         borderTopColor: 'transparent',
         paddingTop: 5,
         paddingBottom: 5,
-        height: 66,
-      },
-      labelStyle: {
-        fontSize: 14,
-        marginBottom: 4,
-        marginTop: 4,
-        color: baseColors.mediumGray,
+        height: 54,
       },
     },
     tabBarPosition: 'bottom',
     animationEnabled: true,
     swipeEnabled: false,
+    ...generateCustomBottomBar(),
   },
 );
 
 // SEND TOKEN FLOW
 const sendTokenFlow = createStackNavigator({
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
 
@@ -201,6 +278,7 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
+    [CHAT]: ChatScreen,
   }, {
     mode: 'modal',
     navigationOptions: navigationOpts,
@@ -216,7 +294,9 @@ type Props = {
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  fetchTransactionsHistory: (walletAddress: string) => Function,
+  fetchTransactionsHistoryNotifications: Function,
+  fetchInviteNotifications: Function,
   notifications: Object[],
   wallet: Object,
   assets: Object,
@@ -231,35 +311,37 @@ class AppFlow extends React.Component<Props, {}> {
       userState,
       startListeningNotifications,
       startListeningIntercomNotifications,
+      fetchTransactionsHistory,
+      fetchInviteNotifications,
+      fetchTransactionsHistoryNotifications,
+      fetchAssetsBalances,
+      assets,
+      wallet,
     } = this.props;
     if (userState !== REGISTERED) {
       fetchUser();
     }
     startListeningNotifications();
     startListeningIntercomNotifications();
+    fetchTransactionsHistory(wallet.address);
+    fetchAssetsBalances(assets, wallet.address);
+    fetchInviteNotifications();
+    fetchTransactionsHistoryNotifications();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
       notifications,
-      fetchAssetsBalances,
-      fetchTransactionsHistory,
-      assets,
-      wallet,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-
       Toast.show({
         text: lastNotification.message,
         buttonText: '',
       });
-
-      fetchAssetsBalances(assets, wallet.address);
-      fetchTransactionsHistory(wallet.address, lastNotification.asset);
     }
   }
 
@@ -311,8 +393,14 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
-  fetchTransactionsHistory: (walletAddress, asset) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
+  fetchTransactionsHistory: (walletAddress) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress));
+  },
+  fetchTransactionsHistoryNotifications: () => {
+    dispatch(fetchTransactionsHistoryNotificationsAction());
+  },
+  fetchInviteNotifications: () => {
+    dispatch(fetchInviteNotificationsAction());
   },
 });
 

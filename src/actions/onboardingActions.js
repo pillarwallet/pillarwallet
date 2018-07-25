@@ -4,6 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
 import Intercom from 'react-native-intercom';
+import ChatService from 'services/chat';
 import { getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
@@ -18,13 +19,17 @@ import {
   SET_API_USER,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
-import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_CONTACTS } from 'constants/contactsConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
 
 const storage = Storage.getInstance('db');
+const chat = new ChatService();
 
 export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
@@ -40,6 +45,10 @@ export const registerWalletAction = () => {
 
     // STEP 0: Clear local storage
     await storage.removeAll();
+    dispatch({ type: UPDATE_CONTACTS, payload: [] });
+    dispatch({ type: UPDATE_INVITATIONS, payload: [] });
+    dispatch({ type: UPDATE_ASSETS, payload: {} });
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
 
     // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -79,6 +88,11 @@ export const registerWalletAction = () => {
     await firebase.messaging().requestPermission();
     const fcmToken = await firebase.messaging().getToken();
     await Intercom.sendTokenToIntercom(fcmToken);
+    await chat.init({
+      username: user.username,
+      password: pin,
+    }).catch(() => null);
+    await chat.client.registerAccount().catch(() => null);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);

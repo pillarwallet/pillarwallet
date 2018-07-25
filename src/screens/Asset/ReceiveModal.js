@@ -7,6 +7,7 @@ import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
+import WarningBanner from 'components/WarningBanner';
 
 const { height } = Dimensions.get('window');
 
@@ -107,10 +108,11 @@ export default class ReceiveModal extends React.Component<Props, State> {
         onModalHide={onModalHide}
         subtitle={`Share your wallet address to receive ${tokenName} (${token})`}
       >
+        <WarningBanner rounded small />
         <ContentWrapper>
           <Holder>
             <QRCodeWrapper>
-              <QRCode value={address} size={180} />
+              <QRCode value={address} size={120} />
             </QRCodeWrapper>
             <Button
               title="Share Address"

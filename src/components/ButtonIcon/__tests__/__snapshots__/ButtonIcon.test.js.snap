@@ -71,6 +71,11 @@ exports[`Button Icon should render Button Icon correctly 1`] = `
           Object {
             "color": undefined,
             "fontSize": undefined,
+            "marginBottom": undefined,
+            "marginLeft": undefined,
+            "marginRight": undefined,
+            "marginTop": undefined,
+            "paddingTop": 0,
           },
         ],
         Object {

@@ -3,21 +3,23 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
 import { TouchableWithoutFeedback, View, Platform } from 'react-native';
-import { Label } from 'components/Typography';
+import { Label, SubTitle } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import { noop } from 'utils/common';
 
+
 type Props = {
   onBack?: Function,
   onClose: Function,
+  subtitle?: boolean,
   title?: string,
   rightLabelText?: string,
 }
 
 const Header = styled.View`
   background-color: #fff;
-  height: 80px;
+  height: 97px;
   padding: 0 16px;
   display: flex;
   flex-direction: row;
@@ -25,28 +27,29 @@ const Header = styled.View`
   align-items: center;
 `;
 
-const Left = styled.View`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-
 const Right = styled.View`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-end;
+  margin-top: ${Platform.OS === 'ios' ? 0 : 5};
+  margin-right: ${Platform.OS === 'ios' ? -2 : -8};
 `;
 
 const BackIcon = styled(ButtonIcon)`
-  position: relative;
-  top: 10px;
-  margin: 0 -10px;
+  margin: 0 0 0 -10px;
+  padding: 14px 0 0;
 `;
 
 const CloseButton = styled(ButtonIcon)`
-  position: relative;
-  bottom: 3px;
+  margin: -2px 2px 0 10px;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+`;
+
+const ModalSubTitle = styled(SubTitle)`
+  margin: 20px 0;
 `;
 
 const ModalScreenHeader = (props: Props) => {
@@ -54,16 +57,26 @@ const ModalScreenHeader = (props: Props) => {
     onBack,
     onClose,
     title,
+    subtitle,
     rightLabelText = '',
   } = props;
 
-  const onBackLeftPadding = Platform.OS === 'ios' ? 5 : 0;
+
+  const additionalStyle = Platform.OS === 'ios' ?
+    {
+      marginBottom: 10,
+    }
+    :
+    {
+      marginBottom: 15,
+      paddingLeft: 15,
+    };
 
   return (
-    <Header style={{ paddingLeft: onBack ? onBackLeftPadding : 20 }}>
-      <Left>
+    <Header>
+      <View>
         <TouchableWithoutFeedback onPress={() => onBack ? onBack(null) : noop}>
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'flex-start' }}>
             {onBack &&
             <BackIcon
               icon="chevron-left"
@@ -71,14 +84,20 @@ const ModalScreenHeader = (props: Props) => {
               onPress={() => onBack(null)}
               color={UIColors.primary}
               fontSize={32}
+              style={additionalStyle}
             />
             }
-            <Title title={title} />
+            {!!subtitle &&
+              <ModalSubTitle>{title}</ModalSubTitle>
+            }
+            {!subtitle &&
+              <Title title={title} />
+            }
           </View>
         </TouchableWithoutFeedback>
-      </Left>
+      </View>
       <Right>
-        <Label>{rightLabelText.toUpperCase()}</Label>
+        <Label style={{ lineHeight: 20 }}>{rightLabelText.toUpperCase()}</Label>
         <CloseButton
           icon="close"
           onPress={onClose}

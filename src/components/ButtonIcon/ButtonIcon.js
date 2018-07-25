@@ -9,7 +9,9 @@ type Props = {
   onPress?: Function,
   fontSize?: number,
   style?: StyleSheet.Styles,
+  iconStyle?: StyleSheet.Styles,
   type?: string,
+  margin?: number,
 }
 
 const ButtonIcon = (props: Props) => {
@@ -19,12 +21,21 @@ const ButtonIcon = (props: Props) => {
     fontSize,
     color,
     style,
+    margin,
     type = 'Ionicons',
   } = props;
   const iconParams = {
     active: false,
     name: icon,
-    style: { fontSize, color },
+    style: {
+      paddingTop: 0,
+      fontSize,
+      color,
+      marginLeft: margin,
+      marginRight: margin,
+      marginTop: margin,
+      marginBottom: margin,
+    },
     type,
   };
   if (Platform.OS === 'ios') {

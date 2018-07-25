@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.3.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -32,7 +32,7 @@ jobs:
   test_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.3.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -123,7 +123,7 @@ jobs:
   deploy_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.3.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -232,6 +232,7 @@ jobs:
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             sed -i 's/_build_number_/$buildNumber/g' .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: node-{{ checksum "../yarn.lock" }}
       - run:
@@ -300,11 +301,14 @@ jobs:
       #     path: app/build/test-results
       - run:
           name: Initial build
-          command: ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
 
       - run:
           name: Fastlane deploy to Google Play
           command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
             bundle exec fastlane supply init --json_key_data="$GOOGLE_JSON_DATA"
             bundle exec fastlane deploy_internal --verbose

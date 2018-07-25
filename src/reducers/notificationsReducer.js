@@ -1,10 +1,14 @@
 // @flow
-import { ADD_NOTIFICATION, UPDATE_INTERCOM_NOTIFICATIONS_COUNT } from 'constants/notificationConstants';
+import {
+  ADD_NOTIFICATION,
+  UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+} from 'constants/notificationConstants';
 import type { Notification } from 'models/Notification';
 
 type NotificationReducerState = {
   data: Notification[],
   intercomNotificationsCount: number,
+  homeNotifications: [],
 }
 
 type NotificationReducerAction = {
@@ -15,6 +19,7 @@ type NotificationReducerAction = {
 const initialState = {
   data: [],
   intercomNotificationsCount: 0,
+  homeNotifications: [],
 };
 
 export default function notificationsReducer(
