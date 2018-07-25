@@ -147,7 +147,7 @@ class AssetScreen extends React.Component<Props, State> {
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
     return (
-      <Container>
+      <Container color={baseColors.snowWhite}>
         <CloseButton
           icon="close"
           onPress={this.handleCardTap}
