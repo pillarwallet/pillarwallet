@@ -24,7 +24,7 @@ class Onboarding extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Header title="welcome" onBack={() => this.props.navigation.goBack(null)} index={1} />
+        <Header title="welcome" onBack={() => this.props.navigation.goBack(null)}  />
         <Wrapper regularPadding>
           <Paragraph>Pillar is a next-generation digital wallet
             and application for personal data management.

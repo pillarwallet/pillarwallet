@@ -106,7 +106,7 @@ class AddToken extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Header title="add token" onClose={this.handleScreenDismissal} index={1} />
+        <Header title="add token" onClose={this.handleScreenDismissal} />
         <ScrollWrapper regularPadding>
           <SubTitle>
             Toggle ERC-20 tokens your wallet should display.

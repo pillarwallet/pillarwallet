@@ -198,7 +198,7 @@ class AssetsScreen extends React.Component<Props> {
           title="assets"
           onNextPress={this.goToAddTokenPage}
           nextText="Add token"
-          index={1}
+
         />
         <Wrapper regularPadding>
           <ScrollView

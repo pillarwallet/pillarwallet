@@ -205,7 +205,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} index={4} />
+        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph>
             Please select the appropriate words from the list.

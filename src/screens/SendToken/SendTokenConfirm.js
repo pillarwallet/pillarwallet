@@ -157,7 +157,6 @@ class SendTokenContacts extends React.Component<Props, State> {
             onClose={this.handleModalDismissal}
             title="send"
             onCloseText="STEP 3 OF 3"
-            index={1}
           />
           <WarningBanner />
           <Wrapper regularPadding>

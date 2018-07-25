@@ -27,7 +27,7 @@ class BackupPhrase extends React.Component<Props, {}> {
 
     return (
       <Container>
-        <Header title="backup phrase" onBack={() => this.props.navigation.goBack(null)} index={3} />
+        <Header title="backup phrase" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph>Write down all 12 words in the order shown.</Paragraph>
           <Paragraph light>

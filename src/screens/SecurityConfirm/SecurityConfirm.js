@@ -41,7 +41,7 @@ export default class SecurityConfirm extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="security" onBack={() => this.props.navigation.goBack(null)} index={2} />
+        <Header title="security" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph>
             Keep your backup phrase safe! We don’t have it.

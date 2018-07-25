@@ -64,7 +64,7 @@ class ConnectionRequests extends React.Component<Props> {
         <Header
           title="connection requests"
           onBack={this.props.navigation.goBack}
-          index={1}
+
         />
         <ContactCardList contentInset={{ bottom: 40 }}>
           {this.renderInvitations()}

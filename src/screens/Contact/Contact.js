@@ -103,7 +103,7 @@ const Contact = (props: Props) => {
   const contact = props.navigation.getParam('contact', {});
   return (
     <Container>
-      <Header title="contact" onBack={props.navigation.goBack} index={2} />
+      <Header title="contact" onBack={props.navigation.goBack}  />
       <Wrapper regularPadding>
         <ContactWapper>
           <ContactHeader>

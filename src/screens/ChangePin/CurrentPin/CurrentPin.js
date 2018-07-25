@@ -22,7 +22,7 @@ export default class CurrentPin extends React.Component<Props> {
     return (
       <React.Fragment>
         <Container>
-          <Header onClose={this.handleScreenDismissal} index={1} />
+          <Header onClose={this.handleScreenDismissal} />
           <CheckPin
             onPinValid={() => navigation.navigate(CHANGE_PIN_NEW_PIN)}
             title="enter current pincode"

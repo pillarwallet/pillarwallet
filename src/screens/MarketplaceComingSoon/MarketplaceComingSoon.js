@@ -20,7 +20,7 @@ const ComingSoonBannerText = styled(BoldText)`
 const MarketplaceComingSoon = () => {
   return (
     <Container>
-      <Header title="marketplace" index={1} />
+      <Header title="marketplace"  />
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>

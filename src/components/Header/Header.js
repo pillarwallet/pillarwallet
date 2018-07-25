@@ -14,7 +14,6 @@ type Props = {
   onCloseText?: string,
   onNextPress?: Function,
   nextText?: string,
-  index?: number,
   title?: string,
   gray?: boolean,
   centerTitle?: boolean,
@@ -69,7 +68,6 @@ const HeaderRight = styled(Right)`
 const Header = (props: Props) => {
   const {
     onBack,
-    index,
     nextText,
     onNextPress,
     onClose,
@@ -85,7 +83,7 @@ const Header = (props: Props) => {
   return (
     <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
-        {onBack && !!index &&
+        {onBack &&
           <BackIcon icon="arrow-back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={28} />
         }
         {showTitleLeft &&
