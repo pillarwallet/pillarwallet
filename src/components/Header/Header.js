@@ -23,13 +23,12 @@ const Wrapper = styled.View`
   background-color: ${props => props.gray ? baseColors.snowWhite : baseColors.white};
   border-bottom-width: 0;
   padding: 0 16px;
-  padding-top: 0;
   height: 40px;
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
   margin-bottom: 20px;
-  margin-top: ${props => props.isAndroid ? '20px' : '0'};
+  margin-top: ${Platform.OS === 'android' ? '20px' : '0'};
 `;
 
 const BackIcon = styled(ButtonIcon)`
@@ -48,6 +47,7 @@ const CloseIconWrapper = styled.View`
   align-items: center;
   justify-content: flex-end;
 `;
+
 const CloseIcon = styled(Icon)`
   height: 36px;
 `;
@@ -81,7 +81,7 @@ const Header = (props: Props) => {
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   return (
-    <Wrapper isAndroid={Platform.OS === 'android'} gray={gray}>
+    <Wrapper gray={gray}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon icon="arrow-back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={28} />
