@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, Share, RefreshControl, Platform } from 'react-native';
+import { Animated, Easing, Share, RefreshControl } from 'react-native';
 import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
