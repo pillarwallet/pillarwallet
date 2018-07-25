@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { FlatList, View } from 'react-native';
-import { Container } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
@@ -72,15 +72,14 @@ class ChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { contacts, chats } = this.props;
+    const ChatWrapper = contacts.length ? ScrollWrapper : View;
     return (
       <Container>
         <ChatListHeader>
           <Title center noMargin title="chat" />
         </ChatListHeader>
-        <View style={{
-          paddingTop: 18,
+        <ChatWrapper style={{
           paddingBottom: contacts.length ? 18 : 0,
-          flex: 1,
         }}
         >
           <FlatList
@@ -97,7 +96,7 @@ class ChatListScreen extends React.Component<Props, State> {
                 bodyText="Start chatting with someone. Recent chats will appear here."
               />}
           />
-        </View>
+        </ChatWrapper>
       </Container>
     );
   }
