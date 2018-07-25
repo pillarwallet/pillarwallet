@@ -136,17 +136,21 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           }
         >
           <View
-            center={undefined}
+            align={undefined}
             maxWidth={undefined}
             noMargin={true}
             style={
               Array [
                 Object {
+                  "alignItems": "baseline",
                   "alignSelf": "flex-start",
+                  "justifyContent": "flex-end",
                   "marginBottom": 0,
                   "marginLeft": 0,
                   "marginRight": 0,
                   "marginTop": 0,
+                  "position": "relative",
+                  "top": 2,
                 },
                 undefined,
               ]
@@ -154,8 +158,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           >
             <Text
               accessible={true}
+              align={undefined}
               allowFontScaling={true}
-              center={undefined}
               ellipsizeMode="tail"
               style={
                 Array [
@@ -174,6 +178,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       Object {
                         "fontSize": 22,
                         "fontWeight": "700",
+                        "lineHeight": 22,
                       },
                       undefined,
                     ],
@@ -208,6 +213,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                         "fontSize": 12,
                         "height": 4,
                         "left": 6,
+                        "marginBottom": -4,
                         "position": "relative",
                         "top": -9,
                         "width": 4,
