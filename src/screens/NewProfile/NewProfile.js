@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, ScrollWrapper, Footer } from 'components/Layout';
+import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
@@ -91,6 +91,15 @@ type State = {
   formOptions: Object,
 };
 
+const FooterAndroid = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  width: 100%;
+  margin-bottom: 20px;
+  margin-top: 30px;
+`;
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
@@ -159,6 +168,8 @@ class NewProfile extends React.Component<Props, State> {
   render() {
     const { value, formOptions } = this.state;
     const { walletState } = this.props;
+    const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
+    const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
 
     return (
       <Container>
@@ -172,16 +183,18 @@ class NewProfile extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
         </ScrollWrapper>
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={50}>
-          <Footer>
-            <Button
-              block
-              onPress={this.handleSubmit}
-              disabled={walletState === CHECKING_USERNAME}
-              title="Next"
-            />
-          </Footer>
-        </KeyboardAvoidingView>
+        <FooterWrapperComponent>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'padding'} keyboardVerticalOffset={50}>
+            <FooterInnerComponent>
+              <Button
+                block
+                onPress={this.handleSubmit}
+                disabled={walletState === CHECKING_USERNAME}
+                title="Next"
+              />
+            </FooterInnerComponent>
+          </KeyboardAvoidingView>
+        </FooterWrapperComponent>
       </Container>
     );
   }
