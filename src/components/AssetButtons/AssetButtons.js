@@ -17,13 +17,14 @@ const AssetButtonsWrapper = styled.View`
   flex: 1;
   justify-content: center;
   margin: 20px 0;
+  padding: 10px;
 `;
 
 const AssetButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   margin: 0 14px;
-  padding: 0 6px;
+  padding: 6px;
 `;
 
 const ImageHolder = styled.View`
