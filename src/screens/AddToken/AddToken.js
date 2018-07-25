@@ -9,7 +9,7 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { SubTitle, BoldText, LightText } from 'components/Typography';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import {
   addAssetAction,
   removeAssetAction,
@@ -106,7 +106,7 @@ class AddToken extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <ModalScreenHeader title="add token" onClose={this.handleScreenDismissal} />
+        <Header title="add token" onClose={this.handleScreenDismissal} />
         <ScrollWrapper regularPadding>
           <SubTitle>
             Toggle ERC-20 tokens your wallet should display.

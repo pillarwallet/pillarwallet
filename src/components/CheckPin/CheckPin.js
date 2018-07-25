@@ -67,7 +67,7 @@ class CheckPin extends React.Component<Props, State> {
       <React.Fragment>
         {showError}
         <Center>
-          <Title center title={title || 'enter pincode'} />
+          <Title align="center" title={title || 'enter pincode'} />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
