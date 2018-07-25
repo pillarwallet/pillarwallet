@@ -211,8 +211,8 @@ class PeopleScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
-              horizonpadding: 16,
-              verticalpadding: spacingSizes.defaultVerticalSpacing,
+              paddingHorizontal: 16,
+              paddingVertical: spacingSizes.defaultVerticalSpacing,
               paddingTop: 0,
             }}
             refreshControl={
