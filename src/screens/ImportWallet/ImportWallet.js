@@ -83,7 +83,7 @@ class ImportWallet extends React.Component<Props, State> {
     const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
     return (
       <Container>
-        <Header title="restore wallet" onBack={() => this.props.navigation.goBack(null)} index={1} />
+        <Header title="restore wallet" onBack={() => this.props.navigation.goBack(null)} />
         <ScrollWrapper regularPadding>
           <Paragraph>
               Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.

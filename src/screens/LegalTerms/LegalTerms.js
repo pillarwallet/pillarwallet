@@ -108,7 +108,7 @@ class LegalTerms extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="review" onBack={() => this.props.navigation.goBack(null)} index={6} />
+        <Header title="review" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet I understand that:</Paragraph>
           <CheckboxItem marginBottom>

@@ -35,10 +35,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     if (!pinIsValid) {
       return (
         <Container>
-          <Header
-            onClose={this.handleScreenDismissal}
-            index={1}
-          />
+          <Header onClose={this.handleScreenDismissal} />
           <CheckPin onPinValid={() => this.setState({ pinIsValid: true })} />
         </Container>
       );
@@ -46,11 +43,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header
-          title="backup phrase"
-          onClose={this.handleScreenDismissal}
-          index={1}
-        />
+        <Header title="backup phrase" onClose={this.handleScreenDismissal} />
         <Wrapper regularPadding>
           <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
           <Paragraph light>

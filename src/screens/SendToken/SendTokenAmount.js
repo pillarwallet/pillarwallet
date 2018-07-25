@@ -281,7 +281,6 @@ class SendTokenAmount extends React.Component<Props, State> {
               onClose={this.props.navigation.dismiss}
               onCloseText="STEP 2 OF 3"
               title="send"
-              index={1}
             />
             <WarningBanner />
             <Wrapper regularPadding>
@@ -320,7 +319,6 @@ class SendTokenAmount extends React.Component<Props, State> {
                 onClose={this.props.navigation.dismiss}
                 onCloseText="STEP 2 OF 3"
                 title="send"
-                index={1}
               />
               <WarningBanner />
               <BodyWrapper>

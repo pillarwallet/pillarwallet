@@ -48,7 +48,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
     return (
       <Container>
         {!!error && <ErrorMessage>{error}</ErrorMessage>}
-        <Header title="create pincode" onBack={() => this.props.navigation.goBack(null)} index={1} />
+        <Header title="create pincode" onBack={() => this.props.navigation.goBack(null)} />
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}

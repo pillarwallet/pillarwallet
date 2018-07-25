@@ -247,7 +247,6 @@ class SendTokenContacts extends React.Component<Props, State> {
             onCloseText="STEP 1 OF 3"
             title="send"
             centerTitle
-            index={1}
           />
           {FormContent}
           {qrScannerComponent}
@@ -267,7 +266,6 @@ class SendTokenContacts extends React.Component<Props, State> {
             onCloseText="STEP 1 OF 3"
             title="send"
             centerTitle
-            index={1}
           />
           {FormContent}
           {!!value.address.length &&

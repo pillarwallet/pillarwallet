@@ -169,7 +169,7 @@ class NewProfile extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} index={5} />
+        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} />
         <ScrollWrapper regularPadding>
           <LoginForm
             innerRef={node => { this._form = node; }}
