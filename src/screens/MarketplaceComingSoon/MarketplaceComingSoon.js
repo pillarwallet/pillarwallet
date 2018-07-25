@@ -3,17 +3,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, BoldText } from 'components/Typography';
-import Title from 'components/Title';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
-
-const MarketplaceHeader = styled.View`
-  flex-direction: row;
-  height: 97px;
-  background-color: ${baseColors.white};
-  padding: 0 16px;
-  align-items: center;
-  justify-content: space-between;
-`;
+import Header from 'components/Header';
 
 const ComingSoonBanner = styled.View`
   padding: 16px;
@@ -29,9 +20,7 @@ const ComingSoonBannerText = styled(BoldText)`
 const MarketplaceComingSoon = () => {
   return (
     <Container>
-      <MarketplaceHeader>
-        <Title center noMargin title="marketplace" />
-      </MarketplaceHeader>
+      <Header title="marketplace" />
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>

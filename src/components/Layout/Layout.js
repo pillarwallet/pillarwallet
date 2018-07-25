@@ -30,8 +30,8 @@ const ContainerInner = styled.View`
 
 export const Container = (props: ContainerProps) => {
   return (
-    <ContainerOuter color={props.color}>
-      <ContainerInner color={props.color} center={props.center}>
+    <ContainerOuter color={props.color} forceInset={{ top: 'always' }}>
+      <ContainerInner center={props.center}>
         {props.children}
       </ContainerInner>
     </ContainerOuter>
@@ -45,6 +45,9 @@ export const Wrapper = styled.View`
   ${({ center }) => center && `
     align-items: center;
     justify-content: center;
+  `}
+  ${({ flex }) => flex && `
+    flex: ${flex};
   `}
 `;
 

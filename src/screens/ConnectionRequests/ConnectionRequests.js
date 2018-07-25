@@ -10,7 +10,7 @@ import {
   rejectInvitationAction,
 } from 'actions/invitationsActions';
 import { Container, ScrollWrapper } from 'components/Layout';
-import ScreenHeader from 'components/ScreenHeader';
+import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
 
 type Props = {
@@ -61,7 +61,10 @@ class ConnectionRequests extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <ScreenHeader title="connection requests" onBack={this.props.navigation.goBack} />
+        <Header
+          title="connection requests"
+          onBack={this.props.navigation.goBack}
+        />
         <ContactCardList contentInset={{ bottom: 40 }}>
           {this.renderInvitations()}
         </ContactCardList>
