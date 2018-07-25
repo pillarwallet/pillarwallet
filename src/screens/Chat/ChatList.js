@@ -9,14 +9,16 @@ import { CHAT } from 'constants/navigationConstants';
 import Title from 'components/Title';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import { baseColors } from 'utils/variables';
-import { getExistingChatsAction } from 'actions/chatActions';
+import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
 import ChatListItem from './ChatListItem';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   chats: Object[],
+  notifications: Object[],
   getExistingChats: Function,
+  resetUnread: Function,
 }
 
 type State = {
@@ -41,10 +43,25 @@ class ChatListScreen extends React.Component<Props, State> {
     getExistingChats();
   }
 
+  componentDidUpdate(prevProps: Props) {
+    const { notifications, getExistingChats } = this.props;
+    const { notifications: prevNotifications } = prevProps;
+    if (notifications.length !== prevNotifications.length) {
+      getExistingChats();
+    }
+  }
+
+  handleChatItemClick = (contact) => {
+    const { navigation, resetUnread } = this.props;
+    navigation.navigate(CHAT, { contact });
+    resetUnread(contact.userName);
+  }
+
   renderItem = ({ item: contact }: Object) => {
-    const { chats, navigation } = this.props;
+    const { chats } = this.props;
     const existingChat = chats.find(({ username }) => contact.username === username) || {};
-    const lastMessage = existingChat.lastMessage || {};
+    const lastMessage = existingChat.lastMessage || { content: 'Start New Conversation', username: contact.username };
+
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
       const dateSent = new Date(lastMessage.serverTimestamp);
@@ -52,14 +69,15 @@ class ChatListScreen extends React.Component<Props, State> {
       const hours = (`0${dateSent.getHours()}`).slice(-2);
       timeSent = `${hours}:${minutes}`; // HH:mm
     }
+    const newMessageCopy = existingChat.unread > 1 ? 'New Messages' : 'New Message'
     return (
       <ChatListItem
         userName={contact.username}
         avatar={contact.avatar}
-        message={lastMessage.content}
+        message={existingChat.unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={existingChat.unread}
-        onPress={() => navigation.navigate(CHAT, { contact })}
+        onPress={() => this.handleChatItemClick(contact)}
       />
     );
   };
@@ -107,13 +125,16 @@ class ChatListScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   chat: { data: { chats } },
+  notifications: { data: notifications },
 }) => ({
   contacts,
   chats,
+  notifications,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
+  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatListScreen);

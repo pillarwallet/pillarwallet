@@ -1,5 +1,5 @@
 // @flow
-import { UPDATE_MESSAGES, ADD_MESSAGE, UPDATE_CHATS } from 'constants/chatConstants';
+import { UPDATE_MESSAGES, ADD_MESSAGE, UPDATE_CHATS, RESET_UNREAD_MESSAGE } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
 type Message = {
@@ -63,6 +63,12 @@ export default function historyReducer(
         },
       );
     case UPDATE_CHATS:
+      return merge(
+        {},
+        state,
+        { data: { chats: action.payload } },
+      );
+    case RESET_UNREAD_MESSAGE:
       return merge(
         {},
         state,

@@ -18,7 +18,7 @@ type Props = {
 const ItemRow = styled.View`
   flex-direction: row;
   align-items: flex-start;
-  padding: 6px 18px 10px 18px;
+  padding: 6px 16px 10px 16px;
 `;
 
 const AvatarWrapper = styled.View`
