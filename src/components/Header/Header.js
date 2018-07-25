@@ -58,6 +58,9 @@ const HeaderLeft = styled(Left)`
   align-items: flex-end;
 `;
 
+const HeaderBody = styled(Body)`
+  flex: 4;
+`;
 
 const HeaderRight = styled(Right)`
   flex: 1;
@@ -91,9 +94,9 @@ const Header = (props: Props) => {
         }
       </HeaderLeft>
       {showTitleCenter &&
-        <Body style={{ flex: 1 }}>
+        <HeaderBody>
           <Title align="center" noMargin title={title} />
-        </Body>
+        </HeaderBody >
       }
       {showRight &&
         <HeaderRight onClose={onClose}>
