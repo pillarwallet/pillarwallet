@@ -166,7 +166,7 @@ class TXHistory extends React.Component<Props, State> {
     Linking.openURL(TX_DETAILS_URL + hash);
   };
 
-  renderTransaction = ({ item: transaction, index }: Object) => {
+  renderTransaction = ({ item: transaction, index }: { item: Transaction, index: number }) => {
     const {
       status,
       value,
