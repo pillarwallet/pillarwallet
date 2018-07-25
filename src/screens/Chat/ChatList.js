@@ -65,7 +65,7 @@ class ChatListScreen extends React.Component<Props, State> {
     const ChatWrapper = contacts.length ? ScrollWrapper : View;
     return (
       <Container>
-        <Header title="chat"  />
+        <Header title="chat" />
         <ChatWrapper style={{
           paddingBottom: contacts.length ? 18 : 0,
         }}
