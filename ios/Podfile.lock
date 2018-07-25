@@ -9,12 +9,12 @@ PODS:
     - Bolts/Tasks
   - Bolts/Tasks (1.9.0)
   - boost-for-react-native (1.63.0)
-  - BoringSSL (10.0.5):
-    - BoringSSL/Implementation (= 10.0.5)
-    - BoringSSL/Interface (= 10.0.5)
-  - BoringSSL/Implementation (10.0.5):
-    - BoringSSL/Interface (= 10.0.5)
-  - BoringSSL/Interface (10.0.5)
+  - BoringSSL (10.0.3):
+    - BoringSSL/Implementation (= 10.0.3)
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Implementation (10.0.3):
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Interface (10.0.3)
   - Branch (0.24.2):
     - Branch/Core (= 0.24.2)
   - Branch/Core (0.24.2)
@@ -119,7 +119,7 @@ PODS:
     - gRPC-ProtoRPC (~> 1.0)
     - leveldb-library (~> 1.18)
     - Protobuf (~> 3.1)
-  - FirebaseInstanceID (3.1.0):
+  - FirebaseInstanceID (3.0.0):
     - FirebaseCore (~> 5.0)
   - FirebaseMessaging (3.0.0):
     - FirebaseCore (~> 5.0)
@@ -216,7 +216,7 @@ PODS:
     - gRPC-Core (= 1.12.0)
     - gRPC-RxLibrary (= 1.12.0)
   - GTMSessionFetcher/Core (1.1.15)
-  - Intercom (5.0.3)
+  - Intercom (5.0.2)
   - JKBigInteger2 (0.0.5)
   - leveldb-library (1.20)
   - lottie-ios (2.5.0)
@@ -225,7 +225,7 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - Protobuf (3.6.0)
+  - Protobuf (3.5.0)
   - React (0.55.4):
     - React/Core (= 0.55.4)
   - react-native-intercom (11.0.0):
@@ -350,7 +350,7 @@ SPEC CHECKSUMS:
   AppAuth: 3f4f1d6d85ad631d0bbf15ffcdc10c447face97a
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  BoringSSL: cf3f1793eb6e3c445c4d150456341f149c268a35
+  BoringSSL: c46efb47593135382bc0934196f16d2f726f5f36
   Branch: 0d98d22745a9b68bcb4fa6dc1c6a92b64d4fdd7b
   CocoaLumberjack: 2800c03334042fe80589423c8d80e582dcaec482
   Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
@@ -369,7 +369,7 @@ SPEC CHECKSUMS:
   FirebaseDatabase: 697eb53e5b4fe7cd4fa8756c1f82a9fca011345f
   FirebaseDynamicLinks: c70e8ef2f267f13459db89b8816b13a06b2278d2
   FirebaseFirestore: f686b8e83f3cf8bbc37db6e98e01029a14f01f55
-  FirebaseInstanceID: 05d779cbb97bd5bd5c51a38a903fc9cfe1b2454a
+  FirebaseInstanceID: 83e0040351565df711a5db3d8ebe5ea21aca998a
   FirebaseMessaging: f2360a966ecfb0d14facf0fbdf306efc2df0ddbe
   FirebasePerformance: 1ec6c40e5dad2543ca4c4f25d15168bde6322c2c
   FirebaseRemoteConfig: 3c57e4644bd6976b671ae0b725cd709f198bd1f5
@@ -393,12 +393,12 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: a1bd56fb1991a8dae4581250d7259eddabb66779
   gRPC-RxLibrary: 1ed5314e8b38cd6e55c9bfa048387136ae925ce9
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
-  Intercom: 93ebb0bd49fcb2c4c1efaec7638e0b447e4452c4
+  Intercom: 0fcb000a9eea9a8fe889ac1466972771ef8919f2
   JKBigInteger2: e91672035c42328c48b7dd015b66812ddf40ca9b
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
+  Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   React: aa2040dbb6f317b95314968021bd2888816e03d5
   react-native-intercom: 50fa177c55a5bd8135742afb38867a485b3fda2d
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
