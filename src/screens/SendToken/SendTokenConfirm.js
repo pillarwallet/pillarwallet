@@ -12,13 +12,13 @@ import Button from 'components/Button';
 import ModalScreenHeader from 'components/ModalScreenHeader';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
+import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { baseColors, fontSizes } from 'utils/variables';
-import WarningBanner from 'components/WarningBanner';
-import { getUserName } from '../../utils/contacts';
+import { getUserName } from 'utils/contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
