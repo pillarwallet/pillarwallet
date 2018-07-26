@@ -15,6 +15,7 @@ const glyphMap = {
   search: '\uE807',
   settings: '\uE809',
   warning: '\uE80A',
+  check: '\uE80B',
 };
 
 type Props = {

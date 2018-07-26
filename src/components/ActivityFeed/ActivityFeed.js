@@ -159,15 +159,15 @@ export default class ActivityFeed extends React.Component<Props, State> {
               color={baseColors.darkGray}
               margin={0}
               icon="close"
-              fontSize={Platform.OS === 'ios' ? 32 : 22}
+              fontSize={fontSizes.small}
               onPress={() => onRejectInvitation(notification)}
             />
             <ActionCircleButton
               color={baseColors.white}
               margin={0}
               accept
-              icon="ios-checkmark"
-              fontSize={Platform.OS === 'ios' ? 32 : 26}
+              icon="check"
+              fontSize={fontSizes.small}
               onPress={() => onAcceptInvitation(notification)}
             />
           </ButtonIconWrapper>
@@ -237,7 +237,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
             textStyle={{ fontSize: 14 }}
           />
         </ActivityFeedItemCol>
-        <ActivityFeedItemCol fixedWidth="200px">
+        <ActivityFeedItemCol fixedWidth="150px">
           <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
           <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
         </ActivityFeedItemCol>
