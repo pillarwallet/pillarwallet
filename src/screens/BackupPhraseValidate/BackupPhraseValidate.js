@@ -6,7 +6,6 @@ import { Platform } from 'react-native';
 import { UIColors, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import { Container, Wrapper, Footer } from 'components/Layout';
-import HeaderLink from 'components/HeaderLink';
 import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
@@ -15,6 +14,7 @@ import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {
   enteredWords: string[],
+  isFormValid: boolean,
 };
 
 type Props = {
@@ -88,26 +88,8 @@ const ShuffledWordWrapper = styled.View`
 class BackupPhraseValidate extends React.Component<Props, State> {
   state = {
     enteredWords: [],
+    isFormValid: false,
   };
-
-  constructor(props: Props) {
-    super(props);
-    props.navigation.setParams({
-      isFormValid: false,
-    });
-  }
-
-  static navigationOptions = ({ navigation }) => ({
-    headerRight: (
-      <HeaderLink
-        onPress={() => navigation.navigate(SET_WALLET_PIN_CODE)}
-        disabled={navigation.state.params ? !navigation.state.params.isFormValid : true}
-      >
-      Next
-      </HeaderLink>
-    ),
-  });
-
 
   handleWordSetting = (word) => {
     let { enteredWords } = this.state;
@@ -120,11 +102,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
       enteredWords,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
-      this.props.navigation.setParams({
+      this.setState({
         isFormValid,
       });
     });
-  }
+  };
 
   handleLastWordRemoval = () => {
     let { enteredWords } = this.state;
@@ -134,11 +116,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
       enteredWords,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
-      this.props.navigation.setParams({
+      this.setState({
         isFormValid,
       });
     });
-  }
+  };
 
   validateForm(enteredWords) {
     const { onboarding: wallet } = this.props.wallet;
@@ -180,7 +162,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           </WordInputWrapper>
         );
       });
-  }
+  };
 
   renderShuffledWordList = () => {
     const { onboarding: wallet } = this.props.wallet;
@@ -199,10 +181,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         </MnemonicPhraseWord>
       );
     });
-  }
+  };
 
   render() {
     const { onboarding: wallet } = this.props.wallet;
+    const { isFormValid } = this.state;
     if (!wallet.mnemonic.original) return null;
 
     return (
@@ -226,14 +209,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             </MnemonicPhraseWord>
             )}
           </ShuffledWordWrapper>
-
         </Wrapper>
         <Footer>
           <Button
             block
             onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
             title="Next"
-            disabled={this.props.navigation.state.params ? !this.props.navigation.state.params.isFormValid : true}
+            disabled={!isFormValid}
           />
         </Footer>
       </Container>
