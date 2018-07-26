@@ -24,13 +24,12 @@ type Props = {
 
 const IconSet = createIconSet(glyphMap, 'pillar-icons');
 
-export default class Icon extends React.Component<Props> {
-  render() {
-    const { name, style } = this.props;
-    // The check below is a fix for an obscure issue with expo's Font component not being recognised by jest
-    if (Font && Font.isLoaded('pillar-icons')) {
-      return <IconSet name={name} style={style} />;
-    }
-    return null;
+const Icon = (props: Props) => {
+  const { name, style } = props;
+  if (Font && Font.isLoaded('pillar-icons')) {
+    return <IconSet name={name} style={style} />;
   }
-}
+  return null;
+};
+
+export default Icon;

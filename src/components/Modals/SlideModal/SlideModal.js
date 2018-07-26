@@ -4,8 +4,7 @@ import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import Header from 'components/Header';
 import { SubTitle } from 'components/Typography';
-import ButtonIcon from 'components/ButtonIcon';
-import { Platform, Dimensions, Keyboard } from 'react-native';
+import { Dimensions, Keyboard } from 'react-native';
 
 const { height } = Dimensions.get('window');
 
@@ -49,13 +48,6 @@ const ModalContent = styled.View`
 const ModalOverflow = styled.View`
   width: 100%;
   background-color: #FFFFFF;
-`;
-
-
-const CloseButton = styled(ButtonIcon)`
-  position: absolute;
-  right: ${(props) => props.fullScreen ? 16 : 0}px;
-  ${Platform.OS === 'ios' && 'top: -10px;'}
 `;
 
 export default class SlideModal extends React.Component<Props, State> {

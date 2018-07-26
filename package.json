@@ -105,6 +105,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
+    "@expo/vector-icons": "^6.3.1",
     "@pillarwallet/pillarwallet-nodejs-sdk": "^1.4.622",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
