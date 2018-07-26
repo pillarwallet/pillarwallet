@@ -271,53 +271,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             }
             testID={undefined}
             tvParallaxProperties={undefined}
-          >
-            <Text
-              accessible={true}
-              active={false}
-              allowFontScaling={false}
-              ellipsizeMode="tail"
-              style={
-                Array [
-                  Object {
-                    "color": undefined,
-                    "fontSize": 12,
-                  },
-                  Array [
-                    Object {
-                      "color": "#000",
-                      "fontSize": 30,
-                    },
-                    Object {
-                      "color": "#007aff",
-                      "fontSize": 24,
-                      "marginLeft": 16,
-                      "marginRight": 16,
-                      "paddingTop": 2,
-                    },
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 36,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    },
-                  ],
-                  Object {
-                    "fontFamily": "Ionicons",
-                    "fontStyle": "normal",
-                    "fontWeight": "normal",
-                  },
-                ]
-              }
-              type="Ionicons"
-              virtual={undefined}
-            >
-              
-            </Text>
-          </View>
+          />
         </View>
         <Text
           accessible={true}
