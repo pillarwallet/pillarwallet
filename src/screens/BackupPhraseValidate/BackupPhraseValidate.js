@@ -5,9 +5,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Platform } from 'react-native';
 import { UIColors, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import HeaderLink from 'components/HeaderLink';
 import { Paragraph, Label, BoldText } from 'components/Typography';
+import Button from 'components/Button';
 import Header from 'components/Header';
 import ButtonIcon from 'components/ButtonIcon';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
@@ -172,7 +173,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
               <RemoveWordButtonIcon
                 icon="close"
                 onPress={this.handleLastWordRemoval}
-                fontSize={fontSizes.extraExtraLarge}
+                fontSize={fontSizes.small}
+                color={UIColors.primary}
               />
             }
           </WordInputWrapper>
@@ -226,6 +228,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           </ShuffledWordWrapper>
 
         </Wrapper>
+        <Footer>
+          <Button
+            block
+            onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
+            title="Next"
+            disabled={this.props.navigation.state.params ? !this.props.navigation.state.params.isFormValid : true}
+          />
+        </Footer>
       </Container>
     );
   }

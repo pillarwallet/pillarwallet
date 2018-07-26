@@ -170,6 +170,7 @@ class NewProfile extends React.Component<Props, State> {
     const { walletState } = this.props;
     const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
     const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
+    const isUsernameValid = value && value.username && value.username.length > 0;
 
     return (
       <Container>
@@ -189,7 +190,7 @@ class NewProfile extends React.Component<Props, State> {
               <Button
                 block
                 onPress={this.handleSubmit}
-                disabled={walletState === CHECKING_USERNAME}
+                disabled={!isUsernameValid || walletState === CHECKING_USERNAME}
                 title="Next"
               />
             </FooterInnerComponent>

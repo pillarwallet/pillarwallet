@@ -1,9 +1,8 @@
 // @flow
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import Title from 'components/Title';
+import Header from 'components/Header';
 import { SubTitle } from 'components/Typography';
 import ButtonIcon from 'components/ButtonIcon';
 import { Platform, Dimensions, Keyboard } from 'react-native';
@@ -37,14 +36,6 @@ const ModalBackground = styled.View`
   padding: ${(props) => props.fullScreen ? '60px 0 80px' : '20px'};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
   ${props => props.fullScreen && 'height: 100%;'}
-`;
-
-const ModalHeader = styled.View`
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  ${props => props.fullScreen && 'padding: 0 20px;'}
 `;
 
 const ModalSubtitle = styled(SubTitle)`
@@ -136,16 +127,7 @@ export default class SlideModal extends React.Component<Props, State> {
       >
         <ModalWrapper fullScreen={fullScreen}>
           <ModalBackground fullScreen={fullScreen}>
-            <ModalHeader fullScreen={fullScreen}>
-              <Title noMargin title={title} />
-              <CloseButton
-                icon="close"
-                onPress={this.hideModal}
-                fontSize={Platform.OS === 'ios' ? 36 : 30}
-                color={baseColors.darkGray}
-                fullScreen={fullScreen}
-              />
-            </ModalHeader>
+            <Header noPadding title={title} onClose={this.hideModal} />
             <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
             <ModalContent fullScreen={fullScreen}>
               {children}

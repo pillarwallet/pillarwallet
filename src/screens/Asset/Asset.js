@@ -16,7 +16,7 @@ import type { Assets } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
-import ButtonIcon from 'components/ButtonIcon';
+import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
@@ -55,14 +55,6 @@ type State = {
     },
   },
 }
-
-const CloseButton = styled(ButtonIcon)`
-  margin-right: 16px;
-  margin-bottom: 4px;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-`;
 
 const AssetCardWrapper = styled(Wrapper)`
   flex: 1;
@@ -148,11 +140,7 @@ class AssetScreen extends React.Component<Props, State> {
       .sort((a, b) => b.timestamp - a.timestamp);
     return (
       <Container color={baseColors.snowWhite}>
-        <CloseButton
-          icon="close"
-          onPress={this.handleCardTap}
-          color={baseColors.black}
-        />
+        <Header onClose={this.handleCardTap} />
         <ScrollWrapper
           refreshControl={
             <RefreshControl

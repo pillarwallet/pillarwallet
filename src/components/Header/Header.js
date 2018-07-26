@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { Left, Body, Right, Icon } from 'native-base';
+import { Left, Body, Right } from 'native-base';
 import { TextLink, BaseText } from 'components/Typography';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import Title from 'components/Title';
@@ -16,14 +16,13 @@ type Props = {
   onNextPress?: Function,
   nextText?: string,
   title?: string,
-  gray?: boolean,
   centerTitle?: boolean,
+  noPadding?: boolean,
 }
 
 const Wrapper = styled.View`
-  background-color: ${props => props.gray ? baseColors.snowWhite : baseColors.white};
   border-bottom-width: 0;
-  padding: 0 16px;
+  padding: ${props => props.noPadding ? 0 : '0 16px'};
   height: 40px;
   justify-content: flex-end;
   align-items: flex-end;
@@ -35,10 +34,11 @@ const Wrapper = styled.View`
 const BackIcon = styled(ButtonIcon)`
   position: relative;
   align-self: flex-start;
+  height: 44px;
+  padding-right: 10px;
 `;
 
 const CloseIconText = styled(BaseText)`
-  margin-right: 10px;
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.extraExtraSmall};
 `;
@@ -49,8 +49,9 @@ const CloseIconWrapper = styled.View`
   justify-content: flex-end;
 `;
 
-const CloseIcon = styled(Icon)`
-  height: 36px;
+const CloseIcon = styled(ButtonIcon)`
+  height: 44px;
+  padding-left: 10px;
 `;
 
 const HeaderLeft = styled(Left)`
@@ -60,7 +61,7 @@ const HeaderLeft = styled(Left)`
 `;
 
 const HeaderBody = styled(Body)`
-  flex: 4;
+  flex: ${props => props.onCloseText ? 2 : 4};
 `;
 
 const HeaderRight = styled(Right)`
@@ -78,24 +79,24 @@ const Header = (props: Props) => {
     onCloseText,
     title,
     centerTitle,
-    gray,
+    noPadding,
   } = props;
   const showRight = nextText || onBack || onClose;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   return (
-    <Wrapper gray={gray}>
+    <Wrapper noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
-          <BackIcon icon="arrow-back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={28} />
+          <BackIcon icon="back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={fontSizes.small} />
         }
         {showTitleLeft &&
           <Title noMargin title={title} />
         }
       </HeaderLeft>
       {showTitleCenter &&
-        <HeaderBody>
+        <HeaderBody onCloseText={onCloseText}>
           <Title align="center" noMargin title={title} />
         </HeaderBody >
       }
@@ -109,7 +110,7 @@ const Header = (props: Props) => {
               {onCloseText &&
                 <CloseIconText>{onCloseText}</CloseIconText>
               }
-              <CloseIcon name="ios-close" style={{ fontSize: 36, color: UIColors.primary }} onPress={onClose} />
+              <CloseIcon icon="close" color={UIColors.primary} onPress={() => onClose()} fontSize={fontSizes.small} />
             </CloseIconWrapper>
           }
         </HeaderRight>
