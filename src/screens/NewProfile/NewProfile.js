@@ -1,14 +1,15 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS } from 'constants/navigationConstants';
-import HeaderLink from 'components/HeaderLink';
 import TextInput from 'components/TextInput';
-import Title from 'components/Title';
+import Header from 'components/Header';
+import Button from 'components/Button';
 import { updateLocalUserAction } from 'actions/userActions';
 import { validateUserDetailsAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
@@ -90,9 +91,15 @@ type State = {
   formOptions: Object,
 };
 
-const mapStateToPropsHeaderLink = ({ wallet: { walletState } }) => ({ isLoading: walletState === CHECKING_USERNAME });
-
-const ConnectedHeaderLink = connect(mapStateToPropsHeaderLink, null)(HeaderLink);
+const FooterAndroid = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  width: 100%;
+  margin-bottom: 20px;
+  margin-top: 30px;
+`;
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
@@ -107,24 +114,6 @@ class NewProfile extends React.Component<Props, State> {
       value,
       formOptions: getDefaultFormOptions(inputDisabled),
     };
-  }
-
-  static navigationOptions = ({ navigation }: { navigation: NavigationScreenProp<*> }) => {
-    const { params = {} } = navigation.state;
-    return {
-      headerRight: (
-        <ConnectedHeaderLink onPress={params.handleSubmit}>
-          Next
-        </ConnectedHeaderLink>
-      ),
-    };
-  };
-
-  componentDidMount() {
-    const { navigation } = this.props;
-    navigation.setParams({
-      handleSubmit: this.handleSubmit,
-    });
   }
 
   handleChange = (value: Object) => {
@@ -178,10 +167,14 @@ class NewProfile extends React.Component<Props, State> {
 
   render() {
     const { value, formOptions } = this.state;
+    const { walletState } = this.props;
+    const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
+    const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
+
     return (
       <Container>
+        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} />
         <ScrollWrapper regularPadding>
-          <Title title="choose your username" />
           <LoginForm
             innerRef={node => { this._form = node; }}
             type={formStructure}
@@ -190,6 +183,18 @@ class NewProfile extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
         </ScrollWrapper>
+        <FooterWrapperComponent>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'padding'} keyboardVerticalOffset={50}>
+            <FooterInnerComponent>
+              <Button
+                block
+                onPress={this.handleSubmit}
+                disabled={walletState === CHECKING_USERNAME}
+                title="Next"
+              />
+            </FooterInnerComponent>
+          </KeyboardAvoidingView>
+        </FooterWrapperComponent>
       </Container>
     );
   }
