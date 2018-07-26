@@ -122,13 +122,11 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         }
       >
         <View
-          gray={undefined}
           noPadding={true}
           style={
             Array [
               Object {
                 "alignItems": "flex-end",
-                "backgroundColor": "#ffffff",
                 "borderBottomWidth": 0,
                 "flexDirection": "row",
                 "height": 40,
@@ -288,7 +286,53 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   undefined,
                 ]
               }
-            />
+            >
+              <View
+                accessibilityComponentType={undefined}
+                accessibilityLabel={undefined}
+                accessibilityTraits={undefined}
+                accessible={true}
+                collapsable={undefined}
+                hasTVPreferredFocus={undefined}
+                hitSlop={undefined}
+                isTVSelectable={true}
+                nativeID={undefined}
+                onLayout={undefined}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": null,
+                    "backgroundColor": "transparent",
+                    "borderBottomWidth": null,
+                    "borderColor": "#007aff",
+                    "borderLeftWidth": null,
+                    "borderRadius": 5,
+                    "borderRightWidth": null,
+                    "borderTopWidth": null,
+                    "elevation": 0,
+                    "flexDirection": "row",
+                    "height": 44,
+                    "justifyContent": "space-between",
+                    "opacity": 1,
+                    "paddingBottom": 6,
+                    "paddingLeft": 10,
+                    "paddingTop": 6,
+                    "shadowColor": null,
+                    "shadowOffset": null,
+                    "shadowOpacity": null,
+                    "shadowRadius": null,
+                  }
+                }
+                testID={undefined}
+                tvParallaxProperties={undefined}
+              />
+            </View>
           </View>
         </View>
         <Text
