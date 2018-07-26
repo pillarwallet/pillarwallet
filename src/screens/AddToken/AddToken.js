@@ -9,7 +9,7 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { SubTitle, BoldText, LightText } from 'components/Typography';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import {
   addAssetAction,
   removeAssetAction,
@@ -51,6 +51,8 @@ type Props = {
 }
 
 class AddToken extends React.Component<Props> {
+  formChanged: boolean = false;
+
   componentDidMount() {
     const { fetchSupportedAssets } = this.props;
     fetchSupportedAssets();
@@ -58,6 +60,7 @@ class AddToken extends React.Component<Props> {
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
+    this.formChanged = true;
     if (enabled) {
       addAsset(asset);
       return;
@@ -104,9 +107,17 @@ class AddToken extends React.Component<Props> {
   };
 
   render() {
+    const titleText = 'add token';
+    let header;
+    if (this.formChanged) {
+      header = <Header title={titleText} nextText="save" onNextPress={this.handleScreenDismissal} />;
+    } else {
+      header = <Header title={titleText} onClose={this.handleScreenDismissal} />;
+    }
+
     return (
       <Container>
-        <ModalScreenHeader title="add token" onClose={this.handleScreenDismissal} />
+        {header}
         <ScrollWrapper regularPadding>
           <SubTitle>
             Toggle ERC-20 tokens your wallet should display.
