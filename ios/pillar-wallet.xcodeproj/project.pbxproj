@@ -834,6 +834,7 @@
 				B563863F1DB9693800A0598C /* Resources */,
 				7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */,
 				EE4E73BD20D122990008F745 /* Bundle Expo assets */,
+				6908659620F78D65009274B7 /* ShellScript */,
 				863359BBB25B18EA5E2B2C8F /* [CP] Embed Pods Frameworks */,
 				1697CBA020FB4F200085253C /* Embed Frameworks */,
 			);
@@ -1306,6 +1307,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		6908659620F78D65009274B7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" caabdf2a776e077aff8381eab0399b9e3fc1bbb8 158eb97c4462d1b6c1fba13f0d2a045b939b5bf571dafca81dfc122b3ef385ce";
+		};
 		7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1578,6 +1592,7 @@
 				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
