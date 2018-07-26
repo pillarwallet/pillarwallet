@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, ActivityIndicator, StatusBar, Image } from 'react-native';
+import { View, StatusBar, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -257,17 +257,17 @@ class ChatScreen extends React.Component<Props, State> {
     );
   };
 
-  renderLoading = () => {
-    return (
-      <Container center>
-        <ActivityIndicator
-          animating
-          color="#111"
-          size="large"
-        />
-      </Container>
-    );
-  };
+  // renderLoading = () => {
+  //   return (
+  //     <View style={{ flex: 1 }}>
+  //       <ActivityIndicator
+  //         animating
+  //         color="#111"
+  //         size="large"
+  //       />
+  //     </View>
+  //   );
+  // };
 
   renderMessage = (props: Props) => {
     return (
@@ -314,7 +314,7 @@ class ChatScreen extends React.Component<Props, State> {
               renderInputToolbar={this.renderInputToolbar}
               renderDay={this.renderDay}
               renderTime={this.renderTime}
-              renderLoading={this.renderLoading}
+              // renderLoading={this.renderLoading}
               loadEarlier={showLoadEarlierButton}
               onLoadEarlier={this.handleLoadEarlier}
               renderLoadEarlier={this.renderLoadEarlier}
