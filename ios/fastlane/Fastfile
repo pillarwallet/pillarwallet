@@ -39,17 +39,4 @@ platform :ios do
      skip_waiting_for_build_processing: true
     )
   end
-
-  desc "Create a published build - ipa file"
-  lane :build_ipa do
-    match(type: "appstore",
-          readonly: true)
-    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
-    build_app(clean: true,
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
-              configuration: "Release",
-              export_method: "app-store"
-    )
-  end
 end
