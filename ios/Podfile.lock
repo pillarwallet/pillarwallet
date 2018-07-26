@@ -27,7 +27,7 @@ PODS:
   - Crashlytics (3.10.2):
     - Fabric (~> 1.7.7)
   - DoubleConversion (1.1.5)
-  - ExpoKit/Core (2.6.5):
+  - ExpoKit/Core (2.6.8):
     - Amplitude-iOS (~> 3.8)
     - Analytics (~> 3.5)
     - AppAuth (~> 0.4)
@@ -47,9 +47,9 @@ PODS:
     - JKBigInteger2 (= 0.0.5)
     - lottie-ios (~> 2.5.0)
     - React
-  - ExpoKit/CPP (2.6.5):
+  - ExpoKit/CPP (2.6.8):
     - ExpoKit/Core
-  - ExpoKit/GL (2.6.5):
+  - ExpoKit/GL (2.6.8):
     - ExpoKit/CPP
   - Fabric (1.7.7)
   - FBAudienceNetwork (4.28.1)
@@ -285,9 +285,10 @@ PODS:
 
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
-  - ExpoKit/Core (from `http://github.com/expo/expo.git`, tag `ios/2.6.5`)
-  - ExpoKit/CPP (from `http://github.com/expo/expo.git`, tag `ios/2.6.5`)
-  - ExpoKit/GL (from `http://github.com/expo/expo.git`, tag `ios/2.6.5`)
+  - ExpoKit/Core (from `http://github.com/expo/expo.git`, tag `ios/2.6.8`)
+  - ExpoKit/CPP (from `http://github.com/expo/expo.git`, tag `ios/2.6.8`)
+  - ExpoKit/GL (from `http://github.com/expo/expo.git`, tag `ios/2.6.8`)
+  - Fabric (~> 1.7.5)
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Core (~> 5.0.0)
@@ -323,7 +324,7 @@ EXTERNAL SOURCES:
     :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
   ExpoKit:
     :git: http://github.com/expo/expo.git
-    :tag: ios/2.6.5
+    :tag: ios/2.6.8
   Folly:
     :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
   glog:
@@ -342,7 +343,7 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   ExpoKit:
     :git: http://github.com/expo/expo.git
-    :tag: ios/2.6.5
+    :tag: ios/2.6.8
 
 SPEC CHECKSUMS:
   Amplitude-iOS: 4a3c8807b2ea5369dc11e87e23825bff01e5a922
@@ -355,7 +356,7 @@ SPEC CHECKSUMS:
   CocoaLumberjack: 2800c03334042fe80589423c8d80e582dcaec482
   Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
   DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
-  ExpoKit: 441d1c7592f0715a5c81ac2346d7e743ac50428e
+  ExpoKit: 8a24c285fed8db4ba1caabd179a087470ad4b8cb
   Fabric: bda89e242bce1b7b8ab264248cf3407774ce0095
   FBAudienceNetwork: c0cda151bb2f7b55d1e045e59ebc81f3153989b2
   FBSDKCoreKit: 572b047a7e029bc44542bcf8a59414e7ff2b543e
@@ -405,6 +406,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 69dd6d9ebadcd5e40236a49bc9f9388de217523a
+PODFILE CHECKSUM: abd10393af155cbd9896631724cc4675b70eb51c
 
 COCOAPODS: 1.4.0
