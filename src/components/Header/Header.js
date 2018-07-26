@@ -34,7 +34,7 @@ const Wrapper = styled.View`
 const BackIcon = styled(ButtonIcon)`
   position: relative;
   align-self: flex-start;
-  height: 44px;
+  height: 32px;
   padding-right: 10px;
 `;
 
@@ -50,7 +50,7 @@ const CloseIconWrapper = styled.View`
 `;
 
 const CloseIcon = styled(ButtonIcon)`
-  height: 44px;
+  height: 32px;
   padding-left: 10px;
 `;
 
