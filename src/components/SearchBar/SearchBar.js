@@ -6,7 +6,7 @@ import { Animated, Keyboard, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 const SearchHolder = styled.View`
-  padding-bottom: 20px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;

@@ -13,5 +13,5 @@ export function getUserName(contact: ?Object) {
   if (!contact) {
     return '';
   }
-  return contact.firstName ? `${contact.firstName} ${contact.lastName}` : contact.username;
+  return contact.username;
 }

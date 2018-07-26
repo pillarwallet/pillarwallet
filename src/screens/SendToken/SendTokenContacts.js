@@ -2,18 +2,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform, View, StatusBar } from 'react-native';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } from 'react-native';
 import { Permissions } from 'expo';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { Container } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
 import ContactsSeparator from 'components/ContactsSeparator';
 import { isValidETHAddress } from 'utils/validators';
@@ -33,12 +33,6 @@ type State = {
   },
   formStructure: t.struct,
 }
-
-const statusBarHeight = Platform.OS === 'ios' ?
-  20
-  :
-  StatusBar.currentHeight;
-
 
 const qrCode = require('assets/images/qr.png');
 
@@ -248,10 +242,11 @@ class SendTokenContacts extends React.Component<Props, State> {
     const layout = Platform.OS === 'ios' ?
       (
         <Container>
-          <ModalScreenHeader
+          <Header
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
+            onCloseText="STEP 1 OF 3"
             title="send"
+            centerTitle
           />
           {FormContent}
           {qrScannerComponent}
@@ -266,10 +261,11 @@ class SendTokenContacts extends React.Component<Props, State> {
       ) :
       (
         <Container>
-          <ModalScreenHeader
+          <Header
             onClose={this.props.navigation.dismiss}
-            rightLabelText="step 1 of 3"
+            onCloseText="STEP 1 OF 3"
             title="send"
+            centerTitle
           />
           {FormContent}
           {!!value.address.length &&
@@ -280,11 +276,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           {qrScannerComponent}
         </Container>
       );
-    return (
-      <View style={{ paddingTop: statusBarHeight, backgroundColor: baseColors.white }}>
-        {layout}
-      </View>
-    );
+    return layout;
   }
 }
 
