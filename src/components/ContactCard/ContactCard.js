@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
@@ -54,7 +55,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   height: 34px;
   width: 34px;
   border-radius: 17px;
-  padding: 0;
+  padding: ${Platform.OS === 'ios' ? 0 : 8}px;
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
@@ -136,15 +137,15 @@ export default class ContactCard extends React.Component<Props> {
             color={baseColors.darkGray}
             margin={0}
             icon="close"
-            fontSize={32}
+            fontSize={fontSizes.small}
             onPress={onRejectInvitationPress}
           />
           <ActionCircleButton
             color={baseColors.white}
             margin={0}
             accept
-            icon="ios-checkmark"
-            fontSize={32}
+            icon="check"
+            fontSize={fontSizes.small}
             onPress={onAcceptInvitationPress}
           />
         </ButtonIconWrapper>

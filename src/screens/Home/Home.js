@@ -227,15 +227,13 @@ class PeopleScreen extends React.Component<Props> {
             <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
             <HomeHeaderButtons>
               <HomeHeaderButton
-                icon="question-circle-o"
-                type="FontAwesome"
+                icon="help"
                 color={baseColors.darkGray}
                 fontSize={24}
                 onPress={() => Intercom.displayMessenger()}
               />
               <HomeHeaderButton
-                icon="cog"
-                type="FontAwesome"
+                icon="settings"
                 color={baseColors.darkGray}
                 fontSize={24}
                 onPress={() => this.goToProfile()}
