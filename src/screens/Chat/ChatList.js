@@ -55,7 +55,7 @@ class ChatListScreen extends React.Component<Props, State> {
     const { navigation, resetUnread } = this.props;
     navigation.navigate(CHAT, { contact });
     resetUnread(contact.username);
-  }
+  };
 
   renderItem = ({ item: contact }: Object) => {
     const { chats } = this.props;
@@ -69,7 +69,7 @@ class ChatListScreen extends React.Component<Props, State> {
       const hours = (`0${dateSent.getHours()}`).slice(-2);
       timeSent = `${hours}:${minutes}`; // HH:mm
     }
-    const newMessageCopy = existingChat.unread > 1 ? 'New Messages' : 'New Message'
+    const newMessageCopy = existingChat.unread > 1 ? 'New Messages' : 'New Message';
     return (
       <ChatListItem
         userName={contact.username}
