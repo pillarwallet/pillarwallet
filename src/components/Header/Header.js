@@ -65,7 +65,7 @@ const HeaderBody = styled(Body)`
 `;
 
 const HeaderRight = styled(Right)`
-  flex: 1;
+  flex: ${props => props.small ? '0 0 44px' : 1};
   justify-content: flex-end;
   align-items: flex-end;
 `;
@@ -85,6 +85,7 @@ const Header = (props: Props) => {
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
+  const onlyCloseIcon = onClose && !nextText && !onCloseText;
   return (
     <Wrapper noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
@@ -101,7 +102,7 @@ const Header = (props: Props) => {
         </HeaderBody >
       }
       {showRight &&
-        <HeaderRight onClose={onClose || noop}>
+        <HeaderRight small={onlyCloseIcon} onClose={onClose || noop}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
