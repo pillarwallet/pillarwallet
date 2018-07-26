@@ -63,7 +63,7 @@ const Button = (props: Props) => {
       marginLeft={props.marginLeft}
       marginRight={props.marginRight}
       noPadding={props.noPadding}
-      onPress={props.onPress}
+      onPress={props.disabled ? null : props.onPress}
       width={props.width}
       underlayColor={theme.underlay}
     >

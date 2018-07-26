@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import { StyleSheet, Platform, TouchableNativeFeedback, View } from 'react-native';
-import { Icon, Button } from 'native-base';
+import { Button } from 'native-base';
+import Icon from 'components/Icon';
 
 type Props = {
   icon: string,
@@ -22,7 +23,7 @@ const ButtonIcon = (props: Props) => {
     color,
     style,
     margin,
-    type = 'Ionicons',
+    type,
   } = props;
   const iconParams = {
     active: false,

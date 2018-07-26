@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		0258B09B6A34AC731A90ED32 /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
@@ -75,6 +74,7 @@
 		E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */; };
 		EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */; };
 		F52660EC2C5047DBADBFA3A9 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40EC5CFD374F4F00AB6AAB9D /* MaterialCommunityIcons.ttf */; };
+		226CFD8DB3354FA598407BD3 /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A443BFC898794D6C81E642C6 /* PillarIcons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -493,6 +493,7 @@
 		ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		A443BFC898794D6C81E642C6 /* PillarIcons.ttf */ = {isa = PBXFileReference; name = "PillarIcons.ttf"; path = "../src/assets/fonts/PillarIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -757,6 +758,7 @@
 				9A620D8D5B1641ECBAD6134F /* AktivGrotesk-Light.ttf */,
 				4D515899D9004318864A50A8 /* AktivGrotesk-Medium.ttf */,
 				7CE7280988A442FCADF0F811 /* AktivGrotesk-Regular.ttf */,
+				A443BFC898794D6C81E642C6 /* PillarIcons.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1331,6 +1333,7 @@
 				C75080BFD22A45CE9179B572 /* AktivGrotesk-Light.ttf in Resources */,
 				9FD24FB33ACC48009E09133D /* AktivGrotesk-Medium.ttf in Resources */,
 				4FBC0B2843F24203BE7C4DDC /* AktivGrotesk-Regular.ttf in Resources */,
+				226CFD8DB3354FA598407BD3 /* PillarIcons.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
