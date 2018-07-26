@@ -10,7 +10,6 @@ export const getExistingChatsAction = () => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
     await chat.client.getUnreadMessagesCount().then((response) => {
       const unread = JSON.parse(response);
-      console.log('get messages count from chat action on ', Platform.OS, response)
 
       chats.map((item) => {
         item.unread = typeof unread.unreadCount[item.username] !== 'undefined' ? unread.unreadCount[item.username] : 0;
@@ -27,15 +26,19 @@ export const getExistingChatsAction = () => {
 export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
+    await chat.client.getUnreadMessagesCount().then((response) => {
+      const unread = JSON.parse(response);
+      console.log('get messages count from chat action on ', Platform.OS, response)
 
-    console.log('chat actions', chats);
+      chats.map((item) => {
+        console.log('mapping', item.username, contactUsername, item.unread);
+        item.unread = item.username === contactUsername ? 0 : unread.unreadCount[item.username];
+        console.log('new item unread', item.unread)
 
-    chats.map((item) => {
-      item.unread = item.username === contactUsername ? 0 : item.unread;
-      console.log('true', item);
-      return item;
-    });
-
+        console.log(contactUsername, Boolean(item.username === contactUsername));
+        return item;
+      });
+    }).catch(() => null);
     dispatch({
       type: RESET_UNREAD_MESSAGE,
       payload: chats,

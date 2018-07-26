@@ -54,7 +54,7 @@ class ChatListScreen extends React.Component<Props, State> {
   handleChatItemClick = (contact) => {
     const { navigation, resetUnread } = this.props;
     navigation.navigate(CHAT, { contact });
-    resetUnread(contact.userName);
+    resetUnread(contact.username);
   }
 
   renderItem = ({ item: contact }: Object) => {
