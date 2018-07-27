@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, Share, RefreshControl, Platform } from 'react-native';
+import { Animated, Easing, Share, RefreshControl } from 'react-native';
 import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -16,7 +16,7 @@ import type { Assets } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
-import ButtonIcon from 'components/ButtonIcon';
+import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
@@ -55,14 +55,6 @@ type State = {
     },
   },
 }
-
-const CloseButton = styled(ButtonIcon)`
-  margin-right: 16px;
-  margin-bottom: 4px;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-end;
-`;
 
 const AssetCardWrapper = styled(Wrapper)`
   flex: 1;
@@ -147,13 +139,8 @@ class AssetScreen extends React.Component<Props, State> {
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
     return (
-      <Container>
-        <CloseButton
-          icon="close"
-          onPress={this.handleCardTap}
-          fontSize={Platform.OS === 'ios' ? 36 : 30}
-          color={baseColors.black}
-        />
+      <Container color={baseColors.snowWhite}>
+        <Header onClose={this.handleCardTap} />
         <ScrollWrapper
           refreshControl={
             <RefreshControl

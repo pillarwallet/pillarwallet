@@ -13,7 +13,7 @@ import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 import Button from 'components/Button';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import { validatePin } from 'utils/validators';
 
 type Props = {
@@ -88,10 +88,10 @@ class ConfirmNewPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <ModalScreenHeader onClose={this.handleScreenDismissal} />
+        <Header onClose={this.handleScreenDismissal} />
         {showError}
         <Center>
-          <Title center title="confirm new pincode" />
+          <Title align="center" title="confirm new pincode" />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}

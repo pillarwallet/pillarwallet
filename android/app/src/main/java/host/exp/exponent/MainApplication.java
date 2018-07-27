@@ -1,6 +1,7 @@
 package host.exp.exponent;
 
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactPackage;
 
 import java.util.Arrays;
@@ -10,12 +11,16 @@ import expolib_v1.okhttp3.OkHttpClient;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
+import com.oblador.vectoricons.VectorIconsPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
+
+import io.fabric.sdk.android.Fabric;
 import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -29,6 +34,10 @@ public class MainApplication extends ExpoApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    final Fabric fabric = new Fabric.Builder(this)
+            .kits(new Crashlytics())
+            .build();
+    Fabric.with(fabric);
     if (BuildConfig.DEBUG) {
       Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
     } else {
@@ -50,6 +59,7 @@ public class MainApplication extends ExpoApplication {
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new VectorIconsPackage(),
             new RNSignalClientPackage(),
             new IntercomPackage(),
             new UdpSocketsModule(),
@@ -58,6 +68,7 @@ public class MainApplication extends ExpoApplication {
             new RNOSModule(),
             new RNFirebasePackage(),
             new RNFirebaseMessagingPackage(),
+            new RNFirebaseCrashlyticsPackage(),
             new RNDeviceInfo()
     );
   }

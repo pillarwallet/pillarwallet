@@ -6,6 +6,8 @@
 #import "RNFirebaseNotifications.h"
 #import "RNFirebaseMessaging.h"
 #import "Intercom/intercom.h"
+#import "Fabric/Fabric.h"
+#import "Crashlytics/Crashlytics.h"
 
 @interface AppDelegate ()
 
@@ -22,6 +24,7 @@
     _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     _window.backgroundColor = [UIColor whiteColor];
     [[ExpoKit sharedInstance] application:application didFinishLaunchingWithOptions:launchOptions];
+    [Fabric with:@[[Crashlytics class]]];
     #ifdef DEBUG
       [Intercom setApiKey:@"ios_sdk-8c4a15ada22af46599f62d1bef70c7c121957dd7" forAppId:@"xbjzrshe"];  
     #else
