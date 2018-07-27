@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import { View, TouchableOpacity, Text, Dimensions, Platform } from 'react-native';
@@ -31,6 +31,7 @@ type State = {
 const ModalWrapper = styled.View`
   flex: 1;
   background-color: #ffffff;
+  position: relative;
 `;
 
 const PhotoBoundariesWrapper = styled.View`
@@ -259,13 +260,12 @@ class RNCamera extends React.Component<Props, State> {
         }}
       >
         <ModalWrapper>
-          <Container>{content}</Container>
+          <Container color={baseColors.black}>{content}</Container>
           <CloseButton
-            style={{ marginTop: 5 }}
             icon="close"
             onPress={modalHide}
             color={this.state.showResult ? baseColors.darkGray : '#ffffff'}
-            fontSize={Platform.OS === 'ios' ? 46 : 36}
+            fontSize={fontSizes.small}
           />
         </ModalWrapper>
       </Modal>

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Vibration, Animated, Dimensions, Platform } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import { noop } from 'utils/common';
+import { fontSizes } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native';
 
@@ -187,7 +188,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
             icon="close"
             onPress={this.handleAnimationDismiss}
             color={rectangleColor}
-            fontSize={Platform.OS === 'ios' ? 46 : 36}
+            fontSize={fontSizes.small}
           />
         </Animated.View>
       </Wrapper>
