@@ -54,6 +54,7 @@ class ConnectionRequests extends React.Component<Props> {
           name={invitation.username}
           status={invitation.type}
           showActions
+          avatar={invitation.profileImage}
         />
       ));
   };

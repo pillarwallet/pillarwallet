@@ -123,7 +123,7 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     return (
       <ProfileImage
-        uri={contact.avatar}
+        uri={contact.profileImage}
         userName={contact.username}
         diameter={34}
         textStyle={{

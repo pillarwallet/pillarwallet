@@ -142,8 +142,8 @@ export default class ActivityFeed extends React.Component<Props, State> {
       onCancelInvitation,
       onAcceptInvitation,
       onRejectInvitation,
-
     } = this.props;
+
     switch (type) {
       case TYPE_RECEIVED:
         return (
@@ -205,7 +205,7 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
       <ActivityFeedItem isEven={isEven} key={index}>
         <ActivityFeedItemCol fixedWidth="42px">
           <ProfileImage
-            uri={notification.avatar}
+            uri={notification.profileImage}
             userName={displayName}
             diameter={32}
             containerStyle={{ marginRight: 10 }}
@@ -228,11 +228,11 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
     <ActivityFeedItem isEven={isEven} key={index}>
       <ActivityFeedItemCol fixedWidth="42px">
         <ProfileImage
-          uri={notification.avatar}
           userName={notification.username}
           diameter={32}
           containerStyle={{ marginRight: 10 }}
           textStyle={{ fontSize: 14 }}
+          uri={notification.profileImage}
         />
       </ActivityFeedItemCol>
       <ActivityFeedItemCol>
@@ -249,6 +249,7 @@ renderActivityFeedItem = ({ item: notification }: Object, index: number) => {
 render() {
   const { activeTab } = this.state;
   const { history } = this.props;
+
   const filteredHistory = history.filter(({ type }) => {
     if (activeTab === TRANSACTIONS) {
       return type === TRANSACTION_EVENT;

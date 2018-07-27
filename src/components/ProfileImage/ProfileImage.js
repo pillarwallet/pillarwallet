@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 const CircleImage = styled.Image`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -19,6 +20,7 @@ const ImageTouchable = styled.TouchableOpacity`
   justify-content: center;
   background-color: ${baseColors.brightSkyBlue};
   ${props => (props.additionalContainerStyle)};
+  overflow: hidden;
 `;
 
 const AvatarText = styled.Text`
@@ -49,6 +51,7 @@ const ProfileImage = (props: Props) => {
     diameter,
   } = props;
 
+  const fullUri = uri ? `${SDK_PROVIDER}/user/image/${uri}` : null;
   const initials = userName
     .split(' ')
     .map(name => name.substring(0, 1))
@@ -58,7 +61,7 @@ const ProfileImage = (props: Props) => {
   return (
     <ImageTouchable additionalContainerStyle={containerStyle} diameter={diameter} disabled={!onPress} onPress={onPress}>
       {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
-      {!!uri && <CircleImage additionalImageStyle={imageStyle} source={{ uri }} />}
+      {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri: fullUri }} />}
     </ImageTouchable>
   );
 };

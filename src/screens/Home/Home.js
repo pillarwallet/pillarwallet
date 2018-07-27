@@ -158,7 +158,7 @@ class PeopleScreen extends React.Component<Props, State> {
         >
           <RecentConnectionsItemAvatarWrapper>
             <ProfileImage
-              uri={contact.avatar}
+              uri={contact.profileImage}
               userName={contact.username}
               diameter={48}
             />
@@ -185,12 +185,13 @@ class PeopleScreen extends React.Component<Props, State> {
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const homeNotifications = [...mappedContacts, ...invitations, ...historyNotifications]
       .sort((a, b) => b.createdAt - a.createdAt);
+
     return (
       <Container>
         <HomeHeader>
           <HomeHeaderRow>
             <ProfileImage
-              uri={user.avatar}
+              uri={user.profileImage}
               userName={user.username}
               diameter={40}
               containerStyle={{

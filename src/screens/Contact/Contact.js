@@ -116,7 +116,7 @@ const Contact = (props: Props) => {
           </ContactHeader>
           <ContactHeaderAvatarWrapper >
             <ProfileImage
-              uri={contact.avatar}
+              uri={contact.profileImage}
               userName={contact.username}
               diameter={60}
               textStyle={{ fontSize: 32 }}
