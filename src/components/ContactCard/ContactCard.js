@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
-import { baseColors, UIColors, fontSizes } from 'utils/variables';
+import { Platform, Dimensions } from 'react-native';
+import { baseColors, UIColors, fontSizes, itemSizes } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import ButtonIcon from 'components/ButtonIcon';
@@ -22,6 +22,8 @@ const ContactCardWrapper = styled.TouchableHighlight`
 const ContactCardInner = styled.View`
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+  flex: 1;
 `;
 
 const ContactCardAvatarWrapper = styled.View`
@@ -39,6 +41,7 @@ const ContactCardAvatarWrapper = styled.View`
 
 const ContactCardName = styled(BoldText)`
   font-size: ${fontSizes.medium};
+  flex-wrap: wrap;
 `;
 
 const ContactCardNotificationCircle = styled(NotificationCircle)`
@@ -61,13 +64,18 @@ const ActionCircleButton = styled(ButtonIcon)`
   align-items: center;
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
 `;
+const ContactCardSide = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
 const ButtonIconWrapper = styled.View`
   margin-left: auto;
   flex-direction: row;
 `;
 
 const ActionTextWrapper = styled.TouchableOpacity`
-  margin-left: auto;
+  // margin-left: auto;
 `;
 
 const CancelActionText = styled(BaseText)`
@@ -101,8 +109,11 @@ type Props = {
   onCancelInvitationPress?: Function,
   onSendInvitationPress?: Function,
   noBorder?: boolean,
+  disabled?: boolean,
   customButton?: React.Node,
 };
+
+const maxContactInfoWidth = Dimensions.get('window').width - 220;
 
 // TODO: convert into dumb component
 export default class ContactCard extends React.Component<Props> {
@@ -179,6 +190,7 @@ export default class ContactCard extends React.Component<Props> {
       avatar,
       onPress,
       noBorder,
+      disabled,
     } = this.props;
 
     return (
@@ -186,21 +198,26 @@ export default class ContactCard extends React.Component<Props> {
         onPress={onPress}
         underlayColor={baseColors.lightGray}
         noBorder={noBorder}
+        disabled={disabled}
       >
         <ContactCardInner>
-          <ContactCardAvatarWrapper>
-            <ProfileImage
-              uri={avatar}
-              userName={name}
-              diameter={40}
-              textStyle={{ fontSize: 18 }}
-            />
-          </ContactCardAvatarWrapper>
-          <ContactCardName>{name}</ContactCardName>
-          {notificationCount > 0 &&
+          <ContactCardSide>
+            <ContactCardAvatarWrapper>
+              <ProfileImage
+                uri={avatar}
+                userName={name}
+                diameter={itemSizes.avaratCircleSmall}
+                textStyle={{ fontSize: fontSizes.medium }}
+              />
+            </ContactCardAvatarWrapper>
+            <ContactCardName style={{ maxWidth: maxContactInfoWidth }}>{name}</ContactCardName>
+          </ContactCardSide>
+          <ContactCardSide>
+            {notificationCount > 0 &&
             <ContactCardNotificationCircle gray>{notificationCount}</ContactCardNotificationCircle>
-          }
-          {this.renderActions()}
+            }
+            {this.renderActions()}
+          </ContactCardSide>
         </ContactCardInner>
       </ContactCardWrapper>
     );
