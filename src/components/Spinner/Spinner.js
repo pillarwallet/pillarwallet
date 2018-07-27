@@ -1,19 +1,30 @@
 // @flow
 import React from 'react';
-import { Animated } from 'react-native';
+import styled from 'styled-components/native';
+import LottieView from 'lottie-react-native';
 
-type Props = {
+const AnimationWrapper = styled.View``;
 
-}
+const animationSource = require('./animation.json');
 
-type State = {
-  progress: Animated.Value,
-}
+export default class Spinner extends React.Component<*> {
+  animation: LottieView
 
-// const animationSource = require('./animation.json');
-
-export default class Spinner extends React.Component<Props, State> { // eslint-disable-line
+  componentDidMount() {
+    this.animation.play();
+  }
   render() {
-
+    return (
+      <AnimationWrapper>
+        <LottieView
+          ref={(animation) => {
+            this.animation = animation;
+          }}
+          source={animationSource}
+          style={{ width: 40, height: 40 }}
+          loop
+        />
+      </AnimationWrapper>
+    );
   }
 }

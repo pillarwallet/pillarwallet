@@ -35,10 +35,6 @@
 		1680D90B21027C6300D92EF7 /* libFirebaseStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D90A21027C6300D92EF7 /* libFirebaseStorage.a */; };
 		1680D91E21027F1200D92EF7 /* libFirebaseFirestore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D91D21027F1200D92EF7 /* libFirebaseFirestore.a */; };
 		1680D95D2102828600D92EF7 /* libreact-native-intercom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D95C2102828600D92EF7 /* libreact-native-intercom.a */; };
-		1DD9246C210B2BA200DA02B7 /* liblottie-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DD9246B210B2BA200DA02B7 /* liblottie-ios.a */; };
-		1DD9246E210B2BA200DA02B7 /* liblottie-react-native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DD9246D210B2BA200DA02B7 /* liblottie-react-native.a */; };
-		1DD9249F210B2D2300DA02B7 /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DD9249E210B2D2300DA02B7 /* Lottie.framework */; };
-		1DD924A0210B2D2300DA02B7 /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1DD9249E210B2D2300DA02B7 /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		226CFD8DB3354FA598407BD3 /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A443BFC898794D6C81E642C6 /* PillarIcons.ttf */; };
 		22F95E64F92E4E398099112D /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 209ECA9FD3A147FF82955E48 /* Entypo.ttf */; };
 		276C827361654D53B0300D88 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */; };
@@ -401,7 +397,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				165B8E8C2108DD99009440FF /* SignalProtocol.framework in Embed Frameworks */,
-				1DD924A0210B2D2300DA02B7 /* Lottie.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -445,7 +440,6 @@
 		1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "pillar-wallet/Supporting/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		1DD9246B210B2BA200DA02B7 /* liblottie-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "liblottie-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DD9246D210B2BA200DA02B7 /* liblottie-react-native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "liblottie-react-native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1DD9249A210B2C7D00DA02B7 /* Lottie.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Lottie.framework; path = "../../../Library/Developer/Xcode/DerivedData/Lottie-fucaqmfctnmajwawjzngvgqbtben/Build/Products/Debug-iphonesimulator/Lottie.framework"; sourceTree = "<group>"; };
 		1DD9249E210B2D2300DA02B7 /* Lottie.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Lottie.framework; sourceTree = "<group>"; };
 		209ECA9FD3A147FF82955E48 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
@@ -511,8 +505,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DD9246C210B2BA200DA02B7 /* liblottie-ios.a in Frameworks */,
-				1DD9246E210B2BA200DA02B7 /* liblottie-react-native.a in Frameworks */,
 				165B8DBF2108D222009440FF /* libRCTAnimation.a in Frameworks */,
 				16764F232104E41B00E0E111 /* libRCTNetwork.a in Frameworks */,
 				16764F222104E41000E0E111 /* libRCTVibration.a in Frameworks */,
@@ -521,7 +513,6 @@
 				16764F1F2104E3F800E0E111 /* libRCTActionSheet.a in Frameworks */,
 				165B8E8B2108DD99009440FF /* SignalProtocol.framework in Frameworks */,
 				16764EF42104E3F200E0E111 /* libRCTText.a in Frameworks */,
-				1DD9249F210B2D2300DA02B7 /* Lottie.framework in Frameworks */,
 				1680D8612102752500D92EF7 /* libSignalMessagingSwift.a in Frameworks */,
 				1680D86C2102761300D92EF7 /* libRNRandomBytes.a in Frameworks */,
 				1680D86F2102767900D92EF7 /* libTcpSockets.a in Frameworks */,
@@ -718,7 +709,7 @@
 		3BD32C7E56A0F383F77FCFE5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1DD9249A210B2C7D00DA02B7 /* Lottie.framework */,
+				1DD9249E210B2D2300DA02B7 /* Lottie.framework */,
 				1DD9246B210B2BA200DA02B7 /* liblottie-ios.a */,
 				1DD9246D210B2BA200DA02B7 /* liblottie-react-native.a */,
 				1680D95C2102828600D92EF7 /* libreact-native-intercom.a */,
@@ -805,7 +796,6 @@
 		B56386381DB9693800A0598C = {
 			isa = PBXGroup;
 			children = (
-				1DD9249E210B2D2300DA02B7 /* Lottie.framework */,
 				EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */,
 				B56386431DB9693800A0598C /* pillar-wallet */,
 				B56386421DB9693800A0598C /* Products */,
