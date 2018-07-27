@@ -19,7 +19,7 @@ const ImageTouchable = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${baseColors.cyan};
+  background-color: ${props => (props.transparent ? 'transparent' : baseColors.cyan)};
   ${props => (props.additionalContainerStyle)};
   overflow: hidden;
 `;
@@ -65,6 +65,7 @@ const ProfileImage = (props: Props) => {
       diameter={diameter}
       disabled={!onPress}
       onPress={onPress}
+      transparent={uri}
     >
       {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
       {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri: fullUri }} />}
