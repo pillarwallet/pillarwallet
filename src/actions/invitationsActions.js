@@ -173,12 +173,7 @@ export const fetchInviteNotificationsAction = () => {
       const invitationData = JSON.parse(inviteNotification.payload.msg);
       const invitationSender = invitationData.senderUserData.username;
       const users = await api.userSearch(invitationSender, user.walletId);
-      const thisUser = users.filter(obj => {
-        if (obj.username === invitationSender) {
-          return obj;
-        }
-        return null;
-      });
+      const thisUser = users.find(({ username }) => username === invitationSender);
       if (!thisUser.length) return inviteNotification;
       if (thisUser[0].profileImage) {
         inviteNotification.profileImage = thisUser[0].profileImage;
@@ -205,17 +200,11 @@ export const fetchInviteNotificationsAction = () => {
       .map((
         {
           senderUserData,
-          type,
-          createdAt,
-          meta,
-          profileImage,
+          ...rest
         }) => (
         {
           ...senderUserData,
-          type,
-          createdAt,
-          meta,
-          profileImage,
+          ...rest,
         }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
