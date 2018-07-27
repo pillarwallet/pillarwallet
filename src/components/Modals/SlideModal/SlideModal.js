@@ -98,16 +98,15 @@ export default class SlideModal extends React.Component<Props, State> {
       fullScreen,
       subtitle,
     } = this.props;
-    const animationInTiming = 600;
-    const animationOutTiming = 600;
+    const animationTiming = 600;
     return (
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
         onModalHide={onModalHide}
         onBackdropPress={this.hideModal}
-        animationInTiming={animationInTiming}
-        animationOutTiming={animationOutTiming}
+        animationInTiming={animationTiming}
+        animationOutTiming={animationTiming}
         animationIn="slideInUp"
         animationOut="slideOutDown"
         swipeDirection="down"
