@@ -12,10 +12,10 @@ import {
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
 } from 'constants/walletConstants';
-import HeaderLink from 'components/HeaderLink';
+import Button from 'components/Button';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import Title from 'components/Title';
+import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 
 type Props = {
@@ -46,17 +46,6 @@ class ImportWallet extends React.Component<Props, State> {
       handleImportSubmit: this.handleImportSubmit,
     });
   }
-
-  static navigationOptions = ({ navigation }) => ({
-    headerRight: (
-      <HeaderLink
-        onPress={() => navigation.state.params.handleImportSubmit()}
-      >
-      Import
-      </HeaderLink>
-    ),
-  });
-
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { walletState, error } = nextProps.wallet;
 
@@ -94,8 +83,8 @@ class ImportWallet extends React.Component<Props, State> {
     const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
     return (
       <Container>
+        <Header title="restore wallet" onBack={() => this.props.navigation.goBack(null)} />
         <ScrollWrapper regularPadding>
-          <Title title="restore wallet" />
           <Paragraph>
               Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
           </Paragraph>
@@ -119,6 +108,7 @@ class ImportWallet extends React.Component<Props, State> {
             errorMessage={errorMessagePrivateKey}
             underlineColorAndroid="transparent"
           />
+          <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
         </ScrollWrapper>
       </Container>
     );

@@ -4,9 +4,9 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors, fontWeights } from 'utils/variables';
+import { fontSizes, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 
@@ -51,7 +51,7 @@ const ActivityFeedHeader = styled.View`
 `;
 
 const ActivityFeedItem = styled.View`
-  background-color: ${props => props.isEven ? baseColors.white : baseColors.snowWhite};
+  background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};
   height: 74px;
   padding: 0px 16px;
   justify-content: flex-start;
@@ -59,19 +59,18 @@ const ActivityFeedItem = styled.View`
   flex-direction: row;
 `;
 
-const ActivityFeedItemLabel = styled.Text`
+const ActivityFeedItemLabel = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.extraSmall};
   margin-bottom: 2px;
 `;
 
-const ActivityFeedItemName = styled.Text`
-  font-size: ${fontSizes.medium};
+const ActivityFeedItemName = styled(BaseText)`
+  font-size: ${fontSizes.small};
 `;
 
-const ActivityFeedItemAmount = styled.Text`
-  font-weight: ${fontWeights.bold};
-  font-size: ${fontSizes.small};
+const ActivityFeedItemAmount = styled(BoldText)`
+  font-size: ${fontSizes.extraSmall};
   color: ${props => props.received ? baseColors.jadeGreen : baseColors.fireEngineRed};
 `;
 
@@ -96,9 +95,8 @@ const TabItem = styled.TouchableOpacity`
   border-bottom-width: 2px;
 `;
 
-const TabItemText = styled.Text`
+const TabItemText = styled(BaseText)`
   font-size: ${fontSizes.small};
-  font-weight: ${props => props.active ? fontWeights.bold : fontWeights.book};
   color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
@@ -118,10 +116,11 @@ const ButtonIconWrapper = styled.View`
   flex-direction: row;
 `;
 
-const LabelText = styled.Text`
+const LabelText = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${(props) => props.button ? baseColors.fireEngineRed : baseColors.darkGray};
   margin-left: auto;
+  padding: 6px;
 `;
 
 type Props = {
@@ -160,15 +159,15 @@ export default class ActivityFeed extends React.Component<Props, State> {
               color={baseColors.darkGray}
               margin={0}
               icon="close"
-              fontSize={Platform.OS === 'ios' ? 32 : 22}
+              fontSize={fontSizes.small}
               onPress={() => onRejectInvitation(notification)}
             />
             <ActionCircleButton
               color={baseColors.white}
               margin={0}
               accept
-              icon="ios-checkmark"
-              fontSize={Platform.OS === 'ios' ? 32 : 26}
+              icon="check"
+              fontSize={fontSizes.small}
               onPress={() => onAcceptInvitation(notification)}
             />
           </ButtonIconWrapper>
@@ -216,7 +215,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
           <ActivityFeedItemCol fixedWidth="44px">
             <Image source={directionIcon} style={{ width: 36, height: 36 }} />
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol fixedWidth="200px">
+          <ActivityFeedItemCol fixedWidth="150px">
             <ActivityFeedItemName>{title}</ActivityFeedItemName>
             <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
           </ActivityFeedItemCol>
@@ -238,7 +237,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
             textStyle={{ fontSize: 14 }}
           />
         </ActivityFeedItemCol>
-        <ActivityFeedItemCol fixedWidth="200px">
+        <ActivityFeedItemCol fixedWidth="150px">
           <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
           <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
         </ActivityFeedItemCol>

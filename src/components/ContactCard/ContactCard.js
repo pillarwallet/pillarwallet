@@ -148,15 +148,15 @@ export default class ContactCard extends React.Component<Props> {
             color={baseColors.darkGray}
             margin={0}
             icon="close"
-            fontSize={Platform.OS === 'ios' ? fontSizes.iosIcons : fontSizes.androidCloseIcon}
+            fontSize={fontSizes.small}
             onPress={onRejectInvitationPress}
           />
           <ActionCircleButton
             color={baseColors.white}
             margin={0}
             accept
-            icon="ios-checkmark"
-            fontSize={Platform.OS === 'ios' ? fontSizes.iosIcons : fontSizes.androidCheckmarkIcon}
+            icon="check"
+            fontSize={fontSizes.small}
             onPress={onAcceptInvitationPress}
           />
         </ButtonIconWrapper>

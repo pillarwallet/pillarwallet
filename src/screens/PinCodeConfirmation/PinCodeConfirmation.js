@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Container, Center } from 'components/Layout';
-import Title from 'components/Title';
+import { Container } from 'components/Layout';
+import type { NavigationScreenProp } from 'react-navigation';
+import Header from 'components/Header';
 import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
@@ -10,6 +11,7 @@ import { validatePin } from 'utils/validators';
 
 type Props = {
   confirmPinForNewWallet: (pin: string) => Function,
+  navigation: NavigationScreenProp<*>,
   wallet: Object,
 };
 
@@ -47,9 +49,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     return (
       <Container>
         {!!this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
-        <Center>
-          <Title center title="confirm pincode" />
-        </Center>
+        <Header title="confirm pincode" onBack={() => this.props.navigation.goBack(null)} />
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}

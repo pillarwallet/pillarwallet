@@ -5,46 +5,56 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
-		05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */; };
+		0258B09B6A34AC731A90ED32 /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
-		163AF94320E6DA3000C0E17A /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 163AF92820E6DA2A00C0E17A /* libRCTVibration.a */; };
-		163B373620FE2E6F006ACE2C /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 163B373520FE2E64006ACE2C /* libSignalMessagingSwift.a */; };
-		163B37CE20FE44AA006ACE2C /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 163B37C520FE446C006ACE2C /* SignalProtocol.framework */; };
-		163B380B20FE56C7006ACE2C /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 163B37C520FE446C006ACE2C /* SignalProtocol.framework */; };
-		163B380C20FE56C7006ACE2C /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 163B37C520FE446C006ACE2C /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		16874E8220BB3B6E0034548E /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E7B20BB3B470034548E /* libRCTWebSocket.a */; };
-		16874E8C20BB3BBB0034548E /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E8920BB3B950034548E /* libRCTImage.a */; };
-		16874E8E20BB3BE00034548E /* libExpoKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E8D20BB3BE00034548E /* libExpoKit.a */; };
-		16877D5F20BEE57800A7AD1D /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16877D5E20BEE57800A7AD1D /* libReact.a */; };
-		16877D8620BEE80500A7AD1D /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168C48F920BDB29B00A0E98F /* libRCTActionSheet.a */; };
-		168C491D20BDB2A000A0E98F /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168C48F920BDB29B00A0E98F /* libRCTActionSheet.a */; };
-		16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16EF832620BA1B8200CDDE12 /* libGPUImage.a */; };
-		16F1DC5D20BC029800A8F843 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DC4F20BC01CF00A8F843 /* libRCTText.a */; };
-		16F1DCA320BC035F00A8F843 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DCA020BC034D00A8F843 /* libRCTNetwork.a */; };
-		16F1DCB820BC061D00A8F843 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DCB520BC061100A8F843 /* libRCTAnimation.a */; };
-		1A8BCB2497E14E5C939C8EA3 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 358C5AA222F84E91AEFA3908 /* libRNOS.a */; };
+		165B8DBF2108D222009440FF /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DCB520BC061100A8F843 /* libRCTAnimation.a */; };
+		165B8E8B2108DD99009440FF /* SignalProtocol.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D87A2102769200D92EF7 /* SignalProtocol.framework */; };
+		165B8E8C2108DD99009440FF /* SignalProtocol.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D87A2102769200D92EF7 /* SignalProtocol.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		16764EF42104E3F200E0E111 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DC4F20BC01CF00A8F843 /* libRCTText.a */; };
+		16764F1F2104E3F800E0E111 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 168C48F920BDB29B00A0E98F /* libRCTActionSheet.a */; };
+		16764F202104E40400E0E111 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E8920BB3B950034548E /* libRCTImage.a */; };
+		16764F212104E40B00E0E111 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16874E7B20BB3B470034548E /* libRCTWebSocket.a */; };
+		16764F222104E41000E0E111 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 163AF92820E6DA2A00C0E17A /* libRCTVibration.a */; };
+		16764F232104E41B00E0E111 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F1DCA020BC034D00A8F843 /* libRCTNetwork.a */; };
+		1680D85F2102751300D92EF7 /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16570B8420BA0C7000CB6BE6 /* libUdpSockets.a */; };
+		1680D8612102752500D92EF7 /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 163B373520FE2E64006ACE2C /* libSignalMessagingSwift.a */; };
+		1680D8662102755A00D92EF7 /* libExpoKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D8652102755A00D92EF7 /* libExpoKit.a */; };
+		1680D869210275EA00D92EF7 /* libGPUImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D868210275EA00D92EF7 /* libGPUImage.a */; };
+		1680D86B2102760A00D92EF7 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16570B8120BA0C7000CB6BE6 /* libRNOS.a */; };
+		1680D86C2102761300D92EF7 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16570B6C20BA04B400CB6BE6 /* libRNRandomBytes.a */; };
+		1680D86E2102764B00D92EF7 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CD8FAD20A8D94D00BD276F /* libRNFirebase.a */; };
+		1680D86F2102767900D92EF7 /* libTcpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16570B7A20BA0C7000CB6BE6 /* libTcpSockets.a */; };
+		1680D8962102794800D92EF7 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D8952102794800D92EF7 /* libRNDeviceInfo.a */; };
+		1680D8C42102795400D92EF7 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D8C32102795400D92EF7 /* libRNVectorIcons.a */; };
+		1680D8C62102795B00D92EF7 /* libFirebaseAuth.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D8C52102795B00D92EF7 /* libFirebaseAuth.a */; };
+		1680D8C82102796300D92EF7 /* libFirebaseMessaging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D8C72102796300D92EF7 /* libFirebaseMessaging.a */; };
+		1680D8CA2102796B00D92EF7 /* libFirebaseCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D8C92102796B00D92EF7 /* libFirebaseCore.a */; };
+		1680D8DD21027C5A00D92EF7 /* libFirebaseDatabase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D8DC21027C5A00D92EF7 /* libFirebaseDatabase.a */; };
+		1680D90B21027C6300D92EF7 /* libFirebaseStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D90A21027C6300D92EF7 /* libFirebaseStorage.a */; };
+		1680D91E21027F1200D92EF7 /* libFirebaseFirestore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D91D21027F1200D92EF7 /* libFirebaseFirestore.a */; };
+		1680D95D2102828600D92EF7 /* libreact-native-intercom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D95C2102828600D92EF7 /* libreact-native-intercom.a */; };
 		22F95E64F92E4E398099112D /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 209ECA9FD3A147FF82955E48 /* Entypo.ttf */; };
 		276C827361654D53B0300D88 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */; };
 		2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */; };
 		2EC3EE0BF47A4A74940BE84E /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCE4860CBACC4A99B26705F0 /* Zocial.ttf */; };
 		308F1777F22140319410B3D5 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A53A48870B24236BA9A090E /* Octicons.ttf */; };
 		3BE522D36D0E44CB973ECA16 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 43399DA83DE5422CB158B171 /* MaterialIcons.ttf */; };
-		3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E57168F09C0F4E06ADD6E15F /* libRNFirebase.a */; };
 		44C758D34A0A45438D9BBC25 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BE9C8A714CA544BB85EFA109 /* Foundation.ttf */; };
 		4738BC479653470A8BC52374 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */; };
 		4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A144060C424F469E8074D840 /* SimpleLineIcons.ttf */; };
 		4E9A9E801BE94E43B50FF9F7 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2702BF20B911498186578798 /* SimpleLineIcons.ttf */; };
+		4FBC0B2843F24203BE7C4DDC /* AktivGrotesk-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7CE7280988A442FCADF0F811 /* AktivGrotesk-Regular.ttf */; };
 		5024DD2C1ACA4DF494A1CCB1 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB597A9C1A5B42FDA30549CE /* Entypo.ttf */; };
-		52E89B24A5A54CB2881789EF /* libTcpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE658B24F3194D0A90335341 /* libTcpSockets.a */; };
 		55CF3F18E6EF415F8718A968 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 327A307B25DC4C5299D33695 /* Feather.ttf */; };
 		5F1F067D48844591B2A659A9 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */; };
 		63DDAC5BF5F84775A54FEFB1 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 751A293D237B47E0BDE37FF9 /* FontAwesome.ttf */; };
 		7FE0949E8E1E4A86920A222E /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E949CFC2D5F1485A83DC3C36 /* rubicon-icon-font.ttf */; };
 		8D2F06EA360544BDADBED075 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 06BB724CDE404052B9BE592C /* Octicons.ttf */; };
 		8FDBC48B259C41AD8BA2A002 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0A919F81462B49BEADFD1CBD /* EvilIcons.ttf */; };
+		91B99CD1D9604490AD88AC2F /* AktivGrotesk-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0224C6FCFA9642FA8C90C62C /* AktivGrotesk-Bold.ttf */; };
 		95BD5F9120F54993001E93AA /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BD5F9020F54993001E93AA /* SwiftBridge.swift */; };
+		9FD24FB33ACC48009E09133D /* AktivGrotesk-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D515899D9004318864A50A8 /* AktivGrotesk-Medium.ttf */; };
 		B501732B1DC01252003445D9 /* EXShell.plist in Resources */ = {isa = PBXBuildFile; fileRef = B501732A1DC01252003445D9 /* EXShell.plist */; };
 		B56386491DB9693800A0598C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B56386481DB9693800A0598C /* AppDelegate.m */; };
 		B56386511DB9693800A0598C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B56386501DB9693800A0598C /* Assets.xcassets */; };
@@ -57,14 +67,14 @@
 		B5DB04801F3A684600E91581 /* shell-app-manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047E1F3A684600E91581 /* shell-app-manifest.json */; };
 		B5DB04811F3A684600E91581 /* shell-app.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5DB047F1F3A684600E91581 /* shell-app.bundle */; };
 		B666863B0A07408B887D99ED /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 26CDF7B322B74120A8501540 /* Roboto.ttf */; };
-		B8CED6E293D24607AA6B21C6 /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D9B6B06506C48CBA2AC547B /* libRNRandomBytes.a */; };
+		C75080BFD22A45CE9179B572 /* AktivGrotesk-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9A620D8D5B1641ECBAD6134F /* AktivGrotesk-Light.ttf */; };
 		D4D8BA8366FF42B7B92933D8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 809C8F6F2C484692B42E92AE /* MaterialCommunityIcons.ttf */; };
 		DE488ED3D5684B76A0C40B8C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ABE6DAB20184465D8E053C80 /* Ionicons.ttf */; };
 		E449C90563E9496DA9020516 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */; };
 		E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */; };
 		EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */; };
 		F52660EC2C5047DBADBFA3A9 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40EC5CFD374F4F00AB6AAB9D /* MaterialCommunityIcons.ttf */; };
-		FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
+		226CFD8DB3354FA598407BD3 /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A443BFC898794D6C81E642C6 /* PillarIcons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,48 +91,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 958BF8F920F3CAD8003CF3A0;
 			remoteInfo = SignalMessagingSwift;
-		};
-		163B37C420FE446C006ACE2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CE1F0C35203467B3003F1C04;
-			remoteInfo = "libsignal-protocol-swift iOS";
-		};
-		163B37C620FE446C006ACE2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CE1F0C5420346830003F1C04;
-			remoteInfo = "libsignal-protocol-swift macOS";
-		};
-		163B37C820FE446C006ACE2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CE1F0C612034685B003F1C04;
-			remoteInfo = "libsignal-protocol-swift tvOS";
-		};
-		163B37CA20FE446C006ACE2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CE1F0C6E20346875003F1C04;
-			remoteInfo = "libsignal-protocol-swift watchOS";
-		};
-		163B37CC20FE446C006ACE2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CE1F0C3E203467B3003F1C04;
-			remoteInfo = "libsignal-protocol-swiftTests";
-		};
-		163B380D20FE56C7006ACE2C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CE1F0C34203467B3003F1C04;
-			remoteInfo = "libsignal-protocol-swift iOS";
 		};
 		16570B6B20BA04B400CB6BE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -158,6 +126,48 @@
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = UdpSockets;
+		};
+		165B8E8D2108DD99009440FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CE1F0C34203467B3003F1C04;
+			remoteInfo = "libsignal-protocol-swift iOS";
+		};
+		1680D8792102769200D92EF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CE1F0C35203467B3003F1C04;
+			remoteInfo = "libsignal-protocol-swift iOS";
+		};
+		1680D87B2102769200D92EF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CE1F0C5420346830003F1C04;
+			remoteInfo = "libsignal-protocol-swift macOS";
+		};
+		1680D87D2102769200D92EF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CE1F0C612034685B003F1C04;
+			remoteInfo = "libsignal-protocol-swift tvOS";
+		};
+		1680D87F2102769200D92EF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CE1F0C6E20346875003F1C04;
+			remoteInfo = "libsignal-protocol-swift watchOS";
+		};
+		1680D8812102769200D92EF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CE1F0C3E203467B3003F1C04;
+			remoteInfo = "libsignal-protocol-swiftTests";
 		};
 		16874E7A20BB3B470034548E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -376,23 +386,16 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
-		EE03A31120C54DF3009DA27F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 16F1DC5E20BC030C00A8F843 /* React.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 83CBBA2D1A601D0E00E9B192;
-			remoteInfo = React;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		1697CBA020FB4F200085253C /* Embed Frameworks */ = {
+		165B8E8F2108DD99009440FF /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				163B380C20FE56C7006ACE2C /* SignalProtocol.framework in Embed Frameworks */,
+				165B8E8C2108DD99009440FF /* SignalProtocol.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -400,13 +403,25 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0224C6FCFA9642FA8C90C62C /* AktivGrotesk-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AktivGrotesk-Bold.ttf"; path = "../src/assets/fonts/AktivGrotesk-Bold.ttf"; sourceTree = "<group>"; };
 		06BB724CDE404052B9BE592C /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		091E87CFB7B878842C4CB7F5 /* Pods-pillar-wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillar-wallet.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet.release.xcconfig"; sourceTree = "<group>"; };
 		0A919F81462B49BEADFD1CBD /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		1625638A20A8F7EA00E77868 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		163AF91A20E6DA2A00C0E17A /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
 		163B372F20FE2E64006ACE2C /* SignalMessagingSwift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SignalMessagingSwift.xcodeproj; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift.xcodeproj"; sourceTree = "<group>"; };
-		163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "libsignal-protocol-swift.xcodeproj"; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/libsignal-protocol-swift-master/libsignal-protocol-swift.xcodeproj"; sourceTree = "<group>"; };
+		1680D8652102755A00D92EF7 /* libExpoKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libExpoKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D868210275EA00D92EF7 /* libGPUImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libGPUImage.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "libsignal-protocol-swift.xcodeproj"; path = "../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/libsignal-protocol-swift-master/libsignal-protocol-swift.xcodeproj"; sourceTree = "<group>"; };
+		1680D8952102794800D92EF7 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D8C32102795400D92EF7 /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D8C52102795B00D92EF7 /* libFirebaseAuth.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFirebaseAuth.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D8C72102796300D92EF7 /* libFirebaseMessaging.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFirebaseMessaging.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D8C92102796B00D92EF7 /* libFirebaseCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFirebaseCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D8DC21027C5A00D92EF7 /* libFirebaseDatabase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFirebaseDatabase.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D90A21027C6300D92EF7 /* libFirebaseStorage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFirebaseStorage.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D91D21027F1200D92EF7 /* libFirebaseFirestore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFirebaseFirestore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1680D95C2102828600D92EF7 /* libreact-native-intercom.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libreact-native-intercom.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		16874E7320BB3B450034548E /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		16874E8320BB3B950034548E /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		16874E8D20BB3BE00034548E /* libExpoKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libExpoKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -435,8 +450,10 @@
 		43399DA83DE5422CB158B171 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		462A98C765944A1BA87BDB9C /* RNOS.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNOS.xcodeproj; path = "../node_modules/react-native-os/ios/RNOS.xcodeproj"; sourceTree = "<group>"; };
 		4A53A48870B24236BA9A090E /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		4D515899D9004318864A50A8 /* AktivGrotesk-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AktivGrotesk-Medium.ttf"; path = "../src/assets/fonts/AktivGrotesk-Medium.ttf"; sourceTree = "<group>"; };
 		656DE667C19E4B64B8132FD8 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/@expo/vector-icons/vendor/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		751A293D237B47E0BDE37FF9 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
+		7CE7280988A442FCADF0F811 /* AktivGrotesk-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AktivGrotesk-Regular.ttf"; path = "../src/assets/fonts/AktivGrotesk-Regular.ttf"; sourceTree = "<group>"; };
 		7D0396A597875542ECE2CDF9 /* Pods-pillar-wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillar-wallet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pillar-wallet/Pods-pillar-wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		7D9B6B06506C48CBA2AC547B /* libRNRandomBytes.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNRandomBytes.a; sourceTree = "<group>"; };
 		80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -444,6 +461,7 @@
 		9323DFC7B05B4EA99C84D391 /* libUdpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libUdpSockets.a; sourceTree = "<group>"; };
 		95BD5F8F20F54992001E93AA /* pillar-wallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillar-wallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		95BD5F9020F54993001E93AA /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
+		9A620D8D5B1641ECBAD6134F /* AktivGrotesk-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AktivGrotesk-Light.ttf"; path = "../src/assets/fonts/AktivGrotesk-Light.ttf"; sourceTree = "<group>"; };
 		A144060C424F469E8074D840 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		ABDB1B80C02F4F8CAF10338E /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
 		ABE6DAB20184465D8E053C80 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
@@ -475,6 +493,7 @@
 		ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
+		A443BFC898794D6C81E642C6 /* PillarIcons.ttf */ = {isa = PBXFileReference; name = "PillarIcons.ttf"; path = "../src/assets/fonts/PillarIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -482,38 +501,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				163B37CE20FE44AA006ACE2C /* SignalProtocol.framework in Frameworks */,
-				163B373620FE2E6F006ACE2C /* libSignalMessagingSwift.a in Frameworks */,
-				163AF94320E6DA3000C0E17A /* libRCTVibration.a in Frameworks */,
-				16877D5F20BEE57800A7AD1D /* libReact.a in Frameworks */,
-				163B380B20FE56C7006ACE2C /* SignalProtocol.framework in Frameworks */,
-				16F1DCB820BC061D00A8F843 /* libRCTAnimation.a in Frameworks */,
-				16877D8620BEE80500A7AD1D /* libRCTActionSheet.a in Frameworks */,
-				16F1DCA320BC035F00A8F843 /* libRCTNetwork.a in Frameworks */,
-				16F1DC5D20BC029800A8F843 /* libRCTText.a in Frameworks */,
-				16874E8220BB3B6E0034548E /* libRCTWebSocket.a in Frameworks */,
-				16874E8C20BB3BBB0034548E /* libRCTImage.a in Frameworks */,
-				16874E8E20BB3BE00034548E /* libExpoKit.a in Frameworks */,
-				3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */,
-				B8CED6E293D24607AA6B21C6 /* libRNRandomBytes.a in Frameworks */,
-				1A8BCB2497E14E5C939C8EA3 /* libRNOS.a in Frameworks */,
-				52E89B24A5A54CB2881789EF /* libTcpSockets.a in Frameworks */,
-				05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */,
-				16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */,
-				168C491D20BDB2A000A0E98F /* libRCTActionSheet.a in Frameworks */,
-				FE4B98D0E3E94ABD48BBBD4D /* libPods-pillar-wallet.a in Frameworks */,
-				16F1DCB820BC061D00A8F843 /* libRCTAnimation.a in Frameworks */,
-				16F1DCA320BC035F00A8F843 /* libRCTNetwork.a in Frameworks */,
-				16F1DC5D20BC029800A8F843 /* libRCTText.a in Frameworks */,
-				16874E8220BB3B6E0034548E /* libRCTWebSocket.a in Frameworks */,
-				16874E8C20BB3BBB0034548E /* libRCTImage.a in Frameworks */,
-				16874E8E20BB3BE00034548E /* libExpoKit.a in Frameworks */,
-				3EA42830C10D494DAD0F155A /* libRNFirebase.a in Frameworks */,
-				B8CED6E293D24607AA6B21C6 /* libRNRandomBytes.a in Frameworks */,
-				1A8BCB2497E14E5C939C8EA3 /* libRNOS.a in Frameworks */,
-				52E89B24A5A54CB2881789EF /* libTcpSockets.a in Frameworks */,
-				05BDF9E182314D38ADB91799 /* libUdpSockets.a in Frameworks */,
-				16EF832720BA1B8200CDDE12 /* libGPUImage.a in Frameworks */,
+				165B8DBF2108D222009440FF /* libRCTAnimation.a in Frameworks */,
+				16764F232104E41B00E0E111 /* libRCTNetwork.a in Frameworks */,
+				16764F222104E41000E0E111 /* libRCTVibration.a in Frameworks */,
+				16764F212104E40B00E0E111 /* libRCTWebSocket.a in Frameworks */,
+				16764F202104E40400E0E111 /* libRCTImage.a in Frameworks */,
+				16764F1F2104E3F800E0E111 /* libRCTActionSheet.a in Frameworks */,
+				165B8E8B2108DD99009440FF /* SignalProtocol.framework in Frameworks */,
+				16764EF42104E3F200E0E111 /* libRCTText.a in Frameworks */,
+				1680D8612102752500D92EF7 /* libSignalMessagingSwift.a in Frameworks */,
+				1680D86C2102761300D92EF7 /* libRNRandomBytes.a in Frameworks */,
+				1680D86F2102767900D92EF7 /* libTcpSockets.a in Frameworks */,
+				1680D85F2102751300D92EF7 /* libUdpSockets.a in Frameworks */,
+				1680D86E2102764B00D92EF7 /* libRNFirebase.a in Frameworks */,
+				1680D8CA2102796B00D92EF7 /* libFirebaseCore.a in Frameworks */,
+				1680D8C62102795B00D92EF7 /* libFirebaseAuth.a in Frameworks */,
+				1680D8DD21027C5A00D92EF7 /* libFirebaseDatabase.a in Frameworks */,
+				1680D8C82102796300D92EF7 /* libFirebaseMessaging.a in Frameworks */,
+				1680D91E21027F1200D92EF7 /* libFirebaseFirestore.a in Frameworks */,
+				1680D90B21027C6300D92EF7 /* libFirebaseStorage.a in Frameworks */,
+				1680D86B2102760A00D92EF7 /* libRNOS.a in Frameworks */,
+				1680D95D2102828600D92EF7 /* libreact-native-intercom.a in Frameworks */,
+				1680D8C42102795400D92EF7 /* libRNVectorIcons.a in Frameworks */,
+				1680D869210275EA00D92EF7 /* libGPUImage.a in Frameworks */,
+				1680D8962102794800D92EF7 /* libRNDeviceInfo.a in Frameworks */,
+				1680D8662102755A00D92EF7 /* libExpoKit.a in Frameworks */,
+				0258B09B6A34AC731A90ED32 /* libPods-pillar-wallet.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,18 +545,6 @@
 			isa = PBXGroup;
 			children = (
 				163B373520FE2E64006ACE2C /* libSignalMessagingSwift.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		163B37BC20FE446B006ACE2C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				163B37C520FE446C006ACE2C /* SignalProtocol.framework */,
-				163B37C720FE446C006ACE2C /* SignalProtocol.framework */,
-				163B37C920FE446C006ACE2C /* SignalProtocol.framework */,
-				163B37CB20FE446C006ACE2C /* SignalProtocol.framework */,
-				163B37CD20FE446C006ACE2C /* libsignal-protocol-swiftTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -577,6 +578,18 @@
 			isa = PBXGroup;
 			children = (
 				16570B8120BA0C7000CB6BE6 /* libRNOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1680D8712102769200D92EF7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1680D87A2102769200D92EF7 /* SignalProtocol.framework */,
+				1680D87C2102769200D92EF7 /* SignalProtocol.framework */,
+				1680D87E2102769200D92EF7 /* SignalProtocol.framework */,
+				1680D8802102769200D92EF7 /* SignalProtocol.framework */,
+				1680D8822102769200D92EF7 /* libsignal-protocol-swiftTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -692,6 +705,17 @@
 		3BD32C7E56A0F383F77FCFE5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1680D95C2102828600D92EF7 /* libreact-native-intercom.a */,
+				1680D91D21027F1200D92EF7 /* libFirebaseFirestore.a */,
+				1680D90A21027C6300D92EF7 /* libFirebaseStorage.a */,
+				1680D8DC21027C5A00D92EF7 /* libFirebaseDatabase.a */,
+				1680D8C92102796B00D92EF7 /* libFirebaseCore.a */,
+				1680D8C72102796300D92EF7 /* libFirebaseMessaging.a */,
+				1680D8C52102795B00D92EF7 /* libFirebaseAuth.a */,
+				1680D8C32102795400D92EF7 /* libRNVectorIcons.a */,
+				1680D8952102794800D92EF7 /* libRNDeviceInfo.a */,
+				1680D868210275EA00D92EF7 /* libGPUImage.a */,
+				1680D8652102755A00D92EF7 /* libExpoKit.a */,
 				16877D5E20BEE57800A7AD1D /* libReact.a */,
 				16874E8D20BB3BE00034548E /* libExpoKit.a */,
 				16EF832620BA1B8200CDDE12 /* libGPUImage.a */,
@@ -730,6 +754,11 @@
 				A144060C424F469E8074D840 /* SimpleLineIcons.ttf */,
 				BCE4860CBACC4A99B26705F0 /* Zocial.ttf */,
 				40EC5CFD374F4F00AB6AAB9D /* MaterialCommunityIcons.ttf */,
+				0224C6FCFA9642FA8C90C62C /* AktivGrotesk-Bold.ttf */,
+				9A620D8D5B1641ECBAD6134F /* AktivGrotesk-Light.ttf */,
+				4D515899D9004318864A50A8 /* AktivGrotesk-Medium.ttf */,
+				7CE7280988A442FCADF0F811 /* AktivGrotesk-Regular.ttf */,
+				A443BFC898794D6C81E642C6 /* PillarIcons.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -737,7 +766,7 @@
 		69BE83450974470B970EB9BA /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */,
+				1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */,
 				163B372F20FE2E64006ACE2C /* SignalMessagingSwift.xcodeproj */,
 				163AF91A20E6DA2A00C0E17A /* RCTVibration.xcodeproj */,
 				168C48F420BDB29A00A0E98F /* RCTActionSheet.xcodeproj */,
@@ -834,14 +863,14 @@
 				B563863F1DB9693800A0598C /* Resources */,
 				7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */,
 				EE4E73BD20D122990008F745 /* Bundle Expo assets */,
+				6908659620F78D65009274B7 /* ShellScript */,
 				863359BBB25B18EA5E2B2C8F /* [CP] Embed Pods Frameworks */,
-				1697CBA020FB4F200085253C /* Embed Frameworks */,
+				165B8E8F2108DD99009440FF /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				EE03A31220C54DF3009DA27F /* PBXTargetDependency */,
-				163B380E20FE56C7006ACE2C /* PBXTargetDependency */,
+				165B8E8E2108DD99009440FF /* PBXTargetDependency */,
 			);
 			name = "pillar-wallet";
 			productName = "pillar-wallet";
@@ -886,8 +915,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 163B37BC20FE446B006ACE2C /* Products */;
-					ProjectRef = 163B37BB20FE446B006ACE2C /* libsignal-protocol-swift.xcodeproj */;
+					ProductGroup = 1680D8712102769200D92EF7 /* Products */;
+					ProjectRef = 1680D8702102769200D92EF7 /* libsignal-protocol-swift.xcodeproj */;
 				},
 				{
 					ProductGroup = 168C48F520BDB29A00A0E98F /* Products */;
@@ -972,41 +1001,6 @@
 			remoteRef = 163B373420FE2E64006ACE2C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		163B37C520FE446C006ACE2C /* SignalProtocol.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SignalProtocol.framework;
-			remoteRef = 163B37C420FE446C006ACE2C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		163B37C720FE446C006ACE2C /* SignalProtocol.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SignalProtocol.framework;
-			remoteRef = 163B37C620FE446C006ACE2C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		163B37C920FE446C006ACE2C /* SignalProtocol.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SignalProtocol.framework;
-			remoteRef = 163B37C820FE446C006ACE2C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		163B37CB20FE446C006ACE2C /* SignalProtocol.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SignalProtocol.framework;
-			remoteRef = 163B37CA20FE446C006ACE2C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		163B37CD20FE446C006ACE2C /* libsignal-protocol-swiftTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "libsignal-protocol-swiftTests.xctest";
-			remoteRef = 163B37CC20FE446C006ACE2C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		16570B6C20BA04B400CB6BE6 /* libRNRandomBytes.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1040,6 +1034,41 @@
 			fileType = archive.ar;
 			path = libUdpSockets.a;
 			remoteRef = 16570B8320BA0C7000CB6BE6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1680D87A2102769200D92EF7 /* SignalProtocol.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SignalProtocol.framework;
+			remoteRef = 1680D8792102769200D92EF7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1680D87C2102769200D92EF7 /* SignalProtocol.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SignalProtocol.framework;
+			remoteRef = 1680D87B2102769200D92EF7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1680D87E2102769200D92EF7 /* SignalProtocol.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SignalProtocol.framework;
+			remoteRef = 1680D87D2102769200D92EF7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1680D8802102769200D92EF7 /* SignalProtocol.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = SignalProtocol.framework;
+			remoteRef = 1680D87F2102769200D92EF7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		1680D8822102769200D92EF7 /* libsignal-protocol-swiftTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "libsignal-protocol-swiftTests.xctest";
+			remoteRef = 1680D8812102769200D92EF7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		16874E7B20BB3B470034548E /* libRCTWebSocket.a */ = {
@@ -1300,12 +1329,30 @@
 				4E7544C051CA4D30A676218A /* SimpleLineIcons.ttf in Resources */,
 				2EC3EE0BF47A4A74940BE84E /* Zocial.ttf in Resources */,
 				F52660EC2C5047DBADBFA3A9 /* MaterialCommunityIcons.ttf in Resources */,
+				91B99CD1D9604490AD88AC2F /* AktivGrotesk-Bold.ttf in Resources */,
+				C75080BFD22A45CE9179B572 /* AktivGrotesk-Light.ttf in Resources */,
+				9FD24FB33ACC48009E09133D /* AktivGrotesk-Medium.ttf in Resources */,
+				4FBC0B2843F24203BE7C4DDC /* AktivGrotesk-Regular.ttf in Resources */,
+				226CFD8DB3354FA598407BD3 /* PillarIcons.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		6908659620F78D65009274B7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" caabdf2a776e077aff8381eab0399b9e3fc1bbb8 158eb97c4462d1b6c1fba13f0d2a045b939b5bf571dafca81dfc122b3ef385ce";
+		};
 		7A491DFE4D0E76EFFA69093F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1453,15 +1500,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		163B380E20FE56C7006ACE2C /* PBXTargetDependency */ = {
+		165B8E8E2108DD99009440FF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "libsignal-protocol-swift iOS";
-			targetProxy = 163B380D20FE56C7006ACE2C /* PBXContainerItemProxy */;
-		};
-		EE03A31220C54DF3009DA27F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = React;
-			targetProxy = EE03A31120C54DF3009DA27F /* PBXContainerItemProxy */;
+			targetProxy = 165B8E8D2108DD99009440FF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1578,6 +1620,7 @@
 				CODE_SIGN_ENTITLEMENTS = "pillar-wallet/pillar-wallet.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
