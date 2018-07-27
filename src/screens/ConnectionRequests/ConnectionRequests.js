@@ -1,18 +1,20 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native';
+import { FlatList, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
-import ContactsSeparator from 'components/ContactsSeparator';
+import { spacingSizes } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
   rejectInvitationAction,
+  fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
+import ContactsSeparator from 'components/ContactsSeparator';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -20,11 +22,8 @@ type Props = {
   cancelInvitation: Function,
   rejectInvitation: Function,
   acceptInvitation: Function,
+  fetchInviteNotifications: Function,
 }
-
-const ContactCardList = styled(ScrollWrapper)`
-  padding: 16px;
-`;
 
 class ConnectionRequests extends React.Component<Props> {
   handleAcceptInvitationPress = (invitation) => () => {
@@ -42,36 +41,55 @@ class ConnectionRequests extends React.Component<Props> {
     cancelInvitation(invitation);
   };
 
-  renderInvitations = () => {
-    const { invitations } = this.props;
-    return invitations
-      .filter(({ type }) => type === TYPE_RECEIVED)
-      .map(invitation => (
-        <ContactCard
-          noBorder
-          disabled
-          key={invitation.id}
-          onAcceptInvitationPress={this.handleAcceptInvitationPress(invitation)}
-          onRejectInvitationPress={this.handleRejectInvitatonPress(invitation)}
-          onCancelInvitationPress={this.handleCancelInvitationPress(invitation)}
-          name={invitation.username}
-          status={invitation.type}
-          showActions
-          ItemSeparatorComponent={ContactsSeparator}
-        />
-      ));
-  };
+  renderInvitation = ({ item }) => (
+    <ContactCard
+      noBorder
+      disabled
+      key={item.id}
+      onAcceptInvitationPress={this.handleAcceptInvitationPress(item)}
+      onRejectInvitationPress={this.handleRejectInvitatonPress(item)}
+      onCancelInvitationPress={this.handleCancelInvitationPress(item)}
+      name={item.username}
+      status={item.type}
+      showActions
+      ItemSeparatorComponent={ContactsSeparator}
+      avatar={item.profileImage}
+    />
+  );
+
+  keyExtractor = (item) => item.id;
 
   render() {
+    const {
+      invitations,
+      fetchInviteNotifications,
+    } = this.props;
+
     return (
       <Container>
         <Header
           title="connection requests"
           onBack={this.props.navigation.goBack}
         />
-        <ContactCardList contentInset={{ bottom: 40 }}>
-          {this.renderInvitations()}
-        </ContactCardList>
+
+        <FlatList
+          data={invitations.filter(({ type }) => type === TYPE_RECEIVED)}
+          extraData={invitations}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderInvitation}
+          ItemSeparatorComponent={ContactsSeparator}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            paddingVertical: spacingSizes.defaultVerticalSpacing,
+            paddingTop: 0,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => { fetchInviteNotifications(); }}
+            />
+          }
+        />
       </Container>
     );
   }
@@ -87,6 +105,7 @@ const mapDispatchToProps = (dispatch) => ({
   cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
+  fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
 });
 
 export default connect(mapStateTopProps, mapDispatchToProps)(ConnectionRequests);
