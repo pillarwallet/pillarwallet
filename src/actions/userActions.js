@@ -28,7 +28,14 @@ export const updateUserAction = (walletId: string, field: Object) => {
 
 export const updateUserAvatarAction = (walletId: string, formData: any) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const user = await api.updateUserAvatar(walletId, formData); // eslint-disable-line
+    const userAvatar = await api.updateUserAvatar(walletId, formData); // eslint-disable-line
+    const user = await api.userInfo(userAvatar.walletId);
+    if (!Object.keys(user).length) return;
+    await storage.save('user', { user }, true);
+    dispatch({
+      type: UPDATE_USER,
+      payload: { user, state: REGISTERED },
+    });
   };
 };
 

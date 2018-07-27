@@ -64,7 +64,7 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
 SDKWrapper.prototype.updateUserAvatar = function (walletId: string, formData: Object) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
-    .then(({ data }) => { console.log('returned data', data); }) // eslint-disable-line
+    .then(({ data }) => ({ profileImage: data.profileImage, walletId }))
     .catch((err) => { console.log('returned error', err); }); // eslint-disable-line
 };
 
