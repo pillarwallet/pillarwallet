@@ -169,9 +169,54 @@ export const fetchInviteNotificationsAction = () => {
     ];
     const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
 
-    const mappedInviteNotifications = inviteNotifications
-      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
-      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
+    const contactsWithAvatar = inviteNotifications.map(async (inviteNotification) => {
+      const invitationData = JSON.parse(inviteNotification.payload.msg);
+      const invitationSender = invitationData.senderUserData.username;
+      const users = await api.userSearch(invitationSender, user.walletId);
+      const thisUser = users.filter(obj => {
+        if (obj.username === invitationSender) {
+          return obj;
+        }
+        return null;
+      });
+      if (!thisUser.length) return inviteNotification;
+      if (thisUser[0].profileImage) {
+        inviteNotification.profileImage = thisUser[0].profileImage;
+      }
+      return inviteNotification;
+    });
+
+    const invitationsWithAvatars = await Promise.all(contactsWithAvatar).catch(() => []);
+
+    const mappedInviteNotifications = invitationsWithAvatars
+      .map((
+        {
+          payload: { msg },
+          createdAt,
+          meta,
+          profileImage,
+        }) => (
+        {
+          ...JSON.parse(msg),
+          createdAt,
+          meta,
+          profileImage,
+        }))
+      .map((
+        {
+          senderUserData,
+          type,
+          createdAt,
+          meta,
+          profileImage,
+        }) => (
+        {
+          ...senderUserData,
+          type,
+          createdAt,
+          meta,
+          profileImage,
+        }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
