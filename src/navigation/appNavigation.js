@@ -142,6 +142,7 @@ const peopleFlow = createStackNavigator({
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
+  [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
 const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
