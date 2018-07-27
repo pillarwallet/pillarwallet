@@ -438,9 +438,6 @@
 		16F1DCAF20BC061100A8F843 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		1D20A7AB20B6EFA000799791 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "pillar-wallet/Supporting/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
-		1DD9246B210B2BA200DA02B7 /* liblottie-ios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "liblottie-ios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1DD9246D210B2BA200DA02B7 /* liblottie-react-native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "liblottie-react-native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1DD9249E210B2D2300DA02B7 /* Lottie.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Lottie.framework; sourceTree = "<group>"; };
 		209ECA9FD3A147FF82955E48 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		228B80E2C76D469EA3AE9A78 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		26CDF7B322B74120A8501540 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
@@ -709,9 +706,6 @@
 		3BD32C7E56A0F383F77FCFE5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1DD9249E210B2D2300DA02B7 /* Lottie.framework */,
-				1DD9246B210B2BA200DA02B7 /* liblottie-ios.a */,
-				1DD9246D210B2BA200DA02B7 /* liblottie-react-native.a */,
 				1680D95C2102828600D92EF7 /* libreact-native-intercom.a */,
 				1680D91D21027F1200D92EF7 /* libFirebaseFirestore.a */,
 				1680D90A21027C6300D92EF7 /* libFirebaseStorage.a */,
