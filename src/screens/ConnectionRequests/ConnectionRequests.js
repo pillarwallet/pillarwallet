@@ -52,12 +52,9 @@ class ConnectionRequests extends React.Component<Props> {
       name={item.username}
       status={item.type}
       showActions
-      ItemSeparatorComponent={ContactsSeparator}
       avatar={item.profileImage}
     />
   );
-
-  keyExtractor = (item) => item.id;
 
   render() {
     const {
@@ -75,7 +72,7 @@ class ConnectionRequests extends React.Component<Props> {
         <FlatList
           data={invitations.filter(({ type }) => type === TYPE_RECEIVED)}
           extraData={invitations}
-          keyExtractor={this.keyExtractor}
+          keyExtractor={(item) => item.id}
           renderItem={this.renderInvitation}
           ItemSeparatorComponent={ContactsSeparator}
           contentContainerStyle={{
