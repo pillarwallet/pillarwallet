@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { BoldText } from 'components/Typography';
 
 const CircleImage = styled.Image`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -18,15 +19,15 @@ const ImageTouchable = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: ${baseColors.brightSkyBlue};
+  background-color: ${baseColors.cyan};
   ${props => (props.additionalContainerStyle)};
   overflow: hidden;
 `;
 
-const AvatarText = styled.Text`
+const AvatarText = styled(BoldText)`
   font-size: ${fontSizes.large};
-  font-weight: ${fontWeights.bold};
   color: ${baseColors.white};
+  text-align: center;
   ${props => (props.additionalTextStyle)};
 `;
 
@@ -59,7 +60,12 @@ const ProfileImage = (props: Props) => {
     .toUpperCase();
 
   return (
-    <ImageTouchable additionalContainerStyle={containerStyle} diameter={diameter} disabled={!onPress} onPress={onPress}>
+    <ImageTouchable
+      additionalContainerStyle={containerStyle}
+      diameter={diameter}
+      disabled={!onPress}
+      onPress={onPress}
+    >
       {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
       {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri: fullUri }} />}
     </ImageTouchable>

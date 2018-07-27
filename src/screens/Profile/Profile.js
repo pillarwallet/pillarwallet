@@ -15,7 +15,7 @@ import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText } from 'components/Typography';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
@@ -45,7 +45,7 @@ const ListSeparator = styled.View`
   background-color: ${baseColors.lighterGray};
 `;
 
-const ListValue = styled.Text`
+const ListValue = styled(BaseText)`
   font-size: ${fontSizes.small};
   padding-left: 20px;
 `;
@@ -223,7 +223,7 @@ class Profile extends React.Component<Props, State> {
     } = this.state;
     return (
       <Container color={baseColors.snowWhite}>
-        <Header gray title="settings" onBack={navigation.goBack} index={1} />
+        <Header gray title="settings" onBack={navigation.goBack} />
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'country'}
           subtitle="Choose your country"

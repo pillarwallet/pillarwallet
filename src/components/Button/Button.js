@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
 import { Button as NBButton } from 'native-base';
+import { BoldText } from 'components/Typography';
 import ButtonWrapper from './ButtonWrapper';
 import ButtonText from './ButtonText';
 
@@ -62,7 +63,7 @@ const Button = (props: Props) => {
       marginLeft={props.marginLeft}
       marginRight={props.marginRight}
       noPadding={props.noPadding}
-      onPress={props.onPress}
+      onPress={props.disabled ? null : props.onPress}
       width={props.width}
       underlayColor={theme.underlay}
     >
@@ -91,9 +92,8 @@ const ButtonMiniWrapper = styled(NBButton)`
   width: auto;
 `;
 
-const ButtonMiniText = styled.Text`
+const ButtonMiniText = styled(BoldText)`
   font-size: 14px;
-  font-weight: 700;
   letter-spacing: 0.3;
   color: #fff;
 `;

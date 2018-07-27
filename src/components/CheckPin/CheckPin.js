@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
 
-import { Text, ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
+import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -52,7 +53,7 @@ class CheckPin extends React.Component<Props, State> {
     if (walletState === DECRYPTING) {
       return (
         <Container center>
-          <Text style={{ marginBottom: 20 }}>Checking</Text>
+          <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>
           <ActivityIndicator
             animating
             color="#111"
@@ -66,7 +67,7 @@ class CheckPin extends React.Component<Props, State> {
       <React.Fragment>
         {showError}
         <Center>
-          <Title center title={title || 'enter pincode'} />
+          <Title align="center" title={title || 'enter pincode'} />
         </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}

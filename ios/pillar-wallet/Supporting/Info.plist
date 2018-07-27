@@ -41,7 +41,7 @@
 	<key>Fabric</key>
 	<dict>
 		<key>APIKey</key>
-		<string>81130e95ea13cd7ed9a4f455e96214902c721c99</string>
+		<string>caabdf2a776e077aff8381eab0399b9e3fc1bbb8</string>
 		<key>Kits</key>
 		<array>
 			<dict>
@@ -95,6 +95,16 @@
 		<string>Zocial.ttf</string>
 		<string>Feather.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
+		<string>AktivGrotesk_A_Bd.ttf</string>
+		<string>AktivGrotesk_A_Lt.ttf</string>
+		<string>AktivGrotesk_A_Md.ttf</string>
+		<string>AktivGrotesk_A_Rg.ttf</string>
+		<string>ActivGrotesk-Light.ttf</string>
+		<string>AktivGrotesk-Bold.ttf</string>
+		<string>AktivGrotesk-Medium.ttf</string>
+		<string>AktivGrotesk-Regular.ttf</string>
+		<string>AktivGrotesk-Light.ttf</string>
+		<string>PillarIcons.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

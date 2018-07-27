@@ -1,12 +1,14 @@
 // @flow
 import * as React from 'react';
-import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
+import { Platform } from 'react-native';
+import { baseColors, UIColors, fontSizes } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
 import { noop } from 'utils/common';
 import styled from 'styled-components/native';
+import { BoldText, BaseText } from 'components/Typography';
 
 const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
@@ -35,16 +37,15 @@ const ContactCardAvatarWrapper = styled.View`
   shadow-opacity: 0.1;
 `;
 
-const ContactCardName = styled.Text`
+const ContactCardName = styled(BoldText)`
   font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold};
 `;
 
 const ContactCardNotificationCircle = styled(NotificationCircle)`
   margin-left: auto;
 `;
 
-const StatusText = styled.Text`
+const StatusText = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
   margin-left: auto;
@@ -54,7 +55,7 @@ const ActionCircleButton = styled(ButtonIcon)`
   height: 34px;
   width: 34px;
   border-radius: 17px;
-  padding: 0;
+  padding: ${Platform.OS === 'ios' ? 0 : 8}px;
   margin: 0 0 0 10px;
   justify-content: center;
   align-items: center;
@@ -69,7 +70,7 @@ const ActionTextWrapper = styled.TouchableOpacity`
   margin-left: auto;
 `;
 
-const CancelActionText = styled.Text`
+const CancelActionText = styled(BaseText)`
   color: ${baseColors.fireEngineRed};
   font-size: ${fontSizes.small};
 `;
@@ -83,9 +84,8 @@ const ActionButton = styled.View`
   align-items: center;
 `;
 
-const ActionButtonText = styled.Text`
+const ActionButtonText = styled(BoldText)`
   font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.bold};
   color: ${baseColors.white};
 `;
 
@@ -137,15 +137,15 @@ export default class ContactCard extends React.Component<Props> {
             color={baseColors.darkGray}
             margin={0}
             icon="close"
-            fontSize={32}
+            fontSize={fontSizes.small}
             onPress={onRejectInvitationPress}
           />
           <ActionCircleButton
             color={baseColors.white}
             margin={0}
             accept
-            icon="ios-checkmark"
-            fontSize={32}
+            icon="check"
+            fontSize={fontSizes.small}
             onPress={onAcceptInvitationPress}
           />
         </ButtonIconWrapper>

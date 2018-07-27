@@ -122,167 +122,218 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         }
       >
         <View
-          fullScreen={undefined}
+          noPadding={true}
           style={
             Array [
               Object {
-                "alignItems": "center",
+                "alignItems": "flex-end",
+                "borderBottomWidth": 0,
                 "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
+                "height": 40,
+                "justifyContent": "flex-end",
+                "marginBottom": 20,
+                "marginTop": 0,
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
               },
               undefined,
             ]
           }
         >
           <View
-            center={undefined}
-            maxWidth={undefined}
-            noMargin={true}
+            showTitleLeft={true}
             style={
               Array [
                 Object {
-                  "alignSelf": "flex-start",
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
+                  "alignItems": "flex-start",
+                  "alignSelf": "center",
+                  "flex": 1,
+                },
+                Object {
+                  "alignItems": "flex-end",
+                  "flexBasis": 0,
+                  "flexGrow": 2,
+                  "flexShrink": 1,
+                  "justifyContent": "flex-start",
                 },
                 undefined,
               ]
             }
+            virtual={undefined}
           >
-            <Text
-              accessible={true}
-              allowFontScaling={true}
-              center={undefined}
-              ellipsizeMode="tail"
+            <View
+              align={undefined}
+              maxWidth={undefined}
+              noMargin={true}
               style={
                 Array [
                   Object {
-                    "fontSize": 22,
-                    "fontWeight": "700",
+                    "alignItems": "baseline",
+                    "alignSelf": "flex-start",
+                    "justifyContent": "flex-end",
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "position": "relative",
+                    "top": 2,
                   },
                   undefined,
                 ]
               }
             >
-              title
-            </Text>
-            <Text
-              accessible={true}
-              allowFontScaling={true}
-              ellipsizeMode="tail"
-              style={
-                Array [
-                  Object {
-                    "alignSelf": "flex-end",
-                    "backgroundColor": "#00bfff",
-                    "color": "#007AFF",
-                    "fontSize": 10,
-                    "height": 4,
-                    "left": 6,
-                    "position": "relative",
-                    "top": -9,
-                    "width": 4,
-                  },
-                  undefined,
-                ]
-              }
-            />
-          </View>
-          <View
-            accessibilityComponentType={undefined}
-            accessibilityLabel={undefined}
-            accessibilityTraits={undefined}
-            accessible={true}
-            collapsable={undefined}
-            hasTVPreferredFocus={undefined}
-            hitSlop={undefined}
-            isTVSelectable={true}
-            nativeID={undefined}
-            onLayout={undefined}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
-              Object {
-                "alignItems": "center",
-                "alignSelf": "flex-start",
-                "backgroundColor": "transparent",
-                "borderBottomWidth": null,
-                "borderColor": "#007aff",
-                "borderLeftWidth": null,
-                "borderRadius": 5,
-                "borderRightWidth": null,
-                "borderTopWidth": null,
-                "elevation": 0,
-                "flexDirection": "row",
-                "height": 45,
-                "justifyContent": "space-between",
-                "opacity": 1,
-                "paddingBottom": 6,
-                "paddingTop": 6,
-                "position": "absolute",
-                "right": 0,
-                "shadowColor": null,
-                "shadowOffset": null,
-                "shadowOpacity": null,
-                "shadowRadius": null,
-                "top": -10,
-              }
-            }
-            testID={undefined}
-            tvParallaxProperties={undefined}
-          >
-            <Text
-              accessible={true}
-              active={false}
-              allowFontScaling={false}
-              ellipsizeMode="tail"
-              style={
-                Array [
-                  Object {
-                    "color": undefined,
-                    "fontSize": 12,
-                  },
+              <Text
+                accessible={true}
+                align={undefined}
+                allowFontScaling={true}
+                ellipsizeMode="tail"
+                style={
                   Array [
                     Object {
-                      "color": "#000",
-                      "fontSize": 30,
+                      "fontFamily": "aktiv-grotesk-regular",
+                      "includeFontPadding": false,
+                      "textAlignVertical": "center",
                     },
+                    Array [
+                      Object {
+                        "fontFamily": "aktiv-grotesk-bold",
+                        "includeFontPadding": false,
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "fontSize": 22,
+                          "fontWeight": "700",
+                          "lineHeight": 22,
+                        },
+                        undefined,
+                      ],
+                    ],
+                  ]
+                }
+              >
+                title
+              </Text>
+              <Text
+                accessible={true}
+                allowFontScaling={true}
+                ellipsizeMode="tail"
+                style={
+                  Array [
                     Object {
-                      "color": "#007aff",
-                      "fontSize": 24,
-                      "marginLeft": 16,
-                      "marginRight": 16,
-                      "paddingTop": 2,
+                      "fontFamily": "aktiv-grotesk-regular",
+                      "includeFontPadding": false,
+                      "textAlignVertical": "center",
                     },
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 36,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    },
-                  ],
+                    Array [
+                      Object {
+                        "fontFamily": "aktiv-grotesk-bold",
+                        "includeFontPadding": false,
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "alignSelf": "flex-end",
+                          "backgroundColor": "#00bfff",
+                          "color": "#007AFF",
+                          "fontSize": 12,
+                          "height": 4,
+                          "left": 6,
+                          "marginBottom": -4,
+                          "position": "relative",
+                          "top": -9,
+                          "width": 4,
+                        },
+                        undefined,
+                      ],
+                    ],
+                  ]
+                }
+              />
+            </View>
+          </View>
+          <View
+            onClose={[Function]}
+            small={true}
+            style={
+              Array [
+                Object {
+                  "alignItems": "flex-end",
+                  "alignSelf": "center",
+                  "flex": 1,
+                },
+                Object {
+                  "alignItems": "flex-end",
+                  "flexBasis": 44,
+                  "flexGrow": 0,
+                  "flexShrink": 0,
+                  "justifyContent": "flex-end",
+                },
+                undefined,
+              ]
+            }
+            virtual={undefined}
+          >
+            <View
+              style={
+                Array [
                   Object {
-                    "fontFamily": "Ionicons",
-                    "fontStyle": "normal",
-                    "fontWeight": "normal",
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "justifyContent": "flex-end",
                   },
+                  undefined,
                 ]
               }
-              type="Ionicons"
-              virtual={undefined}
             >
-              
-            </Text>
+              <View
+                accessibilityComponentType={undefined}
+                accessibilityLabel={undefined}
+                accessibilityTraits={undefined}
+                accessible={true}
+                collapsable={undefined}
+                hasTVPreferredFocus={undefined}
+                hitSlop={undefined}
+                isTVSelectable={true}
+                nativeID={undefined}
+                onLayout={undefined}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": null,
+                    "backgroundColor": "transparent",
+                    "borderBottomWidth": null,
+                    "borderColor": "#007aff",
+                    "borderLeftWidth": null,
+                    "borderRadius": 5,
+                    "borderRightWidth": null,
+                    "borderTopWidth": null,
+                    "elevation": 0,
+                    "flexDirection": "row",
+                    "height": 32,
+                    "justifyContent": "space-between",
+                    "opacity": 1,
+                    "paddingBottom": 6,
+                    "paddingLeft": 10,
+                    "paddingTop": 6,
+                    "shadowColor": null,
+                    "shadowOffset": null,
+                    "shadowOpacity": null,
+                    "shadowRadius": null,
+                  }
+                }
+                testID={undefined}
+                tvParallaxProperties={undefined}
+              />
+            </View>
           </View>
         </View>
         <Text
@@ -293,24 +344,31 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           style={
             Array [
               Object {
-                "color": "#007AFF",
-                "fontSize": 16,
-                "fontWeight": "400",
-                "lineHeight": 24,
-                "marginBottom": 20,
-                "marginLeft": 0,
-                "marginRight": 0,
-                "marginTop": 0,
-                "textAlign": "left",
+                "fontFamily": "aktiv-grotesk-regular",
+                "includeFontPadding": false,
+                "textAlignVertical": "center",
               },
               Array [
                 Object {
-                  "paddingBottom": 10,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 10,
+                  "color": "#007AFF",
+                  "fontSize": 18,
+                  "fontWeight": "400",
+                  "lineHeight": 24,
+                  "marginBottom": 20,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "textAlign": "left",
                 },
-                undefined,
+                Array [
+                  Object {
+                    "paddingBottom": 10,
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "paddingTop": 10,
+                  },
+                  undefined,
+                ],
               ],
             ]
           }

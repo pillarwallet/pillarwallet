@@ -5,15 +5,16 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Platform } from 'react-native';
 import { UIColors, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
-import HeaderLink from 'components/HeaderLink';
-import { Paragraph, Label } from 'components/Typography';
-import Title from 'components/Title';
+import { Container, Wrapper, Footer } from 'components/Layout';
+import { Paragraph, Label, BoldText } from 'components/Typography';
+import Button from 'components/Button';
+import Header from 'components/Header';
 import ButtonIcon from 'components/ButtonIcon';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {
   enteredWords: string[],
+  isFormValid: boolean,
 };
 
 type Props = {
@@ -32,8 +33,7 @@ const MnemonicPhraseWord = styled.TouchableHighlight`
   margin: 5px;
 `;
 
-const MnemonicPhraseWordText = styled.Text`
-  font-weight: bold;
+const MnemonicPhraseWordText = styled(BoldText)`
   font-size: ${fontSizes.extraSmall};
   color: #ffffff;
 `;
@@ -73,9 +73,8 @@ const RemoveWordButtonIcon = styled(ButtonIcon)`
   margin-right: ${Platform.OS === 'ios' ? 0 : '-6px'};
 `;
 
-const WordInputText = styled.Text`
+const WordInputText = styled(BoldText)`
   font-size: 14px;
-  font-weight: bold;
   color: white;
 `;
 
@@ -89,26 +88,8 @@ const ShuffledWordWrapper = styled.View`
 class BackupPhraseValidate extends React.Component<Props, State> {
   state = {
     enteredWords: [],
+    isFormValid: false,
   };
-
-  constructor(props: Props) {
-    super(props);
-    props.navigation.setParams({
-      isFormValid: false,
-    });
-  }
-
-  static navigationOptions = ({ navigation }) => ({
-    headerRight: (
-      <HeaderLink
-        onPress={() => navigation.navigate(SET_WALLET_PIN_CODE)}
-        disabled={navigation.state.params ? !navigation.state.params.isFormValid : true}
-      >
-      Next
-      </HeaderLink>
-    ),
-  });
-
 
   handleWordSetting = (word) => {
     let { enteredWords } = this.state;
@@ -121,11 +102,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
       enteredWords,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
-      this.props.navigation.setParams({
+      this.setState({
         isFormValid,
       });
     });
-  }
+  };
 
   handleLastWordRemoval = () => {
     let { enteredWords } = this.state;
@@ -135,11 +116,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
       enteredWords,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
-      this.props.navigation.setParams({
+      this.setState({
         isFormValid,
       });
     });
-  }
+  };
 
   validateForm(enteredWords) {
     const { onboarding: wallet } = this.props.wallet;
@@ -174,13 +155,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
               <RemoveWordButtonIcon
                 icon="close"
                 onPress={this.handleLastWordRemoval}
-                fontSize={fontSizes.extraExtraLarge}
+                fontSize={fontSizes.small}
+                color={UIColors.primary}
               />
             }
           </WordInputWrapper>
         );
       });
-  }
+  };
 
   renderShuffledWordList = () => {
     const { onboarding: wallet } = this.props.wallet;
@@ -199,16 +181,17 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         </MnemonicPhraseWord>
       );
     });
-  }
+  };
 
   render() {
     const { onboarding: wallet } = this.props.wallet;
+    const { isFormValid } = this.state;
     if (!wallet.mnemonic.original) return null;
 
     return (
       <Container>
+        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
-          <Title title="verify backup phrase" />
           <Paragraph>
             Please select the appropriate words from the list.
           </Paragraph>
@@ -226,8 +209,15 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             </MnemonicPhraseWord>
             )}
           </ShuffledWordWrapper>
-
         </Wrapper>
+        <Footer>
+          <Button
+            block
+            onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
+            title="Next"
+            disabled={!isFormValid}
+          />
+        </Footer>
       </Container>
     );
   }

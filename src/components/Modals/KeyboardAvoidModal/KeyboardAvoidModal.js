@@ -3,7 +3,7 @@ import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import { Platform, Dimensions, Keyboard } from 'react-native';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 
 const { height } = Dimensions.get('window');
 
@@ -101,7 +101,7 @@ export default class KeyboardAvoidModal extends React.Component<Props, State> {
         }}
       >
         <ModalWrapper>
-          <ModalScreenHeader subtitle title={subtitle} onClose={this.hideModal} />
+          <Header subtitle title={subtitle} onClose={this.hideModal} />
           {children}
           <ModalOverflow />
         </ModalWrapper>

@@ -1,14 +1,14 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Label } from 'components/Typography';
+import { Label, BaseText, BoldText } from 'components/Typography';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 const MnemonicPhraseWrapper = styled.View`
   flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
-  height: 280px;
+  height: 220px;
   margin: 20px 0;
   width: 100%;
 `;
@@ -22,20 +22,19 @@ const MnemonicPhraseItem = styled.View`
   justify-content: flex-start;
 `;
 
-const MnemonicPhraseIndex = styled.Text`
-  flex: 0 0 20px;
+const MnemonicPhraseIndex = styled(BaseText)`
+  flex: 0 0 30px;
 `;
 
-const MnemonicPhraseWord = styled.Text`
+const MnemonicPhraseWord = styled(BoldText)`
   background-color: ${baseColors.lightGray};
-  font-weight: bold;
   font-size: ${fontSizes.extraSmall};
   flex: 1;
   border-color: ${UIColors.defaultBorderColor};
   border-style: dashed;
   border-width: 1;
   border-radius: 6;
-  padding: 10px;
+  padding: 5px;
 `;
 
 type Props = {

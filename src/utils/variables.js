@@ -12,6 +12,7 @@ export const baseColors = {
   freshEucalyptus: '#2AA057',
   snowWhite: '#fafafa',
   lightGray: '#f5f5f5',
+  whiteSmoke: '#f7f7f7',
   lighterGray: '#fafafa',
   mediumGray: '#C6CACD',
   darkGray: '#8B939E',
@@ -45,11 +46,11 @@ export const UIColors = {
 };
 
 export const fontSizes = {
-  extraExtraSmall: 10,
-  extraSmall: 12,
-  small: 14,
-  medium: 16,
-  mediumLarge: 18,
+  extraExtraSmall: 12,
+  extraSmall: 14,
+  small: 16,
+  medium: 18,
+  mediumLarge: 20,
   large: 22,
   extraLarge: 24,
   extraExtraLarge: 32,

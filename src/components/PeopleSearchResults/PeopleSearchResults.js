@@ -9,7 +9,7 @@ import { CONTACT } from 'constants/navigationConstants';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import ContactCard from 'components/ContactCard';
 import ContactsSeparator from 'components/ContactsSeparator';
-import { SubHeading } from 'components/Typography';
+import { SubHeading, BaseText } from 'components/Typography';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import {
   sendInvitationAction,
@@ -52,7 +52,7 @@ const LocalContactsItemAvatarWrapper = styled.View`
   border: 2px solid white;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
-  shadow-radius: 2px     ;
+  shadow-radius: 2px;
   shadow-opacity: 0.1;
   margin-bottom: 10px;
 `;
@@ -60,7 +60,7 @@ const LocalContactsItemAvatarWrapper = styled.View`
 const LocalContactsItemAvatarImage = styled.Image`
 `;
 
-const LocalContactsItemName = styled.Text`
+const LocalContactsItemName = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
 `;

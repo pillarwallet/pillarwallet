@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Icon } from 'native-base';
+import Icon from 'components/Icon';
 import { UIColors, fontSizes } from 'utils/variables';
 
 type Props = {
@@ -21,8 +21,7 @@ const BackButton = (props: Props) => {
       }}
     >
       <Icon
-        name="chevron-left"
-        type="Feather"
+        name="back"
         style={{
           color: UIColors.primary,
           fontSize: fontSizes.extraExtraLarge,

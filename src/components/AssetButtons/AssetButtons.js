@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
+import { BoldText } from 'components/Typography';
 
 type Props = {
   onPressReceive: Function,
@@ -16,13 +17,14 @@ const AssetButtonsWrapper = styled.View`
   flex: 1;
   justify-content: center;
   margin: 20px 0;
+  padding: 10px;
 `;
 
 const AssetButton = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   margin: 0 14px;
-  padding: 0 6px;
+  padding: 6px;
 `;
 
 const ImageHolder = styled.View`
@@ -45,10 +47,9 @@ const AssetButtonImage = styled.Image`
   display: flex;
 `;
 
-const AssetButtonText = styled.Text`
+const AssetButtonText = styled(BoldText)`
   color: ${baseColors.electricBlue};
   text-align: center;
-  font-weight: ${fontWeights.bold};
   font-size: ${fontSizes.extraSmall};
   margin-top: 10px;
 `;

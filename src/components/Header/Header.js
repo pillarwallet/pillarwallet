@@ -1,60 +1,121 @@
 // @flow
 import * as React from 'react';
-import { Header as NBHeader, Left, Body, Right } from 'native-base';
-import { TextLink } from 'components/Typography';
-import { baseColors } from 'utils/variables';
+import { Platform } from 'react-native';
+import { Left, Body, Right } from 'native-base';
+import { TextLink, BaseText } from 'components/Typography';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
 import ButtonIcon from 'components/ButtonIcon';
+import { noop } from 'utils/common';
 
 type Props = {
   onBack?: Function,
+  onClose?: Function,
+  onCloseText?: string,
   onNextPress?: Function,
   nextText?: string,
-  index?: number,
   title?: string,
-  gray?: boolean,
+  centerTitle?: boolean,
+  noPadding?: boolean,
 }
 
-const Wrapper = styled(NBHeader)`
-  background-color: ${props => props.gray ? baseColors.snowWhite : baseColors.white};
+const Wrapper = styled.View`
   border-bottom-width: 0;
-  padding: 0 16px;
+  padding: ${props => props.noPadding ? 0 : '0 16px'};
+  height: 40px;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex-direction: row;
+  margin-bottom: 20px;
+  margin-top: ${Platform.OS === 'android' ? '20px' : '0'};
 `;
 
 const BackIcon = styled(ButtonIcon)`
   position: relative;
   align-self: flex-start;
+  height: 32px;
+  padding-right: 10px;
+`;
+
+const CloseIconText = styled(BaseText)`
+  color: ${baseColors.darkGray};
+  font-size: ${fontSizes.extraExtraSmall};
+`;
+
+const CloseIconWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+const CloseIcon = styled(ButtonIcon)`
+  height: 32px;
+  padding-left: 10px;
+`;
+
+const HeaderLeft = styled(Left)`
+  flex: ${props => props.showTitleLeft ? 2 : 1};
+  justify-content: flex-start;
+  align-items: flex-end;
+`;
+
+const HeaderBody = styled(Body)`
+  flex: ${props => props.onCloseText ? 2 : 4};
+`;
+
+const HeaderRight = styled(Right)`
+  flex: ${props => props.small ? '0 0 44px' : 1};
+  justify-content: flex-end;
+  align-items: flex-end;
 `;
 
 const Header = (props: Props) => {
   const {
     onBack,
-    index,
     nextText,
     onNextPress,
+    onClose,
+    onCloseText,
     title,
-    gray,
+    centerTitle,
+    noPadding,
   } = props;
-  if (!index) return null;
+  const showRight = nextText || onBack || onClose;
+  const titleOnBack = title && onBack;
+  const showTitleCenter = titleOnBack || centerTitle;
+  const showTitleLeft = !onBack && !centerTitle;
+  const onlyCloseIcon = onClose && !nextText && !onCloseText;
   return (
-    <Wrapper gray={gray}>
-      <Left style={{ flex: 1, justifyContent: 'flex-start' }}>
+    <Wrapper noPadding={noPadding}>
+      <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
-          <BackIcon icon="arrow-back" color="#000" onPress={() => onBack(null)} fontSize={28} />
+          <BackIcon icon="back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={fontSizes.small} />
         }
-      </Left>
-      <Body style={{ flex: 1 }}>
-        {title &&
-          <Title center noMargin title={title} />
+        {showTitleLeft &&
+          <Title noMargin title={title} />
         }
-      </Body>
-      <Right style={{ flex: 1, justifyContent: 'flex-end' }}>
-        {nextText &&
-          <TextLink onPress={onNextPress}>{nextText}</TextLink>
-        }
-      </Right>
-
+      </HeaderLeft>
+      {showTitleCenter &&
+        <HeaderBody onCloseText={onCloseText}>
+          <Title align="center" noMargin title={title} />
+        </HeaderBody >
+      }
+      {showRight &&
+        <HeaderRight small={onlyCloseIcon} onClose={onClose || noop}>
+          {nextText &&
+            <TextLink onPress={onNextPress}>{nextText}</TextLink>
+          }
+          {onClose &&
+            <CloseIconWrapper>
+              {onCloseText &&
+                <CloseIconText>{onCloseText}</CloseIconText>
+              }
+              <CloseIcon icon="close" color={UIColors.primary} onPress={() => onClose()} fontSize={fontSizes.small} />
+            </CloseIconWrapper>
+          }
+        </HeaderRight>
+      }
     </Wrapper>
   );
 };

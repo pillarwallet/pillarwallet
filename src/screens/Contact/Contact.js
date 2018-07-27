@@ -2,10 +2,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, fontWeights, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
+import { BoldText } from 'components/Typography';
 import { CHAT } from 'constants/navigationConstants';
-import ScreenHeader from 'components/ScreenHeader';
+import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 
 const imageChat = require('assets/images/btn_chat.png');
@@ -38,10 +39,9 @@ const ChatButtonImage = styled.Image`
   display: flex;
 `;
 
-const ChatButtonText = styled.Text`
+const ChatButtonText = styled(BoldText)`
   color: ${baseColors.electricBlue};
   text-align: center;
-  font-weight: 600;
   margin-top: 10px;
 `;
 
@@ -72,10 +72,9 @@ const ContactHeaderBody = styled.View`
   justify-content: center;
 `;
 
-const ContactHeaderName = styled.Text`
+const ContactHeaderName = styled(BoldText)`
   font-size: ${fontSizes.extraExtraLarge};
   color: ${baseColors.white};
-  font-weight: ${fontWeights.bold}'
 `;
 
 const ContactHeaderAvatarWrapper = styled.View`
@@ -104,7 +103,7 @@ const Contact = (props: Props) => {
   const contact = props.navigation.getParam('contact', {});
   return (
     <Container>
-      <ScreenHeader title="contact" onBack={props.navigation.goBack} />
+      <Header title="contact" onBack={props.navigation.goBack} />
       <Wrapper regularPadding>
         <ContactWapper>
           <ContactHeader>
