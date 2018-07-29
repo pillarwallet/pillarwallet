@@ -96,17 +96,6 @@ export const fetchSupportedAssetsAction = () => {
   };
 };
 
-export const fetchExchangeRatesAction = (assets: Assets) => {
-  return async (dispatch: Function) => {
-    const tickers = Object.keys(assets);
-    if (tickers.length) {
-      getExchangeRates(tickers)
-        .then(rates => dispatch({ type: SET_RATES, payload: rates }))
-        .catch(console.log); // eslint-disable-line
-    }
-  };
-};
-
 export const fetchInitialAssetsAction = (walletAddress: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { user: { data: { walletId } } } = getState();
