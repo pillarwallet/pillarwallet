@@ -8067,18 +8067,9 @@ loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1:
   dependencies:
     js-tokens "^3.0.0"
 
-lottie-ios@^2.1.5, lottie-ios@^2.5.0:
+lottie-ios@^2.5.0:
   version "2.5.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-ios/-/lottie-ios-2.5.0.tgz#55c808e785d4a6933b0c10b395530b17098b05de"
-
-lottie-react-native@2.3.2:
-  version "2.3.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lottie-react-native/-/lottie-react-native-2.3.2.tgz#c9b751e1c121708cd6f50f7770cb5aa0e1042a29"
-  dependencies:
-    invariant "^2.2.2"
-    lottie-ios "^2.1.5"
-    prop-types "^15.5.10"
-    react-native-safe-module "^1.1.0"
 
 lottie-react-native@2.5.0:
   version "2.5.0"

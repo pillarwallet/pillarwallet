@@ -220,9 +220,6 @@ PODS:
   - JKBigInteger2 (0.0.5)
   - leveldb-library (1.20)
   - lottie-ios (2.5.0)
-  - lottie-react-native (2.3.2):
-    - lottie-ios
-    - React
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
@@ -304,8 +301,6 @@ DEPENDENCIES:
   - Firebase/Storage
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - lottie-ios (from `../node_modules/lottie-ios`)
-  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - react-native-intercom (from `../node_modules/react-native-intercom`)
   - React/ART (from `../node_modules/react-native`)
   - React/Core (from `../node_modules/react-native`)
@@ -334,10 +329,6 @@ EXTERNAL SOURCES:
     :podspec: ../node_modules/react-native/third-party-podspecs/Folly.podspec
   glog:
     :podspec: ../node_modules/react-native/third-party-podspecs/glog.podspec
-  lottie-ios:
-    :path: ../node_modules/lottie-ios
-  lottie-react-native:
-    :path: ../node_modules/lottie-react-native
   React:
     :path: ../node_modules/react-native
   react-native-intercom:
@@ -406,8 +397,7 @@ SPEC CHECKSUMS:
   Intercom: 93ebb0bd49fcb2c4c1efaec7638e0b447e4452c4
   JKBigInteger2: e91672035c42328c48b7dd015b66812ddf40ca9b
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
-  lottie-ios: 9f24be3ecb13412223b6ac70d97437742b0e3de1
-  lottie-react-native: db4bd75685428c4ad0ec2f913145abff3d38b640
+  lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
   React: aa2040dbb6f317b95314968021bd2888816e03d5
@@ -416,6 +406,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: df7b622e35343e6b63401bf608c94203159e56c6
+PODFILE CHECKSUM: dbc6953fced77e79533e43ab7d3059e8bb7009f6
 
 COCOAPODS: 1.4.0

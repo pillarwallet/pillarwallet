@@ -1,14 +1,16 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components/native';
-import LottieView from 'lottie-react-native';
+import { DangerZone } from 'expo';
+
+const { Lottie } = DangerZone;
 
 const AnimationWrapper = styled.View``;
 
 const animationSource = require('./animation.json');
 
 export default class Spinner extends React.Component<*> {
-  animation: LottieView
+  animation: Lottie
 
   componentDidMount() {
     this.animation.play();
@@ -16,7 +18,7 @@ export default class Spinner extends React.Component<*> {
   render() {
     return (
       <AnimationWrapper>
-        <LottieView
+        <Lottie
           ref={(animation) => {
             this.animation = animation;
           }}

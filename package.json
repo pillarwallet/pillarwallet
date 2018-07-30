@@ -120,7 +120,6 @@
     "https-browserify": "~0.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
-    "lottie-react-native": "2.3.2",
     "native-base": "2.6.1",
     "polished": "^1.9.2",
     "pouchdb-react-native": "^6.4.1",
