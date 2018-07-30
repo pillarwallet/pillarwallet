@@ -17,6 +17,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { CHAT } from 'constants/chatConstants';
 
 const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
 const TRANSACTION_SENT = 'TRANSACTION_SENT';
@@ -25,6 +26,7 @@ const SOCIAL_TYPES = [
   TYPE_ACCEPTED,
   TYPE_REJECTED,
   TYPE_SENT,
+  CHAT,
 ];
 
 const TRANSACTIONS = 'TRANSACTIONS';
@@ -40,6 +42,7 @@ const NOTIFICATION_LABELS = {
   [TYPE_REJECTED]: 'Connection rejected',
   [TRANSACTION_RECEIVED]: 'Received',
   [TRANSACTION_SENT]: 'Sent',
+  [CHAT]: 'New message',
 };
 
 const ActivityFeedWrapper = styled.View`
@@ -50,7 +53,7 @@ const ActivityFeedHeader = styled.View`
   padding: 16px 16px 0;
 `;
 
-const ActivityFeedItem = styled.View`
+const ActivityFeedItem = styled.TouchableOpacity`
   background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};
   height: 74px;
   padding: 0px 16px;
@@ -189,6 +192,12 @@ export default class ActivityFeed extends React.Component<Props, State> {
             </LabelText>
           </TouchableOpacity >
         );
+      case CHAT:
+        return (
+          <LabelText>
+            Read
+          </LabelText>
+        );
       default:
         return (
           <LabelText>
@@ -229,7 +238,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
       );
     }
     return (
-      <ActivityFeedItem isEven={isEven} key={index}>
+      <ActivityFeedItem isEven={isEven} key={index} onPress={notification.onPress}>
         <ActivityFeedItemCol fixedWidth="44px">
           <ProfileImage
             uri={notification.avatar}
@@ -261,6 +270,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
       }
       return true;
     });
+
     return (
       <ActivityFeedWrapper>
         <ActivityFeedHeader>
