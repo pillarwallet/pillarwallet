@@ -19,7 +19,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { baseColors, UIColors, fontSizes } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacingSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
@@ -30,7 +30,6 @@ import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
-
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -56,10 +55,6 @@ const ConnectionRequestBannerIcon = styled(Icon)`
 
 const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
   margin-left: 10px;
-`;
-
-const ContactCardList = styled(FlatList)`
-  padding: 16px;
 `;
 
 const EmptyStateBGWrapper = styled.View`
@@ -141,6 +136,11 @@ class PeopleScreen extends React.Component<Props, State> {
     />
   );
 
+  componentDidMount() {
+    const { fetchInviteNotifications } = this.props;
+    fetchInviteNotifications();
+  }
+
   render() {
     const { query } = this.state;
     const {
@@ -193,12 +193,17 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !!localContacts.length &&
-          <ContactCardList
+          <FlatList
             data={localContacts}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderContact}
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+              paddingVertical: spacingSizes.defaultVerticalSpacing,
+              paddingTop: 0,
+            }}
             refreshControl={
               <RefreshControl
                 refreshing={false}
