@@ -24,6 +24,11 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     errorMessage: '',
   };
 
+  constructor(props) {
+    super(props);
+    this.props.navigation.state.key = 'PinCodeConfirmation';
+  }
+
   handlePinSubmit = (pin: string) => {
     const { onboarding: wallet } = this.props.wallet;
     const previousPin = wallet.pin;

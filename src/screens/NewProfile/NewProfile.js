@@ -174,10 +174,12 @@ class NewProfile extends React.Component<Props, State> {
     const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
     const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
     const isUsernameValid = value && value.username && value.username.length > 0;
-
     return (
       <Container>
-        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} />
+        <Header
+          title="choose your username"
+          onBack={() => this.props.navigation.goBack('PinCodeConfirmation')}
+        />
         <ScrollWrapper regularPadding>
           <LoginForm
             innerRef={node => { this._form = node; }}

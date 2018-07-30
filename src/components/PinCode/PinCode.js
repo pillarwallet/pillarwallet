@@ -60,6 +60,7 @@ export default class PinCode extends React.Component<Props, State> {
 
     if (passCode.length === PASS_CODE_LENGTH) {
       this.props.onPinEntered(passCodeString);
+      this.setState({ passCode: [] });
     } else if (this.props.onPinChanged) {
       this.props.onPinChanged(passCodeString);
     }
