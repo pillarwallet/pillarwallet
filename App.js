@@ -3,8 +3,9 @@ import 'utils/setup';
 import * as React from 'react';
 import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { Root as NBRoot, Toast } from 'native-base';
+import { Root as NBRoot } from 'native-base';
 import { Font } from 'expo';
+import { showToast } from 'utils/toast';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
@@ -82,15 +83,7 @@ class App extends React.Component<Props, State> {
 
   handleConnectivityChange = isOnline => {
     if (!isOnline) {
-      Toast.show({
-        type: 'danger',
-        position: 'top',
-        duration: 0,
-        text: 'No active internet connection found!',
-        buttonText: '',
-      });
-    } else {
-      Toast.toastInstance._root.closeToast();
+      showToast({ text: 'No active internet connection found!', type: 'danger' });
     }
   };
 
