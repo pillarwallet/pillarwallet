@@ -4845,9 +4845,9 @@ ethereumjs-util@5.2.0:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-ethers@^3.0.9:
-  version "3.0.22"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethers/-/ethers-3.0.22.tgz#7fab1ea16521705837aa43c15831877b2716b436"
+"ethers@https://github.com/pillarwallet/ethers.js":
+  version "3.0.21"
+  resolved "https://github.com/pillarwallet/ethers.js#517698a86d6db109f5314c4d7bf72ff059853687"
   dependencies:
     aes-js "3.0.0"
     bn.js "^4.4.0"
@@ -4855,6 +4855,7 @@ ethers@^3.0.9:
     hash.js "^1.0.0"
     inherits "2.0.1"
     js-sha3 "0.5.7"
+    react-native-scrypt "1.0.0"
     scrypt-js "2.0.3"
     setimmediate "1.0.4"
     uuid "2.0.1"
@@ -10690,6 +10691,10 @@ react-native-scripts@1.13.1:
 react-native-scrollable-mixin@^1.0.1:
   version "1.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrollable-mixin/-/react-native-scrollable-mixin-1.0.1.tgz#34a32167b64248594154fd0d6a8b03f22740548e"
+
+react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
 
 react-native-storybook-loader@^1.8.0:
   version "1.8.0"

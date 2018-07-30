@@ -29,7 +29,7 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
     await delay(100);
     const saltedPin = getSaltedPin(pin);
     try {
-      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       api.init(wallet.privateKey);
       const { user } = await storage.get('user');
       await chat.init({
@@ -74,7 +74,7 @@ export const changePinAction = (pin: string) => {
     await delay(50);
 
     const saltedPin = getSaltedPin(pin);
-    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 1024 } })
+    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 1024 } })
       .then(JSON.parse)
       .catch(() => ({}));
 

@@ -62,14 +62,14 @@ const mockExchangeRates = {
   },
 };
 
-Object.defineProperty(mockWallet, 'encrypt', {
+Object.defineProperty(mockWallet, 'RNencrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
 jest.mock('ethers', () => ({
   Wallet: {
     fromMnemonic: () => mockWallet,
-    fromEncryptedWallet: () => mockWallet,
+    RNfromEncryptedWallet: () => mockWallet,
   },
 }));
 
