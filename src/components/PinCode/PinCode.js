@@ -59,8 +59,9 @@ export default class PinCode extends React.Component<Props, State> {
     const passCodeString = passCode.join('');
 
     if (passCode.length === PASS_CODE_LENGTH) {
-      this.props.onPinEntered(passCodeString);
-      this.setState({ passCode: [] });
+      this.setState({ passCode: [] },
+        () => this.props.onPinEntered(passCodeString),
+      );
     } else if (this.props.onPinChanged) {
       this.props.onPinChanged(passCodeString);
     }
