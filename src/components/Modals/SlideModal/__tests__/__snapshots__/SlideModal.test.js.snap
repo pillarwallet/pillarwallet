@@ -73,11 +73,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         "justifyContent": "flex-end",
         "left": 0,
         "margin": 0,
-        "opacity": 0,
         "top": 0,
         "transform": Array [
           Object {
-            "translateY": 800,
+            "translateY": 1334,
           },
         ],
       }
@@ -122,201 +121,218 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         }
       >
         <View
-          fullScreen={undefined}
+          noPadding={true}
           style={
             Array [
               Object {
-                "alignItems": "center",
+                "alignItems": "flex-end",
+                "borderBottomWidth": 0,
                 "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
+                "height": 40,
+                "justifyContent": "flex-end",
+                "marginBottom": 20,
+                "marginTop": 0,
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
               },
               undefined,
             ]
           }
         >
           <View
-            align={undefined}
-            maxWidth={undefined}
-            noMargin={true}
+            showTitleLeft={true}
             style={
               Array [
                 Object {
-                  "alignItems": "baseline",
-                  "alignSelf": "flex-start",
-                  "justifyContent": "flex-end",
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "position": "relative",
-                  "top": 2,
+                  "alignItems": "flex-start",
+                  "alignSelf": "center",
+                  "flex": 1,
+                },
+                Object {
+                  "alignItems": "flex-end",
+                  "flexBasis": 0,
+                  "flexGrow": 2,
+                  "flexShrink": 1,
+                  "justifyContent": "flex-start",
                 },
                 undefined,
               ]
             }
+            virtual={undefined}
           >
-            <Text
-              accessible={true}
+            <View
               align={undefined}
-              allowFontScaling={true}
-              ellipsizeMode="tail"
+              maxWidth={undefined}
+              noMargin={true}
               style={
                 Array [
                   Object {
-                    "fontFamily": "aktiv-grotesk-regular",
-                    "includeFontPadding": false,
-                    "textAlignVertical": "center",
+                    "alignItems": "baseline",
+                    "alignSelf": "flex-start",
+                    "justifyContent": "flex-end",
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                    "position": "relative",
+                    "top": 2,
                   },
-                  Array [
-                    Object {
-                      "fontFamily": "aktiv-grotesk-bold",
-                      "includeFontPadding": false,
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "fontSize": 22,
-                        "fontWeight": "700",
-                        "lineHeight": 22,
-                      },
-                      undefined,
-                    ],
-                  ],
+                  undefined,
                 ]
               }
             >
-              title
-            </Text>
-            <Text
-              accessible={true}
-              allowFontScaling={true}
-              ellipsizeMode="tail"
-              style={
-                Array [
-                  Object {
-                    "fontFamily": "aktiv-grotesk-regular",
-                    "includeFontPadding": false,
-                    "textAlignVertical": "center",
-                  },
+              <Text
+                accessible={true}
+                align={undefined}
+                allowFontScaling={true}
+                ellipsizeMode="tail"
+                style={
                   Array [
                     Object {
-                      "fontFamily": "aktiv-grotesk-bold",
+                      "fontFamily": "aktiv-grotesk-regular",
                       "includeFontPadding": false,
                       "textAlignVertical": "center",
                     },
                     Array [
                       Object {
-                        "alignSelf": "flex-end",
-                        "backgroundColor": "#00bfff",
-                        "color": "#007AFF",
-                        "fontSize": 12,
-                        "height": 4,
-                        "left": 6,
-                        "marginBottom": -4,
-                        "position": "relative",
-                        "top": -9,
-                        "width": 4,
+                        "fontFamily": "aktiv-grotesk-bold",
+                        "includeFontPadding": false,
+                        "textAlignVertical": "center",
                       },
-                      undefined,
+                      Array [
+                        Object {
+                          "fontSize": 22,
+                          "fontWeight": "700",
+                          "lineHeight": 22,
+                        },
+                        undefined,
+                      ],
                     ],
-                  ],
-                ]
-              }
-            />
+                  ]
+                }
+              >
+                title
+              </Text>
+              <Text
+                accessible={true}
+                allowFontScaling={true}
+                ellipsizeMode="tail"
+                style={
+                  Array [
+                    Object {
+                      "fontFamily": "aktiv-grotesk-regular",
+                      "includeFontPadding": false,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "fontFamily": "aktiv-grotesk-bold",
+                        "includeFontPadding": false,
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "alignSelf": "flex-end",
+                          "backgroundColor": "#00bfff",
+                          "color": "#007AFF",
+                          "fontSize": 12,
+                          "height": 4,
+                          "left": 6,
+                          "marginBottom": -4,
+                          "position": "relative",
+                          "top": -9,
+                          "width": 4,
+                        },
+                        undefined,
+                      ],
+                    ],
+                  ]
+                }
+              />
+            </View>
           </View>
           <View
-            accessibilityComponentType={undefined}
-            accessibilityLabel={undefined}
-            accessibilityTraits={undefined}
-            accessible={true}
-            collapsable={undefined}
-            hasTVPreferredFocus={undefined}
-            hitSlop={undefined}
-            isTVSelectable={true}
-            nativeID={undefined}
-            onLayout={undefined}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
+            onClose={[Function]}
+            small={true}
             style={
-              Object {
-                "alignItems": "center",
-                "alignSelf": "flex-start",
-                "backgroundColor": "transparent",
-                "borderBottomWidth": null,
-                "borderColor": "#007aff",
-                "borderLeftWidth": null,
-                "borderRadius": 5,
-                "borderRightWidth": null,
-                "borderTopWidth": null,
-                "elevation": 0,
-                "flexDirection": "row",
-                "height": 45,
-                "justifyContent": "space-between",
-                "opacity": 1,
-                "paddingBottom": 6,
-                "paddingTop": 6,
-                "position": "absolute",
-                "right": 0,
-                "shadowColor": null,
-                "shadowOffset": null,
-                "shadowOpacity": null,
-                "shadowRadius": null,
-                "top": -10,
-              }
+              Array [
+                Object {
+                  "alignItems": "flex-end",
+                  "alignSelf": "center",
+                  "flex": 1,
+                },
+                Object {
+                  "alignItems": "flex-end",
+                  "flexBasis": 44,
+                  "flexGrow": 0,
+                  "flexShrink": 0,
+                  "justifyContent": "flex-end",
+                },
+                undefined,
+              ]
             }
-            testID={undefined}
-            tvParallaxProperties={undefined}
+            virtual={undefined}
           >
-            <Text
-              accessible={true}
-              active={false}
-              allowFontScaling={false}
-              ellipsizeMode="tail"
+            <View
               style={
                 Array [
                   Object {
-                    "color": undefined,
-                    "fontSize": 12,
+                    "alignItems": "center",
+                    "flexDirection": "row",
+                    "justifyContent": "flex-end",
                   },
-                  Array [
-                    Object {
-                      "color": "#000",
-                      "fontSize": 30,
-                    },
-                    Object {
-                      "color": "#007aff",
-                      "fontSize": 24,
-                      "marginLeft": 16,
-                      "marginRight": 16,
-                      "paddingTop": 2,
-                    },
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 36,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    },
-                  ],
-                  Object {
-                    "fontFamily": "Ionicons",
-                    "fontStyle": "normal",
-                    "fontWeight": "normal",
-                  },
+                  undefined,
                 ]
               }
-              type="Ionicons"
-              virtual={undefined}
             >
-              
-            </Text>
+              <View
+                accessibilityComponentType={undefined}
+                accessibilityLabel={undefined}
+                accessibilityTraits={undefined}
+                accessible={true}
+                collapsable={undefined}
+                hasTVPreferredFocus={undefined}
+                hitSlop={undefined}
+                isTVSelectable={true}
+                nativeID={undefined}
+                onLayout={undefined}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": null,
+                    "backgroundColor": "transparent",
+                    "borderBottomWidth": null,
+                    "borderColor": "#007aff",
+                    "borderLeftWidth": null,
+                    "borderRadius": 5,
+                    "borderRightWidth": null,
+                    "borderTopWidth": null,
+                    "elevation": 0,
+                    "flexDirection": "row",
+                    "height": 32,
+                    "justifyContent": "space-between",
+                    "opacity": 1,
+                    "paddingBottom": 6,
+                    "paddingLeft": 10,
+                    "paddingTop": 6,
+                    "shadowColor": null,
+                    "shadowOffset": null,
+                    "shadowOpacity": null,
+                    "shadowRadius": null,
+                  }
+                }
+                testID={undefined}
+                tvParallaxProperties={undefined}
+              />
+            </View>
           </View>
         </View>
         <Text

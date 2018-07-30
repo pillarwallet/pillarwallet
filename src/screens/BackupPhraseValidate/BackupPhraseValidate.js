@@ -155,7 +155,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
               <RemoveWordButtonIcon
                 icon="close"
                 onPress={this.handleLastWordRemoval}
-                fontSize={fontSizes.extraExtraLarge}
+                fontSize={fontSizes.small}
+                color={UIColors.primary}
               />
             }
           </WordInputWrapper>
