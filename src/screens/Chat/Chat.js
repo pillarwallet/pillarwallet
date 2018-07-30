@@ -173,7 +173,7 @@ class ChatScreen extends React.Component<Props, State> {
           marginBottom: 6,
           marginRight: 10,
         }}
-        composerHeight={40}
+        multiline
       />
     );
   };
