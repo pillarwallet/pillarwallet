@@ -5,7 +5,6 @@ import {
   Easing,
   RefreshControl,
   ActivityIndicator,
-  ScrollView,
 } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -20,7 +19,7 @@ import {
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import Header from 'components/Header';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
@@ -199,25 +198,24 @@ class AssetsScreen extends React.Component<Props> {
           onNextPress={this.goToAddTokenPage}
           nextText="Add token"
         />
-        <Wrapper regularPadding>
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const {
-                    fetchAssetsBalances,
-                    fetchExchangeRates,
-                  } = this.props;
-                  fetchAssetsBalances(assets, wallet.address);
-                  fetchExchangeRates(assets);
-                }}
-              />
-            }
-          >
-            { this.renderAssets() }
-          </ScrollView>
-        </Wrapper>
+        <ScrollWrapper
+          regularPadding
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                const {
+                  fetchAssetsBalances,
+                  fetchExchangeRates,
+                } = this.props;
+                fetchAssetsBalances(assets, wallet.address);
+                fetchExchangeRates(assets);
+              }}
+            />
+          }
+        >
+          {this.renderAssets()}
+        </ScrollWrapper>
       </Container >
     );
   }
