@@ -46,12 +46,15 @@ function InputTemplate(locals) {
 }
 
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null && username.length <= maxUsernameLength;
+  return username != null && username.length <= maxUsernameLength && /^[a-z0-9]+$/i.test(username);
 });
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
     return `Username should be less than ${maxUsernameLength} characters.`;
+  }
+  if (username != null && !(/^[a-z0-9]+$/i.test(username))) {
+    return 'Username should only contain alpha-numeric characters.';
   }
   return 'Please specify the username.';
 };
@@ -170,6 +173,7 @@ class NewProfile extends React.Component<Props, State> {
     const { walletState } = this.props;
     const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
     const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
+    const isUsernameValid = value && value.username && value.username.length > 0;
 
     return (
       <Container>
@@ -189,7 +193,7 @@ class NewProfile extends React.Component<Props, State> {
               <Button
                 block
                 onPress={this.handleSubmit}
-                disabled={walletState === CHECKING_USERNAME}
+                disabled={!isUsernameValid || walletState === CHECKING_USERNAME}
                 title="Next"
               />
             </FooterInnerComponent>
