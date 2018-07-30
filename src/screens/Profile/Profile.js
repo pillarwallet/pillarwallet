@@ -144,7 +144,6 @@ class Profile extends React.Component<Props, State> {
     storage.removeAll();
     chat.client.resetAccount().catch(() => null);
     showToast({ text: 'Cleared' });
-
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {

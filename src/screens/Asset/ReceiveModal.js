@@ -8,6 +8,7 @@ import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
+import { showToast } from 'utils/toast';
 
 const { height } = Dimensions.get('window');
 
@@ -81,6 +82,7 @@ export default class ReceiveModal extends React.Component<Props, State> {
       address,
     } = this.state;
     Clipboard.setString(address);
+    showToast({ text: 'Address copied to clipboard' });
   };
 
   handleAddressShare = () => {

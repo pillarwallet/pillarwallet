@@ -10,7 +10,7 @@ export const showToast = (info: Object) => {
     text: info.text,
     buttonText: info.buttonText,
     position: 'top',
-    duration: 300000,
+    duration: 2000,
     textStyle: {
       color: info.type === 'danger' ? baseColors.white : UIColors.defaultTextColor,
       fontFamily: 'aktiv-grotesk-regular',
@@ -26,7 +26,7 @@ export const showToast = (info: Object) => {
       fontSize: fontSizes.small,
     },
     style: {
-      backgroundColor: info.type === 'danger' ? baseColors.fireEngineRed : baseColors.white,
+      backgroundColor: info.type === 'danger' ? baseColors.fireEngineRed : baseColors.snowWhite,
       height: 80,
       borderRadius: 4,
       marginTop: 20,
