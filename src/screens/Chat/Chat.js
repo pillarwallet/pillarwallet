@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, StatusBar, Image } from 'react-native';
+import { View, StatusBar, Image, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -159,22 +159,32 @@ class ChatScreen extends React.Component<Props, State> {
 
   renderComposer = (props: Props) => {
     return (
-      <Composer
-        {...props}
-        textInputStyle={{
-          borderWidth: 1,
-          borderColor: '#e6e8eb',
-          borderRadius: 20,
-          paddingTop: 11,
-          paddingBottom: 11,
-          paddingLeft: 14,
-          paddingRight: 14,
-          marginTop: 6,
-          marginBottom: 6,
-          marginRight: 10,
-        }}
-        multiline
-      />
+      <View style={{
+        flex: 1,
+        borderWidth: 1,
+        borderColor: '#e6e8eb',
+        borderRadius: 26,
+        marginRight: 10,
+        marginTop: 3,
+        marginBottom: 3,
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        minHeight: 40,
+        paddingTop: 4,
+        paddingLeft: 2,
+        paddingBottom: 2,
+        paddingRight: 20,
+      }}
+      >
+        <Composer
+          {...props}
+          textInputStyle={{
+            borderWidth: 0,
+            width: '100%',
+            margin: 0,
+          }}
+        />
+      </View>
     );
   };
 
@@ -211,6 +221,8 @@ class ChatScreen extends React.Component<Props, State> {
         }}
         containerStyle={{
           bottom: 2,
+          paddingLeft: 10,
+          borderTopWidth: 0,
         }}
       />
     );
