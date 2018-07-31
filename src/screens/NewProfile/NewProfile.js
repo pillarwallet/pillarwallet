@@ -10,7 +10,6 @@ import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstant
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { updateLocalUserAction } from 'actions/userActions';
 import { validateUserDetailsAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
@@ -80,7 +79,6 @@ const getDefaultFormOptions = (inputDisabled: boolean) => ({
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  updateUser: Function,
   validateUserDetails: Function,
   resetWalletState: Function,
   walletState: ?string,
@@ -209,7 +207,6 @@ class NewProfile extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet: { walletState, onboarding: { apiUser } } }) => ({ walletState, apiUser });
 
 const mapDispatchToProps = (dispatch) => ({
-  updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
 });
 

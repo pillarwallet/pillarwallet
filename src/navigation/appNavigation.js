@@ -32,7 +32,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 
 // actions
-import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
+import { initAppAndRedirectAction } from 'actions/appActions';
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -70,7 +70,7 @@ import {
   CHAT_LIST,
   CHAT,
 } from 'constants/navigationConstants';
-import { PENDING, REGISTERED } from 'constants/userConstants';
+import { PENDING } from 'constants/userConstants';
 
 // models
 import type { Assets } from 'models/Asset';
@@ -312,7 +312,6 @@ const AppFlowNavigation = createStackNavigator(
 type Props = {
   userState: ?string,
   fetchAppSettingsAndRedirect: Function,
-  fetchUser: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
@@ -331,8 +330,6 @@ class AppFlow extends React.Component<Props, {}> {
 
   componentDidMount() {
     const {
-      fetchUser,
-      userState,
       startListeningNotifications,
       startListeningIntercomNotifications,
       fetchTransactionsHistory,
@@ -342,9 +339,6 @@ class AppFlow extends React.Component<Props, {}> {
       assets,
       wallet,
     } = this.props;
-    if (userState !== REGISTERED) {
-      fetchUser();
-    }
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchTransactionsHistory(wallet.address);
@@ -406,7 +400,6 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
-  fetchUser: () => dispatch(fetchUserAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
