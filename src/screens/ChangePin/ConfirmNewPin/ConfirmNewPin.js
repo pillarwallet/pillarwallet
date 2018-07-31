@@ -1,7 +1,5 @@
 // @flow
 import * as React from 'react';
-
-import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
@@ -11,6 +9,7 @@ import { Container, Center } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
+import Spinner from 'components/Spinner';
 import PinCode from 'components/PinCode';
 import Button from 'components/Button';
 import Header from 'components/Header';
@@ -68,11 +67,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
-          <ActivityIndicator
-            animating
-            color="#111"
-            size="large"
-          />
+          <Spinner />
         </Container>
       );
     }

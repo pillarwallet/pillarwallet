@@ -4,14 +4,15 @@ import {
   Animated,
   Easing,
   RefreshControl,
-  ActivityIndicator,
 } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { BaseText } from 'components/Typography';
+import Spinner from 'components/Spinner';
 import type { Assets } from 'models/Asset';
 import Button from 'components/Button';
+
 import {
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
@@ -160,11 +161,7 @@ class AssetsScreen extends React.Component<Props> {
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>Loading default assets</BaseText>
           {assetsState !== FETCH_INITIAL_FAILED && (
-            <ActivityIndicator
-              animating
-              color="#111"
-              size="large"
-            />
+            <Spinner />
           )}
           {assetsState === FETCH_INITIAL_FAILED && (
             <Button title="Try again" onPress={() => fetchInitialAssets(wallet.address)} />
