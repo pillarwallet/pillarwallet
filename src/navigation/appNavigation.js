@@ -83,10 +83,6 @@ const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 
-const navigationOpts = {
-  header: null,
-};
-
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconHome = require('assets/icons/icon_home.png');
@@ -157,17 +153,17 @@ const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
       source={icon}
     />
     {!!hasAddon &&
-    <View
-      style={{
-        width: 7,
-        height: 7,
-        backgroundColor: '#ffdb3c',
-        borderRadius: 3.5,
-        position: 'absolute',
-        top: 0,
-        right: 0,
-      }}
-    />}
+      <View
+        style={{
+          width: 7,
+          height: 7,
+          backgroundColor: '#ffdb3c',
+          borderRadius: 3.5,
+          position: 'absolute',
+          top: 0,
+          right: 0,
+        }}
+      />}
   </View>
 );
 
@@ -213,8 +209,8 @@ const tabNavigation = createBottomTabNavigator(
     },
     [HOME]: {
       screen: homeFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHome),
+      navigationOptions: (props) => ({
+        tabBarIcon: tabBarIcon(iconHome, props.screenProps.hasUnreadNotifications),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -271,6 +267,7 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -282,7 +279,9 @@ const AppFlowNavigation = createStackNavigator(
     [CHAT]: ChatScreen,
   }, {
     mode: 'modal',
-    navigationOptions: navigationOpts,
+    navigationOptions: () => ({
+      header: null,
+    }),
     transitionConfig: () => ({
       transitionSpec: {
         duration: 400,
@@ -323,6 +322,7 @@ type Props = {
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   notifications: Object[],
+  hasUnreadNotifications: boolean,
   wallet: Object,
   assets: Object,
 }
@@ -392,18 +392,19 @@ class AppFlow extends React.Component<Props, {}> {
       return <RetryApiRegistration />;
     }
 
-    return <AppFlowNavigation />;
+    return <AppFlowNavigation screenProps={{ hasUnreadNotifications: this.props.hasUnreadNotifications }} />;
   }
 }
 
 const mapStateToProps = ({
   user: { userState },
-  notifications: { data: notifications },
+  notifications: { data: notifications, hasUnreadNotifications },
   assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
   userState,
   notifications,
+  hasUnreadNotifications,
   assets,
   wallet,
 });

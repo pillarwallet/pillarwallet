@@ -14,6 +14,7 @@ import Storage from 'services/storage';
 import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+  SET_UNREAD_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
 
 const CONNECTION = 'CONNECTION';
@@ -52,6 +53,12 @@ export const stopListeningIntercomNotificationsAction = () => {
   };
 };
 
+export const setUnreadNotificationsStatusAction = (unreadNotificationsStatus: boolean) => {
+  return async (dispatch: Function) => {
+    dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: unreadNotificationsStatus });
+  };
+};
+
 export const startListeningNotificationsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
@@ -81,6 +88,7 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchInviteNotificationsAction());
       }
       dispatch({ type: ADD_NOTIFICATION, payload: notification });
+      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
     });
   };
 };

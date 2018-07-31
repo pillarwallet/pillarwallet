@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 import { RefreshControl } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
@@ -16,6 +16,7 @@ import {
   fetchTransactionsHistoryNotificationsAction,
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
+import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -122,10 +123,26 @@ type Props = {
   acceptInvitation: Function,
   cancelInvitation: Function,
   rejectInvitation: Function,
+  setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
 };
 
 class PeopleScreen extends React.Component<Props> {
+  _willFocus: NavigationEventSubscription;
+
+  componentDidMount() {
+    this._willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => {
+        this.props.setUnreadNotificationsStatus(false);
+      },
+    );
+  }
+
+  componentWillUnmount() {
+    this._willFocus.remove();
+  }
+
   goToProfile = () => {
     const { navigation } = this.props;
     navigation.navigate(PROFILE);
@@ -305,6 +322,10 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
+  setUnreadNotificationsStatus: (unreadNotificationsStatus) => {
+    dispatch(setUnreadNotificationsStatusAction(unreadNotificationsStatus));
+  },
+
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);
