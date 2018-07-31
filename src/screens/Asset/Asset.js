@@ -138,6 +138,7 @@ class AssetScreen extends React.Component<Props, State> {
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
+    const isWalletEmpty = assetData.amount === '0';
     return (
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.handleCardTap} />
@@ -174,6 +175,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal(assetData)}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
+              noBalance={isWalletEmpty}
             />
           </AssetCardWrapper>
           <TXHistory
