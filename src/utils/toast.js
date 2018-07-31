@@ -31,7 +31,7 @@ export const showToast = (info: Object) => {
     text: info.text,
     buttonText: info.buttonText,
     position: info.position ? info.position : 'top',
-    duration: info.duration ? info.duration : 2000,
+    duration: info.duration !== undefined ? info.duration : 2000,
     textStyle: {
       color: theme.textColor,
       fontFamily: 'aktiv-grotesk-regular',
@@ -57,6 +57,5 @@ export const showToast = (info: Object) => {
       borderColor: UIColors.defaultBorderColor,
       borderWidth: 1,
     },
-
   });
 };

@@ -3,7 +3,7 @@ import 'utils/setup';
 import * as React from 'react';
 import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import { NavigationActions } from 'react-navigation';
-import { Root as NBRoot } from 'native-base';
+import { Root as NBRoot, Toast } from 'native-base';
 import { Font } from 'expo';
 import { showToast } from 'utils/toast';
 import { Provider, connect } from 'react-redux';
@@ -83,9 +83,12 @@ class App extends React.Component<Props, State> {
 
   handleConnectivityChange = isOnline => {
     const { fontLoaded } = this.state;
-    const duration = isOnline ? 0 : 10000;
-    if (fontLoaded) {
-      showToast({ text: 'No active internet connection found!', type: 'danger', duration });
+    if (!fontLoaded) return;
+
+    if (!isOnline) {
+      showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 });
+    } else {
+      Toast.toastInstance._root.closeToast();
     }
   };
 
