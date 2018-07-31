@@ -51,8 +51,9 @@ class ChatListScreen extends React.Component<Props, State> {
 
   renderItem = ({ item: contact }: Object) => {
     const { chats } = this.props;
+    const emptyState = { content: 'Start New Conversation', username: contact.username };
     const existingChat = chats.find(({ username }) => contact.username === username) || {};
-    const lastMessage = existingChat.lastMessage || { content: 'Start New Conversation', username: contact.username };
+    const lastMessage = 'content' in existingChat.lastMessage ? existingChat.lastMessage : emptyState;
 
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
@@ -62,6 +63,7 @@ class ChatListScreen extends React.Component<Props, State> {
       timeSent = `${hours}:${minutes}`; // HH:mm
     }
     const newMessageCopy = existingChat.unread > 1 ? 'New Messages' : 'New Message';
+
     return (
       <ChatListItem
         userName={contact.username}

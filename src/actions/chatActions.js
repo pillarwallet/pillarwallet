@@ -32,7 +32,9 @@ export const getExistingChatsAction = () => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
     const { contacts } = await storage.get('contacts');
 
-    const messagesOfContacts = generateChatInfo(contacts, chats);
+    if (!contacts.length) return;
+
+    const messagesOfContacts = generateChatInfo(contacts, chats) ;
 
     await chat.client.getUnreadMessagesCount().then((response) => {
       const unread = JSON.parse(response);
@@ -53,6 +55,8 @@ export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
     const { contacts } = await storage.get('contacts');
+
+    if (!contacts.length) return;
 
     const messagesOfContacts = generateChatInfo(contacts, chats);
 
