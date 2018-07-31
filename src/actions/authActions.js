@@ -14,6 +14,7 @@ import {
 import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { delay } from 'utils/common';
+import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 
@@ -42,7 +43,7 @@ export const loginAction = (pin: string) => {
 
       await chat.init({
         username: user.username,
-        password: pin,
+        password: generateChatPassword(wallet.privateKey),
       }).catch(() => null);
       await chat.client.registerAccount().catch(() => null);
 
@@ -110,13 +111,6 @@ export const changePinAction = (pin: string) => {
       .catch(() => ({}));
 
     await storage.save('wallet', { wallet: encryptedWallet });
-
-    const { user } = await storage.get('user');
-    await chat.init({
-      username: user.username,
-      password: pin,
-    });
-    await chat.client.registerAccount().catch(() => null);
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
