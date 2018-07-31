@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, StatusBar, Image } from 'react-native';
+import { View, StatusBar, Image, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -30,7 +30,8 @@ type Props = {
   sendMessageByContact: Function,
   getChatByContact: Function,
   messages: Object,
-  notifications: Object
+  notifications: Object,
+  isFetching: boolean,
 }
 
 type State = {
@@ -57,7 +58,7 @@ class ChatScreen extends React.Component<Props, State> {
     StatusBar.setBarStyle('dark-content');
     const { contact } = this.state;
     const { getChatByContact } = this.props;
-    getChatByContact(contact.username);
+    getChatByContact(contact.username, contact.profileImage);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -65,27 +66,14 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     const { notifications: prevNotifications } = prevProps;
     if (notifications.length !== prevNotifications.length) {
-      getChatByContact(contact.username);
+      getChatByContact(contact.username, contact.profileImage);
     }
   }
-
-  formatMessages = (messages: Object[] = [], contact: Object, user: Object) => {
-    return messages.map((message, index) => ({
-      _id: index,
-      text: message.content,
-      createdAt: new Date(message.serverTimestamp),
-      user: {
-        _id: message.username,
-        name: message.username,
-        avatar: message.username === contact.username ? contact.avatar : user.usernameAvatar,
-      },
-    })).sort((a, b) => b.createdAt - a.createdAt);
-  };
 
   handleLoadEarlier = () => {
     const { getChatByContact } = this.props;
     const { contact } = this.state;
-    getChatByContact(contact.username, true);
+    getChatByContact(contact.username, contact.profileImage, true);
     this.setState({
       showLoadEarlierButton: false,
     });
@@ -269,18 +257,6 @@ class ChatScreen extends React.Component<Props, State> {
     );
   };
 
-  // renderLoading = () => {
-  //   return (
-  //     <View style={{ flex: 1 }}>
-  //       <ActivityIndicator
-  //         animating
-  //         color="#111"
-  //         size="large"
-  //       />
-  //     </View>
-  //   );
-  // };
-
   renderMessage = (props: Props) => {
     return (
       <Message
@@ -304,35 +280,42 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { messages, user } = this.props;
+    const { messages, isFetching } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
-    const contactMessages = this.formatMessages(messages[contact.username], contact, user);
     const title = `chat with ${getUserName(contact).toLowerCase()}`;
+
     return (
       <React.Fragment>
         <Container>
           <ModalScreenHeader title={title} center onClose={this.handleChatDismissal} />
           <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+            {!!isFetching &&
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <ActivityIndicator
+                animating
+                color="#111"
+                size="large"
+              />
+            </View>}
+            {!isFetching &&
             <GiftedChat
-              messages={contactMessages}
+              messages={messages[contact.username]}
               onSend={msgs => this.onSend(msgs)}
               user={{
                 _id: this.props.user.username,
               }}
-              style={{ backgroundColor: 'red' }}
               renderBubble={this.renderBubble}
               renderAvatar={this.renderAvatar}
               renderComposer={this.renderComposer}
               renderInputToolbar={this.renderInputToolbar}
               renderDay={this.renderDay}
               renderTime={this.renderTime}
-              // renderLoading={this.renderLoading}
               loadEarlier={showLoadEarlierButton}
               onLoadEarlier={this.handleLoadEarlier}
               renderLoadEarlier={this.renderLoadEarlier}
               renderMessage={this.renderMessage}
               minInputToolbarHeight={52}
-            />
+            />}
           </View>
         </Container>
       </React.Fragment>
@@ -342,17 +325,18 @@ class ChatScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  chat: { data: { messages } },
+  chat: { data: { messages, isFetching } },
   notifications: { data: notifications },
 }) => ({
   user,
   messages,
+  isFetching,
   notifications,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   sendMessageByContact: (username, message) => dispatch(sendMessageByContactAction(username, message)),
-  getChatByContact: (username) => dispatch(getChatByContactAction(username)),
+  getChatByContact: (username, avatar, loadEarlier) => dispatch(getChatByContactAction(username, avatar, loadEarlier)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);

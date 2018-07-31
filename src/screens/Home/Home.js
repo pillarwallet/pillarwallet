@@ -26,7 +26,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { getExistingChatsAction } from 'actions/chatActions';
+import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
@@ -117,7 +117,7 @@ type Props = {
   history: Object[],
   user: Object,
   wallet: Object,
-  chat: Object,
+  chats: Object,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   fetchTransactionsHistory: Function,
@@ -126,6 +126,7 @@ type Props = {
   rejectInvitation: Function,
   homeNotifications: Object[],
   getExistingChats: Function,
+  resetUnread: Function,
 };
 
 class PeopleScreen extends React.Component<Props> {
@@ -200,7 +201,9 @@ class PeopleScreen extends React.Component<Props> {
   }
 
   toChat = (contact) => {
-    this.props.navigation.navigate(CHAT, { contact });
+    const { navigation, resetUnread } = this.props;
+    navigation.navigate(CHAT, { contact });
+    resetUnread(contact.username);
   }
 
   render() {
@@ -214,24 +217,28 @@ class PeopleScreen extends React.Component<Props> {
       historyNotifications,
       history,
       wallet: { address: walletAddress },
+      chats,
     } = this.props;
+
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-    const chatNotifications = this.props.chat.chats
+
+    const currentTime = Math.floor(new Date().getTime() / 1000);
+    const chatNotifications = chats.chats
       .map((
         {
           username,
           lastMessage,
           profileImage,
-          ...rest
+          unread,
         }) => (
         {
           username,
-          ...rest,
           type: 'CHAT',
-          createdAt: lastMessage.savedTimestamp,
+          createdAt: unread ? currentTime : lastMessage.savedTimestamp || currentTime,
           onPress: () => this.toChat({ username, profileImage }),
         }));
+
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
       .sort((a, b) => b.createdAt - a.createdAt);
     return (
@@ -315,7 +322,7 @@ const mapStateToProps = ({
   history: { data: history, historyNotifications },
   invitations: { data: invitations },
   wallet: { data: wallet },
-  chat: { data: chat },
+  chat: { data: chats },
 }) => ({
   contacts,
   user,
@@ -323,7 +330,7 @@ const mapStateToProps = ({
   history,
   invitations,
   wallet,
-  chat,
+  chats,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -334,6 +341,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   getExistingChats: () => dispatch(getExistingChatsAction()),
+  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

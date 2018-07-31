@@ -1,23 +1,50 @@
 // @flow
 import ChatService from 'services/chat';
-import { UPDATE_CHATS, ADD_MESSAGE, UPDATE_MESSAGES, RESET_UNREAD_MESSAGE } from 'constants/chatConstants';
+import {
+  UPDATE_CHATS,
+  ADD_MESSAGE,
+  UPDATE_MESSAGES,
+  RESET_UNREAD_MESSAGE,
+  FETCHING_CHATS,
+} from 'constants/chatConstants';
+import Storage from 'services/storage';
+
+const storage = Storage.getInstance('db');
 
 const chat = new ChatService();
+
+const generateChatInfo = (contacts, chats) => {
+  const chatsWithContacts = contacts.map((contact) => {
+    const existingChat = chats.find(({ username }) => contact.username === username) || {};
+    const lastMessage = existingChat.lastMessage || {};
+
+    const chatInfo = {
+      lastMessage,
+      username: contact.username,
+    };
+    return chatInfo;
+  });
+  return chatsWithContacts;
+};
 
 export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
+    const { contacts } = await storage.get('contacts');
+
+    const messagesOfContacts = generateChatInfo(contacts, chats);
+
     await chat.client.getUnreadMessagesCount().then((response) => {
       const unread = JSON.parse(response);
-
-      chats.map((item) => {
+      messagesOfContacts.map((item) => {
         item.unread = typeof unread.unreadCount[item.username] !== 'undefined' ? unread.unreadCount[item.username] : 0;
         return item;
       });
-    }).catch(() => null);
+    }).catch(() => {});
+
     dispatch({
       type: UPDATE_CHATS,
-      payload: chats,
+      payload: messagesOfContacts,
     });
   };
 };
@@ -25,30 +52,36 @@ export const getExistingChatsAction = () => {
 export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
+    const { contacts } = await storage.get('contacts');
+
+    const messagesOfContacts = generateChatInfo(contacts, chats);
+
     await chat.client.getUnreadMessagesCount().then((response) => {
       const unread = JSON.parse(response);
-      chats.map((item) => {
+      messagesOfContacts.map((item) => {
         item.unread = item.username === contactUsername ? 0 : unread.unreadCount[item.username];
         return item;
       });
     }).catch(() => null);
     dispatch({
       type: RESET_UNREAD_MESSAGE,
-      payload: chats,
+      payload: messagesOfContacts,
     });
   };
 };
-
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
     await chat.client.sendMessageByContact(username, message.text).catch(() => null);
     const timestamp = new Date(message.createdAt).getTime();
     const msg = {
-      content: message.text,
-      savedTimestamp: timestamp,
-      serverTimestamp: timestamp,
-      username: message.user._id,
+      _id: timestamp,
+      createdAt: timestamp,
+      text: message.text,
+      user: {
+        _id: message.user._id,
+        name: message.user._id,
+      },
     };
 
     dispatch({
@@ -58,17 +91,32 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
   };
 };
 
-export const getChatByContactAction = (username: string, loadEarlier: boolean = false) => {
+export const getChatByContactAction = (username: string, avatar: string, loadEarlier: boolean = false) => {
   return async (dispatch: Function) => {
+    dispatch({
+      type: FETCHING_CHATS,
+    });
     await chat.client.addContact(username).catch(() => null);
     if (loadEarlier) {
       // TODO: split message loading in bunches and load earlier on lick
     }
     await chat.client.receiveNewMessagesByContact(username).catch(() => null);
     const receivedMessages = await chat.client.getChatByContact(username).then(JSON.parse).catch(() => null);
+
+    const updatedMessages = await receivedMessages.map((message) => ({
+      _id: message.serverTimestamp,
+      text: message.content,
+      createdAt: new Date(message.serverTimestamp),
+      user: {
+        _id: message.username,
+        name: message.username,
+        avatar,
+      },
+    })).sort((a, b) => b.createdAt - a.createdAt);
+
     dispatch({
       type: UPDATE_MESSAGES,
-      payload: { messages: receivedMessages, username },
+      payload: { messages: updatedMessages, username },
     });
   };
 };

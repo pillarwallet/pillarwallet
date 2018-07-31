@@ -1,5 +1,11 @@
 // @flow
-import { UPDATE_MESSAGES, ADD_MESSAGE, UPDATE_CHATS, RESET_UNREAD_MESSAGE } from 'constants/chatConstants';
+import {
+  UPDATE_MESSAGES,
+  ADD_MESSAGE,
+  UPDATE_CHATS,
+  RESET_UNREAD_MESSAGE,
+  FETCHING_CHATS,
+} from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
 type Message = {
@@ -28,6 +34,7 @@ export type ChateducerState = {
     messages: {
       [string]: Message[],
     },
+    isFetching: boolean,
   },
 }
 
@@ -40,25 +47,40 @@ const initialState = {
   data: {
     chats: [],
     messages: {},
+    isFetching: false,
   },
 };
 
-export default function historyReducer(
+export default function chatReducer(
   state: ChateducerState = initialState,
   action: ChateducerAction,
 ): ChateducerState {
   switch (action.type) {
     case ADD_MESSAGE:
       const { username, message } = action.payload;
-      const contactMessages = (state.data.messages[username] || []).concat(message);
+      const contactMessages = state.data.messages[username] || [];
+      const allMessages = [message, ...contactMessages];
+
       return merge(
         {},
         state,
         {
           data: {
             messages: {
-              [username]: contactMessages,
+              [username]: allMessages,
             },
+            isFetching: false,
+          },
+        },
+      );
+    case FETCHING_CHATS:
+      return merge(
+        {},
+        state,
+        {
+          data: {
+            chats: action.payload,
+            isFetching: true,
           },
         },
       );
@@ -66,13 +88,23 @@ export default function historyReducer(
       return merge(
         {},
         state,
-        { data: { chats: action.payload } },
+        {
+          data: {
+            chats: action.payload,
+            isFetching: false,
+          },
+        },
       );
     case RESET_UNREAD_MESSAGE:
       return merge(
         {},
         state,
-        { data: { chats: action.payload } },
+        {
+          data: {
+            chats: action.payload,
+            isFetching: false,
+          },
+        },
       );
     case UPDATE_MESSAGES:
       return merge(
@@ -83,6 +115,7 @@ export default function historyReducer(
             messages: {
               [action.payload.username]: [...action.payload.messages],
             },
+            isFetching: false,
           },
         },
       );

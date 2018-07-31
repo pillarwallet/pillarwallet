@@ -9,6 +9,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 import Storage from 'services/storage';
 import {
@@ -69,7 +70,7 @@ export const startListeningNotificationsAction = () => {
     }
     await firebase.messaging().getToken();
     if (notificationsListener) return;
-    notificationsListener = firebase.messaging().onMessage(message => {
+    notificationsListener = firebase.messaging().onMessage(async message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
@@ -82,10 +83,11 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type === SIGNAL) {
-        dispatch({ type: SIGNAL, payload: { message } });
-      }
+        dispatch({ type: ADD_NOTIFICATION, payload: notification });
 
-      dispatch({ type: ADD_NOTIFICATION, payload: notification });
+        dispatch({ type: SIGNAL, payload: { message } });
+        dispatch(getExistingChatsAction());
+      }
     });
   };
 };

@@ -43,14 +43,6 @@ class ChatListScreen extends React.Component<Props, State> {
     getExistingChats();
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { notifications, getExistingChats } = this.props;
-    const { notifications: prevNotifications } = prevProps;
-    if (notifications.length !== prevNotifications.length) {
-      getExistingChats();
-    }
-  }
-
   handleChatItemClick = (contact) => {
     const { navigation, resetUnread } = this.props;
     navigation.navigate(CHAT, { contact });
