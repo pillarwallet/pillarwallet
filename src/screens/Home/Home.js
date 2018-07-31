@@ -266,7 +266,7 @@ class PeopleScreen extends React.Component<Props> {
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
             {!this.props.contacts.length && this.renderEmptyRCState()}
             {!!this.props.contacts.length &&
-            <RecentConnectionsScrollView horizontal>
+            <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
               {this.renderRecentConnections()}
             </RecentConnectionsScrollView>}
           </RecentConnections>
