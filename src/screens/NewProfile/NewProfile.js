@@ -6,7 +6,7 @@ import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
-import { LEGAL_TERMS } from 'constants/navigationConstants';
+import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -155,7 +155,7 @@ class NewProfile extends React.Component<Props, State> {
           },
         },
       });
-      this.setState({ formOptions: options });// eslint-disable-line
+      this.setState({ formOptions: options }); // eslint-disable-line
     }
 
     if (walletState === USERNAME_OK) {
@@ -178,7 +178,7 @@ class NewProfile extends React.Component<Props, State> {
       <Container>
         <Header
           title="choose your username"
-          onBack={() => this.props.navigation.goBack('PinCodeConfirmation')}
+          onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
         />
         <ScrollWrapper regularPadding>
           <LoginForm
