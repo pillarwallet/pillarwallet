@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		0258B09B6A34AC731A90ED32 /* libPods-pillar-wallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */; };
 		10BB09495A68450DA10A7ECD /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DE05E338A8C34FBBB8352C94 /* FontAwesome.ttf */; };
@@ -34,6 +35,7 @@
 		1680D90B21027C6300D92EF7 /* libFirebaseStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D90A21027C6300D92EF7 /* libFirebaseStorage.a */; };
 		1680D91E21027F1200D92EF7 /* libFirebaseFirestore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D91D21027F1200D92EF7 /* libFirebaseFirestore.a */; };
 		1680D95D2102828600D92EF7 /* libreact-native-intercom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1680D95C2102828600D92EF7 /* libreact-native-intercom.a */; };
+		226CFD8DB3354FA598407BD3 /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A443BFC898794D6C81E642C6 /* PillarIcons.ttf */; };
 		22F95E64F92E4E398099112D /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 209ECA9FD3A147FF82955E48 /* Entypo.ttf */; };
 		276C827361654D53B0300D88 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A67E635B26845D5808FFD13 /* Roboto_medium.ttf */; };
 		2E31B2817FC042A79F4E2C16 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3193EACCA2B5408EB09FDD69 /* Ionicons.ttf */; };
@@ -74,7 +76,6 @@
 		E70145DE40424021A9BE81A4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 80344D87C0CC4883AC64E7EF /* MaterialIcons.ttf */; };
 		EE27F04C20C6E64600BB0436 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */; };
 		F52660EC2C5047DBADBFA3A9 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 40EC5CFD374F4F00AB6AAB9D /* MaterialCommunityIcons.ttf */; };
-		226CFD8DB3354FA598407BD3 /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A443BFC898794D6C81E642C6 /* PillarIcons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -463,6 +464,7 @@
 		95BD5F9020F54993001E93AA /* SwiftBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftBridge.swift; sourceTree = "<group>"; };
 		9A620D8D5B1641ECBAD6134F /* AktivGrotesk-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AktivGrotesk-Light.ttf"; path = "../src/assets/fonts/AktivGrotesk-Light.ttf"; sourceTree = "<group>"; };
 		A144060C424F469E8074D840 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
+		A443BFC898794D6C81E642C6 /* PillarIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = PillarIcons.ttf; path = ../src/assets/fonts/PillarIcons.ttf; sourceTree = "<group>"; };
 		ABDB1B80C02F4F8CAF10338E /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
 		ABE6DAB20184465D8E053C80 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		B314D4836A1FE2ED938E2291 /* libPods-pillar-wallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillar-wallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -493,7 +495,6 @@
 		ED250D0DEA2D49D8A11E3C8E /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		EE27F02820C6E64500BB0436 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		FCEF93F90AE145CC89EE63E0 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
-		A443BFC898794D6C81E642C6 /* PillarIcons.ttf */ = {isa = PBXFileReference; name = "PillarIcons.ttf"; path = "../src/assets/fonts/PillarIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1622,6 +1623,10 @@
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"${PODS_ROOT}/Firebase/Core/Sources",
@@ -1721,6 +1726,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = J9DEY3FGPD;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"${PODS_ROOT}/Firebase/Core/Sources",
