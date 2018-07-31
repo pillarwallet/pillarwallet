@@ -223,7 +223,7 @@ class Profile extends React.Component<Props, State> {
     } = this.state;
     return (
       <Container color={baseColors.snowWhite}>
-        <Header gray title="settings" onBack={navigation.goBack} />
+        <Header gray title="settings" onBack={() => navigation.goBack(null)} />
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'country'}
           subtitle="Choose your country"

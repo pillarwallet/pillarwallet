@@ -66,7 +66,7 @@ class ConnectionRequests extends React.Component<Props> {
       <Container>
         <Header
           title="connection requests"
-          onBack={this.props.navigation.goBack}
+          onBack={() => this.props.navigation.goBack(null)}
         />
 
         <FlatList
