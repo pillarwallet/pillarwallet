@@ -15,7 +15,6 @@ import Button from 'components/Button';
 import {
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
-  fetchExchangeRatesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import Header from 'components/Header';
@@ -25,24 +24,9 @@ import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/as
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
-// TODO: change to actual token colors that is fetch with the asset
-const tokenColor = {};
-tokenColor.ETH = '#3c3c3d';
-tokenColor.PLR = '#00bfff';
-tokenColor.QTM = '#1297d7';
-tokenColor.EOS = '#443f53';
-tokenColor.OMG = '#1a56f0';
-tokenColor.ICX = '#1aaaba';
-tokenColor.STORJ = '#2683FF';
-tokenColor.BAT = '#ff5500';
-tokenColor.GNT = '#282f41';
-tokenColor.PPT = '#5a9ef6';
-tokenColor.SALT = '#85C884';
-
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchExchangeRates: (assets: Assets) => Function,
   assets: Assets,
   wallet: Object,
   rates: Object,
@@ -64,13 +48,11 @@ class AssetsScreen extends React.Component<Props> {
     const {
       fetchInitialAssets,
       fetchAssetsBalances,
-      fetchExchangeRates,
       assets,
       wallet,
     } = this.props;
 
     fetchAssetsBalances(assets, wallet.address);
-    fetchExchangeRates(assets);
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
@@ -204,12 +186,8 @@ class AssetsScreen extends React.Component<Props> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                const {
-                  fetchAssetsBalances,
-                  fetchExchangeRates,
-                } = this.props;
+                const { fetchAssetsBalances } = this.props;
                 fetchAssetsBalances(assets, wallet.address);
-                fetchExchangeRates(assets);
               }}
             />
           }
@@ -240,9 +218,6 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
-  fetchExchangeRates: (assets) => {
-    dispatch(fetchExchangeRatesAction(assets));
   },
 });
 
