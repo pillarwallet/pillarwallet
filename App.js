@@ -82,8 +82,10 @@ class App extends React.Component<Props, State> {
   };
 
   handleConnectivityChange = isOnline => {
-    if (!isOnline) {
-      showToast({ text: 'No active internet connection found!', type: 'danger' });
+    const { fontLoaded } = this.state;
+    const duration = isOnline ? 0 : 10000;
+    if (fontLoaded) {
+      showToast({ text: 'No active internet connection found!', type: 'danger', duration });
     }
   };
 

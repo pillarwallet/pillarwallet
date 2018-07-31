@@ -5,14 +5,35 @@ import { baseColors, UIColors, fontSizes } from 'utils/variables';
 
 // Native Base has some styling I can't control, so this is a compromise
 const horizontalMargin = Platform.OS === 'ios' ? 0 : 20;
+
+function getTheme(type: string) {
+  if (type === 'danger') {
+    return ({
+      backgroundColor: baseColors.fireEngineRed,
+      textColor: baseColors.white,
+    });
+  } else if (type === 'info') {
+    return ({
+      backgroundColor: baseColors.clearBlue,
+      textColor: baseColors.white,
+    });
+  }
+  return ({
+    backgroundColor: baseColors.snowWhite,
+    textColor: UIColors.defaultTextColor,
+  });
+}
+
 export const showToast = (info: Object) => {
+  const theme = getTheme(info.type);
+
   Toast.show({
     text: info.text,
     buttonText: info.buttonText,
-    position: 'top',
-    duration: 2000,
+    position: info.position ? info.position : 'top',
+    duration: info.duration ? info.duration : 2000,
     textStyle: {
-      color: info.type === 'danger' ? baseColors.white : UIColors.defaultTextColor,
+      color: theme.textColor,
       fontFamily: 'aktiv-grotesk-regular',
       fontSize: fontSizes.small,
     },
@@ -26,7 +47,7 @@ export const showToast = (info: Object) => {
       fontSize: fontSizes.small,
     },
     style: {
-      backgroundColor: info.type === 'danger' ? baseColors.fireEngineRed : baseColors.snowWhite,
+      backgroundColor: theme.backgroundColor,
       height: 80,
       borderRadius: 4,
       marginTop: 20,
