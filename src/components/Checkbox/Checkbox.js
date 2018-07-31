@@ -34,6 +34,7 @@ type Props = {
   text: string,
   onPress: Function,
   disabled?: boolean,
+  checked?: boolean,
 };
 
 type State = {
@@ -46,8 +47,8 @@ export default class Checkbox extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
     this.state = {
-      checked: false,
-      animateActive: new Animated.Value(4),
+      checked: !!props.checked,
+      animateActive: new Animated.Value(props.checked ? 12 : 4),
     };
   }
 
@@ -58,7 +59,7 @@ export default class Checkbox extends React.Component<Props, State> {
       this.setState({
         checked: !checked,
       },
-      () => onPress(),
+      () => onPress(checked),
       );
 
       if (checked) {
