@@ -34,7 +34,7 @@ export const getExistingChatsAction = () => {
 
     if (!contacts.length) return;
 
-    const messagesOfContacts = generateChatInfo(contacts, chats) ;
+    const messagesOfContacts = generateChatInfo(contacts, chats);
 
     await chat.client.getUnreadMessagesCount().then((response) => {
       const unread = JSON.parse(response);
