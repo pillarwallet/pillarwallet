@@ -45,14 +45,14 @@ function InputTemplate(locals) {
 }
 
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null && username.length <= maxUsernameLength && /^[a-z0-9]+$/i.test(username);
+  return username != null && username.length <= maxUsernameLength && /^[a-z0-9_\- ]+$/i.test(username);
 });
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
     return `Username should be less than ${maxUsernameLength} characters.`;
   }
-  if (username != null && !(/^[a-z0-9]+$/i.test(username))) {
+  if (username != null && !(/^[a-z0-9_\- ]+$/i.test(username))) {
     return 'Username should only contain alpha-numeric characters.';
   }
   return 'Please specify the username.';
