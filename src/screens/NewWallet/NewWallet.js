@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import { ActivityIndicator } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
+import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import { API_REGISTRATION_FAILED } from 'constants/walletConstants';
 import { APP_FLOW } from 'constants/navigationConstants';
@@ -36,11 +36,7 @@ const NewWallet = (props: Props) => {
     <Container center>
       <BaseText style={{ marginBottom: 20 }}>{statusMessage}</BaseText>
       {!!showSpinner && (
-        <ActivityIndicator
-          animating
-          color="#111"
-          size="large"
-        />
+        <Spinner />
       )}
       {note}
     </Container>

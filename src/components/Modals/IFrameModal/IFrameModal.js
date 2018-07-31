@@ -3,7 +3,8 @@ import * as React from 'react';
 import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import { Platform, WebView, ActivityIndicator } from 'react-native';
+import { Platform, WebView } from 'react-native';
+import Spinner from 'components/Spinner';
 import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
@@ -96,11 +97,7 @@ export default class IFrameModal extends React.Component<Props, State> {
           </ModalHeader>
           {!isIFrameLoaded &&
           <ActivityIndicatorWrapper>
-            <ActivityIndicator
-              animating
-              color="#111"
-              size="large"
-            />
+            <Spinner />
           </ActivityIndicatorWrapper>
           }
           <WebView
