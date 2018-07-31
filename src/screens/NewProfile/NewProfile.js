@@ -6,7 +6,7 @@ import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
-import { LEGAL_TERMS } from 'constants/navigationConstants';
+import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -46,12 +46,15 @@ function InputTemplate(locals) {
 }
 
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null && username.length <= maxUsernameLength;
+  return username != null && username.length <= maxUsernameLength && /^[a-z0-9_\- ]+$/i.test(username);
 });
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
     return `Username should be less than ${maxUsernameLength} characters.`;
+  }
+  if (username != null && !(/^[a-z0-9_\- ]+$/i.test(username))) {
+    return 'Username should only contain alpha-numeric characters.';
   }
   return 'Please specify the username.';
 };
@@ -152,7 +155,7 @@ class NewProfile extends React.Component<Props, State> {
           },
         },
       });
-      this.setState({ formOptions: options });// eslint-disable-line
+      this.setState({ formOptions: options }); // eslint-disable-line
     }
 
     if (walletState === USERNAME_OK) {
@@ -171,10 +174,12 @@ class NewProfile extends React.Component<Props, State> {
     const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
     const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
     const isUsernameValid = value && value.username && value.username.length > 0;
-
     return (
       <Container>
-        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} />
+        <Header
+          title="choose your username"
+          onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
+        />
         <ScrollWrapper regularPadding>
           <LoginForm
             innerRef={node => { this._form = node; }}

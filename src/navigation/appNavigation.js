@@ -1,10 +1,9 @@
 // @flow
 import * as React from 'react';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
-import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-
+import { showToast } from 'utils/toast';
 import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
 import { BaseText } from 'components/Typography';
 
@@ -142,6 +141,7 @@ const peopleFlow = createStackNavigator({
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
+  [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
 const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
@@ -282,6 +282,30 @@ const AppFlowNavigation = createStackNavigator(
   }, {
     mode: 'modal',
     navigationOptions: navigationOpts,
+    transitionConfig: () => ({
+      transitionSpec: {
+        duration: 400,
+        easing: Easing.out(Easing.poly(2)),
+        timing: Animated.timing,
+      },
+      screenInterpolator: sceneProps => {
+        const { layout, position, scene } = sceneProps;
+        const { index } = scene;
+
+        const height = layout.initHeight;
+        const translateY = position.interpolate({
+          inputRange: [index - 1, index, index + 1],
+          outputRange: [height, 0, 0],
+        });
+
+        const opacity = position.interpolate({
+          inputRange: [index - 1, index - 0.99, index],
+          outputRange: [0, 1, 1],
+        });
+
+        return { opacity, transform: [{ translateY }] };
+      },
+    }),
   },
 );
 
@@ -338,10 +362,7 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-      Toast.show({
-        text: lastNotification.message,
-        buttonText: '',
-      });
+      showToast({ text: lastNotification.message });
     }
   }
 

@@ -8,6 +8,7 @@ import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
 import { validatePin } from 'utils/validators';
+import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 
 type Props = {
   confirmPinForNewWallet: (pin: string) => Function,
@@ -23,6 +24,11 @@ class PinCodeConfirmation extends React.Component<Props, State> {
   state = {
     errorMessage: '',
   };
+
+  constructor(props) {
+    super(props);
+    this.props.navigation.state.key = PIN_CODE_CONFIRMATION;
+  }
 
   handlePinSubmit = (pin: string) => {
     const { onboarding: wallet } = this.props.wallet;

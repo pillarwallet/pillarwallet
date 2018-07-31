@@ -122,6 +122,7 @@ class PeopleSearchResults extends React.Component<Props> {
         status={status}
         showActions
         noBorder
+        disabled
       />
     );
   };
