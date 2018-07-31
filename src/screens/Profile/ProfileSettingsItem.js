@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacingSizes } from 'utils/variables';
 import { Icon, Switch, Badge as NBBadge } from 'native-base';
 import { BaseText } from 'components/Typography';
 import { Platform, View, StyleSheet, TouchableNativeFeedback } from 'react-native';
@@ -11,7 +11,7 @@ const StyledItemTouchable = styled.TouchableHighlight`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  padding: 20px 16px;
+  padding: 20px ${spacingSizes.defaultHorizontalMargin}px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};
@@ -24,7 +24,7 @@ const StyledItemView = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 16px;
+  padding: 20px ${spacingSizes.defaultHorizontalMargin}px;
   background-color: #ffffff;
   border-bottom-color: ${baseColors.lightGray};
   border-top-color: ${baseColors.lightGray};

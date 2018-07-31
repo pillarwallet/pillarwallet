@@ -4,6 +4,7 @@ import { Image } from 'react-native';
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { spacingSizes } from 'utils/variables';
 
 const EmptyStateBGWrapper = styled.View`
   flex-direction: row;
@@ -12,7 +13,7 @@ const EmptyStateBGWrapper = styled.View`
   top: 0;
   left: 0;
   width: 100%;
-  padding: 8px 16px 0 16px;
+  padding: 8px ${spacingSizes.defaultHorizontalMargin}px 0;
 `;
 
 type Props = {

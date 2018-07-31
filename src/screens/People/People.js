@@ -50,7 +50,7 @@ const ConnectionRequestBannerIcon = styled(Icon)`
   font-size: ${fontSizes.medium};
   color: ${baseColors.darkGray};
   margin-left: auto;
-  margin-right: 16px;
+  margin-right: ${spacingSizes.defaultHorizontalMargin}px;
 `;
 
 const ConnectionRequestNotificationCircle = styled(NotificationCircle)`

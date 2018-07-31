@@ -31,7 +31,8 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 const HomeHeader = styled.View`
   height: 120px;
-  padding: ${Platform.OS === 'android' ? '20px' : 0} ${spacingSizes.defaultHorizontalMargin}px 0;
+  padding: 0 ${spacingSizes.defaultHorizontalMargin}px;
+  margin-top: ${Platform.OS === 'android' ? '20px' : 0};
   align-content: space-between;
   border-bottom-width: 1px;
   border-style: solid;

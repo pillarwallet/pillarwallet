@@ -19,7 +19,7 @@ import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
-import { baseColors } from 'utils/variables';
+import { baseColors, spacingSizes } from 'utils/variables';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -112,7 +112,7 @@ const KeyboardAvoidingView = Platform.OS === 'ios' ?
 `;
 
 const BodyWrapper = styled.View`
-  padding: 0 16px;
+  padding: 0 ${spacingSizes.defaultHorizontalMargin}px;
 `;
 
 const ActionsWrapper = styled.View`
@@ -133,7 +133,7 @@ const FooterWrapper = Platform.OS === 'ios' ?
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 ${spacingSizes.defaultHorizontalMargin}px;
   width: 100%;
   margin-bottom: 20px;
   margin-top: 30px;

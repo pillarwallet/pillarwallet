@@ -3,11 +3,11 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, BoldText } from 'components/Typography';
-import { baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights, spacingSizes } from 'utils/variables';
 import Header from 'components/Header';
 
 const ComingSoonBanner = styled.View`
-  padding: 16px;
+  padding: ${spacingSizes.defaultHorizontalMargin}px;
   margin-bottom: 20px;
   background: ${baseColors.sunYellow};
 `;

@@ -5,6 +5,7 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import { spacingSizes } from 'utils/variables';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
@@ -96,7 +97,7 @@ const FooterAndroid = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 ${spacingSizes.defaultHorizontalMargin}px;
   width: 100%;
   margin-bottom: 20px;
   margin-top: 30px;
