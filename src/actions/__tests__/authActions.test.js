@@ -7,9 +7,10 @@ import {
   DECRYPTING,
 } from 'constants/walletConstants';
 import { APP_FLOW, ASSETS } from 'constants/navigationConstants';
+import { UPDATE_USER, PENDING } from 'constants/userConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
-import { checkPinAction } from '../authActions';
+import { loginAction } from '../authActions';
 
 const NAVIGATE = 'Navigation/NAVIGATE';
 const pillarSdk = new PillarSdk();
@@ -51,6 +52,7 @@ describe('Wallet actions', () => {
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
+      { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       { type: DECRYPT_WALLET, payload: mockWallet },
       {
         type: NAVIGATE,
@@ -62,7 +64,7 @@ describe('Wallet actions', () => {
 
     const pin = '123456';
 
-    return store.dispatch(checkPinAction(pin))
+    return store.dispatch(loginAction(pin))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
