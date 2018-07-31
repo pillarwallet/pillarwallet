@@ -64,7 +64,7 @@ const EmptyStateBGWrapper = styled.View`
   top: 0;
   left: 0;
   width: 100%;
-  padding: 0 16px 16px 16px;
+  padding: 0 20px 20px;
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -200,8 +200,8 @@ class PeopleScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
-              paddingHorizontal: 16,
-              paddingVertical: spacingSizes.defaultVerticalSpacing,
+              paddingHorizontal: spacingSizes.defaultHorizontalMargin,
+              paddingVertical: spacingSizes.defaultVerticalMargin,
               paddingTop: 0,
             }}
             refreshControl={

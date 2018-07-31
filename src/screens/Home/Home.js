@@ -2,7 +2,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
@@ -19,7 +19,7 @@ import {
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacingSizes } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -31,7 +31,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 const HomeHeader = styled.View`
   height: 120px;
-  padding: 0 16px;
+  padding: ${Platform.OS === 'android' ? '20px' : 0} ${spacingSizes.defaultHorizontalMargin}px 0;
   align-content: space-between;
   border-bottom-width: 1px;
   border-style: solid;
@@ -72,7 +72,7 @@ const RecentConnectionsScrollView = styled.ScrollView`
 `;
 
 const RecentConnectionsSubHeading = styled(SubHeading)`
-  margin: 16px;
+  margin: 20px ${spacingSizes.defaultHorizontalMargin}px 10px;
 `;
 
 

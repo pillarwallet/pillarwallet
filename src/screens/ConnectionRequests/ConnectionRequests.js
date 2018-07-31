@@ -77,7 +77,7 @@ class ConnectionRequests extends React.Component<Props> {
           ItemSeparatorComponent={ContactsSeparator}
           contentContainerStyle={{
             paddingHorizontal: 16,
-            paddingVertical: spacingSizes.defaultVerticalSpacing,
+            paddingVertical: spacingSizes.defaultVerticalMargin,
             paddingTop: 0,
           }}
           refreshControl={

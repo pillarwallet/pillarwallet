@@ -61,8 +61,8 @@ export const fontSizes = {
 };
 
 export const spacingSizes = {
-  defaultHorizontalSideSpacing: 20,
-  defaultVerticalSpacing: 20,
+  defaultHorizontalMargin: 20,
+  defaultVerticalMargin: 20,
 };
 
 export const itemSizes = {

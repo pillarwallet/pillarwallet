@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes, baseColors, spacingSizes } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
@@ -47,13 +47,13 @@ const ActivityFeedWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 16px 16px 0;
+  padding: 20px ${spacingSizes.defaultHorizontalMargin}px 0;
 `;
 
 const ActivityFeedItem = styled.View`
   background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};
   height: 74px;
-  padding: 0px 16px;
+  padding: 0px ${spacingSizes.defaultHorizontalMargin}px;
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
@@ -83,7 +83,7 @@ const ActivityFeedItemCol = styled.View`
 
 const TabWrapper = styled.View`
   flex-direction: row;
-  margin: 10px 16px 10px;
+  margin: 10px ${spacingSizes.defaultHorizontalMargin}px 10px;
 `;
 
 const TabItem = styled.TouchableOpacity`
