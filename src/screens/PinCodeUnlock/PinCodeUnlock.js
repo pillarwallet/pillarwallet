@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { checkPinAction } from 'actions/authActions';
+import { loginAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
@@ -81,9 +81,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string) => {
-    dispatch(checkPinAction(pin));
-  },
+  login: (pin: string) => dispatch(loginAction(pin)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
