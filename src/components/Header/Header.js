@@ -86,11 +86,17 @@ const Header = (props: Props) => {
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
+
   return (
     <Wrapper noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
-          <BackIcon icon="back" color={UIColors.primary} onPress={() => onBack(null)} fontSize={fontSizes.small} />
+          <BackIcon
+            icon="back"
+            color={UIColors.primary}
+            onPress={() => onBack()}
+            fontSize={fontSizes.small}
+          />
         }
         {showTitleLeft &&
           <Title noMargin title={title} />
