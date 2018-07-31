@@ -47,7 +47,7 @@ const HomeHeaderRow = styled.View`
 `;
 
 const HomeHeaderUsername = styled(BoldText)`
-  font-size: ${fontSizes.extraLarge};
+  font-size: ${fontSizes.large};
 `;
 
 const HomeHeaderButtons = styled.View`
