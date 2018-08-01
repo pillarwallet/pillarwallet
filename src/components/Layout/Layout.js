@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { Platform, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-navigation';
-import { baseColors } from 'utils/variables';
+import { baseColors, spacingSizes } from 'utils/variables';
 
 type ContainerProps = {
   children?: React.Node,
@@ -61,7 +61,7 @@ export const Footer = styled.View`
   align-items: center;
   width: 100%;
   justify-content: flex-end;
-  padding: 20px;
+  padding: ${spacingSizes.defaultHorizontalMargin};
   position: absolute;
   bottom: 0;
 `;
