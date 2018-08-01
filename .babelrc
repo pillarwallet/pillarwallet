@@ -1,14 +1,27 @@
 {
-  "presets": ["babel-preset-expo", "react-native-dotenv"],
+  "presets": [
+    "babel-preset-react-native-stage-0/decorator-support",
+    "react-native-dotenv"
+  ],
   "plugins": [
-    ["module-resolver", {
-      "root": ["./src"]
-    }],
-    ["babel-plugin-styled-components"]
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ]
+      }
+    ],
+    [
+      "babel-plugin-styled-components"
+    ]
   ],
   "env": {
     "development": {
-      "plugins": ["transform-react-jsx-source", "babel-plugin-styled-components"]
+      "plugins": [
+        "transform-react-jsx-source",
+        "babel-plugin-styled-components"
+      ]
     }
   }
 }

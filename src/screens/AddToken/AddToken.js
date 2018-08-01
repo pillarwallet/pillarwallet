@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Image as ImageCache } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
@@ -18,7 +19,6 @@ import {
 } from 'actions/assetsActions';
 import { ETH } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { Image as ImageCache } from 'react-native-expo-image-cache';
 
 const TokenName = styled(BoldText)`
   font-size: ${fontSizes.small};

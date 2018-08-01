@@ -1,7 +1,7 @@
 // @flow
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
-import BCX from 'blockchain-explorer-sdk';
+// import BCX from 'blockchain-explorer-sdk';
 import {
   SDK_PROVIDER,
   BCX_URL,
@@ -22,6 +22,9 @@ type BalancePayload = {
   address: string,
   assets: Asset[],
 };
+
+function BCX() { }
+BCX.prototype.txHistory = function () { return Promise.resolve(); };
 
 const BCXSdk = new BCX({ apiUrl: BCX_URL });
 

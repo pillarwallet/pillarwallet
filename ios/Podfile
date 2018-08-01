@@ -1,19 +1,9 @@
 source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '9.0'
 
-target 'pillar-wallet' do
+target 'pillarwallet' do
   pod 'Fabric', '~> 1.7.5'
-  # pod 'Crashlytics', '~> 3.10.4' ExpoKit contains Crashalytics 3.8
-
-  pod 'ExpoKit',
-    :git => "http://github.com/expo/expo.git",
-    :tag => "ios/2.6.8",
-    :subspecs => [
-      "Core",
-      "CPP",
-      "GL"
-    ],
-    :inhibit_warnings => true
+  pod 'Crashlytics', '~> 3.10.4'
 
   pod 'React',
     :path => "../node_modules/react-native",

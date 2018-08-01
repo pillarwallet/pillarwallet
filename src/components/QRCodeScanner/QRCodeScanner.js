@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Vibration, Animated, Dimensions, Platform } from 'react-native';
-import { Camera, Permissions } from 'expo';
+// import { Camera, Permissions } from 'expo';
 import { noop } from 'utils/common';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
@@ -40,14 +40,9 @@ const QRCodeScannerHeader = styled(Header)`
   z-index: 4;
 `;
 
-const Scanner = styled(Camera)`
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+const Scanner = styled.View`
+  alignItems: center;
+  justifyContent: center;
 `;
 
 const RectangleContainer = styled.View`
@@ -135,10 +130,10 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   }
 
   async askPermissions() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({
-      authorizationState: status.toUpperCase() === PERMISSION_GRANTED ? AUTHORIZED : DECLINED,
-    });
+    // const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    // this.setState({
+    //   authorizationState: status.toUpperCase() === PERMISSION_GRANTED ? AUTHORIZED : DECLINED,
+    // });
   }
 
   handleQRRead = (data: Object) => {
