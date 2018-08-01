@@ -4,7 +4,6 @@ import Storage from 'services/storage';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS } from 'constants/assetsConstants';
-import { UPDATE_USER, REGISTERED, PENDING } from 'constants/userConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 
@@ -29,20 +28,5 @@ export const initAppAndRedirectAction = () => {
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
-  };
-};
-
-export const fetchUserAction = () => {
-  return async (dispatch: Function) => {
-    let { user } = await storage.get('user');
-    user = user || {};
-    const userState = user.walletId ? REGISTERED : PENDING;
-    dispatch({
-      type: UPDATE_USER,
-      payload: {
-        user,
-        state: userState,
-      },
-    });
   };
 };

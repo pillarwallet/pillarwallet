@@ -26,7 +26,6 @@ class SetWalletPinCode extends React.Component<Props, State> {
 
   handlePinSubmit = (pin: string) => {
     const validationError = validatePin(pin);
-
     if (validationError) {
       this.setState({
         error: validationError,

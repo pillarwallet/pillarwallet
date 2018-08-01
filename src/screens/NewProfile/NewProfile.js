@@ -6,11 +6,10 @@ import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
-import { LEGAL_TERMS } from 'constants/navigationConstants';
+import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { updateLocalUserAction } from 'actions/userActions';
 import { validateUserDetailsAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
@@ -80,7 +79,6 @@ const getDefaultFormOptions = (inputDisabled: boolean) => ({
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  updateUser: Function,
   validateUserDetails: Function,
   resetWalletState: Function,
   walletState: ?string,
@@ -155,7 +153,7 @@ class NewProfile extends React.Component<Props, State> {
           },
         },
       });
-      this.setState({ formOptions: options });// eslint-disable-line
+      this.setState({ formOptions: options }); // eslint-disable-line
     }
 
     if (walletState === USERNAME_OK) {
@@ -174,10 +172,12 @@ class NewProfile extends React.Component<Props, State> {
     const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
     const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
     const isUsernameValid = value && value.username && value.username.length > 0;
-
     return (
       <Container>
-        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} />
+        <Header
+          title="choose your username"
+          onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
+        />
         <ScrollWrapper regularPadding>
           <LoginForm
             innerRef={node => { this._form = node; }}
@@ -207,7 +207,6 @@ class NewProfile extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet: { walletState, onboarding: { apiUser } } }) => ({ walletState, apiUser });
 
 const mapDispatchToProps = (dispatch) => ({
-  updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
 });
 
