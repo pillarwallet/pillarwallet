@@ -108,6 +108,7 @@ apply from: 'expo.gradle'
 
 dependencies {
     compile project(':react-native-vector-icons')
+    compile project(':lottie-react-native')
     compile project(':rn-signal-protocol-messaging')
     compile project(':react-native-intercom')
     compile project(':react-native-udp')

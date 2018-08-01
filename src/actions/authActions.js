@@ -12,6 +12,7 @@ import {
   DECRYPTED,
 } from 'constants/walletConstants';
 import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
+import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { delay } from 'utils/common';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
@@ -21,7 +22,7 @@ import firebase from 'react-native-firebase';
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const checkPinAction = (pin: string, onValidPin?: Function) => {
+export const loginAction = (pin: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
@@ -33,7 +34,14 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
     try {
       const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       api.init(wallet.privateKey);
-      const { user } = await storage.get('user');
+
+      const { user = {} } = await storage.get('user');
+      const userState = user.walletId ? REGISTERED : PENDING;
+      dispatch({
+        type: UPDATE_USER,
+        payload: { user, state: userState },
+      });
+
       await chat.init({
         username: user.username,
         password: generateChatPassword(wallet.privateKey),
@@ -41,15 +49,11 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
       const fcmToken = await firebase.messaging().getToken();
       await chat.client.registerAccount().catch(() => null);
       await chat.client.setFcmId(fcmToken).catch(() => null);
+
       dispatch({
         type: DECRYPT_WALLET,
         payload: wallet,
       });
-
-      if (onValidPin) {
-        onValidPin();
-        return;
-      }
 
       const navigateToAssetsAction = NavigationActions.navigate({
         routeName: APP_FLOW,
@@ -58,6 +62,33 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
       });
 
       dispatch(navigateToAssetsAction);
+    } catch (e) {
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: INVALID_PASSWORD,
+      });
+    }
+  };
+};
+
+export const checkPinAction = (pin: string, onValidPin?: Function) => {
+  return async (dispatch: Function) => {
+    const { wallet: encryptedWallet } = await storage.get('wallet');
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: DECRYPTING,
+    });
+    await delay(100);
+    const saltedPin = getSaltedPin(pin);
+    try {
+      const wallet = await ethers.Wallet.fromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      dispatch({
+        type: DECRYPT_WALLET,
+        payload: wallet,
+      });
+      if (onValidPin) {
+        onValidPin();
+      }
     } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,

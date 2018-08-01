@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Image, ActivityIndicator, Platform } from 'react-native';
+import { View, Image, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -25,6 +25,7 @@ import {
   getExistingChatsAction,
   resetUnreadAction,
 } from 'actions/chatActions';
+import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
@@ -353,11 +354,7 @@ class ChatScreen extends React.Component<Props, State> {
           <Wrapper fullScreen flex={1}>
             {!!this.state.isFetching &&
             <View style={{ flex: 1, alignItems: 'center' }}>
-              <ActivityIndicator
-                animating
-                color="#111"
-                size="large"
-              />
+              <Spinner />
             </View>}
             {!this.state.isFetching &&
             <GiftedChat
