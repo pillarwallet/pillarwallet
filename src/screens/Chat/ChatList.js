@@ -41,9 +41,9 @@ class ChatListScreen extends React.Component<Props, State> {
 
   renderItem = ({ item: contact }: Object) => {
     const { chats } = this.props;
-    const emptyState = { content: 'Start New Conversation', username: contact.username };
-    const existingChat = chats.find(({ username }) => contact.username === username) || {};
-    const lastMessage = !Object.keys(existingChat).length ? existingChat.lastMessage : emptyState;
+
+    const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
+    const { lastMessage, unread } = chatWithContact;
 
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
@@ -52,15 +52,15 @@ class ChatListScreen extends React.Component<Props, State> {
       const hours = (`0${dateSent.getHours()}`).slice(-2);
       timeSent = `${hours}:${minutes}`; // HH:mm
     }
-    const newMessageCopy = existingChat.unread > 1 ? 'New Messages' : 'New Message';
+    const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
 
     return (
       <ChatListItem
         userName={contact.username}
         avatar={contact.avatar}
-        message={existingChat.unread ? newMessageCopy : lastMessage.content}
+        message={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
-        unreadCount={existingChat.unread}
+        unreadCount={unread}
         onPress={() => this.handleChatItemClick(contact)}
       />
     );
@@ -85,7 +85,7 @@ class ChatListScreen extends React.Component<Props, State> {
         }}
         >
           <FlatList
-            data={contacts}
+            data={chats}
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}

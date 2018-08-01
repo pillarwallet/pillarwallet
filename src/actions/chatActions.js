@@ -10,18 +10,24 @@ import {
 import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
-
 const chat = new ChatService();
 
 const generateChatInfo = (contacts, chats) => {
   const chatsWithContacts = contacts.map((contact) => {
-    const existingChat = chats.find(({ username }) => contact.username === username) || {};
-    const lastMessage = existingChat.lastMessage || {};
+    const newChat = {
+      content: 'Start new conversation',
+      device: 1,
+      savedTimestamp: '',
+      serverTimestamp: '',
+      username: '',
+    };
 
+    const existingChat = chats.find(({ username }) => contact.username === username) || { lastMessage: newChat };
     const chatInfo = {
-      lastMessage,
+      lastMessage: existingChat.lastMessage,
       username: contact.username,
     };
+
     return chatInfo;
   });
   return chatsWithContacts;
@@ -31,11 +37,8 @@ export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
     const { contacts } = await storage.get('contacts');
-
-    if (!contacts.length) return;
-
+    if (!contacts) return;
     const messagesOfContacts = generateChatInfo(contacts, chats);
-
     await chat.client.getUnreadMessagesCount().then((response) => {
       const unread = JSON.parse(response);
       messagesOfContacts.map((item) => {
@@ -55,11 +58,8 @@ export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
     const { contacts } = await storage.get('contacts');
-
-    if (!contacts.length) return;
-
+    if (!contacts) return;
     const messagesOfContacts = generateChatInfo(contacts, chats);
-
     await chat.client.getUnreadMessagesCount().then((response) => {
       const unread = JSON.parse(response);
       messagesOfContacts.map((item) => {

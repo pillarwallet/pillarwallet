@@ -224,19 +224,20 @@ class PeopleScreen extends React.Component<Props> {
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
 
     const currentTime = Math.floor(new Date().getTime() / 1000);
+
     const chatNotifications = chats.chats
       .map((
         {
           username,
           lastMessage,
           profileImage,
-          unread,
         }) => {
-        if (!Object.keys(lastMessage).length) return {};
+        if (lastMessage.content === '') return {};
         return {
+          content: lastMessage.content,
           username,
           type: 'CHAT',
-          createdAt: unread ? currentTime : lastMessage.savedTimestamp || currentTime,
+          createdAt: Object.keys(lastMessage).length ? lastMessage.savedTimestamp : currentTime,
           onPress: () => this.toChat({ username, profileImage }),
         };
       });

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, StatusBar, Image, ActivityIndicator } from 'react-native';
+import { View, Image, ActivityIndicator, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -19,7 +19,12 @@ import {
 import { baseColors } from 'utils/variables';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
-import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
+import {
+  sendMessageByContactAction,
+  getChatByContactAction,
+  getExistingChatsAction,
+  resetUnreadAction,
+} from 'actions/chatActions';
 import { getUserName } from 'utils/contacts';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
@@ -32,16 +37,27 @@ type Props = {
   messages: Object,
   notifications: Object,
   isFetching: boolean,
+  getExistingChats: Function,
+  resetUnread: Function,
+  contact: Object,
+  chats: any,
 }
 
 type State = {
   contact: Object,
   showLoadEarlierButton: boolean,
+  isFetching: boolean,
 }
 
 class ChatScreen extends React.Component<Props, State> {
   handleChatDismissal = () => {
-    const { navigation } = this.props;
+    const {
+      navigation,
+      getExistingChats,
+      resetUnread,
+    } = this.props;
+    getExistingChats();
+    resetUnread(this.state.contact.username);
     navigation.goBack(null);
   };
 
@@ -51,22 +67,28 @@ class ChatScreen extends React.Component<Props, State> {
     this.state = {
       contact,
       showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
+      isFetching: true,
     };
   }
 
   componentDidMount() {
-    StatusBar.setBarStyle('dark-content');
     const { contact } = this.state;
     const { getChatByContact } = this.props;
     getChatByContact(contact.username, contact.profileImage);
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { notifications, getChatByContact } = this.props;
+    const { chats, getChatByContact, isFetching } = this.props;
     const { contact } = this.state;
-    const { notifications: prevNotifications } = prevProps;
-    if (notifications.length !== prevNotifications.length) {
+    const { chats: prevChats } = prevProps;
+    const chatWithContact = chats.find(({ username }) => contact.username === username);
+    const prevChatWithContact = prevChats.find(({ username }) => contact.username === username);
+    if (chatWithContact.unread !== prevChatWithContact.unread) {
       getChatByContact(contact.username, contact.profileImage);
+    }
+
+    if (this.state.isFetching && !isFetching) {
+      this.setState({ isFetching: false }); // eslint-disable-line
     }
   }
 
@@ -146,6 +168,21 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   renderComposer = (props: Props) => {
+    if (Platform.OS === 'ios') {
+      return (
+        <Composer
+          {...props}
+          textInputStyle={{
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+
+            marginLeft: 0,
+            paddingTop: 4,
+          }}
+        />
+      );
+    }
+
     return (
       <View style={{
         flex: 1,
@@ -154,7 +191,7 @@ class ChatScreen extends React.Component<Props, State> {
         borderRadius: 26,
         marginRight: 10,
         marginTop: 3,
-        marginBottom: 3,
+        marginBottom: 6,
         alignItems: 'flex-start',
         justifyContent: 'center',
         minHeight: 40,
@@ -171,6 +208,7 @@ class ChatScreen extends React.Component<Props, State> {
             width: '100%',
             margin: 0,
           }}
+          multiline
         />
       </View>
     );
@@ -185,7 +223,7 @@ class ChatScreen extends React.Component<Props, State> {
           alignItems: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          height: 54,
+          height: Platform.OS === 'ios' ? 44 : 54,
         }}
       >
         <Image
@@ -200,6 +238,30 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   renderInputToolbar = (props: Props) => {
+    if (Platform.OS === 'ios') {
+      return (
+        <InputToolbar
+          {...props}
+          renderSend={this.renderSend}
+          primaryStyle={{
+            justifyContent: 'center',
+          }}
+          containerStyle={{
+            bottom: 2,
+            borderWidth: 1,
+            borderTopWidth: 1,
+            borderTopColor: '#e6e8eb',
+            borderColor: '#e6e8eb',
+            borderRadius: 20,
+            paddingLeft: 10,
+            marginRight: 10,
+            marginLeft: 10,
+          }}
+          // renderAccessory={this.renderSend()}
+        />
+      );
+    }
+
     return (
       <InputToolbar
         {...props}
@@ -280,7 +342,7 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { messages, isFetching } = this.props;
+    const { messages } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const title = `chat with ${getUserName(contact).toLowerCase()}`;
 
@@ -289,7 +351,7 @@ class ChatScreen extends React.Component<Props, State> {
         <Container>
           <Header title={title} onClose={this.handleChatDismissal} />
           <Wrapper fullScreen flex={1}>
-            {!!isFetching &&
+            {!!this.state.isFetching &&
             <View style={{ flex: 1, alignItems: 'center' }}>
               <ActivityIndicator
                 animating
@@ -297,7 +359,7 @@ class ChatScreen extends React.Component<Props, State> {
                 size="large"
               />
             </View>}
-            {!isFetching &&
+            {!this.state.isFetching &&
             <GiftedChat
               messages={messages[contact.username]}
               onSend={msgs => this.onSend(msgs)}
@@ -325,18 +387,19 @@ class ChatScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  chat: { data: { messages, isFetching } },
-  notifications: { data: notifications },
+  chat: { data: { messages, isFetching, chats } },
 }) => ({
   user,
   messages,
   isFetching,
-  notifications,
+  chats,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   sendMessageByContact: (username, message) => dispatch(sendMessageByContactAction(username, message)),
   getChatByContact: (username, avatar, loadEarlier) => dispatch(getChatByContactAction(username, avatar, loadEarlier)),
+  getExistingChats: () => dispatch(getExistingChatsAction()),
+  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);

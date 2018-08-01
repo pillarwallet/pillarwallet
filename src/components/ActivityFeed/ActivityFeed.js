@@ -18,6 +18,7 @@ import {
 } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { CHAT } from 'constants/chatConstants';
+import { connect } from 'react-redux';
 
 const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
 const TRANSACTION_SENT = 'TRANSACTION_SENT';
@@ -132,6 +133,7 @@ type Props = {
   onCancelInvitation: Function,
   onRejectInvitation: Function,
   walletAddress: string,
+  notifications: Object
 }
 
 type State = {
@@ -140,7 +142,7 @@ type State = {
   esBody: string,
 }
 
-export default class ActivityFeed extends React.Component<Props, State> {
+class ActivityFeed extends React.Component<Props, State> {
   state = {
     activeTab: 'ALL',
     esTitle: 'Make your first step',
@@ -260,7 +262,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
 
   render() {
     const { activeTab, esTitle, esBody } = this.state;
-    const { history } = this.props;
+    const { history, notifications } = this.props;
     const filteredHistory = history.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
         return type === TRANSACTION_EVENT;
@@ -313,8 +315,9 @@ export default class ActivityFeed extends React.Component<Props, State> {
         </TabWrapper>
         <FlatList
           data={filteredHistory}
+          extraData={notifications}
           renderItem={this.renderActivityFeedItem}
-          keyExtractor={({ createdAt }) => createdAt.toString()}
+          keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{ height: '100%' }}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
         />
@@ -322,3 +325,11 @@ export default class ActivityFeed extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = ({
+  notifications: { data: notifications },
+}) => ({
+  notifications,
+});
+
+export default connect(mapStateToProps)(ActivityFeed);

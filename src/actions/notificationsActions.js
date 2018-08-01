@@ -2,6 +2,7 @@
 
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
+
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -83,10 +84,9 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type === SIGNAL) {
-        dispatch({ type: ADD_NOTIFICATION, payload: notification });
-
         dispatch({ type: SIGNAL, payload: { message } });
         dispatch(getExistingChatsAction());
+        dispatch({ type: ADD_NOTIFICATION, payload: notification });
       }
     });
   };
