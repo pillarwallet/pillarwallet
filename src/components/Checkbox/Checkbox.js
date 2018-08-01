@@ -59,7 +59,7 @@ export default class Checkbox extends React.Component<Props, State> {
       this.setState({
         checked: !checked,
       },
-      () => onPress(checked),
+      () => onPress(!checked),
       );
 
       if (checked) {
