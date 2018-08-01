@@ -143,7 +143,7 @@ type Props = {
   homeNotifications: Object[],
 };
 
-class PeopleScreen extends React.Component<Props> {
+class HomeScreen extends React.Component<Props> {
   goToProfile = () => {
     const { navigation } = this.props;
     navigation.navigate(PROFILE);
@@ -333,4 +333,4 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

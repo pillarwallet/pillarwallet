@@ -2,13 +2,13 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
+import { TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, spacingSizes } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 
@@ -44,8 +44,12 @@ const NOTIFICATION_LABELS = {
   [TRANSACTION_SENT]: 'Sent',
 };
 
+
+const ActivityFeedList = styled.FlatList`
+  background: pink;
+`;
+
 const ActivityFeedWrapper = styled.View`
-  height: 100%;
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -63,16 +67,16 @@ const ActivityFeedItem = styled.View`
 
 const ActivityFeedItemLabel = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.extraExtraSmall};
   margin-bottom: 2px;
 `;
 
 const ActivityFeedItemName = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
 `;
 
-const ActivityFeedItemAmount = styled(BoldText)`
-  font-size: ${fontSizes.extraSmall};
+const ActivityFeedItemAmount = styled(BaseText)`
+  font-size: ${fontSizes.small};
   color: ${props => props.received ? baseColors.jadeGreen : baseColors.fireEngineRed};
 `;
 
@@ -83,9 +87,10 @@ const ActivityFeedItemCol = styled.View`
   justify-content: center;
 `;
 
-const TabWrapper = styled.View`
+const TabWrapper = styled.ScrollView`
   flex-direction: row;
-  margin: 10px 16px 10px;
+  background-color: ${baseColors.white};
+  padding: 10px 16px 10px;
 `;
 
 const TabItem = styled.TouchableOpacity`
@@ -221,20 +226,20 @@ export default class ActivityFeed extends React.Component<Props, State> {
       const directionSymbol = isReceived ? '+' : '-';
       const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
-      const title = notification.username || `${address.slice(0, 7)}…${address.slice(-7)}`;
+      const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? iconDown : iconUp;
       return (
         <ActivityFeedItem isEven={isEven} key={index}>
-          <ActivityFeedItemCol fixedWidth="44px">
-            <Image source={directionIcon} style={{ width: 36, height: 36 }} />
+          <ActivityFeedItemCol fixedWidth="50px">
+            <Image source={directionIcon} style={{ width: 40, height: 40 }} />
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol fixedWidth="150px">
+          <ActivityFeedItemCol>
             <ActivityFeedItemName>{title}</ActivityFeedItemName>
             <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol flexEnd>
+          <ActivityFeedItemCol fixedWidth="120px" flexEnd>
             <ActivityFeedItemAmount received={isReceived}>
-              {directionSymbol}{value} {notification.asset}
+              {directionSymbol} {value} {notification.asset}
             </ActivityFeedItemAmount>
           </ActivityFeedItemCol>
         </ActivityFeedItem>
@@ -242,11 +247,11 @@ export default class ActivityFeed extends React.Component<Props, State> {
     }
     return (
       <ActivityFeedItem isEven={isEven} key={index}>
-        <ActivityFeedItemCol fixedWidth="44px">
+        <ActivityFeedItemCol fixedWidth="50px">
           <ProfileImage
             uri={notification.avatar}
             userName={notification.username}
-            diameter={36}
+            diameter={40}
             textStyle={{ fontSize: 14 }}
           />
         </ActivityFeedItemCol>
@@ -273,12 +278,14 @@ export default class ActivityFeed extends React.Component<Props, State> {
       }
       return true;
     });
+
+
     return (
       <ActivityFeedWrapper>
         <ActivityFeedHeader>
           <Title subtitle title="your activity." />
         </ActivityFeedHeader>
-        <TabWrapper>
+        <TabWrapper horizontal>
           <TabItem
             active={activeTab === ALL}
             onPress={() => this.setState({
@@ -287,7 +294,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
               esBody: 'Your activity will appear here.',
             })}
           >
-            <TabItemIcon active={activeTab === ALL} name="chat" />
+            <TabItemIcon active={activeTab === ALL} name="all" />
             <TabItemText active={activeTab === ALL}>All</TabItemText>
           </TabItem>
           <TabItem
@@ -298,7 +305,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
               esBody: 'Your transactions will appear here. Send or receive tokens to start.',
             })}
           >
-            <TabItemIcon active={activeTab === TRANSACTIONS} name="settings" />
+            <TabItemIcon active={activeTab === TRANSACTIONS} name="send" />
             <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
           </TabItem>
           <TabItem
@@ -309,21 +316,21 @@ export default class ActivityFeed extends React.Component<Props, State> {
               esBody: 'Information on your connections will appear here. Send a connection request to start.',
             })}
           >
-            <TabItemIcon active={activeTab === SOCIAL} name="warning" />
+            <TabItemIcon active={activeTab === SOCIAL} name="social" />
             <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
           </TabItem>
           <TabItem
             onPress={() => this.openMoreFilterOptions}
           >
-            <TabItemIcon active={activeTab === SOCIAL} name="help" />
+            <TabItemIcon active={activeTab === SOCIAL} name="warning" />
           </TabItem>
         </TabWrapper>
-        <FlatList
+        <ActivityFeedList
           data={filteredHistory}
           renderItem={this.renderActivityFeedItem}
           keyExtractor={({ createdAt }) => createdAt.toString()}
-          contentContainerStyle={{ height: '100%' }}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
+          stickyHeaderIndices={[0]}
         />
       </ActivityFeedWrapper>
     );
