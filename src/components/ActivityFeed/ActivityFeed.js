@@ -41,9 +41,7 @@ const TRANSACTIONS = 'TRANSACTIONS';
 const SOCIAL = 'SOCIAL';
 
 
-const ActivityFeedList = styled.FlatList`
-  background: pink;
-`;
+const ActivityFeedList = styled.FlatList``;
 
 const ActivityFeedWrapper = styled.View`
 `;
@@ -255,7 +253,7 @@ export default class ActivityFeed extends React.Component<Props> {
         <ActivityFeedList
           data={filteredHistory}
           renderItem={this.renderActivityFeedItem}
-          keyExtractor={({ createdAt }) => createdAt.toString()}
+          // keyExtractor={({ createdAt }) => createdAt.toString()}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
           stickyHeaderIndices={[0]}
         />

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
@@ -60,6 +60,7 @@ const ALL = 'ALL';
 
 const HomeHeader = styled.View`
   padding: 0 16px;
+  margin-top: ${Platform.OS === 'android' ? '20px' : 0};
 `;
 
 const HomeHeaderRow = styled.View`
@@ -286,10 +287,12 @@ class HomeScreen extends React.Component<Props, State> {
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory]
       .sort((a, b) => b.createdAt - a.createdAt);
+    const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
+
     return (
       <Container>
         <ScrollWrapper
-          stickyHeaderIndices={[3]}
+          stickyHeaderIndices={stickyHeaderIndices}
           refreshControl={
             <RefreshControl
               refreshing={false}
