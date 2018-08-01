@@ -4,10 +4,9 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors, spacingSizes } from 'utils/variables';
+import { fontSizes, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
-import Title from 'components/Title';
-import Icon from 'components/Icon';
+
 import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
@@ -29,9 +28,7 @@ const SOCIAL_TYPES = [
   TYPE_SENT,
 ];
 
-const TRANSACTIONS = 'TRANSACTIONS';
-const SOCIAL = 'SOCIAL';
-const ALL = 'ALL';
+
 const iconUp = require('assets/icons/up.png');
 const iconDown = require('assets/icons/down.png');
 
@@ -44,16 +41,15 @@ const NOTIFICATION_LABELS = {
   [TRANSACTION_SENT]: 'Sent',
 };
 
+const TRANSACTIONS = 'TRANSACTIONS';
+const SOCIAL = 'SOCIAL';
+
 
 const ActivityFeedList = styled.FlatList`
   background: pink;
 `;
 
 const ActivityFeedWrapper = styled.View`
-`;
-
-const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacingSizes.defaultHorizontalSideSpacing}px;
 `;
 
 const ActivityFeedItem = styled.View`
@@ -87,33 +83,6 @@ const ActivityFeedItemCol = styled.View`
   justify-content: center;
 `;
 
-const TabWrapper = styled.ScrollView`
-  flex-direction: row;
-  background-color: ${baseColors.white};
-  padding: 10px 16px 10px;
-`;
-
-const TabItem = styled.TouchableOpacity`
-  height: 32px;
-  padding: 0 15px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
-  border-radius: 16px;
-  flex-direction: row;
-`;
-
-const TabItemIcon = styled(Icon)`
-  font-size: ${fontSizes.extraSmall};
-  margin-right: 5px;
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
-`;
-
-const TabItemText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
-`;
-
 const ActionCircleButton = styled(ButtonIcon)`
   height: 34px;
   width: 34px;
@@ -143,21 +112,12 @@ type Props = {
   onCancelInvitation: Function,
   onRejectInvitation: Function,
   walletAddress: string,
-}
-
-type State = {
   activeTab: string,
   esTitle: string,
   esBody: string,
 }
 
-export default class ActivityFeed extends React.Component<Props, State> {
-  state = {
-    activeTab: 'ALL',
-    esTitle: 'Make your first step',
-    esBody: 'Your activity will appear here.',
-  };
-
+export default class ActivityFeed extends React.Component<Props> {
   getSocialAction = (type: string, notification: Object) => {
     const {
       onCancelInvitation,
@@ -211,10 +171,6 @@ export default class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
-  openMoreFilterOptions = () => {
-    // Three dots link in filter tab bar logic should go here
-  }
-
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const isEven = index % 2;
     const { type } = notification;
@@ -267,8 +223,9 @@ export default class ActivityFeed extends React.Component<Props, State> {
   };
 
   render() {
-    const { activeTab, esTitle, esBody } = this.state;
-    const { history } = this.props;
+    const {
+      history, activeTab, esTitle, esBody,
+    } = this.props;
     const filteredHistory = history.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
         return type === TRANSACTION_EVENT;
@@ -282,49 +239,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
 
     return (
       <ActivityFeedWrapper>
-        <ActivityFeedHeader>
-          <Title subtitle title="your activity." />
-        </ActivityFeedHeader>
-        <TabWrapper horizontal>
-          <TabItem
-            active={activeTab === ALL}
-            onPress={() => this.setState({
-              activeTab: ALL,
-              esTitle: 'Make your first step',
-              esBody: 'Your activity will appear here.',
-            })}
-          >
-            <TabItemIcon active={activeTab === ALL} name="all" />
-            <TabItemText active={activeTab === ALL}>All</TabItemText>
-          </TabItem>
-          <TabItem
-            active={activeTab === TRANSACTIONS}
-            onPress={() => this.setState({
-              activeTab: TRANSACTIONS,
-              esTitle: 'Make your first step',
-              esBody: 'Your transactions will appear here. Send or receive tokens to start.',
-            })}
-          >
-            <TabItemIcon active={activeTab === TRANSACTIONS} name="send" />
-            <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
-          </TabItem>
-          <TabItem
-            active={activeTab === SOCIAL}
-            onPress={() => this.setState({
-              activeTab: SOCIAL,
-              esTitle: 'Make your first step',
-              esBody: 'Information on your connections will appear here. Send a connection request to start.',
-            })}
-          >
-            <TabItemIcon active={activeTab === SOCIAL} name="social" />
-            <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
-          </TabItem>
-          <TabItem
-            onPress={() => this.openMoreFilterOptions}
-          >
-            <TabItemIcon active={activeTab === SOCIAL} name="warning" />
-          </TabItem>
-        </TabWrapper>
+
         <ActivityFeedList
           data={filteredHistory}
           renderItem={this.renderActivityFeedItem}

@@ -18,6 +18,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import ButtonIcon from 'components/ButtonIcon';
+import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { baseColors, fontSizes, spacingSizes } from 'utils/variables';
@@ -29,6 +30,33 @@ import {
 } from 'actions/invitationsActions';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+
+type Props = {
+  navigation: NavigationScreenProp<*>,
+  contacts: Object[],
+  invitations: Object[],
+  historyNotifications: Object[],
+  history: Object[],
+  user: Object,
+  wallet: Object,
+  fetchTransactionsHistoryNotifications: Function,
+  fetchInviteNotifications: Function,
+  fetchTransactionsHistory: Function,
+  acceptInvitation: Function,
+  cancelInvitation: Function,
+  rejectInvitation: Function,
+  homeNotifications: Object[],
+};
+
+type State = {
+  activeTab: string,
+  esTitle: string,
+  esBody: string,
+}
+
+const TRANSACTIONS = 'TRANSACTIONS';
+const SOCIAL = 'SOCIAL';
+const ALL = 'ALL';
 
 const HomeHeader = styled.View`
   padding: 0 16px;
@@ -114,6 +142,36 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
   elevation: 4
 `;
 
+const TabWrapper = styled.View`
+  padding: 10px 16px 10px;
+  background: ${baseColors.white};
+`;
+
+const TabWrapperScrollView = styled.ScrollView`
+  flex-direction: row;
+`;
+
+const TabItem = styled.TouchableOpacity`
+  height: 32px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
+  border-radius: 16px;
+  flex-direction: row;
+`;
+
+const TabItemIcon = styled(Icon)`
+  font-size: ${fontSizes.extraSmall};
+  margin-right: 5px;
+  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
+`;
+
+const TabItemText = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall};
+  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
+`;
+
 const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${baseColors.darkGray};
@@ -126,24 +184,17 @@ const EmptyStateWrapper = styled.View`
   margin: 6px 0 8px 0;
 `;
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  contacts: Object[],
-  invitations: Object[],
-  historyNotifications: Object[],
-  history: Object[],
-  user: Object,
-  wallet: Object,
-  fetchTransactionsHistoryNotifications: Function,
-  fetchInviteNotifications: Function,
-  fetchTransactionsHistory: Function,
-  acceptInvitation: Function,
-  cancelInvitation: Function,
-  rejectInvitation: Function,
-  homeNotifications: Object[],
-};
+const ActivityFeedHeader = styled.View`
+  padding: 0 ${spacingSizes.defaultHorizontalSideSpacing}px;
+`;
 
-class HomeScreen extends React.Component<Props> {
+
+class HomeScreen extends React.Component<Props, State> {
+  state = {
+    activeTab: 'ALL',
+    esTitle: 'Make your first step',
+    esBody: 'Your activity will appear here.',
+  }
   goToProfile = () => {
     const { navigation } = this.props;
     navigation.navigate(PROFILE);
@@ -214,6 +265,10 @@ class HomeScreen extends React.Component<Props> {
     return uniqBy(concatedHistory, 'txHash');
   }
 
+  openMoreFilterOptions = () => {
+    // Three dots link in filter tab bar logic should go here
+  }
+
   render() {
     const {
       user,
@@ -226,49 +281,15 @@ class HomeScreen extends React.Component<Props> {
       history,
       wallet: { address: walletAddress },
     } = this.props;
+    const { activeTab, esBody, esTitle } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory]
       .sort((a, b) => b.createdAt - a.createdAt);
     return (
       <Container>
-        <HomeHeader>
-          <HomeHeaderRow>
-            <HomeHeaderLeft>
-              <HomeHeaderButton
-                icon="help"
-                color={baseColors.darkGray}
-                fontSize={24}
-                onPress={() => Intercom.displayMessenger()}
-              />
-            </HomeHeaderLeft>
-
-            <HomeHeaderBody>
-              <HomeHeaderProfileImage
-                uri={user.avatar}
-                userName={user.username}
-                diameter={72}
-              />
-            </HomeHeaderBody>
-
-            <HomeHeaderRight>
-              <HomeHeaderButton
-                flexEnd
-                icon="settings"
-                color={baseColors.darkGray}
-                fontSize={24}
-                onPress={() => this.goToProfile()}
-              />
-            </HomeHeaderRight>
-          </HomeHeaderRow>
-          <HomeHeaderRow>
-            <HomeHeaderBody>
-              <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
-              <HomeHeaderPortfolioBalance />
-            </HomeHeaderBody>
-          </HomeHeaderRow>
-        </HomeHeader>
         <ScrollWrapper
+          stickyHeaderIndices={[3]}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -286,6 +307,43 @@ class HomeScreen extends React.Component<Props> {
             />
           }
         >
+          <HomeHeader>
+            <HomeHeaderRow>
+              <HomeHeaderLeft>
+                <HomeHeaderButton
+                  icon="help"
+                  color={baseColors.darkGray}
+                  fontSize={24}
+                  onPress={() => Intercom.displayMessenger()}
+                />
+              </HomeHeaderLeft>
+
+              <HomeHeaderBody>
+                <HomeHeaderProfileImage
+                  uri={user.avatar}
+                  userName={user.username}
+                  diameter={72}
+                />
+              </HomeHeaderBody>
+
+              <HomeHeaderRight>
+                <HomeHeaderButton
+                  flexEnd
+                  icon="settings"
+                  color={baseColors.darkGray}
+                  fontSize={24}
+                  onPress={() => this.goToProfile()}
+                />
+              </HomeHeaderRight>
+            </HomeHeaderRow>
+            <HomeHeaderRow>
+              <HomeHeaderBody>
+                <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
+                <HomeHeaderPortfolioBalance />
+              </HomeHeaderBody>
+            </HomeHeaderRow>
+          </HomeHeader>
+
           <RecentConnectionsWrapper>
             <RecentConnections>
               <RecentConnectionsSubtitle subtitle title="recent connections." />
@@ -296,12 +354,60 @@ class HomeScreen extends React.Component<Props> {
                 </RecentConnectionsScrollView>}
             </RecentConnections>
           </RecentConnectionsWrapper>
+          <ActivityFeedHeader>
+            <Title subtitle title="your activity." />
+          </ActivityFeedHeader>
+          <TabWrapper>
+            <TabWrapperScrollView horizontal>
+              <TabItem
+                active={activeTab === ALL}
+                onPress={() => this.setState({
+                  activeTab: ALL,
+                  esTitle: 'Make your first step',
+                  esBody: 'Your activity will appear here.',
+                })}
+              >
+                <TabItemIcon active={activeTab === ALL} name="all" />
+                <TabItemText active={activeTab === ALL}>All</TabItemText>
+              </TabItem>
+              <TabItem
+                active={activeTab === TRANSACTIONS}
+                onPress={() => this.setState({
+                  activeTab: TRANSACTIONS,
+                  esTitle: 'Make your first step',
+                  esBody: 'Your transactions will appear here. Send or receive tokens to start.',
+                })}
+              >
+                <TabItemIcon active={activeTab === TRANSACTIONS} name="send" />
+                <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
+              </TabItem>
+              <TabItem
+                active={activeTab === SOCIAL}
+                onPress={() => this.setState({
+                  activeTab: SOCIAL,
+                  esTitle: 'Make your first step',
+                  esBody: 'Information on your connections will appear here. Send a connection request to start.',
+                })}
+              >
+                <TabItemIcon active={activeTab === SOCIAL} name="social" />
+                <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
+              </TabItem>
+              <TabItem
+                onPress={() => this.openMoreFilterOptions}
+              >
+                <TabItemIcon active={activeTab === SOCIAL} name="more" />
+              </TabItem>
+            </TabWrapperScrollView>
+          </TabWrapper>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
             history={homeNotifications}
             walletAddress={walletAddress}
+            activeTab={activeTab}
+            esBody={esBody}
+            esTitle={esTitle}
           />
         </ScrollWrapper>
       </Container>
