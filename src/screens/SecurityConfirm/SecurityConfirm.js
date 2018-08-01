@@ -48,7 +48,7 @@ export default class SecurityConfirm extends React.Component<Props, State> {
             You’ll need these words if you lose your device or delete your app.
           </Paragraph>
           <Paragraph light>
-            Write down your backup phrase and  store it in several places only you know.
+            Write down your backup phrase and store it in several places only you know.
             Be very careful when putting it into a digital file or USB stick -
             always encrypt any digital version of these 12 words.
 

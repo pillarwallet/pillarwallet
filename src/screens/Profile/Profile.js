@@ -336,7 +336,7 @@ class Profile extends React.Component<Props, State> {
 
             {wallet.mnemonic && (<ProfileSettingsItem
               key="backupWallet"
-              label="Backup wallet"
+              label="Reveal backup phrase"
               onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
             />)}
 

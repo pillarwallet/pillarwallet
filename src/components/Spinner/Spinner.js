@@ -1,19 +1,32 @@
 // @flow
 import React from 'react';
-import { Animated } from 'react-native';
+import styled from 'styled-components/native';
+import { DangerZone } from 'expo';
 
-type Props = {
+const { Lottie } = DangerZone;
 
-}
+const AnimationWrapper = styled.View``;
 
-type State = {
-  progress: Animated.Value,
-}
+const animationSource = require('./animation.json');
 
-// const animationSource = require('./animation.json');
+export default class Spinner extends React.Component<*> {
+  animation: Lottie
 
-export default class Spinner extends React.Component<Props, State> { // eslint-disable-line
+  componentDidMount() {
+    this.animation.play();
+  }
   render() {
-
+    return (
+      <AnimationWrapper>
+        <Lottie
+          ref={(animation) => {
+            this.animation = animation;
+          }}
+          source={animationSource}
+          style={{ width: 40, height: 40 }}
+          loop
+        />
+      </AnimationWrapper>
+    );
   }
 }

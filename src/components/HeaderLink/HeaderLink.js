@@ -2,8 +2,8 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
+import Spinner from 'components/Spinner';
 import { TextLink } from 'components/Typography';
-import { baseColors } from 'utils/variables';
 
 type Props = {
   children: React.Node,
@@ -12,14 +12,14 @@ type Props = {
   isLoading?: boolean,
 }
 
-const ActivityIndicator = styled.ActivityIndicator`
+const CustomSpinner = styled(Spinner)`
   margin-right: 16px;
 `;
 
 const HeaderLink = (props: Props) => {
   return (
     props.isLoading ?
-      <ActivityIndicator animating color={baseColors.electricBlue} /> :
+      <CustomSpinner /> :
       <TouchableOpacity
         onPress={props.onPress}
         disabled={props.disabled}
