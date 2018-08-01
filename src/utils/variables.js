@@ -23,6 +23,7 @@ export const baseColors = {
   lightGreen: '#82bc40',
   jadeGreen: '#2aa157',
   clearBlue: '#2077fd',
+  offBlue: '#5983b0',
   white: '#ffffff',
   black: '#000000',
 };

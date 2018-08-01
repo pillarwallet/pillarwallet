@@ -2,11 +2,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { TouchableOpacity, Image, Platform } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
-
+import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
@@ -27,10 +27,6 @@ const SOCIAL_TYPES = [
   TYPE_REJECTED,
   TYPE_SENT,
 ];
-
-
-const iconUp = require('assets/icons/up.png');
-const iconDown = require('assets/icons/down.png');
 
 const NOTIFICATION_LABELS = {
   [TYPE_ACCEPTED]: 'New connection',
@@ -59,6 +55,20 @@ const ActivityFeedItem = styled.View`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
+`;
+
+const ActivityFeedDirectionCircle = styled.View`
+  width: 40px;
+  border-radius: 20px;
+  height: 40px;
+  background-color: ${baseColors.lightGray};
+  align-items: center;
+  justify-content: center;
+`;
+
+const ActivityFeedDirectionCircleIcon = styled(Icon)`
+  color: ${baseColors.offBlue};
+  font-size: ${fontSizes.giant};
 `;
 
 const ActivityFeedItemLabel = styled(BaseText)`
@@ -183,11 +193,13 @@ export default class ActivityFeed extends React.Component<Props> {
       const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
       const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
-      const directionIcon = isReceived ? iconDown : iconUp;
+      const directionIcon = isReceived ? 'received' : 'sent';
       return (
         <ActivityFeedItem isEven={isEven} key={index}>
           <ActivityFeedItemCol fixedWidth="50px">
-            <Image source={directionIcon} style={{ width: 40, height: 40 }} />
+            <ActivityFeedDirectionCircle>
+              <ActivityFeedDirectionCircleIcon name={directionIcon} />
+            </ActivityFeedDirectionCircle>
           </ActivityFeedItemCol>
           <ActivityFeedItemCol>
             <ActivityFeedItemName>{title}</ActivityFeedItemName>
