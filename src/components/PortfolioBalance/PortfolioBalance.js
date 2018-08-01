@@ -18,7 +18,8 @@ type Props = {
   assets: Assets,
   rates: Rates,
   baseFiatCurrency: string,
-  label?: string;
+  label?: string,
+  style: Object,
 };
 
 class PortfolioBalance extends React.Component<Props, {}> {
@@ -48,6 +49,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
 
   render() {
     const {
+      style,
       assets,
       rates,
       baseFiatCurrency,
@@ -64,13 +66,13 @@ class PortfolioBalance extends React.Component<Props, {}> {
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
-      <View>
+      <View style={style}>
         {!!label &&
         <BaseText style={{
-          color: baseColors.darkGray,
-          fontSize: fontSizes.small,
-          paddingTop: 10,
-        }}
+            color: baseColors.darkGray,
+            fontSize: fontSizes.small,
+            paddingTop: 10,
+          }}
         >
           {label}
         </BaseText>}

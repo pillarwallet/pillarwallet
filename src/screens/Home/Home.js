@@ -8,7 +8,7 @@ import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Intercom from 'react-native-intercom';
-import { SubHeading, BaseText, BoldText } from 'components/Typography';
+import { SubHeading, BaseText } from 'components/Typography';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { uniqBy } from 'utils/common';
 import { getUserName } from 'utils/contacts';
@@ -30,33 +30,47 @@ import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 const HomeHeader = styled.View`
-  height: 120px;
   padding: 0 16px;
-  align-content: space-between;
   border-bottom-width: 1px;
   border-style: solid;
   border-color: ${UIColors.defaultBorderColor};
 `;
 
 const HomeHeaderRow = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: flex-start;
   flex-direction: row;
 `;
 
-const HomeHeaderUsername = styled(BoldText)`
-  font-size: ${fontSizes.extraLarge};
+const HomeHeaderLeft = styled.View`
+  flex: 0 0 40px;
+  align-items: flex-start;
 `;
 
-const HomeHeaderButtons = styled.View`
-  margin-left: auto;
-  flex-direction: row;
+const HomeHeaderRight = styled.View`
+  flex: 0 0 40px;
   align-items: flex-end;
 `;
 
+
+const HomeHeaderBody = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const HomeHeaderUsername = styled(BaseText)`
+  font-size: ${fontSizes.mediumLarge};
+  margin-bottom: 5px;
+`;
+
 const HomeHeaderButton = styled(ButtonIcon)`
-  margin-left: 10px;
+  align-self: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
+`;
+
+const HomeHeaderProfileImage = styled(ProfileImage)`
+  margin-bottom: 20px;
+`;
+
+const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
+  margin-bottom: 30px;
 `;
 
 const RecentConnections = styled.View`
@@ -67,14 +81,11 @@ const RecentConnections = styled.View`
   border-color: ${UIColors.defaultBorderColor};
 `;
 
-const RecentConnectionsScrollView = styled.ScrollView`
-
-`;
+const RecentConnectionsScrollView = styled.ScrollView``;
 
 const RecentConnectionsSubHeading = styled(SubHeading)`
   margin: 16px;
 `;
-
 
 const RecentConnectionsItem = styled.TouchableOpacity`
   align-items: center;
@@ -216,32 +227,38 @@ class PeopleScreen extends React.Component<Props> {
       <Container>
         <HomeHeader>
           <HomeHeaderRow>
-            <ProfileImage
-              uri={user.avatar}
-              userName={user.username}
-              diameter={42}
-              containerStyle={{
-                marginRight: 10,
-              }}
-            />
-            <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
-            <HomeHeaderButtons>
+            <HomeHeaderLeft>
               <HomeHeaderButton
                 icon="help"
                 color={baseColors.darkGray}
                 fontSize={24}
                 onPress={() => Intercom.displayMessenger()}
               />
+            </HomeHeaderLeft>
+
+            <HomeHeaderBody>
+              <HomeHeaderProfileImage
+                uri={user.avatar}
+                userName={user.username}
+                diameter={72}
+              />
+            </HomeHeaderBody>
+
+            <HomeHeaderRight>
               <HomeHeaderButton
+                flexEnd
                 icon="settings"
                 color={baseColors.darkGray}
                 fontSize={24}
                 onPress={() => this.goToProfile()}
               />
-            </HomeHeaderButtons>
+            </HomeHeaderRight>
           </HomeHeaderRow>
           <HomeHeaderRow>
-            <PortfolioBalance />
+            <HomeHeaderBody>
+              <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
+              <HomeHeaderPortfolioBalance />
+            </HomeHeaderBody>
           </HomeHeaderRow>
         </HomeHeader>
         <ScrollWrapper
@@ -266,9 +283,9 @@ class PeopleScreen extends React.Component<Props> {
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
             {!this.props.contacts.length && this.renderEmptyRCState()}
             {!!this.props.contacts.length &&
-            <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
-              {this.renderRecentConnections()}
-            </RecentConnectionsScrollView>}
+              <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
+                {this.renderRecentConnections()}
+              </RecentConnectionsScrollView>}
           </RecentConnections>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
