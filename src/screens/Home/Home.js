@@ -231,15 +231,18 @@ class PeopleScreen extends React.Component<Props> {
           lastMessage,
           profileImage,
           unread,
-        }) => (
-        {
+        }) => {
+        if (!Object.keys(lastMessage).length) return {};
+        return {
           username,
           type: 'CHAT',
           createdAt: unread ? currentTime : lastMessage.savedTimestamp || currentTime,
           onPress: () => this.toChat({ username, profileImage }),
-        }));
+        };
+      });
 
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
+      .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
     return (
       <Container>

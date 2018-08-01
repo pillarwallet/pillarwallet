@@ -43,7 +43,7 @@ class ChatListScreen extends React.Component<Props, State> {
     const { chats } = this.props;
     const emptyState = { content: 'Start New Conversation', username: contact.username };
     const existingChat = chats.find(({ username }) => contact.username === username) || {};
-    const lastMessage = 'content' in existingChat.lastMessage ? existingChat.lastMessage : emptyState;
+    const lastMessage = !Object.keys(existingChat).length ? existingChat.lastMessage : emptyState;
 
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
