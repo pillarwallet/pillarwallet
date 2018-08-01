@@ -8,7 +8,8 @@ import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Intercom from 'react-native-intercom';
-import { SubHeading, BaseText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
+import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { uniqBy } from 'utils/common';
 import { getUserName } from 'utils/contacts';
@@ -19,7 +20,7 @@ import {
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacingSizes } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -31,9 +32,6 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 const HomeHeader = styled.View`
   padding: 0 16px;
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${UIColors.defaultBorderColor};
 `;
 
 const HomeHeaderRow = styled.View`
@@ -74,17 +72,26 @@ const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
 `;
 
 const RecentConnections = styled.View`
-  min-height: 140px;
-  background-color: ${baseColors.lightGray};
+  min-height: 160px;
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${UIColors.defaultBorderColor};
+  border-color: ${baseColors.duckEggBlue};
 `;
 
-const RecentConnectionsScrollView = styled.ScrollView``;
+const RecentConnectionsWrapper = styled.View`
+  shadow-color: ${baseColors.pigeonPost};
+  shadow-radius: 12px;
+  shadow-opacity: 0.3;
+  shadow-offset: 0px 0px;
+  background-color: ${baseColors.white};
+`;
 
-const RecentConnectionsSubHeading = styled(SubHeading)`
-  margin: 16px;
+const RecentConnectionsScrollView = styled.ScrollView`
+
+`;
+
+const RecentConnectionsSubtitle = styled(Title)`
+  margin-left: ${spacingSizes.defaultHorizontalSideSpacing};
 `;
 
 const RecentConnectionsItem = styled.TouchableOpacity`
@@ -279,14 +286,16 @@ class PeopleScreen extends React.Component<Props> {
             />
           }
         >
-          <RecentConnections>
-            <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
-            {!this.props.contacts.length && this.renderEmptyRCState()}
-            {!!this.props.contacts.length &&
-              <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
-                {this.renderRecentConnections()}
-              </RecentConnectionsScrollView>}
-          </RecentConnections>
+          <RecentConnectionsWrapper>
+            <RecentConnections>
+              <RecentConnectionsSubtitle subtitle title="recent connections." />
+              {!this.props.contacts.length && this.renderEmptyRCState()}
+              {!!this.props.contacts.length &&
+                <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
+                  {this.renderRecentConnections()}
+                </RecentConnectionsScrollView>}
+            </RecentConnections>
+          </RecentConnectionsWrapper>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}

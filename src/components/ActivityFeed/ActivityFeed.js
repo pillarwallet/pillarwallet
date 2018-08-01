@@ -4,9 +4,11 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes, baseColors, spacingSizes } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
-import { SubHeading, BaseText, BoldText } from 'components/Typography';
+import Title from 'components/Title';
+import Icon from 'components/Icon';
+import { BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 
@@ -47,7 +49,7 @@ const ActivityFeedWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 16px 16px 0;
+  padding: 0 ${spacingSizes.defaultHorizontalSideSpacing}px;
 `;
 
 const ActivityFeedItem = styled.View`
@@ -87,17 +89,24 @@ const TabWrapper = styled.View`
 `;
 
 const TabItem = styled.TouchableOpacity`
-  height: 44px;
+  height: 32px;
+  padding: 0 15px;
   align-items: center;
   justify-content: center;
-  flex: ${props => props.flex ? props.flex : 1};
-  border-color: ${props => props.active ? baseColors.electricBlue : baseColors.lightGray};
-  border-bottom-width: 2px;
+  background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
+  border-radius: 16px;
+  flex-direction: row;
+`;
+
+const TabItemIcon = styled(Icon)`
+  font-size: ${fontSizes.extraSmall};
+  margin-right: 5px;
+  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
 `;
 
 const TabItemText = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
+  font-size: ${fontSizes.extraSmall};
+  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
 `;
 
 const ActionCircleButton = styled(ButtonIcon)`
@@ -197,6 +206,10 @@ export default class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
+  openMoreFilterOptions = () => {
+    // Three dots link in filter tab bar logic should go here
+  }
+
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const isEven = index % 2;
     const { type } = notification;
@@ -263,7 +276,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
     return (
       <ActivityFeedWrapper>
         <ActivityFeedHeader>
-          <SubHeading>ACTIVITY</SubHeading>
+          <Title subtitle title="your activity." />
         </ActivityFeedHeader>
         <TabWrapper>
           <TabItem
@@ -273,8 +286,8 @@ export default class ActivityFeed extends React.Component<Props, State> {
               esTitle: 'Make your first step',
               esBody: 'Your activity will appear here.',
             })}
-            flex={1}
           >
+            <TabItemIcon active={activeTab === ALL} name="chat" />
             <TabItemText active={activeTab === ALL}>All</TabItemText>
           </TabItem>
           <TabItem
@@ -284,8 +297,8 @@ export default class ActivityFeed extends React.Component<Props, State> {
               esTitle: 'Make your first step',
               esBody: 'Your transactions will appear here. Send or receive tokens to start.',
             })}
-            flex={1}
           >
+            <TabItemIcon active={activeTab === TRANSACTIONS} name="settings" />
             <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
           </TabItem>
           <TabItem
@@ -295,9 +308,14 @@ export default class ActivityFeed extends React.Component<Props, State> {
               esTitle: 'Make your first step',
               esBody: 'Information on your connections will appear here. Send a connection request to start.',
             })}
-            flex={1}
           >
+            <TabItemIcon active={activeTab === SOCIAL} name="warning" />
             <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
+          </TabItem>
+          <TabItem
+            onPress={() => this.openMoreFilterOptions}
+          >
+            <TabItemIcon active={activeTab === SOCIAL} name="help" />
           </TabItem>
         </TabWrapper>
         <FlatList
