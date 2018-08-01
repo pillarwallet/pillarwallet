@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import { Container, Wrapper, Footer } from 'components/Layout';
-import Title from 'components/Title';
+import type { NavigationScreenProp } from 'react-navigation';
+import Header from 'components/Header';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
@@ -18,6 +19,7 @@ import { fontSizes } from 'utils/variables';
 
 type Props = {
   generateEncryptedWallet: () => Function,
+  navigation: NavigationScreenProp<*>,
 };
 
 type State = {
@@ -106,8 +108,8 @@ class LegalTerms extends React.Component<Props, State> {
 
     return (
       <Container>
+        <Header title="review" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
-          <Title title="review" />
           <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet I understand that:</Paragraph>
           <CheckboxItem marginBottom>
             { this.buildCheckBox('box01', box01) }

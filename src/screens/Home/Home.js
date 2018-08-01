@@ -256,15 +256,13 @@ class PeopleScreen extends React.Component<Props> {
             <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
             <HomeHeaderButtons>
               <HomeHeaderButton
-                icon="question-circle-o"
-                type="FontAwesome"
+                icon="help"
                 color={baseColors.darkGray}
                 fontSize={24}
                 onPress={() => Intercom.displayMessenger()}
               />
               <HomeHeaderButton
-                icon="cog"
-                type="FontAwesome"
+                icon="settings"
                 color={baseColors.darkGray}
                 fontSize={24}
                 onPress={() => this.goToProfile()}
@@ -299,7 +297,7 @@ class PeopleScreen extends React.Component<Props> {
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
             {!this.props.contacts.length && this.renderEmptyRCState()}
             {!!this.props.contacts.length &&
-            <RecentConnectionsScrollView horizontal>
+            <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
               {this.renderRecentConnections()}
             </RecentConnectionsScrollView>}
           </RecentConnections>

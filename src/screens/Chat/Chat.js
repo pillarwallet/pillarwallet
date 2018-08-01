@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { View, StatusBar, Image, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import {
   GiftedChat,
@@ -17,7 +17,7 @@ import {
   Message,
 } from 'react-native-gifted-chat';
 import { baseColors } from 'utils/variables';
-import ModalScreenHeader from 'components/ModalScreenHeader';
+import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
 import { getUserName } from 'utils/contacts';
@@ -287,8 +287,8 @@ class ChatScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <ModalScreenHeader title={title} center onClose={this.handleChatDismissal} />
-          <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
+          <Header title={title} onClose={this.handleChatDismissal} />
+          <Wrapper fullScreen flex={1}>
             {!!isFetching &&
             <View style={{ flex: 1, alignItems: 'center' }}>
               <ActivityIndicator
@@ -316,7 +316,7 @@ class ChatScreen extends React.Component<Props, State> {
               renderMessage={this.renderMessage}
               minInputToolbarHeight={52}
             />}
-          </View>
+          </Wrapper>
         </Container>
       </React.Fragment>
     );

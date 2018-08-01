@@ -1,12 +1,11 @@
 // @flow
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
+import { Root } from 'native-base';
 import styled from 'styled-components/native';
-import Title from 'components/Title';
+import Header from 'components/Header';
 import { SubTitle } from 'components/Typography';
-import ButtonIcon from 'components/ButtonIcon';
-import { Platform, Dimensions, Keyboard } from 'react-native';
+import { Dimensions, Keyboard } from 'react-native';
 
 const { height } = Dimensions.get('window');
 
@@ -39,14 +38,6 @@ const ModalBackground = styled.View`
   ${props => props.fullScreen && 'height: 100%;'}
 `;
 
-const ModalHeader = styled.View`
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  ${props => props.fullScreen && 'padding: 0 20px;'}
-`;
-
 const ModalSubtitle = styled(SubTitle)`
   padding: ${(props) => props.fullScreen ? '20px 20px 0' : '10px 0'};
 `;
@@ -58,13 +49,6 @@ const ModalContent = styled.View`
 const ModalOverflow = styled.View`
   width: 100%;
   background-color: #FFFFFF;
-`;
-
-
-const CloseButton = styled(ButtonIcon)`
-  position: absolute;
-  right: ${(props) => props.fullScreen ? 16 : 0}px;
-  ${Platform.OS === 'ios' && 'top: -10px;'}
 `;
 
 export default class SlideModal extends React.Component<Props, State> {
@@ -115,18 +99,17 @@ export default class SlideModal extends React.Component<Props, State> {
       fullScreen,
       subtitle,
     } = this.props;
-    const animationInTiming = 800;
-    const animationOutTiming = 400;
+    const animationTiming = 600;
     return (
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
         onModalHide={onModalHide}
         onBackdropPress={this.hideModal}
-        animationInTiming={animationInTiming}
-        animationOutTiming={animationOutTiming}
-        animationIn="bounceInUp"
-        animationOut="bounceOutDown"
+        animationInTiming={animationTiming}
+        animationOutTiming={animationTiming}
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
         swipeDirection="down"
         hideModalContentWhileAnimating
         style={{
@@ -135,23 +118,20 @@ export default class SlideModal extends React.Component<Props, State> {
         }}
       >
         <ModalWrapper fullScreen={fullScreen}>
-          <ModalBackground fullScreen={fullScreen}>
-            <ModalHeader fullScreen={fullScreen}>
-              <Title noMargin title={title} />
-              <CloseButton
-                icon="close"
-                onPress={this.hideModal}
-                fontSize={Platform.OS === 'ios' ? 36 : 30}
-                color={baseColors.darkGray}
-                fullScreen={fullScreen}
-              />
-            </ModalHeader>
-            <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
-            <ModalContent fullScreen={fullScreen}>
-              {children}
-            </ModalContent>
-            <ModalOverflow />
-          </ModalBackground>
+          <Root>
+
+            <ModalBackground fullScreen={fullScreen}>
+              {!fullScreen &&
+                <Header noPadding title={title} onClose={this.hideModal} />
+              }
+              <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
+              <ModalContent fullScreen={fullScreen}>
+                {children}
+              </ModalContent>
+              <ModalOverflow />
+            </ModalBackground>
+          </Root>
+
         </ModalWrapper>
         {isVisible && fullScreenComponent}
       </Modal>

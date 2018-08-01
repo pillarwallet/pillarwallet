@@ -30,8 +30,8 @@ const ContainerInner = styled.View`
 
 export const Container = (props: ContainerProps) => {
   return (
-    <ContainerOuter color={props.color}>
-      <ContainerInner color={props.color} center={props.center}>
+    <ContainerOuter color={props.color} forceInset={{ top: 'always' }}>
+      <ContainerInner center={props.center}>
         {props.children}
       </ContainerInner>
     </ContainerOuter>
@@ -41,15 +41,18 @@ export const Container = (props: ContainerProps) => {
 export const Wrapper = styled.View`
   height: ${props => props.fullScreen ? '100%' : 'auto'};
   width: ${props => props.fullScreen ? '100%' : 'auto'};
-  padding: ${props => (props.regularPadding ? '0 16px' : '0')};
+  margin: ${props => (props.regularPadding ? '0 16px' : '0')};
   ${({ center }) => center && `
     align-items: center;
     justify-content: center;
   `}
+  ${({ flex }) => flex && `
+    flex: ${flex};
+  `}
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
-  padding: ${props => (props.regularPadding ? '0 16px' : '0')};
+  margin: ${props => (props.regularPadding ? '0 16px' : '0')};
   background-color: ${props => props.color ? props.color : 'transparent'};
 `;
 

@@ -6,7 +6,7 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import { CHAT } from 'constants/navigationConstants';
-import ScreenHeader from 'components/ScreenHeader';
+import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 
 const imageChat = require('assets/images/btn_chat.png');
@@ -103,7 +103,7 @@ const Contact = (props: Props) => {
   const contact = props.navigation.getParam('contact', {});
   return (
     <Container>
-      <ScreenHeader title="contact" onBack={props.navigation.goBack} />
+      <Header title="contact" onBack={() => props.navigation.goBack(null)} />
       <Wrapper regularPadding>
         <ContactWapper>
           <ContactHeader>

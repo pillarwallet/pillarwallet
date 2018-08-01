@@ -7,8 +7,9 @@ import ChatService from 'services/chat';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes } from 'utils/variables';
+import { showToast } from 'utils/toast';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import { Toast, ListItem as NBListItem, Left, Right, Icon } from 'native-base';
+import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
@@ -142,10 +143,7 @@ class Profile extends React.Component<Props, State> {
   clearLocalStorage() {
     storage.removeAll();
     chat.client.resetAccount().catch(() => null);
-    Toast.show({
-      text: 'Cleared',
-      buttonText: '',
-    });
+    showToast({ text: 'Cleared' });
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
@@ -223,7 +221,7 @@ class Profile extends React.Component<Props, State> {
     } = this.state;
     return (
       <Container color={baseColors.snowWhite}>
-        <Header gray title="settings" onBack={navigation.goBack} index={1} />
+        <Header gray title="settings" onBack={() => navigation.goBack(null)} />
         <KeyboardAvoidModal
           isVisible={this.state.visibleModal === 'country'}
           subtitle="Choose your country"

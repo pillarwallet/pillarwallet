@@ -2,9 +2,12 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '9.0'
 
 target 'pillar-wallet' do
+  pod 'Fabric', '~> 1.7.5'
+  # pod 'Crashlytics', '~> 3.10.4' ExpoKit contains Crashalytics 3.8
+
   pod 'ExpoKit',
     :git => "http://github.com/expo/expo.git",
-    :tag => "ios/2.6.5",
+    :tag => "ios/2.6.8",
     :subspecs => [
       "Core",
       "CPP",
@@ -57,14 +60,15 @@ target 'pillar-wallet' do
   pod 'Firebase/Performance'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';
     installer.pods_project.main_group.indent_width = '2';
-    # installer.pods_project.targets.each do |target|
-    #   if target.name == "React"
-    #     target.remove_from_project
-    #   end
-    # end
+    installer.pods_project.targets.each do |target|
+      if target.name == "React"
+        target.remove_from_project
+      end
+    end
     installer.pod_targets.each do |target|
     if target.pod_name == 'ExpoKit'
       target.native_target.build_configurations.each do |config|

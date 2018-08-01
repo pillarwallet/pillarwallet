@@ -5,6 +5,7 @@ import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Root as NBRoot, Toast } from 'native-base';
 import { Font } from 'expo';
+import { showToast } from 'utils/toast';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
@@ -19,6 +20,7 @@ const aktivGroteskBold = require('./src/assets/fonts/AktivGrotesk-Bold.ttf');
 const aktivGroteskMedium = require('./src/assets/fonts/AktivGrotesk-Medium.ttf');
 const aktivGroteskRegular = require('./src/assets/fonts/AktivGrotesk-Regular.ttf');
 const aktivGroteskLight = require('./src/assets/fonts/AktivGrotesk-Light.ttf');
+const pillarIcons = require('./src/assets/fonts/PillarIcons.ttf');
 
 type State = {
   isFetched: boolean,
@@ -50,6 +52,7 @@ class App extends React.Component<Props, State> {
       'aktiv-grotesk-medium': aktivGroteskMedium,
       'aktiv-grotesk-light': aktivGroteskLight,
       'aktiv-grotesk-regular': aktivGroteskRegular,
+      'pillar-icons': pillarIcons,
     });
     this.setState({ fontLoaded: true });
   };
@@ -79,14 +82,11 @@ class App extends React.Component<Props, State> {
   };
 
   handleConnectivityChange = isOnline => {
+    const { fontLoaded } = this.state;
+    if (!fontLoaded) return;
+
     if (!isOnline) {
-      Toast.show({
-        type: 'danger',
-        position: 'top',
-        duration: 0,
-        text: 'No active internet connection found!',
-        buttonText: '',
-      });
+      showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 });
     } else {
       Toast.toastInstance._root.closeToast();
     }

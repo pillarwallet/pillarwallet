@@ -4,7 +4,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { SECURITY_CONFIRM, IMPORT_WALLET } from 'constants/navigationConstants';
 import { Container, Wrapper, Footer } from 'components/Layout';
-import Title from 'components/Title';
+import Header from 'components/Header';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 
@@ -24,8 +24,8 @@ class Onboarding extends React.Component<Props> {
   render() {
     return (
       <Container>
+        <Header title="welcome" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
-          <Title title="welcome" />
           <Paragraph>Pillar is a next-generation digital wallet
             and application for personal data management.
           </Paragraph>
