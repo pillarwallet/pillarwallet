@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { ActivityIndicator, StatusBar, Image } from 'react-native';
+import { StatusBar, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -19,6 +19,7 @@ import {
 import { baseColors } from 'utils/variables';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
+import Spinner from 'components/Spinner';
 import { sendMessageByContactAction, getChatByContactAction } from 'actions/chatActions';
 import { getUserName } from 'utils/contacts';
 
@@ -250,11 +251,7 @@ class ChatScreen extends React.Component<Props, State> {
   renderLoading = () => {
     return (
       <Container center>
-        <ActivityIndicator
-          animating
-          color="#111"
-          size="large"
-        />
+        <Spinner />
       </Container>
     );
   };

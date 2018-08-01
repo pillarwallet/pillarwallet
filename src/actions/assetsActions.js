@@ -75,6 +75,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
 
     const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
     const updatedAssets = merge({}, assets, transformAssetsToObject(balances));
+    // @TODO: Extra "rates fetching" to it's own action ones required.
     const rates = await getExchangeRates(Object.keys(updatedAssets));
     await storage.save('assets', { assets: updatedAssets }, true);
     dispatch({ type: SET_RATES, payload: rates });
@@ -93,17 +94,6 @@ export const fetchSupportedAssetsAction = () => {
       type: UPDATE_SUPPORTED_ASSETS,
       payload: assets,
     });
-  };
-};
-
-export const fetchExchangeRatesAction = (assets: Assets) => {
-  return async (dispatch: Function) => {
-    const tickers = Object.keys(assets);
-    if (tickers.length) {
-      getExchangeRates(tickers)
-        .then(rates => dispatch({ type: SET_RATES, payload: rates }))
-        .catch(console.log); // eslint-disable-line
-    }
   };
 };
 
