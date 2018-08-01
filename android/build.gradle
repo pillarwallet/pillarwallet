@@ -49,6 +49,11 @@ allprojects {
 
 task clean(type: Delete) {
   delete rootProject.buildDir
+  def var = new Properties()
+  File localProperties = file("local.properties")
+  if (localProperties.exists()) var.load(localProperties.newDataInputStream())
+  var.setProperty("ndk.dir", "")
+  var.store(localProperties.newWriter(), null)
 }
 
 ext {
