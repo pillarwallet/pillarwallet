@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes, baseColors, UIColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
@@ -53,6 +53,9 @@ const ActivityFeedItem = styled.View`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${UIColors.defaultBorderColor};
 `;
 
 const ActivityFeedDirectionCircle = styled.View`
@@ -180,7 +183,6 @@ export default class ActivityFeed extends React.Component<Props> {
   };
 
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
-    const isEven = index % 2;
     const { type } = notification;
     const { walletAddress } = this.props;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
@@ -193,7 +195,7 @@ export default class ActivityFeed extends React.Component<Props> {
       const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       return (
-        <ActivityFeedItem isEven={isEven} key={index}>
+        <ActivityFeedItem key={index}>
           <ActivityFeedItemCol fixedWidth="50px">
             <ActivityFeedDirectionCircle>
               <ActivityFeedDirectionCircleIcon name={directionIcon} />
@@ -212,7 +214,7 @@ export default class ActivityFeed extends React.Component<Props> {
       );
     }
     return (
-      <ActivityFeedItem isEven={isEven} key={index}>
+      <ActivityFeedItem key={index}>
         <ActivityFeedItemCol fixedWidth="50px">
           <ProfileImage
             uri={notification.avatar}

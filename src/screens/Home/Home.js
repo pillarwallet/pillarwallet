@@ -21,7 +21,7 @@ import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { baseColors, fontSizes, spacingSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacingSizes } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -109,9 +109,9 @@ const RecentConnections = styled.View`
 
 const RecentConnectionsWrapper = styled.View`
   shadow-color: ${baseColors.pigeonPost};
-  shadow-radius: 12px;
-  shadow-opacity: 0.3;
-  shadow-offset: 0px 0px;
+  shadow-radius: 6px;
+  shadow-opacity: 0.15;
+  shadow-offset: 0px 6px;
   background-color: ${baseColors.white};
 `;
 
@@ -146,6 +146,9 @@ const RecentConnectionsItemAvatarWrapper = styled.View`
 const TabWrapper = styled.View`
   padding: 10px 16px 10px;
   background: ${baseColors.white};
+  border-bottom-width: 1px;
+  border-color: ${UIColors.defaultBorderColor};
+  border-style: solid;
 `;
 
 const TabWrapperScrollView = styled.ScrollView`
