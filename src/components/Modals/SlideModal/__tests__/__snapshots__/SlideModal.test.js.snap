@@ -262,6 +262,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               </View>
             </View>
             <View
+              flex={[Function]}
               onClose={[Function]}
               small={true}
               style={
@@ -273,9 +274,9 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   },
                   Object {
                     "alignItems": "flex-end",
-                    "flexBasis": 44,
-                    "flexGrow": 0,
-                    "flexShrink": 0,
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
                     "justifyContent": "flex-end",
                   },
                   undefined,
