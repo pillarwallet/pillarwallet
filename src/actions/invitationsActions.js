@@ -14,6 +14,7 @@ import {
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { getExistingChatsAction } from 'actions/chatActions';
 import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
@@ -215,5 +216,6 @@ export const fetchInviteNotificationsAction = () => {
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
+    dispatch(getExistingChatsAction());
   };
 };

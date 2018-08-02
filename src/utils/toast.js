@@ -14,7 +14,7 @@ function getTheme(type: string) {
     });
   } else if (type === 'info') {
     return ({
-      backgroundColor: baseColors.clearBlue,
+      backgroundColor: baseColors.electricBlue,
       textColor: baseColors.white,
     });
   }
