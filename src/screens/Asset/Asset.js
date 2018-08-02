@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Animated, Easing, Share, RefreshControl } from 'react-native';
+import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -17,7 +18,6 @@ import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { formatMoney } from 'utils/common';
-import { baseColors } from 'utils/variables';
 import ReceiveModal from './ReceiveModal';
 
 const activeModalResetState = {
