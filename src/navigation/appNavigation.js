@@ -76,15 +76,12 @@ import { PENDING } from 'constants/userConstants';
 import type { Assets } from 'models/Asset';
 
 import { UIColors, baseColors } from 'utils/variables';
+import { modalTransition } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
-
-const navigationOpts = {
-  header: null,
-};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
@@ -279,34 +276,7 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [CHAT]: ChatScreen,
-  }, {
-    mode: 'modal',
-    navigationOptions: navigationOpts,
-    transitionConfig: () => ({
-      transitionSpec: {
-        duration: 400,
-        easing: Easing.out(Easing.poly(2)),
-        timing: Animated.timing,
-      },
-      screenInterpolator: sceneProps => {
-        const { layout, position, scene } = sceneProps;
-        const { index } = scene;
-
-        const height = layout.initHeight;
-        const translateY = position.interpolate({
-          inputRange: [index - 1, index, index + 1],
-          outputRange: [height, 0, 0],
-        });
-
-        const opacity = position.interpolate({
-          inputRange: [index - 1, index - 0.99, index],
-          outputRange: [0, 1, 1],
-        });
-
-        return { opacity, transform: [{ translateY }] };
-      },
-    }),
-  },
+  }, modalTransition,
 );
 
 type Props = {

@@ -12,6 +12,7 @@ type Props = {
   onPress: Function,
   disabled?: boolean,
   secondary?: boolean,
+  danger?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,
@@ -33,6 +34,11 @@ const themes = {
     underlay: 'rgba(0,0,0,0)',
     color: baseColors.electricBlue,
   },
+  danger: {
+    background: baseColors.burningFire,
+    underlay: '#f77718',
+    color: baseColors.white,
+  },
   disabled: {
     background: baseColors.lightGray,
     underlay: baseColors.mediumGray,
@@ -46,6 +52,9 @@ const getTheme = (props: Props) => {
   }
   if (props.secondary) {
     return themes.secondary;
+  }
+  if (props.danger) {
+    return themes.danger;
   }
   return themes.primary;
 };
