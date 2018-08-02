@@ -269,10 +269,6 @@ class HomeScreen extends React.Component<Props, State> {
     return uniqBy(concatedHistory, 'txHash');
   }
 
-  openMoreFilterOptions = () => {
-    // Three dots link in filter tab bar logic should go here
-  }
-
   render() {
     const {
       user,
@@ -397,11 +393,6 @@ class HomeScreen extends React.Component<Props, State> {
               >
                 <TabItemIcon active={activeTab === SOCIAL} name="social" />
                 <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
-              </TabItem>
-              <TabItem
-                onPress={() => this.openMoreFilterOptions}
-              >
-                <TabItemIcon active={activeTab === SOCIAL} name="more" />
               </TabItem>
             </TabWrapperScrollView>
           </TabWrapper>
