@@ -2,6 +2,7 @@
 
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
+
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -9,6 +10,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 import Storage from 'services/storage';
 import {
@@ -17,6 +19,7 @@ import {
 } from 'constants/notificationConstants';
 
 const CONNECTION = 'CONNECTION';
+const SIGNAL = 'SIGNAL';
 const BCX = 'BCX';
 
 const storage = Storage.getInstance('db');
@@ -80,7 +83,10 @@ export const startListeningNotificationsAction = () => {
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());
       }
-      dispatch({ type: ADD_NOTIFICATION, payload: notification });
+      if (notification.type === SIGNAL) {
+        dispatch(getExistingChatsAction());
+        dispatch({ type: ADD_NOTIFICATION, payload: notification });
+      }
     });
   };
 };

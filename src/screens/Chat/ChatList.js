@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -8,14 +8,16 @@ import { CHAT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import { baseColors } from 'utils/variables';
-import { getExistingChatsAction } from 'actions/chatActions';
+import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
 import ChatListItem from './ChatListItem';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   chats: Object[],
+  notifications: Object[],
   getExistingChats: Function,
+  resetUnread: Function,
 }
 
 type State = {
@@ -31,23 +33,35 @@ class ChatListScreen extends React.Component<Props, State> {
     getExistingChats();
   }
 
+  handleChatItemClick = (contact) => {
+    const { navigation, resetUnread } = this.props;
+    navigation.navigate(CHAT, { contact });
+    resetUnread(contact.username);
+  };
+
   renderItem = ({ item: contact }: Object) => {
-    const { chats, navigation } = this.props;
-    const existingChat = chats.find(({ username }) => contact.username === username) || {};
-    const lastMessage = existingChat.lastMessage || {};
+    const { chats } = this.props;
+
+    const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
+    const { lastMessage, unread } = chatWithContact;
+
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
       const dateSent = new Date(lastMessage.serverTimestamp);
-      timeSent = `${dateSent.getHours()}:${dateSent.getMinutes()}`; // HH:mm
+      const minutes = (`0${dateSent.getMinutes()}`).slice(-2);
+      const hours = (`0${dateSent.getHours()}`).slice(-2);
+      timeSent = `${hours}:${minutes}`; // HH:mm
     }
+    const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
+
     return (
       <ChatListItem
         userName={contact.username}
         avatar={contact.avatar}
-        message={lastMessage.content}
+        message={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
-        unreadCount={existingChat.unread}
-        onPress={() => navigation.navigate(CHAT, { contact })}
+        unreadCount={unread}
+        onPress={() => this.handleChatItemClick(contact)}
       />
     );
   };
@@ -61,17 +75,24 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { contacts, chats } = this.props;
-    const ChatWrapper = contacts.length ? ScrollWrapper : View;
+    const { chats, getExistingChats } = this.props;
+    const ChatWrapper = chats.length ? ScrollWrapper : View;
     return (
       <Container>
         <Header title="chat" />
-        <ChatWrapper style={{
-          paddingBottom: contacts.length ? 18 : 0,
-        }}
+        <ChatWrapper
+          style={{
+            paddingBottom: chats.length ? 18 : 0,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => { getExistingChats(); }}
+            />
+          }
         >
           <FlatList
-            data={contacts}
+            data={chats}
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
@@ -93,13 +114,16 @@ class ChatListScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   chat: { data: { chats } },
+  notifications: { data: notifications },
 }) => ({
   contacts,
   chats,
+  notifications,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
+  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatListScreen);
