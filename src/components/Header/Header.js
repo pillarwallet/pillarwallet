@@ -18,6 +18,7 @@ type Props = {
   title?: string,
   centerTitle?: boolean,
   noPadding?: boolean,
+  headerRightFlex?: string,
 }
 
 const Wrapper = styled.View`
@@ -65,7 +66,7 @@ const HeaderBody = styled(Body)`
 `;
 
 const HeaderRight = styled(Right)`
-  flex: ${props => props.small ? '0 0 44px' : 1};
+  flex: ${props => props.flex};
   justify-content: flex-end;
   align-items: flex-end;
 `;
@@ -78,14 +79,25 @@ const Header = (props: Props) => {
     onClose,
     onCloseText,
     title,
+    small,
     centerTitle,
     noPadding,
+    headerRightFlex,
   } = props;
   const showRight = nextText || onBack || onClose;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
+
+  const getHeaderRightFlex = () => {
+    if (headerRightFlex) {
+      return headerRightFlex;
+    } else if (small) {
+      return '0 0 44px';
+    }
+    return 1;
+  };
 
   return (
     <Wrapper noPadding={noPadding}>
@@ -108,7 +120,7 @@ const Header = (props: Props) => {
         </HeaderBody >
       }
       {showRight &&
-        <HeaderRight small={onlyCloseIcon} onClose={onClose || noop}>
+        <HeaderRight flex={getHeaderRightFlex} small={onlyCloseIcon} onClose={onClose || noop}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
