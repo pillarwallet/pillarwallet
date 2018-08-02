@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } from 'react-native';
-// import { Permissions } from 'expo';
+import Permissions from 'react-native-permissions';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes } from 'utils/variables';
@@ -19,7 +19,7 @@ import Separator from 'components/Separator';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
-const PERMISSION_GRANTED = 'GRANTED';
+const AUTHORIZED = 'AUTHORIZED';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -148,14 +148,14 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleQRScannerOpen = async () => {
-    // const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    // this.setState({
-    //   isScanning: status.toUpperCase() === PERMISSION_GRANTED,
-    // }, () => {
-    //   if (this.state.isScanning) {
-    //     Keyboard.dismiss();
-    //   }
-    // });
+    const status = await Permissions.request('camera');
+    this.setState({
+      isScanning: status.toUpperCase() === AUTHORIZED,
+    }, () => {
+      if (this.state.isScanning) {
+        Keyboard.dismiss();
+      }
+    });
   };
 
   handleQRScannerClose = () => {

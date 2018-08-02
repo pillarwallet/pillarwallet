@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
-// import { Font } from 'expo';
-// import { createIconSet } from '@expo/vector-icons';
+import { createIconSet } from 'react-native-vector-icons';
 
 const glyphMap = {
   chat: '\uE801',
@@ -31,14 +30,11 @@ type Props = {
   style: Object,
 }
 
-// const IconSet = createIconSet(glyphMap, 'pillar-icons');
+const IconSet = createIconSet(glyphMap, 'fontello');
 
 const Icon = (props: Props) => {
   const { name, style } = props;
-  // if (Font && Font.isLoaded('pillar-icons')) {
-  //   return <IconSet name={name} style={style} />;
-  // }
-  return null;
+  return <IconSet name={name} style={style} />;
 };
 
 export default Icon;

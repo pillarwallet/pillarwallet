@@ -50,6 +50,11 @@ target 'pillarwallet' do
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
 
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+
+  pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
+
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';

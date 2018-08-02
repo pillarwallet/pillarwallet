@@ -3,6 +3,8 @@ package com.pillarwallet;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import org.reactnative.camera.RNCameraPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.tradle.react.UdpSocketsModule;
@@ -32,6 +34,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFetchBlobPackage(),
+            new RNCameraPackage(),
             new RNSignalClientPackage(),
             new VectorIconsPackage(),
             new UdpSocketsModule(),

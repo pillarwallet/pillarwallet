@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Image as ImageCache } from 'react-native';
+import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
@@ -33,7 +33,7 @@ const TokenListItem = styled(ListItem)`
   margin: 0;
 `;
 
-const TokenThumbnail = styled(ImageCache)`
+const TokenThumbnail = styled(CachedImage)`
   width: 44px;
   height: 44px;
   border-radius: 22px;
@@ -79,7 +79,7 @@ class AddToken extends React.Component<Props> {
         const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
         return (
           <TokenListItem key={symbol}>
-            <TokenThumbnail uri={fullIconUrl} />
+            <TokenThumbnail source={{ uri: fullIconUrl }} />
             <Body style={{ marginLeft: 20 }}>
               <TokenName>{name}</TokenName>
               <TokenSymbol>{symbol}</TokenSymbol>

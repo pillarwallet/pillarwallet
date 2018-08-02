@@ -3,8 +3,8 @@ import * as React from 'react';
 import {
   Animated,
   TouchableWithoutFeedback,
-  Image as ImageCache,
 } from 'react-native';
+import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
 import styled from 'styled-components/native';
 import IconWrapper from './IconWrapper';
@@ -39,7 +39,7 @@ const BackgroundHolder = styled.View`
   background-color: ${props => (props.cardColor)};
 `;
 
-const BackgroundImage = styled(ImageCache)`
+const BackgroundImage = styled(CachedImage)`
   height: 100%;
   width: 100%;
   position: absolute;
@@ -87,7 +87,6 @@ export default class AssetCard extends React.Component<Props, State> {
     } = this.props;
 
     const { cardIcon } = this.state;
-
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
     return (
@@ -106,7 +105,7 @@ export default class AssetCard extends React.Component<Props, State> {
           }]}
         >
           <BackgroundHolder cardColor={defaultCardColor}>
-            <BackgroundImage uri={wallpaper} />
+            <BackgroundImage source={{ uri: wallpaper }} />
             <DetailsWrapper>
               <Name>{name}</Name>
               <AmountWrapper>
@@ -120,13 +119,13 @@ export default class AssetCard extends React.Component<Props, State> {
             {!!cardIcon &&
             <IconWrapper>
               <IconCircle>
-                <ImageCache
+                <CachedImage
                   key={token}
                   style={{
                     height: 40,
                     width: 40,
                   }}
-                  uri={cardIcon}
+                  source={{ uri: cardIcon }}
                   resizeMode="contain"
                 />
               </IconCircle>

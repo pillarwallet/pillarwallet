@@ -1,17 +1,17 @@
 // @flow
 import * as React from 'react';
 import { Vibration, Animated, Dimensions, Platform } from 'react-native';
-// import { Camera, Permissions } from 'expo';
+import { RNCamera as Camera } from 'react-native-camera';
+import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
 
 const window = Dimensions.get('window');
 
-const PERMISSION_GRANTED = 'GRANTED';
 const AUTHORIZED = 'AUTHORIZED';
 const PENDING = 'PENDING';
-const DECLINED = 'DECLINED';
+const DENIED = 'DENIED';
 
 const Wrapper = styled.View`
   position: absolute;
@@ -40,7 +40,7 @@ const QRCodeScannerHeader = styled(Header)`
   z-index: 4;
 `;
 
-const Scanner = styled.View`
+const Scanner = styled(Camera)`
   alignItems: center;
   justifyContent: center;
 `;
@@ -130,10 +130,10 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   }
 
   async askPermissions() {
-    // const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    // this.setState({
-    //   authorizationState: status.toUpperCase() === PERMISSION_GRANTED ? AUTHORIZED : DECLINED,
-    // });
+    const status = await Permissions.request('camera');
+    this.setState({
+      authorizationState: status.toUpperCase() === AUTHORIZED ? AUTHORIZED : DENIED,
+    });
   }
 
   handleQRRead = (data: Object) => {
