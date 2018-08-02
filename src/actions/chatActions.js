@@ -7,7 +7,6 @@ import {
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
 } from 'constants/chatConstants';
-import { Platform } from 'react-native';
 
 const chat = new ChatService();
 
@@ -45,10 +44,6 @@ export const getExistingChatsAction = () => {
         item.unread = typeof unreadCount[item.username] !== 'undefined' ? unreadCount[item.username] : 0;
       });
     }).catch(() => {});
-
-    console.log('INFO contacts', Platform.OS, contacts);
-    console.log('INFO chats', Platform.OS, chats);
-    console.log('INFO generated chats', Platform.OS, messagesOfContacts);
 
     dispatch({
       type: UPDATE_CHATS,
