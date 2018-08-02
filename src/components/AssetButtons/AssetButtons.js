@@ -36,7 +36,7 @@ const AssetButtonIconWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   box-shadow: .5px 1px 1px ${baseColors.mediumGray};
-  elevation: 6;
+  elevation: ${props => props.disabled ? 0 : 6};
 `;
 
 const AssetButtonIcon = styled(Icon)`
