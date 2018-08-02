@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import { WebView } from 'react-native';
@@ -24,13 +23,6 @@ const ActivityIndicatorWrapper = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-`;
-
-const ModalWrapper = styled.View`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: ${baseColors.white};
 `;
 
 export default class IFrameModal extends React.Component<Props, State> {

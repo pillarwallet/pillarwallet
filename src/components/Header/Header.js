@@ -18,6 +18,8 @@ type Props = {
   title?: string,
   centerTitle?: boolean,
   noPadding?: boolean,
+  light?: boolean,
+  style?: Object,
 }
 
 const Wrapper = styled.View`
@@ -39,7 +41,7 @@ const BackIcon = styled(ButtonIcon)`
 `;
 
 const CloseIconText = styled(BaseText)`
-  color: ${baseColors.darkGray};
+  color: ${props => props.light ? baseColors.white : baseColors.darkGray};
   font-size: ${fontSizes.extraExtraSmall};
 `;
 
@@ -80,6 +82,8 @@ const Header = (props: Props) => {
     title,
     centerTitle,
     noPadding,
+    style,
+    light,
   } = props;
   const showRight = nextText || onBack || onClose;
   const titleOnBack = title && onBack;
@@ -88,12 +92,12 @@ const Header = (props: Props) => {
   const onlyCloseIcon = onClose && !nextText && !onCloseText;
 
   return (
-    <Wrapper noPadding={noPadding}>
+    <Wrapper style={style} noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon
             icon="back"
-            color={UIColors.primary}
+            color={light ? baseColors.white : UIColors.primary}
             onPress={() => onBack()}
             fontSize={fontSizes.small}
           />
@@ -115,9 +119,9 @@ const Header = (props: Props) => {
           {onClose &&
             <CloseIconWrapper>
               {onCloseText &&
-                <CloseIconText>{onCloseText}</CloseIconText>
+                <CloseIconText light={light} >{onCloseText}</CloseIconText>
               }
-              <CloseIcon icon="close" color={UIColors.primary} onPress={() => onClose()} fontSize={fontSizes.small} />
+              <CloseIcon icon="close" color={light ? baseColors.white : UIColors.primary} onPress={() => onClose()} fontSize={fontSizes.small} />
             </CloseIconWrapper>
           }
         </HeaderRight>
