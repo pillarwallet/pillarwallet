@@ -13,24 +13,19 @@ type Props = {
 }
 
 const ButtonLabel = styled(BaseText)`
-  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall};
+  font-size: ${fontSizes.extraSmall};
   color: rgb(32,119,253);
-  ${({ bold }) => bold && `
-     font-family: aktiv-grotesk-bold;
-  `}
 `;
 
 const ButtonText = (props: Props) => {
   const {
     buttonText,
     onPress,
-    fontSize,
-    bold,
   } = props;
   if (Platform.OS === 'ios') {
     return (
       <TouchableOpacity onPress={onPress}>
-        <ButtonLabel fontSize={fontSize} bold={bold}>{buttonText}</ButtonLabel>
+        <ButtonLabel>{buttonText}</ButtonLabel>
       </TouchableOpacity>
     );
   }
