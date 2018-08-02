@@ -79,7 +79,6 @@ const Header = (props: Props) => {
     onClose,
     onCloseText,
     title,
-    small,
     centerTitle,
     noPadding,
     headerRightFlex,
@@ -93,7 +92,7 @@ const Header = (props: Props) => {
   const getHeaderRightFlex = () => {
     if (headerRightFlex) {
       return headerRightFlex;
-    } else if (small) {
+    } else if (onlyCloseIcon) {
       return '0 0 44px';
     }
     return 1;
@@ -120,7 +119,7 @@ const Header = (props: Props) => {
         </HeaderBody >
       }
       {showRight &&
-        <HeaderRight flex={getHeaderRightFlex} small={onlyCloseIcon} onClose={onClose || noop}>
+        <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
