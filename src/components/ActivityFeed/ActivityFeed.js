@@ -9,6 +9,7 @@ import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
+import type { NavigationScreenProp } from 'react-navigation';
 
 import {
   TYPE_RECEIVED,
@@ -17,6 +18,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { CONTACT } from 'constants/navigationConstants';
 
 const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
 const TRANSACTION_SENT = 'TRANSACTION_SENT';
@@ -57,6 +59,10 @@ const ActivityFeedItem = styled.View`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
+`;
+
+const ActivityFeedItemLink = styled.TouchableOpacity`
+  padding-right: 10px;
 `;
 
 const ActivityFeedItemLabel = styled(BaseText)`
@@ -129,6 +135,7 @@ type Props = {
   onCancelInvitation: Function,
   onRejectInvitation: Function,
   walletAddress: string,
+  navigation: NavigationScreenProp<*>,
 }
 
 type State = {
@@ -200,7 +207,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const isEven = index % 2;
     const { type } = notification;
-    const { walletAddress } = this.props;
+    const { walletAddress, navigation } = this.props;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.toAddress.toUpperCase() === walletAddress.toUpperCase();
@@ -229,18 +236,28 @@ export default class ActivityFeed extends React.Component<Props, State> {
     }
     return (
       <ActivityFeedItem isEven={isEven} key={index}>
-        <ActivityFeedItemCol fixedWidth="44px">
-          <ProfileImage
-            uri={notification.avatar}
-            userName={notification.username}
-            diameter={36}
-            textStyle={{ fontSize: 14 }}
-          />
-        </ActivityFeedItemCol>
-        <ActivityFeedItemCol fixedWidth="150px">
-          <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
-          <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
-        </ActivityFeedItemCol>
+        <ActivityFeedItemLink
+          onPress={() => navigation.navigate(CONTACT, { contact: notification })}
+          fixedWidth="44px"
+        >
+          <ActivityFeedItemCol>
+            <ProfileImage
+              uri={notification.avatar}
+              userName={notification.username}
+              diameter={36}
+              textStyle={{ fontSize: 14 }}
+            />
+          </ActivityFeedItemCol>
+        </ActivityFeedItemLink>
+        <ActivityFeedItemLink
+          onPress={() => navigation.navigate(CONTACT, { contact: notification })}
+          fixedWidth="150px"
+        >
+          <ActivityFeedItemCol>
+            <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
+            <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
+          </ActivityFeedItemCol>
+        </ActivityFeedItemLink>
         <ActivityFeedItemCol flexEnd>
           {this.getSocialAction(type, notification)}
         </ActivityFeedItemCol>

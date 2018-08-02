@@ -207,6 +207,7 @@ class PeopleScreen extends React.Component<Props> {
       historyNotifications,
       history,
       wallet: { address: walletAddress },
+      navigation,
     } = this.props;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
@@ -276,6 +277,7 @@ class PeopleScreen extends React.Component<Props> {
             onAcceptInvitation={acceptInvitation}
             history={homeNotifications}
             walletAddress={walletAddress}
+            navigation={navigation}
           />
         </ScrollWrapper>
       </Container>
