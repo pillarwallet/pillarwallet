@@ -84,7 +84,6 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type === SIGNAL) {
-        dispatch({ type: SIGNAL, payload: { message } });
         dispatch(getExistingChatsAction());
         dispatch({ type: ADD_NOTIFICATION, payload: notification });
       }
