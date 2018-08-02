@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Platform, BackHandler } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import {
   importWalletFromTWordsPhraseAction,
@@ -32,6 +33,8 @@ type State = {
   errorField: string,
 };
 
+let listener = null;
+
 class ImportWallet extends React.Component<Props, State> {
   state = {
     privateKey: '',
@@ -46,6 +49,25 @@ class ImportWallet extends React.Component<Props, State> {
       handleImportSubmit: this.handleImportSubmit,
     });
   }
+
+  phisicalBackAction = () => {
+    this.handleBackAction();
+    return true;
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    const navigateTo = navigation.getParam('navigateTo', null);
+    if (Platform.OS === 'android' && listener == null && navigateTo) {
+      BackHandler.addEventListener('hardwareBackPress', this.phisicalBackAction);
+    }
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.phisicalBackAction);
+    listener = null;
+  }
+
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     const { walletState, error } = nextProps.wallet;
 
@@ -77,13 +99,24 @@ class ImportWallet extends React.Component<Props, State> {
     return '';
   };
 
+  handleBackAction = () => {
+    const { navigation } = this.props;
+    const navigateTo = navigation.getParam('navigateTo', null);
+    if (navigateTo) {
+      navigation.navigate(navigateTo);
+    } else {
+      navigation.goBack(null);
+    }
+  }
+
   render() {
     const { privateKey, tWordsPhrase } = this.state;
     const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
     const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
+
     return (
       <Container>
-        <Header title="restore wallet" onBack={() => this.props.navigation.goBack(null)} />
+        <Header title="restore wallet" onBack={this.handleBackAction} />
         <ScrollWrapper regularPadding>
           <Paragraph>
               Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
