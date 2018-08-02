@@ -37,6 +37,12 @@ export const processNotification = (notification: Object, myEthAddress: string):
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
+  if (parsedNotification.type === 'signal') {
+    return {
+      message: 'New chat message',
+      type: 'SIGNAL',
+    };
+  }
   if (connectionEvents.includes(parsedNotification.type)) {
     result = {
       message: 'Connection update',
