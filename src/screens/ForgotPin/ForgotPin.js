@@ -7,10 +7,9 @@ import { Container, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import ButtonText from 'components/ButtonText';
 import styled from 'styled-components/native/index';
-import { baseColors, fontSizes } from 'utils/variables';
-import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { baseColors } from 'utils/variables';
+import { IMPORT_WALLET, FORGOT_PIN } from 'constants/navigationConstants';
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
@@ -50,7 +49,7 @@ class ForgotPin extends React.Component<Props, {}> {
   };
 
   toImportWallet = () => {
-    this.props.navigation.navigate(IMPORT_WALLET);
+    this.props.navigation.navigate(IMPORT_WALLET, { navigateTo: FORGOT_PIN });
   };
 
   render() {
@@ -73,12 +72,7 @@ class ForgotPin extends React.Component<Props, {}> {
                 It is impossible to restore your wallet without the backup, be careful.
               </FooterParagraph>
               <Button block danger marginBottom="20px" onPress={this.toImportWallet} title="Import wallet" />
-              <ButtonText
-                buttonText="Try entering PIN again"
-                onPress={this.goBackToPin}
-                fontSize={fontSizes.medium}
-                bold
-              />
+              <Button onPress={this.goBackToPin} secondary title="Try entering PIN again" />
             </Footer>
           </InnerWrapper>
         </Wrapper>
