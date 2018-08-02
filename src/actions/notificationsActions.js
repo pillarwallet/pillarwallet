@@ -71,7 +71,7 @@ export const startListeningNotificationsAction = () => {
     }
     await firebase.messaging().getToken();
     if (notificationsListener) return;
-    notificationsListener = firebase.messaging().onMessage(async message => {
+    notificationsListener = firebase.messaging().onMessage(message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;

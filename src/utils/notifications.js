@@ -39,7 +39,7 @@ export const processNotification = (notification: Object, myEthAddress: string):
   if (!parsedNotification) return result;
   if (parsedNotification.type === 'signal') {
     return {
-      message: 'New message on chat',
+      message: 'New chat message',
       type: 'SIGNAL',
     };
   }

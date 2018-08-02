@@ -1,10 +1,13 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
+
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors } from 'utils/variables';
+import type { Notification } from 'models/Notification';
 import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
@@ -18,7 +21,6 @@ import {
 } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { CHAT } from 'constants/chatConstants';
-import { connect } from 'react-redux';
 
 const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
 const TRANSACTION_SENT = 'TRANSACTION_SENT';
@@ -133,7 +135,7 @@ type Props = {
   onCancelInvitation: Function,
   onRejectInvitation: Function,
   walletAddress: string,
-  notifications: Object
+  notifications: Notification[],
 }
 
 type State = {

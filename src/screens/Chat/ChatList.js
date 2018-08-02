@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -75,14 +75,21 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { contacts, chats } = this.props;
-    const ChatWrapper = contacts.length ? ScrollWrapper : View;
+    const { chats, getExistingChats } = this.props;
+    const ChatWrapper = chats.length ? ScrollWrapper : View;
     return (
       <Container>
         <Header title="chat" />
-        <ChatWrapper style={{
-          paddingBottom: contacts.length ? 18 : 0,
-        }}
+        <ChatWrapper
+          style={{
+            paddingBottom: chats.length ? 18 : 0,
+          }}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => { getExistingChats(); }}
+            />
+          }
         >
           <FlatList
             data={chats}

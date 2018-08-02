@@ -36,7 +36,6 @@ type Props = {
   sendMessageByContact: Function,
   getChatByContact: Function,
   messages: Object,
-  notifications: Object,
   isFetching: boolean,
   getExistingChats: Function,
   resetUnread: Function,
@@ -50,18 +49,225 @@ type State = {
   isFetching: boolean,
 }
 
-class ChatScreen extends React.Component<Props, State> {
-  handleChatDismissal = () => {
-    const {
-      navigation,
-      getExistingChats,
-      resetUnread,
-    } = this.props;
-    getExistingChats();
-    resetUnread(this.state.contact.username);
-    navigation.goBack(null);
-  };
+// chat elements
+const renderBubble = (props: Props) => (
+  <Bubble
+    {...props}
+    textStyle={{
+      left: {
+        color: baseColors.darkGray,
+        fontSize: 14,
+      },
+      right: {
+        color: '#ffffff',
+        fontSize: 14,
+      },
+    }}
+    wrapperStyle={{
+      left: {
+        backgroundColor: baseColors.lightGray,
+        borderRadius: 5,
+        padding: 20,
+        paddingTop: 2,
+        paddingLeft: 6,
+        paddingBottom: 6,
+        paddingRight: 2,
+      },
+      right: {
+        backgroundColor: baseColors.electricBlue,
+        borderRadius: 5,
+        paddingTop: 2,
+        paddingRight: 6,
+        paddingBottom: 6,
+        paddingLeft: 2,
+      },
+    }}
+  />
+);
 
+const renderCustomAvatar = (contact) => () => (
+  <ProfileImage
+    uri={contact.avatar}
+    userName={contact.username}
+    diameter={34}
+    textStyle={{
+      fontSize: 16,
+    }}
+  />
+);
+
+const renderAvatar = (contact) => (props: Props) => (
+  <Avatar
+    {...props}
+    renderAvatar={renderCustomAvatar(contact)}
+    containerStyle={{
+      left: {
+        marginRight: 2,
+      },
+    }}
+  />
+);
+
+const renderComposer = (props: Props) => {
+  if (Platform.OS === 'ios') {
+    return (
+      <Composer
+        {...props}
+        textInputStyle={{
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+
+          marginLeft: 0,
+          paddingTop: 4,
+        }}
+      />
+    );
+  }
+
+  return (
+    <View style={{
+      flex: 1,
+      borderWidth: 1,
+      borderColor: '#e6e8eb',
+      borderRadius: 26,
+      marginRight: 10,
+      marginTop: 3,
+      marginBottom: 6,
+      alignItems: 'flex-start',
+      justifyContent: 'center',
+      minHeight: 40,
+      paddingTop: 4,
+      paddingLeft: 2,
+      paddingBottom: 2,
+      paddingRight: 20,
+    }}
+    >
+      <Composer
+        {...props}
+        textInputStyle={{
+          borderWidth: 0,
+          width: '100%',
+          margin: 0,
+        }}
+        multiline
+      />
+    </View>
+  );
+};
+
+const renderSend = (props: Props) => (
+  <Send
+    {...props}
+    containerStyle={{
+      paddingRight: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'column',
+      height: Platform.OS === 'ios' ? 44 : 54,
+    }}
+  >
+    <Image
+      style={{
+        width: 24,
+        height: 24,
+      }}
+      source={iconSend}
+    />
+  </Send>
+);
+
+const renderInputToolbar = (props: Props) => {
+  if (Platform.OS === 'ios') {
+    return (
+      <InputToolbar
+        {...props}
+        renderSend={renderSend}
+        primaryStyle={{
+          justifyContent: 'center',
+        }}
+        containerStyle={{
+          bottom: 2,
+          borderWidth: 1,
+          borderTopWidth: 1,
+          borderTopColor: '#e6e8eb',
+          borderColor: '#e6e8eb',
+          borderRadius: 20,
+          paddingLeft: 10,
+          marginRight: 10,
+          marginLeft: 10,
+        }}
+        // renderAccessory={this.renderSend()}
+      />
+    );
+  }
+
+  return (
+    <InputToolbar
+      {...props}
+      renderSend={renderSend}
+      primaryStyle={{
+        justifyContent: 'center',
+      }}
+      containerStyle={{
+        bottom: 2,
+        paddingLeft: 10,
+        borderTopWidth: 0,
+      }}
+    />
+  );
+};
+
+const renderDay = (props: Props) => (
+  <Day
+    {...props}
+    containerStyle={{
+      marginTop: 30,
+      marginBottom: 36,
+    }}
+    textStyle={{
+      color: baseColors.darkGray,
+      fontWeight: '300',
+      fontSize: 14,
+    }}
+    dateFormat="LL"
+  />
+);
+
+const renderTime = (props: Props) => (
+  <Time
+    {...props}
+    textStyle={{
+      color: baseColors.darkGray,
+    }}
+    timeFormat="HH:mm"
+  />
+);
+
+const renderLoadEarlier = (props: Props) => (
+  <LoadEarlier
+    {...props}
+    containerStyle={{
+      marginTop: 70,
+    }}
+  />
+);
+
+const renderMessage = (props: Props) => (
+  <Message
+    {...props}
+    containerStyle={{
+      left: {
+        paddingLeft: 10,
+      },
+      right: {
+        paddingRight: 10,
+      },
+    }}
+  />
+);
+
+
+class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const contact = props.navigation.getParam('contact', {});
@@ -93,6 +299,17 @@ class ChatScreen extends React.Component<Props, State> {
     }
   }
 
+  handleChatDismissal = () => {
+    const {
+      navigation,
+      getExistingChats,
+      resetUnread,
+    } = this.props;
+    getExistingChats();
+    resetUnread(this.state.contact.username);
+    navigation.goBack(null);
+  };
+
   handleLoadEarlier = () => {
     const { getChatByContact } = this.props;
     const { contact } = this.state;
@@ -100,240 +317,6 @@ class ChatScreen extends React.Component<Props, State> {
     this.setState({
       showLoadEarlierButton: false,
     });
-  };
-
-  // chat elements
-  renderBubble = (props: Props) => {
-    return (
-      <Bubble
-        {...props}
-        textStyle={{
-          left: {
-            color: baseColors.darkGray,
-            fontSize: 14,
-          },
-          right: {
-            color: '#ffffff',
-            fontSize: 14,
-          },
-        }}
-        wrapperStyle={{
-          left: {
-            backgroundColor: baseColors.lightGray,
-            borderRadius: 5,
-            padding: 20,
-            paddingTop: 2,
-            paddingLeft: 6,
-            paddingBottom: 6,
-            paddingRight: 2,
-          },
-          right: {
-            backgroundColor: baseColors.electricBlue,
-            borderRadius: 5,
-            paddingTop: 2,
-            paddingRight: 6,
-            paddingBottom: 6,
-            paddingLeft: 2,
-          },
-        }}
-      />
-    );
-  };
-
-  renderCustomAvatar = () => {
-    const { contact } = this.state;
-    return (
-      <ProfileImage
-        uri={contact.avatar}
-        userName={contact.username}
-        diameter={34}
-        textStyle={{
-          fontSize: 16,
-        }}
-      />
-    );
-  };
-
-  renderAvatar = (props: Props) => {
-    return (
-      <Avatar
-        {...props}
-        renderAvatar={this.renderCustomAvatar}
-        containerStyle={{
-          left: {
-            marginRight: 2,
-          },
-        }}
-      />
-    );
-  };
-
-  renderComposer = (props: Props) => {
-    if (Platform.OS === 'ios') {
-      return (
-        <Composer
-          {...props}
-          textInputStyle={{
-            alignItems: 'flex-start',
-            justifyContent: 'center',
-
-            marginLeft: 0,
-            paddingTop: 4,
-          }}
-        />
-      );
-    }
-
-    return (
-      <View style={{
-        flex: 1,
-        borderWidth: 1,
-        borderColor: '#e6e8eb',
-        borderRadius: 26,
-        marginRight: 10,
-        marginTop: 3,
-        marginBottom: 6,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        minHeight: 40,
-        paddingTop: 4,
-        paddingLeft: 2,
-        paddingBottom: 2,
-        paddingRight: 20,
-      }}
-      >
-        <Composer
-          {...props}
-          textInputStyle={{
-            borderWidth: 0,
-            width: '100%',
-            margin: 0,
-          }}
-          multiline
-        />
-      </View>
-    );
-  };
-
-  renderSend = (props: Props) => {
-    return (
-      <Send
-        {...props}
-        containerStyle={{
-          paddingRight: 12,
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          height: Platform.OS === 'ios' ? 44 : 54,
-        }}
-      >
-        <Image
-          style={{
-            width: 24,
-            height: 24,
-          }}
-          source={iconSend}
-        />
-      </Send>
-    );
-  };
-
-  renderInputToolbar = (props: Props) => {
-    if (Platform.OS === 'ios') {
-      return (
-        <InputToolbar
-          {...props}
-          renderSend={this.renderSend}
-          primaryStyle={{
-            justifyContent: 'center',
-          }}
-          containerStyle={{
-            bottom: 2,
-            borderWidth: 1,
-            borderTopWidth: 1,
-            borderTopColor: '#e6e8eb',
-            borderColor: '#e6e8eb',
-            borderRadius: 20,
-            paddingLeft: 10,
-            marginRight: 10,
-            marginLeft: 10,
-          }}
-          // renderAccessory={this.renderSend()}
-        />
-      );
-    }
-
-    return (
-      <InputToolbar
-        {...props}
-        renderSend={this.renderSend}
-        primaryStyle={{
-          justifyContent: 'center',
-        }}
-        containerStyle={{
-          bottom: 2,
-          paddingLeft: 10,
-          borderTopWidth: 0,
-        }}
-      />
-    );
-  };
-
-  renderDay = (props: Props) => {
-    return (
-      <Day
-        {...props}
-        containerStyle={{
-          marginTop: 30,
-          marginBottom: 36,
-        }}
-        textStyle={{
-          color: baseColors.darkGray,
-          fontWeight: '300',
-          fontSize: 14,
-        }}
-        dateFormat="LL"
-      />
-    );
-  };
-
-  renderTime = (props: Props) => {
-    return (
-      <Time
-        {...props}
-        textStyle={{
-          color: baseColors.darkGray,
-        }}
-        timeFormat="HH:mm"
-      />
-    );
-  };
-
-  renderLoadEarlier = (props: Props) => {
-    return (
-      <LoadEarlier
-        {...props}
-        containerStyle={{
-          marginTop: 70,
-        }}
-      />
-    );
-  };
-
-  renderMessage = (props: Props) => {
-    return (
-      <Message
-        {...props}
-        containerStyle={{
-          left: {
-            paddingLeft: 10,
-          },
-          right: {
-            paddingRight: 10,
-          },
-        }}
-      />
-    );
   };
 
   onSend = (messages: Object[] = []) => {
@@ -345,39 +328,37 @@ class ChatScreen extends React.Component<Props, State> {
   render() {
     const { messages } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
-    const title = `chat with ${getUserName(contact).toLowerCase()}`;
+    const title = getUserName(contact).toLowerCase();
 
     return (
-      <React.Fragment>
-        <Container>
-          <Header title={title} onClose={this.handleChatDismissal} />
-          <Wrapper fullScreen flex={1}>
-            {!!this.state.isFetching &&
-            <View style={{ flex: 1, alignItems: 'center' }}>
-              <Spinner />
-            </View>}
-            {!this.state.isFetching &&
-            <GiftedChat
-              messages={messages[contact.username]}
-              onSend={msgs => this.onSend(msgs)}
-              user={{
-                _id: this.props.user.username,
-              }}
-              renderBubble={this.renderBubble}
-              renderAvatar={this.renderAvatar}
-              renderComposer={this.renderComposer}
-              renderInputToolbar={this.renderInputToolbar}
-              renderDay={this.renderDay}
-              renderTime={this.renderTime}
-              loadEarlier={showLoadEarlierButton}
-              onLoadEarlier={this.handleLoadEarlier}
-              renderLoadEarlier={this.renderLoadEarlier}
-              renderMessage={this.renderMessage}
-              minInputToolbarHeight={52}
-            />}
-          </Wrapper>
-        </Container>
-      </React.Fragment>
+      <Container>
+        <Header title={title} onClose={this.handleChatDismissal} />
+        <Wrapper fullScreen flex={1}>
+          {!!this.state.isFetching &&
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Spinner />
+          </View>}
+          {!this.state.isFetching &&
+          <GiftedChat
+            messages={messages[contact.username]}
+            onSend={msgs => this.onSend(msgs)}
+            user={{
+              _id: this.props.user.username,
+            }}
+            renderBubble={renderBubble}
+            renderAvatar={renderAvatar(contact)}
+            renderComposer={renderComposer}
+            renderInputToolbar={renderInputToolbar}
+            renderDay={renderDay}
+            renderTime={renderTime}
+            loadEarlier={showLoadEarlierButton}
+            onLoadEarlier={this.handleLoadEarlier}
+            renderLoadEarlier={renderLoadEarlier}
+            renderMessage={renderMessage}
+            minInputToolbarHeight={52}
+          />}
+        </Wrapper>
+      </Container>
     );
   }
 }

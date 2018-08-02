@@ -10,44 +10,42 @@ import {
 
 const chat = new ChatService();
 
-const generateChatInfo = (contacts, chats) => {
-  const chatsWithContacts = contacts.map((contact) => {
-    const newChat = {
-      content: 'Start new conversation',
-      device: 1,
-      savedTimestamp: '',
-      serverTimestamp: '',
-      username: '',
-    };
+const addContactsToChats = (contacts, chats) => {
+  const newChatPlaceholder = {
+    content: 'Start new conversation',
+    device: 1,
+    savedTimestamp: '',
+    serverTimestamp: '',
+    username: '',
+  };
 
-    const existingChat = chats.find(({ username }) => contact.username === username) || { lastMessage: newChat };
-    const chatInfo = {
-      lastMessage: existingChat.lastMessage ? existingChat.lastMessage : newChat,
+  return contacts.map((contact) => {
+    const existingChat = chats.find(({ username }) => contact.username === username);
+    return {
+      lastMessage: (existingChat && existingChat.lastMessage) || newChatPlaceholder,
       username: contact.username,
       unread: 0,
     };
-
-    return chatInfo;
   });
-  return chatsWithContacts;
 };
 
 export const getExistingChatsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
     const { contacts: { data: contacts } } = getState();
-    if (!contacts) return;
-    const messagesOfContacts = generateChatInfo(contacts, chats);
-    await chat.client.getUnreadMessagesCount().then((response) => {
-      const { unreadCount } = JSON.parse(response);
-      messagesOfContacts.forEach((item) => {
-        item.unread = typeof unreadCount[item.username] !== 'undefined' ? unreadCount[item.username] : 0;
-      });
-    }).catch(() => {});
+    if (!contacts.length) return;
+
+    const chatsWithContacts = addContactsToChats(contacts, chats);
+    const { unreadCount } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => null);
+
+    const augmentedChats = chatsWithContacts.map(item => {
+      const unread = unreadCount[item.username] || 0;
+      return { ...item, unread };
+    });
 
     dispatch({
       type: UPDATE_CHATS,
-      payload: messagesOfContacts,
+      payload: augmentedChats,
     });
   };
 };
@@ -55,18 +53,21 @@ export const getExistingChatsAction = () => {
 export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function, getState: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
+
     const { contacts: { data: contacts } } = getState();
-    if (!contacts) return;
-    const messagesOfContacts = generateChatInfo(contacts, chats);
-    await chat.client.getUnreadMessagesCount().then((response) => {
-      const { unreadCount } = JSON.parse(response);
-      messagesOfContacts.forEach((item) => {
-        item.unread = item.username === contactUsername ? 0 : unreadCount[item.username];
-      });
-    }).catch(() => null);
+    if (!contacts.length) return;
+
+    const chatsWithContacts = addContactsToChats(contacts, chats);
+    const { unreadCount } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => null);
+
+    const augmentedChats = chatsWithContacts.map(item => {
+      const unread = item.username === contactUsername ? 0 : unreadCount[item.username];
+      return { ...item, unread };
+    });
+
     dispatch({
       type: RESET_UNREAD_MESSAGE,
-      payload: messagesOfContacts,
+      payload: augmentedChats,
     });
   };
 };

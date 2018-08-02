@@ -232,13 +232,6 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Chat'),
       }),
     },
-    [CHAT_LIST]: {
-      screen: chatFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconChat),
-        tabBarLabel: 'Chat',
-      }),
-    },
   }, {
     tabBarOptions: {
       activeTintColor: UIColors.primary,
