@@ -4,12 +4,13 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors, UIColors } from 'utils/variables';
+import { fontSizes, baseColors } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
+import Separator from 'components/Separator';
 
 import {
   TYPE_RECEIVED,
@@ -53,9 +54,6 @@ const ActivityFeedItem = styled.View`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${UIColors.defaultBorderColor};
 `;
 
 const ActivityFeedDirectionCircle = styled.View`
@@ -144,7 +142,7 @@ export default class ActivityFeed extends React.Component<Props> {
               color={baseColors.darkGray}
               margin={0}
               icon="close"
-              fontSize={fontSizes.small}
+              fontSize={fontSizes.extraSmall}
               onPress={() => onRejectInvitation(notification)}
             />
             <ActionCircleButton
@@ -152,7 +150,7 @@ export default class ActivityFeed extends React.Component<Props> {
               margin={0}
               accept
               icon="check"
-              fontSize={fontSizes.small}
+              fontSize={fontSizes.extraSmall}
               onPress={() => onAcceptInvitation(notification)}
             />
           </ButtonIconWrapper>
@@ -251,13 +249,12 @@ export default class ActivityFeed extends React.Component<Props> {
 
     return (
       <ActivityFeedWrapper>
-
         <ActivityFeedList
           data={filteredHistory}
           renderItem={this.renderActivityFeedItem}
-          // keyExtractor={({ createdAt }) => createdAt.toString()}
+          ItemSeparatorComponent={Separator}
+          keyExtractor={({ createdAt }) => createdAt.toString()}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
-          stickyHeaderIndices={[0]}
         />
       </ActivityFeedWrapper>
     );

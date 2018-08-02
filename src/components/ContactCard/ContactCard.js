@@ -17,6 +17,8 @@ const ContactCardWrapper = styled.TouchableHighlight`
   height: 75px;
   padding: ${props => (props.noBorder ? '14px 0' : '14px')};
   border-radius: 4px;
+  // Should be replaced with variable once move to 20px is merged
+  margin: 0 16px;
 `;
 
 const ContactCardInner = styled.View`
@@ -148,7 +150,7 @@ export default class ContactCard extends React.Component<Props> {
             color={baseColors.darkGray}
             margin={0}
             icon="close"
-            fontSize={fontSizes.small}
+            fontSize={fontSizes.extraSmall}
             onPress={onRejectInvitationPress}
           />
           <ActionCircleButton
@@ -156,7 +158,7 @@ export default class ContactCard extends React.Component<Props> {
             margin={0}
             accept
             icon="check"
-            fontSize={fontSizes.small}
+            fontSize={fontSizes.extraSmall}
             onPress={onAcceptInvitationPress}
           />
         </ButtonIconWrapper>
