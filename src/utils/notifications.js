@@ -37,7 +37,7 @@ export const processNotification = (notification: Object, myEthAddress: string):
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
-  if (parsedNotification.type !== 'undefined' && parsedNotification.type === 'signal') {
+  if (parsedNotification.type === 'signal') {
     return {
       message: 'New message on chat',
       type: 'SIGNAL',

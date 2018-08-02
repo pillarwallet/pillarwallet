@@ -223,8 +223,6 @@ class PeopleScreen extends React.Component<Props> {
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
 
-    const currentTime = Math.floor(new Date().getTime() / 1000);
-
     const chatNotifications = chats.chats
       .map((
         {
@@ -232,12 +230,12 @@ class PeopleScreen extends React.Component<Props> {
           lastMessage,
           profileImage,
         }) => {
-        if (lastMessage.content === '') return {};
+        if (lastMessage.savedTimestamp === '') return {};
         return {
           content: lastMessage.content,
           username,
           type: 'CHAT',
-          createdAt: Object.keys(lastMessage).length ? lastMessage.savedTimestamp : currentTime,
+          createdAt: lastMessage.savedTimestamp,
           onPress: () => this.toChat({ username, profileImage }),
         };
       });

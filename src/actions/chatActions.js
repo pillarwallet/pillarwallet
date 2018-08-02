@@ -7,9 +7,8 @@ import {
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
 } from 'constants/chatConstants';
-import Storage from 'services/storage';
+import { Platform } from 'react-native';
 
-const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
 const generateChatInfo = (contacts, chats) => {
@@ -24,8 +23,9 @@ const generateChatInfo = (contacts, chats) => {
 
     const existingChat = chats.find(({ username }) => contact.username === username) || { lastMessage: newChat };
     const chatInfo = {
-      lastMessage: existingChat.lastMessage,
+      lastMessage: existingChat.lastMessage ? existingChat.lastMessage : newChat,
       username: contact.username,
+      unread: 0,
     };
 
     return chatInfo;
@@ -34,18 +34,21 @@ const generateChatInfo = (contacts, chats) => {
 };
 
 export const getExistingChatsAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
-    const { contacts } = await storage.get('contacts');
+    const { contacts: { data: contacts } } = getState();
     if (!contacts) return;
     const messagesOfContacts = generateChatInfo(contacts, chats);
     await chat.client.getUnreadMessagesCount().then((response) => {
-      const unread = JSON.parse(response);
-      messagesOfContacts.map((item) => {
-        item.unread = typeof unread.unreadCount[item.username] !== 'undefined' ? unread.unreadCount[item.username] : 0;
-        return item;
+      const { unreadCount } = JSON.parse(response);
+      messagesOfContacts.forEach((item) => {
+        item.unread = typeof unreadCount[item.username] !== 'undefined' ? unreadCount[item.username] : 0;
       });
     }).catch(() => {});
+
+    console.log('INFO contacts', Platform.OS, contacts);
+    console.log('INFO chats', Platform.OS, chats);
+    console.log('INFO generated chats', Platform.OS, messagesOfContacts);
 
     dispatch({
       type: UPDATE_CHATS,
@@ -55,16 +58,15 @@ export const getExistingChatsAction = () => {
 };
 
 export const resetUnreadAction = (contactUsername: string) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
-    const { contacts } = await storage.get('contacts');
+    const { contacts: { data: contacts } } = getState();
     if (!contacts) return;
     const messagesOfContacts = generateChatInfo(contacts, chats);
     await chat.client.getUnreadMessagesCount().then((response) => {
-      const unread = JSON.parse(response);
-      messagesOfContacts.map((item) => {
-        item.unread = item.username === contactUsername ? 0 : unread.unreadCount[item.username];
-        return item;
+      const { unreadCount } = JSON.parse(response);
+      messagesOfContacts.forEach((item) => {
+        item.unread = item.username === contactUsername ? 0 : unreadCount[item.username];
       });
     }).catch(() => null);
     dispatch({
