@@ -5,7 +5,7 @@ import { Label, BaseText, BoldText } from 'components/Typography';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 const MnemonicPhraseWrapper = styled.View`
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-around;
   flex-wrap: wrap;
   height: 220px;
@@ -13,8 +13,15 @@ const MnemonicPhraseWrapper = styled.View`
   width: 100%;
 `;
 
-const MnemonicPhraseItem = styled.View`
+const Column = styled.View`
+  flex-direction: column;
+  justify-content: space-around;
+  flex-wrap: wrap;
   width: 50%;
+`;
+
+const MnemonicPhraseItem = styled.View`
+  width: 100%;
   margin: 0 0 5px 0;
   padding-right: 10px;
   flex-direction: row;
@@ -44,19 +51,33 @@ type Props = {
 const MnemonicPhrase = (props: Props) => {
   const { phrase } = props;
   const mnemonicList = phrase.split(' ');
-
+  const mnemonic1to6 = mnemonicList.slice(0, 6);
+  const mnemonic7to12 = mnemonicList.slice(6, 12);
 
   return (
     <MnemonicPhraseWrapper>
-      {
-        mnemonicList.map((word, index) => (
-          <MnemonicPhraseItem key={`${word}+${index}`}>
-            <MnemonicPhraseIndex><Label>{index + 1}</Label></MnemonicPhraseIndex>
-            <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
-          </MnemonicPhraseItem>
-          ),
-        )
-      }
+      <Column>
+        {
+          mnemonic1to6.map((word, index) => (
+            <MnemonicPhraseItem key={`${word}+${index}`}>
+              <MnemonicPhraseIndex><Label>{index + 1}</Label></MnemonicPhraseIndex>
+              <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
+            </MnemonicPhraseItem>
+            ),
+          )
+        }
+      </Column>
+      <Column>
+        {
+          mnemonic7to12.map((word, index) => (
+            <MnemonicPhraseItem key={`${word}+${index}`}>
+              <MnemonicPhraseIndex><Label>{index + 7}</Label></MnemonicPhraseIndex>
+              <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
+            </MnemonicPhraseItem>
+            ),
+          )
+        }
+      </Column>
     </MnemonicPhraseWrapper>
   );
 };

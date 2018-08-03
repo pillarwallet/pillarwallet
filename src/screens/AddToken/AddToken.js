@@ -107,10 +107,10 @@ class AddToken extends React.Component<Props> {
   };
 
   render() {
-    const titleText = 'add token';
+    const titleText = 'manage tokens';
     let header;
     if (this.formChanged) {
-      header = <Header title={titleText} nextText="save" onNextPress={this.handleScreenDismissal} />;
+      header = <Header title={titleText} nextText="Save" onNextPress={this.handleScreenDismissal} />;
     } else {
       header = <Header title={titleText} onClose={this.handleScreenDismissal} />;
     }

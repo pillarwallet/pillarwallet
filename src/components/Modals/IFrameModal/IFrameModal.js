@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import { Platform, WebView } from 'react-native';
+import { WebView } from 'react-native';
+import { Container } from 'components/Layout';
+import Header from 'components/Header';
 import Spinner from 'components/Spinner';
-import ButtonIcon from 'components/ButtonIcon';
 
 type Props = {
   uri: string,
@@ -23,23 +23,6 @@ const ActivityIndicatorWrapper = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-`;
-
-const ModalWrapper = styled.View`
-  flex: 1;
-  background-color: ${baseColors.white};
-`;
-
-const ModalHeader = styled.View`
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 10px;
-`;
-
-const CloseButton = styled(ButtonIcon)`
-  position: relative;
 `;
 
 export default class IFrameModal extends React.Component<Props, State> {
@@ -86,15 +69,8 @@ export default class IFrameModal extends React.Component<Props, State> {
           justifyContent: 'flex-start',
         }}
       >
-        <ModalWrapper>
-          <ModalHeader style={{ marginTop: Platform.OS === 'ios' ? 20 : 0 }}>
-            <CloseButton
-              icon="close"
-              onPress={modalHide}
-              fontSize={36}
-              color={baseColors.darkGray}
-            />
-          </ModalHeader>
+        <Container>
+          <Header onClose={modalHide} />
           {!isIFrameLoaded &&
           <ActivityIndicatorWrapper>
             <Spinner />
@@ -105,7 +81,7 @@ export default class IFrameModal extends React.Component<Props, State> {
             onLoad={this.handleLoadIFrame}
             style={{ opacity: isIFrameLoaded ? 1 : 0 }}
           />
-        </ModalWrapper>
+        </Container>
       </Modal>
     );
   }
