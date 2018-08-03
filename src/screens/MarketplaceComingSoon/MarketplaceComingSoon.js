@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph, BoldText } from 'components/Typography';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import Header from 'components/Header';
@@ -24,8 +24,8 @@ const MarketplaceComingSoon = () => {
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>
-      <Wrapper regularPadding>
-        <Paragraph style={{ marginTop: 10 }}>
+      <ScrollWrapper regularPadding>
+        <Paragraph>
           The marketplace will contain many services.
         </Paragraph>
         <Paragraph>
@@ -39,7 +39,7 @@ const MarketplaceComingSoon = () => {
           The London Stock Exchange Group (LSEG) and the Financial Conduct Authority are working with 20|30 and Nivaura
           to build a platform for corporate equity issuance.
         </Paragraph>
-      </Wrapper>
+      </ScrollWrapper>
     </Container>
   );
 };
