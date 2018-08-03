@@ -153,7 +153,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       <React.Fragment>
         <Container>
           <Header
-            onBack={this.props.navigation.goBack}
+            onBack={() => this.props.navigation.goBack(null)}
             onClose={this.handleModalDismissal}
             title="send"
             onCloseText="STEP 3 OF 3"

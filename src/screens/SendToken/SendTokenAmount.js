@@ -277,7 +277,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         <ScrollWrapper color={baseColors.white}>
           <Container>
             <Header
-              onBack={this.props.navigation.goBack}
+              onBack={() => this.props.navigation.goBack(null)}
               onClose={this.props.navigation.dismiss}
               onCloseText="STEP 2 OF 3"
               title="send"
@@ -315,7 +315,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           <KeyboardAvoidingView behavior="padding">
             <View>
               <Header
-                onBack={this.props.navigation.goBack}
+                onBack={() => this.props.navigation.goBack(null)}
                 onClose={this.props.navigation.dismiss}
                 onCloseText="STEP 2 OF 3"
                 title="send"

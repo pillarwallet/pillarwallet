@@ -14,7 +14,7 @@ import {
 import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
-import ContactsSeparator from 'components/ContactsSeparator';
+import Separator from 'components/Separator';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -66,7 +66,7 @@ class ConnectionRequests extends React.Component<Props> {
       <Container>
         <Header
           title="connection requests"
-          onBack={this.props.navigation.goBack}
+          onBack={() => this.props.navigation.goBack(null)}
         />
 
         <FlatList
@@ -74,9 +74,8 @@ class ConnectionRequests extends React.Component<Props> {
           extraData={invitations}
           keyExtractor={(item) => item.id}
           renderItem={this.renderInvitation}
-          ItemSeparatorComponent={ContactsSeparator}
+          ItemSeparatorComponent={Separator}
           contentContainerStyle={{
-            paddingHorizontal: 16,
             paddingVertical: spacingSizes.defaultVerticalSpacing,
             paddingTop: 0,
           }}

@@ -71,6 +71,9 @@ jest.mock('ethers', () => ({
     fromMnemonic: () => mockWallet,
     RNfromEncryptedWallet: () => mockWallet,
   },
+  utils: {
+    id: () => '',
+  },
 }));
 
 jest.mock('cryptocompare', () => ({

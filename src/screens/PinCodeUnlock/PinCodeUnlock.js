@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react';
-import { ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
-import { checkPinAction } from 'actions/authActions';
+import { loginAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import { BaseText } from 'components/Typography';
+import Spinner from 'components/Spinner';
 import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
@@ -57,11 +57,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
-          <ActivityIndicator
-            animating
-            color="#111"
-            size="large"
-          />
+          <Spinner />
         </Container>
       );
     }
@@ -85,9 +81,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string) => {
-    dispatch(checkPinAction(pin));
-  },
+  login: (pin: string) => dispatch(loginAction(pin)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

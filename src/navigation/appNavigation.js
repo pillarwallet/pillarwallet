@@ -1,10 +1,9 @@
 // @flow
 import * as React from 'react';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
-import { Toast } from 'native-base';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-
+import { showToast } from 'utils/toast';
 import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
 import { BaseText } from 'components/Typography';
 
@@ -33,7 +32,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 
 // actions
-import { initAppAndRedirectAction, fetchUserAction } from 'actions/appActions';
+import { initAppAndRedirectAction } from 'actions/appActions';
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -46,6 +45,7 @@ import {
   fetchTransactionsHistoryNotificationsAction,
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 // constants
 import {
@@ -71,7 +71,7 @@ import {
   CHAT_LIST,
   CHAT,
 } from 'constants/navigationConstants';
-import { PENDING, REGISTERED } from 'constants/userConstants';
+import { PENDING } from 'constants/userConstants';
 
 // models
 import type { Assets } from 'models/Asset';
@@ -82,10 +82,6 @@ const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
-
-const navigationOpts = {
-  header: null,
-};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
@@ -213,8 +209,8 @@ const tabNavigation = createBottomTabNavigator(
     },
     [HOME]: {
       screen: homeFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHome),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -271,6 +267,7 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -282,7 +279,9 @@ const AppFlowNavigation = createStackNavigator(
     [CHAT]: ChatScreen,
   }, {
     mode: 'modal',
-    navigationOptions: navigationOpts,
+    navigationOptions: () => ({
+      header: null,
+    }),
     transitionConfig: () => ({
       transitionSpec: {
         duration: 400,
@@ -313,7 +312,6 @@ const AppFlowNavigation = createStackNavigator(
 type Props = {
   userState: ?string,
   fetchAppSettingsAndRedirect: Function,
-  fetchUser: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
@@ -322,7 +320,9 @@ type Props = {
   fetchTransactionsHistory: (walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
+  getExistingChats: Function,
   notifications: Object[],
+  hasUnreadNotifications: boolean,
   wallet: Object,
   assets: Object,
 }
@@ -332,26 +332,23 @@ class AppFlow extends React.Component<Props, {}> {
 
   componentDidMount() {
     const {
-      fetchUser,
-      userState,
       startListeningNotifications,
       startListeningIntercomNotifications,
       fetchTransactionsHistory,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
+      getExistingChats,
       assets,
       wallet,
     } = this.props;
-    if (userState !== REGISTERED) {
-      fetchUser();
-    }
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchTransactionsHistory(wallet.address);
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
+    getExistingChats();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
@@ -363,10 +360,7 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-      Toast.show({
-        text: lastNotification.message,
-        buttonText: '',
-      });
+      showToast({ text: lastNotification.message });
     }
   }
 
@@ -386,31 +380,31 @@ class AppFlow extends React.Component<Props, {}> {
   };
 
   render() {
-    const { userState } = this.props;
+    const { userState, hasUnreadNotifications } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
 
-    return <AppFlowNavigation />;
+    return <AppFlowNavigation screenProps={{ hasUnreadNotifications }} />;
   }
 }
 
 const mapStateToProps = ({
   user: { userState },
-  notifications: { data: notifications },
+  notifications: { data: notifications, hasUnreadNotifications },
   assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
   userState,
   notifications,
+  hasUnreadNotifications,
   assets,
   wallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
-  fetchUser: () => dispatch(fetchUserAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
@@ -427,6 +421,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => {
     dispatch(fetchInviteNotificationsAction());
   },
+  getExistingChats: () => dispatch(getExistingChatsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

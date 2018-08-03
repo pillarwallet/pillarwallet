@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import Modal from 'react-native-modal';
+import { Root } from 'native-base';
 import styled from 'styled-components/native';
 import Header from 'components/Header';
 import { SubTitle } from 'components/Typography';
@@ -117,16 +118,19 @@ export default class SlideModal extends React.Component<Props, State> {
         }}
       >
         <ModalWrapper fullScreen={fullScreen}>
-          <ModalBackground fullScreen={fullScreen}>
-            {!fullScreen &&
-              <Header noPadding title={title} onClose={this.hideModal} />
-            }
-            <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
-            <ModalContent fullScreen={fullScreen}>
-              {children}
-            </ModalContent>
-            <ModalOverflow />
-          </ModalBackground>
+          <Root>
+            <ModalBackground fullScreen={fullScreen}>
+              {!fullScreen &&
+                <Header noPadding title={title} onClose={this.hideModal} />
+              }
+              <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
+              <ModalContent fullScreen={fullScreen}>
+                {children}
+              </ModalContent>
+              <ModalOverflow />
+            </ModalBackground>
+          </Root>
+
         </ModalWrapper>
         {isVisible && fullScreenComponent}
       </Modal>

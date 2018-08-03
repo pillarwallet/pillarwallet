@@ -1,16 +1,15 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import Icon from 'components/Icon';
 import { baseColors, fontSizes } from 'utils/variables';
 import { BoldText } from 'components/Typography';
 
 type Props = {
   onPressReceive: Function,
   onPressSend: Function,
+  noBalance?: boolean,
 }
-
-const imageSend = require('assets/images/btn_iconSend.png');
-const imageReceive = require('assets/images/qr.png');
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
@@ -27,28 +26,28 @@ const AssetButton = styled.TouchableOpacity`
   padding: 6px;
 `;
 
-const ImageHolder = styled.View`
+const AssetButtonIconWrapper = styled.View`
   border-radius: 50;
   width: 54px;
   height: 54px;
-  background: ${baseColors.white};
+  background: ${props => props.disabled ? baseColors.lightGray : baseColors.white};
   justify-content: center;
   display: flex;
   flex-direction: row;
   align-items: center;
   box-shadow: .5px 1px 1px ${baseColors.mediumGray};
-  elevation: 6;
+  elevation: ${props => props.disabled ? 0 : 6};
 `;
 
-const AssetButtonImage = styled.Image`
-  width: 27px;
-  height: 27px;
+const AssetButtonIcon = styled(Icon)`
+  font-size: ${fontSizes.extraExtraLarge};
+  color: ${props => props.disabled ? baseColors.mediumGray : baseColors.clearBlue};
   justify-content: center;
   display: flex;
 `;
 
 const AssetButtonText = styled(BoldText)`
-  color: ${baseColors.electricBlue};
+  color: ${props => props.disabled ? baseColors.mediumGray : baseColors.electricBlue};
   text-align: center;
   font-size: ${fontSizes.extraSmall};
   margin-top: 10px;
@@ -58,16 +57,16 @@ const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
       <AssetButton onPress={props.onPressReceive}>
-        <ImageHolder>
-          <AssetButtonImage source={imageReceive} />
-        </ImageHolder>
+        <AssetButtonIconWrapper>
+          <AssetButtonIcon name="qrcode" />
+        </AssetButtonIconWrapper>
         <AssetButtonText>RECEIVE</AssetButtonText>
       </AssetButton>
-      <AssetButton onPress={props.onPressSend}>
-        <ImageHolder>
-          <AssetButtonImage source={imageSend} />
-        </ImageHolder>
-        <AssetButtonText>SEND</AssetButtonText>
+      <AssetButton disabled={props.noBalance} onPress={props.noBalance ? null : props.onPressSend}>
+        <AssetButtonIconWrapper disabled={props.noBalance}>
+          <AssetButtonIcon disabled={props.noBalance} name="send" />
+        </AssetButtonIconWrapper>
+        <AssetButtonText disabled={props.noBalance}>SEND</AssetButtonText>
       </AssetButton>
     </AssetButtonsWrapper>
   );

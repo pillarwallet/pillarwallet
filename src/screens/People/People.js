@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
-  ActivityIndicator,
   View,
   FlatList,
   Keyboard,
@@ -24,6 +23,7 @@ import { baseColors, UIColors, fontSizes, spacingSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
+import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
@@ -200,7 +200,6 @@ class PeopleScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
-              paddingHorizontal: 16,
               paddingVertical: spacingSizes.defaultVerticalSpacing,
               paddingTop: 0,
             }}
@@ -221,11 +220,7 @@ class PeopleScreen extends React.Component<Props, State> {
         {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
           <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
             {!!query && contactState === FETCHING &&
-              <ActivityIndicator
-                animating
-                color="#111"
-                size="large"
-              />
+              <Spinner />
             }
 
             {inSearchMode && contactState === FETCHED && !usersFound &&

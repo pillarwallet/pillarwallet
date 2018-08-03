@@ -6,10 +6,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import {
-  fetchAssetsBalancesAction,
-  fetchExchangeRatesAction,
-} from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
@@ -20,6 +17,7 @@ import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
 
 const activeModalResetState = {
@@ -33,15 +31,12 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchExchangeRates: (assets: Assets) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   history: Transaction[],
   assets: Assets,
   wallet: Object,
   rates: Object,
-  assetsState: ?string,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
 }
 
 type State = {
@@ -127,17 +122,28 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { assetData } = this.props.navigation.state.params;
     const {
       assets,
+      rates,
       wallet,
       fetchAssetsBalances,
-      fetchExchangeRates,
       fetchTransactionsHistory,
     } = this.props;
+    const { assetData } = this.props.navigation.state.params;
+    const { balanceInFiat: { currency: fiatCurrency }, token } = assetData;
+
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
+    const { balance } = assets[token];
+    const isWalletEmpty = Number(balance) <= 0;
+    const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
+    const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const displayAmount = formatMoney(balance, 4);
+    const displayBalanceInFiat = {
+      amount: formattedBalanceInFiat,
+      currency: fiatCurrency,
+    };
     return (
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.handleCardTap} />
@@ -147,7 +153,6 @@ class AssetScreen extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances(assets, wallet.address);
-                fetchExchangeRates(assets);
                 fetchTransactionsHistory(wallet.address, assetData.token);
               }}
             />
@@ -159,8 +164,8 @@ class AssetScreen extends React.Component<Props, State> {
                 id={assetData.token}
                 name={assetData.name}
                 token={assetData.token}
-                amount={assetData.amount}
-                balanceInFiat={assetData.balanceInFiat}
+                amount={displayAmount}
+                balanceInFiat={displayBalanceInFiat}
                 color={assetData.color}
                 onPress={this.handleCardTap}
                 address={assetData.address}
@@ -174,6 +179,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal(assetData)}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
+              noBalance={isWalletEmpty}
             />
           </AssetCardWrapper>
           <TXHistory
@@ -197,25 +203,19 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
-  assets: { data: assets, assetsState },
+  assets: { data: assets },
   rates: { data: rates },
   history: { data: history },
-  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
   assets,
-  assetsState,
   rates,
-  baseFiatCurrency,
   history,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
-  fetchExchangeRates: (assets) => {
-    dispatch(fetchExchangeRatesAction(assets));
   },
   fetchTransactionsHistory: (walletAddress, asset) => {
     dispatch(fetchTransactionsHistoryAction(walletAddress, asset));

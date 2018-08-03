@@ -10,6 +10,7 @@ type Props = {
   style?: Object,
   noMargin?: boolean,
   align?: string,
+  subtitle?: boolean,
   maxWidth?: number,
 };
 
@@ -27,7 +28,7 @@ const Wrapper = styled.View`
 
 const Text = styled(BoldText)`
   line-height: ${fontSizes.large};
-  font-size: ${fontSizes.large};
+  font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
     width: 100%;
@@ -52,8 +53,8 @@ const BlueDot = styled(BoldText)`
 const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
-      <Text align={props.align}>{props.title}</Text>
-      {!!props.title && <BlueDot />}
+      <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
+      {!!props.title && !props.subtitle && <BlueDot />}
     </Wrapper>
   );
 };

@@ -7,9 +7,6 @@ import Header from 'components/Header';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
-import CheckboxItem from 'components/CheckboxItem';
-import CheckboxText from 'components/CheckboxText';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -48,21 +45,18 @@ export default class SecurityConfirm extends React.Component<Props, State> {
             You’ll need these words if you lose your device or delete your app.
           </Paragraph>
           <Paragraph light>
-            Write down your backup phrase and  store it in several places only you know.
+            Write down your backup phrase and store it in several places only you know.
             Be very careful when putting it into a digital file or USB stick -
             always encrypt any digital version of these 12 words.
 
           </Paragraph>
         </Wrapper>
         <Footer>
-          <CheckboxItem
-            marginBottom
-          >
-            <Checkbox toggleCheckbox={this.toggleCheckBox} tag="checkbox" checked={!confirmButtonDisabled} />
-            <CheckboxText>
-              I understand that if I lose my backup phrase, I risk losing everything stored on my wallet.
-            </CheckboxText>
-          </CheckboxItem>
+          <Checkbox
+            text="The assets I store on this wallet are safe on their respective blockchains and that this wallet holds
+                the private key to those assets. Pillar does not have access to my private keys."
+            onPress={() => this.setState({ confirmButtonDisabled: !confirmButtonDisabled })}
+          />
           <Button
             block
             title="Continue"
