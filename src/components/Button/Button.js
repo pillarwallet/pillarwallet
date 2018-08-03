@@ -2,11 +2,9 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
-import { Button as NBButton, View } from 'native-base';
+import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
-import ButtonWrapper from './ButtonWrapper';
-import ButtonText from './ButtonText';
 
 type Props = {
   title: string,
@@ -28,12 +26,10 @@ type Props = {
 const themes = {
   primary: {
     background: baseColors.electricBlue,
-    underlay: '#80dfff',
     color: '#ffffff',
   },
   secondary: {
     background: 'rgba(0,0,0,0)',
-    underlay: 'rgba(0,0,0,0)',
     color: baseColors.electricBlue,
   },
   danger: {
@@ -43,7 +39,6 @@ const themes = {
   },
   disabled: {
     background: baseColors.lightGray,
-    underlay: baseColors.mediumGray,
     color: baseColors.darkGray,
   },
 };
@@ -65,6 +60,25 @@ const ButtonIcon = styled(Icon)`
   font-size: ${fontSizes.medium};
   margin-right: 5px;
   color: ${props => props.theme.color};
+`;
+
+const ButtonWrapper = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+  padding: ${props => props.noPadding ? '0' : '15px 40px'};
+  background-color: ${props => props.theme.background};
+  margin-top: ${props => props.marginTop || '0px'};
+  margin-bottom: ${props => props.marginBottom || '0px'};
+  margin-left: ${props => props.marginLeft || '0px'};
+  margin-right: ${props => props.marginRight || '0px'};
+  border-radius: 40;
+  width: ${props => props.block ? '100%' : 'auto'};
+  flex-direction: row;
+`;
+
+const ButtonText = styled(BoldText)`
+  color: ${props => props.theme.color};
+  font-size: 18px;
 `;
 
 const Button = (props: Props) => {
@@ -94,16 +108,13 @@ const Button = (props: Props) => {
       noPadding={noPadding}
       onPress={disabled ? null : onPress}
       width={width}
-      underlayColor={theme.underlay}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-        {!!icon &&
-        <ButtonIcon name={icon} theme={theme} />}
-        <ButtonText
-          theme={theme}
-        >{props.title}
-        </ButtonText>
-      </View>
+      {!!icon &&
+      <ButtonIcon name={icon} theme={theme} />}
+      <ButtonText
+        theme={theme}
+      >{props.title}
+      </ButtonText>
     </ButtonWrapper>
   );
 };
