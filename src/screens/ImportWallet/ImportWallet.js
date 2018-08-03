@@ -18,6 +18,11 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import QRCodeScanner from 'components/QRCodeScanner';
+import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } from 'react-native';
+import { Permissions } from 'expo';
+
+const PERMISSION_GRANTED = 'GRANTED';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -31,6 +36,7 @@ type State = {
   tWordsPhrase: string,
   errorMessage: string,
   errorField: string,
+  isScanning: boolean,
 };
 
 class ImportWallet extends React.Component<Props, State> {
@@ -39,6 +45,7 @@ class ImportWallet extends React.Component<Props, State> {
     tWordsPhrase: '',
     errorMessage: '',
     errorField: '',
+    isScanning: false,
   };
 
   constructor(props: Props) {
@@ -91,6 +98,29 @@ class ImportWallet extends React.Component<Props, State> {
     }
   };
 
+  handleQRScannerOpen = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    this.setState({
+      isScanning: status.toUpperCase() === PERMISSION_GRANTED,
+    }, () => {
+      if (this.state.isScanning) {
+        Keyboard.dismiss();
+      }
+    });
+  };
+
+  handleQRScannerClose = () => {
+    this.setState({
+      isScanning: false,
+    });
+  };
+
+  handleQRRead = (address: string) => {
+    this.setState({ privateKey: { ...this.state.privateKey, address }, isScanning: false }, () => {
+      // this.navigateToNextScreen(address);
+    });
+  };
+
   getError = (errorField: string) => {
     if (errorField === this.state.errorField) {
       return this.state.errorMessage;
@@ -109,7 +139,7 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   render() {
-    const { privateKey, tWordsPhrase } = this.state;
+    const { privateKey, tWordsPhrase, isScanning } = this.state;
     const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
     const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
 
@@ -140,8 +170,14 @@ class ImportWallet extends React.Component<Props, State> {
             errorMessage={errorMessagePrivateKey}
             underlineColorAndroid="transparent"
           />
+          <Button onPress={this.handleQRScannerOpen}/>
           <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
         </ScrollWrapper>
+        <QRCodeScanner
+            isActive={isScanning}
+            onDismiss={this.handleQRScannerClose}
+            onRead={this.handleQRRead}
+        />
       </Container>
     );
   }
