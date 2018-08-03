@@ -4,8 +4,6 @@ import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
-import ButtonWrapper from './ButtonWrapper';
-import ButtonText from './ButtonText';
 
 type Props = {
   title: string,
@@ -25,17 +23,14 @@ type Props = {
 const themes = {
   primary: {
     background: baseColors.electricBlue,
-    underlay: '#80dfff',
     color: '#ffffff',
   },
   secondary: {
     background: 'rgba(0,0,0,0)',
-    underlay: 'rgba(0,0,0,0)',
     color: baseColors.electricBlue,
   },
   disabled: {
     background: baseColors.lightGray,
-    underlay: baseColors.mediumGray,
     color: baseColors.darkGray,
   },
 };
@@ -49,6 +44,23 @@ const getTheme = (props: Props) => {
   }
   return themes.primary;
 };
+
+const ButtonWrapper = styled.TouchableOpacity`
+  align-items: center;
+  padding: ${props => props.noPadding ? '0' : '15px 40px'};
+  background-color: ${props => props.theme.background};
+  margin-top: ${props => props.marginTop || '0px'};
+  margin-bottom: ${props => props.marginBottom || '0px'};
+  margin-left: ${props => props.marginLeft || '0px'};
+  margin-right: ${props => props.marginRight || '0px'};
+  border-radius: 40;
+  width: ${props => props.block ? '100%' : 'auto'};
+`;
+
+const ButtonText = styled(BoldText)`
+  color: ${props => props.theme.color};
+  font-size: 18px;
+`;
 
 const Button = (props: Props) => {
   const theme = getTheme(props);
@@ -65,7 +77,6 @@ const Button = (props: Props) => {
       noPadding={props.noPadding}
       onPress={props.disabled ? null : props.onPress}
       width={props.width}
-      underlayColor={theme.underlay}
     >
       <ButtonText
         theme={theme}
