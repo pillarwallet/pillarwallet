@@ -86,7 +86,7 @@ const CancelActionText = styled(BaseText)`
 `;
 
 const ActionButton = styled.View`
-  background: ${baseColors.clearBlue};
+  background: ${baseColors.electricBlue};
   padding: 0 20px;
   height: 34px;
   border-radius: 17px;
