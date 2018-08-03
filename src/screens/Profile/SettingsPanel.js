@@ -85,10 +85,10 @@ const SettingsPanel = (props: Props) => {
         {children}
         <ButtonGroupAndroid>
           <ButtonAndroid onPress={handleCancel}>
-            <BaseText style={{ textAlign: 'center', color: baseColors.clearBlue, fontSize: 17 }}>CANCEL</BaseText>
+            <BaseText style={{ textAlign: 'center', color: baseColors.electricBlue, fontSize: 17 }}>CANCEL</BaseText>
           </ButtonAndroid>
           <ButtonAndroid onPress={handleOK}>
-            <BaseText style={{ textAlign: 'center', color: baseColors.clearBlue, fontSize: 17 }}>OK</BaseText>
+            <BaseText style={{ textAlign: 'center', color: baseColors.electricBlue, fontSize: 17 }}>OK</BaseText>
           </ButtonAndroid>
         </ButtonGroupAndroid>
       </SettingsPanelAndroid>
@@ -109,7 +109,7 @@ const SettingsPanel = (props: Props) => {
         >
           <BaseText style={{
             textAlign: 'center',
-            color: baseColors.clearBlue,
+            color: baseColors.electricBlue,
             fontSize: 17,
           }}
           >Cancel
@@ -121,7 +121,7 @@ const SettingsPanel = (props: Props) => {
         >
           <BaseText style={{
             textAlign: 'center',
-            color: baseColors.clearBlue,
+            color: baseColors.electricBlue,
             fontWeight: '700',
             fontSize: 17,
           }}

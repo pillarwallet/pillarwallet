@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { RefreshControl, Platform } from 'react-native';
-import { PROFILE, CONTACT } from 'constants/navigationConstants';
+import { PROFILE, CONTACT, CHAT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -26,6 +26,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
+import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
@@ -117,6 +118,7 @@ type Props = {
   history: Object[],
   user: Object,
   wallet: Object,
+  chats: Object,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   fetchTransactionsHistory: Function,
@@ -124,6 +126,8 @@ type Props = {
   cancelInvitation: Function,
   rejectInvitation: Function,
   homeNotifications: Object[],
+  getExistingChats: Function,
+  resetUnread: Function,
 };
 
 class PeopleScreen extends React.Component<Props> {
@@ -197,6 +201,12 @@ class PeopleScreen extends React.Component<Props> {
     return uniqBy(concatedHistory, 'txHash');
   }
 
+  toChat = (contact) => {
+    const { navigation, resetUnread } = this.props;
+    navigation.navigate(CHAT, { contact });
+    resetUnread(contact.username);
+  }
+
   render() {
     const {
       user,
@@ -208,10 +218,31 @@ class PeopleScreen extends React.Component<Props> {
       historyNotifications,
       history,
       wallet: { address: walletAddress },
+      chats,
     } = this.props;
+
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-    const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory]
+
+    const chatNotifications = chats.chats
+      .map((
+        {
+          username,
+          lastMessage,
+          profileImage,
+        }) => {
+        if (lastMessage.savedTimestamp === '') return {};
+        return {
+          content: lastMessage.content,
+          username,
+          type: 'CHAT',
+          createdAt: lastMessage.savedTimestamp,
+          onPress: () => this.toChat({ username, profileImage }),
+        };
+      });
+
+    const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
+      .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
     return (
       <Container>
@@ -254,11 +285,13 @@ class PeopleScreen extends React.Component<Props> {
                   fetchTransactionsHistoryNotifications,
                   fetchInviteNotifications,
                   fetchTransactionsHistory,
+                  getExistingChats,
                   wallet,
                 } = this.props;
                 fetchTransactionsHistoryNotifications();
                 fetchInviteNotifications();
                 fetchTransactionsHistory(wallet.address);
+                getExistingChats();
               }}
             />
           }
@@ -290,6 +323,7 @@ const mapStateToProps = ({
   history: { data: history, historyNotifications },
   invitations: { data: invitations },
   wallet: { data: wallet },
+  chat: { data: chats },
 }) => ({
   contacts,
   user,
@@ -297,6 +331,7 @@ const mapStateToProps = ({
   history,
   invitations,
   wallet,
+  chats,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -306,6 +341,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
+  getExistingChats: () => dispatch(getExistingChatsAction()),
+  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

@@ -94,6 +94,7 @@ export const registerWalletAction = () => {
       password: generateChatPassword(wallet.privateKey),
     }).catch(() => null);
     await chat.client.registerAccount().catch(() => null);
+    await chat.client.setFcmId(fcmToken).catch(() => null);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);

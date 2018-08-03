@@ -173,10 +173,13 @@ class NewProfile extends React.Component<Props, State> {
     const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
     const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
     const isUsernameValid = value && value.username && value.username.length > 0;
+    const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
+    const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability;
+
     return (
       <Container>
         <Header
-          title="choose your username"
+          title="choose username"
           onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
         />
         <ScrollWrapper regularPadding>
@@ -194,7 +197,7 @@ class NewProfile extends React.Component<Props, State> {
               <Button
                 block
                 onPress={this.handleSubmit}
-                disabled={!isUsernameValid || walletState === CHECKING_USERNAME}
+                disabled={shouldNextButtonBeDisabled}
                 title="Next"
               />
             </FooterInnerComponent>
