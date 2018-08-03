@@ -24,11 +24,10 @@ const TransactionSentModal = (props: Props) => {
         <Title title="transaction sent" align="center" />
       </Center>
       <Paragraph light center style={{ marginBottom: 30 }}>
-          We will let you know once it has been confirmed.
+        We will let you know once it has been confirmed.
       </Paragraph>
     </PopModal>
   );
 };
 
 export default TransactionSentModal;
-

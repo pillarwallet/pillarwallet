@@ -5,12 +5,13 @@ import { DangerZone } from 'expo';
 const { Lottie } = DangerZone;
 const tokenSentConfirmationAnimation = require('./transactionSentConfirmationAnimation.json');
 
-export default class TransactionSentAnimation extends React.Component<*> {
+export default class TransactionSentAnimation extends React.Component<{}> {
   animation: Lottie;
 
   componentDidMount() {
     this.animation.play();
   }
+
   render() {
     return (
       <Lottie
