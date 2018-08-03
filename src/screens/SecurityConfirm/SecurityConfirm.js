@@ -53,8 +53,7 @@ export default class SecurityConfirm extends React.Component<Props, State> {
         </Wrapper>
         <Footer>
           <Checkbox
-            text="The assets I store on this wallet are safe on their respective blockchains and that this wallet holds
-                the private key to those assets. Pillar does not have access to my private keys."
+            text="I understand that my backup phrase is the only way I can restore my wallet if I lose access."
             onPress={() => this.setState({ confirmButtonDisabled: !confirmButtonDisabled })}
           />
           <Button
@@ -62,7 +61,6 @@ export default class SecurityConfirm extends React.Component<Props, State> {
             title="Continue"
             onPress={this.handleConfirm}
             disabled={confirmButtonDisabled}
-            marginBottom="20px"
           />
         </Footer>
       </Container>
