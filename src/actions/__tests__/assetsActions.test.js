@@ -47,7 +47,7 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 jest.mock('ethers', () => ({
   Wallet: {
     fromMnemonic: () => mockWallet,
-    fromEncryptedWallet: () => mockWallet,
+    RNfromEncryptedWallet: () => mockWallet,
   },
   utils: {
     parseEther: x => x,
