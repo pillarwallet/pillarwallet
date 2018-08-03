@@ -46,6 +46,7 @@ import {
   fetchTransactionsHistoryNotificationsAction,
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 // constants
 import {
@@ -321,6 +322,7 @@ type Props = {
   fetchTransactionsHistory: (walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
+  getExistingChats: Function,
   notifications: Object[],
   wallet: Object,
   assets: Object,
@@ -337,6 +339,7 @@ class AppFlow extends React.Component<Props, {}> {
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
+      getExistingChats,
       assets,
       wallet,
     } = this.props;
@@ -346,6 +349,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
+    getExistingChats();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
@@ -417,6 +421,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => {
     dispatch(fetchInviteNotificationsAction());
   },
+  getExistingChats: () => dispatch(getExistingChatsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

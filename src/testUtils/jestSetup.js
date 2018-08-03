@@ -42,6 +42,7 @@ jest.setMock('rn-signal-protocol-messaging', {
     sendMessageByContact: () => Promise.resolve(),
     receiveNewMessagesByContact: () => Promise.resolve(),
     registerAccount: () => Promise.resolve(),
+    setFcmId: () => Promise.resolve(),
   },
 });
 
