@@ -8,7 +8,7 @@ import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import ContactCard from 'components/ContactCard';
-import ContactsSeparator from 'components/ContactsSeparator';
+import Separator from 'components/Separator';
 import { SubHeading, BaseText } from 'components/Typography';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import {
@@ -163,7 +163,7 @@ class PeopleSearchResults extends React.Component<Props> {
             keyExtractor={({ username }) => username}
             contentContainerStyle={{ paddingBottom: 40 }}
             ListHeaderComponent={<SubHeading>ALL USERS</SubHeading>}
-            ItemSeparatorComponent={ContactsSeparator}
+            ItemSeparatorComponent={Separator}
           />
         )}
       </React.Fragment>
