@@ -50,8 +50,7 @@ const SOCIAL = 'SOCIAL';
 
 const ActivityFeedList = styled.FlatList``;
 
-const ActivityFeedWrapper = styled.View`
-`;
+const ActivityFeedWrapper = styled.View``;
 
 const ActivityFeedItem = styled.TouchableOpacity`
   background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};

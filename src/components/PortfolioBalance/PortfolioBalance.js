@@ -69,10 +69,10 @@ class PortfolioBalance extends React.Component<Props, {}> {
       <View style={style}>
         {!!label &&
         <BaseText style={{
-            color: baseColors.darkGray,
-            fontSize: fontSizes.small,
-            paddingTop: 10,
-          }}
+          color: baseColors.darkGray,
+          fontSize: fontSizes.small,
+          paddingTop: 10,
+        }}
         >
           {label}
         </BaseText>}

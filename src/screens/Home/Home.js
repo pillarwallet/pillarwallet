@@ -56,11 +56,12 @@ type State = {
   activeTab: string,
   esTitle: string,
   esBody: string,
-}
+};
 
 const TRANSACTIONS = 'TRANSACTIONS';
 const SOCIAL = 'SOCIAL';
 const ALL = 'ALL';
+
 
 const HomeHeader = styled.View`
   padding: 0 16px;
@@ -80,7 +81,6 @@ const HomeHeaderRight = styled.View`
   flex: 0 0 40px;
   align-items: flex-end;
 `;
-
 
 const HomeHeaderBody = styled.View`
   flex: 1;
@@ -119,9 +119,7 @@ const RecentConnectionsWrapper = styled.View`
   background-color: ${baseColors.white};
 `;
 
-const RecentConnectionsScrollView = styled.ScrollView`
-
-`;
+const RecentConnectionsScrollView = styled.ScrollView``;
 
 const RecentConnectionsSubtitle = styled(Title)`
   margin-left: ${spacingSizes.defaultHorizontalSideSpacing};
@@ -273,11 +271,25 @@ class HomeScreen extends React.Component<Props, State> {
     return uniqBy(concatedHistory, 'txHash');
   }
 
-  toChat = (contact) => {
+  navigateToChat = (contact) => {
     const { navigation, resetUnread } = this.props;
     navigation.navigate(CHAT, { contact });
     resetUnread(contact.username);
-  }
+  };
+
+  refreshScreenData = () => {
+    const {
+      fetchTransactionsHistoryNotifications,
+      fetchInviteNotifications,
+      fetchTransactionsHistory,
+      getExistingChats,
+      wallet,
+    } = this.props;
+    fetchTransactionsHistoryNotifications();
+    fetchInviteNotifications();
+    fetchTransactionsHistory(wallet.address);
+    getExistingChats();
+  };
 
   render() {
     const {
@@ -309,7 +321,7 @@ class HomeScreen extends React.Component<Props, State> {
           username,
           type: 'CHAT',
           createdAt: lastMessage.savedTimestamp,
-          onPress: () => this.toChat({ username, profileImage }),
+          onPress: () => this.navigateToChat({ username, profileImage }),
         };
       });
 
@@ -325,19 +337,7 @@ class HomeScreen extends React.Component<Props, State> {
           refreshControl={
             <RefreshControl
               refreshing={false}
-              onRefresh={() => {
-                const {
-                  fetchTransactionsHistoryNotifications,
-                  fetchInviteNotifications,
-                  fetchTransactionsHistory,
-                  getExistingChats,
-                  wallet,
-                } = this.props;
-                fetchTransactionsHistoryNotifications();
-                fetchInviteNotifications();
-                fetchTransactionsHistory(wallet.address);
-                getExistingChats();
-              }}
+              onRefresh={this.refreshScreenData}
             />
           }
         >
