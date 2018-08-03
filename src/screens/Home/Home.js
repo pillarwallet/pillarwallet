@@ -77,7 +77,6 @@ const RecentConnectionsSubHeading = styled(SubHeading)`
   margin: 16px;
 `;
 
-
 const RecentConnectionsItem = styled.TouchableOpacity`
   align-items: center;
   width: 64px;
@@ -129,6 +128,7 @@ type Props = {
   homeNotifications: Object[],
   getExistingChats: Function,
   resetUnread: Function,
+  screenProps: Object,
 };
 
 class PeopleScreen extends React.Component<Props> {
@@ -235,6 +235,7 @@ class PeopleScreen extends React.Component<Props> {
       history,
       wallet: { address: walletAddress },
       chats,
+      screenProps: { hasUnreadNotifications },
     } = this.props;
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
@@ -260,6 +261,11 @@ class PeopleScreen extends React.Component<Props> {
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
       .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
+
+    if (hasUnreadNotifications) {
+      this.props.setUnreadNotificationsStatus(false);
+    }
+
     return (
       <Container>
         <HomeHeader>
@@ -316,9 +322,9 @@ class PeopleScreen extends React.Component<Props> {
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
             {!this.props.contacts.length && this.renderEmptyRCState()}
             {!!this.props.contacts.length &&
-            <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
-              {this.renderRecentConnections()}
-            </RecentConnectionsScrollView>}
+              <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
+                {this.renderRecentConnections()}
+              </RecentConnectionsScrollView>}
           </RecentConnections>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
@@ -337,6 +343,7 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
   history: { data: history, historyNotifications },
+  notifications: { hasUnreadNotifications },
   invitations: { data: invitations },
   wallet: { data: wallet },
   chat: { data: chats },
@@ -344,6 +351,7 @@ const mapStateToProps = ({
   contacts,
   user,
   historyNotifications,
+  hasUnreadNotifications,
   history,
   invitations,
   wallet,
