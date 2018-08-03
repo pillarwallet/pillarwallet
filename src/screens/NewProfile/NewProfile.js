@@ -178,7 +178,7 @@ class NewProfile extends React.Component<Props, State> {
     return (
       <Container>
         <Header
-          title="choose your username"
+          title="choose username"
           onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
         />
         <ScrollWrapper regularPadding>
