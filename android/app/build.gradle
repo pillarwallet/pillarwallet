@@ -108,6 +108,7 @@ apply from: 'expo.gradle'
 
 dependencies {
     compile project(':react-native-background-timer')
+    compile project(':react-native-scrypt')
     compile project(':react-native-vector-icons')
     compile project(':lottie-react-native')
     compile project(':rn-signal-protocol-messaging')
