@@ -51,7 +51,6 @@ type Props = {
   homeNotifications: Object[],
   getExistingChats: Function,
   resetUnread: Function,
-  screenProps: Object,
   chats: any,
 };
 
@@ -319,8 +318,6 @@ class HomeScreen extends React.Component<Props, State> {
       history,
       wallet: { address: walletAddress },
       chats,
-      screenProps: { hasUnreadNotifications },
-      setUnreadNotificationsStatus,
     } = this.props;
     const { activeTab, esBody, esTitle } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
@@ -347,10 +344,6 @@ class HomeScreen extends React.Component<Props, State> {
       .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
-
-    if (hasUnreadNotifications) {
-      setUnreadNotificationsStatus(false);
-    }
 
     return (
       <Container>
@@ -470,7 +463,6 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
   history: { data: history, historyNotifications },
-  notifications: { hasUnreadNotifications },
   invitations: { data: invitations },
   wallet: { data: wallet },
   chat: { data: chats },
@@ -478,7 +470,6 @@ const mapStateToProps = ({
   contacts,
   user,
   historyNotifications,
-  hasUnreadNotifications,
   history,
   invitations,
   wallet,

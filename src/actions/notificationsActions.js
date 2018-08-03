@@ -56,9 +56,9 @@ export const stopListeningIntercomNotificationsAction = () => {
   };
 };
 
-export const setUnreadNotificationsStatusAction = (unreadNotificationsStatus: boolean) => {
+export const setUnreadNotificationsStatusAction = (status: boolean) => {
   return async (dispatch: Function) => {
-    dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: unreadNotificationsStatus });
+    dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: status });
   };
 };
 
@@ -90,12 +90,11 @@ export const startListeningNotificationsAction = () => {
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());
       }
-      dispatch({ type: ADD_NOTIFICATION, payload: notification });
-      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
         dispatch({ type: ADD_NOTIFICATION, payload: notification });
       }
+      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
     });
   };
 };

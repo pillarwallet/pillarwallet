@@ -209,8 +209,8 @@ const tabNavigation = createBottomTabNavigator(
     },
     [HOME]: {
       screen: homeFlow,
-      navigationOptions: (props) => ({
-        tabBarIcon: tabBarIcon(iconHome, props.screenProps.hasUnreadNotifications),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -380,13 +380,13 @@ class AppFlow extends React.Component<Props, {}> {
   };
 
   render() {
-    const { userState } = this.props;
+    const { userState, hasUnreadNotifications } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
 
-    return <AppFlowNavigation screenProps={{ hasUnreadNotifications: this.props.hasUnreadNotifications }} />;
+    return <AppFlowNavigation screenProps={{ hasUnreadNotifications }} />;
   }
 }
 
