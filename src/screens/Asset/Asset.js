@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Animated, Easing, Share, RefreshControl } from 'react-native';
+import { baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -17,7 +18,6 @@ import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { formatMoney } from 'utils/common';
-import { baseColors } from 'utils/variables';
 import ReceiveModal from './ReceiveModal';
 
 const activeModalResetState = {
@@ -135,8 +135,8 @@ class AssetScreen extends React.Component<Props, State> {
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
-
     const { balance } = assets[token];
+    const isWalletEmpty = Number(balance) <= 0;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
@@ -144,7 +144,6 @@ class AssetScreen extends React.Component<Props, State> {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
     };
-
     return (
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.handleCardTap} />
@@ -180,6 +179,7 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal(assetData)}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
+              noBalance={isWalletEmpty}
             />
           </AssetCardWrapper>
           <TXHistory
