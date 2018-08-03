@@ -106,7 +106,7 @@ class LegalTerms extends React.Component<Props, State> {
                 marginRight: 4,
                 marginLeft: 4,
                 marginBottom: 0,
-                fontSize: fontSizes.small,
+                fontSize: fontSizes.extraSmall,
               }}
               >
                 and
