@@ -19,7 +19,7 @@ import {
 import ButtonIcon from 'components/ButtonIcon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { UIColors, baseColors, fontSizes, spacingSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -31,7 +31,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 const HomeHeader = styled.View`
   height: 120px;
-  padding: 0 ${spacingSizes.defaultHorizontalMargin}px;
+  padding: 0 ${spacing.rhythm}px;
   margin-top: ${Platform.OS === 'android' ? '20px' : 0};
   align-content: space-between;
   border-bottom-width: 1px;
@@ -73,7 +73,7 @@ const RecentConnectionsScrollView = styled.ScrollView`
 `;
 
 const RecentConnectionsSubHeading = styled(SubHeading)`
-  margin: 20px ${spacingSizes.defaultHorizontalMargin}px 10px;
+  margin: 20px ${spacing.rhythm}px 10px;
 `;
 
 

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Vibration, Animated, Dimensions, Platform } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import { noop } from 'utils/common';
-import { spacingSizes } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import ButtonIcon from 'components/ButtonIcon';
 import styled from 'styled-components/native';
 
@@ -55,7 +55,7 @@ const Rectangle = styled.View`
 
 const CloseButton = styled(ButtonIcon)`
   position: absolute;
-  right: ${spacingSizes.defaultHorizontalMargin}px;
+  right: ${spacing.rhythm}px;
   top: 20px;
   zIndex: 5;
 `;

@@ -19,7 +19,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { baseColors, UIColors, fontSizes, spacingSizes } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
@@ -50,7 +50,7 @@ const ConnectionRequestBannerIcon = styled(Icon)`
   font-size: ${fontSizes.medium};
   color: ${baseColors.darkGray};
   margin-left: auto;
-  margin-right: ${spacingSizes.defaultHorizontalMargin}px;
+  margin-right: ${spacing.rhythm}px;
 `;
 
 const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
@@ -200,8 +200,8 @@ class PeopleScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
-              paddingHorizontal: spacingSizes.defaultHorizontalMargin,
-              paddingVertical: spacingSizes.defaultVerticalMargin,
+              paddingHorizontal: spacing.rhythm,
+              paddingVertical: spacing.rhythm,
               paddingTop: 0,
             }}
             refreshControl={

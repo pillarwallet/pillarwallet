@@ -12,7 +12,7 @@ import { Label, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
 import { getUserName } from 'utils/contacts';
-import { spacingSizes } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Item from './Item';
@@ -69,7 +69,7 @@ const flatListStyles = {
 
 const TXHistoryHeader = styled.View`
   align-items: flex-start;
-  padding: 10px ${spacingSizes.defaultHorizontalMargin}px 0;
+  padding: 10px ${spacing.rhythm}px 0;
 `;
 
 const SENT = 'Sent';

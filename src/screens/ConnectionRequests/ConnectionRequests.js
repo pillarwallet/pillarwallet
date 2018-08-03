@@ -4,7 +4,7 @@ import { FlatList, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
-import { spacingSizes } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -77,7 +77,7 @@ class ConnectionRequests extends React.Component<Props> {
           ItemSeparatorComponent={ContactsSeparator}
           contentContainerStyle={{
             paddingHorizontal: 16,
-            paddingVertical: spacingSizes.defaultVerticalMargin,
+            paddingVertical: spacing.rhythm,
             paddingTop: 0,
           }}
           refreshControl={

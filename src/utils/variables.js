@@ -60,9 +60,8 @@ export const fontSizes = {
   androidCheckmarkIcon: 26,
 };
 
-export const spacingSizes = {
-  defaultHorizontalMargin: 20,
-  defaultVerticalMargin: 20,
+export const spacing = {
+  rhythm: 20,
 };
 
 export const itemSizes = {
