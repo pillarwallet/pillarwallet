@@ -4,5 +4,6 @@
     "javascript.validate.enable": false,
     "files.associations": {
       "*.js" : "javascriptreact"
-    }
+    },
+    "eslint.enable": true
   }
