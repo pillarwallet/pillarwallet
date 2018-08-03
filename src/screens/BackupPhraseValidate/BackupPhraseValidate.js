@@ -22,9 +22,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
-const WordInputFields = styled.View`
-  margin: 20px 0;
-`;
+const WordInputFields = styled.View``;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
   background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
@@ -84,6 +82,7 @@ const ShuffledWordWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
@@ -199,6 +198,9 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           <WordInputFields>
             {this.renderInputFields()}
           </WordInputFields>
+
+        </Wrapper>
+        <Footer>
           <ShuffledWordWrapper>
             {this.renderShuffledWordList()}
             {!!__DEV__ && (
@@ -210,8 +212,6 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             </MnemonicPhraseWord>
             )}
           </ShuffledWordWrapper>
-        </Wrapper>
-        <Footer>
           <Button
             small
             flexRight

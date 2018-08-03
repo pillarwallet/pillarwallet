@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { transparentize } from 'polished';
 import { BaseText, BoldText } from 'components/Typography';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 
 
 const MnemonicPhraseWrapper = styled.View`
@@ -43,15 +43,14 @@ const MnemonicPhraseIndex = styled(BaseText)`
 const MnemonicPhraseWord = styled(BoldText)`
   font-size: ${fontSizes.small};
   padding-left: 10px;
-  line-height: 0;
   flex: 1;
   color: ${baseColors.white};
 
 `;
 
 const getIndex = (number: number) => {
-  return ("0" + number).slice(-2)
-}
+  return (`0${number}`).slice(-2);
+};
 
 type Props = {
   phrase: string,
