@@ -16,6 +16,8 @@ const glyphMap = {
   settings: '\uE809',
   warning: '\uE80A',
   check: '\uE80B',
+  qrcode: '\uE80C',
+  send: '\uF1D9',
 };
 
 type Props = {
