@@ -76,7 +76,7 @@ import { PENDING } from 'constants/userConstants';
 // models
 import type { Assets } from 'models/Asset';
 
-import { UIColors, baseColors } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
@@ -174,10 +174,11 @@ const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
 const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
   <BaseText
     style={{
-      fontSize: 12,
+      fontSize: fontSizes.extraExtraSmall,
       color: focused ? tintColor : baseColors.mediumGray,
       textAlign: 'center',
     }}
+    numberOfLines={1}
   >
     {labelText}
   </BaseText>
