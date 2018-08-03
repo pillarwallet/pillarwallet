@@ -1,10 +1,13 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
+
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors } from 'utils/variables';
+import type { Notification } from 'models/Notification';
 import ButtonIcon from 'components/ButtonIcon';
 import { SubHeading, BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
@@ -17,6 +20,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { CHAT } from 'constants/chatConstants';
 
 const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
 const TRANSACTION_SENT = 'TRANSACTION_SENT';
@@ -25,6 +29,7 @@ const SOCIAL_TYPES = [
   TYPE_ACCEPTED,
   TYPE_REJECTED,
   TYPE_SENT,
+  CHAT,
 ];
 
 const TRANSACTIONS = 'TRANSACTIONS';
@@ -40,6 +45,7 @@ const NOTIFICATION_LABELS = {
   [TYPE_REJECTED]: 'Connection rejected',
   [TRANSACTION_RECEIVED]: 'Received',
   [TRANSACTION_SENT]: 'Sent',
+  [CHAT]: 'New message',
 };
 
 const ActivityFeedWrapper = styled.View`
@@ -50,7 +56,7 @@ const ActivityFeedHeader = styled.View`
   padding: 16px 16px 0;
 `;
 
-const ActivityFeedItem = styled.View`
+const ActivityFeedItem = styled.TouchableOpacity`
   background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};
   height: 74px;
   padding: 0px 16px;
@@ -129,6 +135,7 @@ type Props = {
   onCancelInvitation: Function,
   onRejectInvitation: Function,
   walletAddress: string,
+  notifications: Notification[],
 }
 
 type State = {
@@ -137,7 +144,7 @@ type State = {
   esBody: string,
 }
 
-export default class ActivityFeed extends React.Component<Props, State> {
+class ActivityFeed extends React.Component<Props, State> {
   state = {
     activeTab: 'ALL',
     esTitle: 'Make your first step',
@@ -188,6 +195,12 @@ export default class ActivityFeed extends React.Component<Props, State> {
             </LabelText>
           </TouchableOpacity >
         );
+      case CHAT:
+        return (
+          <LabelText>
+            Read
+          </LabelText>
+        );
       default:
         return (
           <LabelText>
@@ -201,6 +214,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
     const isEven = index % 2;
     const { type } = notification;
     const { walletAddress } = this.props;
+
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.toAddress.toUpperCase() === walletAddress.toUpperCase();
@@ -228,7 +242,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
       );
     }
     return (
-      <ActivityFeedItem isEven={isEven} key={index}>
+      <ActivityFeedItem isEven={isEven} key={index} onPress={notification.onPress}>
         <ActivityFeedItemCol fixedWidth="44px">
           <ProfileImage
             uri={notification.avatar}
@@ -250,7 +264,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
 
   render() {
     const { activeTab, esTitle, esBody } = this.state;
-    const { history } = this.props;
+    const { history, notifications } = this.props;
     const filteredHistory = history.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
         return type === TRANSACTION_EVENT;
@@ -260,6 +274,7 @@ export default class ActivityFeed extends React.Component<Props, State> {
       }
       return true;
     });
+
     return (
       <ActivityFeedWrapper>
         <ActivityFeedHeader>
@@ -302,8 +317,9 @@ export default class ActivityFeed extends React.Component<Props, State> {
         </TabWrapper>
         <FlatList
           data={filteredHistory}
+          extraData={notifications}
           renderItem={this.renderActivityFeedItem}
-          keyExtractor={({ createdAt }) => createdAt.toString()}
+          keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{ height: '100%' }}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
         />
@@ -311,3 +327,11 @@ export default class ActivityFeed extends React.Component<Props, State> {
     );
   }
 }
+
+const mapStateToProps = ({
+  notifications: { data: notifications },
+}) => ({
+  notifications,
+});
+
+export default connect(mapStateToProps)(ActivityFeed);

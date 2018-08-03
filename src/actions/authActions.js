@@ -17,6 +17,7 @@ import { delay } from 'utils/common';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
+import firebase from 'react-native-firebase';
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
@@ -45,7 +46,9 @@ export const loginAction = (pin: string) => {
         username: user.username,
         password: generateChatPassword(wallet.privateKey),
       }).catch(() => null);
+      const fcmToken = await firebase.messaging().getToken();
       await chat.client.registerAccount().catch(() => null);
+      await chat.client.setFcmId(fcmToken).catch(() => null);
 
       dispatch({
         type: DECRYPT_WALLET,
