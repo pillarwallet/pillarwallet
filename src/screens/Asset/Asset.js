@@ -136,7 +136,7 @@ class AssetScreen extends React.Component<Props, State> {
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
     const { balance } = assets[token];
-    const isWalletEmpty = balance === '0.0';
+    const isWalletEmpty = Number(balance) <= 0;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
