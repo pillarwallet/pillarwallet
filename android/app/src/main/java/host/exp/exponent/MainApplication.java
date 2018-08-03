@@ -11,6 +11,7 @@ import expolib_v1.okhttp3.OkHttpClient;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
+import com.crypho.scrypt.RNScryptPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.tradle.react.UdpSocketsModule;
@@ -59,6 +60,7 @@ public class MainApplication extends ExpoApplication {
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new RNScryptPackage(),
             new VectorIconsPackage(),
             new RNSignalClientPackage(),
             new IntercomPackage(),
