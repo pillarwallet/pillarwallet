@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
-import { Button as NBButton } from 'native-base';
+import { baseColors, fontSizes } from 'utils/variables';
+import { Button as NBButton, View } from 'native-base';
 import { BoldText } from 'components/Typography';
+import Icon from 'components/Icon';
 import ButtonWrapper from './ButtonWrapper';
 import ButtonText from './ButtonText';
 
@@ -21,6 +22,7 @@ type Props = {
   width?: string,
   block?: boolean,
   noPadding?: boolean,
+  icon?: string,
 };
 
 const themes = {
@@ -36,7 +38,7 @@ const themes = {
   },
   danger: {
     background: baseColors.burningFire,
-    underlay: '#f77718',
+    underlay: '#ff7f20',
     color: baseColors.white,
   },
   disabled: {
@@ -59,27 +61,49 @@ const getTheme = (props: Props) => {
   return themes.primary;
 };
 
+const ButtonIcon = styled(Icon)`
+  font-size: ${fontSizes.medium};
+  margin-right: 5px;
+  color: ${props => props.theme.color};
+`;
+
 const Button = (props: Props) => {
   const theme = getTheme(props);
+  const {
+    block,
+    marginTop,
+    marginBottom,
+    icon,
+    marginLeft,
+    marginRight,
+    noPadding,
+    disabled,
+    onPress,
+    width,
+  } = props;
 
   return (
     <ButtonWrapper
       {...props}
       theme={theme}
-      block={props.block}
-      marginTop={props.marginTop}
-      marginBottom={props.marginBottom}
-      marginLeft={props.marginLeft}
-      marginRight={props.marginRight}
-      noPadding={props.noPadding}
-      onPress={props.disabled ? null : props.onPress}
-      width={props.width}
+      block={block}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      marginLeft={marginLeft}
+      marginRight={marginRight}
+      noPadding={noPadding}
+      onPress={disabled ? null : onPress}
+      width={width}
       underlayColor={theme.underlay}
     >
-      <ButtonText
-        theme={theme}
-      >{props.title}
-      </ButtonText>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {!!icon &&
+        <ButtonIcon name={icon} theme={theme} />}
+        <ButtonText
+          theme={theme}
+        >{props.title}
+        </ButtonText>
+      </View>
     </ButtonWrapper>
   );
 };
