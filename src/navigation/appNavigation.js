@@ -153,17 +153,17 @@ const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
       source={icon}
     />
     {!!hasAddon &&
-      <View
-        style={{
-          width: 7,
-          height: 7,
-          backgroundColor: '#ffdb3c',
-          borderRadius: 3.5,
-          position: 'absolute',
-          top: 0,
-          right: 0,
-        }}
-      />}
+    <View
+      style={{
+        width: 7,
+        height: 7,
+        backgroundColor: '#ffdb3c',
+        borderRadius: 3.5,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+      }}
+    />}
   </View>
 );
 

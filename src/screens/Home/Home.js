@@ -137,9 +137,7 @@ class PeopleScreen extends React.Component<Props> {
   componentDidMount() {
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
-      () => {
-        this.props.setUnreadNotificationsStatus(false);
-      },
+      () => { this.props.setUnreadNotificationsStatus(false); },
     );
   }
 
@@ -322,9 +320,9 @@ class PeopleScreen extends React.Component<Props> {
             <RecentConnectionsSubHeading>RECENT CONNECTIONS</RecentConnectionsSubHeading>
             {!this.props.contacts.length && this.renderEmptyRCState()}
             {!!this.props.contacts.length &&
-              <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
-                {this.renderRecentConnections()}
-              </RecentConnectionsScrollView>}
+            <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
+              {this.renderRecentConnections()}
+            </RecentConnectionsScrollView>}
           </RecentConnections>
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
