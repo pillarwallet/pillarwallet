@@ -17,7 +17,7 @@ const CheckboxBox = styled.View`
 
 const CheckboxText = styled(BaseText)`
   flex: 1;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
 `;
 
 const CheckboxWrapper = styled.View`

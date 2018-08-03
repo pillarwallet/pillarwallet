@@ -191,10 +191,11 @@ class NewProfile extends React.Component<Props, State> {
           />
         </ScrollWrapper>
         <FooterWrapperComponent>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'padding'} keyboardVerticalOffset={50}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'padding'} keyboardVerticalOffset={20}>
             <FooterInnerComponent>
               <Button
-                block
+                small
+                flexRight
                 onPress={this.handleSubmit}
                 disabled={shouldNextButtonBeDisabled}
                 title="Next"

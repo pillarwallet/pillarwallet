@@ -23,14 +23,14 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
-  margin-top: 20px;
+  margin: 20px 0;
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
   background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
   border-radius: 6;
-  padding: 10px;
-  margin: 5px;
+  padding: 5px 10px;
+  margin: 0 5px 10px;
 `;
 
 const MnemonicPhraseWordText = styled(BoldText)`
@@ -39,7 +39,7 @@ const MnemonicPhraseWordText = styled(BoldText)`
 `;
 
 const WordInputWrapper = styled.View`
-  margin: 0 0 20px;
+  margin-bottom: 5px;
   flex-direction: row;
   align-items: flex-start;
 `;
@@ -50,9 +50,9 @@ const WordInput = styled.View`
   border-style: ${props => (props.filled ? 'solid' : 'dashed')};
   border-color: ${props => (props.filled ? 'transparent' : UIColors.defaultBorderColor)};;
   border-radius: 6px;
-  padding: 10px;
-  height: 42px;
+  height: 34px;
   flex: 1;
+  justify-content: center;
 `;
 
 const WordInputPrefix = styled.View`
@@ -74,8 +74,9 @@ const RemoveWordButtonIcon = styled(ButtonIcon)`
 `;
 
 const WordInputText = styled(BoldText)`
-  font-size: 14px;
+  font-size: ${fontSizes.small};
   color: white;
+  margin-left: 10px;
 `;
 
 const ShuffledWordWrapper = styled.View`
@@ -212,7 +213,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         </Wrapper>
         <Footer>
           <Button
-            block
+            small
+            flexRight
             onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
             title="Next"
             disabled={!isFormValid}

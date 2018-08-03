@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 
@@ -18,6 +18,8 @@ type Props = {
   width?: string,
   block?: boolean,
   noPadding?: boolean,
+  flexRight?: boolean,
+  small?: boolean,
 };
 
 const themes = {
@@ -45,9 +47,18 @@ const getTheme = (props: Props) => {
   return themes.primary;
 };
 
+const getButtonPadding = (props: Props) => {
+  if (props.noPadding) {
+    return '0';
+  } else if (props.small) {
+    return '10px 20px';
+  }
+  return '10px 40px';
+};
+
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: center;
-  padding: ${props => props.noPadding ? '0' : '15px 40px'};
+  padding: ${props => getButtonPadding(props)};
   background-color: ${props => props.theme.background};
   margin-top: ${props => props.marginTop || '0px'};
   margin-bottom: ${props => props.marginBottom || '0px'};
@@ -55,11 +66,12 @@ const ButtonWrapper = styled.TouchableOpacity`
   margin-right: ${props => props.marginRight || '0px'};
   border-radius: 40;
   width: ${props => props.block ? '100%' : 'auto'};
+  align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
 `;
 
 const ButtonText = styled(BoldText)`
   color: ${props => props.theme.color};
-  font-size: 18px;
+  font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.medium};
 `;
 
 const Button = (props: Props) => {
@@ -80,6 +92,7 @@ const Button = (props: Props) => {
     >
       <ButtonText
         theme={theme}
+        small={props.small}
       >{props.title}
       </ButtonText>
     </ButtonWrapper>
