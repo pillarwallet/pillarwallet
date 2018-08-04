@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 import { RefreshControl, Platform } from 'react-native';
 import { PROFILE, CONTACT, CHAT } from 'constants/navigationConstants';
@@ -17,6 +17,7 @@ import {
   fetchTransactionsHistoryNotificationsAction,
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
+import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
@@ -46,6 +47,7 @@ type Props = {
   acceptInvitation: Function,
   cancelInvitation: Function,
   rejectInvitation: Function,
+  setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   getExistingChats: Function,
   resetUnread: Function,
@@ -195,11 +197,24 @@ const ActivityFeedHeader = styled.View`
 `;
 
 class HomeScreen extends React.Component<Props, State> {
+  _willFocus: NavigationEventSubscription;
+
   state = {
     activeTab: 'ALL',
     esTitle: 'Make your first step',
     esBody: 'Your activity will appear here.',
   };
+
+  componentDidMount() {
+    this._willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => { this.props.setUnreadNotificationsStatus(false); },
+    );
+  }
+
+  componentWillUnmount() {
+    this._willFocus.remove();
+  }
 
   goToProfile = () => {
     const { navigation } = this.props;
@@ -468,6 +483,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
+  setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
   getExistingChats: () => dispatch(getExistingChatsAction()),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
