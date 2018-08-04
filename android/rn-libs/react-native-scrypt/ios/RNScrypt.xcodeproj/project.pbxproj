@@ -1,0 +1,309 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B3E7B58A1CC2AC0600A0062D /* RNScrypt.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNScrypt.m */; };
+		E03019D91FCC6AB700B3EAF0 /* crypto_scrypt-nosse.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019CB1FCC6AB500B3EAF0 /* crypto_scrypt-nosse.c */; };
+		E03019DA1FCC6AB700B3EAF0 /* crypto_scrypt-check.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019CD1FCC6AB600B3EAF0 /* crypto_scrypt-check.c */; };
+		E03019DB1FCC6AB700B3EAF0 /* crypto-scrypt-saltgen.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019CF1FCC6AB600B3EAF0 /* crypto-scrypt-saltgen.c */; };
+		E03019DC1FCC6AB700B3EAF0 /* slowequals.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019D01FCC6AB600B3EAF0 /* slowequals.c */; };
+		E03019DD1FCC6AB700B3EAF0 /* crypto_scrypt-hash.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019D11FCC6AB600B3EAF0 /* crypto_scrypt-hash.c */; };
+		E03019DE1FCC6AB700B3EAF0 /* b64.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019D31FCC6AB600B3EAF0 /* b64.c */; };
+		E03019DF1FCC6AB700B3EAF0 /* crypto-mcf.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019D41FCC6AB600B3EAF0 /* crypto-mcf.c */; };
+		E03019E01FCC6AB700B3EAF0 /* crypto_scrypt-hexconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019D51FCC6AB600B3EAF0 /* crypto_scrypt-hexconvert.c */; };
+		E03019E11FCC6AB700B3EAF0 /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = E03019D81FCC6AB600B3EAF0 /* sha256.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		58B511D91A9E6C8500147676 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		134814201AA4EA6300B7C361 /* libRNScrypt.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNScrypt.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E7B5881CC2AC0600A0062D /* RNScrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNScrypt.h; sourceTree = "<group>"; };
+		B3E7B5891CC2AC0600A0062D /* RNScrypt.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNScrypt.m; sourceTree = "<group>"; };
+		E03019C91FCC6AB500B3EAF0 /* sysendian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sysendian.h; path = ../libscrypt/sysendian.h; sourceTree = "<group>"; };
+		E03019CA1FCC6AB500B3EAF0 /* slowequals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = slowequals.h; path = ../libscrypt/slowequals.h; sourceTree = "<group>"; };
+		E03019CB1FCC6AB500B3EAF0 /* crypto_scrypt-nosse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "crypto_scrypt-nosse.c"; path = "../libscrypt/crypto_scrypt-nosse.c"; sourceTree = "<group>"; };
+		E03019CC1FCC6AB500B3EAF0 /* libscrypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libscrypt.h; path = ../libscrypt/libscrypt.h; sourceTree = "<group>"; };
+		E03019CD1FCC6AB600B3EAF0 /* crypto_scrypt-check.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "crypto_scrypt-check.c"; path = "../libscrypt/crypto_scrypt-check.c"; sourceTree = "<group>"; };
+		E03019CE1FCC6AB600B3EAF0 /* crypto_scrypt-hexconvert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "crypto_scrypt-hexconvert.h"; path = "../libscrypt/crypto_scrypt-hexconvert.h"; sourceTree = "<group>"; };
+		E03019CF1FCC6AB600B3EAF0 /* crypto-scrypt-saltgen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "crypto-scrypt-saltgen.c"; path = "../libscrypt/crypto-scrypt-saltgen.c"; sourceTree = "<group>"; };
+		E03019D01FCC6AB600B3EAF0 /* slowequals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = slowequals.c; path = ../libscrypt/slowequals.c; sourceTree = "<group>"; };
+		E03019D11FCC6AB600B3EAF0 /* crypto_scrypt-hash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "crypto_scrypt-hash.c"; path = "../libscrypt/crypto_scrypt-hash.c"; sourceTree = "<group>"; };
+		E03019D21FCC6AB600B3EAF0 /* b64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = b64.h; path = ../libscrypt/b64.h; sourceTree = "<group>"; };
+		E03019D31FCC6AB600B3EAF0 /* b64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = b64.c; path = ../libscrypt/b64.c; sourceTree = "<group>"; };
+		E03019D41FCC6AB600B3EAF0 /* crypto-mcf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "crypto-mcf.c"; path = "../libscrypt/crypto-mcf.c"; sourceTree = "<group>"; };
+		E03019D51FCC6AB600B3EAF0 /* crypto_scrypt-hexconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "crypto_scrypt-hexconvert.c"; path = "../libscrypt/crypto_scrypt-hexconvert.c"; sourceTree = "<group>"; };
+		E03019D61FCC6AB600B3EAF0 /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sha256.h; path = ../libscrypt/sha256.h; sourceTree = "<group>"; };
+		E03019D71FCC6AB600B3EAF0 /* android.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = android.h; path = ../libscrypt/android.h; sourceTree = "<group>"; };
+		E03019D81FCC6AB600B3EAF0 /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sha256.c; path = ../libscrypt/sha256.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		58B511D81A9E6C8500147676 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		134814211AA4EA7D00B7C361 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				134814201AA4EA6300B7C361 /* libRNScrypt.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		58B511D21A9E6C8500147676 = {
+			isa = PBXGroup;
+			children = (
+				E03019D71FCC6AB600B3EAF0 /* android.h */,
+				E03019D31FCC6AB600B3EAF0 /* b64.c */,
+				E03019D21FCC6AB600B3EAF0 /* b64.h */,
+				E03019CD1FCC6AB600B3EAF0 /* crypto_scrypt-check.c */,
+				E03019D11FCC6AB600B3EAF0 /* crypto_scrypt-hash.c */,
+				E03019D51FCC6AB600B3EAF0 /* crypto_scrypt-hexconvert.c */,
+				E03019CE1FCC6AB600B3EAF0 /* crypto_scrypt-hexconvert.h */,
+				E03019CB1FCC6AB500B3EAF0 /* crypto_scrypt-nosse.c */,
+				E03019D41FCC6AB600B3EAF0 /* crypto-mcf.c */,
+				E03019CF1FCC6AB600B3EAF0 /* crypto-scrypt-saltgen.c */,
+				E03019CC1FCC6AB500B3EAF0 /* libscrypt.h */,
+				E03019D81FCC6AB600B3EAF0 /* sha256.c */,
+				E03019D61FCC6AB600B3EAF0 /* sha256.h */,
+				E03019D01FCC6AB600B3EAF0 /* slowequals.c */,
+				E03019CA1FCC6AB500B3EAF0 /* slowequals.h */,
+				E03019C91FCC6AB500B3EAF0 /* sysendian.h */,
+				B3E7B5881CC2AC0600A0062D /* RNScrypt.h */,
+				B3E7B5891CC2AC0600A0062D /* RNScrypt.m */,
+				134814211AA4EA7D00B7C361 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		58B511DA1A9E6C8500147676 /* RNScrypt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNScrypt" */;
+			buildPhases = (
+				58B511D71A9E6C8500147676 /* Sources */,
+				58B511D81A9E6C8500147676 /* Frameworks */,
+				58B511D91A9E6C8500147676 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RNScrypt;
+			productName = RCTDataManager;
+			productReference = 134814201AA4EA6300B7C361 /* libRNScrypt.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		58B511D31A9E6C8500147676 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0830;
+				ORGANIZATIONNAME = Facebook;
+				TargetAttributes = {
+					58B511DA1A9E6C8500147676 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNScrypt" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 58B511D21A9E6C8500147676;
+			productRefGroup = 58B511D21A9E6C8500147676;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				58B511DA1A9E6C8500147676 /* RNScrypt */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		58B511D71A9E6C8500147676 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E03019E11FCC6AB700B3EAF0 /* sha256.c in Sources */,
+				E03019D91FCC6AB700B3EAF0 /* crypto_scrypt-nosse.c in Sources */,
+				E03019DF1FCC6AB700B3EAF0 /* crypto-mcf.c in Sources */,
+				E03019DD1FCC6AB700B3EAF0 /* crypto_scrypt-hash.c in Sources */,
+				E03019DE1FCC6AB700B3EAF0 /* b64.c in Sources */,
+				E03019DC1FCC6AB700B3EAF0 /* slowequals.c in Sources */,
+				E03019DA1FCC6AB700B3EAF0 /* crypto_scrypt-check.c in Sources */,
+				E03019E01FCC6AB700B3EAF0 /* crypto_scrypt-hexconvert.c in Sources */,
+				E03019DB1FCC6AB700B3EAF0 /* crypto-scrypt-saltgen.c in Sources */,
+				B3E7B58A1CC2AC0600A0062D /* RNScrypt.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		58B511ED1A9E6C8500147676 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		58B511EE1A9E6C8500147676 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		58B511F01A9E6C8500147676 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = RNScrypt;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		58B511F11A9E6C8500147676 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = RNScrypt;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "RNScrypt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				58B511ED1A9E6C8500147676 /* Debug */,
+				58B511EE1A9E6C8500147676 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "RNScrypt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				58B511F01A9E6C8500147676 /* Debug */,
+				58B511F11A9E6C8500147676 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 58B511D31A9E6C8500147676 /* Project object */;
+}
