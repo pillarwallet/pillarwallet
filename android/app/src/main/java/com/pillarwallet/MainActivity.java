@@ -1,4 +1,4 @@
-package com.pillarwallet;
+package com.pillarproject.wallet;
 
 import com.facebook.react.ReactActivity;
 

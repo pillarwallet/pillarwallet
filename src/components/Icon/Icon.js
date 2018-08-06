@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { createIconSet } from 'react-native-vector-icons';
+import { Platform } from 'react-native';
 
 const glyphMap = {
   chat: '\uE801',
@@ -30,7 +31,9 @@ type Props = {
   style: Object,
 }
 
-const IconSet = createIconSet(glyphMap, 'fontello');
+const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';
+
+const IconSet = createIconSet(glyphMap, fontName);
 
 const Icon = (props: Props) => {
   const { name, style } = props;

@@ -1,7 +1,9 @@
-package com.pillarwallet;
+package com.pillarproject.wallet;
 
 import android.app.Application;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -19,16 +21,21 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
+
+import io.fabric.sdk.android.Fabric;
+import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
+
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+
+import com.robinpowered.react.Intercom.IntercomPackage;
+import io.intercom.android.sdk.Intercom;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-    @Override
-    public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
-    }
 
     @Override
     protected List<ReactPackage> getPackages() {
@@ -42,15 +49,22 @@ public class MainApplication extends Application implements ReactApplication {
             new TcpSocketsModule(),
             new RandomBytesPackage(),
             new RNOSModule(),
-            new IntercomPackage(),
             new RNFirebasePackage(),
-            new RNDeviceInfo()
-      );
+            new RNFirebaseMessagingPackage(),
+            new RNFirebaseCrashlyticsPackage(),
+            new RNDeviceInfo(),
+            new IntercomPackage()
+        );
     }
 
     @Override
     protected String getJSMainModuleName() {
       return "index";
+    }
+
+    @Override
+    public boolean getUseDeveloperSupport() {
+      return BuildConfig.DEBUG;
     }
   };
 
@@ -62,6 +76,15 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+    final Fabric fabric = new Fabric.Builder(this)
+            .kits(new Crashlytics())
+            .build();
+    Fabric.with(fabric);
+    if (BuildConfig.DEBUG) {
+      Intercom.initialize(this, "android_sdk-e8448a61a33991a680742cf91d68aaae8652d012", "xbjzrshe");
+    } else {
+      Intercom.initialize(this, "android_sdk-b989462efb366f8046f5ca1a12c75d67ecb7592c", "s70dqvb2");
+    }
     SoLoader.init(this, /* native exopackage */ false);
   }
 }
