@@ -5,9 +5,12 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import { baseColors } from 'utils/variables';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import { BaseText } from 'components/Typography';
 import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
+import Spinner from 'components/Spinner';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { validateUserDetailsAction } from 'actions/onboardingActions';
@@ -20,8 +23,21 @@ const LoginForm = styled(Form)`
   margin: 10px 0 40px;
 `;
 
+const LoadingMessageWrapper = styled.View`
+  align-items: center;
+  flex-direction: row;
+  flex: 1;
+  margin-bottom: 20px;
+`;
+
+const LoadingMessage = styled(BaseText)`
+  color: ${baseColors.darkGray};
+  margin-left: 10px;
+`;
+
 function InputTemplate(locals) {
   const errorMessage = locals.error;
+  const { loadingMessage } = locals;
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
@@ -36,6 +52,7 @@ function InputTemplate(locals) {
 
   return (
     <TextInput
+      loadingMessage={loadingMessage}
       errorMessage={errorMessage}
       id={locals.label}
       label={locals.label}
@@ -53,7 +70,7 @@ Username.getValidationErrorMessage = (username): string => {
     return `Username should be less than ${maxUsernameLength} characters.`;
   }
   if (username != null && !(/^[a-z0-9_\- ]+$/i.test(username))) {
-    return 'Username should only contain alpha-numeric characters.';
+    return 'Only use alpha-numeric characters, underscores, dashes or full stops.';
   }
   return 'Please specify the username.';
 };
@@ -131,6 +148,7 @@ class NewProfile extends React.Component<Props, State> {
 
   handleSubmit = () => {
     const { validateUserDetails, apiUser } = this.props;
+
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
       return;
@@ -189,10 +207,17 @@ class NewProfile extends React.Component<Props, State> {
             value={value}
             onChange={this.handleChange}
           />
+
         </ScrollWrapper>
         <FooterWrapperComponent>
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'padding'} keyboardVerticalOffset={50}>
             <FooterInnerComponent>
+              {isCheckingUsernameAvailability &&
+                <LoadingMessageWrapper>
+                  <Spinner />
+                  <LoadingMessage>Checking username availability…</LoadingMessage>
+                </LoadingMessageWrapper>
+              }
               <Button
                 block
                 onPress={this.handleSubmit}
