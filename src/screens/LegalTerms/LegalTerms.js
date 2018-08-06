@@ -66,14 +66,12 @@ class LegalTerms extends React.Component<Props, State> {
         <Wrapper regularPadding>
           <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet I understand that:</Paragraph>
           <Checkbox
-            text="The assets I store on this wallet are safe on their respective blockchains and that this wallet holds
-              the private key to those assets. Pillar does not have access to my private keys."
+            text="Pillar does not have access to my private keys."
             onPress={() => this.setState({ userCheck1: !userCheck1 })}
           />
 
           <Checkbox
-            text="If I delete or move this app to another phone,
-            the only way to recover my assets is to use the 12-word backup phrase."
+            text="The only way to recover my assets is to use the 12-word backup phrase."
             onPress={() => this.setState({ userCheck2: !userCheck2 })}
           />
 

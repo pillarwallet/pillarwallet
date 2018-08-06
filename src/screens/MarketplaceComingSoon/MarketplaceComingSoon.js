@@ -20,13 +20,13 @@ const ComingSoonBannerText = styled(BoldText)`
 const MarketplaceComingSoon = () => {
   return (
     <Container>
-      <Header title="marketplace" />
+      <Header title="market" />
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>
       <ScrollWrapper regularPadding>
         <Paragraph>
-          The marketplace will contain many services.
+          The market will contain many services.
         </Paragraph>
         <Paragraph>
           20|30 will build the first service, an ICO platform, delivered through the Pillar wallet.

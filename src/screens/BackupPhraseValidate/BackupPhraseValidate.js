@@ -22,7 +22,9 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
-const WordInputFields = styled.View``;
+const WordInputFields = styled.View`
+  margin-top: 20px;
+`;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
   background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
@@ -193,12 +195,11 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph>
-            Please select the appropriate words from the list.
+            Please select the correct words.
           </Paragraph>
           <WordInputFields>
             {this.renderInputFields()}
           </WordInputFields>
-
         </Wrapper>
         <Footer>
           <ShuffledWordWrapper>

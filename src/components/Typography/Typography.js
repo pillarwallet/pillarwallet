@@ -46,7 +46,7 @@ export const SubHeading = styled(BaseText)`
 `;
 
 export const Paragraph = styled(BaseText)`
-  font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.small};
+  font-size: ${props => props.small ? fontSizes.small : fontSizes.medium};
   margin-bottom: ${props => props.small ? '5px' : '10px'};
   color: ${props => props.light ? baseColors.darkGray : UIColors.defaultTextColor};
   text-align: ${props => props.center ? 'center' : 'left'};

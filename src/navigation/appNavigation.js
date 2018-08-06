@@ -220,7 +220,7 @@ const tabNavigation = createBottomTabNavigator(
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
-        tabBarLabel: tabBarLabel('Marketplace'),
+        tabBarLabel: tabBarLabel('Market'),
       }),
     },
     [CHAT_LIST]: {
