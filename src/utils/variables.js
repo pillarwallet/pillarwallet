@@ -6,7 +6,9 @@ export const baseColors = {
   fireEngineRed: '#ff0005',
   warmPurple: '#b2329c',
   electricBlue: '#007AFF',
+  duckEggBlue: '#e6eefa',
   brightSkyBlue: '#00bfff',
+  pigeonPost: '#9fb7db',
   cyan: '#00bfff',
   aquaMarine: '#50e3c2',
   freshEucalyptus: '#2AA057',
@@ -21,6 +23,7 @@ export const baseColors = {
   lightGreen: '#82bc40',
   jadeGreen: '#2aa157',
   clearBlue: '#2077fd',
+  offBlue: '#5983b0',
   white: '#ffffff',
   black: '#000000',
 };

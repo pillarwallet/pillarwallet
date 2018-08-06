@@ -4,14 +4,16 @@ import { connect } from 'react-redux';
 
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { FlatList, TouchableOpacity, Image, Platform } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import ButtonIcon from 'components/ButtonIcon';
-import { SubHeading, BaseText, BoldText } from 'components/Typography';
+import Icon from 'components/Icon';
+import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
+import Separator from 'components/Separator';
 
 import {
   TYPE_RECEIVED,
@@ -32,12 +34,6 @@ const SOCIAL_TYPES = [
   CHAT,
 ];
 
-const TRANSACTIONS = 'TRANSACTIONS';
-const SOCIAL = 'SOCIAL';
-const ALL = 'ALL';
-const iconUp = require('assets/icons/up.png');
-const iconDown = require('assets/icons/down.png');
-
 const NOTIFICATION_LABELS = {
   [TYPE_ACCEPTED]: 'New connection',
   [TYPE_RECEIVED]: 'Incoming connection',
@@ -48,13 +44,13 @@ const NOTIFICATION_LABELS = {
   [CHAT]: 'New message',
 };
 
-const ActivityFeedWrapper = styled.View`
-  height: 100%;
-`;
+const TRANSACTIONS = 'TRANSACTIONS';
+const SOCIAL = 'SOCIAL';
 
-const ActivityFeedHeader = styled.View`
-  padding: ${spacing.rhythm}px ${spacing.rhythm}px 0;
-`;
+
+const ActivityFeedList = styled.FlatList``;
+
+const ActivityFeedWrapper = styled.View``;
 
 const ActivityFeedItem = styled.TouchableOpacity`
   background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};
@@ -65,18 +61,32 @@ const ActivityFeedItem = styled.TouchableOpacity`
   flex-direction: row;
 `;
 
+const ActivityFeedDirectionCircle = styled.View`
+  width: 40px;
+  border-radius: 20px;
+  height: 40px;
+  background-color: ${baseColors.lightGray};
+  align-items: center;
+  justify-content: center;
+`;
+
+const ActivityFeedDirectionCircleIcon = styled(Icon)`
+  color: ${baseColors.offBlue};
+  font-size: ${fontSizes.giant};
+`;
+
 const ActivityFeedItemLabel = styled(BaseText)`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.extraExtraSmall};
   margin-bottom: 2px;
 `;
 
 const ActivityFeedItemName = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
 `;
 
-const ActivityFeedItemAmount = styled(BoldText)`
-  font-size: ${fontSizes.extraSmall};
+const ActivityFeedItemAmount = styled(BaseText)`
+  font-size: ${fontSizes.small};
   color: ${props => props.received ? baseColors.jadeGreen : baseColors.fireEngineRed};
 `;
 
@@ -85,25 +95,6 @@ const ActivityFeedItemCol = styled.View`
   flex-direction: column;
   align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
   justify-content: center;
-`;
-
-const TabWrapper = styled.View`
-  flex-direction: row;
-  margin: 10px ${spacing.rhythm}px 10px;
-`;
-
-const TabItem = styled.TouchableOpacity`
-  height: 44px;
-  align-items: center;
-  justify-content: center;
-  flex: ${props => props.flex ? props.flex : 1};
-  border-color: ${props => props.active ? baseColors.electricBlue : baseColors.lightGray};
-  border-bottom-width: 2px;
-`;
-
-const TabItemText = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  color: ${props => props.active ? baseColors.slateBlack : baseColors.darkGray};
 `;
 
 const ActionCircleButton = styled(ButtonIcon)`
@@ -136,27 +127,18 @@ type Props = {
   onRejectInvitation: Function,
   walletAddress: string,
   notifications: Notification[],
-}
-
-type State = {
   activeTab: string,
   esTitle: string,
   esBody: string,
 }
 
-class ActivityFeed extends React.Component<Props, State> {
-  state = {
-    activeTab: 'ALL',
-    esTitle: 'Make your first step',
-    esBody: 'Your activity will appear here.',
-  };
 
+class ActivityFeed extends React.Component<Props> {
   getSocialAction = (type: string, notification: Object) => {
     const {
       onCancelInvitation,
       onAcceptInvitation,
       onRejectInvitation,
-
     } = this.props;
     switch (type) {
       case TYPE_RECEIVED:
@@ -166,7 +148,7 @@ class ActivityFeed extends React.Component<Props, State> {
               color={baseColors.darkGray}
               margin={0}
               icon="close"
-              fontSize={fontSizes.small}
+              fontSize={fontSizes.extraSmall}
               onPress={() => onRejectInvitation(notification)}
             />
             <ActionCircleButton
@@ -174,7 +156,7 @@ class ActivityFeed extends React.Component<Props, State> {
               margin={0}
               accept
               icon="check"
-              fontSize={fontSizes.small}
+              fontSize={fontSizes.extraSmall}
               onPress={() => onAcceptInvitation(notification)}
             />
           </ButtonIconWrapper>
@@ -211,7 +193,6 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
-    const isEven = index % 2;
     const { type } = notification;
     const { walletAddress } = this.props;
 
@@ -222,32 +203,34 @@ class ActivityFeed extends React.Component<Props, State> {
       const directionSymbol = isReceived ? '+' : '-';
       const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
-      const title = notification.username || `${address.slice(0, 7)}…${address.slice(-7)}`;
-      const directionIcon = isReceived ? iconDown : iconUp;
+      const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
+      const directionIcon = isReceived ? 'received' : 'sent';
       return (
-        <ActivityFeedItem isEven={isEven} key={index}>
-          <ActivityFeedItemCol fixedWidth="44px">
-            <Image source={directionIcon} style={{ width: 36, height: 36 }} />
+        <ActivityFeedItem key={index}>
+          <ActivityFeedItemCol fixedWidth="50px">
+            <ActivityFeedDirectionCircle>
+              <ActivityFeedDirectionCircleIcon name={directionIcon} />
+            </ActivityFeedDirectionCircle>
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol fixedWidth="150px">
+          <ActivityFeedItemCol>
             <ActivityFeedItemName>{title}</ActivityFeedItemName>
             <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol flexEnd>
+          <ActivityFeedItemCol fixedWidth="120px" flexEnd>
             <ActivityFeedItemAmount received={isReceived}>
-              {directionSymbol}{value} {notification.asset}
+              {directionSymbol} {value} {notification.asset}
             </ActivityFeedItemAmount>
           </ActivityFeedItemCol>
         </ActivityFeedItem>
       );
     }
     return (
-      <ActivityFeedItem isEven={isEven} key={index} onPress={notification.onPress}>
-        <ActivityFeedItemCol fixedWidth="44px">
+      <ActivityFeedItem key={index} onPress={notification.onPress}>
+        <ActivityFeedItemCol fixedWidth="50px">
           <ProfileImage
             uri={notification.avatar}
             userName={notification.username}
-            diameter={36}
+            diameter={40}
             textStyle={{ fontSize: 14 }}
           />
         </ActivityFeedItemCol>
@@ -263,8 +246,14 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   render() {
-    const { activeTab, esTitle, esBody } = this.state;
-    const { history, notifications } = this.props;
+    const {
+      history,
+      activeTab,
+      esTitle,
+      esBody,
+      notifications,
+    } = this.props;
+
     const filteredHistory = history.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
         return type === TRANSACTION_EVENT;
@@ -277,48 +266,11 @@ class ActivityFeed extends React.Component<Props, State> {
 
     return (
       <ActivityFeedWrapper>
-        <ActivityFeedHeader>
-          <SubHeading>ACTIVITY</SubHeading>
-        </ActivityFeedHeader>
-        <TabWrapper>
-          <TabItem
-            active={activeTab === ALL}
-            onPress={() => this.setState({
-              activeTab: ALL,
-              esTitle: 'Make your first step',
-              esBody: 'Your activity will appear here.',
-            })}
-            flex={1}
-          >
-            <TabItemText active={activeTab === ALL}>All</TabItemText>
-          </TabItem>
-          <TabItem
-            active={activeTab === TRANSACTIONS}
-            onPress={() => this.setState({
-              activeTab: TRANSACTIONS,
-              esTitle: 'Make your first step',
-              esBody: 'Your transactions will appear here. Send or receive tokens to start.',
-            })}
-            flex={1}
-          >
-            <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
-          </TabItem>
-          <TabItem
-            active={activeTab === SOCIAL}
-            onPress={() => this.setState({
-              activeTab: SOCIAL,
-              esTitle: 'Make your first step',
-              esBody: 'Information on your connections will appear here. Send a connection request to start.',
-            })}
-            flex={1}
-          >
-            <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
-          </TabItem>
-        </TabWrapper>
-        <FlatList
+        <ActivityFeedList
           data={filteredHistory}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
+          ItemSeparatorComponent={Separator}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{ height: '100%' }}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}

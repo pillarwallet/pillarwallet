@@ -2,6 +2,7 @@
 import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+  SET_UNREAD_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
 import type { Notification } from 'models/Notification';
 
@@ -9,17 +10,19 @@ type NotificationReducerState = {
   data: Notification[],
   intercomNotificationsCount: number,
   homeNotifications: [],
+  hasUnreadNotifications: boolean,
 }
 
 type NotificationReducerAction = {
   type: string,
-  payload: Notification
+  payload: Notification,
 }
 
 const initialState = {
   data: [],
   intercomNotificationsCount: 0,
   homeNotifications: [],
+  hasUnreadNotifications: false,
 };
 
 export default function notificationsReducer(
@@ -31,6 +34,8 @@ export default function notificationsReducer(
       return { ...state, intercomNotificationsCount: action.payload };
     case ADD_NOTIFICATION:
       return { ...state, data: [...state.data, action.payload] };
+    case SET_UNREAD_NOTIFICATIONS_STATUS:
+      return { ...state, hasUnreadNotifications: action.payload };
     default:
       return state;
   }

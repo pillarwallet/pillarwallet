@@ -200,7 +200,6 @@ class PeopleScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
-              paddingHorizontal: spacing.rhythm,
               paddingVertical: spacing.rhythm,
               paddingTop: 0,
             }}

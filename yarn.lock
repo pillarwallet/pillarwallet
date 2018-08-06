@@ -4845,9 +4845,9 @@ ethereumjs-util@5.2.0:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-ethers@^3.0.9:
-  version "3.0.22"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethers/-/ethers-3.0.22.tgz#7fab1ea16521705837aa43c15831877b2716b436"
+"ethers@https://github.com/pillarwallet/ethers.js":
+  version "3.0.21"
+  resolved "https://github.com/pillarwallet/ethers.js#517698a86d6db109f5314c4d7bf72ff059853687"
   dependencies:
     aes-js "3.0.0"
     bn.js "^4.4.0"
@@ -4855,6 +4855,7 @@ ethers@^3.0.9:
     hash.js "^1.0.0"
     inherits "2.0.1"
     js-sha3 "0.5.7"
+    react-native-scrypt "1.0.0"
     scrypt-js "2.0.3"
     setimmediate "1.0.4"
     uuid "2.0.1"
@@ -10461,6 +10462,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-background-timer@^2.0.1:
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-background-timer/-/react-native-background-timer-2.0.1.tgz#ef714a4bfd28fc47cbbd335631b581cf915604a2"
+
 react-native-branch@2.2.5:
   version "2.2.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-branch/-/react-native-branch-2.2.5.tgz#4074dd63b4973e6397d9ce50e97b57c77a518e9d"
@@ -10707,6 +10712,10 @@ react-native-scripts@1.13.1:
 react-native-scrollable-mixin@^1.0.1:
   version "1.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrollable-mixin/-/react-native-scrollable-mixin-1.0.1.tgz#34a32167b64248594154fd0d6a8b03f22740548e"
+
+react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
 
 react-native-storybook-loader@^1.8.0:
   version "1.8.0"
@@ -11543,9 +11552,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@^1.0.53:
-  version "1.0.53"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.53.tgz#42b26e72988ec64a0bb0093d16ee0bad2ff5ca75"
+rn-signal-protocol-messaging@^1.0.56:
+  version "1.0.56"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.56.tgz#003a2089471091e7df50df2533b0070fede6a22d"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
