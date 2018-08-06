@@ -29,14 +29,11 @@ class BackupPhrase extends React.Component<Props, {}> {
       <Container>
         <Header title="backup phrase" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
-          <Paragraph>Write down all 12 words in the order shown.</Paragraph>
-          <Paragraph light>
-            Don’t take a screenshot; write them down carefully, make a few copies, and put them in different places.
-          </Paragraph>
+          <Paragraph>Write down your 12 word backup phrase in the correct order.</Paragraph>
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </Wrapper>
         <Footer>
-          <Button block onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
+          <Button small flexRight onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
         </Footer>
       </Container>
     );

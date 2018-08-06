@@ -8,7 +8,7 @@ import { UIColors, baseColors, fontSizes } from 'utils/variables';
 const CheckboxBox = styled.View`
   width: 40;
   height: 40;
-  margin-right: 20;
+  margin-right: 20px;
   border-radius: 60;
   flex: 0 0 40px;
   border-width: 2;
@@ -17,7 +17,7 @@ const CheckboxBox = styled.View`
 
 const CheckboxText = styled(BaseText)`
   flex: 1;
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.medium};
 `;
 
 const CheckboxWrapper = styled.View`
@@ -41,7 +41,6 @@ type State = {
   checked: boolean,
   animateActive: Animated.Value,
 };
-
 
 export default class Checkbox extends React.Component<Props, State> {
   constructor(props: any) {
