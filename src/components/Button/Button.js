@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 
@@ -10,6 +10,7 @@ type Props = {
   onPress: Function,
   disabled?: boolean,
   secondary?: boolean,
+  danger?: boolean,
   marginBottom?: string,
   marginTop?: string,
   marginLeft?: string,
@@ -31,15 +32,23 @@ const themes = {
     background: 'rgba(0,0,0,0)',
     color: baseColors.electricBlue,
   },
+  secondaryDanger: {
+    background: 'rgba(0,0,0,0)',
+    color: baseColors.fireEngineRed,
+  },
   disabled: {
     background: baseColors.lightGray,
     color: baseColors.darkGray,
   },
+
 };
 
 const getTheme = (props: Props) => {
   if (props.disabled) {
     return themes.disabled;
+  }
+  if (props.secondary && props.danger) {
+    return themes.secondaryDanger;
   }
   if (props.secondary) {
     return themes.secondary;
@@ -67,6 +76,9 @@ const ButtonWrapper = styled.TouchableOpacity`
   border-radius: 40;
   width: ${props => props.block ? '100%' : 'auto'};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
+  border-color: ${UIColors.defaultBorderColor};
+  border-width: ${props => props.secondary ? '1px' : 0};
+  border-style: solid;
 `;
 
 const ButtonText = styled(BoldText)`
