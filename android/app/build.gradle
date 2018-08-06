@@ -11,8 +11,9 @@ apply plugin: 'com.neenbedankt.android-apt'
 import com.android.build.OutputFile
 
 project.ext.react = [
-    bundleInDebug: false,
-    bundleInRelease: true,
+  entryFile: "index.js",
+  bundleInDebug: false,
+  bundleInRelease: true,
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"

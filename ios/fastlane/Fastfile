@@ -10,10 +10,10 @@ platform :ios do
   lane :build_ios_simulator do
   match(type: "development",
         readonly: true)
-        disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
+        disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
         xcbuild(
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
+              workspace: "pillarwallet.xcworkspace",
+              scheme: "pillarwallet",
               configuration: "Release",
               xcargs: "-sdk iphonesimulator SYMROOT='~/pillarwallet'"
           )
@@ -27,10 +27,10 @@ platform :ios do
     sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillar-wallet/Supporting/Info.plist\"")
     match(type: "appstore",
           readonly: true)
-    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
+    disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
     build_app(clean: true,
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
+              workspace: "pillarwallet.xcworkspace",
+              scheme: "pillarwallet",
               configuration: "Release",
               export_method: "app-store"
     )
@@ -44,10 +44,10 @@ platform :ios do
   lane :build_ipa do
     match(type: "appstore",
           readonly: true)
-    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
+    disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
     build_app(clean: true,
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
+              workspace: "pillarwallet.xcworkspace",
+              scheme: "pillarwallet",
               configuration: "Release",
               export_method: "app-store"
     )
