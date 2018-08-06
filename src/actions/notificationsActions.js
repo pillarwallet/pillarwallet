@@ -28,6 +28,23 @@ const storage = Storage.getInstance('db');
 let notificationsListener = null;
 let intercomNotificationsListener = null;
 
+export const getAssets = (getState: Function, notification: Object): Object => {
+  const {
+    assets: { data: assets, supportedAssets },
+  } = getState();
+
+  if (!notification) return assets;
+
+  if (notification.type === BCX && !Object.keys(assets).includes(notification.asset)) {
+    const extraAsset = supportedAssets.find(asset => asset.symbol === notification.asset);
+    if (extraAsset) {
+      assets[extraAsset.symbol] = extraAsset;
+    }
+  }
+
+  return assets;
+};
+
 export const startListeningIntercomNotificationsAction = () => {
   return async (dispatch: Function) => {
     const { user } = await storage.get('user');
@@ -66,7 +83,6 @@ export const startListeningNotificationsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       wallet: { data: wallet },
-      assets: { data: assets },
     } = getState();
     // check if permissions enabled
     const enabled = await firebase.messaging().hasPermission();
@@ -83,6 +99,7 @@ export const startListeningNotificationsAction = () => {
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
       if (notification.type === BCX) {
+        const assets:Object = getAssets(getState, notification);
         dispatch(fetchTransactionsHistoryNotificationsAction());
         dispatch(fetchTransactionsHistoryAction(wallet.address));
         dispatch(fetchAssetsBalancesAction(assets, notification.asset));

@@ -14,7 +14,6 @@ import {
   addAssetAction,
   removeAssetAction,
   fetchAssetsBalancesAction,
-  fetchSupportedAssetsAction,
 } from 'actions/assetsActions';
 import { ETH } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -45,7 +44,6 @@ type Props = {
   assets: Assets,
   wallet: Object,
   fetchAssetsBalances: Function,
-  fetchSupportedAssets: Function,
   addAsset: Function,
   removeAsset: Function,
 }
@@ -54,8 +52,6 @@ class AddToken extends React.Component<Props> {
   formChanged: boolean = false;
 
   componentDidMount() {
-    const { fetchSupportedAssets } = this.props;
-    fetchSupportedAssets();
   }
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
@@ -140,8 +136,6 @@ const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { 
 const mapDispatchToProps = (dispatch) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchSupportedAssets: () =>
-    dispatch(fetchSupportedAssetsAction()),
   fetchAssetsBalances: (assets, walletAddress) =>
     dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
 });
