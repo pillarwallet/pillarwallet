@@ -344,43 +344,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               </View>
             </View>
           </View>
-          <Text
-            accessible={true}
-            allowFontScaling={true}
-            ellipsizeMode="tail"
-            fullScreen={undefined}
-            style={
-              Array [
-                Object {
-                  "fontFamily": "aktiv-grotesk-regular",
-                  "includeFontPadding": false,
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#007AFF",
-                    "fontSize": 18,
-                    "fontWeight": "400",
-                    "lineHeight": 24,
-                    "marginBottom": 20,
-                    "marginLeft": 0,
-                    "marginRight": 0,
-                    "marginTop": 0,
-                    "textAlign": "left",
-                  },
-                  Array [
-                    Object {
-                      "paddingBottom": 10,
-                      "paddingLeft": 0,
-                      "paddingRight": 0,
-                      "paddingTop": 10,
-                    },
-                    undefined,
-                  ],
-                ],
-              ]
-            }
-          />
           <View
             fullScreen={undefined}
             style={
