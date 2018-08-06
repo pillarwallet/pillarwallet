@@ -10462,6 +10462,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-background-timer@^2.0.1:
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-background-timer/-/react-native-background-timer-2.0.1.tgz#ef714a4bfd28fc47cbbd335631b581cf915604a2"
+
 react-native-branch@2.2.5:
   version "2.2.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-branch/-/react-native-branch-2.2.5.tgz#4074dd63b4973e6397d9ce50e97b57c77a518e9d"
@@ -11548,9 +11552,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@^1.0.53:
-  version "1.0.53"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.53.tgz#42b26e72988ec64a0bb0093d16ee0bad2ff5ca75"
+rn-signal-protocol-messaging@^1.0.56:
+  version "1.0.56"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.56.tgz#003a2089471091e7df50df2533b0070fede6a22d"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
