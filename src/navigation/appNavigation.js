@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { showToast } from 'utils/toast';
 import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
 import { BaseText } from 'components/Typography';
+import BackgroundTimer from 'react-native-background-timer';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -45,6 +46,7 @@ import {
   fetchTransactionsHistoryNotificationsAction,
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 
 // constants
 import {
@@ -81,10 +83,6 @@ const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const INACTIVE_APP_STATE = 'inactive';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
-
-const navigationOpts = {
-  header: null,
-};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
@@ -212,8 +210,8 @@ const tabNavigation = createBottomTabNavigator(
     },
     [HOME]: {
       screen: homeFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHome),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -270,6 +268,7 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -281,7 +280,9 @@ const AppFlowNavigation = createStackNavigator(
     [CHAT]: ChatScreen,
   }, {
     mode: 'modal',
-    navigationOptions: navigationOpts,
+    navigationOptions: () => ({
+      header: null,
+    }),
     transitionConfig: () => ({
       transitionSpec: {
         duration: 400,
@@ -320,7 +321,9 @@ type Props = {
   fetchTransactionsHistory: (walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
+  getExistingChats: Function,
   notifications: Object[],
+  hasUnreadNotifications: boolean,
   wallet: Object,
   assets: Object,
 }
@@ -336,6 +339,7 @@ class AppFlow extends React.Component<Props, {}> {
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
+      getExistingChats,
       assets,
       wallet,
     } = this.props;
@@ -345,6 +349,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
+    getExistingChats();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
@@ -369,31 +374,32 @@ class AppFlow extends React.Component<Props, {}> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { fetchAppSettingsAndRedirect } = this.props;
-    clearTimeout(this.timer);
+    BackgroundTimer.clearTimeout(this.timer);
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
+      this.timer = BackgroundTimer.setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
     }
   };
 
   render() {
-    const { userState } = this.props;
+    const { userState, hasUnreadNotifications } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
 
-    return <AppFlowNavigation />;
+    return <AppFlowNavigation screenProps={{ hasUnreadNotifications }} />;
   }
 }
 
 const mapStateToProps = ({
   user: { userState },
-  notifications: { data: notifications },
+  notifications: { data: notifications, hasUnreadNotifications },
   assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
   userState,
   notifications,
+  hasUnreadNotifications,
   assets,
   wallet,
 });
@@ -416,6 +422,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => {
     dispatch(fetchInviteNotificationsAction());
   },
+  getExistingChats: () => dispatch(getExistingChatsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

@@ -6,6 +6,7 @@ import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
 jest.mock('NativeAnimatedHelper');
+jest.mock('react-native-background-timer', () => {});
 
 Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
@@ -40,6 +41,7 @@ jest.setMock('rn-signal-protocol-messaging', {
     sendMessageByContact: () => Promise.resolve(),
     receiveNewMessagesByContact: () => Promise.resolve(),
     registerAccount: () => Promise.resolve(),
+    setFcmId: () => Promise.resolve(),
   },
 });
 

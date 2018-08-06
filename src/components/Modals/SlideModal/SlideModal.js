@@ -119,7 +119,6 @@ export default class SlideModal extends React.Component<Props, State> {
       >
         <ModalWrapper fullScreen={fullScreen}>
           <Root>
-
             <ModalBackground fullScreen={fullScreen}>
               {!fullScreen &&
                 <Header noPadding title={title} onClose={this.hideModal} />
