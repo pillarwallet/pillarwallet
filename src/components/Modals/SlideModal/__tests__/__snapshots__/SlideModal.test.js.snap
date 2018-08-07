@@ -130,6 +130,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         >
           <View
             noPadding={true}
+            overlay={undefined}
             style={
               Array [
                 Object {
@@ -144,6 +145,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
+                  "zIndex": 10,
                 },
                 undefined,
               ]

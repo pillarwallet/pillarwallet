@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import { TouchableOpacity, Text, Dimensions, Platform } from 'react-native';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
-import { Container, Wrapper, Footer } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import { Camera, FileSystem } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
