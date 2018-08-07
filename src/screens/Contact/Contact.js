@@ -5,7 +5,9 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
+import Button from 'components/Button';
 import { CHAT } from 'constants/navigationConstants';
+import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 
@@ -99,39 +101,75 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 }
 
-const Contact = (props: Props) => {
-  const contact = props.navigation.getParam('contact', {});
-  return (
-    <Container>
-      <Header title="contact" onBack={props.navigation.goBack} />
-      <Wrapper regularPadding>
-        <ContactWapper>
-          <ContactHeader>
-            <ContactHeaderBody>
-              <ContactHeaderName>
-                {contact.username}
-              </ContactHeaderName>
-            </ContactHeaderBody>
-          </ContactHeader>
-          <ContactHeaderAvatarWrapper >
-            <ProfileImage
-              uri={contact.profileImage}
-              userName={contact.username}
-              diameter={60}
-              textStyle={{ fontSize: 32 }}
-            />
-          </ContactHeaderAvatarWrapper>
-        </ContactWapper>
+type State = {
+  isOptionsModalActive: boolean,
+}
 
-        <ChatButton onPress={() => { props.navigation.navigate(CHAT, { contact }); }}>
-          <ImageHolder>
-            <ChatButtonImage source={imageChat} />
-          </ImageHolder>
-          <ChatButtonText>CHAT</ChatButtonText>
-        </ChatButton>
-      </Wrapper>
-    </Container>
-  );
-};
+export default class Contact extends React.Component<Props, State> {
+  state = {
+    isOptionsModalActive: false,
+  }
 
-export default Contact;
+  openOptionsModal = () => {
+    this.setState({
+      isOptionsModalActive: true,
+    });
+  }
+
+  closeOptionsModal = () => {
+    this.setState({
+      isOptionsModalActive: false,
+    });
+  }
+
+  render() {
+    const { navigation } = this.props;
+    const { isOptionsModalActive } = this.state;
+    const contact = navigation.getParam('contact', {});
+
+    return (
+      <Container>
+        <Header
+          title="contact"
+          onBack={() => navigation.goBack(null)}
+          onNextPress={this.openOptionsModal}
+          nextIcon="more"
+        />
+        <Wrapper regularPadding>
+          <ContactWapper>
+            <ContactHeader>
+              <ContactHeaderBody>
+                <ContactHeaderName>
+                  {contact.username}
+                </ContactHeaderName>
+              </ContactHeaderBody>
+            </ContactHeader>
+            <ContactHeaderAvatarWrapper >
+              <ProfileImage
+                uri={contact.profileImage}
+                userName={contact.username}
+                diameter={60}
+                textStyle={{ fontSize: 32 }}
+              />
+            </ContactHeaderAvatarWrapper>
+          </ContactWapper>
+          <ChatButton onPress={() => { navigation.navigate(CHAT, { contact }); }}>
+            <ImageHolder>
+              <ChatButtonImage source={imageChat} />
+            </ImageHolder>
+            <ChatButtonText>CHAT</ChatButtonText>
+          </ChatButton>
+        </Wrapper>
+        <SlideModal
+          title="manage"
+          isVisible={isOptionsModalActive}
+          onModalHide={this.closeOptionsModal}
+        >
+          <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
+          <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />
+          <Button secondary danger block marginBottom="10px" onPress={() => {}} title="Report / Block" />
+        </SlideModal>
+      </Container>
+    );
+  }
+}

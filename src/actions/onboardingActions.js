@@ -25,6 +25,7 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { SET_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
+import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
 
@@ -72,7 +73,7 @@ export const registerWalletAction = () => {
     });
     await delay(50);
     const saltedPin = getSaltedPin(pin);
-    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 1024 } })
+    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 1024 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
@@ -90,9 +91,10 @@ export const registerWalletAction = () => {
     await Intercom.sendTokenToIntercom(fcmToken);
     await chat.init({
       username: user.username,
-      password: pin,
+      password: generateChatPassword(wallet.privateKey),
     }).catch(() => null);
     await chat.client.registerAccount().catch(() => null);
+    await chat.client.setFcmId(fcmToken).catch(() => null);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);

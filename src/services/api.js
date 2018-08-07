@@ -18,7 +18,6 @@ type HistoryPayload = {
   batchNb?: number,
 };
 
-
 type BalancePayload = {
   address: string,
   assets: Asset[],

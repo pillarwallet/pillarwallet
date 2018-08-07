@@ -1,41 +1,56 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Label, BaseText, BoldText } from 'components/Typography';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { transparentize } from 'polished';
+import { BaseText, BoldText } from 'components/Typography';
+import { baseColors, fontSizes } from 'utils/variables';
+
 
 const MnemonicPhraseWrapper = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 20px 0;
+  padding: 20px 10px 10px;
+  width: 100%;
+  background-color: ${baseColors.electricBlue};
+  border-radius: 12px;
+`;
+
+const Column = styled.View`
   flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
-  height: 220px;
-  margin: 20px 0;
-  width: 100%;
+  width: 50%;
 `;
 
 const MnemonicPhraseItem = styled.View`
-  width: 50%;
-  margin: 0 0 5px 0;
+  width: 100%;
   padding-right: 10px;
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+  margin-bottom: 10px;
 `;
 
 const MnemonicPhraseIndex = styled(BaseText)`
   flex: 0 0 30px;
+  text-align: right;
+  font-size: ${fontSizes.small};
+  color: ${transparentize(0.5, baseColors.white)};
 `;
 
 const MnemonicPhraseWord = styled(BoldText)`
-  background-color: ${baseColors.lightGray};
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small};
+  padding-left: 10px;
   flex: 1;
-  border-color: ${UIColors.defaultBorderColor};
-  border-style: dashed;
-  border-width: 1;
-  border-radius: 6;
-  padding: 5px;
+  color: ${baseColors.white};
+
 `;
+
+const getIndex = (number: number) => {
+  return (`0${number}`).slice(-2);
+};
 
 type Props = {
   phrase: string,
@@ -44,19 +59,33 @@ type Props = {
 const MnemonicPhrase = (props: Props) => {
   const { phrase } = props;
   const mnemonicList = phrase.split(' ');
-
+  const mnemonic1to6 = mnemonicList.slice(0, 6);
+  const mnemonic7to12 = mnemonicList.slice(6, 12);
 
   return (
     <MnemonicPhraseWrapper>
-      {
-        mnemonicList.map((word, index) => (
-          <MnemonicPhraseItem key={`${word}+${index}`}>
-            <MnemonicPhraseIndex><Label>{index + 1}</Label></MnemonicPhraseIndex>
-            <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
-          </MnemonicPhraseItem>
-          ),
-        )
-      }
+      <Column>
+        {
+          mnemonic1to6.map((word, index) => (
+            <MnemonicPhraseItem key={`${word}+${index}`}>
+              <MnemonicPhraseIndex>{getIndex(index + 1)}</MnemonicPhraseIndex>
+              <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
+            </MnemonicPhraseItem>
+            ),
+          )
+        }
+      </Column>
+      <Column>
+        {
+          mnemonic7to12.map((word, index) => (
+            <MnemonicPhraseItem key={`${word}+${index}`}>
+              <MnemonicPhraseIndex>{getIndex(index + 7)}</MnemonicPhraseIndex>
+              <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
+            </MnemonicPhraseItem>
+            ),
+          )
+        }
+      </Column>
     </MnemonicPhraseWrapper>
   );
 };

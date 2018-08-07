@@ -39,6 +39,7 @@ type Props = {
   imageStyle?: Object,
   onPress?: Function,
   diameter?: number,
+  style?: Object,
 }
 
 const ProfileImage = (props: Props) => {
@@ -49,6 +50,7 @@ const ProfileImage = (props: Props) => {
     textStyle,
     imageStyle,
     onPress,
+    style,
     diameter,
   } = props;
 
@@ -66,6 +68,7 @@ const ProfileImage = (props: Props) => {
       disabled={!onPress}
       onPress={onPress}
       transparent={uri}
+      style={style}
     >
       {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
       {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri: fullUri }} />}

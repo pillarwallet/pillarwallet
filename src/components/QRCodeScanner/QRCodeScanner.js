@@ -3,8 +3,7 @@ import * as React from 'react';
 import { Vibration, Animated, Dimensions, Platform } from 'react-native';
 import { Camera, Permissions } from 'expo';
 import { noop } from 'utils/common';
-import { fontSizes } from 'utils/variables';
-import ButtonIcon from 'components/ButtonIcon';
+import Header from 'components/Header';
 import styled from 'styled-components/native';
 
 const window = Dimensions.get('window');
@@ -20,7 +19,7 @@ const Wrapper = styled.View`
   height: 100%;
   top: 0;
   left: 0;
-  zIndex: 2;
+  z-index: 2;
 `;
 
 const Overlay = styled.View`
@@ -29,35 +28,41 @@ const Overlay = styled.View`
   height: 100%;
   top: 0;
   left: 0;
-  backgroundColor: rgba(0, 0, 0, .3);
-  zIndex: 3;
+  background-color: rgba(0, 0, 0, .3);
+  z-index: 3;
+`;
+
+const QRCodeScannerHeader = styled(Header)`
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 4;
 `;
 
 const Scanner = styled(Camera)`
-  alignItems: center;
-  justifyContent: center;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 `;
 
 const RectangleContainer = styled.View`
   flex: 1;
-  alignItems: center;
-  justifyContent: center;
-  backgroundColor: transparent;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
 `;
 
 const Rectangle = styled.View`
   height: 250;
   width: 250;
-  borderWidth: 4;
-  borderColor: ${props => props.color};
-  backgroundColor: transparent;
-`;
-
-const CloseButton = styled(ButtonIcon)`
-  position: absolute;
-  right: 16px;
-  top: 20px;
-  zIndex: 5;
+  border-width: 4px;
+  border-color: ${props => props.color};
+  background-color: transparent;
 `;
 
 type Props = {
@@ -184,12 +189,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
             </RectangleContainer>
           </Scanner>
           <Overlay />
-          <CloseButton
-            icon="close"
-            onPress={this.handleAnimationDismiss}
-            color={rectangleColor}
-            fontSize={fontSizes.small}
-          />
+          <QRCodeScannerHeader light onClose={this.handleAnimationDismiss} />
         </Animated.View>
       </Wrapper>
     );

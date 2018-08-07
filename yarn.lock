@@ -4845,9 +4845,9 @@ ethereumjs-util@5.2.0:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-ethers@^3.0.9:
-  version "3.0.22"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ethers/-/ethers-3.0.22.tgz#7fab1ea16521705837aa43c15831877b2716b436"
+"ethers@https://github.com/pillarwallet/ethers.js":
+  version "3.0.21"
+  resolved "https://github.com/pillarwallet/ethers.js#517698a86d6db109f5314c4d7bf72ff059853687"
   dependencies:
     aes-js "3.0.0"
     bn.js "^4.4.0"
@@ -4855,6 +4855,7 @@ ethers@^3.0.9:
     hash.js "^1.0.0"
     inherits "2.0.1"
     js-sha3 "0.5.7"
+    react-native-scrypt "1.0.0"
     scrypt-js "2.0.3"
     setimmediate "1.0.4"
     uuid "2.0.1"
@@ -7511,6 +7512,10 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
+"js-tokens@^3.0.0 || ^4.0.0":
+  version "4.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
+
 js-yaml@^3.4.3, js-yaml@^3.7.0, js-yaml@^3.9.0, js-yaml@^3.9.1:
   version "3.12.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/js-yaml/-/js-yaml-3.12.0.tgz#eaed656ec8344f10f527c6bfa1b6e2244de167d1"
@@ -8061,7 +8066,13 @@ longest@^1.0.1:
   version "1.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/longest/-/longest-1.0.1.tgz#30a0b2da38f73770e8294a0d22e6625ed77d0097"
 
-loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.3.1:
+loose-envify@^1.0.0, loose-envify@^1.3.1:
+  version "1.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
+  dependencies:
+    js-tokens "^3.0.0 || ^4.0.0"
+
+loose-envify@^1.1.0:
   version "1.3.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/loose-envify/-/loose-envify-1.3.1.tgz#d1a8ad33fa9ce0e713d65fdd0ac8b748d478c848"
   dependencies:
@@ -10234,6 +10245,13 @@ query-string@^4.1.0:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
+query-string@^6.1.0:
+  version "6.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/query-string/-/query-string-6.1.0.tgz#01e7d69f6a0940dac67a937d6c6325647aa4532a"
+  dependencies:
+    decode-uri-component "^0.2.0"
+    strict-uri-encode "^2.0.0"
+
 querystring-es3@^0.2.0, querystring-es3@~0.2.0:
   version "0.2.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/querystring-es3/-/querystring-es3-0.2.1.tgz#9ec61f79049875707d69414596fd907a4d711e73"
@@ -10691,6 +10709,10 @@ react-native-scrollable-mixin@^1.0.1:
   version "1.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrollable-mixin/-/react-native-scrollable-mixin-1.0.1.tgz#34a32167b64248594154fd0d6a8b03f22740548e"
 
+react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
+
 react-native-storybook-loader@^1.8.0:
   version "1.8.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-storybook-loader/-/react-native-storybook-loader-1.8.0.tgz#35056d62f01019af8692d540fd404a855464d4f3"
@@ -10828,9 +10850,9 @@ react-navigation-deprecated-tab-navigator@1.3.0:
   dependencies:
     react-native-tab-view "^0.0.77"
 
-react-navigation-drawer@0.3.0:
-  version "0.3.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-drawer/-/react-navigation-drawer-0.3.0.tgz#641007213f0f1e1b55a0a4bb64d71df07b3e7208"
+react-navigation-drawer@0.4.3:
+  version "0.4.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation-drawer/-/react-navigation-drawer-0.4.3.tgz#c04c94e2429b7e724801af05bd0a93a79cb27f71"
   dependencies:
     react-native-drawer-layout-polyfill "^1.3.2"
 
@@ -10858,19 +10880,19 @@ react-navigation-tabs@0.5.1, react-navigation-tabs@^0.5.1:
     react-native-safe-area-view "^0.7.0"
     react-native-tab-view "^1.0.0"
 
-react-navigation@2.3.1:
-  version "2.3.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation/-/react-navigation-2.3.1.tgz#f0734ecc64a0af70395f889d9ffa8f610642eed5"
+react-navigation@2.9.3:
+  version "2.9.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-navigation/-/react-navigation-2.9.3.tgz#de97f7102df6b836af780bfa5bfa80747148da19"
   dependencies:
     clamp "^1.0.1"
     create-react-context "^0.2.1"
     hoist-non-react-statics "^2.2.0"
     path-to-regexp "^1.7.0"
-    prop-types "^15.5.10"
+    query-string "^6.1.0"
     react-lifecycles-compat "^3"
     react-native-safe-area-view "^0.8.0"
     react-navigation-deprecated-tab-navigator "1.3.0"
-    react-navigation-drawer "0.3.0"
+    react-navigation-drawer "0.4.3"
     react-navigation-tabs "0.5.1"
 
 react-proxy@^1.1.7:
@@ -11526,9 +11548,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@^1.0.49:
-  version "1.0.49"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.49.tgz#39c741b2a1d407477a5d354ad097f7d7447bea96"
+rn-signal-protocol-messaging@^1.0.58:
+  version "1.0.58"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.58.tgz#38661f1bdb667cd14efa4dc42bf254fd7bba6f2a"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -12182,6 +12204,10 @@ stream-shift@^1.0.0:
 strict-uri-encode@^1.0.0:
   version "1.1.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
+
+strict-uri-encode@^2.0.0:
+  version "2.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/strict-uri-encode/-/strict-uri-encode-2.0.0.tgz#b9c7330c7042862f6b142dc274bbcc5866ce3546"
 
 string-length@^2.0.0:
   version "2.0.0"

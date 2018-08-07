@@ -6,11 +6,10 @@ import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
-import { LEGAL_TERMS } from 'constants/navigationConstants';
+import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { updateLocalUserAction } from 'actions/userActions';
 import { validateUserDetailsAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
@@ -46,12 +45,15 @@ function InputTemplate(locals) {
 }
 
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null && username.length <= maxUsernameLength;
+  return username != null && username.length <= maxUsernameLength && /^[a-z0-9_\- ]+$/i.test(username);
 });
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
     return `Username should be less than ${maxUsernameLength} characters.`;
+  }
+  if (username != null && !(/^[a-z0-9_\- ]+$/i.test(username))) {
+    return 'Username should only contain alpha-numeric characters.';
   }
   return 'Please specify the username.';
 };
@@ -77,7 +79,6 @@ const getDefaultFormOptions = (inputDisabled: boolean) => ({
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  updateUser: Function,
   validateUserDetails: Function,
   resetWalletState: Function,
   walletState: ?string,
@@ -90,16 +91,6 @@ type State = {
   },
   formOptions: Object,
 };
-
-const FooterAndroid = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  width: 100%;
-  margin-bottom: 20px;
-  margin-top: 30px;
-`;
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
@@ -152,7 +143,7 @@ class NewProfile extends React.Component<Props, State> {
           },
         },
       });
-      this.setState({ formOptions: options });// eslint-disable-line
+      this.setState({ formOptions: options }); // eslint-disable-line
     }
 
     if (walletState === USERNAME_OK) {
@@ -168,13 +159,16 @@ class NewProfile extends React.Component<Props, State> {
   render() {
     const { value, formOptions } = this.state;
     const { walletState } = this.props;
-    const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
-    const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
     const isUsernameValid = value && value.username && value.username.length > 0;
+    const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
+    const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability;
 
     return (
       <Container>
-        <Header title="choose your username" onBack={() => this.props.navigation.goBack(null)} />
+        <Header
+          title="choose username"
+          onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
+        />
         <ScrollWrapper regularPadding>
           <LoginForm
             innerRef={node => { this._form = node; }}
@@ -184,18 +178,21 @@ class NewProfile extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
         </ScrollWrapper>
-        <FooterWrapperComponent>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'padding'} keyboardVerticalOffset={50}>
-            <FooterInnerComponent>
-              <Button
-                block
-                onPress={this.handleSubmit}
-                disabled={!isUsernameValid || walletState === CHECKING_USERNAME}
-                title="Next"
-              />
-            </FooterInnerComponent>
+        <Footer>
+          <KeyboardAvoidingView
+            style={{ width: '100%' }}
+            behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
+            keyboardVerticalOffset={20}
+          >
+            <Button
+              small
+              flexRight
+              onPress={this.handleSubmit}
+              disabled={shouldNextButtonBeDisabled}
+              title="Next"
+            />
           </KeyboardAvoidingView>
-        </FooterWrapperComponent>
+        </Footer>
       </Container>
     );
   }
@@ -204,7 +201,6 @@ class NewProfile extends React.Component<Props, State> {
 const mapStateToProps = ({ wallet: { walletState, onboarding: { apiUser } } }) => ({ walletState, apiUser });
 
 const mapDispatchToProps = (dispatch) => ({
-  updateUser: (user: Object) => dispatch(updateLocalUserAction(user, true)),
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
 });
 

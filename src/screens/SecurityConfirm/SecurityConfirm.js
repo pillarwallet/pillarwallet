@@ -4,12 +4,9 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import Header from 'components/Header';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
-import CheckboxItem from 'components/CheckboxItem';
-import CheckboxText from 'components/CheckboxText';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -44,31 +41,27 @@ export default class SecurityConfirm extends React.Component<Props, State> {
         <Header title="security" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph>
-            Keep your backup phrase safe! We don’t have it.
-            You’ll need these words if you lose your device or delete your app.
+            Your wallet is secured by a 12 word <BoldText>backup phrase</BoldText>.
+          </Paragraph>
+          <Paragraph>
+            Keep your backup phrase safe! We don’t have it and we cannot access it.
+            You’ll need your backup phrase if you lose your device or delete your app.
           </Paragraph>
           <Paragraph light>
-            Write down your backup phrase and  store it in several places only you know.
-            Be very careful when putting it into a digital file or USB stick -
-            always encrypt any digital version of these 12 words.
-
+            Write down your backup phrase and store it in several places.
           </Paragraph>
         </Wrapper>
         <Footer>
-          <CheckboxItem
-            marginBottom
-          >
-            <Checkbox toggleCheckbox={this.toggleCheckBox} tag="checkbox" checked={!confirmButtonDisabled} />
-            <CheckboxText>
-              I understand that if I lose my backup phrase, I risk losing everything stored on my wallet.
-            </CheckboxText>
-          </CheckboxItem>
+          <Checkbox
+            text="I understand that my backup phrase is the only way I can restore my wallet if I lose access."
+            onPress={() => this.setState({ confirmButtonDisabled: !confirmButtonDisabled })}
+          />
           <Button
-            block
+            flexRight
+            small
             title="Continue"
             onPress={this.handleConfirm}
             disabled={confirmButtonDisabled}
-            marginBottom="20px"
           />
         </Footer>
       </Container>
