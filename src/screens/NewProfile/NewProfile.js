@@ -92,16 +92,6 @@ type State = {
   formOptions: Object,
 };
 
-const FooterAndroid = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  width: 100%;
-  margin-bottom: 20px;
-  margin-top: 30px;
-`;
-
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
 
@@ -169,8 +159,6 @@ class NewProfile extends React.Component<Props, State> {
   render() {
     const { value, formOptions } = this.state;
     const { walletState } = this.props;
-    const FooterWrapperComponent = Platform.OS === 'ios' ? React.Fragment : Footer;
-    const FooterInnerComponent = Platform.OS === 'ios' ? Footer : FooterAndroid;
     const isUsernameValid = value && value.username && value.username.length > 0;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability;
@@ -190,18 +178,21 @@ class NewProfile extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
         </ScrollWrapper>
-        <FooterWrapperComponent>
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'padding'} keyboardVerticalOffset={50}>
-            <FooterInnerComponent>
-              <Button
-                block
-                onPress={this.handleSubmit}
-                disabled={shouldNextButtonBeDisabled}
-                title="Next"
-              />
-            </FooterInnerComponent>
+        <Footer>
+          <KeyboardAvoidingView
+            style={{ width: '100%' }}
+            behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
+            keyboardVerticalOffset={20}
+          >
+            <Button
+              small
+              flexRight
+              onPress={this.handleSubmit}
+              disabled={shouldNextButtonBeDisabled}
+              title="Next"
+            />
           </KeyboardAvoidingView>
-        </FooterWrapperComponent>
+        </Footer>
       </Container>
     );
   }
