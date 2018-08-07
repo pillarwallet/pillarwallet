@@ -4,17 +4,24 @@ import { connect } from 'react-redux';
 
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { TouchableOpacity, Platform } from 'react-native';
+import { TouchableOpacity, Platform, Dimensions, Linking } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
-import { BaseText } from 'components/Typography';
+import { BaseText, Label } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import type { NavigationScreenProp } from 'react-navigation';
 import Separator from 'components/Separator';
+import { Row, Column } from 'components/Grid';
+import Button from 'components/Button';
+import { formatETHAmount } from 'utils/common';
+import SlideModal from 'components/Modals/SlideModal';
+import Timestamp from 'components/TXHistory/Timestamp.js';
+import { getUserName } from 'utils/contacts';
+import { TX_DETAILS_URL } from 'react-native-dotenv';
 
 import {
   TYPE_RECEIVED,
@@ -48,7 +55,10 @@ const NOTIFICATION_LABELS = {
 
 const TRANSACTIONS = 'TRANSACTIONS';
 const SOCIAL = 'SOCIAL';
+const SENT = 'Sent';
+const RECEIVED = 'Received';
 
+const window = Dimensions.get('window');
 
 const ActivityFeedList = styled.FlatList``;
 
@@ -61,10 +71,6 @@ const ActivityFeedItem = styled.TouchableOpacity`
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
-`;
-
-const ActivityFeedItemLink = styled.TouchableOpacity`
-  padding-right: 10px;
 `;
 
 const ActivityFeedDirectionCircle = styled.View`
@@ -126,6 +132,19 @@ const LabelText = styled(BaseText)`
   padding: 6px;
 `;
 
+const ContentWrapper = styled.View`
+  height: ${window.height / 2.5};
+  justify-content: space-around;
+  display: flex;
+`;
+
+const Holder = styled.View`
+  display: flex;
+  flex-direction:column;
+  justify-content: space-around;
+  align-items: center;
+`;
+
 type Props = {
   history: Array<*>,
   onAcceptInvitation: Function,
@@ -137,10 +156,105 @@ type Props = {
   activeTab: string,
   esTitle: string,
   esBody: string,
-}
+};
 
+type State = {
+  showModal: boolean,
+  selectedTransaction: {
+    hash: string,
+    date: ?string,
+    token: ?string,
+    amount: ?number,
+    recipient: ?string,
+    note: ?string,
+    fee: ?number,
+    confirmations: ?number,
+    status: ?string,
+    direction: ?string,
+  }
+};
 
-class ActivityFeed extends React.Component<Props> {
+class ActivityFeed extends React.Component<Props, State> {
+
+  state = {
+    showModal: false,
+    selectedTransaction: {
+      hash: '',
+      date: null,
+      token: null,
+      amount: null,
+      recipient: null,
+      fee: null,
+      note: null,
+      confirmations: null,
+      status: null,
+      direction: null,
+    },
+  };
+
+  getDate = (datetime: number) => {
+    const months = [
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
+    ];
+    const date: Date = new Date(0);
+    date.setUTCSeconds(datetime);
+    return `${months[date.getMonth()]} ${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  };
+
+  selectTransaction = (transaction: Object) => {
+    const {
+        status,
+        toAddress,
+        fromAddress,
+        asset,
+        nbConfirmations,
+        gasUsed,
+        gasPrice,
+        value,
+    } = transaction;
+    const timestamp = transaction.createdAt;
+    const hash = transaction.txHash;
+    const { history, walletAddress } = this.props;
+    const datetime = new Date(timestamp);
+    const contact = history
+        .find(({ ethAddress }) => ethAddress != null && toAddress.toUpperCase() === ethAddress.toUpperCase());
+    const recipient = toAddress.toUpperCase() !== walletAddress.toUpperCase()
+        ? (getUserName(contact) || `${toAddress.slice(0, 7)}…${toAddress.slice(-7)}`)
+        : null;
+    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
+
+    this.setState({
+      selectedTransaction: {
+        hash,
+        date: this.getDate(datetime),
+        token: asset,
+        amount: formatETHAmount(amount),
+        recipient,
+        fee: gasUsed ? gasUsed * gasPrice : 0,
+        note: null,
+        confirmations: nbConfirmations,
+        status: status.charAt(0).toUpperCase() + status.slice(1),
+        direction: walletAddress.toUpperCase() === fromAddress.toUpperCase() ? SENT : RECEIVED,
+      },
+      showModal: true,
+    });
+  };
+
+  viewTransactionOnBlockchain = (hash: string) => {
+    Linking.openURL(TX_DETAILS_URL + hash);
+  };
+
   getSocialAction = (type: string, notification: Object) => {
     const {
       onCancelInvitation,
@@ -204,6 +318,9 @@ class ActivityFeed extends React.Component<Props> {
     const { walletAddress, navigation } = this.props;
 
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
+    if (type !== TRANSACTION_EVENT && type !== CHAT) {
+      notification.onPress = () => navigation.navigate(CONTACT, { contact: notification });
+    }
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.toAddress.toUpperCase() === walletAddress.toUpperCase();
       const address = isReceived ? notification.fromAddress : notification.toAddress;
@@ -213,7 +330,7 @@ class ActivityFeed extends React.Component<Props> {
       const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       return (
-        <ActivityFeedItem key={index}>
+        <ActivityFeedItem key={index} onPress={() => this.selectTransaction(notification)}>
           <ActivityFeedItemCol fixedWidth="50px">
             <ActivityFeedDirectionCircle>
               <ActivityFeedDirectionCircleIcon name={directionIcon} />
@@ -233,11 +350,7 @@ class ActivityFeed extends React.Component<Props> {
     }
     return (
       <ActivityFeedItem key={index} onPress={notification.onPress}>
-        <ActivityFeedItemLink
-          onPress={() => navigation.navigate(CONTACT, { contact: notification })}
-          fixedWidth="50px"
-        >
-          <ActivityFeedItemCol>
+          <ActivityFeedItemCol fixedWidth="50px">
             <ProfileImage
               uri={notification.avatar}
               userName={notification.username}
@@ -245,16 +358,10 @@ class ActivityFeed extends React.Component<Props> {
               textStyle={{ fontSize: 14 }}
             />
           </ActivityFeedItemCol>
-        </ActivityFeedItemLink>
-        <ActivityFeedItemLink
-          onPress={() => navigation.navigate(CONTACT, { contact: notification })}
-          fixedWidth="150px"
-        >
-          <ActivityFeedItemCol>
+          <ActivityFeedItemCol fixedWidth="150px">
             <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
             <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
           </ActivityFeedItemCol>
-        </ActivityFeedItemLink>
         <ActivityFeedItemCol flexEnd>
           {this.getSocialAction(type, notification)}
         </ActivityFeedItemCol>
@@ -270,6 +377,8 @@ class ActivityFeed extends React.Component<Props> {
       esBody,
       notifications,
     } = this.props;
+
+    const { showModal, selectedTransaction } = this.state;
 
     const filteredHistory = history.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
@@ -292,6 +401,67 @@ class ActivityFeed extends React.Component<Props> {
           contentContainerStyle={{ height: '100%' }}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
         />
+        <SlideModal
+            isVisible={showModal}
+            title="transaction details"
+            onModalHide={() => { this.setState({ showModal: false }); }}
+        >
+          <ContentWrapper>
+            <Holder>
+              <Row size="0 0 30px">
+                <Column>
+                  <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
+                </Column>
+                <Column>
+                  <BaseText>{selectedTransaction.amount} {selectedTransaction.token}</BaseText>
+                </Column>
+              </Row>
+              <Row size="0 0 30px">
+                <Column><Label>Date</Label></Column>
+                <Column>
+                  <BaseText>{selectedTransaction.date}</BaseText>
+                </Column>
+              </Row>
+              {!!selectedTransaction.recipient &&
+              <Row size="0 0 30px">
+                <Column><Label>Recipient</Label></Column>
+                <Column>
+                  <BaseText>{selectedTransaction.recipient}</BaseText>
+                </Column>
+              </Row>
+              }
+              {!!selectedTransaction.fee &&
+              <Row size="0 0 30px">
+                <Column><Label>Transaction fee</Label></Column>
+                <Column>
+                  <BaseText>{utils.formatEther(selectedTransaction.fee.toString())} ETH</BaseText>
+                </Column>
+              </Row>
+              }
+
+              {selectedTransaction.note &&
+              <Row size="0 0 80px">
+                <Column><Label>Note</Label></Column>
+                <Column>
+                  <BaseText>{selectedTransaction.note}</BaseText>
+                </Column>
+              </Row>
+              }
+              <Row size="0 0 30px">
+                <Column><Label>Status</Label></Column>
+                <Column>
+                  <BaseText>{selectedTransaction.status}</BaseText>
+                </Column>
+              </Row>
+            </Holder>
+            <Holder>
+              <Button
+                  title="View on the blockchain"
+                  onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
+              />
+            </Holder>
+          </ContentWrapper>
+        </SlideModal>
       </ActivityFeedWrapper>
     );
   }
