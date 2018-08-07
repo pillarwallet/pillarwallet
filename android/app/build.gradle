@@ -112,11 +112,11 @@ android {
       }
   }
   // hotfix for lottie lib and Java 8 issue
-  configurations.all {
-    resolutionStrategy {
-      force 'com.airbnb.android:lottie:2.5.5'
-    }
-  }
+ configurations.all {
+   resolutionStrategy {
+     force 'com.airbnb.android:lottie:2.5.5'
+   }
+ }
 }
 
 // Don't use modern jsc-android since it still has some critical bugs that

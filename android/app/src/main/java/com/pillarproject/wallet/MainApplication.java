@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import com.crypho.scrypt.RNScryptPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import org.reactnative.camera.RNCameraPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
@@ -20,7 +21,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-
+import com.airbnb.android.react.lottie.LottiePackage;
 
 import io.fabric.sdk.android.Fabric;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
@@ -41,20 +42,22 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNFetchBlobPackage(),
-            new RNCameraPackage(),
-            new RNSignalClientPackage(),
-            new VectorIconsPackage(),
-            new UdpSocketsModule(),
-            new TcpSocketsModule(),
-            new RandomBytesPackage(),
-            new RNOSModule(),
-            new RNFirebasePackage(),
-            new RNFirebaseMessagingPackage(),
-            new RNFirebaseCrashlyticsPackage(),
-            new RNDeviceInfo(),
-            new IntercomPackage()
-        );
+          new RNScryptPackage(),
+          new RNFetchBlobPackage(),
+          new RNCameraPackage(),
+          new RNSignalClientPackage(),
+          new VectorIconsPackage(),
+          new UdpSocketsModule(),
+          new TcpSocketsModule(),
+          new RandomBytesPackage(),
+          new RNOSModule(),
+          new RNFirebasePackage(),
+          new RNFirebaseMessagingPackage(),
+          new RNFirebaseCrashlyticsPackage(),
+          new RNDeviceInfo(),
+          new IntercomPackage(),
+          new LottiePackage()
+      );
     }
 
     @Override
