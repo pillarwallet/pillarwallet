@@ -4,12 +4,15 @@ import styled from 'styled-components/native';
 import Icon from 'components/Icon';
 import { baseColors, fontSizes } from 'utils/variables';
 import { BoldText } from 'components/Typography';
+import LinearGradient from 'react-native-linear-gradient';
 
 type Props = {
   onPressReceive: Function,
   onPressSend: Function,
   noBalance?: boolean,
 }
+
+const assetButtonIconWrapperColors = [baseColors.selago, baseColors.hawkesBlue];
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
@@ -26,7 +29,7 @@ const AssetButton = styled.TouchableOpacity`
   padding: 6px;
 `;
 
-const AssetButtonIconWrapper = styled.View`
+const AssetButtonIconWrapper = styled(LinearGradient)`
   border-radius: 50;
   width: 54px;
   height: 54px;
@@ -53,17 +56,23 @@ const AssetButtonText = styled(BoldText)`
   margin-top: 10px;
 `;
 
+
 const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
       <AssetButton onPress={props.onPressReceive}>
-        <AssetButtonIconWrapper>
+        <AssetButtonIconWrapper
+          colors={assetButtonIconWrapperColors}
+        >
           <AssetButtonIcon name="qrcode" />
         </AssetButtonIconWrapper>
         <AssetButtonText>RECEIVE</AssetButtonText>
       </AssetButton>
       <AssetButton disabled={props.noBalance} onPress={props.noBalance ? null : props.onPressSend}>
-        <AssetButtonIconWrapper disabled={props.noBalance}>
+        <AssetButtonIconWrapper
+          colors={assetButtonIconWrapperColors}
+          disabled={props.noBalance}
+        >
           <AssetButtonIcon disabled={props.noBalance} name="send" />
         </AssetButtonIconWrapper>
         <AssetButtonText disabled={props.noBalance}>SEND</AssetButtonText>
