@@ -175,7 +175,7 @@ class AssetsScreen extends React.Component<Props> {
         <Header
           title="assets"
           onNextPress={this.goToAddTokenPage}
-          nextText="Manage Tokens"
+          nextIcon="more"
           headerRightFlex="2"
         />
         <ScrollWrapper

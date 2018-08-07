@@ -94,7 +94,7 @@ const Header = (props: Props) => {
     light,
     headerRightFlex,
   } = props;
-  const showRight = nextText || onBack || onClose;
+  const showRight = nextText || nextIcon || onBack || onClose;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
