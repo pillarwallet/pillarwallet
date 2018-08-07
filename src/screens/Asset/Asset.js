@@ -173,7 +173,7 @@ class AssetScreen extends React.Component<Props, State> {
                 wallpaper={assetData.wallpaper}
               />
             </Transition>
-            <Paragraph light>
+            <Paragraph small light>
               {assetData.description}
             </Paragraph>
             <AssetButtons

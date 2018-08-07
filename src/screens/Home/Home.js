@@ -103,7 +103,7 @@ const HomeHeaderProfileImage = styled(ProfileImage)`
 `;
 
 const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 `;
 
 const RecentConnections = styled.View`
