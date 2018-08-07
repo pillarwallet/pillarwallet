@@ -6,7 +6,6 @@ import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
 jest.mock('NativeAnimatedHelper');
-jest.mock('react-native-background-timer', () => {});
 
 Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
