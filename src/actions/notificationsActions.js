@@ -33,8 +33,6 @@ export const getAssets = (getState: Function, notification: Object): Object => {
     assets: { data: assets, supportedAssets },
   } = getState();
 
-  if (!notification) return assets;
-
   if (notification.type === BCX && !Object.keys(assets).includes(notification.asset)) {
     const extraAsset = supportedAssets.find(asset => asset.symbol === notification.asset);
     if (extraAsset) {
