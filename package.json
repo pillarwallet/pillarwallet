@@ -3,15 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "@babel/core": "7.0.0-beta.54",
     "@storybook/addon-actions": "^3.4.1",
     "@storybook/addon-links": "^3.4.1",
     "@storybook/addons": "^3.4.1",
     "@storybook/react-native": "^3.4.1",
-    "babel-core": "^6.26.0",
+    "babel-bridge": "^1.12.11",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.2",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "^1.5.1",
-    "babel-runtime": "^6.26.0",
+    "babel-runtime": "7.0.0-beta.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.19.1",
@@ -37,7 +39,7 @@
     "react-native-debugger-open": "^0.3.17",
     "react-native-dotenv": "^0.2.0",
     "react-native-storybook-loader": "^1.8.0",
-    "react-test-renderer": "16.3.0-alpha.1",
+    "react-test-renderer": "16.4.2",
     "redux-mock-store": "^1.5.1",
     "rn-nodeify": "tradle/rn-nodeify",
     "run-s": "^0.0.0"
@@ -73,8 +75,12 @@
   },
   "jest": {
     "preset": "react-native",
-    "roots": [
-      "."
+    "verbose": true,
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
+    },
+    "modulePaths": [
+      "<rootDir>/src/"
     ],
     "testRegex": "\\.test\\.js$",
     "testResultsProcessor": "./node_modules/jest-html-reporter",
@@ -89,7 +95,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-parsed-text|@expo/react-native-action-sheet|@expo/vector-icons|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|expo|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|react-native-communications|react-native-qrcode|react-native-gifted-chat|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-navigation-fluid-transitions)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -137,7 +143,7 @@
     "react-native-intercom": "^11.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
-    "react-native-modal": "^6.0.0",
+    "react-native-modal": "6.5.0",
     "react-native-os": "^1.0.1",
     "react-native-permissions": "^1.1.1",
     "react-native-qrcode": "^0.2.6",
