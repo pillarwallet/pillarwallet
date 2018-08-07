@@ -1,4 +1,6 @@
 include ':app'
+include ':react-native-scrypt'
+project(':react-native-scrypt').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-scrypt/android')
 include ':react-native-vector-icons'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':lottie-react-native'

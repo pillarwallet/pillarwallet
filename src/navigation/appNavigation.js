@@ -76,7 +76,7 @@ import { PENDING } from 'constants/userConstants';
 // models
 import type { Assets } from 'models/Asset';
 
-import { UIColors, baseColors } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import { modalTransition } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
@@ -171,10 +171,11 @@ const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
 const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
   <BaseText
     style={{
-      fontSize: 12,
+      fontSize: fontSizes.extraExtraSmall,
       color: focused ? tintColor : baseColors.mediumGray,
       textAlign: 'center',
     }}
+    numberOfLines={1}
   >
     {labelText}
   </BaseText>
@@ -210,8 +211,8 @@ const tabNavigation = createBottomTabNavigator(
     },
     [HOME]: {
       screen: homeFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHome),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -219,7 +220,7 @@ const tabNavigation = createBottomTabNavigator(
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
-        tabBarLabel: tabBarLabel('Marketplace'),
+        tabBarLabel: tabBarLabel('Market'),
       }),
     },
     [CHAT_LIST]: {
@@ -268,6 +269,7 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -293,6 +295,7 @@ type Props = {
   fetchInviteNotifications: Function,
   getExistingChats: Function,
   notifications: Object[],
+  hasUnreadNotifications: boolean,
   wallet: Object,
   assets: Object,
 }
@@ -350,24 +353,25 @@ class AppFlow extends React.Component<Props, {}> {
   };
 
   render() {
-    const { userState } = this.props;
+    const { userState, hasUnreadNotifications } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
 
-    return <AppFlowNavigation />;
+    return <AppFlowNavigation screenProps={{ hasUnreadNotifications }} />;
   }
 }
 
 const mapStateToProps = ({
   user: { userState },
-  notifications: { data: notifications },
+  notifications: { data: notifications, hasUnreadNotifications },
   assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
   userState,
   notifications,
+  hasUnreadNotifications,
   assets,
   wallet,
 });
