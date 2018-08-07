@@ -124,7 +124,7 @@ const RecentConnectionsWrapper = styled.View`
 const RecentConnectionsScrollView = styled.ScrollView``;
 
 const RecentConnectionsSubtitle = styled(Title)`
-  margin-left: ${spacing.rhythm};
+  margin-left: ${spacing.rhythm}px;
 `;
 
 const RecentConnectionsItem = styled.TouchableOpacity`
