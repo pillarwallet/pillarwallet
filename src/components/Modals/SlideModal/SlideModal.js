@@ -33,7 +33,7 @@ const ModalBackground = styled.View`
   background-color: white;
   border-top-left-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
   border-top-right-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
-  padding: ${(props) => props.fullScreen ? '60px 0 80px' : '20px'};
+  padding: ${(props) => props.fullScreen ? '0' : '20px'};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
   ${props => props.fullScreen && 'height: 100%;'}
 `;
@@ -99,7 +99,7 @@ export default class SlideModal extends React.Component<Props, State> {
       fullScreen,
       subtitle,
     } = this.props;
-    const animationTiming = 600;
+    const animationTiming = 500;
     return (
       <Modal
         isVisible={isVisible}
@@ -108,8 +108,8 @@ export default class SlideModal extends React.Component<Props, State> {
         onBackdropPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
-        animationIn="slideInUp"
-        animationOut="slideOutDown"
+        animationIn="bounceInUp"
+        animationOut="bounceOutDown"
         swipeDirection="down"
         hideModalContentWhileAnimating
         style={{

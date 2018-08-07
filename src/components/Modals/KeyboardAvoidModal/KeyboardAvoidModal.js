@@ -81,16 +81,15 @@ export default class KeyboardAvoidModal extends React.Component<Props, State> {
       onModalHide,
       subtitle,
     } = this.props;
-    const animationInTiming = 800;
-    const animationOutTiming = 400;
+    const animationTiming = 500;
     return (
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
         onModalHide={onModalHide}
         onBackdropPress={this.hideModal}
-        animationInTiming={animationInTiming}
-        animationOutTiming={animationOutTiming}
+        animationInTiming={animationTiming}
+        animationOutTiming={animationTiming}
         animationIn="bounceInUp"
         animationOut="bounceOutDown"
         swipeDirection="down"

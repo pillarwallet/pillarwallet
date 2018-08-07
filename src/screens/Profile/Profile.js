@@ -437,11 +437,7 @@ class Profile extends React.Component<Props, State> {
               fullScreen
               onModalHide={() => this.setState({ showSystemInfoModal: false })}
             >
-              <Container>
-                <Wrapper regularPadding>
-                  <SystemInfoModal />
-                </Wrapper>
-              </Container>
+              <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
             </SlideModal>
           </ListWrapper>
 
