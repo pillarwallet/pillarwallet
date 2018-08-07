@@ -19,7 +19,6 @@ import { Row, Column } from 'components/Grid';
 import Button from 'components/Button';
 import { formatETHAmount } from 'utils/common';
 import SlideModal from 'components/Modals/SlideModal';
-import Timestamp from 'components/TXHistory/Timestamp.js';
 import { getUserName } from 'utils/contacts';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 
@@ -175,7 +174,6 @@ type State = {
 };
 
 class ActivityFeed extends React.Component<Props, State> {
-
   state = {
     showModal: false,
     selectedTransaction: {
@@ -214,24 +212,24 @@ class ActivityFeed extends React.Component<Props, State> {
 
   selectTransaction = (transaction: Object) => {
     const {
-        status,
-        toAddress,
-        fromAddress,
-        asset,
-        nbConfirmations,
-        gasUsed,
-        gasPrice,
-        value,
+      status,
+      toAddress,
+      fromAddress,
+      asset,
+      nbConfirmations,
+      gasUsed,
+      gasPrice,
+      value,
     } = transaction;
     const timestamp = transaction.createdAt;
     const hash = transaction.txHash;
     const { history, walletAddress } = this.props;
     const datetime = new Date(timestamp);
     const contact = history
-        .find(({ ethAddress }) => ethAddress != null && toAddress.toUpperCase() === ethAddress.toUpperCase());
+      .find(({ ethAddress }) => ethAddress != null && toAddress.toUpperCase() === ethAddress.toUpperCase());
     const recipient = toAddress.toUpperCase() !== walletAddress.toUpperCase()
-        ? (getUserName(contact) || `${toAddress.slice(0, 7)}…${toAddress.slice(-7)}`)
-        : null;
+      ? (getUserName(contact) || `${toAddress.slice(0, 7)}…${toAddress.slice(-7)}`)
+      : null;
     const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
 
     this.setState({
@@ -350,18 +348,18 @@ class ActivityFeed extends React.Component<Props, State> {
     }
     return (
       <ActivityFeedItem key={index} onPress={notification.onPress}>
-          <ActivityFeedItemCol fixedWidth="50px">
-            <ProfileImage
-              uri={notification.avatar}
-              userName={notification.username}
-              diameter={40}
-              textStyle={{ fontSize: 14 }}
-            />
-          </ActivityFeedItemCol>
-          <ActivityFeedItemCol fixedWidth="150px">
-            <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
-            <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
-          </ActivityFeedItemCol>
+        <ActivityFeedItemCol fixedWidth="50px">
+          <ProfileImage
+            uri={notification.avatar}
+            userName={notification.username}
+            diameter={40}
+            textStyle={{ fontSize: 14 }}
+          />
+        </ActivityFeedItemCol>
+        <ActivityFeedItemCol fixedWidth="150px">
+          <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
+          <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
+        </ActivityFeedItemCol>
         <ActivityFeedItemCol flexEnd>
           {this.getSocialAction(type, notification)}
         </ActivityFeedItemCol>
@@ -402,9 +400,9 @@ class ActivityFeed extends React.Component<Props, State> {
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
         />
         <SlideModal
-            isVisible={showModal}
-            title="transaction details"
-            onModalHide={() => { this.setState({ showModal: false }); }}
+          isVisible={showModal}
+          title="transaction details"
+          onModalHide={() => { this.setState({ showModal: false }); }}
         >
           <ContentWrapper>
             <Holder>
@@ -456,8 +454,8 @@ class ActivityFeed extends React.Component<Props, State> {
             </Holder>
             <Holder>
               <Button
-                  title="View on the blockchain"
-                  onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
+                title="View on the blockchain"
+                onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
               />
             </Holder>
           </ContentWrapper>
