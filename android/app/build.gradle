@@ -134,6 +134,7 @@ dependencies {
   }
   compile "com.google.firebase:firebase-messaging:17.1.0"
   compile 'me.leolin:ShortcutBadger:1.1.21@aar'
+  compile project(':react-native-linear-gradient')
 
   // Our dependencies from ExpoView
   // DON'T ADD ANYTHING HERE THAT ISN'T IN EXPOVIEW. ONLY COPY THINGS FROM EXPOVIEW TO HERE.

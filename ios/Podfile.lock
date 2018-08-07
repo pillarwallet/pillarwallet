@@ -18,6 +18,8 @@ PODS:
   - Branch (0.24.2):
     - Branch/Core (= 0.24.2)
   - Branch/Core (0.24.2)
+  - BVLinearGradient (2.4.0):
+    - React
   - CocoaLumberjack (3.2.1):
     - CocoaLumberjack/Default (= 3.2.1)
     - CocoaLumberjack/Extensions (= 3.2.1)
@@ -284,6 +286,7 @@ PODS:
   - yoga (0.55.4.React)
 
 DEPENDENCIES:
+  - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - ExpoKit/Core (from `http://github.com/expo/expo.git`, tag `ios/2.6.8`)
   - ExpoKit/CPP (from `http://github.com/expo/expo.git`, tag `ios/2.6.8`)
@@ -320,6 +323,8 @@ DEPENDENCIES:
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
+  BVLinearGradient:
+    :path: ../node_modules/react-native-linear-gradient
   DoubleConversion:
     :podspec: ../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec
   ExpoKit:
@@ -353,6 +358,7 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BoringSSL: cf3f1793eb6e3c445c4d150456341f149c268a35
   Branch: 0d98d22745a9b68bcb4fa6dc1c6a92b64d4fdd7b
+  BVLinearGradient: 4b3f3bdf1ac1a52a5ef5e65c9585d793a7c3f825
   CocoaLumberjack: 2800c03334042fe80589423c8d80e582dcaec482
   Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
   DoubleConversion: e22e0762848812a87afd67ffda3998d9ef29170c
@@ -406,6 +412,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
 
-PODFILE CHECKSUM: 4fd73da9795bc5fc0a3ec616eb12cf68b980b286
+PODFILE CHECKSUM: e439a6e344dede158c11b4600708600049571676
 
 COCOAPODS: 1.4.0

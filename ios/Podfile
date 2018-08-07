@@ -47,6 +47,7 @@ target 'pillar-wallet' do
     :inhibit_warnings => true
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'react-native-intercom', :path => '../node_modules/react-native-intercom'
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
   pod 'Firebase/Core', '~> 5.0.0'
   pod 'Firebase/Database'
   pod 'Firebase/Analytics'
