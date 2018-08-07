@@ -33,8 +33,6 @@ type State = {
   errorField: string,
 };
 
-let listener = null;
-
 class ImportWallet extends React.Component<Props, State> {
   state = {
     privateKey: '',
@@ -50,22 +48,23 @@ class ImportWallet extends React.Component<Props, State> {
     });
   }
 
-  phisicalBackAction = () => {
+  physicalBackAction = () => {
     this.handleBackAction();
     return true;
-  }
+  };
 
   componentDidMount() {
     const { navigation } = this.props;
     const navigateTo = navigation.getParam('navigateTo', null);
-    if (Platform.OS === 'android' && listener == null && navigateTo) {
-      BackHandler.addEventListener('hardwareBackPress', this.phisicalBackAction);
+    if (Platform.OS === 'android' && navigateTo) {
+      BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
     }
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.phisicalBackAction);
-    listener = null;
+    if (Platform.OS === 'android') {
+      BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
+    }
   }
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -107,7 +106,7 @@ class ImportWallet extends React.Component<Props, State> {
     } else {
       navigation.goBack(null);
     }
-  }
+  };
 
   render() {
     const { privateKey, tWordsPhrase } = this.state;

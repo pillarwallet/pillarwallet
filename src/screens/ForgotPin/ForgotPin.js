@@ -27,8 +27,8 @@ const InnerWrapper = styled.View`
   height: 100%;
 `;
 
-const Body = styled.View`
-`;
+const Body = styled.View``;
+
 const Footer = styled.View`
   flex-direction: column;
   align-items: center;

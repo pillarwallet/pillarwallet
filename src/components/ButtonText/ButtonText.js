@@ -9,7 +9,6 @@ type Props = {
   buttonText: string,
   onPress: Function,
   fontSize?: number,
-  bold?: boolean,
 }
 
 const ButtonLabel = styled(BaseText)`
@@ -18,10 +17,7 @@ const ButtonLabel = styled(BaseText)`
 `;
 
 const ButtonText = (props: Props) => {
-  const {
-    buttonText,
-    onPress,
-  } = props;
+  const { buttonText, onPress } = props;
   if (Platform.OS === 'ios') {
     return (
       <TouchableOpacity onPress={onPress}>
