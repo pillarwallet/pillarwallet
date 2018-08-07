@@ -22,6 +22,7 @@ type Props = {
   light?: boolean,
   style?: Object,
   headerRightFlex?: string,
+  overlay?: boolean,
 }
 
 const Wrapper = styled.View`
@@ -31,8 +32,9 @@ const Wrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
-  margin-bottom: 20px;
   margin-top: ${Platform.OS === 'android' ? '20px' : '0'};
+  margin-bottom: ${props => props.overlay ? '-40px' : '20px'};
+  z-index: 10;
 `;
 
 const BackIcon = styled(ButtonIcon)`
@@ -93,6 +95,7 @@ const Header = (props: Props) => {
     style,
     light,
     headerRightFlex,
+    overlay,
   } = props;
   const showRight = nextText || onBack || onClose;
   const titleOnBack = title && onBack;
@@ -110,7 +113,7 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper style={style} noPadding={noPadding}>
+    <Wrapper overlay={overlay} style={style} noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon

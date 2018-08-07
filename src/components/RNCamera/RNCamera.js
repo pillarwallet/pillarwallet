@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors } from 'utils/variables';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import { View, TouchableOpacity, Text, Dimensions, Platform } from 'react-native';
-import ButtonIcon from 'components/ButtonIcon';
+import { TouchableOpacity, Text, Dimensions, Platform } from 'react-native';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
-import { Container } from 'components/Layout';
+import Header from 'components/Header';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import { Camera, FileSystem } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
@@ -28,48 +28,15 @@ type State = {
   currentCaptureUrl: string,
 };
 
-const ModalWrapper = styled.View`
-  flex: 1;
-  background-color: #ffffff;
-  position: relative;
-`;
-
-const PhotoBoundariesWrapper = styled.View`
-  flex: 1;
-  alignItems: center;
-  justifyContent: center;
-  backgroundColor: transparent;
-`;
-
 const PhotoBoundaries = styled.View`
-  height: ${Dimensions.get('window').width};
-  width: ${Dimensions.get('window').width};
+  height: ${Dimensions.get('window').width - 40};
+  width: ${Dimensions.get('window').width - 40};
   border-radius: ${Dimensions.get('window').width / 2};
-  borderWidth: 2;
-  borderStyle: dashed;
-  borderColor: ${props => props.color};
-  backgroundColor: transparent;
-`;
-
-const CloseButton = styled(ButtonIcon)`
-  position: absolute;
-  right: 16px;
-  top: 20px;
-  zIndex: 5;
-`;
-
-const BottomBar = styled.View`
-  position: absolute;
-  bottom: 6px;
-  left:0;
-  width: 100%;
-  padding-bottom: 5px;
+  border-width: 2;
+  border-style: dashed;
+  border-color: ${props => props.color};
   background-color: transparent;
-  align-self: center;
-  justify-content: center;
-  flex: 0.12;
-  flexDirection: row;
-  zIndex: 20;
+  margin-bottom: 40px;
 `;
 
 const NoPermissions = styled.View`
@@ -177,27 +144,21 @@ class RNCamera extends React.Component<Props, State> {
 
   renderBottomBar = () => {
     return (
-      <BottomBar>
-        <View style={{ flex: 0.4 }}>
-          <TouchableOpacity
-            onPress={this.takePicture}
-            style={{ alignSelf: 'center' }}
-          >
-            <Ionicons name="ios-radio-button-on" size={70} color="white" />
-          </TouchableOpacity>
-        </View>
-      </BottomBar>
+      <Footer>
+        <TouchableOpacity
+          onPress={this.takePicture}
+          style={{ alignSelf: 'center' }}
+        >
+          <Ionicons name="ios-radio-button-on" size={70} color="white" />
+        </TouchableOpacity>
+      </Footer>
     );
   }
 
   renderCamera = () =>
     (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#000000',
-        }}
-      >
+
+      <React.Fragment>
         <Camera
           ref={ref => {
             this.camera = ref;
@@ -205,18 +166,16 @@ class RNCamera extends React.Component<Props, State> {
           style={{
             width: screenWidth,
             height: Platform.OS === 'ios' ? screenHeight : cameraHeight,
-            justifyContent: 'flex-end',
-            position: 'relative',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
           type="front"
           ratio="16:9"
         >
-          <PhotoBoundariesWrapper>
-            <PhotoBoundaries color="#ffffff" />
-          </PhotoBoundariesWrapper>
+          <PhotoBoundaries color="#ffffff" />
         </Camera>
         {this.renderBottomBar()}
-      </View>
+      </React.Fragment>
     );
 
   renderResult = () =>
@@ -259,15 +218,10 @@ class RNCamera extends React.Component<Props, State> {
           justifyContent: 'flex-start',
         }}
       >
-        <ModalWrapper>
-          <Container color={baseColors.black}>{content}</Container>
-          <CloseButton
-            icon="close"
-            onPress={modalHide}
-            color={this.state.showResult ? baseColors.darkGray : '#ffffff'}
-            fontSize={fontSizes.small}
-          />
-        </ModalWrapper>
+        <Container>
+          <Header overlay light onClose={modalHide} />
+          {content}
+        </Container>
       </Modal>
     );
   }
