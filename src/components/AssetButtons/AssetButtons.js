@@ -30,9 +30,9 @@ const AssetButton = styled.TouchableOpacity`
 `;
 
 const AssetButtonIconWrapper = styled(LinearGradient)`
-  border-radius: 50;
-  width: 54px;
-  height: 54px;
+  border-radius: 32;
+  width: 64px;
+  height: 64px;
   background: ${props => props.disabled ? baseColors.lightGray : baseColors.white};
   justify-content: center;
   display: flex;
