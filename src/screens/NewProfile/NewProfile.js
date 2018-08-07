@@ -37,7 +37,6 @@ const LoadingMessage = styled(BaseText)`
 
 function InputTemplate(locals) {
   const errorMessage = locals.error;
-  const { loadingMessage } = locals;
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
@@ -52,7 +51,6 @@ function InputTemplate(locals) {
 
   return (
     <TextInput
-      loadingMessage={loadingMessage}
       errorMessage={errorMessage}
       id={locals.label}
       label={locals.label}
