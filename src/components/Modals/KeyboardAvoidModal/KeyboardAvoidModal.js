@@ -26,8 +26,8 @@ const ModalWrapper = styled.View`
   flex: 1;
   width: 100%;
   height: ${height};
-  padding: ${Platform.OS === 'ios' ? '40px 0 80px' : '20px 0 80px'}
-  backgroundColor: #ffffff
+  padding: ${Platform.OS === 'ios' ? '40px 0 80px' : '20px 0 80px'};
+  background-color: #ffffff;
 `;
 
 const ModalOverflow = styled.View`

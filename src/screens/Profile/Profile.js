@@ -56,7 +56,7 @@ const ListItem = styled(NBListItem)`
 `;
 
 const ListIcon = styled(Icon)`
-  fontSize: 22px;
+  font-size: 22px;
   color: ${baseColors.coolGrey};
 `;
 
@@ -201,7 +201,7 @@ class Profile extends React.Component<Props, State> {
         </Right>
       </ListItem>
     );
-  }
+  };
 
   render() {
     const {
@@ -334,11 +334,13 @@ class Profile extends React.Component<Props, State> {
                 this.setState({ visibleModal: 'baseCurrency' })}
             />
 
-            {wallet.mnemonic && (<ProfileSettingsItem
-              key="backupWallet"
-              label="Reveal backup phrase"
-              onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
-            />)}
+            {wallet.mnemonic &&
+              <ProfileSettingsItem
+                key="backupWallet"
+                label="Reveal backup phrase"
+                onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
+              />
+            }
 
             <ProfileSettingsItem
               key="changePin"
@@ -361,6 +363,7 @@ class Profile extends React.Component<Props, State> {
             >
               <Container>
                 <CheckPinWrapper>
+                  <Header onClose={this.handleCheckPinModalClose} style={{ paddingTop: 0 }} />
                   <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
                 </CheckPinWrapper>
               </Container>

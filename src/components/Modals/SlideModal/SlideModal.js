@@ -39,11 +39,11 @@ const ModalBackground = styled.View`
 `;
 
 const ModalSubtitle = styled(SubTitle)`
-  padding: ${(props) => props.fullScreen ? '20px 20px 0' : '10px 0'};
+  padding: 10px 0;
 `;
 
 const ModalContent = styled.View`
-  ${props => props.fullScreen && 'height: 100%;'}
+  ${props => props.fullScreen && 'height: 100%; padding: 20px 0 40px;'}
 `;
 
 const ModalOverflow = styled.View`
@@ -85,7 +85,7 @@ export default class SlideModal extends React.Component<Props, State> {
     this.setState({
       isVisible: false,
     });
-  }
+  };
 
   render() {
     const {
@@ -123,8 +123,8 @@ export default class SlideModal extends React.Component<Props, State> {
               {!fullScreen &&
                 <Header noPadding title={title} onClose={this.hideModal} />
               }
-              {subtitle &&
-                <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
+              {subtitle && !fullScreen &&
+                <ModalSubtitle>{subtitle}</ModalSubtitle>
               }
               <ModalContent fullScreen={fullScreen}>
                 {children}

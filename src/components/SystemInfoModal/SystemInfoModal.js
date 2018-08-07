@@ -36,7 +36,7 @@ type Props = {
 const SystemInfoModal = (props: Props) => {
   return (
     <Container>
-      <Header title="System Info" onClose={() => props.headerOnClose()} />
+      <Header title="System Info" onClose={props.headerOnClose} />
       <Wrapper regularPadding>
         <LabeledRow>
           <Label>BUILD_NUMBER</Label>
