@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { showToast } from 'utils/toast';
 import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
 import { BaseText } from 'components/Typography';
-import BackgroundTimer from 'react-native-background-timer';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -375,9 +374,9 @@ class AppFlow extends React.Component<Props, {}> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { fetchAppSettingsAndRedirect } = this.props;
-    BackgroundTimer.clearTimeout(this.timer);
+    clearTimeout(this.timer);
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = BackgroundTimer.setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
+      this.timer = setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
     }
   };
 
