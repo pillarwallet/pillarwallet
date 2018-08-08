@@ -24,7 +24,7 @@ platform :ios do
 
   desc "Upload a new build to TestFlight"
   lane :build_test_flight do
-    sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillarwallet/Supporting/Info.plist\"")
+    sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillarwallet/Info.plist\"")
     match(type: "appstore",
           readonly: true)
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
