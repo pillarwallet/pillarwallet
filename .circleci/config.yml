@@ -1,33 +1,33 @@
 version: 2
 jobs:
-#   build:
-#     working_directory: ~/pillarwallet
-#     macos:
-#       xcode: "9.4.0"
-#     environment:
-#       FL_OUTPUT_DIR: output
-#     shell: /bin/bash --login -o pipefail
+  build:
+    working_directory: ~/pillarwallet
+    macos:
+      xcode: "9.4.0"
+    environment:
+      FL_OUTPUT_DIR: output
+    shell: /bin/bash --login -o pipefail
 
-#     steps:
-#       - checkout
-#       - run:
-#             name: Authenticate with Artifactory
-#             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-#       - run:
-#             name: set Registry to use Artifactory
-#             command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-#       - run:
-#           name: Install node dependencies
-#           command: yarn install
-#       - run:
-#           name: Run validation
-#           command: yarn validate
-#       - run:
-#           name: Run unit test and generate coverage stats
-#           command:  yarn test:coverage
-#       - store_artifacts:
-#           path: ./reports/
-#           destination: reports
+    steps:
+      - checkout
+      - run:
+            name: Authenticate with Artifactory
+            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+    #   - run:
+    #         name: set Registry to use Artifactory
+    #         command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+    #   - run:
+    #       name: Install node dependencies
+    #       command: yarn install
+    #   - run:
+    #       name: Run validation
+    #       command: yarn validate
+    #   - run:
+    #       name: Run unit test and generate coverage stats
+    #       command:  yarn test:coverage
+    #   - store_artifacts:
+    #       path: ./reports/
+    #       destination: reports
 
   test_ios:
     working_directory: ~/pillarwallet
@@ -310,7 +310,7 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-    #   - build
+      - build
       - deploy_ios:
           requires:
             - build
