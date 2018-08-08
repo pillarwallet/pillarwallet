@@ -48,12 +48,9 @@ class AssetsScreen extends React.Component<Props> {
   componentDidMount() {
     const {
       fetchInitialAssets,
-      fetchAssetsBalances,
       assets,
       wallet,
     } = this.props;
-
-    fetchAssetsBalances(assets, wallet.address);
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
