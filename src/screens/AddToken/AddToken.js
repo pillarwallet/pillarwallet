@@ -13,6 +13,7 @@ import Header from 'components/Header';
 import {
   addAssetAction,
   removeAssetAction,
+  updateAssetsAction,
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
 import { ETH } from 'constants/assetsConstants';
@@ -44,6 +45,7 @@ type Props = {
   assets: Assets,
   wallet: Object,
   fetchAssetsBalances: Function,
+  updateAssets: Function,
   addAsset: Function,
   removeAsset: Function,
 }
@@ -92,10 +94,12 @@ class AddToken extends React.Component<Props> {
     const {
       navigation,
       fetchAssetsBalances,
+      updateAssets,
       assets,
       wallet,
     } = this.props;
     if (this.formChanged) {
+      updateAssets(assets);
       fetchAssetsBalances(assets, wallet.address);
     }
     navigation.goBack(null);
@@ -135,7 +139,8 @@ const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { 
 const mapDispatchToProps = (dispatch) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchAssetsBalances: (assets, walletAddress) => {
+  updateAssets: (assets: Assets) => dispatch(updateAssetsAction(assets)),
+  fetchAssetsBalances: (assets: Assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
 });

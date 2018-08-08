@@ -34,6 +34,7 @@ type Props = {
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   history: Transaction[],
   assets: Assets,
+  balances: Assets,
   wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
@@ -125,6 +126,7 @@ class AssetScreen extends React.Component<Props, State> {
     const {
       assets,
       rates,
+      balances,
       wallet,
       fetchAssetsBalances,
       fetchTransactionsHistory,
@@ -135,8 +137,8 @@ class AssetScreen extends React.Component<Props, State> {
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
-    const { balance } = assets[token];
-    const isWalletEmpty = Number(balance) <= 0;
+    const balance = Number(balances[token] && balances[token].balance) || 0;
+    const isWalletEmpty = balance <= 0;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
@@ -177,7 +179,7 @@ class AssetScreen extends React.Component<Props, State> {
               {assetData.description}
             </Paragraph>
             <AssetButtons
-              onPressReceive={() => this.openReceiveTokenModal(assetData)}
+              onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               noBalance={isWalletEmpty}
             />
@@ -203,12 +205,13 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
-  assets: { data: assets },
+  assets: { data: assets, balances },
   rates: { data: rates },
   history: { data: history },
 }) => ({
   wallet,
   assets,
+  balances,
   rates,
   history,
 });

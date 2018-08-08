@@ -29,6 +29,7 @@ type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
+  balances: Assets,
   wallet: Object,
   rates: Object,
   assetsState: ?string,
@@ -77,6 +78,7 @@ class AssetsScreen extends React.Component<Props> {
     const {
       wallet,
       assets,
+      balances,
       rates,
       baseFiatCurrency,
     } = this.props;
@@ -84,17 +86,14 @@ class AssetsScreen extends React.Component<Props> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return Object.keys(assets)
       .map(id => assets[id])
-      .map(({
+      .map(({ symbol, balance, ...rest }) => ({
         symbol,
-        iconMonoUrl,
-        wallpaperUrl,
-        balance = 0,
-        ...rest
-      }) => ({
+        balance: Number(balances[symbol] && balances[symbol].balance) || 0,
+        ...rest,
+      }))
+      .map(({ balance, symbol, ...rest }) => ({
         balance,
         symbol,
-        iconMonoUrl,
-        wallpaperUrl,
         balanceInFiat: rates[symbol] ? balance * rates[symbol][fiatCurrency] : 0,
         ...rest,
       }))
@@ -196,13 +195,14 @@ class AssetsScreen extends React.Component<Props> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
-  assets: { data: assets, assetsState },
+  assets: { data: assets, assetsState, balances },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
   assets,
   assetsState,
+  balances,
   rates,
   baseFiatCurrency,
 });

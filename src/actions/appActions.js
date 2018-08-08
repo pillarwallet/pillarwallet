@@ -3,7 +3,7 @@ import { NavigationActions } from 'react-navigation';
 import Storage from 'services/storage';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 
@@ -15,6 +15,9 @@ export const initAppAndRedirectAction = () => {
     if (appSettings.wallet) {
       const { assets = {} } = await storage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
+
+      const { balances = {} } = await storage.get('balances');
+      dispatch({ type: UPDATE_BALANCES, payload: balances });
 
       const { contacts = [] } = await storage.get('contacts');
       dispatch({ type: UPDATE_CONTACTS, payload: contacts });
