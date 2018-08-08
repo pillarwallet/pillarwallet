@@ -318,6 +318,7 @@ workflows:
             branches:
               only:
                   - master
+                  - feature/eject-expo
       - deploy_android:
           requires:
             - build
