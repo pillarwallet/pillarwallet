@@ -40,10 +40,7 @@ import {
   stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
-import {
-  fetchAssetsBalancesAction,
-  fetchSupportedAssetsAction,
-} from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import {
   fetchTransactionsHistoryNotificationsAction,
   fetchTransactionsHistoryAction,
@@ -324,7 +321,6 @@ type Props = {
   fetchTransactionsHistory: (walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
-  fetchSupportedAssets: Function,
   getExistingChats: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
@@ -343,7 +339,6 @@ class AppFlow extends React.Component<Props, {}> {
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
-      fetchSupportedAssets,
       getExistingChats,
       assets,
       wallet,
@@ -354,7 +349,6 @@ class AppFlow extends React.Component<Props, {}> {
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
-    fetchSupportedAssets();
     getExistingChats();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
@@ -428,8 +422,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => {
     dispatch(fetchInviteNotificationsAction());
   },
-  fetchSupportedAssets: () =>
-    dispatch(fetchSupportedAssetsAction()),
   getExistingChats: () => dispatch(getExistingChatsAction()),
 });
 

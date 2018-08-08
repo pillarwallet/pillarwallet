@@ -3,7 +3,6 @@ import merge from 'lodash.merge';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
-  UPDATE_SUPPORTED_ASSETS,
   ADD_ASSET,
   REMOVE_ASSET,
   SET_INITIAL_ASSETS,
@@ -82,17 +81,6 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     dispatch({
       type: UPDATE_ASSETS,
       payload: updatedAssets,
-    });
-  };
-};
-
-export const fetchSupportedAssetsAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { walletId } } } = getState();
-    const assets = await api.fetchSupportedAssets(walletId);
-    dispatch({
-      type: UPDATE_SUPPORTED_ASSETS,
-      payload: assets,
     });
   };
 };
