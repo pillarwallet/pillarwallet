@@ -98,7 +98,9 @@ class AddToken extends React.Component<Props> {
       assets,
       wallet,
     } = this.props;
-    fetchAssetsBalances(assets, wallet.address);
+    if (this.formChanged) {
+      fetchAssetsBalances(assets, wallet.address);
+    }
     navigation.goBack(null);
   };
 
