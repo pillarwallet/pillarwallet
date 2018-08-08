@@ -50,12 +50,6 @@ jobs:
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
-          name: Install Expo cli
-          command: yarn global add exp
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
-      - run:
             name: Authenticate with Artifactory
             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
@@ -90,12 +84,6 @@ jobs:
       - run:
           name: Creating Gemfile in ios dir
           command: cd ios && bundle init
-      - run:
-          name: Login to Expo
-          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
-      - run:
-          name: Publish resources bundle to Expo server
-          command: exp publish
       - run:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./ios/Gemfile
@@ -138,12 +126,6 @@ jobs:
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             sed -i.bak s/_build_number_/$buildNumber/g .env
-      - run:
-          name: Install Expo cli
-          command: yarn global add exp
-      - run:
-          name: Setting .expo/PATH
-          command: exp path
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -173,17 +155,14 @@ jobs:
           paths:
             - ./ios/Pods
       - run:
+          name: Build ios bundle
+          command: yarn build:ios
+      - run:
           name: Install Bundler
           command: sudo gem install bundler
       - run:
           name: Creating Gemfile in ios dir
           command: cd ios && bundle init
-      - run:
-          name: Login to Expo
-          command: exp login -u $EXPO_LOGIN -p $EXPO_PASSWORD
-      - run:
-          name: Publish resources bundle to Expo server
-          command: exp publish
       - run:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./ios/Gemfile

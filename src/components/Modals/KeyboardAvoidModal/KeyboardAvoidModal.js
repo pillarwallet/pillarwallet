@@ -13,14 +13,10 @@ type Props = {
   subtitle?: string,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
+  onModalHidden?: Function,
   fullScreen?: boolean,
   isVisible: boolean,
 };
-
-type State = {
-  isVisible: boolean,
-};
-
 
 const ModalWrapper = styled.View`
   flex: 1;
@@ -35,51 +31,25 @@ const ModalOverflow = styled.View`
   background-color: #FFFFFF;
 `;
 
-export default class KeyboardAvoidModal extends React.Component<Props, State> {
+export default class KeyboardAvoidModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
   };
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isVisible: props.isVisible,
-    };
-  }
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.isVisible !== prevState.isVisible) {
-      return {
-        isVisible: nextProps.isVisible,
-      };
-    }
-    return null;
-  }
-
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    return this.state.isVisible !== nextState.isVisible;
-  }
-
-  componentDidUpdate() {
-    Keyboard.dismiss();
-  }
-
   hideModal = () => {
     Keyboard.dismiss();
-    this.setState({
-      isVisible: false,
-    });
-  };
+    if (this.props.onModalHide) {
+      this.props.onModalHide();
+    }
+  }
 
   render() {
     const {
-      isVisible,
-    } = this.state;
-    const {
       children,
       fullScreenComponent,
-      onModalHide,
+      onModalHidden,
       subtitle,
+      isVisible,
     } = this.props;
     const animationInTiming = 800;
     const animationOutTiming = 400;
@@ -87,7 +57,7 @@ export default class KeyboardAvoidModal extends React.Component<Props, State> {
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
-        onModalHide={onModalHide}
+        onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}
