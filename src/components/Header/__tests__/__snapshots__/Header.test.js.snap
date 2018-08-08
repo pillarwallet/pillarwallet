@@ -76,7 +76,22 @@ exports[`Header should render Header correctly 1`] = `
           "shadowRadius": null,
         }
       }
-    />
+    >
+      <View
+        name="back"
+        style={
+          Object {
+            "color": "#007AFF",
+            "fontSize": 16,
+            "marginBottom": undefined,
+            "marginLeft": undefined,
+            "marginRight": undefined,
+            "marginTop": undefined,
+            "paddingTop": 0,
+          }
+        }
+      />
+    </View>
   </View>
   <View
     flex={[Function]}

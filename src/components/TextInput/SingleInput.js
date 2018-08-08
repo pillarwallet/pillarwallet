@@ -32,10 +32,6 @@ type Props = {
   trim: boolean,
 }
 
-type State = {
-  value: ?string
-}
-
 type EventLike = {
   nativeEvent: Object,
 }
@@ -102,11 +98,7 @@ const InputField = styled(Input)`
   padding: 0 12px;
 `;
 
-class SingleInput extends React.Component<Props, State> {
-  state = {
-    value: '',
-  };
-
+class SingleInput extends React.Component<Props, *> {
   static defaultProps = {
     inputType: 'default',
     innerImageURI: '',
@@ -114,36 +106,21 @@ class SingleInput extends React.Component<Props, State> {
     trim: true,
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.inputProps && nextProps.inputProps.value !== prevState.value) {
-      return {
-        value: nextProps.inputProps.value,
-      };
-    }
-    return null;
-  }
-
   handleBlur = (e: EventLike) => {
     if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
       return;
     }
     const { inputProps: { onBlur }, trim } = this.props;
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
-    this.setState({ value }, () => {
-      if (onBlur) {
-        onBlur(value);
-      }
-    });
+    if (onBlur) {
+      onBlur(value);
+    }
   };
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
     const value = e.nativeEvent.text;
-    this.setState({ value }, () => {
-      if (onChange) {
-        onChange(value);
-      }
-    });
+    onChange(value);
   };
 
   resolveAssetSource(uri: string | number) {
@@ -163,7 +140,7 @@ class SingleInput extends React.Component<Props, State> {
       outterImageText,
       onPress,
     } = this.props;
-    const { value } = this.state;
+    const { value = '' } = inputProps;
     return (
       <Wrapper>
         {label && <Label>{label}</Label>}

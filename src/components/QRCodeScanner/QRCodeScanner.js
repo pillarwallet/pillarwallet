@@ -74,7 +74,6 @@ type State = {
   authorizationState: string,
   isScanned: boolean,
   animFadeIn: Object,
-  isActive: boolean,
 }
 
 const screenWidth = Dimensions.get('window').width;
@@ -95,28 +94,15 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     this.state = {
       authorizationState: PENDING,
       isScanned: false,
-      isActive: props.isActive,
       animFadeIn: new Animated.Value(0),
     };
   }
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.isActive !== prevState.isActive) {
-      return {
-        ...prevState,
-        isScanned: !nextProps.isActive,
-        isActive: nextProps.isActive,
-        animFadeIn: new Animated.Value(0),
-      };
-    }
-    return null;
-  }
-
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.state.isActive && this.state.authorizationState === PENDING) {
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.isActive && this.state.authorizationState === PENDING) {
       this.askPermissions();
     }
-    if (prevState.isActive === this.state.isActive) return;
+    if (prevProps.isActive === this.props.isActive) return;
     Animated.timing(this.state.animFadeIn, {
       toValue: 1,
       duration: 250,
@@ -158,15 +144,14 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       duration: 250,
     }).start(() => {
       this.setState({
-        isActive: false,
         isScanned: false,
       }, onDismiss);
     });
   };
 
   render() {
-    const { isActive, animFadeIn } = this.state;
-    const { rectangleColor } = this.props;
+    const { animFadeIn } = this.state;
+    const { rectangleColor, isActive } = this.props;
     if (!isActive) {
       return null;
     }

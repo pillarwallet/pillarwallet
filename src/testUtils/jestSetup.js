@@ -59,12 +59,12 @@ jest.setMock('react-native-device-info', {
 });
 
 jest.setMock('react-native-intercom', {
-  addListener: () => {},
-  removeListener: () => {},
-  registerIdentifiedUser: () => {},
+  addListener: () => { },
+  removeListener: () => { },
+  registerIdentifiedUser: () => { },
   Notifications: { UNREAD_COUNT: 'UNREAD_COUNT' },
-  reset: () => {},
-  setInAppMessageVisibility: () => {},
+  reset: () => { },
+  setInAppMessageVisibility: () => { },
   sendTokenToIntercom: () => Promise.resolve(),
 });
 
@@ -80,9 +80,17 @@ jest.setMock('rn-signal-protocol-messaging', {
   },
 });
 
+const mockCameraView = mockView;
+
+// ouch
+mockCameraView.Constants = {
+  Type: {
+    back: 'back',
+  },
+};
+
 jest.setMock('react-native-camera', {
-  RNCamera: mockView,
-  Constants: { Type: { back: 'back' } },
+  RNCamera: mockCameraView,
 });
 
 jest.setMock('react-native-vector-icons', {

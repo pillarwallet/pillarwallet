@@ -47,7 +47,6 @@ target 'pillarwallet' do
   pod 'Firebase/RemoteConfig'
   pod 'Firebase/Storage'
   pod 'Firebase/Performance'
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'

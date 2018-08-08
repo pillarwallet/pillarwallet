@@ -204,8 +204,6 @@ PODS:
     - React
   - RNDeviceInfo (0.21.5):
     - React
-  - RNVectorIcons (5.0.0):
-    - React
   - yoga (0.56.0.React)
 
 DEPENDENCIES:
@@ -242,7 +240,6 @@ DEPENDENCIES:
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
-  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
@@ -264,8 +261,6 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-permissions
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
-  RNVectorIcons:
-    :path: ../node_modules/react-native-vector-icons
   yoga:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
@@ -307,9 +302,8 @@ SPEC CHECKSUMS:
   react-native-intercom: 50fa177c55a5bd8135742afb38867a485b3fda2d
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
-  RNVectorIcons: c0dbfbf6068fefa240c37b0f71bd03b45dddac44
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: a65c2191c3ae58f66483d3c18429faa2967f4f1c
+PODFILE CHECKSUM: ccd1644f3de532aef94dccd3460436b2c89e3283
 
 COCOAPODS: 1.4.0

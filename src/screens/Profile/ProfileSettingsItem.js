@@ -120,8 +120,8 @@ export default class ProfileSettingsItem extends React.Component<Props> {
           >
             {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             <Icon
-              name="chevron-right"
-              type="Feather"
+              name="chevron-thin-right"
+              type="Entypo"
               style={{
                 fontSize: 16,
                 color: baseColors.coolGrey,

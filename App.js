@@ -16,10 +16,6 @@ import StorybookUI from './storybook';
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
 
-type State = {
-  isFetched: boolean,
-}
-
 type Props = {
   dispatch: Function,
   navigation: Object,
@@ -27,17 +23,7 @@ type Props = {
   fetchAppSettingsAndRedirect: Function,
 }
 
-class App extends React.Component<Props, State> {
-  state = {
-    isFetched: false,
-  };
-
-  static getDerivedStateFromProps(nextProps: Props) {
-    return {
-      isFetched: nextProps.isFetched,
-    };
-  }
-
+class App extends React.Component<Props, *> {
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
@@ -70,8 +56,7 @@ class App extends React.Component<Props, State> {
   };
 
   render() {
-    const { isFetched } = this.state;
-    const { navigation, dispatch } = this.props;
+    const { navigation, dispatch, isFetched } = this.props;
     if (!isFetched) return null;
 
     return (
