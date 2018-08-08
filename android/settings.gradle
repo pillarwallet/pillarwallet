@@ -1,16 +1,16 @@
 include ':app'
-include ':react-native-background-timer'
-project(':react-native-background-timer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-timer/android')
-include ':react-native-scrypt'
-project(':react-native-scrypt').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-scrypt/android')
-include ':react-native-vector-icons'
-project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':lottie-react-native'
 project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/src/android')
+include ':react-native-scrypt'
+project(':react-native-scrypt').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-scrypt/android')
+include ':react-native-fetch-blob'
+project(':react-native-fetch-blob').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-fetch-blob/android')
+include ':react-native-camera'
+project(':react-native-camera').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-camera/android')
 include ':rn-signal-protocol-messaging'
 project(':rn-signal-protocol-messaging').projectDir = new File(rootProject.projectDir, '../node_modules/rn-signal-protocol-messaging/android')
-include ':react-native-intercom'
-project(':react-native-intercom').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-intercom/android')
+include ':react-native-vector-icons'
+project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':react-native-udp'
 project(':react-native-udp').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-udp/android')
 include ':react-native-tcp'
@@ -19,7 +19,9 @@ include ':react-native-randombytes'
 project(':react-native-randombytes').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-randombytes/android')
 include ':react-native-os'
 project(':react-native-os').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-os/android')
+include ':react-native-intercom'
+project(':react-native-intercom').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-intercom/android')
 include ':react-native-firebase'
 project(':react-native-firebase').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-firebase/android')
 include ':react-native-device-info'
-project(':react-native-device-info').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-info/android')
+project(':react-native-device-info').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-device-info/android')

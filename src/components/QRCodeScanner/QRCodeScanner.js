@@ -1,17 +1,17 @@
 // @flow
 import * as React from 'react';
 import { Vibration, Animated, Dimensions, Platform } from 'react-native';
-import { Camera, Permissions } from 'expo';
+import { RNCamera as Camera } from 'react-native-camera';
+import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
 
 const window = Dimensions.get('window');
 
-const PERMISSION_GRANTED = 'GRANTED';
 const AUTHORIZED = 'AUTHORIZED';
 const PENDING = 'PENDING';
-const DECLINED = 'DECLINED';
+const DENIED = 'DENIED';
 
 const Wrapper = styled.View`
   position: absolute;
@@ -41,13 +41,8 @@ const QRCodeScannerHeader = styled(Header)`
 `;
 
 const Scanner = styled(Camera)`
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  alignItems: center;
+  justifyContent: center;
 `;
 
 const RectangleContainer = styled.View`
@@ -79,7 +74,6 @@ type State = {
   authorizationState: string,
   isScanned: boolean,
   animFadeIn: Object,
-  isActive: boolean,
 }
 
 const screenWidth = Dimensions.get('window').width;
@@ -100,28 +94,15 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     this.state = {
       authorizationState: PENDING,
       isScanned: false,
-      isActive: props.isActive,
       animFadeIn: new Animated.Value(0),
     };
   }
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.isActive !== prevState.isActive) {
-      return {
-        ...prevState,
-        isScanned: !nextProps.isActive,
-        isActive: nextProps.isActive,
-        animFadeIn: new Animated.Value(0),
-      };
-    }
-    return null;
-  }
-
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.state.isActive && this.state.authorizationState === PENDING) {
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.isActive && this.state.authorizationState === PENDING) {
       this.askPermissions();
     }
-    if (prevState.isActive === this.state.isActive) return;
+    if (prevProps.isActive === this.props.isActive) return;
     Animated.timing(this.state.animFadeIn, {
       toValue: 1,
       duration: 250,
@@ -135,9 +116,9 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   }
 
   async askPermissions() {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    const status = await Permissions.request('camera');
     this.setState({
-      authorizationState: status.toUpperCase() === PERMISSION_GRANTED ? AUTHORIZED : DECLINED,
+      authorizationState: status.toUpperCase() === AUTHORIZED ? AUTHORIZED : DENIED,
     });
   }
 
@@ -163,15 +144,14 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       duration: 250,
     }).start(() => {
       this.setState({
-        isActive: false,
         isScanned: false,
       }, onDismiss);
     });
   };
 
   render() {
-    const { isActive, animFadeIn } = this.state;
-    const { rectangleColor } = this.props;
+    const { animFadeIn } = this.state;
+    const { rectangleColor, isActive } = this.props;
     if (!isActive) {
       return null;
     }

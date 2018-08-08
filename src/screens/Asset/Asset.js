@@ -16,9 +16,11 @@ import TXHistory from 'components/TXHistory';
 import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
+
+const RECEIVE = 'RECEIVE';
 
 const activeModalResetState = {
   type: null,
@@ -68,22 +70,6 @@ class AssetScreen extends React.Component<Props, State> {
     },
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { initialModalState } = nextProps.navigation.state.params;
-    const activeModalInitialState = {
-      type: initialModalState,
-      opts: {},
-    };
-
-    if (initialModalState !== prevState.activeModal) {
-      return {
-        ...prevState,
-        activeModal: activeModalInitialState,
-      };
-    }
-    return null;
-  }
-
   componentDidMount() {
     const {
       fetchTransactionsHistory,
@@ -102,10 +88,6 @@ class AssetScreen extends React.Component<Props, State> {
     Share.share({ title: 'Public address', message: address });
   };
 
-  goToAddTokenPage = () => {
-    this.props.navigation.navigate(ADD_TOKEN);
-  };
-
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FLOW, {
       assetData,
@@ -115,7 +97,7 @@ class AssetScreen extends React.Component<Props, State> {
   openReceiveTokenModal = (assetData) => {
     this.setState({
       activeModal: {
-        type: 'RECEIVE',
+        type: RECEIVE,
         opts: { address: assetData.address },
       },
     });
@@ -131,7 +113,6 @@ class AssetScreen extends React.Component<Props, State> {
     } = this.props;
     const { assetData } = this.props.navigation.state.params;
     const { balanceInFiat: { currency: fiatCurrency }, token } = assetData;
-
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.timestamp - a.timestamp);
@@ -173,7 +154,7 @@ class AssetScreen extends React.Component<Props, State> {
                 wallpaper={assetData.wallpaper}
               />
             </Transition>
-            <Paragraph light>
+            <Paragraph small light>
               {assetData.description}
             </Paragraph>
             <AssetButtons
@@ -189,7 +170,7 @@ class AssetScreen extends React.Component<Props, State> {
         </ScrollWrapper>
 
         <ReceiveModal
-          isVisible={this.state.activeModal.type === 'RECEIVE'}
+          isVisible={this.state.activeModal.type === RECEIVE}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           address={assetData.address}
           token={assetData.token}

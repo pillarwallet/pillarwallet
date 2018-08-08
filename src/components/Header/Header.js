@@ -15,6 +15,7 @@ type Props = {
   onCloseText?: string,
   onNextPress?: Function,
   nextText?: string,
+  nextIcon?: string,
   title?: string,
   centerTitle?: boolean,
   noPadding?: boolean,
@@ -57,6 +58,11 @@ const CloseIcon = styled(ButtonIcon)`
   padding-left: 10px;
 `;
 
+const NextIcon = styled(ButtonIcon)`
+  height: 32px;
+  padding-left: 10px;
+`;
+
 const HeaderLeft = styled(Left)`
   flex: ${props => props.showTitleLeft ? 2 : 1};
   justify-content: flex-start;
@@ -77,6 +83,7 @@ const Header = (props: Props) => {
   const {
     onBack,
     nextText,
+    nextIcon,
     onNextPress,
     onClose,
     onCloseText,
@@ -127,6 +134,14 @@ const Header = (props: Props) => {
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
+          {nextIcon &&
+            <NextIcon
+              icon={nextIcon}
+              color={light ? baseColors.white : UIColors.primary}
+              onPress={onNextPress}
+              fontSize={fontSizes.small}
+            />
+          }
           {onClose &&
             <CloseIconWrapper>
               {onCloseText &&
@@ -135,7 +150,7 @@ const Header = (props: Props) => {
               <CloseIcon
                 icon="close"
                 color={light ? baseColors.white : UIColors.primary}
-                onPress={() => onClose()}
+                onPress={onClose}
                 fontSize={fontSizes.small}
               />
             </CloseIconWrapper>

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { showToast } from 'utils/toast';
 import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
 import { BaseText } from 'components/Typography';
-import BackgroundTimer from 'react-native-background-timer';
 
 // screens
 import AddTokenScreen from 'screens/AddToken';
@@ -77,7 +76,7 @@ import { PENDING } from 'constants/userConstants';
 // models
 import type { Assets } from 'models/Asset';
 
-import { UIColors, baseColors } from 'utils/variables';
+import { UIColors, baseColors, fontSizes } from 'utils/variables';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
@@ -171,10 +170,11 @@ const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
 const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
   <BaseText
     style={{
-      fontSize: 12,
+      fontSize: fontSizes.extraExtraSmall,
       color: focused ? tintColor : baseColors.mediumGray,
       textAlign: 'center',
     }}
+    numberOfLines={1}
   >
     {labelText}
   </BaseText>
@@ -219,7 +219,7 @@ const tabNavigation = createBottomTabNavigator(
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIco),
-        tabBarLabel: tabBarLabel('Marketplace'),
+        tabBarLabel: tabBarLabel('Market'),
       }),
     },
     [CHAT_LIST]: {
@@ -374,9 +374,9 @@ class AppFlow extends React.Component<Props, {}> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { fetchAppSettingsAndRedirect } = this.props;
-    BackgroundTimer.clearTimeout(this.timer);
+    clearTimeout(this.timer);
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = BackgroundTimer.setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
+      this.timer = setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
     }
   };
 
