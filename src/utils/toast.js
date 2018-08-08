@@ -34,8 +34,9 @@ export const showToast = (info: Object) => {
     duration: info.duration !== undefined ? info.duration : 2000,
     textStyle: {
       color: theme.textColor,
-      fontFamily: 'aktiv-grotesk-regular',
+      fontFamily: Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App',
       fontSize: fontSizes.small,
+      fontWeight: '400',
     },
     buttonStyle: {
       marginLeft: 20,
@@ -43,8 +44,9 @@ export const showToast = (info: Object) => {
     },
     buttonTextStyle: {
       color: UIColors.defaultTextColor,
-      fontFamily: 'aktiv-grotesk-regular',
+      fontFamily: Platform.OS === 'android' ? 'AktivGrotesk-Light' : 'Aktiv Grotesk App',
       fontSize: fontSizes.small,
+      fontWeight: '300',
     },
     style: {
       backgroundColor: theme.backgroundColor,

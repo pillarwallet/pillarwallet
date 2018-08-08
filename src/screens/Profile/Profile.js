@@ -6,7 +6,7 @@ import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { showToast } from 'utils/toast';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
@@ -39,7 +39,7 @@ const ListWrapper = styled.View`
 `;
 
 const ListSeparator = styled.View`
-  padding: 20px 16px;
+  padding: 20px ${spacing.rhythm}px;
   border-top-width: ${props => props.first ? 0 : '1px'};
   border-bottom-width: 1px;
   border-color: ${baseColors.lightGray};
@@ -106,7 +106,6 @@ type Props = {
 
 type State = {
   visibleModal: string | null,
-  value: Object,
   requestPinForTransaction: ?boolean,
   showCheckPinModal: boolean,
   showTermsConditionsModal: boolean,
@@ -120,7 +119,6 @@ class Profile extends React.Component<Props, State> {
     const { requestPinForTransaction = true } = props;
     this.state = {
       visibleModal: null,
-      value: {},
       requestPinForTransaction,
       showCheckPinModal: false,
       showTermsConditionsModal: false,
@@ -129,15 +127,10 @@ class Profile extends React.Component<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { requestPinForTransaction } = nextProps;
-    if (requestPinForTransaction !== undefined && requestPinForTransaction !== prevState.requestPinForTransaction) {
-      return {
-        ...prevState,
-        requestPinForTransaction,
-      };
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.requestPinForTransaction !== this.props.requestPinForTransaction) {
+      this.setState({ requestPinForTransaction: this.props.requestPinForTransaction }); // eslint-disable-line
     }
-    return null;
   }
 
   clearLocalStorage() {
@@ -195,8 +188,8 @@ class Profile extends React.Component<Props, State> {
         </Left>
         <Right>
           <ListIcon
-            name="chevron-right"
-            type="Feather"
+            name="chevron-thin-right"
+            type="Entypo"
           />
         </Right>
       </ListItem>

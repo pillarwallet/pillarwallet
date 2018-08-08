@@ -40,25 +40,17 @@ const mockAssets: Assets = {
   },
 };
 
+const mockExchangeRates = {
+  ETH: {
+    EUR: 624.21,
+    GBP: 544.57,
+    USD: 748.92,
+  },
+};
+
 Object.defineProperty(mockWallet, 'sendTransaction', {
   value: () => Promise.resolve('trx_hash'),
 });
-
-jest.mock('ethers', () => ({
-  Wallet: {
-    fromMnemonic: () => mockWallet,
-    RNfromEncryptedWallet: () => mockWallet,
-  },
-  utils: {
-    parseEther: x => x,
-    bigNumberify: x => x,
-  },
-  providers: {
-    getDefaultProvider: () => ({
-      getBalance: () => Promise.resolve(1), // ropsten dummy balance
-    }),
-  },
-}));
 
 const initialState = {
   wallet: { data: mockWallet },
@@ -88,7 +80,7 @@ describe('Wallet actions', () => {
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
-      { payload: {}, type: UPDATE_RATES },
+      { payload: mockExchangeRates, type: UPDATE_RATES },
       { payload: { ETH: mockAssets.ETH }, type: UPDATE_ASSETS },
     ];
     return store.dispatch(fetchAssetsBalancesAction(mockAssets, mockWallet.address))

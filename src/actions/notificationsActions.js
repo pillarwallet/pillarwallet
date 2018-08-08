@@ -2,7 +2,6 @@
 
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -68,15 +67,13 @@ export const startListeningNotificationsAction = () => {
       wallet: { data: wallet },
       assets: { data: assets },
     } = getState();
-    // check if permissions enabled
     const enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
       try {
         await firebase.messaging().requestPermission();
-        // create a listener
+        await firebase.messaging().getToken();
       } catch (err) { return; } // eslint-disable-line
     }
-    await firebase.messaging().getToken();
     if (notificationsListener) return;
     notificationsListener = firebase.messaging().onMessage(message => {
       if (!message._data || !Object.keys(message._data).length) return;

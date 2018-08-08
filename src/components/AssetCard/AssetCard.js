@@ -4,9 +4,9 @@ import {
   Animated,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
 import styled from 'styled-components/native';
-import { Image as ImageCache } from 'react-native-expo-image-cache';
 import IconWrapper from './IconWrapper';
 import IconCircle from './IconCircle';
 import DetailsWrapper from './DetailsWrapper';
@@ -39,7 +39,7 @@ const BackgroundHolder = styled.View`
   background-color: ${props => (props.cardColor)};
 `;
 
-const BackgroundImage = styled(ImageCache)`
+const BackgroundImage = styled(CachedImage)`
   height: 100%;
   width: 100%;
   position: absolute;
@@ -55,85 +55,66 @@ const AmountWrapper = styled.View`
   justify-content: flex-end;
 `;
 
-type State = {
-  cardIcon: string,
-}
-
 const defaultCardColor = '#ACBCCD';
 
-export default class AssetCard extends React.Component<Props, State> {
-  state = {
-    cardIcon: '',
-  };
+const AssetCard = (props: Props) => {
+  const {
+    name,
+    amount,
+    token,
+    balanceInFiat,
+    onPress,
+    wallpaper,
+    icon = '',
+  } = props;
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.icon !== prevState.cardIcon) {
-      return {
-        cardIcon: nextProps.icon,
-      };
-    }
+  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
 
-    return null;
-  }
-
-  render() {
-    const {
-      name,
-      amount,
-      token,
-      balanceInFiat,
-      onPress,
-      wallpaper,
-    } = this.props;
-
-    const { cardIcon } = this.state;
-
-    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-
-    return (
-      <TouchableWithoutFeedback
-        onPress={onPress}
-        style={{
-          width: '100%',
-          height: '100%',
-          zIndex: 10,
-        }}
+  return (
+    <TouchableWithoutFeedback
+      onPress={onPress}
+      style={{
+        width: '100%',
+        height: '100%',
+        zIndex: 10,
+      }}
+    >
+      <Animated.View
+        style={[{
+          height: 130,
+          marginBottom: 12,
+        }]}
       >
-        <Animated.View
-          style={[{
-            height: 130,
-            marginBottom: 12,
-          }]}
-        >
-          <BackgroundHolder cardColor={defaultCardColor}>
-            <BackgroundImage uri={wallpaper} />
-            <DetailsWrapper>
-              <Name>{name}</Name>
-              <AmountWrapper>
-                <Amount>{amount}</Amount>
-                <AmountToken> {token}</AmountToken>
-              </AmountWrapper>
-              <FiatAmount>
-                {currencySymbol}{balanceInFiat.amount}
-              </FiatAmount>
-            </DetailsWrapper>
-            {!!cardIcon &&
+        <BackgroundHolder cardColor={defaultCardColor}>
+          <BackgroundImage source={{ uri: wallpaper }} />
+          <DetailsWrapper>
+            <Name>{name}</Name>
+            <AmountWrapper>
+              <Amount>{amount}</Amount>
+              <AmountToken> {token}</AmountToken>
+            </AmountWrapper>
+            <FiatAmount>
+              {currencySymbol}{balanceInFiat.amount}
+            </FiatAmount>
+          </DetailsWrapper>
+          {!!icon &&
             <IconWrapper>
               <IconCircle>
-                <ImageCache
+                <CachedImage
                   key={token}
                   style={{
                     height: 40,
                     width: 40,
                   }}
-                  uri={cardIcon}
+                  source={{ uri: icon }}
                   resizeMode="contain"
                 />
               </IconCircle>
             </IconWrapper>}
-          </BackgroundHolder>
-        </Animated.View>
-      </TouchableWithoutFeedback>
-    );
-  }
-}
+        </BackgroundHolder>
+      </Animated.View>
+    </TouchableWithoutFeedback>
+  );
+};
+
+export default AssetCard;
