@@ -856,7 +856,7 @@
     "@storybook/react-simple-di" "^1.2.1"
     babel-runtime "6.x.x"
 
-"@storybook/node-logger@3.4.10":
+"@storybook/node-logger@3.4.8":
   version "3.4.8"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/node-logger/-/node-logger-3.4.8.tgz#8f8abcd51920545c7458385b0b30199ae48ad78a"
   dependencies:
