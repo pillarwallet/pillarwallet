@@ -11,20 +11,19 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
   scrollOffset={0}
   scrollOffsetMax={0}
   scrollTo={null}
+  supportedOrientations={
+    Array [
+      "portrait",
+      "landscape",
+    ]
+  }
   swipeDirection="down"
   swipeThreshold={100}
   transparent={true}
   visible={true}
 >
   <View
-    accessibilityComponentType={undefined}
-    accessibilityLabel={undefined}
-    accessibilityTraits={undefined}
     accessible={true}
-    collapsable={undefined}
-    hitSlop={undefined}
-    nativeID={undefined}
-    onLayout={undefined}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
     onResponderRelease={[Function]}
@@ -44,10 +43,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         "width": 750,
       }
     }
-    testID={undefined}
   />
   <View
-    collapsable={undefined}
     hideModalContentWhileAnimating={true}
     onModalHide={[Function]}
     onMoveShouldSetResponder={[Function]}
@@ -81,11 +78,16 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         ],
       }
     }
+    supportedOrientations={
+      Array [
+        "portrait",
+        "landscape",
+      ]
+    }
     swipeDirection="down"
     swipeThreshold={100}
   >
     <View
-      fullScreen={undefined}
       style={
         Array [
           Object {
@@ -102,10 +104,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             "flex": 1,
           }
         }
-        virtual={undefined}
       >
         <View
-          fullScreen={undefined}
           style={
             Array [
               Object {
@@ -168,11 +168,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   undefined,
                 ]
               }
-              virtual={undefined}
             >
               <View
-                align={undefined}
-                maxWidth={undefined}
                 noMargin={true}
                 style={
                   Array [
@@ -192,20 +189,18 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 }
               >
                 <Text
-                  accessible={true}
-                  align={undefined}
-                  allowFontScaling={true}
-                  ellipsizeMode="tail"
                   style={
                     Array [
                       Object {
-                        "fontFamily": "aktiv-grotesk-regular",
+                        "fontFamily": "Aktiv Grotesk App",
+                        "fontWeight": "400",
                         "includeFontPadding": false,
                         "textAlignVertical": "center",
                       },
                       Array [
                         Object {
-                          "fontFamily": "aktiv-grotesk-bold",
+                          "fontFamily": "Aktiv Grotesk App",
+                          "fontWeight": "600",
                           "includeFontPadding": false,
                           "textAlignVertical": "center",
                         },
@@ -220,24 +215,22 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       ],
                     ]
                   }
-                  subtitle={undefined}
                 >
                   title
                 </Text>
                 <Text
-                  accessible={true}
-                  allowFontScaling={true}
-                  ellipsizeMode="tail"
                   style={
                     Array [
                       Object {
-                        "fontFamily": "aktiv-grotesk-regular",
+                        "fontFamily": "Aktiv Grotesk App",
+                        "fontWeight": "400",
                         "includeFontPadding": false,
                         "textAlignVertical": "center",
                       },
                       Array [
                         Object {
-                          "fontFamily": "aktiv-grotesk-bold",
+                          "fontFamily": "Aktiv Grotesk App",
+                          "fontWeight": "600",
                           "includeFontPadding": false,
                           "textAlignVertical": "center",
                         },
@@ -282,7 +275,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   undefined,
                 ]
               }
-              virtual={undefined}
             >
               <View
                 style={
@@ -297,16 +289,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 }
               >
                 <View
-                  accessibilityComponentType={undefined}
-                  accessibilityLabel={undefined}
-                  accessibilityTraits={undefined}
                   accessible={true}
-                  collapsable={undefined}
-                  hasTVPreferredFocus={undefined}
-                  hitSlop={undefined}
                   isTVSelectable={true}
-                  nativeID={undefined}
-                  onLayout={undefined}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
                   onResponderRelease={[Function]}
@@ -338,14 +322,26 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       "shadowRadius": null,
                     }
                   }
-                  testID={undefined}
-                  tvParallaxProperties={undefined}
-                />
+                >
+                  <View
+                    name="close"
+                    style={
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 16,
+                        "marginBottom": undefined,
+                        "marginLeft": undefined,
+                        "marginRight": undefined,
+                        "marginTop": undefined,
+                        "paddingTop": 0,
+                      }
+                    }
+                  />
+                </View>
               </View>
             </View>
           </View>
           <View
-            fullScreen={undefined}
             style={
               Array [
                 Object {},
@@ -373,16 +369,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           visible={false}
         >
           <View
-            accessibilityComponentType={undefined}
-            accessibilityLabel={undefined}
-            accessibilityTraits={undefined}
             accessible={true}
-            collapsable={undefined}
-            hasTVPreferredFocus={undefined}
-            hitSlop={undefined}
             isTVSelectable={true}
-            nativeID={undefined}
-            onLayout={undefined}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}
@@ -397,20 +385,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "opacity": 1,
               }
             }
-            testID={undefined}
-            tvParallaxProperties={undefined}
           >
             <View
-              accessibilityComponentType={undefined}
-              accessibilityLabel={undefined}
-              accessibilityTraits={undefined}
               accessible={true}
-              collapsable={undefined}
-              hasTVPreferredFocus={undefined}
-              hitSlop={undefined}
               isTVSelectable={true}
-              nativeID={undefined}
-              onLayout={undefined}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
               onResponderRelease={[Function]}
@@ -428,8 +406,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   "padding": 15,
                 }
               }
-              testID={undefined}
-              tvParallaxProperties={undefined}
             >
               <RCTScrollView
                 data={Array []}
@@ -438,7 +414,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 getItemCount={[Function]}
                 horizontal={false}
                 initialNumToRender={10}
-                invertStickyHeaders={undefined}
                 keyExtractor={[Function]}
                 maxToRenderPerBatch={10}
                 numColumns={1}
