@@ -9,7 +9,7 @@ import { Container, Wrapper, Footer } from 'components/Layout';
 import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {
@@ -66,7 +66,7 @@ const WordInputNumber = styled(Label)`
   line-height: 42px;
 `;
 
-const RemoveWordButtonIcon = styled(ButtonIcon)`
+const RemoveWordButtonIcon = styled(IconButton)`
   height: 42px;
   margin-left: ${Platform.OS === 'ios' ? '14px' : '6px'};
   margin-top: ${Platform.OS === 'ios' ? 0 : '-4px'};

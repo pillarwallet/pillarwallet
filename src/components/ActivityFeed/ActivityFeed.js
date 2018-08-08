@@ -8,7 +8,7 @@ import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { fontSizes, baseColors } from 'utils/variables';
 import type { Notification } from 'models/Notification';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
@@ -97,7 +97,7 @@ const ActivityFeedItemCol = styled.View`
   justify-content: center;
 `;
 
-const ActionCircleButton = styled(ButtonIcon)`
+const ActionCircleButton = styled(IconButton)`
   height: 34px;
   width: 34px;
   border-radius: 17px;
