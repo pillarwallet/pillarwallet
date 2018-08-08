@@ -18,26 +18,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 }
 
-type State = {
-  pinError: string,
-};
-
-class PinCodeUnlock extends React.Component<Props, State> {
-  state = {
-    pinError: '',
-  };
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { walletState } = nextProps.wallet;
-    if (walletState === INVALID_PASSWORD) {
-      return {
-        ...prevState,
-        pinError: 'Invalid pincode',
-      };
-    }
-    return null;
-  }
-
+class PinCodeUnlock extends React.Component<Props, *> {
   handlePinSubmit = (pin: string) => {
     const { login } = this.props;
     login(pin);
@@ -48,10 +29,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   render() {
-    const { pinError } = this.state;
-
-    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     const { walletState } = this.props.wallet;
+    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
+    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING) {
       return (
