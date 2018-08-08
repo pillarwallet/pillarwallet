@@ -155,6 +155,9 @@ jobs:
           paths:
             - ./ios/Pods
       - run:
+          name: Build ios bundle
+          command: yarn build:ios
+      - run:
           name: Install Bundler
           command: sudo gem install bundler
       - run:
