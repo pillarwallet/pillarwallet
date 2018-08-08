@@ -6,7 +6,7 @@ import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { showToast } from 'utils/toast';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
@@ -39,7 +39,7 @@ const ListWrapper = styled.View`
 `;
 
 const ListSeparator = styled.View`
-  padding: 20px 16px;
+  padding: 20px ${spacing.rhythm}px;
   border-top-width: ${props => props.first ? 0 : '1px'};
   border-bottom-width: 1px;
   border-color: ${baseColors.lightGray};
