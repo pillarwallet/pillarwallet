@@ -210,11 +210,8 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            cat .env
-            echo "$buildNumber"
-            sed -i 's/_build_number_/$buildNumber/g' .env
+            sed -i "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-            cat .env
       - restore_cache:
           key: node-{{ checksum "../yarn.lock" }}
       - run:
