@@ -105,8 +105,8 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
     await chat.client.receiveNewMessagesByContact(username).catch(() => null);
     const receivedMessages = await chat.client.getChatByContact(username).then(JSON.parse).catch(() => []);
 
-    const updatedMessages = await receivedMessages.map((message) => ({
-      _id: message.serverTimestamp,
+    const updatedMessages = await receivedMessages.map((message, index) => ({
+      _id: `${message.serverTimestamp}_${index}`,
       text: message.content,
       createdAt: new Date(message.serverTimestamp),
       user: {
