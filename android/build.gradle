@@ -10,6 +10,9 @@ buildscript {
     maven {
       url 'https://maven.fabric.io/public'
     }
+    maven {
+      url "$rootDir/../node_modules/react-native/android"
+    }
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.3'
@@ -33,9 +36,11 @@ allprojects {
       // Local Maven repo containing AARs with JSC built for Android
       url "$rootDir/../js/node_modules/jsc-android/android"
     }
+    maven {
+      url "$rootDir/../node_modules/react-native/android"
+    }
     flatDir {
       dirs 'libs'
-      // dirs project(':expoview').file('libs')
     }
     maven { url "https://jitpack.io" }
     maven {
@@ -52,7 +57,7 @@ task clean(type: Delete) {
   def var = new Properties()
   File localProperties = file("local.properties")
   if (localProperties.exists()) var.load(localProperties.newDataInputStream())
-  var.setProperty("ndk.dir", "")
+  var.setProperty("ndk.dir", "")    
   var.store(localProperties.newWriter(), null)
 }
 

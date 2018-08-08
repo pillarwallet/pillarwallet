@@ -34,6 +34,7 @@ export const LEGAL_TERMS = 'LEGAL_TERMS';
 // PINCODE FLOW
 export const AUTH_FLOW = 'AUTH_FLOW';
 export const PIN_CODE_UNLOCK = 'PIN_CODE_UNLOCK';
+export const FORGOT_PIN = 'FORGOT_PIN';
 
 // SIGNUP/OTP FLOW
 export const SECURITY_CONFIRM = 'SECURITY_CONFIRM';
