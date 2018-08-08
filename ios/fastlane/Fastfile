@@ -17,14 +17,14 @@ platform :ios do
               configuration: "Release",
               xcargs: "-sdk iphonesimulator SYMROOT='~/pillarwallet'"
           )
-  zip(path: "/Users/distiller/pillarwallet/Release-iphonesimulator/pillar-wallet.app",
-      output_path: "./build/pillar-wallet.app.zip"
+  zip(path: "/Users/distiller/pillarwallet/Release-iphonesimulator/pillarwallet.app",
+      output_path: "./build/pillarwallet.app.zip"
     )
   end
 
   desc "Upload a new build to TestFlight"
   lane :build_test_flight do
-    sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillar-wallet/Supporting/Info.plist\"")
+    sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillarwallet/Supporting/Info.plist\"")
     match(type: "appstore",
           readonly: true)
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
