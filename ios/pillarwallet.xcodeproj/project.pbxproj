@@ -37,9 +37,9 @@
 		16891C7A211A61E5002BFCD6 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16891C79211A61AB002BFCD6 /* libRNVectorIcons.a */; };
 		16891CC6211A6A59002BFCD6 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1930D3910B414B29A8A2F59D /* Feather.ttf */; };
 		16A4A6832111EBDA008E645C /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A4A6822111EBDA008E645C /* SwiftBridge.swift */; };
-		16A4A6852111EBF1008E645C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 16A4A6842111EBF0008E645C /* GoogleService-Info.plist */; };
 		16A4A68721120C89008E645C /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A4A6802111EBA7008E645C /* libSignalMessagingSwift.a */; };
 		1A35E955B6E8424F983EECB2 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54AE39B9C8BF45D98DEA6581 /* rubicon-icon-font.ttf */; };
+		1D07F721211B3CD8009D15F8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */; };
 		23F435F37E804B0B8011559D /* AktivGrotesk-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ACB594E6440F44338EDE2EB7 /* AktivGrotesk-Bold.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -518,10 +518,10 @@
 		16891C74211A61AA002BFCD6 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		16A4A6812111EBD9008E645C /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		16A4A6822111EBDA008E645C /* SwiftBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridge.swift; path = pillarwallet/SwiftBridge.swift; sourceTree = "<group>"; };
-		16A4A6842111EBF0008E645C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/ios/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		16A4A6E6211227BF008E645C /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
 		1930D3910B414B29A8A2F59D /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		1A7A6F4ED0218800D8189BB6 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1D4CC066FEC94A60A27A859B /* AktivGrotesk-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AktivGrotesk-Light.ttf"; path = "../src/assets/fonts/AktivGrotesk-Light.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* pillarwallet-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pillarwallet-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* pillarwallet-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pillarwallet-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -713,9 +713,9 @@
 		13B07FAE1A68108700A75B9A /* pillarwallet */ = {
 			isa = PBXGroup;
 			children = (
+				1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */,
 				162E180B21186C160028BE96 /* launch_background_image.png */,
 				16A4A6E6211227BF008E645C /* pillarwallet.entitlements */,
-				16A4A6842111EBF0008E645C /* GoogleService-Info.plist */,
 				16A4A6822111EBDA008E645C /* SwiftBridge.swift */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -1624,6 +1624,7 @@
 				E8197C7BA3C44222AC003DF5 /* Entypo.ttf in Resources */,
 				45EE92A36C08417FA16196A3 /* EvilIcons.ttf in Resources */,
 				9780FC46A57D42758DBD034A /* FontAwesome.ttf in Resources */,
+				1D07F721211B3CD8009D15F8 /* GoogleService-Info.plist in Resources */,
 				EC113BA65B394361A4500F72 /* Foundation.ttf in Resources */,
 				6612AEE4BC954980A8267D91 /* Ionicons.ttf in Resources */,
 				6620E2D8C717452AA263A579 /* MaterialCommunityIcons.ttf in Resources */,
@@ -1633,7 +1634,6 @@
 				A619D15ABDF942EC8912E9AD /* Roboto.ttf in Resources */,
 				1A35E955B6E8424F983EECB2 /* rubicon-icon-font.ttf in Resources */,
 				06F589C928FF4E118352DC39 /* SimpleLineIcons.ttf in Resources */,
-				16A4A6852111EBF1008E645C /* GoogleService-Info.plist in Resources */,
 				162E183C21186C170028BE96 /* launch_background_image.png in Resources */,
 				73D45330BF5C4B1095BDF850 /* Zocial.ttf in Resources */,
 				0A77B4F9D5F7443A9BD907FD /* FontAwesome5_Brands.ttf in Resources */,
