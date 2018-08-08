@@ -34,7 +34,6 @@ type Props = {
 }
 
 type State = {
-  value: ?string,
   isFocused: boolean,
 }
 
@@ -111,7 +110,6 @@ const CustomLabel = styled(Label)`
 
 class TextInput extends React.Component<Props, State> {
   state = {
-    value: '',
     isFocused: false,
   };
 
@@ -121,15 +119,6 @@ class TextInput extends React.Component<Props, State> {
     trim: true,
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.inputProps && nextProps.inputProps.value !== prevState.value) {
-      return {
-        value: nextProps.inputProps.value,
-      };
-    }
-    return null;
-  }
-
   handleBlur = (e: EventLike) => {
     if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
       return;
@@ -137,21 +126,15 @@ class TextInput extends React.Component<Props, State> {
 
     const { inputProps: { onBlur }, trim } = this.props;
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
-    this.setState({ value, isFocused: false }, () => {
-      if (onBlur) {
-        onBlur(value);
-      }
-    });
+    if (onBlur) {
+      onBlur(value);
+    }
   };
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
     const value = e.nativeEvent.text;
-    this.setState({ value }, () => {
-      if (onChange) {
-        onChange(value);
-      }
-    });
+    onChange(value);
   };
 
   handleFocus = () => {
@@ -174,7 +157,8 @@ class TextInput extends React.Component<Props, State> {
       footerAddonAction,
       autoCorrect,
     } = this.props;
-    const { value, isFocused } = this.state;
+    const { value = '' } = inputProps;
+    const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
     return (
       <View style={{ paddingBottom: 10 }}>

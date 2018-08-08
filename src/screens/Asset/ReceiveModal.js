@@ -26,14 +26,6 @@ type Props = {
   isVisible: boolean,
 }
 
-type State = {
-  isVisible: boolean,
-  address: string,
-  onModalHide: Function,
-  token: string,
-  tokenName: string,
-}
-
 const FooterWrapper = styled.View`
   flexDirection: column;
   justify-content: space-around;
@@ -58,29 +50,11 @@ const QRCodeWrapper = styled.View`
   margin-bottom: 30px;
 `;
 
-export default class ReceiveModal extends React.Component<Props, State> {
-  state = {
-    isVisible: false,
-    address: '',
-    onModalHide: () => { },
-    token: '',
-    tokenName: '',
-  }
-
-  static getDerivedStateFromProps(props: Props) {
-    return {
-      isVisible: props.isVisible,
-      address: props.address,
-      onModalHide: props.onModalHide,
-      token: props.token,
-      tokenName: props.tokenName,
-    };
-  }
-
+export default class ReceiveModal extends React.Component<Props, *> {
   handleAddressClipboardSet = () => {
     const {
       address,
-    } = this.state;
+    } = this.props;
     Clipboard.setString(address);
     showToast({ text: 'Address copied to clipboard', type: 'info', position: 'bottom' });
   };
@@ -101,7 +75,7 @@ export default class ReceiveModal extends React.Component<Props, State> {
       token,
       tokenName,
       onModalHide,
-    } = this.state;
+    } = this.props;
 
     return (
       <SlideModal

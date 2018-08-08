@@ -47,7 +47,7 @@ const InputIcon = styled(Image)`
 
 type inputPropsType = {
   placeholder?: string,
-  onChange?: Function,
+  onChange: Function,
   onBlur?: Function,
   value: ?string,
 };
@@ -59,7 +59,6 @@ type Props = {
 };
 
 type State = {
-  value: ?string,
   animShrink: Object,
   isFocused: boolean,
 };
@@ -70,7 +69,6 @@ type EventLike = {
 
 class SearchBar extends React.Component<Props, State> {
   state = {
-    value: '',
     animShrink: new Animated.Value(100),
     isFocused: false,
   };
@@ -81,28 +79,15 @@ class SearchBar extends React.Component<Props, State> {
     placeholder: 'Search or add new contact',
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.inputProps.value !== prevState.value) {
-      return {
-        value: nextProps.inputProps.value,
-      };
-    }
-    return null;
-  }
-
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
     const value = e.nativeEvent.text;
-    this.setState({ value }, () => {
-      if (onChange) {
-        onChange(value);
-      }
-    });
+    onChange(value);
   };
 
-  handleBlur = () => {
+  handleBlur = (e: EventLike) => {
     const { inputProps: { onBlur } } = this.props;
-    const { value } = this.state;
+    const value = e.nativeEvent.text;
     if (!value) {
       this.hideKeyboard();
     }
@@ -140,10 +125,10 @@ class SearchBar extends React.Component<Props, State> {
   render() {
     const { inputProps, placeholder } = this.props;
     const {
-      value,
       animShrink,
       isFocused,
     } = this.state;
+    const { value = '' } = inputProps;
 
     return (
       <SearchHolder>

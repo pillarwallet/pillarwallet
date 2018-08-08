@@ -1,8 +1,7 @@
 // @flow
 import React from 'react';
-import { DangerZone } from 'expo';
+import Lottie from 'lottie-react-native';
 
-const { Lottie } = DangerZone;
 const tokenSentConfirmationAnimation = require('./transactionSentConfirmationAnimation.json');
 
 export default class TransactionSentAnimation extends React.Component<{}> {
