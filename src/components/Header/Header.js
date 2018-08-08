@@ -150,7 +150,7 @@ const Header = (props: Props) => {
               <CloseIcon
                 icon="close"
                 color={light ? baseColors.white : UIColors.primary}
-                onPress={() => onClose()}
+                onPress={onClose}
                 fontSize={fontSizes.small}
               />
             </CloseIconWrapper>
