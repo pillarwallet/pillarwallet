@@ -31,6 +31,7 @@ type Props = {
   footerAddonText?: string,
   footerAddonAction?: Function,
   autoCorrect?: boolean,
+  viewWidth?: number,
 }
 
 type State = {
@@ -157,11 +158,12 @@ class TextInput extends React.Component<Props, State> {
       footerAddonAction,
       autoCorrect,
     } = this.props;
+    const viewWidth = this.props.viewWidth || 'auto';
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
     return (
-      <View style={{ paddingBottom: 10 }}>
+      <View style={{ paddingBottom: 10, width: viewWidth }}>
         <Item
           inlineLabel={inlineLabel}
           stackedLabel={!inlineLabel}

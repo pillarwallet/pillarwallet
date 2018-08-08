@@ -19,8 +19,9 @@ import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } from 'react-native';
+import { Keyboard, Dimensions } from 'react-native';
 import { Permissions } from 'expo';
+import styled from 'styled-components/native';
 
 const PERMISSION_GRANTED = 'GRANTED';
 
@@ -38,6 +39,31 @@ type State = {
   errorField: string,
   isScanning: boolean,
 };
+
+const qrCode = require('assets/images/qr.png');
+
+const window = Dimensions.get('window');
+
+const InputWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ScanButton = styled.TouchableOpacity`
+  align-items: center;
+  margin-left: 10px;
+`;
+
+const ScanImage = styled.Image`
+  width: 24px;
+  height: 24px;
+`;
+
+const ScanText = styled.Text`
+  font-size: 16px;
+  color: #007AFF;
+  text-align: center;
+`;
 
 class ImportWallet extends React.Component<Props, State> {
   state = {
@@ -116,8 +142,8 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleQRRead = (address: string) => {
-    this.setState({ privateKey: { ...this.state.privateKey, address }, isScanning: false }, () => {
-      // this.navigateToNextScreen(address);
+    this.setState({ privateKey: address, isScanning: false }, () => {
+      this.props.navigation.state.params.handleImportSubmit();
     });
   };
 
@@ -161,22 +187,30 @@ class ImportWallet extends React.Component<Props, State> {
             underlineColorAndroid="transparent"
           />
           <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
-          <TextInput
-            label="Use your Private Key"
-            inputProps={{
-              onChange: (value) => this.setState({ privateKey: value }),
-              value: privateKey,
-            }}
-            errorMessage={errorMessagePrivateKey}
-            underlineColorAndroid="transparent"
-          />
-          <Button onPress={this.handleQRScannerOpen}/>
+          <InputWrapper>
+            <TextInput
+              label="Use your Private Key"
+              inputProps={{
+                onChange: (value) => this.setState({ privateKey: value }),
+                value: privateKey,
+              }}
+              errorMessage={errorMessagePrivateKey}
+              underlineColorAndroid="transparent"
+              viewWidth={window.width - 85}
+            />
+            <ScanButton onPress={this.handleQRScannerOpen}>
+              <ScanImage
+                source={qrCode}
+              />
+              <ScanText>SCAN</ScanText>
+            </ScanButton>
+          </InputWrapper>
           <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
         </ScrollWrapper>
         <QRCodeScanner
-            isActive={isScanning}
-            onDismiss={this.handleQRScannerClose}
-            onRead={this.handleQRRead}
+          isActive={isScanning}
+          onDismiss={this.handleQRScannerClose}
+          onRead={this.handleQRRead}
         />
       </Container>
     );
