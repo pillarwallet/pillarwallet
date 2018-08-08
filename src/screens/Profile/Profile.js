@@ -106,7 +106,6 @@ type Props = {
 
 type State = {
   visibleModal: string | null,
-  value: Object,
   requestPinForTransaction: ?boolean,
   showCheckPinModal: boolean,
   showTermsConditionsModal: boolean,
@@ -120,7 +119,6 @@ class Profile extends React.Component<Props, State> {
     const { requestPinForTransaction = true } = props;
     this.state = {
       visibleModal: null,
-      value: {},
       requestPinForTransaction,
       showCheckPinModal: false,
       showTermsConditionsModal: false,
@@ -129,15 +127,10 @@ class Profile extends React.Component<Props, State> {
     };
   }
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { requestPinForTransaction } = nextProps;
-    if (requestPinForTransaction !== undefined && requestPinForTransaction !== prevState.requestPinForTransaction) {
-      return {
-        ...prevState,
-        requestPinForTransaction,
-      };
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.requestPinForTransaction !== this.props.requestPinForTransaction) {
+      this.setState({ requestPinForTransaction: this.props.requestPinForTransaction }); // eslint-disable-line
     }
-    return null;
   }
 
   clearLocalStorage() {
@@ -195,8 +188,8 @@ class Profile extends React.Component<Props, State> {
         </Left>
         <Right>
           <ListIcon
-            name="chevron-right"
-            type="Feather"
+            name="chevron-thin-right"
+            type="Entypo"
           />
         </Right>
       </ListItem>
