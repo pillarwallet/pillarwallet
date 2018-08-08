@@ -51,9 +51,6 @@ type Props = {
 class AddToken extends React.Component<Props> {
   formChanged: boolean = false;
 
-  componentDidMount() {
-  }
-
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
     this.formChanged = true;
@@ -138,8 +135,9 @@ const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { 
 const mapDispatchToProps = (dispatch) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchAssetsBalances: (assets, walletAddress) =>
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
+  fetchAssetsBalances: (assets, walletAddress) => {
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddToken);
