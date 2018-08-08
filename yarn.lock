@@ -823,7 +823,7 @@
     "@storybook/addons" "3.4.10"
     "@storybook/channel-postmessage" "3.4.10"
     "@storybook/client-logger" "3.4.10"
-    "@storybook/node-logger" "3.4.10"
+    "@storybook/node-logger" "3.4.8"
     "@storybook/ui" "3.4.10"
     autoprefixer "^7.2.6"
     babel-runtime "^6.26.0"
