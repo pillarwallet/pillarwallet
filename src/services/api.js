@@ -66,6 +66,13 @@ SDKWrapper.prototype.updateUserAvatar = function (walletId: string, formData: Ob
     .catch((err) => { console.log('returned error', err); }); // eslint-disable-line
 };
 
+SDKWrapper.prototype.getUserAvatar = function (userId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
+    .catch((err) => { console.log('returned error', err); }); // eslint-disable-line
+};
+
+
 SDKWrapper.prototype.userInfo = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.info({ walletId }))

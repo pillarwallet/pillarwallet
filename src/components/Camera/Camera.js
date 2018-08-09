@@ -2,15 +2,15 @@
 import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import { TouchableOpacity, Text, Dimensions, Platform } from 'react-native';
+import { Text, Dimensions, Platform } from 'react-native';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
 import { Container, Footer } from 'components/Layout';
 import { RNCamera } from 'react-native-camera';
-import Icon from 'components/Icon';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
+import { baseColors } from 'utils/variables';
 
 type Props = {
   onModalHide?: Function,
@@ -24,6 +24,7 @@ type Props = {
 type State = {
   showResult: boolean,
   previewBase64: string,
+  imageUri: string,
 };
 
 const PhotoBoundaries = styled.View`
@@ -68,6 +69,22 @@ const ResultScreenFooter = styled.View`
   padding: 30px 0;
 `;
 
+const CameraButtonOuter = styled.TouchableOpacity`
+  border: 4px solid white;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  align-self: center;
+  justify-content: center;
+  align-items: center;
+`;
+const CameraButtonInner = styled.View`
+  width: 44px;
+  height: 44px;
+  background-color: ${baseColors.white};
+  border-radius: 22px;
+`;
+
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const cameraHeight = screenWidth * (16 / 9);
@@ -80,6 +97,7 @@ class Camera extends React.Component<Props, State> {
     this.state = {
       showResult: false,
       previewBase64: '',
+      imageUri: '',
     };
   }
 
@@ -98,6 +116,7 @@ class Camera extends React.Component<Props, State> {
           this.setState({
             previewBase64: `data:image/jpg;base64,${res.base64}`,
             showResult: true,
+            imageUri: res.uri,
           });
         })
         .catch((err) => console.log(err)); // eslint-disable-line
@@ -106,21 +125,14 @@ class Camera extends React.Component<Props, State> {
   };
 
   setImage = async () => {
-    // const { user, updateUserAvatar } = this.props;
-    // const { currentCaptureUrl } = this.state;
-    // const newImageUrl = `${FileSystem.documentDirectory}profile/${Date.now()}.jpg`;
-    // await FileSystem.moveAsync({
-    //   from: currentCaptureUrl,
-    //   to: newImageUrl,
-    // });
-    // const formData : any = new FormData();
-    // formData.append('walletId', user.walletId);
-    // formData.append('image', { uri: newImageUrl, name: 'image.jpg', type: 'multipart/form-data' });
-    // updateUserAvatar(user.walletId, formData);
-    // this.handleModalClose();
-    // this.props.modalHide();
-
-    // Jegor, look at the code above! It uses a derprecated Expo Filesystem module
+    const { user, updateUserAvatar } = this.props;
+    const { imageUri } = this.state;
+    const formData: any = new FormData();
+    formData.append('walletId', user.walletId);
+    formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
+    updateUserAvatar(user.walletId, formData);
+    this.handleModalClose();
+    this.props.modalHide();
   };
 
 
@@ -137,12 +149,9 @@ class Camera extends React.Component<Props, State> {
   renderBottomBar = () => {
     return (
       <Footer>
-        <TouchableOpacity
-          onPress={this.takePicture}
-          style={{ alignSelf: 'center' }}
-        >
-          <Icon name="send" style={{color: 'white'}} />
-        </TouchableOpacity>
+        <CameraButtonOuter onPress={this.takePicture} >
+          <CameraButtonInner />
+        </CameraButtonOuter>
       </Footer>
     );
   }

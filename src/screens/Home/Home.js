@@ -230,13 +230,12 @@ class HomeScreen extends React.Component<Props, State> {
     navigation.navigate(PROFILE);
   };
 
-  toggleCamera = () => {
-    Permissions.request('photo').then(response => {
-      this.setState({
-        permissionsGranted: response === 'authorized',
-        showCamera: !this.state.showCamera,
-      })
-    })
+  toggleCamera = async () => {
+    const status = await Permissions.request('photo');
+    this.setState({
+      permissionsGranted: status === 'authorized',
+      showCamera: !this.state.showCamera,
+    });
   }
 
   renderRecentConnections = () => {
@@ -346,7 +345,6 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-
     const chatNotifications = chats.chats
       .map((
         {

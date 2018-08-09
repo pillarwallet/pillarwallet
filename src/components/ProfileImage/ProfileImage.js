@@ -2,7 +2,6 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { BoldText } from 'components/Typography';
 
 const CircleImage = styled.Image`
@@ -10,6 +9,7 @@ const CircleImage = styled.Image`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   ${props => (props.additionalImageStyle)};
+  background: ${baseColors.lightGray};
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
@@ -21,7 +21,6 @@ const ImageTouchable = styled.TouchableOpacity`
   justify-content: center;
   background-color: ${props => (props.transparent ? 'transparent' : baseColors.cyan)};
   ${props => (props.additionalContainerStyle)};
-  overflow: hidden;
 `;
 
 const AvatarText = styled(BoldText)`
@@ -54,7 +53,6 @@ const ProfileImage = (props: Props) => {
     diameter,
   } = props;
 
-  const fullUri = uri ? `${SDK_PROVIDER}/user/image/${uri}` : null;
   const initials = userName
     .split(' ')
     .map(name => name.substring(0, 1))
@@ -71,7 +69,7 @@ const ProfileImage = (props: Props) => {
       style={style}
     >
       {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
-      {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri: fullUri }} />}
+      {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri }} />}
     </ImageTouchable>
   );
 };
