@@ -141,7 +141,7 @@ class Camera extends React.Component<Props, State> {
           onPress={this.takePicture}
           style={{ alignSelf: 'center' }}
         >
-          <Icon name="send" />
+          <Icon name="send" style={{color: 'white'}} />
         </TouchableOpacity>
       </Footer>
     );

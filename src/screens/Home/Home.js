@@ -22,8 +22,7 @@ import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
-import { Permissions } from 'react-native-permissions';
-
+import Permissions from 'react-native-permissions';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import {
@@ -231,12 +230,13 @@ class HomeScreen extends React.Component<Props, State> {
     navigation.navigate(PROFILE);
   };
 
-  toggleCamera = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({
-      permissionsGranted: status === 'granted',
-      showCamera: !this.state.showCamera,
-    });
+  toggleCamera = () => {
+    Permissions.request('photo').then(response => {
+      this.setState({
+        permissionsGranted: response === 'authorized',
+        showCamera: !this.state.showCamera,
+      })
+    })
   }
 
   renderRecentConnections = () => {
