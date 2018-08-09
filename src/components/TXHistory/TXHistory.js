@@ -8,6 +8,7 @@ import { format as formatDate } from 'date-fns';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { getUserName } from 'utils/contacts';
+import { spacing } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import TXDetails from 'components/TXDetails';
@@ -41,7 +42,7 @@ const flatListStyles = {
 
 const TXHistoryHeader = styled.View`
   align-items: flex-start;
-  padding: 10px 16px 0;
+  padding: 10px ${spacing.rhythm}px 0;
 `;
 
 const SENT = 'Sent';

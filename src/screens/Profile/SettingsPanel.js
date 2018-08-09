@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { BaseText, BoldText } from 'components/Typography';
 import { Platform, StyleSheet } from 'react-native';
 
@@ -20,7 +20,7 @@ const SettingsPanelAndroid = styled.View`
 `;
 
 const FormPlacer = styled.View`
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
 `;
 
 const PanelHeaderIOS = styled(BoldText)`
