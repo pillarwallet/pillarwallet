@@ -15,13 +15,15 @@ import {
 } from 'constants/walletConstants';
 import Button from 'components/Button';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import { Keyboard, Dimensions } from 'react-native';
 import { Permissions } from 'expo';
 import styled from 'styled-components/native';
+import Icon from 'components/Icon';
+import { fontSizes, baseColors } from 'utils/variables';
 
 const PERMISSION_GRANTED = 'GRANTED';
 
@@ -40,8 +42,6 @@ type State = {
   isScanning: boolean,
 };
 
-const qrCode = require('assets/images/qr.png');
-
 const window = Dimensions.get('window');
 
 const InputWrapper = styled.View`
@@ -54,15 +54,14 @@ const ScanButton = styled.TouchableOpacity`
   margin-left: 10px;
 `;
 
-const ScanImage = styled.Image`
-  width: 24px;
-  height: 24px;
+const ScanIcon = styled(Icon)`
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.extraLarge};
 `;
 
-const ScanText = styled.Text`
-  font-size: 16px;
-  color: #007AFF;
-  text-align: center;
+const ScanText = styled(BaseText)`
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.small};
 `;
 
 class ImportWallet extends React.Component<Props, State> {
@@ -199,10 +198,10 @@ class ImportWallet extends React.Component<Props, State> {
               viewWidth={window.width - 85}
             />
             <ScanButton onPress={this.handleQRScannerOpen}>
-              <ScanImage
-                source={qrCode}
+              <ScanIcon
+                name="qrcode"
               />
-              <ScanText>SCAN</ScanText>
+              <ScanText>{'Scan'.toUpperCase()}</ScanText>
             </ScanButton>
           </InputWrapper>
           <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
