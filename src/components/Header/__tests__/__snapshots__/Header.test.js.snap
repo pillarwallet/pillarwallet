@@ -61,6 +61,7 @@ exports[`Header should render Header correctly 1`] = `
           "borderRadius": 5,
           "borderRightWidth": null,
           "borderTopWidth": null,
+          "borderWidth": undefined,
           "elevation": 0,
           "flexDirection": "row",
           "height": 32,

@@ -21,6 +21,7 @@ exports[`Button Icon should render Button Icon correctly 1`] = `
       "borderRadius": 5,
       "borderRightWidth": null,
       "borderTopWidth": null,
+      "borderWidth": undefined,
       "elevation": 0,
       "flexDirection": "row",
       "height": 45,
