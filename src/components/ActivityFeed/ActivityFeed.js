@@ -1,20 +1,24 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-
+import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
+
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
+import type { Transaction } from 'models/Transaction';
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
-
+import SlideModal from 'components/Modals/SlideModal';
+import TXDetails from 'components/TXDetails';
+import { partial } from 'utils/common';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -22,6 +26,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 
 const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
@@ -47,9 +52,7 @@ const NOTIFICATION_LABELS = {
 const TRANSACTIONS = 'TRANSACTIONS';
 const SOCIAL = 'SOCIAL';
 
-
 const ActivityFeedList = styled.FlatList``;
-
 const ActivityFeedWrapper = styled.View``;
 
 const ActivityFeedItem = styled.TouchableOpacity`
@@ -120,20 +123,38 @@ const LabelText = styled(BaseText)`
   padding: 6px;
 `;
 
+
 type Props = {
   history: Array<*>,
   onAcceptInvitation: Function,
   onCancelInvitation: Function,
   onRejectInvitation: Function,
   walletAddress: string,
+  navigation: NavigationScreenProp<*>,
   notifications: Notification[],
   activeTab: string,
   esTitle: string,
   esBody: string,
-}
+};
 
+type State = {
+  showModal: boolean,
+  selectedTransaction: ?Transaction,
+};
 
-class ActivityFeed extends React.Component<Props> {
+class ActivityFeed extends React.Component<Props, State> {
+  state = {
+    showModal: false,
+    selectedTransaction: null,
+  };
+
+  selectTransaction = (transaction: Transaction) => {
+    this.setState({
+      selectedTransaction: transaction,
+      showModal: true,
+    });
+  };
+
   getSocialAction = (type: string, notification: Object) => {
     const {
       onCancelInvitation,
@@ -169,9 +190,7 @@ class ActivityFeed extends React.Component<Props> {
         );
       case TYPE_SENT:
         return (
-          <TouchableOpacity
-            onPress={() => onCancelInvitation(notification)}
-          >
+          <TouchableOpacity onPress={() => onCancelInvitation(notification)}>
             <LabelText button>
               Cancel
             </LabelText>
@@ -194,19 +213,19 @@ class ActivityFeed extends React.Component<Props> {
 
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const { type } = notification;
-    const { walletAddress } = this.props;
+    const { walletAddress, navigation } = this.props;
 
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
     if (type === TRANSACTION_EVENT) {
-      const isReceived = notification.toAddress.toUpperCase() === walletAddress.toUpperCase();
-      const address = isReceived ? notification.fromAddress : notification.toAddress;
+      const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
+      const address = isReceived ? notification.from : notification.to;
       const directionSymbol = isReceived ? '+' : '-';
       const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
       const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       return (
-        <ActivityFeedItem key={index}>
+        <ActivityFeedItem key={index} onPress={() => this.selectTransaction(notification)}>
           <ActivityFeedItemCol fixedWidth="50px">
             <ActivityFeedDirectionCircle>
               <ActivityFeedDirectionCircleIcon name={directionIcon} />
@@ -224,14 +243,20 @@ class ActivityFeed extends React.Component<Props> {
         </ActivityFeedItem>
       );
     }
+
+    const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
+    const onItemPress = (type === TYPE_ACCEPTED) ? navigateToContact : undefined;
+    const onProfileImagePress = ([TYPE_SENT, TYPE_RECEIVED].includes(type)) ? navigateToContact : undefined;
+
     return (
-      <ActivityFeedItem key={index} onPress={notification.onPress}>
+      <ActivityFeedItem key={index} onPress={onItemPress}>
         <ActivityFeedItemCol fixedWidth="50px">
           <ProfileImage
             uri={notification.avatar}
             userName={notification.username}
             diameter={40}
             textStyle={{ fontSize: 14 }}
+            onPress={onProfileImagePress}
           />
         </ActivityFeedItemCol>
         <ActivityFeedItemCol fixedWidth="150px">
@@ -254,6 +279,8 @@ class ActivityFeed extends React.Component<Props> {
       notifications,
     } = this.props;
 
+    const { showModal, selectedTransaction } = this.state;
+
     const filteredHistory = history.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
         return type === TRANSACTION_EVENT;
@@ -275,6 +302,13 @@ class ActivityFeed extends React.Component<Props> {
           contentContainerStyle={{ height: '100%' }}
           ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
         />
+        <SlideModal
+          isVisible={showModal}
+          title="transaction details"
+          onModalHide={() => { this.setState({ showModal: false }); }}
+        >
+          <TXDetails transaction={selectedTransaction} />
+        </SlideModal>
       </ActivityFeedWrapper>
     );
   }
