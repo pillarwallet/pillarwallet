@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { RefreshControl, Platform } from 'react-native';
 import { PROFILE, CONTACT, CHAT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
@@ -22,7 +22,7 @@ import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { UIColors, baseColors, fontSizes, spacingSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -66,7 +66,7 @@ const ALL = 'ALL';
 
 
 const HomeHeader = styled.View`
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
   margin-top: ${Platform.OS === 'android' ? '20px' : 0};
 `;
 
@@ -103,7 +103,7 @@ const HomeHeaderProfileImage = styled(ProfileImage)`
 `;
 
 const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 `;
 
 const RecentConnections = styled.View`
@@ -124,7 +124,7 @@ const RecentConnectionsWrapper = styled.View`
 const RecentConnectionsScrollView = styled.ScrollView``;
 
 const RecentConnectionsSubtitle = styled(Title)`
-  margin-left: ${spacingSizes.defaultHorizontalSideSpacing};
+  margin-left: ${spacing.rhythm}px;
 `;
 
 const RecentConnectionsItem = styled.TouchableOpacity`
@@ -193,7 +193,7 @@ const EmptyStateWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacingSizes.defaultHorizontalSideSpacing}px;
+  padding: 0 ${spacing.rhythm}px;
 `;
 
 class HomeScreen extends React.Component<Props, State> {
@@ -258,28 +258,26 @@ class HomeScreen extends React.Component<Props, State> {
     const concatedHistory = history
       .map(({
         hash,
-        from,
-        to,
-        timestamp,
         ...rest
       }) => ({
         txHash: hash,
-        fromAddress: from,
-        toAddress: to,
         type: TRANSACTION_EVENT,
-        createdAt: timestamp,
         ...rest,
       }))
-      .concat(historyNotifications)
-      .map(({ toAddress, fromAddress, ...rest }) => {
+      .concat(historyNotifications.map(({ toAddress, fromAddress, ...rest }) => ({
+        to: toAddress,
+        from: fromAddress,
+        ...rest,
+      })))
+      .map(({ to, from, ...rest }) => {
         const contact = contacts.find(({ ethAddress }) => {
-          return fromAddress.toUpperCase() === ethAddress.toUpperCase()
-            || toAddress.toUpperCase() === ethAddress.toUpperCase();
+          return from.toUpperCase() === ethAddress.toUpperCase()
+            || to.toUpperCase() === ethAddress.toUpperCase();
         });
         return {
           username: getUserName(contact),
-          toAddress,
-          fromAddress,
+          to,
+          from,
           ...rest,
         };
       });
@@ -317,6 +315,7 @@ class HomeScreen extends React.Component<Props, State> {
       historyNotifications,
       history,
       wallet: { address: walletAddress },
+      navigation,
       chats,
     } = this.props;
     const { activeTab, esBody, esTitle } = this.state;
@@ -449,6 +448,7 @@ class HomeScreen extends React.Component<Props, State> {
             onAcceptInvitation={acceptInvitation}
             history={homeNotifications}
             walletAddress={walletAddress}
+            navigation={navigation}
             activeTab={activeTab}
             esBody={esBody}
             esTitle={esTitle}

@@ -29,11 +29,11 @@ public class RNFirebaseMessaging extends ReactContextBaseJavaModule {
 
     // Subscribe to message events
     localBroadcastManager.registerReceiver(new MessageReceiver(),
-      new IntentFilter(RNFirebaseMessagingService.MESSAGE_EVENT));
+            new IntentFilter(RNFirebaseMessagingService.MESSAGE_EVENT));
 
     // Subscribe to token refresh events
     localBroadcastManager.registerReceiver(new RefreshTokenReceiver(),
-      new IntentFilter(RNFirebaseInstanceIdService.TOKEN_REFRESH_EVENT));
+            new IntentFilter(RNFirebaseInstanceIdService.TOKEN_REFRESH_EVENT));
   }
 
   @Override

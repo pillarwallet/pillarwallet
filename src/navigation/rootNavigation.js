@@ -1,6 +1,7 @@
 // @flow
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
+
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
@@ -14,6 +15,9 @@ import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
 import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
+import ForgotPinScreen from 'screens/ForgotPin';
+
+import { modalTransition } from 'utils/common';
 
 import {
   APP_FLOW,
@@ -31,6 +35,7 @@ import {
   PIN_CODE_UNLOCK,
   ONBOARDING_HOME,
   WELCOME,
+  FORGOT_PIN,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -63,7 +68,8 @@ const onBoardingFlow = createStackNavigator({
 
 const authFlow = createStackNavigator({
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
-}, StackNavigatorConfig);
+  [FORGOT_PIN]: ForgotPinScreen,
+}, modalTransition);
 
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
   [ONBOARDING_FLOW]: onBoardingFlow,

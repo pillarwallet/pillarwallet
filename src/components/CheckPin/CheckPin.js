@@ -18,37 +18,16 @@ type Props = {
   title?: string,
 }
 
-type State = {
-  pinError: string,
-};
-
-class CheckPin extends React.Component<Props, State> {
-  state = {
-    pinError: '',
-  };
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { walletState } = nextProps.wallet;
-    if (walletState === INVALID_PASSWORD) {
-      return {
-        ...prevState,
-        pinError: 'Invalid pincode',
-      };
-    }
-    return null;
-  }
-
+class CheckPin extends React.Component<Props, *> {
   handlePinSubmit = (pin: string) => {
     const { checkPin, onPinValid } = this.props;
     checkPin(pin, () => onPinValid());
   };
 
   render() {
-    const { pinError } = this.state;
-    const { title } = this.props;
-
+    const { title, wallet: { walletState } } = this.props;
+    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
-    const { walletState } = this.props.wallet;
 
     if (walletState === DECRYPTING) {
       return (

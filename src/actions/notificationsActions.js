@@ -2,7 +2,6 @@
 
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -68,15 +67,13 @@ export const startListeningNotificationsAction = () => {
       wallet: { data: wallet },
       assets: { data: assets },
     } = getState();
-    // check if permissions enabled
     const enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
       try {
         await firebase.messaging().requestPermission();
-        // create a listener
+        await firebase.messaging().getToken();
       } catch (err) { return; } // eslint-disable-line
     }
-    await firebase.messaging().getToken();
     if (notificationsListener) return;
     notificationsListener = firebase.messaging().onMessage(message => {
       if (!message._data || !Object.keys(message._data).length) return;
@@ -84,8 +81,8 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
-        dispatch(fetchTransactionsHistoryAction(wallet.address));
-        dispatch(fetchAssetsBalancesAction(assets, notification.asset));
+        dispatch(fetchTransactionsHistoryAction(wallet.address, notification.asset));
+        dispatch(fetchAssetsBalancesAction(assets, wallet.address));
       }
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());

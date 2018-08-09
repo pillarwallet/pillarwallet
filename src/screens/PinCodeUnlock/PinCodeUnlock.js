@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
-import { ONBOARDING_FLOW } from 'constants/navigationConstants';
+import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import { BaseText } from 'components/Typography';
@@ -18,40 +18,20 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 }
 
-type State = {
-  pinError: string,
-};
-
-class PinCodeUnlock extends React.Component<Props, State> {
-  state = {
-    pinError: '',
-  };
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { walletState } = nextProps.wallet;
-    if (walletState === INVALID_PASSWORD) {
-      return {
-        ...prevState,
-        pinError: 'Invalid pincode',
-      };
-    }
-    return null;
-  }
-
+class PinCodeUnlock extends React.Component<Props, *> {
   handlePinSubmit = (pin: string) => {
     const { login } = this.props;
     login(pin);
   };
 
   handleForgotPasscode = () => {
-    this.props.navigation.navigate(ONBOARDING_FLOW);
+    this.props.navigation.navigate(FORGOT_PIN);
   };
 
   render() {
-    const { pinError } = this.state;
-
-    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
     const { walletState } = this.props.wallet;
+    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
+    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING) {
       return (
