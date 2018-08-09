@@ -22,8 +22,8 @@ const ModalWrapper = styled.View`
   flex: 1;
   width: 100%;
   height: ${height};
-  padding: ${Platform.OS === 'ios' ? '40px 0 80px' : '20px 0 80px'}
-  backgroundColor: #ffffff
+  padding: ${Platform.OS === 'ios' ? '40px 0 80px' : '20px 0 80px'};
+  background-color: #ffffff;
 `;
 
 const ModalOverflow = styled.View`
@@ -51,16 +51,15 @@ export default class KeyboardAvoidModal extends React.Component<Props, *> {
       subtitle,
       isVisible,
     } = this.props;
-    const animationInTiming = 800;
-    const animationOutTiming = 400;
+    const animationTiming = 500;
     return (
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
-        animationInTiming={animationInTiming}
-        animationOutTiming={animationOutTiming}
+        animationInTiming={animationTiming}
+        animationOutTiming={animationTiming}
         animationIn="bounceInUp"
         animationOut="bounceOutDown"
         swipeDirection="down"
