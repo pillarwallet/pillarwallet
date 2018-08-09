@@ -25,7 +25,7 @@ import RNCamera from 'components/RNCamera';
 import { Permissions } from 'expo';
 
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { UIColors, baseColors, fontSizes, spacingSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -71,7 +71,7 @@ const ALL = 'ALL';
 
 
 const HomeHeader = styled.View`
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
   margin-top: ${Platform.OS === 'android' ? '20px' : 0};
 `;
 
@@ -129,7 +129,7 @@ const RecentConnectionsWrapper = styled.View`
 const RecentConnectionsScrollView = styled.ScrollView``;
 
 const RecentConnectionsSubtitle = styled(Title)`
-  margin-left: ${spacingSizes.defaultHorizontalSideSpacing};
+  margin-left: ${spacing.rhythm}px;
 `;
 
 const RecentConnectionsItem = styled.TouchableOpacity`
@@ -198,7 +198,7 @@ const EmptyStateWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacingSizes.defaultHorizontalSideSpacing}px;
+  padding: 0 ${spacing.rhythm}px;
 `;
 
 class HomeScreen extends React.Component<Props, State> {

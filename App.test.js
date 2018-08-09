@@ -3,10 +3,7 @@ import renderer from 'react-test-renderer';
 import React from 'react';
 import App from './App';
 
-it('renders without crashing', (done) => {
-  const rendered = renderer.create(<App />);
-  setTimeout(() => {
-    expect(rendered.toJSON()).toBeTruthy();
-    done();
-  }, 150);
+it('renders without crashing', () => {
+  const rendered = renderer.create(<App isFetched />);
+  expect(rendered.toJSON()).toBeTruthy();
 });

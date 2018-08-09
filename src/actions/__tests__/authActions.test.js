@@ -29,16 +29,6 @@ Object.defineProperty(mockWallet, 'RNencrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
-jest.mock('ethers', () => ({
-  Wallet: {
-    fromMnemonic: () => mockWallet,
-    RNfromEncryptedWallet: () => mockWallet,
-  },
-  utils: {
-    id: () => '',
-  },
-}));
-
 describe('Wallet actions', () => {
   let store;
 

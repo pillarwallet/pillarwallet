@@ -6,7 +6,7 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors } from 'utils/variables';
+import { fontSizes, baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
@@ -55,7 +55,7 @@ const ActivityFeedWrapper = styled.View``;
 const ActivityFeedItem = styled.TouchableOpacity`
   background-color: ${props => props.isEven ? baseColors.snowWhite : baseColors.white};
   height: 74px;
-  padding: 0px 16px;
+  padding: 0px ${spacing.rhythm}px;
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;

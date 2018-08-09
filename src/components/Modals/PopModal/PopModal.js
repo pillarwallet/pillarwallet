@@ -12,15 +12,12 @@ type Props = {
   children?: React.Node,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
+  onModalHidden?: Function,
   isVisible: boolean,
   animationOutTiming: number,
   animationInTiming: number,
   backdropTransitionInTiming: number,
   backdropTransitionOutTiming: number,
-};
-
-type State = {
-  isVisible: boolean,
 };
 
 const window = Dimensions.get('window');
@@ -53,7 +50,7 @@ const ModalContent = styled.View`
 `;
 
 
-export default class PopModal extends React.Component<Props, State> {
+export default class PopModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
     animationInTiming: 300,
@@ -62,48 +59,30 @@ export default class PopModal extends React.Component<Props, State> {
     backdropTransitionOutTiming: 300,
   };
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isVisible: props.isVisible,
-    };
-  }
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.isVisible !== prevState.isVisible) {
-      return {
-        isVisible: nextProps.isVisible,
-      };
-    }
-    return null;
-  }
-
   hideModal = () => {
-    this.setState({
-      isVisible: false,
-    });
+    if (this.props.onModalHide) {
+      this.props.onModalHide();
+    }
   }
 
   render() {
     const {
-      isVisible,
-    } = this.state;
-    const {
       children,
       title,
       fullScreenComponent,
-      onModalHide,
+      onModalHidden,
       headerImage,
       animationInTiming,
       animationOutTiming,
       backdropTransitionInTiming,
       backdropTransitionOutTiming,
+      isVisible,
     } = this.props;
     return (
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
-        onModalHide={onModalHide}
+        onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}

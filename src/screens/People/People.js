@@ -19,7 +19,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { baseColors, UIColors, fontSizes, spacingSizes } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
@@ -50,7 +50,7 @@ const ConnectionRequestBannerIcon = styled(Icon)`
   font-size: ${fontSizes.medium};
   color: ${baseColors.darkGray};
   margin-left: auto;
-  margin-right: 16px;
+  margin-right: ${spacing.rhythm}px;
 `;
 
 const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
@@ -64,7 +64,7 @@ const EmptyStateBGWrapper = styled.View`
   top: 0;
   left: 0;
   width: 100%;
-  padding: 0 16px 16px 16px;
+  padding: 0 20px 20px;
 `;
 
 const MIN_QUERY_LENGTH = 2;
@@ -179,7 +179,7 @@ class PeopleScreen extends React.Component<Props, State> {
               <ConnectionRequestNotificationCircle>
                 {pendingConnectionRequests}
               </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon type="Feather" name="chevron-right" />
+              <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
             </React.Fragment>
           </ConnectionRequestBanner>
         }
@@ -201,7 +201,7 @@ class PeopleScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
-              paddingVertical: spacingSizes.defaultVerticalSpacing,
+              paddingVertical: spacing.rhythm,
               paddingTop: 0,
             }}
             refreshControl={

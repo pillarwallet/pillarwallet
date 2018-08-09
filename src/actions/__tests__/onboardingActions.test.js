@@ -66,20 +66,6 @@ Object.defineProperty(mockWallet, 'RNencrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
-jest.mock('ethers', () => ({
-  Wallet: {
-    fromMnemonic: () => mockWallet,
-    RNfromEncryptedWallet: () => mockWallet,
-  },
-  utils: {
-    id: () => '',
-  },
-}));
-
-jest.mock('cryptocompare', () => ({
-  priceMulti: () => Promise.resolve(mockExchangeRates),
-}));
-
 describe('Wallet actions', () => {
   let store;
   beforeEach(() => {
