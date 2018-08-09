@@ -199,6 +199,7 @@ dependencies {
   }
   compile project(':react-native-device-info')
   compile "com.android.support:appcompat-v7:23.0.1"
+  compile project(':react-native-fs')
   compile "com.facebook.react:react-native:+"  // From node_modules
 
 

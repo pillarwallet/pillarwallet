@@ -7,8 +7,8 @@ import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
 import { Container, Footer } from 'components/Layout';
-import { Camera, FileSystem } from 'expo';
-import { Ionicons } from '@expo/vector-icons';
+import { RNCamera } from 'react-native-camera';
+import Icon from 'components/Icon';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 
@@ -73,7 +73,7 @@ const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 const cameraHeight = screenWidth * (16 / 9);
 
-class RNCamera extends React.Component<Props, State> {
+class Camera extends React.Component<Props, State> {
   camera: ?Object;
 
   constructor(props: Props) {
@@ -148,7 +148,7 @@ class RNCamera extends React.Component<Props, State> {
           onPress={this.takePicture}
           style={{ alignSelf: 'center' }}
         >
-          <Ionicons name="ios-radio-button-on" size={70} color="white" />
+          <Icon name="send" />
         </TouchableOpacity>
       </Footer>
     );
@@ -158,10 +158,10 @@ class RNCamera extends React.Component<Props, State> {
     (
 
       <React.Fragment>
-        <Camera
+        <RNCamera
           ref={ref => {
             this.camera = ref;
-          }}
+        }}
           style={{
             width: screenWidth,
             height: Platform.OS === 'ios' ? screenHeight : cameraHeight,
@@ -172,7 +172,7 @@ class RNCamera extends React.Component<Props, State> {
           ratio="16:9"
         >
           <PhotoBoundaries color="#ffffff" />
-        </Camera>
+        </RNCamera>
         {this.renderBottomBar()}
       </React.Fragment>
     );
@@ -231,5 +231,5 @@ const mapDispatchToProps = (dispatch: Function) => ({
   updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RNCamera);
+export default connect(mapStateToProps, mapDispatchToProps)(Camera);
 

@@ -28,7 +28,7 @@ const glyphMap = {
 
 type Props = {
   name: string,
-  style: Object,
+  style?: Object,
 }
 
 const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';

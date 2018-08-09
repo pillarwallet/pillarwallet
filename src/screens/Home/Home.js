@@ -21,8 +21,8 @@ import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
-import RNCamera from 'components/RNCamera';
-import { Permissions } from 'expo';
+import Camera from 'components/Camera';
+import { Permissions } from 'react-native-permissions';
 
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
@@ -479,7 +479,7 @@ class HomeScreen extends React.Component<Props, State> {
             esTitle={esTitle}
           />
         </ScrollWrapper>
-        <RNCamera
+        <Camera
           isVisible={showCamera}
           modalHide={this.toggleCamera}
           permissionsGranted={permissionsGranted}
