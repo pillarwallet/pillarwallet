@@ -204,8 +204,6 @@ PODS:
     - React
   - RNDeviceInfo (0.21.5):
     - React
-  - RNFS (2.11.15):
-    - React
   - yoga (0.56.0.React)
 
 DEPENDENCIES:
@@ -304,9 +302,8 @@ SPEC CHECKSUMS:
   react-native-intercom: 50fa177c55a5bd8135742afb38867a485b3fda2d
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
-  RNFS: bbb1a64eb245763daf34aea86f97c97c4e85f74c
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: cc40f283867408a605f7e7a8cd1de3c0344b4874
+PODFILE CHECKSUM: ccd1644f3de532aef94dccd3460436b2c89e3283
 
 COCOAPODS: 1.4.0
