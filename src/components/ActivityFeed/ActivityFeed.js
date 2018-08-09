@@ -245,24 +245,18 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
-
-    if (type === TYPE_ACCEPTED) {
-      notification.onItemPress = navigateToContact;
-    }
-
-    if ([TYPE_SENT, TYPE_RECEIVED].includes(type)) {
-      notification.onProfileImagePress = navigateToContact;
-    }
+    const onItemPress = (type === TYPE_ACCEPTED) ? navigateToContact : undefined;
+    const onProfileImagePress = ([TYPE_SENT, TYPE_RECEIVED].includes(type)) ? navigateToContact : undefined;
 
     return (
-      <ActivityFeedItem key={index} onPress={notification.onItemPress || undefined}>
+      <ActivityFeedItem key={index} onPress={onItemPress}>
         <ActivityFeedItemCol fixedWidth="50px">
           <ProfileImage
             uri={notification.avatar}
             userName={notification.username}
             diameter={40}
             textStyle={{ fontSize: 14 }}
-            onPress={notification.onProfileImagePress || undefined}
+            onPress={onProfileImagePress}
           />
         </ActivityFeedItemCol>
         <ActivityFeedItemCol fixedWidth="150px">
