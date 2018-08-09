@@ -19,7 +19,6 @@ import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
 import TXDetails from 'components/TXDetails';
 import { partial } from 'utils/common';
-import { fontSizes, baseColors } from 'utils/variables';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
