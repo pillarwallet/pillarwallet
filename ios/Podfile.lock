@@ -242,7 +242,6 @@ DEPENDENCIES:
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
-  - RNFS (from `../node_modules/react-native-fs`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
@@ -264,8 +263,6 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-permissions
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
-  RNFS:
-    :path: ../node_modules/react-native-fs
   yoga:
     :path: ../node_modules/react-native/ReactCommon/yoga
 

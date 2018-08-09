@@ -10823,13 +10823,6 @@ react-native-firebase@^4.2.0:
     postinstall-build "^5.0.1"
     prop-types "^15.6.1"
 
-react-native-fs@^2.11.15:
-  version "2.11.15"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-fs/-/react-native-fs-2.11.15.tgz#b80ac78edf124137624697b4864f834c1caf4f43"
-  dependencies:
-    base-64 "^0.1.0"
-    utf8 "^2.1.1"
-
 react-native-gifted-chat@^0.4.3:
   version "0.4.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-gifted-chat/-/react-native-gifted-chat-0.4.3.tgz#25b4da866c802e407c06e589495f421f7dcdf70a"

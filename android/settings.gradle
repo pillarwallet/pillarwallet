@@ -25,5 +25,3 @@ include ':react-native-firebase'
 project(':react-native-firebase').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-firebase/android')
 include ':react-native-device-info'
 project(':react-native-device-info').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-device-info/android')
-include ':react-native-fs'
-project(':react-native-fs').projectDir = new File(settingsDir, '../node_modules/react-native-fs/android')

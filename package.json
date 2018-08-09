@@ -139,7 +139,6 @@
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^0.21.5",
     "react-native-firebase": "^4.2.0",
-    "react-native-fs": "^2.11.15",
     "react-native-gifted-chat": "^0.4.3",
     "react-native-intercom": "^11.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",

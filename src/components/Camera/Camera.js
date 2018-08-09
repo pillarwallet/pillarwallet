@@ -24,7 +24,6 @@ type Props = {
 type State = {
   showResult: boolean,
   previewBase64: string,
-  currentCaptureUrl: string,
 };
 
 const PhotoBoundaries = styled.View`
@@ -81,18 +80,11 @@ class Camera extends React.Component<Props, State> {
     this.state = {
       showResult: false,
       previewBase64: '',
-      currentCaptureUrl: '',
     };
   }
 
   handleModalClose = () => {
     this.setState({ showResult: false });
-  }
-
-  componentDidMount() {
-    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}profile`).catch(e => {
-      console.log(e, 'Directory exists'); // eslint-disable-line
-    });
   }
 
   getBackToCamera = () => {
@@ -105,7 +97,6 @@ class Camera extends React.Component<Props, State> {
         .then((res) => {
           this.setState({
             previewBase64: `data:image/jpg;base64,${res.base64}`,
-            currentCaptureUrl: res.uri,
             showResult: true,
           });
         })
@@ -115,19 +106,21 @@ class Camera extends React.Component<Props, State> {
   };
 
   setImage = async () => {
-    const { user, updateUserAvatar } = this.props;
-    const { currentCaptureUrl } = this.state;
-    const newImageUrl = `${FileSystem.documentDirectory}profile/${Date.now()}.jpg`;
-    await FileSystem.moveAsync({
-      from: currentCaptureUrl,
-      to: newImageUrl,
-    });
-    const formData : any = new FormData();
-    formData.append('walletId', user.walletId);
-    formData.append('image', { uri: newImageUrl, name: 'image.jpg', type: 'multipart/form-data' });
-    updateUserAvatar(user.walletId, formData);
-    this.handleModalClose();
-    this.props.modalHide();
+    // const { user, updateUserAvatar } = this.props;
+    // const { currentCaptureUrl } = this.state;
+    // const newImageUrl = `${FileSystem.documentDirectory}profile/${Date.now()}.jpg`;
+    // await FileSystem.moveAsync({
+    //   from: currentCaptureUrl,
+    //   to: newImageUrl,
+    // });
+    // const formData : any = new FormData();
+    // formData.append('walletId', user.walletId);
+    // formData.append('image', { uri: newImageUrl, name: 'image.jpg', type: 'multipart/form-data' });
+    // updateUserAvatar(user.walletId, formData);
+    // this.handleModalClose();
+    // this.props.modalHide();
+
+    // Jegor, look at the code above! It uses a derprecated Expo Filesystem module
   };
 
 

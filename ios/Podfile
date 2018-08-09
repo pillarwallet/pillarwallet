@@ -50,7 +50,6 @@ target 'pillarwallet' do
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
-  pod 'RNFS', :path => '../node_modules/react-native-fs'
 
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';
