@@ -53,6 +53,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "flow": "flow",
     "flow-stop": "flow stop",
     "flow-typed": "flow-typed install",

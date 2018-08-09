@@ -1,2 +1,2 @@
 // @flow
-export const SET_RATES = 'SET_RATES';
+export const UPDATE_RATES = 'UPDATE_RATES';

@@ -1,11 +1,11 @@
 // @flow
-import { SET_RATES } from 'constants/ratesConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
 import reducer from '../ratesReducer';
 
 describe('Rates reducer', () => {
-  it('should handle SET_RATES', () => {
+  it('should handle UPDATE_RATES', () => {
     const updateAction = {
-      type: SET_RATES,
+      type: UPDATE_RATES,
       payload: {
         ETH: {
           EUR: 624.21,
