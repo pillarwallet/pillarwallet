@@ -81,8 +81,8 @@ export const startListeningNotificationsAction = () => {
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
-        dispatch(fetchTransactionsHistoryAction(wallet.address));
-        dispatch(fetchAssetsBalancesAction(assets, notification.asset));
+        dispatch(fetchTransactionsHistoryAction(wallet.address, notification.asset));
+        dispatch(fetchAssetsBalancesAction(assets, wallet.address));
       }
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());

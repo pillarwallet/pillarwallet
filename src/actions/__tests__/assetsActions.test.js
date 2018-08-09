@@ -7,9 +7,9 @@ import {
   FETCHED,
   FETCHING,
   ETH,
-  UPDATE_ASSETS,
+  UPDATE_BALANCES,
 } from 'constants/assetsConstants';
-import { SET_RATES } from 'constants/ratesConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
 import type { Assets } from 'models/Asset';
 import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
@@ -78,10 +78,11 @@ describe('Wallet actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
+    const updateBalancesPayload = { ETH: { balance: 1, symbol: 'ETH' } };
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
-      { payload: mockExchangeRates, type: SET_RATES },
-      { payload: { ETH: mockAssets.ETH }, type: UPDATE_ASSETS },
+      { payload: updateBalancesPayload, type: UPDATE_BALANCES },
+      { payload: mockExchangeRates, type: UPDATE_RATES },
     ];
     return store.dispatch(fetchAssetsBalancesAction(mockAssets, mockWallet.address))
       .then(() => {
