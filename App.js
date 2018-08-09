@@ -51,7 +51,7 @@ class App extends React.Component<Props, *> {
     if (!isOnline) {
       showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 });
     } else {
-      Toast.toastInstance._root.closeToast();
+      Toast.hide();
     }
   };
 

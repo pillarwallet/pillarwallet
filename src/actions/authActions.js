@@ -42,13 +42,14 @@ export const loginAction = (pin: string) => {
         payload: { user, state: userState },
       });
 
-      await chat.init({
+      const fcmToken = await firebase.messaging().getToken();
+      chat.init({
         username: user.username,
         password: generateChatPassword(wallet.privateKey),
-      }).catch(() => null);
-      const fcmToken = await firebase.messaging().getToken();
-      await chat.client.registerAccount().catch(() => null);
-      await chat.client.setFcmId(fcmToken).catch(() => null);
+      })
+        .then(() => chat.client.registerAccount())
+        .then(() => chat.client.setFcmId(fcmToken))
+        .catch(() => null);
 
       dispatch({
         type: DECRYPT_WALLET,
