@@ -70,10 +70,11 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         "justifyContent": "flex-end",
         "left": 0,
         "margin": 0,
+        "opacity": 0,
         "top": 0,
         "transform": Array [
           Object {
-            "translateY": 1334,
+            "translateY": 800,
           },
         ],
       }
