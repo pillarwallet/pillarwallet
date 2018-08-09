@@ -1,27 +1,24 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-
+import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { TouchableOpacity, Platform, Dimensions, Linking } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
-import { fontSizes, baseColors } from 'utils/variables';
+
 import type { Notification } from 'models/Notification';
+import type { Transaction } from 'models/Transaction';
 import ButtonIcon from 'components/ButtonIcon';
 import Icon from 'components/Icon';
-import { BaseText, Label } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
-import type { NavigationScreenProp } from 'react-navigation';
 import Separator from 'components/Separator';
-import { Row, Column } from 'components/Grid';
-import Button from 'components/Button';
-import { formatETHAmount } from 'utils/common';
 import SlideModal from 'components/Modals/SlideModal';
-import { getUserName } from 'utils/contacts';
-import { TX_DETAILS_URL } from 'react-native-dotenv';
-
+import TXDetails from 'components/TXDetails';
+import { partial } from 'utils/common';
+import { fontSizes, baseColors } from 'utils/variables';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -54,13 +51,8 @@ const NOTIFICATION_LABELS = {
 
 const TRANSACTIONS = 'TRANSACTIONS';
 const SOCIAL = 'SOCIAL';
-const SENT = 'Sent';
-const RECEIVED = 'Received';
-
-const window = Dimensions.get('window');
 
 const ActivityFeedList = styled.FlatList``;
-
 const ActivityFeedWrapper = styled.View``;
 
 const ActivityFeedItem = styled.TouchableOpacity`
@@ -131,18 +123,6 @@ const LabelText = styled(BaseText)`
   padding: 6px;
 `;
 
-const ContentWrapper = styled.View`
-  height: ${window.height / 2.5};
-  justify-content: space-around;
-  display: flex;
-`;
-
-const Holder = styled.View`
-  display: flex;
-  flex-direction:column;
-  justify-content: space-around;
-  align-items: center;
-`;
 
 type Props = {
   history: Array<*>,
@@ -159,98 +139,20 @@ type Props = {
 
 type State = {
   showModal: boolean,
-  selectedTransaction: {
-    hash: string,
-    date: ?string,
-    token: ?string,
-    amount: ?number,
-    recipient: ?string,
-    note: ?string,
-    fee: ?number,
-    confirmations: ?number,
-    status: ?string,
-    direction: ?string,
-  }
+  selectedTransaction: ?Transaction,
 };
 
 class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
-    selectedTransaction: {
-      hash: '',
-      date: null,
-      token: null,
-      amount: null,
-      recipient: null,
-      fee: null,
-      note: null,
-      confirmations: null,
-      status: null,
-      direction: null,
-    },
+    selectedTransaction: null,
   };
 
-  getDate = (datetime: number) => {
-    const months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC',
-    ];
-    const date: Date = new Date(0);
-    date.setUTCSeconds(datetime);
-    return `${months[date.getMonth()]} ${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  };
-
-  selectTransaction = (transaction: Object) => {
-    const {
-      status,
-      toAddress,
-      fromAddress,
-      asset,
-      nbConfirmations,
-      gasUsed,
-      gasPrice,
-      value,
-    } = transaction;
-    const timestamp = transaction.createdAt;
-    const hash = transaction.txHash;
-    const { history, walletAddress } = this.props;
-    const datetime = new Date(timestamp);
-    const contact = history
-      .find(({ ethAddress }) => ethAddress != null && toAddress.toUpperCase() === ethAddress.toUpperCase());
-    const recipient = toAddress.toUpperCase() !== walletAddress.toUpperCase()
-      ? (getUserName(contact) || `${toAddress.slice(0, 7)}…${toAddress.slice(-7)}`)
-      : null;
-    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
-
+  selectTransaction = (transaction: Transaction) => {
     this.setState({
-      selectedTransaction: {
-        hash,
-        date: this.getDate(datetime),
-        token: asset,
-        amount: formatETHAmount(amount),
-        recipient,
-        fee: gasUsed ? gasUsed * gasPrice : 0,
-        note: null,
-        confirmations: nbConfirmations,
-        status: status.charAt(0).toUpperCase() + status.slice(1),
-        direction: walletAddress.toUpperCase() === fromAddress.toUpperCase() ? SENT : RECEIVED,
-      },
+      selectedTransaction: transaction,
       showModal: true,
     });
-  };
-
-  viewTransactionOnBlockchain = (hash: string) => {
-    Linking.openURL(TX_DETAILS_URL + hash);
   };
 
   getSocialAction = (type: string, notification: Object) => {
@@ -288,9 +190,7 @@ class ActivityFeed extends React.Component<Props, State> {
         );
       case TYPE_SENT:
         return (
-          <TouchableOpacity
-            onPress={() => onCancelInvitation(notification)}
-          >
+          <TouchableOpacity onPress={() => onCancelInvitation(notification)}>
             <LabelText button>
               Cancel
             </LabelText>
@@ -316,12 +216,9 @@ class ActivityFeed extends React.Component<Props, State> {
     const { walletAddress, navigation } = this.props;
 
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
-    if (type !== TRANSACTION_EVENT && type !== CHAT) {
-      notification.onPress = () => navigation.navigate(CONTACT, { contact: notification });
-    }
     if (type === TRANSACTION_EVENT) {
-      const isReceived = notification.toAddress.toUpperCase() === walletAddress.toUpperCase();
-      const address = isReceived ? notification.fromAddress : notification.toAddress;
+      const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
+      const address = isReceived ? notification.from : notification.to;
       const directionSymbol = isReceived ? '+' : '-';
       const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
@@ -346,14 +243,26 @@ class ActivityFeed extends React.Component<Props, State> {
         </ActivityFeedItem>
       );
     }
+
+    const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
+
+    if (type === TYPE_ACCEPTED) {
+      notification.onItemPress = navigateToContact;
+    }
+
+    if ([TYPE_SENT, TYPE_RECEIVED].includes(type)) {
+      notification.onProfileImagePress = navigateToContact;
+    }
+
     return (
-      <ActivityFeedItem key={index} onPress={notification.onPress}>
+      <ActivityFeedItem key={index} onPress={notification.onItemPress || undefined}>
         <ActivityFeedItemCol fixedWidth="50px">
           <ProfileImage
             uri={notification.avatar}
             userName={notification.username}
             diameter={40}
             textStyle={{ fontSize: 14 }}
+            onPress={notification.onProfileImagePress || undefined}
           />
         </ActivityFeedItemCol>
         <ActivityFeedItemCol fixedWidth="150px">
@@ -404,61 +313,7 @@ class ActivityFeed extends React.Component<Props, State> {
           title="transaction details"
           onModalHide={() => { this.setState({ showModal: false }); }}
         >
-          <ContentWrapper>
-            <Holder>
-              <Row size="0 0 30px">
-                <Column>
-                  <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
-                </Column>
-                <Column>
-                  <BaseText>{selectedTransaction.amount} {selectedTransaction.token}</BaseText>
-                </Column>
-              </Row>
-              <Row size="0 0 30px">
-                <Column><Label>Date</Label></Column>
-                <Column>
-                  <BaseText>{selectedTransaction.date}</BaseText>
-                </Column>
-              </Row>
-              {!!selectedTransaction.recipient &&
-              <Row size="0 0 30px">
-                <Column><Label>Recipient</Label></Column>
-                <Column>
-                  <BaseText>{selectedTransaction.recipient}</BaseText>
-                </Column>
-              </Row>
-              }
-              {!!selectedTransaction.fee &&
-              <Row size="0 0 30px">
-                <Column><Label>Transaction fee</Label></Column>
-                <Column>
-                  <BaseText>{utils.formatEther(selectedTransaction.fee.toString())} ETH</BaseText>
-                </Column>
-              </Row>
-              }
-
-              {selectedTransaction.note &&
-              <Row size="0 0 80px">
-                <Column><Label>Note</Label></Column>
-                <Column>
-                  <BaseText>{selectedTransaction.note}</BaseText>
-                </Column>
-              </Row>
-              }
-              <Row size="0 0 30px">
-                <Column><Label>Status</Label></Column>
-                <Column>
-                  <BaseText>{selectedTransaction.status}</BaseText>
-                </Column>
-              </Row>
-            </Holder>
-            <Holder>
-              <Button
-                title="View on the blockchain"
-                onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
-              />
-            </Holder>
-          </ContentWrapper>
+          <TXDetails transaction={selectedTransaction} />
         </SlideModal>
       </ActivityFeedWrapper>
     );

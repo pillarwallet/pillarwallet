@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
-import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { RefreshControl, Platform } from 'react-native';
 import { PROFILE, CONTACT, CHAT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
@@ -258,28 +258,26 @@ class HomeScreen extends React.Component<Props, State> {
     const concatedHistory = history
       .map(({
         hash,
-        from,
-        to,
-        timestamp,
         ...rest
       }) => ({
         txHash: hash,
-        fromAddress: from,
-        toAddress: to,
         type: TRANSACTION_EVENT,
-        createdAt: timestamp,
         ...rest,
       }))
-      .concat(historyNotifications)
-      .map(({ toAddress, fromAddress, ...rest }) => {
+      .concat(historyNotifications.map(({ toAddress, fromAddress, ...rest }) => ({
+        to: toAddress,
+        from: fromAddress,
+        ...rest,
+      })))
+      .map(({ to, from, ...rest }) => {
         const contact = contacts.find(({ ethAddress }) => {
-          return fromAddress.toUpperCase() === ethAddress.toUpperCase()
-            || toAddress.toUpperCase() === ethAddress.toUpperCase();
+          return from.toUpperCase() === ethAddress.toUpperCase()
+            || to.toUpperCase() === ethAddress.toUpperCase();
         });
         return {
           username: getUserName(contact),
-          toAddress,
-          fromAddress,
+          to,
+          from,
           ...rest,
         };
       });

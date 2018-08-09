@@ -14,13 +14,14 @@ export const buildHistoryTransaction = ({
 }: TransactionEthers): Transaction => ({
   status: PENDING,
   gasUsed: parseFloat(utils.formatEther(gasPrice.mul(gasLimit))),
+  gasPrice: Number(gasPrice),
   value,
   from,
   hash,
   to,
   _id: hash,
   asset,
-  timestamp: +new Date() / 1000, // seconds
+  createdAt: +new Date() / 1000, // seconds
   nbConfirmations: 0,
   transaction: {},
   __v: 0,
