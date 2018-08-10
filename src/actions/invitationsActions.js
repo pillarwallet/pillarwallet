@@ -169,44 +169,9 @@ export const fetchInviteNotificationsAction = () => {
       TYPE_REJECTED,
     ];
     const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
-
-    const contactsWithAvatar = inviteNotifications.map(async (inviteNotification) => {
-      const invitationData = JSON.parse(inviteNotification.payload.msg);
-      const invitationSender = invitationData.senderUserData.username;
-      const users = await api.userSearch(invitationSender, user.walletId);
-      const thisUser = users.find(({ username }) => username === invitationSender);
-      if (!thisUser.length) return inviteNotification;
-      if (thisUser[0].profileImage) {
-        inviteNotification.profileImage = thisUser[0].profileImage;
-      }
-      return inviteNotification;
-    });
-
-    const invitationsWithAvatars = await Promise.all(contactsWithAvatar).catch(() => []);
-
-    const mappedInviteNotifications = invitationsWithAvatars
-      .map((
-        {
-          payload: { msg },
-          createdAt,
-          meta,
-          profileImage,
-        }) => (
-        {
-          ...JSON.parse(msg),
-          createdAt,
-          meta,
-          profileImage,
-        }))
-      .map((
-        {
-          senderUserData,
-          ...rest
-        }) => (
-        {
-          ...senderUserData,
-          ...rest,
-        }))
+    const mappedInviteNotifications = inviteNotifications
+      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
+      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {

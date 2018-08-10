@@ -78,6 +78,7 @@ const CameraButtonOuter = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
+
 const CameraButtonInner = styled.View`
   width: 44px;
   height: 44px;
@@ -103,11 +104,11 @@ class Camera extends React.Component<Props, State> {
 
   handleModalClose = () => {
     this.setState({ showResult: false });
-  }
+  };
 
   getBackToCamera = () => {
     this.setState({ showResult: false });
-  }
+  };
 
   takePicture = () => {
     if (this.camera) {
@@ -154,49 +155,43 @@ class Camera extends React.Component<Props, State> {
         </CameraButtonOuter>
       </Footer>
     );
-  }
+  };
 
-  renderCamera = () =>
-    (
-
-      <React.Fragment>
-        <RNCamera
-          ref={ref => {
-            this.camera = ref;
+  renderCamera = () => (
+    <React.Fragment>
+      <RNCamera
+        ref={ref => {
+          this.camera = ref;
         }}
-          style={{
-            width: screenWidth,
-            height: Platform.OS === 'ios' ? screenHeight : cameraHeight,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          type="front"
-          ratio="16:9"
-        >
-          <PhotoBoundaries color="#ffffff" />
-        </RNCamera>
-        {this.renderBottomBar()}
-      </React.Fragment>
-    );
+        style={{
+          width: screenWidth,
+          height: Platform.OS === 'ios' ? screenHeight : cameraHeight,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        type="front"
+        ratio="16:9"
+      >
+        <PhotoBoundaries color="#ffffff" />
+      </RNCamera>
+      {this.renderBottomBar()}
+    </React.Fragment>
+  );
 
-  renderResult = () =>
-    (
-      <ResultScreen>
-        <ImageCircle
-          source={{ uri: this.state.previewBase64 }}
-        />
-        <ResultScreenFooter>
-          <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
-          <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
-        </ResultScreenFooter>
-      </ResultScreen>
-    );
+  renderResult = () => (
+    <ResultScreen>
+      <ImageCircle
+        source={{ uri: this.state.previewBase64 }}
+      />
+      <ResultScreenFooter>
+        <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
+        <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
+      </ResultScreenFooter>
+    </ResultScreen>
+  );
 
   render() {
-    const {
-      isVisible,
-      modalHide,
-    } = this.props;
+    const { isVisible, modalHide } = this.props;
 
     const cameraScreenContent = this.props.permissionsGranted
       ? this.renderCamera()
