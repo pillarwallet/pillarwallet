@@ -7,9 +7,9 @@ import {
   FETCHED,
   FETCHING,
   ETH,
-  UPDATE_ASSETS,
+  UPDATE_BALANCES,
 } from 'constants/assetsConstants';
-import { SET_RATES } from 'constants/ratesConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
 import type { Assets } from 'models/Asset';
 import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
@@ -40,25 +40,17 @@ const mockAssets: Assets = {
   },
 };
 
+const mockExchangeRates = {
+  ETH: {
+    EUR: 624.21,
+    GBP: 544.57,
+    USD: 748.92,
+  },
+};
+
 Object.defineProperty(mockWallet, 'sendTransaction', {
   value: () => Promise.resolve('trx_hash'),
 });
-
-jest.mock('ethers', () => ({
-  Wallet: {
-    fromMnemonic: () => mockWallet,
-    RNfromEncryptedWallet: () => mockWallet,
-  },
-  utils: {
-    parseEther: x => x,
-    bigNumberify: x => x,
-  },
-  providers: {
-    getDefaultProvider: () => ({
-      getBalance: () => Promise.resolve(1), // ropsten dummy balance
-    }),
-  },
-}));
 
 const initialState = {
   wallet: { data: mockWallet },
@@ -86,10 +78,11 @@ describe('Wallet actions', () => {
   });
 
   it('should expect series of actions with payload to be dispatch on fetchAssetsBalancesAction execution', () => {
+    const updateBalancesPayload = { ETH: { balance: 1, symbol: 'ETH' } };
     const expectedActions = [
       { payload: FETCHING, type: UPDATE_ASSETS_STATE },
-      { payload: {}, type: SET_RATES },
-      { payload: { ETH: mockAssets.ETH }, type: UPDATE_ASSETS },
+      { payload: updateBalancesPayload, type: UPDATE_BALANCES },
+      { payload: mockExchangeRates, type: UPDATE_RATES },
     ];
     return store.dispatch(fetchAssetsBalancesAction(mockAssets, mockWallet.address))
       .then(() => {

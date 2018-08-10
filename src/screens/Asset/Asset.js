@@ -16,9 +16,11 @@ import TXHistory from 'components/TXHistory';
 import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import { ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
+
+const RECEIVE = 'RECEIVE';
 
 const activeModalResetState = {
   type: null,
@@ -34,6 +36,7 @@ type Props = {
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   history: Transaction[],
   assets: Assets,
+  balances: Assets,
   wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
@@ -68,22 +71,6 @@ class AssetScreen extends React.Component<Props, State> {
     },
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { initialModalState } = nextProps.navigation.state.params;
-    const activeModalInitialState = {
-      type: initialModalState,
-      opts: {},
-    };
-
-    if (initialModalState !== prevState.activeModal) {
-      return {
-        ...prevState,
-        activeModal: activeModalInitialState,
-      };
-    }
-    return null;
-  }
-
   componentDidMount() {
     const {
       fetchTransactionsHistory,
@@ -102,10 +89,6 @@ class AssetScreen extends React.Component<Props, State> {
     Share.share({ title: 'Public address', message: address });
   };
 
-  goToAddTokenPage = () => {
-    this.props.navigation.navigate(ADD_TOKEN);
-  };
-
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_TOKEN_FLOW, {
       assetData,
@@ -115,7 +98,7 @@ class AssetScreen extends React.Component<Props, State> {
   openReceiveTokenModal = (assetData) => {
     this.setState({
       activeModal: {
-        type: 'RECEIVE',
+        type: RECEIVE,
         opts: { address: assetData.address },
       },
     });
@@ -125,18 +108,18 @@ class AssetScreen extends React.Component<Props, State> {
     const {
       assets,
       rates,
+      balances,
       wallet,
       fetchAssetsBalances,
       fetchTransactionsHistory,
     } = this.props;
     const { assetData } = this.props.navigation.state.params;
     const { balanceInFiat: { currency: fiatCurrency }, token } = assetData;
-
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
-      .sort((a, b) => b.timestamp - a.timestamp);
-    const { balance } = assets[token];
-    const isWalletEmpty = Number(balance) <= 0;
+      .sort((a, b) => b.createdAt - a.createdAt);
+    const balance = Number(balances[token] && balances[token].balance) || 0;
+    const isWalletEmpty = balance <= 0;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
@@ -177,7 +160,7 @@ class AssetScreen extends React.Component<Props, State> {
               {assetData.description}
             </Paragraph>
             <AssetButtons
-              onPressReceive={() => this.openReceiveTokenModal(assetData)}
+              onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               noBalance={isWalletEmpty}
             />
@@ -189,7 +172,7 @@ class AssetScreen extends React.Component<Props, State> {
         </ScrollWrapper>
 
         <ReceiveModal
-          isVisible={this.state.activeModal.type === 'RECEIVE'}
+          isVisible={this.state.activeModal.type === RECEIVE}
           onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
           address={assetData.address}
           token={assetData.token}
@@ -203,12 +186,13 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
-  assets: { data: assets },
+  assets: { data: assets, balances },
   rates: { data: rates },
   history: { data: history },
 }) => ({
   wallet,
   assets,
+  balances,
   rates,
   history,
 });

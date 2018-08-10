@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
@@ -10,6 +11,7 @@ import { CHAT } from 'constants/navigationConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
+import type { ApiUser } from 'models/Contacts';
 import CircleButton from 'components/CircleButton';
 
 const ContactWrapper = styled.View`
@@ -65,13 +67,14 @@ const ContactHeaderAvatarWrapper = styled.View`
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
+  contacts: ApiUser[],
 }
 
 type State = {
   isOptionsModalActive: boolean,
 }
 
-export default class Contact extends React.Component<Props, State> {
+class Contact extends React.Component<Props, State> {
   state = {
     isOptionsModalActive: false,
   }
@@ -89,10 +92,10 @@ export default class Contact extends React.Component<Props, State> {
   }
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, contacts } = this.props;
     const { isOptionsModalActive } = this.state;
     const contact = navigation.getParam('contact', {});
-
+    const isAccepted = !!contacts.find(({ username }) => username === contact.username);
     return (
       <Container>
         <Header
@@ -119,18 +122,28 @@ export default class Contact extends React.Component<Props, State> {
               />
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>
+          {isAccepted &&
           <CircleButton label="Chat" icon="send" onPress={() => navigation.navigate(CHAT, { contact })} />
+          }
         </Wrapper>
         <SlideModal
           title="manage"
           isVisible={isOptionsModalActive}
           onModalHide={this.closeOptionsModal}
         >
-          <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
-          <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />
-          <Button secondary danger block marginBottom="10px" onPress={() => {}} title="Report / Block" />
+          <Button secondary block marginBottom="10px" onPress={() => { }} title="Mute" />
+          <Button secondary block marginBottom="10px" onPress={() => { }} title="Remove connection" />
+          <Button secondary danger block marginBottom="10px" onPress={() => { }} title="Report / Block" />
         </SlideModal>
       </Container>
     );
   }
 }
+
+const mapStateToProps = ({
+  contacts: { data: contacts },
+}) => ({
+  contacts,
+});
+
+export default connect(mapStateToProps)(Contact);

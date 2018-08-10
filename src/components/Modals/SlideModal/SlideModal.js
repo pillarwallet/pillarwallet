@@ -15,11 +15,8 @@ type Props = {
   subtitle?: string,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
+  onModalHidden?: Function,
   fullScreen?: boolean,
-  isVisible: boolean,
-};
-
-type State = {
   isVisible: boolean,
 };
 
@@ -33,17 +30,17 @@ const ModalBackground = styled.View`
   background-color: white;
   border-top-left-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
   border-top-right-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
-  padding: ${(props) => props.fullScreen ? '60px 0 80px' : '20px'};
+  padding: ${(props) => props.fullScreen ? '0' : '20px'};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
   ${props => props.fullScreen && 'height: 100%;'}
 `;
 
 const ModalSubtitle = styled(SubTitle)`
-  padding: ${(props) => props.fullScreen ? '20px 20px 0' : '10px 0'};
+  padding: 10px 0;
 `;
 
 const ModalContent = styled.View`
-  ${props => props.fullScreen && 'height: 100%;'}
+  ${props => props.fullScreen && 'height: 100%; padding: 20px 0 40px;'}
 `;
 
 const ModalOverflow = styled.View`
@@ -51,65 +48,39 @@ const ModalOverflow = styled.View`
   background-color: #FFFFFF;
 `;
 
-export default class SlideModal extends React.Component<Props, State> {
+export default class SlideModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
   };
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      isVisible: props.isVisible,
-    };
-  }
-
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    if (nextProps.isVisible !== prevState.isVisible) {
-      return {
-        isVisible: nextProps.isVisible,
-      };
-    }
-    return null;
-  }
-
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    return this.state.isVisible !== nextState.isVisible;
-  }
-
-  componentDidUpdate() {
-    Keyboard.dismiss();
-  }
-
   hideModal = () => {
     Keyboard.dismiss();
-    this.setState({
-      isVisible: false,
-    });
+    if (this.props.onModalHide) {
+      this.props.onModalHide();
+    }
   }
 
   render() {
     const {
-      isVisible,
-    } = this.state;
-    const {
       children,
       title,
       fullScreenComponent,
-      onModalHide,
+      onModalHidden,
       fullScreen,
       subtitle,
+      isVisible,
     } = this.props;
-    const animationTiming = 600;
+    const animationTiming = 500;
     return (
       <Modal
         isVisible={isVisible}
         onSwipe={this.hideModal}
-        onModalHide={onModalHide}
+        onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
-        animationIn="slideInUp"
-        animationOut="slideOutDown"
+        animationIn="bounceInUp"
+        animationOut="bounceOutDown"
         swipeDirection="down"
         hideModalContentWhileAnimating
         style={{
@@ -123,8 +94,8 @@ export default class SlideModal extends React.Component<Props, State> {
               {!fullScreen &&
                 <Header noPadding title={title} onClose={this.hideModal} />
               }
-              {subtitle &&
-                <ModalSubtitle fullScreen={fullScreen}>{subtitle}</ModalSubtitle>
+              {subtitle && !fullScreen &&
+                <ModalSubtitle>{subtitle}</ModalSubtitle>
               }
               <ModalContent fullScreen={fullScreen}>
                 {children}

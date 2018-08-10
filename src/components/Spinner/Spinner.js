@@ -1,9 +1,7 @@
 // @flow
 import React from 'react';
 import styled from 'styled-components/native';
-import { DangerZone } from 'expo';
-
-const { Lottie } = DangerZone;
+import Lottie from 'lottie-react-native';
 
 const AnimationWrapper = styled.View``;
 

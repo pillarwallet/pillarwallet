@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
@@ -13,12 +14,11 @@ import Header from 'components/Header';
 import {
   addAssetAction,
   removeAssetAction,
+  updateAssetsAction,
   fetchAssetsBalancesAction,
-  fetchSupportedAssetsAction,
 } from 'actions/assetsActions';
 import { ETH } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { Image as ImageCache } from 'react-native-expo-image-cache';
 
 const TokenName = styled(BoldText)`
   font-size: ${fontSizes.small};
@@ -33,7 +33,7 @@ const TokenListItem = styled(ListItem)`
   margin: 0;
 `;
 
-const TokenThumbnail = styled(ImageCache)`
+const TokenThumbnail = styled(CachedImage)`
   width: 44px;
   height: 44px;
   border-radius: 22px;
@@ -45,18 +45,13 @@ type Props = {
   assets: Assets,
   wallet: Object,
   fetchAssetsBalances: Function,
-  fetchSupportedAssets: Function,
+  updateAssets: Function,
   addAsset: Function,
   removeAsset: Function,
 }
 
 class AddToken extends React.Component<Props> {
   formChanged: boolean = false;
-
-  componentDidMount() {
-    const { fetchSupportedAssets } = this.props;
-    fetchSupportedAssets();
-  }
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
@@ -79,7 +74,7 @@ class AddToken extends React.Component<Props> {
         const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
         return (
           <TokenListItem key={symbol}>
-            <TokenThumbnail uri={fullIconUrl} />
+            <TokenThumbnail source={{ uri: fullIconUrl }} />
             <Body style={{ marginLeft: 20 }}>
               <TokenName>{name}</TokenName>
               <TokenSymbol>{symbol}</TokenSymbol>
@@ -99,10 +94,14 @@ class AddToken extends React.Component<Props> {
     const {
       navigation,
       fetchAssetsBalances,
+      updateAssets,
       assets,
       wallet,
     } = this.props;
-    fetchAssetsBalances(assets, wallet.address);
+    if (this.formChanged) {
+      updateAssets(assets);
+      fetchAssetsBalances(assets, wallet.address);
+    }
     navigation.goBack(null);
   };
 
@@ -140,10 +139,10 @@ const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { 
 const mapDispatchToProps = (dispatch) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchSupportedAssets: () =>
-    dispatch(fetchSupportedAssetsAction()),
-  fetchAssetsBalances: (assets, walletAddress) =>
-    dispatch(fetchAssetsBalancesAction(assets, walletAddress)),
+  updateAssets: (assets: Assets) => dispatch(updateAssetsAction(assets)),
+  fetchAssetsBalances: (assets: Assets, walletAddress) => {
+    dispatch(fetchAssetsBalancesAction(assets, walletAddress));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddToken);

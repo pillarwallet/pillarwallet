@@ -4,28 +4,15 @@ import * as React from 'react';
 import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { Root as NBRoot, Toast } from 'native-base';
-import { Font } from 'expo';
 import { showToast } from 'utils/toast';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
-import { SHOW_STORYBOOK } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import configureStore from './src/configureStore';
-import StorybookUI from './storybook';
 
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
-const aktivGroteskBold = require('./src/assets/fonts/AktivGrotesk-Bold.ttf');
-const aktivGroteskMedium = require('./src/assets/fonts/AktivGrotesk-Medium.ttf');
-const aktivGroteskRegular = require('./src/assets/fonts/AktivGrotesk-Regular.ttf');
-const aktivGroteskLight = require('./src/assets/fonts/AktivGrotesk-Light.ttf');
-const pillarIcons = require('./src/assets/fonts/PillarIcons.ttf');
-
-type State = {
-  isFetched: boolean,
-  fontLoaded: boolean,
-}
 
 type Props = {
   dispatch: Function,
@@ -34,29 +21,7 @@ type Props = {
   fetchAppSettingsAndRedirect: Function,
 }
 
-class App extends React.Component<Props, State> {
-  state = {
-    isFetched: false,
-    fontLoaded: false,
-  };
-
-  static getDerivedStateFromProps(nextProps: Props) {
-    return {
-      isFetched: nextProps.isFetched,
-    };
-  }
-
-  loadCustomFont = async () => {
-    await Font.loadAsync({
-      'aktiv-grotesk-bold': aktivGroteskBold,
-      'aktiv-grotesk-medium': aktivGroteskMedium,
-      'aktiv-grotesk-light': aktivGroteskLight,
-      'aktiv-grotesk-regular': aktivGroteskRegular,
-      'pillar-icons': pillarIcons,
-    });
-    this.setState({ fontLoaded: true });
-  };
-
+class App extends React.Component<Props, *> {
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
@@ -64,7 +29,6 @@ class App extends React.Component<Props, State> {
 
   async componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
-    this.loadCustomFont();
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
@@ -82,20 +46,16 @@ class App extends React.Component<Props, State> {
   };
 
   handleConnectivityChange = isOnline => {
-    const { fontLoaded } = this.state;
-    if (!fontLoaded) return;
-
     if (!isOnline) {
       showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 });
     } else {
-      Toast.toastInstance._root.closeToast();
+      Toast.hide();
     }
   };
 
   render() {
-    const { isFetched, fontLoaded } = this.state;
-    const { navigation, dispatch } = this.props;
-    if (!isFetched || !fontLoaded) return null;
+    const { navigation, dispatch, isFetched } = this.props;
+    if (!isFetched) return null;
 
     return (
       <ReduxifiedRootNavigation state={navigation} dispatch={dispatch} />
@@ -123,4 +83,4 @@ const Root = () => (
   </NBRoot>
 );
 
-export default (__DEV__ && SHOW_STORYBOOK === 'true') ? StorybookUI : Root;
+export default Root;
