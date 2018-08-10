@@ -112,7 +112,12 @@ android {
       }
   }
 }
-
+  // hotfix for lottie lib and Java 8 issue
+  configurations.all {
+    resolutionStrategy {
+      force 'com.airbnb.android:lottie:2.5.5'
+    }
+  }
 // Don't use modern jsc-android since it still has some critical bugs that
 // crash applications when the string for the JS bundle is loaded and when
 // locale-specific date functions are called.
@@ -168,6 +173,7 @@ dependencies {
   compile 'com.segment.analytics.android:analytics:4.3.0'
   compile 'com.google.zxing:core:3.2.1'
   compile 'net.openid:appauth:0.4.1'
+  compile 'com.airbnb.android:lottie:2.2.0'
   compile 'io.branch.sdk.android:library:2.6.1'
   compile('io.nlopez.smartlocation:library:3.2.11') {
     transitive = false
@@ -191,7 +197,7 @@ dependencies {
       transitive = false
   }
   compile project(':react-native-device-info')
-  compile "com.android.support:appcompat-v7:23.0.1"
+  compile "com.android.support:appcompat-v7:26.0.1"
   compile "com.facebook.react:react-native:+"  // From node_modules
 
 
