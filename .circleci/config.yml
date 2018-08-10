@@ -267,11 +267,13 @@ jobs:
       # - store_test_results:
       #     path: app/build/test-results
       - run:
+          name: Android bundle
+          command: yarn build:android
+      - run:
           name: Initial build
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
-
+            ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM -x bundleProdReleaseJsAndAssets
       - run:
           name: Fastlane deploy to Google Play
           command: |
