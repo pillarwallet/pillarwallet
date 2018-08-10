@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { RefreshControl, Platform } from 'react-native';
-import { PROFILE, CONTACT, CHAT } from 'constants/navigationConstants';
+import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -31,7 +31,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
@@ -52,7 +52,6 @@ type Props = {
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   getExistingChats: Function,
-  resetUnread: Function,
   chats: any,
 };
 
@@ -301,12 +300,6 @@ class HomeScreen extends React.Component<Props, State> {
     return uniqBy(concatedHistory, 'txHash');
   }
 
-  navigateToChat = (contact) => {
-    const { navigation, resetUnread } = this.props;
-    navigation.navigate(CHAT, { contact });
-    resetUnread(contact.username);
-  };
-
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -349,7 +342,6 @@ class HomeScreen extends React.Component<Props, State> {
         {
           username,
           lastMessage,
-          profileImage,
         }) => {
         if (lastMessage.savedTimestamp === '') return {};
         return {
@@ -357,7 +349,6 @@ class HomeScreen extends React.Component<Props, State> {
           username,
           type: 'CHAT',
           createdAt: lastMessage.savedTimestamp,
-          onPress: () => this.navigateToChat({ username, profileImage }),
         };
       });
 
@@ -513,7 +504,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
   getExistingChats: () => dispatch(getExistingChatsAction()),
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

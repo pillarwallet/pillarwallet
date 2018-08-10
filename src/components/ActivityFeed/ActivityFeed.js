@@ -7,6 +7,7 @@ import { utils } from 'ethers';
 import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 
+import { resetUnreadAction } from 'actions/chatActions';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
@@ -135,6 +136,7 @@ type Props = {
   activeTab: string,
   esTitle: string,
   esBody: string,
+  resetUnread: Function,
 };
 
 type State = {
@@ -212,6 +214,12 @@ class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
+  navigateToChat = (contact) => {
+    const { navigation, resetUnread } = this.props;
+    navigation.navigate(CHAT, { contact });
+    resetUnread(contact.username);
+  };
+
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const { type } = notification;
     const { walletAddress, navigation } = this.props;
@@ -246,7 +254,17 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
-    const onItemPress = (type === TYPE_ACCEPTED) ? navigateToContact : undefined;
+
+    let onItemPress;
+    if (type === TYPE_ACCEPTED) {
+      onItemPress = navigateToContact;
+    } else if (type === CHAT) {
+      onItemPress = partial(this.navigateToChat, {
+        username: notification.username,
+        profileImage: notification.avatar,
+      });
+    }
+
     const onProfileImagePress = ([TYPE_SENT, TYPE_RECEIVED].includes(type)) ? navigateToContact : undefined;
 
     return (
@@ -322,4 +340,8 @@ const mapStateToProps = ({
   notifications,
 });
 
-export default connect(mapStateToProps)(ActivityFeed);
+const mapDispatchToProps = (dispatch) => ({
+  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActivityFeed);
