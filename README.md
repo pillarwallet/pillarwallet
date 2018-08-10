@@ -73,14 +73,6 @@ Simply create a separate **.env.production** file and the default release proces
 * [Configuration](https://github.com/zetachang/react-native-dotenv)
 
 
-### React Storybook
-
-- Run storybook: `yarn storybook`
-- Set `SHOW_STORYBOOK=true` setting in `.env` file (or in `.env.development`)
-- Run the app
-- Note: RN runner likes to cache the `.env` file, so sometimes you need to restart the packager and clear the cache (`Shift + R`)
-- Open in browser `http://localhost:7007`
-
 ## Old CRNA Readme
 
 This project was bootstrapped with [Create React Native App](https://github.com/react-community/create-react-native-app).
