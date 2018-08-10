@@ -311,6 +311,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       "borderRadius": 5,
                       "borderRightWidth": null,
                       "borderTopWidth": null,
+                      "borderWidth": undefined,
                       "elevation": 0,
                       "flexDirection": "row",
                       "height": 32,
