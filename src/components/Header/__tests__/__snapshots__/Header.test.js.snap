@@ -16,6 +16,7 @@ exports[`Header should render Header correctly 1`] = `
         "paddingLeft": 20,
         "paddingRight": 20,
         "paddingTop": 0,
+        "zIndex": 10,
       },
       undefined,
     ]
