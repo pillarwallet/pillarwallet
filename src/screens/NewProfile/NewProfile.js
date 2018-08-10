@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView, Platform } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -169,6 +169,7 @@ class NewProfile extends React.Component<Props, State> {
 
   goToNextScreen() {
     const { navigation } = this.props;
+    Keyboard.dismiss();
     navigation.navigate(LEGAL_TERMS);
   }
 
