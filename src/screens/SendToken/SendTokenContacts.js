@@ -6,7 +6,7 @@ import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } fr
 import Permissions from 'react-native-permissions';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { Container } from 'components/Layout';
 import { SubTitle } from 'components/Typography';
 import { ButtonMini } from 'components/Button';
@@ -98,7 +98,7 @@ const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
 `;
 
 const FormWrapper = styled.View`
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
 `;
 
 const FooterWrapper = Platform.OS === 'ios' ?
@@ -113,14 +113,14 @@ const FooterWrapper = Platform.OS === 'ios' ?
   flex-direction: row;
   justify-content: flex-end;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
   width: 100%;
   margin-bottom: 10px;
   margin-top: 10px;
 `;
 
 const ContactCardList = styled.FlatList`
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {

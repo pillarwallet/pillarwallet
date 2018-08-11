@@ -8,10 +8,8 @@ import { showToast } from 'utils/toast';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
-import { SHOW_STORYBOOK } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import configureStore from './src/configureStore';
-import StorybookUI from './storybook';
 
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
@@ -51,7 +49,7 @@ class App extends React.Component<Props, *> {
     if (!isOnline) {
       showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 });
     } else {
-      Toast.toastInstance._root.closeToast();
+      Toast.hide();
     }
   };
 
@@ -85,4 +83,4 @@ const Root = () => (
   </NBRoot>
 );
 
-export default (__DEV__ && SHOW_STORYBOOK === 'true') ? StorybookUI : Root;
+export default Root;

@@ -2,18 +2,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { FlatList, Linking, Image, Dimensions } from 'react-native';
+import { FlatList, Image } from 'react-native';
 import styled from 'styled-components/native';
-import { TX_DETAILS_URL } from 'react-native-dotenv';
+import { format as formatDate } from 'date-fns';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
-import { Row, Column } from 'components/Grid';
-import { Label, BaseText } from 'components/Typography';
-import Button from 'components/Button';
-import { formatETHAmount } from 'utils/common';
 import { getUserName } from 'utils/contacts';
+import { spacing } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
+import TXDetails from 'components/TXDetails';
 import Item from './Item';
 import Amount from './Amount';
 import Hash from './Hash';
@@ -21,22 +19,9 @@ import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
 
-const window = Dimensions.get('window');
 const iconUp = require('assets/icons/up.png');
 const iconDown = require('assets/icons/down.png');
 
-const ContentWrapper = styled.View`
-  height: ${window.height / 2.5};
-  justify-content: space-around;
-  display: flex;
-`;
-
-const Holder = styled.View`
-  display: flex;
-  flex-direction:column;
-  justify-content: space-around;
-  align-items: center;
-`;
 
 type Props = {
   history: Transaction[],
@@ -47,18 +32,7 @@ type Props = {
 
 type State = {
   showModal: boolean,
-  selectedTransaction: {
-    hash: string,
-    date: ?string,
-    token: ?string,
-    amount: ?number,
-    recipient: ?string,
-    note: ?string,
-    fee: ?number,
-    confirmations: ?number,
-    status: ?string,
-    direction: ?string,
-  }
+  selectedTransaction: ?Transaction,
 }
 
 const flatListStyles = {
@@ -68,7 +42,7 @@ const flatListStyles = {
 
 const TXHistoryHeader = styled.View`
   align-items: flex-start;
-  padding: 10px 16px 0;
+  padding: 10px ${spacing.rhythm}px 0;
 `;
 
 const SENT = 'Sent';
@@ -81,18 +55,7 @@ class TXHistory extends React.Component<Props, State> {
 
   state = {
     showModal: false,
-    selectedTransaction: {
-      hash: '',
-      date: null,
-      token: null,
-      amount: null,
-      recipient: null,
-      fee: null,
-      note: null,
-      confirmations: null,
-      status: null,
-      direction: null,
-    },
+    selectedTransaction: null,
   };
 
   getDirectionSymbol = (direction: string) => {
@@ -104,66 +67,11 @@ class TXHistory extends React.Component<Props, State> {
     return null;
   };
 
-  getDate = (datetime: number) => {
-    const months = [
-      'JAN',
-      'FEB',
-      'MAR',
-      'APR',
-      'MAY',
-      'JUN',
-      'JUL',
-      'AUG',
-      'SEP',
-      'OCT',
-      'NOV',
-      'DEC',
-    ];
-    const date: Date = new Date(0);
-    date.setUTCSeconds(datetime);
-    return `${months[date.getMonth()]} ${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  };
-  selectTransaction = (transaction: Object) => {
-    const {
-      status,
-      to,
-      from,
-      asset,
-      nbConfirmations,
-      hash,
-      timestamp,
-      gasUsed,
-      gasPrice,
-      value,
-    } = transaction;
-    const { contacts, wallet: { address: myAddress } } = this.props;
-    const datetime = new Date(timestamp);
-    const contact = contacts
-      .find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
-    const recipient = to.toUpperCase() !== myAddress.toUpperCase()
-      ? (getUserName(contact) || `${to.slice(0, 7)}…${to.slice(-7)}`)
-      : null;
-    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
-
+  selectTransaction = (transaction: Transaction) => {
     this.setState({
-      selectedTransaction: {
-        hash,
-        date: this.getDate(datetime),
-        token: asset,
-        amount: formatETHAmount(amount),
-        recipient,
-        fee: gasUsed ? gasUsed * gasPrice : 0,
-        note: null,
-        confirmations: nbConfirmations,
-        status: status.charAt(0).toUpperCase() + status.slice(1),
-        direction: myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED,
-      },
+      selectedTransaction: transaction,
       showModal: true,
     });
-  };
-
-  viewTransactionOnBlockchain = (hash: string) => {
-    Linking.openURL(TX_DETAILS_URL + hash);
   };
 
   renderTransaction = ({ item: transaction, index }: { item: Transaction, index: number }) => {
@@ -174,11 +82,11 @@ class TXHistory extends React.Component<Props, State> {
       to,
       _id: id,
       asset,
-      timestamp,
+      createdAt,
     } = transaction;
     const { contacts, wallet: { address: myAddress } } = this.props;
     const direction = myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
-    const datetime = new Date(timestamp);
+    const dateTime = formatDate(new Date(createdAt * 1000), 'MMM Do');
     const icon = direction === SENT ? iconUp : iconDown;
     const senderRecipientAddress = direction === SENT ? to : from;
     const contact = contacts
@@ -191,7 +99,7 @@ class TXHistory extends React.Component<Props, State> {
         <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
         <Section>
           <Hash>{address}</Hash>
-          <Timestamp>{this.getDate(datetime)}</Timestamp>
+          <Timestamp>{dateTime}</Timestamp>
         </Section>
         <Section>
           <Amount direction={direction}>{this.getDirectionSymbol(direction)} {amount} {asset}</Amount>
@@ -227,61 +135,7 @@ class TXHistory extends React.Component<Props, State> {
           title="transaction details"
           onModalHide={() => { this.setState({ showModal: false }); }}
         >
-          <ContentWrapper>
-            <Holder>
-              <Row size="0 0 30px">
-                <Column>
-                  <Label>You {selectedTransaction.direction === SENT ? 'sent' : 'received'}</Label>
-                </Column>
-                <Column>
-                  <BaseText>{selectedTransaction.amount} {selectedTransaction.token}</BaseText>
-                </Column>
-              </Row>
-              <Row size="0 0 30px">
-                <Column><Label>Date</Label></Column>
-                <Column>
-                  <BaseText>{selectedTransaction.date}</BaseText>
-                </Column>
-              </Row>
-              {!!selectedTransaction.recipient &&
-                <Row size="0 0 30px">
-                  <Column><Label>Recipient</Label></Column>
-                  <Column>
-                    <BaseText>{selectedTransaction.recipient}</BaseText>
-                  </Column>
-                </Row>
-              }
-              {!!selectedTransaction.fee &&
-                <Row size="0 0 30px">
-                  <Column><Label>Transaction fee</Label></Column>
-                  <Column>
-                    <BaseText>{utils.formatEther(selectedTransaction.fee.toString())} ETH</BaseText>
-                  </Column>
-                </Row>
-              }
-
-              {selectedTransaction.note &&
-                <Row size="0 0 80px">
-                  <Column><Label>Note</Label></Column>
-                  <Column>
-                    <BaseText>{selectedTransaction.note}</BaseText>
-                  </Column>
-                </Row>
-              }
-              <Row size="0 0 30px">
-                <Column><Label>Status</Label></Column>
-                <Column>
-                  <BaseText>{selectedTransaction.status}</BaseText>
-                </Column>
-              </Row>
-            </Holder>
-            <Holder>
-              <Button
-                title="View on the blockchain"
-                onPress={() => this.viewTransactionOnBlockchain(selectedTransaction.hash)}
-              />
-            </Holder>
-          </ContentWrapper>
+          <TXDetails transaction={selectedTransaction} />
         </SlideModal>
       </React.Fragment>
     );
