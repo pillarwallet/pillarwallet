@@ -43,7 +43,7 @@
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "generate:ios:ipa": "react-native run-ios --configuration=release && mkdir build/Build/Products/Release-iphonesimulator/Payload && cp -R build/Build/Products/Release-iphonesimulator/pillarwallet.app build/Build/Products/Release-iphonesimulator/Payload && /usr/bin/zip -r  pillarwallet.ipa build/Build/Products/Release-iphonesimulator/Payload && rm -rf build/Build/Products/Release-iphonesimulator/Payload",
+    "generate:ios:ipa": "react-native run-ios --configuration=release && mkdir build/Build/Products/Release-iphonesimulator/Payload && cp -R build/Build/Products/Release-iphonesimulator/pillarwallet.app build/Build/Products/Release-iphonesimulator/Payload && build/Build/Products/Release-iphonesimulator/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../../ && cd ../../../..",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/pillarwallet/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
     "test": "jest",
