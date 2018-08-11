@@ -10,7 +10,7 @@ import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import type { Assets } from 'models/Asset';
+import type { Assets, Balances } from 'models/Asset';
 import Button from 'components/Button';
 
 import {
@@ -29,7 +29,7 @@ type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
-  balances: Assets,
+  balances: Balances,
   wallet: Object,
   rates: Object,
   assetsState: ?string,
