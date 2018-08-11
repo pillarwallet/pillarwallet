@@ -179,8 +179,11 @@ jobs:
           paths:
             - vendor/bundle
       - run:
+          name: Inject build number
+          command: sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillarwallet/Info.plist\"")
+      - run:
           name: Execute Fastlane deployment to TestFlight
-          command: cd ios && bundle exec fastlane build_test_flight
+          command: cd ios && yarn generate:ios:ipa && bundle exec fastlane build_test_flight
           environment:
             SCAN_DEVICE: iPhone 8
       - run:
@@ -305,6 +308,7 @@ workflows:
             branches:
               only:
                   - master
+                  - feature/ios-deployment
       - deploy_android:
           requires:
             - build
