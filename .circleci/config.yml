@@ -180,10 +180,10 @@ jobs:
             - vendor/bundle
       - run:
           name: Inject build number
-          command: bundle exec fastlane inject_build_number
+          command: cd ios && bundle exec fastlane inject_build_number
       - run:
           name: Execute Fastlane deployment to TestFlight
-          command: cd ios && yarn generate:ios:ipa && bundle exec fastlane build_test_flight
+          command: yarn generate:ios:ipa && bundle exec fastlane build_test_flight
           environment:
             SCAN_DEVICE: iPhone 8
       - run:
