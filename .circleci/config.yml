@@ -177,18 +177,18 @@ jobs:
       - save_cache:
           key: gems-{{ checksum "./ios/Gemfile" }}
           paths:
-            - vendor/bundle
+            - vendor/bundle          
       - run:
           name: Inject build number
           command: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $CIRCLE_BUILD_NUM" ~/pillarwallet/ios/pillarwallet/Info.plist
       - run:
           name: Generate IPA
-          command: yarn generate:ios:ipa
+          command: cd ios && fastlane gym --workspace "pillarwallet.xcworkspace" --include_bitcode true
           environment:
             SCAN_DEVICE: iPhone 8
-      - run:
-          name: Upload to TestFlight
-          command: cd ios && bundle exec fastlane build_test_flight
+    #   - run:
+    #       name: Upload to TestFlight
+    #       command: cd ios && bundle exec fastlane build_test_flight
       - run:
           name: Announce Deployment
           command: |
