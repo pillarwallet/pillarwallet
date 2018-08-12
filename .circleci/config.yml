@@ -182,10 +182,13 @@ jobs:
           name: Inject build number
           command: cd ios && bundle exec fastlane inject_build_number
       - run:
-          name: Execute Fastlane deployment to TestFlight
-          command: yarn generate:ios:ipa && bundle exec fastlane build_test_flight
+          name: Generate IPA
+          command: yarn generate:ios:ipa
           environment:
             SCAN_DEVICE: iPhone 8
+      - run:
+          name: Upload to TestFlight
+          command: cd ios && bundle exec fastlane build_test_flight
       - run:
           name: Announce Deployment
           command: |
