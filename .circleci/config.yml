@@ -180,7 +180,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Inject build number
-          command: cd ios && bundle exec fastlane inject_build_number
+          command: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $CIRCLE_BUILD_NUM" ~/pillarwallet/ios/pillarwallet/Info.plist
       - run:
           name: Generate IPA
           command: yarn generate:ios:ipa
