@@ -47,7 +47,8 @@ platform :ios do
               workspace: "pillarwallet.xcworkspace",
               scheme: "pillarwallet",
               configuration: "Release",
-              export_method: "app-store"
+              export_method: "app-store",
+              include_bitcode: true
     )
   end
 
