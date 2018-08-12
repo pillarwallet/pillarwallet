@@ -183,12 +183,12 @@ jobs:
           command: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $CIRCLE_BUILD_NUM" ~/pillarwallet/ios/pillarwallet/Info.plist
       - run:
           name: Generate IPA
-          command: cd ios && bundle exec fastlane gym --workspace "pillarwallet.xcworkspace" --include_bitcode true --scheme pillarwallet
+          command: cd ios && yarn generate:ios:ipa
           environment:
             SCAN_DEVICE: iPhone 8
-    #   - run:
-    #       name: Upload to TestFlight
-    #       command: cd ios && bundle exec fastlane build_test_flight
+      - run:
+          name: Upload to TestFlight
+          command: cd ios && bundle exec fastlane build_test_flight
       - run:
           name: Announce Deployment
           command: |

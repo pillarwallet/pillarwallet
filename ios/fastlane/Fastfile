@@ -22,16 +22,13 @@ platform :ios do
     )
   end
 
-  desc "Inject Build Number"
-  lane :inject_build_number do
-    sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillarwallet/Info.plist\"")
-  end
-
   desc "Upload a new build to TestFlight"
   lane :build_test_flight do
     match(type: "appstore",
           readonly: true)
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
+    sigh(force: true)
+    sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
     commit = last_git_commit
      upload_to_testflight(changelog: commit[:message],
      skip_waiting_for_build_processing: true
