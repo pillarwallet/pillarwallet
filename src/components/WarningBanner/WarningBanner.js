@@ -28,7 +28,7 @@ const WarningBanner = (props: Props) => {
   return (
     <WarningBannerBackground small={props.small} rounded={props.rounded}>
       <WarningBannerText small={props.small}>
-        This wallet is deployed on Ropsten. Do not send real ETH or ERC20 tokens.
+        Do not send real ETH or ERC20 tokens.
       </WarningBannerText>
     </WarningBannerBackground>
   );

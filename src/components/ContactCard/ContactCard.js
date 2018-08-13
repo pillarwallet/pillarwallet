@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
-import { baseColors, UIColors, fontSizes, itemSizes } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, itemSizes, spacing } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import ButtonIcon from 'components/ButtonIcon';
@@ -10,6 +10,23 @@ import { noop } from 'utils/common';
 import styled from 'styled-components/native';
 import { BoldText, BaseText } from 'components/Typography';
 
+type Props = {
+  onPress?: Function,
+  name: string,
+  avatar?: string,
+  notificationCount?: number,
+  showActions?: boolean,
+  status?: string,
+  noMargin?: boolean,
+  onAcceptInvitationPress?: Function,
+  onRejectInvitationPress?: Function,
+  onCancelInvitationPress?: Function,
+  onSendInvitationPress?: Function,
+  noBorder?: boolean,
+  disabled?: boolean,
+  customButton?: React.Node,
+};
+
 const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
   border: ${props => (props.noBorder ? 0 : '1px solid')};
@@ -17,8 +34,7 @@ const ContactCardWrapper = styled.TouchableHighlight`
   height: 75px;
   padding: ${props => (props.noBorder ? '14px 0' : '14px')};
   border-radius: 4px;
-  // Should be replaced with variable once move to 20px is merged
-  margin: 0 16px;
+  margin: ${props => props.noMargin ? '0' : `0 ${spacing.rhythm}px`};
 `;
 
 const ContactCardInner = styled.View`
@@ -99,22 +115,6 @@ const ActionButtonText = styled(BoldText)`
   color: ${baseColors.white};
 `;
 
-type Props = {
-  onPress?: Function,
-  name: string,
-  avatar?: string,
-  notificationCount?: number,
-  showActions?: boolean,
-  status?: string,
-  onAcceptInvitationPress?: Function,
-  onRejectInvitationPress?: Function,
-  onCancelInvitationPress?: Function,
-  onSendInvitationPress?: Function,
-  noBorder?: boolean,
-  disabled?: boolean,
-  customButton?: React.Node,
-};
-
 const maxContactInfoWidth = Dimensions.get('window').width - 220;
 
 // TODO: convert into dumb component
@@ -192,6 +192,7 @@ export default class ContactCard extends React.Component<Props> {
       avatar,
       onPress,
       noBorder,
+      noMargin,
       disabled,
     } = this.props;
 
@@ -200,6 +201,7 @@ export default class ContactCard extends React.Component<Props> {
         onPress={onPress}
         underlayColor={baseColors.lightGray}
         noBorder={noBorder}
+        noMargin={noMargin}
         disabled={disabled}
       >
         <ContactCardInner>
