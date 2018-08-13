@@ -22,7 +22,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.airbnb.android.react.lottie.LottiePackage;
-
+import com.BV.LinearGradient.LinearGradientPackage;
 import io.fabric.sdk.android.Fabric;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 
@@ -56,7 +56,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseCrashlyticsPackage(),
           new RNDeviceInfo(),
           new IntercomPackage(),
-          new LottiePackage()
+          new LottiePackage(),
+          new LinearGradientPackage()
       );
     }
 
