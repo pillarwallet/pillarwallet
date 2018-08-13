@@ -114,14 +114,16 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   handlePendingNotificationOpen = () => {
     const { isSubmitted } = this.state;
-    if (!isSubmitted) return;
+    if (!isSubmitted) {
+      this.handleCheckPinModalClose();
+      return;
+    }
     this.setState({ showTransactionPendingModal: true });
   };
 
   handleCheckPinModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
-    this.setState({ showCheckPinModal: false });
   };
 
   makeTransaction = () => {
