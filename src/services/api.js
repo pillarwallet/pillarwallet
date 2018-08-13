@@ -118,11 +118,13 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
         fromAddress,
         toAddress,
         txHash,
+        timestamp,
         ...rest
       }): Transaction => ({
         to: toAddress,
         from: fromAddress,
         hash: txHash,
+        createdAt: timestamp,
         ...rest,
       }));
     })

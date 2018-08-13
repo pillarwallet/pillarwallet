@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
-import { ONBOARDING_FLOW } from 'constants/navigationConstants';
+import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container, Center } from 'components/Layout';
 import { BaseText } from 'components/Typography';
@@ -25,7 +25,7 @@ class PinCodeUnlock extends React.Component<Props, *> {
   };
 
   handleForgotPasscode = () => {
-    this.props.navigation.navigate(ONBOARDING_FLOW);
+    this.props.navigation.navigate(FORGOT_PIN);
   };
 
   render() {

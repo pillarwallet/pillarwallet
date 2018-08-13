@@ -66,7 +66,7 @@ const FloatingButton = styled(IconButton)`
 `;
 
 const ErrorMessage = styled(BaseText)`
-  color: tomato;
+  color: ${baseColors.fireEngineRed};
   flex: 1;
 `;
 

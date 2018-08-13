@@ -26,7 +26,7 @@ type Props = {
 
 const Wrapper = styled.View`
   border-bottom-width: 0;
-  padding: ${props => props.noPadding ? 0 : '0 16px'};
+  padding: ${props => props.noPadding ? 0 : '0 20px'};
   height: 40px;
   justify-content: flex-end;
   align-items: flex-end;
@@ -38,8 +38,8 @@ const Wrapper = styled.View`
 const BackIcon = styled(IconButton)`
   position: relative;
   align-self: flex-start;
-  height: 32px;
-  padding-right: 10px;
+  height: 44px;
+  padding-right: 18px;
 `;
 
 const CloseIconText = styled(BaseText)`
@@ -54,13 +54,13 @@ const CloseIconWrapper = styled.View`
 `;
 
 const CloseIcon = styled(IconButton)`
-  height: 32px;
-  padding-left: 10px;
+  height: 44px;
+  padding-left: 18px;
 `;
 
 const NextIcon = styled(IconButton)`
-  height: 32px;
-  padding-left: 10px;
+  height: 44px;
+  padding-left: 18px;
 `;
 
 const HeaderLeft = styled(Left)`

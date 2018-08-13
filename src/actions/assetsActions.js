@@ -3,7 +3,6 @@ import merge from 'lodash.merge';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
-  UPDATE_SUPPORTED_ASSETS,
   ADD_ASSET,
   REMOVE_ASSET,
   SET_INITIAL_ASSETS,
@@ -11,9 +10,10 @@ import {
   FETCHING_INITIAL,
   FETCH_INITIAL_FAILED,
   ETH,
+  UPDATE_BALANCES,
 } from 'constants/assetsConstants';
 import { ADD_TRANSACTION } from 'constants/historyConstants';
-import { SET_RATES } from 'constants/ratesConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
 import {
   transferETH,
   transferERC20,
@@ -66,6 +66,16 @@ export const sendAssetAction = ({
   };
 };
 
+export const updateAssetsAction = (assets: Assets) => {
+  return async (dispatch: Function) => {
+    await storage.save('assets', { assets }, true);
+    dispatch({
+      type: UPDATE_ASSETS,
+      payload: assets,
+    });
+  };
+};
+
 export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     dispatch({
@@ -74,26 +84,14 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     });
 
     const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
-    const updatedAssets = merge({}, assets, transformAssetsToObject(balances));
-    // @TODO: Extra "rates fetching" to it's own action ones required.
-    const rates = await getExchangeRates(Object.keys(updatedAssets));
-    await storage.save('assets', { assets: updatedAssets }, true);
-    dispatch({ type: SET_RATES, payload: rates });
-    dispatch({
-      type: UPDATE_ASSETS,
-      payload: updatedAssets,
-    });
-  };
-};
+    const transformedBalances = transformAssetsToObject(balances);
+    await storage.save('balances', { balances: transformedBalances }, true);
+    dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
 
-export const fetchSupportedAssetsAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const { user: { data: { walletId } } } = getState();
-    const assets = await api.fetchSupportedAssets(walletId);
-    dispatch({
-      type: UPDATE_SUPPORTED_ASSETS,
-      payload: assets,
-    });
+    // @TODO: Extra "rates fetching" to it's own action ones required.
+    const rates = await getExchangeRates(Object.keys(assets));
+    await storage.save('rates', { rates }, true);
+    dispatch({ type: UPDATE_RATES, payload: rates });
   };
 };
 
@@ -122,7 +120,7 @@ export const fetchInitialAssetsAction = (walletAddress: string) => {
 
     const rates = await getExchangeRates(Object.keys(initialAssets));
     dispatch({
-      type: SET_RATES,
+      type: UPDATE_RATES,
       payload: rates,
     });
 
