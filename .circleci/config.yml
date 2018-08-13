@@ -155,9 +155,6 @@ jobs:
           paths:
             - ./ios/Pods
       - run:
-          name: Build ios bundle
-          command: yarn build:ios
-      - run:
           name: Install Bundler
           command: sudo gem install bundler
       - run:
@@ -178,14 +175,6 @@ jobs:
           key: gems-{{ checksum "./ios/Gemfile" }}
           paths:
             - vendor/bundle          
-      - run:
-          name: Inject build number
-          command: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $CIRCLE_BUILD_NUM" ~/pillarwallet/ios/pillarwallet/Info.plist
-      - run:
-          name: Generate IPA
-          command: cd ios && xcodebuild -workspace pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath build && yarn generate:ios:ipa
-          environment:
-            SCAN_DEVICE: iPhone 8
       - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane build_test_flight
