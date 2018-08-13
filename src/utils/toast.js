@@ -24,8 +24,10 @@ function getTheme(type: string) {
   });
 }
 
-export const showToast = (info: Object) => {
+export const showToast = (info: Object, forceShow: boolean = false) => {
   const theme = getTheme(info.type);
+
+  if (!forceShow) return;
 
   Toast.show({
     text: info.text,

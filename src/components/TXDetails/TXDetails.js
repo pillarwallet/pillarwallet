@@ -101,11 +101,11 @@ const TXDetails = (props: Props) => {
           </Column>
         </Row>
         }
-        {!!tx.fee &&
+        {!!tx.fee && !!tx.confirmations &&
         <Row size="0 0 30px">
           <Column><Label>Transaction fee</Label></Column>
           <Column>
-            <BaseText>{utils.formatEther(tx.fee.toString())} ETH</BaseText>
+            <BaseText>{utils.formatEther(Math.round(tx.fee).toString())} ETH</BaseText>
           </Column>
         </Row>
         }

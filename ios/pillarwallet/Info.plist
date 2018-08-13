@@ -17,11 +17,13 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>0.0.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2461</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -35,10 +37,30 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Allow Pillar Wallet to access Apple Music</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Allow Pillar Wallet use your bluetooth</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Allow Pillar Wallet to access your calendar</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Scan QR codes and avatars</string>
+	<string>Allow Pillar Wallet to use your camera</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Allow Pillar Wallet to access your contacts</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string>Allow Pillar Wallet to use your location</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow Pillar Wallet to access your microphone</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Allow Pillar Wallet to access your device's accelerometer</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Give Pillar Wallet permission to save photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Give Pillar Wallet permission to access your photos</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Allow Pillar Wallet to access your reminders</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Allow Pillar Wallet recognize speech</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AktivGrotesk-Bold.ttf</string>
@@ -74,6 +96,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDefault</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
