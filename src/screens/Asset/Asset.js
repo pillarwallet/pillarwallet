@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import type { Assets, Balances } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
@@ -36,7 +36,7 @@ type Props = {
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   history: Transaction[],
   assets: Assets,
-  balances: Assets,
+  balances: Balances,
   wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
