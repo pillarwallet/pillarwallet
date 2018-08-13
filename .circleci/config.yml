@@ -101,7 +101,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Execute Fastlane Build for Simulator testing
-          command: cd ios && bundle exec fastlane build_ios_simulator
+          command: cd ios && xcodebuild archive -archivePath ./build/pillarwallet -allowProvisioningUpdates -scheme pillarwallet -configuration release -workspace ./pillarwallet.xcworkspace
           environment:
             SCAN_DEVICE: iPhone 8
       - store_artifacts:
