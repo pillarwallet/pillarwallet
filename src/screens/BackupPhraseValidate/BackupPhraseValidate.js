@@ -29,8 +29,8 @@ const WordInputFields = styled.View`
 const MnemonicPhraseWord = styled.TouchableHighlight`
   background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
   border-radius: 6;
-  padding: 5px 10px;
-  margin: 0 5px 10px;
+  padding: 14px 5px;
+  margin: 0 2.5px 5px;
 `;
 
 const MnemonicPhraseWordText = styled(BoldText)`
