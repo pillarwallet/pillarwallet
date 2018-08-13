@@ -24,15 +24,16 @@ platform :ios do
 
   desc "Upload a new build to TestFlight"
   lane :build_test_flight do
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    #sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
           readonly: true)
-    sh "xcodebuild archive -archivePath ../build/pillarwallet -allowProvisioningUpdates -scheme pillarwallet -configuration release -workspace ../pillarwallet.xcworkspace ENABLE_BITCODE=NO -derivedDataPath ~/Library/Developer/Xcode/DerivedData"
-    sh "xcodebuild -archivePath ../build/pillarwallet.xcarchive -exportPath ../ipa -exportArchive -exportOptionsPlist ../pillarwallet/ExportOptions.plist"
+    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath ../build"
+    sh "mkdir ../app && mkdir ../build/Build/Products/Release-iphoneos/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet.app ../build/Build/Products/Release-iphoneos/Payload && mv ../build/Build/Products/Release-iphoneos/Payload ../app  && cp -R ../pillarwallet/SwiftSupport ../app && rm -rf ../build/Build/Products/Release-iphoneos/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && /usr/bin/zip -r ../pillarwallet.ipa ../app"
+    sigh(force: true)
+    sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
     commit = last_git_commit
      upload_to_testflight(changelog: commit[:message],
      skip_waiting_for_build_processing: true,
-     ipa: "ipa/pillarwallet.ipa"
     )
   end
 
