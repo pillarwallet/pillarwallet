@@ -6,7 +6,7 @@ import { TextLink, BaseText } from 'components/Typography';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import { noop } from 'utils/common';
 
 type Props = {
@@ -35,11 +35,11 @@ const Wrapper = styled.View`
   margin-top: ${Platform.OS === 'android' ? '20px' : '0'};
 `;
 
-const BackIcon = styled(ButtonIcon)`
+const BackIcon = styled(IconButton)`
   position: relative;
   align-self: flex-start;
-  height: 32px;
-  padding-right: 10px;
+  height: 44px;
+  padding-right: 18px;
 `;
 
 const CloseIconText = styled(BaseText)`
@@ -53,14 +53,14 @@ const CloseIconWrapper = styled.View`
   justify-content: flex-end;
 `;
 
-const CloseIcon = styled(ButtonIcon)`
-  height: 32px;
-  padding-left: 10px;
+const CloseIcon = styled(IconButton)`
+  height: 44px;
+  padding-left: 18px;
 `;
 
-const NextIcon = styled(ButtonIcon)`
-  height: 32px;
-  padding-left: 10px;
+const NextIcon = styled(IconButton)`
+  height: 44px;
+  padding-left: 18px;
 `;
 
 const HeaderLeft = styled(Left)`

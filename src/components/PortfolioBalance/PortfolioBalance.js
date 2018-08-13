@@ -2,39 +2,35 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import type { Asset, Assets } from 'models/Asset';
+import type { Assets, Balances, Rates } from 'models/Asset';
 import { BaseText } from 'components/Typography';
 import { connect } from 'react-redux';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-type Rates = {
-  [string]: {
-    [string]: number,
-  },
-};
-
 type Props = {
   assets: Assets,
   rates: Rates,
+  balances: Balances,
   baseFiatCurrency: string,
   label?: string,
   style: Object,
 };
 
 class PortfolioBalance extends React.Component<Props, {}> {
-  calculatePortfolioBalance(assets: Assets, rates: Rates) {
+  calculatePortfolioBalance(assets: Assets, rates: Rates, balances: Object) {
     // CLEANUP REQUIRED
     return Object
       .keys(assets)
       .map(key => assets[key])
-      .map((item: Asset) => {
-        const assetRates = rates[item.symbol] || {};
+      .map(({ symbol }) => {
+        const assetRates = rates[symbol] || {};
+        const balance = Number(balances[symbol] && balances[symbol].balance) || 0;
         const assetFiatBalance = Object
           .keys(assetRates)
           .map(key => ({
             currency: key,
-            total: assetRates[key] * (item.balance || 0),
+            total: assetRates[key] * (balance || 0),
           }));
         return assetFiatBalance;
       })
@@ -52,6 +48,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
       style,
       assets,
       rates,
+      balances,
       baseFiatCurrency,
       label,
     } = this.props;
@@ -60,7 +57,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
       return null;
     }
 
-    let portfolioBalance = this.calculatePortfolioBalance(assets, rates);
+    let portfolioBalance = this.calculatePortfolioBalance(assets, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     portfolioBalance = formatMoney(portfolioBalance[fiatCurrency]);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
@@ -89,12 +86,13 @@ class PortfolioBalance extends React.Component<Props, {}> {
 }
 
 const mapStateToProps = ({
-  assets: { data: assets },
+  assets: { data: assets, balances },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   rates,
   assets,
+  balances,
   baseFiatCurrency,
 });
 export default connect(mapStateToProps)(PortfolioBalance);

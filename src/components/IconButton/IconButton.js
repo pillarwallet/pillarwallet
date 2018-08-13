@@ -15,7 +15,7 @@ type Props = {
   margin?: number,
 }
 
-const ButtonIcon = (props: Props) => {
+const IconButton = (props: Props) => {
   const {
     icon,
     onPress,
@@ -63,4 +63,4 @@ const ButtonIcon = (props: Props) => {
   );
 };
 
-export default ButtonIcon;
+export default IconButton;
