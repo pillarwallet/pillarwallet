@@ -177,7 +177,7 @@ jobs:
             - vendor/bundle          
       - run:
           name: Upload to TestFlight
-          command: cd ios && bundle exec fastlane build_test_flight
+          command: cd ios && xcodebuild archive -archivePath ./build/pillarwallet -allowProvisioningUpdates -scheme pillarwallet -configuration release -workspace ./pillarwallet.xcworkspace
       - run:
           name: Announce Deployment
           command: |
