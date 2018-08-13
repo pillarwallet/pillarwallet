@@ -7,7 +7,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import {
+  fetchTransactionsHistoryAction,
+  fetchOlderTransactionsHistoryAction,
+} from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
@@ -34,6 +37,7 @@ const activeModalResetState = {
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  fetchOlderTransactionsHistory: (walletAddress: string, asset: string) => Function,
   history: Transaction[],
   assets: Assets,
   balances: Balances,
@@ -104,6 +108,22 @@ class AssetScreen extends React.Component<Props, State> {
     });
   };
 
+  onScrollWrapperEndDrag = (e) => {
+    const {
+      fetchOlderTransactionsHistory,
+      wallet,
+    } = this.props;
+    const { assetData } = this.props.navigation.state.params;
+
+    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
+    const contentHeight = e.nativeEvent.contentSize.height;
+    const offsetY = e.nativeEvent.contentOffset.y;
+
+    if (layoutHeight + offsetY + 200 >= contentHeight) {
+      fetchOlderTransactionsHistory(wallet.address, assetData.token);
+    }
+  };
+
   render() {
     const {
       assets,
@@ -131,6 +151,7 @@ class AssetScreen extends React.Component<Props, State> {
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.handleCardTap} />
         <ScrollWrapper
+          onScrollEndDrag={this.onScrollWrapperEndDrag}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -203,6 +224,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   fetchTransactionsHistory: (walletAddress, asset) => {
     dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
+  },
+  fetchOlderTransactionsHistory: (walletAddress, asset) => {
+    dispatch(fetchOlderTransactionsHistoryAction(walletAddress, asset));
   },
 });
 
