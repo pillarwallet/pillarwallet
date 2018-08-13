@@ -183,7 +183,7 @@ jobs:
           command: /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $CIRCLE_BUILD_NUM" ~/pillarwallet/ios/pillarwallet/Info.plist
       - run:
           name: Generate IPA
-          command: cd ios && yarn generate:ios:ipa
+          command: cd ios && xcodebuild -workspace pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath build && yarn generate:ios:ipa
           environment:
             SCAN_DEVICE: iPhone 8
       - run:
