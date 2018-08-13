@@ -101,7 +101,7 @@ const TXDetails = (props: Props) => {
           </Column>
         </Row>
         }
-        {!!tx.fee &&
+        {!!tx.fee && !!tx.confirmations &&
         <Row size="0 0 30px">
           <Column><Label>Transaction fee</Label></Column>
           <Column>
