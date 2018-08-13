@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>app-store</string>
+    <key>teamID</key>
+    <string>J9DEY3FGPD</string>
+    <key>compileBitcode</key>
+    <false/>
+    <key>uploadSymbols</key>
+    <true/>
+    <key>signingCertificate</key>
+    <string>iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.pillarproject.wallet</key>
+        <string>match AppStore com.pillarproject.wallet 1526587087</string>
+    </dict>
+</dict>
+</plist>

@@ -101,7 +101,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Execute Fastlane Build for Simulator testing
-          command: cd ios && bundle exec fastlane build_ios_simulator
+          command: cd ios && xcodebuild archive -archivePath ./build/pillarwallet -allowProvisioningUpdates -scheme pillarwallet -configuration release -workspace ./pillarwallet.xcworkspace
           environment:
             SCAN_DEVICE: iPhone 8
       - store_artifacts:
@@ -155,9 +155,6 @@ jobs:
           paths:
             - ./ios/Pods
       - run:
-          name: Build ios bundle
-          command: yarn build:ios
-      - run:
           name: Install Bundler
           command: sudo gem install bundler
       - run:
@@ -177,12 +174,10 @@ jobs:
       - save_cache:
           key: gems-{{ checksum "./ios/Gemfile" }}
           paths:
-            - vendor/bundle
+            - vendor/bundle          
       - run:
-          name: Execute Fastlane deployment to TestFlight
+          name: Upload to TestFlight
           command: cd ios && bundle exec fastlane build_test_flight
-          environment:
-            SCAN_DEVICE: iPhone 8
       - run:
           name: Announce Deployment
           command: |
