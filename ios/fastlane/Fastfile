@@ -27,7 +27,7 @@ platform :ios do
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
           readonly: true)
-    sh "xcodebuild archive -archivePath ../build/pillarwallet -allowProvisioningUpdates -scheme pillarwallet -configuration release -workspace ../pillarwallet.xcworkspace ENABLE_BITCODE=NO"
+    sh "xcodebuild archive -archivePath ../build/pillarwallet -allowProvisioningUpdates -scheme pillarwallet -configuration release -workspace ../pillarwallet.xcworkspace ENABLE_BITCODE=NO -derivedDataPath ~/Library/Developer/Xcode/DerivedData"
     sh "xcodebuild -archivePath ../build/pillarwallet.xcarchive -exportPath ../ipa -exportArchive -exportOptionsPlist ../pillarwallet/ExportOptions.plist"
     commit = last_git_commit
      upload_to_testflight(changelog: commit[:message],
