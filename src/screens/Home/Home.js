@@ -11,7 +11,7 @@ import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import { uniqBy } from 'utils/common';
+import { uniqBy, isIphoneX } from 'utils/common';
 import { getUserName } from 'utils/contacts';
 import {
   fetchTransactionsHistoryNotificationsAction,
@@ -21,6 +21,8 @@ import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
+import Camera from 'components/Camera';
+import Permissions from 'react-native-permissions';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import {
@@ -57,6 +59,8 @@ type State = {
   activeTab: string,
   esTitle: string,
   esBody: string,
+  showCamera: boolean,
+  permissionsGranted: boolean,
 };
 
 const TRANSACTIONS = 'TRANSACTIONS';
@@ -66,7 +70,7 @@ const ALL = 'ALL';
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
-  margin-top: ${Platform.OS === 'android' ? '20px' : 0};
+  margin-top: ${isIphoneX() ? '0' : '20px'};
 `;
 
 const HomeHeaderRow = styled.View`
@@ -94,7 +98,9 @@ const HomeHeaderUsername = styled(BaseText)`
 `;
 
 const HomeHeaderButton = styled(IconButton)`
-  align-self: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
+  align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
+  width: 44px;
+  height: 44px;
 `;
 
 const HomeHeaderProfileImage = styled(ProfileImage)`
@@ -174,6 +180,11 @@ const TabItemIcon = styled(Icon)`
   color: ${props => props.active ? baseColors.white : baseColors.darkGray};
 `;
 
+const CameraIcon = styled(Icon)`
+  font-size: ${fontSizes.extraLarge};
+  color: ${baseColors.electricBlue};
+`;
+
 const TabItemText = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${props => props.active ? baseColors.white : baseColors.darkGray};
@@ -202,9 +213,14 @@ class HomeScreen extends React.Component<Props, State> {
     activeTab: 'ALL',
     esTitle: 'Make your first step',
     esBody: 'Your activity will appear here.',
+    showCamera: false,
+    permissionsGranted: false,
   };
 
   componentDidMount() {
+    const { fetchInviteNotifications } = this.props;
+    fetchInviteNotifications();
+
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
       () => { this.props.setUnreadNotificationsStatus(false); },
@@ -220,6 +236,14 @@ class HomeScreen extends React.Component<Props, State> {
     navigation.navigate(PROFILE);
   };
 
+  toggleCamera = async () => {
+    const status = await Permissions.request('photo');
+    this.setState({
+      permissionsGranted: status === 'authorized',
+      showCamera: !this.state.showCamera,
+    });
+  }
+
   renderRecentConnections = () => {
     const { contacts, navigation } = this.props;
     return contacts
@@ -232,7 +256,7 @@ class HomeScreen extends React.Component<Props, State> {
         >
           <RecentConnectionsItemAvatarWrapper>
             <ProfileImage
-              uri={contact.avatar}
+              uri={contact.profileImage}
               userName={contact.username}
               diameter={48}
             />
@@ -311,10 +335,15 @@ class HomeScreen extends React.Component<Props, State> {
       navigation,
       chats,
     } = this.props;
-    const { activeTab, esBody, esTitle } = this.state;
+    const {
+      activeTab,
+      esBody,
+      esTitle,
+      showCamera,
+      permissionsGranted,
+    } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-
     const chatNotifications = chats.chats
       .map((
         {
@@ -359,10 +388,13 @@ class HomeScreen extends React.Component<Props, State> {
 
               <HomeHeaderBody>
                 <HomeHeaderProfileImage
-                  uri={user.avatar}
+                  uri={`${user.profileImage}?${+new Date()}`}
                   userName={user.username}
                   diameter={72}
-                />
+                  onPress={this.toggleCamera}
+                >
+                  <CameraIcon name="camera" />
+                </HomeHeaderProfileImage>
               </HomeHeaderBody>
 
               <HomeHeaderRight>
@@ -445,6 +477,11 @@ class HomeScreen extends React.Component<Props, State> {
             esTitle={esTitle}
           />
         </ScrollWrapper>
+        <Camera
+          isVisible={showCamera}
+          modalHide={this.toggleCamera}
+          permissionsGranted={permissionsGranted}
+        />
       </Container>
     );
   }

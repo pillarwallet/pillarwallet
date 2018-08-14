@@ -59,6 +59,19 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
     .catch(() => ({}));
 };
 
+SDKWrapper.prototype.updateUserAvatar = function (walletId: string, formData: Object) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
+    .then(({ data }) => ({ profileImage: data.profileImage, walletId }))
+    .catch((err) => { console.log('returned error', err); }); // eslint-disable-line
+};
+
+SDKWrapper.prototype.getUserAvatar = function (userId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
+    .catch((err) => { console.log('returned error', err); }); // eslint-disable-line
+};
+
 SDKWrapper.prototype.userInfo = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.info({ walletId }))
