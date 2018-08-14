@@ -125,7 +125,12 @@ class Camera extends React.Component<Props, State> {
 
   takePicture = () => {
     if (this.camera) {
-      return this.camera.takePictureAsync({ base64: true })
+      return this.camera.takePictureAsync({
+        base64: true,
+        forceUpOrientation: true,
+        fixOrientation: true,
+        mirrorImage: true,
+      })
         .then((res) => {
           this.setState({
             previewBase64: `data:image/jpg;base64,${res.base64}`,
