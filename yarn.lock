@@ -727,7 +727,7 @@
   version "0.2.29"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.4.627":
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.9.698":
   version "1.9.698"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.9.698.tgz#c70c88167d7e37e7f62a9e42cd27cc2d6d644f09"
   dependencies:
@@ -787,8 +787,8 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
 
 "@types/node@*":
-  version "10.5.7"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.5.7.tgz#960d9feb3ade2233bcc9843c918d740b4f78a7cf"
+  version "10.7.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@types/node/-/node-10.7.0.tgz#d384b2c8625414ab2aa18fdf989c288d6a7a8202"
 
 "@types/node@9.6.6":
   version "9.6.6"
@@ -2869,12 +2869,12 @@ caniuse-api@^1.5.2:
     lodash.uniq "^4.5.0"
 
 caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
-  version "1.0.30000876"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-db/-/caniuse-db-1.0.30000876.tgz#0cbd78ad84900196982e5145c26170f6d6a93fd7"
+  version "1.0.30000877"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-db/-/caniuse-db-1.0.30000877.tgz#29ea435fdbe8a671cc5b027a75e28a816c17c340"
 
 caniuse-lite@^1.0.30000844:
-  version "1.0.30000874"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-lite/-/caniuse-lite-1.0.30000874.tgz#a641b1f1c420d58d9b132920ef6ba87bbdcd2223"
+  version "1.0.30000877"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/caniuse-lite/-/caniuse-lite-1.0.30000877.tgz#f189673b86ecc06436520e3e391de6a13ca923b4"
 
 capture-exit@^1.2.0:
   version "1.2.0"
@@ -3010,8 +3010,8 @@ chrome-trace-event@^1.0.0:
     tslib "^1.9.0"
 
 ci-info@^1.0.0:
-  version "1.1.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ci-info/-/ci-info-1.1.3.tgz#710193264bb05c77b8c90d02f5aaf22216a667b2"
+  version "1.2.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ci-info/-/ci-info-1.2.0.tgz#8d1e9cb4051482ff70cd52a89b4b095a8fb635f6"
 
 cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3:
   version "1.0.4"
@@ -4034,8 +4034,8 @@ ee-first@1.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
 electron-to-chromium@^1.2.7, electron-to-chromium@^1.3.47:
-  version "1.3.57"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/electron-to-chromium/-/electron-to-chromium-1.3.57.tgz#61b2446f16af26fb8873210007a7637ad644c82d"
+  version "1.3.58"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/electron-to-chromium/-/electron-to-chromium-1.3.58.tgz#8267a4000014e93986d9d18c65a8b4022ca75188"
 
 elliptic@6.3.3:
   version "6.3.3"
@@ -4204,8 +4204,8 @@ es-to-primitive@^1.1.1:
     is-symbol "^1.0.1"
 
 es5-ext@^0.10.35, es5-ext@^0.10.9, es5-ext@~0.10.14:
-  version "0.10.45"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es5-ext/-/es5-ext-0.10.45.tgz#0bfdf7b473da5919d5adf3bd25ceb754fccc3653"
+  version "0.10.46"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/es5-ext/-/es5-ext-0.10.46.tgz#efd99f67c5a7ec789baa3daa7f79870388f7f572"
   dependencies:
     es6-iterator "~2.0.3"
     es6-symbol "~3.1.1"
@@ -4317,8 +4317,8 @@ eslint-plugin-flowtype@^2.46.1:
     lodash "^4.17.10"
 
 eslint-plugin-import@^2.10.0:
-  version "2.13.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-import/-/eslint-plugin-import-2.13.0.tgz#df24f241175e312d91662dc91ca84064caec14ed"
+  version "2.14.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-import/-/eslint-plugin-import-2.14.0.tgz#6b17626d2e3e6ad52cfce8807a845d15e22111a8"
   dependencies:
     contains-path "^0.1.0"
     debug "^2.6.8"
@@ -4332,8 +4332,8 @@ eslint-plugin-import@^2.10.0:
     resolve "^1.6.0"
 
 eslint-plugin-jest@^21.15.0:
-  version "21.20.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-jest/-/eslint-plugin-jest-21.20.2.tgz#136dfe946e9a015e643f074ade2fdb9932e8bab3"
+  version "21.21.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-jest/-/eslint-plugin-jest-21.21.0.tgz#f0afd138c4acb5f0cd7698318fb49c7d49f3bf45"
 
 eslint-plugin-jsx-a11y@^6.0.3:
   version "6.1.1"
@@ -4363,9 +4363,10 @@ eslint-plugin-react-native@^3.2.1:
     eslint-plugin-react-native-globals "^0.1.1"
 
 eslint-plugin-react@^7.7.0:
-  version "7.10.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-react/-/eslint-plugin-react-7.10.0.tgz#af5c1fef31c4704db02098f9be18202993828b50"
+  version "7.11.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-react/-/eslint-plugin-react-7.11.1.tgz#c01a7af6f17519457d6116aa94fc6d2ccad5443c"
   dependencies:
+    array-includes "^3.0.3"
     doctrine "^2.1.0"
     has "^1.0.3"
     jsx-ast-utils "^2.0.1"
@@ -4970,8 +4971,8 @@ flush-write-stream@^1.0.0:
     readable-stream "^2.0.4"
 
 follow-redirects@^1.0.0, follow-redirects@^1.3.0:
-  version "1.5.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/follow-redirects/-/follow-redirects-1.5.2.tgz#5a9d80e0165957e5ef0c1210678fc5c4acb9fb03"
+  version "1.5.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/follow-redirects/-/follow-redirects-1.5.5.tgz#3c143ca599a2e22e62876687d68b23d55bad788b"
   dependencies:
     debug "^3.1.0"
 
@@ -5630,7 +5631,7 @@ iconv-lite@0.4.19:
   version "0.4.19"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
-iconv-lite@^0.4.17, iconv-lite@^0.4.22, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
+iconv-lite@0.4.23, iconv-lite@^0.4.17, iconv-lite@^0.4.22, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
   version "0.4.23"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/iconv-lite/-/iconv-lite-0.4.23.tgz#297871f63be507adcfbfca715d0cd0eed84e9a63"
   dependencies:
@@ -8159,8 +8160,8 @@ negotiator@0.6.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
 neo-async@^2.5.0:
-  version "2.5.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/neo-async/-/neo-async-2.5.1.tgz#acb909e327b1e87ec9ef15f41b8a269512ad41ee"
+  version "2.5.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/neo-async/-/neo-async-2.5.2.tgz#489105ce7bc54e709d736b195f82135048c50fcc"
 
 neptune-namespaces-runtime@*:
   version "3.0.7"
@@ -8185,8 +8186,8 @@ nice-try@^1.0.4:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
 
 nise@^1.2.0:
-  version "1.4.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/nise/-/nise-1.4.2.tgz#a9a3800e3994994af9e452333d549d60f72b8e8c"
+  version "1.4.3"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/nise/-/nise-1.4.3.tgz#d1996e8d15256ceff1a0a1596e0c72bff370e37c"
   dependencies:
     "@sinonjs/formatio" "^2.0.0"
     just-extend "^1.1.27"
@@ -8752,7 +8753,7 @@ parse5@4.0.0:
   version "4.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/parse5/-/parse5-4.0.0.tgz#6d78656e3da8d78b4ec0b906f7c08ef1dfe3f608"
 
-parse5@^3.0.1, parse5@^3.0.2:
+parse5@^3.0.1:
   version "3.0.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/parse5/-/parse5-3.0.3.tgz#042f792ffdd36851551cf4e9e066b3874ab45b5c"
   dependencies:
@@ -9781,11 +9782,10 @@ react-native-camera@^1.1.4:
     prop-types "^15.5.10"
 
 react-native-canvas@^0.1.20:
-  version "0.1.22"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-canvas/-/react-native-canvas-0.1.22.tgz#5485a7c672ec9236e160b8797759ce2ebd3ffb43"
+  version "0.1.23"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-canvas/-/react-native-canvas-0.1.23.tgz#2c147ff16c511505ba07e9042e93b7291988dc30"
   dependencies:
     ctx-polyfill lifaon74/ctx-polyfill
-    parse5 "^3.0.2"
 
 react-native-clcasher@1.0.0:
   version "1.0.0"
@@ -9882,9 +9882,9 @@ react-native-gifted-chat@^0.4.3:
     shallowequal "1.0.2"
     uuid "3.2.1"
 
-react-native-intercom@^11.0.0:
-  version "11.2.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-11.2.0.tgz#b55714d7ab085d8727f1cfcbf4de43ef2de1cde5"
+react-native-intercom@^12.0.0:
+  version "12.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-12.0.0.tgz#c1e5445730250f6430c4737f39c386758f106d24"
 
 react-native-invertible-scroll-view@^1.1.0:
   version "1.1.1"
@@ -11965,8 +11965,8 @@ uglify-to-browserify@~1.0.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz#6e0924d6bda6b5afe349e39a6d632850a0f882b7"
 
 uglifyjs-webpack-plugin@^1.2.4:
-  version "1.2.7"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.2.7.tgz#57638dd99c853a1ebfe9d97b42160a8a507f9d00"
+  version "1.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.3.0.tgz#75f548160858163a08643e086d5fefe18a5d67de"
   dependencies:
     cacache "^10.0.4"
     find-cache-dir "^1.0.0"
@@ -12533,10 +12533,10 @@ websocket-extensions@>=0.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
 
 whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3:
-  version "1.0.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/whatwg-encoding/-/whatwg-encoding-1.0.3.tgz#57c235bc8657e914d24e1a397d3c82daee0a6ba3"
+  version "1.0.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/whatwg-encoding/-/whatwg-encoding-1.0.4.tgz#63fb016b7435b795d9025632c086a5209dbd2621"
   dependencies:
-    iconv-lite "0.4.19"
+    iconv-lite "0.4.23"
 
 whatwg-fetch@>=0.10.0:
   version "2.0.4"
