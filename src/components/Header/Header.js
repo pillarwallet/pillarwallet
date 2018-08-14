@@ -6,7 +6,7 @@ import { TextLink, BaseText } from 'components/Typography';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import { noop } from 'utils/common';
 
 type Props = {
@@ -37,7 +37,7 @@ const Wrapper = styled.View`
   z-index: 10;
 `;
 
-const BackIcon = styled(ButtonIcon)`
+const BackIcon = styled(IconButton)`
   position: relative;
   align-self: flex-start;
   height: 44px;
@@ -49,18 +49,18 @@ const CloseIconText = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
 `;
 
-const CloseIconWrapper = styled.View`
+const IconWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
 `;
 
-const CloseIcon = styled(ButtonIcon)`
+const CloseIcon = styled(IconButton)`
   height: 44px;
   padding-left: 18px;
 `;
 
-const NextIcon = styled(ButtonIcon)`
+const NextIcon = styled(IconButton)`
   height: 44px;
   padding-left: 18px;
 `;
@@ -97,7 +97,7 @@ const Header = (props: Props) => {
     headerRightFlex,
     overlay,
   } = props;
-  const showRight = nextText || onBack || onClose;
+  const showRight = nextText || nextIcon || onBack || onClose;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
@@ -138,15 +138,17 @@ const Header = (props: Props) => {
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
           {nextIcon &&
-            <NextIcon
-              icon={nextIcon}
-              color={light ? baseColors.white : UIColors.primary}
-              onPress={onNextPress}
-              fontSize={fontSizes.small}
-            />
+            <IconWrapper>
+              <NextIcon
+                icon={nextIcon}
+                color={light ? baseColors.white : UIColors.primary}
+                onPress={onNextPress}
+                fontSize={fontSizes.small}
+              />
+            </IconWrapper>
           }
           {onClose &&
-            <CloseIconWrapper>
+            <IconWrapper>
               {onCloseText &&
                 <CloseIconText light={light} >{onCloseText}</CloseIconText>
               }
@@ -156,7 +158,7 @@ const Header = (props: Props) => {
                 onPress={onClose}
                 fontSize={fontSizes.small}
               />
-            </CloseIconWrapper>
+            </IconWrapper>
           }
         </HeaderRight>
       }

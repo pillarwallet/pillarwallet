@@ -11,7 +11,7 @@ import { resetUnreadAction } from 'actions/chatActions';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
@@ -101,7 +101,7 @@ const ActivityFeedItemCol = styled.View`
   justify-content: center;
 `;
 
-const ActionCircleButton = styled(ButtonIcon)`
+const ActionCircleButton = styled(IconButton)`
   height: 34px;
   width: 34px;
   border-radius: 17px;

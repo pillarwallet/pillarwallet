@@ -12,48 +12,14 @@ import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import type { ApiUser } from 'models/Contacts';
+import CircleButton from 'components/CircleButton';
 
-const imageChat = require('assets/images/btn_chat.png');
-
-const ChatButton = styled.TouchableOpacity`
-  justify-content: center;
-  align-items: center;
-  margin: 40px 14px;
-  padding: 6px;
-`;
-
-const ImageHolder = styled.View`
-  border-radius: 50;
-  width: 54px;
-  height: 54px;
-  background: ${baseColors.lightGray};
-  justify-content: center;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  box-shadow: .5px 1px 1px ${baseColors.mediumGray};
-  elevation: 6;
-  z-index: 2;
-`;
-
-const ChatButtonImage = styled.Image`
-  width: 27px;
-  height: 27px;
-  justify-content: center;
-  display: flex;
-`;
-
-const ChatButtonText = styled(BoldText)`
-  color: ${baseColors.electricBlue};
-  text-align: center;
-  margin-top: 10px;
-`;
-
-const ContactWapper = styled.View`
+const ContactWrapper = styled.View`
   height: 218px;
   position: relative;
   justify-content: flex-end;
   margin-top: 30px;
+  margin-bottom: 20px;
 `;
 
 const ContactHeader = styled.View`
@@ -139,7 +105,7 @@ class Contact extends React.Component<Props, State> {
           nextIcon="more"
         />
         <Wrapper regularPadding>
-          <ContactWapper>
+          <ContactWrapper>
             <ContactHeader>
               <ContactHeaderBody>
                 <ContactHeaderName>
@@ -155,14 +121,9 @@ class Contact extends React.Component<Props, State> {
                 textStyle={{ fontSize: 32 }}
               />
             </ContactHeaderAvatarWrapper>
-          </ContactWapper>
+          </ContactWrapper>
           {isAccepted &&
-            <ChatButton onPress={() => { navigation.navigate(CHAT, { contact }); }}>
-              <ImageHolder>
-                <ChatButtonImage source={imageChat} />
-              </ImageHolder>
-              <ChatButtonText>CHAT</ChatButtonText>
-            </ChatButton>
+          <CircleButton label="Chat" icon="send" onPress={() => navigation.navigate(CHAT, { contact })} />
           }
         </Wrapper>
         <SlideModal

@@ -9,7 +9,7 @@ import { Container, Wrapper, Footer } from 'components/Layout';
 import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {
@@ -29,8 +29,8 @@ const WordInputFields = styled.View`
 const MnemonicPhraseWord = styled.TouchableHighlight`
   background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
   border-radius: 6;
-  padding: 5px 10px;
-  margin: 0 5px 10px;
+  padding: 14px 5px;
+  margin: 0 2.5px 5px;
 `;
 
 const MnemonicPhraseWordText = styled(BoldText)`
@@ -66,7 +66,7 @@ const WordInputNumber = styled(Label)`
   line-height: 42px;
 `;
 
-const RemoveWordButtonIcon = styled(ButtonIcon)`
+const RemoveWordButtonIcon = styled(IconButton)`
   height: 42px;
   margin-left: ${Platform.OS === 'ios' ? '14px' : '6px'};
   margin-top: ${Platform.OS === 'ios' ? 0 : '-4px'};

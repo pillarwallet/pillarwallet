@@ -143,6 +143,7 @@ dependencies {
   }
   compile "com.google.firebase:firebase-messaging:17.1.0"
   compile 'me.leolin:ShortcutBadger:1.1.21@aar'
+  compile project(':react-native-linear-gradient')
 
   provided 'org.glassfish:javax.annotation:3.1.1'
   compile 'com.jakewharton:butterknife:7.0.1'
