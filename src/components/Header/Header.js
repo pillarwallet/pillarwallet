@@ -47,7 +47,7 @@ const CloseIconText = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
 `;
 
-const CloseIconWrapper = styled.View`
+const IconWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
@@ -94,7 +94,7 @@ const Header = (props: Props) => {
     light,
     headerRightFlex,
   } = props;
-  const showRight = nextText || onBack || onClose;
+  const showRight = nextText || nextIcon || onBack || onClose;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
@@ -135,15 +135,17 @@ const Header = (props: Props) => {
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
           }
           {nextIcon &&
-            <NextIcon
-              icon={nextIcon}
-              color={light ? baseColors.white : UIColors.primary}
-              onPress={onNextPress}
-              fontSize={fontSizes.small}
-            />
+            <IconWrapper>
+              <NextIcon
+                icon={nextIcon}
+                color={light ? baseColors.white : UIColors.primary}
+                onPress={onNextPress}
+                fontSize={fontSizes.small}
+              />
+            </IconWrapper>
           }
           {onClose &&
-            <CloseIconWrapper>
+            <IconWrapper>
               {onCloseText &&
                 <CloseIconText light={light} >{onCloseText}</CloseIconText>
               }
@@ -153,7 +155,7 @@ const Header = (props: Props) => {
                 onPress={onClose}
                 fontSize={fontSizes.small}
               />
-            </CloseIconWrapper>
+            </IconWrapper>
           }
         </HeaderRight>
       }
