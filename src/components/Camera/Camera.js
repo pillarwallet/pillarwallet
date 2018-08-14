@@ -6,11 +6,11 @@ import { Text, Dimensions } from 'react-native';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
-import { Container, Footer } from 'components/Layout';
+import { Footer } from 'components/Layout';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
-import { baseColors } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 
 type Props = {
   onModalHide?: Function,
@@ -29,6 +29,12 @@ type State = {
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
+
+
+const HeaderWrapper = styled.SafeAreaView`
+  margin-bottom: auto;
+  width: 100%;
+`;
 
 const PhotoBoundaries = styled.View`
   height: ${Dimensions.get('window').width - 40};
@@ -58,11 +64,10 @@ const NoPermissions = styled.View`
 `;
 
 const ImageCircle = styled.Image`
-  width: 160px;
+  width: ${spacing.rhythm * 8};
   height: 160px;
   border-radius: 80px;
   resizeMode: cover;
-  margin-bottom: 10px;
 `;
 
 const ResultScreen = styled.View`
@@ -180,7 +185,9 @@ class Camera extends React.Component<Props, State> {
         type="front"
         ratio="16:9"
       >
-        <Header light flexStart onClose={modalHide} />
+        <HeaderWrapper>
+          <Header light flexStart onClose={modalHide} />
+        </HeaderWrapper>
       </RNCamera>
       <PhotoBoundariesWrapper pointerEvents="none">
         <PhotoBoundaries color={baseColors.white} />
@@ -225,9 +232,7 @@ class Camera extends React.Component<Props, State> {
           justifyContent: 'flex-start',
         }}
       >
-        <Container>
-          {content}
-        </Container>
+        {content}
       </Modal>
     );
   }
