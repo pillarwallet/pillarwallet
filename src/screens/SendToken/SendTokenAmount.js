@@ -69,7 +69,7 @@ function AmountInputTemplate(locals) {
     ellipsizeMode: 'middle',
     keyboardType: 'decimal-pad',
     textAlign: 'right',
-    autoCapitalize: 'none',
+    autoCapitalize: 'words',
   };
 
   return (
