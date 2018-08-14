@@ -30,7 +30,6 @@ const ContainerInner = styled.View`
   height: 100%;
   align-items: ${props => (props.center ? 'center' : 'stretch')};
   justify-content: ${props => (props.center ? 'center' : 'flex-start')};
-  background-color: ${props => props.color ? props.color : 'transparent'};
 `;
 
 export const Container = (props: ContainerProps) => {

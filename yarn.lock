@@ -727,7 +727,7 @@
   version "0.2.29"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.4.622":
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.4.627":
   version "1.9.698"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.9.698.tgz#c70c88167d7e37e7f62a9e42cd27cc2d6d644f09"
   dependencies:

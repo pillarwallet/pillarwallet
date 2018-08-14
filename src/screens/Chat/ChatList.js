@@ -57,7 +57,7 @@ class ChatListScreen extends React.Component<Props, State> {
     return (
       <ChatListItem
         userName={contact.username}
-        avatar={contact.avatar}
+        avatar={contact.profileImage}
         message={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={unread}

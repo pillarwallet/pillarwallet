@@ -54,7 +54,8 @@ const getTheme = (props: Props) => {
   }
   if (props.secondary && props.danger) {
     return themes.secondaryDanger;
-  } else if (props.danger) {
+  }
+  if (props.danger) {
     return themes.danger;
   }
   if (props.secondary) {
