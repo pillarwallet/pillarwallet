@@ -24,7 +24,7 @@ import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
 const { Form } = t.form;
-const gasLimit = 21000;
+const gasLimit = 500000;
 
 const getFormStructure = (maxAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
