@@ -18,7 +18,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -93,7 +93,7 @@ const HomeHeaderUsername = styled(BaseText)`
   margin-bottom: 5px;
 `;
 
-const HomeHeaderButton = styled(ButtonIcon)`
+const HomeHeaderButton = styled(IconButton)`
   align-self: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
 `;
 

@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
 import { fontSizes, fontWeights, baseColors } from 'utils/variables';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import { View, TouchableOpacity, Platform } from 'react-native';
 
@@ -54,7 +54,7 @@ const inputTypes = {
   },
 };
 
-const FloatingButton = styled(ButtonIcon)`
+const FloatingButton = styled(IconButton)`
   position:absolute;
   right: 0;
   top: 20px;

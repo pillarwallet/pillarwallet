@@ -4,7 +4,7 @@ import { Platform, Dimensions } from 'react-native';
 import { baseColors, UIColors, fontSizes, itemSizes, spacing } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
 import { noop } from 'utils/common';
 import styled from 'styled-components/native';
@@ -72,7 +72,7 @@ const StatusText = styled(BaseText)`
   margin-left: auto;
 `;
 
-const ActionCircleButton = styled(ButtonIcon)`
+const ActionCircleButton = styled(IconButton)`
   height: 34px;
   width: 34px;
   border-radius: 17px;
