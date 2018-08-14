@@ -22,12 +22,6 @@ jobs:
       - run:
           name: Run validation
           command: yarn validate
-      - run:
-          name: Run unit test and generate coverage stats
-          command:  yarn test:coverage
-      - store_artifacts:
-          path: ./reports/
-          destination: reports
 
   test_ios:
     working_directory: ~/pillarwallet
@@ -174,7 +168,7 @@ jobs:
       - save_cache:
           key: gems-{{ checksum "./ios/Gemfile" }}
           paths:
-            - vendor/bundle          
+            - vendor/bundle
       - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane build_test_flight
