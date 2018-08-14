@@ -15,7 +15,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
-import Separator from 'components/Separator';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
@@ -209,7 +208,6 @@ class SendTokenContacts extends React.Component<Props, State> {
           data={localContacts}
           renderItem={this.renderContact}
           keyExtractor={({ username }) => username}
-          ItemSeparatorComponent={Separator}
         />
       </React.Fragment>
     );
