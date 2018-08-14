@@ -2,14 +2,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView as RNKeyboardAvoidingView, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import Permissions from 'react-native-permissions';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
-import { Container } from 'components/Layout';
-import { SubTitle } from 'components/Typography';
-import { ButtonMini } from 'components/Button';
+import { Container, Footer } from 'components/Layout';
+import Title from 'components/Title';
+import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -89,35 +89,11 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
-  flex: 1;
-  position: absolute;
-  bottom: 40;
-  left: 0;
-  width: 100%;
-`;
 
 const FormWrapper = styled.View`
   padding: 0 ${spacing.rhythm}px;
 `;
 
-const FooterWrapper = Platform.OS === 'ios' ?
-  styled.View`
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 20px;
-  width: 100%;
-` :
-  styled.View`
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  padding: 0 ${spacing.rhythm}px;
-  width: 100%;
-  margin-bottom: 10px;
-  margin-top: 10px;
-`;
 
 const ContactCardList = styled.FlatList`
   padding: 0 ${spacing.rhythm}px;
@@ -173,11 +149,10 @@ class SendTokenContacts extends React.Component<Props, State> {
   renderContact = ({ item: user }) => {
     return (
       <ContactCard
+        noMargin
         name={user.username}
         avatar={user.profileImage}
         key={user.id}
-        showActions
-        noBorder
         onPress={() => this.setUsersEthAddress(user.ethAddress)}
       />
     );
@@ -220,7 +195,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const FormContent = (
       <React.Fragment>
         <FormWrapper>
-          <SubTitle margin="0px">To whom you would like to send?</SubTitle>
+          <Title subtitle title="To whom you would like to send?" />
           <Form
             ref={node => { this._form = node; }}
             type={formStructure}
@@ -239,44 +214,21 @@ class SendTokenContacts extends React.Component<Props, State> {
       </React.Fragment>
     );
 
-    const layout = Platform.OS === 'ios' ?
-      (
-        <Container>
-          <Header
-            onClose={this.props.navigation.dismiss}
-            onCloseText="STEP 1 OF 3"
-            title="send"
-            centerTitle
-          />
-          {FormContent}
-          {qrScannerComponent}
-          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
-            {!!value.address.length &&
-            <FooterWrapper>
-              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-            </FooterWrapper>
-            }
-          </KeyboardAvoidingView>
-        </Container>
-      ) :
-      (
-        <Container>
-          <Header
-            onClose={this.props.navigation.dismiss}
-            onCloseText="STEP 1 OF 3"
-            title="send"
-            centerTitle
-          />
-          {FormContent}
-          {!!value.address.length &&
-          <FooterWrapper>
-            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-          </FooterWrapper>
-          }
-          {qrScannerComponent}
-        </Container>
-      );
-    return layout;
+    return (
+      <Container>
+        <Header
+          onClose={this.props.navigation.dismiss}
+          onCloseText="Step 1 of 3"
+          title="send"
+          centerTitle
+        />
+        {FormContent}
+        {qrScannerComponent}
+        <Footer>
+          <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
+        </Footer>
+      </Container>
+    );
   }
 }
 
