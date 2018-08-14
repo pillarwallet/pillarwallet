@@ -133,6 +133,7 @@ class PeopleScreen extends React.Component<Props, State> {
       onPress={this.handleContactCardPress(item)}
       name={item.username}
       key={item.id}
+      avatar={item.profileImage}
     />
   );
 
