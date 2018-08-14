@@ -1,25 +1,25 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { TouchableOpacity, KeyboardAvoidingView as RNKeyboardAvoidingView, View, Platform } from 'react-native';
+import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { utils, providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, Footer, Wrapper } from 'components/Layout';
 import SingleInput from 'components/TextInput/SingleInput';
-import { ButtonMini } from 'components/Button';
+import Button from 'components/Button';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import { SubTitle, TextLink, Paragraph, BaseText } from 'components/Typography';
+import { TextLink, Paragraph, Label } from 'components/Typography';
+import Title from 'components/Title';
 import Header from 'components/Header';
 import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Balances } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
-import { baseColors, spacing } from 'utils/variables';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -96,48 +96,12 @@ const generateFormOptions = (config: Object): Object => ({
   },
 });
 
-const KeyboardAvoidingView = Platform.OS === 'ios' ?
-  styled(RNKeyboardAvoidingView)`
-  flex: 1;
-  position: absolute;
-  bottom: 40;
-  left: 0;
-  width: 100%;
-` :
-  styled(RNKeyboardAvoidingView)`
-  flex: 1;
-  width: 100%;
-  justify-content: space-between;
-  padding-bottom: 50px;
-`;
-
-const BodyWrapper = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-`;
-
 const ActionsWrapper = styled.View`
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: space-between;
 `;
 
-const FooterWrapper = Platform.OS === 'ios' ?
-  styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  width: 100%;
-` :
-  styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 ${spacing.rhythm}px;
-  width: 100%;
-  margin-bottom: 20px;
-  margin-top: 30px;
-`;
 
 type Props = {
   token: string;
@@ -225,6 +189,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         symbol: this.assetData.symbol,
         contractAddress: this.assetData.contractAddress,
       };
+      Keyboard.dismiss();
       navigation.navigate(SEND_TOKEN_CONFIRM, {
         assetData: this.assetData,
         transactionPayload,
@@ -265,91 +230,42 @@ class SendTokenAmount extends React.Component<Props, State> {
     const {
       value,
       formStructure,
-      txFeeInWei,
     } = this.state;
     const { token, icon, balance: unformattedBalance } = this.assetData;
     const balance = formatAmount(unformattedBalance);
     const formOptions = generateFormOptions({ icon, currency: token });
-    const txFeeInWeiFormatted = txFeeInWei && formatAmount(utils.formatEther(txFeeInWei.toString()), 8);
+    return (
+      <Container>
+        <Header
+          onBack={() => this.props.navigation.goBack(null)}
+          onClose={this.props.navigation.dismiss}
+          onCloseText="Step 2 of 3"
+          title="send"
+        />
+        <WarningBanner small />
+        <Wrapper regularPadding>
+          <Title subtitle title={`How much ${token} would you like to send?`} />
+          <Form
+            ref={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            value={value}
+            onChange={this.handleChange}
+          />
+          <ActionsWrapper>
+            <Paragraph small><Label>Balance</Label> {balance} {token}</Paragraph>
+            <TouchableOpacity onPress={this.useMaxValue}>
+              <TextLink>Send All</TextLink>
+            </TouchableOpacity>
+          </ActionsWrapper>
 
-    const layout = Platform.OS === 'ios' ?
-      (
-        <ScrollWrapper color={baseColors.white}>
-          <Container>
-            <Header
-              onBack={() => this.props.navigation.goBack(null)}
-              onClose={this.props.navigation.dismiss}
-              onCloseText="STEP 2 OF 3"
-              title="send"
-            />
-            <WarningBanner />
-            <Wrapper regularPadding>
-              <SubTitle>How much {token} would you like to send?</SubTitle>
-              <Form
-                ref={node => { this._form = node; }}
-                type={formStructure}
-                options={formOptions}
-                value={value}
-                onChange={this.handleChange}
-              />
-              <ActionsWrapper>
-                <Paragraph style={{ marginRight: 24 }}>Balance {balance} {token}</Paragraph>
-                <TouchableOpacity onPress={this.useMaxValue}>
-                  <TextLink>Send All</TextLink>
-                </TouchableOpacity>
-              </ActionsWrapper>
-            </Wrapper>
-          </Container>
-          <FooterWrapper>
-            <BaseText>Fee
-              <TextLink>
-                {txFeeInWeiFormatted !== null && txFeeInWeiFormatted !== undefined && ` ${txFeeInWeiFormatted} ETH`}
-              </TextLink>
-            </BaseText>
-            <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-          </FooterWrapper>
-        </ScrollWrapper>
-      ) :
-      (
-        <Container>
-          <KeyboardAvoidingView behavior="padding">
-            <View>
-              <Header
-                onBack={() => this.props.navigation.goBack(null)}
-                onClose={this.props.navigation.dismiss}
-                onCloseText="STEP 2 OF 3"
-                title="send"
-              />
-              <WarningBanner />
-              <BodyWrapper>
-                <SubTitle>How much {token} would you like to send?</SubTitle>
-                <Form
-                  ref={node => { this._form = node; }}
-                  type={formStructure}
-                  options={formOptions}
-                  value={value}
-                  onChange={this.handleChange}
-                />
-                <ActionsWrapper>
-                  <Paragraph style={{ marginRight: 24 }}>Balance {balance} {token}</Paragraph>
-                  <TouchableOpacity onPress={this.useMaxValue}>
-                    <TextLink>Send All</TextLink>
-                  </TouchableOpacity>
-                </ActionsWrapper>
-              </BodyWrapper>
-            </View>
-            <FooterWrapper>
-              <BaseText>Fee
-                <TextLink>
-                  {txFeeInWeiFormatted !== null && txFeeInWeiFormatted !== undefined && ` ${txFeeInWeiFormatted} ETH`}
-                </TextLink>
-              </BaseText>
-              <ButtonMini title="Next" onPress={this.handleFormSubmit} />
-            </FooterWrapper>
-          </KeyboardAvoidingView>
-        </Container>
-      );
-    return layout;
+        </Wrapper>
+        <Footer>
+
+          <Button small flexRight title="Next" onPress={this.handleFormSubmit} />
+        </Footer>
+      </Container>
+    );
   }
 }
 

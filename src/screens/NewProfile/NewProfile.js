@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors } from 'utils/variables';
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import { baseColors, spacing } from 'utils/variables';
+import { Container, Footer, Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
@@ -26,8 +26,8 @@ const LoginForm = styled(Form)`
 const LoadingMessageWrapper = styled.View`
   align-items: center;
   flex-direction: row;
-  flex: 1;
-  margin-bottom: 20px;
+  margin: ${spacing.rhythm}px 0;
+  width: 100%;
 `;
 
 const LoadingMessage = styled(BaseText)`
@@ -186,7 +186,7 @@ class NewProfile extends React.Component<Props, State> {
           title="choose username"
           onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
         />
-        <ScrollWrapper regularPadding>
+        <Wrapper regularPadding>
           <LoginForm
             innerRef={node => { this._form = node; }}
             type={formStructure}
@@ -194,28 +194,25 @@ class NewProfile extends React.Component<Props, State> {
             value={value}
             onChange={this.handleChange}
           />
+          {isCheckingUsernameAvailability &&
+            <LoadingMessageWrapper>
+              <Spinner />
+              <LoadingMessage>Checking username availability…</LoadingMessage>
+            </LoadingMessageWrapper>
+          }
 
-        </ScrollWrapper>
+        </Wrapper>
+
         <Footer>
-          <KeyboardAvoidingView
-            style={{ width: '100%' }}
-            behavior={Platform.OS === 'ios' ? 'position' : 'padding'}
-            keyboardVerticalOffset={20}
-          >
-            {isCheckingUsernameAvailability &&
-              <LoadingMessageWrapper>
-                <Spinner />
-                <LoadingMessage>Checking username availability…</LoadingMessage>
-              </LoadingMessageWrapper>
-            }
-            <Button
-              small
-              flexRight
-              onPress={this.handleSubmit}
-              disabled={shouldNextButtonBeDisabled}
-              title="Next"
-            />
-          </KeyboardAvoidingView>
+
+          <Button
+            small
+            flexRight
+            onPress={this.handleSubmit}
+            disabled={shouldNextButtonBeDisabled}
+            title="Next"
+          />
+
         </Footer>
       </Container>
     );
