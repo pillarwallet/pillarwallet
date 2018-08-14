@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
 import { Left, Body, Right } from 'native-base';
 import { TextLink, BaseText } from 'components/Typography';
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { isIphoneX, noop } from 'utils/common';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
-import { noop } from 'utils/common';
 
 type Props = {
   onBack?: Function,
@@ -19,6 +18,7 @@ type Props = {
   title?: string,
   centerTitle?: boolean,
   noPadding?: boolean,
+  flexStart?: boolean,
   light?: boolean,
   style?: Object,
   headerRightFlex?: string,
@@ -32,8 +32,8 @@ const Wrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
-  margin-top: ${Platform.OS === 'android' ? '20px' : '0'};
-  margin-bottom: ${props => props.overlay ? '-40px' : '20px'};
+  margin-top: ${isIphoneX() ? '0' : '20px'};
+  margin-bottom: ${props => props.flexStart ? 'auto' : '20px'};
   z-index: 10;
 `;
 
@@ -41,7 +41,7 @@ const BackIcon = styled(IconButton)`
   position: relative;
   align-self: flex-start;
   height: 44px;
-  padding-right: 18px;
+  width: 44px;
 `;
 
 const CloseIconText = styled(BaseText)`
@@ -55,14 +55,10 @@ const IconWrapper = styled.View`
   justify-content: flex-end;
 `;
 
-const CloseIcon = styled(IconButton)`
-  height: 44px;
-  padding-left: 18px;
-`;
-
 const NextIcon = styled(IconButton)`
   height: 44px;
-  padding-left: 18px;
+  width: 44px;
+  align-items: flex-end;
 `;
 
 const HeaderLeft = styled(Left)`
@@ -96,6 +92,7 @@ const Header = (props: Props) => {
     light,
     headerRightFlex,
     overlay,
+    flexStart,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose;
   const titleOnBack = title && onBack;
@@ -113,7 +110,7 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper overlay={overlay} style={style} noPadding={noPadding}>
+    <Wrapper overlay={overlay} flexStart={flexStart} style={style} noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon
@@ -152,7 +149,7 @@ const Header = (props: Props) => {
               {onCloseText &&
                 <CloseIconText light={light} >{onCloseText}</CloseIconText>
               }
-              <CloseIcon
+              <NextIcon
                 icon="close"
                 color={light ? baseColors.white : UIColors.primary}
                 onPress={onClose}

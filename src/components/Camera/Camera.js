@@ -2,7 +2,7 @@
 import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import { Text, Dimensions, Platform } from 'react-native';
+import { Text, Dimensions } from 'react-native';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
@@ -27,6 +27,9 @@ type State = {
   imageUri: string,
 };
 
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
+
 const PhotoBoundaries = styled.View`
   height: ${Dimensions.get('window').width - 40};
   width: ${Dimensions.get('window').width - 40};
@@ -35,7 +38,16 @@ const PhotoBoundaries = styled.View`
   border-style: dashed;
   border-color: ${props => props.color};
   background-color: transparent;
-  margin-bottom: 40px;
+`;
+
+const PhotoBoundariesWrapper = styled.View`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  justify-content: center;
+  align-items: center;
 `;
 
 const NoPermissions = styled.View`
@@ -85,10 +97,6 @@ const CameraButtonInner = styled.View`
   background-color: ${baseColors.white};
   border-radius: 22px;
 `;
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
-const cameraHeight = screenWidth * (16 / 9);
 
 class Camera extends React.Component<Props, State> {
   camera: ?Object;
@@ -165,7 +173,7 @@ class Camera extends React.Component<Props, State> {
         }}
         style={{
           width: screenWidth,
-          height: Platform.OS === 'ios' ? screenHeight : cameraHeight,
+          height: screenHeight,
           alignItems: 'center',
           justifyContent: 'center',
         }}
@@ -173,8 +181,10 @@ class Camera extends React.Component<Props, State> {
         ratio="16:9"
       >
         <Header light flexStart onClose={modalHide} />
-        <PhotoBoundaries color="#ffffff" />
       </RNCamera>
+      <PhotoBoundariesWrapper pointerEvents="none">
+        <PhotoBoundaries color={baseColors.white} />
+      </PhotoBoundariesWrapper>
       {this.renderBottomBar()}
     </React.Fragment>
   );

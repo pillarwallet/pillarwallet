@@ -98,7 +98,9 @@ const HomeHeaderUsername = styled(BaseText)`
 `;
 
 const HomeHeaderButton = styled(IconButton)`
-  align-self: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
+  align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
+  width: 44px;
+  height: 44px;
 `;
 
 const HomeHeaderProfileImage = styled(ProfileImage)`
