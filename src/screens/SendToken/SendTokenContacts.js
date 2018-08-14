@@ -151,7 +151,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       <ContactCard
         noMargin
         name={user.username}
-        avatar={user.avatar}
+        avatar={user.profileImage}
         key={user.id}
         onPress={() => this.setUsersEthAddress(user.ethAddress)}
       />
