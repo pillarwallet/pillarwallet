@@ -157,7 +157,7 @@ class Camera extends React.Component<Props, State> {
     );
   };
 
-  renderCamera = () => (
+  renderCamera = (modalHide: Function) => (
     <React.Fragment>
       <RNCamera
         ref={ref => {
@@ -172,6 +172,7 @@ class Camera extends React.Component<Props, State> {
         type="front"
         ratio="16:9"
       >
+        <Header light flexStart onClose={modalHide} />
         <PhotoBoundaries color="#ffffff" />
       </RNCamera>
       {this.renderBottomBar()}
@@ -194,7 +195,7 @@ class Camera extends React.Component<Props, State> {
     const { isVisible, modalHide } = this.props;
 
     const cameraScreenContent = this.props.permissionsGranted
-      ? this.renderCamera()
+      ? this.renderCamera(modalHide)
       : this.renderNoPermissions();
     const content = this.state.showResult ? this.renderResult() : cameraScreenContent;
 
@@ -215,7 +216,6 @@ class Camera extends React.Component<Props, State> {
         }}
       >
         <Container>
-          <Header overlay light onClose={modalHide} />
           {content}
         </Container>
       </Modal>
