@@ -180,6 +180,11 @@ const TabItemIcon = styled(Icon)`
   color: ${props => props.active ? baseColors.white : baseColors.darkGray};
 `;
 
+const CameraIcon = styled(Icon)`
+  font-size: ${fontSizes.extraLarge};
+  color: ${baseColors.electricBlue};
+`;
+
 const TabItemText = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
   color: ${props => props.active ? baseColors.white : baseColors.darkGray};
@@ -387,7 +392,9 @@ class HomeScreen extends React.Component<Props, State> {
                   userName={user.username}
                   diameter={72}
                   onPress={this.toggleCamera}
-                />
+                >
+                  <CameraIcon name="camera" />
+                </HomeHeaderProfileImage>
               </HomeHeaderBody>
 
               <HomeHeaderRight>

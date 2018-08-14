@@ -1,15 +1,15 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes } from 'utils/variables';
-import { BoldText } from 'components/Typography';
+import { baseColors } from 'utils/variables';
 
 const CircleImage = styled.Image`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   ${props => (props.additionalImageStyle)};
-  background: ${baseColors.lightGray};
+  align-items: center;
+  justify-content: center;
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
@@ -17,47 +17,41 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  align-items: center;
-  justify-content: center;
   background-color: ${props => (props.transparent ? 'transparent' : baseColors.cyan)};
   ${props => (props.additionalContainerStyle)};
+  background: ${baseColors.lightGray};
+  position: relative;
 `;
 
-const AvatarText = styled(BoldText)`
-  font-size: ${fontSizes.large};
-  color: ${baseColors.white};
-  text-align: center;
-  ${props => (props.additionalTextStyle)};
+const InnerBackground = styled.View`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
 `;
 
 type Props = {
   uri?: string,
-  userName: string,
   containerStyle?: Object,
-  textStyle?: Object,
   imageStyle?: Object,
   onPress?: Function,
   diameter?: number,
   style?: Object,
+  children?: React.Node,
 }
 
 const ProfileImage = (props: Props) => {
   const {
     uri,
-    userName,
     containerStyle,
-    textStyle,
     imageStyle,
     onPress,
     style,
     diameter,
+    children,
   } = props;
 
-  const initials = userName
-    .split(' ')
-    .map(name => name.substring(0, 1))
-    .join('')
-    .toUpperCase();
 
   return (
     <ImageTouchable
@@ -68,7 +62,11 @@ const ProfileImage = (props: Props) => {
       transparent={uri}
       style={style}
     >
-      {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
+      {children &&
+        <InnerBackground>
+          {children}
+        </InnerBackground>
+      }
       {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri }} />}
     </ImageTouchable>
   );

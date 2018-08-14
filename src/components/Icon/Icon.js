@@ -24,6 +24,7 @@ const glyphMap = {
   more: '\uE810',
   sent: '\uE811',
   received: '\uE812',
+  camera: '\uE813',
 };
 
 type Props = {
