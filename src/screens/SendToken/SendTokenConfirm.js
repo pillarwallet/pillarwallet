@@ -112,16 +112,18 @@ class SendTokenContacts extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
-  handlePendingNotifcationOpen = () => {
+  handlePendingNotificationOpen = () => {
     const { isSubmitted } = this.state;
-    if (!isSubmitted) return;
+    if (!isSubmitted) {
+      this.handleCheckPinModalClose();
+      return;
+    }
     this.setState({ showTransactionPendingModal: true });
   };
 
   handleCheckPinModalClose = () => {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
-    this.setState({ showCheckPinModal: false });
   };
 
   makeTransaction = () => {
@@ -189,7 +191,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
         <CheckPinModal
           isVisible={showCheckPinModal}
-          onModalHide={this.handlePendingNotifcationOpen}
+          onModalHidden={this.handlePendingNotificationOpen}
           fullScreen
         >
           <CheckPin onPinValid={this.makeTransaction} />

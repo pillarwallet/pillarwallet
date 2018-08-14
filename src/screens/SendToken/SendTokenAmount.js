@@ -17,9 +17,9 @@ import { SubTitle, TextLink, Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import type { Balances } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
-import { baseColors } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -67,7 +67,7 @@ function AmountInputTemplate(locals) {
     placeholder: '0',
     value: locals.value,
     ellipsizeMode: 'middle',
-    keyboardType: Platform.OS === 'ios' ? 'numeric' : 'default',
+    keyboardType: 'decimal-pad',
     textAlign: 'right',
     autoCapitalize: 'none',
   };
@@ -112,7 +112,7 @@ const KeyboardAvoidingView = Platform.OS === 'ios' ?
 `;
 
 const BodyWrapper = styled.View`
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
 `;
 
 const ActionsWrapper = styled.View`
@@ -133,7 +133,7 @@ const FooterWrapper = Platform.OS === 'ios' ?
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
+  padding: 0 ${spacing.rhythm}px;
   width: 100%;
   margin-bottom: 20px;
   margin-top: 30px;
@@ -147,7 +147,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isVisible: boolean,
   formValues?: Object,
-  assets: Object,
+  balances: Balances,
 }
 
 type State = {
@@ -187,10 +187,10 @@ class SendTokenAmount extends React.Component<Props, State> {
         this.gasPrice = increasedGasPrice;
         this.gasPriceFetched = true;
         const { token, balance } = this.assetData;
-        const { assets } = this.props;
+        const { balances } = this.props;
         const txFeeInWei = this.gasPrice.mul(gasLimit);
         this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-        this.enoughForFee = this.checkIfEnoughForFee(assets, txFeeInWei);
+        this.enoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
 
         this.setState({
           txFeeInWei,
@@ -254,9 +254,9 @@ class SendTokenAmount extends React.Component<Props, State> {
     return new BigNumber(utils.formatEther(maxAmount)).toNumber();
   }
 
-  checkIfEnoughForFee(assets: Assets, txFeeInWei): boolean {
-    if (!assets[ETH]) return false;
-    const ethBalance = assets[ETH].balance;
+  checkIfEnoughForFee(balances: Balances, txFeeInWei): boolean {
+    if (!balances[ETH]) return false;
+    const ethBalance = balances[ETH].balance;
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }
@@ -303,7 +303,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           <FooterWrapper>
             <BaseText>Fee
               <TextLink>
-                {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
+                {txFeeInWeiFormatted !== null && txFeeInWeiFormatted !== undefined && ` ${txFeeInWeiFormatted} ETH`}
               </TextLink>
             </BaseText>
             <ButtonMini title="Next" onPress={this.handleFormSubmit} />
@@ -341,7 +341,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <FooterWrapper>
               <BaseText>Fee
                 <TextLink>
-                  {!!txFeeInWeiFormatted && ` ${txFeeInWeiFormatted} ETH`}
+                  {txFeeInWeiFormatted !== null && txFeeInWeiFormatted !== undefined && ` ${txFeeInWeiFormatted} ETH`}
                 </TextLink>
               </BaseText>
               <ButtonMini title="Next" onPress={this.handleFormSubmit} />
@@ -353,8 +353,8 @@ class SendTokenAmount extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ assets: { data: assets } }) => ({
-  assets,
+const mapStateToProps = ({ assets: { balances } }) => ({
+  balances,
 });
 
 export default connect(mapStateToProps)(SendTokenAmount);

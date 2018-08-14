@@ -31,12 +31,12 @@ const addContactsToChats = (contacts, chats) => {
 
 export const getExistingChatsAction = () => {
   return async (dispatch: Function, getState: Function) => {
-    const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
+    const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
     const { contacts: { data: contacts } } = getState();
     if (!contacts.length) return;
 
     const chatsWithContacts = addContactsToChats(contacts, chats);
-    const { unreadCount } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => null);
+    const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
 
     const augmentedChats = chatsWithContacts.map(item => {
       const unread = unreadCount[item.username] || 0;
@@ -52,16 +52,16 @@ export const getExistingChatsAction = () => {
 
 export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function, getState: Function) => {
-    const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => null);
+    const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
 
     const { contacts: { data: contacts } } = getState();
     if (!contacts.length) return;
 
     const chatsWithContacts = addContactsToChats(contacts, chats);
-    const { unreadCount } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => null);
+    const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
 
     const augmentedChats = chatsWithContacts.map(item => {
-      const unread = item.username === contactUsername ? 0 : unreadCount[item.username];
+      const unread = item.username === contactUsername ? 0 : (unreadCount[item.username] || 0);
       return { ...item, unread };
     });
 
@@ -103,10 +103,10 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
       // TODO: split message loading in bunches and load earlier on lick
     }
     await chat.client.receiveNewMessagesByContact(username).catch(() => null);
-    const receivedMessages = await chat.client.getChatByContact(username).then(JSON.parse).catch(() => null);
+    const receivedMessages = await chat.client.getChatByContact(username).then(JSON.parse).catch(() => []);
 
-    const updatedMessages = await receivedMessages.map((message) => ({
-      _id: message.serverTimestamp,
+    const updatedMessages = await receivedMessages.map((message, index) => ({
+      _id: `${message.serverTimestamp}_${index}`,
       text: message.content,
       createdAt: new Date(message.serverTimestamp),
       user: {

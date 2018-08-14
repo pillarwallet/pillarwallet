@@ -10,33 +10,30 @@ platform :ios do
   lane :build_ios_simulator do
   match(type: "development",
         readonly: true)
-        disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
+        disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
         xcbuild(
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
+              workspace: "pillarwallet.xcworkspace",
+              scheme: "pillarwallet",
               configuration: "Release",
               xcargs: "-sdk iphonesimulator SYMROOT='~/pillarwallet'"
           )
-  zip(path: "/Users/distiller/pillarwallet/Release-iphonesimulator/pillar-wallet.app",
-      output_path: "./build/pillar-wallet.app.zip"
+  zip(path: "/Users/distiller/pillarwallet/Release-iphonesimulator/pillarwallet.app",
+      output_path: "./build/pillarwallet.app.zip"
     )
   end
 
   desc "Upload a new build to TestFlight"
   lane :build_test_flight do
-    sh("/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $CIRCLE_BUILD_NUM\" \"../pillar-wallet/Supporting/Info.plist\"")
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
           readonly: true)
-    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
-    build_app(clean: true,
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
-              configuration: "Release",
-              export_method: "app-store"
-    )
+    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath ../build"
+    sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet.ipa *"
+    sigh(force: true)
+    sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
     commit = last_git_commit
      upload_to_testflight(changelog: commit[:message],
-     skip_waiting_for_build_processing: true
+     skip_waiting_for_build_processing: true,
     )
   end
 
@@ -44,10 +41,10 @@ platform :ios do
   lane :build_ipa do
     match(type: "appstore",
           readonly: true)
-    disable_automatic_code_signing(path: "pillar-wallet.xcodeproj")
+    disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
     build_app(clean: true,
-              workspace: "pillar-wallet.xcworkspace",
-              scheme: "pillar-wallet",
+              workspace: "pillarwallet.xcworkspace",
+              scheme: "pillarwallet",
               configuration: "Release",
               export_method: "app-store"
     )

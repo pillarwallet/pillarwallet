@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header should render Header correctly 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "flex-end",
+        "borderBottomWidth": 0,
+        "flexDirection": "row",
+        "height": 40,
+        "justifyContent": "flex-end",
+        "marginBottom": 20,
+        "marginTop": 0,
+        "paddingBottom": 0,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 0,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    showTitleLeft={false}
+    style={
+      Array [
+        Object {
+          "alignItems": "flex-start",
+          "alignSelf": "center",
+          "flex": 1,
+        },
+        Object {
+          "alignItems": "flex-end",
+          "flexBasis": 0,
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      accessible={true}
+      isTVSelectable={true}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "flex-start",
+          "backgroundColor": "transparent",
+          "borderBottomWidth": null,
+          "borderColor": "#007aff",
+          "borderLeftWidth": null,
+          "borderRadius": 5,
+          "borderRightWidth": null,
+          "borderTopWidth": null,
+          "borderWidth": undefined,
+          "elevation": 0,
+          "flexDirection": "row",
+          "height": 44,
+          "justifyContent": "space-between",
+          "opacity": 1,
+          "paddingBottom": 6,
+          "paddingRight": 18,
+          "paddingTop": 6,
+          "position": "relative",
+          "shadowColor": null,
+          "shadowOffset": null,
+          "shadowOpacity": null,
+          "shadowRadius": null,
+        }
+      }
+    >
+      <View
+        name="back"
+        style={
+          Object {
+            "color": "#007AFF",
+            "fontSize": 16,
+            "marginBottom": undefined,
+            "marginLeft": undefined,
+            "marginRight": undefined,
+            "marginTop": undefined,
+            "paddingTop": 0,
+          }
+        }
+      />
+    </View>
+  </View>
+  <View
+    flex={[Function]}
+    onClose={[Function]}
+    style={
+      Array [
+        Object {
+          "alignItems": "flex-end",
+          "alignSelf": "center",
+          "flex": 1,
+        },
+        Object {
+          "alignItems": "flex-end",
+          "flexBasis": 0,
+          "flexGrow": 1,
+          "flexShrink": 1,
+          "justifyContent": "flex-end",
+        },
+        undefined,
+      ]
+    }
+  />
+</View>
+`;

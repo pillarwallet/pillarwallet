@@ -29,13 +29,10 @@ class Onboarding extends React.Component<Props> {
           <Paragraph>Pillar is a next-generation digital wallet
             and application for personal data management.
           </Paragraph>
-          <Paragraph light>Pillar does not store your personal data or know what you’re doing.
-          You’ll learn more about our privacy and safety policies as you go.
-          </Paragraph>
         </Wrapper>
         <Footer>
           <Button block marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup new wallet" />
-          <Button onPress={this.importOldWallet} secondary title="Import existing wallet" />
+          <Button block onPress={this.importOldWallet} secondary title="Import existing wallet" />
         </Footer>
       </Container>
     );

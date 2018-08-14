@@ -2,54 +2,24 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
+import Button from 'components/Button';
 import { CHAT } from 'constants/navigationConstants';
+import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
+import type { ApiUser } from 'models/Contacts';
+import CircleButton from 'components/CircleButton';
 
-const imageChat = require('assets/images/btn_chat.png');
-
-const ChatButton = styled.TouchableOpacity`
-  justify-content: center;
-  align-items: center;
-  margin: 40px 14px;
-  padding: 6px;
-`;
-
-const ImageHolder = styled.View`
-  border-radius: 50;
-  width: 54px;
-  height: 54px;
-  background: ${baseColors.lightGray};
-  justify-content: center;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  box-shadow: .5px 1px 1px ${baseColors.mediumGray};
-  elevation: 6;
-  z-index: 2;
-`;
-
-const ChatButtonImage = styled.Image`
-  width: 27px;
-  height: 27px;
-  justify-content: center;
-  display: flex;
-`;
-
-const ChatButtonText = styled(BoldText)`
-  color: ${baseColors.electricBlue};
-  text-align: center;
-  margin-top: 10px;
-`;
-
-const ContactWapper = styled.View`
+const ContactWrapper = styled.View`
   height: 218px;
   position: relative;
   justify-content: flex-end;
   margin-top: 30px;
+  margin-bottom: 20px;
 `;
 
 const ContactHeader = styled.View`
@@ -97,41 +67,83 @@ const ContactHeaderAvatarWrapper = styled.View`
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
+  contacts: ApiUser[],
 }
 
-const Contact = (props: Props) => {
-  const contact = props.navigation.getParam('contact', {});
-  return (
-    <Container>
-      <Header title="contact" onBack={() => props.navigation.goBack(null)} />
-      <Wrapper regularPadding>
-        <ContactWapper>
-          <ContactHeader>
-            <ContactHeaderBody>
-              <ContactHeaderName>
-                {contact.username}
-              </ContactHeaderName>
-            </ContactHeaderBody>
-          </ContactHeader>
-          <ContactHeaderAvatarWrapper >
-            <ProfileImage
-              uri={contact.avatar}
-              userName={contact.username}
-              diameter={60}
-              textStyle={{ fontSize: 32 }}
-            />
-          </ContactHeaderAvatarWrapper>
-        </ContactWapper>
+type State = {
+  isOptionsModalActive: boolean,
+}
 
-        <ChatButton onPress={() => { props.navigation.navigate(CHAT, { contact }); }}>
-          <ImageHolder>
-            <ChatButtonImage source={imageChat} />
-          </ImageHolder>
-          <ChatButtonText>CHAT</ChatButtonText>
-        </ChatButton>
-      </Wrapper>
-    </Container>
-  );
-};
+class Contact extends React.Component<Props, State> {
+  state = {
+    isOptionsModalActive: false,
+  }
 
-export default Contact;
+  openOptionsModal = () => {
+    this.setState({
+      isOptionsModalActive: true,
+    });
+  }
+
+  closeOptionsModal = () => {
+    this.setState({
+      isOptionsModalActive: false,
+    });
+  }
+
+  render() {
+    const { navigation, contacts } = this.props;
+    const { isOptionsModalActive } = this.state;
+    const contact = navigation.getParam('contact', {});
+    const isAccepted = !!contacts.find(({ username }) => username === contact.username);
+    return (
+      <Container>
+        <Header
+          title="contact"
+          onBack={() => navigation.goBack(null)}
+          onNextPress={this.openOptionsModal}
+          nextIcon="more"
+        />
+        <Wrapper regularPadding>
+          <ContactWrapper>
+            <ContactHeader>
+              <ContactHeaderBody>
+                <ContactHeaderName>
+                  {contact.username}
+                </ContactHeaderName>
+              </ContactHeaderBody>
+            </ContactHeader>
+            <ContactHeaderAvatarWrapper >
+              <ProfileImage
+                uri={contact.avatar}
+                userName={contact.username}
+                diameter={60}
+                textStyle={{ fontSize: 32 }}
+              />
+            </ContactHeaderAvatarWrapper>
+          </ContactWrapper>
+          {isAccepted &&
+          <CircleButton label="Chat" icon="send" onPress={() => navigation.navigate(CHAT, { contact })} />
+          }
+        </Wrapper>
+        <SlideModal
+          title="manage"
+          isVisible={isOptionsModalActive}
+          onModalHide={this.closeOptionsModal}
+        >
+          <Button secondary block marginBottom="10px" onPress={() => { }} title="Mute" />
+          <Button secondary block marginBottom="10px" onPress={() => { }} title="Remove connection" />
+          <Button secondary danger block marginBottom="10px" onPress={() => { }} title="Report / Block" />
+        </SlideModal>
+      </Container>
+    );
+  }
+}
+
+const mapStateToProps = ({
+  contacts: { data: contacts },
+}) => ({
+  contacts,
+});
+
+export default connect(mapStateToProps)(Contact);

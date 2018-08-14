@@ -13,7 +13,7 @@ import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
-import { SET_RATES } from 'constants/ratesConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
@@ -66,20 +66,6 @@ Object.defineProperty(mockWallet, 'RNencrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
-jest.mock('ethers', () => ({
-  Wallet: {
-    fromMnemonic: () => mockWallet,
-    RNfromEncryptedWallet: () => mockWallet,
-  },
-  utils: {
-    id: () => '',
-  },
-}));
-
-jest.mock('cryptocompare', () => ({
-  priceMulti: () => Promise.resolve(mockExchangeRates),
-}));
-
 describe('Wallet actions', () => {
   let store;
   beforeEach(() => {
@@ -104,7 +90,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      { type: SET_RATES, payload: mockExchangeRates },
+      { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
         type: NAVIGATE,
@@ -140,7 +126,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      { type: SET_RATES, payload: mockExchangeRates },
+      { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
       {
         type: NAVIGATE,

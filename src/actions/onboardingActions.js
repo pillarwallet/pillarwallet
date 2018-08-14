@@ -23,7 +23,7 @@ import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { SET_RATES } from 'constants/ratesConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
@@ -124,7 +124,7 @@ export const registerWalletAction = () => {
     const rates = await getExchangeRates(Object.keys(initialAssets));
 
     dispatch({
-      type: SET_RATES,
+      type: UPDATE_RATES,
       payload: rates,
     });
 

@@ -9,7 +9,7 @@ import { Container, Wrapper, Footer } from 'components/Layout';
 import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import ButtonIcon from 'components/ButtonIcon';
+import IconButton from 'components/IconButton';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 type State = {
@@ -23,14 +23,14 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
-  margin-top: 20px;
+  margin: 20px 0;
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
   background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
   border-radius: 6;
-  padding: 10px;
-  margin: 5px;
+  padding: 14px 5px;
+  margin: 0 2.5px 5px;
 `;
 
 const MnemonicPhraseWordText = styled(BoldText)`
@@ -39,7 +39,7 @@ const MnemonicPhraseWordText = styled(BoldText)`
 `;
 
 const WordInputWrapper = styled.View`
-  margin: 0 0 20px;
+  margin-bottom: 5px;
   flex-direction: row;
   align-items: flex-start;
 `;
@@ -50,9 +50,9 @@ const WordInput = styled.View`
   border-style: ${props => (props.filled ? 'solid' : 'dashed')};
   border-color: ${props => (props.filled ? 'transparent' : UIColors.defaultBorderColor)};;
   border-radius: 6px;
-  padding: 10px;
-  height: 42px;
+  height: 34px;
   flex: 1;
+  justify-content: center;
 `;
 
 const WordInputPrefix = styled.View`
@@ -66,7 +66,7 @@ const WordInputNumber = styled(Label)`
   line-height: 42px;
 `;
 
-const RemoveWordButtonIcon = styled(ButtonIcon)`
+const RemoveWordButtonIcon = styled(IconButton)`
   height: 42px;
   margin-left: ${Platform.OS === 'ios' ? '14px' : '6px'};
   margin-top: ${Platform.OS === 'ios' ? 0 : '-4px'};
@@ -74,8 +74,9 @@ const RemoveWordButtonIcon = styled(ButtonIcon)`
 `;
 
 const WordInputText = styled(BoldText)`
-  font-size: 14px;
+  font-size: ${fontSizes.small};
   color: white;
+  margin-left: 10px;
 `;
 
 const ShuffledWordWrapper = styled.View`
@@ -83,6 +84,7 @@ const ShuffledWordWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin-bottom: 20px;
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
@@ -193,11 +195,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
         <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
           <Paragraph>
-            Please select the appropriate words from the list.
+            Please select the correct words.
           </Paragraph>
           <WordInputFields>
             {this.renderInputFields()}
           </WordInputFields>
+        </Wrapper>
+        <Footer>
           <ShuffledWordWrapper>
             {this.renderShuffledWordList()}
             {!!__DEV__ && (
@@ -209,10 +213,9 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             </MnemonicPhraseWord>
             )}
           </ShuffledWordWrapper>
-        </Wrapper>
-        <Footer>
           <Button
-            block
+            small
+            flexRight
             onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
             title="Next"
             disabled={!isFormValid}

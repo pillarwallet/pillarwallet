@@ -6,14 +6,15 @@ export type Transaction = {
   hash: string,
   to: string,
   from: string,
-  timestamp: number,
+  createdAt: number,
   asset: string,
   nbConfirmations: number,
   gasUsed: number,
+  gasPrice: number,
   status: string,
   value: number,
   __v: number,
-  receipt: Object
+  receipt: Object,
 }
 
 export type TransactionPayload = {

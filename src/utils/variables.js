@@ -7,6 +7,8 @@ export const baseColors = {
   warmPurple: '#b2329c',
   electricBlue: '#007AFF',
   duckEggBlue: '#e6eefa',
+  selago: '#f6fafe',
+  hawkesBlue: '#f0f7fe',
   brightSkyBlue: '#00bfff',
   pigeonPost: '#9fb7db',
   cyan: '#00bfff',
@@ -63,9 +65,8 @@ export const fontSizes = {
   androidCheckmarkIcon: 26,
 };
 
-export const spacingSizes = {
-  defaultHorizontalSideSpacing: 20,
-  defaultVerticalSpacing: 20,
+export const spacing = {
+  rhythm: 20,
 };
 
 export const itemSizes = {
