@@ -225,8 +225,8 @@ const tabNavigation = createBottomTabNavigator(
     },
     [CHAT_LIST]: {
       screen: chatFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconChat),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(iconChat, !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
         tabBarLabel: tabBarLabel('Chat'),
       }),
     },
@@ -365,7 +365,7 @@ class AppFlow extends React.Component<Props, {}> {
 
 const mapStateToProps = ({
   user: { userState },
-  notifications: { data: notifications, hasUnreadNotifications },
+  notifications: { data: notifications, hasUnreadNotifications, hasUnreadChatNotifications },
   assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
@@ -374,6 +374,7 @@ const mapStateToProps = ({
   hasUnreadNotifications,
   assets,
   wallet,
+  hasUnreadChatNotifications,
 });
 
 const mapDispatchToProps = (dispatch) => ({
