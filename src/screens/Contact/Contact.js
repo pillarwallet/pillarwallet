@@ -101,8 +101,8 @@ class Contact extends React.Component<Props, State> {
         <Header
           title="contact"
           onBack={() => navigation.goBack(null)}
-          onNextPress={this.openOptionsModal}
-          nextIcon="more"
+          // onNextPress={this.openOptionsModal}
+          // nextIcon="more"
         />
         <Wrapper regularPadding>
           <ContactWrapper>
