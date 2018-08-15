@@ -2,6 +2,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import { StatusBar, BackHandler, NetInfo } from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
 import { Root as NBRoot, Toast } from 'native-base';
 import { showToast } from 'utils/toast';
@@ -29,11 +30,13 @@ class App extends React.Component<Props, *> {
 
   async componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
+    SplashScreen.hide();
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
   }
+
 
   onBackPress = () => {
     const { dispatch, navigation } = this.props;

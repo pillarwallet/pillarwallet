@@ -19,7 +19,6 @@
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
-		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
@@ -32,6 +31,7 @@
 		1646A5412119D1D500164EDD /* Lottie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1646A5042119D1AD00164EDD /* Lottie.framework */; };
 		1646A5422119D1D500164EDD /* Lottie.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1646A5042119D1AD00164EDD /* Lottie.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1646A546211A0E1C00164EDD /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
+		165F277321244AD40089F39A /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 165F277021244AC70089F39A /* libSplashScreen.a */; };
 		16891C7A211A61E5002BFCD6 /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16891C79211A61AB002BFCD6 /* libRNVectorIcons.a */; };
 		16891CC6211A6A59002BFCD6 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1930D3910B414B29A8A2F59D /* Feather.ttf */; };
 		16A4A6832111EBDA008E645C /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A4A6822111EBDA008E645C /* SwiftBridge.swift */; };
@@ -177,6 +177,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 62CA59B71E3C173B002D7188;
 			remoteInfo = Lottie_iOS;
+		};
+		165F276F21244AC70089F39A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 165F273A21244AC70089F39A /* SplashScreen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3D7682761D8E76B80014119E;
+			remoteInfo = SplashScreen;
 		};
 		16891C78211A61AB002BFCD6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -470,7 +477,6 @@
 		13B07F961A680F5B00A75B9A /* pillarwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pillarwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pillarwallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pillarwallet/AppDelegate.m; sourceTree = "<group>"; };
-		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = pillarwallet/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = pillarwallet/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = pillarwallet/main.m; sourceTree = "<group>"; };
@@ -482,6 +488,7 @@
 		162E1ACF2119CFA90028BE96 /* RNScrypt.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNScrypt.xcodeproj; path = "../node_modules/react-native-scrypt/ios/RNScrypt.xcodeproj"; sourceTree = "<group>"; };
 		1646A4FC2119D1AC00164EDD /* Lottie.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lottie.xcodeproj; path = "../node_modules/lottie-ios/Lottie.xcodeproj"; sourceTree = "<group>"; };
 		1646A5392119D1BF00164EDD /* LottieReactNative.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LottieReactNative.xcodeproj; path = "../node_modules/lottie-react-native/src/ios/LottieReactNative.xcodeproj"; sourceTree = "<group>"; };
+		165F273A21244AC70089F39A /* SplashScreen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SplashScreen.xcodeproj; path = "../node_modules/react-native-splash-screen/ios/SplashScreen.xcodeproj"; sourceTree = "<group>"; };
 		16891C74211A61AA002BFCD6 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		16A4A6812111EBD9008E645C /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		16A4A6822111EBDA008E645C /* SwiftBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridge.swift; path = pillarwallet/SwiftBridge.swift; sourceTree = "<group>"; };
@@ -532,6 +539,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				165F277321244AD40089F39A /* libSplashScreen.a in Frameworks */,
 				16891C7A211A61E5002BFCD6 /* libRNVectorIcons.a in Frameworks */,
 				1646A5402119D1D000164EDD /* libLottie.a in Frameworks */,
 				1646A53F2119D1CB00164EDD /* libLottieReactNative.a in Frameworks */,
@@ -637,7 +645,6 @@
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				16A4A6812111EBD9008E645C /* pillarwallet-Bridging-Header.h */,
 			);
@@ -698,6 +705,14 @@
 			isa = PBXGroup;
 			children = (
 				1646A53E2119D1C000164EDD /* libLottieReactNative.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		165F273B21244AC70089F39A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				165F277021244AC70089F39A /* libSplashScreen.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -813,6 +828,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				165F273A21244AC70089F39A /* SplashScreen.xcodeproj */,
 				16891C74211A61AA002BFCD6 /* RNVectorIcons.xcodeproj */,
 				1646A5392119D1BF00164EDD /* LottieReactNative.xcodeproj */,
 				1646A4FC2119D1AC00164EDD /* Lottie.xcodeproj */,
@@ -1059,6 +1075,10 @@
 					ProjectRef = 4C1E21202BBC4C8F979136AA /* SignalMessagingSwift.xcodeproj */;
 				},
 				{
+					ProductGroup = 165F273B21244AC70089F39A /* Products */;
+					ProjectRef = 165F273A21244AC70089F39A /* SplashScreen.xcodeproj */;
+				},
+				{
 					ProductGroup = 16A4A6722111EBA7008E645C /* Products */;
 					ProjectRef = 3C6BE9948FEC483EA9345AC5 /* TcpSockets.xcodeproj */;
 				},
@@ -1178,6 +1198,13 @@
 			fileType = archive.ar;
 			path = libLottieReactNative.a;
 			remoteRef = 1646A53D2119D1C000164EDD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		165F277021244AC70089F39A /* libSplashScreen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSplashScreen.a;
+			remoteRef = 165F276F21244AC70089F39A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		16891C79211A61AB002BFCD6 /* libRNVectorIcons.a */ = {
@@ -1448,7 +1475,6 @@
 			files = (
 				16891CC6211A6A59002BFCD6 /* Feather.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				23F435F37E804B0B8011559D /* AktivGrotesk-Bold.ttf in Resources */,
 				DB52ECF8FE1E4747AC7EDCEC /* AktivGrotesk-Light.ttf in Resources */,
 				661E6492C09943498B2DB9BE /* AktivGrotesk-Medium.ttf in Resources */,
@@ -1571,15 +1597,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		13B07FB11A68108700A75B9A /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				13B07FB21A68108700A75B9A /* Base */,
-			);
-			name = LaunchScreen.xib;
-			path = pillarwallet;
-			sourceTree = "<group>";
-		};
 		162E180B21186C160028BE96 /* launch_background_image.png */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1597,6 +1614,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1614,6 +1632,7 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/**",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios/**",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1640,6 +1659,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = pillarwallet/pillarwallet.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
@@ -1656,6 +1676,7 @@
 					"$(SRCROOT)/../node_modules/react-native-tcp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/**",
+					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios/**",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
