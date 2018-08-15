@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
 import { BaseText } from 'components/Typography';
 
-const CircleImage = styled.Image`
+const CircleImage = styled(CachedImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
