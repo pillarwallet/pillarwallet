@@ -1,17 +1,12 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native/index';
 import KeyPad from 'components/KeyPad';
-import { Wrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import PinDots from './PinDots';
 
 const PASS_CODE_LENGTH = 6;
 
-const PageWrapper = styled.View`
-  flex: 1;
-  justify-content: space-between;
-`;
 
 type Props = {
   onPinEntered: Function,
@@ -98,16 +93,14 @@ export default class PinCode extends React.Component<Props, State> {
     const numActiveDots = this.state.passCode.length;
 
     return (
-      <PageWrapper>
-        <Wrapper regularPadding>
-          <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
-        </Wrapper>
+      <React.Fragment>
+        <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
         <KeyPad
           type="pincode"
           options={{ showForgotButton }}
           onKeyPress={this.handleButtonPressed}
         />
-      </PageWrapper>
+      </React.Fragment>
     );
   }
 }

@@ -17,9 +17,9 @@ const KeyInput = styled.View`
 const Wrapper = styled.View`
   flex-wrap: wrap;
   flex-direction: row;
-  align-self: flex-end;
   justify-content: center;
   align-items: center;
+  margin-top: auto;
 `;
 
 const PinButton = styled.TouchableOpacity`

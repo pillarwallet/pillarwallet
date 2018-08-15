@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
-import { Container, Center } from 'components/Layout';
+import { Container, Wrapper, Center } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Title from 'components/Title';
@@ -39,7 +39,7 @@ class CheckPin extends React.Component<Props, *> {
     }
 
     return (
-      <React.Fragment>
+      <Wrapper flex={1}>
         {showError}
         <Center>
           <Title align="center" title={title || 'enter pincode'} />
@@ -49,7 +49,7 @@ class CheckPin extends React.Component<Props, *> {
           pageInstructions=""
           showForgotButton={false}
         />
-      </React.Fragment>
+      </Wrapper>
     );
   }
 }

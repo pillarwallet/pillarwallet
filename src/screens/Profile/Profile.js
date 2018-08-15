@@ -22,7 +22,6 @@ import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
-import KeyboardAvoidModal from 'components/Modals/KeyboardAvoidModal';
 
 import countries from 'utils/countries.json';
 import ProfileSettingsItem from './ProfileSettingsItem';
@@ -215,7 +214,7 @@ class Profile extends React.Component<Props, State> {
     return (
       <Container color={baseColors.snowWhite}>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
-        <KeyboardAvoidModal
+        <SlideModal
           isVisible={this.state.visibleModal === 'country'}
           subtitle="Choose your country"
           fullScreen
@@ -226,8 +225,8 @@ class Profile extends React.Component<Props, State> {
             renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
             keyExtractor={({ name }) => name}
           />
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'city'}
           subtitle="Enter city name"
           fullScreen
@@ -240,8 +239,8 @@ class Profile extends React.Component<Props, State> {
               value={{ city: user.city }}
             />
           </Wrapper>
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'email'}
           subtitle="Enter your email"
           fullScreen
@@ -254,8 +253,8 @@ class Profile extends React.Component<Props, State> {
               value={{ email: user.email }}
             />
           </Wrapper>
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'fullName'}
           subtitle="Enter your full name"
           fullScreen
@@ -268,8 +267,8 @@ class Profile extends React.Component<Props, State> {
               value={{ firstName: user.firstName, lastName: user.lastName }}
             />
           </Wrapper>
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
           subtitle="Choose your base currency"
           fullScreen
@@ -280,7 +279,7 @@ class Profile extends React.Component<Props, State> {
             renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
             keyExtractor={({ name }) => name}
           />
-        </KeyboardAvoidModal>
+        </SlideModal>
         <ScrollWrapper>
           <ListWrapper>
             <ListSeparator first>

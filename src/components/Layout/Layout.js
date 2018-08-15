@@ -43,8 +43,6 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.View`
-  height: ${props => props.fullScreen ? '100%' : 'auto'};
-  width: ${props => props.fullScreen ? '100%' : 'auto'};
   margin: ${props => (props.regularPadding ? '0 20px' : '0')};
   ${({ center }) => center && `
     align-items: center;

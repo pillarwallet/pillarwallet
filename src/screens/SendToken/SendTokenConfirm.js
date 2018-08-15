@@ -118,6 +118,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     resetIncorrectPassword();
   };
 
+  closeCheckPinModal = () => {
+    this.setState({
+      showCheckPinModal: false,
+    });
+  }
+
   makeTransaction = () => {
     const { transactionPayload, assetData: { token } } = this.state;
     this.props.sendAsset({ ...transactionPayload, symbol: token });
@@ -184,8 +190,11 @@ class SendTokenContacts extends React.Component<Props, State> {
         <CheckPinModal
           isVisible={showCheckPinModal}
           onModalHidden={this.handlePendingNotificationOpen}
+          onModalHide={this.closeCheckPinModal}
           fullScreen
+          showHeader
         >
+
           <CheckPin onPinValid={this.makeTransaction} />
         </CheckPinModal>
       </React.Fragment>
