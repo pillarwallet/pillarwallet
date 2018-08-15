@@ -1,7 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
+import { getInitials } from 'utils/contacts';
+import { BaseText } from 'components/Typography';
 
 const CircleImage = styled.Image`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -17,9 +19,8 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.transparent ? 'transparent' : baseColors.cyan)};
+  background-color: ${props => (props.hasChildren ? baseColors.lightGray : baseColors.cyan)};
   ${props => (props.additionalContainerStyle)};
-  background: ${baseColors.lightGray};
   position: relative;
 `;
 
@@ -31,8 +32,14 @@ const InnerBackground = styled.View`
   align-items: center;
 `;
 
+const InnerUsername = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  color: ${baseColors.white};
+`;
+
 type Props = {
   uri?: string,
+  userName?: string,
   containerStyle?: Object,
   imageStyle?: Object,
   onPress?: Function,
@@ -50,8 +57,10 @@ const ProfileImage = (props: Props) => {
     style,
     diameter,
     children,
+    userName,
   } = props;
 
+  const initials = userName && getInitials(userName);
 
   return (
     <ImageTouchable
@@ -61,10 +70,18 @@ const ProfileImage = (props: Props) => {
       onPress={onPress}
       transparent={uri}
       style={style}
+      hasChildren={children}
     >
       {children &&
         <InnerBackground>
           {children}
+        </InnerBackground>
+      }
+      {userName && !children &&
+        <InnerBackground>
+          <InnerUsername>
+            {initials}
+          </InnerUsername>
         </InnerBackground>
       }
       {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri }} />}
