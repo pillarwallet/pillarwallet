@@ -93,7 +93,7 @@ export default class SlideModal extends React.Component<Props, *> {
       <React.Fragment>
         {showModalHeader &&
           <HeaderWrapper fullScreen={fullScreen}>
-            <Header noPadding={!fullScreen} title={title} onClose={this.hideModal} />
+            <Header noMargin={!fullScreen} noPadding={!fullScreen} title={title} onClose={this.hideModal} />
           </HeaderWrapper>
         }
         {subtitle &&
@@ -120,7 +120,7 @@ export default class SlideModal extends React.Component<Props, *> {
       return modalInner;
     };
 
-    const animationTiming = 500;
+    const animationTiming = 400;
     return (
       <Modal
         isVisible={isVisible}
@@ -129,13 +129,11 @@ export default class SlideModal extends React.Component<Props, *> {
         onBackdropPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
-        animationIn="bounceInUp"
-        animationOut="bounceOutDown"
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
         swipeDirection="down"
-        hideModalContentWhileAnimating
         style={{
           margin: 0,
-          justifyContent: 'flex-end',
         }}
       >
         <ModalWrapper fullScreen={fullScreen}>

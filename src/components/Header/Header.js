@@ -18,6 +18,7 @@ type Props = {
   title?: string,
   centerTitle?: boolean,
   noPadding?: boolean,
+  noMargin?: boolean,
   flexStart?: boolean,
   light?: boolean,
   style?: Object,
@@ -32,7 +33,7 @@ const Wrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
-  margin-top: ${isIphoneX() ? '0' : '20px'};
+  margin-top: ${props => isIphoneX() || props.noMargin ? '0' : '20px'};
   margin-bottom: ${props => props.flexStart ? 'auto' : '20px'};
   z-index: 10;
 `;
@@ -88,6 +89,7 @@ const Header = (props: Props) => {
     title,
     centerTitle,
     noPadding,
+    noMargin,
     style,
     light,
     headerRightFlex,
@@ -110,7 +112,7 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper overlay={overlay} flexStart={flexStart} style={style} noPadding={noPadding}>
+    <Wrapper overlay={overlay} noMargin={noMargin} flexStart={flexStart} style={style} noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon
