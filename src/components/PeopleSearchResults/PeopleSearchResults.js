@@ -6,10 +6,11 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, UIColors, itemSizes } from 'utils/variables';
 import ContactCard from 'components/ContactCard';
 import Separator from 'components/Separator';
 import { SubHeading, BaseText } from 'components/Typography';
+import ProfileImage from 'components/ProfileImage';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import {
   sendInvitationAction,
@@ -55,9 +56,6 @@ const LocalContactsItemAvatarWrapper = styled.View`
   shadow-radius: 2px;
   shadow-opacity: 0.1;
   margin-bottom: 10px;
-`;
-
-const LocalContactsItemAvatarImage = styled.Image`
 `;
 
 const LocalContactsItemName = styled(BaseText)`
@@ -136,7 +134,12 @@ class PeopleSearchResults extends React.Component<Props> {
           onPress={() => navigation.navigate(CONTACT, { contact })}
         >
           <LocalContactsItemAvatarWrapper>
-            <LocalContactsItemAvatarImage />
+            <ProfileImage
+              uri={contact.profileImage}
+              userName={contact.username}
+              diameter={itemSizes.avaratCircleMedium}
+              textStyle={{ fontSize: fontSizes.medium }}
+            />
           </LocalContactsItemAvatarWrapper>
           <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
         </LocalContactsItem>

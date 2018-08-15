@@ -1,9 +1,14 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native';
-import { baseColors } from 'utils/variables';
+import { ImageBackground } from 'react-native';
 
-const CircleImage = styled.Image`
+import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
+import { baseColors, fontSizes } from 'utils/variables';
+import { getInitials } from 'utils/contacts';
+import { BaseText } from 'components/Typography';
+
+const CircleImage = styled(CachedImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
@@ -17,9 +22,8 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.transparent ? 'transparent' : baseColors.cyan)};
+  background-color: ${props => (props.hasChildren ? baseColors.lightGray : baseColors.cyan)};
   ${props => (props.additionalContainerStyle)};
-  background: ${baseColors.lightGray};
   position: relative;
 `;
 
@@ -31,8 +35,14 @@ const InnerBackground = styled.View`
   align-items: center;
 `;
 
+const InnerUsername = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  color: ${baseColors.white};
+`;
+
 type Props = {
   uri?: string,
+  userName?: string,
   containerStyle?: Object,
   imageStyle?: Object,
   onPress?: Function,
@@ -40,6 +50,31 @@ type Props = {
   style?: Object,
   children?: React.Node,
 }
+
+const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node }) => {
+  const { userName, innerComponent } = props;
+  const initials = userName && getInitials(userName);
+
+  return (
+    <React.Fragment>
+      {innerComponent &&
+        <InnerBackground>
+          {innerComponent}
+        </InnerBackground>
+      }
+      {userName && !innerComponent &&
+      <InnerBackground>
+        <InnerUsername>
+          {initials}
+        </InnerUsername>
+      </InnerBackground>
+      }
+    </React.Fragment>
+  );
+};
+
+const CACHED_IMAGE_REF = 'cachedImage';
+const IMAGE_LOAD_FAILED = 'image_load_failed';
 
 const ProfileImage = (props: Props) => {
   const {
@@ -50,8 +85,17 @@ const ProfileImage = (props: Props) => {
     style,
     diameter,
     children,
+    userName,
   } = props;
 
+  const renderDefaultImage = () => <DefaultPicture userName={userName} innerComponent={children} />;
+
+  const renderImage = (data: Object) => {
+    if (data.source === IMAGE_LOAD_FAILED) {
+      return renderDefaultImage();
+    }
+    return <ImageBackground imageStyle={data.style} ref={CACHED_IMAGE_REF} {...data} />;
+  };
 
   return (
     <ImageTouchable
@@ -61,13 +105,18 @@ const ProfileImage = (props: Props) => {
       onPress={onPress}
       transparent={uri}
       style={style}
+      hasChildren={children}
     >
-      {children &&
-        <InnerBackground>
-          {children}
-        </InnerBackground>
+      {!uri && renderDefaultImage()}
+      {!!uri &&
+        <CircleImage
+          additionalImageStyle={imageStyle}
+          diameter={diameter}
+          renderImage={renderImage}
+          fallbackSource={IMAGE_LOAD_FAILED}
+          source={{ uri }}
+        />
       }
-      {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri }} />}
     </ImageTouchable>
   );
 };

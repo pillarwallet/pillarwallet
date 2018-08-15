@@ -68,6 +68,7 @@ type EventLike = {
 };
 
 class SearchBar extends React.Component<Props, State> {
+  value = '';
   state = {
     animShrink: new Animated.Value(100),
     isFocused: false,
@@ -81,27 +82,26 @@ class SearchBar extends React.Component<Props, State> {
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
-    const value = e.nativeEvent.text;
-    onChange(value);
+    this.value = e.nativeEvent.text;
+    onChange(this.value);
   };
 
-  handleBlur = (e: EventLike) => {
+  handleBlur = () => {
     const { inputProps: { onBlur } } = this.props;
-    const value = e.nativeEvent.text;
-    if (!value) {
+    if (!this.value) {
       this.hideKeyboard();
     }
     if (onBlur) {
-      onBlur(value);
+      onBlur(this.value);
     }
     this.setState({ isFocused: false });
   };
 
   handleCancel = () => {
     const { inputProps: { onChange } } = this.props;
-    const searchValue = '';
+    this.value = '';
     if (onChange) {
-      onChange(searchValue);
+      onChange(this.value);
     }
     this.hideKeyboard();
   };

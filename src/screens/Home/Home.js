@@ -129,6 +129,10 @@ const RecentConnectionsWrapper = styled.View`
 
 const RecentConnectionsScrollView = styled.ScrollView``;
 
+const RecentConnectionsItemProfileImage = styled(ProfileImage)`
+  margin-bottom: ${spacing.rhythm / 2};
+`;
+
 const RecentConnectionsSubtitle = styled(Title)`
   margin-left: ${spacing.rhythm}px;
 `;
@@ -137,20 +141,6 @@ const RecentConnectionsItem = styled.TouchableOpacity`
   align-items: center;
   width: 64px;
   margin: 0 8px;
-`;
-
-const RecentConnectionsItemAvatarWrapper = styled.View`
-  width: 52px;
-  height: 52px;
-  border-radius: 26px;
-  background-color: ${baseColors.cyan};
-  border: 2px solid white;
-  shadow-color: ${baseColors.black};
-  shadow-offset: 0 0;
-  shadow-radius: 2px;
-  shadow-opacity: 0.1;
-  margin-bottom: 10px;
-  elevation: 4
 `;
 
 const TabWrapper = styled.View`
@@ -257,13 +247,11 @@ class HomeScreen extends React.Component<Props, State> {
           key={contact.username}
           onPress={() => navigation.navigate(CONTACT, { contact })}
         >
-          <RecentConnectionsItemAvatarWrapper>
-            <ProfileImage
-              uri={contact.profileImage}
-              userName={contact.username}
-              diameter={48}
-            />
-          </RecentConnectionsItemAvatarWrapper>
+          <RecentConnectionsItemProfileImage
+            uri={contact.profileImage}
+            userName={contact.username}
+            diameter={52}
+          />
           <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
         </RecentConnectionsItem>
       ));
@@ -336,7 +324,6 @@ class HomeScreen extends React.Component<Props, State> {
       history,
       wallet: { address: walletAddress },
       navigation,
-      chats,
     } = this.props;
     const {
       activeTab,
@@ -347,7 +334,8 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-    const chatNotifications = chats.chats
+    const chatNotifications = [];
+    /* chats.chats
       .map((
         {
           username,
@@ -360,7 +348,7 @@ class HomeScreen extends React.Component<Props, State> {
           type: 'CHAT',
           createdAt: lastMessage.savedTimestamp,
         };
-      });
+      }); */
 
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
       .filter(value => Object.keys(value).length !== 0)
