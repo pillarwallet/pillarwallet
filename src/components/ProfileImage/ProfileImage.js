@@ -18,9 +18,8 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.transparent ? 'transparent' : baseColors.cyan)};
+  background-color: ${props => (props.hasChildren ? baseColors.lightGray : baseColors.cyan)};
   ${props => (props.additionalContainerStyle)};
-  background: ${baseColors.cyan};
   position: relative;
 `;
 
@@ -77,6 +76,7 @@ const ProfileImage = (props: Props) => {
       onPress={onPress}
       transparent={uri}
       style={style}
+      hasChildren={children}
     >
       {children &&
         <InnerBackground>
