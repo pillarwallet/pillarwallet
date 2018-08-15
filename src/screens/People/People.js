@@ -133,6 +133,7 @@ class PeopleScreen extends React.Component<Props, State> {
       onPress={this.handleContactCardPress(item)}
       name={item.username}
       key={item.id}
+      avatar={item.profileImage}
     />
   );
 
@@ -220,7 +221,7 @@ class PeopleScreen extends React.Component<Props, State> {
         {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&
           <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
             {!!query && contactState === FETCHING &&
-              <Spinner />
+              <Wrapper center><Spinner /></Wrapper>
             }
 
             {inSearchMode && contactState === FETCHED && !usersFound &&

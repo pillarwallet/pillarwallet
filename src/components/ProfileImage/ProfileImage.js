@@ -1,14 +1,20 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native';
-import { baseColors, fontSizes } from 'utils/variables';
-import { BoldText } from 'components/Typography';
+import { ImageBackground } from 'react-native';
 
-const CircleImage = styled.Image`
+import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
+import { baseColors, fontSizes } from 'utils/variables';
+import { getInitials } from 'utils/contacts';
+import { BaseText } from 'components/Typography';
+
+const CircleImage = styled(CachedImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   ${props => (props.additionalImageStyle)};
+  align-items: center;
+  justify-content: center;
 `;
 
 const ImageTouchable = styled.TouchableOpacity`
@@ -16,47 +22,80 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: ${baseColors.cyan};
+  background-color: ${props => (props.hasChildren ? baseColors.lightGray : baseColors.cyan)};
   ${props => (props.additionalContainerStyle)};
+  position: relative;
 `;
 
-const AvatarText = styled(BoldText)`
-  font-size: ${fontSizes.large};
+const InnerBackground = styled.View`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+`;
+
+const InnerUsername = styled(BaseText)`
+  font-size: ${fontSizes.medium};
   color: ${baseColors.white};
-  text-align: center;
-  ${props => (props.additionalTextStyle)};
 `;
 
 type Props = {
   uri?: string,
-  userName: string,
+  userName?: string,
   containerStyle?: Object,
-  textStyle?: Object,
   imageStyle?: Object,
   onPress?: Function,
   diameter?: number,
   style?: Object,
+  children?: React.Node,
 }
+
+const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node }) => {
+  const { userName, innerComponent } = props;
+  const initials = userName && getInitials(userName);
+
+  return (
+    <React.Fragment>
+      {innerComponent &&
+        <InnerBackground>
+          {innerComponent}
+        </InnerBackground>
+      }
+      {userName && !innerComponent &&
+      <InnerBackground>
+        <InnerUsername>
+          {initials}
+        </InnerUsername>
+      </InnerBackground>
+      }
+    </React.Fragment>
+  );
+};
+
+const CACHED_IMAGE_REF = 'cachedImage';
+const IMAGE_LOAD_FAILED = 'image_load_failed';
 
 const ProfileImage = (props: Props) => {
   const {
     uri,
-    userName,
     containerStyle,
-    textStyle,
     imageStyle,
     onPress,
     style,
     diameter,
+    children,
+    userName,
   } = props;
 
-  const initials = userName
-    .split(' ')
-    .map(name => name.substring(0, 1))
-    .join('')
-    .toUpperCase();
+  const renderDefaultImage = () => <DefaultPicture userName={userName} innerComponent={children} />;
+
+  const renderImage = (data: Object) => {
+    if (data.source === IMAGE_LOAD_FAILED) {
+      return renderDefaultImage();
+    }
+    return <ImageBackground imageStyle={data.style} ref={CACHED_IMAGE_REF} {...data} />;
+  };
 
   return (
     <ImageTouchable
@@ -64,10 +103,20 @@ const ProfileImage = (props: Props) => {
       diameter={diameter}
       disabled={!onPress}
       onPress={onPress}
+      transparent={uri}
       style={style}
+      hasChildren={children}
     >
-      {!uri && <AvatarText additionalTextStyle={textStyle}>{initials}</AvatarText>}
-      {!!uri && <CircleImage additionalImageStyle={imageStyle} source={{ uri }} />}
+      {!uri && renderDefaultImage()}
+      {!!uri &&
+        <CircleImage
+          additionalImageStyle={imageStyle}
+          diameter={diameter}
+          renderImage={renderImage}
+          fallbackSource={IMAGE_LOAD_FAILED}
+          source={{ uri }}
+        />
+      }
     </ImageTouchable>
   );
 };

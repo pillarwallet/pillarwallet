@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ONBOARDING_HOME } from 'constants/navigationConstants';
-import { Container, Footer } from 'components/Layout';
+import { Wrapper, Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
 import IFrameModal from 'components/Modals/IFrameModal';
@@ -74,8 +74,10 @@ class Welcome extends React.Component<Props, State> {
     if (!isFetched) return null;
     return (
       <Container center>
-        <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
-        <PillarLogo source={pillarLogoSource} />
+        <Wrapper fullScreen center>
+          <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
+          <PillarLogo source={pillarLogoSource} />
+        </Wrapper>
         <Footer>
           <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />
           <ButtonText buttonText="Terms and Conditions" onPress={this.toggleTermsConditionsModal} />

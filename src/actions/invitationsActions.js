@@ -169,7 +169,6 @@ export const fetchInviteNotificationsAction = () => {
       TYPE_REJECTED,
     ];
     const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
-
     const mappedInviteNotifications = inviteNotifications
       .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))

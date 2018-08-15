@@ -3,16 +3,18 @@ import * as React from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import { baseColors } from 'utils/variables';
 import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
+import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import ChatListItem from './ChatListItem';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  setUnreadChatNotificationsStatus: Function,
   contacts: Object[],
   chats: Object[],
   notifications: Object[],
@@ -28,9 +30,19 @@ type State = {
 }
 
 class ChatListScreen extends React.Component<Props, State> {
+  _willFocus: NavigationEventSubscription;
+
   componentDidMount() {
     const { getExistingChats } = this.props;
     getExistingChats();
+    this._willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => { this.props.setUnreadChatNotificationsStatus(false); },
+    );
+  }
+
+  componentWillUnmount() {
+    this._willFocus.remove();
   }
 
   handleChatItemClick = (contact) => {
@@ -57,7 +69,7 @@ class ChatListScreen extends React.Component<Props, State> {
     return (
       <ChatListItem
         userName={contact.username}
-        avatar={contact.avatar}
+        avatar={contact.profileImage}
         message={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={unread}
@@ -124,6 +136,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
+  setUnreadChatNotificationsStatus: (status) => dispatch(setUnreadChatNotificationsStatusAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatListScreen);

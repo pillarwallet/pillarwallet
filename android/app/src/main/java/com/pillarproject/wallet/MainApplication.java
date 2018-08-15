@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.crypho.scrypt.RNScryptPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import org.reactnative.camera.RNCameraPackage;
@@ -22,7 +23,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.airbnb.android.react.lottie.LottiePackage;
-
+import com.BV.LinearGradient.LinearGradientPackage;
 import io.fabric.sdk.android.Fabric;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 
@@ -30,7 +31,7 @@ import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 import com.robinpowered.react.Intercom.IntercomPackage;
 import io.intercom.android.sdk.Intercom;
-
+// react-native-splash-screen >= 0.3.1
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new SplashScreenReactPackage(),
           new RNScryptPackage(),
           new RNFetchBlobPackage(),
           new RNCameraPackage(),
@@ -56,7 +58,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNFirebaseCrashlyticsPackage(),
           new RNDeviceInfo(),
           new IntercomPackage(),
-          new LottiePackage()
+          new LottiePackage(),
+          new LinearGradientPackage()
       );
     }
 

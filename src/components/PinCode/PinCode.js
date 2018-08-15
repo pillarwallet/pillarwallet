@@ -26,6 +26,8 @@ type State = {
 };
 
 export default class PinCode extends React.Component<Props, State> {
+  resetPinCodeTimeout: any | TimeoutID;
+
   static defaultProps = {
     pageHeading: 'Enter Passcode',
     pageInstructions: 'Setup your Passcode',
@@ -58,10 +60,13 @@ export default class PinCode extends React.Component<Props, State> {
     const { passCode } = this.state;
     const passCodeString = passCode.join('');
 
+    if (passCode.length > PASS_CODE_LENGTH) return;
+
     if (passCode.length === PASS_CODE_LENGTH) {
-      this.setState({ passCode: [] },
-        () => this.props.onPinEntered(passCodeString),
-      );
+      this.props.onPinEntered(passCodeString);
+      this.resetPinCodeTimeout = setTimeout(() => {
+        this.setState({ passCode: [] });
+      }, 500);
     } else if (this.props.onPinChanged) {
       this.props.onPinChanged(passCodeString);
     }
@@ -81,6 +86,12 @@ export default class PinCode extends React.Component<Props, State> {
       this.props.onForgotPin();
     }
   };
+
+  componentWillUnmount() {
+    if (this.resetPinCodeTimeout) {
+      clearTimeout(this.resetPinCodeTimeout);
+    }
+  }
 
   render() {
     const { showForgotButton } = this.props;

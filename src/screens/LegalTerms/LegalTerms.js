@@ -3,14 +3,13 @@ import * as React from 'react';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import Header from 'components/Header';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, TextLink } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
 import IFrameModal from 'components/Modals/IFrameModal';
-import ButtonText from 'components/ButtonText';
 import { View } from 'react-native';
 import { fontSizes } from 'utils/variables';
 
@@ -93,23 +92,22 @@ class LegalTerms extends React.Component<Props, State> {
               marginBottom="20px"
             />
             <View style={{
-              flex: 1,
               alignContent: 'center',
               justifyContent: 'center',
               flexDirection: 'row',
             }}
             >
-              <ButtonText buttonText="Terms of Use" onPress={this.toggleTermsConditionsModal} />
+              <TextLink onPress={this.toggleTermsConditionsModal}>Terms & Conditions</TextLink>
               <Paragraph style={{
                 marginRight: 4,
                 marginLeft: 4,
                 marginBottom: 0,
-                fontSize: fontSizes.extraSmall,
+                fontSize: fontSizes.small,
               }}
               >
                 and
               </Paragraph>
-              <ButtonText buttonText="Privacy Policy" onPress={this.togglePrivacyPolicyModal} />
+              <TextLink onPress={this.togglePrivacyPolicyModal}>Privacy Policy</TextLink>
             </View>
           </MultiButtonWrapper>
         </Footer>
