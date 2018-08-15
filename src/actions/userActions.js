@@ -15,3 +15,23 @@ export const updateUserAction = (walletId: string, field: Object) => {
     });
   };
 };
+
+export const updateUserAvatarAction = (walletId: string, formData: any) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const { user: { data: user } } = getState();
+    const userAvatar = await api.updateUserAvatar(walletId, formData); // eslint-disable-line
+    // Below to be investigated
+    // const profileImage = await api.getUserAvatar({
+    //   userId: user.id,
+    //   walletId,
+    // });
+    // console.log(profileImage);
+    if (!Object.keys(user).length) return;
+    await storage.save('user', { user }, true);
+    dispatch({
+      type: UPDATE_USER,
+      payload: { user, state: REGISTERED },
+    });
+  };
+};
+
