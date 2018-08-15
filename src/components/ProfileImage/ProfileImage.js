@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
+import { getInitials } from 'utils/contacts';
 import { BaseText } from 'components/Typography';
 
 const CircleImage = styled.Image`
@@ -31,7 +32,6 @@ const InnerBackground = styled.View`
   align-items: center;
 `;
 
-
 const InnerUsername = styled(BaseText)`
   font-size: ${fontSizes.medium};
   color: ${baseColors.white};
@@ -48,7 +48,6 @@ type Props = {
   children?: React.Node,
 }
 
-
 const ProfileImage = (props: Props) => {
   const {
     uri,
@@ -61,12 +60,7 @@ const ProfileImage = (props: Props) => {
     userName,
   } = props;
 
-  const initials = userName && userName
-    .split(' ')
-    .map(name => name.substring(0, 1))
-    .join('')
-    .toUpperCase();
-
+  const initials = userName && getInitials(userName);
 
   return (
     <ImageTouchable
