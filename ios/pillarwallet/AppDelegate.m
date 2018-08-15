@@ -7,13 +7,14 @@
 #import "Fabric/Fabric.h"
 #import "React/RCTRootView.h"
 #import "Crashlytics/Crashlytics.h"
+#import "RNSplashScreen.h"
+
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSURL *jsCodeLocation;
-
     [FIRApp configure];
     [RNFirebaseNotifications configure];
     [Fabric with:@[[Crashlytics class]]];
@@ -28,12 +29,12 @@
                                                         moduleName:@"pillarwallet"
                                                 initialProperties:nil
                                                     launchOptions:launchOptions];
-
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     UIViewController *rootViewController = [UIViewController new];
     rootViewController.view = rootView;
     self.window.rootViewController = rootViewController;
     [self.window makeKeyAndVisible];
+    [RNSplashScreen show];
     return YES;
 }
 

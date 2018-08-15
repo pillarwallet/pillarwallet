@@ -3614,7 +3614,7 @@ cssstyle@^1.0.0:
   dependencies:
     cssom "0.3.x"
 
-"ctx-polyfill@github:lifaon74/ctx-polyfill":
+ctx-polyfill@lifaon74/ctx-polyfill:
   version "1.1.4"
   resolved "https://codeload.github.com/lifaon74/ctx-polyfill/tar.gz/f39f2d22be29dc87f211e1c363edb324bee173b4"
 
@@ -9987,6 +9987,10 @@ react-native-scrollable-mixin@^1.0.1:
 react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
+
+react-native-splash-screen@^3.1.1:
+  version "3.1.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-splash-screen/-/react-native-splash-screen-3.1.1.tgz#1a4e46c9fdce53ff52af2a2cb4181788c4e30b30"
 
 react-native-tab-view@^0.0.77:
   version "0.0.77"
