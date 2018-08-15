@@ -4,12 +4,10 @@ import Modal from 'react-native-modal';
 import { Root } from 'native-base';
 import styled from 'styled-components/native';
 import Header from 'components/Header';
-import { spacing } from 'utils/variables';
 import { Container } from 'components/Layout';
+import { spacing, baseColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
-import { Dimensions, Keyboard } from 'react-native';
-
-const { height } = Dimensions.get('window');
+import { Keyboard } from 'react-native';
 
 type Props = {
   title?: string,
@@ -25,20 +23,20 @@ type Props = {
 
 const ModalWrapper = styled.View`
   width: 100%;
-  ${props => props.fullScreen && `height: ${height};`}
+  height: 100%;
 `;
 
 const HeaderWrapper = styled.View`
   padding-top: ${(props) => props.fullScreen ? `${spacing.rhythm}px` : '0'};
-  background: green;
 `;
 
 const ModalBackground = styled.View`
-  background-color: red;
   border-top-left-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
   border-top-right-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
   padding: ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
+  margin-top: auto;
+  background: ${baseColors.white};
 `;
 
 const ModalSubtitle = styled(SubTitle)`
@@ -52,16 +50,17 @@ const getModalContentPadding = (showHeader: boolean) => {
   return `${spacing.rhythm}px 0 0`;
 };
 
-const ModalContent = styled(Container)`
-  background: yellow;
-  ${({ fullScreen, showHeader }) => fullScreen && `
-    padding: ${fullScreen && showHeader && getModalContentPadding(showHeader)};
+const ModalContent = styled.View`
+  ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
+    padding: ${getModalContentPadding(showHeader)};
   `}
 `;
 
 const ModalOverflow = styled.View`
   width: 100%;
-  background-color: #FFFFFF;
+  height: 100px;
+  margin-bottom: -100px;
+  background-color: ${baseColors.white};
 `;
 
 export default class SlideModal extends React.Component<Props, *> {
@@ -90,6 +89,37 @@ export default class SlideModal extends React.Component<Props, *> {
 
     const showModalHeader = !fullScreen || showHeader;
 
+    const modalInner = (
+      <React.Fragment>
+        {showModalHeader &&
+          <HeaderWrapper fullScreen={fullScreen}>
+            <Header noPadding={!fullScreen} title={title} onClose={this.hideModal} />
+          </HeaderWrapper>
+        }
+        {subtitle &&
+          <ModalSubtitle>{subtitle}</ModalSubtitle>
+        }
+        <ModalContent
+          fullScreen={fullScreen}
+          showHeader={showHeader}
+        >
+          {children}
+        </ModalContent>
+        <ModalOverflow />
+      </React.Fragment>
+    );
+
+    const modalContent = () => {
+      if (fullScreen) {
+        return (
+          <Container>
+            {modalInner}
+          </Container>
+        );
+      }
+      return modalInner;
+    };
+
     const animationTiming = 500;
     return (
       <Modal
@@ -111,21 +141,7 @@ export default class SlideModal extends React.Component<Props, *> {
         <ModalWrapper fullScreen={fullScreen}>
           <Root>
             <ModalBackground fullScreen={fullScreen}>
-              {showModalHeader &&
-                <HeaderWrapper fullScreen={fullScreen}>
-                  <Header noPadding={!fullScreen} title={title} onClose={this.hideModal} />
-                </HeaderWrapper>
-              }
-              {subtitle && !fullScreen &&
-                <ModalSubtitle>{subtitle}</ModalSubtitle>
-              }
-              <ModalContent
-                fullScreen={fullScreen}
-                showHeader={showHeader}
-              >
-                {children}
-              </ModalContent>
-              <ModalOverflow />
+              {modalContent()}
             </ModalBackground>
           </Root>
 

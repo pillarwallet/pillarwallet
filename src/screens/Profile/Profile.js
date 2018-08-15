@@ -216,8 +216,9 @@ class Profile extends React.Component<Props, State> {
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
-          subtitle="Choose your country"
+          title="Choose your country"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
@@ -228,8 +229,9 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'city'}
-          subtitle="Enter city name"
+          title="Enter city name"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
@@ -242,8 +244,9 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'email'}
-          subtitle="Enter your email"
+          title="Enter your email"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
@@ -256,8 +259,9 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'fullName'}
-          subtitle="Enter your full name"
+          title="Enter your full name"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
@@ -270,8 +274,9 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          subtitle="Choose your base currency"
+          title="Choose your base currency"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
@@ -352,6 +357,7 @@ class Profile extends React.Component<Props, State> {
               isVisible={showCheckPinModal}
               onModalHide={this.handleCheckPinModalClose}
               fullScreen
+              showHeader
             >
               <Container>
                 <CheckPinWrapper>
@@ -430,6 +436,7 @@ class Profile extends React.Component<Props, State> {
             <SlideModal
               isVisible={showSystemInfoModal}
               fullScreen
+              showHeader
               onModalHide={() => this.setState({ showSystemInfoModal: false })}
             >
               <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
