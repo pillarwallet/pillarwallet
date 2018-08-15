@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform, BackHandler } from 'react-native';
+import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import {
   importWalletFromTWordsPhraseAction,
@@ -19,13 +19,12 @@ import { Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
-import { Keyboard, Dimensions } from 'react-native';
-import { Permissions } from 'expo';
+import Permissions from 'react-native-permissions';
 import styled from 'styled-components/native';
 import Icon from 'components/Icon';
 import { fontSizes, baseColors } from 'utils/variables';
-
-const PERMISSION_GRANTED = 'GRANTED';
+import { pipe, decodeETHAddress } from 'utils/common';
+import { isValidETHAddress } from '../../utils/validators';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -42,6 +41,7 @@ type State = {
   isScanning: boolean,
 };
 
+const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
 const window = Dimensions.get('window');
 
 const InputWrapper = styled.View`
@@ -49,6 +49,7 @@ const InputWrapper = styled.View`
   align-items: center;
 `;
 
+// const ScanButton = styled(IconButton)`
 const ScanButton = styled.TouchableOpacity`
   align-items: center;
   margin-left: 10px;
@@ -124,14 +125,22 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleQRScannerOpen = async () => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA);
-    this.setState({
-      isScanning: status.toUpperCase() === PERMISSION_GRANTED,
-    }, () => {
-      if (this.state.isScanning) {
-        Keyboard.dismiss();
-      }
-    });
+    try {
+      const status = await Permissions.request('camera');
+      console.log('!!! status:', status);
+
+      this.setState({
+        isScanning: status.toUpperCase() === 'AUTHORIZED',
+      }, () => {
+        if (this.state.isScanning) {
+          Keyboard.dismiss();
+        }
+      });
+    } catch (e) {
+      // TODO: tell the user that there is a problem
+      console.log('!!! !!! !!! !!!');
+      console.log(e);
+    }
   };
 
   handleQRScannerClose = () => {
@@ -208,6 +217,8 @@ class ImportWallet extends React.Component<Props, State> {
         </ScrollWrapper>
         <QRCodeScanner
           isActive={isScanning}
+          validator={ETHValidator}
+          dataFormatter={decodeETHAddress}
           onDismiss={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
