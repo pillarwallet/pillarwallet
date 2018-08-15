@@ -71,6 +71,7 @@ export const spacing = {
 
 export const itemSizes = {
   avaratCircleSmall: 40,
+  avaratCircleMedium: 50,
 };
 
 export const fontTrackings = {

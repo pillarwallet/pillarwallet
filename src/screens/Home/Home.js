@@ -321,7 +321,6 @@ class HomeScreen extends React.Component<Props, State> {
       history,
       wallet: { address: walletAddress },
       navigation,
-      chats,
     } = this.props;
     const {
       activeTab,
@@ -332,7 +331,8 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-    const chatNotifications = chats.chats
+    const chatNotifications = [];
+    /* chats.chats
       .map((
         {
           username,
@@ -345,7 +345,7 @@ class HomeScreen extends React.Component<Props, State> {
           type: 'CHAT',
           createdAt: lastMessage.savedTimestamp,
         };
-      });
+      }); */
 
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
       .filter(value => Object.keys(value).length !== 0)
