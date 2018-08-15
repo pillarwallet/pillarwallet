@@ -156,10 +156,10 @@ const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
     {!!hasAddon &&
     <View
       style={{
-        width: 7,
-        height: 7,
-        backgroundColor: '#ffdb3c',
-        borderRadius: 3.5,
+        width: 8,
+        height: 8,
+        backgroundColor: baseColors.sunYellow,
+        borderRadius: 4,
         position: 'absolute',
         top: 0,
         right: 0,
@@ -225,8 +225,8 @@ const tabNavigation = createBottomTabNavigator(
     },
     [CHAT_LIST]: {
       screen: chatFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconChat),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(iconChat, !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
         tabBarLabel: tabBarLabel('Chat'),
       }),
     },
@@ -296,6 +296,7 @@ type Props = {
   getExistingChats: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
+  hasUnreadChatNotifications: boolean,
   wallet: Object,
   assets: Object,
 }
@@ -353,19 +354,19 @@ class AppFlow extends React.Component<Props, {}> {
   };
 
   render() {
-    const { userState, hasUnreadNotifications } = this.props;
+    const { userState, hasUnreadNotifications, hasUnreadChatNotifications } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
 
-    return <AppFlowNavigation screenProps={{ hasUnreadNotifications }} />;
+    return <AppFlowNavigation screenProps={{ hasUnreadNotifications, hasUnreadChatNotifications }} />;
   }
 }
 
 const mapStateToProps = ({
   user: { userState },
-  notifications: { data: notifications, hasUnreadNotifications },
+  notifications: { data: notifications, hasUnreadNotifications, hasUnreadChatNotifications },
   assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
@@ -374,6 +375,7 @@ const mapStateToProps = ({
   hasUnreadNotifications,
   assets,
   wallet,
+  hasUnreadChatNotifications,
 });
 
 const mapDispatchToProps = (dispatch) => ({
