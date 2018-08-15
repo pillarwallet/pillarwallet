@@ -12,6 +12,7 @@ type NotificationReducerState = {
   intercomNotificationsCount: number,
   homeNotifications: [],
   hasUnreadNotifications: boolean,
+  hasUnreadChatNotifications: boolean,
 }
 
 type NotificationReducerAction = {
@@ -24,6 +25,7 @@ const initialState = {
   intercomNotificationsCount: 0,
   homeNotifications: [],
   hasUnreadNotifications: false,
+  hasUnreadChatNotifications: false,
 };
 
 export default function notificationsReducer(
