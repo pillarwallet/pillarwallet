@@ -98,7 +98,13 @@ export default class SlideModal extends React.Component<Props, *> {
       <React.Fragment>
         {showModalHeader &&
           <HeaderWrapper fullScreen={fullScreen}>
-            <Header noMargin={!fullScreen} centerTitle={centerTitle} noPadding={!fullScreen} title={title} onClose={this.hideModal} />
+            <Header
+              noMargin={!fullScreen}
+              centerTitle={centerTitle}
+              noPadding={!fullScreen}
+              title={title}
+              onClose={this.hideModal}
+            />
           </HeaderWrapper>
         }
         {subtitle &&
