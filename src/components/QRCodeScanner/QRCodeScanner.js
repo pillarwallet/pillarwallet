@@ -19,7 +19,7 @@ const Wrapper = styled.View`
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 20;
 `;
 
 const Overlay = styled.View`
