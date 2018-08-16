@@ -8,10 +8,13 @@ export const updateUserAction = (walletId: string, field: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const user = await api.updateUser({ walletId, ...field });
     if (!Object.keys(user).length) return;
-    await storage.save('user', { user }, true);
+
+    const updatedUser = { ...user, lastUpdateTime: +new Date() };
+    await storage.save('user', { user: updatedUser }, true);
+
     dispatch({
       type: UPDATE_USER,
-      payload: { user, state: REGISTERED },
+      payload: { user: updatedUser, state: REGISTERED },
     });
   };
 };
@@ -19,18 +22,20 @@ export const updateUserAction = (walletId: string, field: Object) => {
 export const updateUserAvatarAction = (walletId: string, formData: any) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: user } } = getState();
-    const userAvatar = await api.updateUserAvatar(walletId, formData); // eslint-disable-line
-    // Below to be investigated
-    // const profileImage = await api.getUserAvatar({
-    //   userId: user.id,
-    //   walletId,
-    // });
-    // console.log(profileImage);
-    if (!Object.keys(user).length) return;
-    await storage.save('user', { user }, true);
+
+    const userAvatar = await api.updateUserAvatar(walletId, formData).catch(() => ({}));
+    if (!Object.keys(userAvatar).length || !userAvatar.profileImage) return;
+
+    const updatedUser = {
+      ...user,
+      profileImage: userAvatar.profileImage,
+      lastUpdateTime: +new Date(),
+    };
+    await storage.save('user', { user: updatedUser }, true);
+
     dispatch({
       type: UPDATE_USER,
-      payload: { user, state: REGISTERED },
+      payload: { user: updatedUser, state: REGISTERED },
     });
   };
 };

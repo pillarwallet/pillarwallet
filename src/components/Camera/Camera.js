@@ -150,10 +150,8 @@ class Camera extends React.Component<Props, State> {
     formData.append('walletId', user.walletId);
     formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
     updateUserAvatar(user.walletId, formData);
-    this.handleModalClose();
     this.props.modalHide();
   };
-
 
   renderNoPermissions = () => {
     return (
