@@ -351,10 +351,14 @@ class Profile extends React.Component<Props, State> {
             <SlideModal
               isVisible={showCheckPinModal}
               onModalHide={this.handleCheckPinModalClose}
+              title="enter pincode"
+              centerTitle
               fullScreen
               showHeader
             >
-              <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+              <Wrapper flex={1}>
+                <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+              </Wrapper>
             </SlideModal>
 
             <ListSeparator>

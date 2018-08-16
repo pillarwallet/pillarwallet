@@ -96,7 +96,7 @@ const Header = (props: Props) => {
     overlay,
     flexStart,
   } = props;
-  const showRight = nextText || nextIcon || onBack || onClose;
+  const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;

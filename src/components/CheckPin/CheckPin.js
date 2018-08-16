@@ -1,13 +1,12 @@
 // @flow
 import * as React from 'react';
-
+import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
 import { Container, Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 
@@ -18,6 +17,12 @@ type Props = {
   title?: string,
 }
 
+const CheckPinWrapper = styled(Wrapper)`
+  margin-top: auto;
+  height: 100%;
+  flex: 1;
+`;
+
 class CheckPin extends React.Component<Props, *> {
   handlePinSubmit = (pin: string) => {
     const { checkPin, onPinValid } = this.props;
@@ -25,7 +30,7 @@ class CheckPin extends React.Component<Props, *> {
   };
 
   render() {
-    const { title, wallet: { walletState } } = this.props;
+    const { wallet: { walletState } } = this.props;
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
@@ -39,15 +44,14 @@ class CheckPin extends React.Component<Props, *> {
     }
 
     return (
-      <Wrapper>
-        <Header title="enter pincode" />
+      <CheckPinWrapper>
         {showError}
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""
           showForgotButton={false}
         />
-      </Wrapper>
+      </CheckPinWrapper>
     );
   }
 }

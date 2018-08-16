@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import KeyPad from 'components/KeyPad';
-import { Container } from 'components/Layout';
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import PinDots from './PinDots';
 

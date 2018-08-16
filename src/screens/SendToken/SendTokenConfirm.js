@@ -191,11 +191,13 @@ class SendTokenContacts extends React.Component<Props, State> {
           isVisible={showCheckPinModal}
           onModalHidden={this.handlePendingNotificationOpen}
           onModalHide={this.closeCheckPinModal}
+          title="enter pincode"
           fullScreen
           showHeader
         >
-
-          <CheckPin onPinValid={this.makeTransaction} />
+          <Container>
+            <CheckPin onPinValid={this.makeTransaction} />
+          </Container>
         </CheckPinModal>
       </React.Fragment>
     );

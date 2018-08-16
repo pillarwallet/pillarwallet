@@ -19,6 +19,7 @@ type Props = {
   fullScreen?: boolean,
   isVisible: boolean,
   showHeader?: boolean,
+  centerTitle?: boolean,
 };
 
 const ModalWrapper = styled.View`
@@ -27,8 +28,6 @@ const ModalWrapper = styled.View`
 `;
 
 const HeaderWrapper = styled.View`
-  // This needs a better check
-  padding-top: ${(props) => props.fullScreen ? `${spacing.rhythm}px` : '0'};
 `;
 
 const ModalBackground = styled.View`
@@ -52,7 +51,8 @@ const getModalContentPadding = (showHeader: boolean) => {
 };
 
 const ModalContent = styled.View`
-flex-direction: column;
+  flex-direction: column;
+  flex: 1;
   ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
     padding: ${getModalContentPadding(showHeader)};
   `}
@@ -87,6 +87,7 @@ export default class SlideModal extends React.Component<Props, *> {
       subtitle,
       isVisible,
       showHeader,
+      centerTitle,
     } = this.props;
 
     const showModalHeader = !fullScreen || showHeader;
@@ -95,7 +96,7 @@ export default class SlideModal extends React.Component<Props, *> {
       <React.Fragment>
         {showModalHeader &&
           <HeaderWrapper fullScreen={fullScreen}>
-            <Header noMargin={!fullScreen} noPadding={!fullScreen} title={title} onClose={this.hideModal} />
+            <Header noMargin={!fullScreen} centerTitle={centerTitle} noPadding={!fullScreen} title={title} onClose={this.hideModal} />
           </HeaderWrapper>
         }
         {subtitle &&
