@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { connect } from 'react-redux';
+import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
@@ -72,30 +73,51 @@ type Props = {
 
 type State = {
   isOptionsModalActive: boolean,
+  avatarRefreshed: boolean,
 }
 
 class Contact extends React.Component<Props, State> {
-  state = {
-    isOptionsModalActive: false,
+  constructor(props: Props) {
+    super(props);
+    const { navigation } = this.props;
+    const contact = navigation.getParam('contact', {});
+
+    this.state = {
+      isOptionsModalActive: false,
+      avatarRefreshed: !contact.profileImage,
+    };
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    const contact = navigation.getParam('contact', {});
+
+    if (contact.profileImage) {
+      const defaultImageCacheManager = ImageCacheManager();
+      defaultImageCacheManager.deleteUrl(contact.profileImage)
+        .then(() => this.setState({ avatarRefreshed: true }))
+        .catch(() => null);
+    }
   }
 
   openOptionsModal = () => {
     this.setState({
       isOptionsModalActive: true,
     });
-  }
+  };
 
   closeOptionsModal = () => {
     this.setState({
       isOptionsModalActive: false,
     });
-  }
+  };
 
   render() {
     const { navigation, contacts } = this.props;
-    const { isOptionsModalActive } = this.state;
+    const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
     const isAccepted = !!contacts.find(({ username }) => username === contact.username);
+    const userAvatar = avatarRefreshed ? contact.profileImage : undefined;
     return (
       <Container>
         <Header
@@ -115,7 +137,7 @@ class Contact extends React.Component<Props, State> {
             </ContactHeader>
             <ContactHeaderAvatarWrapper >
               <ProfileImage
-                uri={contact.profileImage}
+                uri={userAvatar}
                 userName={contact.username}
                 diameter={60}
                 textStyle={{ fontSize: 32 }}
