@@ -59,10 +59,6 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const CheckPinModal = styled(SlideModal)`
-  align-items: flex-start;
-`;
-
 const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
@@ -117,6 +113,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { resetIncorrectPassword } = this.props;
     resetIncorrectPassword();
   };
+
+  closeCheckPinModal = () => {
+    this.setState({
+      showCheckPinModal: false,
+    });
+  }
 
   makeTransaction = () => {
     const { transactionPayload, assetData: { token } } = this.state;
@@ -181,13 +183,19 @@ class SendTokenContacts extends React.Component<Props, State> {
           </FooterWrapper>
         </KeyboardAvoidingView>
         <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
-        <CheckPinModal
+        <SlideModal
           isVisible={showCheckPinModal}
           onModalHidden={this.handlePendingNotificationOpen}
+          onModalHide={this.closeCheckPinModal}
+          title="enter pincode"
+          centerTitle
           fullScreen
+          showHeader
         >
-          <CheckPin onPinValid={this.makeTransaction} />
-        </CheckPinModal>
+          <Wrapper flex={1}>
+            <CheckPin onPinValid={this.makeTransaction} />
+          </Wrapper>
+        </SlideModal>
       </React.Fragment>
     );
   }

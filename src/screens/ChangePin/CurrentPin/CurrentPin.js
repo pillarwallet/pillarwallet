@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container } from 'components/Layout';
 import Header from 'components/Header';
@@ -20,15 +19,16 @@ export default class CurrentPin extends React.Component<Props> {
     const { navigation } = this.props;
 
     return (
-      <React.Fragment>
-        <Container>
-          <Header onClose={this.handleScreenDismissal} />
-          <CheckPin
-            onPinValid={() => navigation.navigate(CHANGE_PIN_NEW_PIN)}
-            title="enter current pincode"
-          />
-        </Container>
-      </React.Fragment >
+      <Container>
+        <Header
+          title="enter current pincode"
+          centerTitle
+          onClose={this.handleScreenDismissal}
+        />
+        <CheckPin
+          onPinValid={() => navigation.navigate(CHANGE_PIN_NEW_PIN)}
+        />
+      </Container>
     );
   }
 }

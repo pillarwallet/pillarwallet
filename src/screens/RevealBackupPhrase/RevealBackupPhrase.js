@@ -35,7 +35,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     if (!pinIsValid) {
       return (
         <Container>
-          <Header onClose={this.handleScreenDismissal} />
+          <Header title="enter pincode" centerTitle onClose={this.handleScreenDismissal} />
           <CheckPin onPinValid={() => this.setState({ pinIsValid: true })} />
         </Container>
       );
