@@ -4,10 +4,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
-import { Container, Wrapper, Center } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import Title from 'components/Title';
+import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 
@@ -39,11 +39,9 @@ class CheckPin extends React.Component<Props, *> {
     }
 
     return (
-      <Wrapper flex={1}>
+      <Wrapper>
+        <Header title="enter pincode" />
         {showError}
-        <Center>
-          <Title align="center" title={title || 'enter pincode'} />
-        </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""

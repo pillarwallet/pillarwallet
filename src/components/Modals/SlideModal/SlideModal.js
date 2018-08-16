@@ -27,6 +27,7 @@ const ModalWrapper = styled.View`
 `;
 
 const HeaderWrapper = styled.View`
+  // This needs a better check
   padding-top: ${(props) => props.fullScreen ? `${spacing.rhythm}px` : '0'};
 `;
 
@@ -51,6 +52,7 @@ const getModalContentPadding = (showHeader: boolean) => {
 };
 
 const ModalContent = styled.View`
+flex-direction: column;
   ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
     padding: ${getModalContentPadding(showHeader)};
   `}

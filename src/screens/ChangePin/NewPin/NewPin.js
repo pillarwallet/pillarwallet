@@ -23,10 +23,7 @@ export default class NewPin extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Header onClose={this.handleScreenDismissal} />
-        <Center>
-          <Title align="center" title="enter new pincode" />
-        </Center>
+        <Header title="enter new pincode" onClose={this.handleScreenDismissal} />
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""

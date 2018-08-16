@@ -85,11 +85,6 @@ const fullNameFormFields = [{
   config: { placeholder: 'Last name' },
 }];
 
-const CheckPinWrapper = styled.View`
-  display: flex;
-  height: 100%;
-`;
-
 type Props = {
   user: Object,
   navigation: NavigationScreenProp<*>,
@@ -359,12 +354,7 @@ class Profile extends React.Component<Props, State> {
               fullScreen
               showHeader
             >
-              <Container>
-                <CheckPinWrapper>
-                  <Header onClose={this.handleCheckPinModalClose} style={{ paddingTop: 0 }} />
-                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
-                </CheckPinWrapper>
-              </Container>
+              <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
             </SlideModal>
 
             <ListSeparator>
