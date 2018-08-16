@@ -59,10 +59,6 @@ const LabeledRow = styled.View`
   margin: 10px 0;
 `;
 
-const CheckPinModal = styled(SlideModal)`
-  align-items: flex-start;
-`;
-
 const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
@@ -187,18 +183,19 @@ class SendTokenContacts extends React.Component<Props, State> {
           </FooterWrapper>
         </KeyboardAvoidingView>
         <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
-        <CheckPinModal
+        <SlideModal
           isVisible={showCheckPinModal}
           onModalHidden={this.handlePendingNotificationOpen}
           onModalHide={this.closeCheckPinModal}
           title="enter pincode"
+          centerTitle
           fullScreen
           showHeader
         >
-          <Container>
+          <Wrapper flex={1}>
             <CheckPin onPinValid={this.makeTransaction} />
-          </Container>
-        </CheckPinModal>
+          </Wrapper>
+        </SlideModal>
       </React.Fragment>
     );
   }
