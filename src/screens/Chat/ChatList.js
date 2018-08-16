@@ -51,11 +51,12 @@ class ChatListScreen extends React.Component<Props, State> {
     resetUnread(contact.username);
   };
 
-  renderItem = ({ item: contact }: Object) => {
+  renderItem = (contacts: Object[]) => ({ item: contact }: Object) => {
     const { chats } = this.props;
 
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const { lastMessage, unread } = chatWithContact;
+    const contactInfo = contacts.find(({ username }) => contact.username === username) || {};
 
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
@@ -69,7 +70,7 @@ class ChatListScreen extends React.Component<Props, State> {
     return (
       <ChatListItem
         userName={contact.username}
-        avatar={contact.profileImage}
+        avatar={contactInfo.profileImage}
         message={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={unread}
@@ -87,7 +88,7 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { chats, getExistingChats } = this.props;
+    const { chats, getExistingChats, contacts } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     return (
       <Container>
@@ -107,7 +108,7 @@ class ChatListScreen extends React.Component<Props, State> {
             data={chats}
             extraData={chats}
             keyExtractor={(item) => item.username}
-            renderItem={this.renderItem}
+            renderItem={this.renderItem(contacts)}
             ItemSeparatorComponent={this.renderSeparator}
             style={{ height: '100%' }}
             contentContainerStyle={{ height: '100%' }}
