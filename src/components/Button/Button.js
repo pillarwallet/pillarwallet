@@ -39,7 +39,7 @@ const themes = {
     color: baseColors.fireEngineRed,
   },
   danger: {
-    background: baseColors.burningFire,
+    background: baseColors.fireEngineRed,
     color: baseColors.white,
   },
   disabled: {
@@ -54,7 +54,8 @@ const getTheme = (props: Props) => {
   }
   if (props.secondary && props.danger) {
     return themes.secondaryDanger;
-  } else if (props.danger) {
+  }
+  if (props.danger) {
     return themes.danger;
   }
   if (props.secondary) {

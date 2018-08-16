@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
 import { StyleSheet } from 'react-native';
-import { Button } from 'native-base';
 import Icon from 'components/Icon';
 
 type Props = {
@@ -14,6 +14,11 @@ type Props = {
   type?: string,
   margin?: number,
 }
+
+const IconButtonWrapper = styled.TouchableOpacity`
+  justify-content: center;
+  padding: 0;
+`;
 
 const IconButton = (props: Props) => {
   const {
@@ -40,9 +45,9 @@ const IconButton = (props: Props) => {
     type,
   };
   return (
-    <Button transparent iconLeft={0} onPress={onPress} style={style}>
+    <IconButtonWrapper style={style} onPress={onPress}>
       <Icon {...iconParams} />
-    </Button>
+    </IconButtonWrapper>
   );
 };
 

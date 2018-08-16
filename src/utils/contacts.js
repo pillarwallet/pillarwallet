@@ -15,3 +15,11 @@ export function getUserName(contact: ?Object) {
   }
   return contact.username;
 }
+
+export function getInitials(fullName: string = '') {
+  return fullName
+    .split(' ')
+    .map(name => name.substring(0, 1))
+    .join('')
+    .toUpperCase();
+}

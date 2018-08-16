@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-navigation';
+import { Platform } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { baseColors, spacing } from 'utils/variables';
 
 type ContainerProps = {
@@ -22,7 +22,7 @@ export const Center = styled.View`
 `;
 
 
-const ContainerOuter = styled(Platform.OS === 'ios' ? SafeAreaView : View)`
+const ContainerOuter = styled(SafeAreaView)`
   background-color: ${props => props.color ? props.color : baseColors.white};
 `;
 
@@ -30,7 +30,6 @@ const ContainerInner = styled.View`
   height: 100%;
   align-items: ${props => (props.center ? 'center' : 'stretch')};
   justify-content: ${props => (props.center ? 'center' : 'flex-start')};
-  background-color: ${props => props.color ? props.color : 'transparent'};
 `;
 
 export const Container = (props: ContainerProps) => {
@@ -44,12 +43,14 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.View`
-  height: ${props => props.fullScreen ? '100%' : 'auto'};
-  width: ${props => props.fullScreen ? '100%' : 'auto'};
   margin: ${props => (props.regularPadding ? '0 20px' : '0')};
   ${({ center }) => center && `
     align-items: center;
     justify-content: center;
+  `}
+  ${({ fullScreen }) => fullScreen && `
+    height: 100%;
+    width: 100%;
   `}
   ${({ flex }) => flex && `
     flex: ${flex};

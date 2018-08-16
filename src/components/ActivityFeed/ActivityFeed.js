@@ -163,6 +163,7 @@ class ActivityFeed extends React.Component<Props, State> {
       onAcceptInvitation,
       onRejectInvitation,
     } = this.props;
+
     switch (type) {
       case TYPE_RECEIVED:
         return (
@@ -270,9 +271,10 @@ class ActivityFeed extends React.Component<Props, State> {
       <ActivityFeedItem key={index} onPress={onItemPress}>
         <ActivityFeedItemCol fixedWidth="50px">
           <ProfileImage
-            uri={notification.avatar}
+            uri={notification.profileImage}
             userName={notification.username}
-            diameter={40}
+            diameter={36}
+            containerStyle={{ marginRight: 10 }}
             textStyle={{ fontSize: 14 }}
             onPress={onProfileImagePress}
           />

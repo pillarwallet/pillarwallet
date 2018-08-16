@@ -34,7 +34,7 @@ const ContactCardWrapper = styled.TouchableHighlight`
   height: 75px;
   padding: ${props => (props.noBorder ? '14px 0' : '14px')};
   border-radius: 4px;
-  margin: ${props => props.noMargin ? '0' : `0 ${spacing.rhythm}px`};
+  margin: ${props => props.noMargin ? `0 0 ${spacing.rhythm / 2}px` : `0 ${spacing.rhythm}px ${spacing.rhythm / 2}px`};
 `;
 
 const ContactCardInner = styled.View`

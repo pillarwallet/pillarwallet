@@ -8,6 +8,7 @@ export const BaseText = styled.Text`
   font-weight: 400;
   include-font-padding: false;
   text-align-vertical: center;
+  color: ${UIColors.defaultTextColor};
 `;
 
 export const BoldText = styled(BaseText)`
@@ -15,6 +16,7 @@ export const BoldText = styled(BaseText)`
   font-weight: 600;
   include-font-padding: false;
   text-align-vertical: center;
+  color: ${UIColors.defaultTextColor};
 `;
 
 export const LightText = styled(BaseText)`
@@ -22,6 +24,7 @@ export const LightText = styled(BaseText)`
   font-weight: 300;
   include-font-padding: false;
   text-align-vertical: center;
+  color: ${UIColors.defaultTextColor};
 `;
 
 

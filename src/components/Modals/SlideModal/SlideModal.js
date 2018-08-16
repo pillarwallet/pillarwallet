@@ -4,10 +4,10 @@ import Modal from 'react-native-modal';
 import { Root } from 'native-base';
 import styled from 'styled-components/native';
 import Header from 'components/Header';
+import { Container } from 'components/Layout';
+import { spacing, baseColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
-import { Dimensions, Keyboard } from 'react-native';
-
-const { height } = Dimensions.get('window');
+import { Keyboard } from 'react-native';
 
 type Props = {
   title?: string,
@@ -18,34 +18,53 @@ type Props = {
   onModalHidden?: Function,
   fullScreen?: boolean,
   isVisible: boolean,
+  showHeader?: boolean,
+  centerTitle?: boolean,
 };
 
 const ModalWrapper = styled.View`
-  position: absolute;
   width: 100%;
-  ${props => props.fullScreen && `height: ${height};`}
+  height: 100%;
+`;
+
+const HeaderWrapper = styled.View`
 `;
 
 const ModalBackground = styled.View`
-  background-color: white;
-  border-top-left-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
-  border-top-right-radius:  ${(props) => props.fullScreen ? '0' : '20px'};
-  padding: ${(props) => props.fullScreen ? '0' : '20px'};
+  border-top-left-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
+  border-top-right-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
+  padding: ${(props) => props.fullScreen ? '0' : `0 ${spacing.rhythm}px`};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
-  ${props => props.fullScreen && 'height: 100%;'}
+  margin-top: auto;
+  background: ${baseColors.white};
 `;
 
 const ModalSubtitle = styled(SubTitle)`
   padding: 10px 0;
 `;
 
+const getModalContentPadding = (showHeader: boolean) => {
+  if (showHeader) {
+    return '0';
+  }
+  return `${spacing.rhythm}px 0 0`;
+};
+
 const ModalContent = styled.View`
-  ${props => props.fullScreen && 'height: 100%; padding: 20px 0 40px;'}
+  flex-direction: column;
+  ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
+    padding: ${getModalContentPadding(showHeader)};
+  `}
+  ${({ fullScreen }) => fullScreen && `
+    flex: 1;
+  `}
 `;
 
 const ModalOverflow = styled.View`
   width: 100%;
-  background-color: #FFFFFF;
+  height: 100px;
+  margin-bottom: -100px;
+  background-color: ${baseColors.white};
 `;
 
 export default class SlideModal extends React.Component<Props, *> {
@@ -69,8 +88,50 @@ export default class SlideModal extends React.Component<Props, *> {
       fullScreen,
       subtitle,
       isVisible,
+      showHeader,
+      centerTitle,
     } = this.props;
-    const animationTiming = 500;
+
+    const showModalHeader = !fullScreen || showHeader;
+
+    const modalInner = (
+      <React.Fragment>
+        {showModalHeader &&
+          <HeaderWrapper fullScreen={fullScreen}>
+            <Header
+              noMargin={!fullScreen}
+              centerTitle={centerTitle}
+              noPadding={!fullScreen}
+              title={title}
+              onClose={this.hideModal}
+            />
+          </HeaderWrapper>
+        }
+        {subtitle &&
+          <ModalSubtitle>{subtitle}</ModalSubtitle>
+        }
+        <ModalContent
+          fullScreen={fullScreen}
+          showHeader={showHeader}
+        >
+          {children}
+        </ModalContent>
+        <ModalOverflow />
+      </React.Fragment>
+    );
+
+    const modalContent = () => {
+      if (fullScreen) {
+        return (
+          <Container>
+            {modalInner}
+          </Container>
+        );
+      }
+      return modalInner;
+    };
+
+    const animationTiming = 400;
     return (
       <Modal
         isVisible={isVisible}
@@ -79,28 +140,17 @@ export default class SlideModal extends React.Component<Props, *> {
         onBackdropPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
-        animationIn="bounceInUp"
-        animationOut="bounceOutDown"
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
         swipeDirection="down"
-        hideModalContentWhileAnimating
         style={{
           margin: 0,
-          justifyContent: 'flex-end',
         }}
       >
         <ModalWrapper fullScreen={fullScreen}>
           <Root>
             <ModalBackground fullScreen={fullScreen}>
-              {!fullScreen &&
-                <Header noPadding title={title} onClose={this.hideModal} />
-              }
-              {subtitle && !fullScreen &&
-                <ModalSubtitle>{subtitle}</ModalSubtitle>
-              }
-              <ModalContent fullScreen={fullScreen}>
-                {children}
-              </ModalContent>
-              <ModalOverflow />
+              {modalContent()}
             </ModalBackground>
           </Root>
 

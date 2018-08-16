@@ -3,16 +3,18 @@ import * as React from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import { baseColors } from 'utils/variables';
 import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
+import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import ChatListItem from './ChatListItem';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  setUnreadChatNotificationsStatus: Function,
   contacts: Object[],
   chats: Object[],
   notifications: Object[],
@@ -28,9 +30,19 @@ type State = {
 }
 
 class ChatListScreen extends React.Component<Props, State> {
+  _willFocus: NavigationEventSubscription;
+
   componentDidMount() {
     const { getExistingChats } = this.props;
     getExistingChats();
+    this._willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => { this.props.setUnreadChatNotificationsStatus(false); },
+    );
+  }
+
+  componentWillUnmount() {
+    this._willFocus.remove();
   }
 
   handleChatItemClick = (contact) => {
@@ -39,11 +51,12 @@ class ChatListScreen extends React.Component<Props, State> {
     resetUnread(contact.username);
   };
 
-  renderItem = ({ item: contact }: Object) => {
+  renderItem = (contacts: Object[]) => ({ item: contact }: Object) => {
     const { chats } = this.props;
 
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const { lastMessage, unread } = chatWithContact;
+    const contactInfo = contacts.find(({ username }) => contact.username === username) || {};
 
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
@@ -56,12 +69,12 @@ class ChatListScreen extends React.Component<Props, State> {
 
     return (
       <ChatListItem
-        userName={contact.username}
-        avatar={contact.avatar}
+        userName={contactInfo.username}
+        avatar={contactInfo.profileImage}
         message={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={unread}
-        onPress={() => this.handleChatItemClick(contact)}
+        onPress={() => this.handleChatItemClick(contactInfo)}
       />
     );
   };
@@ -75,7 +88,7 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { chats, getExistingChats } = this.props;
+    const { chats, getExistingChats, contacts } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     return (
       <Container>
@@ -95,7 +108,7 @@ class ChatListScreen extends React.Component<Props, State> {
             data={chats}
             extraData={chats}
             keyExtractor={(item) => item.username}
-            renderItem={this.renderItem}
+            renderItem={this.renderItem(contacts)}
             ItemSeparatorComponent={this.renderSeparator}
             style={{ height: '100%' }}
             contentContainerStyle={{ height: '100%' }}
@@ -124,6 +137,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
+  setUnreadChatNotificationsStatus: (status) => dispatch(setUnreadChatNotificationsStatusAction(status)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatListScreen);
