@@ -36,7 +36,7 @@ class ForgotPin extends React.Component<Props, {}> {
         <Header centerTitle title="forgot pin" onClose={this.goBackToPin} />
         <Wrapper regularPadding>
           <Paragraph>You can restore access to your wallet by re-importing
-                it using 12-word backup phrase private key 
+                it using 12-word backup phrase private key
                 generated for you during the wallet creation.
           </Paragraph>
           <Paragraph light>
