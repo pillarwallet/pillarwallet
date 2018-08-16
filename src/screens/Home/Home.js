@@ -241,7 +241,7 @@ class HomeScreen extends React.Component<Props, State> {
     const { contacts, navigation } = this.props;
     return contacts
       .sort((a, b) => b.createdAt - a.createdAt)
-      .slice(0, 5)
+      .slice(0, 10)
       .map(contact => (
         <RecentConnectionsItem
           key={contact.username}
