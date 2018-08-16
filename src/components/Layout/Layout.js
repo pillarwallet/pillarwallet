@@ -1,9 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-navigation';
 import { baseColors, spacing } from 'utils/variables';
 
 type ContainerProps = {
@@ -22,7 +21,7 @@ export const Center = styled.View`
 `;
 
 
-const ContainerOuter = styled(Platform.OS === 'ios' ? SafeAreaView : View)`
+const ContainerOuter = styled.SafeAreaView`
   background-color: ${props => props.color ? props.color : baseColors.white};
 `;
 

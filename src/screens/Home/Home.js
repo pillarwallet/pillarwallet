@@ -11,7 +11,7 @@ import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import { uniqBy, isIphoneX } from 'utils/common';
+import { uniqBy } from 'utils/common';
 import { getUserName } from 'utils/contacts';
 import {
   fetchTransactionsHistoryNotificationsAction,
