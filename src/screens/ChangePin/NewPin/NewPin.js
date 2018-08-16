@@ -1,9 +1,8 @@
 // @flow
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Center } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Header from 'components/Header';
-import Title from 'components/Title';
 import PinCode from 'components/PinCode';
 import { CHANGE_PIN_CONFIRM_NEW_PIN } from 'constants/navigationConstants';
 
@@ -23,10 +22,11 @@ export default class NewPin extends React.Component<Props> {
   render() {
     return (
       <Container>
-        <Header onClose={this.handleScreenDismissal} />
-        <Center>
-          <Title align="center" title="enter new pincode" />
-        </Center>
+        <Header
+          title="enter new pincode"
+          centerTitle
+          onClose={this.handleScreenDismissal}
+        />
         <PinCode
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""

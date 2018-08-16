@@ -12,7 +12,7 @@ import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import { uniqBy, isIphoneX } from 'utils/common';
+import { uniqBy } from 'utils/common';
 import { getUserName } from 'utils/contacts';
 import {
   fetchTransactionsHistoryNotificationsAction,
@@ -71,7 +71,7 @@ const ALL = 'ALL';
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
-  margin-top: ${isIphoneX() ? '0' : '20px'};
+  margin-top: ${spacing.rhythm}px;
 `;
 
 const HomeHeaderRow = styled.View`
@@ -379,7 +379,7 @@ class HomeScreen extends React.Component<Props, State> {
 
               <HomeHeaderBody>
                 <HomeHeaderProfileImage
-                  uri={`${user.profileImage}?${+new Date()}`}
+                  uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
                   userName={user.username}
                   diameter={72}
                   onPress={this.toggleCamera}

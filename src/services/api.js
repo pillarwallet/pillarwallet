@@ -63,13 +63,13 @@ SDKWrapper.prototype.updateUserAvatar = function (walletId: string, formData: Ob
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
     .then(({ data }) => ({ profileImage: data.profileImage, walletId }))
-    .catch((err) => { console.log('returned error', err); }); // eslint-disable-line
+    .catch(() => ({}));
 };
 
 SDKWrapper.prototype.getUserAvatar = function (userId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
-    .catch((err) => { console.log('returned error', err); }); // eslint-disable-line
+    .catch(() => null);
 };
 
 SDKWrapper.prototype.userInfo = function (walletId: string) {

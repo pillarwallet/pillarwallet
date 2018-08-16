@@ -4,8 +4,13 @@ import { Platform, TouchableNativeFeedback, Image as RNImage } from 'react-nativ
 import styled from 'styled-components/native';
 import { fontSizes, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
+import { Wrapper } from 'components/Layout';
 import { KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import keyPadTypes from './keyPadTypes';
+
+const KeyPadWrapper = styled(Wrapper)`
+  margin-top: auto;
+`;
 
 const KeyInput = styled.View`
   justify-content: center;
@@ -14,12 +19,12 @@ const KeyInput = styled.View`
   height: 70;
 `;
 
-const Wrapper = styled.View`
+const KeyPadInner = styled.View`
   flex-wrap: wrap;
   flex-direction: row;
-  align-self: flex-end;
   justify-content: center;
   align-items: center;
+  margin-top: auto;
 `;
 
 const PinButton = styled.TouchableOpacity`
@@ -156,9 +161,11 @@ export default class KeyPad extends React.Component<Props> {
     const buttons = customButtons || (keyPadTypes[type] ? keyPadTypes[type](options) : keyPadTypes.numeric());
 
     return (
-      <Wrapper style={style}>
-        {this.renderKeys(buttons)}
-      </Wrapper>
+      <KeyPadWrapper style={style}>
+        <KeyPadInner>
+          {this.renderKeys(buttons)}
+        </KeyPadInner>
+      </KeyPadWrapper>
     );
   }
 }

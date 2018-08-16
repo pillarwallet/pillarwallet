@@ -2,8 +2,8 @@
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
 import { TextLink, BaseText } from 'components/Typography';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { isIphoneX, noop } from 'utils/common';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { noop } from 'utils/common';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
@@ -18,6 +18,7 @@ type Props = {
   title?: string,
   centerTitle?: boolean,
   noPadding?: boolean,
+  noMargin?: boolean,
   flexStart?: boolean,
   light?: boolean,
   style?: Object,
@@ -32,7 +33,7 @@ const Wrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
-  margin-top: ${isIphoneX() ? '0' : '20px'};
+  margin-top: ${spacing.rhythm};
   margin-bottom: ${props => props.flexStart ? 'auto' : '20px'};
   z-index: 10;
 `;
@@ -88,13 +89,14 @@ const Header = (props: Props) => {
     title,
     centerTitle,
     noPadding,
+    noMargin,
     style,
     light,
     headerRightFlex,
     overlay,
     flexStart,
   } = props;
-  const showRight = nextText || nextIcon || onBack || onClose;
+  const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
   const showTitleLeft = !onBack && !centerTitle;
@@ -110,7 +112,7 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper overlay={overlay} flexStart={flexStart} style={style} noPadding={noPadding}>
+    <Wrapper overlay={overlay} noMargin={noMargin} flexStart={flexStart} style={style} noPadding={noPadding}>
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon
