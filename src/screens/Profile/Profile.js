@@ -321,7 +321,7 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="baseCurrency"
               label="Base currency"
-              value={baseFiatCurrency}
+              value={baseFiatCurrency || 'GBP'}
               onPress={() =>
                 this.setState({ visibleModal: 'baseCurrency' })}
             />
