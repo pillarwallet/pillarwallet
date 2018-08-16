@@ -22,7 +22,6 @@ import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
-import KeyboardAvoidModal from 'components/Modals/KeyboardAvoidModal';
 
 import countries from 'utils/countries.json';
 import ProfileSettingsItem from './ProfileSettingsItem';
@@ -85,11 +84,6 @@ const fullNameFormFields = [{
   type: 'string',
   config: { placeholder: 'Last name' },
 }];
-
-const CheckPinWrapper = styled.View`
-  display: flex;
-  height: 100%;
-`;
 
 type Props = {
   user: Object,
@@ -215,10 +209,11 @@ class Profile extends React.Component<Props, State> {
     return (
       <Container color={baseColors.snowWhite}>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
-        <KeyboardAvoidModal
+        <SlideModal
           isVisible={this.state.visibleModal === 'country'}
-          subtitle="Choose your country"
+          title="Choose your country"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
@@ -226,11 +221,12 @@ class Profile extends React.Component<Props, State> {
             renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
             keyExtractor={({ name }) => name}
           />
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'city'}
-          subtitle="Enter city name"
+          title="Enter city name"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
@@ -240,11 +236,12 @@ class Profile extends React.Component<Props, State> {
               value={{ city: user.city }}
             />
           </Wrapper>
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'email'}
-          subtitle="Enter your email"
+          title="Enter your email"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
@@ -254,11 +251,12 @@ class Profile extends React.Component<Props, State> {
               value={{ email: user.email }}
             />
           </Wrapper>
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'fullName'}
-          subtitle="Enter your full name"
+          title="Enter your full name"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <Wrapper regularPadding>
@@ -268,11 +266,12 @@ class Profile extends React.Component<Props, State> {
               value={{ firstName: user.firstName, lastName: user.lastName }}
             />
           </Wrapper>
-        </KeyboardAvoidModal>
-        <KeyboardAvoidModal
+        </SlideModal>
+        <SlideModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          subtitle="Choose your base currency"
+          title="Choose your base currency"
           fullScreen
+          showHeader
           onModalHide={this.toggleSlideModalOpen}
         >
           <FlatList
@@ -280,7 +279,7 @@ class Profile extends React.Component<Props, State> {
             renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
             keyExtractor={({ name }) => name}
           />
-        </KeyboardAvoidModal>
+        </SlideModal>
         <ScrollWrapper>
           <ListWrapper>
             <ListSeparator first>
@@ -352,14 +351,14 @@ class Profile extends React.Component<Props, State> {
             <SlideModal
               isVisible={showCheckPinModal}
               onModalHide={this.handleCheckPinModalClose}
+              title="enter pincode"
+              centerTitle
               fullScreen
+              showHeader
             >
-              <Container>
-                <CheckPinWrapper>
-                  <Header onClose={this.handleCheckPinModalClose} style={{ paddingTop: 0 }} />
-                  <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
-                </CheckPinWrapper>
-              </Container>
+              <Wrapper flex={1}>
+                <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
+              </Wrapper>
             </SlideModal>
 
             <ListSeparator>
@@ -431,6 +430,7 @@ class Profile extends React.Component<Props, State> {
             <SlideModal
               isVisible={showSystemInfoModal}
               fullScreen
+              showHeader
               onModalHide={() => this.setState({ showSystemInfoModal: false })}
             >
               <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
