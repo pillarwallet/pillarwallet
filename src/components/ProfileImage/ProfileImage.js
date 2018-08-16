@@ -1,11 +1,14 @@
 // @flow
 import * as React from 'react';
+import { ImageBackground } from 'react-native';
+
 import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
 import { BaseText } from 'components/Typography';
 
-const CircleImage = styled.Image`
+const CircleImage = styled(CachedImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
@@ -48,6 +51,31 @@ type Props = {
   children?: React.Node,
 }
 
+const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node }) => {
+  const { userName, innerComponent } = props;
+  const initials = userName && getInitials(userName);
+
+  return (
+    <React.Fragment>
+      {innerComponent &&
+        <InnerBackground>
+          {innerComponent}
+        </InnerBackground>
+      }
+      {userName && !innerComponent &&
+      <InnerBackground>
+        <InnerUsername>
+          {initials}
+        </InnerUsername>
+      </InnerBackground>
+      }
+    </React.Fragment>
+  );
+};
+
+const CACHED_IMAGE_REF = 'cachedImage';
+const IMAGE_LOAD_FAILED = 'image_load_failed';
+
 const ProfileImage = (props: Props) => {
   const {
     uri,
@@ -60,7 +88,14 @@ const ProfileImage = (props: Props) => {
     userName,
   } = props;
 
-  const initials = userName && getInitials(userName);
+  const renderDefaultImage = () => <DefaultPicture userName={userName} innerComponent={children} />;
+
+  const renderImage = (data: Object) => {
+    if (data.source === IMAGE_LOAD_FAILED) {
+      return renderDefaultImage();
+    }
+    return <ImageBackground imageStyle={data.style} ref={CACHED_IMAGE_REF} {...data} />;
+  };
 
   return (
     <ImageTouchable
@@ -72,19 +107,16 @@ const ProfileImage = (props: Props) => {
       style={style}
       hasChildren={children}
     >
-      {children &&
-        <InnerBackground>
-          {children}
-        </InnerBackground>
+      {!uri && renderDefaultImage()}
+      {!!uri &&
+        <CircleImage
+          additionalImageStyle={imageStyle}
+          diameter={diameter}
+          renderImage={renderImage}
+          fallbackSource={IMAGE_LOAD_FAILED}
+          source={{ uri }}
+        />
       }
-      {userName && !children &&
-        <InnerBackground>
-          <InnerUsername>
-            {initials}
-          </InnerUsername>
-        </InnerBackground>
-      }
-      {!!uri && <CircleImage additionalImageStyle={imageStyle} diameter={diameter} source={{ uri }} />}
     </ImageTouchable>
   );
 };

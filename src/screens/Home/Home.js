@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
+import firebase from 'react-native-firebase';
 import { RefreshControl, Platform } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
@@ -210,7 +211,9 @@ class HomeScreen extends React.Component<Props, State> {
   componentDidMount() {
     const { fetchInviteNotifications } = this.props;
     fetchInviteNotifications();
-
+    if (Platform.OS === 'ios') {
+      firebase.notifications().setBadge(0);
+    }
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
       () => { this.props.setUnreadNotificationsStatus(false); },
@@ -321,7 +324,6 @@ class HomeScreen extends React.Component<Props, State> {
       history,
       wallet: { address: walletAddress },
       navigation,
-      chats,
     } = this.props;
     const {
       activeTab,
@@ -332,7 +334,8 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.state;
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-    const chatNotifications = chats.chats
+    const chatNotifications = [];
+    /* chats.chats
       .map((
         {
           username,
@@ -345,7 +348,7 @@ class HomeScreen extends React.Component<Props, State> {
           type: 'CHAT',
           createdAt: lastMessage.savedTimestamp,
         };
-      });
+      }); */
 
     const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
       .filter(value => Object.keys(value).length !== 0)

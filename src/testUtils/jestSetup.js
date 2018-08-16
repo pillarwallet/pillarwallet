@@ -21,6 +21,11 @@ jest.setMock('cryptocompare', {
   },
 });
 
+jest.setMock('react-native-splash-screen', {
+  show: jest.fn(),
+  hide: jest.fn(),
+});
+
 jest.setMock('react-native-scrypt', () => Promise.resolve('xxxx'));
 
 jest.setMock('react-native-permissions', {
