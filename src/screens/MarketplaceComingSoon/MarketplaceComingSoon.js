@@ -24,7 +24,7 @@ const MarketplaceComingSoon = () => {
       <ComingSoonBanner>
         <ComingSoonBannerText>Coming Soon</ComingSoonBannerText>
       </ComingSoonBanner>
-      <ScrollWrapper regularPadding>
+      <ScrollWrapper regularPadding showsVerticalScrollIndicator={false}>
         <Paragraph>
           The market will contain many services.
         </Paragraph>
