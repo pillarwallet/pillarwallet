@@ -60,7 +60,7 @@ const NoPermissions = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding: 10;
+  padding: 10px;
 `;
 
 const ImageCircle = styled.Image`
@@ -154,12 +154,18 @@ class Camera extends React.Component<Props, State> {
   };
 
   renderNoPermissions = () => {
+    const { modalHide } = this.props;
     return (
-      <NoPermissions>
-        <Text style={{ color: 'white' }}>
-          Camera permissions not granted - cannot open camera preview.
-        </Text>
-      </NoPermissions>
+      <React.Fragment>
+        <HeaderWrapper>
+          <Header light flexStart onClose={modalHide} />
+        </HeaderWrapper>
+        <NoPermissions>
+          <Text style={{ color: 'white' }}>
+            Camera permissions not granted - cannot open camera preview.
+          </Text>
+        </NoPermissions>
+      </React.Fragment>
     );
   };
 
