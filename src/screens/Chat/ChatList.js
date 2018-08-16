@@ -69,12 +69,12 @@ class ChatListScreen extends React.Component<Props, State> {
 
     return (
       <ChatListItem
-        userName={contact.username}
+        userName={contactInfo.username}
         avatar={contactInfo.profileImage}
         message={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={unread}
-        onPress={() => this.handleChatItemClick(contact)}
+        onPress={() => this.handleChatItemClick(contactInfo)}
       />
     );
   };
