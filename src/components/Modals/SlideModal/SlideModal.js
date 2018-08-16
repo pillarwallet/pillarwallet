@@ -33,7 +33,7 @@ const HeaderWrapper = styled.View`
 const ModalBackground = styled.View`
   border-top-left-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
   border-top-right-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
-  padding: ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
+  padding: ${(props) => props.fullScreen ? '0' : `0 ${spacing.rhythm}px`};
   box-shadow: 10px 5px 5px rgba(0,0,0,.5);
   margin-top: auto;
   background: ${baseColors.white};
