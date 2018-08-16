@@ -379,7 +379,7 @@ class HomeScreen extends React.Component<Props, State> {
 
               <HomeHeaderBody>
                 <HomeHeaderProfileImage
-                  uri={`${user.profileImage}?${+new Date()}`}
+                  uri={`${user.profileImage}?t=${+new Date()}`}
                   userName={user.username}
                   diameter={72}
                   onPress={this.toggleCamera}
