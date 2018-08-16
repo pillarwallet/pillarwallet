@@ -70,7 +70,7 @@ const ALL = 'ALL';
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
-  margin-top: ${isIphoneX() ? '0' : '20px'};
+  margin-top: ${spacing.rhythm}px;
 `;
 
 const HomeHeaderRow = styled.View`

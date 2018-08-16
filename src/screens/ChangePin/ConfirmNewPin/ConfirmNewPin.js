@@ -83,7 +83,11 @@ class ConfirmNewPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="confirm new pincode" onClose={this.handleScreenDismissal} />
+        <Header
+          title="confirm new pincode"
+          centerTitle
+          onClose={this.handleScreenDismissal}
+        />
         {showError}
         <PinCode
           onPinEntered={this.handlePinSubmit}

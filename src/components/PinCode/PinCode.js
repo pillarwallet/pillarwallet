@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
 import KeyPad from 'components/KeyPad';
+import { Wrapper } from 'components/Layout';
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import PinDots from './PinDots';
 
@@ -18,6 +20,10 @@ type Props = {
 type State = {
   passCode: string[],
 };
+
+const PinDotsWrapper = styled(Wrapper)`
+  justify-content: center;
+`;
 
 export default class PinCode extends React.Component<Props, State> {
   resetPinCodeTimeout: any | TimeoutID;
@@ -93,7 +99,9 @@ export default class PinCode extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
+        <PinDotsWrapper flex={1}>
+          <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
+        </PinDotsWrapper>
         <KeyPad
           type="pincode"
           options={{ showForgotButton }}

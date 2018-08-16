@@ -2,8 +2,8 @@
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
 import { TextLink, BaseText } from 'components/Typography';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { isIphoneX, noop } from 'utils/common';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { noop } from 'utils/common';
 import Title from 'components/Title';
 import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
@@ -33,7 +33,7 @@ const Wrapper = styled.View`
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
-  margin-top: ${props => isIphoneX() || props.noMargin ? '0' : '20px'};
+  margin-top: ${spacing.rhythm};
   margin-bottom: ${props => props.flexStart ? 'auto' : '20px'};
   z-index: 10;
 `;

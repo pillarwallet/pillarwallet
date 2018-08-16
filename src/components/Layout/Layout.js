@@ -48,6 +48,10 @@ export const Wrapper = styled.View`
     align-items: center;
     justify-content: center;
   `}
+  ${({ fullScreen }) => fullScreen && `
+    height: 100%;
+    width: 100%;
+  `}
   ${({ flex }) => flex && `
     flex: ${flex};
   `}

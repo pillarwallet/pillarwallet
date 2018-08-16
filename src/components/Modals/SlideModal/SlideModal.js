@@ -52,9 +52,11 @@ const getModalContentPadding = (showHeader: boolean) => {
 
 const ModalContent = styled.View`
   flex-direction: column;
-  flex: 1;
   ${({ fullScreen, showHeader }) => fullScreen && showHeader && `
     padding: ${getModalContentPadding(showHeader)};
+  `}
+  ${({ fullScreen }) => fullScreen && `
+    flex: 1;
   `}
 `;
 

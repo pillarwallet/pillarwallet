@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { baseColors } from 'utils/variables';
 
 const Wrapper = styled.View`
   flex-wrap: wrap;
@@ -9,15 +10,14 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-self: center;
   justify-content: space-between;
-  width: 150;
+  width: 180;
 `;
 
 const PinDot = styled.View`
-  width: 12px;
-  height: 12px;
-  background-color: gray;
-  border-radius: 6;
-  opacity: ${props => (props.active ? 1 : 0.5)};
+  width: 20px;
+  height: 20px;
+  background-color: ${props => (props.active ? baseColors.electricBlue : baseColors.mediumGray)};
+  border-radius: 10;
 `;
 
 type Props = {
