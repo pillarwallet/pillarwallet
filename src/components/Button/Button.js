@@ -39,7 +39,7 @@ const themes = {
     color: baseColors.fireEngineRed,
   },
   danger: {
-    background: baseColors.burningFire,
+    background: baseColors.fireEngineRed,
     color: baseColors.white,
   },
   disabled: {
