@@ -177,6 +177,14 @@ jobs:
           command: |
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "TestFlight"
+      - run:
+          name: prepare to archive ipa file
+          command: |
+            mkdir -p ./toArchive
+            cp ./ios/pillarwallet.ipa ./toArchive
+      - store_artifacts:
+          path: ./toArchive
+          destination: app_build
 
   deploy_android:
     working_directory: ~/pillarwallet/android
