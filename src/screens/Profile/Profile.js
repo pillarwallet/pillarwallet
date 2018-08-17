@@ -432,7 +432,6 @@ class Profile extends React.Component<Props, State> {
               fullScreen
               showHeader
               title="system info"
-              centerTitle
               onModalHide={() => this.setState({ showSystemInfoModal: false })}
             >
               <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
