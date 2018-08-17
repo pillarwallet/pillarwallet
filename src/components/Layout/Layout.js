@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-navigation';
+import { Platform } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { baseColors, spacing } from 'utils/variables';
 
 type ContainerProps = {
@@ -12,12 +12,17 @@ type ContainerProps = {
   color?: string,
 }
 
+type FooterProps = {
+  children?: React.Node,
+  column?: boolean,
+}
+
 export const Center = styled.View`
   align-items: center;
 `;
 
 
-const ContainerOuter = styled(Platform.OS === 'ios' ? SafeAreaView : View)`
+const ContainerOuter = styled(SafeAreaView)`
   background-color: ${props => props.color ? props.color : baseColors.white};
 `;
 
@@ -25,7 +30,6 @@ const ContainerInner = styled.View`
   height: 100%;
   align-items: ${props => (props.center ? 'center' : 'stretch')};
   justify-content: ${props => (props.center ? 'center' : 'flex-start')};
-  background-color: ${props => props.color ? props.color : 'transparent'};
 `;
 
 export const Container = (props: ContainerProps) => {
@@ -39,12 +43,14 @@ export const Container = (props: ContainerProps) => {
 };
 
 export const Wrapper = styled.View`
-  height: ${props => props.fullScreen ? '100%' : 'auto'};
-  width: ${props => props.fullScreen ? '100%' : 'auto'};
   margin: ${props => (props.regularPadding ? '0 20px' : '0')};
   ${({ center }) => center && `
     align-items: center;
     justify-content: center;
+  `}
+  ${({ fullScreen }) => fullScreen && `
+    height: 100%;
+    width: 100%;
   `}
   ${({ flex }) => flex && `
     flex: ${flex};
@@ -56,12 +62,31 @@ export const ScrollWrapper = styled(KeyboardAwareScrollView)`
   background-color: ${props => props.color ? props.color : 'transparent'};
 `;
 
-export const Footer = styled.View`
-  flex-direction: column;
-  align-items: center;
+
+const FooterInner = styled.KeyboardAvoidingView`
   width: 100%;
-  justify-content: flex-end;
-  padding: ${spacing.rhythm}px;
-  position: absolute;
-  bottom: 0;
+  margin-top: auto;
+  padding: ${Platform.OS === 'ios' ? 0 : `${spacing.rhythm}px`};
+  flex-direction: ${props => props.column ? 'row' : 'column'};
 `;
+
+export const Footer = (props: FooterProps) => {
+  return (
+    <FooterInner
+      enabled
+      column={props.column}
+      behavior={Platform.OS === 'ios' ? 'position' : null}
+      keyboardVerticalOffset={40}
+      contentContainerStyle={{
+        alignItems: 'center',
+        position: 'relative',
+        flexDirection: 'column',
+        justifyContent: 'flex-end',
+        padding: spacing.rhythm,
+      }}
+    >
+      {props.children}
+    </FooterInner>
+  );
+};
+

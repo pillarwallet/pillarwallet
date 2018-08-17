@@ -5,9 +5,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
 import { PROFILE } from 'constants/navigationConstants';
 import { changePinAction } from 'actions/authActions';
-import { Container, Center } from 'components/Layout';
+import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
-import Title from 'components/Title';
 import ErrorMessage from 'components/ErrorMessage';
 import Spinner from 'components/Spinner';
 import PinCode from 'components/PinCode';
@@ -83,11 +82,12 @@ class ConfirmNewPin extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header onClose={this.handleScreenDismissal} />
+        <Header
+          title="confirm new pincode"
+          centerTitle
+          onClose={this.handleScreenDismissal}
+        />
         {showError}
-        <Center>
-          <Title align="center" title="confirm new pincode" />
-        </Center>
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}

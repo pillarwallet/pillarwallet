@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -39,7 +39,7 @@ const themes = {
     color: baseColors.fireEngineRed,
   },
   danger: {
-    background: baseColors.burningFire,
+    background: baseColors.fireEngineRed,
     color: baseColors.white,
   },
   disabled: {
@@ -54,7 +54,8 @@ const getTheme = (props: Props) => {
   }
   if (props.secondary && props.danger) {
     return themes.secondaryDanger;
-  } else if (props.danger) {
+  }
+  if (props.danger) {
     return themes.danger;
   }
   if (props.secondary) {
@@ -69,19 +70,27 @@ const ButtonIcon = styled(Icon)`
   color: ${props => props.theme.color};
 `;
 
+const getButtonHeight = (props: Props) => {
+  if (props.noPadding) {
+    return '0';
+  } else if (props.small) {
+    return '34px';
+  }
+  return '52px';
+};
+
 const getButtonPadding = (props: Props) => {
   if (props.noPadding) {
     return '0';
   } else if (props.small) {
-    return '10px 20px';
+    return `${spacing.rhythm}px`;
   }
-  return '10px 40px';
+  return `${spacing.rhythm * 2.5}px`;
 };
-
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
-  padding: ${props => getButtonPadding(props)};
+  padding: 0 ${props => getButtonPadding(props)};
   background-color: ${props => props.theme.background};
   margin-top: ${props => props.marginTop || '0px'};
   margin-bottom: ${props => props.marginBottom || '0px'};
@@ -89,6 +98,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   margin-right: ${props => props.marginRight || '0px'};
   border-radius: 40;
   width: ${props => props.block ? '100%' : 'auto'};
+  height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
   border-color: ${UIColors.defaultBorderColor};
   border-width: ${props => props.secondary ? '1px' : 0};

@@ -19,7 +19,7 @@ const Wrapper = styled.View`
   height: 100%;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 20;
 `;
 
 const Overlay = styled.View`
@@ -72,7 +72,6 @@ type Props = {
 
 type State = {
   authorizationState: string,
-  isScanned: boolean,
   animFadeIn: Object,
 }
 
@@ -88,12 +87,12 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     validator: () => true,
     dataFormatter: (x: any) => x,
   };
+  isScanned: boolean = false;
 
   constructor(props: Props) {
     super(props);
     this.state = {
       authorizationState: PENDING,
-      isScanned: false,
       animFadeIn: new Animated.Value(0),
     };
   }
@@ -103,6 +102,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       this.askPermissions();
     }
     if (prevProps.isActive === this.props.isActive) return;
+    this.isScanned = false;
     Animated.timing(this.state.animFadeIn, {
       toValue: 1,
       duration: 250,
@@ -124,16 +124,14 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   handleQRRead = (data: Object) => {
     const { onRead, validator, dataFormatter } = this.props;
-    const { isScanned } = this.state;
     const { data: address } = data;
 
     const isValid = validator(address);
 
-    if (!isScanned && isValid) {
-      this.setState({ isScanned: true }, () => {
-        Vibration.vibrate();
-        onRead(dataFormatter(address));
-      });
+    if (!this.isScanned && isValid) {
+      this.isScanned = true;
+      Vibration.vibrate();
+      onRead(dataFormatter(address));
     }
   };
 
@@ -143,9 +141,8 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       toValue: 0,
       duration: 250,
     }).start(() => {
-      this.setState({
-        isScanned: false,
-      }, onDismiss);
+      this.isScanned = false;
+      onDismiss();
     });
   };
 

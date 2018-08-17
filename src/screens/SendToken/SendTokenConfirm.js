@@ -7,7 +7,8 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { Container, Wrapper } from 'components/Layout';
 import TransactionSentModal from 'components/TransactionSentModal';
-import { SubTitle, BoldText } from 'components/Typography';
+import { Label, BoldText } from 'components/Typography';
+import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
@@ -17,7 +18,7 @@ import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { baseColors, fontSizes } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 
 type Props = {
@@ -56,19 +57,6 @@ const FooterWrapper = styled.View`
 
 const LabeledRow = styled.View`
   margin: 10px 0;
-`;
-
-const CheckPinModal = styled(SlideModal)`
-  align-items: flex-start;
-`;
-
-
-// EXTRA TO TYPOGRAPHY ONCE ALL AGREED
-const Label = styled(BoldText)`
-  color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
-  letter-spacing: 0.5;
-  line-height: 24px;
 `;
 
 const Value = styled(BoldText)`
@@ -126,6 +114,12 @@ class SendTokenContacts extends React.Component<Props, State> {
     resetIncorrectPassword();
   };
 
+  closeCheckPinModal = () => {
+    this.setState({
+      showCheckPinModal: false,
+    });
+  }
+
   makeTransaction = () => {
     const { transactionPayload, assetData: { token } } = this.state;
     this.props.sendAsset({ ...transactionPayload, symbol: token });
@@ -158,27 +152,27 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBack={() => this.props.navigation.goBack(null)}
             onClose={this.handleModalDismissal}
             title="send"
-            onCloseText="STEP 3 OF 3"
+            onCloseText="Step 3 of 3"
           />
           <WarningBanner />
           <Wrapper regularPadding>
-            <SubTitle>Review and confirm</SubTitle>
+            <Title subtitle title="Review and Confirm" />
             <LabeledRow>
-              <Label>AMOUNT</Label>
+              <Label>Amount</Label>
               <Value>{amount} {assetData.token}</Value>
             </LabeledRow>
             {!!recipientUsername &&
             <LabeledRow>
-              <Label>RECIPIENT USERNAME</Label>
+              <Label>Recipient Username</Label>
               <Value>{recipientUsername}</Value>
             </LabeledRow>
             }
             <LabeledRow>
-              <Label>RECIPIENT ADDRESS</Label>
+              <Label>Recipient Address</Label>
               <Value>{to}</Value>
             </LabeledRow>
             <LabeledRow>
-              <Label>TRANSACTION FEE</Label>
+              <Label>Transaction Fee</Label>
               <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
             </LabeledRow>
           </Wrapper>
@@ -189,13 +183,19 @@ class SendTokenContacts extends React.Component<Props, State> {
           </FooterWrapper>
         </KeyboardAvoidingView>
         <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
-        <CheckPinModal
+        <SlideModal
           isVisible={showCheckPinModal}
           onModalHidden={this.handlePendingNotificationOpen}
+          onModalHide={this.closeCheckPinModal}
+          title="enter pincode"
+          centerTitle
           fullScreen
+          showHeader
         >
-          <CheckPin onPinValid={this.makeTransaction} />
-        </CheckPinModal>
+          <Wrapper flex={1}>
+            <CheckPin onPinValid={this.makeTransaction} />
+          </Wrapper>
+        </SlideModal>
       </React.Fragment>
     );
   }

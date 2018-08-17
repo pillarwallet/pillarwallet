@@ -133,7 +133,7 @@ PODS:
     - gRPC-Core (= 1.13.0)
     - gRPC-RxLibrary (= 1.13.0)
   - GTMSessionFetcher/Core (1.2.0)
-  - Intercom (5.0.4)
+  - Intercom (5.1.1)
   - leveldb-library (1.20)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
@@ -153,8 +153,8 @@ PODS:
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
-  - react-native-intercom (11.2.0):
-    - Intercom (~> 5.0.2)
+  - react-native-intercom (12.0.0):
+    - Intercom (~> 5.0)
     - React/Core
   - React/ART (0.56.0):
     - React/Core
@@ -298,14 +298,14 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: 842797fbe05dfcf891afb4a5048e5ccf5f06ef86
   gRPC-RxLibrary: fa6852f98d6ec0b73c0ec2f6406c26943099d501
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
-  Intercom: 52b7523157c0c6b631c0b7adc4d8b2fe3e444ea2
+  Intercom: 563224e5e7238f50951aaf265cbcb49f0c7907e3
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
   react-native-camera: 68ad5143d2d0636236d46c7de8d2a6455ca52a36
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
-  react-native-intercom: 50fa177c55a5bd8135742afb38867a485b3fda2d
+  react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85

@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ONBOARDING_HOME } from 'constants/navigationConstants';
-import { Container, Footer } from 'components/Layout';
+import { Wrapper, Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
 import IFrameModal from 'components/Modals/IFrameModal';
 import ButtonText from 'components/ButtonText';
+import { CachedImage } from 'react-native-cached-image';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -24,7 +25,7 @@ type State = {
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
 
-const PillarLogo = styled.Image`
+const PillarLogo = styled(CachedImage)`
   height: 60;
   width: 120;
 `;
@@ -73,9 +74,11 @@ class Welcome extends React.Component<Props, State> {
     const { showTermsConditionsModal } = this.state;
     if (!isFetched) return null;
     return (
-      <Container center>
+      <Container>
         <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
-        <PillarLogo source={pillarLogoSource} />
+        <Wrapper fullScreen center>
+          <PillarLogo source={pillarLogoSource} />
+        </Wrapper>
         <Footer>
           <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />
           <ButtonText buttonText="Terms and Conditions" onPress={this.toggleTermsConditionsModal} />

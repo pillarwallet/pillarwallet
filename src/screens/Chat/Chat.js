@@ -87,7 +87,7 @@ const renderBubble = (props: Props) => (
 
 const renderCustomAvatar = (contact) => () => (
   <ProfileImage
-    uri={contact.avatar}
+    uri={contact.profileImage}
     userName={contact.username}
     diameter={34}
     textStyle={{

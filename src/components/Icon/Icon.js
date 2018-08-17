@@ -22,13 +22,14 @@ const glyphMap = {
   social: '\uE80E',
   pending: '\uE80F',
   more: '\uE810',
-  sent: '\uE811',
-  received: '\uE812',
+  received: '\uE811',
+  sent: '\uE812',
+  camera: '\uE813',
 };
 
 type Props = {
   name: string,
-  style: Object,
+  style?: Object,
 }
 
 const fontName = Platform.OS === 'ios' ? 'fontello' : 'PillarIcons';

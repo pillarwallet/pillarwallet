@@ -60,6 +60,19 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
     .catch(() => ({}));
 };
 
+SDKWrapper.prototype.updateUserAvatar = function (walletId: string, formData: Object) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.uploadProfileImageFormData(walletId, formData))
+    .then(({ data }) => ({ profileImage: data.profileImage, walletId }))
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.getUserAvatar = function (userId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
+    .catch(() => null);
+};
+
 SDKWrapper.prototype.userInfo = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.info({ walletId }))
