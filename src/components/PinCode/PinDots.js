@@ -14,8 +14,8 @@ const Wrapper = styled.View`
 `;
 
 const PinDot = styled.View`
-  width: 20px;
-  height: 20px;
+  width: 10px;
+  height: 10px;
   background-color: ${props => (props.active ? baseColors.electricBlue : baseColors.mediumGray)};
   border-radius: 10;
 `;
