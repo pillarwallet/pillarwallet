@@ -2,7 +2,6 @@
 
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { Platform } from 'react-native';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -82,15 +81,13 @@ export const startListeningNotificationsAction = () => {
         await firebase.messaging().getToken();
       } catch (err) { return; } // eslint-disable-line
     }
-    if (Platform.OS === 'ios') {
-      const notificationOpen = await firebase.notifications().getInitialNotification();
-      if (notificationOpen) {
-        dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
-      }
+    const notificationOpen = await firebase.notifications().getInitialNotification();
+    if (notificationOpen) {
+      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
     }
 
     if (notificationsListener) return;
-    notificationsListener = firebase.messaging().onMessage(message => {
+    notificationsListener = firebase.notifications().onNotification(message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
