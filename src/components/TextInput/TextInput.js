@@ -157,8 +157,8 @@ class TextInput extends React.Component<Props, State> {
       footerAddonText,
       footerAddonAction,
       autoCorrect,
+      viewWidth = 'auto',
     } = this.props;
-    const viewWidth = this.props.viewWidth || 'auto';
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
