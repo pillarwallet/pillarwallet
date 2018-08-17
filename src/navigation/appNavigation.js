@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { showToast } from 'utils/toast';
-import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
+import { AppState, Animated, Easing, View, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // screens
@@ -87,8 +87,13 @@ const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconHome = require('assets/icons/icon_home.png');
-const iconIco = require('assets/icons/icon_ico.png');
+const iconIco = require('assets/icons/icon_marketplace.png');
 const iconChat = require('assets/icons/icon_chat.png');
+const iconWalletActive = require('assets/icons/icon_wallet_active.png');
+const iconPeopleActive = require('assets/icons/icon_people_active.png');
+const iconHomeActive = require('assets/icons/icon_home_active.png');
+const iconIcoActive = require('assets/icons/icon_marketplace_active.png');
+const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const StackNavigatorModalConfig = {
   transitionConfig: () => ({
@@ -142,16 +147,15 @@ const homeFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
-const tabBarIcon = (icon, hasAddon) => ({ focused, tintColor }) => (
+const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
     <Image
       style={{
         width: 18,
         height: 18,
-        tintColor: focused ? tintColor : baseColors.mediumGray,
         resizeMode: 'contain',
       }}
-      source={icon}
+      source={focused ? iconActive : icon}
     />
     {!!hasAddon &&
     <View
@@ -198,35 +202,40 @@ const tabNavigation = createBottomTabNavigator(
     [ASSETS]: {
       screen: assetsFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconWallet),
+        tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
         tabBarLabel: tabBarLabel('Assets'),
       }),
     },
     [PEOPLE]: {
       screen: peopleFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconPeople),
+        tabBarIcon: tabBarIcon(iconPeopleActive, iconPeople),
         tabBarLabel: tabBarLabel('People'),
       }),
     },
     [HOME]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
+        tabBarIcon: tabBarIcon(iconHomeActive, iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconIco),
+        tabBarIcon: tabBarIcon(iconIcoActive, iconIco),
         tabBarLabel: tabBarLabel('Market'),
       }),
     },
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(iconChat, !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
+        tabBarIcon:
+          tabBarIcon(
+            iconChatActive,
+            iconChat,
+            !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
+
         tabBarLabel: tabBarLabel('Chat'),
       }),
     },
