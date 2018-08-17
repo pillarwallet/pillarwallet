@@ -28,7 +28,7 @@ import io.fabric.sdk.android.Fabric;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
-
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import com.robinpowered.react.Intercom.IntercomPackage;
 import io.intercom.android.sdk.Intercom;
 // react-native-splash-screen >= 0.3.1
@@ -59,7 +59,8 @@ public class MainApplication extends Application implements ReactApplication {
           new RNDeviceInfo(),
           new IntercomPackage(),
           new LottiePackage(),
-          new LinearGradientPackage()
+          new LinearGradientPackage(),
+          new RNFirebaseNotificationsPackage()
       );
     }
 
