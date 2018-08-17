@@ -10,7 +10,7 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-self: center;
   justify-content: space-between;
-  width: 180;
+  width: 150;
 `;
 
 const PinDot = styled.View`
