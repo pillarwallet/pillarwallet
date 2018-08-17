@@ -1,7 +1,5 @@
 // @flow
-import {
-  fetchTransactionsHistoryAction,
-} from '../historyActions';
+import { fetchTransactionsHistoryAction } from '../historyActions';
 import { SET_HISTORY } from '../../constants/historyConstants';
 
 describe('History Actions', () => {
@@ -40,6 +38,7 @@ describe('History Actions', () => {
           address1: walletAddress,
           asset,
           nbTx: transactionsHistoryStep,
+          fromIndex: 0,
         });
       });
 
