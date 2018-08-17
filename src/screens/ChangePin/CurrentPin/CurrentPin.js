@@ -26,6 +26,7 @@ export default class CurrentPin extends React.Component<Props> {
           onClose={this.handleScreenDismissal}
         />
         <CheckPin
+          revealMnemonic
           onPinValid={() => navigation.navigate(CHANGE_PIN_NEW_PIN)}
         />
       </Container>
