@@ -15,7 +15,8 @@ type HistoryPayload = {
   address1: string,
   address2?: string,
   asset?: string,
-  batchNb?: number,
+  nbTx?: number,
+  fromIndex: number,
 };
 
 type BalancePayload = {

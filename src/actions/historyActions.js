@@ -7,9 +7,17 @@ import {
 import { UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { fetchAssetsBalancesAction, updateAssetsAction } from './assetsActions';
 
-export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL') => {
+const TRANSACTIONS_HISTORY_STEP = 10;
+
+export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const history = await api.fetchHistory({ address1: walletAddress, asset });
+    const history = await api.fetchHistory({
+      address1: walletAddress,
+      asset,
+      nbTx: TRANSACTIONS_HISTORY_STEP,
+      fromIndex,
+    });
+    if (!history.length) return;
     dispatch({
       type: SET_HISTORY,
       payload: {
