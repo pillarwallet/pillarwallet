@@ -4635,9 +4635,9 @@ ethereumjs-util@5.2.0:
     safe-buffer "^5.1.1"
     secp256k1 "^3.0.1"
 
-"ethers@https://github.com/pillarwallet/ethers.js":
+"ethers@https://github.com/pillarwallet/ethers.js#master":
   version "3.0.21"
-  resolved "https://github.com/pillarwallet/ethers.js#517698a86d6db109f5314c4d7bf72ff059853687"
+  resolved "https://github.com/pillarwallet/ethers.js#b092619248bf266f47b5cecaf4d3340eb1febc21"
   dependencies:
     aes-js "3.0.0"
     bn.js "^4.4.0"

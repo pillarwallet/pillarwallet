@@ -106,7 +106,7 @@
     "cryptocompare": "^0.5.0",
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
-    "ethers": "https://github.com/pillarwallet/ethers.js",
+    "ethers": "https://github.com/pillarwallet/ethers.js#master",
     "https-browserify": "~0.0.0",
     "lodash.debounce": "^4.0.8",
     "lodash.merge": "^4.6.1",
