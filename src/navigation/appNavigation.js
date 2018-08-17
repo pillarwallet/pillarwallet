@@ -4,7 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { showToast } from 'utils/toast';
-import { AppState, Animated, Easing, Image, View, Platform } from 'react-native';
+import { AppState, Animated, Easing, View, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // screens
@@ -151,8 +151,8 @@ const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
     <Image
       style={{
-        width: 24,
-        height: 24,
+        width: 18,
+        height: 18,
         resizeMode: 'contain',
       }}
       source={focused ? iconActive : icon}
