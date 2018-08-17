@@ -162,9 +162,7 @@ class SingleInput extends React.Component<Props, *> {
           </Item>
           {outterImageURI &&
             <ImageHolder onPress={onPress}>
-              <Image
-                source={this.resolveAssetSource(outterImageURI)}
-              />
+              <Image source={this.resolveAssetSource(outterImageURI)} />
               <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
             </ImageHolder>
           }
