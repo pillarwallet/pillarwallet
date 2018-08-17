@@ -2,7 +2,6 @@
 
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
-import { Platform } from 'react-native';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
