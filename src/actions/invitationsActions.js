@@ -76,6 +76,9 @@ export const acceptInvitationAction = (invitation: Object) => {
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     await storage.save('invitations', { invitations: updatedInvitations }, true);
+    /*const userInfo = await api.userInfoById(userId, {
+      walletId,
+    });*/
     const updatedContacts = contacts
       .filter(({ id }) => id !== invitation.id)
       .concat(invitation)

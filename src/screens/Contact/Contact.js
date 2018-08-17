@@ -5,6 +5,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
+import { syncContactAction } from 'actions/contactsActions';
 import { Container, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
@@ -12,8 +13,8 @@ import { CHAT } from 'constants/navigationConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
-import type { ApiUser } from 'models/Contacts';
 import CircleButton from 'components/CircleButton';
+import type { ApiUser } from 'models/Contacts';
 
 const ContactWrapper = styled.View`
   height: 218px;
@@ -69,6 +70,7 @@ type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
+  syncContact: Function,
 }
 
 type State = {
@@ -89,14 +91,18 @@ class Contact extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { navigation } = this.props;
+    const { navigation, contacts, syncContact } = this.props;
     const contact = navigation.getParam('contact', {});
 
-    if (contact.profileImage) {
-      const defaultImageCacheManager = ImageCacheManager();
-      defaultImageCacheManager.deleteUrl(contact.profileImage)
-        .then(() => this.setState({ avatarRefreshed: true }))
-        .catch(() => null);
+    const localContact = contacts.find(({ username }) => username === contact.username);
+    if (localContact) {
+      syncContact(localContact.username);
+      if (localContact.profileImage) {
+        const defaultImageCacheManager = ImageCacheManager();
+        defaultImageCacheManager.deleteUrl(localContact.profileImage)
+          .then(() => this.setState({ avatarRefreshed: true }))
+          .catch(() => null);
+      }
     }
   }
 
@@ -116,8 +122,10 @@ class Contact extends React.Component<Props, State> {
     const { navigation, contacts } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
-    const isAccepted = !!contacts.find(({ username }) => username === contact.username);
-    const userAvatar = avatarRefreshed ? contact.profileImage : undefined;
+    const localContact = contacts.find(({ username }) => username === contact.username);
+    const isAccepted = !!localContact;
+    const displayContact = localContact || contact;
+    const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
     return (
       <Container>
         <Header
@@ -131,21 +139,21 @@ class Contact extends React.Component<Props, State> {
             <ContactHeader>
               <ContactHeaderBody>
                 <ContactHeaderName>
-                  {contact.username}
+                  {displayContact.username}
                 </ContactHeaderName>
               </ContactHeaderBody>
             </ContactHeader>
             <ContactHeaderAvatarWrapper >
               <ProfileImage
                 uri={userAvatar}
-                userName={contact.username}
+                userName={displayContact.username}
                 diameter={60}
                 textStyle={{ fontSize: 32 }}
               />
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>
           {isAccepted &&
-          <CircleButton label="Chat" icon="send" onPress={() => navigation.navigate(CHAT, { contact })} />
+          <CircleButton label="Chat" icon="send" onPress={() => navigation.navigate(CHAT, { displayContact })} />
           }
         </Wrapper>
         <SlideModal
@@ -168,4 +176,8 @@ const mapStateToProps = ({
   contacts,
 });
 
-export default connect(mapStateToProps)(Contact);
+const mapDispatchToProps = (dispatch: Function) => ({
+  syncContact: (username) => dispatch(syncContactAction(username)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Contact);

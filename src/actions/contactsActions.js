@@ -37,3 +37,16 @@ export const resetSearchContactsStateAction = () => {
   };
 };
 
+export const syncContactAction = (userId: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      contacts: { data: localContacts },
+      invitations: { data: invitations },
+    } = getState();
+
+    const userInfo = await api.userInfoById(userId, {
+      walletId,
+    });
+  };
+};
