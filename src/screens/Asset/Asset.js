@@ -7,10 +7,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import {
-  fetchTransactionsHistoryAction,
-  fetchOlderTransactionsHistoryAction,
-} from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
@@ -36,8 +33,7 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
-  fetchOlderTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  fetchTransactionsHistory: (walletAddress: string, asset: string, indexFrom?: number) => Function,
   history: Transaction[],
   assets: Assets,
   balances: Balances,
@@ -108,19 +104,22 @@ class AssetScreen extends React.Component<Props, State> {
     });
   };
 
-  onScrollWrapperEndDrag = (e) => {
+  handleScrollWrapperEndDrag = (e) => {
     const {
-      fetchOlderTransactionsHistory,
+      fetchTransactionsHistory,
       wallet,
+      history,
     } = this.props;
-    const { assetData } = this.props.navigation.state.params;
-
+    const { assetData: { token } } = this.props.navigation.state.params;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const contentHeight = e.nativeEvent.contentSize.height;
     const offsetY = e.nativeEvent.contentOffset.y;
+    const indexFrom = history
+      .filter(({ asset }) => asset === token)
+      .length;
 
     if (layoutHeight + offsetY + 200 >= contentHeight) {
-      fetchOlderTransactionsHistory(wallet.address, assetData.token);
+      fetchTransactionsHistory(wallet.address, token, indexFrom);
     }
   };
 
@@ -151,7 +150,7 @@ class AssetScreen extends React.Component<Props, State> {
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.handleCardTap} />
         <ScrollWrapper
-          onScrollEndDrag={this.onScrollWrapperEndDrag}
+          onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -222,11 +221,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
-  fetchTransactionsHistory: (walletAddress, asset) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
-  },
-  fetchOlderTransactionsHistory: (walletAddress, asset) => {
-    dispatch(fetchOlderTransactionsHistoryAction(walletAddress, asset));
+  fetchTransactionsHistory: (walletAddress, asset, indexFrom) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress, asset, indexFrom));
   },
 });
 

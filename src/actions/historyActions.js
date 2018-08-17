@@ -9,34 +9,13 @@ import { fetchAssetsBalancesAction, updateAssetsAction } from './assetsActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
-export const fetchOlderTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL') => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const transactions = await api.fetchHistory({
-      address1: walletAddress,
-      asset,
-      nbTx: TRANSACTIONS_HISTORY_STEP,
-      // set the value fromIndex by the number of stored transaction count
-      fromIndex: getState().history.data.length,
-    });
-
-    if (!transactions.length) return;
-
-    dispatch({
-      type: SET_HISTORY,
-      payload: {
-        transactions,
-        asset,
-      },
-    });
-  };
-};
-
-export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL') => {
+export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL', fromIndex: number = 0) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const history = await api.fetchHistory({
       address1: walletAddress,
       asset,
       nbTx: TRANSACTIONS_HISTORY_STEP,
+      fromIndex,
     });
     if (!history.length) return;
     dispatch({
