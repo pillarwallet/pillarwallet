@@ -1,8 +1,10 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform, BackHandler } from 'react-native';
+import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import Permissions from 'react-native-permissions';
+import styled from 'styled-components/native';
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
@@ -15,9 +17,12 @@ import {
 } from 'constants/walletConstants';
 import Button from 'components/Button';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import QRCodeScanner from 'components/QRCodeScanner';
+import IconButton from 'components/IconButton';
+import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -31,7 +36,26 @@ type State = {
   tWordsPhrase: string,
   errorMessage: string,
   errorField: string,
+  isScanning: boolean,
 };
+
+const window = Dimensions.get('window');
+const AUTHORIZED = 'AUTHORIZED';
+
+const InputWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ScanButton = styled.TouchableOpacity`
+  align-items: center;
+  margin-left: 10px;
+`;
+
+const ScanText = styled(BaseText)`
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.small};
+`;
 
 class ImportWallet extends React.Component<Props, State> {
   state = {
@@ -39,6 +63,7 @@ class ImportWallet extends React.Component<Props, State> {
     tWordsPhrase: '',
     errorMessage: '',
     errorField: '',
+    isScanning: false,
   };
 
   constructor(props: Props) {
@@ -82,13 +107,36 @@ class ImportWallet extends React.Component<Props, State> {
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    if (this.state.privateKey) {
-      importWalletFromPrivateKey(this.state.privateKey);
-    } else if (this.state.tWordsPhrase) {
-      importWalletFromTWordsPhrase(this.state.tWordsPhrase);
+    const { privateKey, tWordsPhrase } = this.state;
+
+    if (privateKey) {
+      importWalletFromPrivateKey(privateKey);
+    } else if (tWordsPhrase) {
+      importWalletFromTWordsPhrase(tWordsPhrase);
     } else {
       this.setState({ errorField: '' });
     }
+  };
+
+  handleQRScannerOpen = async () => {
+    const status = await Permissions.request('camera');
+    this.setState({
+      isScanning: status.toUpperCase() === AUTHORIZED,
+    }, () => {
+      if (this.state.isScanning) {
+        Keyboard.dismiss();
+      }
+    });
+  };
+
+  handleQRScannerClose = () => {
+    this.setState({
+      isScanning: false,
+    });
+  };
+
+  handleQRRead = (privateKey: string) => {
+    this.setState({ privateKey, isScanning: false });
   };
 
   getError = (errorField: string) => {
@@ -109,7 +157,7 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   render() {
-    const { privateKey, tWordsPhrase } = this.state;
+    const { privateKey, tWordsPhrase, isScanning } = this.state;
     const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
     const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
 
@@ -131,17 +179,33 @@ class ImportWallet extends React.Component<Props, State> {
             underlineColorAndroid="transparent"
           />
           <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
-          <TextInput
-            label="Use your Private Key"
-            inputProps={{
-              onChange: (value) => this.setState({ privateKey: value }),
-              value: privateKey,
-            }}
-            errorMessage={errorMessagePrivateKey}
-            underlineColorAndroid="transparent"
-          />
+          <InputWrapper>
+            <TextInput
+              label="Use your Private Key"
+              inputProps={{
+                onChange: (value) => this.setState({ privateKey: value }),
+                value: privateKey,
+              }}
+              errorMessage={errorMessagePrivateKey}
+              underlineColorAndroid="transparent"
+              viewWidth={window.width - 95}
+            />
+            <ScanButton onPress={this.handleQRScannerOpen}>
+              <IconButton
+                icon="qrcode"
+                color={baseColors.electricBlue}
+                fontSize={fontSizes.extraLarge}
+              />
+              <ScanText>SCAN</ScanText>
+            </ScanButton>
+          </InputWrapper>
           <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
         </ScrollWrapper>
+        <QRCodeScanner
+          isActive={isScanning}
+          onDismiss={this.handleQRScannerClose}
+          onRead={this.handleQRRead}
+        />
       </Container>
     );
   }

@@ -171,28 +171,25 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   render() {
+    const { localContacts = [] } = this.props;
     const {
       isScanning,
       formStructure,
       value,
     } = this.state;
+
     const formOptions = generateFormOptions(
       { onIconPress: this.handleQRScannerOpen },
     );
 
-    const qrScannerComponent = (
-      <QRCodeScanner
-        validator={ETHValidator}
-        dataFormatter={decodeETHAddress}
-        isActive={isScanning}
-        onDismiss={this.handleQRScannerClose}
-        onRead={this.handleQRRead}
-      />
-    );
-
-    const { localContacts = [] } = this.props;
-    const FormContent = (
-      <React.Fragment>
+    return (
+      <Container>
+        <Header
+          onClose={this.props.navigation.dismiss}
+          onCloseText="Step 1 of 3"
+          title="send"
+          centerTitle
+        />
         <FormWrapper>
           <Title subtitle title="To whom you would like to send?" />
           <Form
@@ -209,19 +206,13 @@ class SendTokenContacts extends React.Component<Props, State> {
           renderItem={this.renderContact}
           keyExtractor={({ username }) => username}
         />
-      </React.Fragment>
-    );
-
-    return (
-      <Container>
-        <Header
-          onClose={this.props.navigation.dismiss}
-          onCloseText="Step 1 of 3"
-          title="send"
-          centerTitle
+        <QRCodeScanner
+          validator={ETHValidator}
+          dataFormatter={decodeETHAddress}
+          isActive={isScanning}
+          onDismiss={this.handleQRScannerClose}
+          onRead={this.handleQRRead}
         />
-        {FormContent}
-        {qrScannerComponent}
         <Footer>
           <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
         </Footer>
