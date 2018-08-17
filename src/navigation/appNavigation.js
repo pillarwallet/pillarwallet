@@ -87,12 +87,12 @@ const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconHome = require('assets/icons/icon_home.png');
-const iconIco = require('assets/icons/icon_ico.png');
+const iconIco = require('assets/icons/icon_marketplace.png');
 const iconChat = require('assets/icons/icon_chat.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
-const iconIcoActive = require('assets/icons/icon_ico_active.png');
+const iconIcoActive = require('assets/icons/icon_marketplace_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const StackNavigatorModalConfig = {
@@ -147,15 +147,15 @@ const homeFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
-const tabBarIcon = (icon, hasAddon) => (
+const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
     <Image
       style={{
-        width: 18,
-        height: 18,
+        width: 24,
+        height: 24,
         resizeMode: 'contain',
       }}
-      source={icon}
+      source={focused ? iconActive : icon}
     />
     {!!hasAddon &&
     <View
@@ -201,36 +201,41 @@ const tabNavigation = createBottomTabNavigator(
   {
     [ASSETS]: {
       screen: assetsFlow,
-      navigationOptions: ({ navigation }) => ({
-        tabBarIcon: tabBarIcon(navigation.isFocused() ? iconWalletActive : iconWallet),
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconWalletActive, iconWallet),
         tabBarLabel: tabBarLabel('Assets'),
       }),
     },
     [PEOPLE]: {
       screen: peopleFlow,
-      navigationOptions: ({ navigation }) => ({
-        tabBarIcon: tabBarIcon(navigation.isFocused() ? iconPeopleActive : iconPeople),
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconPeopleActive, iconPeople),
         tabBarLabel: tabBarLabel('People'),
       }),
     },
     [HOME]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(navigation.isFocused() ? iconHomeActive : iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
+        tabBarIcon: tabBarIcon(iconHomeActive, iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
     [ICO]: {
       screen: MarketplaceComingSoonScreen,
-      navigationOptions: ({ navigation }) => ({
-        tabBarIcon: tabBarIcon(navigation.isFocused() ? iconIcoActive : iconIco),
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconIcoActive, iconIco),
         tabBarLabel: tabBarLabel('Market'),
       }),
     },
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(navigation.isFocused() ? iconChatActive : iconChat, !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
+        tabBarIcon:
+          tabBarIcon(
+            iconChatActive,
+            iconChat,
+            !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
+
         tabBarLabel: tabBarLabel('Chat'),
       }),
     },
