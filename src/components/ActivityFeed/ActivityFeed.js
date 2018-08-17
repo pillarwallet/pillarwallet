@@ -232,7 +232,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
       const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
-      const directionIcon = isReceived ? 'received' : 'sent';
+      const directionIcon = isReceived ? 'sent' : 'received';
       return (
         <ActivityFeedItem key={index} onPress={() => this.selectTransaction(notification)}>
           <ActivityFeedItemCol fixedWidth="50px">
