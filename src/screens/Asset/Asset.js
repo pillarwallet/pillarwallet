@@ -33,7 +33,7 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  fetchTransactionsHistory: (walletAddress: string, asset: string, indexFrom?: number) => Function,
   history: Transaction[],
   assets: Assets,
   balances: Balances,
@@ -104,6 +104,25 @@ class AssetScreen extends React.Component<Props, State> {
     });
   };
 
+  handleScrollWrapperEndDrag = (e) => {
+    const {
+      fetchTransactionsHistory,
+      wallet,
+      history,
+    } = this.props;
+    const { assetData: { token } } = this.props.navigation.state.params;
+    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
+    const contentHeight = e.nativeEvent.contentSize.height;
+    const offsetY = e.nativeEvent.contentOffset.y;
+    const indexFrom = history
+      .filter(({ asset }) => asset === token)
+      .length;
+
+    if (layoutHeight + offsetY + 200 >= contentHeight) {
+      fetchTransactionsHistory(wallet.address, token, indexFrom);
+    }
+  };
+
   render() {
     const {
       assets,
@@ -131,6 +150,7 @@ class AssetScreen extends React.Component<Props, State> {
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.handleCardTap} />
         <ScrollWrapper
+          onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -201,8 +221,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
-  fetchTransactionsHistory: (walletAddress, asset) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
+  fetchTransactionsHistory: (walletAddress, asset, indexFrom) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress, asset, indexFrom));
   },
 });
 
