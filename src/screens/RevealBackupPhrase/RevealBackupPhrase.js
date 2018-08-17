@@ -36,7 +36,7 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       return (
         <Container>
           <Header title="enter pincode" centerTitle onClose={this.handleScreenDismissal} />
-          <CheckPin onPinValid={() => this.setState({ pinIsValid: true })} />
+          <CheckPin revealMnemonic onPinValid={() => this.setState({ pinIsValid: true })} />
         </Container>
       );
     }
