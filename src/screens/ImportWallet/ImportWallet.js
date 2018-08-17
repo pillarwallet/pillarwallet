@@ -3,6 +3,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import Permissions from 'react-native-permissions';
+import styled from 'styled-components/native';
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
@@ -19,9 +21,7 @@ import { Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
-import Permissions from 'react-native-permissions';
-import styled from 'styled-components/native';
-import Icon from 'components/Icon';
+import IconButton from 'components/IconButton';
 import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
@@ -50,11 +50,6 @@ const InputWrapper = styled.View`
 const ScanButton = styled.TouchableOpacity`
   align-items: center;
   margin-left: 10px;
-`;
-
-const ScanIcon = styled(Icon)`
-  color: ${baseColors.electricBlue};
-  font-size: ${fontSizes.extraLarge};
 `;
 
 const ScanText = styled(BaseText)`
@@ -196,7 +191,11 @@ class ImportWallet extends React.Component<Props, State> {
               viewWidth={window.width - 95}
             />
             <ScanButton onPress={this.handleQRScannerOpen}>
-              <ScanIcon name="qrcode" />
+              <IconButton
+                icon="qrcode"
+                color={baseColors.electricBlue}
+                fontSize={fontSizes.extraLarge}
+              />
               <ScanText>SCAN</ScanText>
             </ScanButton>
           </InputWrapper>
