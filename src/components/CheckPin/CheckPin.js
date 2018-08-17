@@ -11,8 +11,9 @@ import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 
 type Props = {
-  checkPin: (pin: string, onValidPin: Function) => Function,
+  checkPin: (pin: string, onValidPin: Function, options: Object) => Function,
   wallet: Object,
+  revealMnemonic: boolean,
   onPinValid: Function,
   title?: string,
 }
@@ -25,8 +26,11 @@ const CheckPinWrapper = styled(Wrapper)`
 
 class CheckPin extends React.Component<Props, *> {
   handlePinSubmit = (pin: string) => {
-    const { checkPin, onPinValid } = this.props;
-    checkPin(pin, () => onPinValid());
+    const { checkPin, onPinValid, revealMnemonic = false } = this.props;
+    const options = {
+      mnemonic: revealMnemonic,
+    };
+    checkPin(pin, onPinValid, options);
   };
 
   render() {
@@ -59,8 +63,8 @@ class CheckPin extends React.Component<Props, *> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  checkPin: (pin: string, onValidPin: Function) => {
-    dispatch(checkPinAction(pin, onValidPin));
+  checkPin: (pin: string, onValidPin: Function, options: Object) => {
+    dispatch(checkPinAction(pin, onValidPin, options));
   },
 });
 
