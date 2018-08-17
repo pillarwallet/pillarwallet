@@ -90,7 +90,7 @@ const getButtonPadding = (props: Props) => {
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
-  padding: 0 ${getButtonPadding(props)};
+  padding: 0 ${props => getButtonPadding(props)};
   background-color: ${props => props.theme.background};
   margin-top: ${props => props.marginTop || '0px'};
   margin-bottom: ${props => props.marginBottom || '0px'};
