@@ -90,7 +90,7 @@ export const startListeningNotificationsAction = () => {
     }
 
     if (notificationsListener) return;
-    notificationsListener = firebase.messaging().onMessage(message => {
+    notificationsListener = firebase.notifications().onNotification(message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
