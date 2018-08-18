@@ -41,10 +41,7 @@ import {
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import {
-  fetchTransactionsHistoryNotificationsAction,
-  fetchTransactionsHistoryAction,
-} from 'actions/historyActions';
+import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 
 // constants
@@ -299,7 +296,6 @@ type Props = {
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
-  fetchTransactionsHistory: (walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
@@ -317,7 +313,6 @@ class AppFlow extends React.Component<Props, {}> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
-      fetchTransactionsHistory,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
@@ -327,7 +322,6 @@ class AppFlow extends React.Component<Props, {}> {
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    fetchTransactionsHistory(wallet.address);
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
@@ -395,9 +389,6 @@ const mapDispatchToProps = (dispatch) => ({
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
-  },
-  fetchTransactionsHistory: (walletAddress) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress));
   },
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());

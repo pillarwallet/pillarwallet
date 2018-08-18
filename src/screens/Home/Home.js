@@ -14,10 +14,7 @@ import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
 import { uniqBy } from 'utils/common';
 import { getUserName } from 'utils/contacts';
-import {
-  fetchTransactionsHistoryNotificationsAction,
-  fetchTransactionsHistoryAction,
-} from 'actions/historyActions';
+import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
@@ -46,7 +43,6 @@ type Props = {
   wallet: Object,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
-  fetchTransactionsHistory: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
   rejectInvitation: Function,
@@ -302,13 +298,10 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
-      fetchTransactionsHistory,
       getExistingChats,
-      wallet,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
-    fetchTransactionsHistory(wallet.address);
     getExistingChats();
   };
 
@@ -500,7 +493,6 @@ const mapDispatchToProps = (dispatch) => ({
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
   getExistingChats: () => dispatch(getExistingChatsAction()),
