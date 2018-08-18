@@ -1,6 +1,14 @@
 // @flow
-import { UPDATE_SEARCH_RESULTS, FETCHING, UPDATE_CONTACTS_STATE } from 'constants/contactsConstants';
+import {
+  UPDATE_SEARCH_RESULTS,
+  FETCHING,
+  UPDATE_CONTACTS_STATE,
+  UPDATE_CONTACTS,
+} from 'constants/contactsConstants';
 import { excludeLocalContacts } from 'utils/contacts';
+import Storage from 'services/storage';
+
+const storage = Storage.getInstance('db');
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -41,12 +49,27 @@ export const syncContactAction = (userId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       user: { data: { walletId } },
-      contacts: { data: localContacts },
-      invitations: { data: invitations },
+      contacts: { data: contacts },
+      accessTokens: { data: accessTokens },
     } = getState();
+
+    const accessToken = accessTokens.find(token => token.userId === userId);
+    if (!accessToken) return;
 
     const userInfo = await api.userInfoById(userId, {
       walletId,
+      userAccessKey: accessToken.myAccessToken,
+      targetUserAccessKey: accessToken.userAccessToken,
+    });
+
+    const updatedContacts = contacts
+      .filter(({ id }) => id !== userId)
+      .concat(userInfo);
+    await storage.save('contacts', { contacts: updatedContacts }, true);
+
+    dispatch({
+      type: UPDATE_CONTACTS,
+      payload: updatedContacts,
     });
   };
 };

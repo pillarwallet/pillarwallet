@@ -96,7 +96,7 @@ class Contact extends React.Component<Props, State> {
 
     const localContact = contacts.find(({ username }) => username === contact.username);
     if (localContact) {
-      syncContact(localContact.username);
+      syncContact(localContact.id);
       if (localContact.profileImage) {
         const defaultImageCacheManager = ImageCacheManager();
         defaultImageCacheManager.deleteUrl(localContact.profileImage)
@@ -177,7 +177,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  syncContact: (username) => dispatch(syncContactAction(username)),
+  syncContact: (userId) => dispatch(syncContactAction(userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Contact);

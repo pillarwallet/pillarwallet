@@ -88,7 +88,6 @@ SDKWrapper.prototype.userInfo = function (walletId: string) {
 SDKWrapper.prototype.userInfoById = function (targetUserId: string, params: UserInfoByIdPayload) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.infoById(targetUserId, params))
-    .then((data) => { console.log(data); return data; })
     .then(({ data }) => ({ ...data }))
     .catch(() => ({}));
 };

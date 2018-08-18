@@ -14,6 +14,7 @@ import {
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
 import Storage from 'services/storage';
 
@@ -24,6 +25,7 @@ export const sendInvitationAction = (user: ApiUser) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
+      accessTokens: { data: accessTokens },
     } = getState();
 
     const index = invitations.findIndex(el => el.id === user.id);
@@ -46,6 +48,15 @@ export const sendInvitationAction = (user: ApiUser) => {
     };
     await storage.save('invitations', { invitations: [...invitations, invitation] }, true);
 
+    const updatedAccessTokens = accessTokens
+      .filter(({ userId }) => userId !== user.id)
+      .concat({
+        userId: user.id,
+        myAccessToken: accessKey,
+        userAccessToken: '',
+      });
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+
     dispatch({
       type: ADD_INVITATION,
       payload: invitation,
@@ -54,6 +65,10 @@ export const sendInvitationAction = (user: ApiUser) => {
       type: ADD_NOTIFICATION,
       payload: { message: 'Invitation sent!' },
     }));
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
+    });
   };
 };
 
@@ -63,6 +78,7 @@ export const acceptInvitationAction = (invitation: Object) => {
       user: { data: { walletId } },
       invitations: { data: invitations },
       contacts: { data: contacts },
+      accessTokens: { data: accessTokens },
     } = getState();
     const sourceUserAccessKey = generateAccessKey();
 
@@ -76,23 +92,33 @@ export const acceptInvitationAction = (invitation: Object) => {
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     await storage.save('invitations', { invitations: updatedInvitations }, true);
-    /*const userInfo = await api.userInfoById(userId, {
-      walletId,
-    });*/
+
     const updatedContacts = contacts
       .filter(({ id }) => id !== invitation.id)
       .concat(invitation)
-      .map(({ ...rest }) => ({ ...rest }));
+      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
     await storage.save('contacts', { contacts: updatedContacts }, true);
+
+    const updatedAccessTokens = accessTokens
+      .filter(({ userId }) => userId !== invitation.id)
+      .concat({
+        userId: invitation.id,
+        myAccessToken: sourceUserAccessKey,
+        userAccessToken: invitation.connectionKey,
+      });
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
 
     dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
     });
-
     dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
+    });
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
     });
   };
 };
@@ -102,6 +128,7 @@ export const cancelInvitationAction = (invitation: Object) => {
     const {
       user: { data: { walletId } },
       invitations: { data: invitations },
+      accessTokens: { data: accessTokens },
     } = getState();
 
     const cancelledInvitation = await api.cancelInvitation(
@@ -118,9 +145,17 @@ export const cancelInvitationAction = (invitation: Object) => {
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     await storage.save('invitations', { invitations: updatedInvitations }, true);
+
+    const updatedAccessTokens = accessTokens.filter(({ userId }) => userId !== invitation.id);
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+
     dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
+    });
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
     });
   };
 };
@@ -162,6 +197,7 @@ export const fetchInviteNotificationsAction = () => {
       invitations: { data: invitations },
       contacts: { data: contacts },
       user: { data: user },
+      accessTokens: { data: accessTokens },
     } = getState();
 
     const types = [
@@ -200,15 +236,27 @@ export const fetchInviteNotificationsAction = () => {
     ].map(({ id: userId }) => userId);
 
     const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
-      .filter(({ id }) => {
-        return !invitationsToExclude.includes(id);
+      .filter(({ id }) => !invitationsToExclude.includes(id));
+
+    // find new connections
+    const contactsIds = contacts.map(({ id: userId }) => userId);
+    const newConnections = groupedNotifications.connectionAcceptedEvent
+      .filter(({ id }) => !contactsIds.includes(id));
+
+    const updatedContacts = uniqBy(newConnections.concat(contacts), 'id')
+      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
+
+    // save new connections keys
+    let updatedAccessTokens = [...accessTokens];
+    newConnections.forEach(({ id, connectionKey }) => {
+      updatedAccessTokens = accessTokens.map(accessToken => {
+        if (accessToken.userId !== id) return accessToken;
+        return { ...accessToken, userAccessToken: connectionKey };
       });
-
-    const updatedContacts = uniqBy(groupedNotifications.connectionAcceptedEvent.concat(contacts), 'id')
-      .map(({ type, ...rest }) => ({ ...rest }));
-
+    });
     await storage.save('invitations', { invitations: updatedInvitations }, true);
     await storage.save('contacts', { contacts: updatedContacts }, true);
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
 
     dispatch({
       type: UPDATE_INVITATIONS,
@@ -217,6 +265,10 @@ export const fetchInviteNotificationsAction = () => {
     dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
+    });
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
     });
     dispatch(getExistingChatsAction());
   };
