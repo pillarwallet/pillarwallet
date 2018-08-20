@@ -12,7 +12,7 @@ import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
-import { supportedFiatCurrencies } from 'constants/assetsConstants';
+import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
@@ -130,7 +130,7 @@ class Profile extends React.Component<Props, State> {
   clearLocalStorage() {
     storage.removeAll();
     chat.client.resetAccount().catch(() => null);
-    showToast({ text: 'Cleared' });
+    showToast({ text: 'Cleared' }, true);
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
@@ -321,7 +321,7 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="baseCurrency"
               label="Base currency"
-              value={baseFiatCurrency || 'GBP'}
+              value={baseFiatCurrency || defaultFiatCurrency}
               onPress={() =>
                 this.setState({ visibleModal: 'baseCurrency' })}
             />
@@ -432,7 +432,6 @@ class Profile extends React.Component<Props, State> {
               fullScreen
               showHeader
               title="system info"
-              centerTitle
               onModalHide={() => this.setState({ showSystemInfoModal: false })}
             >
               <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />

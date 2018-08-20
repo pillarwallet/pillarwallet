@@ -56,7 +56,7 @@ export const processNotification = (notification: Object, myEthAddress: string):
     const { asset, status, value } = parsedNotification;
     const sender = parsedNotification.fromAddress.toUpperCase();
     const receiver = parsedNotification.toAddress.toUpperCase();
-    const amount = utils.formatUnits(utils.bigNumberify(value));
+    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
 
     if (receiver === myEthAddress && status === 'pending') {
       message = `New incoming transaction ${amount} ${asset}`;

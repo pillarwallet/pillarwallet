@@ -24,6 +24,12 @@ type BalancePayload = {
   assets: Asset[],
 };
 
+type UserInfoByIdPayload = {
+  walletId: string,
+  userAccessKey: string,
+  targetUserAccessKey: string,
+};
+
 const BCXSdk = new BCX({ apiUrl: BCX_URL });
 
 export default function SDKWrapper() {
@@ -77,6 +83,13 @@ SDKWrapper.prototype.userInfo = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.info({ walletId }))
     .then(({ data }) => ({ ...data, walletId }))
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.userInfoById = function (targetUserId: string, params: UserInfoByIdPayload) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.infoById(targetUserId, params))
+    .then(({ data }) => ({ ...data }))
     .catch(() => ({}));
 };
 
