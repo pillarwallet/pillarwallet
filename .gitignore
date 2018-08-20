@@ -18,7 +18,7 @@ yarn-error.log*
 /reports/
 
 package-lock.json
-
+/.env.development
 /.npmrc
 
 #### Xcode
