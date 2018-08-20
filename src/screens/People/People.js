@@ -126,8 +126,6 @@ class PeopleScreen extends React.Component<Props, State> {
     );
   };
 
-  keyExtractor = (item) => item.id;
-
   renderContact = ({ item }) => (
     <ContactCard
       onPress={this.handleContactCardPress(item)}
@@ -196,7 +194,7 @@ class PeopleScreen extends React.Component<Props, State> {
         {!inSearchMode && !!localContacts.length &&
           <FlatList
             data={localContacts}
-            keyExtractor={this.keyExtractor}
+            keyExtractor={(item) => item.id}
             renderItem={this.renderContact}
             ItemSeparatorComponent={this.renderSeparator}
             onScroll={() => Keyboard.dismiss()}

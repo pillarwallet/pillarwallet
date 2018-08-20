@@ -1,0 +1,3 @@
+// @flow
+
+export const UPDATE_ACCESS_TOKENS = 'UPDATE_ACCESS_TOKENS';
