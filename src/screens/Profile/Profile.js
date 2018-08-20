@@ -130,7 +130,7 @@ class Profile extends React.Component<Props, State> {
   clearLocalStorage() {
     storage.removeAll();
     chat.client.resetAccount().catch(() => null);
-    showToast({ text: 'Cleared' });
+    showToast({ text: 'Cleared' }, true);
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
