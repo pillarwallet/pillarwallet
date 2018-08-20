@@ -4,14 +4,11 @@ import {
   Animated,
   TouchableWithoutFeedback,
 } from 'react-native';
+import styled from 'styled-components/native';
+import { LightText, BoldText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import styled from 'styled-components/native';
-import IconWrapper from './IconWrapper';
-import IconCircle from './IconCircle';
-import DetailsWrapper from './DetailsWrapper';
-import Name from './Name';
-import { Amount, AmountToken, FiatAmount } from './Amount';
+import { spacing, fontSizes, fontTrackings } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -55,6 +52,62 @@ const AmountWrapper = styled.View`
   justify-content: flex-end;
 `;
 
+const Amount = styled(LightText)`
+  font-size: ${fontSizes.extraLarge};
+  line-height: ${fontSizes.extraLarge};
+  color: #fff;
+`;
+
+const FiatAmount = styled(LightText)`
+  font-size: 14px;
+  line-height: 14px;
+  color: #fff;
+  position: absolute;
+  bottom: 20px;
+  left: 14px;
+`;
+
+const AmountToken = styled(BoldText)`
+  font-size: ${fontSizes.medium};
+  line-height: ${fontSizes.extraLarge};
+  color: #fff;
+`;
+
+
+const DetailsWrapper = styled.View`
+  flex: 3;
+  justify-content: flex-start;
+  flex-direction: column;
+`;
+
+
+const IconCircle = styled.View`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  align-self: flex-end;
+  margin-top: 20px;
+  margin-right: 14px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const IconWrapper = styled.View`
+  flex: 1;
+`;
+
+
+const Name = styled(BoldText)`
+  font-size: ${fontSizes.mediumLarge};
+  letter-spacing: ${fontTrackings.medium};
+  line-height: ${fontSizes.mediumLarge};
+  margin: 20px 0 0 14px;
+  color: white;
+`;
+
+
 const defaultCardColor = '#ACBCCD';
 
 const AssetCard = (props: Props) => {
@@ -82,7 +135,7 @@ const AssetCard = (props: Props) => {
       <Animated.View
         style={[{
           height: 130,
-          marginBottom: 12,
+          marginBottom: spacing.rhythm / 2,
         }]}
       >
         <BackgroundHolder cardColor={defaultCardColor}>
