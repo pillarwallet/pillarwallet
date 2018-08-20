@@ -72,7 +72,19 @@ export const loginAction = (pin: string) => {
   };
 };
 
-export const checkPinAction = (pin: string, onValidPin?: Function) => {
+type DecryptionSettings = {
+  mnemonic: boolean
+}
+
+const defaultDecryptionSettings = {
+  mnemonic: false,
+};
+
+export const checkPinAction = (
+  pin: string,
+  onValidPin?: Function,
+  options: DecryptionSettings = defaultDecryptionSettings,
+) => {
   return async (dispatch: Function) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
@@ -82,7 +94,7 @@ export const checkPinAction = (pin: string, onValidPin?: Function) => {
     await delay(100);
     const saltedPin = getSaltedPin(pin);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
       dispatch({
         type: DECRYPT_WALLET,
         payload: wallet,
@@ -110,7 +122,7 @@ export const changePinAction = (pin: string) => {
     await delay(50);
 
     const saltedPin = getSaltedPin(pin);
-    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 1024 } })
+    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
 

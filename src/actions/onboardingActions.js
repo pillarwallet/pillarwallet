@@ -73,7 +73,7 @@ export const registerWalletAction = () => {
     });
     await delay(50);
     const saltedPin = getSaltedPin(pin);
-    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 1024 } })
+    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
