@@ -1,6 +1,7 @@
 // @flow
 import 'utils/setup';
 import * as React from 'react';
+import Intercom from 'react-native-intercom';
 import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
@@ -30,6 +31,7 @@ class App extends React.Component<Props, *> {
 
   async componentDidMount() {
     const { fetchAppSettingsAndRedirect } = this.props;
+    Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
     SplashScreen.hide();
     fetchAppSettingsAndRedirect();
     StatusBar.setBarStyle('dark-content');

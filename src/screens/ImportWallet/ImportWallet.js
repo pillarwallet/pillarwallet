@@ -3,7 +3,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import Permissions from 'react-native-permissions';
 import styled from 'styled-components/native';
 import {
   importWalletFromTWordsPhraseAction,
@@ -40,7 +39,6 @@ type State = {
 };
 
 const window = Dimensions.get('window');
-const AUTHORIZED = 'AUTHORIZED';
 
 const InputWrapper = styled.View`
   flex-direction: row;
@@ -119,20 +117,16 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleQRScannerOpen = async () => {
-    const status = await Permissions.request('camera');
-    this.setState({
-      isScanning: status.toUpperCase() === AUTHORIZED,
-    }, () => {
-      if (this.state.isScanning) {
-        Keyboard.dismiss();
-      }
-    });
+    this.setState({ isScanning: !this.state.isScanning },
+      () => {
+        if (this.state.isScanning) {
+          Keyboard.dismiss();
+        }
+      });
   };
 
   handleQRScannerClose = () => {
-    this.setState({
-      isScanning: false,
-    });
+    this.setState({ isScanning: false });
   };
 
   handleQRRead = (privateKey: string) => {
@@ -195,6 +189,7 @@ class ImportWallet extends React.Component<Props, State> {
                 icon="qrcode"
                 color={baseColors.electricBlue}
                 fontSize={fontSizes.extraLarge}
+                onPress={this.handleQRScannerOpen}
               />
               <ScanText>SCAN</ScanText>
             </ScanButton>
