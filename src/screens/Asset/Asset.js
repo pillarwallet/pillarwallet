@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
 import { Animated, Easing, Share, RefreshControl } from 'react-native';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
+import { transparentize } from 'polished';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -11,16 +12,19 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
+import LinearGradient from 'react-native-linear-gradient';
 import AssetButtons from 'components/AssetButtons';
 import TXHistory from 'components/TXHistory';
 import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
+
+const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.snowWhite), baseColors.snowWhite];
 
 const activeModalResetState = {
   type: null,
@@ -43,6 +47,7 @@ type Props = {
 }
 
 type State = {
+  assetDescriptionExpanded: boolean,
   activeModal: {
     type: string | null,
     opts: {
@@ -58,9 +63,33 @@ const AssetCardWrapper = styled(Wrapper)`
   flex: 1;
 `;
 
+const AssetDescriptionWrapper = styled.View`
+  height: ${props => props.expanded ? 'auto' : '24px'};
+  margin-bottom: ${spacing.rhythm}px;
+  position: relative;
+`;
+
+const AssetDescriptionToggle = styled.TouchableOpacity`
+  padding: ${spacing.rhythm / 2}px;
+`;
+
+const AssetDescriptionToggleText = styled(BaseText)`
+  font-size: ${fontSizes.small};
+  color: ${baseColors.electricBlue};
+  line-height: 18px;
+`;
+
+const AssetDescriptionToggleWrapper = styled(LinearGradient)`
+  position: absolute;
+  bottom: ${props => props.expanded ? '-26px' : '-6px'};
+  right: 0;
+  padding-left: 40px;
+`;
+
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
+    assetDescriptionExpanded: false,
   };
 
   static navigationOptions = {
@@ -123,6 +152,12 @@ class AssetScreen extends React.Component<Props, State> {
     }
   };
 
+  toggleAssetDescription = () => {
+    this.setState({
+      assetDescriptionExpanded: !this.state.assetDescriptionExpanded,
+    });
+  }
+
   render() {
     const {
       assets,
@@ -132,6 +167,7 @@ class AssetScreen extends React.Component<Props, State> {
       fetchAssetsBalances,
       fetchTransactionsHistory,
     } = this.props;
+    const { assetDescriptionExpanded } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { balanceInFiat: { currency: fiatCurrency }, token } = assetData;
     const history = this.props.history
@@ -142,6 +178,7 @@ class AssetScreen extends React.Component<Props, State> {
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
+    const shouldAssetDescriptionToggleShow = assetData.description.length > 60;
     const displayBalanceInFiat = {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
@@ -176,14 +213,34 @@ class AssetScreen extends React.Component<Props, State> {
                 wallpaper={assetData.wallpaper}
               />
             </Transition>
-            <Paragraph small light>
-              {assetData.description}
-            </Paragraph>
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               noBalance={isWalletEmpty}
             />
+            <AssetDescriptionWrapper
+              expanded={assetDescriptionExpanded}
+            >
+              <Paragraph small light>
+                {assetData.description}
+              </Paragraph>
+              <AssetDescriptionToggleWrapper
+                colors={assetDescriptionExpanded ? [] : AssetDescriptionToggleWrapperColors}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0.5, y: 0 }}
+                expanded={assetDescriptionExpanded}
+              >
+                {shouldAssetDescriptionToggleShow &&
+                  <AssetDescriptionToggle
+                    onPress={this.toggleAssetDescription}
+                  >
+                    <AssetDescriptionToggleText>
+                      {assetDescriptionExpanded ? 'Less' : 'More'}
+                    </AssetDescriptionToggleText>
+                  </AssetDescriptionToggle>
+                }
+              </AssetDescriptionToggleWrapper>
+            </AssetDescriptionWrapper>
           </AssetCardWrapper>
           <TXHistory
             history={history}
