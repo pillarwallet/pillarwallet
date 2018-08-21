@@ -183,7 +183,7 @@ class AssetScreen extends React.Component<Props, State> {
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
-    const shouldAssetDescriptionToggleShow = assetData.description.length > 60;
+    const shouldAssetDescriptionToggleShow = assetData.description.length > 40;
     const displayBalanceInFiat = {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
