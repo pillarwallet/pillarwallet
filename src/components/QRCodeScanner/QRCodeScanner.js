@@ -1,49 +1,33 @@
 // @flow
 import * as React from 'react';
-import { Vibration, Animated, Dimensions, Platform } from 'react-native';
-import { RNCamera as Camera } from 'react-native-camera';
+import { Vibration, Dimensions, Text } from 'react-native';
+import { RNCamera } from 'react-native-camera';
+import Modal from 'react-native-modal';
 import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
 
-const window = Dimensions.get('window');
-
 const AUTHORIZED = 'AUTHORIZED';
 const PENDING = 'PENDING';
 const DENIED = 'DENIED';
 
-const Wrapper = styled.View`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 20;
-`;
+type Props = {
+  onRead: Function,
+  onDismiss: Function,
+  reactivate: boolean,
+  validator: Function,
+  dataFormatter: Function,
+  rectangleColor: string,
+  isActive: boolean,
+}
 
-const Overlay = styled.View`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, .3);
-  z-index: 3;
-`;
+type State = {
+  authorizationState: string,
+}
 
-const QRCodeScannerHeader = styled(Header)`
-  position: absolute;
-  width: 100%;
-  top: 0;
-  left: 0;
-  z-index: 4;
-`;
-
-const Scanner = styled(Camera)`
-  alignItems: center;
-  justifyContent: center;
-`;
+const screenWidth = Dimensions.get('window').width;
+const screenHeight = Dimensions.get('window').height;
 
 const RectangleContainer = styled.View`
   flex: 1;
@@ -60,24 +44,17 @@ const Rectangle = styled.View`
   background-color: transparent;
 `;
 
-type Props = {
-  onRead: Function,
-  onDismiss: Function,
-  reactivate: boolean,
-  validator: Function,
-  dataFormatter: Function,
-  rectangleColor: string,
-  isActive: boolean,
-}
+const HeaderWrapper = styled.SafeAreaView`
+  margin-bottom: auto;
+  width: 100%;
+`;
 
-type State = {
-  authorizationState: string,
-  animFadeIn: Object,
-}
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
-const cameraHeight = screenWidth * (16 / 9);
+const NoPermissions = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+`;
 
 export default class QRCodeScanner extends React.Component<Props, State> {
   static defaultProps = {
@@ -87,15 +64,12 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     validator: () => true,
     dataFormatter: (x: any) => x,
   };
+  camera: ?Object;
   isScanned: boolean = false;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      authorizationState: PENDING,
-      animFadeIn: new Animated.Value(0),
-    };
-  }
+  state = {
+    authorizationState: PENDING,
+  };
 
   componentDidUpdate(prevProps: Props) {
     if (this.props.isActive && this.state.authorizationState === PENDING) {
@@ -103,10 +77,6 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     }
     if (prevProps.isActive === this.props.isActive) return;
     this.isScanned = false;
-    Animated.timing(this.state.animFadeIn, {
-      toValue: 1,
-      duration: 250,
-    }).start();
   }
 
   componentDidMount() {
@@ -137,38 +107,84 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   handleAnimationDismiss = () => {
     const { onDismiss } = this.props;
-    Animated.timing(this.state.animFadeIn, {
-      toValue: 0,
-      duration: 250,
-    }).start(() => {
-      this.isScanned = false;
-      onDismiss();
-    });
+    this.isScanned = false;
+    onDismiss();
   };
 
+  renderNoPermissions() {
+    return (
+      <React.Fragment>
+        <HeaderWrapper>
+          <Header light flexStart onClose={this.handleAnimationDismiss} />
+        </HeaderWrapper>
+        <NoPermissions>
+          <Text style={{ color: 'white' }}>
+            Camera permissions not granted - cannot open the QR scanner.
+          </Text>
+        </NoPermissions>
+      </React.Fragment>
+    );
+  }
+
+  renderScanner() {
+    const { rectangleColor } = this.props;
+    return (
+      <React.Fragment>
+        <RNCamera
+          ref={ref => {
+            this.camera = ref;
+          }}
+          style={{
+            width: screenWidth,
+            height: screenHeight,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          type={RNCamera.Constants.Type.back}
+          ratio="16:9"
+          onBarCodeRead={this.handleQRRead}
+        >
+          <HeaderWrapper>
+            <Header light flexStart onClose={this.handleAnimationDismiss} />
+          </HeaderWrapper>
+          <RectangleContainer>
+            <Rectangle color={rectangleColor} />
+          </RectangleContainer>
+        </RNCamera>
+      </React.Fragment>
+    );
+  }
+
   render() {
-    const { animFadeIn } = this.state;
-    const { rectangleColor, isActive } = this.props;
-    if (!isActive) {
+    const { isActive } = this.props;
+    const { authorizationState } = this.state;
+
+    if (authorizationState === PENDING) {
       return null;
     }
+
+    const content = (authorizationState === DENIED)
+      ? this.renderNoPermissions()
+      : this.renderScanner();
+
+    const animationInTiming = 300;
+    const animationOutTiming = 300;
+
     return (
-      <Wrapper>
-        <Animated.View style={{ opacity: animFadeIn, height: window.height }}>
-          <Scanner
-            type={Camera.Constants.Type.back}
-            ratio="16:9"
-            style={{ width: screenWidth, height: Platform.OS === 'ios' ? screenHeight : cameraHeight }}
-            onBarCodeRead={this.handleQRRead}
-          >
-            <RectangleContainer>
-              <Rectangle color={rectangleColor} />
-            </RectangleContainer>
-          </Scanner>
-          <Overlay />
-          <QRCodeScannerHeader light onClose={this.handleAnimationDismiss} />
-        </Animated.View>
-      </Wrapper>
+      <Modal
+        isVisible={isActive}
+        animationInTiming={animationInTiming}
+        animationOutTiming={animationOutTiming}
+        animationIn="fadeIn"
+        animationOut="fadeOut"
+        onBackButtonPress={this.handleAnimationDismiss}
+        style={{
+          margin: 0,
+          justifyContent: 'flex-start',
+        }}
+      >
+        {content}
+      </Modal>
     );
   }
 }
