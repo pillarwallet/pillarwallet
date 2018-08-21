@@ -88,7 +88,7 @@ class LegalTerms extends React.Component<Props, State> {
               block
               title="Confirm and Finish"
               onPress={this.handleConfirm}
-              disabled={!userCheck3}
+              disabled={!userCheck1 || !userCheck2 || !userCheck3}
               marginBottom="20px"
             />
             <View style={{

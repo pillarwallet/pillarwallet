@@ -152,6 +152,7 @@ class SingleInput extends React.Component<Props, *> {
               error={!!errorMessage}
               onChange={this.handleChange}
               onBlur={this.handleBlur}
+              numberOfLines={1}
               value={value}
               style={{ paddingLeft: innerImageURI ? 54 : 12 }}
               placeholderTextColor={baseColors.mediumGray}

@@ -3,12 +3,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
-import Permissions from 'react-native-permissions';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
-import Title from 'components/Title';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -17,8 +15,6 @@ import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
-
-const AUTHORIZED = 'AUTHORIZED';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -45,7 +41,7 @@ function AddressInputTemplate(locals) {
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: 'Ethereum Address',
+    placeholder: 'Recepient Address',
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'left',
@@ -123,9 +119,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleQRScannerOpen = async () => {
-    const status = await Permissions.request('camera');
     this.setState({
-      isScanning: status.toUpperCase() === AUTHORIZED,
+      isScanning: !this.state.isScanning,
     }, () => {
       if (this.state.isScanning) {
         Keyboard.dismiss();
@@ -186,12 +181,10 @@ class SendTokenContacts extends React.Component<Props, State> {
       <Container>
         <Header
           onClose={this.props.navigation.dismiss}
-          onCloseText="Step 1 of 3"
-          title="send"
+          title={`send ${this.assetData.token}`}
           centerTitle
         />
         <FormWrapper>
-          <Title subtitle title="To whom you would like to send?" />
           <Form
             ref={node => { this._form = node; }}
             type={formStructure}
