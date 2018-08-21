@@ -48,6 +48,25 @@ class LegalTerms extends React.Component<Props, State> {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
   };
 
+  toggleCheckbox = (check: string) => {
+    const { userCheck1, userCheck2, userCheck3 } = this.state;
+    if (check === 'userCheck1') {
+      this.setState({
+        userCheck1: !userCheck1,
+      });
+    }
+    if (check === 'userCheck2') {
+      this.setState({
+        userCheck2: !userCheck2,
+      });
+    }
+    if (check === 'userCheck3') {
+      this.setState({
+        userCheck3: !userCheck3,
+      });
+    }
+  }
+
   render() {
     const {
       userCheck1,
@@ -66,12 +85,12 @@ class LegalTerms extends React.Component<Props, State> {
           <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet I understand that:</Paragraph>
           <Checkbox
             text="Pillar does not have access to my private keys."
-            onPress={() => this.setState({ userCheck1: !userCheck1 })}
+            onPress={() => this.toggleCheckbox('userCheck1')}
           />
 
           <Checkbox
             text="The only way to recover my assets is to use the 12-word backup phrase."
-            onPress={() => this.setState({ userCheck2: !userCheck2 })}
+            onPress={() => this.toggleCheckbox('userCheck2')}
           />
 
         </Wrapper>
@@ -79,7 +98,7 @@ class LegalTerms extends React.Component<Props, State> {
 
           <Checkbox
             text="I have read, understand, and agree to the Terms of Use."
-            onPress={() => this.setState({ userCheck3: !userCheck3 })}
+            onPress={() => userCanAcceptCheck3 && this.toggleCheckbox('userCheck3')}
             disabled={userCanAcceptCheck3}
           />
 
