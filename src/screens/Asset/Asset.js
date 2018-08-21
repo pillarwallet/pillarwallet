@@ -71,8 +71,6 @@ const AssetCardWrapper = styled(Wrapper)`
 
 const AssetDescriptionWrapper = styled.View`
   height: ${props => props.expanded ? 'auto' : '24px'};
-  margin-bottom: ${spacing.rhythm}px;
-  position: relative;
   z-index: 10;
 `;
 
@@ -93,11 +91,14 @@ const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   padding-left: 40px;
 `;
 
+const AssetDescription = styled(Paragraph)`
+  margin-bottom: ${spacing.rhythm}px;
+`;
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
     assetDescriptionExpanded: false,
-  };
+  };rr
 
   static navigationOptions = {
     transitionConfig: {
@@ -230,9 +231,9 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetDescriptionWrapper
               expanded={assetDescriptionExpanded}
             >
-              <Paragraph small light>
+              <AssetDescription small light>
                 {assetData.description}
-              </Paragraph>
+              </AssetDescription>
               <AssetDescriptionToggleWrapper
                 colors={
                   assetDescriptionExpanded
