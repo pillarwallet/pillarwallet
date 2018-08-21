@@ -19,12 +19,17 @@ import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
 
 const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.snowWhite), baseColors.snowWhite];
+
+const AssetDescriptionToggleWrapperActiveColors = (
+  [transparentize(1, baseColors.snowWhite), transparentize(1, baseColors.snowWhite)]
+);
 
 const activeModalResetState = {
   type: null,
@@ -44,6 +49,7 @@ type Props = {
   wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
+  baseFiatCurrency: ?string,
 }
 
 type State = {
@@ -65,8 +71,7 @@ const AssetCardWrapper = styled(Wrapper)`
 
 const AssetDescriptionWrapper = styled.View`
   height: ${props => props.expanded ? 'auto' : '24px'};
-  margin-bottom: ${spacing.rhythm}px;
-  position: relative;
+  z-index: 10;
 `;
 
 const AssetDescriptionToggle = styled.TouchableOpacity`
@@ -81,11 +86,14 @@ const AssetDescriptionToggleText = styled(BaseText)`
 
 const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   position: absolute;
-  bottom: ${props => props.expanded ? '-26px' : '-6px'};
+  bottom: ${props => props.expanded ? '-6px' : '-6px'};
   right: 0;
   padding-left: 40px;
 `;
 
+const AssetDescription = styled(Paragraph)`
+  padding-bottom: ${spacing.rhythm}px;
+`;
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
@@ -156,7 +164,7 @@ class AssetScreen extends React.Component<Props, State> {
     this.setState({
       assetDescriptionExpanded: !this.state.assetDescriptionExpanded,
     });
-  }
+  };
 
   render() {
     const {
@@ -166,10 +174,12 @@ class AssetScreen extends React.Component<Props, State> {
       wallet,
       fetchAssetsBalances,
       fetchTransactionsHistory,
+      baseFiatCurrency,
     } = this.props;
     const { assetDescriptionExpanded } = this.state;
     const { assetData } = this.props.navigation.state.params;
-    const { balanceInFiat: { currency: fiatCurrency }, token } = assetData;
+    const { token } = assetData;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.createdAt - a.createdAt);
@@ -178,7 +188,7 @@ class AssetScreen extends React.Component<Props, State> {
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
-    const shouldAssetDescriptionToggleShow = assetData.description.length > 60;
+    const shouldAssetDescriptionToggleShow = assetData.description.length > 40;
     const displayBalanceInFiat = {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
@@ -221,11 +231,15 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetDescriptionWrapper
               expanded={assetDescriptionExpanded}
             >
-              <Paragraph small light>
+              <AssetDescription small light>
                 {assetData.description}
-              </Paragraph>
+              </AssetDescription>
               <AssetDescriptionToggleWrapper
-                colors={assetDescriptionExpanded ? [] : AssetDescriptionToggleWrapperColors}
+                colors={
+                  assetDescriptionExpanded
+                    ? AssetDescriptionToggleWrapperActiveColors
+                    : AssetDescriptionToggleWrapperColors
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.5, y: 0 }}
                 expanded={assetDescriptionExpanded}
@@ -266,12 +280,14 @@ const mapStateToProps = ({
   assets: { data: assets, balances },
   rates: { data: rates },
   history: { data: history },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
   assets,
   balances,
   rates,
   history,
+  baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

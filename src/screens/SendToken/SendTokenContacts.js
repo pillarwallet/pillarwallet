@@ -7,7 +7,6 @@ import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
-import Title from 'components/Title';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -42,7 +41,7 @@ function AddressInputTemplate(locals) {
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: 'Ethereum Address',
+    placeholder: 'Recepient Address',
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'left',
@@ -182,12 +181,10 @@ class SendTokenContacts extends React.Component<Props, State> {
       <Container>
         <Header
           onClose={this.props.navigation.dismiss}
-          onCloseText="Step 1 of 3"
-          title="send"
+          title={`send ${this.assetData.token}`}
           centerTitle
         />
         <FormWrapper>
-          <Title subtitle title="To whom you would like to send?" />
           <Form
             ref={node => { this._form = node; }}
             type={formStructure}

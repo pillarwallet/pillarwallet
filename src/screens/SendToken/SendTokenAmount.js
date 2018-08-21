@@ -13,13 +13,12 @@ import SingleInput from 'components/TextInput/SingleInput';
 import Button from 'components/Button';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import { TextLink, Paragraph, Label } from 'components/Typography';
-import Title from 'components/Title';
+import { TextLink, Label, BaseText } from 'components/Typography';
 import Header from 'components/Header';
-import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Balances } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
+import { fontSizes, spacing } from 'utils/variables';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -102,6 +101,12 @@ const ActionsWrapper = styled.View`
   justify-content: space-between;
 `;
 
+const SendTokenDetails = styled.View``;
+
+const SendTokenDetailsValue = styled(BaseText)`
+  font-size: ${fontSizes.small};
+  margin-bottom: ${spacing.rhythm / 2}px;
+`;
 
 type Props = {
   token: string;
@@ -230,21 +235,20 @@ class SendTokenAmount extends React.Component<Props, State> {
     const {
       value,
       formStructure,
+      txFeeInWei,
     } = this.state;
     const { token, icon, balance: unformattedBalance } = this.assetData;
     const balance = formatAmount(unformattedBalance);
     const formOptions = generateFormOptions({ icon, currency: token });
+    const txFeeInEth = !!txFeeInWei && utils.formatEther(txFeeInWei);
     return (
       <Container>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
           onClose={this.props.navigation.dismiss}
-          onCloseText="Step 2 of 3"
-          title="send"
+          title={`send ${this.assetData.token}`}
         />
-        <WarningBanner small />
         <Wrapper regularPadding>
-          <Title subtitle title={`How much ${token} would you like to send?`} />
           <Form
             ref={node => { this._form = node; }}
             type={formStructure}
@@ -253,7 +257,12 @@ class SendTokenAmount extends React.Component<Props, State> {
             onChange={this.handleChange}
           />
           <ActionsWrapper>
-            <Paragraph small><Label>Balance</Label> {balance} {token}</Paragraph>
+            <SendTokenDetails>
+              <Label>Available Balance</Label>
+              <SendTokenDetailsValue>{balance} {token}</SendTokenDetailsValue>
+              <Label>Est. Network Fee</Label>
+              <SendTokenDetailsValue>{+txFeeInEth} ETH</SendTokenDetailsValue>
+            </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
               <TextLink>Send All</TextLink>
             </TouchableOpacity>
