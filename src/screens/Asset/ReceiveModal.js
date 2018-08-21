@@ -2,9 +2,9 @@
 import * as React from 'react';
 import { Clipboard, Dimensions } from 'react-native';
 import QRCode from 'react-native-qrcode';
-import { TextLink, Label, BaseText } from 'components/Typography';
+import { TextLink, BaseText } from 'components/Typography';
 import { Footer } from 'components/Layout';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
