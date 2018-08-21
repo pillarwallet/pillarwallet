@@ -231,9 +231,9 @@ class AssetScreen extends React.Component<Props, State> {
               </Paragraph>
               <AssetDescriptionToggleWrapper
                 colors={
-                  assetDescriptionExpanded ? (
-                    AssetDescriptionToggleWrapperActiveColors
-                  ) : AssetDescriptionToggleWrapperColors
+                  assetDescriptionExpanded
+                    ? AssetDescriptionToggleWrapperActiveColors
+                    : AssetDescriptionToggleWrapperColors
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.5, y: 0 }}
