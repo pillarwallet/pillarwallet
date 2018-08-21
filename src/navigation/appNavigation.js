@@ -349,10 +349,18 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   handleAppStateChange = (nextAppState: string) => {
-    const { fetchAppSettingsAndRedirect } = this.props;
+    const {
+      fetchAppSettingsAndRedirect,
+      stopListeningNotifications,
+      stopListeningIntercomNotifications,
+    } = this.props;
     clearTimeout(this.timer);
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = setTimeout(() => fetchAppSettingsAndRedirect(), SLEEP_TIMEOUT);
+      this.timer = setTimeout(() => {
+        stopListeningNotifications();
+        stopListeningIntercomNotifications();
+        fetchAppSettingsAndRedirect();
+      }, SLEEP_TIMEOUT);
     }
   };
 
