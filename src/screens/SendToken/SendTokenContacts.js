@@ -3,7 +3,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
-import Permissions from 'react-native-permissions';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
@@ -17,8 +16,6 @@ import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
-
-const AUTHORIZED = 'AUTHORIZED';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -123,9 +120,8 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleQRScannerOpen = async () => {
-    const status = await Permissions.request('camera');
     this.setState({
-      isScanning: status.toUpperCase() === AUTHORIZED,
+      isScanning: !this.state.isScanning,
     }, () => {
       if (this.state.isScanning) {
         Keyboard.dismiss();
