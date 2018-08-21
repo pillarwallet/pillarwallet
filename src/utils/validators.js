@@ -41,3 +41,15 @@ export function isValidEmail(email: string) {
   const re = /\S+@\S+\.\S+/;
   return re.test(email);
 }
+
+export function isValidName(name: string) {
+  const re = (
+    /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u
+  );
+  return re.test(name);
+}
+
+export function isValidCityName(cityName: string) {
+  const re = /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/u;
+  return re.test(cityName);
+}

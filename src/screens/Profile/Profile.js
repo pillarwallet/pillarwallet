@@ -62,7 +62,7 @@ const ListIcon = styled(Icon)`
 const cityFormFields = [{
   label: 'City',
   name: 'city',
-  type: 'string',
+  type: 'city',
   config: { placeholder: 'City' },
 }];
 
@@ -76,12 +76,12 @@ const emailFormFields = [{
 const fullNameFormFields = [{
   label: 'First name',
   name: 'firstName',
-  type: 'string',
+  type: 'firstName',
   config: { placeholder: 'First name' },
 }, {
   label: 'Last name',
   name: 'lastName',
-  type: 'string',
+  type: 'lastName',
   config: { placeholder: 'Last name' },
 }];
 
