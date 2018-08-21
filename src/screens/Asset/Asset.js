@@ -26,6 +26,10 @@ const RECEIVE = 'RECEIVE';
 
 const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.snowWhite), baseColors.snowWhite];
 
+const AssetDescriptionToggleWrapperActiveColors = (
+  [transparentize(1, baseColors.snowWhite), transparentize(1, baseColors.snowWhite)]
+);
+
 const activeModalResetState = {
   type: null,
   opts: {
@@ -67,6 +71,7 @@ const AssetDescriptionWrapper = styled.View`
   height: ${props => props.expanded ? 'auto' : '24px'};
   margin-bottom: ${spacing.rhythm}px;
   position: relative;
+  z-index: 10;
 `;
 
 const AssetDescriptionToggle = styled.TouchableOpacity`
@@ -225,7 +230,11 @@ class AssetScreen extends React.Component<Props, State> {
                 {assetData.description}
               </Paragraph>
               <AssetDescriptionToggleWrapper
-                colors={assetDescriptionExpanded ? [] : AssetDescriptionToggleWrapperColors}
+                colors={
+                  assetDescriptionExpanded ? (
+                    AssetDescriptionToggleWrapperActiveColors
+                  ) : AssetDescriptionToggleWrapperColors
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.5, y: 0 }}
                 expanded={assetDescriptionExpanded}

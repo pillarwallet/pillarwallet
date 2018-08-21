@@ -21,7 +21,7 @@ export default class CurrentPin extends React.Component<Props> {
     return (
       <Container>
         <Header
-          title="enter current pincode"
+          title="enter pincode"
           centerTitle
           onClose={this.handleScreenDismissal}
         />

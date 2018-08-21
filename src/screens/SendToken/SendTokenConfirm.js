@@ -151,7 +151,6 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBack={() => this.props.navigation.goBack(null)}
             onClose={this.handleModalDismissal}
             title="send"
-            onCloseText="Step 3 of 3"
           />
           <Wrapper regularPadding>
             <Title subtitle title="Review and Confirm" />
@@ -170,7 +169,7 @@ class SendTokenContacts extends React.Component<Props, State> {
               <Value>{to}</Value>
             </LabeledRow>
             <LabeledRow>
-              <Label>Transaction Fee</Label>
+              <Label>Est. Network Fee</Label>
               <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
             </LabeledRow>
           </Wrapper>

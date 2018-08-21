@@ -72,8 +72,6 @@ export default class ReceiveModal extends React.Component<Props, *> {
     const {
       isVisible,
       address,
-      token,
-      tokenName,
       onModalHide,
     } = this.props;
 
@@ -82,7 +80,6 @@ export default class ReceiveModal extends React.Component<Props, *> {
         title="receive"
         isVisible={isVisible}
         onModalHide={onModalHide}
-        subtitle={`Share your wallet address to receive ${tokenName} (${token})`}
       >
         <WarningBanner rounded small />
         <ContentWrapper>
