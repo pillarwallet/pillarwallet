@@ -19,6 +19,7 @@ import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
 
@@ -48,6 +49,7 @@ type Props = {
   wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
+  baseFiatCurrency: ?string,
 }
 
 type State = {
@@ -161,7 +163,7 @@ class AssetScreen extends React.Component<Props, State> {
     this.setState({
       assetDescriptionExpanded: !this.state.assetDescriptionExpanded,
     });
-  }
+  };
 
   render() {
     const {
@@ -171,10 +173,12 @@ class AssetScreen extends React.Component<Props, State> {
       wallet,
       fetchAssetsBalances,
       fetchTransactionsHistory,
+      baseFiatCurrency,
     } = this.props;
     const { assetDescriptionExpanded } = this.state;
     const { assetData } = this.props.navigation.state.params;
-    const { balanceInFiat: { currency: fiatCurrency }, token } = assetData;
+    const { token } = assetData;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const history = this.props.history
       .filter(({ asset }) => asset === assetData.token)
       .sort((a, b) => b.createdAt - a.createdAt);
@@ -275,12 +279,14 @@ const mapStateToProps = ({
   assets: { data: assets, balances },
   rates: { data: rates },
   history: { data: history },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
   assets,
   balances,
   rates,
   history,
+  baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
