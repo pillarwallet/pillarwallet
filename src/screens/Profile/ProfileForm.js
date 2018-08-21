@@ -7,7 +7,7 @@ import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
-import { isValidEmail } from 'utils/validators';
+import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
 
 type Field = {
   name: string,
@@ -76,14 +76,58 @@ function InputTemplate(locals) {
 
 const { Form } = t.form;
 
+const FirstNameStruct = t.refinement(t.String, (firstName: string): boolean => {
+  return !!firstName.length && isValidName(firstName);
+});
+
+const LastNameStruct = t.refinement(t.String, (lastName: string): boolean => {
+  return !!lastName.length && isValidName(lastName);
+});
+
 const EmailStruct = t.refinement(t.String, (email: string): boolean => {
   return !!email.length && isValidEmail(email);
 });
+
+const CityStruct = t.refinement(t.String, (city: string): boolean => {
+  return !!city.length && isValidCityName(city);
+});
+
+FirstNameStruct.getValidationErrorMessage = (firstName): string => {
+  if (!isValidName(firstName)) {
+    return 'Please enter a valid first name';
+  }
+  return 'Please specify your first name';
+};
+
+LastNameStruct.getValidationErrorMessage = (lastName): string => {
+  if (!isValidName(lastName)) {
+    return 'Please enter a valid last name';
+  }
+  return 'Please specify your last name';
+};
+
+EmailStruct.getValidationErrorMessage = (email): string => {
+  if (!!email && !isValidEmail(email)) {
+    return 'Please enter a valid email';
+  }
+  return 'Please specify your email';
+};
+
+CityStruct.getValidationErrorMessage = (city): string => {
+  if (!!city && !isValidCityName(city)) {
+    return 'Please enter a valid city';
+  }
+  return 'Please specify your city';
+};
+
 
 const defaultTypes = {
   string: t.String,
   number: t.Number,
   email: EmailStruct,
+  firstName: FirstNameStruct,
+  lastName: LastNameStruct,
+  city: CityStruct,
 };
 
 const getFormStructure = (fields: Field[]) => {
@@ -99,8 +143,8 @@ const generateFormOptions = (fields: Field[]): Object => {
     memo[field.name] = {
       template: InputTemplate,
       config: field.config,
-      error: field.config.error || `Please specify your ${field.label.toLowerCase()}`,
     };
+
     return memo;
   }, {});
   return {
