@@ -92,7 +92,7 @@ const AssetDescriptionToggleWrapper = styled(LinearGradient)`
 `;
 
 const AssetDescription = styled(Paragraph)`
-  margin-bottom: ${spacing.rhythm}px;
+  padding-bottom: ${spacing.rhythm}px;
 `;
 class AssetScreen extends React.Component<Props, State> {
   state = {
