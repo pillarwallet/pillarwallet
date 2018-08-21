@@ -59,15 +59,16 @@ function InputTemplate(locals) {
   );
 }
 
+const usernameRegex = /^[a-z0-9._\- ]+$/i;
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null && username.length <= maxUsernameLength && /^[a-z0-9_\- ]+$/i.test(username);
+  return username != null && username.length <= maxUsernameLength && usernameRegex.test(username);
 });
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length > maxUsernameLength) {
     return `Username should be less than ${maxUsernameLength} characters.`;
   }
-  if (username != null && !(/^[a-z0-9_\- ]+$/i.test(username))) {
+  if (username != null && !(usernameRegex.test(username))) {
     return 'Only use alpha-numeric characters, underscores, dashes or full stops.';
   }
   return 'Please specify the username.';
