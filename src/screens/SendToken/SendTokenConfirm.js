@@ -13,7 +13,6 @@ import Button from 'components/Button';
 import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
-import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -154,7 +153,6 @@ class SendTokenContacts extends React.Component<Props, State> {
             title="send"
             onCloseText="Step 3 of 3"
           />
-          <WarningBanner />
           <Wrapper regularPadding>
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
