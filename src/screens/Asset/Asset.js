@@ -84,7 +84,6 @@ const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   bottom: ${props => props.expanded ? '-26px' : '-6px'};
   right: 0;
   padding-left: 40px;
-
 `;
 
 class AssetScreen extends React.Component<Props, State> {
@@ -179,6 +178,7 @@ class AssetScreen extends React.Component<Props, State> {
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
+    const shouldAssetDescriptionToggleShow = assetData.description.length > 60;
     const displayBalanceInFiat = {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
@@ -230,13 +230,15 @@ class AssetScreen extends React.Component<Props, State> {
                 end={{ x: 0.5, y: 0 }}
                 expanded={assetDescriptionExpanded}
               >
-                <AssetDescriptionToggle
-                  onPress={this.toggleAssetDescription}
-                >
-                  <AssetDescriptionToggleText>
-                    {assetDescriptionExpanded ? 'Less' : 'More'}
-                  </AssetDescriptionToggleText>
-                </AssetDescriptionToggle>
+                {shouldAssetDescriptionToggleShow &&
+                  <AssetDescriptionToggle
+                    onPress={this.toggleAssetDescription}
+                  >
+                    <AssetDescriptionToggleText>
+                      {assetDescriptionExpanded ? 'Less' : 'More'}
+                    </AssetDescriptionToggleText>
+                  </AssetDescriptionToggle>
+                }
               </AssetDescriptionToggleWrapper>
             </AssetDescriptionWrapper>
           </AssetCardWrapper>
