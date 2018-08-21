@@ -96,14 +96,14 @@ FirstNameStruct.getValidationErrorMessage = (firstName): string => {
   if (!isValidName(firstName)) {
     return 'Please enter a valid first name';
   }
-  return 'Please specify4 your first name';
+  return 'Please specify your first name';
 };
 
 LastNameStruct.getValidationErrorMessage = (lastName): string => {
   if (!isValidName(lastName)) {
     return 'Please enter a valid last name';
   }
-  return 'Please specify3 your last name';
+  return 'Please specify your last name';
 };
 
 EmailStruct.getValidationErrorMessage = (email): string => {
