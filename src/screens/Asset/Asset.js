@@ -65,6 +65,7 @@ const AssetCardWrapper = styled(Wrapper)`
 
 const AssetDescriptionWrapper = styled.View`
   height: ${props => props.expanded ? 'auto' : '24px'};
+  margin-bottom: ${spacing.rhythm}px;
   position: relative;
 `;
 
@@ -80,7 +81,7 @@ const AssetDescriptionToggleText = styled(BaseText)`
 
 const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   position: absolute;
-  bottom: -6px;
+  bottom: ${props => props.expanded ? '-26px' : '-6px'};
   right: 0;
   padding-left: 40px;
 
@@ -212,6 +213,11 @@ class AssetScreen extends React.Component<Props, State> {
                 wallpaper={assetData.wallpaper}
               />
             </Transition>
+            <AssetButtons
+              onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
+              onPressSend={() => this.goToSendTokenFlow(assetData)}
+              noBalance={isWalletEmpty}
+            />
             <AssetDescriptionWrapper
               expanded={assetDescriptionExpanded}
             >
@@ -219,9 +225,10 @@ class AssetScreen extends React.Component<Props, State> {
                 {assetData.description}
               </Paragraph>
               <AssetDescriptionToggleWrapper
-                colors={AssetDescriptionToggleWrapperColors}
+                colors={assetDescriptionExpanded ? [] : AssetDescriptionToggleWrapperColors}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0.5, y: 0 }}
+                expanded={assetDescriptionExpanded}
               >
                 <AssetDescriptionToggle
                   onPress={this.toggleAssetDescription}
@@ -232,11 +239,6 @@ class AssetScreen extends React.Component<Props, State> {
                 </AssetDescriptionToggle>
               </AssetDescriptionToggleWrapper>
             </AssetDescriptionWrapper>
-            <AssetButtons
-              onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
-              onPressSend={() => this.goToSendTokenFlow(assetData)}
-              noBalance={isWalletEmpty}
-            />
           </AssetCardWrapper>
           <TXHistory
             history={history}
