@@ -13,7 +13,6 @@ import Button from 'components/Button';
 import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
-import WarningBanner from 'components/WarningBanner';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -152,9 +151,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBack={() => this.props.navigation.goBack(null)}
             onClose={this.handleModalDismissal}
             title="send"
-            onCloseText="Step 3 of 3"
           />
-          <WarningBanner />
           <Wrapper regularPadding>
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
@@ -172,7 +169,7 @@ class SendTokenContacts extends React.Component<Props, State> {
               <Value>{to}</Value>
             </LabeledRow>
             <LabeledRow>
-              <Label>Transaction Fee</Label>
+              <Label>Est. Network Fee</Label>
               <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
             </LabeledRow>
           </Wrapper>

@@ -99,6 +99,19 @@ export const startListeningNotificationsAction = () => {
       });
     }
     if (notificationsListener) return;
+    // TODO: remove it once signal payload matches the rest notifications.
+    if (!signalListener) {
+      firebase.messaging().onMessage(message => {
+        const notification = processNotification(message._data, wallet.address.toUpperCase());
+        if (!notification) return;
+        if (notification.type === SIGNAL) {
+          dispatch(getExistingChatsAction());
+          dispatch({ type: ADD_NOTIFICATION, payload: notification });
+          dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+        }
+      });
+    }
+
     notificationsListener = firebase.notifications().onNotification(message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
