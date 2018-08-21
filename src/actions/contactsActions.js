@@ -62,9 +62,11 @@ export const syncContactAction = (userId: string) => {
       targetUserAccessKey: accessToken.userAccessToken,
     });
 
+    const oldInfo = contacts.find(({ id }) => id === userId) || {};
+    const currentDate = Math.round(+new Date() / 1000);
     const updatedContacts = contacts
       .filter(({ id }) => id !== userId)
-      .concat(userInfo);
+      .concat({ ...userInfo, createdAt: oldInfo.createdAt || currentDate });
     await storage.save('contacts', { contacts: updatedContacts }, true);
 
     dispatch({
