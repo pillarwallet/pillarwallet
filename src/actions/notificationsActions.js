@@ -27,6 +27,7 @@ const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
 let intercomNotificationsListener = null;
+let signalListener = null;
 
 export const startListeningIntercomNotificationsAction = () => {
   return async (dispatch: Function) => {
@@ -86,6 +87,19 @@ export const startListeningNotificationsAction = () => {
     }
 
     if (notificationsListener) return;
+    // TODO: remove it once signal payload matches the rest notifications.
+    if (!signalListener) {
+      firebase.messaging().onMessage(message => {
+        const notification = processNotification(message._data, wallet.address.toUpperCase());
+        if (!notification) return;
+        if (notification.type === SIGNAL) {
+          dispatch(getExistingChatsAction());
+          dispatch({ type: ADD_NOTIFICATION, payload: notification });
+          dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+        }
+      });
+    }
+
     notificationsListener = firebase.notifications().onNotification(message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
@@ -98,11 +112,6 @@ export const startListeningNotificationsAction = () => {
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());
       }
-      if (notification.type === SIGNAL) {
-        dispatch(getExistingChatsAction());
-        dispatch({ type: ADD_NOTIFICATION, payload: notification });
-        dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-      }
       if (notification.type !== SIGNAL) {
         dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       }
@@ -112,6 +121,12 @@ export const startListeningNotificationsAction = () => {
 
 export const stopListeningNotificationsAction = () => {
   return async (dispatch: Function) => { // eslint-disable-line
+    // TODO: remove it once signal payload matches the rest notifications.
+    if (signalListener) {
+      signalListener();
+      signalListener = null;
+    }
+
     if (!notificationsListener) return;
     notificationsListener();
     notificationsListener = null;
