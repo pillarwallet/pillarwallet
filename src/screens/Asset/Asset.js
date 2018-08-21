@@ -98,7 +98,7 @@ class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
     assetDescriptionExpanded: false,
-  };rr
+  };
 
   static navigationOptions = {
     transitionConfig: {
