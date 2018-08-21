@@ -71,8 +71,6 @@ const AssetCardWrapper = styled(Wrapper)`
 
 const AssetDescriptionWrapper = styled.View`
   height: ${props => props.expanded ? 'auto' : '24px'};
-  margin-bottom: ${spacing.rhythm}px;
-  position: relative;
   z-index: 10;
 `;
 
@@ -88,11 +86,14 @@ const AssetDescriptionToggleText = styled(BaseText)`
 
 const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   position: absolute;
-  bottom: ${props => props.expanded ? '-26px' : '-6px'};
+  bottom: ${props => props.expanded ? '-6px' : '-6px'};
   right: 0;
   padding-left: 40px;
 `;
 
+const AssetDescription = styled(Paragraph)`
+  padding-bottom: ${spacing.rhythm}px;
+`;
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
@@ -187,7 +188,7 @@ class AssetScreen extends React.Component<Props, State> {
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
-    const shouldAssetDescriptionToggleShow = assetData.description.length > 60;
+    const shouldAssetDescriptionToggleShow = assetData.description.length > 40;
     const displayBalanceInFiat = {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
@@ -230,9 +231,9 @@ class AssetScreen extends React.Component<Props, State> {
             <AssetDescriptionWrapper
               expanded={assetDescriptionExpanded}
             >
-              <Paragraph small light>
+              <AssetDescription small light>
                 {assetData.description}
-              </Paragraph>
+              </AssetDescription>
               <AssetDescriptionToggleWrapper
                 colors={
                   assetDescriptionExpanded

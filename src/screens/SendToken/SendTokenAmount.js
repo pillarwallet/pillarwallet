@@ -104,7 +104,7 @@ const ActionsWrapper = styled.View`
 const SendTokenDetails = styled.View``;
 
 const SendTokenDetailsValue = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small};
   margin-bottom: ${spacing.rhythm / 2}px;
 `;
 
