@@ -53,11 +53,13 @@ class LegalTerms extends React.Component<Props, State> {
     if (check === 'userCheck1') {
       this.setState({
         userCheck1: !userCheck1,
+        userCheck3: false,
       });
     }
     if (check === 'userCheck2') {
       this.setState({
         userCheck2: !userCheck2,
+        userCheck3: false,
       });
     }
     if (check === 'userCheck3') {
@@ -98,7 +100,7 @@ class LegalTerms extends React.Component<Props, State> {
 
           <Checkbox
             text="I have read, understand, and agree to the Terms of Use."
-            onPress={() => userCanAcceptCheck3 && this.toggleCheckbox('userCheck3')}
+            onPress={() => this.toggleCheckbox('userCheck3')}
             disabled={userCanAcceptCheck3}
           />
 

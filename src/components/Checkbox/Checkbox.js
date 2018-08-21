@@ -52,7 +52,7 @@ export default class Checkbox extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.disabled !== this.props.disabled && !!this.props.disabled) {
+    if (prevProps.disabled !== this.props.disabled && this.props.disabled) {
       this.toggleCheckBox(false);
     }
   }
@@ -72,14 +72,20 @@ export default class Checkbox extends React.Component<Props, State> {
     }
   }
 
+  toggleOnPress = (checkedStatus: boolean) => {
+    if (!this.props.disabled) {
+      this.props.onPress(checkedStatus);
+    }
+  }
+
   toggleCheckBox = (status?: boolean) => {
     const { checked } = this.state;
-    const { onPress, disabled } = this.props;
+    const { disabled } = this.props;
     const checkedStatus = disabled ? false : status || !checked;
     this.setState({
       checked: checkedStatus,
     },
-    () => onPress(checkedStatus),
+    () => this.toggleOnPress(checkedStatus),
     );
     this.animateCheckBox(checkedStatus);
   };
