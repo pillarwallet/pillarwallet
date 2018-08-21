@@ -155,17 +155,17 @@ const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
       source={focused ? iconActive : icon}
     />
     {!!hasAddon &&
-    <View
-      style={{
-        width: 8,
-        height: 8,
-        backgroundColor: baseColors.sunYellow,
-        borderRadius: 4,
-        position: 'absolute',
-        top: 0,
-        right: 0,
-      }}
-    />}
+      <View
+        style={{
+          width: 8,
+          height: 8,
+          backgroundColor: baseColors.sunYellow,
+          borderRadius: 4,
+          position: 'absolute',
+          top: 0,
+          right: 0,
+        }}
+      />}
   </View>
 );
 
@@ -213,7 +213,10 @@ const tabNavigation = createBottomTabNavigator(
     [HOME]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon: tabBarIcon(iconHomeActive, iconHome, !navigation.isFocused() && screenProps.hasUnreadNotifications),
+        tabBarIcon: tabBarIcon(
+          iconHomeActive,
+          iconHome,
+          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -302,6 +305,7 @@ type Props = {
   notifications: Object[],
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
+  intercomNotificationsCount: number,
   wallet: Object,
   assets: Object,
 }
@@ -365,19 +369,36 @@ class AppFlow extends React.Component<Props, {}> {
   };
 
   render() {
-    const { userState, hasUnreadNotifications, hasUnreadChatNotifications } = this.props;
+    const {
+      userState,
+      hasUnreadNotifications,
+      intercomNotificationsCount,
+      hasUnreadChatNotifications,
+    } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
 
-    return <AppFlowNavigation screenProps={{ hasUnreadNotifications, hasUnreadChatNotifications }} />;
+    return (
+      <AppFlowNavigation screenProps={{
+        hasUnreadNotifications,
+        hasUnreadChatNotifications,
+        intercomNotificationsCount,
+      }}
+      />
+    );
   }
 }
 
 const mapStateToProps = ({
   user: { userState },
-  notifications: { data: notifications, hasUnreadNotifications, hasUnreadChatNotifications },
+  notifications: {
+    data: notifications,
+    intercomNotificationsCount,
+    hasUnreadNotifications,
+    hasUnreadChatNotifications,
+  },
   assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
@@ -387,6 +408,7 @@ const mapStateToProps = ({
   assets,
   wallet,
   hasUnreadChatNotifications,
+  intercomNotificationsCount,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import { RefreshControl, Platform } from 'react-native';
+import { RefreshControl, Platform, View } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
@@ -49,6 +49,7 @@ type Props = {
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   getExistingChats: Function,
+  intercomNotificationsCount: number,
   chats: any,
 };
 
@@ -315,6 +316,7 @@ class HomeScreen extends React.Component<Props, State> {
       invitations,
       historyNotifications,
       history,
+      intercomNotificationsCount,
       wallet: { address: walletAddress },
       navigation,
     } = this.props;
@@ -347,7 +349,7 @@ class HomeScreen extends React.Component<Props, State> {
       .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
-
+    const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
       <Container>
         <ScrollWrapper
@@ -368,6 +370,17 @@ class HomeScreen extends React.Component<Props, State> {
                   fontSize={24}
                   onPress={() => Intercom.displayMessenger()}
                 />
+                {hasIntercomNotifications && <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.sunYellow,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 6,
+                    right: 8,
+                  }}
+                />}
               </HomeHeaderLeft>
 
               <HomeHeaderBody>
@@ -478,6 +491,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   wallet: { data: wallet },
   chat: { data: chats },
+  notifications: { intercomNotificationsCount },
 }) => ({
   contacts,
   user,
@@ -486,6 +500,7 @@ const mapStateToProps = ({
   invitations,
   wallet,
   chats,
+  intercomNotificationsCount,
 });
 
 const mapDispatchToProps = (dispatch) => ({
