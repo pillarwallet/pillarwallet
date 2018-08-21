@@ -153,7 +153,11 @@ class Contact extends React.Component<Props, State> {
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>
           {isAccepted &&
-          <CircleButton label="Chat" icon="send" onPress={() => navigation.navigate(CHAT, { displayContact })} />
+            <CircleButton
+              label="Chat"
+              icon="send"
+              onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+            />
           }
         </Wrapper>
         <SlideModal
