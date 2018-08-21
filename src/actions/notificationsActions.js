@@ -86,10 +86,9 @@ export const startListeningNotificationsAction = () => {
       dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
     }
 
-    if (notificationsListener) return;
     // TODO: remove it once signal payload matches the rest notifications.
     if (!signalListener) {
-      firebase.messaging().onMessage(message => {
+      signalListener = firebase.messaging().onMessage(message => {
         const notification = processNotification(message._data, wallet.address.toUpperCase());
         if (!notification) return;
         if (notification.type === SIGNAL) {
@@ -99,7 +98,7 @@ export const startListeningNotificationsAction = () => {
         }
       });
     }
-
+    if (notificationsListener) return;
     notificationsListener = firebase.notifications().onNotification(message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
