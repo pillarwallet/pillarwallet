@@ -5745,7 +5745,7 @@ iconv-lite@0.4.19:
   version "0.4.19"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
-iconv-lite@0.4.23, iconv-lite@^0.4.17, iconv-lite@^0.4.22, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
+iconv-lite@0.4.23, iconv-lite@^0.4.17, iconv-lite@^0.4.4, iconv-lite@~0.4.13:
   version "0.4.23"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/iconv-lite/-/iconv-lite-0.4.23.tgz#297871f63be507adcfbfca715d0cd0eed84e9a63"
   dependencies:
@@ -8281,17 +8281,6 @@ next-tick@1:
 nice-try@^1.0.4:
   version "1.0.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
-
-
-nise@^1.2.0:
-  version "1.4.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/nise/-/nise-1.4.3.tgz#d1996e8d15256ceff1a0a1596e0c72bff370e37c"
-  dependencies:
-    "@sinonjs/formatio" "^2.0.0"
-    just-extend "^1.1.27"
-    lolex "^2.3.2"
-    path-to-regexp "^1.7.0"
-    text-encoding "^0.6.4"
 
 node-fetch@1.6.3:
   version "1.6.3"

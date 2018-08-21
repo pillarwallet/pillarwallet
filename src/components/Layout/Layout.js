@@ -76,7 +76,7 @@ export const Footer = (props: FooterProps) => {
       enabled
       column={props.column}
       behavior={Platform.OS === 'ios' ? 'position' : null}
-      keyboardVerticalOffset={40}
+      keyboardVerticalOffset={20}
       contentContainerStyle={{
         alignItems: 'center',
         position: 'relative',

@@ -127,7 +127,9 @@ const TXDetails = (props: Props) => {
       </Holder>
       <Holder>
         <Button
-          title="View on the blockchain"
+          block
+          small
+          title="View on the Blockchain"
           onPress={() => viewTransactionOnBlockchain(tx.hash)}
         />
       </Holder>

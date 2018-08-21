@@ -2,8 +2,9 @@
 import * as React from 'react';
 import { Clipboard, Dimensions } from 'react-native';
 import QRCode from 'react-native-qrcode';
-import { TextLink, Label } from 'components/Typography';
-import { baseColors } from 'utils/variables';
+import { TextLink, BaseText } from 'components/Typography';
+import { Footer } from 'components/Layout';
+import { spacing, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -14,7 +15,7 @@ const { height } = Dimensions.get('window');
 
 const ContentWrapper = styled.View`
   height: ${height / 2};
-  justify-content: space-around;
+  justify-content: flex-start;
 `;
 
 type Props = {
@@ -26,28 +27,20 @@ type Props = {
   isVisible: boolean,
 }
 
-const FooterWrapper = styled.View`
-  flexDirection: column;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0 10px;
-  width: 100%;
-`;
-
-const TouchableOpacity = styled.TouchableOpacity`
-  padding-top: 10px;
-`;
-
-const Holder = styled.View`
-  display: flex;
-  flex-direction:column;
-  justify-content: space-around;
+const CopyAddressLink = styled.TouchableOpacity`
+  margin-top: ${spacing.rhythm}px;
+  margin-bottom: ${spacing.rhythm}px;
   align-items: center;
 `;
 
 const QRCodeWrapper = styled.View`
-  display: flex;
-  margin-bottom: 30px;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;
+
+const WalletAddress = styled(BaseText)`
+  font-size: ${fontSizes.medium};
 `;
 
 export default class ReceiveModal extends React.Component<Props, *> {
@@ -72,8 +65,6 @@ export default class ReceiveModal extends React.Component<Props, *> {
     const {
       isVisible,
       address,
-      token,
-      tokenName,
       onModalHide,
     } = this.props;
 
@@ -82,31 +73,29 @@ export default class ReceiveModal extends React.Component<Props, *> {
         title="receive"
         isVisible={isVisible}
         onModalHide={onModalHide}
-        subtitle={`Share your wallet address to receive ${tokenName} (${token})`}
       >
         <WarningBanner rounded small />
         <ContentWrapper>
-          <Holder>
-            <QRCodeWrapper>
-              <QRCode value={address} size={120} />
-            </QRCodeWrapper>
-            <Button
-              title="Share Address"
-              onPress={this.handleAddressShare}
-              style={{
-                marginBottom: 20,
-              }}
-            />
-          </Holder>
-          <Holder>
-            <FooterWrapper>
-              <Label color={baseColors.slateBlack}>{address}</Label>
-              <TouchableOpacity onPress={this.handleAddressClipboardSet}>
-                <TextLink>Copy wallet address to clipboard</TextLink>
-              </TouchableOpacity>
-            </FooterWrapper>
-          </Holder>
+          <QRCodeWrapper>
+            <QRCode value={address} size={160} />
+            <CopyAddressLink onPress={this.handleAddressClipboardSet}>
+              <TextLink>Copy wallet address to clipboard</TextLink>
+            </CopyAddressLink>
+
+            <WalletAddress>{address}</WalletAddress>
+          </QRCodeWrapper>
+
+
         </ContentWrapper>
+        <Footer>
+          <Button
+            title="Share Address"
+            onPress={this.handleAddressShare}
+            style={{
+              marginBottom: 20,
+            }}
+          />
+        </Footer>
       </SlideModal>
     );
   }
