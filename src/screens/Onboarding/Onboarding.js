@@ -31,8 +31,8 @@ class Onboarding extends React.Component<Props> {
           </Paragraph>
         </Wrapper>
         <Footer>
-          <Button block marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup new wallet" />
-          <Button block onPress={this.importOldWallet} secondary title="Import existing wallet" />
+          <Button block marginBottom="20px" marginTop="20px" onPress={this.createNewWallet} title="Setup New Wallet" />
+          <Button block onPress={this.importOldWallet} secondary title="Import Wallet" />
         </Footer>
       </Container>
     );
