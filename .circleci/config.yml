@@ -40,7 +40,7 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            sed -i.bak s/_build_number_/$buildNumber/g .env
+            sed -i.bak s/_build_number_/$buildNumber/g .env.production
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -119,7 +119,7 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            sed -i.bak s/_build_number_/$buildNumber/g .env
+            sed -i.bak s/_build_number_/$buildNumber/g .env.production
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -207,7 +207,7 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            sed -i "s/_build_number_/$buildNumber/g" .env
+            sed -i "s/_build_number_/$buildNumber/g" .env.production
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: node-{{ checksum "../yarn.lock" }}
