@@ -86,7 +86,7 @@ const AssetDescriptionToggleText = styled(BaseText)`
 
 const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   position: absolute;
-  bottom: ${props => props.expanded ? '-26px' : '-6px'};
+  bottom: ${props => props.expanded ? '-6px' : '-6px'};
   right: 0;
   padding-left: 40px;
 `;
