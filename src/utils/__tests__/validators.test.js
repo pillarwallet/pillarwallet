@@ -1,5 +1,13 @@
 // @flow
-import { validatePin, isValidETHAddress, hasAllValues, isValidFullname, isValidEmail } from '../validators';
+import {
+  validatePin,
+  isValidETHAddress,
+  hasAllValues,
+  isValidFullname,
+  isValidEmail,
+  isValidName,
+  isValidCityName,
+} from '../validators';
 
 describe('Validators', () => {
   describe('validatePin', () => {
@@ -66,6 +74,30 @@ describe('Validators', () => {
     it('should return true if email is valid', () => {
       const email = 'jon@snow.com';
       expect(isValidEmail(email)).toBeTruthy();
+    });
+  });
+
+  describe('isValidName', () => {
+    it('should return false if name isn\'t valid', () => {
+      const name = 'P1R@T3';
+      expect(isValidName(name)).toBeFalsy();
+    });
+
+    it('should return true if name is valid', () => {
+      const name = 'Jonathan';
+      expect(isValidName(name)).toBeTruthy();
+    });
+  });
+
+  describe('isValidCityName', () => {
+    it('should return false if city name isn\'t valid', () => {
+      const cityName = 'S3ct0r 9!';
+      expect(isValidCityName(cityName)).toBeFalsy();
+    });
+
+    it('should return true if city name is valid', () => {
+      const cityName = 'San Fransisco';
+      expect(isValidCityName(cityName)).toBeTruthy();
     });
   });
 });
