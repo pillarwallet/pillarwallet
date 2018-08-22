@@ -8,7 +8,7 @@ import { format as formatDate } from 'date-fns';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { getUserName } from 'utils/contacts';
-import { spacing } from 'utils/variables';
+import { spacing, baseColors, fontSizes } from 'utils/variables';
 import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
@@ -44,9 +44,17 @@ const TXHistoryHeader = styled.View`
 `;
 
 const DirectionIcon = styled(Icon)`
-  width: 35px;
-  height: 35px;
+  font-size: ${fontSizes.giant}px;
+`;
+
+const DirectionIconWrapper = styled.View`
+  background-color: ${baseColors.lightGray};
   margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const SENT = 'Sent';
@@ -100,7 +108,9 @@ class TXHistory extends React.Component<Props, State> {
     const isEven = index % 2;
     return (
       <Item key={id} onPress={() => this.selectTransaction(transaction)} isEven={isEven}>
-        <DirectionIcon name={icon} />
+        <DirectionIconWrapper>
+          <DirectionIcon name={icon} />
+        </DirectionIconWrapper>
         <Section>
           <Hash>{address}</Hash>
           <Timestamp>{dateTime}</Timestamp>
