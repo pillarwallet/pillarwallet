@@ -98,10 +98,10 @@ export function fetchETHBalance(walletAddress: Address) {
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchERC20Balance(walletAddress: Address, contractAddress: Address) {
+export function fetchERC20Balance(walletAddress: Address, contractAddress: Address, decimals: number = 18) {
   const provider = providers.getDefaultProvider(PROVIDER);
   const contract = new Contract(contractAddress, CONTRACT_ABI, provider);
-  return contract.balanceOf(walletAddress).then(utils.formatEther);
+  return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
 export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<Object[]> {
@@ -109,7 +109,7 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
         ? await fetchETHBalance(walletAddress)
-        : await fetchERC20Balance(walletAddress, asset.address).catch(() => 0);
+        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => 0);
       return {
         balance,
         symbol: asset.symbol,

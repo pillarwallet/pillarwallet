@@ -37,6 +37,7 @@ const mockAssets: Assets = {
     iconUrl: '',
     iconMonoUrl: '',
     wallpaperUrl: '',
+    decimals: 18,
   },
 };
 
