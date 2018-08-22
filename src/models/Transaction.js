@@ -25,6 +25,7 @@ export type TransactionPayload = {
   txFeeInWei: number,
   symbol: string,
   contractAddress: ?string,
+  decimals: number,
 }
 
 export type TransactionEthers = {
