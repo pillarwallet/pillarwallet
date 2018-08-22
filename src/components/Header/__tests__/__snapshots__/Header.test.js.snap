@@ -56,13 +56,14 @@ exports[`Header should render Header correctly 1`] = `
           "alignSelf": "flex-start",
           "height": 44,
           "justifyContent": "center",
+          "marginLeft": -20,
           "opacity": 1,
           "paddingBottom": 0,
-          "paddingLeft": 0,
+          "paddingLeft": 20,
           "paddingRight": 0,
           "paddingTop": 0,
           "position": "relative",
-          "width": 44,
+          "width": 64,
         }
       }
     >
