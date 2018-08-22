@@ -106,6 +106,7 @@ class AssetsScreen extends React.Component<Props> {
           balance,
           iconMonoUrl,
           wallpaperUrl,
+          decimals,
         } = asset;
 
         const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
@@ -125,6 +126,7 @@ class AssetsScreen extends React.Component<Props> {
           address: wallet.address,
           icon: fullIconMonoUrl,
           wallpaper: fullIconWallpaperUrl,
+          decimals,
         };
         return (
           <Transition key={assetData.name} shared={assetData.name}>
