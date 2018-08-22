@@ -2,13 +2,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { FlatList, Image } from 'react-native';
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { getUserName } from 'utils/contacts';
 import { spacing } from 'utils/variables';
+import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import TXDetails from 'components/TXDetails';
@@ -18,9 +19,6 @@ import Hash from './Hash';
 import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
-
-const iconUp = require('assets/icons/up.png');
-const iconDown = require('assets/icons/down.png');
 
 
 type Props = {
@@ -43,6 +41,12 @@ const flatListStyles = {
 const TXHistoryHeader = styled.View`
   align-items: flex-start;
   padding: 10px ${spacing.rhythm}px 0;
+`;
+
+const DirectionIcon = styled(Icon)`
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
 `;
 
 const SENT = 'Sent';
@@ -87,7 +91,7 @@ class TXHistory extends React.Component<Props, State> {
     const { contacts, wallet: { address: myAddress } } = this.props;
     const direction = myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
     const dateTime = formatDate(new Date(createdAt * 1000), 'MMM Do');
-    const icon = direction === SENT ? iconUp : iconDown;
+    const icon = direction === SENT ? 'sent' : 'received';
     const senderRecipientAddress = direction === SENT ? to : from;
     const contact = contacts
       .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
@@ -96,7 +100,7 @@ class TXHistory extends React.Component<Props, State> {
     const isEven = index % 2;
     return (
       <Item key={id} onPress={() => this.selectTransaction(transaction)} isEven={isEven}>
-        <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
+        <DirectionIcon name={icon} />
         <Section>
           <Hash>{address}</Hash>
           <Timestamp>{dateTime}</Timestamp>
