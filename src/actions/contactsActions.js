@@ -62,6 +62,10 @@ export const syncContactAction = (userId: string) => {
       targetUserAccessKey: accessToken.userAccessToken,
     });
 
+    if (!userInfo || !Object.keys(userInfo).length) {
+      return;
+    }
+
     const oldInfo = contacts.find(({ id }) => id === userId) || {};
     const currentDate = +new Date() / 1000;
     const updatedContacts = contacts
