@@ -19,6 +19,8 @@ import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 
+const Crashlytics = firebase.crashlytics();
+
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
@@ -36,6 +38,7 @@ export const loginAction = (pin: string) => {
       api.init(wallet.privateKey);
 
       const { user = {} } = await storage.get('user');
+      Crashlytics.setUserIdentifier(user.username);
       const userState = user.walletId ? REGISTERED : PENDING;
       dispatch({
         type: UPDATE_USER,

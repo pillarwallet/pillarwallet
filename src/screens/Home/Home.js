@@ -97,7 +97,9 @@ const HomeHeaderUsername = styled(BaseText)`
 
 const HomeHeaderButton = styled(IconButton)`
   align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
-  width: 44px;
+  margin: ${props => props.flexEnd ? `0 -${spacing.rhythm}px 0 0` : `0 0 0 -${spacing.rhythm}px`};
+  padding: ${props => props.flexEnd ? `0 ${spacing.rhythm}px 0 0` : `0 0 0 ${spacing.rhythm}px`};
+  width: 64px;
   height: 44px;
 `;
 
