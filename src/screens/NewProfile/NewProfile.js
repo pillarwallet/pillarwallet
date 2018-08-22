@@ -59,7 +59,7 @@ function InputTemplate(locals) {
   );
 }
 
-const usernameRegex = /^[a-z0-9._\- ]+$/i;
+const usernameRegex = /^[a-z0-9._-]+$/i;
 const Username = t.refinement(t.String, (username): boolean => {
   return username != null && username.length <= maxUsernameLength && usernameRegex.test(username);
 });
