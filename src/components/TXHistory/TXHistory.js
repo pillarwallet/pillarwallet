@@ -5,6 +5,7 @@ import { utils } from 'ethers';
 import { FlatList, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
+import { BigNumber } from 'bignumber.js';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { getUserName } from 'utils/contacts';
@@ -92,7 +93,7 @@ class TXHistory extends React.Component<Props, State> {
     const contact = contacts
       .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
     const address = getUserName(contact) || `${senderRecipientAddress.slice(0, 7)}…${senderRecipientAddress.slice(-7)}`;
-    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
+    const amount = utils.formatUnits(new BigNumber(value.toString()).toFixed());
     const isEven = index % 2;
     return (
       <Item key={id} onPress={() => this.selectTransaction(transaction)} isEven={isEven}>
