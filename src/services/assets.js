@@ -107,7 +107,6 @@ export function fetchERC20Balance(walletAddress: Address, contractAddress: Addre
 export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<Object[]> {
   const promises = assets
     .map(async (asset: Asset) => {
-      console.log(asset);
       const balance = asset.symbol === ETH
         ? await fetchETHBalance(walletAddress)
         : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => 0);
