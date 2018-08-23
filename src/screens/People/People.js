@@ -87,6 +87,8 @@ type State = {
   query: string,
 }
 
+let didBlurSubscription;
+
 class PeopleScreen extends React.Component<Props, State> {
   state = {
     query: '',
@@ -136,9 +138,18 @@ class PeopleScreen extends React.Component<Props, State> {
   );
 
   componentDidMount() {
-    const { fetchInviteNotifications } = this.props;
+    const { fetchInviteNotifications, navigation } = this.props;
     fetchInviteNotifications();
+    didBlurSubscription = navigation.addListener('willBlur', this.onBlur);
   }
+
+  componentWillUnmount() {
+    didBlurSubscription.remove();
+  }
+
+  onBlur = () => {
+    Keyboard.dismiss();
+  };
 
   render() {
     const { query } = this.state;
