@@ -49,7 +49,8 @@ type ERC20TransferOptions = {
   contractAddress: ?string,
   to: Address,
   amount: number,
-  wallet: Object
+  wallet: Object,
+  decimals: number,
 }
 
 type ETHTransferOptions = {
@@ -57,7 +58,7 @@ type ETHTransferOptions = {
   gasPrice: number,
   amount: number,
   to: Address,
-  wallet: Object
+  wallet: Object,
 }
 
 export function transferERC20(options: ERC20TransferOptions) {
@@ -66,11 +67,11 @@ export function transferERC20(options: ERC20TransferOptions) {
     to,
     amount,
     wallet,
+    decimals = 18,
   } = options;
   wallet.provider = providers.getDefaultProvider(PROVIDER);
   const contract = new Contract(contractAddress, CONTRACT_ABI, wallet);
-  const numberOfDecimals = 18;
-  return contract.transfer(to, utils.parseUnits(amount.toString(), numberOfDecimals));
+  return contract.transfer(to, utils.parseUnits(amount.toString(), decimals));
 }
 
 export function transferETH(options: ETHTransferOptions) {
@@ -98,10 +99,10 @@ export function fetchETHBalance(walletAddress: Address) {
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
-export function fetchERC20Balance(walletAddress: Address, contractAddress: Address) {
+export function fetchERC20Balance(walletAddress: Address, contractAddress: Address, decimals: number = 18) {
   const provider = providers.getDefaultProvider(PROVIDER);
   const contract = new Contract(contractAddress, CONTRACT_ABI, provider);
-  return contract.balanceOf(walletAddress).then(utils.formatEther);
+  return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 
 export function fetchAssetBalances(assets: Asset[], walletAddress: string): Promise<Object[]> {
@@ -109,7 +110,7 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
     .map(async (asset: Asset) => {
       const balance = asset.symbol === ETH
         ? await fetchETHBalance(walletAddress)
-        : await fetchERC20Balance(walletAddress, asset.address).catch(() => 0);
+        : await fetchERC20Balance(walletAddress, asset.address, asset.decimals).catch(() => 0);
       return {
         balance,
         symbol: asset.symbol,
