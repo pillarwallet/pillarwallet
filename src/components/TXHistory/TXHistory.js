@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { FlatList, Image } from 'react-native';
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
@@ -10,7 +10,8 @@ import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import { getUserName } from 'utils/contacts';
-import { spacing } from 'utils/variables';
+import { spacing, baseColors, fontSizes } from 'utils/variables';
+import Icon from 'components/Icon';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import TXDetails from 'components/TXDetails';
@@ -20,9 +21,6 @@ import Hash from './Hash';
 import Status from './Status';
 import Timestamp from './Timestamp';
 import Section from './Section';
-
-const iconUp = require('assets/icons/up.png');
-const iconDown = require('assets/icons/down.png');
 
 
 type Props = {
@@ -46,6 +44,20 @@ const flatListStyles = {
 const TXHistoryHeader = styled.View`
   align-items: flex-start;
   padding: 10px ${spacing.rhythm}px 0;
+`;
+
+const DirectionIcon = styled(Icon)`
+  font-size: ${fontSizes.giant}px;
+`;
+
+const DirectionIconWrapper = styled.View`
+  background-color: ${baseColors.lightGray};
+  margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const SENT = 'Sent';
@@ -90,7 +102,7 @@ class TXHistory extends React.Component<Props, State> {
     const { contacts, wallet: { address: myAddress }, assets } = this.props;
     const direction = myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
     const dateTime = formatDate(new Date(createdAt * 1000), 'MMM Do');
-    const icon = direction === SENT ? iconUp : iconDown;
+    const icon = direction === SENT ? 'sent' : 'received';
     const senderRecipientAddress = direction === SENT ? to : from;
     const contact = contacts
       .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
@@ -100,7 +112,9 @@ class TXHistory extends React.Component<Props, State> {
     const isEven = index % 2;
     return (
       <Item key={id} onPress={() => this.selectTransaction({ ...transaction, value: amount })} isEven={isEven}>
-        <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
+        <DirectionIconWrapper>
+          <DirectionIcon name={icon} />
+        </DirectionIconWrapper>
         <Section>
           <Hash>{address}</Hash>
           <Timestamp>{dateTime}</Timestamp>
