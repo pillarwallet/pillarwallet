@@ -117,11 +117,11 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({
       showCheckPinModal: false,
     });
-  }
+  };
 
   makeTransaction = () => {
-    const { transactionPayload, assetData: { token } } = this.state;
-    this.props.sendAsset({ ...transactionPayload, symbol: token });
+    const { transactionPayload, assetData: { token, decimals } } = this.state;
+    this.props.sendAsset({ ...transactionPayload, symbol: token, decimals });
     this.setState({
       showCheckPinModal: false,
       isSubmitted: true,

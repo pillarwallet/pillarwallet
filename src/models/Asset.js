@@ -7,6 +7,7 @@ export type Asset = {
   iconUrl: string,
   iconMonoUrl: string,
   wallpaperUrl: string,
+  decimals: number,
 };
 
 export type Assets = {
