@@ -148,8 +148,8 @@ const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
     <Image
       style={{
-        width: 18,
-        height: 18,
+        width: 24,
+        height: 24,
         resizeMode: 'contain',
       }}
       source={focused ? iconActive : icon}
