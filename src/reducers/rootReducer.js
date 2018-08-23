@@ -12,6 +12,7 @@ import contactsReducer from './contactsReducer';
 import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
 import accessTokensReducer from './accessTokensReducer';
+import sessionReducer from './sessionReducer';
 
 export default combineReducers({
   navigation: navigationReducer,
@@ -26,4 +27,5 @@ export default combineReducers({
   invitations: invitationsReducer,
   chat: chatReducer,
   accessTokens: accessTokensReducer,
+  session: sessionReducer,
 });
