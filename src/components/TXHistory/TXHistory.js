@@ -8,6 +8,7 @@ import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 import { getUserName } from 'utils/contacts';
 import { spacing } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
@@ -26,6 +27,7 @@ const iconDown = require('assets/icons/down.png');
 
 type Props = {
   history: Transaction[],
+  assets: Asset[],
   contacts: Object[],
   token: string,
   wallet: Object,
@@ -85,7 +87,7 @@ class TXHistory extends React.Component<Props, State> {
       asset,
       createdAt,
     } = transaction;
-    const { contacts, wallet: { address: myAddress } } = this.props;
+    const { contacts, wallet: { address: myAddress }, assets } = this.props;
     const direction = myAddress.toUpperCase() === from.toUpperCase() ? SENT : RECEIVED;
     const dateTime = formatDate(new Date(createdAt * 1000), 'MMM Do');
     const icon = direction === SENT ? iconUp : iconDown;
@@ -93,10 +95,11 @@ class TXHistory extends React.Component<Props, State> {
     const contact = contacts
       .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
     const address = getUserName(contact) || `${senderRecipientAddress.slice(0, 7)}…${senderRecipientAddress.slice(-7)}`;
-    const amount = utils.formatUnits(new BigNumber(value.toString()).toFixed());
+    const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
+    const amount = utils.formatUnits(new BigNumber(value.toString()).toFixed(), decimals);
     const isEven = index % 2;
     return (
-      <Item key={id} onPress={() => this.selectTransaction(transaction)} isEven={isEven}>
+      <Item key={id} onPress={() => this.selectTransaction({ ...transaction, value: amount })} isEven={isEven}>
         <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
         <Section>
           <Hash>{address}</Hash>
@@ -146,9 +149,11 @@ class TXHistory extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet: { data: wallet },
   contacts: { data: contacts },
+  assets: { data: assets },
 }) => ({
   wallet,
   contacts,
+  assets: Object.values(assets),
 });
 
 export default connect(mapStateToProps)(TXHistory);
