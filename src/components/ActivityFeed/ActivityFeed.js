@@ -309,7 +309,7 @@ class ActivityFeed extends React.Component<Props, State> {
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const { type } = notification;
     const { wallet, navigation, assets } = this.props;
-    const { walletAddress } = wallet;
+    const walletAddress = wallet.address;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
