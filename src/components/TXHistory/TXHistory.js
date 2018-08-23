@@ -8,10 +8,11 @@ import { format as formatDate } from 'date-fns';
 import Title from 'components/Title';
 import type { Transaction } from 'models/Transaction';
 import { getUserName } from 'utils/contacts';
-import { spacing } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import TXDetails from 'components/TXDetails';
+import ProfileImage from 'components/ProfileImage';
 import Item from './Item';
 import Amount from './Amount';
 import Hash from './Hash';
@@ -43,6 +44,11 @@ const flatListStyles = {
 const TXHistoryHeader = styled.View`
   align-items: flex-start;
   padding: 10px ${spacing.rhythm}px 0;
+`;
+
+const IconWrapper = styled.View`
+  align-items: flex-start;
+  margin-right: ${spacing.rhythm}px;
 `;
 
 const SENT = 'Sent';
@@ -89,16 +95,33 @@ class TXHistory extends React.Component<Props, State> {
     const dateTime = formatDate(new Date(createdAt * 1000), 'MMM Do');
     const icon = direction === SENT ? iconUp : iconDown;
     const senderRecipientAddress = direction === SENT ? to : from;
-    const contact = contacts
+    const contact: any = contacts
       .find(({ ethAddress }) => senderRecipientAddress.toUpperCase() === ethAddress.toUpperCase());
     const address = getUserName(contact) || `${senderRecipientAddress.slice(0, 7)}…${senderRecipientAddress.slice(-7)}`;
     const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
     const isEven = index % 2;
+    let image;
+
+    const nameOrAddress = contact.firstName ? `${contact.firstName} ${contact.lastName}` : address;
+
+    if (getUserName(contact)) {
+      image = (<ProfileImage
+        uri={contact.profileImage}
+        userName={address}
+        diameter={40}
+        textStyle={{ fontSize: fontSizes.medium }}
+      />);
+    } else {
+      image = <Image source={icon} style={{ width: 40, height: 40 }} />;
+    }
+
     return (
       <Item key={id} onPress={() => this.selectTransaction(transaction)} isEven={isEven}>
-        <Image source={icon} style={{ width: 35, height: 35, marginRight: 10 }} />
+        <IconWrapper>
+          { image }
+        </IconWrapper>
         <Section>
-          <Hash>{address}</Hash>
+          <Hash>{nameOrAddress}</Hash>
           <Timestamp>{dateTime}</Timestamp>
         </Section>
         <Section>
