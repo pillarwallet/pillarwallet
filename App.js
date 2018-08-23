@@ -11,6 +11,7 @@ import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { initAppAndRedirectAction } from 'actions/appActions';
+import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import configureStore from './src/configureStore';
 
 const store = configureStore();
@@ -21,6 +22,7 @@ type Props = {
   navigation: Object,
   isFetched: Boolean,
   fetchAppSettingsAndRedirect: Function,
+  updateSessionNetworkStatus: Function,
 }
 
 class App extends React.Component<Props, *> {
@@ -51,6 +53,8 @@ class App extends React.Component<Props, *> {
   };
 
   handleConnectivityChange = isOnline => {
+    const { updateSessionNetworkStatus } = this.props;
+    updateSessionNetworkStatus(isOnline);
     if (!isOnline) {
       showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 }, true);
     } else {
@@ -76,6 +80,7 @@ const mapStateToProps = ({ navigation, appSettings: { isFetched } }) => ({
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
   fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
+  updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
