@@ -6,6 +6,7 @@ import {
   IMPORT_ERROR,
   IMPORT_WALLET,
   SET_WALLET_ERROR,
+  RESET_WALLET_ERROR,
   NEW_WALLET_SET_PIN,
   NEW_WALLET_CONFIRM_PIN,
   IMPORT_WALLET_PRIVATE_KEY,
@@ -80,6 +81,11 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
     }
   };
 };
+
+export const resetWalletErrorAction = () => ({
+  type: RESET_WALLET_ERROR,
+  payload: { },
+});
 
 const NUM_WORDS_TO_CHECK = 3;
 export const generateWalletMnemonicAction = () => {
