@@ -61,13 +61,12 @@ const TXDetails = (props: Props) => {
   const recipient = to.toUpperCase() !== myAddress.toUpperCase()
     ? (getUserName(contact) || `${to.slice(0, 7)}…${to.slice(-7)}`)
     : null;
-  const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
 
   const tx = {
     hash,
     date: dateTime,
     token: asset,
-    amount: formatETHAmount(amount),
+    amount: formatETHAmount(value),
     recipient,
     fee: gasUsed ? gasUsed * gasPrice : 0,
     note: null,
