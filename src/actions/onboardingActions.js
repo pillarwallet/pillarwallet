@@ -88,8 +88,8 @@ export const registerWalletAction = () => {
     });
     // STEP 4: Initialize SDK annd register user
     api.init(wallet.privateKey);
-    await firebase.messaging().requestPermission();
-    const fcmToken = await firebase.messaging().getToken();
+    await firebase.messaging().requestPermission().catch(() => { });
+    const fcmToken = await firebase.messaging().getToken().catch(() => { });
     await Intercom.sendTokenToIntercom(fcmToken);
     await chat.init({
       username: user.username,
@@ -158,8 +158,8 @@ export const registerOnBackendAction = () => {
     const { user } = await storage.get('user');
     await delay(1000);
     api.init(wallet.privateKey);
-    await firebase.messaging().requestPermission();
-    const fcmToken = await firebase.messaging().getToken();
+    await firebase.messaging().requestPermission().catch(() => { });
+    const fcmToken = await firebase.messaging().getToken().catch(() => { });
     await Intercom.sendTokenToIntercom(fcmToken);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
