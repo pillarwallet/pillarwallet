@@ -11,6 +11,7 @@ import {
   NEW_WALLET_CONFIRM_PIN,
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
+  SET_API_USER,
 } from 'constants/walletConstants';
 import {
   NEW_PROFILE,
@@ -32,7 +33,6 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
         importedWallet,
         apiUser,
       };
-
       dispatch({
         type: IMPORT_WALLET,
         payload,
@@ -59,11 +59,11 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
 
       api.init(importedWallet.privateKey);
       const apiUser = await api.validateAddress(importedWallet.address);
+
       const payload = {
         importedWallet,
         apiUser,
       };
-
       dispatch({
         type: IMPORT_WALLET,
         payload,
@@ -102,6 +102,10 @@ export const generateWalletMnemonicAction = () => {
         shuffled: shuffledMnemonicPhrase,
         wordsToValidate,
       },
+    });
+    dispatch({
+      type: SET_API_USER,
+      payload: {},
     });
   };
 };
