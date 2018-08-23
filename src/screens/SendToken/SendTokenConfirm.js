@@ -24,6 +24,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   sendAsset: Function,
   appSettings: Object,
+  session: Object,
   resetIncorrectPassword: () => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   wallet: Object,
@@ -129,7 +130,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   render() {
-    const { contacts } = this.props;
+    const { contacts, session } = this.props;
     const {
       assetData,
       transactionPayload: {
@@ -176,7 +177,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         </Container>
         <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
-            <Button onPress={this.handleFormSubmit} title="Confirm Transaction" />
+            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
         </KeyboardAvoidingView>
         <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
@@ -202,10 +203,12 @@ const mapStateToProps = ({
   appSettings: { data: appSettings },
   wallet: { data: wallet },
   contacts: { data: contacts },
+  session: { data: session },
 }) => ({
   appSettings,
   wallet,
   contacts,
+  session,
 });
 
 const mapDispatchToProps = (dispatch) => ({
