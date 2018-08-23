@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { UIColors } from 'utils/variables';
 
 const SeparatorWrapper = styled.View`
-  padding-left: 50px;
+  padding-left: 54px;
   // Below should use variable once move to 20px is applied universally
   margin-left: 16px;
 `;

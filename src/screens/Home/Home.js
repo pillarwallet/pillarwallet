@@ -12,8 +12,6 @@ import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import { uniqBy } from 'utils/common';
-import { getUserName } from 'utils/contacts';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import IconButton from 'components/IconButton';
@@ -22,7 +20,7 @@ import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
 import Permissions from 'react-native-permissions';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -30,8 +28,7 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { getExistingChatsAction } from 'actions/chatActions';
-import { TYPE_ACCEPTED } from 'constants/invitationsConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { ALL } from 'constants/activityConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -54,17 +51,9 @@ type Props = {
 };
 
 type State = {
-  activeTab: string,
-  esTitle: string,
-  esBody: string,
   showCamera: boolean,
   permissionsGranted: boolean,
 };
-
-const TRANSACTIONS = 'TRANSACTIONS';
-const SOCIAL = 'SOCIAL';
-const ALL = 'ALL';
-
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
@@ -142,42 +131,9 @@ const RecentConnectionsItem = styled.TouchableOpacity`
   margin: 0 8px;
 `;
 
-const TabWrapper = styled.View`
-  padding: 10px 16px 10px;
-  background: ${baseColors.white};
-  border-bottom-width: 1px;
-  border-color: ${UIColors.defaultBorderColor};
-  border-style: solid;
-`;
-
-const TabWrapperScrollView = styled.ScrollView`
-  flex-direction: row;
-`;
-
-const TabItem = styled.TouchableOpacity`
-  height: 32px;
-  padding: 0 10px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
-  border-radius: 16px;
-  flex-direction: row;
-`;
-
-const TabItemIcon = styled(Icon)`
-  font-size: ${fontSizes.extraSmall};
-  margin-right: 5px;
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
-`;
-
 const CameraIcon = styled(Icon)`
   font-size: ${fontSizes.extraLarge};
   color: ${baseColors.electricBlue};
-`;
-
-const TabItemText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
 `;
 
 const RecentConnectionsItemName = styled(BaseText)`
@@ -192,17 +148,10 @@ const EmptyStateWrapper = styled.View`
   margin: 6px 0 8px 0;
 `;
 
-const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-`;
-
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
-    activeTab: 'ALL',
-    esTitle: 'Make your first step',
-    esBody: 'Your activity will appear here.',
     showCamera: false,
     permissionsGranted: false,
   };
@@ -266,37 +215,6 @@ class HomeScreen extends React.Component<Props, State> {
       </EmptyStateWrapper>
     );
   };
-
-  mapTransactionsHistory(history, historyNotifications, contacts) {
-    const concatedHistory = history
-      .map(({
-        hash,
-        ...rest
-      }) => ({
-        txHash: hash,
-        type: TRANSACTION_EVENT,
-        ...rest,
-      }))
-      .concat(historyNotifications.map(({ toAddress, fromAddress, ...rest }) => ({
-        to: toAddress,
-        from: fromAddress,
-        ...rest,
-      })))
-      .map(({ to, from, ...rest }) => {
-        const contact = contacts.find(({ ethAddress }) => {
-          return from.toUpperCase() === ethAddress.toUpperCase()
-            || to.toUpperCase() === ethAddress.toUpperCase();
-        });
-        return {
-          username: getUserName(contact),
-          to,
-          from,
-          ...rest,
-        };
-      });
-    return uniqBy(concatedHistory, 'txHash');
-  }
-
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -314,42 +232,15 @@ class HomeScreen extends React.Component<Props, State> {
       cancelInvitation,
       acceptInvitation,
       rejectInvitation,
-      contacts,
-      invitations,
-      historyNotifications,
-      history,
       intercomNotificationsCount,
       wallet: { address: walletAddress },
       navigation,
     } = this.props;
     const {
-      activeTab,
-      esBody,
-      esTitle,
       showCamera,
       permissionsGranted,
     } = this.state;
-    const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-    const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
-    const chatNotifications = [];
-    /* chats.chats
-      .map((
-        {
-          username,
-          lastMessage,
-        }) => {
-        if (lastMessage.savedTimestamp === '') return {};
-        return {
-          content: lastMessage.content,
-          username,
-          type: 'CHAT',
-          createdAt: lastMessage.savedTimestamp,
-        };
-      }); */
 
-    const homeNotifications = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
-      .filter(value => Object.keys(value).length !== 0)
-      .sort((a, b) => b.createdAt - a.createdAt);
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
@@ -424,56 +315,15 @@ class HomeScreen extends React.Component<Props, State> {
                 </RecentConnectionsScrollView>}
             </RecentConnections>
           </RecentConnectionsWrapper>
-          <ActivityFeedHeader>
-            <Title subtitle title="your activity." />
-          </ActivityFeedHeader>
-          <TabWrapper>
-            <TabWrapperScrollView horizontal>
-              <TabItem
-                active={activeTab === ALL}
-                onPress={() => this.setState({
-                  activeTab: ALL,
-                  esTitle: 'Make your first step',
-                  esBody: 'Your activity will appear here.',
-                })}
-              >
-                <TabItemIcon active={activeTab === ALL} name="all" />
-                <TabItemText active={activeTab === ALL}>All</TabItemText>
-              </TabItem>
-              <TabItem
-                active={activeTab === TRANSACTIONS}
-                onPress={() => this.setState({
-                  activeTab: TRANSACTIONS,
-                  esTitle: 'Make your first step',
-                  esBody: 'Your transactions will appear here. Send or receive tokens to start.',
-                })}
-              >
-                <TabItemIcon active={activeTab === TRANSACTIONS} name="send" />
-                <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
-              </TabItem>
-              <TabItem
-                active={activeTab === SOCIAL}
-                onPress={() => this.setState({
-                  activeTab: SOCIAL,
-                  esTitle: 'Make your first step',
-                  esBody: 'Information on your connections will appear here. Send a connection request to start.',
-                })}
-              >
-                <TabItemIcon active={activeTab === SOCIAL} name="social" />
-                <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
-              </TabItem>
-            </TabWrapperScrollView>
-          </TabWrapper>
           <ActivityFeed
+            feedTitle="your activity."
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
-            history={homeNotifications}
             walletAddress={walletAddress}
             navigation={navigation}
-            activeTab={activeTab}
-            esBody={esBody}
-            esTitle={esTitle}
+            activeTab={ALL}
+            sortable
           />
         </ScrollWrapper>
         <Camera
