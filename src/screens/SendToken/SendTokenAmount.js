@@ -117,6 +117,7 @@ type Props = {
   isVisible: boolean,
   formValues?: Object,
   balances: Balances,
+  session: Object,
 }
 
 type State = {
@@ -150,6 +151,16 @@ class SendTokenAmount extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    this.fetchGasPrice();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
+      this.fetchGasPrice();
+    }
+  }
+
+  fetchGasPrice() {
     provider.getGasPrice()
       .then(gasPrice => {
         const increasedGasPrice = gasPrice.mul(2);
@@ -239,6 +250,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       formStructure,
       txFeeInWei,
     } = this.state;
+    const { session } = this.props;
     const { token, icon, balance: unformattedBalance } = this.assetData;
     const balance = formatAmount(unformattedBalance);
     const formOptions = generateFormOptions({ icon, currency: token });
@@ -263,7 +275,7 @@ class SendTokenAmount extends React.Component<Props, State> {
               <Label>Available Balance</Label>
               <SendTokenDetailsValue>{balance} {token}</SendTokenDetailsValue>
               <Label>Est. Network Fee</Label>
-              <SendTokenDetailsValue>{+txFeeInEth} ETH</SendTokenDetailsValue>
+              <SendTokenDetailsValue>{txFeeInEth || 0} ETH</SendTokenDetailsValue>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
               <TextLink>Send All</TextLink>
@@ -273,15 +285,16 @@ class SendTokenAmount extends React.Component<Props, State> {
         </Wrapper>
         <Footer>
 
-          <Button small flexRight title="Next" onPress={this.handleFormSubmit} />
+          <Button disabled={!session.isOnline} small flexRight title="Next" onPress={this.handleFormSubmit} />
         </Footer>
       </Container>
     );
   }
 }
 
-const mapStateToProps = ({ assets: { balances } }) => ({
+const mapStateToProps = ({ assets: { balances }, session: { data: session } }) => ({
   balances,
+  session,
 });
 
 export default connect(mapStateToProps)(SendTokenAmount);
