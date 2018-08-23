@@ -191,9 +191,11 @@ class SendTokenAmount extends React.Component<Props, State> {
         gasLimit,
         gasPrice: this.gasPrice.toNumber(),
         txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
-        symbol: this.assetData.symbol,
+        symbol: this.assetData.token,
         contractAddress: this.assetData.contractAddress,
+        decimals: this.assetData.decimals,
       };
+
       Keyboard.dismiss();
       navigation.navigate(SEND_TOKEN_CONFIRM, {
         assetData: this.assetData,

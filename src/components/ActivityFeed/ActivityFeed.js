@@ -6,11 +6,14 @@ import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
+import { BigNumber } from 'bignumber.js';
 
 import { resetUnreadAction } from 'actions/chatActions';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
+
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
@@ -127,6 +130,7 @@ const LabelText = styled(BaseText)`
 
 type Props = {
   history: Array<*>,
+  assets: Asset[],
   onAcceptInvitation: Function,
   onCancelInvitation: Function,
   onRejectInvitation: Function,
@@ -222,19 +226,19 @@ class ActivityFeed extends React.Component<Props, State> {
 
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const { type } = notification;
-    const { walletAddress, navigation } = this.props;
-
+    const { walletAddress, navigation, assets } = this.props;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
       const address = isReceived ? notification.from : notification.to;
       const directionSymbol = isReceived ? '+' : '-';
-      const value = utils.formatUnits(utils.bigNumberify(notification.value.toString()));
+      const { decimals = 18 } = assets.find(({ symbol }) => symbol === notification.asset) || {};
+      const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
       const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       return (
-        <ActivityFeedItem key={index} onPress={() => this.selectTransaction(notification)}>
+        <ActivityFeedItem key={index} onPress={() => this.selectTransaction({ ...notification, value })}>
           <ActivityFeedItemCol fixedWidth="50px">
             <ActivityFeedDirectionCircle>
               <ActivityFeedDirectionCircleIcon name={directionIcon} />
@@ -336,8 +340,10 @@ class ActivityFeed extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   notifications: { data: notifications },
+  assets: { data: assets },
 }) => ({
   notifications,
+  assets: Object.values(assets),
 });
 
 const mapDispatchToProps = (dispatch) => ({

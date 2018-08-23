@@ -35,6 +35,7 @@ export const sendAssetAction = ({
   gasPrice,
   symbol,
   contractAddress,
+  decimals,
 }: TransactionPayload) => {
   return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet } } = getState();
@@ -58,6 +59,7 @@ export const sendAssetAction = ({
       amount,
       contractAddress,
       wallet,
+      decimals,
     });
     dispatch({
       type: ADD_TRANSACTION,
