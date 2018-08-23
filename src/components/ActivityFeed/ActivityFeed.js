@@ -176,7 +176,7 @@ type Props = {
   onAcceptInvitation: Function,
   onCancelInvitation: Function,
   onRejectInvitation: Function,
-  walletAddress: string,
+  wallet: Object,
   navigation: NavigationScreenProp<*>,
   notifications: Notification[],
   activeTab: string,
@@ -308,7 +308,8 @@ class ActivityFeed extends React.Component<Props, State> {
 
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const { type } = notification;
-    const { walletAddress, navigation, assets } = this.props;
+    const { wallet, navigation, assets } = this.props;
+    const { walletAddress } = wallet;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
@@ -530,6 +531,7 @@ const mapStateToProps = ({
   history: { data: history, historyNotifications },
   invitations: { data: invitations },
   assets: { data: assets },
+  wallet: { data: wallet },
 }) => ({
   contacts,
   notifications,
@@ -537,6 +539,7 @@ const mapStateToProps = ({
   historyNotifications,
   invitations,
   assets: Object.values(assets),
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({

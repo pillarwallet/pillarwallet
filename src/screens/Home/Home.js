@@ -233,7 +233,6 @@ class HomeScreen extends React.Component<Props, State> {
       acceptInvitation,
       rejectInvitation,
       intercomNotificationsCount,
-      wallet: { address: walletAddress },
       navigation,
     } = this.props;
     const {
@@ -320,7 +319,6 @@ class HomeScreen extends React.Component<Props, State> {
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
-            walletAddress={walletAddress}
             navigation={navigation}
             activeTab={ALL}
             sortable

@@ -180,7 +180,6 @@ class AssetScreen extends React.Component<Props, State> {
       fetchTransactionsHistory,
       baseFiatCurrency,
       navigation,
-      wallet: { address: walletAddress },
     } = this.props;
     const { assetDescriptionExpanded } = this.state;
     const { assetData } = this.props.navigation.state.params;
@@ -263,7 +262,6 @@ class AssetScreen extends React.Component<Props, State> {
 
           <ActivityFeed
             feedTitle="transactions."
-            walletAddress={walletAddress}
             navigation={navigation}
             activeTab={TRANSACTIONS}
             additionalFiltering={(data) => data.filter(({ asset }) => asset === assetData.token)}
