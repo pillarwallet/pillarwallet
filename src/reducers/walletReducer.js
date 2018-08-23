@@ -25,6 +25,7 @@ export type Wallet = {
 export type WalletReducerState = {
   data: Wallet,
   walletState: ?string,
+  onboarding: Object,
   error: ?{
     code: string,
     message: string,
@@ -84,9 +85,15 @@ export default function newWalletReducer(
       );
     case IMPORT_WALLET:
       const { importedWallet, apiUser } = action.payload;
-      return merge({}, state, { onboarding: { importedWallet, apiUser } });
+      return {
+        ...state,
+        onboarding: { ...state.onboarding, importedWallet, apiUser },
+      };
     case SET_API_USER:
-      return merge({}, state, { onboarding: { apiUser: action.payload } });
+      return {
+        ...state,
+        onboarding: { ...state.onboarding, apiUser: action.payload },
+      };
     default:
       return state;
   }
