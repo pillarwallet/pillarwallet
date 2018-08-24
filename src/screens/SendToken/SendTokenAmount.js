@@ -142,10 +142,11 @@ class SendTokenAmount extends React.Component<Props, State> {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
-    this.maxAmount = this.assetData.balance;
+    const { balance } = props.balances[this.assetData.token];
+    this.maxAmount = +balance;
     this.state = {
       value: null,
-      formStructure: getFormStructure(this.assetData.balance, this.enoughForFee, this.formSubmitted),
+      formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
       txFeeInWei: null,
     };
   }
@@ -188,11 +189,15 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     this.formSubmitted = true;
+    const { txFeeInWei } = this.state;
+    const { token } = this.assetData;
+    const { balances } = this.props;
+    const { balance } = balances[token];
+    this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     this.setState({
       formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
     }, () => {
       const value = this._form.getValue();
-      const { txFeeInWei } = this.state;
       const { navigation } = this.props;
 
       if (!value || !this.gasPriceFetched) return;
