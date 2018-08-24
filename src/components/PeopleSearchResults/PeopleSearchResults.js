@@ -108,6 +108,7 @@ class PeopleSearchResults extends React.Component<Props> {
     if (localContactsIds.includes(user.id)) {
       status = TYPE_ACCEPTED;
     }
+
     return (
       <ContactCard
         onSendInvitationPress={this.handleSendInvitationPress(user)}
@@ -121,6 +122,7 @@ class PeopleSearchResults extends React.Component<Props> {
         showActions
         noBorder
         disabled
+        noMargin
       />
     );
   };
@@ -164,9 +166,11 @@ class PeopleSearchResults extends React.Component<Props> {
             renderItem={this.renderContact}
             onScroll={() => Keyboard.dismiss()}
             keyExtractor={({ username }) => username}
-            contentContainerStyle={{ paddingBottom: 40 }}
+            contentContainerStyle={{
+              paddingBottom: 40,
+            }}
             ListHeaderComponent={<SubHeading>ALL USERS</SubHeading>}
-            ItemSeparatorComponent={Separator}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={42} />}
           />
         )}
       </React.Fragment>
