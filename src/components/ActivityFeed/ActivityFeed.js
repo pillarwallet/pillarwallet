@@ -310,9 +310,16 @@ class ActivityFeed extends React.Component<Props, State> {
 
   renderActivityFeedItem = ({ item: notification, index }: Object) => {
     const { type } = notification;
-    const { wallet, navigation, assets } = this.props;
+    const {
+      wallet,
+      navigation,
+      assets,
+      contacts,
+    } = this.props;
+
     const walletAddress = wallet.address;
     const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
+
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
       const address = isReceived ? notification.from : notification.to;
@@ -323,8 +330,8 @@ class ActivityFeed extends React.Component<Props, State> {
       const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
 
-      const contact: any = this.props.contacts
-        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase());
+      const contact = contacts
+        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
 
       const nameOrAddress = contact.firstName ? `${contact.firstName} ${contact.lastName}`.trim() : title;
 
@@ -416,7 +423,13 @@ class ActivityFeed extends React.Component<Props, State> {
       historyNotifications,
       history,
       additionalFiltering,
+      customFeedData,
     } = this.props;
+
+    const {
+      showModal,
+      selectedTransaction,
+    } = this.state;
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
@@ -440,13 +453,7 @@ class ActivityFeed extends React.Component<Props, State> {
       .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
 
-    const feedData = this.props.customFeedData ? this.props.customFeedData : allFeedData;
-
-    const {
-      showModal,
-      selectedTransaction,
-    } = this.state;
-
+    const feedData = customFeedData || allFeedData;
     const esTitle = this.props.esTitle || this.state.esTitle;
     const esBody = this.props.esBody || this.state.esBody;
     const activeTab = sortable ? this.state.activeTab : this.props.activeTab;
