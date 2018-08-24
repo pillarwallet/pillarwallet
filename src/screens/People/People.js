@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
+import orderBy from 'lodash.orderby';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
@@ -163,6 +164,7 @@ class PeopleScreen extends React.Component<Props, State> {
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
+    const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
 
     return (
       <Container>
@@ -198,13 +200,13 @@ class PeopleScreen extends React.Component<Props, State> {
             searchResults={searchResults}
             navigation={navigation}
             invitations={invitations}
-            localContacts={localContacts}
+            localContacts={sortedLocalContacts}
           />
         }
 
-        {!inSearchMode && !!localContacts.length &&
+        {!inSearchMode && !!sortedLocalContacts.length &&
           <FlatList
-            data={localContacts}
+            data={sortedLocalContacts}
             keyExtractor={(item) => item.id}
             renderItem={this.renderContact}
             ItemSeparatorComponent={this.renderSeparator}
@@ -217,9 +219,7 @@ class PeopleScreen extends React.Component<Props, State> {
               <RefreshControl
                 refreshing={false}
                 onRefresh={() => {
-                  const {
-                    fetchInviteNotifications,
-                  } = this.props;
+                  const { fetchInviteNotifications } = this.props;
                   fetchInviteNotifications();
                 }}
               />
@@ -239,7 +239,7 @@ class PeopleScreen extends React.Component<Props, State> {
               </Wrapper>
             }
 
-            {!inSearchMode && !localContacts.length &&
+            {!inSearchMode && !sortedLocalContacts.length &&
               <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
                 <EmptyStateBGWrapper>
                   <Image source={esBackground} />
