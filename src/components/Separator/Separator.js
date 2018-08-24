@@ -8,7 +8,7 @@ type Props = {
 }
 
 const SeparatorWrapper = styled.View`
-  padding-left: ${props => props.spaceOnLeft ? props.spaceOnLeft : 50}px;
+  padding-left: ${props => props.spaceOnLeft ? props.spaceOnLeft : 54}px;
   // Below should use variable once move to 20px is applied universally
   margin-left: 16px;
 `;
