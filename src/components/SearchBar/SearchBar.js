@@ -151,6 +151,7 @@ class SearchBar extends React.Component<Props, State> {
             placeholder={placeholder}
             placeholderTextColor={UIColors.placeholderTextColor}
             underlineColorAndroid="transparent"
+            autoCorrect={false}
           />
           <InputIcon source={searchIcon} />
         </Animated.View>
