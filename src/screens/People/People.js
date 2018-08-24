@@ -10,7 +10,7 @@ import {
   Platform,
   RefreshControl,
 } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
@@ -87,9 +87,9 @@ type State = {
   query: string,
 }
 
-let didBlurSubscription;
-
 class PeopleScreen extends React.Component<Props, State> {
+  _willBlur: NavigationEventSubscription;
+
   state = {
     query: '',
   };
@@ -97,6 +97,16 @@ class PeopleScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
+  }
+
+  componentDidMount() {
+    const { fetchInviteNotifications, navigation } = this.props;
+    fetchInviteNotifications();
+    this._willBlur = navigation.addListener('willBlur', this.onBlur);
+  }
+
+  componentWillUnmount() {
+    this._willBlur.remove();
   }
 
   handleSearchChange = (query: any) => {
@@ -136,16 +146,6 @@ class PeopleScreen extends React.Component<Props, State> {
       avatar={item.profileImage}
     />
   );
-
-  componentDidMount() {
-    const { fetchInviteNotifications, navigation } = this.props;
-    fetchInviteNotifications();
-    didBlurSubscription = navigation.addListener('willBlur', this.onBlur);
-  }
-
-  componentWillUnmount() {
-    didBlurSubscription.remove();
-  }
 
   onBlur = () => {
     Keyboard.dismiss();
