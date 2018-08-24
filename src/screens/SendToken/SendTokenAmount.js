@@ -166,8 +166,9 @@ class SendTokenAmount extends React.Component<Props, State> {
         const increasedGasPrice = gasPrice.mul(2);
         this.gasPrice = increasedGasPrice;
         this.gasPriceFetched = true;
-        const { token, balance } = this.assetData;
+        const { token } = this.assetData;
         const { balances } = this.props;
+        const { balance } = balances[token];
         const txFeeInWei = this.gasPrice.mul(gasLimit);
         this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
         this.enoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
@@ -218,7 +219,9 @@ class SendTokenAmount extends React.Component<Props, State> {
   useMaxValue = () => {
     if (!this.gasPriceFetched) return;
     const { txFeeInWei } = this.state;
-    const { token, balance } = this.assetData;
+    const { balances } = this.props;
+    const { token } = this.assetData;
+    const { balance } = balances[token];
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
 
     this.setState({
@@ -228,11 +231,14 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
-  calculateMaxAmount(token: string, balance: number, txFeeInWei: ?Object): number {
-    if (token !== ETH) {
-      return balance;
+  calculateMaxAmount(token: string, balance: string, txFeeInWei: ?Object): number {
+    if (typeof balance !== 'string') {
+      balance = balance.toString();
     }
-    const maxAmount = utils.parseUnits(balance.toString(), 'ether').sub(txFeeInWei);
+    if (token !== ETH) {
+      return +balance;
+    }
+    const maxAmount = utils.parseUnits(balance, 'ether').sub(txFeeInWei);
     if (maxAmount.lt(0)) return 0;
     return new BigNumber(utils.formatEther(maxAmount)).toNumber();
   }
@@ -250,9 +256,10 @@ class SendTokenAmount extends React.Component<Props, State> {
       formStructure,
       txFeeInWei,
     } = this.state;
-    const { session } = this.props;
-    const { token, icon, balance: unformattedBalance } = this.assetData;
-    const balance = formatAmount(unformattedBalance);
+    const { session, balances } = this.props;
+    const { token, icon } = this.assetData;
+    const { balance } = balances[token];
+    const formattedBalance = formatAmount(balance);
     const formOptions = generateFormOptions({ icon, currency: token });
     const txFeeInEth = !!txFeeInWei && utils.formatEther(txFeeInWei);
     return (
@@ -273,7 +280,7 @@ class SendTokenAmount extends React.Component<Props, State> {
           <ActionsWrapper>
             <SendTokenDetails>
               <Label>Available Balance</Label>
-              <SendTokenDetailsValue>{balance} {token}</SendTokenDetailsValue>
+              <SendTokenDetailsValue>{formattedBalance} {token}</SendTokenDetailsValue>
               <Label>Est. Network Fee</Label>
               <SendTokenDetailsValue>{txFeeInEth || 0} ETH</SendTokenDetailsValue>
             </SendTokenDetails>
@@ -281,10 +288,8 @@ class SendTokenAmount extends React.Component<Props, State> {
               <TextLink>Send All</TextLink>
             </TouchableOpacity>
           </ActionsWrapper>
-
         </Wrapper>
         <Footer>
-
           <Button disabled={!session.isOnline} small flexRight title="Next" onPress={this.handleFormSubmit} />
         </Footer>
       </Container>
