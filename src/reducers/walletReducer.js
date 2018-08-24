@@ -7,6 +7,7 @@ import {
   CREATED,
   DECRYPTED,
   SET_WALLET_ERROR,
+  RESET_WALLET_ERROR,
   WALLET_ERROR,
   IMPORT_WALLET,
   UPDATE_WALLET_MNEMONIC,
@@ -25,6 +26,7 @@ export type Wallet = {
 export type WalletReducerState = {
   data: Wallet,
   walletState: ?string,
+  onboarding: Object,
   error: ?{
     code: string,
     message: string,
@@ -69,6 +71,8 @@ export default function newWalletReducer(
       return merge({}, state, { onboarding: { mnemonic: action.payload } });
     case SET_WALLET_ERROR:
       return merge({}, state, { error: action.payload, walletState: WALLET_ERROR });
+    case RESET_WALLET_ERROR:
+      return merge({}, state, { error: null, walletState: null });
     case DECRYPT_WALLET:
       return merge({}, state, { data: action.payload, walletState: DECRYPTED });
     case NEW_WALLET_SET_PIN:
@@ -84,9 +88,15 @@ export default function newWalletReducer(
       );
     case IMPORT_WALLET:
       const { importedWallet, apiUser } = action.payload;
-      return merge({}, state, { onboarding: { importedWallet, apiUser } });
+      return {
+        ...state,
+        onboarding: { ...state.onboarding, importedWallet, apiUser },
+      };
     case SET_API_USER:
-      return merge({}, state, { onboarding: { apiUser: action.payload } });
+      return {
+        ...state,
+        onboarding: { ...state.onboarding, apiUser: action.payload },
+      };
     default:
       return state;
   }
