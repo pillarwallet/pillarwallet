@@ -98,6 +98,7 @@ type Props = {
   validateUserDetails: Function,
   resetWalletState: Function,
   walletState: ?string,
+  session: Object,
   apiUser: Object,
 };
 
@@ -176,10 +177,10 @@ class NewProfile extends React.Component<Props, State> {
 
   render() {
     const { value, formOptions } = this.state;
-    const { walletState } = this.props;
+    const { walletState, session } = this.props;
     const isUsernameValid = value && value.username && value.username.length > 0;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
-    const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability;
+    const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
 
     return (
       <Container>
@@ -220,7 +221,14 @@ class NewProfile extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet: { walletState, onboarding: { apiUser } } }) => ({ walletState, apiUser });
+const mapStateToProps = ({
+  wallet: { walletState, onboarding: { apiUser } },
+  session: { data: session },
+}) => ({
+  walletState,
+  apiUser,
+  session,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
