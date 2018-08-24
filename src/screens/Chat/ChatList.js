@@ -3,6 +3,7 @@ import * as React from 'react';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
+import { isToday, isYesterday, format as formatDate } from 'date-fns';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
@@ -60,10 +61,14 @@ class ChatListScreen extends React.Component<Props, State> {
 
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
-      const dateSent = new Date(lastMessage.serverTimestamp);
-      const minutes = (`0${dateSent.getMinutes()}`).slice(-2);
-      const hours = (`0${dateSent.getHours()}`).slice(-2);
-      timeSent = `${hours}:${minutes}`; // HH:mm
+      const lastMessageDate = new Date(lastMessage.serverTimestamp);
+      if (isToday(lastMessageDate)) {
+        timeSent = formatDate(lastMessageDate, 'HH:mm');
+      } else if (isYesterday(lastMessageDate)) {
+        timeSent = 'Yesterday';
+      } else {
+        timeSent = formatDate(lastMessageDate, 'MM/DD/YY');
+      }
     }
     const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
 
