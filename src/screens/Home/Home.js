@@ -269,15 +269,14 @@ class HomeScreen extends React.Component<Props, State> {
 
   mapTransactionsHistory(history, historyNotifications, contacts) {
     const concatedHistory = history
-      .map(({
-        hash,
+      .map(({ ...rest }) => ({ type: TRANSACTION_EVENT, ...rest }))
+      .concat(historyNotifications.map(({
+        toAddress,
+        fromAddress,
+        txHash,
         ...rest
       }) => ({
-        txHash: hash,
-        type: TRANSACTION_EVENT,
-        ...rest,
-      }))
-      .concat(historyNotifications.map(({ toAddress, fromAddress, ...rest }) => ({
+        hash: txHash,
         to: toAddress,
         from: fromAddress,
         ...rest,
@@ -294,7 +293,7 @@ class HomeScreen extends React.Component<Props, State> {
           ...rest,
         };
       });
-    return uniqBy(concatedHistory, 'txHash');
+    return uniqBy(concatedHistory, 'hash');
   }
 
   refreshScreenData = () => {
