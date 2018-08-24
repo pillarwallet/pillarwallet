@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import orderBy from 'lodash.orderby';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
@@ -34,11 +35,12 @@ class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   componentDidMount() {
-    const { getExistingChats } = this.props;
-    getExistingChats();
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
-      () => { this.props.setUnreadChatNotificationsStatus(false); },
+      () => {
+        this.props.setUnreadChatNotificationsStatus(false);
+        this.props.getExistingChats();
+      },
     );
   }
 
@@ -95,22 +97,23 @@ class ChatListScreen extends React.Component<Props, State> {
   render() {
     const { chats, getExistingChats, contacts } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
+    const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     return (
       <Container>
         <Header title="chat" />
         <ChatWrapper
           style={{
-            paddingBottom: chats.length ? 18 : 0,
+            paddingBottom: sortedChats.length ? 18 : 0,
           }}
           refreshControl={
             <RefreshControl
               refreshing={false}
-              onRefresh={() => { getExistingChats(); }}
+              onRefresh={getExistingChats}
             />
           }
         >
           <FlatList
-            data={chats}
+            data={sortedChats}
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem(contacts)}
