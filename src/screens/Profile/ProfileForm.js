@@ -1,11 +1,9 @@
 // @flow
 
 import React from 'react';
-import { KeyboardAvoidingView as RNKeyboardAvoidingView, Platform, View } from 'react-native';
-import styled from 'styled-components/native';
 import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
-import { Container } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
 
@@ -25,28 +23,6 @@ type Props = {
 type State = {
   value: Object,
 }
-
-const FooterWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0 20px;
-  width: 100%;
-`;
-
-const KeyboardAvoidingView = Platform.OS === 'ios' ?
-  styled(RNKeyboardAvoidingView)`
-  position: absolute;
-  bottom: 40px;
-  left: 0;
-  width: 100%;
-`
-  :
-  styled(RNKeyboardAvoidingView)`
-  width: 100%;
-  flex: 1;
-  justify-content: space-between;
-  padding-bottom: 40px;`;
 
 function InputTemplate(locals) {
   const { config } = locals;
@@ -182,40 +158,17 @@ export default class ProfileForm extends React.Component<Props, State> {
     const formOptions = generateFormOptions(fields);
     const formStructure = getFormStructure(fields);
 
-    const content = Platform.OS === 'ios' ?
-      (
-        <View style={{ flex: 1 }}>
-          <Form
-            ref={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={value}
-            onChange={this.handleChange}
-          />
-          <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={180}>
-            <FooterWrapper style={{ paddingTop: 20 }}>
-              <Button onPress={this.handleSubmit} title="Save" />
-            </FooterWrapper>
-          </KeyboardAvoidingView>
-        </View>)
-      :
-      (
-        <KeyboardAvoidingView behavior="padding">
-          <Form
-            ref={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={value}
-            onChange={this.handleChange}
-          />
-          <FooterWrapper style={{ marginBottom: 40 }}>
-            <Button onPress={this.handleSubmit} title="Save" />
-          </FooterWrapper>
-        </KeyboardAvoidingView>);
     return (
-      <Container>
-        {content}
-      </Container>
+      <Wrapper>
+        <Form
+          ref={node => { this._form = node; }}
+          type={formStructure}
+          options={formOptions}
+          value={value}
+          onChange={this.handleChange}
+        />
+        <Button onPress={this.handleSubmit} title="Save" />
+      </Wrapper>
     );
   }
 }

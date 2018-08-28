@@ -1,8 +1,10 @@
 // @flow
 import * as React from 'react';
+import orderBy from 'lodash.orderby';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
+import { isToday, isYesterday, format as formatDate } from 'date-fns';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
@@ -33,11 +35,12 @@ class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   componentDidMount() {
-    const { getExistingChats } = this.props;
-    getExistingChats();
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
-      () => { this.props.setUnreadChatNotificationsStatus(false); },
+      () => {
+        this.props.setUnreadChatNotificationsStatus(false);
+        this.props.getExistingChats();
+      },
     );
   }
 
@@ -60,10 +63,14 @@ class ChatListScreen extends React.Component<Props, State> {
 
     let timeSent = '';
     if (lastMessage.serverTimestamp) {
-      const dateSent = new Date(lastMessage.serverTimestamp);
-      const minutes = (`0${dateSent.getMinutes()}`).slice(-2);
-      const hours = (`0${dateSent.getHours()}`).slice(-2);
-      timeSent = `${hours}:${minutes}`; // HH:mm
+      const lastMessageDate = new Date(lastMessage.serverTimestamp);
+      if (isToday(lastMessageDate)) {
+        timeSent = formatDate(lastMessageDate, 'HH:mm');
+      } else if (isYesterday(lastMessageDate)) {
+        timeSent = 'Yesterday';
+      } else {
+        timeSent = formatDate(lastMessageDate, 'MM/DD/YY');
+      }
     }
     const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
 
@@ -90,22 +97,23 @@ class ChatListScreen extends React.Component<Props, State> {
   render() {
     const { chats, getExistingChats, contacts } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
+    const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     return (
       <Container>
         <Header title="chat" />
         <ChatWrapper
           style={{
-            paddingBottom: chats.length ? 18 : 0,
+            paddingBottom: sortedChats.length ? 18 : 0,
           }}
           refreshControl={
             <RefreshControl
               refreshing={false}
-              onRefresh={() => { getExistingChats(); }}
+              onRefresh={getExistingChats}
             />
           }
         >
           <FlatList
-            data={chats}
+            data={sortedChats}
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem(contacts)}

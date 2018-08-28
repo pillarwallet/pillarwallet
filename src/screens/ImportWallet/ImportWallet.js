@@ -7,6 +7,7 @@ import styled from 'styled-components/native';
 import {
   importWalletFromTWordsPhraseAction,
   importWalletFromPrivateKeyAction,
+  resetWalletErrorAction,
 } from 'actions/walletActions';
 import {
   WALLET_ERROR,
@@ -28,6 +29,7 @@ type Props = {
   importWalletFromPrivateKey: (privateKey: string) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
+  resetWalletError: Function,
 };
 
 type State = {
@@ -99,6 +101,12 @@ class ImportWallet extends React.Component<Props, State> {
         errorMessage: error.message,
         errorField: error.field,
       };
+    } else if (walletState !== WALLET_ERROR) {
+      return {
+        ...prevState,
+        errorMessage: '',
+        errorField: '',
+      };
     }
     return null;
   }
@@ -150,6 +158,13 @@ class ImportWallet extends React.Component<Props, State> {
     }
   };
 
+  handleValueChange = (field) => (value) => {
+    this.setState({
+      [field]: value,
+    });
+    this.props.resetWalletError();
+  };
+
   render() {
     const { privateKey, tWordsPhrase, isScanning } = this.state;
     const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
@@ -160,12 +175,12 @@ class ImportWallet extends React.Component<Props, State> {
         <Header title="restore wallet" onBack={this.handleBackAction} />
         <ScrollWrapper regularPadding>
           <Paragraph>
-              Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
+            Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
           </Paragraph>
           <TextInput
             label="Enter your 12 word backup phrase."
             inputProps={{
-              onChange: (value) => this.setState({ tWordsPhrase: value }),
+              onChange: this.handleValueChange('tWordsPhrase'),
               value: tWordsPhrase,
               multiline: true,
             }}
@@ -177,7 +192,7 @@ class ImportWallet extends React.Component<Props, State> {
             <TextInput
               label="Use your Private Key"
               inputProps={{
-                onChange: (value) => this.setState({ privateKey: value }),
+                onChange: this.handleValueChange('privateKey'),
                 value: privateKey,
               }}
               errorMessage={errorMessagePrivateKey}
@@ -214,6 +229,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   importWalletFromPrivateKey: (privateKey) => {
     dispatch(importWalletFromPrivateKeyAction(privateKey));
+  },
+  resetWalletError: () => {
+    dispatch(resetWalletErrorAction());
   },
 });
 
