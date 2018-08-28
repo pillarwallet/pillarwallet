@@ -95,7 +95,7 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { chats, getExistingChats, contacts } = this.props;
+    const { chats, getExistingChats } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     return (
