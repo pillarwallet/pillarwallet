@@ -44,7 +44,7 @@ const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: bo
 
     amount = parseNumber(amount.toString());
     if (amount >= maxAmount) {
-      return 'Amount should not exceed the total balance.';
+      return 'Amount should not exceed the sum of total balance and est. network fee';
     } else if (amount < minAmount) {
       return 'Amount should be greater than 1 Wei (1e-18)';
     } else if (!enoughForFee) {
