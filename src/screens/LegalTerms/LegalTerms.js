@@ -48,26 +48,26 @@ class LegalTerms extends React.Component<Props, State> {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
   };
 
-  toggleCheckbox = (check: string) => {
+  toggleCheckbox = (field: string) => {
     const { userCheck1, userCheck2, userCheck3 } = this.state;
-    if (check === 'userCheck1') {
+    if (field === 'userCheck1') {
       this.setState({
         userCheck1: !userCheck1,
         userCheck3: false,
       });
     }
-    if (check === 'userCheck2') {
+    if (field === 'userCheck2') {
       this.setState({
         userCheck2: !userCheck2,
         userCheck3: false,
       });
     }
-    if (check === 'userCheck3') {
+    if (field === 'userCheck3') {
       this.setState({
         userCheck3: !userCheck3,
       });
     }
-  }
+  };
 
   render() {
     const {
