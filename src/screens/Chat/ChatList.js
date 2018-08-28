@@ -54,8 +54,8 @@ class ChatListScreen extends React.Component<Props, State> {
     resetUnread(contact.username);
   };
 
-  renderItem = (contacts: Object[]) => ({ item: contact }: Object) => {
-    const { chats } = this.props;
+  renderItem = ({ item: contact }: Object) => {
+    const { chats, contacts } = this.props;
 
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const { lastMessage, unread } = chatWithContact;
@@ -116,7 +116,7 @@ class ChatListScreen extends React.Component<Props, State> {
             data={sortedChats}
             extraData={chats}
             keyExtractor={(item) => item.username}
-            renderItem={this.renderItem(contacts)}
+            renderItem={this.renderItem}
             ItemSeparatorComponent={this.renderSeparator}
             style={{ height: '100%' }}
             contentContainerStyle={{ height: '100%' }}
