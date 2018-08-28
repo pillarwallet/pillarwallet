@@ -9838,6 +9838,10 @@ react-native-animatable@^1.2.4:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-background-timer@^2.0.1:
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-background-timer/-/react-native-background-timer-2.0.1.tgz#ef714a4bfd28fc47cbbd335631b581cf915604a2"
+
 react-native-cached-image@^1.4.3:
   version "1.4.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-cached-image/-/react-native-cached-image-1.4.3.tgz#0942e2cd078284a1f0438de8dfe17f2b36a89752"

@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import BackgroundTimer from 'react-native-background-timer';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { showToast } from 'utils/toast';
@@ -358,12 +359,13 @@ class AppFlow extends React.Component<Props, {}> {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
     } = this.props;
-    clearTimeout(this.timer);
+    BackgroundTimer.stopBackgroundTimer();
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = setTimeout(() => {
+      BackgroundTimer.runBackgroundTimer(() => {
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         fetchAppSettingsAndRedirect();
+        BackgroundTimer.stopBackgroundTimer();
       }, SLEEP_TIMEOUT);
     }
   };
