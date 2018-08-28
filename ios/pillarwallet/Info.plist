@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Pillar Wallet</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -52,7 +52,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Pillar Wallet to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
-	<string>Allow Pillar Wallet to access your device's accelerometer</string>
+	<string>Allow Pillar Wallet to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Give Pillar Wallet permission to save photos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
