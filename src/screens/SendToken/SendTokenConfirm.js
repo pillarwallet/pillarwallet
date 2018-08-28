@@ -134,7 +134,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const {
       assetData,
       transactionPayload: {
-        amount,
+        amountExponential,
         to,
         txFeeInWei,
       },
@@ -157,7 +157,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
               <Label>Amount</Label>
-              <Value>{amount} {assetData.token}</Value>
+              <Value>{amountExponential} {assetData.token}</Value>
             </LabeledRow>
             {!!recipientUsername &&
             <LabeledRow>

@@ -208,7 +208,8 @@ class SendTokenAmount extends React.Component<Props, State> {
 
       const transactionPayload: TransactionPayload = {
         to: this.receiver,
-        amount: parseNumber(value.amount),
+        amount: value.amount,
+        amountExponential: parseNumber(value.amount),
         gasLimit,
         gasPrice: this.gasPrice.toNumber(),
         txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
