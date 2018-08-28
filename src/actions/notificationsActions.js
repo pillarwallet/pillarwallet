@@ -90,7 +90,7 @@ export const startListeningNotificationsAction = () => {
     // TODO: remove it once signal payload matches the rest notifications.
     if (!signalListener) {
       // TODO: This is a temporary solution to reduces the possibility of the wrong notification order.
-      //       We will use the socket in the future.
+      // We're going to use websockets in the future.
       const onMessage = message => {
         const notification = processNotification(message._data, wallet.address.toUpperCase());
         if (!notification) return;
