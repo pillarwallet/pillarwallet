@@ -60,6 +60,8 @@ const IconHolder = styled.View`
 `;
 
 export default class Toast extends React.Component<*, State> {
+  timeout: TimeoutID
+
   state = {
     isVisible: false,
     animSlide: new Animated.Value(0),
@@ -83,6 +85,7 @@ export default class Toast extends React.Component<*, State> {
   }
 
   componentWillUnmount() {
+    clearTimeout(this.timeout);
     Toast.toastInstances.splice(Toast.toastInstances.length - 1);
   }
 
@@ -108,9 +111,9 @@ export default class Toast extends React.Component<*, State> {
       })
       .start(() => {
         if (!this.state.toastOptions.autoClose) return;
-        const timeout = setTimeout(() => {
+        this.timeout = setTimeout(() => {
           this.handleClose();
-          clearTimeout(timeout);
+          clearTimeout(this.timeout);
         }, 2000);
       });
   }
