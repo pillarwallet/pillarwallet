@@ -55,7 +55,7 @@ const Message = styled(BaseText)`
 
 const DetailsWrapper = styled.View`
   flex-direction: column;
-  width: 60px;
+  width: 80px;
   align-items: flex-end;
 `;
 
