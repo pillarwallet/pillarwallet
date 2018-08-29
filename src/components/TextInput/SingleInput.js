@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Input, Label } from 'native-base';
 import { TextLink, BaseText } from 'components/Typography';
-import { baseColors, UIColors, fontSizes, fontWeights } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { Image as RNImage, Platform } from 'react-native';
 
 type inputPropsType = {
@@ -84,7 +84,8 @@ const ErrorMessage = styled(BaseText)`
   display: flex;
   justify-content: flex-end;
   text-align: left;
-  height: 30px;
+  min-height: 30px;
+  padding-bottom: ${spacing.rhythm / 2}px;;
 `;
 
 const InputField = styled(Input)`

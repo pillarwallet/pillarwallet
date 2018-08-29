@@ -25,7 +25,7 @@ import TXDetails from 'components/TXDetails';
 import Title from 'components/Title';
 
 import { getUserName } from 'utils/contacts';
-import { partial, uniqBy } from 'utils/common';
+import { partial, uniqBy, formatAmount } from 'utils/common';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -323,12 +323,17 @@ class ActivityFeed extends React.Component<Props, State> {
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
       const address = isReceived ? notification.from : notification.to;
-      const directionSymbol = isReceived ? '+' : '-';
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === notification.asset) || {};
       const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
+      const formattedValue = formatAmount(value);
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
       const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
+      let directionSymbol = isReceived ? '+' : '-';
+
+      if (formattedValue === '0') {
+        directionSymbol = '';
+      }
 
       const contact = contacts
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
@@ -355,7 +360,7 @@ class ActivityFeed extends React.Component<Props, State> {
         <ActivityFeedItem key={index} onPress={() => this.selectTransaction({ ...notification, value })}>
           <ActivityFeedItemCol fixedWidth="50px">
             <IconWrapper>
-              { image }
+              {image}
             </IconWrapper>
           </ActivityFeedItemCol>
           <ActivityFeedItemCol>
@@ -364,7 +369,7 @@ class ActivityFeed extends React.Component<Props, State> {
           </ActivityFeedItemCol>
           <ActivityFeedItemCol fixedWidth="120px" flexEnd>
             <ActivityFeedItemAmount received={isReceived}>
-              {directionSymbol} {value} {notification.asset}
+              {directionSymbol} {formattedValue} {notification.asset}
             </ActivityFeedItemAmount>
           </ActivityFeedItemCol>
         </ActivityFeedItem>
