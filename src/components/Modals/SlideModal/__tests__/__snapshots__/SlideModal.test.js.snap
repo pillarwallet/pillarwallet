@@ -370,6 +370,177 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             }
           />
         </View>
+        <View
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#fff",
+              "borderColor": "#2f86eb",
+              "borderLeftWidth": 8,
+              "borderStyle": "solid",
+              "elevation": 9,
+              "height": 125,
+              "justifyContent": "center",
+              "left": 0,
+              "opacity": false,
+              "paddingBottom": 20,
+              "paddingTop": 50,
+              "position": "absolute",
+              "shadowColor": "#333",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 0.25,
+              "shadowRadius": 10,
+              "top": 0,
+              "transform": Array [
+                Object {
+                  "translateY": -125,
+                },
+              ],
+              "width": "100%",
+              "zIndex": 1000,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "display": "flex",
+                  "flexDirection": "row",
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "display": "flex",
+                    "flexBasis": 0,
+                    "flexGrow": 2,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                name="info-circle"
+                style={
+                  Object {
+                    "color": "#2f86eb",
+                    "fontSize": 24,
+                  }
+                }
+              />
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "flexBasis": 0,
+                    "flexGrow": 9,
+                    "flexShrink": 1,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "Aktiv Grotesk App",
+                      "fontWeight": "400",
+                      "includeFontPadding": false,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "Aktiv Grotesk App",
+                        "fontWeight": "600",
+                        "includeFontPadding": false,
+                        "textAlignVertical": "center",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                
+              </Text>
+              <Text
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "Aktiv Grotesk App",
+                      "fontWeight": "400",
+                      "includeFontPadding": false,
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "color": "#8B939E",
+                      "marginBottom": 10,
+                      "marginTop": 5,
+                    },
+                  ]
+                }
+              >
+                
+              </Text>
+            </View>
+            <View
+              accessible={true}
+              isTVSelectable={true}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "flex": 3,
+                  "justifyContent": "center",
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                }
+              }
+            >
+              <View
+                name="close"
+                style={
+                  Object {
+                    "borderColor": "#C6CACD",
+                    "borderRadius": 16,
+                    "borderWidth": 2,
+                    "color": "#C6CACD",
+                    "fontSize": undefined,
+                    "marginBottom": undefined,
+                    "marginLeft": undefined,
+                    "marginRight": undefined,
+                    "marginTop": undefined,
+                    "padding": 6,
+                    "paddingTop": 6,
+                  }
+                }
+              />
+            </View>
+          </View>
+        </View>
         <Modal
           animationType="fade"
           hardwareAccelerated={false}
