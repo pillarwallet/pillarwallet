@@ -172,7 +172,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Upload to TestFlight
-          command: cd ios && bundle exec build_staging_ipa
+          command: cd ios && bundle exec fastlane build_staging_ipa
       # - run:
       #     name: Announce Deployment
       #     command: |
@@ -256,7 +256,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Upload to TestFlight
-          command: cd ios && bundle exec build_ipa
+          command: cd ios && bundle exec fastlane build_ipa
       # - run:
       #     name: Announce Deployment
       #     command: |
