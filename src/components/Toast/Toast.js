@@ -8,6 +8,7 @@ import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 import { baseColors, fontSizes } from 'utils/variables';
 import { BoldText, BaseText } from 'components/Typography';
+import { isIphoneX } from 'utils/common';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -129,20 +130,20 @@ export default class Toast extends React.Component<*, State> {
     const { toastOptions } = this.state;
     const animation = this.state.animSlide.interpolate({
       inputRange: [0, 0.3, 1],
-      outputRange: [-125, -10, 0],
+      outputRange: [-110, -10, 0],
     });
     return (
       <Animated.View
         style={{
           transform: [{ translateY: animation }],
           opacity: !!this.state.toastOptions.message,
-          height: 125,
+          height: 110,
           backgroundColor: '#fff',
           position: 'absolute',
           left: 0,
           top: 0,
           width: '100%',
-          paddingTop: 50,
+          paddingTop: isIphoneX() ? 50 : 30,
           paddingBottom: 20,
           borderLeftWidth: 8,
           borderStyle: 'solid',
