@@ -46,7 +46,7 @@ const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: bo
     if (amount >= maxAmount) {
       return 'Amount should not exceed the sum of total balance and est. network fee';
     } else if (amount < minAmount) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001)';
+      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
     } else if (!enoughForFee) {
       return 'Not enough ETH to process the transaction fee';
     }
@@ -124,7 +124,7 @@ type Props = {
 
 type State = {
   value: ?{
-    amount: ?number,
+    amount: ?string,
   },
   formStructure: t.struct,
   txFeeInWei: ?Object, // BigNumber
@@ -209,7 +209,6 @@ class SendTokenAmount extends React.Component<Props, State> {
       const transactionPayload: TransactionPayload = {
         to: this.receiver,
         amount: value.amount,
-        amountExponential: parseNumber(value.amount),
         gasLimit,
         gasPrice: this.gasPrice.toNumber(),
         txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
