@@ -15,10 +15,6 @@ export function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min; // eslint-disable-line
 }
 
-export function formatETHAmount(amount: number) {
-  return +parseFloat(amount).toFixed(6);
-}
-
 export function decodeETHAddress(encodedAddress: string) {
   if (!encodedAddress || encodedAddress.substr(0, 9) !== 'ethereum:') {
     return encodedAddress;
@@ -84,8 +80,13 @@ export function isValidNumber(amount: string = '0') {
   return true;
 }
 
-export function formatAmount(amount: string | number, precision: number = 6): number {
-  return Number(new BigNumber(amount).toFixed(precision, 1)); // 1 = ROUND_DOWN
+export function formatAmount(amount: string | number, precision: number = 6): string {
+  const roundedNumber = new BigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
+  return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
+}
+
+export function formatFullAmount(amount: string | number): string {
+  return new BigNumber(amount).toFixed(); // strip trailing zeros
 }
 
 export function getCurrencySymbol(currency: string): string {
