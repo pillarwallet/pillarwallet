@@ -379,12 +379,12 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               "borderLeftWidth": 8,
               "borderStyle": "solid",
               "elevation": 9,
-              "height": 125,
+              "height": 110,
               "justifyContent": "center",
               "left": 0,
-              "opacity": false,
-              "paddingBottom": 20,
-              "paddingTop": 50,
+              "opacity": 0,
+              "paddingBottom": 10,
+              "paddingTop": 20,
               "position": "absolute",
               "shadowColor": "#333",
               "shadowOffset": Object {
@@ -396,7 +396,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               "top": 0,
               "transform": Array [
                 Object {
-                  "translateY": -125,
+                  "translateY": -110,
                 },
               ],
               "width": "100%",
@@ -510,7 +510,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               style={
                 Object {
                   "alignItems": "center",
-                  "flex": 3,
+                  "display": "flex",
+                  "flex": 2,
                   "justifyContent": "center",
                   "opacity": 1,
                   "paddingBottom": 0,
@@ -529,12 +530,14 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     "borderWidth": 2,
                     "color": "#C6CACD",
                     "fontSize": undefined,
+                    "height": 32,
                     "marginBottom": undefined,
                     "marginLeft": undefined,
                     "marginRight": undefined,
                     "marginTop": undefined,
-                    "padding": 6,
                     "paddingTop": 6,
+                    "textAlign": "center",
+                    "width": 32,
                   }
                 }
               />

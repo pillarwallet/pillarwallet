@@ -1,7 +1,7 @@
 
 // @flow
 import * as React from 'react';
-import { Animated } from 'react-native';
+import { Animated, Platform } from 'react-native';
 import merge from 'lodash.merge';
 import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
@@ -136,15 +136,15 @@ export default class Toast extends React.Component<*, State> {
       <Animated.View
         style={{
           transform: [{ translateY: animation }],
-          opacity: !!this.state.toastOptions.message,
+          opacity: +!!this.state.toastOptions.message,
           height: 110,
           backgroundColor: '#fff',
           position: 'absolute',
           left: 0,
           top: 0,
           width: '100%',
-          paddingTop: isIphoneX() ? 50 : 30,
-          paddingBottom: 20,
+          paddingTop: isIphoneX() ? 40 : 20,
+          paddingBottom: 10,
           borderLeftWidth: 8,
           borderStyle: 'solid',
           borderColor: typeColors[toastOptions.type],
@@ -179,16 +179,19 @@ export default class Toast extends React.Component<*, State> {
             icon="close"
             color={baseColors.mediumGray}
             style={{
-              flex: 3,
+              flex: 2,
               justifyContent: 'center',
               alignItems: 'center',
+              display: 'flex',
             }}
             iconStyle={{
               borderWidth: 2,
-              padding: 6,
-              paddingTop: 6,
               borderRadius: 16,
+              paddingTop: Platform.OS === 'ios' ? 6 : 8,
               borderColor: baseColors.mediumGray,
+              height: 32,
+              width: 32,
+              textAlign: 'center',
             }}
           />
         </ToastHolder>

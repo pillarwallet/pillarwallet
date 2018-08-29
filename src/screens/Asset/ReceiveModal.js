@@ -49,7 +49,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
       address,
     } = this.props;
     Clipboard.setString(address);
-    Toast.show({ message: 'Address copied to clipboard', type: 'info', title: 'Success' });
+    Toast.show({ message: 'Address copied to clipboard', type: 'success', title: 'Success' });
   };
 
   handleAddressShare = () => {
