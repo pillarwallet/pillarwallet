@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
 import Modal from 'react-native-modal';
-import { Root } from 'native-base';
 import styled from 'styled-components/native';
 import Header from 'components/Header';
+import Root from 'components/Root';
 import { Container } from 'components/Layout';
 import { spacing, baseColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
@@ -153,7 +153,6 @@ export default class SlideModal extends React.Component<Props, *> {
               {modalContent()}
             </ModalBackground>
           </Root>
-
         </ModalWrapper>
         {isVisible && fullScreenComponent}
       </Modal>
