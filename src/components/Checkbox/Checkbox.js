@@ -51,36 +51,44 @@ export default class Checkbox extends React.Component<Props, State> {
     };
   }
 
-  toggleCheckBox = () => {
-    const { animateActive, checked } = this.state;
-    const { onPress, disabled } = this.props;
-    if (!disabled) {
-      this.setState({
-        checked: !checked,
-      },
-      () => onPress(!checked),
-      );
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.disabled !== this.props.disabled && this.props.disabled) {
+      this.toggleCheckBox(false);
+    }
+  }
 
-      if (checked) {
-        Animated.spring(animateActive, {
-          toValue: 4,
-          duration: 600,
-        }).start();
-      } else {
-        Animated.spring(animateActive, {
-          toValue: 12,
-          duration: 600,
-        }).start();
-      }
+  animateCheckBox = (checked: boolean) => {
+    const { animateActive } = this.state;
+    if (!checked) {
+      Animated.spring(animateActive, {
+        toValue: 4,
+        duration: 600,
+      }).start();
+    } else {
+      Animated.spring(animateActive, {
+        toValue: 12,
+        duration: 600,
+      }).start();
     }
   };
 
+  toggleOnPress = (checkedStatus: boolean) => {
+    if (!this.props.disabled) {
+      this.props.onPress(checkedStatus);
+    }
+  };
+
+  toggleCheckBox = (status?: boolean) => {
+    const { checked } = this.state;
+    const { disabled } = this.props;
+    const checkedStatus = disabled ? false : status || !checked;
+    this.setState({ checked: checkedStatus }, () => this.toggleOnPress(checkedStatus));
+    this.animateCheckBox(checkedStatus);
+  };
+
   render() {
-    const { animateActive } = this.state;
-    const {
-      disabled,
-      text,
-    } = this.props;
+    const { animateActive, checked } = this.state;
+    const { disabled, text } = this.props;
     return (
       <TouchableHighlight
         onPress={() => this.toggleCheckBox()}
@@ -88,7 +96,7 @@ export default class Checkbox extends React.Component<Props, State> {
       >
         <CheckboxWrapper disabled={disabled}>
           <CheckboxBoxAnimated
-            active={this.state.checked}
+            active={disabled ? false : checked}
             style={{ borderWidth: animateActive }}
           />
           <CheckboxText>{text}</CheckboxText>
