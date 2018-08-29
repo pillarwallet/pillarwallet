@@ -535,7 +535,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     "marginLeft": undefined,
                     "marginRight": undefined,
                     "marginTop": undefined,
-                    "paddingTop": 6,
+                    "paddingTop": 7,
                     "textAlign": "center",
                     "width": 32,
                   }

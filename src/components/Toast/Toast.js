@@ -1,7 +1,7 @@
 
 // @flow
 import * as React from 'react';
-import { Animated, Platform } from 'react-native';
+import { Animated } from 'react-native';
 import merge from 'lodash.merge';
 import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
@@ -190,7 +190,7 @@ export default class Toast extends React.Component<*, State> {
             iconStyle={{
               borderWidth: 2,
               borderRadius: 16,
-              paddingTop: Platform.OS === 'ios' ? 6 : 8,
+              paddingTop: 7,
               borderColor: baseColors.mediumGray,
               height: 32,
               width: 32,
