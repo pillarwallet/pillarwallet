@@ -6,6 +6,36 @@ platform :ios do
     setup_circle_ci
   end
 
+  desc "Install Development certificates and provisioning profiles"
+  lane :development_certificates do
+    match(type: "development",
+          readonly: true,
+          git_branch: "master",
+          app_identifier: "com.pillarproject.wallet",
+          team_id: "J9DEY3FGPD"
+        )
+  end
+
+  desc "Install Production Release certificates and provisioning profiles"
+  lane :production_release_certificates do
+    match(type: "appstore",
+          readonly: true,
+          git_branch: "master",
+          app_identifier: "com.pillarproject.wallet",
+          team_id: "J9DEY3FGPD"
+        )
+  end
+
+  desc "Install Staging certificates and provisioning profiles"
+  lane :staging_certificates do
+    match(type: "appstore",
+          readonly: true,
+          git_branch: "develop",
+          app_identifier: "com.pillarproject.wallet.staging",
+          team_id: "J9DEY3FGPD"
+        )
+  end
+
   desc "Create ios simulator build"
   lane :build_ios_simulator do
   match(type: "development",
@@ -26,7 +56,11 @@ platform :ios do
   lane :build_test_flight do
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
-          readonly: true)
+          readonly: true,
+          git_branch: "master",
+          app_identifier: "com.pillarproject.wallet",
+          team_id: "J9DEY3FGPD"
+        )
     sh "xcodebuild -clean -workspace ../pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath ../build"
     sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet.ipa *"
     sigh(force: true)
@@ -41,7 +75,11 @@ platform :ios do
   lane :build_staging_test_flight do
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion 1' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
-          readonly: true)
+          readonly: true,
+          git_branch: "develop",
+          app_identifier: "com.pillarproject.wallet.staging",
+          team_id: "J9DEY3FGPD"
+        )
     sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build"
     sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
     sigh(force: true)
