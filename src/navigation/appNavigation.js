@@ -29,7 +29,7 @@ import ChatScreen from 'screens/Chat/Chat';
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
-
+import Toast from 'components/Toast';
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
 import {
@@ -340,7 +340,7 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-      // showToast({ text: lastNotification.message });
+      Toast.show({ message: lastNotification.message, type: 'info', title: 'Notification' });
     }
   }
 
