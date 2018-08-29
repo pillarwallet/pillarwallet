@@ -327,7 +327,7 @@ class ActivityFeed extends React.Component<Props, State> {
       const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
       const formattedValue = formatAmount(value);
       const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
-      const title = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
+      const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '+' : '-';
 
@@ -338,14 +338,12 @@ class ActivityFeed extends React.Component<Props, State> {
       const contact = contacts
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
 
-      const nameOrAddress = contact.firstName ? `${contact.firstName} ${contact.lastName}`.trim() : title;
-
       let image;
       if (contact) {
         image = (
           <ProfileImage
             uri={contact.profileImage}
-            userName={title}
+            userName={contact.username}
             diameter={40}
             textStyle={{ fontSize: fontSizes.medium }}
           />
@@ -391,9 +389,6 @@ class ActivityFeed extends React.Component<Props, State> {
     }
 
     const onProfileImagePress = ([TYPE_SENT, TYPE_RECEIVED].includes(type)) ? navigateToContact : undefined;
-    const userTitle = notification.firstName ?
-      `${notification.firstName} ${notification.lastName}`.trim() :
-      notification.username;
 
     return (
       <ActivityFeedItem key={index} onPress={onItemPress} disabled={!onItemPress}>
@@ -408,7 +403,7 @@ class ActivityFeed extends React.Component<Props, State> {
           />
         </ActivityFeedItemCol>
         <ActivityFeedItemCol fixedWidth="150px">
-          <ActivityFeedItemName>{userTitle}</ActivityFeedItemName>
+          <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
           <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
         </ActivityFeedItemCol>
         <ActivityFeedItemCol flexEnd>
