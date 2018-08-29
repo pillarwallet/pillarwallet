@@ -29,19 +29,21 @@ type State = {
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const RectangleContainer = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-`;
+const squareSize = 250;
 
-const Rectangle = styled.View`
-  height: 250;
-  width: 250;
+const viewMinScanX = (screenWidth - squareSize) / 2;
+const viewMinScanY = (screenHeight - squareSize) / 2;
+
+const SquareContainer = styled.View`
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  height: ${squareSize};
+  width: ${squareSize};
   border-width: 4px;
   border-color: ${props => props.color};
   background-color: transparent;
+
 `;
 
 const HeaderWrapper = styled.SafeAreaView`
@@ -93,15 +95,18 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   }
 
   handleQRRead = (data: Object) => {
-    const { onRead, validator, dataFormatter } = this.props;
-    const { data: address } = data;
-
-    const isValid = validator(address);
-
-    if (!this.isScanned && isValid) {
-      this.isScanned = true;
-      Vibration.vibrate();
-      onRead(dataFormatter(address));
+    const { bounds: { origin } } = data;
+    const x = Number(origin.x);
+    const y = Number(origin.y);
+    if ((x > viewMinScanX && y > viewMinScanY) && (x < (viewMinScanX + 60) && (y < viewMinScanY + 60))) {
+      const { onRead, validator, dataFormatter } = this.props;
+      const { data: address } = data;
+      const isValid = validator(address);
+      if (!this.isScanned && isValid) {
+        this.isScanned = true;
+        Vibration.vibrate();
+        onRead(dataFormatter(address));
+      }
     }
   };
 
@@ -130,6 +135,9 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     const { rectangleColor } = this.props;
     return (
       <React.Fragment>
+        <HeaderWrapper>
+          <Header light flexStart onClose={this.handleAnimationDismiss} />
+        </HeaderWrapper>
         <RNCamera
           ref={ref => {
             this.camera = ref;
@@ -141,15 +149,9 @@ export default class QRCodeScanner extends React.Component<Props, State> {
             justifyContent: 'center',
           }}
           type={RNCamera.Constants.Type.back}
-          ratio="16:9"
           onBarCodeRead={this.handleQRRead}
         >
-          <HeaderWrapper>
-            <Header light flexStart onClose={this.handleAnimationDismiss} />
-          </HeaderWrapper>
-          <RectangleContainer>
-            <Rectangle color={rectangleColor} />
-          </RectangleContainer>
+          <SquareContainer color={rectangleColor} />
         </RNCamera>
       </React.Fragment>
     );
