@@ -58,7 +58,7 @@ const ContactHeaderAvatarWrapper = styled.View`
   margin-right: 14px;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
-  shadow-radius: 2px     ;
+  shadow-radius: 2px;
   shadow-opacity: 0.1;
   position: absolute;
   top: 0;
@@ -71,12 +71,12 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
-}
+};
 
 type State = {
   isOptionsModalActive: boolean,
   avatarRefreshed: boolean,
-}
+};
 
 class Contact extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -99,7 +99,8 @@ class Contact extends React.Component<Props, State> {
       syncContact(localContact.id);
       if (localContact.profileImage) {
         const defaultImageCacheManager = ImageCacheManager();
-        defaultImageCacheManager.deleteUrl(localContact.profileImage)
+        defaultImageCacheManager
+          .deleteUrl(localContact.profileImage)
           .then(() => this.setState({ avatarRefreshed: true }))
           .catch(() => null);
       }
@@ -138,12 +139,10 @@ class Contact extends React.Component<Props, State> {
           <ContactWrapper>
             <ContactHeader>
               <ContactHeaderBody>
-                <ContactHeaderName>
-                  {displayContact.username}
-                </ContactHeaderName>
+                <ContactHeaderName>{displayContact.username}</ContactHeaderName>
               </ContactHeaderBody>
             </ContactHeader>
-            <ContactHeaderAvatarWrapper >
+            <ContactHeaderAvatarWrapper>
               <ProfileImage
                 uri={userAvatar}
                 userName={displayContact.username}
@@ -152,36 +151,40 @@ class Contact extends React.Component<Props, State> {
               />
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>
-          {isAccepted &&
+          <Wrapper center horizontal>
+            {isAccepted && (
+              <CircleButton
+                label="Chat"
+                icon="chat"
+                onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+              />
+            )}
             <CircleButton
-              label="Chat"
+              label="Send"
               icon="send"
               onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
             />
-          }
+          </Wrapper>
         </Wrapper>
-        <SlideModal
-          title="manage"
-          isVisible={isOptionsModalActive}
-          onModalHide={this.closeOptionsModal}
-        >
-          <Button secondary block marginBottom="10px" onPress={() => { }} title="Mute" />
-          <Button secondary block marginBottom="10px" onPress={() => { }} title="Remove connection" />
-          <Button secondary danger block marginBottom="10px" onPress={() => { }} title="Report / Block" />
+        <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
+          <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
+          <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />
+          <Button secondary danger block marginBottom="10px" onPress={() => {}} title="Report / Block" />
         </SlideModal>
       </Container>
     );
   }
 }
 
-const mapStateToProps = ({
-  contacts: { data: contacts },
-}) => ({
+const mapStateToProps = ({ contacts: { data: contacts } }) => ({
   contacts,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  syncContact: (userId) => dispatch(syncContactAction(userId)),
+  syncContact: userId => dispatch(syncContactAction(userId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Contact);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Contact);
