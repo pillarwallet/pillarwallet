@@ -1,7 +1,7 @@
 // @flow
 import {
   delay,
-  formatETHAmount,
+  formatAmount,
   decodeETHAddress,
   pipe,
   parseNumber,
@@ -25,10 +25,10 @@ describe('Common utils', () => {
     });
   });
 
-  describe('formatETHAmount', () => {
-    it('should format ETH amount to a readable one', () => {
-      const expectedAmount = 0.00042;
-      expect(formatETHAmount(0.00042000001)).toBe(expectedAmount);
+  describe('formatAmount', () => {
+    it('should format transaction amount to a readable one', () => {
+      const expectedAmount = '0.000042';
+      expect(formatAmount(0.0000420000001)).toBe(expectedAmount);
     });
   });
 
