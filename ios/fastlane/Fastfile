@@ -114,7 +114,7 @@ platform :ios do
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
 
     get_push_certificate(
-#        force: true, # create a new profile, even if the old one is still valid
+        force: true, # create a new profile, even if the old one is still valid
         app_identifier: "com.pillarproject.wallet.staging", # optional app identifier,
 #        save_private_key: true,
 #        new_profile: proc do |profile_path| # this block gets called when a new profile was generated
