@@ -9,7 +9,7 @@ import type { Assets, Balances } from 'models/Asset';
 import { CachedImage } from 'react-native-cached-image';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import Header from 'components/Header';
-import { Wrapper, Container } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Separator from 'components/Separator';
 import { fontSizes, spacing } from 'utils/variables';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
