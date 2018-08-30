@@ -1,12 +1,15 @@
 // @flow
 import * as React from 'react';
-import { Vibration, Dimensions, Text } from 'react-native';
+import { Vibration, Dimensions, Text, Platform, PixelRatio } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import Modal from 'react-native-modal';
 import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
+import { baseColors } from 'utils/variables';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
+
+const pixelRatio = PixelRatio.get();
 
 const AUTHORIZED = 'AUTHORIZED';
 const PENDING = 'PENDING';
@@ -29,19 +32,21 @@ type State = {
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const RectangleContainer = styled.View`
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-`;
+const squareSize = 250;
 
-const Rectangle = styled.View`
-  height: 250;
-  width: 250;
+const viewMinScanX = (screenWidth - squareSize) / 2;
+const viewMinScanY = (screenHeight - squareSize) / 2;
+
+const SquareContainer = styled.View`
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  height: ${squareSize};
+  width: ${squareSize};
   border-width: 4px;
   border-color: ${props => props.color};
   background-color: transparent;
+
 `;
 
 const HeaderWrapper = styled.SafeAreaView`
@@ -92,12 +97,34 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     });
   }
 
+  getAndroidCoordinates = (bounds: Object[]) => {
+    const leftBottom = { x: bounds[0].x / pixelRatio, y: bounds[0].y / (pixelRatio - 1.5) };
+    const leftTop = { x: bounds[1].x / pixelRatio, y: bounds[1].y / (pixelRatio - 1.5) };
+    const rightTop = { x: bounds[2].x / pixelRatio, y: bounds[2].y / (pixelRatio - 1.5) };
+    return {
+      x: Math.min(leftTop.x, leftBottom.x),
+      y: Math.min(leftTop.y, rightTop.y),
+    };
+  }
+
+  getIOSCoordinates = (bounds: Object) => {
+    return {
+      x: +bounds.origin.x,
+      y: +bounds.origin.y,
+    };
+  }
+
   handleQRRead = (data: Object) => {
+    const coordinates = Platform.OS === 'ios'
+      ? this.getIOSCoordinates(data.bounds)
+      : this.getAndroidCoordinates(data.bounds);
+    const { x, y } = coordinates;
+    const isInRecognitionArea = (x > viewMinScanX && y > viewMinScanY) &&
+      (x < (viewMinScanX + 80) && (y < viewMinScanY + 80));
+    if (!isInRecognitionArea) return;
     const { onRead, validator, dataFormatter } = this.props;
     const { data: address } = data;
-
     const isValid = validator(address);
-
     if (!this.isScanned && isValid) {
       this.isScanned = true;
       Vibration.vibrate();
@@ -118,7 +145,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
           <Header light flexStart onClose={this.handleAnimationDismiss} />
         </HeaderWrapper>
         <NoPermissions>
-          <Text style={{ color: 'white' }}>
+          <Text style={{ color: baseColors.white }}>
             Camera permissions not granted - cannot open the QR scanner.
           </Text>
         </NoPermissions>
@@ -129,29 +156,24 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   renderScanner() {
     const { rectangleColor } = this.props;
     return (
-      <React.Fragment>
-        <RNCamera
-          ref={ref => {
-            this.camera = ref;
-          }}
-          style={{
-            width: screenWidth,
-            height: screenHeight,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          type={RNCamera.Constants.Type.back}
-          ratio="16:9"
-          onBarCodeRead={this.handleQRRead}
-        >
-          <HeaderWrapper>
-            <Header light flexStart onClose={this.handleAnimationDismiss} />
-          </HeaderWrapper>
-          <RectangleContainer>
-            <Rectangle color={rectangleColor} />
-          </RectangleContainer>
-        </RNCamera>
-      </React.Fragment>
+      <RNCamera
+        ref={ref => {
+          this.camera = ref;
+        }}
+        style={{
+          width: screenWidth,
+          height: screenHeight,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        type={RNCamera.Constants.Type.back}
+        onBarCodeRead={this.handleQRRead}
+      >
+        <HeaderWrapper>
+          <Header light flexStart onClose={this.handleAnimationDismiss} />
+        </HeaderWrapper>
+        <SquareContainer color={rectangleColor} />
+      </RNCamera>
     );
   }
 
