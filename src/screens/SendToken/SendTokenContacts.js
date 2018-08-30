@@ -2,24 +2,26 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, TouchableOpacity } from 'react-native';
+import { BoldText } from 'components/Typography';
+import Separator from 'components/Separator';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import { fontSizes, spacing } from 'utils/variables';
+import ProfileImage from 'components/ProfileImage';
+import { fontSizes, spacing, itemSizes } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Header from 'components/Header';
-import ContactCard from 'components/ContactCard';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   localContacts: Object[],
-}
+};
 
 type State = {
   isScanning: boolean,
@@ -27,16 +29,45 @@ type State = {
     address: string,
   },
   formStructure: t.struct,
-}
+};
 
 const qrCode = require('assets/images/qr.png');
 
+const ContactName = styled(BoldText)`
+  font-size: ${fontSizes.small};
+`;
+
+const ContactListItem = styled.View`
+  margin: 0;
+  padding: ${spacing.rhythm / 2}px 0;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const ContactThumbnail = styled.View`
+  margin-right: ${spacing.rhythm / 2}px;
+`;
+
+const FormWrapper = styled.View`
+  padding: 0 ${spacing.rhythm}px;
+`;
+
+const ContactCardList = styled.FlatList`
+  padding: 0 ${spacing.rhythm}px;
+`;
+
 // make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
+const ETHValidator = (address: string): Function =>
+  pipe(
+    decodeETHAddress,
+    isValidETHAddress,
+  )(address);
 const { Form } = t.form;
 
 function AddressInputTemplate(locals) {
-  const { config: { onIconPress } } = locals;
+  const {
+    config: { onIconPress },
+  } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     onChange: locals.onChange,
@@ -62,9 +93,12 @@ function AddressInputTemplate(locals) {
 }
 
 const getFormStructure = () => {
-  const Address = t.refinement(t.String, (address): boolean => {
-    return address.length && isValidETHAddress(address);
-  });
+  const Address = t.refinement(
+    t.String,
+    (address): boolean => {
+      return address.length && isValidETHAddress(address);
+    },
+  );
 
   Address.getValidationErrorMessage = (address): string => {
     if (!isValidETHAddress(address)) {
@@ -83,16 +117,6 @@ const generateFormOptions = (config: Object): Object => ({
     address: { template: AddressInputTemplate, config, label: 'To' },
   },
 });
-
-
-const FormWrapper = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-`;
-
-
-const ContactCardList = styled.FlatList`
-  padding: 0 ${spacing.rhythm}px;
-`;
 
 class SendTokenContacts extends React.Component<Props, State> {
   _form: t.form;
@@ -119,13 +143,16 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleQRScannerOpen = async () => {
-    this.setState({
-      isScanning: !this.state.isScanning,
-    }, () => {
-      if (this.state.isScanning) {
-        Keyboard.dismiss();
-      }
-    });
+    this.setState(
+      {
+        isScanning: !this.state.isScanning,
+      },
+      () => {
+        if (this.state.isScanning) {
+          Keyboard.dismiss();
+        }
+      },
+    );
   };
 
   handleQRScannerClose = () => {
@@ -142,13 +169,19 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   renderContact = ({ item: user }) => {
     return (
-      <ContactCard
-        noMargin
-        name={user.username}
-        avatar={user.profileImage}
-        key={user.id}
-        onPress={() => this.setUsersEthAddress(user.ethAddress)}
-      />
+      <TouchableOpacity onPress={() => this.setUsersEthAddress(user.ethAddress)}>
+        <ContactListItem>
+          <ContactThumbnail>
+            <ProfileImage
+              uri={user.profileImage}
+              userName={user.userName}
+              diameter={itemSizes.avaratCircleSmall}
+              textStyle={{ fontSize: fontSizes.medium }}
+            />
+          </ContactThumbnail>
+          <ContactName>{user.username}</ContactName>
+        </ContactListItem>
+      </TouchableOpacity>
     );
   };
 
@@ -167,26 +200,18 @@ class SendTokenContacts extends React.Component<Props, State> {
 
   render() {
     const { localContacts = [] } = this.props;
-    const {
-      isScanning,
-      formStructure,
-      value,
-    } = this.state;
+    const { isScanning, formStructure, value } = this.state;
 
-    const formOptions = generateFormOptions(
-      { onIconPress: this.handleQRScannerOpen },
-    );
+    const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     return (
       <Container>
-        <Header
-          onClose={this.props.navigation.dismiss}
-          title={`send ${this.assetData.token}`}
-          centerTitle
-        />
+        <Header onClose={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
         <FormWrapper>
           <Form
-            ref={node => { this._form = node; }}
+            ref={node => {
+              this._form = node;
+            }}
             type={formStructure}
             options={formOptions}
             onChange={this.handleChange}
@@ -198,6 +223,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           data={localContacts}
           renderItem={this.renderContact}
           keyExtractor={({ username }) => username}
+          ItemSeparatorComponent={Separator}
         />
         <QRCodeScanner
           validator={ETHValidator}

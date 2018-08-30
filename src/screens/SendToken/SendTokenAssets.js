@@ -1,20 +1,18 @@
 // @flow
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { BoldText, LightText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import type { Assets, Balances } from 'models/Asset';
 import { CachedImage } from 'react-native-cached-image';
 import { fetchInitialAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import Header from 'components/Header';
-import { Container } from 'components/Layout';
+import { Wrapper, Container } from 'components/Layout';
 import Separator from 'components/Separator';
-import { formatMoney } from 'utils/common';
-import { fontSizes, baseColors } from 'utils/variables';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { fontSizes, spacing } from 'utils/variables';
+import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 type Props = {
@@ -23,36 +21,41 @@ type Props = {
   assets: Assets,
   balances: Balances,
   wallet: Object,
-  rates: Object,
-  assetsState: ?string,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: string,
+};
+
+type State = {
+  isRefreshing: boolean,
 };
 
 const TokenName = styled(BoldText)`
   font-size: ${fontSizes.small};
 `;
 
-const TokenSymbol = styled(LightText)`
-  color: ${baseColors.darkGray};
-  font-size: ${fontSizes.small};
-`;
-
 const TokenListItem = styled.View`
   margin: 0;
+  padding: ${spacing.rhythm / 2}px 0;
   flex-direction: row;
+  align-items: center;
 `;
 
 const TokenThumbnail = styled(CachedImage)`
   width: 44px;
   height: 44px;
+  margin-right: ${spacing.rhythm / 2}px;
   border-radius: 22px;
 `;
 
-const Body = styled.View``;
-const Right = styled.View``;
+const TokenBalance = styled(BaseText)`
+  margin-left: auto;
+  font-size: ${fontSizes.medium};
+`;
 
-class SendTokenAssetsScreen extends React.Component<Props> {
+class SendTokenAssetsScreen extends React.Component<Props, State> {
+  state = {
+    isRefreshing: false,
+  };
+
   componentDidMount() {
     const { fetchInitialAssets, assets, wallet } = this.props;
 
@@ -61,119 +64,71 @@ class SendTokenAssetsScreen extends React.Component<Props> {
     }
   }
 
-  handleCardTap = (assetData: Object) => {
-    this.props.navigation.navigate(ASSET, {
-      assetData,
+  navigateToNextScreen(ethAddress, token) {
+    this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
+      assetData: { token },
+      receiver: ethAddress,
     });
-  };
-
-  goToAddTokenPage = () => {
-    this.props.navigation.navigate(ADD_TOKEN);
-  };
-
-  goToSendTokenFlow = (asset: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, {
-      asset,
-    });
-  };
-
-  renderAssets() {
-    const {
-      wallet, assets, balances, rates, baseFiatCurrency,
-    } = this.props;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(assets)
-      .map(id => assets[id])
-      .map(({ symbol, balance, ...rest }) => ({
-        symbol,
-        balance: Number(balances[symbol] && balances[symbol].balance) || 0,
-        ...rest,
-      }))
-      .map(({ balance, symbol, ...rest }) => ({
-        balance,
-        symbol,
-        balanceInFiat: rates[symbol] ? balance * rates[symbol][fiatCurrency] : 0,
-        ...rest,
-      }))
-      .sort((a, b) => b.balanceInFiat - a.balanceInFiat)
-      .map(asset => {
-        const {
-          name, symbol, balanceInFiat, balance, iconUrl, decimals,
-        } = asset;
-
-        const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
-
-        const formattedBalanceInFiat = formatMoney(balanceInFiat);
-        const displayAmount = formatMoney(balance, 4);
-
-        const assetData = {
-          name: name || symbol,
-          token: symbol,
-          amount: displayAmount,
-          contractAddress: asset.address,
-          description: asset.description,
-          balance,
-          balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-          address: wallet.address,
-          icon: fullIconUrl,
-          decimals,
-        };
-        return (
-          <TokenListItem key={assetData.token}>
-            <TokenThumbnail source={{ uri: fullIconUrl }} />
-            <Body style={{ marginLeft: 20 }}>
-              <TokenName>{assetData.name}</TokenName>
-              <TokenSymbol>{assetData.token}</TokenSymbol>
-            </Body>
-            <Right />
-          </TokenListItem>
-        );
-      });
   }
 
-  renderAsset = ({ asset }) => {
-    const fullIconUrl = `${SDK_PROVIDER}/${asset.iconUrl}?size=3`;
+  renderAsset = ({ item }) => {
+    const { balances, wallet } = this.props;
+    const assetBalance = balances[item.symbol].balance;
+    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     return (
-      <TokenListItem key={asset.token}>
-        {console.log(asset)}
-        <TokenThumbnail source={{ uri: fullIconUrl }} />
-        <TokenName>{asset.name}</TokenName>
-      </TokenListItem>
+      <TouchableOpacity onPress={() => this.navigateToNextScreen(wallet.address, item.symbol)}>
+        <TokenListItem>
+          <TokenThumbnail source={{ uri: fullIconUrl }} />
+          <TokenName>{item.name}</TokenName>
+          <TokenBalance>
+            {assetBalance} {item.symbol}
+          </TokenBalance>
+        </TokenListItem>
+      </TouchableOpacity>
     );
   };
 
+  refreshAssetsList = () => {
+    const { assets, fetchAssetsBalances, wallet } = this.props;
+    this.setState({
+      isRefreshing: true,
+    });
+    fetchAssetsBalances(assets, wallet.address);
+    setTimeout(() => this.setState({ isRefreshing: false }), 1000);
+  };
+
   render() {
-    const { assets, wallet } = this.props;
+    const { assets, navigation } = this.props;
+    const { isRefreshing } = this.state;
+    const assetsArray = Object.values(assets);
+    const contact = navigation.getParam('contact', {});
+    const contactUsername = contact.username;
 
     return (
       <Container>
-        <Header title="send to X" centerTitle headerRightFlex="2" />
-        {this.renderAssets()}
-        <FlatList
-          data={assets}
-          renderItem={this.renderAsset}
-          ItemSeparatorComponent={Separator}
-        />
+        <Header title={`send to ${contactUsername}`} centerTitle onClose={navigation.dismiss} />
+        <Wrapper regularPadding>
+          <FlatList
+            keyExtractor={item => item.symbol}
+            data={assetsArray}
+            renderItem={this.renderAsset}
+            ItemSeparatorComponent={Separator}
+            contentContainerStyle={{
+              height: '100%',
+            }}
+            refreshing={isRefreshing}
+            onRefresh={() => this.refreshAssetsList()}
+          />
+        </Wrapper>
       </Container>
     );
   }
 }
 
-const mapStateToProps = ({
-  wallet: { data: wallet },
-  assets: { data: assets, assetsState, balances },
-  rates: { data: rates },
-  appSettings: {
-    data: { baseFiatCurrency },
-  },
-}) => ({
+const mapStateToProps = ({ wallet: { data: wallet }, assets: { data: assets, balances } }) => ({
   wallet,
   assets,
-  assetsState,
   balances,
-  rates,
-  baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
