@@ -9,7 +9,7 @@ import { syncContactAction } from 'actions/contactsActions';
 import { Container, Wrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
-import { CHAT } from 'constants/navigationConstants';
+import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
@@ -155,7 +155,7 @@ class Contact extends React.Component<Props, State> {
             <CircleButton
               label="Send"
               icon="send"
-              onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+              onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
             />
             {isAccepted && (
               <CircleButton
