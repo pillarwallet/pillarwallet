@@ -14,12 +14,14 @@ import type { Assets, Balances } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
 import LinearGradient from 'react-native-linear-gradient';
 import AssetButtons from 'components/AssetButtons';
-import TXHistory from 'components/TXHistory';
+import ActivityFeed from 'components/ActivityFeed';
+
 import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney } from 'utils/common';
 import ReceiveModal from './ReceiveModal';
 
@@ -44,12 +46,14 @@ type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string, indexFrom?: number) => Function,
   history: Transaction[],
+  historyNotifications: Object[],
   assets: Assets,
   balances: Balances,
   wallet: Object,
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
+  contacts: Object,
 }
 
 type State = {
@@ -175,14 +179,12 @@ class AssetScreen extends React.Component<Props, State> {
       fetchAssetsBalances,
       fetchTransactionsHistory,
       baseFiatCurrency,
+      navigation,
     } = this.props;
     const { assetDescriptionExpanded } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const history = this.props.history
-      .filter(({ asset }) => asset === assetData.token)
-      .sort((a, b) => b.createdAt - a.createdAt);
     const balance = Number(balances[token] && balances[token].balance) || 0;
     const isWalletEmpty = balance <= 0;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
@@ -193,6 +195,7 @@ class AssetScreen extends React.Component<Props, State> {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
     };
+
     return (
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.handleCardTap} />
@@ -256,9 +259,12 @@ class AssetScreen extends React.Component<Props, State> {
               </AssetDescriptionToggleWrapper>
             </AssetDescriptionWrapper>
           </AssetCardWrapper>
-          <TXHistory
-            history={history}
-            token={assetData.token}
+
+          <ActivityFeed
+            feedTitle="transactions."
+            navigation={navigation}
+            activeTab={TRANSACTIONS}
+            additionalFiltering={(data) => data.filter(({ asset }) => asset === assetData.token)}
           />
         </ScrollWrapper>
 
@@ -277,16 +283,19 @@ class AssetScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
+  contacts: { data: contacts },
   assets: { data: assets, balances },
   rates: { data: rates },
-  history: { data: history },
+  history: { data: history, historyNotifications },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
+  contacts,
   assets,
   balances,
   rates,
   history,
+  historyNotifications,
   baseFiatCurrency,
 });
 

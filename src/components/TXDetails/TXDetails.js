@@ -10,8 +10,8 @@ import type { Transaction } from 'models/Transaction';
 import { Column, Row } from 'components/Grid';
 import { BaseText, Label } from 'components/Typography';
 import Button from 'components/Button';
-import { formatETHAmount } from '../../utils/common';
-import { getUserName } from '../../utils/contacts';
+import { formatFullAmount } from 'utils/common';
+import { getUserName } from 'utils/contacts';
 
 type Props = {
   transaction: Transaction,
@@ -57,17 +57,22 @@ const TXDetails = (props: Props) => {
   } = transaction;
 
   const dateTime = formatDate(new Date(createdAt * 1000), 'MMM Do');
-  const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+  const recipientContact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+  const senderContact = contacts.find(({ ethAddress }) => from.toUpperCase() === ethAddress.toUpperCase());
   const recipient = to.toUpperCase() !== myAddress.toUpperCase()
-    ? (getUserName(contact) || `${to.slice(0, 7)}…${to.slice(-7)}`)
+    ? (getUserName(recipientContact) || `${to.slice(0, 7)}…${to.slice(-7)}`)
+    : null;
+  const sender = from.toUpperCase() !== myAddress.toUpperCase()
+    ? (getUserName(senderContact) || `${to.slice(0, 7)}…${to.slice(-7)}`)
     : null;
 
   const tx = {
     hash,
     date: dateTime,
     token: asset,
-    amount: formatETHAmount(value),
+    amount: formatFullAmount(value),
     recipient,
+    sender,
     fee: gasUsed ? gasUsed * gasPrice : 0,
     note: null,
     confirmations: nbConfirmations,
@@ -97,6 +102,14 @@ const TXDetails = (props: Props) => {
           <Column><Label>Recipient</Label></Column>
           <Column>
             <BaseText>{tx.recipient}</BaseText>
+          </Column>
+        </Row>
+        }
+        {!!tx.sender &&
+        <Row size="0 0 30px">
+          <Column><Label>Sender</Label></Column>
+          <Column>
+            <BaseText>{tx.sender}</BaseText>
           </Column>
         </Row>
         }
