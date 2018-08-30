@@ -1,12 +1,11 @@
-
 // @flow
 import * as React from 'react';
+import styled from 'styled-components/native';
 import { Animated } from 'react-native';
 import merge from 'lodash.merge';
-import styled from 'styled-components/native';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { BoldText, BaseText } from 'components/Typography';
 import { isIphoneX } from 'utils/common';
 
@@ -15,13 +14,13 @@ type ToastOptions = {
   type: string,
   message: string,
   title: string,
-}
+};
 
 type State = {
   isVisible: boolean,
   animSlide: Object,
   toastOptions: ToastOptions,
-}
+};
 
 const toastInitialOptions = {
   autoClose: true,
@@ -29,7 +28,6 @@ const toastInitialOptions = {
   message: '',
   title: '',
 };
-
 
 const typeColors = {
   warning: baseColors.vividOrange,
@@ -48,6 +46,31 @@ const ToastHolder = styled.View`
   flex-direction: row;
 `;
 
+const ToastWrapper = styled.View`
+  opacity: ${props => props.opacity};
+  height: 110px;
+  background-color: ${baseColors.white};
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  padding-top: ${isIphoneX() ? '40px' : '20px'};
+  padding-bottom: ${spacing.rhythm / 2}px;
+  border-left-width: ${spacing.rhythm / 2}px;
+  border-style: solid;
+  border-color: ${props => props.borderColor};
+  shadow-color: #333;
+  shadow-offset: 0 2px;
+  shadow-opacity: 0.25;
+  shadow-radius: 10;
+  elevation: 9;
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+`;
+
+const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
+
 const TextHolder = styled.View`
   flex: 9;
 `;
@@ -60,7 +83,7 @@ const IconHolder = styled.View`
 `;
 
 export default class Toast extends React.Component<*, State> {
-  timeout: TimeoutID
+  timeout: TimeoutID;
 
   state = {
     isVisible: false,
@@ -91,43 +114,34 @@ export default class Toast extends React.Component<*, State> {
 
   handleOpen = (toastOptions: ToastOptions) => {
     if (this.state.isVisible) return;
-    const { options } = merge(
-      {},
-      { options: this.state.toastOptions },
-      { options: toastOptions },
-    );
+    const { options } = merge({}, { options: this.state.toastOptions }, { options: toastOptions });
 
     this.setState({
       isVisible: true,
       toastOptions: options,
     });
 
-    Animated.timing(
-      this.state.animSlide,
-      {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-      })
-      .start(() => {
-        if (!this.state.toastOptions.autoClose) return;
-        this.timeout = setTimeout(() => {
-          this.handleClose();
-          clearTimeout(this.timeout);
-        }, 2000);
-      });
-  }
+    Animated.timing(this.state.animSlide, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(() => {
+      if (!this.state.toastOptions.autoClose) return;
+      this.timeout = setTimeout(() => {
+        this.handleClose();
+        clearTimeout(this.timeout);
+      }, 2000);
+    });
+  };
 
   handleClose = () => {
     this.setState({ isVisible: false });
-    Animated.timing(
-      this.state.animSlide,
-      {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => this.setState({ toastOptions: toastInitialOptions }));
-  }
+    Animated.timing(this.state.animSlide, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => this.setState({ toastOptions: toastInitialOptions }));
+  };
 
   render() {
     const { toastOptions } = this.state;
@@ -136,30 +150,12 @@ export default class Toast extends React.Component<*, State> {
       outputRange: [-110, -10, 0],
     });
     return (
-      <Animated.View
+      <AnimatedToastWrapper
         style={{
           transform: [{ translateY: animation }],
-          opacity: +!!this.state.toastOptions.message,
-          height: 110,
-          backgroundColor: '#fff',
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          width: '100%',
-          paddingTop: isIphoneX() ? 40 : 20,
-          paddingBottom: 10,
-          borderLeftWidth: 8,
-          borderStyle: 'solid',
-          borderColor: typeColors[toastOptions.type],
-          shadowColor: '#333',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 10,
-          elevation: 9,
-          zIndex: 1000,
-          justifyContent: 'center',
-          alignItems: 'center',
         }}
+        opacity={+!!this.state.toastOptions.message}
+        borderColor={typeColors[toastOptions.type]}
       >
         <ToastHolder>
           <IconHolder>
@@ -198,7 +194,7 @@ export default class Toast extends React.Component<*, State> {
             }}
           />
         </ToastHolder>
-      </Animated.View>
+      </AnimatedToastWrapper>
     );
   }
 }
