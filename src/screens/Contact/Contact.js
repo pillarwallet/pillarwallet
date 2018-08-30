@@ -152,6 +152,11 @@ class Contact extends React.Component<Props, State> {
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>
           <Wrapper center horizontal>
+            <CircleButton
+              label="Send"
+              icon="send"
+              onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+            />
             {isAccepted && (
               <CircleButton
                 label="Chat"
@@ -159,11 +164,6 @@ class Contact extends React.Component<Props, State> {
                 onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
               />
             )}
-            <CircleButton
-              label="Send"
-              icon="send"
-              onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
-            />
           </Wrapper>
         </Wrapper>
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
