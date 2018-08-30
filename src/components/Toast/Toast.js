@@ -123,7 +123,7 @@ export default class Toast extends React.Component<*, State> {
 
     Animated.timing(this.state.animSlide, {
       toValue: 1,
-      duration: 400,
+      duration: 200,
       useNativeDriver: true,
     }).start(() => {
       if (!this.state.toastOptions.autoClose) return;
@@ -138,7 +138,7 @@ export default class Toast extends React.Component<*, State> {
     this.setState({ isVisible: false });
     Animated.timing(this.state.animSlide, {
       toValue: 0,
-      duration: 300,
+      duration: 200,
       useNativeDriver: true,
     }).start(() => this.setState({ toastOptions: toastInitialOptions }));
   };
@@ -146,8 +146,8 @@ export default class Toast extends React.Component<*, State> {
   render() {
     const { toastOptions } = this.state;
     const animation = this.state.animSlide.interpolate({
-      inputRange: [0, 0.3, 1],
-      outputRange: [-110, -10, 0],
+      inputRange: [0, 1],
+      outputRange: [-110, 0],
     });
     return (
       <AnimatedToastWrapper
