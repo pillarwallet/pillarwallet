@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { BaseText, BoldText } from 'components/Typography';
 import type { Assets, Balances } from 'models/Asset';
 import { CachedImage } from 'react-native-cached-image';
-import { fetchInitialAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import Header from 'components/Header';
 import { Wrapper, Container } from 'components/Layout';
 import Separator from 'components/Separator';
@@ -16,7 +16,6 @@ import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 type Props = {
-  fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
   balances: Balances,
@@ -55,14 +54,6 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
   state = {
     isRefreshing: false,
   };
-
-  componentDidMount() {
-    const { fetchInitialAssets, assets, wallet } = this.props;
-
-    if (!Object.keys(assets).length) {
-      fetchInitialAssets(wallet.address);
-    }
-  }
 
   navigateToNextScreen(ethAddress, token) {
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
@@ -107,19 +98,19 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
     return (
       <Container>
         <Header title={`send to ${contactUsername}`} centerTitle onClose={navigation.dismiss} />
-        <Wrapper regularPadding>
-          <FlatList
-            keyExtractor={item => item.symbol}
-            data={assetsArray}
-            renderItem={this.renderAsset}
-            ItemSeparatorComponent={Separator}
-            contentContainerStyle={{
-              height: '100%',
-            }}
-            refreshing={isRefreshing}
-            onRefresh={() => this.refreshAssetsList()}
-          />
-        </Wrapper>
+        <FlatList
+          keyExtractor={item => item.symbol}
+          data={assetsArray}
+          renderItem={this.renderAsset}
+          ItemSeparatorComponent={Separator}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingLeft: spacing.rhythm,
+            paddingRight: spacing.rhythm,
+          }}
+          refreshing={isRefreshing}
+          onRefresh={() => this.refreshAssetsList()}
+        />
       </Container>
     );
   }
@@ -132,9 +123,6 @@ const mapStateToProps = ({ wallet: { data: wallet }, assets: { data: assets, bal
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  fetchInitialAssets: walletAddress => {
-    dispatch(fetchInitialAssetsAction(walletAddress));
-  },
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
