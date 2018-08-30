@@ -8,7 +8,7 @@ for_lane :build_ipa do
 end
 
 for_lane :build_staging_ipa do
-  app_identifier("com.pillarproject.wallet") # The bundle identifier of your app
+  app_identifier("com.pillarproject.wallet.staging") # The bundle identifier of your app
 end
 
 # For more information about the Appfile, see:

@@ -102,11 +102,15 @@ platform :ios do
     sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
   end
 
-  desc "Upload a new staging build"
+  desc "Create an IPA pointing to staging"
   lane :build_staging_ipa do
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
-          readonly: true)
+          readonly: true,
+          git_branch: "develop",
+          app_identifier: "com.pillarproject.wallet.staging",
+          team_id: "J9DEY3FGPD"
+        )
     sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build"
     sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
     sigh(force: true)
