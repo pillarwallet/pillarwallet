@@ -1865,7 +1865,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet.staging;
 				PRODUCT_NAME = "pillarwallet-staging";
-				PROVISIONING_PROFILE = "10adb40a-cbb9-4a9f-99c5-522bf611480c";
+				PROVISIONING_PROFILE = "d8e794b2-5d40-4f32-a744-44d75cba6c19";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet.staging";
 				REACT_HEADERS_PATH = "$(BUILD_DIR)/Release-$(PLATFORM_NAME)/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
