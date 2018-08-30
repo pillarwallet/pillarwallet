@@ -371,37 +371,43 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           />
         </View>
         <View
+          borderColor="#2f86eb"
+          opacity={0}
           style={
-            Object {
-              "alignItems": "center",
-              "backgroundColor": "#fff",
-              "borderColor": "#2f86eb",
-              "borderLeftWidth": 8,
-              "borderStyle": "solid",
-              "elevation": 9,
-              "height": 110,
-              "justifyContent": "center",
-              "left": 0,
-              "opacity": 0,
-              "paddingBottom": 10,
-              "paddingTop": 20,
-              "position": "absolute",
-              "shadowColor": "#333",
-              "shadowOffset": Object {
-                "height": 2,
-                "width": 0,
-              },
-              "shadowOpacity": 0.25,
-              "shadowRadius": 10,
-              "top": 0,
-              "transform": Array [
-                Object {
-                  "translateY": -110,
+            Array [
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#ffffff",
+                "borderColor": "#2f86eb",
+                "borderLeftWidth": 10,
+                "borderStyle": "solid",
+                "elevation": 9,
+                "height": 110,
+                "justifyContent": "center",
+                "left": 0,
+                "opacity": 0,
+                "paddingBottom": 10,
+                "paddingTop": 20,
+                "position": "absolute",
+                "shadowColor": "#333",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
                 },
-              ],
-              "width": "100%",
-              "zIndex": 1000,
-            }
+                "shadowOpacity": 0.25,
+                "shadowRadius": 10,
+                "top": 0,
+                "width": "100%",
+                "zIndex": 1000,
+              },
+              Object {
+                "transform": Array [
+                  Object {
+                    "translateY": -110,
+                  },
+                ],
+              },
+            ]
           }
         >
           <View
