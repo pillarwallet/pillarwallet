@@ -40,6 +40,13 @@ const ItemLabelHolder = styled.View`
   align-items: center;
 `;
 
+const ListItem = styled.View`
+  flex: 1;
+  flex-direction: row; 
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const Badge = styled(NBBadge)`
   position: absolute;
   top: -3px;
@@ -61,7 +68,10 @@ const ItemLabel = styled(BaseText)`
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.coolGrey};
-  line-height: ${fontSizes.medium};
+  flex-wrap: wrap;
+  text-align: right;
+  flex: 1;
+  padding: 0 ${spacing.rhythm / 2}px
 `;
 
 const ButtonWrapper = ({ onPress, children }) => {
@@ -105,19 +115,12 @@ export default class ProfileSettingsItem extends React.Component<Props> {
     } = this.props;
     if (!toggle) {
       return (
-        <View style={{ flex: 1, paddingRight: 20, position: 'relative' }}>
+        <ListItem>
           <ItemLabelHolder>
             <ItemLabel>{label}</ItemLabel>
             <ItemValue>{processedValue}</ItemValue>
           </ItemLabelHolder>
-          <View style={{
-            position: 'absolute',
-            width: 12,
-            height: 16,
-            right: -2,
-            top: 2,
-          }}
-          >
+          <View>
             {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             <Icon
               name="chevron-thin-right"
@@ -128,7 +131,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
               }}
             />
           </View>
-        </View>
+        </ListItem>
       );
     }
 
