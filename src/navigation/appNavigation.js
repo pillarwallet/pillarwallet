@@ -1,6 +1,12 @@
 // @flow
 import * as React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+  StackActions,
+  NavigationActions,
+} from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
@@ -32,8 +38,6 @@ import ChatScreen from 'screens/Chat/Chat';
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 
-// actions
-import { initAppAndRedirectAction } from 'actions/appActions';
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -68,6 +72,7 @@ import {
   REVEAL_BACKUP_PHRASE,
   CHAT_LIST,
   CHAT,
+  AUTH_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -307,6 +312,7 @@ type Props = {
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
   intercomNotificationsCount: number,
+  navigation: NavigationScreenProp<*>,
   wallet: Object,
   assets: Object,
 }
@@ -355,16 +361,20 @@ class AppFlow extends React.Component<Props, {}> {
 
   handleAppStateChange = (nextAppState: string) => {
     const {
-      fetchAppSettingsAndRedirect,
       stopListeningNotifications,
       stopListeningIntercomNotifications,
+      navigation,
     } = this.props;
     BackgroundTimer.stopBackgroundTimer();
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
       BackgroundTimer.runBackgroundTimer(() => {
+        const resetAction = StackActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: AUTH_FLOW })],
+        });
+        navigation.dispatch(resetAction);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
-        fetchAppSettingsAndRedirect();
         BackgroundTimer.stopBackgroundTimer();
       }, SLEEP_TIMEOUT);
     }
@@ -414,7 +424,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
