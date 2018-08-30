@@ -93,6 +93,7 @@ platform :ios do
 
   desc "Upload a new build"
   lane :build_ipa do
+    app_identifier "com.pillarproject.wallet"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
           readonly: true)
@@ -104,6 +105,7 @@ platform :ios do
 
   desc "Upload a new staging build"
   lane :build_staging_ipa do
+    app_identifier "com.pillarproject.wallet.staging"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
           readonly: true)
