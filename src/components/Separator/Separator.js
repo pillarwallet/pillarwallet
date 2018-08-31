@@ -1,16 +1,15 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors } from 'utils/variables';
+import { UIColors, spacing } from 'utils/variables';
 
 type Props = {
-  spaceOnLeft?: number;
-}
+  spaceOnLeft?: number,
+};
 
 const SeparatorWrapper = styled.View`
-  padding-left: ${props => props.spaceOnLeft ? props.spaceOnLeft : 54}px;
-  // Below should use variable once move to 20px is applied universally
-  margin-left: 16px;
+  padding-left: ${props => (props.spaceOnLeft ? props.spaceOnLeft : 44)}px;
+  margin-left: ${spacing.rhythm / 2}px;
 `;
 
 const SeparatorLine = styled.View`

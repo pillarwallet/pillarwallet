@@ -3,6 +3,7 @@ import * as React from 'react';
 import renderer from 'react-test-renderer';
 import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
+import { fontSizes } from 'utils/variables';
 import SlideModal from '../SlideModal';
 
 describe('Slide Modal', () => {
@@ -21,7 +22,7 @@ describe('Slide Modal', () => {
     const onModalHide = jest.fn();
     const component = renderer.create(<SlideModal title="title" isVisible onModalHide={onModalHide} />);
     const instance = component.root;
-    const button = instance.findByProps({ icon: 'close' });
+    const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.small });
     button.props.onPress();
     expect(onModalHide).toHaveBeenCalled();
   });

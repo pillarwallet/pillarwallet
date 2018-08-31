@@ -10,8 +10,8 @@ import type { Transaction } from 'models/Transaction';
 import { Column, Row } from 'components/Grid';
 import { BaseText, Label } from 'components/Typography';
 import Button from 'components/Button';
-import { formatETHAmount } from '../../utils/common';
-import { getUserName } from '../../utils/contacts';
+import { formatFullAmount } from 'utils/common';
+import { getUserName } from 'utils/contacts';
 
 type Props = {
   transaction: Transaction,
@@ -70,7 +70,7 @@ const TXDetails = (props: Props) => {
     hash,
     date: dateTime,
     token: asset,
-    amount: formatETHAmount(value),
+    amount: formatFullAmount(value),
     recipient,
     sender,
     fee: gasUsed ? gasUsed * gasPrice : 0,

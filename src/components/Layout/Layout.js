@@ -10,20 +10,19 @@ type ContainerProps = {
   children?: React.Node,
   center?: boolean,
   color?: string,
-}
+};
 
 type FooterProps = {
   children?: React.Node,
   column?: boolean,
-}
+};
 
 export const Center = styled.View`
   align-items: center;
 `;
 
-
 const ContainerOuter = styled(SafeAreaView)`
-  background-color: ${props => props.color ? props.color : baseColors.white};
+  background-color: ${props => (props.color ? props.color : baseColors.white)};
 `;
 
 const ContainerInner = styled.View`
@@ -35,39 +34,29 @@ const ContainerInner = styled.View`
 export const Container = (props: ContainerProps) => {
   return (
     <ContainerOuter color={props.color} forceInset={{ top: 'always' }}>
-      <ContainerInner center={props.center}>
-        {props.children}
-      </ContainerInner>
+      <ContainerInner center={props.center}>{props.children}</ContainerInner>
     </ContainerOuter>
   );
 };
 
 export const Wrapper = styled.View`
   margin: ${props => (props.regularPadding ? '0 20px' : '0')};
-  ${({ center }) => center && `
-    align-items: center;
-    justify-content: center;
-  `}
-  ${({ fullScreen }) => fullScreen && `
-    height: 100%;
-    width: 100%;
-  `}
-  ${({ flex }) => flex && `
-    flex: ${flex};
-  `}
+  ${({ center }) => center && 'align-items: center; justify-content: center;'}
+  ${({ fullScreen }) => fullScreen && 'height: 100%; width: 100%;'}
+  ${({ flex }) => flex && `flex: ${flex};`}
+  ${({ horizontal }) => horizontal && 'flex-direction: row;'}
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
   margin: ${props => (props.regularPadding ? '0 20px' : '0')};
-  background-color: ${props => props.color ? props.color : 'transparent'};
+  background-color: ${props => (props.color ? props.color : 'transparent')};
 `;
-
 
 const FooterInner = styled.KeyboardAvoidingView`
   width: 100%;
   margin-top: auto;
   padding: ${Platform.OS === 'ios' ? 0 : `${spacing.rhythm}px`};
-  flex-direction: ${props => props.column ? 'row' : 'column'};
+  flex-direction: ${props => (props.column ? 'row' : 'column')};
 `;
 
 export const Footer = (props: FooterProps) => {
@@ -89,4 +78,3 @@ export const Footer = (props: FooterProps) => {
     </FooterInner>
   );
 };
-

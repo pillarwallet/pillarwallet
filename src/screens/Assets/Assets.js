@@ -22,7 +22,7 @@ import Header from 'components/Header';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
-import { ASSET, ADD_TOKEN, SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 type Props = {
@@ -69,7 +69,7 @@ class AssetsScreen extends React.Component<Props> {
   };
 
   goToSendTokenFlow = (asset: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FLOW, {
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, {
       asset,
     });
   };

@@ -1,5 +1,6 @@
 // @flow
 
+import debounce from 'lodash.debounce';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { processNotification } from 'utils/notifications';
@@ -88,15 +89,18 @@ export const startListeningNotificationsAction = () => {
 
     // TODO: remove it once signal payload matches the rest notifications.
     if (!signalListener) {
-      signalListener = firebase.messaging().onMessage(message => {
+      // TODO: This is a temporary solution to reduces the possibility of the wrong notification order.
+      // We're going to use websockets in the future.
+      const onMessage = message => {
         const notification = processNotification(message._data, wallet.address.toUpperCase());
         if (!notification) return;
         if (notification.type === SIGNAL) {
           dispatch(getExistingChatsAction());
-          dispatch({ type: ADD_NOTIFICATION, payload: notification });
+          // dispatch({ type: ADD_NOTIFICATION, payload: notification });
           dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         }
-      });
+      };
+      signalListener = firebase.messaging().onMessage(debounce(onMessage, 500));
     }
     if (notificationsListener) return;
     notificationsListener = firebase.notifications().onNotification(message => {
@@ -112,6 +116,7 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type !== SIGNAL) {
+        dispatch({ type: ADD_NOTIFICATION, payload: notification });
         dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       }
     });
