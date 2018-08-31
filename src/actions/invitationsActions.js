@@ -20,6 +20,89 @@ import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
 
+export const fetchInviteNotificationsAction = () => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      invitations: { data: invitations },
+      contacts: { data: contacts },
+      user: { data: user },
+      accessTokens: { data: accessTokens },
+    } = getState();
+
+    const types = [
+      TYPE_RECEIVED,
+      TYPE_ACCEPTED,
+      TYPE_CANCELLED,
+      TYPE_BLOCKED,
+      TYPE_REJECTED,
+    ];
+    const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
+    const mappedInviteNotifications = inviteNotifications
+      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
+      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
+      .sort((a, b) => b.createdAt - a.createdAt);
+
+    const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
+      const group = arr.filter(({ id: userId }) => userId === invitation.id);
+      const uniqGroup = uniqBy(group, 'id');
+      memo[invitation.id] = uniqGroup;
+      return memo;
+    }, {});
+
+    const latestEventPerId = Object.keys(groupedByUserId).map((key) => groupedByUserId[key][0]);
+    const groupedNotifications = types.reduce((memo, type) => {
+      const group = latestEventPerId.filter(({ type: invType }) => invType === type);
+      memo[type] = group;
+      return memo;
+    }, {});
+
+    // CLEANUP REQUIRED
+    const invitationsToExclude = [
+      ...contacts,
+      ...groupedNotifications.connectionCancelledEvent,
+      ...groupedNotifications.connectionAcceptedEvent,
+      ...groupedNotifications.connectionRejectedEvent,
+    ].map(({ id: userId }) => userId);
+
+    const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
+      .filter(({ id }) => !invitationsToExclude.includes(id));
+
+    // find new connections
+    const contactsIds = contacts.map(({ id: userId }) => userId);
+    const newConnections = groupedNotifications.connectionAcceptedEvent
+      .filter(({ id }) => !contactsIds.includes(id));
+
+    const updatedContacts = uniqBy(newConnections.concat(contacts), 'id')
+      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
+
+    // save new connections keys
+    let updatedAccessTokens = [...accessTokens];
+    newConnections.forEach(({ id, connectionKey }) => {
+      updatedAccessTokens = accessTokens.map(accessToken => {
+        if (accessToken.userId !== id) return accessToken;
+        return { ...accessToken, userAccessToken: connectionKey };
+      });
+    });
+    await storage.save('invitations', { invitations: updatedInvitations }, true);
+    await storage.save('contacts', { contacts: updatedContacts }, true);
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+
+    dispatch({
+      type: UPDATE_INVITATIONS,
+      payload: updatedInvitations,
+    });
+    dispatch({
+      type: UPDATE_CONTACTS,
+      payload: updatedContacts,
+    });
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
+    });
+    dispatch(getExistingChatsAction());
+  };
+};
+
 export const sendInvitationAction = (user: ApiUser) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
@@ -136,7 +219,15 @@ export const cancelInvitationAction = (invitation: Object) => {
       invitation.connectionKey,
       walletId,
     );
-    if (!cancelledInvitation) return;
+
+    if (!cancelledInvitation) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'User already accepted yours invitation' },
+      }));
+      dispatch(fetchInviteNotificationsAction());
+      return;
+    }
 
     dispatch(({
       type: ADD_NOTIFICATION,
@@ -187,89 +278,5 @@ export const rejectInvitationAction = (invitation: Object) => {
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
     });
-  };
-};
-
-
-export const fetchInviteNotificationsAction = () => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      invitations: { data: invitations },
-      contacts: { data: contacts },
-      user: { data: user },
-      accessTokens: { data: accessTokens },
-    } = getState();
-
-    const types = [
-      TYPE_RECEIVED,
-      TYPE_ACCEPTED,
-      TYPE_CANCELLED,
-      TYPE_BLOCKED,
-      TYPE_REJECTED,
-    ];
-    const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
-    const mappedInviteNotifications = inviteNotifications
-      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
-      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
-      .sort((a, b) => b.createdAt - a.createdAt);
-
-    const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
-      const group = arr.filter(({ id: userId }) => userId === invitation.id);
-      const uniqGroup = uniqBy(group, 'id');
-      memo[invitation.id] = uniqGroup;
-      return memo;
-    }, {});
-
-    const latestEventPerId = Object.keys(groupedByUserId).map((key) => groupedByUserId[key][0]);
-    const groupedNotifications = types.reduce((memo, type) => {
-      const group = latestEventPerId.filter(({ type: invType }) => invType === type);
-      memo[type] = group;
-      return memo;
-    }, {});
-
-    // CLEANUP REQUIRED
-    const invitationsToExclude = [
-      ...contacts,
-      ...groupedNotifications.connectionCancelledEvent,
-      ...groupedNotifications.connectionAcceptedEvent,
-      ...groupedNotifications.connectionRejectedEvent,
-    ].map(({ id: userId }) => userId);
-
-    const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
-      .filter(({ id }) => !invitationsToExclude.includes(id));
-
-    // find new connections
-    const contactsIds = contacts.map(({ id: userId }) => userId);
-    const newConnections = groupedNotifications.connectionAcceptedEvent
-      .filter(({ id }) => !contactsIds.includes(id));
-
-    const updatedContacts = uniqBy(newConnections.concat(contacts), 'id')
-      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
-
-    // save new connections keys
-    let updatedAccessTokens = [...accessTokens];
-    newConnections.forEach(({ id, connectionKey }) => {
-      updatedAccessTokens = accessTokens.map(accessToken => {
-        if (accessToken.userId !== id) return accessToken;
-        return { ...accessToken, userAccessToken: connectionKey };
-      });
-    });
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
-    await storage.save('contacts', { contacts: updatedContacts }, true);
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
-
-    dispatch({
-      type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
-    });
-    dispatch({
-      type: UPDATE_CONTACTS,
-      payload: updatedContacts,
-    });
-    dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
-    });
-    dispatch(getExistingChatsAction());
   };
 };
