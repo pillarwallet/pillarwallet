@@ -3,7 +3,6 @@ import * as React from 'react';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { showToast } from 'utils/toast';
 import { AppState, Animated, Easing, View, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
@@ -31,6 +30,7 @@ import ChatScreen from 'screens/Chat/Chat';
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
+import Toast from 'components/Toast';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -165,8 +165,8 @@ const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
           backgroundColor: baseColors.sunYellow,
           borderRadius: 4,
           position: 'absolute',
-          top: 0,
-          right: 0,
+          top: 4,
+          right: 4,
         }}
       />}
   </View>
@@ -352,7 +352,7 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-      showToast({ text: lastNotification.message });
+      Toast.show({ message: lastNotification.message, type: 'info', title: 'Notification' });
     }
   }
 

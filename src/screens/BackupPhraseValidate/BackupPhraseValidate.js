@@ -42,6 +42,7 @@ const WordInputWrapper = styled.View`
   margin-bottom: 5px;
   flex-direction: row;
   align-items: flex-start;
+  justify-content: center;
 `;
 
 const WordInput = styled.View`
@@ -56,14 +57,14 @@ const WordInput = styled.View`
 `;
 
 const WordInputPrefix = styled.View`
-  flex: 0 0 20px;
-  height: 42px;
+  flex: 0 0 24px;
+  height: 40px;
   justify-content: center;
   align-items: flex-start;
 `;
 
 const WordInputNumber = styled(Label)`
-  line-height: 42px;
+  line-height: 40px;
 `;
 
 const RemoveWordButtonIcon = styled(IconButton)`
