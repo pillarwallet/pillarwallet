@@ -171,6 +171,9 @@ jobs:
           paths:
             - vendor/bundle
       - run:
+          name: dump build settings to compare with local
+          command: xcodebuild -showBuildSettings -project ./pillarwallet.xcodeproj -scheme Staging -configuration Staging.Release
+      - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane build_staging_ipa
       # - run:
