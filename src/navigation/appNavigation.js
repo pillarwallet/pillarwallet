@@ -162,8 +162,8 @@ const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
           backgroundColor: baseColors.sunYellow,
           borderRadius: 4,
           position: 'absolute',
-          top: 0,
-          right: 0,
+          top: 4,
+          right: 4,
         }}
       />}
   </View>
