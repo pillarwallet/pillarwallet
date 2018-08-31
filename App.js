@@ -5,13 +5,13 @@ import Intercom from 'react-native-intercom';
 import { StatusBar, BackHandler, NetInfo } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { NavigationActions } from 'react-navigation';
-import { Root as NBRoot, Toast } from 'native-base';
-import { showToast } from 'utils/toast';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
+import Root from 'components/Root';
+import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
 
 const store = configureStore();
@@ -56,12 +56,14 @@ class App extends React.Component<Props, *> {
     const { updateSessionNetworkStatus } = this.props;
     updateSessionNetworkStatus(isOnline);
     if (!isOnline) {
-      showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 }, true);
+      Toast.show({
+        message: 'No active internet connection found!',
+        type: 'warning',
+        title: 'Connection Issue',
+        autoClose: false,
+      });
     } else {
-      // TODO: remove this ASAP once custom toast implemented
-      try {
-        Toast.hide();
-      } catch (e) {} //eslint-disable-line
+      Toast.close();
     }
   };
 
@@ -88,12 +90,12 @@ const mapDispatchToProps = (dispatch) => ({
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
-const Root = () => (
-  <NBRoot>
+const AppRoot = () => (
+  <Root>
     <Provider store={store}>
       <AppWithNavigationState />
     </Provider>
-  </NBRoot>
+  </Root>
 );
 
-export default Root;
+export default AppRoot;
