@@ -82,7 +82,7 @@ const IconHolder = styled.View`
   justify-content: center;
 `;
 
-export default class Toast extends React.Component<*, State> {
+export default class Toast extends React.Component<{}, State> {
   timeout: TimeoutID;
 
   state = {
