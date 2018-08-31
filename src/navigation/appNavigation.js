@@ -30,6 +30,7 @@ import ChatScreen from 'screens/Chat/Chat';
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 import Toast from 'components/Toast';
+
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
 import {
