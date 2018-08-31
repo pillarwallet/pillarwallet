@@ -45,11 +45,6 @@ const ContactCardInner = styled.View`
 `;
 
 const ContactCardAvatarWrapper = styled.View`
-  height: 44px;
-  width: 44px;
-  border: 2px solid ${baseColors.white};
-  background: ${baseColors.cyan};
-  border-radius: 22px;
   margin-right: 14px;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;

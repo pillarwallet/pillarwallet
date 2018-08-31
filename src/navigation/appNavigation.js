@@ -21,6 +21,7 @@ import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
+import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
@@ -62,8 +63,10 @@ import {
   TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
+  SEND_TOKEN_ASSETS,
   SEND_TOKEN_CONFIRM,
-  SEND_TOKEN_FLOW,
+  SEND_TOKEN_FROM_ASSET_FLOW,
+  SEND_TOKEN_FROM_CONTACT_FLOW,
   REVEAL_BACKUP_PHRASE,
   CHAT_LIST,
   CHAT,
@@ -265,9 +268,16 @@ const tabNavigation = createBottomTabNavigator(
   },
 );
 
-// SEND TOKEN FLOW
-const sendTokenFlow = createStackNavigator({
+// SEND TOKEN FROM ASSET FLOW
+const sendTokenFromAssetFlow = createStackNavigator({
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+}, StackNavigatorModalConfig);
+
+// SEND TOKEN FROM CONTACT FLOW
+const sendTokenFromContactFlow = createStackNavigator({
+  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
@@ -284,7 +294,8 @@ const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
-    [SEND_TOKEN_FLOW]: sendTokenFlow,
+    [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
+    [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [CHAT]: ChatScreen,

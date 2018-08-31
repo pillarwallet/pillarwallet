@@ -73,8 +73,8 @@ export const spacing = {
 };
 
 export const itemSizes = {
-  avaratCircleSmall: 40,
-  avaratCircleMedium: 50,
+  avaratCircleSmall: 44,
+  avaratCircleMedium: 54,
 };
 
 export const fontTrackings = {
