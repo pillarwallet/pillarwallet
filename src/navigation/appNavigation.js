@@ -3,8 +3,6 @@ import * as React from 'react';
 import {
   createStackNavigator,
   createBottomTabNavigator,
-  StackActions,
-  NavigationActions,
 } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
@@ -365,17 +363,12 @@ class AppFlow extends React.Component<Props, {}> {
       stopListeningIntercomNotifications,
       navigation,
     } = this.props;
-    BackgroundTimer.stopBackgroundTimer();
+    BackgroundTimer.clearTimeout(this.timer);
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      BackgroundTimer.runBackgroundTimer(() => {
-        const resetAction = StackActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: AUTH_FLOW })],
-        });
-        navigation.dispatch(resetAction);
+      this.timer = BackgroundTimer.setTimeout(() => {
+        navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
-        BackgroundTimer.stopBackgroundTimer();
       }, SLEEP_TIMEOUT);
     }
   };
