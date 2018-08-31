@@ -152,17 +152,19 @@ class Contact extends React.Component<Props, State> {
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>
           <Wrapper center horizontal>
-            <CircleButton
-              label="Send"
-              icon="send"
-              onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
-            />
             {isAccepted && (
-              <CircleButton
-                label="Chat"
-                icon="chat"
-                onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
-              />
+              <React.Fragment>
+                <CircleButton
+                  label="Send"
+                  icon="send"
+                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+                />
+                <CircleButton
+                  label="Chat"
+                  icon="chat"
+                  onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+                />
+              </React.Fragment>
             )}
           </Wrapper>
         </Wrapper>
