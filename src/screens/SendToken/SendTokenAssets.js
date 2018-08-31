@@ -23,10 +23,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
-type State = {
-  isRefreshing: boolean,
-};
-
 const TokenName = styled(BoldText)`
   font-size: ${fontSizes.small};
 `;
@@ -50,11 +46,7 @@ const TokenBalance = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
-class SendTokenAssetsScreen extends React.Component<Props, State> {
-  state = {
-    isRefreshing: false,
-  };
-
+class SendTokenAssetsScreen extends React.Component<Props, {}> {
   navigateToNextScreen(ethAddress, token) {
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
       assetData: { token },
@@ -81,16 +73,11 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
 
   refreshAssetsList = () => {
     const { assets, fetchAssetsBalances, wallet } = this.props;
-    this.setState({
-      isRefreshing: true,
-    });
     fetchAssetsBalances(assets, wallet.address);
-    setTimeout(() => this.setState({ isRefreshing: false }), 1000);
   };
 
   render() {
     const { assets, navigation } = this.props;
-    const { isRefreshing } = this.state;
     const assetsArray = Object.values(assets);
     const contact = navigation.getParam('contact', {});
     const contactUsername = contact.username;
@@ -108,7 +95,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
             paddingLeft: spacing.rhythm,
             paddingRight: spacing.rhythm,
           }}
-          refreshing={isRefreshing}
+          refreshing={false}
           onRefresh={() => this.refreshAssetsList()}
         />
       </Container>
@@ -116,7 +103,10 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet: { data: wallet }, assets: { data: assets, balances } }) => ({
+const mapStateToProps = ({
+  wallet: { data: wallet },
+  assets: { data: assets, balances },
+}) => ({
   wallet,
   assets,
   balances,
@@ -128,7 +118,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SendTokenAssetsScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAssetsScreen);

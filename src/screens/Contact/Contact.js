@@ -186,7 +186,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(Contact);
+export default connect(mapStateToProps, mapDispatchToProps)(Contact);

@@ -57,17 +57,11 @@ const ContactCardList = styled.FlatList`
 `;
 
 // make Dynamic once more tokens supported
-const ETHValidator = (address: string): Function =>
-  pipe(
-    decodeETHAddress,
-    isValidETHAddress,
-  )(address);
+const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
 const { Form } = t.form;
 
 function AddressInputTemplate(locals) {
-  const {
-    config: { onIconPress },
-  } = locals;
+  const { config: { onIconPress } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     onChange: locals.onChange,
@@ -93,12 +87,9 @@ function AddressInputTemplate(locals) {
 }
 
 const getFormStructure = () => {
-  const Address = t.refinement(
-    t.String,
-    (address): boolean => {
-      return address.length && isValidETHAddress(address);
-    },
-  );
+  const Address = t.refinement(t.String, (address): boolean => {
+    return address.length && isValidETHAddress(address);
+  });
 
   Address.getValidationErrorMessage = (address): string => {
     if (!isValidETHAddress(address)) {
@@ -143,16 +134,13 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   handleQRScannerOpen = async () => {
-    this.setState(
-      {
-        isScanning: !this.state.isScanning,
-      },
-      () => {
-        if (this.state.isScanning) {
-          Keyboard.dismiss();
-        }
-      },
-    );
+    this.setState({
+      isScanning: !this.state.isScanning,
+    }, () => {
+      if (this.state.isScanning) {
+        Keyboard.dismiss();
+      }
+    });
   };
 
   handleQRScannerClose = () => {
