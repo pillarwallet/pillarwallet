@@ -59,6 +59,11 @@ jest.setMock('ethers', {
   },
 });
 
+jest.setMock('react-native-background-timer', {
+  runBackgroundTimer: () => {},
+  stopBackgroundTimer: () => {},
+});
+
 jest.setMock('react-native-device-info', {
   getUniqueID: () => '1x1x1x1x1x1x1',
 });
