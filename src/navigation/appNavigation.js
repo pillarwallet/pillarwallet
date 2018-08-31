@@ -9,7 +9,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { showToast } from 'utils/toast';
-import { AppState, Animated, Easing, View, Platform, Image } from 'react-native';
+import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // screens
@@ -82,8 +82,19 @@ import { modalTransition } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
-const INACTIVE_APP_STATE = 'inactive';
-const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
+const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
+
+const addAppStateChangeListener = (callback) => {
+  return Platform.OS === 'ios'
+    ? AppState.addEventListener('change', callback)
+    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
+};
+
+const removeAppStateChangeListener = (callback) => {
+  return Platform.OS === 'ios'
+    ? AppState.removeEventListener('change', callback)
+    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
+};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
@@ -335,7 +346,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
-    AppState.addEventListener('change', this.handleAppStateChange);
+    addAppStateChangeListener(this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -354,7 +365,7 @@ class AppFlow extends React.Component<Props, {}> {
     const { stopListeningNotifications, stopListeningIntercomNotifications } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    removeAppStateChangeListener(this.handleAppStateChange);
   }
 
   handleAppStateChange = (nextAppState: string) => {
