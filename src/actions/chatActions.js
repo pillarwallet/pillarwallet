@@ -10,35 +10,17 @@ import {
 
 const chat = new ChatService();
 
-const addContactsToChats = (contacts, chats) => {
-  const newChatPlaceholder = {
-    content: 'Start new conversation',
-    device: 1,
-    savedTimestamp: '',
-    serverTimestamp: '',
-    username: '',
-  };
-
-  return contacts.map((contact) => {
-    const existingChat = chats.find(({ username }) => contact.username === username);
-    return {
-      lastMessage: (existingChat && existingChat.lastMessage) || newChatPlaceholder,
-      username: contact.username,
-      unread: 0,
-    };
-  });
-};
-
 export const getExistingChatsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
+    const filteredChats = chats.filter((thisChat) => { return typeof thisChat.lastMessage !== 'undefined'; });
+
     const { contacts: { data: contacts } } = getState();
     if (!contacts.length) return;
 
-    const chatsWithContacts = addContactsToChats(contacts, chats);
     const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
 
-    const augmentedChats = chatsWithContacts.map(item => {
+    const augmentedChats = filteredChats.map(item => {
       const unread = unreadCount[item.username] || 0;
       return { ...item, unread };
     });
@@ -53,14 +35,14 @@ export const getExistingChatsAction = () => {
 export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function, getState: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
+    const filteredChats = chats.filter((thisChat) => { return typeof thisChat.lastMessage !== 'undefined'; });
 
     const { contacts: { data: contacts } } = getState();
     if (!contacts.length) return;
 
-    const chatsWithContacts = addContactsToChats(contacts, chats);
     const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
 
-    const augmentedChats = chatsWithContacts.map(item => {
+    const augmentedChats = filteredChats.map(item => {
       const unread = item.username === contactUsername ? 0 : (unreadCount[item.username] || 0);
       return { ...item, unread };
     });

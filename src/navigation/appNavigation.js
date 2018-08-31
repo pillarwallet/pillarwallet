@@ -25,6 +25,7 @@ import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
+import NewChatListScreen from 'screens/Chat/NewChatList';
 import ChatScreen from 'screens/Chat/Chat';
 
 // components
@@ -66,6 +67,7 @@ import {
   SEND_TOKEN_FLOW,
   REVEAL_BACKUP_PHRASE,
   CHAT_LIST,
+  NEW_CHAT,
   CHAT,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
@@ -122,6 +124,7 @@ const StackNavigatorConfig = {
 // CHAT FLOW
 const chatFlow = createStackNavigator({
   [CHAT_LIST]: ChatListScreen,
+  [NEW_CHAT]: NewChatListScreen,
 }, StackNavigatorConfig);
 
 // ASSETS FLOW
