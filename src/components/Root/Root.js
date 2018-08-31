@@ -13,7 +13,7 @@ const Root = (props: Props) => (
     {props.children}
     <Toast
       ref={c => {
-        if (c && Toast.toastInstances.indexOf(c) < 0) Toast.toastInstances.push(c);
+        if (c && !Toast.toastInstances.includes(c)) Toast.toastInstances.push(c);
       }}
     />
     <ActionSheet
