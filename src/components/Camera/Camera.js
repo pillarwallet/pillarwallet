@@ -44,7 +44,6 @@ const HeaderWrapperCamera = styled.SafeAreaView`
   left: 0;
 `;
 
-
 const PhotoBoundaries = styled.View`
   height: ${Dimensions.get('window').width - 40};
   width: ${Dimensions.get('window').width - 40};
