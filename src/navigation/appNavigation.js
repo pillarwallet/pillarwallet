@@ -1,9 +1,14 @@
 // @flow
 import * as React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+} from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
+import BackgroundTimer from 'react-native-background-timer';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, View, Platform, Image } from 'react-native';
+import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // screens
@@ -32,8 +37,6 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 import Toast from 'components/Toast';
 
-// actions
-import { initAppAndRedirectAction } from 'actions/appActions';
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -70,6 +73,7 @@ import {
   REVEAL_BACKUP_PHRASE,
   CHAT_LIST,
   CHAT,
+  AUTH_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -81,8 +85,19 @@ import { modalTransition } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
-const INACTIVE_APP_STATE = 'inactive';
-const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
+const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
+
+const addAppStateChangeListener = (callback) => {
+  return Platform.OS === 'ios'
+    ? AppState.addEventListener('change', callback)
+    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
+};
+
+const removeAppStateChangeListener = (callback) => {
+  return Platform.OS === 'ios'
+    ? AppState.removeEventListener('change', callback)
+    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
+};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
@@ -317,6 +332,7 @@ type Props = {
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
   intercomNotificationsCount: number,
+  navigation: NavigationScreenProp<*>,
   wallet: Object,
   assets: Object,
 }
@@ -341,7 +357,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
-    AppState.addEventListener('change', this.handleAppStateChange);
+    addAppStateChangeListener(this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -360,21 +376,21 @@ class AppFlow extends React.Component<Props, {}> {
     const { stopListeningNotifications, stopListeningIntercomNotifications } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    removeAppStateChangeListener(this.handleAppStateChange);
   }
 
   handleAppStateChange = (nextAppState: string) => {
     const {
-      fetchAppSettingsAndRedirect,
       stopListeningNotifications,
       stopListeningIntercomNotifications,
+      navigation,
     } = this.props;
-    clearTimeout(this.timer);
+    BackgroundTimer.clearTimeout(this.timer);
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = setTimeout(() => {
+      this.timer = BackgroundTimer.setTimeout(() => {
+        navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
-        fetchAppSettingsAndRedirect();
       }, SLEEP_TIMEOUT);
     }
   };
@@ -423,7 +439,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
