@@ -52,32 +52,43 @@ function InputTemplate(locals) {
 
 const { Form } = t.form;
 
+const maxLength = 100;
+const halfMaxLength = maxLength / 2;
+
 const FirstNameStruct = t.refinement(t.String, (firstName: string): boolean => {
-  return !!firstName.length && isValidName(firstName);
+  return !!firstName.length && isValidName(firstName) && firstName.length <= halfMaxLength;
 });
 
 const LastNameStruct = t.refinement(t.String, (lastName: string): boolean => {
-  return !!lastName.length && isValidName(lastName);
+  return !!lastName.length && isValidName(lastName) && lastName.length <= halfMaxLength;
 });
 
 const EmailStruct = t.refinement(t.String, (email: string): boolean => {
-  return !!email.length && isValidEmail(email);
+  return !!email.length && isValidEmail(email) && email.length <= maxLength;
 });
 
 const CityStruct = t.refinement(t.String, (city: string): boolean => {
-  return !!city.length && isValidCityName(city);
+  return !!city.length && isValidCityName(city) && city.length <= maxLength;
 });
 
 FirstNameStruct.getValidationErrorMessage = (firstName): string => {
-  if (!isValidName(firstName)) {
-    return 'Please enter a valid first name';
+  if (firstName) {
+    if (!isValidName(firstName)) {
+      return 'Please enter a valid first name';
+    } else if (firstName.length > halfMaxLength) {
+      return `First name should not be longer than ${halfMaxLength} symbols`;
+    }
   }
   return 'Please specify your first name';
 };
 
 LastNameStruct.getValidationErrorMessage = (lastName): string => {
-  if (!isValidName(lastName)) {
-    return 'Please enter a valid last name';
+  if (lastName) {
+    if (!isValidName(lastName)) {
+      return 'Please enter a valid last name';
+    } else if (lastName.length > halfMaxLength) {
+      return `Last name should not be longer than ${halfMaxLength} symbols`;
+    }
   }
   return 'Please specify your last name';
 };
@@ -85,6 +96,8 @@ LastNameStruct.getValidationErrorMessage = (lastName): string => {
 EmailStruct.getValidationErrorMessage = (email): string => {
   if (!!email && !isValidEmail(email)) {
     return 'Please enter a valid email';
+  } else if (email.length > maxLength) {
+    return `Email should not be longer than ${maxLength} symbols`;
   }
   return 'Please specify your email';
 };
@@ -92,6 +105,8 @@ EmailStruct.getValidationErrorMessage = (email): string => {
 CityStruct.getValidationErrorMessage = (city): string => {
   if (!!city && !isValidCityName(city)) {
     return 'Please enter a valid city';
+  } else if (city.length > maxLength) {
+    return `City should not be longer than ${maxLength} symbols`;
   }
   return 'Please specify your city';
 };

@@ -63,7 +63,12 @@ export const sendAssetAction = ({
     });
     dispatch({
       type: ADD_TRANSACTION,
-      payload: buildHistoryTransaction({ ...ERC20Trx, asset: symbol }),
+      payload: buildHistoryTransaction({
+        ...ERC20Trx,
+        asset: symbol,
+        value: amount * (10 ** decimals),
+        to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+      }),
     });
   };
 };
