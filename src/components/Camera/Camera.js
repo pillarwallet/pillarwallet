@@ -36,6 +36,15 @@ const HeaderWrapper = styled.SafeAreaView`
   width: 100%;
 `;
 
+const HeaderWrapperCamera = styled.SafeAreaView`
+  margin-bottom: auto;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
+
 const PhotoBoundaries = styled.View`
   height: ${Dimensions.get('window').width - 40};
   width: ${Dimensions.get('window').width - 40};
@@ -193,11 +202,10 @@ class Camera extends React.Component<Props, State> {
         }}
         type="front"
         ratio="16:9"
-      >
-        <HeaderWrapper>
-          <Header light flexStart onClose={modalHide} />
-        </HeaderWrapper>
-      </RNCamera>
+      />
+      <HeaderWrapperCamera>
+        <Header light flexStart onClose={modalHide} />
+      </HeaderWrapperCamera>
       <PhotoBoundariesWrapper pointerEvents="none">
         <PhotoBoundaries color={baseColors.white} />
       </PhotoBoundariesWrapper>
