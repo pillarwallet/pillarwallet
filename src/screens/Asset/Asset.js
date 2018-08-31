@@ -278,9 +278,7 @@ const mapStateToProps = ({
   assets: { data: assets, balances },
   rates: { data: rates },
   history: { data: history, historyNotifications },
-  appSettings: {
-    data: { baseFiatCurrency },
-  },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
   contacts,
@@ -301,7 +299,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AssetScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(AssetScreen);
