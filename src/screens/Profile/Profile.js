@@ -420,7 +420,7 @@ class Profile extends React.Component<Props, State> {
             )}
 
             <ListSeparator>
-              <SubHeading>SYSTEM INFO</SubHeading>
+              <SubHeading>SYSTEM</SubHeading>
             </ListSeparator>
 
             <ProfileSettingsItem
