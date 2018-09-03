@@ -4,6 +4,7 @@ import renderer from 'react-test-renderer';
 import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
 import { fontSizes } from 'utils/variables';
+import { delay } from 'utils/common';
 import SlideModal from '../SlideModal';
 
 describe('Slide Modal', () => {
@@ -18,12 +19,13 @@ describe('Slide Modal', () => {
     expect(wrapper.find(ChildContent)).toHaveLength(1);
   });
 
-  it('should close modal on dismiss', () => {
+  it('should close modal on dismiss', async () => {
     const onModalHide = jest.fn();
     const component = renderer.create(<SlideModal title="title" isVisible onModalHide={onModalHide} />);
     const instance = component.root;
     const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.small });
     button.props.onPress();
+    await delay(400);
     expect(onModalHide).toHaveBeenCalled();
   });
 });

@@ -10,7 +10,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
   onSwipe={[Function]}
   scrollOffset={0}
   scrollOffsetMax={0}
-  scrollTo={null}
+  scrollTo={[Function]}
   supportedOrientations={
     Array [
       "portrait",
@@ -63,7 +63,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
     pointerEvents="box-none"
     scrollOffset={0}
     scrollOffsetMax={0}
-    scrollTo={null}
+    scrollTo={[Function]}
     style={
       Object {
         "flex": 1,
@@ -376,15 +376,16 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           style={
             Array [
               Object {
-                "alignItems": "center",
+                "alignItems": "flex-end",
                 "backgroundColor": "#ffffff",
                 "borderColor": "#2f86eb",
                 "borderLeftWidth": 10,
                 "borderStyle": "solid",
                 "elevation": 9,
-                "height": 110,
-                "justifyContent": "center",
+                "height": 320,
+                "justifyContent": "flex-end",
                 "left": 0,
+                "marginTop": -220,
                 "opacity": 0,
                 "paddingBottom": 10,
                 "paddingTop": 20,
@@ -403,7 +404,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               Object {
                 "transform": Array [
                   Object {
-                    "translateY": -110,
+                    "translateY": -260,
                   },
                 ],
               },

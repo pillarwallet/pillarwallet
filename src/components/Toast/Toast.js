@@ -48,7 +48,8 @@ const ToastHolder = styled.View`
 
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
-  height: 110px;
+  height: 320px;
+  margin-top: -220px;
   background-color: ${baseColors.white};
   position: absolute;
   left: 0;
@@ -65,8 +66,8 @@ const ToastWrapper = styled.View`
   shadow-radius: 10;
   elevation: 9;
   z-index: 1000;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-end;
+  align-items: flex-end;
 `;
 
 const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
@@ -105,6 +106,11 @@ export default class Toast extends React.Component<{}, State> {
     if (toast) {
       toast.handleClose();
     }
+  }
+
+  static isVisible() {
+    const toast = this.toastInstances[this.toastInstances.length - 1];
+    return toast ? toast.state.isVisible : false;
   }
 
   componentWillUnmount() {
@@ -147,7 +153,7 @@ export default class Toast extends React.Component<{}, State> {
     const { toastOptions } = this.state;
     const animation = this.state.animSlide.interpolate({
       inputRange: [0, 1],
-      outputRange: [-110, 0],
+      outputRange: [-260, 0],
     });
     return (
       <AnimatedToastWrapper
