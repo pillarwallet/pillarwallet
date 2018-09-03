@@ -10,6 +10,25 @@ import {
 
 const chat = new ChatService();
 
+const addNewChatToChats = (unreadCount, chats) => {
+  return Object.keys(unreadCount).map((key) => {
+    if (!chats.find(({ username }) => key === username)) {
+      return {
+        lastMessage: {
+          content: '',
+          username: key,
+          device: 1,
+          serverTimestamp: 0,
+          savedTimestamp: 0,
+        },
+        username: key,
+        unread: unreadCount[key],
+      };
+    }
+    return {};
+  });
+};
+
 export const getExistingChatsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
@@ -19,15 +38,17 @@ export const getExistingChatsAction = () => {
     if (!contacts.length) return;
 
     const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
-
+    const newChats = addNewChatToChats(unreadCount, chats);
     const augmentedChats = filteredChats.map(item => {
       const unread = unreadCount[item.username] || 0;
       return { ...item, unread };
     });
 
+    const augmentedChatsWithNewChats = augmentedChats.concat(newChats.filter(value => Object.keys(value).length !== 0));
+
     dispatch({
       type: UPDATE_CHATS,
-      payload: augmentedChats,
+      payload: augmentedChatsWithNewChats,
     });
   };
 };
@@ -41,15 +62,17 @@ export const resetUnreadAction = (contactUsername: string) => {
     if (!contacts.length) return;
 
     const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
+    const newChats = addNewChatToChats(unreadCount, chats);
 
     const augmentedChats = filteredChats.map(item => {
       const unread = item.username === contactUsername ? 0 : (unreadCount[item.username] || 0);
       return { ...item, unread };
     });
+    const augmentedChatsWithNewChats = augmentedChats.concat(newChats.filter(value => Object.keys(value).length !== 0));
 
     dispatch({
       type: RESET_UNREAD_MESSAGE,
-      payload: augmentedChats,
+      payload: augmentedChatsWithNewChats,
     });
   };
 };
