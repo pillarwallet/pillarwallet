@@ -952,6 +952,7 @@
 				60702656908C4144E1C18049 /* [CP] Copy Pods Resources */,
 				162E1796211325E60028BE96 /* Embed Frameworks */,
 				164D049C212D7418008344CE /* Setup Fabric */,
+				33DD1BC5398B1B80B72E6CB6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1542,6 +1543,21 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\"";
 		};
+		33DD1BC5398B1B80B72E6CB6 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		60702656908C4144E1C18049 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1869,7 +1885,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.pillarproject.wallet.staging;
 				PRODUCT_NAME = "pillarwallet-staging";
-				PROVISIONING_PROFILE = "d8e794b2-5d40-4f32-a744-44d75cba6c19";
+				PROVISIONING_PROFILE = "8b6ef947-6273-47da-b76c-cb859a44ec70";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.pillarproject.wallet.staging";
 				REACT_HEADERS_PATH = "$(BUILD_DIR)/Release-$(PLATFORM_NAME)/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
