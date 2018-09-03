@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import { RefreshControl, Platform, View } from 'react-native';
+import { Animated, RefreshControl, Platform, View } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
@@ -53,7 +53,10 @@ type Props = {
 type State = {
   showCamera: boolean,
   permissionsGranted: boolean,
+  scrollY: Animated.Value,
 };
+
+const AnimatedScrollWrapper = Animated.createAnimatedComponent(ScrollWrapper);
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
@@ -154,6 +157,7 @@ class HomeScreen extends React.Component<Props, State> {
   state = {
     showCamera: false,
     permissionsGranted: false,
+    scrollY: new Animated.Value(0),
   };
 
   componentDidMount() {
@@ -238,14 +242,78 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       showCamera,
       permissionsGranted,
+      scrollY,
     } = this.state;
+
+    console.log(scrollY);
 
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
       <Container>
-        <ScrollWrapper
+        <HomeHeader>
+          <HomeHeaderRow>
+            <HomeHeaderLeft>
+              <HomeHeaderButton
+                icon="help"
+                color={baseColors.darkGray}
+                fontSize={24}
+                onPress={() => Intercom.displayMessenger()}
+              />
+              {hasIntercomNotifications && <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  backgroundColor: baseColors.sunYellow,
+                  borderRadius: 4,
+                  position: 'absolute',
+                  top: 6,
+                  right: 8,
+                }}
+              />}
+            </HomeHeaderLeft>
+
+            <HomeHeaderBody>
+              <HomeHeaderProfileImage
+                uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+                userName={user.username}
+                diameter={72}
+                onPress={this.toggleCamera}
+              >
+                <CameraIcon name="camera" />
+              </HomeHeaderProfileImage>
+            </HomeHeaderBody>
+
+            <HomeHeaderRight>
+              <HomeHeaderButton
+                flexEnd
+                icon="settings"
+                color={baseColors.darkGray}
+                fontSize={24}
+                onPress={() => this.goToProfile()}
+              />
+            </HomeHeaderRight>
+          </HomeHeaderRow>
+          <HomeHeaderRow>
+            <HomeHeaderBody>
+              <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
+              <HomeHeaderPortfolioBalance />
+            </HomeHeaderBody>
+          </HomeHeaderRow>
+        </HomeHeader>
+        <Animated.ScrollView
           stickyHeaderIndices={stickyHeaderIndices}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: { y: scrollY },
+                },
+              },
+            ],
+            { useNativeDriver: true },
+          )}
+          scrollEventThrottle={1}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -253,57 +321,6 @@ class HomeScreen extends React.Component<Props, State> {
             />
           }
         >
-          <HomeHeader>
-            <HomeHeaderRow>
-              <HomeHeaderLeft>
-                <HomeHeaderButton
-                  icon="help"
-                  color={baseColors.darkGray}
-                  fontSize={24}
-                  onPress={() => Intercom.displayMessenger()}
-                />
-                {hasIntercomNotifications && <View
-                  style={{
-                    width: 8,
-                    height: 8,
-                    backgroundColor: baseColors.sunYellow,
-                    borderRadius: 4,
-                    position: 'absolute',
-                    top: 6,
-                    right: 8,
-                  }}
-                />}
-              </HomeHeaderLeft>
-
-              <HomeHeaderBody>
-                <HomeHeaderProfileImage
-                  uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-                  userName={user.username}
-                  diameter={72}
-                  onPress={this.toggleCamera}
-                >
-                  <CameraIcon name="camera" />
-                </HomeHeaderProfileImage>
-              </HomeHeaderBody>
-
-              <HomeHeaderRight>
-                <HomeHeaderButton
-                  flexEnd
-                  icon="settings"
-                  color={baseColors.darkGray}
-                  fontSize={24}
-                  onPress={() => this.goToProfile()}
-                />
-              </HomeHeaderRight>
-            </HomeHeaderRow>
-            <HomeHeaderRow>
-              <HomeHeaderBody>
-                <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
-                <HomeHeaderPortfolioBalance />
-              </HomeHeaderBody>
-            </HomeHeaderRow>
-          </HomeHeader>
-
           <RecentConnectionsWrapper>
             <RecentConnections>
               <RecentConnectionsSubtitle subtitle title="recent connections." />
@@ -323,7 +340,7 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={ALL}
             sortable
           />
-        </ScrollWrapper>
+        </Animated.ScrollView>
         <Camera
           isVisible={showCamera}
           modalHide={this.toggleCamera}
