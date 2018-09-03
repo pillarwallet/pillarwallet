@@ -43,12 +43,12 @@ const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: bo
     }
 
     amount = parseNumber(amount.toString());
-    if (amount >= maxAmount) {
+    if (!enoughForFee) {
+      return 'Not enough ETH to process the transaction fee';
+    } else if (amount >= maxAmount) {
       return 'Amount should not exceed the sum of total balance and est. network fee';
     } else if (amount < minAmount) {
       return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
-    } else if (!enoughForFee) {
-      return 'Not enough ETH to process the transaction fee';
     }
     return 'Amount should be specified.';
   };
@@ -237,7 +237,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       value: {
         amount: formatAmount(maxAmount),
       },
-    });
+    }, () => { this._form.getValue(); }); // trigger form validation
   };
 
   calculateMaxAmount(token: string, balance: string, txFeeInWei: ?Object): number {
