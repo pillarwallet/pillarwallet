@@ -29,6 +29,7 @@ const IconButton = (props: Props) => {
     style,
     margin,
     type,
+    iconStyle = {},
   } = props;
   const iconParams = {
     active: false,
@@ -41,6 +42,7 @@ const IconButton = (props: Props) => {
       marginRight: margin,
       marginTop: margin,
       marginBottom: margin,
+      ...iconStyle,
     },
     type,
   };

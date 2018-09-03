@@ -9,7 +9,7 @@ import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
-import { showToast } from 'utils/toast';
+import Toast from 'components/Toast';
 
 const { height } = Dimensions.get('window');
 
@@ -49,7 +49,7 @@ export default class ReceiveModal extends React.Component<Props, *> {
       address,
     } = this.props;
     Clipboard.setString(address);
-    showToast({ text: 'Address copied to clipboard', type: 'info', position: 'bottom' });
+    Toast.show({ message: 'Address copied to clipboard', type: 'success', title: 'Success' });
   };
 
   handleAddressShare = () => {
@@ -67,7 +67,6 @@ export default class ReceiveModal extends React.Component<Props, *> {
       address,
       onModalHide,
     } = this.props;
-
     return (
       <SlideModal
         title="receive"
@@ -84,8 +83,6 @@ export default class ReceiveModal extends React.Component<Props, *> {
 
             <WalletAddress>{address}</WalletAddress>
           </QRCodeWrapper>
-
-
         </ContentWrapper>
         <Footer>
           <Button

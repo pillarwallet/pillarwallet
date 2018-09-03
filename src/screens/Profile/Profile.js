@@ -7,7 +7,6 @@ import ChatService from 'services/chat';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { showToast } from 'utils/toast';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
@@ -22,6 +21,7 @@ import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
+import Toast from 'components/Toast';
 
 import countries from 'utils/countries.json';
 import ProfileSettingsItem from './ProfileSettingsItem';
@@ -130,7 +130,7 @@ class Profile extends React.Component<Props, State> {
   clearLocalStorage() {
     storage.removeAll();
     chat.client.resetAccount().catch(() => null);
-    showToast({ text: 'Cleared' }, true);
+    Toast.show({ title: 'Success', type: 'success', message: 'Local storage was cleared' });
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
