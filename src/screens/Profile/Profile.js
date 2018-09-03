@@ -18,7 +18,7 @@ import Header from 'components/Header';
 import { SubHeading, BaseText } from 'components/Typography';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { resetIncorrectPasswordAction, lockScreenAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
@@ -96,6 +96,7 @@ type Props = {
   changeRequestPinForTransaction: (value: boolean) => Function,
   updateUser: (walletId: string, field: Object) => Function,
   resetIncorrectPassword: () => Function,
+  lockScreen: () => Function,
 }
 
 type State = {
@@ -197,6 +198,7 @@ class Profile extends React.Component<Props, State> {
       intercomNotificationsCount,
       baseFiatCurrency,
       navigation,
+      lockScreen,
     } = this.props;
 
     const {
@@ -426,6 +428,11 @@ class Profile extends React.Component<Props, State> {
               label="System Info"
               onPress={() => this.setState({ showSystemInfoModal: true })}
             />
+            <ProfileSettingsItem
+              key="lockScreen"
+              label="Lock Screen"
+              onPress={lockScreen}
+            />
 
             <SlideModal
               isVisible={showSystemInfoModal}
@@ -464,6 +471,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
+  lockScreen: () => dispatch(lockScreenAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
