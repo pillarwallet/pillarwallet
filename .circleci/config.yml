@@ -172,7 +172,9 @@ jobs:
             - vendor/bundle
       - run:
           name: dump environment into a file to archive
-          command: cd ios && xcodebuild -showBuildSettings -project ./pillarwallet.xcodeproj -scheme Staging -configuration Staging.Release >> ../reports/buildSettings.txt
+          command: |
+            mkdir -p ./reports
+            cd ios && xcodebuild -showBuildSettings -project ./pillarwallet.xcodeproj -scheme Staging -configuration Staging.Release >> ../reports/buildSettings.txt
       - store_artifacts:
           path: ./reports
           destination: reports
