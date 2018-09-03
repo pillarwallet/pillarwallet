@@ -1,5 +1,6 @@
 // @flow
 import ChatService from 'services/chat';
+import Toast from 'components/Toast';
 import {
   UPDATE_CHATS,
   ADD_MESSAGE,
@@ -74,7 +75,18 @@ export const resetUnreadAction = (contactUsername: string) => {
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
-    await chat.client.sendMessageByContact(username, message.text).catch(() => null);
+    try {
+      await chat.client.sendMessageByContact(username, message.text);
+    } catch (e) {
+      Toast.show({
+        message: 'There is a problem with the server or there is no active internet connection found!',
+        type: 'warning',
+        title: 'Cannot send the message',
+        autoClose: false,
+      });
+      return;
+    }
+
     const timestamp = new Date(message.createdAt).getTime();
     const msg = {
       _id: timestamp,
