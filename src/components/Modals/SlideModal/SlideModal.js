@@ -4,6 +4,7 @@ import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import Header from 'components/Header';
 import Root from 'components/Root';
+import Toast from 'components/Toast';
 import { Container } from 'components/Layout';
 import { spacing, baseColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
@@ -74,8 +75,21 @@ export default class SlideModal extends React.Component<Props, *> {
 
   hideModal = () => {
     Keyboard.dismiss();
-    if (this.props.onModalHide) {
-      this.props.onModalHide();
+    const TIMEOUT = Toast.isVisible() ? 150 : 0;
+    if (Toast.isVisible()) {
+      Toast.close();
+    }
+    const timer = setTimeout(() => {
+      if (this.props.onModalHide) {
+        this.props.onModalHide();
+      }
+      clearTimeout(timer);
+    }, TIMEOUT);
+  }
+
+  handleScroll = () => {
+    if (Toast.isVisible()) {
+      Toast.close();
     }
   }
 
@@ -135,6 +149,7 @@ export default class SlideModal extends React.Component<Props, *> {
     return (
       <Modal
         isVisible={isVisible}
+        scrollTo={this.handleScroll}
         onSwipe={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
