@@ -171,6 +171,12 @@ jobs:
           paths:
             - vendor/bundle
       - run:
+          name: dump environment into a file to archive
+          command: cd ios && xcodebuild -showBuildSettings -project ./pillarwallet.xcodeproj -scheme Staging -configuration Staging.Release >> ../reports/buildSettings.txt
+      - store_artifacts:
+          path: ./reports
+          destination: reports
+      - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane build_staging_ipa
       # - run:
