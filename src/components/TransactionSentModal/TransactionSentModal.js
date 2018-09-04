@@ -1,32 +1,57 @@
 // @flow
 import * as React from 'react';
+import Modal from 'react-native-modal';
+import { Container, Wrapper, Footer } from 'components/Layout';
+import ShareSocial from 'components/ShareSocial';
 import { Paragraph } from 'components/Typography';
-import { Center } from 'components/Layout';
 import Title from 'components/Title';
-import PopModal from 'components/Modals/PopModal';
+import Button from 'components/Button';
 import TransactionSentAnimation from './TransactionSentAnimation';
 
 type Props = {
+  onModalHide?: Function,
   isVisible: boolean,
-  onModalHide: Function,
+  modalHide: Function,
 };
 
 const TransactionSentModal = (props: Props) => {
-  const { isVisible, onModalHide } = props;
+  const {
+    isVisible,
+    modalHide,
+    onModalHide,
+  } = props;
+
+  const animationInTiming = 300;
+  const animationOutTiming = 300;
 
   return (
-    <PopModal
+    <Modal
       isVisible={isVisible}
+      animationInTiming={animationInTiming}
+      animationOutTiming={animationOutTiming}
+      animationIn="fadeIn"
+      animationOut="fadeOut"
+      onBackButtonPress={modalHide}
       onModalHide={onModalHide}
+      style={{
+        margin: 0,
+        justifyContent: 'flex-start',
+      }}
     >
-      <Center>
-        <TransactionSentAnimation />
-        <Title title="transaction sent" align="center" />
-      </Center>
-      <Paragraph light center style={{ marginBottom: 30 }}>
-        We will let you know once it has been confirmed.
-      </Paragraph>
-    </PopModal>
+      <Container>
+        <Wrapper flex={1} center regularPadding>
+          <TransactionSentAnimation />
+          <Title title="Money is on its way" align="center" noBlueDot />
+          <Paragraph light center style={{ marginBottom: 30 }}>
+            It will be settled in a few moments, depending on your gas price settings and Ethereum network load
+          </Paragraph>
+          <Button marginBottom="20px" onPress={modalHide} title="Magic!" />
+        </Wrapper>
+        <Footer>
+          <ShareSocial label="Share the love" facebook instagram twitter />
+        </Footer>
+      </Container>
+    </Modal>
   );
 };
 

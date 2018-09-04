@@ -100,6 +100,15 @@ class SendTokenContacts extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
+  closePendingModal = () => {
+    const { navigation } = this.props;
+    navigation.dismiss();
+
+    this.setState({
+      showTransactionPendingModal: false,
+    });
+  }
+
   handlePendingNotificationOpen = () => {
     const { isSubmitted } = this.state;
     if (!isSubmitted) {
@@ -180,7 +189,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
         </KeyboardAvoidingView>
-        <TransactionSentModal isVisible={showTransactionPendingModal} onModalHide={this.handleModalDismissal} />
+        <TransactionSentModal isVisible={showTransactionPendingModal} modalHide={this.closePendingModal} />
         <SlideModal
           isVisible={showCheckPinModal}
           onModalHidden={this.handlePendingNotificationOpen}
