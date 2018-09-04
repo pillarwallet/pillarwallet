@@ -190,7 +190,7 @@ jobs:
           name: prepare to archive ipa file
           command: |
             mkdir -p ./toArchive
-            cp ./ios/pillarwallet.ipa ./toArchive
+            cp ./ios/pillarwallet-staging.ipa ./toArchive
       - store_artifacts:
           path: ./toArchive
           destination: app_build
