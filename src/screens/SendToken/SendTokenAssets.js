@@ -55,11 +55,13 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
   }
 
   renderAsset = ({ item }) => {
-    const { balances, wallet } = this.props;
+    const { balances, navigation } = this.props;
+    const contact = navigation.getParam('contact', {});
+    const contactAddress = contact.ethAddress;
     const assetBalance = balances[item.symbol].balance;
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     return (
-      <TouchableOpacity onPress={() => this.navigateToNextScreen(wallet.address, item.symbol)}>
+      <TouchableOpacity onPress={() => this.navigateToNextScreen(contactAddress, item.symbol)}>
         <TokenListItem>
           <TokenThumbnail source={{ uri: fullIconUrl }} />
           <TokenName>{item.name}</TokenName>
@@ -81,7 +83,6 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     const assetsArray = Object.values(assets);
     const contact = navigation.getParam('contact', {});
     const contactUsername = contact.username;
-
     return (
       <Container>
         <Header title={`send to ${contactUsername}`} centerTitle onClose={navigation.dismiss} />
