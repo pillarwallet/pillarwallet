@@ -2,12 +2,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
+import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
@@ -56,7 +57,8 @@ type State = {
   scrollY: Animated.Value,
 };
 
-const AnimatedScrollWrapper = Animated.createAnimatedComponent(ScrollWrapper);
+
+const profileImageWidth = 72;
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
@@ -84,12 +86,19 @@ const HomeHeaderBody = styled.View`
   align-items: center;
 `;
 
-const HomeHeaderUsername = styled(BaseText)`
-  font-size: ${fontSizes.mediumLarge};
-  margin-bottom: 5px;
-  margin-top: 40px;
+const HomeHeaderProfileImage = styled(ProfileImage)`
 `;
 
+const HomeHeaderImageUsername = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: -20px;
+`;
+
+const HomeHeaderUsername = styled(BaseText)`
+  font-size: ${fontSizes.mediumLarge};
+`;
 const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
 const HomeHeaderButton = styled(IconButton)`
@@ -100,15 +109,13 @@ const HomeHeaderButton = styled(IconButton)`
   height: 44px;
 `;
 
-const HomeHeaderProfileImage = styled(ProfileImage)`
-  margin-bottom: 20px;
-`;
 
 const AnimatedHomeHeaderProfileImage = Animated.createAnimatedComponent(HomeHeaderProfileImage);
 
 const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
   margin-bottom: 10px;
 `;
+const AnimatedHomeHeaderPortfolioBalance = Animated.createAnimatedComponent(HomeHeaderPortfolioBalance);
 
 const RecentConnections = styled.View`
   min-height: 160px;
@@ -252,105 +259,52 @@ class HomeScreen extends React.Component<Props, State> {
       scrollY,
     } = this.state;
 
-    const profileImagePosition = scrollY.interpolate({
+    const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, -90],
+      outputRange: [-profileImageWidth / 2, -20],
+      extrapolate: 'clamp',
+    });
+
+    const profileUsernameTranslateY = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, -60],
+      extrapolate: 'clamp',
+    });
+
+    const profileImagePositionX = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [(profileImageWidth / 2) + 10, -10],
+      extrapolate: 'clamp',
+    });
+
+    const profileImagePositionY = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [-60, -60],
       extrapolate: 'clamp',
     });
 
     const profileImageScale = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [1, 0.6],
+      outputRange: [1, 0.5],
       extrapolate: 'clamp',
     });
 
-    const profileUsernamePosition = scrollY.interpolate({
+    const profileBalanceScale = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, -36],
+      outputRange: [1, 0],
       extrapolate: 'clamp',
     });
 
-
-
-    const homeHeaderHeight = scrollY.interpolate({
+    const profileBalanceOpacity = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [200, 50],
+      outputRange: [1, 0],
       extrapolate: 'clamp',
     });
 
-    console.log(scrollY);
-
-    const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
+    const stickyHeaderIndices = Platform.OS === 'android' ? null : [0];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
       <Container>
-        <AnimatedHomeHeader
-        >
-          <HomeHeaderRow>
-            <HomeHeaderLeft>
-              <HomeHeaderButton
-                icon="help"
-                color={baseColors.darkGray}
-                fontSize={24}
-                onPress={() => Intercom.displayMessenger()}
-              />
-              {hasIntercomNotifications && <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: baseColors.sunYellow,
-                  borderRadius: 4,
-                  position: 'absolute',
-                  top: 6,
-                  right: 8,
-                }}
-              />}
-            </HomeHeaderLeft>
-
-            <HomeHeaderBody>
-              <AnimatedHomeHeaderProfileImage
-                uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-                userName={user.username}
-                diameter={72}
-                onPress={this.toggleCamera}
-                style={{
-                  position: 'absolute',
-                  transform: [
-                    { translateX: profileImagePosition },
-                    { scale: profileImageScale },
-                    { perspective: 1000 },
-                  ],
-                }}
-              >
-                <CameraIcon name="camera" />
-              </AnimatedHomeHeaderProfileImage>
-            </HomeHeaderBody>
-
-            <HomeHeaderRight>
-              <HomeHeaderButton
-                flexEnd
-                icon="settings"
-                color={baseColors.darkGray}
-                fontSize={24}
-                onPress={() => this.goToProfile()}
-              />
-            </HomeHeaderRight>
-          </HomeHeaderRow>
-          <HomeHeaderRow>
-            <HomeHeaderBody>
-              <AnimatedHomeHeaderUsername
-                style={{
-                  transform: [
-                    { translateY: profileUsernamePosition },
-                  ],
-                }}
-              >
-                {user.username}
-              </AnimatedHomeHeaderUsername>
-              <HomeHeaderPortfolioBalance />
-            </HomeHeaderBody>
-          </HomeHeaderRow>
-        </AnimatedHomeHeader>
         <Animated.ScrollView
           stickyHeaderIndices={stickyHeaderIndices}
           onScroll={Animated.event(
@@ -371,6 +325,88 @@ class HomeScreen extends React.Component<Props, State> {
             />
           }
         >
+
+          <LinearGradient
+            colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
+          >
+
+            <AnimatedHomeHeader>
+              <HomeHeaderRow>
+                <HomeHeaderLeft>
+                  <HomeHeaderButton
+                    icon="help"
+                    color={baseColors.darkGray}
+                    fontSize={24}
+                    onPress={() => Intercom.displayMessenger()}
+                  />
+                  {hasIntercomNotifications && <View
+                    style={{
+                      width: 8,
+                      height: 8,
+                      backgroundColor: baseColors.sunYellow,
+                      borderRadius: 4,
+                      position: 'absolute',
+                      top: 6,
+                      right: 8,
+                    }}
+                  />}
+                </HomeHeaderLeft>
+
+                <HomeHeaderBody />
+
+                <HomeHeaderRight>
+                  <HomeHeaderButton
+                    flexEnd
+                    icon="settings"
+                    color={baseColors.darkGray}
+                    fontSize={24}
+                    onPress={() => this.goToProfile()}
+                  />
+                </HomeHeaderRight>
+              </HomeHeaderRow>
+              <HomeHeaderRow>
+                <HomeHeaderBody>
+                  <HomeHeaderImageUsername>
+                    <AnimatedHomeHeaderProfileImage
+                      uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+                      userName={user.username}
+                      diameter={profileImageWidth}
+                      onPress={this.toggleCamera}
+                      style={{
+                        transform: [
+                          { translateY: profileImagePositionY },
+                          { translateX: profileImagePositionX },
+                          { scale: profileImageScale },
+                          { perspective: 1000 },
+                        ],
+                      }}
+                    >
+                      <CameraIcon name="camera" />
+                    </AnimatedHomeHeaderProfileImage>
+                    <AnimatedHomeHeaderUsername
+                      style={{
+                        transform: [
+                          { translateX: profileUsernameTranslateX },
+                          { translateY: profileUsernameTranslateY },
+                        ],
+                      }}
+                    >
+                      {user.username}
+                    </AnimatedHomeHeaderUsername>
+                  </HomeHeaderImageUsername>
+                  <AnimatedHomeHeaderPortfolioBalance
+                    style={{
+                      transform: [
+                        { scale: profileBalanceScale },
+                      ],
+                      opacity: profileBalanceOpacity,
+                    }}
+                  />
+                </HomeHeaderBody>
+              </HomeHeaderRow>
+            </AnimatedHomeHeader>
+          </LinearGradient>
+
           <RecentConnectionsWrapper>
             <RecentConnections>
               <RecentConnectionsSubtitle subtitle title="recent connections." />
