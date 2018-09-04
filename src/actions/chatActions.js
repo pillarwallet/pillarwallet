@@ -79,7 +79,7 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
       await chat.client.sendMessageByContact(username, message.text);
     } catch (e) {
       Toast.show({
-        message: 'There is a problem with the server or there is no active internet connection found!',
+        message: 'Unable to contact the server!',
         type: 'warning',
         title: 'Cannot send the message',
         autoClose: false,
