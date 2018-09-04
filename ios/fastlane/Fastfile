@@ -148,7 +148,6 @@ platform :ios do
     sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
     sigh(
       app_identifier: "com.pillarproject.wallet.staging",
-      git_branch: "develop",
       force: true
     )
     sh "fastlane sigh resign ../pillarwallet-staging.ipa --app_identifier 'com.pillarproject.wallet.staging' --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
