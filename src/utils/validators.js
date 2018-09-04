@@ -7,7 +7,7 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
   } else if (!pin.match(/^\d+$/)) {
     return 'Pin could contain numbers only';
   } else if (confirmationPin && pin !== confirmationPin) {
-    return 'Pincode doesn`t match the previous pin';
+    return 'Pincode doesn\'t match the previous pin';
   }
   return '';
 };

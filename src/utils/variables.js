@@ -28,6 +28,9 @@ export const baseColors = {
   offBlue: '#5983b0',
   white: '#ffffff',
   black: '#000000',
+  vividOrange: '#ffc021',
+  brightBlue: '#2f86eb',
+  limeGreen: '#47d764',
 };
 
 export const brandColors = [
@@ -70,8 +73,8 @@ export const spacing = {
 };
 
 export const itemSizes = {
-  avaratCircleSmall: 40,
-  avaratCircleMedium: 50,
+  avaratCircleSmall: 44,
+  avaratCircleMedium: 54,
 };
 
 export const fontTrackings = {

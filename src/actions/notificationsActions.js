@@ -96,7 +96,7 @@ export const startListeningNotificationsAction = () => {
         if (!notification) return;
         if (notification.type === SIGNAL) {
           dispatch(getExistingChatsAction());
-          dispatch({ type: ADD_NOTIFICATION, payload: notification });
+          // dispatch({ type: ADD_NOTIFICATION, payload: notification });
           dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         }
       };
@@ -116,6 +116,7 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type !== SIGNAL) {
+        dispatch({ type: ADD_NOTIFICATION, payload: notification });
         dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       }
     });

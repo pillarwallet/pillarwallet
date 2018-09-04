@@ -1,10 +1,14 @@
 // @flow
 import * as React from 'react';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import {
+  createStackNavigator,
+  createBottomTabNavigator,
+} from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
+import BackgroundTimer from 'react-native-background-timer';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { showToast } from 'utils/toast';
-import { AppState, Animated, Easing, View, Platform, Image } from 'react-native';
+import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // screens
@@ -22,6 +26,7 @@ import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
+import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
@@ -31,9 +36,8 @@ import ChatScreen from 'screens/Chat/Chat';
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
+import Toast from 'components/Toast';
 
-// actions
-import { initAppAndRedirectAction } from 'actions/appActions';
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -63,12 +67,15 @@ import {
   TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_CONTACTS,
+  SEND_TOKEN_ASSETS,
   SEND_TOKEN_CONFIRM,
-  SEND_TOKEN_FLOW,
+  SEND_TOKEN_FROM_ASSET_FLOW,
+  SEND_TOKEN_FROM_CONTACT_FLOW,
   REVEAL_BACKUP_PHRASE,
   CHAT_LIST,
   NEW_CHAT,
   CHAT,
+  AUTH_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -80,8 +87,19 @@ import { modalTransition } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
-const INACTIVE_APP_STATE = 'inactive';
-const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE, INACTIVE_APP_STATE];
+const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
+
+const addAppStateChangeListener = (callback) => {
+  return Platform.OS === 'ios'
+    ? AppState.addEventListener('change', callback)
+    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
+};
+
+const removeAppStateChangeListener = (callback) => {
+  return Platform.OS === 'ios'
+    ? AppState.removeEventListener('change', callback)
+    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
+};
 
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
@@ -165,8 +183,8 @@ const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
           backgroundColor: baseColors.sunYellow,
           borderRadius: 4,
           position: 'absolute',
-          top: 0,
-          right: 0,
+          top: 4,
+          right: 4,
         }}
       />}
   </View>
@@ -268,9 +286,16 @@ const tabNavigation = createBottomTabNavigator(
   },
 );
 
-// SEND TOKEN FLOW
-const sendTokenFlow = createStackNavigator({
+// SEND TOKEN FROM ASSET FLOW
+const sendTokenFromAssetFlow = createStackNavigator({
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+}, StackNavigatorModalConfig);
+
+// SEND TOKEN FROM CONTACT FLOW
+const sendTokenFromContactFlow = createStackNavigator({
+  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
 }, StackNavigatorModalConfig);
@@ -287,7 +312,8 @@ const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [ADD_TOKEN]: AddTokenScreen,
-    [SEND_TOKEN_FLOW]: sendTokenFlow,
+    [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
+    [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [CHAT]: ChatScreen,
@@ -309,6 +335,7 @@ type Props = {
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
   intercomNotificationsCount: number,
+  navigation: NavigationScreenProp<*>,
   wallet: Object,
   assets: Object,
 }
@@ -333,7 +360,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     getExistingChats();
-    AppState.addEventListener('change', this.handleAppStateChange);
+    addAppStateChangeListener(this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -344,7 +371,7 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-      showToast({ text: lastNotification.message });
+      Toast.show({ message: lastNotification.message, type: 'info', title: 'Notification' });
     }
   }
 
@@ -352,21 +379,21 @@ class AppFlow extends React.Component<Props, {}> {
     const { stopListeningNotifications, stopListeningIntercomNotifications } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
-    AppState.removeEventListener('change', this.handleAppStateChange);
+    removeAppStateChangeListener(this.handleAppStateChange);
   }
 
   handleAppStateChange = (nextAppState: string) => {
     const {
-      fetchAppSettingsAndRedirect,
       stopListeningNotifications,
       stopListeningIntercomNotifications,
+      navigation,
     } = this.props;
-    clearTimeout(this.timer);
+    BackgroundTimer.clearTimeout(this.timer);
     if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = setTimeout(() => {
+      this.timer = BackgroundTimer.setTimeout(() => {
+        navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
-        fetchAppSettingsAndRedirect();
       }, SLEEP_TIMEOUT);
     }
   };
@@ -415,7 +442,6 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
