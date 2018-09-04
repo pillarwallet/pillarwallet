@@ -7,8 +7,9 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT, CHAT_LIST } from 'constants/navigationConstants';
 import Header from 'components/Header';
+import EmptyChat from 'components/EmptyState/EmptyChat';
 import { baseColors } from 'utils/variables';
-import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import ChatListItem from './ChatListItem';
 
@@ -19,7 +20,6 @@ type Props = {
   chats: Object[],
   notifications: Object[],
   getExistingChats: Function,
-  resetUnread: Function,
 }
 
 type State = {
@@ -79,7 +79,6 @@ class NewChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats, contacts } = this.props;
-    const ChatWrapper = chats.length ? ScrollWrapper : View;
     const contactsForNewChats = contacts.map((contact) => {
       const existingChat = chats.find(({ username }) => contact.username === username);
       if (existingChat) return {};
@@ -89,12 +88,14 @@ class NewChatListScreen extends React.Component<Props, State> {
     const sortedContactsForNewChats = orderBy(contactsForNewChats
       .filter(value => Object.keys(value).length !== 0), [user => user.username.toLowerCase()], 'asc');
 
+    const ChatWrapper = sortedContactsForNewChats.length ? ScrollWrapper : View;
+
     return (
       <Container>
         <Header title="new chat" onBack={this.goToChatList} />
         <ChatWrapper
           style={{
-            paddingBottom: chats.length ? 18 : 0,
+            paddingBottom: sortedContactsForNewChats.length ? 18 : 0,
           }}
           refreshControl={
             <RefreshControl
@@ -111,6 +112,11 @@ class NewChatListScreen extends React.Component<Props, State> {
             ItemSeparatorComponent={this.renderSeparator}
             style={{ height: '100%' }}
             contentContainerStyle={{ height: '100%' }}
+            ListEmptyComponent={
+              <EmptyChat
+                title="No new connections"
+                bodyText="Check recent chats for existing chats"
+              />}
           />
         </ChatWrapper>
       </Container>
@@ -130,7 +136,6 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   setUnreadChatNotificationsStatus: (status) => dispatch(setUnreadChatNotificationsStatusAction(status)),
 });
 
