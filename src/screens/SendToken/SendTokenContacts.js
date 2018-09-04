@@ -66,7 +66,7 @@ function AddressInputTemplate(locals) {
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: 'Recepient Address',
+    placeholder: 'Recipient Address',
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'left',
