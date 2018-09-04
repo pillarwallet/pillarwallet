@@ -20,7 +20,7 @@ const ContactWrapper = styled.View`
   height: 218px;
   position: relative;
   justify-content: flex-end;
-  margin-top: 30px;
+  margin-top: 60px;
   margin-bottom: 20px;
 `;
 
@@ -50,20 +50,20 @@ const ContactHeaderName = styled(BoldText)`
 `;
 
 const ContactHeaderAvatarWrapper = styled.View`
-  height: 64px;
-  width: 64px;
+  height: 144px;
+  width: 144px;
   border: 2px solid ${baseColors.white};
   background: ${baseColors.cyan};
-  border-radius: 32px;
+  border-radius: 72px;
   margin-right: 14px;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
   shadow-radius: 2px;
   shadow-opacity: 0.1;
   position: absolute;
-  top: 0;
+  top: -58px;
   left: 50%;
-  margin-left: -32px;
+  margin-left: -72px;
 `;
 
 type Props = {
@@ -146,7 +146,7 @@ class Contact extends React.Component<Props, State> {
               <ProfileImage
                 uri={userAvatar}
                 userName={displayContact.username}
-                diameter={60}
+                diameter={140}
                 textStyle={{ fontSize: 32 }}
               />
             </ContactHeaderAvatarWrapper>
