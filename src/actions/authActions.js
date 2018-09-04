@@ -11,7 +11,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { ASSETS, APP_FLOW } from 'constants/navigationConstants';
+import { ASSETS, APP_FLOW, AUTH_FLOW } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { delay } from 'utils/common';
 import { generateChatPassword } from 'utils/chat';
@@ -144,5 +144,11 @@ export const resetIncorrectPasswordAction = () => {
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTED,
     });
+  };
+};
+
+export const lockScreenAction = () => {
+  return async (dispatch: Function) => {
+    dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
   };
 };
