@@ -63,6 +63,8 @@ const HomeHeader = styled.View`
   margin-top: ${spacing.rhythm}px;
 `;
 
+const AnimatedHomeHeader = Animated.createAnimatedComponent(HomeHeader);
+
 const HomeHeaderRow = styled.View`
   flex-direction: row;
 `;
@@ -85,7 +87,10 @@ const HomeHeaderBody = styled.View`
 const HomeHeaderUsername = styled(BaseText)`
   font-size: ${fontSizes.mediumLarge};
   margin-bottom: 5px;
+  margin-top: 40px;
 `;
+
+const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
 const HomeHeaderButton = styled(IconButton)`
   align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
@@ -98,6 +103,8 @@ const HomeHeaderButton = styled(IconButton)`
 const HomeHeaderProfileImage = styled(ProfileImage)`
   margin-bottom: 20px;
 `;
+
+const AnimatedHomeHeaderProfileImage = Animated.createAnimatedComponent(HomeHeaderProfileImage);
 
 const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
   margin-bottom: 10px;
@@ -245,13 +252,40 @@ class HomeScreen extends React.Component<Props, State> {
       scrollY,
     } = this.state;
 
+    const profileImagePosition = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, -90],
+      extrapolate: 'clamp',
+    });
+
+    const profileImageScale = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [1, 0.6],
+      extrapolate: 'clamp',
+    });
+
+    const profileUsernamePosition = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, -36],
+      extrapolate: 'clamp',
+    });
+
+
+
+    const homeHeaderHeight = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [200, 50],
+      extrapolate: 'clamp',
+    });
+
     console.log(scrollY);
 
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
       <Container>
-        <HomeHeader>
+        <AnimatedHomeHeader
+        >
           <HomeHeaderRow>
             <HomeHeaderLeft>
               <HomeHeaderButton
@@ -274,14 +308,22 @@ class HomeScreen extends React.Component<Props, State> {
             </HomeHeaderLeft>
 
             <HomeHeaderBody>
-              <HomeHeaderProfileImage
+              <AnimatedHomeHeaderProfileImage
                 uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
                 userName={user.username}
                 diameter={72}
                 onPress={this.toggleCamera}
+                style={{
+                  position: 'absolute',
+                  transform: [
+                    { translateX: profileImagePosition },
+                    { scale: profileImageScale },
+                    { perspective: 1000 },
+                  ],
+                }}
               >
                 <CameraIcon name="camera" />
-              </HomeHeaderProfileImage>
+              </AnimatedHomeHeaderProfileImage>
             </HomeHeaderBody>
 
             <HomeHeaderRight>
@@ -296,11 +338,19 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
           <HomeHeaderRow>
             <HomeHeaderBody>
-              <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
+              <AnimatedHomeHeaderUsername
+                style={{
+                  transform: [
+                    { translateY: profileUsernamePosition },
+                  ],
+                }}
+              >
+                {user.username}
+              </AnimatedHomeHeaderUsername>
               <HomeHeaderPortfolioBalance />
             </HomeHeaderBody>
           </HomeHeaderRow>
-        </HomeHeader>
+        </AnimatedHomeHeader>
         <Animated.ScrollView
           stickyHeaderIndices={stickyHeaderIndices}
           onScroll={Animated.event(
@@ -313,7 +363,7 @@ class HomeScreen extends React.Component<Props, State> {
             ],
             { useNativeDriver: true },
           )}
-          scrollEventThrottle={1}
+          scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
               refreshing={false}
