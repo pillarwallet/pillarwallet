@@ -16,6 +16,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import IconButton from 'components/IconButton';
+import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
@@ -29,7 +30,7 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { getExistingChatsAction } from 'actions/chatActions';
-import { ALL } from 'constants/activityConstants';
+import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -53,6 +54,7 @@ type Props = {
 
 type State = {
   showCamera: boolean,
+  activeTab: string,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
 };
@@ -121,6 +123,8 @@ const RecentConnections = styled.View`
   min-height: 160px;
   border-bottom-width: 1px;
   border-style: solid;
+  margin-top: 100px;
+  background-color: ${baseColors.white};
   border-color: ${baseColors.duckEggBlue};
 `;
 
@@ -129,7 +133,6 @@ const RecentConnectionsWrapper = styled.View`
   shadow-radius: 6px;
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
-  background-color: ${baseColors.white};
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView``;
@@ -172,6 +175,7 @@ class HomeScreen extends React.Component<Props, State> {
     showCamera: false,
     permissionsGranted: false,
     scrollY: new Animated.Value(0),
+    activeTab: ALL,
   };
 
   componentDidMount() {
@@ -244,6 +248,12 @@ class HomeScreen extends React.Component<Props, State> {
     getExistingChats();
   };
 
+  setActiveTab = (activeTab) => {
+    this.setState({
+      activeTab,
+    });
+  }
+
   render() {
     const {
       user,
@@ -291,7 +301,13 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileBalanceScale = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [1, 0],
+      outputRange: [1, 0.5],
+      extrapolate: 'clamp',
+    });
+
+    const profileBalancePositionY = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, -90],
       extrapolate: 'clamp',
     });
 
@@ -301,12 +317,121 @@ class HomeScreen extends React.Component<Props, State> {
       extrapolate: 'clamp',
     });
 
-    const stickyHeaderIndices = Platform.OS === 'android' ? null : [0];
+    const activityFeedTabs = [
+      {
+        id: ALL,
+        name: 'All',
+        icon: 'all',
+        onPress: () => this.setActiveTab(ALL),
+      },
+      {
+        id: TRANSACTIONS,
+        name: 'Transactions',
+        title: 'Make your first step',
+        body: 'Your transactions will appear here. Send or receive tokens to start.',
+        icon: 'send',
+        onPress: () => this.setActiveTab(TRANSACTIONS),
+      },
+      {
+        id: SOCIAL,
+        name: 'Social',
+        title: 'Make your first step',
+        body: 'Information on your connections will appear here. Send a connection request to start.',
+        icon: 'social',
+        onPress: () => this.setActiveTab(SOCIAL),
+      },
+    ];
+
+    const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
       <Container>
+        <LinearGradient
+          colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
+        >
+
+          <AnimatedHomeHeader>
+            <HomeHeaderRow>
+              <HomeHeaderLeft>
+                <HomeHeaderButton
+                  icon="help"
+                  color={baseColors.darkGray}
+                  fontSize={24}
+                  onPress={() => Intercom.displayMessenger()}
+                />
+                {hasIntercomNotifications && <View
+                  style={{
+                    width: 8,
+                    height: 8,
+                    backgroundColor: baseColors.sunYellow,
+                    borderRadius: 4,
+                    position: 'absolute',
+                    top: 6,
+                    right: 8,
+                  }}
+                />}
+              </HomeHeaderLeft>
+
+              <HomeHeaderBody />
+
+              <HomeHeaderRight>
+                <HomeHeaderButton
+                  flexEnd
+                  icon="settings"
+                  color={baseColors.darkGray}
+                  fontSize={24}
+                  onPress={() => this.goToProfile()}
+                />
+              </HomeHeaderRight>
+            </HomeHeaderRow>
+            <HomeHeaderRow>
+              <HomeHeaderBody>
+                <HomeHeaderImageUsername>
+                  <AnimatedHomeHeaderProfileImage
+                    uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+                    userName={user.username}
+                    diameter={profileImageWidth}
+                    onPress={this.toggleCamera}
+                    style={{
+                      transform: [
+                        { translateY: profileImagePositionY },
+                        { translateX: profileImagePositionX },
+                        { scale: profileImageScale },
+                        { perspective: 1000 },
+                      ],
+                    }}
+                  >
+                    <CameraIcon name="camera" />
+                  </AnimatedHomeHeaderProfileImage>
+                  <AnimatedHomeHeaderUsername
+                    style={{
+                      transform: [
+                        { translateX: profileUsernameTranslateX },
+                        { translateY: profileUsernameTranslateY },
+                      ],
+                    }}
+                  >
+                    {user.username}
+                  </AnimatedHomeHeaderUsername>
+                </HomeHeaderImageUsername>
+                <AnimatedHomeHeaderPortfolioBalance
+                  style={{
+                    transform: [
+                      { scale: profileBalanceScale },
+                      { translateY: profileBalancePositionY },
+                    ],
+                    opacity: profileBalanceOpacity,
+                  }}
+                />
+              </HomeHeaderBody>
+            </HomeHeaderRow>
+          </AnimatedHomeHeader>
+        </LinearGradient>
         <Animated.ScrollView
           stickyHeaderIndices={stickyHeaderIndices}
+          style={{
+            marginTop: -100,
+          }}
           onScroll={Animated.event(
             [
               {
@@ -326,86 +451,6 @@ class HomeScreen extends React.Component<Props, State> {
           }
         >
 
-          <LinearGradient
-            colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
-          >
-
-            <AnimatedHomeHeader>
-              <HomeHeaderRow>
-                <HomeHeaderLeft>
-                  <HomeHeaderButton
-                    icon="help"
-                    color={baseColors.darkGray}
-                    fontSize={24}
-                    onPress={() => Intercom.displayMessenger()}
-                  />
-                  {hasIntercomNotifications && <View
-                    style={{
-                      width: 8,
-                      height: 8,
-                      backgroundColor: baseColors.sunYellow,
-                      borderRadius: 4,
-                      position: 'absolute',
-                      top: 6,
-                      right: 8,
-                    }}
-                  />}
-                </HomeHeaderLeft>
-
-                <HomeHeaderBody />
-
-                <HomeHeaderRight>
-                  <HomeHeaderButton
-                    flexEnd
-                    icon="settings"
-                    color={baseColors.darkGray}
-                    fontSize={24}
-                    onPress={() => this.goToProfile()}
-                  />
-                </HomeHeaderRight>
-              </HomeHeaderRow>
-              <HomeHeaderRow>
-                <HomeHeaderBody>
-                  <HomeHeaderImageUsername>
-                    <AnimatedHomeHeaderProfileImage
-                      uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-                      userName={user.username}
-                      diameter={profileImageWidth}
-                      onPress={this.toggleCamera}
-                      style={{
-                        transform: [
-                          { translateY: profileImagePositionY },
-                          { translateX: profileImagePositionX },
-                          { scale: profileImageScale },
-                          { perspective: 1000 },
-                        ],
-                      }}
-                    >
-                      <CameraIcon name="camera" />
-                    </AnimatedHomeHeaderProfileImage>
-                    <AnimatedHomeHeaderUsername
-                      style={{
-                        transform: [
-                          { translateX: profileUsernameTranslateX },
-                          { translateY: profileUsernameTranslateY },
-                        ],
-                      }}
-                    >
-                      {user.username}
-                    </AnimatedHomeHeaderUsername>
-                  </HomeHeaderImageUsername>
-                  <AnimatedHomeHeaderPortfolioBalance
-                    style={{
-                      transform: [
-                        { scale: profileBalanceScale },
-                      ],
-                      opacity: profileBalanceOpacity,
-                    }}
-                  />
-                </HomeHeaderBody>
-              </HomeHeaderRow>
-            </AnimatedHomeHeader>
-          </LinearGradient>
 
           <RecentConnectionsWrapper>
             <RecentConnections>
@@ -417,13 +462,13 @@ class HomeScreen extends React.Component<Props, State> {
                 </RecentConnectionsScrollView>}
             </RecentConnections>
           </RecentConnectionsWrapper>
+          <Tabs title="your activity." tabs={activityFeedTabs} />
           <ActivityFeed
-            feedTitle="your activity."
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
             navigation={navigation}
-            activeTab={ALL}
+            activeTab={this.state.activeTab}
             sortable
           />
         </Animated.ScrollView>

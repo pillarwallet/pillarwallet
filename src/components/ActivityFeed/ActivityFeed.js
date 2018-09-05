@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { TouchableOpacity, Platform, View } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
 import { resetUnreadAction } from 'actions/chatActions';
-import { UIColors, fontSizes, baseColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
@@ -22,7 +22,6 @@ import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
 import TXDetails from 'components/TXDetails';
-import Title from 'components/Title';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
@@ -32,7 +31,7 @@ import {
   TYPE_REJECTED,
   TYPE_SENT,
 } from 'constants/invitationsConstants';
-import { TRANSACTIONS, SOCIAL, ALL } from 'constants/activityConstants';
+import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
@@ -56,43 +55,6 @@ const NOTIFICATION_LABELS = {
   [TRANSACTION_SENT]: 'Sent',
   [CHAT]: 'New message',
 };
-
-const TabWrapper = styled.View`
-  padding: 10px 16px 10px;
-  background: ${baseColors.white};
-  border-bottom-width: 1px;
-  border-color: ${UIColors.defaultBorderColor};
-  border-style: solid;
-`;
-
-const TabWrapperScrollView = styled.ScrollView`
-  flex-direction: row;
-`;
-
-const TabItem = styled.TouchableOpacity`
-  height: 32px;
-  padding: 0 10px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
-  border-radius: 16px;
-  flex-direction: row;
-`;
-
-const TabItemIcon = styled(Icon)`
-  font-size: ${fontSizes.extraSmall};
-  margin-right: 5px;
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
-`;
-
-const TabItemText = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
-`;
-
-const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-`;
 
 const ActivityFeedList = styled.FlatList``;
 const ActivityFeedWrapper = styled.View``;
@@ -183,8 +145,6 @@ type Props = {
   esTitle: string,
   esBody: string,
   resetUnread: Function,
-  feedTitle: string,
-  sortable?: boolean,
   customFeedData?: Object,
   contacts: Object,
   invitations: Object,
@@ -195,7 +155,6 @@ type Props = {
 type State = {
   showModal: boolean,
   selectedTransaction: ?Transaction,
-  activeTab: string,
   esTitle: string,
   esBody: string,
 };
@@ -204,7 +163,6 @@ class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
     selectedTransaction: null,
-    activeTab: 'ALL',
     esTitle: 'Make your first step',
     esBody: 'Your activity will appear here.',
   };
@@ -416,8 +374,6 @@ class ActivityFeed extends React.Component<Props, State> {
   render() {
     const {
       notifications,
-      feedTitle,
-      sortable,
       contacts,
       invitations,
       historyNotifications,
@@ -456,7 +412,8 @@ class ActivityFeed extends React.Component<Props, State> {
     const feedData = customFeedData || allFeedData;
     const esTitle = this.props.esTitle || this.state.esTitle;
     const esBody = this.props.esBody || this.state.esBody;
-    const activeTab = sortable ? this.state.activeTab : this.props.activeTab;
+    const { activeTab } = this.props;
+
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
         return type === TRANSACTION_EVENT;
@@ -470,66 +427,24 @@ class ActivityFeed extends React.Component<Props, State> {
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
     return (
-      <View>
-        <ActivityFeedHeader>
-          <Title subtitle title={feedTitle} />
-        </ActivityFeedHeader>
-        {!!sortable &&
-        <TabWrapper>
-          <TabWrapperScrollView horizontal>
-            <TabItem
-              active={activeTab === ALL}
-              onPress={() => this.setState({
-                activeTab: ALL,
-                esTitle: 'Make your first step',
-                esBody: 'Your activity will appear here.',
-              })}
-            >
-              <TabItemIcon active={activeTab === ALL} name="all" />
-              <TabItemText active={activeTab === ALL}>All</TabItemText>
-            </TabItem>
-            <TabItem
-              active={activeTab === TRANSACTIONS}
-              onPress={() => this.setState({
-                activeTab: TRANSACTIONS,
-                esTitle: 'Make your first step',
-                esBody: 'Your transactions will appear here. Send or receive tokens to start.',
-              })}
-            >
-              <TabItemIcon active={activeTab === TRANSACTIONS} name="send" />
-              <TabItemText active={activeTab === TRANSACTIONS}>Transactions</TabItemText>
-            </TabItem>
-            <TabItem
-              active={activeTab === SOCIAL}
-              onPress={() => this.setState({
-                activeTab: SOCIAL,
-                esTitle: 'Make your first step',
-                esBody: 'Information on your connections will appear here. Send a connection request to start.',
-              })}
-            >
-              <TabItemIcon active={activeTab === SOCIAL} name="social" />
-              <TabItemText active={activeTab === SOCIAL}>Social</TabItemText>
-            </TabItem>
-          </TabWrapperScrollView>
-        </TabWrapper>}
-        <ActivityFeedWrapper>
-          <ActivityFeedList
-            data={processedHistory}
-            extraData={notifications}
-            renderItem={this.renderActivityFeedItem}
-            ItemSeparatorComponent={Separator}
-            keyExtractor={(item, index) => index.toString()}
-            ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
-          />
-          <SlideModal
-            isVisible={showModal}
-            title="transaction details"
-            onModalHide={() => { this.setState({ showModal: false }); }}
-          >
-            <TXDetails transaction={selectedTransaction} />
-          </SlideModal>
-        </ActivityFeedWrapper>
-      </View>
+
+      <ActivityFeedWrapper>
+        <ActivityFeedList
+          data={processedHistory}
+          extraData={notifications}
+          renderItem={this.renderActivityFeedItem}
+          ItemSeparatorComponent={Separator}
+          keyExtractor={(item, index) => index.toString()}
+          ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
+        />
+        <SlideModal
+          isVisible={showModal}
+          title="transaction details"
+          onModalHide={() => { this.setState({ showModal: false }); }}
+        >
+          <TXDetails transaction={selectedTransaction} />
+        </SlideModal>
+      </ActivityFeedWrapper>
     );
   }
 }
