@@ -171,7 +171,14 @@ export const acceptInvitationAction = (invitation: Object) => {
       sourceUserAccessKey,
       walletId,
     );
-    if (!acceptedInvitation) return;
+    if (!acceptedInvitation) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Invitation doesn\'t exist' },
+      }));
+      dispatch(fetchInviteNotificationsAction());
+      return;
+    }
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
     await storage.save('invitations', { invitations: updatedInvitations }, true);
@@ -264,7 +271,14 @@ export const rejectInvitationAction = (invitation: Object) => {
       walletId,
     );
 
-    if (!rejectedInvitation) return;
+    if (!rejectedInvitation) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Invitation doesn\'t exist' },
+      }));
+      dispatch(fetchInviteNotificationsAction());
+      return;
+    }
 
     dispatch(({
       type: ADD_NOTIFICATION,
