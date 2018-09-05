@@ -19,7 +19,7 @@ describe('App actions', () => {
       { routeName: ONBOARDING_FLOW, type: 'Navigation/NAVIGATE' },
     ];
 
-    return store.dispatch(initAppAndRedirectAction())
+    return store.dispatch(initAppAndRedirectAction('ios', 'active'))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

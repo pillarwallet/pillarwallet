@@ -9,7 +9,7 @@ import Intercom from 'react-native-intercom';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
-import { FlatList } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
@@ -18,7 +18,7 @@ import Header from 'components/Header';
 import { SubHeading, BaseText } from 'components/Typography';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
@@ -96,6 +96,8 @@ type Props = {
   changeRequestPinForTransaction: (value: boolean) => Function,
   updateUser: (walletId: string, field: Object) => Function,
   resetIncorrectPassword: () => Function,
+  lockScreen: () => Function,
+  logoutUser: () => Function,
 }
 
 type State = {
@@ -174,6 +176,18 @@ class Profile extends React.Component<Props, State> {
     this.toggleSlideModalOpen(null);
   };
 
+  handleLogoutMessage = () => {
+    const { logoutUser } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      'Logout will cause a wallet removal from the local storage',
+      [
+        { text: 'Cancel' },
+        { text: 'OK', onPress: logoutUser },
+      ],
+    );
+  }
+
   renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
     return (
       <ListItem key={name} onPress={() => onSelect({ [field]: name })}>
@@ -197,6 +211,7 @@ class Profile extends React.Component<Props, State> {
       intercomNotificationsCount,
       baseFiatCurrency,
       navigation,
+      lockScreen,
     } = this.props;
 
     const {
@@ -418,13 +433,24 @@ class Profile extends React.Component<Props, State> {
             )}
 
             <ListSeparator>
-              <SubHeading>SYSTEM INFO</SubHeading>
+              <SubHeading>SYSTEM</SubHeading>
             </ListSeparator>
 
             <ProfileSettingsItem
               key="systemInfo"
               label="System Info"
               onPress={() => this.setState({ showSystemInfoModal: true })}
+            />
+            <ProfileSettingsItem
+              key="lockScreen"
+              label="Lock Screen"
+              onPress={lockScreen}
+            />
+
+            <ProfileSettingsItem
+              key="logOut"
+              label="Log Out"
+              onPress={this.handleLogoutMessage}
             />
 
             <SlideModal
@@ -464,6 +490,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
+  lockScreen: () => dispatch(lockScreenAction()),
+  logoutUser: () => dispatch(logoutAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);
