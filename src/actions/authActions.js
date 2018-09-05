@@ -160,8 +160,6 @@ export const logoutAction = () => {
     await storage.removeAll();
     dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
-    dispatch({
-      type: LOG_OUT,
-    });
+    dispatch({ type: LOG_OUT });
   };
 };
