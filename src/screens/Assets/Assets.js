@@ -23,6 +23,7 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import assetsConfig from 'configs/assetsConfig';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 type Props = {
@@ -128,6 +129,11 @@ class AssetsScreen extends React.Component<Props> {
           wallpaper: fullIconWallpaperUrl,
           decimals,
         };
+        const {
+          listed: isListed = true,
+          disclaimer,
+        } = assetsConfig[assetData.token] || {};
+
         return (
           <Transition key={assetData.name} shared={assetData.name}>
             <AssetCard
@@ -140,6 +146,8 @@ class AssetsScreen extends React.Component<Props> {
               address={assetData.address}
               icon={assetData.icon}
               wallpaper={assetData.wallpaper}
+              isListed={isListed}
+              disclaimer={disclaimer}
             />
           </Transition>
         );

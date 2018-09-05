@@ -190,13 +190,13 @@ class AssetScreen extends React.Component<Props, State> {
       currency: fiatCurrency,
     };
     const {
-      listed: isListed,
-      send: isSendActive,
-      receive: isReceiveActive,
+      listed: isListed = true,
+      send: isSendActive = true,
+      receive: isReceiveActive = true,
       disclaimer,
     } = assetsConfig[assetData.token] || {};
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header onClose={this.handleCardTap} />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
