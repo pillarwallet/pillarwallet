@@ -72,22 +72,22 @@ const Amount = styled(LightText)`
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: 14px;
+  font-size: ${fontSizes.extraSmall};
   line-height: 14px;
   color: #fff;
   position: absolute;
-  bottom: 18px;
-  left: 12px;
+  bottom: ${spacing.rhythm}
+  left: 12px
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: 14px;
+  font-size: ${fontSizes.extraSmall};
   line-height: 14px;
   color: ${baseColors.burningFire};
   position: relative;
   position: absolute;
   bottom: 18px;
-  left: 14px;
+  left: 16px;
 `;
 
 const AmountToken = styled(BoldText)`
