@@ -13,7 +13,7 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { validateUserDetailsAction } from 'actions/onboardingActions';
+import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
@@ -100,6 +100,8 @@ type Props = {
   walletState: ?string,
   session: Object,
   apiUser: Object,
+  retry?: boolean,
+  registerOnBackend: Function,
 };
 
 type State = {
@@ -138,7 +140,6 @@ class NewProfile extends React.Component<Props, State> {
 
   handleSubmit = () => {
     const { validateUserDetails, apiUser } = this.props;
-
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
       return;
@@ -163,30 +164,32 @@ class NewProfile extends React.Component<Props, State> {
       });
       this.setState({ formOptions: options }); // eslint-disable-line
     }
-
     if (walletState === USERNAME_OK) {
       this.goToNextScreen();
     }
   }
 
   goToNextScreen() {
-    const { navigation } = this.props;
+    const { navigation, retry, registerOnBackend } = this.props;
     Keyboard.dismiss();
+    if (retry) {
+      registerOnBackend();
+      return;
+    }
     navigation.navigate(LEGAL_TERMS);
   }
 
   render() {
     const { value, formOptions } = this.state;
-    const { walletState, session } = this.props;
+    const { walletState, session, retry } = this.props;
     const isUsernameValid = value && value.username && value.username.length > 0;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
-
     return (
       <Container>
         <Header
           title="choose username"
-          onBack={() => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
+          onBack={retry ? undefined : () => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
         />
         <Wrapper regularPadding>
           <LoginForm
@@ -232,6 +235,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
+  registerOnBackend: () => dispatch(registerOnBackendAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
