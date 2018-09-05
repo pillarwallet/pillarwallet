@@ -12,7 +12,6 @@ import {
   GENERATING,
   UPDATE_WALLET_STATE,
   API_REGISTRATION_STARTED,
-  API_REGISTRATION_FAILED,
   USERNAME_EXISTS,
   USERNAME_OK,
   CHECKING_USERNAME,
@@ -116,7 +115,7 @@ export const registerWalletAction = () => {
       await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
-        payload: API_REGISTRATION_FAILED,
+        payload: sdkWallet.reason,
       });
       return;
     }
@@ -150,19 +149,22 @@ export const registerWalletAction = () => {
 
 export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { wallet: { data: wallet } } = getState();
+    const { wallet: { data: wallet, onboarding: { apiUser } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: API_REGISTRATION_STARTED,
     });
-    const { user } = await storage.get('user');
+    let { user } = await storage.get('user');
+    if (apiUser.username) {
+      user = apiUser;
+    }
     await delay(1000);
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission().catch(() => { });
     const fcmToken = await firebase.messaging().getToken().catch(() => { });
     await Intercom.sendTokenToIntercom(fcmToken);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
-    const registrationSucceed = !!Object.keys(sdkWallet).length;
+    const registrationSucceed = !sdkWallet.error;
 
     const userInfo = await api.userInfo(sdkWallet.walletId);
     if (Object.keys(userInfo).length) {
@@ -180,7 +182,7 @@ export const registerOnBackendAction = () => {
     if (!registrationSucceed) {
       dispatch({
         type: UPDATE_WALLET_STATE,
-        payload: API_REGISTRATION_FAILED,
+        payload: sdkWallet.reason,
       });
       return;
     }
@@ -207,19 +209,19 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     await delay(200);
     let wallet = importedWallet;
     if (!wallet) {
-      wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
+      wallet = currentState.wallet.data.privateKey
+        ? currentState.wallet.data
+        : ethers.Wallet.fromMnemonic(mnemonicPhrase);
     }
 
     api.init(wallet.privateKey);
     const apiUser = await api.usernameSearch(username);
     const usernameExists = !!Object.keys(apiUser).length;
     const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
-
     dispatch({
       type: SET_API_USER,
       payload: usernameExists ? apiUser : { username },
     });
-
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: usernameStatus,
