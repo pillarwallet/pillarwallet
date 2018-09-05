@@ -46,16 +46,16 @@ const LocalContactsItem = styled.TouchableOpacity`
 `;
 
 const LocalContactsItemAvatarWrapper = styled.View`
-  width: 52px;
-  height: 52px;
-  border-radius: 26px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
   background-color: ${baseColors.cyan};
   border: 2px solid white;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
   shadow-radius: 2px;
   shadow-opacity: 0.1;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 const LocalContactsItemName = styled(BaseText)`
