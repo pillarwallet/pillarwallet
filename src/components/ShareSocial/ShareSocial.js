@@ -1,10 +1,12 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import Share from 'react-native-share';
 
-import { TouchableOpacity, TouchableNativeFeedback, Platform, Image } from 'react-native';
+import { TouchableOpacity, TouchableNativeFeedback, Platform, Image, Linking } from 'react-native';
 import { Label } from 'components/Typography';
 import { spacing } from 'utils/variables';
+
 
 const ShareWrapper = styled.View`
   justify-content: center;
@@ -33,11 +35,38 @@ type Props = {
 }
 
 export default class ShareSocial extends React.Component<Props> {
-  shareOnTwitter = () => {};
+  shareOnTwitter = () => {
+    Share.shareSingle({
+      title: 'Share via',
+      message: 'pillar.io',
+      social: Share.Social.TWITTER,
+    })
+      .catch(() => {
+        Linking.openURL('https://twitter.com/intent/tweet?text=pillarproject.io/wallet');
+      });
+  };
 
-  shareOnFacebook = () => {};
+  shareOnFacebook = () => {
+    Share.shareSingle({
+      title: 'Share via',
+      message: 'pillar.io',
+      social: Share.Social.FACEBOOK,
+    })
+      .catch(() => {
+        Linking.openURL('https://www.facebook.com/sharer/sharer.php?u=https%3A//pillarproject.io/wallet');
+      });
+  };
 
-  shareOnInstagram = () => {};
+  shareOnInstagram = () => {
+    // Share.shareSingle({
+    //   url: '',
+    //   social: Share.Social.INSTAGRAM,
+    //   type: 'image/*',
+    // }).then((res) => console.log('res', res))
+    //   .catch((err) => {
+    //     console.log('insta err', err);
+    //   });
+  };
 
   renderSocialButton(platform: string) {
     switch (platform) {

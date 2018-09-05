@@ -10067,6 +10067,10 @@ react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
   version "1.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
 
+react-native-share@^1.1.1:
+  version "1.1.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-share/-/react-native-share-1.1.1.tgz#8c50c67c3fa519607f3352c03f56076c0481edeb"
+
 react-native-splash-screen@^3.1.1:
   version "3.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-splash-screen/-/react-native-splash-screen-3.1.1.tgz#1a4e46c9fdce53ff52af2a2cb4181788c4e30b30"

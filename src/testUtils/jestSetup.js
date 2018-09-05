@@ -128,3 +128,5 @@ const mockExchangeRates = {
 jest.setMock('cryptocompare', {
   priceMulti: () => Promise.resolve(mockExchangeRates),
 });
+
+jest.setMock('react-native-share', {});
