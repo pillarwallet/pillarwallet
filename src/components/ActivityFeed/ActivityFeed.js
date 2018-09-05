@@ -142,8 +142,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   notifications: Notification[],
   activeTab: string,
-  esTitle: string,
-  esBody: string,
+  esData: Object,
   resetUnread: Function,
   customFeedData?: Object,
   contacts: Object,
@@ -155,16 +154,12 @@ type Props = {
 type State = {
   showModal: boolean,
   selectedTransaction: ?Transaction,
-  esTitle: string,
-  esBody: string,
 };
 
 class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
     selectedTransaction: null,
-    esTitle: 'Make your first step',
-    esBody: 'Your activity will appear here.',
   };
 
   selectTransaction = (transaction: Transaction) => {
@@ -410,8 +405,7 @@ class ActivityFeed extends React.Component<Props, State> {
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const feedData = customFeedData || allFeedData;
-    const esTitle = this.props.esTitle || this.state.esTitle;
-    const esBody = this.props.esBody || this.state.esBody;
+    const { title, body } = this.props.esData;
     const { activeTab } = this.props;
 
     const filteredHistory = feedData.filter(({ type }) => {
@@ -435,7 +429,7 @@ class ActivityFeed extends React.Component<Props, State> {
           renderItem={this.renderActivityFeedItem}
           ItemSeparatorComponent={Separator}
           keyExtractor={(item, index) => index.toString()}
-          ListEmptyComponent={<EmptyTransactions title={esTitle} bodyText={esBody} />}
+          ListEmptyComponent={<EmptyTransactions title={title && title} bodyText={body && body} />}
         />
         <SlideModal
           isVisible={showModal}

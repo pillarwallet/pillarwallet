@@ -10,9 +10,7 @@ import { UIColors, baseColors, spacing, fontSizes } from 'utils/variables';
 type Tab = {
   id: string,
   name: string,
-  title: string,
   icon: string,
-  body: string,
   onPress: Function,
 }
 
@@ -79,6 +77,7 @@ export default class Tabs extends React.Component<Props, State> {
       const tab = tabs[i];
       tabItems.push(
         <TabItem
+          key={tab.id}
           active={activeTab === tab.id}
           onPress={() => this.setState({
             activeTab: tab.id,

@@ -52,13 +52,18 @@ type Props = {
   chats: any,
 };
 
+type esDataType = {
+  title: string,
+  body: string,
+}
 type State = {
   showCamera: boolean,
+  usernameWidth: number,
   activeTab: string,
+  esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
 };
-
 
 const profileImageWidth = 72;
 
@@ -176,6 +181,11 @@ class HomeScreen extends React.Component<Props, State> {
     permissionsGranted: false,
     scrollY: new Animated.Value(0),
     activeTab: ALL,
+    usernameWidth: 0,
+    esData: {
+      title: 'Make your first step',
+      body: 'Your activity will appear here.',
+    },
   };
 
   componentDidMount() {
@@ -248,9 +258,10 @@ class HomeScreen extends React.Component<Props, State> {
     getExistingChats();
   };
 
-  setActiveTab = (activeTab) => {
+  setActiveTab = (activeTab, esData?) => {
     this.setState({
       activeTab,
+      esData,
     });
   }
 
@@ -267,6 +278,8 @@ class HomeScreen extends React.Component<Props, State> {
       showCamera,
       permissionsGranted,
       scrollY,
+      esData,
+      usernameWidth,
     } = this.state;
 
     const profileUsernameTranslateX = scrollY.interpolate({
@@ -283,7 +296,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileImagePositionX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [(profileImageWidth / 2) + 10, -10],
+      outputRange: [(usernameWidth / 2), -10],
       extrapolate: 'clamp',
     });
 
@@ -301,19 +314,19 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileBalanceScale = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [1, 0.5],
+      outputRange: [1, 0.8],
       extrapolate: 'clamp',
     });
 
     const profileBalancePositionY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, -90],
+      outputRange: [0, -120],
       extrapolate: 'clamp',
     });
 
     const profileBalanceOpacity = scrollY.interpolate({
-      inputRange: [0, 100],
-      outputRange: [1, 0],
+      inputRange: [0, 20, 100],
+      outputRange: [1, 0, 0],
       extrapolate: 'clamp',
     });
 
@@ -327,18 +340,26 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: TRANSACTIONS,
         name: 'Transactions',
-        title: 'Make your first step',
-        body: 'Your transactions will appear here. Send or receive tokens to start.',
         icon: 'send',
-        onPress: () => this.setActiveTab(TRANSACTIONS),
+        onPress: () => this.setActiveTab(
+          TRANSACTIONS,
+          {
+            title: 'Make your first step',
+            body: 'Your transactions will appear here. Send or receive tokens to start.',
+          },
+        ),
       },
       {
         id: SOCIAL,
         name: 'Social',
-        title: 'Make your first step',
-        body: 'Information on your connections will appear here. Send a connection request to start.',
         icon: 'social',
-        onPress: () => this.setActiveTab(SOCIAL),
+        onPress: () => this.setActiveTab(
+          SOCIAL,
+          {
+            title: 'Make your first step',
+            body: 'Information on your connections will appear here. Send a connection request to start.',
+          },
+        ),
       },
     ];
 
@@ -404,6 +425,12 @@ class HomeScreen extends React.Component<Props, State> {
                     <CameraIcon name="camera" />
                   </AnimatedHomeHeaderProfileImage>
                   <AnimatedHomeHeaderUsername
+                    onLayout={(event) => {
+                      const { width } = event.nativeEvent.layout;
+                      this.setState({
+                        usernameWidth: width,
+                      });
+                    }}
                     style={{
                       transform: [
                         { translateX: profileUsernameTranslateX },
@@ -450,8 +477,6 @@ class HomeScreen extends React.Component<Props, State> {
             />
           }
         >
-
-
           <RecentConnectionsWrapper>
             <RecentConnections>
               <RecentConnectionsSubtitle subtitle title="recent connections." />
@@ -469,6 +494,7 @@ class HomeScreen extends React.Component<Props, State> {
             onAcceptInvitation={acceptInvitation}
             navigation={navigation}
             activeTab={this.state.activeTab}
+            esData={esData}
             sortable
           />
         </Animated.ScrollView>
