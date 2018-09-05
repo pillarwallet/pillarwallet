@@ -40,10 +40,10 @@ const BackgroundHolder = styled.View`
   flex: 1;
   flex-direction: row;
   border-radius: 12px;
-  elevation: 6;
   height: 130px;
   border-radius: 20px;
   width: 100%;
+  elevation: 2;
   position: relative;
   background-color: ${props => (props.cardColor)};
 `;

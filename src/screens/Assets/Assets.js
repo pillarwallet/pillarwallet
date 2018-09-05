@@ -185,7 +185,10 @@ class AssetsScreen extends React.Component<Props> {
           headerRightFlex="2"
         />
         <ScrollWrapper
-          regularPadding
+          contentContainerStyle={{
+            paddingLeft: 20,
+            paddingRight: 20,
+          }}
           refreshControl={
             <RefreshControl
               refreshing={false}
