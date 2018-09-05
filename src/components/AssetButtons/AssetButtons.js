@@ -7,6 +7,8 @@ type Props = {
   onPressReceive: Function,
   onPressSend: Function,
   noBalance?: boolean,
+  isSendDisabled?: boolean,
+  isReceiveDisabled?: boolean,
 }
 
 
@@ -22,8 +24,13 @@ const AssetButtonsWrapper = styled.View`
 const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
-      <CircleButton label="Receive" icon="qrcode" onPress={props.onPressReceive} />
-      <CircleButton disabled={props.noBalance} label="Send" icon="send" onPress={props.onPressSend} />
+      <CircleButton disabled={props.isReceiveDisabled} label="Receive" icon="qrcode" onPress={props.onPressReceive} />
+      <CircleButton
+        disabled={props.noBalance || props.isSendDisabled}
+        label="Send"
+        icon="send"
+        onPress={props.onPressSend}
+      />
     </AssetButtonsWrapper>
   );
 };
