@@ -11,8 +11,10 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { ASSETS, APP_FLOW, AUTH_FLOW } from 'constants/navigationConstants';
+import { ASSETS, APP_FLOW, AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
+import { LOG_OUT } from 'constants/authConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { delay } from 'utils/common';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
@@ -150,5 +152,14 @@ export const resetIncorrectPasswordAction = () => {
 export const lockScreenAction = () => {
   return async (dispatch: Function) => {
     dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
+  };
+};
+
+export const logoutAction = () => {
+  return async (dispatch: Function) => {
+    await storage.removeAll();
+    dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    dispatch({ type: LOG_OUT });
   };
 };

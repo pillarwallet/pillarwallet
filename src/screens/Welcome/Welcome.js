@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ONBOARDING_HOME } from 'constants/navigationConstants';
@@ -13,9 +12,6 @@ import { CachedImage } from 'react-native-cached-image';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  isFetched: boolean,
-  OTP: boolean | number,
-  listeners: Object[]
 }
 
 type State = {
@@ -37,11 +33,6 @@ class Welcome extends React.Component<Props, State> {
     super(props);
     this.listeners = [];
   }
-
-
-  static navigationOptions = {
-    header: null,
-  };
 
   state = {
     shouldAnimate: true,
@@ -70,9 +61,7 @@ class Welcome extends React.Component<Props, State> {
   }
 
   render() {
-    const { isFetched } = this.props;
     const { showTermsConditionsModal } = this.state;
-    if (!isFetched) return null;
     return (
       <Container>
         <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
@@ -93,8 +82,4 @@ class Welcome extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appSettings: { isFetched } }) => ({
-  isFetched,
-});
-
-export default connect(mapStateToProps)(Welcome);
+export default Welcome;
