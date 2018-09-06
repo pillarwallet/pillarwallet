@@ -4,6 +4,6 @@ export default {
     listed: false,
     send: false,
     receive: false,
-    disclaimer: 'Deprecated',
+    disclaimer: 'Unsupported',
   },
 };
