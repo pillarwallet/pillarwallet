@@ -188,7 +188,7 @@ export default class ProfileForm extends React.Component<Props, State> {
     const formStructure = getFormStructure(fields);
 
     return (
-      <StyledWrapper flex={1} >
+      <StyledWrapper flex={1}>
         <Form
           ref={node => { this._form = node; }}
           type={formStructure}

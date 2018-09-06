@@ -106,7 +106,7 @@ type State = {
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
   query: string,
-  filteredCountries: any,
+  filteredCountries: ?Object[],
 }
 
 class Profile extends React.Component<Props, State> {
@@ -190,8 +190,8 @@ class Profile extends React.Component<Props, State> {
       this.setState({ filteredCountries: null });
       return;
     }
-    const filteredCountries =
-      sortedCountries.filter(country => country.name.toUpperCase().includes(query.toUpperCase()));
+    const filteredCountries = sortedCountries
+      .filter(country => country.name.toUpperCase().includes(query.toUpperCase()));
     this.setState({ filteredCountries });
   };
 
