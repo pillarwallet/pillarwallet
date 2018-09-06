@@ -48,7 +48,12 @@ const StackNavigatorConfig = {
 };
 
 const onBoardingFlow = createStackNavigator({
-  [WELCOME]: WelcomeScreen,
+  [WELCOME]: {
+    screen: WelcomeScreen,
+    navigationOptions: {
+      header: null,
+    },
+  },
   [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
