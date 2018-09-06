@@ -11,69 +11,62 @@ import {
 
 const chat = new ChatService();
 
-const addNewChatToChats = (unreadCount, chats) => {
-  return Object.keys(unreadCount).map((key) => {
-    if (!chats.find(({ username }) => key === username)) {
-      return {
+const mergeNewChats = (newChats, existingChats) => {
+  const allChats = [...existingChats];
+  Object.keys(newChats).forEach(_username => {
+    if (!existingChats.find(({ username }) => _username === username)) {
+      allChats.push({
         lastMessage: {
           content: '',
-          username: key,
+          username: _username,
           device: 1,
           serverTimestamp: 0,
           savedTimestamp: 0,
         },
-        username: key,
-        unread: unreadCount[key],
-      };
+        username: _username,
+        unread: newChats[_username],
+      });
     }
-    return {};
   });
+  return allChats;
 };
 
 export const getExistingChatsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
-    const filteredChats = chats.filter((thisChat) => { return typeof thisChat.lastMessage !== 'undefined'; });
-
-    const { contacts: { data: contacts } } = getState();
-    if (!contacts.length) return;
-
+    const filteredChats = chats.filter(_chat => _chat.username !== '');
     const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
-    const newChats = addNewChatToChats(unreadCount, chats);
-    const augmentedChats = filteredChats.map(item => {
-      const unread = unreadCount[item.username] || 0;
-      return { ...item, unread };
-    });
+    const newChats = mergeNewChats(unreadCount, filteredChats);
 
-    const augmentedChatsWithNewChats = augmentedChats.concat(newChats.filter(value => Object.keys(value).length !== 0));
+    const augmentedChats = newChats.map(item => {
+      const unread = unreadCount[item.username] || 0;
+      const lastMessage = item.lastMessage || {};
+      return { ...item, unread, lastMessage };
+    });
 
     dispatch({
       type: UPDATE_CHATS,
-      payload: augmentedChatsWithNewChats,
+      payload: augmentedChats,
     });
   };
 };
 
 export const resetUnreadAction = (contactUsername: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
-    const filteredChats = chats.filter((thisChat) => { return typeof thisChat.lastMessage !== 'undefined'; });
-
-    const { contacts: { data: contacts } } = getState();
-    if (!contacts.length) return;
-
+    const filteredChats = chats.filter(_chat => _chat.username !== '');
     const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
-    const newChats = addNewChatToChats(unreadCount, chats);
+    const newChats = mergeNewChats(unreadCount, filteredChats);
 
-    const augmentedChats = filteredChats.map(item => {
+    const augmentedChats = newChats.map(item => {
       const unread = item.username === contactUsername ? 0 : (unreadCount[item.username] || 0);
-      return { ...item, unread };
+      const lastMessage = item.lastMessage || {};
+      return { ...item, unread, lastMessage };
     });
-    const augmentedChatsWithNewChats = augmentedChats.concat(newChats.filter(value => Object.keys(value).length !== 0));
 
     dispatch({
       type: RESET_UNREAD_MESSAGE,
-      payload: augmentedChatsWithNewChats,
+      payload: augmentedChats,
     });
   };
 };
