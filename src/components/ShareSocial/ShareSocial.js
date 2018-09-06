@@ -25,7 +25,6 @@ const ButtonWrapper = styled.View`
 
 const facebook = require('assets/icons/icon_facebook.png');
 const twitter = require('assets/icons/icon_twitter.png');
-const instagram = require('assets/icons/icon_instagram.png');
 
 type Props = {
   label?: string,
@@ -37,8 +36,9 @@ type Props = {
 export default class ShareSocial extends React.Component<Props> {
   shareOnTwitter = () => {
     Share.shareSingle({
-      title: 'Share via',
-      message: 'pillar.io',
+      title: 'Pillar Wallet',
+      message: 'pillarproject.io/wallet',
+      url: 'https://pillarproject.io/wallet',
       social: Share.Social.TWITTER,
     })
       .catch(() => {
@@ -48,24 +48,13 @@ export default class ShareSocial extends React.Component<Props> {
 
   shareOnFacebook = () => {
     Share.shareSingle({
-      title: 'Share via',
-      message: 'pillar.io',
+      message: 'pillarproject.io/wallet',
+      url: 'https://pillarproject.io/wallet',
       social: Share.Social.FACEBOOK,
     })
       .catch(() => {
         Linking.openURL('https://www.facebook.com/sharer/sharer.php?u=https%3A//pillarproject.io/wallet');
       });
-  };
-
-  shareOnInstagram = () => {
-    // Share.shareSingle({
-    //   url: '',
-    //   social: Share.Social.INSTAGRAM,
-    //   type: 'image/*',
-    // }).then((res) => console.log('res', res))
-    //   .catch((err) => {
-    //     console.log('insta err', err);
-    //   });
   };
 
   renderSocialButton(platform: string) {
@@ -90,17 +79,6 @@ export default class ShareSocial extends React.Component<Props> {
               resizeMode: 'contain',
             }}
             source={twitter}
-          />
-        );
-      case instagram:
-        return (
-          <Image
-            style={{
-              width: 50,
-              height: 50,
-              resizeMode: 'contain',
-            }}
-            source={instagram}
           />
         );
       default:
@@ -141,7 +119,6 @@ export default class ShareSocial extends React.Component<Props> {
         <Label>{label}</Label>
         <ButtonsRow>
           {!!facebook && this.renderKeys(this.shareOnFacebook, facebook)}
-          {!!instagram && this.renderKeys(this.shareOnInstagram, instagram)}
           {!!twitter && this.renderKeys(this.shareOnTwitter, twitter)}
         </ButtonsRow>
       </ShareWrapper>
