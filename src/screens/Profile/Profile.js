@@ -1,34 +1,30 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import Storage from 'services/storage';
-import ChatService from 'services/chat';
+import { FlatList, Alert, ScrollView } from 'react-native';
+import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import { FlatList, Alert } from 'react-native';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
 import { SubHeading, BoldText } from 'components/Typography';
-import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
-import { updateUserAction } from 'actions/userActions';
-import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
-import SearchBar from 'components/SearchBar';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-
-import countries from 'utils/countries.json';
+import CountrySelect from 'components/CountrySelect';
+import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
+import { updateUserAction } from 'actions/userActions';
+import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
+import Storage from 'services/storage';
+import ChatService from 'services/chat';
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 
-const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
 const chat = new ChatService();
@@ -44,10 +40,6 @@ const ListSeparator = styled.View`
   border-bottom-width: 1px;
   border-color: ${baseColors.lightGray};
   background-color: ${baseColors.lighterGray};
-`;
-
-const SearchBarWrapper = styled.View`
-  padding: 0 ${spacing.rhythm}px;
 `;
 
 const SettingsModalTitle = styled(BoldText)`
@@ -105,8 +97,6 @@ type State = {
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
-  query: string,
-  filteredCountries: ?Object[],
 }
 
 class Profile extends React.Component<Props, State> {
@@ -120,8 +110,6 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
-      query: '',
-      filteredCountries: null,
     };
   }
 
@@ -138,11 +126,7 @@ class Profile extends React.Component<Props, State> {
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
-    this.setState({
-      visibleModal,
-      query: '',
-      filteredCountries: null,
-    });
+    this.setState({ visibleModal });
   };
 
   toggleTermsConditionsModal = () => {
@@ -180,21 +164,6 @@ class Profile extends React.Component<Props, State> {
     this.toggleSlideModalOpen(null);
   };
 
-  handleSearchChange = (query: any) => {
-    this.setState({ query });
-    this.handleCountrySearch(query);
-  };
-
-  handleCountrySearch = (query: string) => {
-    if (!query || query.trim() === '' || query.length < 2) {
-      this.setState({ filteredCountries: null });
-      return;
-    }
-    const filteredCountries = sortedCountries
-      .filter(country => country.name.toUpperCase().includes(query.toUpperCase()));
-    this.setState({ filteredCountries });
-  };
-
   handleLogoutMessage = () => {
     const { logoutUser } = this.props;
     Alert.alert(
@@ -205,7 +174,7 @@ class Profile extends React.Component<Props, State> {
         { text: 'OK', onPress: logoutUser },
       ],
     );
-  }
+  };
 
   renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
     return (
@@ -233,8 +202,6 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
-      query,
-      filteredCountries,
     } = this.state;
 
     return (
@@ -250,36 +217,10 @@ class Profile extends React.Component<Props, State> {
         >
           <Wrapper flex={1}>
             <SettingsModalTitle extraHorizontalSpacing>
-             Choose your country
+              Choose your country
             </SettingsModalTitle>
-            <SearchBarWrapper>
-              <SearchBar
-                inputProps={{
-                  onChange: this.handleSearchChange,
-                  value: query,
-                  autoCapitalize: 'none',
-                }}
-                placeholder="Search"
-                backgroundColor={baseColors.white}
-              />
-            </SearchBarWrapper>
-            <FlatList
-              data={filteredCountries || sortedCountries}
-              extraData={filteredCountries}
+            <CountrySelect
               renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
-              keyExtractor={({ name }) => name}
-              ListEmptyComponent={
-                <Wrapper
-                  fullScreen
-                  style={{
-                    paddingTop: 90,
-                    paddingBottom: 90,
-                    alignItems: 'center',
-                  }}
-                >
-                  <EmptyStateParagraph title="Nothing found" bodyText="Make sure you entered the country correctly" />
-                </Wrapper>
-              }
             />
           </Wrapper>
         </SlideModal>
@@ -330,14 +271,16 @@ class Profile extends React.Component<Props, State> {
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
-            <SettingsModalTitle>
-              Enter your full name
-            </SettingsModalTitle>
-            <ProfileForm
-              fields={fullNameFormFields}
-              onSubmit={this.handleUserFieldUpdate}
-              value={{ firstName: user.firstName, lastName: user.lastName }}
-            />
+            <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}>
+              <SettingsModalTitle>
+                Enter your full name
+              </SettingsModalTitle>
+              <ProfileForm
+                fields={fullNameFormFields}
+                onSubmit={this.handleUserFieldUpdate}
+                value={{ firstName: user.firstName, lastName: user.lastName }}
+              />
+            </ScrollView>
           </Wrapper>
         </SlideModal>
         <SlideModal
