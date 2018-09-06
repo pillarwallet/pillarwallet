@@ -2,10 +2,25 @@
 
 import React from 'react';
 import t from 'tcomb-form-native';
+import styled from 'styled-components/native';
 import TextInput from 'components/TextInput';
 import { Wrapper } from 'components/Layout';
+import { spacing } from 'utils/variables';
 import Button from 'components/Button';
 import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
+
+const StyledWrapper = styled(Wrapper)`
+  justify-content: space-between;
+  padding-bottom: ${spacing.rhythm}px;
+`;
+
+const FormFooter = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
+`;
 
 type Field = {
   name: string,
@@ -162,7 +177,6 @@ export default class ProfileForm extends React.Component<Props, State> {
     onSubmit(value);
   };
 
-
   handleChange = (value: Object) => {
     this.setState({ value });
   };
@@ -174,7 +188,7 @@ export default class ProfileForm extends React.Component<Props, State> {
     const formStructure = getFormStructure(fields);
 
     return (
-      <Wrapper>
+      <StyledWrapper flex={1}>
         <Form
           ref={node => { this._form = node; }}
           type={formStructure}
@@ -182,8 +196,10 @@ export default class ProfileForm extends React.Component<Props, State> {
           value={value}
           onChange={this.handleChange}
         />
-        <Button onPress={this.handleSubmit} title="Save" />
-      </Wrapper>
+        <FormFooter>
+          <Button onPress={this.handleSubmit} title="Save" />
+        </FormFooter>
+      </StyledWrapper>
     );
   }
 }
