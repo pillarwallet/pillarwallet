@@ -20,39 +20,23 @@ import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import org.reactnative.camera.RNCameraPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
 import cl.json.RNSharePackage;
+import cl.json.ShareApplication;
 import com.ocetnik.timer.BackgroundTimerPackage;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.crypho.scrypt.RNScryptPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
-import org.reactnative.camera.RNCameraPackage;
-import lt.imas.react_native_signal.RNSignalClientPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.tradle.react.UdpSocketsModule;
-import com.peel.react.TcpSocketsModule;
-import com.bitgo.randombytes.RandomBytesPackage;
-import com.peel.react.rnos.RNOSModule;
-import com.robinpowered.react.Intercom.IntercomPackage;
-import io.invertase.firebase.RNFirebasePackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.airbnb.android.react.lottie.LottiePackage;
-import com.BV.LinearGradient.LinearGradientPackage;
 import io.fabric.sdk.android.Fabric;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
-import com.robinpowered.react.Intercom.IntercomPackage;
 import io.intercom.android.sdk.Intercom;
 // react-native-splash-screen >= 0.3.1
 import java.util.Arrays;
 import java.util.List;
 
-import cl.json.RNSharePackage;
-import cl.json.ShareApplication;
 
 public class MainApplication extends Application implements ShareApplication, ReactApplication {
 
