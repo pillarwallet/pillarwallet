@@ -66,14 +66,19 @@ describe('Validators', () => {
   });
 
   describe('validateEmail', () => {
-    it('should return false if email isn\'t valid', () => {
+    it('should return false for jon@', () => {
       const email = 'jon@';
       expect(isValidEmail(email)).toBeFalsy();
     });
 
-    it('should return true if email is valid', () => {
+    it('should return true for jon@snow.com', () => {
       const email = 'jon@snow.com';
       expect(isValidEmail(email)).toBeTruthy();
+    });
+
+    it('should return false for the email with leading spaces', () => {
+      const email = '    jon@snow.com';
+      expect(isValidEmail(email)).toBeFalsy();
     });
   });
 
