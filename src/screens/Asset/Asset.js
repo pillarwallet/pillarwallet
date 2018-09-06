@@ -23,6 +23,7 @@ import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney } from 'utils/common';
+import assetsConfig from 'configs/assetsConfig';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
@@ -188,9 +189,14 @@ class AssetScreen extends React.Component<Props, State> {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
     };
-
+    const {
+      listed: isListed = true,
+      send: isSendActive = true,
+      receive: isReceiveActive = true,
+      disclaimer,
+    } = assetsConfig[assetData.token] || {};
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header onClose={this.handleCardTap} />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
@@ -217,12 +223,16 @@ class AssetScreen extends React.Component<Props, State> {
                 address={assetData.address}
                 icon={assetData.icon}
                 wallpaper={assetData.wallpaper}
+                isListed={isListed}
+                disclaimer={disclaimer}
               />
             </Transition>
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               noBalance={isWalletEmpty}
+              isSendDisabled={!isSendActive}
+              isReceiveDisabled={!isReceiveActive}
             />
             <AssetDescriptionWrapper expanded={assetDescriptionExpanded}>
               <AssetDescription small light>

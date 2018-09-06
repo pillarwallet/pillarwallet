@@ -1,14 +1,10 @@
 // @flow
 import * as React from 'react';
-import {
-  Animated,
-  TouchableWithoutFeedback,
-} from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -19,6 +15,8 @@ type Props = {
   address: string,
   wallpaper: string,
   children?: React.Node,
+  isListed: boolean,
+  disclaimer?: string,
   balanceInFiat: {
     amount: string | number,
     currency: string,
@@ -26,12 +24,26 @@ type Props = {
   icon: string,
 }
 
+const AssetWrapper = styled.View`
+  height: 130px;
+  margin-bottom: ${spacing.rhythm / 2};
+  width: 100%;
+  box-shadow: 0px 1px 2px ${UIColors.defaultShadowColor};
+  padding: 2px;
+`;
+
+const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
+  z-index: 10;
+`;
+
 const BackgroundHolder = styled.View`
   flex: 1;
   flex-direction: row;
   border-radius: 12px;
-  overflow: hidden;
+  height: 130px;
+  border-radius: 20px;
   width: 100%;
+  elevation: 2;
   position: relative;
   background-color: ${props => (props.cardColor)};
 `;
@@ -42,6 +54,7 @@ const BackgroundImage = styled(CachedImage)`
   position: absolute;
   top: 0;
   left: 0;
+  border-radius: 20px;
 `;
 
 const AmountWrapper = styled.View`
@@ -55,22 +68,32 @@ const AmountWrapper = styled.View`
 const Amount = styled(LightText)`
   font-size: ${fontSizes.extraLarge};
   line-height: ${fontSizes.extraLarge};
-  color: #fff;
+  color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
 const FiatAmount = styled(LightText)`
-  font-size: 14px;
+  font-size: ${fontSizes.extraSmall};
   line-height: 14px;
   color: #fff;
   position: absolute;
-  bottom: 20px;
-  left: 14px;
+  bottom: ${spacing.rhythm}
+  left: 12px
+`;
+
+const Disclaimer = styled(LightText)`
+  font-size: ${fontSizes.extraSmall};
+  line-height: 14px;
+  color: ${baseColors.burningFire};
+  position: relative;
+  position: absolute;
+  bottom: 18px;
+  left: 16px;
 `;
 
 const AmountToken = styled(BoldText)`
   font-size: ${fontSizes.medium};
   line-height: ${fontSizes.extraLarge};
-  color: #fff;
+  color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
 
@@ -85,7 +108,7 @@ const IconCircle = styled.View`
   width: 40px;
   height: 40px;
   border-radius: 20px;
-  background: rgba(255,255,255,0.1);
+  background: ${props => props.isListed ? 'rgba(255,255,255,0.1)' : 'rgba(198,202,205,0.6)'};
   position: relative;
   align-self: flex-end;
   margin-top: 20px;
@@ -104,7 +127,7 @@ const Name = styled(BoldText)`
   letter-spacing: ${fontTrackings.medium};
   line-height: ${fontSizes.mediumLarge};
   margin: 20px 0 0 14px;
-  color: white;
+  color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
 
@@ -118,41 +141,33 @@ const AssetCard = (props: Props) => {
     balanceInFiat,
     onPress,
     wallpaper,
+    isListed = true,
+    disclaimer,
     icon = '',
   } = props;
 
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-
+  const bgColor = isListed ? defaultCardColor : baseColors.white;
+  const wallpaperUri = isListed ? wallpaper : undefined;
   return (
-    <TouchableWithoutFeedback
-      onPress={onPress}
-      style={{
-        width: '100%',
-        height: '100%',
-        zIndex: 10,
-      }}
-    >
-      <Animated.View
-        style={[{
-          height: 130,
-          marginBottom: spacing.rhythm / 2,
-        }]}
-      >
-        <BackgroundHolder cardColor={defaultCardColor}>
-          <BackgroundImage source={{ uri: wallpaper }} />
+    <AssetWrapper>
+      <TouchableWithoutFeedback onPress={onPress}>
+        <BackgroundHolder cardColor={bgColor}>
+          <BackgroundImage source={{ uri: wallpaperUri }} />
           <DetailsWrapper>
-            <Name>{name}</Name>
+            <Name isListed={isListed}>{name}</Name>
             <AmountWrapper>
-              <Amount>{amount}</Amount>
-              <AmountToken> {token}</AmountToken>
+              <Amount isListed={isListed}>{amount}</Amount>
+              <AmountToken isListed={isListed}> {token}</AmountToken>
             </AmountWrapper>
-            <FiatAmount>
-              {currencySymbol}{balanceInFiat.amount}
-            </FiatAmount>
+            {disclaimer
+              ? <Disclaimer>{disclaimer}</Disclaimer>
+              : <FiatAmount> {currencySymbol}{balanceInFiat.amount} </FiatAmount>
+            }
           </DetailsWrapper>
           {!!icon &&
             <IconWrapper>
-              <IconCircle>
+              <IconCircle isListed={isListed}>
                 <CachedImage
                   key={token}
                   style={{
@@ -165,8 +180,8 @@ const AssetCard = (props: Props) => {
               </IconCircle>
             </IconWrapper>}
         </BackgroundHolder>
-      </Animated.View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </AssetWrapper>
   );
 };
 
