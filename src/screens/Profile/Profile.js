@@ -6,22 +6,23 @@ import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
 import { FlatList } from 'react-native';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { SubHeading, BaseText } from 'components/Typography';
+import { SubHeading, BoldText } from 'components/Typography';
 import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction } from 'actions/authActions';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
+import SearchBar from 'components/SearchBar';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 import countries from 'utils/countries.json';
 import ProfileSettingsItem from './ProfileSettingsItem';
@@ -45,18 +46,15 @@ const ListSeparator = styled.View`
   background-color: ${baseColors.lighterGray};
 `;
 
-const ListValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  padding-left: 20px;
+const SearchBarWrapper = styled.View`
+  padding: 0 ${spacing.rhythm}px;
 `;
 
-const ListItem = styled(NBListItem)`
-  margin: 5px 0;
-`;
-
-const ListIcon = styled(Icon)`
-  font-size: 22px;
-  color: ${baseColors.coolGrey};
+const SettingsModalTitle = styled(BoldText)`
+  line-height: ${fontSizes.medium};
+  font-size: ${fontSizes.medium};
+  font-weight: ${fontWeights.bold};
+  margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
 const cityFormFields = [{
@@ -106,6 +104,8 @@ type State = {
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
+  query: string,
+  filteredCountries: any,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -119,6 +119,8 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
+      query: '',
+      filteredCountries: null,
     };
   }
 
@@ -137,6 +139,8 @@ class Profile extends React.Component<Props, State> {
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
     this.setState({
       visibleModal,
+      query: '',
+      filteredCountries: null,
     });
   };
 
@@ -175,19 +179,28 @@ class Profile extends React.Component<Props, State> {
     this.toggleSlideModalOpen(null);
   };
 
+  handleSearchChange = (query: any) => {
+    this.setState({ query });
+    this.handleCountrySearch(query);
+  };
+
+  handleCountrySearch = (query: string) => {
+    if (!query || query.trim() === '' || query.length < 2) {
+      this.setState({ filteredCountries: null });
+      return;
+    }
+    const filteredCountries =
+      sortedCountries.filter(country => country.name.toUpperCase().includes(query.toUpperCase()));
+    this.setState({ filteredCountries });
+  };
+
   renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
     return (
-      <ListItem key={name} onPress={() => onSelect({ [field]: name })}>
-        <Left>
-          <ListValue>{name}</ListValue>
-        </Left>
-        <Right>
-          <ListIcon
-            name="chevron-thin-right"
-            type="Entypo"
-          />
-        </Right>
-      </ListItem>
+      <ProfileSettingsItem
+        key={name}
+        label={name}
+        onPress={() => onSelect({ [field]: name })}
+      />
     );
   };
 
@@ -207,31 +220,68 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
+      query,
+      filteredCountries,
     } = this.state;
+
     return (
       <Container color={baseColors.snowWhite}>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
-          title="Choose your country"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <FlatList
-            data={sortedCountries}
-            renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
-            keyExtractor={({ name }) => name}
-          />
+          <Wrapper flex={1}>
+            <SettingsModalTitle extraHorizontalSpacing>
+             Choose your country
+            </SettingsModalTitle>
+            <SearchBarWrapper>
+              <SearchBar
+                inputProps={{
+                  onChange: this.handleSearchChange,
+                  value: query,
+                  autoCapitalize: 'none',
+                }}
+                placeholder="Search"
+                backgroundColor={baseColors.white}
+              />
+            </SearchBarWrapper>
+            <FlatList
+              data={filteredCountries || sortedCountries}
+              extraData={filteredCountries}
+              renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
+              keyExtractor={({ name }) => name}
+              ListEmptyComponent={
+                <Wrapper
+                  fullScreen
+                  style={{
+                    paddingTop: 90,
+                    paddingBottom: 90,
+                    alignItems: 'center',
+                  }}
+                >
+                  <EmptyStateParagraph title="Nothing found" bodyText="Make sure you entered the country correctly" />
+                </Wrapper>
+              }
+            />
+          </Wrapper>
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'city'}
-          title="Enter city name"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <Wrapper regularPadding>
+          <Wrapper regularPadding flex={1}>
+            <SettingsModalTitle>
+              Enter your city name
+            </SettingsModalTitle>
             <ProfileForm
               fields={cityFormFields}
               onSubmit={this.handleUserFieldUpdate}
@@ -241,12 +291,16 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'email'}
-          title="Enter your email"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <Wrapper regularPadding>
+          <Wrapper regularPadding flex={1}>
+            <SettingsModalTitle>
+              Enter your email
+            </SettingsModalTitle>
             <ProfileForm
               fields={emailFormFields}
               onSubmit={this.handleUserFieldUpdate}
@@ -256,12 +310,16 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'fullName'}
-          title="Enter your full name"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <Wrapper regularPadding>
+          <Wrapper regularPadding flex={1}>
+            <SettingsModalTitle>
+              Enter your full name
+            </SettingsModalTitle>
             <ProfileForm
               fields={fullNameFormFields}
               onSubmit={this.handleUserFieldUpdate}
@@ -271,11 +329,14 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          title="Choose your base currency"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
         >
+          <SettingsModalTitle extraHorizontalSpacing>
+            Choose your base currency
+          </SettingsModalTitle>
           <FlatList
             data={currencies}
             renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
