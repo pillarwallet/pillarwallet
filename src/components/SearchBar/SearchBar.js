@@ -47,6 +47,7 @@ const InputIcon = styled(Image)`
 
 type inputPropsType = {
   placeholder?: string,
+  backgroundColor?: string,
   onChange: Function,
   onBlur?: Function,
   value: ?string,
@@ -56,6 +57,7 @@ type Props = {
   errorMessage?: string,
   inputProps: inputPropsType,
   placeholder?: string,
+  backgroundColor?: string,
 };
 
 type State = {
@@ -123,7 +125,7 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   render() {
-    const { inputProps, placeholder } = this.props;
+    const { inputProps, placeholder, backgroundColor } = this.props;
     const {
       animShrink,
       isFocused,
@@ -140,6 +142,7 @@ class SearchBar extends React.Component<Props, State> {
               inputRange: [0, 1],
               outputRange: ['0%', '1%'],
             }),
+            backgroundColor: backgroundColor || 'transparent',
           }}
         >
           <InputField
