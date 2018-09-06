@@ -21,6 +21,8 @@ type Props = {
   isVisible: boolean,
   showHeader?: boolean,
   centerTitle?: boolean,
+  backgroundColor?: string,
+  avoidKeyboard?: boolean,
 };
 
 const ModalWrapper = styled.View`
@@ -104,6 +106,8 @@ export default class SlideModal extends React.Component<Props, *> {
       isVisible,
       showHeader,
       centerTitle,
+      backgroundColor,
+      avoidKeyboard,
     } = this.props;
 
     const showModalHeader = !fullScreen || showHeader;
@@ -137,7 +141,7 @@ export default class SlideModal extends React.Component<Props, *> {
     const modalContent = () => {
       if (fullScreen) {
         return (
-          <Container>
+          <Container color={backgroundColor}>
             {modalInner}
           </Container>
         );
@@ -158,6 +162,7 @@ export default class SlideModal extends React.Component<Props, *> {
         animationIn="slideInUp"
         animationOut="slideOutDown"
         swipeDirection="down"
+        avoidKeyboard={avoidKeyboard}
         style={{
           margin: 0,
         }}
