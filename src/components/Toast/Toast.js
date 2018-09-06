@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated } from 'react-native';
+import { Animated, Platform } from 'react-native';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
@@ -49,7 +49,7 @@ const ToastHolder = styled.View`
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
   height: 320px;
-  margin-top: -220px;
+  margin-top: -${Platform.OS === 'android' ? 240 : 220}px;
   background-color: ${baseColors.white};
   position: absolute;
   left: 0;
@@ -192,7 +192,7 @@ export default class Toast extends React.Component<{}, State> {
             iconStyle={{
               borderWidth: 2,
               borderRadius: 16,
-              paddingTop: 7,
+              paddingTop: Platform.OS === 'android' ? 8 : 7,
               borderColor: baseColors.mediumGray,
               height: 32,
               width: 32,
