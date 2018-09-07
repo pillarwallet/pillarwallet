@@ -31,6 +31,7 @@ import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
+import NewChatListScreen from 'screens/Chat/NewChatList';
 import ChatScreen from 'screens/Chat/Chat';
 
 // components
@@ -74,6 +75,7 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   REVEAL_BACKUP_PHRASE,
   CHAT_LIST,
+  NEW_CHAT,
   CHAT,
   AUTH_FLOW,
 } from 'constants/navigationConstants';
@@ -142,6 +144,7 @@ const StackNavigatorConfig = {
 // CHAT FLOW
 const chatFlow = createStackNavigator({
   [CHAT_LIST]: ChatListScreen,
+  [NEW_CHAT]: NewChatListScreen,
 }, StackNavigatorConfig);
 
 // ASSETS FLOW

@@ -11,6 +11,7 @@ export const ADD_TOKEN = 'ADD_TOKEN';
 export const PROFILE = 'PROFILE';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';
 export const CHAT_LIST = 'CHAT_LIST';
+export const NEW_CHAT = 'NEW_CHAT';
 export const CHAT = 'CHAT';
 
 // CHANGE PIN FLOW

@@ -17,6 +17,7 @@ export const baseColors = {
   snowWhite: '#fafafa',
   lightGray: '#f5f5f5',
   whiteSmoke: '#f7f7f7',
+  whiterSmoke: '#f2f2f2',
   lighterGray: '#fafafa',
   mediumGray: '#C6CACD',
   darkGray: '#8B939E',
@@ -31,6 +32,7 @@ export const baseColors = {
   vividOrange: '#ffc021',
   brightBlue: '#2f86eb',
   limeGreen: '#47d764',
+  lightYellow: '#feffe0',
 };
 
 export const brandColors = [
@@ -54,6 +56,7 @@ export const UIColors = {
 };
 
 export const fontSizes = {
+  tiny: 10,
   extraExtraSmall: 12,
   extraSmall: 14,
   small: 16,
