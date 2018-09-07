@@ -1,5 +1,6 @@
 // @flow
 import ChatService from 'services/chat';
+import Toast from 'components/Toast';
 import {
   UPDATE_CHATS,
   ADD_MESSAGE,
@@ -10,37 +11,33 @@ import {
 
 const chat = new ChatService();
 
-const addContactsToChats = (contacts, chats) => {
-  const newChatPlaceholder = {
-    content: 'Start new conversation',
-    device: 1,
-    savedTimestamp: '',
-    serverTimestamp: '',
-    username: '',
-  };
-
-  return contacts.map((contact) => {
-    const existingChat = chats.find(({ username }) => contact.username === username);
-    return {
-      lastMessage: (existingChat && existingChat.lastMessage) || newChatPlaceholder,
-      username: contact.username,
-      unread: 0,
-    };
-  });
+const mergeNewChats = (newChats, existingChats) => {
+  return Object.keys(newChats)
+    .filter(_username => !existingChats.find(({ username }) => _username === username))
+    .map(_username => ({
+      lastMessage: {
+        content: '',
+        username: _username,
+        device: 1,
+        serverTimestamp: 0,
+        savedTimestamp: 0,
+      },
+      username: _username,
+      unread: newChats[_username],
+    }))
+    .concat(existingChats);
 };
 
 export const getExistingChatsAction = () => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
-    const { contacts: { data: contacts } } = getState();
-    if (!contacts.length) return;
-
-    const chatsWithContacts = addContactsToChats(contacts, chats);
-    const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
-
-    const augmentedChats = chatsWithContacts.map(item => {
-      const unread = unreadCount[item.username] || 0;
-      return { ...item, unread };
+    const filteredChats = chats.filter(_chat => _chat.username !== '');
+    const { unreadChats = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
+    const newChats = mergeNewChats(unreadChats, filteredChats);
+    const augmentedChats = newChats.map(item => {
+      const unread = unreadChats[item.username] || 0;
+      const lastMessage = item.lastMessage || {};
+      return { ...item, unread, lastMessage };
     });
 
     dispatch({
@@ -51,18 +48,16 @@ export const getExistingChatsAction = () => {
 };
 
 export const resetUnreadAction = (contactUsername: string) => {
-  return async (dispatch: Function, getState: Function) => {
+  return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
-
-    const { contacts: { data: contacts } } = getState();
-    if (!contacts.length) return;
-
-    const chatsWithContacts = addContactsToChats(contacts, chats);
+    const filteredChats = chats.filter(_chat => _chat.username !== '');
     const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
+    const newChats = mergeNewChats(unreadCount, filteredChats);
 
-    const augmentedChats = chatsWithContacts.map(item => {
+    const augmentedChats = newChats.map(item => {
       const unread = item.username === contactUsername ? 0 : (unreadCount[item.username] || 0);
-      return { ...item, unread };
+      const lastMessage = item.lastMessage || {};
+      return { ...item, unread, lastMessage };
     });
 
     dispatch({
@@ -74,7 +69,18 @@ export const resetUnreadAction = (contactUsername: string) => {
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
-    await chat.client.sendMessageByContact(username, message.text).catch(() => null);
+    try {
+      await chat.client.sendMessageByContact(username, message.text);
+    } catch (e) {
+      Toast.show({
+        message: 'Unable to contact the server!',
+        type: 'warning',
+        title: 'Cannot send the message',
+        autoClose: false,
+      });
+      return;
+    }
+
     const timestamp = new Date(message.createdAt).getTime();
     const msg = {
       _id: timestamp,

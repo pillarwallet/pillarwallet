@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Vibration, Dimensions, Text, Platform, PixelRatio } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
 import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
@@ -72,9 +73,13 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   camera: ?Object;
   isScanned: boolean = false;
 
-  state = {
-    authorizationState: PENDING,
-  };
+  constructor(props: Props) {
+    super(props);
+    this.handleAndroidQRRead = throttle(this.handleAndroidQRRead, 700);
+    this.state = {
+      authorizationState: PENDING,
+    };
+  }
 
   componentDidUpdate(prevProps: Props) {
     if (this.props.isActive && this.state.authorizationState === PENDING) {
@@ -115,14 +120,22 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     };
   }
 
-  handleQRRead = (data: Object) => {
-    const coordinates = Platform.OS === 'ios'
-      ? this.getIOSCoordinates(data.bounds)
-      : this.getAndroidCoordinates(data.bounds);
-    const { x, y } = coordinates;
+  handleIosQRRead = (data: Object) => {
+    const { bounds, data: address } = data;
+    const { x, y } = this.getIOSCoordinates(bounds);
     const isInRecognitionArea = (x > viewMinScanX + 20 && y > viewMinScanY) &&
       (x < (viewMinScanX + 100) && (y < viewMinScanY + 100));
     if (!isInRecognitionArea) return;
+    const { onRead, validator, dataFormatter } = this.props;
+    const isValid = validator(address);
+    if (!this.isScanned && isValid) {
+      this.isScanned = true;
+      Vibration.vibrate();
+      onRead(dataFormatter(address));
+    }
+  }
+
+  handleAndroidQRRead = (data: Object) => {
     const { onRead, validator, dataFormatter } = this.props;
     const { data: address } = data;
     const isValid = validator(address);
@@ -131,13 +144,13 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       Vibration.vibrate();
       onRead(dataFormatter(address));
     }
-  };
+  }
 
   handleAnimationDismiss = () => {
     const { onDismiss } = this.props;
     this.isScanned = false;
     onDismiss();
-  };
+  }
 
   renderNoPermissions() {
     return (
@@ -156,6 +169,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   renderScanner() {
     const { rectangleColor } = this.props;
+    const handleQRRead = Platform.OS === 'ios' ? this.handleIosQRRead : this.handleAndroidQRRead;
     return (
       <RNCamera
         ref={ref => {
@@ -168,7 +182,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
           justifyContent: 'center',
         }}
         type={RNCamera.Constants.Type.back}
-        onBarCodeRead={this.handleQRRead}
+        onBarCodeRead={handleQRRead}
       >
         <HeaderWrapper>
           <Header light flexStart onClose={this.handleAnimationDismiss} />
