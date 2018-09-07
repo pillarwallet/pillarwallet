@@ -29,6 +29,9 @@ const glyphMap = {
   'tick-circle': '\uE816',
   'warning-circle': '\uE817',
   'chevron-right': '\uE818',
+  'send-message': '\uE832',
+  'send-asset': '\uE833',
+  'send-attachment': '\uE834',
 };
 
 type Props = {

@@ -22,6 +22,12 @@ const ItemRow = styled.View`
   padding: 6px 16px 10px 16px;
 `;
 
+const InnerRow = styled.View`
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+`;
+
 const AvatarWrapper = styled.View`
   width: 48px;
   height: 48px;
@@ -31,13 +37,12 @@ const AvatarWrapper = styled.View`
   shadow-opacity: 0.2;
   shadow-radius: 2px;
   elevation: 5;
-  margin-top: 4px;
+  margin-top: 5px;
+  margin-right: 10px;
 `;
 
-const UserWrapper = styled.View`
+const InnerColumn = styled.View`
   flex-direction: column;
-  padding-left: 10px;
-  padding-right: 10px;
   flex: 4;
 `;
 
@@ -45,24 +50,33 @@ const UserName = styled(BoldText)`
   color: ${baseColors.slateBlack};
   font-size: ${fontSizes.medium};
   letter-spacing: 0.2px;
+  flex: 1;
 `;
 
 const Message = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.small};
-  line-height: ${fontSizes.medium};
+  line-height: ${fontSizes.medium + 2};
   letter-spacing: 0.1px;
+  margin-top: 2px;
+  flex: 1;
 `;
 
-const DetailsWrapper = styled.View`
-  flex-direction: column;
-  width: 80px;
-  align-items: flex-end;
+const TimeWrapper = styled.View`
+  align-items: flex-start;
+  margin-top: ${Platform.OS === 'ios' ? 6 : 4}px;
 `;
 
 const TimeSent = styled(BaseText)`
   color: ${baseColors.darkGray}
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
+  line-height: ${fontSizes.small};
+  text-align-vertical: bottom;
+`;
+
+const CounterPlaceHolder = styled.View`
+  flex: 0 0 50px;
+  height: 100%;
 `;
 
 const UnreadCounter = styled.View`
@@ -72,7 +86,7 @@ const UnreadCounter = styled.View`
   background-color: ${baseColors.darkGray}
   align-self: flex-end;
   padding: 3px 0;
-  margin-top: 6px;
+  margin-top: 2px;
   margin-right: 1px;
 `;
 
@@ -115,26 +129,32 @@ export default class ChatListItem extends React.Component<Props> {
             diameter={44}
           />
         </AvatarWrapper>
-        <UserWrapper>
-          <UserName>
-            {userName}
-          </UserName>
-          {!!message &&
-          <Message numberOfLines={2}>
-            {message}
-          </Message>}
-        </UserWrapper>
-        <DetailsWrapper>
-          <TimeSent>
-            {timeSent}
-          </TimeSent>
-          {!!unreadCount &&
-          <UnreadCounter>
-            <UnreadNumber>
-              {customUnreadCount}
-            </UnreadNumber>
-          </UnreadCounter>}
-        </DetailsWrapper>
+        <InnerColumn>
+          <InnerRow>
+            <UserName>
+              {userName}
+            </UserName>
+            <TimeWrapper>
+              {!!timeSent &&
+              <TimeSent>
+                {timeSent}
+              </TimeSent>}
+            </TimeWrapper>
+          </InnerRow>
+          <InnerRow>
+            <Message numberOfLines={2}>
+              {message}
+            </Message>
+            <CounterPlaceHolder>
+              {!!unreadCount &&
+              <UnreadCounter>
+                <UnreadNumber>
+                  {customUnreadCount}
+                </UnreadNumber>
+              </UnreadCounter>}
+            </CounterPlaceHolder>
+          </InnerRow>
+        </InnerColumn>
       </ItemRow>
     );
 

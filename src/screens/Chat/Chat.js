@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Image, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -16,9 +16,10 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
+import Icon from 'components/Icon';
 import {
   sendMessageByContactAction,
   getChatByContactAction,
@@ -28,8 +29,6 @@ import {
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
 import { CHAT_LIST } from 'constants/navigationConstants';
-
-const iconSend = require('assets/icons/icon_sendMessage.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -57,31 +56,40 @@ const renderBubble = (props: Props) => (
     {...props}
     textStyle={{
       left: {
-        color: baseColors.darkGray,
-        fontSize: 14,
+        color: baseColors.slateBlack,
+        fontSize: fontSizes.extraSmall,
+        fontFamily: Platform.select({
+          ios: 'Aktiv Grotesk App',
+          android: 'AktivGrotesk-Regular',
+        }),
+        fontWeight: '400',
       },
       right: {
-        color: '#ffffff',
-        fontSize: 14,
+        color: baseColors.slateBlack,
+        fontSize: fontSizes.extraSmall,
+        fontFamily: Platform.select({
+          ios: 'Aktiv Grotesk App',
+          android: 'AktivGrotesk-Regular',
+        }),
+        fontWeight: '400',
       },
     }}
     wrapperStyle={{
       left: {
-        backgroundColor: baseColors.lightGray,
+        backgroundColor: baseColors.white,
         borderRadius: 5,
-        padding: 20,
-        paddingTop: 2,
-        paddingLeft: 6,
-        paddingBottom: 6,
-        paddingRight: 2,
+        borderWidth: 1,
+        borderColor: baseColors.whiterSmoke,
+        maxWidth: 262,
+        marginTop: 5,
+        marginBottom: 5,
       },
       right: {
-        backgroundColor: baseColors.electricBlue,
+        backgroundColor: baseColors.lightYellow,
         borderRadius: 5,
-        paddingTop: 2,
-        paddingRight: 6,
-        paddingBottom: 6,
-        paddingLeft: 2,
+        borderWidth: 1,
+        borderColor: baseColors.whiterSmoke,
+        maxWidth: 262,
       },
     }}
   />
@@ -111,49 +119,21 @@ const renderAvatar = (contact) => (props: Props) => (
 );
 
 const renderComposer = (props: Props) => {
-  if (Platform.OS === 'ios') {
-    return (
-      <Composer
-        {...props}
-        textInputStyle={{
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-
-          marginLeft: 0,
-          paddingTop: 4,
-        }}
-      />
-    );
-  }
-
   return (
-    <View style={{
-      flex: 1,
-      borderWidth: 1,
-      borderColor: '#e6e8eb',
-      borderRadius: 26,
-      marginRight: 10,
-      marginTop: 3,
-      marginBottom: 6,
-      alignItems: 'flex-start',
-      justifyContent: 'center',
-      minHeight: 40,
-      paddingTop: 4,
-      paddingLeft: 2,
-      paddingBottom: 2,
-      paddingRight: 20,
-    }}
-    >
-      <Composer
-        {...props}
-        textInputStyle={{
-          borderWidth: 0,
-          width: '100%',
-          margin: 0,
-        }}
-        multiline
-      />
-    </View>
+    <Composer
+      {...props}
+      textInputStyle={{
+        width: '100%',
+        marginTop: Platform.select({
+          ios: 12,
+          android: 8,
+        }),
+        marginBottom: 5,
+        fontSize: fontSizes.extraSmall,
+        lineHeight: fontSizes.extraSmall,
+      }}
+      placeholder="Type your message here"
+    />
   );
 };
 
@@ -161,59 +141,41 @@ const renderSend = (props: Props) => (
   <Send
     {...props}
     containerStyle={{
-      paddingRight: 12,
+      paddingRight: spacing.rhythm,
+      paddingLeft: spacing.rhythm,
+      marginTop: Platform.select({
+        ios: 4,
+        android: 6,
+      }),
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'column',
-      height: Platform.OS === 'ios' ? 44 : 54,
     }}
   >
-    <Image
+    <Icon
+      name="send-message"
       style={{
-        width: 24,
-        height: 24,
+        color: baseColors.brightBlue,
+        fontSize: fontSizes.extraLarge,
       }}
-      source={iconSend}
     />
   </Send>
 );
 
 const renderInputToolbar = (props: Props) => {
-  if (Platform.OS === 'ios') {
-    return (
-      <InputToolbar
-        {...props}
-        renderSend={renderSend}
-        primaryStyle={{
-          justifyContent: 'center',
-        }}
-        containerStyle={{
-          bottom: 2,
-          borderWidth: 1,
-          borderTopWidth: 1,
-          borderTopColor: '#e6e8eb',
-          borderColor: '#e6e8eb',
-          borderRadius: 20,
-          paddingLeft: 10,
-          marginRight: 10,
-          marginLeft: 10,
-        }}
-        // renderAccessory={this.renderSend()}
-      />
-    );
-  }
-
   return (
     <InputToolbar
       {...props}
       renderSend={renderSend}
       primaryStyle={{
         justifyContent: 'center',
+        alignItems: 'flex-start',
       }}
       containerStyle={{
         bottom: 2,
-        paddingLeft: 10,
-        borderTopWidth: 0,
+        paddingLeft: 8,
+        borderColor: baseColors.lightGray,
+        margin: 0,
       }}
     />
   );
@@ -228,22 +190,45 @@ const renderDay = (props: Props) => (
     }}
     textStyle={{
       color: baseColors.darkGray,
-      fontWeight: '300',
-      fontSize: 14,
+      fontWeight: '400',
+      fontSize: fontSizes.extraSmall,
+      fontFamily: Platform.select({
+        ios: 'Aktiv Grotesk App',
+        android: 'AktivGrotesk-Regular',
+      }),
     }}
     dateFormat="LL"
   />
 );
 
-const renderTime = (props: Props) => (
-  <Time
-    {...props}
-    textStyle={{
-      color: baseColors.darkGray,
-    }}
-    timeFormat="HH:mm"
-  />
-);
+const renderTime = (props: Props) => {
+  return (
+    <Time
+      {...props}
+      textStyle={{
+        right: {
+          color: baseColors.darkGray,
+          fontFamily: Platform.select({
+            ios: 'Aktiv Grotesk App',
+            android: 'AktivGrotesk-Regular',
+          }),
+          fontWeight: '400',
+          fontSize: fontSizes.extraExtraSmall,
+        },
+        left: {
+          color: baseColors.darkGray,
+          fontFamily: Platform.select({
+            ios: 'Aktiv Grotesk App',
+            android: 'AktivGrotesk-Regular',
+          }),
+          fontWeight: '400',
+          fontSize: fontSizes.extraExtraSmall,
+        },
+      }}
+      timeFormat="HH:mm"
+    />
+  );
+};
 
 const renderLoadEarlier = (props: Props) => (
   <LoadEarlier
@@ -342,7 +327,7 @@ class ChatScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title={title} onClose={this.handleChatDismissal} />
+        <Header title={title} onBack={this.handleChatDismissal} />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
           <View style={{ flex: 1, alignItems: 'center' }}>
@@ -360,11 +345,11 @@ class ChatScreen extends React.Component<Props, State> {
             renderComposer={renderComposer}
             renderInputToolbar={renderInputToolbar}
             renderDay={renderDay}
-            renderTime={renderTime}
             loadEarlier={showLoadEarlierButton}
             onLoadEarlier={this.handleLoadEarlier}
             renderLoadEarlier={renderLoadEarlier}
             renderMessage={renderMessage}
+            renderTime={renderTime}
             minInputToolbarHeight={52}
           />}
         </Wrapper>
