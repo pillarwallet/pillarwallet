@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Vibration, Dimensions, Text, Platform, PixelRatio } from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import debounce from 'lodash.debounce';
+import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
 import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
@@ -75,7 +75,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.handleAndroidQRRead = debounce(this.handleAndroidQRRead, 500);
+    this.handleAndroidQRRead = throttle(this.handleAndroidQRRead, 700);
     this.state = {
       authorizationState: PENDING,
     };
