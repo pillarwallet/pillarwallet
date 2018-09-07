@@ -129,7 +129,14 @@ platform :ios do
 
   desc "Upload an IPA to staging app"
   lane :deploy_staging do
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    #sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
+
+#    update_info_plist(
+#        plist_path: "Example/Example-Info.plist",
+#        xcodeproj: "Example.xcodeproj",
+#        display_name: "Example Beta"
+#        app_identifier: "com.example.myappbeta"
+#      )
 
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
 
@@ -141,13 +148,13 @@ platform :ios do
         )
 
     get_push_certificate(
-        force: true,
+        force: false,
         app_identifier: "com.pillarproject.wallet.staging",
         team_id: "J9DEY3FGPD",
       )
 
     sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
-    sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
+    sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
     sigh(
       app_identifier: "com.pillarproject.wallet.staging",
       force: true
