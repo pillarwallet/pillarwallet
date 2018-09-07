@@ -27,6 +27,7 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
+import { CHAT_LIST } from 'constants/navigationConstants';
 
 const iconSend = require('assets/icons/icon_sendMessage.png');
 
@@ -41,6 +42,7 @@ type Props = {
   resetUnread: Function,
   contact: Object,
   chats: any,
+  contacts: Object,
 }
 
 type State = {
@@ -304,10 +306,18 @@ class ChatScreen extends React.Component<Props, State> {
       navigation,
       getExistingChats,
       resetUnread,
+      contacts,
+      chats,
     } = this.props;
     getExistingChats();
     resetUnread(this.state.contact.username);
-    navigation.goBack(null);
+
+    if (navigation.getParam('fromNewChatList', false) && (contacts.length - 1 > chats.length)) {
+      navigation.goBack(null);
+      navigation.setParams({ fromNewChatList: false });
+    } else {
+      navigation.navigate(CHAT_LIST);
+    }
   };
 
   handleLoadEarlier = () => {
@@ -366,11 +376,13 @@ class ChatScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   chat: { data: { messages, isFetching, chats } },
+  contacts: { data: contacts },
 }) => ({
   user,
   messages,
   isFetching,
   chats,
+  contacts,
 });
 
 const mapDispatchToProps = (dispatch) => ({
