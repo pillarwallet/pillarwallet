@@ -61,9 +61,16 @@ const Message = styled(BaseText)`
   flex: 1;
 `;
 
+const TimeWrapper = styled.View`
+  align-items: flex-start;
+  margin-top: ${Platform.OS === 'ios' ? 6 : 4}px;
+`;
+
 const TimeSent = styled(BaseText)`
   color: ${baseColors.darkGray}
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraSmall};
+  line-height: ${fontSizes.small};
+  text-align-vertical: bottom;
 `;
 
 const CounterPlaceHolder = styled.View`
@@ -125,10 +132,12 @@ export default class ChatListItem extends React.Component<Props> {
             <UserName>
               {userName}
             </UserName>
-            {!!timeSent &&
-            <TimeSent>
-              {timeSent}
-            </TimeSent>}
+            <TimeWrapper>
+              {!!timeSent &&
+              <TimeSent>
+                {timeSent}
+              </TimeSent>}
+            </TimeWrapper>
           </InnerRow>
           <InnerRow>
             <Message numberOfLines={2}>

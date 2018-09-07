@@ -67,7 +67,7 @@ class ChatListScreen extends React.Component<Props, State> {
       if (isToday(lastMessageDate)) {
         timeSent = formatDate(lastMessageDate, 'HH:mm');
       } else if (isYesterday(lastMessageDate)) {
-        timeSent = 'Yesterday';
+        timeSent = 'yesterday';
       } else {
         timeSent = formatDate(lastMessageDate, 'MM/DD/YY');
       }
