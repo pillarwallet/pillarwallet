@@ -6,7 +6,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { Container, Wrapper } from 'components/Layout';
-import TransactionSentModal from 'components/TransactionSentModal';
 import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
@@ -19,6 +18,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
+import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -36,7 +36,6 @@ type State = {
   assetData: Object,
   isSubmitted: boolean,
   showCheckPinModal: boolean,
-  showTransactionPendingModal: boolean,
 }
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
@@ -73,7 +72,6 @@ class SendTokenContacts extends React.Component<Props, State> {
       assetData,
       isSubmitted: false,
       showCheckPinModal: false,
-      showTransactionPendingModal: false,
     };
   }
 
@@ -82,9 +80,9 @@ class SendTokenContacts extends React.Component<Props, State> {
     if (!needToCheckPinCode) {
       this.makeTransaction();
       this.setState({
-        showTransactionPendingModal: true,
         isSubmitted: true,
       });
+      this.props.navigation.navigate(SEND_TOKEN_TRANSACTION);
       return;
     }
     this.setState({ showCheckPinModal: true });
@@ -100,22 +98,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
-  closePendingModal = () => {
-    const { navigation } = this.props;
-    navigation.dismiss();
-
-    this.setState({
-      showTransactionPendingModal: false,
-    });
-  }
-
-  handlePendingNotificationOpen = () => {
+  handleNavigatingToTransactionState = () => {
     const { isSubmitted } = this.state;
     if (!isSubmitted) {
       this.handleCheckPinModalClose();
       return;
     }
-    this.setState({ showTransactionPendingModal: true });
+    this.props.navigation.navigate(SEND_TOKEN_TRANSACTION);
   };
 
   handleCheckPinModalClose = () => {
@@ -148,7 +137,6 @@ class SendTokenContacts extends React.Component<Props, State> {
         txFeeInWei,
       },
       showCheckPinModal,
-      showTransactionPendingModal,
     } = this.state;
 
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
@@ -189,10 +177,9 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
         </KeyboardAvoidingView>
-        <TransactionSentModal isVisible={showTransactionPendingModal} modalHide={this.closePendingModal} />
         <SlideModal
           isVisible={showCheckPinModal}
-          onModalHidden={this.handlePendingNotificationOpen}
+          onModalHidden={this.handleNavigatingToTransactionState}
           onModalHide={this.closeCheckPinModal}
           title="enter pincode"
           centerTitle
