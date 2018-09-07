@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Image, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -19,6 +19,7 @@ import {
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
+import Icon from 'components/Icon';
 import {
   sendMessageByContactAction,
   getChatByContactAction,
@@ -27,8 +28,6 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-
-const iconSend = require('assets/icons/icon_sendMessage.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -80,6 +79,8 @@ const renderBubble = (props: Props) => (
         borderWidth: 1,
         borderColor: baseColors.whiterSmoke,
         maxWidth: 262,
+        marginTop: 5,
+        marginBottom: 5,
       },
       right: {
         backgroundColor: baseColors.lightYellow,
@@ -142,20 +143,19 @@ const renderSend = (props: Props) => (
       paddingLeft: spacing.rhythm,
       marginTop: Platform.select({
         ios: 4,
-        android: 12,
+        android: 6,
       }),
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'column',
     }}
-    alwaysShowSend
   >
-    <Image
+    <Icon
+      name="send-message"
       style={{
-        width: 24,
-        height: 24,
+        color: baseColors.brightBlue,
+        fontSize: fontSizes.extraLarge,
       }}
-      source={iconSend}
     />
   </Send>
 );
