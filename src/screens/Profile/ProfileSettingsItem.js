@@ -2,9 +2,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { Icon, Switch, Badge as NBBadge } from 'native-base';
+import { Switch, Badge as NBBadge } from 'native-base';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 import { Platform, View, StyleSheet, TouchableNativeFeedback } from 'react-native';
+
 
 const StyledItemTouchable = styled.TouchableHighlight`
   display: flex;
@@ -72,6 +74,7 @@ const ItemValue = styled(BaseText)`
   text-align: right;
   flex: 1;
   padding: 0 ${spacing.rhythm / 2}px
+  align-self: stretch;
 `;
 
 const ButtonWrapper = ({ onPress, children }) => {
@@ -123,10 +126,9 @@ export default class ProfileSettingsItem extends React.Component<Props> {
           <View>
             {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             <Icon
-              name="chevron-thin-right"
-              type="Entypo"
+              name="chevron-right"
               style={{
-                fontSize: 16,
+                fontSize: fontSizes.tiny,
                 color: baseColors.coolGrey,
               }}
             />
