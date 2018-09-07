@@ -168,10 +168,10 @@ class Profile extends React.Component<Props, State> {
     const { logoutUser } = this.props;
     Alert.alert(
       'Are you sure?',
-      'Logout will cause a wallet removal from the local storage',
+      'This action will delete the wallet from this device',
       [
         { text: 'Cancel' },
-        { text: 'OK', onPress: logoutUser },
+        { text: 'Delete', onPress: logoutUser },
       ],
     );
   };
@@ -452,8 +452,8 @@ class Profile extends React.Component<Props, State> {
             />
 
             <ProfileSettingsItem
-              key="logOut"
-              label="Log Out"
+              key="deleteWallet"
+              label="Delete Wallet"
               onPress={this.handleLogoutMessage}
             />
 
