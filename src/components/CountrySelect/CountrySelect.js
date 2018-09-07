@@ -35,7 +35,17 @@ export default class CountrySelect extends React.Component<Props, State> {
       return;
     }
     const filteredCountries = sortedCountries
-      .filter(country => country.name.toUpperCase().includes(query.toUpperCase()));
+      .map(country => {
+        const index = country.name.toUpperCase().indexOf(query.toUpperCase());
+        return {
+          index,
+          country,
+        };
+      })
+      .filter(({ index }) => index > -1)
+      .sort((a, b) => a.index - b.index)
+      .map(({ country }) => country);
+
     this.setState({ filteredCountries, query });
   };
 
