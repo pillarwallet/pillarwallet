@@ -79,6 +79,8 @@ class ChatListScreen extends React.Component<Props, State> {
     }
     const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
 
+    if (!contact.username) return null;
+
     return (
       <ChatListItem
         userName={contactInfo.username}

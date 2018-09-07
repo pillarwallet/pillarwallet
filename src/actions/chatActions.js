@@ -12,34 +12,30 @@ import {
 const chat = new ChatService();
 
 const mergeNewChats = (newChats, existingChats) => {
-  const allChats = [...existingChats];
-  Object.keys(newChats).forEach(_username => {
-    if (!existingChats.find(({ username }) => _username === username)) {
-      allChats.push({
-        lastMessage: {
-          content: '',
-          username: _username,
-          device: 1,
-          serverTimestamp: 0,
-          savedTimestamp: 0,
-        },
+  return Object.keys(newChats)
+    .filter(_username => !existingChats.find(({ username }) => _username === username))
+    .map(_username => ({
+      lastMessage: {
+        content: '',
         username: _username,
-        unread: newChats[_username],
-      });
-    }
-  });
-  return allChats;
+        device: 1,
+        serverTimestamp: 0,
+        savedTimestamp: 0,
+      },
+      username: _username,
+      unread: newChats[_username],
+    }))
+    .concat(existingChats);
 };
 
 export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => _chat.username !== '');
-    const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
-    const newChats = mergeNewChats(unreadCount, filteredChats);
-
+    const { unreadChats = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
+    const newChats = mergeNewChats(unreadChats, filteredChats);
     const augmentedChats = newChats.map(item => {
-      const unread = unreadCount[item.username] || 0;
+      const unread = unreadChats[item.username] || 0;
       const lastMessage = item.lastMessage || {};
       return { ...item, unread, lastMessage };
     });
