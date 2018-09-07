@@ -9,15 +9,16 @@ import ProfileImage from 'components/ProfileImage';
 type Props = {
   userName: string,
   avatar: string,
-  message: string,
-  timeSent: string,
-  unreadCount: number,
+  message?: string,
+  timeSent?: string,
+  unreadCount?: any,
   onPress: Function,
+  centerVertical?: boolean,
 }
 
 const ItemRow = styled.View`
   flex-direction: row;
-  align-items: flex-start;
+  align-items: ${props => props.centerVertical ? 'center' : 'flex-start'};
   padding: 6px 16px 10px 16px;
 `;
 
@@ -95,17 +96,18 @@ export default class ChatListItem extends React.Component<Props> {
       message,
       timeSent,
       unreadCount,
+      centerVertical,
     } = this.props;
 
     let customUnreadCount;
-    if (unreadCount > 9) {
+    if (!!unreadCount && unreadCount > 9) {
       customUnreadCount = '..';
     } else {
       customUnreadCount = unreadCount;
     }
 
     const item = (
-      <ItemRow>
+      <ItemRow centerVertical={centerVertical}>
         <AvatarWrapper style={{ shadowOffset: { width: 1, height: 1 } }}>
           <ProfileImage
             uri={avatar}
@@ -117,9 +119,10 @@ export default class ChatListItem extends React.Component<Props> {
           <UserName>
             {userName}
           </UserName>
+          {!!message &&
           <Message numberOfLines={2}>
             {message}
-          </Message>
+          </Message>}
         </UserWrapper>
         <DetailsWrapper>
           <TimeSent>
