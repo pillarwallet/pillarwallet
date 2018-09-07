@@ -4,13 +4,12 @@ import orderBy from 'lodash.orderby';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
-import { isToday, isYesterday, format as formatDate } from 'date-fns';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
-import { CHAT, NEW_CHAT } from 'constants/navigationConstants';
-import EmptyChat from 'components/EmptyState/EmptyChat';
+import { CHAT, CHAT_LIST } from 'constants/navigationConstants';
 import Header from 'components/Header';
+import EmptyChat from 'components/EmptyState/EmptyChat';
 import { baseColors } from 'utils/variables';
-import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
+import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import ChatListItem from './ChatListItem';
 
@@ -21,7 +20,6 @@ type Props = {
   chats: Object[],
   notifications: Object[],
   getExistingChats: Function,
-  resetUnread: Function,
 }
 
 type State = {
@@ -31,7 +29,7 @@ type State = {
   chatList: Array<Object>,
 }
 
-class ChatListScreen extends React.Component<Props, State> {
+class NewChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   componentDidMount() {
@@ -49,46 +47,24 @@ class ChatListScreen extends React.Component<Props, State> {
   }
 
   handleChatItemClick = (contact) => {
-    const { navigation, resetUnread } = this.props;
-    navigation.navigate(CHAT, { contact });
-    resetUnread(contact.username);
+    const { navigation } = this.props;
+    navigation.navigate(CHAT, { contact, fromNewChatList: true });
   };
 
-  goToNewChatList = () => {
-    this.props.navigation.navigate(NEW_CHAT);
+  goToChatList = () => {
+    this.props.navigation.navigate(CHAT_LIST);
   };
 
   renderItem = ({ item: contact }: Object) => {
-    const { chats, contacts } = this.props;
-
-    const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
-    const { lastMessage, unread } = chatWithContact;
+    const { contacts } = this.props;
     const contactInfo = contacts.find(({ username }) => contact.username === username) || {};
-
-    let timeSent = '';
-
-    if (lastMessage.serverTimestamp) {
-      const lastMessageDate = new Date(lastMessage.serverTimestamp);
-      if (isToday(lastMessageDate)) {
-        timeSent = formatDate(lastMessageDate, 'HH:mm');
-      } else if (isYesterday(lastMessageDate)) {
-        timeSent = 'yesterday';
-      } else {
-        timeSent = formatDate(lastMessageDate, 'MM/DD/YY');
-      }
-    }
-    const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
-
-    if (!contact.username) return null;
 
     return (
       <ChatListItem
         userName={contactInfo.username}
         avatar={contactInfo.profileImage}
-        message={unread ? newMessageCopy : lastMessage.content}
-        timeSent={timeSent}
-        unreadCount={unread}
         onPress={() => this.handleChatItemClick(contactInfo)}
+        centerVertical
       />
     );
   };
@@ -102,19 +78,24 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { chats, getExistingChats } = this.props;
-    const ChatWrapper = chats.length ? ScrollWrapper : View;
-    const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
+    const { chats, getExistingChats, contacts } = this.props;
+    const contactsForNewChats = contacts.map((contact) => {
+      const existingChat = chats.find(({ username }) => contact.username === username);
+      if (existingChat) return {};
+      return contact;
+    });
+
+    const sortedContactsForNewChats = orderBy(contactsForNewChats
+      .filter(value => Object.keys(value).length !== 0), [user => user.username.toLowerCase()], 'asc');
+
+    const ChatWrapper = sortedContactsForNewChats.length ? ScrollWrapper : View;
+
     return (
       <Container>
-        <Header
-          title="chat"
-          nextText="New chat"
-          onNextPress={this.goToNewChatList}
-        />
+        <Header title="new chat" onBack={this.goToChatList} />
         <ChatWrapper
           style={{
-            paddingBottom: sortedChats.length ? 18 : 0,
+            paddingBottom: sortedContactsForNewChats.length ? 18 : 0,
           }}
           refreshControl={
             <RefreshControl
@@ -124,8 +105,8 @@ class ChatListScreen extends React.Component<Props, State> {
           }
         >
           <FlatList
-            data={sortedChats}
-            extraData={chats}
+            data={sortedContactsForNewChats}
+            extraData={this.props.contacts}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
             ItemSeparatorComponent={this.renderSeparator}
@@ -133,8 +114,8 @@ class ChatListScreen extends React.Component<Props, State> {
             contentContainerStyle={{ height: '100%' }}
             ListEmptyComponent={
               <EmptyChat
-                title="Break the ice"
-                bodyText="Start chatting with someone. Recent chats will appear here."
+                title="No new connections"
+                bodyText="Check recent chats for existing chats"
               />}
           />
         </ChatWrapper>
@@ -155,8 +136,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   setUnreadChatNotificationsStatus: (status) => dispatch(setUnreadChatNotificationsStatusAction(status)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatListScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(NewChatListScreen);
