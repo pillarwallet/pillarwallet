@@ -32,7 +32,9 @@ export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => _chat.username !== '');
-    const { unreadChats = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
+    const {
+      unreadCount: unreadChats = {},
+    } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
     const newChats = mergeNewChats(unreadChats, filteredChats);
     const augmentedChats = newChats.map(item => {
       const unread = unreadChats[item.username] || 0;
@@ -51,11 +53,13 @@ export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => _chat.username !== '');
-    const { unreadCount = {} } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
-    const newChats = mergeNewChats(unreadCount, filteredChats);
+    const {
+      unreadCount: unreadChats = {},
+    } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
+    const newChats = mergeNewChats(unreadChats, filteredChats);
 
     const augmentedChats = newChats.map(item => {
-      const unread = item.username === contactUsername ? 0 : (unreadCount[item.username] || 0);
+      const unread = item.username === contactUsername ? 0 : (unreadChats[item.username] || 0);
       const lastMessage = item.lastMessage || {};
       return { ...item, unread, lastMessage };
     });
