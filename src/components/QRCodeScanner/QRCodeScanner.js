@@ -102,17 +102,6 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     });
   }
 
-  getAndroidCoordinates = (bounds: Object[]) => {
-    const ratioXOffset = pixelRatio > 2 ? pixelRatio - 1.5 : pixelRatio;
-    const leftBottom = { x: bounds[0].x / ratioXOffset, y: bounds[0].y / ratioXOffset };
-    const leftTop = { x: bounds[1].x / ratioXOffset, y: bounds[1].y / ratioXOffset };
-    const rightTop = { x: bounds[2].x / ratioXOffset, y: bounds[2].y / ratioXOffset };
-    return {
-      x: Math.min(leftTop.x, leftBottom.x),
-      y: Math.min(leftTop.y, rightTop.y),
-    };
-  }
-
   getIOSCoordinates = (bounds: Object) => {
     return {
       x: +bounds.origin.x,
@@ -123,8 +112,8 @@ export default class QRCodeScanner extends React.Component<Props, State> {
   handleIosQRRead = (data: Object) => {
     const { bounds, data: address } = data;
     const { x, y } = this.getIOSCoordinates(bounds);
-    const isInRecognitionArea = (x > viewMinScanX + 20 && y > viewMinScanY) &&
-      (x < (viewMinScanX + 100) && (y < viewMinScanY + 100));
+    const isInRecognitionArea = x > viewMinScanX + 20 && y > viewMinScanY &&
+      x < viewMinScanX + 100 && y < viewMinScanY + 100;
     if (!isInRecognitionArea) return;
     const { onRead, validator, dataFormatter } = this.props;
     const isValid = validator(address);
