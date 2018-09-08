@@ -343,8 +343,6 @@ type Props = {
 let lockTimer;
 
 class AppFlow extends React.Component<Props, {}> {
-  timer: any | TimeoutID;
-
   componentDidMount() {
     const {
       startListeningNotifications,
