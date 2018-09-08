@@ -121,7 +121,7 @@
     "querystring-es3": "~0.2.0",
     "react": "16.4.1",
     "react-native": "0.56.0",
-    "react-native-background-timer": "^2.0.1",
+    "react-native-background-timer": "2.1.0-alpha.6",
     "react-native-cached-image": "^1.4.3",
     "react-native-camera": "^1.1.4",
     "react-native-canvas": "^0.1.20",

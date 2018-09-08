@@ -344,9 +344,9 @@ type Props = {
   assets: Object,
 }
 
-class AppFlow extends React.Component<Props, {}> {
-  timer: any | TimeoutID;
+let lockTimer;
 
+class AppFlow extends React.Component<Props, {}> {
   componentDidMount() {
     const {
       startListeningNotifications,
@@ -392,9 +392,9 @@ class AppFlow extends React.Component<Props, {}> {
       stopListeningIntercomNotifications,
       navigation,
     } = this.props;
-    BackgroundTimer.clearTimeout(this.timer);
-    if (APP_LOGOUT_STATES.indexOf(nextAppState) > -1) {
-      this.timer = BackgroundTimer.setTimeout(() => {
+    BackgroundTimer.clearTimeout(lockTimer);
+    if (APP_LOGOUT_STATES.includes(nextAppState)) {
+      lockTimer = BackgroundTimer.setTimeout(() => {
         navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
