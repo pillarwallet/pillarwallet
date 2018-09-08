@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Vibration, Dimensions, Text, Platform, PixelRatio } from 'react-native';
+import { Vibration, Dimensions, Text, Platform } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
@@ -9,8 +9,6 @@ import { noop } from 'utils/common';
 import { baseColors } from 'utils/variables';
 import Header from 'components/Header';
 import styled from 'styled-components/native';
-
-const pixelRatio = PixelRatio.get();
 
 const AUTHORIZED = 'AUTHORIZED';
 const PENDING = 'PENDING';
