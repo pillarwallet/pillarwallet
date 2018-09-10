@@ -95,11 +95,11 @@ jobs:
       - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane deploy_staging
-      # - run:
-      #     name: Announce Deployment
-      #     command: |
-      #       chmod +x .circleci/announceDeployment.sh
-      #       .circleci/announceDeployment.sh "Pillar Wallet" "TestFlight"
+       - run:
+           name: Announce Deployment
+           command: |
+             chmod +x .circleci/announceDeployment.sh
+             .circleci/announceDeployment.sh "Pillar Wallet" "Staging TestFlight"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -196,11 +196,11 @@ jobs:
       - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane deploy_prod
-      # - run:
-      #     name: Announce Deployment
-      #     command: |
-      #       chmod +x .circleci/announceDeployment.sh
-      #       .circleci/announceDeployment.sh "Pillar Wallet" "TestFlight"
+       - run:
+           name: Announce Deployment
+           command: |
+             chmod +x .circleci/announceDeployment.sh
+             .circleci/announceDeployment.sh "Pillar Wallet" "Production TestFlight"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -314,7 +314,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
-            .circleci/announceDeployment.sh "Pillar Wallet" "Google Play Store"
+            .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
 
 workflows:
   version: 2
@@ -328,7 +328,6 @@ workflows:
             branches:
               only:
                   - master
-                  - react_native_schemes_manager_spike
       - stage_android:
           requires:
             - build
@@ -336,19 +335,14 @@ workflows:
             branches:
               only:
                   - master
-                  - react_native_schemes_manager_spike
-      - hold:
+      - release_to_prod:
           type: approval
           requires:
            - stage_ios
            - stage_android
       - prod_ios:
           requires:
-            - hold
+            - release_to_prod
       - prod_android:
           requires:
-            - hold
-          filters:
-            branches:
-              only:
-                  - master
+            - release_to_prod

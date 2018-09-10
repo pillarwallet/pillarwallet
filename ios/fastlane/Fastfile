@@ -21,9 +21,9 @@ platform :ios do
     sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
     commit = last_git_commit
 
-    #upload_to_testflight(changelog: commit[:message],
-    # skip_waiting_for_build_processing: true,
-    #)
+    upload_to_testflight(changelog: commit[:message],
+      skip_waiting_for_build_processing: true,
+    )
   end
 
   desc "Release to staging TestFlight"
