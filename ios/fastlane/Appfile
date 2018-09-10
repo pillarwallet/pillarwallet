@@ -3,7 +3,7 @@ itc_team_id("118878535") # iTunes Connect Team ID
 team_id("J9DEY3FGPD") # Developer Portal Team ID
 
 
-for_lane :build_test_flight do
+for_lane :deploy_prod do
   app_identifier("com.pillarproject.wallet") # The bundle identifier of your app
 end
 
