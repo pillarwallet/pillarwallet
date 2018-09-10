@@ -6,24 +6,8 @@ platform :ios do
     setup_circle_ci
   end
 
-  desc "Create ios simulator build"
-  lane :build_ios_simulator do
-  match(type: "development",
-        readonly: true)
-        disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
-        xcbuild(
-              workspace: "pillarwallet.xcworkspace",
-              scheme: "pillarwallet",
-              configuration: "Release",
-              xcargs: "-sdk iphonesimulator SYMROOT='~/pillarwallet'"
-          )
-  zip(path: "/Users/distiller/pillarwallet/Release-iphonesimulator/pillarwallet.app",
-      output_path: "./build/pillarwallet.app.zip"
-    )
-  end
-
-  desc "Upload a new build to TestFlight"
-  lane :build_test_flight do
+  desc "Release to production TestFlight"
+  lane :deploy_prod do
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     match(type: "appstore",
           readonly: true,
@@ -42,7 +26,7 @@ platform :ios do
     #)
   end
 
-  desc "Upload an IPA to staging app"
+  desc "Release to staging TestFlight"
   lane :deploy_staging do
 
     # insert circleCI's build number as our build number
