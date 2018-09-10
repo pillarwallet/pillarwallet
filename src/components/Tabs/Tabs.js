@@ -16,7 +16,7 @@ type Tab = {
 
 type Props = {
   title: string,
-  tabs: Array<Tab>,
+  tabs: Tab[],
 }
 
 type State = {
@@ -69,19 +69,20 @@ export default class Tabs extends React.Component<Props, State> {
     activeTab: ALL,
   }
 
-  renderTabItems = (tabs: Array<Tab>) => {
+  renderTabItems = (tabs: Tab[]) => {
     const { activeTab } = this.state;
     const tabItems = tabs.map(tab => {
+      const isActive = activeTab === tab.id;
       return (
         <TabItem
           key={tab.id}
-          active={activeTab === tab.id}
+          active={isActive}
           onPress={() => this.setState({
             activeTab: tab.id,
-          }, () => tab.onPress())}
+          }, tab.onPress)}
         >
-          <TabItemIcon active={activeTab === tab.id} name={tab.icon} />
-          <TabItemText active={activeTab === tab.id}>{tab.name}</TabItemText>
+          <TabItemIcon active={isActive} name={tab.icon} />
+          <TabItemText active={isActive}>{tab.name}</TabItemText>
         </TabItem>
       );
     });
