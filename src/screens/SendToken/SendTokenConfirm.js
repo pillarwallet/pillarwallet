@@ -10,32 +10,24 @@ import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
-import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM, SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   sendAsset: Function,
   appSettings: Object,
   session: Object,
-  resetIncorrectPassword: () => Function,
-  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
   wallet: Object,
   contacts: Object[],
 }
 
 type State = {
   transactionPayload: Object,
-  assetData: Object,
-  isSubmitted: boolean,
-  showCheckPinModal: boolean,
+  isLoading: boolean,
 }
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
@@ -66,31 +58,35 @@ class SendTokenContacts extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
-    const assetData = this.props.navigation.getParam('assetData', {});
     this.state = {
       transactionPayload,
-      assetData,
-      isSubmitted: false,
-      showCheckPinModal: false,
+      isLoading: false,
     };
   }
 
   handleFormSubmit = () => {
-    const needToCheckPinCode = this.isNeedToCheckPinCode(this.props.appSettings);
-    if (!needToCheckPinCode) {
-      this.makeTransaction();
+    const {
+      appSettings: {
+        requestPinForTransaction = true,
+      },
+      sendAsset,
+      navigation,
+    } = this.props;
+    const { transactionPayload } = this.state;
+    if (!requestPinForTransaction) {
       this.setState({
-        isSubmitted: true,
-      });
-      this.props.navigation.navigate(SEND_TOKEN_TRANSACTION);
+        isLoading: true,
+      }, () => sendAsset(transactionPayload, this.handleNavigationToTransactionState));
       return;
     }
-    this.setState({ showCheckPinModal: true });
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
+      transactionPayload,
+    });
   };
 
-  isNeedToCheckPinCode(appSettings: Object): boolean {
-    const { requestPinForTransaction = true } = appSettings;
-    return requestPinForTransaction;
+  handleNavigationToTransactionState = (params: ?Object) => {
+    const { navigation } = this.props;
+    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params });
   }
 
   handleModalDismissal = () => {
@@ -98,50 +94,21 @@ class SendTokenContacts extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
-  handleNavigatingToTransactionState = () => {
-    const { isSubmitted } = this.state;
-    if (!isSubmitted) {
-      this.handleCheckPinModalClose();
-      return;
-    }
-    this.props.navigation.navigate(SEND_TOKEN_TRANSACTION);
-  };
-
-  handleCheckPinModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
-    resetIncorrectPassword();
-  };
-
-  closeCheckPinModal = () => {
-    this.setState({
-      showCheckPinModal: false,
-    });
-  };
-
-  makeTransaction = () => {
-    const { transactionPayload, assetData: { token, decimals } } = this.state;
-    this.props.sendAsset({ ...transactionPayload, symbol: token, decimals });
-    this.setState({
-      showCheckPinModal: false,
-      isSubmitted: true,
-    });
-  };
-
   render() {
     const { contacts, session } = this.props;
     const {
-      assetData,
       transactionPayload: {
         amount,
         to,
         txFeeInWei,
+        symbol,
       },
-      showCheckPinModal,
+      isLoading,
     } = this.state;
 
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
-
+    const buttonTitle = isLoading ? 'Transaction in progress...' : 'Confirm Transaction';
     return (
       <React.Fragment>
         <Container>
@@ -154,13 +121,13 @@ class SendTokenContacts extends React.Component<Props, State> {
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
               <Label>Amount</Label>
-              <Value>{amount} {assetData.token}</Value>
+              <Value>{amount} {symbol}</Value>
             </LabeledRow>
             {!!recipientUsername &&
-            <LabeledRow>
-              <Label>Recipient Username</Label>
-              <Value>{recipientUsername}</Value>
-            </LabeledRow>
+              <LabeledRow>
+                <Label>Recipient Username</Label>
+                <Value>{recipientUsername}</Value>
+              </LabeledRow>
             }
             <LabeledRow>
               <Label>Recipient Address</Label>
@@ -174,22 +141,9 @@ class SendTokenContacts extends React.Component<Props, State> {
         </Container>
         <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
-            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+            <Button disabled={!session.isOnline || isLoading} onPress={this.handleFormSubmit} title={buttonTitle} />
           </FooterWrapper>
         </KeyboardAvoidingView>
-        <SlideModal
-          isVisible={showCheckPinModal}
-          onModalHidden={this.handleNavigatingToTransactionState}
-          onModalHide={this.closeCheckPinModal}
-          title="enter pincode"
-          centerTitle
-          fullScreen
-          showHeader
-        >
-          <Wrapper flex={1}>
-            <CheckPin onPinValid={this.makeTransaction} />
-          </Wrapper>
-        </SlideModal>
       </React.Fragment>
     );
   }
@@ -208,12 +162,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload) => dispatch(sendAssetAction(transaction)),
-  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  fetchTransactionsHistory: (walletAddress, asset) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress, asset));
-  },
+  sendAsset: (transaction: TransactionPayload, navigate) => dispatch(sendAssetAction(transaction, navigate)),
 });
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);

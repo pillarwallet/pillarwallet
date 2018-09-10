@@ -218,7 +218,6 @@ class SendTokenAmount extends React.Component<Props, State> {
 
       Keyboard.dismiss();
       navigation.navigate(SEND_TOKEN_CONFIRM, {
-        assetData: this.assetData,
         transactionPayload,
       });
     });
