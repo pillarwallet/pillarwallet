@@ -40,7 +40,7 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            sed -i.bak s/_build_number_/$buildNumber/g .env.production
+            sed -i.bak s/_build_number_/$buildNumber/g .env
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -120,7 +120,9 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            sed -i.bak s/_build_number_/$buildNumber/g .env.production
+            rm .env
+            cp environments/.env.staging ./.env
+            sed -i.bak s/_build_number_/$buildNumber/g .env
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -212,7 +214,9 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            sed -i.bak s/_build_number_/$buildNumber/g .env.production
+            rm .env
+            cp environments/.env.production ./.env
+            sed -i.bak s/_build_number_/$buildNumber/g .env
       - restore_cache:
           key: node-{{ checksum "./yarn.lock" }}
       - run:
@@ -264,7 +268,7 @@ jobs:
             - vendor/bundle
       - run:
           name: Upload to TestFlight
-          command: cd ios && bundle exec fastlane build_ipa
+          command: cd ios && bundle exec fastlane build_test_flight
       # - run:
       #     name: Announce Deployment
       #     command: |
@@ -300,7 +304,9 @@ jobs:
             git config user.name "Issabot"
             npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            sed -i "s/_build_number_/$buildNumber/g" .env.production
+            rm .env
+            cp environments/.env.production ./.env
+            sed -i "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: node-{{ checksum "../yarn.lock" }}
@@ -394,15 +400,16 @@ workflows:
           filters:
             branches:
               only:
+                  - develop
                   - react_native_schemes_manager_spike
-#      - deploy_ios:
-#          requires:
-#            - build
-#          filters:
-#            branches:
-#              only:
-#                  - master
-#                  - react_native_schemes_manager_spike
+      - deploy_ios:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                  - master
+                  - react_native_schemes_manager_spike
       - deploy_android:
           requires:
             - build
