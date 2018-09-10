@@ -33,80 +33,69 @@ type Props = {
   instagram?: boolean,
 }
 
+const SOCIAL_NETWORKS = [{
+  platform: 'facebook',
+  sharerUrl: 'https://twitter.com/intent/tweet?text=pillarproject.io/wallet',
+  icon: facebook,
+}, {
+  platform: 'twitter',
+  sharerUrl: 'https://www.facebook.com/sharer/sharer.php?u=https%3A//pillarproject.io/wallet',
+  icon: twitter,
+}];
+
 export default class ShareSocial extends React.Component<Props> {
-  shareOnTwitter = () => {
-    Share.shareSingle({
-      title: 'Pillar Wallet',
-      message: 'pillarproject.io/wallet',
-      url: 'https://pillarproject.io/wallet',
-      social: Share.Social.TWITTER,
-    })
-      .catch(() => {
-        Linking.openURL('https://twitter.com/intent/tweet?text=pillarproject.io/wallet');
-      });
-  };
-
-  shareOnFacebook = () => {
+  shareOnSocialMedia = (platform: string, sharerUrl: string) => () => {
     Share.shareSingle({
       message: 'pillarproject.io/wallet',
       url: 'https://pillarproject.io/wallet',
-      social: Share.Social.FACEBOOK,
+      social: Share.Social[platform.toUpperCase()],
     })
       .catch(() => {
-        Linking.openURL('https://www.facebook.com/sharer/sharer.php?u=https%3A//pillarproject.io/wallet');
+        Linking.openURL(sharerUrl);
       });
   };
 
-  renderSocialButton(platform: string) {
-    switch (platform) {
-      case facebook:
+  renderSharingButton() {
+    return SOCIAL_NETWORKS.map(social => {
+      if (Platform.OS === 'ios') {
         return (
-          <Image
-            style={{
-              width: 50,
-              height: 50,
-              resizeMode: 'contain',
-            }}
-            source={facebook}
-          />
+          <TouchableOpacity
+            key={social.platform}
+            onPress={this.shareOnSocialMedia(social.platform, social.sharerUrl)}
+          >
+            <ButtonWrapper>
+              <Image
+                style={{
+                  width: 50,
+                  height: 50,
+                  resizeMode: 'contain',
+                }}
+                source={social.icon}
+              />
+            </ButtonWrapper>
+          </TouchableOpacity>
         );
-      case twitter:
-        return (
-          <Image
-            style={{
-              width: 50,
-              height: 50,
-              resizeMode: 'contain',
-            }}
-            source={twitter}
-          />
-        );
-      default:
-        return null;
-    }
-  }
+      }
 
-  renderKeys(onPress: Function, platform: string) {
-    if (Platform.OS === 'ios') {
       return (
-        <TouchableOpacity onPress={onPress}>
+        <TouchableNativeFeedback
+          key={social.platform}
+          onPress={this.shareOnSocialMedia(social.platform, social.sharerUrl)}
+          background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
+        >
           <ButtonWrapper>
-            {this.renderSocialButton(platform)}
+            <Image
+              style={{
+                width: 50,
+                height: 50,
+                resizeMode: 'contain',
+              }}
+              source={social.icon}
+            />
           </ButtonWrapper>
-        </TouchableOpacity>
+        </TouchableNativeFeedback>
       );
-    }
-
-    return (
-      <TouchableNativeFeedback
-        onPress={onPress}
-        background={TouchableNativeFeedback.SelectableBackgroundBorderless()}
-      >
-        <ButtonWrapper>
-          {this.renderSocialButton(platform)}
-        </ButtonWrapper>
-      </TouchableNativeFeedback>
-    );
+    });
   }
 
   render() {
@@ -118,8 +107,7 @@ export default class ShareSocial extends React.Component<Props> {
       <ShareWrapper>
         <Label>{label}</Label>
         <ButtonsRow>
-          {!!facebook && this.renderKeys(this.shareOnFacebook, facebook)}
-          {!!twitter && this.renderKeys(this.shareOnTwitter, twitter)}
+          {this.renderSharingButton()}
         </ButtonsRow>
       </ShareWrapper>
     );
