@@ -23,7 +23,7 @@ import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import Storage from 'services/storage';
 import { transformAssetsToObject } from 'utils/assets';
-import { delay } from 'utils/common';
+import { delay, noop } from 'utils/common';
 import { buildHistoryTransaction } from 'utils/history';
 
 const storage = Storage.getInstance('db');
@@ -36,7 +36,7 @@ export const sendAssetAction = ({
   symbol,
   contractAddress,
   decimals,
-}: TransactionPayload) => {
+}: TransactionPayload, navigateToNextScreen: Function = noop) => {
   return async (dispatch: Function, getState: Function) => {
     const { wallet: { data: wallet } } = getState();
     if (symbol === ETH) {
@@ -51,6 +51,7 @@ export const sendAssetAction = ({
         type: ADD_TRANSACTION,
         payload: buildHistoryTransaction({ ...ETHTrx, asset: symbol }),
       });
+      navigateToNextScreen();
       return;
     }
 
@@ -70,6 +71,7 @@ export const sendAssetAction = ({
         to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
       }),
     });
+    navigateToNextScreen();
   };
 };
 

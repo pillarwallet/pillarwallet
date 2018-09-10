@@ -208,6 +208,8 @@ PODS:
     - React
   - RNDeviceInfo (0.21.5):
     - React
+  - RNShare (1.1.1):
+    - React
   - yoga (0.56.0.React)
 
 DEPENDENCIES:
@@ -246,6 +248,7 @@ DEPENDENCIES:
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNShare (from `../node_modules/react-native-share`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 EXTERNAL SOURCES:
@@ -271,6 +274,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-permissions
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
+  RNShare:
+    :path: ../node_modules/react-native-share
   yoga:
     :path: ../node_modules/react-native/ReactCommon/yoga
 
@@ -314,8 +319,9 @@ SPEC CHECKSUMS:
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
+  RNShare: d875e8e37f3e5e8eb7a103ae01e06490af1796f6
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: 20149cfe89db6bf50b455f2f2cafa2f9267b9ee3
+PODFILE CHECKSUM: b53d5e5ad3136f53c37c5c0ed5a85f61aef247a9
 
 COCOAPODS: 1.4.0

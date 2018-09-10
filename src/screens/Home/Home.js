@@ -2,12 +2,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
+import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
-import { RefreshControl, Platform, View } from 'react-native';
+import { Animated, RefreshControl, Platform, View } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
@@ -15,6 +16,7 @@ import PortfolioBalance from 'components/PortfolioBalance';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import IconButton from 'components/IconButton';
+import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
@@ -28,7 +30,7 @@ import {
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
 import { getExistingChatsAction } from 'actions/chatActions';
-import { ALL } from 'constants/activityConstants';
+import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -50,15 +52,27 @@ type Props = {
   chats: any,
 };
 
+type esDataType = {
+  title: string,
+  body: string,
+}
 type State = {
   showCamera: boolean,
+  usernameWidth: number,
+  activeTab: string,
+  esData: esDataType,
   permissionsGranted: boolean,
+  scrollY: Animated.Value,
 };
+
+const profileImageWidth = 72;
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
   margin-top: ${spacing.rhythm}px;
 `;
+
+const AnimatedHomeHeader = Animated.createAnimatedComponent(HomeHeader);
 
 const HomeHeaderRow = styled.View`
   flex-direction: row;
@@ -79,10 +93,20 @@ const HomeHeaderBody = styled.View`
   align-items: center;
 `;
 
+const HomeHeaderProfileImage = styled(ProfileImage)`
+`;
+
+const HomeHeaderImageUsername = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: -20px;
+`;
+
 const HomeHeaderUsername = styled(BaseText)`
   font-size: ${fontSizes.mediumLarge};
-  margin-bottom: 5px;
 `;
+const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
 const HomeHeaderButton = styled(IconButton)`
   align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
@@ -92,18 +116,20 @@ const HomeHeaderButton = styled(IconButton)`
   height: 44px;
 `;
 
-const HomeHeaderProfileImage = styled(ProfileImage)`
-  margin-bottom: 20px;
-`;
+
+const AnimatedHomeHeaderProfileImage = Animated.createAnimatedComponent(HomeHeaderProfileImage);
 
 const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
   margin-bottom: 10px;
 `;
+const AnimatedHomeHeaderPortfolioBalance = Animated.createAnimatedComponent(HomeHeaderPortfolioBalance);
 
 const RecentConnections = styled.View`
   min-height: 160px;
   border-bottom-width: 1px;
   border-style: solid;
+  margin-top: 100px;
+  background-color: ${baseColors.white};
   border-color: ${baseColors.duckEggBlue};
 `;
 
@@ -112,7 +138,6 @@ const RecentConnectionsWrapper = styled.View`
   shadow-radius: 6px;
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
-  background-color: ${baseColors.white};
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView``;
@@ -154,6 +179,13 @@ class HomeScreen extends React.Component<Props, State> {
   state = {
     showCamera: false,
     permissionsGranted: false,
+    scrollY: new Animated.Value(0),
+    activeTab: ALL,
+    usernameWidth: 0,
+    esData: {
+      title: 'Make your first step',
+      body: 'Your activity will appear here.',
+    },
   };
 
   componentDidMount() {
@@ -226,6 +258,13 @@ class HomeScreen extends React.Component<Props, State> {
     getExistingChats();
   };
 
+  setActiveTab = (activeTab, esData?) => {
+    this.setState({
+      activeTab,
+      esData,
+    });
+  }
+
   render() {
     const {
       user,
@@ -238,22 +277,101 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       showCamera,
       permissionsGranted,
+      scrollY,
+      esData,
+      usernameWidth,
     } = this.state;
 
-    const stickyHeaderIndices = Platform.OS === 'android' ? null : [3];
+    const profileUsernameTranslateX = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [-profileImageWidth / 2, -20],
+      extrapolate: 'clamp',
+    });
+
+    const profileUsernameTranslateY = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, -60],
+      extrapolate: 'clamp',
+    });
+
+    const profileImagePositionX = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [(usernameWidth / 2), -10],
+      extrapolate: 'clamp',
+    });
+
+    const profileImagePositionY = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [-60, -60],
+      extrapolate: 'clamp',
+    });
+
+    const profileImageScale = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [1, 0.5],
+      extrapolate: 'clamp',
+    });
+
+    const profileBalanceScale = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [1, 0.8],
+      extrapolate: 'clamp',
+    });
+
+    const profileBalancePositionY = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, -120],
+      extrapolate: 'clamp',
+    });
+
+    const profileBalanceOpacity = scrollY.interpolate({
+      inputRange: [0, 20, 100],
+      outputRange: [1, 0, 0],
+      extrapolate: 'clamp',
+    });
+
+    const activityFeedTabs = [
+      {
+        id: ALL,
+        name: 'All',
+        icon: 'all',
+        onPress: () => this.setActiveTab(ALL),
+      },
+      {
+        id: TRANSACTIONS,
+        name: 'Transactions',
+        icon: 'send',
+        onPress: () => this.setActiveTab(
+          TRANSACTIONS,
+          {
+            title: 'Make your first step',
+            body: 'Your transactions will appear here. Send or receive tokens to start.',
+          },
+        ),
+      },
+      {
+        id: SOCIAL,
+        name: 'Social',
+        icon: 'social',
+        onPress: () => this.setActiveTab(
+          SOCIAL,
+          {
+            title: 'Make your first step',
+            body: 'Information on your connections will appear here. Send a connection request to start.',
+          },
+        ),
+      },
+    ];
+
+    const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
       <Container>
-        <ScrollWrapper
-          stickyHeaderIndices={stickyHeaderIndices}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={this.refreshScreenData}
-            />
-          }
+        <LinearGradient
+          colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
         >
-          <HomeHeader>
+
+          <AnimatedHomeHeader>
             <HomeHeaderRow>
               <HomeHeaderLeft>
                 <HomeHeaderButton
@@ -275,16 +393,7 @@ class HomeScreen extends React.Component<Props, State> {
                 />}
               </HomeHeaderLeft>
 
-              <HomeHeaderBody>
-                <HomeHeaderProfileImage
-                  uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-                  userName={user.username}
-                  diameter={72}
-                  onPress={this.toggleCamera}
-                >
-                  <CameraIcon name="camera" />
-                </HomeHeaderProfileImage>
-              </HomeHeaderBody>
+              <HomeHeaderBody />
 
               <HomeHeaderRight>
                 <HomeHeaderButton
@@ -298,12 +407,76 @@ class HomeScreen extends React.Component<Props, State> {
             </HomeHeaderRow>
             <HomeHeaderRow>
               <HomeHeaderBody>
-                <HomeHeaderUsername>{user.username}</HomeHeaderUsername>
-                <HomeHeaderPortfolioBalance />
+                <HomeHeaderImageUsername>
+                  <AnimatedHomeHeaderProfileImage
+                    uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+                    userName={user.username}
+                    diameter={profileImageWidth}
+                    onPress={this.toggleCamera}
+                    style={{
+                      transform: [
+                        { translateY: profileImagePositionY },
+                        { translateX: profileImagePositionX },
+                        { scale: profileImageScale },
+                        { perspective: 1000 },
+                      ],
+                    }}
+                  >
+                    <CameraIcon name="camera" />
+                  </AnimatedHomeHeaderProfileImage>
+                  <AnimatedHomeHeaderUsername
+                    onLayout={(event) => {
+                      const { width } = event.nativeEvent.layout;
+                      this.setState({
+                        usernameWidth: width,
+                      });
+                    }}
+                    style={{
+                      transform: [
+                        { translateX: profileUsernameTranslateX },
+                        { translateY: profileUsernameTranslateY },
+                      ],
+                    }}
+                  >
+                    {user.username}
+                  </AnimatedHomeHeaderUsername>
+                </HomeHeaderImageUsername>
+                <AnimatedHomeHeaderPortfolioBalance
+                  style={{
+                    transform: [
+                      { scale: profileBalanceScale },
+                      { translateY: profileBalancePositionY },
+                    ],
+                    opacity: profileBalanceOpacity,
+                  }}
+                />
               </HomeHeaderBody>
             </HomeHeaderRow>
-          </HomeHeader>
-
+          </AnimatedHomeHeader>
+        </LinearGradient>
+        <Animated.ScrollView
+          stickyHeaderIndices={stickyHeaderIndices}
+          style={{
+            marginTop: -100,
+          }}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: { y: scrollY },
+                },
+              },
+            ],
+            { useNativeDriver: true },
+          )}
+          scrollEventThrottle={16}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={this.refreshScreenData}
+            />
+          }
+        >
           <RecentConnectionsWrapper>
             <RecentConnections>
               <RecentConnectionsSubtitle subtitle title="recent connections." />
@@ -314,16 +487,17 @@ class HomeScreen extends React.Component<Props, State> {
                 </RecentConnectionsScrollView>}
             </RecentConnections>
           </RecentConnectionsWrapper>
+          <Tabs title="your activity." tabs={activityFeedTabs} />
           <ActivityFeed
-            feedTitle="your activity."
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
             navigation={navigation}
-            activeTab={ALL}
+            activeTab={this.state.activeTab}
+            esData={esData}
             sortable
           />
-        </ScrollWrapper>
+        </Animated.ScrollView>
         <Camera
           isVisible={showCamera}
           modalHide={this.toggleCamera}

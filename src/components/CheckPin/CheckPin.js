@@ -15,6 +15,7 @@ type Props = {
   wallet: Object,
   revealMnemonic: boolean,
   onPinValid: Function,
+  isChecking: boolean,
   title?: string,
 }
 
@@ -34,11 +35,11 @@ class CheckPin extends React.Component<Props, *> {
   };
 
   render() {
-    const { wallet: { walletState } } = this.props;
+    const { wallet: { walletState }, isChecking } = this.props;
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING) {
+    if (walletState === DECRYPTING || isChecking) {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>

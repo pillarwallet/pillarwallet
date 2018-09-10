@@ -12,6 +12,7 @@ type Props = {
   align?: string,
   subtitle?: boolean,
   maxWidth?: number,
+  noBlueDot?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -54,7 +55,7 @@ const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
       <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
-      {!!props.title && !props.subtitle && <BlueDot />}
+      {!!props.title && !props.subtitle && !props.noBlueDot && <BlueDot />}
     </Wrapper>
   );
 };

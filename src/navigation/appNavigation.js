@@ -27,7 +27,9 @@ import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
 import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
 import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
+import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
+import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
 import NewChatListScreen from 'screens/Chat/NewChatList';
@@ -69,8 +71,10 @@ import {
   SEND_TOKEN_CONTACTS,
   SEND_TOKEN_ASSETS,
   SEND_TOKEN_CONFIRM,
+  SEND_TOKEN_TRANSACTION,
   SEND_TOKEN_FROM_ASSET_FLOW,
   SEND_TOKEN_FROM_CONTACT_FLOW,
+  SEND_TOKEN_PIN_CONFIRM,
   REVEAL_BACKUP_PHRASE,
   CHAT_LIST,
   NEW_CHAT,
@@ -291,6 +295,8 @@ const sendTokenFromAssetFlow = createStackNavigator({
   [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
 
 // SEND TOKEN FROM CONTACT FLOW
@@ -298,6 +304,8 @@ const sendTokenFromContactFlow = createStackNavigator({
   [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
 
 const changePinFlow = createStackNavigator({
@@ -343,8 +351,6 @@ type Props = {
 let lockTimer;
 
 class AppFlow extends React.Component<Props, {}> {
-  timer: any | TimeoutID;
-
   componentDidMount() {
     const {
       startListeningNotifications,
