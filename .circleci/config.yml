@@ -338,8 +338,8 @@ workflows:
       - release_to_prod:
           type: approval
           requires:
-           - stage_ios
-           - stage_android
+            - stage_ios
+            - stage_android
       - prod_ios:
           requires:
             - release_to_prod
