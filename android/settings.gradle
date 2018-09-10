@@ -27,8 +27,6 @@ include ':react-native-camera'
 project(':react-native-camera').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera/android')
 include ':lottie-react-native'
 project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/src/android')
-include ':react-native-share'
-project(':react-native-share').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-share/android')
 include ':react-native-background-timer'
 project(':react-native-background-timer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-timer/android')
 include ':react-native-splash-screen'
@@ -62,4 +60,4 @@ project(':react-native-device-info').projectDir = new File(rootProject.projectDi
 include ':react-native-linear-gradient'
 project(':react-native-linear-gradient').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linear-gradient/android')
 include ':react-native-share'
-project(':react-native-share').projectDir = new File(rootProject.projectDir, 	'rn-libs/react-native-share/android')
+project(':react-native-share').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-share/android')
