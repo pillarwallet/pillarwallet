@@ -400,19 +400,18 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
-                  - react_native_schemes_manager_spike
-      - deploy_ios:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
                   - master
                   - react_native_schemes_manager_spike
+      - hold:
+          type: approval
+          requires:
+           - deploy_staging_ios
+      - deploy_ios:
+          requires:
+            - hold
       - deploy_android:
           requires:
-            - build
+            - hold
           filters:
             branches:
               only:
