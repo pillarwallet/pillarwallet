@@ -187,7 +187,6 @@ class SendTokenAmount extends React.Component<Props, State> {
   }
 
   handleChange = (value: Object) => {
-    this._form.getValue(); // NOTE: validate on every change
     this.setState({ value });
   };
 
