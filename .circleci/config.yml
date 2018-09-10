@@ -95,7 +95,7 @@ jobs:
       - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane deploy_staging
-       - run:
+      - run:
            name: Announce Deployment
            command: |
              chmod +x .circleci/announceDeployment.sh
@@ -196,7 +196,7 @@ jobs:
       - run:
           name: Upload to TestFlight
           command: cd ios && bundle exec fastlane deploy_prod
-       - run:
+      - run:
            name: Announce Deployment
            command: |
              chmod +x .circleci/announceDeployment.sh
