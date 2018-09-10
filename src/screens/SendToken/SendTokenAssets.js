@@ -47,10 +47,24 @@ const TokenBalance = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
+type NextScreenAssetData = {
+  ethAddress: string,
+  token: string,
+  contractAddress: string,
+  decimals: number
+};
+
 class SendTokenAssetsScreen extends React.Component<Props, {}> {
-  navigateToNextScreen(ethAddress, token) {
+  navigateToNextScreen(nextScreenAssetData: NextScreenAssetData) {
+    const {
+      ethAddress,
+      token,
+      contractAddress,
+      decimals,
+    } = nextScreenAssetData;
+
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
-      assetData: { token },
+      assetData: { token, contractAddress, decimals },
       receiver: ethAddress,
     });
   }
@@ -58,11 +72,16 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
   renderAsset = ({ item }) => {
     const { balances, navigation } = this.props;
     const contact = navigation.getParam('contact', {});
-    const contactAddress = contact.ethAddress;
     const assetBalance = formatAmount(balances[item.symbol].balance);
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const nextScreenAssetData = {
+      token: item.symbol,
+      contractAddress: item.address,
+      decimals: item.decimals,
+      ethAddress: contact.ethAddress,
+    };
     return (
-      <TouchableOpacity onPress={() => this.navigateToNextScreen(contactAddress, item.symbol)}>
+      <TouchableOpacity onPress={() => this.navigateToNextScreen(nextScreenAssetData)}>
         <TokenListItem>
           <TokenThumbnail source={{ uri: fullIconUrl }} />
           <TokenName>{item.name}</TokenName>
