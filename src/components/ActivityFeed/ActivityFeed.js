@@ -405,8 +405,7 @@ class ActivityFeed extends React.Component<Props, State> {
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const feedData = customFeedData || allFeedData;
-    const { title, body } = this.props.esData;
-    const { activeTab } = this.props;
+    const { activeTab, esData } = this.props;
 
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
@@ -429,7 +428,7 @@ class ActivityFeed extends React.Component<Props, State> {
           renderItem={this.renderActivityFeedItem}
           ItemSeparatorComponent={Separator}
           keyExtractor={(item, index) => index.toString()}
-          ListEmptyComponent={<EmptyTransactions title={title && title} bodyText={body && body} />}
+          ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
         />
         <SlideModal
           isVisible={showModal}

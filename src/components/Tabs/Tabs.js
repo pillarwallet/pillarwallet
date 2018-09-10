@@ -71,11 +71,8 @@ export default class Tabs extends React.Component<Props, State> {
 
   renderTabItems = (tabs: Array<Tab>) => {
     const { activeTab } = this.state;
-    const tabItems = [];
-
-    for (let i = 0; i < tabs.length; i++) {
-      const tab = tabs[i];
-      tabItems.push(
+    const tabItems = tabs.map(tab => {
+      return (
         <TabItem
           key={tab.id}
           active={activeTab === tab.id}
@@ -85,9 +82,9 @@ export default class Tabs extends React.Component<Props, State> {
         >
           <TabItemIcon active={activeTab === tab.id} name={tab.icon} />
           <TabItemText active={activeTab === tab.id}>{tab.name}</TabItemText>
-        </TabItem>,
+        </TabItem>
       );
-    }
+    });
     return tabItems;
   }
 
