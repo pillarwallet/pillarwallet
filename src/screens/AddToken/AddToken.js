@@ -70,7 +70,12 @@ class AddToken extends React.Component<Props> {
       .map(({
         symbol, name, iconUrl, ...rest
       }) => {
-        const boundAssetToggleHandler = partial(this.handleAssetToggle, { symbol, name, ...rest });
+        const boundAssetToggleHandler = partial(this.handleAssetToggle, {
+          symbol,
+          name,
+          iconUrl,
+          ...rest,
+        });
         const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
         return (
           <TokenListItem key={symbol}>
