@@ -4,6 +4,7 @@ import {
   Animated,
   Easing,
   RefreshControl,
+  FlatList,
 } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -19,11 +20,12 @@ import {
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
+import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import Header from 'components/Header';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
-import { EXPANDED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
+import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
 import { spacing } from 'utils/variables';
@@ -52,7 +54,7 @@ class AssetsScreen extends React.Component<Props> {
   };
 
   static defaultProps = {
-    assetLayout: SIMPLIFIED,
+    assetLayout: EXPANDED,
   };
 
   componentDidMount() {
@@ -83,18 +85,141 @@ class AssetsScreen extends React.Component<Props> {
     });
   };
 
-  renderAssets() {
+  renderAsset = ({ item: asset }) => {
     const {
       wallet,
-      assets,
-      balances,
-      rates,
       baseFiatCurrency,
       assetLayout,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(assets)
+
+    const {
+      name,
+      symbol,
+      balanceInFiat,
+      balance,
+      iconMonoUrl,
+      wallpaperUrl,
+      decimals,
+      iconUrl,
+    } = asset;
+
+    const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
+    const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}`;
+    const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const formattedBalanceInFiat = formatMoney(balanceInFiat);
+    const displayAmount = formatMoney(balance, 4);
+
+    const assetData = {
+      name: name || symbol,
+      token: symbol,
+      amount: displayAmount,
+      contractAddress: asset.address,
+      description: asset.description,
+      balance,
+      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
+      address: wallet.address,
+      icon: fullIconMonoUrl,
+      iconColor: fullIconUrl,
+      wallpaper: fullIconWallpaperUrl,
+      decimals,
+    };
+    const {
+      listed: isListed = true,
+      disclaimer,
+    } = assetsConfig[assetData.token] || {};
+
+    switch (assetLayout) {
+      case SIMPLIFIED: {
+        return (
+          <AssetCardSimplified
+            id={assetData.token}
+            name={assetData.name}
+            token={assetData.token}
+            amount={assetData.amount}
+            balanceInFiat={assetData.balanceInFiat}
+            onPress={() => this.handleCardTap(assetData)}
+            address={assetData.address}
+            icon={assetData.iconColor}
+            wallpaper={assetData.wallpaper}
+            isListed={isListed}
+            disclaimer={disclaimer}
+          />
+        );
+      }
+      case MINIMIZED: {
+        return (
+          <AssetCardMinimized
+            id={assetData.token}
+            name={assetData.name}
+            token={assetData.token}
+            amount={assetData.amount}
+            balanceInFiat={assetData.balanceInFiat}
+            onPress={() => this.handleCardTap(assetData)}
+            address={assetData.address}
+            icon={assetData.iconColor}
+            wallpaper={assetData.wallpaper}
+            isListed={isListed}
+            disclaimer={disclaimer}
+          />
+        );
+      }
+      case EXTRASMALL: {
+        return (
+          <AssetCardMinimized
+            id={assetData.token}
+            name={assetData.name}
+            token={assetData.token}
+            amount={assetData.amount}
+            balanceInFiat={assetData.balanceInFiat}
+            onPress={() => this.handleCardTap(assetData)}
+            address={assetData.address}
+            icon={assetData.iconColor}
+            wallpaper={assetData.wallpaper}
+            isListed={isListed}
+            disclaimer={disclaimer}
+            extrasmall
+          />
+        );
+      }
+      default: {
+        return (
+          <Transition key={assetData.name} shared={assetData.name}>
+            <AssetCard
+              id={assetData.token}
+              name={assetData.name}
+              token={assetData.token}
+              amount={assetData.amount}
+              balanceInFiat={assetData.balanceInFiat}
+              onPress={() => this.handleCardTap(assetData)}
+              address={assetData.address}
+              icon={assetData.icon}
+              wallpaper={assetData.wallpaper}
+              isListed={isListed}
+              disclaimer={disclaimer}
+            />
+          </Transition>
+        );
+      }
+    }
+  };
+
+  render() {
+    const {
+      assets,
+      wallet,
+      assetsState,
+      fetchInitialAssets,
+      assetLayout,
+      baseFiatCurrency,
+      rates,
+      balances,
+    } = this.props;
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+    const sortedAssets = Object.keys(assets)
       .map(id => assets[id])
       .map(({ symbol, balance, ...rest }) => ({
         symbol,
@@ -107,94 +232,7 @@ class AssetsScreen extends React.Component<Props> {
         balanceInFiat: rates[symbol] ? balance * rates[symbol][fiatCurrency] : 0,
         ...rest,
       }))
-      .sort((a, b) => b.balanceInFiat - a.balanceInFiat)
-      .map((asset) => {
-        const {
-          name,
-          symbol,
-          balanceInFiat,
-          balance,
-          iconMonoUrl,
-          wallpaperUrl,
-          decimals,
-          iconUrl,
-        } = asset;
-
-        const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
-        const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}`;
-        const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
-
-        const formattedBalanceInFiat = formatMoney(balanceInFiat);
-        const displayAmount = formatMoney(balance, 4);
-
-        const assetData = {
-          name: name || symbol,
-          token: symbol,
-          amount: displayAmount,
-          contractAddress: asset.address,
-          description: asset.description,
-          balance,
-          balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-          address: wallet.address,
-          icon: fullIconMonoUrl,
-          iconColor: fullIconUrl,
-          wallpaper: fullIconWallpaperUrl,
-          decimals,
-        };
-        const {
-          listed: isListed = true,
-          disclaimer,
-        } = assetsConfig[assetData.token] || {};
-
-        switch (assetLayout) {
-          case SIMPLIFIED: {
-            return (
-              <AssetCardSimplified
-                id={assetData.token}
-                name={assetData.name}
-                token={assetData.token}
-                amount={assetData.amount}
-                balanceInFiat={assetData.balanceInFiat}
-                onPress={() => this.handleCardTap(assetData)}
-                address={assetData.address}
-                icon={assetData.iconColor}
-                wallpaper={assetData.wallpaper}
-                isListed={isListed}
-                disclaimer={disclaimer}
-              />
-            );
-          }
-          default: {
-            return (
-              <Transition key={assetData.name} shared={assetData.name}>
-                <AssetCard
-                  id={assetData.token}
-                  name={assetData.name}
-                  token={assetData.token}
-                  amount={assetData.amount}
-                  balanceInFiat={assetData.balanceInFiat}
-                  onPress={() => this.handleCardTap(assetData)}
-                  address={assetData.address}
-                  icon={assetData.icon}
-                  wallpaper={assetData.wallpaper}
-                  isListed={isListed}
-                  disclaimer={disclaimer}
-                />
-              </Transition>
-            );
-          }
-        }
-      });
-  }
-
-  render() {
-    const {
-      assets,
-      wallet,
-      assetsState,
-      fetchInitialAssets,
-      assetLayout,
-    } = this.props;
+      .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -210,6 +248,24 @@ class AssetsScreen extends React.Component<Props> {
       );
     }
 
+    const columnAmount = (assetLayout === MINIMIZED || assetLayout === EXTRASMALL) ? 3 : 1;
+    const horizontalPadding = (layout) => {
+      switch (layout) {
+        case EXTRASMALL: {
+          return spacing.rhythm - (spacing.rhythm / 4);
+        }
+        case MINIMIZED: {
+          return spacing.rhythm - (spacing.rhythm / 4);
+        }
+        case SIMPLIFIED: {
+          return spacing.rhythm / 2;
+        }
+        default: {
+          return spacing.rhythm;
+        }
+      }
+    };
+
     return (
       <Container>
         <Header
@@ -218,10 +274,16 @@ class AssetsScreen extends React.Component<Props> {
           nextIcon="more"
           headerRightFlex="2"
         />
-        <ScrollWrapper
+        <FlatList
+          data={sortedAssets}
+          keyExtractor={(item) => item.id}
+          renderItem={this.renderAsset}
+          style={{ width: '100%' }}
           contentContainerStyle={{
-            paddingHorizontal: assetLayout === EXPANDED ? spacing.rhythm : spacing.rhythm / 2,
+            paddingHorizontal: horizontalPadding(assetLayout),
+            width: '100%',
           }}
+          numColumns={columnAmount}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -231,9 +293,7 @@ class AssetsScreen extends React.Component<Props> {
               }}
             />
           }
-        >
-          {this.renderAssets()}
-        </ScrollWrapper>
+        />
       </Container >
     );
   }

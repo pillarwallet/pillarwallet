@@ -15,7 +15,6 @@ type Props = {
   address: string,
   wallpaper: string,
   children?: React.Node,
-  isListed: boolean,
   disclaimer?: string,
   balanceInFiat: {
     amount: string | number,
@@ -49,7 +48,6 @@ const InnerWrapper = styled.View`
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
   z-index: 10;
-  height: 70px;
 `;
 
 const AmountWrapper = styled.View`
@@ -126,7 +124,6 @@ const AssetCardSimplified = (props: Props) => {
     token,
     balanceInFiat,
     onPress,
-    isListed = true,
     disclaimer,
     icon = '',
   } = props;
@@ -149,15 +146,15 @@ const AssetCardSimplified = (props: Props) => {
             />}
           </IconCircle>
           <DetailsWrapper>
-            <Name isListed={isListed}>{name}</Name>
+            <Name>{name}</Name>
             <AmountWrapper>
               <TokenAmountWrapper>
-                <Amount isListed={isListed}>{amount}</Amount>
-                <AmountToken isListed={isListed}> {token}</AmountToken>
+                <Amount>{amount}</Amount>
+                <AmountToken> {token}</AmountToken>
               </TokenAmountWrapper>
               {disclaimer
                 ? <Disclaimer>{disclaimer}</Disclaimer>
-                : <FiatAmount> {currencySymbol}{balanceInFiat.amount} </FiatAmount>
+                : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
               }
             </AmountWrapper>
           </DetailsWrapper>
