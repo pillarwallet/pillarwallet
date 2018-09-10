@@ -22,21 +22,19 @@ class SendTokenTransaction extends React.Component<Props, State> {
 
   render() {
     return (
-      <React.Fragment>
-        <Container>
-          <Wrapper flex={1} center regularPadding>
-            <TransactionSentAnimation />
-            <Title title="Money is on its way" align="center" noBlueDot />
-            <Paragraph light center style={{ marginBottom: 30 }}>
-              It will be settled in a few moments, depending on your gas price settings and Ethereum network load
-            </Paragraph>
-            <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" />
-          </Wrapper>
-          <Footer>
-            <ShareSocial label="Share the love" facebook instagram twitter />
-          </Footer>
-        </Container>
-      </React.Fragment>
+      <Container>
+        <Wrapper flex={1} center regularPadding>
+          <TransactionSentAnimation />
+          <Title title="Money is on its way" align="center" noBlueDot />
+          <Paragraph light center style={{ marginBottom: 30 }}>
+            It will be settled in a few moments, depending on your gas price settings and Ethereum network load
+          </Paragraph>
+          <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" />
+        </Wrapper>
+        <Footer>
+          <ShareSocial label="Share the love" facebook instagram twitter />
+        </Footer>
+      </Container>
     );
   }
 }
