@@ -24,6 +24,13 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
+type NextScreenAssetData = {
+  ethAddress: string,
+  token: string,
+  contractAddress: string,
+  decimals: number,
+};
+
 const TokenName = styled(BoldText)`
   font-size: ${fontSizes.small};
 `;
@@ -46,13 +53,6 @@ const TokenBalance = styled(BaseText)`
   margin-left: auto;
   font-size: ${fontSizes.medium};
 `;
-
-type NextScreenAssetData = {
-  ethAddress: string,
-  token: string,
-  contractAddress: string,
-  decimals: number
-};
 
 class SendTokenAssetsScreen extends React.Component<Props, {}> {
   navigateToNextScreen(nextScreenAssetData: NextScreenAssetData) {
