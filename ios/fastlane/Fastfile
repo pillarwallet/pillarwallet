@@ -6,36 +6,6 @@ platform :ios do
     setup_circle_ci
   end
 
-  desc "Install Development certificates and provisioning profiles"
-  lane :development_certificates do
-    match(type: "development",
-          readonly: true,
-          git_branch: "master",
-          app_identifier: "com.pillarproject.wallet",
-          team_id: "J9DEY3FGPD"
-        )
-  end
-
-  desc "Install Production Release certificates and provisioning profiles"
-  lane :production_release_certificates do
-    match(type: "appstore",
-          readonly: true,
-          git_branch: "master",
-          app_identifier: "com.pillarproject.wallet",
-          team_id: "J9DEY3FGPD"
-        )
-  end
-
-  desc "Install Staging certificates and provisioning profiles"
-  lane :staging_certificates do
-    match(type: "appstore",
-          readonly: true,
-          git_branch: "develop",
-          app_identifier: "com.pillarproject.wallet.staging",
-          team_id: "J9DEY3FGPD"
-        )
-  end
-
   desc "Create ios simulator build"
   lane :build_ios_simulator do
   match(type: "development",
@@ -71,95 +41,51 @@ platform :ios do
     )
   end
 
-  desc "Upload a new staging build to TestFlight"
-  lane :build_staging_test_flight do
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion 1' ~/pillarwallet/ios/pillarwallet/Info.plist"
-    match(type: "appstore",
-          readonly: true,
-          git_branch: "develop",
-          app_identifier: "com.pillarproject.wallet.staging",
-          team_id: "J9DEY3FGPD"
-        )
-    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build"
-    sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
-    sigh(force: true)
-    sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
-    commit = last_git_commit
-     upload_to_testflight(changelog: commit[:message],
-     skip_waiting_for_build_processing: true,
-    )
-  end
-
-
-  desc "Upload a new build"
-  lane :build_ipa do
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
-    match(type: "appstore",
-          readonly: true)
-    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath ../build"
-    sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet.ipa *"
-    sigh(force: true)
-    sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
-  end
-
-  desc "Create an IPA pointing to staging"
-  lane :build_staging_ipa do
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
-
-    disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
-
-    match(type: "appstore",
-          readonly: true,
-          git_branch: "develop",
-          app_identifier: "com.pillarproject.wallet.staging",
-          team_id: "J9DEY3FGPD",
-        )
-
-    get_push_certificate(
-        readonly: true,
-        app_identifier: "com.pillarproject.wallet.staging",
-        team_id: "J9DEY3FGPD",
-      )
-
-    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
-    sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
-    sigh(force: true)
-    sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
-  end
-
   desc "Upload an IPA to staging app"
   lane :deploy_staging do
-    #sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
-#    update_info_plist(
-#        plist_path: "Example/Example-Info.plist",
-#        xcodeproj: "Example.xcodeproj",
-#        display_name: "Example Beta"
-#        app_identifier: "com.example.myappbeta"
-#      )
+    # insert circleCI's build number as our build number
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
+    # ensure we don't have automatic code signing set up
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
 
+    # get our provisioning profile
     match(type: "appstore",
-          readonly: true,
-          git_branch: "develop",
-          app_identifier: "com.pillarproject.wallet.staging",
-          team_id: "J9DEY3FGPD",
-        )
+      readonly: true,
+      git_branch: "develop",
+      app_identifier: "com.pillarproject.wallet.staging",
+      team_id: "J9DEY3FGPD",
+    )
 
+    # get our push-notification cert
     get_push_certificate(
-        force: false,
-        app_identifier: "com.pillarproject.wallet.staging",
-        team_id: "J9DEY3FGPD",
-      )
+      force: false,
+      app_identifier: "com.pillarproject.wallet.staging",
+      team_id: "J9DEY3FGPD",
+    )
 
+    # trigger the build
     sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
+
+    # manually zip the results into an ipa
     sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
+
+    # download the signing cert
     sigh(
       app_identifier: "com.pillarproject.wallet.staging",
       force: true
     )
+
+    # apply the signing certs to the build
     sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
+
+    # questions remaining:
+    # 1. do we need to download certs, then build, then download more certs and re-sign? sounds like at least one step doesnt' need doing
+    # 2. given that we have the process working now, should we try to shuffle the sh "xcodebuild" blocks into fast-lane speak? we shouldn't need to run anything direct from commandline
+    # 3. should we not be breaking things up a bit more? having a standard 'build' method that all the other methods call?
+    # 4. should we be trying to store the IPA in artifactory at some stage?
+    # 5. do we care that the build that goes into staging will not have the same number as the equivalent build going into production? (because circleCI build number..)
 
     commit = last_git_commit
     upload_to_testflight(changelog: commit[:message],
