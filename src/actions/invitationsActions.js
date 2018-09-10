@@ -20,177 +20,6 @@ import Storage from 'services/storage';
 
 const storage = Storage.getInstance('db');
 
-export const sendInvitationAction = (user: ApiUser) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-      accessTokens: { data: accessTokens },
-    } = getState();
-
-    const index = invitations.findIndex(el => el.id === user.id);
-    if (index >= 0) {
-      dispatch(({
-        type: ADD_NOTIFICATION,
-        payload: { message: 'Invitation has already been sent' },
-      }));
-      return;
-    }
-
-    const accessKey = generateAccessKey();
-    const sentInvitation = await api.sendInvitation(user.id, accessKey, walletId);
-    if (!sentInvitation) return;
-    const invitation = {
-      ...user,
-      type: TYPE_SENT,
-      connectionKey: accessKey,
-      createdAt: +new Date() / 1000,
-    };
-    await storage.save('invitations', { invitations: [...invitations, invitation] }, true);
-
-    const updatedAccessTokens = accessTokens
-      .filter(({ userId }) => userId !== user.id)
-      .concat({
-        userId: user.id,
-        myAccessToken: accessKey,
-        userAccessToken: '',
-      });
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
-
-    dispatch({
-      type: ADD_INVITATION,
-      payload: invitation,
-    });
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation sent!' },
-    }));
-    dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
-    });
-  };
-};
-
-export const acceptInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-      contacts: { data: contacts },
-      accessTokens: { data: accessTokens },
-    } = getState();
-    const sourceUserAccessKey = generateAccessKey();
-
-    const acceptedInvitation = await api.acceptInvitation(
-      invitation.id,
-      invitation.connectionKey,
-      sourceUserAccessKey,
-      walletId,
-    );
-    if (!acceptedInvitation) return;
-
-    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
-
-    const updatedContacts = contacts
-      .filter(({ id }) => id !== invitation.id)
-      .concat(invitation)
-      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
-    await storage.save('contacts', { contacts: updatedContacts }, true);
-
-    const updatedAccessTokens = accessTokens
-      .filter(({ userId }) => userId !== invitation.id)
-      .concat({
-        userId: invitation.id,
-        myAccessToken: sourceUserAccessKey,
-        userAccessToken: invitation.connectionKey,
-      });
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
-
-    dispatch({
-      type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
-    });
-    dispatch({
-      type: UPDATE_CONTACTS,
-      payload: updatedContacts,
-    });
-    dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
-    });
-  };
-};
-
-export const cancelInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-      accessTokens: { data: accessTokens },
-    } = getState();
-
-    const cancelledInvitation = await api.cancelInvitation(
-      invitation.id,
-      invitation.connectionKey,
-      walletId,
-    );
-    if (!cancelledInvitation) return;
-
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation cancelled!' },
-    }));
-
-    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
-
-    const updatedAccessTokens = accessTokens.filter(({ userId }) => userId !== invitation.id);
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
-
-    dispatch({
-      type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
-    });
-    dispatch({
-      type: UPDATE_ACCESS_TOKENS,
-      payload: updatedAccessTokens,
-    });
-  };
-};
-
-export const rejectInvitationAction = (invitation: Object) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
-    const {
-      user: { data: { walletId } },
-      invitations: { data: invitations },
-    } = getState();
-
-    const rejectedInvitation = await api.rejectInvitation(
-      invitation.id,
-      invitation.connectionKey,
-      walletId,
-    );
-
-    if (!rejectedInvitation) return;
-
-    dispatch(({
-      type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation rejected!' },
-    }));
-
-    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
-
-    dispatch({
-      type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
-    });
-  };
-};
-
-
 export const fetchInviteNotificationsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
@@ -271,5 +100,197 @@ export const fetchInviteNotificationsAction = () => {
       payload: updatedAccessTokens,
     });
     dispatch(getExistingChatsAction());
+  };
+};
+
+export const sendInvitationAction = (user: ApiUser) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+      accessTokens: { data: accessTokens },
+    } = getState();
+
+    const index = invitations.findIndex(el => el.id === user.id);
+    if (index >= 0) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Invitation has already been sent' },
+      }));
+      return;
+    }
+
+    const accessKey = generateAccessKey();
+    const sentInvitation = await api.sendInvitation(user.id, accessKey, walletId);
+    if (!sentInvitation) return;
+    const invitation = {
+      ...user,
+      type: TYPE_SENT,
+      connectionKey: accessKey,
+      createdAt: +new Date() / 1000,
+    };
+    await storage.save('invitations', { invitations: [...invitations, invitation] }, true);
+
+    const updatedAccessTokens = accessTokens
+      .filter(({ userId }) => userId !== user.id)
+      .concat({
+        userId: user.id,
+        myAccessToken: accessKey,
+        userAccessToken: '',
+      });
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+
+    dispatch({
+      type: ADD_INVITATION,
+      payload: invitation,
+    });
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Invitation sent!' },
+    }));
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
+    });
+  };
+};
+
+export const acceptInvitationAction = (invitation: Object) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+      contacts: { data: contacts },
+      accessTokens: { data: accessTokens },
+    } = getState();
+    const sourceUserAccessKey = generateAccessKey();
+
+    const acceptedInvitation = await api.acceptInvitation(
+      invitation.id,
+      invitation.connectionKey,
+      sourceUserAccessKey,
+      walletId,
+    );
+    if (!acceptedInvitation) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Invitation doesn\'t exist' },
+      }));
+      dispatch(fetchInviteNotificationsAction());
+      return;
+    }
+
+    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
+    await storage.save('invitations', { invitations: updatedInvitations }, true);
+
+    const updatedContacts = contacts
+      .filter(({ id }) => id !== invitation.id)
+      .concat(invitation)
+      .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
+    await storage.save('contacts', { contacts: updatedContacts }, true);
+
+    const updatedAccessTokens = accessTokens
+      .filter(({ userId }) => userId !== invitation.id)
+      .concat({
+        userId: invitation.id,
+        myAccessToken: sourceUserAccessKey,
+        userAccessToken: invitation.connectionKey,
+      });
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+
+    dispatch({
+      type: UPDATE_INVITATIONS,
+      payload: updatedInvitations,
+    });
+    dispatch({
+      type: UPDATE_CONTACTS,
+      payload: updatedContacts,
+    });
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
+    });
+  };
+};
+
+export const cancelInvitationAction = (invitation: Object) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+      accessTokens: { data: accessTokens },
+    } = getState();
+
+    const cancelledInvitation = await api.cancelInvitation(
+      invitation.id,
+      invitation.connectionKey,
+      walletId,
+    );
+
+    if (!cancelledInvitation) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'User already accepted yours invitation' },
+      }));
+      dispatch(fetchInviteNotificationsAction());
+      return;
+    }
+
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Invitation cancelled!' },
+    }));
+
+    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
+    await storage.save('invitations', { invitations: updatedInvitations }, true);
+
+    const updatedAccessTokens = accessTokens.filter(({ userId }) => userId !== invitation.id);
+    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+
+    dispatch({
+      type: UPDATE_INVITATIONS,
+      payload: updatedInvitations,
+    });
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: updatedAccessTokens,
+    });
+  };
+};
+
+export const rejectInvitationAction = (invitation: Object) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+    } = getState();
+
+    const rejectedInvitation = await api.rejectInvitation(
+      invitation.id,
+      invitation.connectionKey,
+      walletId,
+    );
+
+    if (!rejectedInvitation) {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Invitation doesn\'t exist' },
+      }));
+      dispatch(fetchInviteNotificationsAction());
+      return;
+    }
+
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Invitation rejected!' },
+    }));
+
+    const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
+    await storage.save('invitations', { invitations: updatedInvitations }, true);
+
+    dispatch({
+      type: UPDATE_INVITATIONS,
+      payload: updatedInvitations,
+    });
   };
 };

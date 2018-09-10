@@ -2,16 +2,15 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, BackHandler, NetInfo } from 'react-native';
+import { StatusBar, NetInfo, AppState, Platform } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
-import { NavigationActions } from 'react-navigation';
-import { Root as NBRoot, Toast } from 'native-base';
-import { showToast } from 'utils/toast';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
+import Root from 'components/Root';
+import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
 
 const store = configureStore();
@@ -27,7 +26,6 @@ type Props = {
 
 class App extends React.Component<Props, *> {
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
   }
 
@@ -35,33 +33,23 @@ class App extends React.Component<Props, *> {
     const { fetchAppSettingsAndRedirect } = this.props;
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
     SplashScreen.hide();
-    fetchAppSettingsAndRedirect();
+    fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
-    BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
   }
-
-
-  onBackPress = () => {
-    const { dispatch, navigation } = this.props;
-    const { routes, index } = navigation;
-    if (routes[index].index === 0) {
-      return false;
-    }
-    dispatch(NavigationActions.back());
-    return true;
-  };
 
   handleConnectivityChange = isOnline => {
     const { updateSessionNetworkStatus } = this.props;
     updateSessionNetworkStatus(isOnline);
     if (!isOnline) {
-      showToast({ text: 'No active internet connection found!', type: 'danger', duration: 0 }, true);
+      Toast.show({
+        message: 'No active internet connection found!',
+        type: 'warning',
+        title: 'Connection Issue',
+        autoClose: false,
+      });
     } else {
-      // TODO: remove this ASAP once custom toast implemented
-      try {
-        Toast.hide();
-      } catch (e) {} //eslint-disable-line
+      Toast.close();
     }
   };
 
@@ -82,18 +70,19 @@ const mapStateToProps = ({ navigation, appSettings: { isFetched } }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
-  fetchAppSettingsAndRedirect: () => dispatch(initAppAndRedirectAction()),
+  fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
+    dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
 
-const Root = () => (
-  <NBRoot>
+const AppRoot = () => (
+  <Root>
     <Provider store={store}>
       <AppWithNavigationState />
     </Provider>
-  </NBRoot>
+  </Root>
 );
 
-export default Root;
+export default AppRoot;

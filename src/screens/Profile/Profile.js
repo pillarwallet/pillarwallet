@@ -1,33 +1,30 @@
 // @flow
 import * as React from 'react';
-import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import Storage from 'services/storage';
-import ChatService from 'services/chat';
+import { FlatList, Alert, ScrollView } from 'react-native';
+import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { showToast } from 'utils/toast';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import { ListItem as NBListItem, Left, Right, Icon } from 'native-base';
-import { FlatList } from 'react-native';
 import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { SubHeading, BaseText } from 'components/Typography';
-import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
-import { updateUserAction } from 'actions/userActions';
-import { resetIncorrectPasswordAction } from 'actions/authActions';
+import { SubHeading, BoldText } from 'components/Typography';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
-
-import countries from 'utils/countries.json';
+import Toast from 'components/Toast';
+import CountrySelect from 'components/CountrySelect';
+import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
+import { updateUserAction } from 'actions/userActions';
+import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
+import Storage from 'services/storage';
+import ChatService from 'services/chat';
+import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 
-const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
 const chat = new ChatService();
@@ -45,18 +42,11 @@ const ListSeparator = styled.View`
   background-color: ${baseColors.lighterGray};
 `;
 
-const ListValue = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  padding-left: 20px;
-`;
-
-const ListItem = styled(NBListItem)`
-  margin: 5px 0;
-`;
-
-const ListIcon = styled(Icon)`
-  font-size: 22px;
-  color: ${baseColors.coolGrey};
+const SettingsModalTitle = styled(BoldText)`
+  line-height: ${fontSizes.medium};
+  font-size: ${fontSizes.medium};
+  font-weight: ${fontWeights.bold};
+  margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
 const cityFormFields = [{
@@ -96,6 +86,8 @@ type Props = {
   changeRequestPinForTransaction: (value: boolean) => Function,
   updateUser: (walletId: string, field: Object) => Function,
   resetIncorrectPassword: () => Function,
+  lockScreen: () => Function,
+  logoutUser: () => Function,
 }
 
 type State = {
@@ -130,13 +122,11 @@ class Profile extends React.Component<Props, State> {
   clearLocalStorage() {
     storage.removeAll();
     chat.client.resetAccount().catch(() => null);
-    showToast({ text: 'Cleared' }, true);
+    Toast.show({ title: 'Success', type: 'success', message: 'Local storage was cleared' });
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
-    this.setState({
-      visibleModal,
-    });
+    this.setState({ visibleModal });
   };
 
   toggleTermsConditionsModal = () => {
@@ -174,19 +164,25 @@ class Profile extends React.Component<Props, State> {
     this.toggleSlideModalOpen(null);
   };
 
+  handleLogoutMessage = () => {
+    const { logoutUser } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      'This action will delete the wallet from this device',
+      [
+        { text: 'Cancel' },
+        { text: 'Delete', onPress: logoutUser },
+      ],
+    );
+  };
+
   renderListItem = (field: string, onSelect: Function) => ({ item: { name } }: Object) => {
     return (
-      <ListItem key={name} onPress={() => onSelect({ [field]: name })}>
-        <Left>
-          <ListValue>{name}</ListValue>
-        </Left>
-        <Right>
-          <ListIcon
-            name="chevron-thin-right"
-            type="Entypo"
-          />
-        </Right>
-      </ListItem>
+      <ProfileSettingsItem
+        key={name}
+        label={name}
+        onPress={() => onSelect({ [field]: name })}
+      />
     );
   };
 
@@ -197,6 +193,7 @@ class Profile extends React.Component<Props, State> {
       intercomNotificationsCount,
       baseFiatCurrency,
       navigation,
+      lockScreen,
     } = this.props;
 
     const {
@@ -206,30 +203,39 @@ class Profile extends React.Component<Props, State> {
       showPrivacyPolicyModal,
       showSystemInfoModal,
     } = this.state;
+
     return (
       <Container color={baseColors.snowWhite}>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
-          title="Choose your country"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <FlatList
-            data={sortedCountries}
-            renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
-            keyExtractor={({ name }) => name}
-          />
+          <Wrapper flex={1}>
+            <SettingsModalTitle extraHorizontalSpacing>
+              Choose your country
+            </SettingsModalTitle>
+            <CountrySelect
+              renderItem={this.renderListItem('country', this.handleUserFieldUpdate)}
+            />
+          </Wrapper>
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'city'}
-          title="Enter city name"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <Wrapper regularPadding>
+          <Wrapper regularPadding flex={1}>
+            <SettingsModalTitle>
+              Enter your city name
+            </SettingsModalTitle>
             <ProfileForm
               fields={cityFormFields}
               onSubmit={this.handleUserFieldUpdate}
@@ -239,12 +245,16 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'email'}
-          title="Enter your email"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <Wrapper regularPadding>
+          <Wrapper regularPadding flex={1}>
+            <SettingsModalTitle>
+              Enter your email
+            </SettingsModalTitle>
             <ProfileForm
               fields={emailFormFields}
               onSubmit={this.handleUserFieldUpdate}
@@ -254,26 +264,35 @@ class Profile extends React.Component<Props, State> {
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'fullName'}
-          title="Enter your full name"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
+          avoidKeyboard
         >
-          <Wrapper regularPadding>
-            <ProfileForm
-              fields={fullNameFormFields}
-              onSubmit={this.handleUserFieldUpdate}
-              value={{ firstName: user.firstName, lastName: user.lastName }}
-            />
+          <Wrapper regularPadding flex={1}>
+            <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}>
+              <SettingsModalTitle>
+                Enter your full name
+              </SettingsModalTitle>
+              <ProfileForm
+                fields={fullNameFormFields}
+                onSubmit={this.handleUserFieldUpdate}
+                value={{ firstName: user.firstName, lastName: user.lastName }}
+              />
+            </ScrollView>
           </Wrapper>
         </SlideModal>
         <SlideModal
           isVisible={this.state.visibleModal === 'baseCurrency'}
-          title="Choose your base currency"
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
+          backgroundColor={baseColors.lightGray}
         >
+          <SettingsModalTitle extraHorizontalSpacing>
+            Choose your base currency
+          </SettingsModalTitle>
           <FlatList
             data={currencies}
             renderItem={this.renderListItem('currency', this.handleCurrencyUpdate)}
@@ -418,13 +437,24 @@ class Profile extends React.Component<Props, State> {
             )}
 
             <ListSeparator>
-              <SubHeading>SYSTEM INFO</SubHeading>
+              <SubHeading>SYSTEM</SubHeading>
             </ListSeparator>
 
             <ProfileSettingsItem
               key="systemInfo"
               label="System Info"
               onPress={() => this.setState({ showSystemInfoModal: true })}
+            />
+            <ProfileSettingsItem
+              key="lockScreen"
+              label="Lock Screen"
+              onPress={lockScreen}
+            />
+
+            <ProfileSettingsItem
+              key="deleteWallet"
+              label="Delete Wallet"
+              onPress={this.handleLogoutMessage}
             />
 
             <SlideModal
@@ -464,6 +494,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
+  lockScreen: () => dispatch(lockScreenAction()),
+  logoutUser: () => dispatch(logoutAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

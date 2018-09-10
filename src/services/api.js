@@ -10,6 +10,9 @@ import {
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
+import { USERNAME_EXISTS, API_REGISTRATION_FAILED } from 'constants/walletConstants';
+
+const USERNAME_EXISTS_ERROR_CODE = 409;
 
 type HistoryPayload = {
   address1: string,
@@ -48,7 +51,18 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username }))
     .then(({ data }) => data)
-    .catch(() => ({}));
+    .catch((e) => {
+      if (e.response.status === USERNAME_EXISTS_ERROR_CODE) {
+        return {
+          error: true,
+          reason: USERNAME_EXISTS,
+        };
+      }
+      return {
+        error: true,
+        reason: API_REGISTRATION_FAILED,
+      };
+    });
 };
 
 SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {

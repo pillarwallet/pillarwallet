@@ -25,13 +25,13 @@ const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 const { Form } = t.form;
 const gasLimit = 500000;
 
-const getFormStructure = (maxAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
+const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
     if (amount.toString() === '' && !formSubmitted) return true;
     if (!isValidNumber(amount.toString())) return false;
 
     amount = parseNumber(amount.toString());
-    const isValid = enoughForFee && amount <= maxAmount;
+    const isValid = enoughForFee && amount <= maxAmount && amount >= minAmount;
 
     if (formSubmitted) return isValid && amount > 0;
     return isValid;
@@ -43,10 +43,12 @@ const getFormStructure = (maxAmount: number, enoughForFee: boolean, formSubmitte
     }
 
     amount = parseNumber(amount.toString());
-    if (amount >= maxAmount) {
-      return 'Amount should not exceed the total balance.';
-    } else if (!enoughForFee) {
+    if (!enoughForFee) {
       return 'Not enough ETH to process the transaction fee';
+    } else if (amount >= maxAmount) {
+      return 'Amount should not exceed the sum of total balance and est. network fee';
+    } else if (amount < minAmount) {
+      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
     }
     return 'Amount should be specified.';
   };
@@ -122,7 +124,7 @@ type Props = {
 
 type State = {
   value: ?{
-    amount: ?number,
+    amount: ?string,
   },
   formStructure: t.struct,
   txFeeInWei: ?Object, // BigNumber
@@ -134,6 +136,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   gasPrice: Object; // BigNumber
   gasPriceFetched: boolean = false;
   maxAmount: number;
+  minAmount: number;
   formSubmitted: boolean = false;
   enoughForFee: boolean = false;
   receiver: string;
@@ -144,9 +147,10 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     const { balance } = props.balances[this.assetData.token];
     this.maxAmount = +balance;
+    this.minAmount = 0.000000000000000001; // 1 Wei
     this.state = {
       value: null,
-      formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
+      formStructure: getFormStructure(this.maxAmount, this.minAmount, this.enoughForFee, this.formSubmitted),
       txFeeInWei: null,
     };
   }
@@ -176,7 +180,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
         this.setState({
           txFeeInWei,
-          formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
+          formStructure: getFormStructure(this.maxAmount, this.minAmount, this.enoughForFee, this.formSubmitted),
         });
       })
       .catch(() => { });
@@ -195,7 +199,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const { balance } = balances[token];
     this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     this.setState({
-      formStructure: getFormStructure(this.maxAmount, this.enoughForFee, this.formSubmitted),
+      formStructure: getFormStructure(this.maxAmount, this.minAmount, this.enoughForFee, this.formSubmitted),
     }, () => {
       const value = this._form.getValue();
       const { navigation } = this.props;
@@ -204,7 +208,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
       const transactionPayload: TransactionPayload = {
         to: this.receiver,
-        amount: parseNumber(value.amount),
+        amount: value.amount,
         gasLimit,
         gasPrice: this.gasPrice.toNumber(),
         txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
@@ -233,7 +237,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       value: {
         amount: formatAmount(maxAmount),
       },
-    });
+    }, () => { this._form.getValue(); }); // trigger form validation
   };
 
   calculateMaxAmount(token: string, balance: string, txFeeInWei: ?Object): number {

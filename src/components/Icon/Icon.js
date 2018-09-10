@@ -25,6 +25,13 @@ const glyphMap = {
   received: '\uE811',
   sent: '\uE812',
   camera: '\uE813',
+  'info-circle': '\uE815',
+  'tick-circle': '\uE816',
+  'warning-circle': '\uE817',
+  'chevron-right': '\uE818',
+  'send-message': '\uE832',
+  'send-asset': '\uE833',
+  'send-attachment': '\uE834',
 };
 
 type Props = {

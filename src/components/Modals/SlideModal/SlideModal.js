@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import Modal from 'react-native-modal';
-import { Root } from 'native-base';
 import styled from 'styled-components/native';
 import Header from 'components/Header';
+import Root from 'components/Root';
+import Toast from 'components/Toast';
 import { Container } from 'components/Layout';
 import { spacing, baseColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
@@ -20,6 +21,8 @@ type Props = {
   isVisible: boolean,
   showHeader?: boolean,
   centerTitle?: boolean,
+  backgroundColor?: string,
+  avoidKeyboard?: boolean,
 };
 
 const ModalWrapper = styled.View`
@@ -74,8 +77,21 @@ export default class SlideModal extends React.Component<Props, *> {
 
   hideModal = () => {
     Keyboard.dismiss();
-    if (this.props.onModalHide) {
-      this.props.onModalHide();
+    const TIMEOUT = Toast.isVisible() ? 150 : 0;
+    if (Toast.isVisible()) {
+      Toast.close();
+    }
+    const timer = setTimeout(() => {
+      if (this.props.onModalHide) {
+        this.props.onModalHide();
+      }
+      clearTimeout(timer);
+    }, TIMEOUT);
+  }
+
+  handleScroll = () => {
+    if (Toast.isVisible()) {
+      Toast.close();
     }
   }
 
@@ -90,6 +106,8 @@ export default class SlideModal extends React.Component<Props, *> {
       isVisible,
       showHeader,
       centerTitle,
+      backgroundColor,
+      avoidKeyboard,
     } = this.props;
 
     const showModalHeader = !fullScreen || showHeader;
@@ -123,7 +141,7 @@ export default class SlideModal extends React.Component<Props, *> {
     const modalContent = () => {
       if (fullScreen) {
         return (
-          <Container>
+          <Container color={backgroundColor}>
             {modalInner}
           </Container>
         );
@@ -135,6 +153,7 @@ export default class SlideModal extends React.Component<Props, *> {
     return (
       <Modal
         isVisible={isVisible}
+        scrollTo={this.handleScroll}
         onSwipe={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
@@ -143,6 +162,7 @@ export default class SlideModal extends React.Component<Props, *> {
         animationIn="slideInUp"
         animationOut="slideOutDown"
         swipeDirection="down"
+        avoidKeyboard={avoidKeyboard}
         style={{
           margin: 0,
         }}
@@ -153,7 +173,6 @@ export default class SlideModal extends React.Component<Props, *> {
               {modalContent()}
             </ModalBackground>
           </Root>
-
         </ModalWrapper>
         {isVisible && fullScreenComponent}
       </Modal>

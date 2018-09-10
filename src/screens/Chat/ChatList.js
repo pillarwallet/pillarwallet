@@ -6,7 +6,7 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
 import { isToday, isYesterday, format as formatDate } from 'date-fns';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
-import { CHAT } from 'constants/navigationConstants';
+import { CHAT, NEW_CHAT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import { baseColors } from 'utils/variables';
@@ -54,25 +54,32 @@ class ChatListScreen extends React.Component<Props, State> {
     resetUnread(contact.username);
   };
 
-  renderItem = (contacts: Object[]) => ({ item: contact }: Object) => {
-    const { chats } = this.props;
+  goToNewChatList = () => {
+    this.props.navigation.navigate(NEW_CHAT);
+  };
+
+  renderItem = ({ item: contact }: Object) => {
+    const { chats, contacts } = this.props;
 
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const { lastMessage, unread } = chatWithContact;
     const contactInfo = contacts.find(({ username }) => contact.username === username) || {};
 
     let timeSent = '';
+
     if (lastMessage.serverTimestamp) {
       const lastMessageDate = new Date(lastMessage.serverTimestamp);
       if (isToday(lastMessageDate)) {
         timeSent = formatDate(lastMessageDate, 'HH:mm');
       } else if (isYesterday(lastMessageDate)) {
-        timeSent = 'Yesterday';
+        timeSent = 'yesterday';
       } else {
         timeSent = formatDate(lastMessageDate, 'MM/DD/YY');
       }
     }
     const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
+
+    if (!contact.username) return null;
 
     return (
       <ChatListItem
@@ -88,19 +95,23 @@ class ChatListScreen extends React.Component<Props, State> {
 
   renderSeparator = () => {
     return (
-      <View style={{ paddingLeft: 76, paddingRight: 18 }}>
+      <View style={{ paddingLeft: 74, paddingRight: 18 }}>
         <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
       </View>
     );
   };
 
   render() {
-    const { chats, getExistingChats, contacts } = this.props;
+    const { chats, getExistingChats } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     return (
       <Container>
-        <Header title="chat" />
+        <Header
+          title="chat"
+          nextText="New chat"
+          onNextPress={this.goToNewChatList}
+        />
         <ChatWrapper
           style={{
             paddingBottom: sortedChats.length ? 18 : 0,
@@ -116,7 +127,7 @@ class ChatListScreen extends React.Component<Props, State> {
             data={sortedChats}
             extraData={chats}
             keyExtractor={(item) => item.username}
-            renderItem={this.renderItem(contacts)}
+            renderItem={this.renderItem}
             ItemSeparatorComponent={this.renderSeparator}
             style={{ height: '100%' }}
             contentContainerStyle={{ height: '100%' }}

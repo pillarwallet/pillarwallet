@@ -7,9 +7,11 @@ import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
-import { API_REGISTRATION_FAILED } from 'constants/walletConstants';
+import { API_REGISTRATION_FAILED, USERNAME_EXISTS } from 'constants/walletConstants';
 import { APP_FLOW } from 'constants/navigationConstants';
 // import Spinner from 'components/Spinner';
+
+const API_FAILURES = [USERNAME_EXISTS, API_REGISTRATION_FAILED];
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -26,7 +28,7 @@ const NewWallet = (props: Props) => {
     props.navigation.navigate(APP_FLOW);
   };
 
-  if (walletState === API_REGISTRATION_FAILED) {
+  if (API_FAILURES.includes(walletState)) {
     statusMessage = 'REGISTRATION FAILED';
     showSpinner = false;
     note = <Button title="Try again" onPress={tryToReRegister} />;

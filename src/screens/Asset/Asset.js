@@ -19,19 +19,21 @@ import ActivityFeed from 'components/ActivityFeed';
 import Header from 'components/Header';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
-import { SEND_TOKEN_FLOW } from 'constants/navigationConstants';
+import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney } from 'utils/common';
+import assetsConfig from 'configs/assetsConfig';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
 
 const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.snowWhite), baseColors.snowWhite];
 
-const AssetDescriptionToggleWrapperActiveColors = (
-  [transparentize(1, baseColors.snowWhite), transparentize(1, baseColors.snowWhite)]
-);
+const AssetDescriptionToggleWrapperActiveColors = [
+  transparentize(1, baseColors.snowWhite),
+  transparentize(1, baseColors.snowWhite),
+];
 
 const activeModalResetState = {
   type: null,
@@ -54,7 +56,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   contacts: Object,
-}
+};
 
 type State = {
   assetDescriptionExpanded: boolean,
@@ -67,14 +69,14 @@ type State = {
       formValues?: Object,
     },
   },
-}
+};
 
 const AssetCardWrapper = styled(Wrapper)`
   flex: 1;
 `;
 
 const AssetDescriptionWrapper = styled.View`
-  height: ${props => props.expanded ? 'auto' : '24px'};
+  height: ${props => (props.expanded ? 'auto' : '24px')};
   z-index: 10;
 `;
 
@@ -90,7 +92,7 @@ const AssetDescriptionToggleText = styled(BaseText)`
 
 const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   position: absolute;
-  bottom: ${props => props.expanded ? '-6px' : '-6px'};
+  bottom: ${props => (props.expanded ? '-6px' : '-6px')};
   right: 0;
   padding-left: 40px;
 `;
@@ -113,11 +115,7 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const {
-      fetchTransactionsHistory,
-      wallet,
-      navigation,
-    } = this.props;
+    const { fetchTransactionsHistory, wallet, navigation } = this.props;
     const { assetData } = navigation.state.params;
     fetchTransactionsHistory(wallet.address, assetData.token);
   }
@@ -131,12 +129,12 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   goToSendTokenFlow = (assetData: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FLOW, {
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, {
       assetData,
     });
   };
 
-  openReceiveTokenModal = (assetData) => {
+  openReceiveTokenModal = assetData => {
     this.setState({
       activeModal: {
         type: RECEIVE,
@@ -145,19 +143,15 @@ class AssetScreen extends React.Component<Props, State> {
     });
   };
 
-  handleScrollWrapperEndDrag = (e) => {
+  handleScrollWrapperEndDrag = e => {
+    const { fetchTransactionsHistory, wallet, history } = this.props;
     const {
-      fetchTransactionsHistory,
-      wallet,
-      history,
-    } = this.props;
-    const { assetData: { token } } = this.props.navigation.state.params;
+      assetData: { token },
+    } = this.props.navigation.state.params;
     const layoutHeight = e.nativeEvent.layoutMeasurement.height;
     const contentHeight = e.nativeEvent.contentSize.height;
     const offsetY = e.nativeEvent.contentOffset.y;
-    const indexFrom = history
-      .filter(({ asset }) => asset === token)
-      .length;
+    const indexFrom = history.filter(({ asset }) => asset === token).length;
 
     if (layoutHeight + offsetY + 200 >= contentHeight) {
       fetchTransactionsHistory(wallet.address, token, indexFrom);
@@ -195,9 +189,14 @@ class AssetScreen extends React.Component<Props, State> {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
     };
-
+    const {
+      listed: isListed = true,
+      send: isSendActive = true,
+      receive: isReceiveActive = true,
+      disclaimer,
+    } = assetsConfig[assetData.token] || {};
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header onClose={this.handleCardTap} />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
@@ -224,16 +223,18 @@ class AssetScreen extends React.Component<Props, State> {
                 address={assetData.address}
                 icon={assetData.icon}
                 wallpaper={assetData.wallpaper}
+                isListed={isListed}
+                disclaimer={disclaimer}
               />
             </Transition>
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               noBalance={isWalletEmpty}
+              isSendDisabled={!isSendActive}
+              isReceiveDisabled={!isReceiveActive}
             />
-            <AssetDescriptionWrapper
-              expanded={assetDescriptionExpanded}
-            >
+            <AssetDescriptionWrapper expanded={assetDescriptionExpanded}>
               <AssetDescription small light>
                 {assetData.description}
               </AssetDescription>
@@ -247,15 +248,13 @@ class AssetScreen extends React.Component<Props, State> {
                 end={{ x: 0.5, y: 0 }}
                 expanded={assetDescriptionExpanded}
               >
-                {shouldAssetDescriptionToggleShow &&
-                  <AssetDescriptionToggle
-                    onPress={this.toggleAssetDescription}
-                  >
+                {shouldAssetDescriptionToggleShow && (
+                  <AssetDescriptionToggle onPress={this.toggleAssetDescription}>
                     <AssetDescriptionToggleText>
                       {assetDescriptionExpanded ? 'Less' : 'More'}
                     </AssetDescriptionToggleText>
                   </AssetDescriptionToggle>
-                }
+                )}
               </AssetDescriptionToggleWrapper>
             </AssetDescriptionWrapper>
           </AssetCardWrapper>
@@ -264,13 +263,15 @@ class AssetScreen extends React.Component<Props, State> {
             feedTitle="transactions."
             navigation={navigation}
             activeTab={TRANSACTIONS}
-            additionalFiltering={(data) => data.filter(({ asset }) => asset === assetData.token)}
+            additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
           />
         </ScrollWrapper>
 
         <ReceiveModal
           isVisible={this.state.activeModal.type === RECEIVE}
-          onModalHide={() => { this.setState({ activeModal: activeModalResetState }); }}
+          onModalHide={() => {
+            this.setState({ activeModal: activeModalResetState });
+          }}
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
