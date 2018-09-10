@@ -12,6 +12,7 @@ import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import Separator from 'components/Separator';
 import { fontSizes, spacing } from 'utils/variables';
+import { formatAmount } from 'utils/common';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
@@ -58,7 +59,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     const { balances, navigation } = this.props;
     const contact = navigation.getParam('contact', {});
     const contactAddress = contact.ethAddress;
-    const assetBalance = balances[item.symbol].balance;
+    const assetBalance = formatAmount(balances[item.symbol].balance);
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     return (
       <TouchableOpacity onPress={() => this.navigateToNextScreen(contactAddress, item.symbol)}>
