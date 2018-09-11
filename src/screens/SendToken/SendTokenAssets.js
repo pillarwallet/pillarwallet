@@ -15,6 +15,7 @@ import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import assetsConfig from 'configs/assetsConfig';
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -22,6 +23,13 @@ type Props = {
   balances: Balances,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
+};
+
+type NextScreenAssetData = {
+  ethAddress: string,
+  token: string,
+  contractAddress: string,
+  decimals: number,
 };
 
 const TokenName = styled(BoldText)`
@@ -48,9 +56,16 @@ const TokenBalance = styled(BaseText)`
 `;
 
 class SendTokenAssetsScreen extends React.Component<Props, {}> {
-  navigateToNextScreen(ethAddress, token) {
+  navigateToNextScreen(nextScreenAssetData: NextScreenAssetData) {
+    const {
+      ethAddress,
+      token,
+      contractAddress,
+      decimals,
+    } = nextScreenAssetData;
+
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
-      assetData: { token },
+      assetData: { token, contractAddress, decimals },
       receiver: ethAddress,
     });
   }
@@ -58,11 +73,19 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
   renderAsset = ({ item }) => {
     const { balances, navigation } = this.props;
     const contact = navigation.getParam('contact', {});
-    const contactAddress = contact.ethAddress;
     const assetBalance = formatAmount(balances[item.symbol].balance);
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const nextScreenAssetData = {
+      token: item.symbol,
+      contractAddress: item.address,
+      decimals: item.decimals,
+      ethAddress: contact.ethAddress,
+    };
+    if (assetsConfig[item.symbol] && !assetsConfig[item.symbol].send) {
+      return null;
+    }
     return (
-      <TouchableOpacity onPress={() => this.navigateToNextScreen(contactAddress, item.symbol)}>
+      <TouchableOpacity onPress={() => this.navigateToNextScreen(nextScreenAssetData)}>
         <TokenListItem>
           <TokenThumbnail source={{ uri: fullIconUrl }} />
           <TokenName>{item.name}</TokenName>
