@@ -167,8 +167,8 @@ class AssetsScreen extends React.Component<Props> {
       address: assetData.address,
       icon: assetData.iconColor,
       wallpaper: assetData.wallpaper,
-      isListed: isListed,
-      disclaimer: disclaimer,
+      isListed,
+      disclaimer,
     };
 
     switch (assetLayout) {
