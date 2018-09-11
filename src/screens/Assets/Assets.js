@@ -5,6 +5,9 @@ import {
   Easing,
   RefreshControl,
   FlatList,
+  Dimensions,
+  Platform,
+  PixelRatio,
 } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -28,7 +31,7 @@ import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/as
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
-import { spacing } from 'utils/variables';
+import { spacing, baseColors } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 type Props = {
@@ -43,6 +46,14 @@ type Props = {
   baseFiatCurrency: string,
   assetLayout?: string,
 }
+
+const smallScreen = () => {
+  if (Platform.OS === 'ios') {
+    return Dimensions.get('window').width * PixelRatio.get() < 790;
+  }
+  return Dimensions.get('window').width < 410;
+};
+
 
 class AssetsScreen extends React.Component<Props> {
   static navigationOptions = {
@@ -162,6 +173,7 @@ class AssetsScreen extends React.Component<Props> {
             wallpaper={assetData.wallpaper}
             isListed={isListed}
             disclaimer={disclaimer}
+            smallScreen={smallScreen()}
           />
         );
       }
@@ -179,7 +191,8 @@ class AssetsScreen extends React.Component<Props> {
             wallpaper={assetData.wallpaper}
             isListed={isListed}
             disclaimer={disclaimer}
-            extrasmall
+            smallScreen={smallScreen()}
+            extraSmall
           />
         );
       }
@@ -266,8 +279,10 @@ class AssetsScreen extends React.Component<Props> {
       }
     };
 
+    const containerColor = assetLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
+
     return (
-      <Container>
+      <Container color={containerColor}>
         <Header
           title="assets"
           onNextPress={this.goToAddTokenPage}

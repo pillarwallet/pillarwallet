@@ -1,10 +1,11 @@
 // @flow
 import * as React from 'react';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -26,13 +27,16 @@ type Props = {
 const defaultCircleColor = '#ACBCCD';
 
 const AssetWrapper = styled.View`
-  margin: 6px ${spacing.rhythm / 2}px 10px ;
+  margin: ${Platform.select({
+    ios: `3px ${spacing.rhythm / 2}px 5px`,
+    android: `2px ${spacing.rhythm / 2}px 6px`,
+  })}
   flex-direction: row;
-  shadow-color: #333;
-  shadow-offset: 0 1px;
-  shadow-opacity: 0.25;
-  shadow-radius: 5px;
-  elevation: 4;
+  shadow-color: ${UIColors.cardShadowColor};
+  shadow-offset: 0 3px;
+  shadow-opacity: 1;
+  shadow-radius: 6px;
+  elevation: 3;
   border-radius: 6px;
   background: ${baseColors.white};
   height: 70px;

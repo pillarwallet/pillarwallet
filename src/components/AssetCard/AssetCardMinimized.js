@@ -1,10 +1,11 @@
 // @flow
 import * as React from 'react';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -20,8 +21,10 @@ type Props = {
     currency: string,
   },
   icon: string,
-  extrasmall?: boolean,
+  smallScreen?: boolean,
+  extraSmall?: boolean,
 }
+
 
 const defaultCircleColor = '#ACBCCD';
 
@@ -31,17 +34,31 @@ const AssetWrapper = styled.View`
   align-items: center;
 `;
 
+const cardHeight = (smallScreen, extraSmall) => {
+  if (smallScreen && extraSmall) {
+    return 55;
+  } else if (smallScreen) {
+    return 70;
+  } else if (extraSmall) {
+    return 88;
+  }
+  return 105;
+};
+
 const ShadowHolder = styled.View`
-  margin: 4px ${spacing.rhythm / 4}px 6px ;
+  margin: ${Platform.select({
+    ios: `4px ${spacing.rhythm / 4}px 6px`,
+    android: `2px ${spacing.rhythm / 4}px 8px`,
+  })}
   flex-direction: row;
-  shadow-color: #333;
-  shadow-offset: 0 1px;
-  shadow-opacity: 0.25;
-  shadow-radius: 3px;
-  elevation: 3;
+  shadow-color: ${UIColors.cardShadowColor};
+  shadow-offset: 0 3px;
+  shadow-opacity: 1;
+  shadow-radius: 6px;
+  elevation: 4;
   border-radius: 6px;
   background: ${baseColors.white};
-  height: ${props => props.extrasmall ? 88 : 105}px;
+  height: ${props => cardHeight(props.smallScreen, props.extraSmall)}px;
 `;
 
 const InnerWrapper = styled.View`
@@ -49,7 +66,7 @@ const InnerWrapper = styled.View`
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
-  padding: ${spacing.rhythm / 2}px; 
+  padding: ${props => props.smallScreen ? spacing.rhythm / 4 : spacing.rhythm / 2}px; 
 `;
 
 const CardRow = styled.View`
@@ -66,7 +83,7 @@ const AmountWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
-  margin-top: ${props => props.extrasmall ? 4 : spacing.rhythm / 2}px;
+  margin-top: ${props => props.extraSmall ? 4 : spacing.rhythm / 2}px;
 `;
 
 const Amount = styled(BoldText)`
@@ -84,26 +101,26 @@ const FiatAmount = styled(LightText)`
 `;
 
 const Disclaimer = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.small};
+  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
+  line-height: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
   color: ${baseColors.burningFire};
   text-align: left;
 `;
 
 const IconCircle = styled.View`
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
+  width: ${props => props.smallScreen ? 20 : 36}px;
+  height: ${props => props.smallScreen ? 20 : 36}px;
+  border-radius: ${props => props.smallScreen ? 10 : 18}px;
   background: ${props => props.color ? props.color : defaultCircleColor};
-  margin-right: ${spacing.rhythm / 2}px;
+  margin-right: ${props => props.smallScreen ? 4 : 6}px;
   align-items: center;
   justify-content: center;
 `;
 
 const Name = styled(BoldText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
   letter-spacing: ${fontTrackings.small};
-  line-height: ${fontSizes.small};
+  line-height: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
 `;
 
@@ -119,23 +136,24 @@ const AssetCardMinimized = (props: Props) => {
     onPress,
     disclaimer,
     icon = '',
-    extrasmall,
+    extraSmall,
+    smallScreen,
   } = props;
 
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
   return (
     <AssetWrapper>
-      <ShadowHolder extrasmall={extrasmall}>
+      <ShadowHolder smallScreen={smallScreen} extraSmall={extraSmall}>
         <TouchableWithoutFeedback onPress={onPress}>
-          <InnerWrapper>
+          <InnerWrapper smallScreen={smallScreen}>
             <CardRow>
-              <IconCircle>
+              <IconCircle smallScreen={smallScreen}>
                 {!!icon &&
                 <CachedImage
                   key={token}
                   style={{
-                    height: 40,
-                    width: 40,
+                    height: smallScreen ? 20 : 36,
+                    width: smallScreen ? 20 : 36,
                   }}
                   source={{ uri: icon }}
                   resizeMode="contain"
@@ -144,12 +162,12 @@ const AssetCardMinimized = (props: Props) => {
               <Name>{token}</Name>
             </CardRow>
             <CardRow>
-              <AmountWrapper extrasmall={extrasmall}>
+              <AmountWrapper extraSmall={extraSmall}>
                 <Amount>{amount}</Amount>
-                {!extrasmall &&
+                {!extraSmall &&
                 <DetailWrapper>
                   {disclaimer
-                    ? <Disclaimer>{disclaimer}</Disclaimer>
+                    ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
                     : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
                   }
                 </DetailWrapper>}
