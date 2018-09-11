@@ -15,6 +15,7 @@ import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import assetsConfig from 'configs/assetsConfig';
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -80,6 +81,9 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
       decimals: item.decimals,
       ethAddress: contact.ethAddress,
     };
+    if (assetsConfig[item.symbol] && !assetsConfig[item.symbol].send) {
+      return null;
+    }
     return (
       <TouchableOpacity onPress={() => this.navigateToNextScreen(nextScreenAssetData)}>
         <TokenListItem>
