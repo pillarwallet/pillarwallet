@@ -14,6 +14,8 @@ project.ext.react = [
   entryFile: "index.js",
   bundleInDebug: false,
   bundleInRelease: true,
+  bundleInStaging: true,
+  devDisabledInStaging: true
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -30,6 +32,7 @@ repositories {
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+println(keystoreProperties)
 
 android {
   compileSdkVersion 26
@@ -37,6 +40,12 @@ android {
   signingConfigs {
     debug {
       storeFile file('../debug.keystore')
+    }
+    staging {
+      keyAlias System.getenv('ANDROID_STAGING_KEY_ALIAS') ? System.getenv('ANDROID_STAGING_KEY_ALIAS').toString() : keystoreProperties['stagingKeyAlias']
+      keyPassword System.getenv('ANDROID_STAGING_KEY_PASSWORD') ? System.getenv('ANDROID_STAGING_KEY_PASSWORD').toString() : keystoreProperties['stagingKeyPassword']
+      storeFile file('../staging-key.keystore')
+      storePassword System.getenv('ANDROID_STAGING_STORE_PASSWORD') ? System.getenv('ANDROID_STAGING_STORE_PASSWORD').toString() : keystoreProperties['stagingStorePassword']
     }
     release {
       keyAlias System.getenv('ANDROID_KEY_ALIAS') ? System.getenv('ANDROID_KEY_ALIAS').toString() : keystoreProperties['keyAlias']
@@ -76,6 +85,10 @@ android {
       // time so use 'dev' if not running on older SDKs.
       minSdkVersion 21
     }
+//    stage {
+//      minSdkVersion 21
+//      applicationIdSuffix ".staging"
+//    }
     prod {
       // The actual minSdkVersion for the application.
       minSdkVersion 21
@@ -85,7 +98,13 @@ android {
     debug {
       debuggable true
     }
+    staging {
+      buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
+      signingConfig signingConfigs.staging
+      applicationIdSuffix ".staging"
+    }
     release {
+      buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
