@@ -54,6 +54,22 @@ const smallScreen = () => {
   return Dimensions.get('window').width < 410;
 };
 
+const horizontalPadding = (layout) => {
+  switch (layout) {
+    case EXTRASMALL: {
+      return spacing.rhythm - (spacing.rhythm / 4);
+    }
+    case MINIMIZED: {
+      return spacing.rhythm - (spacing.rhythm / 4);
+    }
+    case SIMPLIFIED: {
+      return spacing.rhythm / 2;
+    }
+    default: {
+      return spacing.rhythm;
+    }
+  }
+};
 
 class AssetsScreen extends React.Component<Props> {
   static navigationOptions = {
@@ -141,56 +157,35 @@ class AssetsScreen extends React.Component<Props> {
       disclaimer,
     } = assetsConfig[assetData.token] || {};
 
+    const props = {
+      id: assetData.token,
+      name: assetData.name,
+      token: assetData.token,
+      amount: assetData.amount,
+      balanceInFiat: assetData.balanceInFiat,
+      onPress: () => this.handleCardTap(assetData),
+      address: assetData.address,
+      icon: assetData.iconColor,
+      wallpaper: assetData.wallpaper,
+      isListed: isListed,
+      disclaimer: disclaimer,
+    };
+
     switch (assetLayout) {
       case SIMPLIFIED: {
         return (
-          <AssetCardSimplified
-            id={assetData.token}
-            name={assetData.name}
-            token={assetData.token}
-            amount={assetData.amount}
-            balanceInFiat={assetData.balanceInFiat}
-            onPress={() => this.handleCardTap(assetData)}
-            address={assetData.address}
-            icon={assetData.iconColor}
-            wallpaper={assetData.wallpaper}
-            isListed={isListed}
-            disclaimer={disclaimer}
-          />
+          <AssetCardSimplified {...props} />
         );
       }
       case MINIMIZED: {
         return (
-          <AssetCardMinimized
-            id={assetData.token}
-            name={assetData.name}
-            token={assetData.token}
-            amount={assetData.amount}
-            balanceInFiat={assetData.balanceInFiat}
-            onPress={() => this.handleCardTap(assetData)}
-            address={assetData.address}
-            icon={assetData.iconColor}
-            wallpaper={assetData.wallpaper}
-            isListed={isListed}
-            disclaimer={disclaimer}
-            smallScreen={smallScreen()}
-          />
+          <AssetCardMinimized {...props} smallScreen={smallScreen()} />
         );
       }
       case EXTRASMALL: {
         return (
           <AssetCardMinimized
-            id={assetData.token}
-            name={assetData.name}
-            token={assetData.token}
-            amount={assetData.amount}
-            balanceInFiat={assetData.balanceInFiat}
-            onPress={() => this.handleCardTap(assetData)}
-            address={assetData.address}
-            icon={assetData.iconColor}
-            wallpaper={assetData.wallpaper}
-            isListed={isListed}
-            disclaimer={disclaimer}
+            {...props}
             smallScreen={smallScreen()}
             extraSmall
           />
@@ -199,19 +194,7 @@ class AssetsScreen extends React.Component<Props> {
       default: {
         return (
           <Transition key={assetData.name} shared={assetData.name}>
-            <AssetCard
-              id={assetData.token}
-              name={assetData.name}
-              token={assetData.token}
-              amount={assetData.amount}
-              balanceInFiat={assetData.balanceInFiat}
-              onPress={() => this.handleCardTap(assetData)}
-              address={assetData.address}
-              icon={assetData.icon}
-              wallpaper={assetData.wallpaper}
-              isListed={isListed}
-              disclaimer={disclaimer}
-            />
+            <AssetCard {...props} icon={assetData.icon} />
           </Transition>
         );
       }
@@ -262,23 +245,6 @@ class AssetsScreen extends React.Component<Props> {
     }
 
     const columnAmount = (assetLayout === MINIMIZED || assetLayout === EXTRASMALL) ? 3 : 1;
-    const horizontalPadding = (layout) => {
-      switch (layout) {
-        case EXTRASMALL: {
-          return spacing.rhythm - (spacing.rhythm / 4);
-        }
-        case MINIMIZED: {
-          return spacing.rhythm - (spacing.rhythm / 4);
-        }
-        case SIMPLIFIED: {
-          return spacing.rhythm / 2;
-        }
-        default: {
-          return spacing.rhythm;
-        }
-      }
-    };
-
     const containerColor = assetLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
 
     return (
