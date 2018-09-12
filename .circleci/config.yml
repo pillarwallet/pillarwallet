@@ -44,7 +44,7 @@ jobs:
             cp environments/.env.staging ./.env
             sed -i.bak s/_build_number_/$buildNumber/g .env
       - restore_cache:
-          key: node-{{ checksum "./yarn.lock" }}
+          key: ios-node-{{ checksum "./yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
@@ -55,11 +55,11 @@ jobs:
           name: Install node dependencies
           command: yarn install
       - save_cache:
-          key: node-{{ checksum "./yarn.lock" }}
+          key: ios-node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/nodes_modules
       - restore_cache:
-          key: pods-{{ checksum "./ios/Podfile.lock" }}
+          key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
       - run:
           name: Fetch CocoaPods Specs
           command: |
@@ -68,7 +68,7 @@ jobs:
           name: Install CocoaPods
           command: cd ios && pod install --verbose
       - save_cache:
-          key: pods-{{ checksum "./ios/Podfile.lock" }}
+          key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
           paths:
             - ./ios/Pods
       - run:
@@ -81,7 +81,7 @@ jobs:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./ios/Gemfile
       - restore_cache:
-          key: gems-{{ checksum "./ios/Gemfile" }}
+          key: ios-gems-{{ checksum "./ios/Gemfile" }}
       - run:
           name: Create Vendor/bundle for gem dependencies
           command: cd ios && bundle check || bundle install --path vendor/bundle
@@ -89,7 +89,7 @@ jobs:
           name: Install fastlane as a dependency
           command: cd ios && sudo bundle update
       - save_cache:
-          key: gems-{{ checksum "./ios/Gemfile" }}
+          key: ios-gems-{{ checksum "./ios/Gemfile" }}
           paths:
             - vendor/bundle
       - run:
@@ -130,7 +130,7 @@ jobs:
             cp environments/.env.production ./.env
             sed -i.bak s/_build_number_/$buildNumber/g .env
       - restore_cache:
-          key: node-{{ checksum "./yarn.lock" }}
+          key: ios-node-{{ checksum "./yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
             command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
@@ -141,11 +141,11 @@ jobs:
           name: Install node dependencies
           command: yarn install
       - save_cache:
-          key: node-{{ checksum "./yarn.lock" }}
+          key: ios-node-{{ checksum "./yarn.lock" }}
           paths:
             - ~/nodes_modules
       - restore_cache:
-          key: pods-{{ checksum "./ios/Podfile.lock" }}
+          key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
       - run:
           name: Fetch CocoaPods Specs
           command: |
@@ -154,7 +154,7 @@ jobs:
           name: Install CocoaPods
           command: cd ios && pod install --verbose
       - save_cache:
-          key: pods-{{ checksum "./ios/Podfile.lock" }}
+          key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
           paths:
             - ./ios/Pods
       - run:
@@ -167,7 +167,7 @@ jobs:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> ./ios/Gemfile
       - restore_cache:
-          key: gems-{{ checksum "./ios/Gemfile" }}
+          key: ios-gems-{{ checksum "./ios/Gemfile" }}
       - run:
           name: Create Vendor/bundle for gem dependencies
           command: cd ios && bundle check || bundle install --path vendor/bundle
@@ -175,7 +175,7 @@ jobs:
           name: Install fastlane as a dependency
           command: cd ios && sudo bundle update
       - save_cache:
-          key: gems-{{ checksum "./ios/Gemfile" }}
+          key: ios-gems-{{ checksum "./ios/Gemfile" }}
           paths:
             - vendor/bundle
       - run:
@@ -221,7 +221,7 @@ jobs:
             sed -i "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
-          key: node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "../yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
             command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
@@ -235,7 +235,7 @@ jobs:
           name: Install node dependencies
           command: cd .. && yarn install
       - save_cache:
-          key: node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "../yarn.lock" }}
           paths:
             - ~/pillarwallet/nodes_modules
       - run:
@@ -245,16 +245,16 @@ jobs:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> Gemfile
       - restore_cache:
-          key: gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "Gemfile" }}
       - run:
           name: Bundle install
           command: bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "Gemfile" }}
           paths:
             - vendor/bundle
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
@@ -262,7 +262,7 @@ jobs:
           name: Download Dependencies
           command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
           paths:
             - ~/.gradle
             - ~/.m2
@@ -319,7 +319,7 @@ jobs:
             sed -i "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
-          key: node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "../yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
             command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
@@ -333,7 +333,7 @@ jobs:
           name: Install node dependencies
           command: cd .. && yarn install
       - save_cache:
-          key: node-{{ checksum "../yarn.lock" }}
+          key: android-node-{{ checksum "../yarn.lock" }}
           paths:
             - ~/pillarwallet/nodes_modules
       - run:
@@ -343,16 +343,16 @@ jobs:
           name: Install fastlane gem
           command: echo 'gem "fastlane"' >> Gemfile
       - restore_cache:
-          key: gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "Gemfile" }}
       - run:
           name: Bundle install
           command: bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "Gemfile" }}
           paths:
             - vendor/bundle
       - restore_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
@@ -360,7 +360,7 @@ jobs:
           name: Download Dependencies
           command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
-          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
           paths:
             - ~/.gradle
             - ~/.m2
