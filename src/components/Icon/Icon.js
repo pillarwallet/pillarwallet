@@ -16,7 +16,7 @@ const glyphMap = {
   settings: '\uE809',
   warning: '\uE80A',
   check: '\uE80B',
-  qrcode: '\uE80C',
+  qrcode: '\uE81C',
   send: '\uF1D9',
   all: '\uE80D',
   social: '\uE80E',
@@ -32,6 +32,7 @@ const glyphMap = {
   'send-message': '\uE832',
   'send-asset': '\uE833',
   'send-attachment': '\uE834',
+  'chat-filled': '\uE81B',
 };
 
 type Props = {
