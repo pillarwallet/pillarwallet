@@ -26,7 +26,6 @@ platform :android do
       track: 'internal',
       apk: 'app/build/outputs/apk/app-prod-staging.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
-      package_name: 'com.pillarproject.wallet.staging',
       skip_upload_aab: true,
       skip_upload_images: true,
       skip_upload_screenshots: true

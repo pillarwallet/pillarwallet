@@ -393,7 +393,7 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-            bundle exec fastlane supply --json_key_data="$GOOGLE_JSON_DATA"
+            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
             bundle exec fastlane deploy_staging --verbose
           environment:
             BUNDLE_PATH: vendor/bundle
