@@ -53,6 +53,7 @@ export const UIColors = {
   focusedBorderColor: baseColors.electricBlue,
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
   placeholderTextColor: baseColors.darkGray,
+  cardShadowColor: 'rgba(16, 91, 170, 0.1)',
 };
 
 export const fontSizes = {
