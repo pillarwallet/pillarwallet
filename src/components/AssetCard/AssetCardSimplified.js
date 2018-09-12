@@ -39,7 +39,7 @@ const AssetWrapper = styled.View`
   shadow-offset: 0 3px;
   shadow-opacity: 1;
   shadow-radius: 6px;
-  elevation: 3;
+  elevation: 2;
   border-radius: 6px;
   background: ${baseColors.white};
   height: 70px;
@@ -112,7 +112,7 @@ const IconCircle = styled.View`
   height: 44px;
   border-radius: 22px;
   background: ${props => props.color ? props.color : defaultCircleColor};
-  margin-right: 16px;
+  margin-right: 22px;
   align-items: center;
   justify-content: center;
 `;

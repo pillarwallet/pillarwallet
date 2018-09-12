@@ -30,7 +30,7 @@ import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import { formatMoney } from 'utils/common';
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, ETH } from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
@@ -117,14 +117,15 @@ class AssetsScreen extends React.Component<Props> {
     });
   };
 
-  swipeoutBtns = (asset) => {
+  swipeoutBtns = (asset, isETH) => {
     const { removeAsset } = this.props;
     return [
       {
         component: (
           <HideAssetButton
             expanded={this.props.assetLayout === EXPANDED}
-            onPress={() => removeAsset(asset)}
+            onPress={isETH ? () => {} : () => removeAsset(asset)}
+            disabled={isETH}
           />),
         backgroundColor: 'transparent',
         disabled: true,
@@ -191,13 +192,18 @@ class AssetsScreen extends React.Component<Props> {
       disclaimer,
     };
 
+    const isETH = (thisSymbol) => {
+      return thisSymbol === ETH;
+    };
+
     switch (assetLayout) {
       case SIMPLIFIED: {
         return (
           <Swipeout
-            right={this.swipeoutBtns(asset)}
+            right={this.swipeoutBtns(asset, isETH(symbol))}
             sensitivity={10}
             backgroundColor="transparent"
+            buttonWidth={80}
           >
             <AssetCardSimplified {...props} />
           </Swipeout>
@@ -220,7 +226,7 @@ class AssetsScreen extends React.Component<Props> {
       default: {
         return (
           <Swipeout
-            right={this.swipeoutBtns(asset)}
+            right={this.swipeoutBtns(asset, isETH(symbol))}
             sensitivity={10}
             backgroundColor="transparent"
           >
