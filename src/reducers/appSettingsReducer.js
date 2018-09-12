@@ -1,5 +1,6 @@
 // @flow
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { EXPANDED } from 'constants/assetsLayoutConstants';
 import merge from 'lodash.merge';
 
 export type AppSettingsReducerState = {
@@ -13,7 +14,11 @@ export type AppSettingsReducerAction = {
 }
 
 const initialState = {
-  data: {},
+  data: {
+    appearanceSettings: {
+      assetsLayout: EXPANDED,
+    },
+  },
   isFetched: false,
 };
 

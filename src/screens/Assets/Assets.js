@@ -44,7 +44,7 @@ type Props = {
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
-  assetLayout?: string,
+  assetsLayout?: string,
 }
 
 const smallScreen = () => {
@@ -81,7 +81,7 @@ class AssetsScreen extends React.Component<Props> {
   };
 
   static defaultProps = {
-    assetLayout: EXPANDED,
+    assetsLayout: EXPANDED,
   };
 
   componentDidMount() {
@@ -116,7 +116,7 @@ class AssetsScreen extends React.Component<Props> {
     const {
       wallet,
       baseFiatCurrency,
-      assetLayout,
+      assetsLayout,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -171,7 +171,7 @@ class AssetsScreen extends React.Component<Props> {
       disclaimer,
     };
 
-    switch (assetLayout) {
+    switch (assetsLayout) {
       case SIMPLIFIED: {
         return (
           <AssetCardSimplified {...props} />
@@ -207,12 +207,11 @@ class AssetsScreen extends React.Component<Props> {
       wallet,
       assetsState,
       fetchInitialAssets,
-      assetLayout,
+      assetsLayout,
       baseFiatCurrency,
       rates,
       balances,
     } = this.props;
-
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const sortedAssets = Object.keys(assets)
@@ -244,8 +243,8 @@ class AssetsScreen extends React.Component<Props> {
       );
     }
 
-    const columnAmount = (assetLayout === MINIMIZED || assetLayout === EXTRASMALL) ? 3 : 1;
-    const containerColor = assetLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
+    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
+    const containerColor = assetsLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
 
     return (
       <Container color={containerColor}>
@@ -256,12 +255,13 @@ class AssetsScreen extends React.Component<Props> {
           headerRightFlex="2"
         />
         <FlatList
+          key={assetsLayout}
           data={sortedAssets}
           keyExtractor={(item) => item.id}
           renderItem={this.renderAsset}
           style={{ width: '100%' }}
           contentContainerStyle={{
-            paddingHorizontal: horizontalPadding(assetLayout),
+            paddingHorizontal: horizontalPadding(assetsLayout),
             width: '100%',
           }}
           numColumns={columnAmount}
@@ -284,7 +284,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, assetsState, balances },
   rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
   wallet,
   assets,
@@ -292,6 +292,7 @@ const mapStateToProps = ({
   balances,
   rates,
   baseFiatCurrency,
+  assetsLayout,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
