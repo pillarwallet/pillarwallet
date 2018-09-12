@@ -42,6 +42,7 @@ platform :android do
       track: 'internal',
       apk: 'app/build/outputs/apk/app-prod-release.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
+      package_name: 'com.pillarproject.wallet',
       skip_upload_aab: true,
       skip_upload_images: true,
       skip_upload_screenshots: true
@@ -57,6 +58,7 @@ platform :android do
 		track: "alpha",
     apk: 'app/build/outputs/apk/app-prod-release.apk',
     json_key_data: ENV['GOOGLE_JSON_DATA'],
+    package_name: 'com.pillarproject.wallet',
     skip_upload_aab: true,
     skip_upload_images: true,
     skip_upload_screenshots: true
@@ -72,6 +74,7 @@ platform :android do
     track: "beta",
     apk: 'app/build/outputs/apk/app-prod-release.apk',
     json_key_data: ENV['GOOGLE_JSON_DATA'],
+    package_name: 'com.pillarproject.wallet',
     skip_upload_aab: true,
     skip_upload_images: true,
     skip_upload_screenshots: true
