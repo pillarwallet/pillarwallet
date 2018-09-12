@@ -26,11 +26,14 @@ type Props = {
 
 const defaultCircleColor = '#ACBCCD';
 
-const AssetWrapper = styled.View`
-  margin: ${Platform.select({
-    ios: `3px ${spacing.rhythm / 2}px 5px`,
-    android: `2px ${spacing.rhythm / 2}px 6px`,
+const AssetOutter = styled.View`
+  padding: ${Platform.select({
+    ios: `15px ${spacing.rhythm}px`,
+    android: `3px ${spacing.rhythm}px 27px`,
   })}
+`;
+
+const AssetWrapper = styled.View`
   flex-direction: row;
   shadow-color: ${UIColors.cardShadowColor};
   shadow-offset: 0 3px;
@@ -134,37 +137,39 @@ const AssetCardSimplified = (props: Props) => {
 
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
   return (
-    <AssetWrapper>
-      <TouchableWithoutFeedback onPress={onPress}>
-        <InnerWrapper>
-          <IconCircle>
-            {!!icon &&
-            <CachedImage
-              key={token}
-              style={{
-                height: 44,
-                width: 44,
-              }}
-              source={{ uri: icon }}
-              resizeMode="contain"
-            />}
-          </IconCircle>
-          <DetailsWrapper>
-            <Name>{name}</Name>
-            <AmountWrapper>
-              <TokenAmountWrapper>
-                <Amount>{amount}</Amount>
-                <AmountToken> {token}</AmountToken>
-              </TokenAmountWrapper>
-              {disclaimer
-                ? <Disclaimer>{disclaimer}</Disclaimer>
-                : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-              }
-            </AmountWrapper>
-          </DetailsWrapper>
-        </InnerWrapper>
-      </TouchableWithoutFeedback>
-    </AssetWrapper>
+    <AssetOutter>
+      <AssetWrapper>
+        <TouchableWithoutFeedback onPress={onPress}>
+          <InnerWrapper>
+            <IconCircle>
+              {!!icon &&
+              <CachedImage
+                key={token}
+                style={{
+                  height: 44,
+                  width: 44,
+                }}
+                source={{ uri: icon }}
+                resizeMode="contain"
+              />}
+            </IconCircle>
+            <DetailsWrapper>
+              <Name>{name}</Name>
+              <AmountWrapper>
+                <TokenAmountWrapper>
+                  <Amount>{amount}</Amount>
+                  <AmountToken> {token}</AmountToken>
+                </TokenAmountWrapper>
+                {disclaimer
+                  ? <Disclaimer>{disclaimer}</Disclaimer>
+                  : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                }
+              </AmountWrapper>
+            </DetailsWrapper>
+          </InnerWrapper>
+        </TouchableWithoutFeedback>
+      </AssetWrapper>
+    </AssetOutter>
   );
 };
 

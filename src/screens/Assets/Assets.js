@@ -8,16 +8,19 @@ import {
   Dimensions,
   Platform,
   PixelRatio,
+  View,
 } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import type { Assets, Balances } from 'models/Asset';
+import type { Assets, Balances, Asset } from 'models/Asset';
 import Button from 'components/Button';
-
+import Swipeout from 'react-native-swipeout';
 import {
+  removeAssetAction,
+  updateAssetsAction,
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
@@ -33,6 +36,7 @@ import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigati
 import assetsConfig from 'configs/assetsConfig';
 import { spacing, baseColors } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { HideAssetButton } from './HideAssetButton';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
@@ -45,6 +49,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetLayout?: string,
+  removeAsset: Function,
 }
 
 const smallScreen = () => {
@@ -63,10 +68,10 @@ const horizontalPadding = (layout) => {
       return spacing.rhythm - (spacing.rhythm / 4);
     }
     case SIMPLIFIED: {
-      return spacing.rhythm / 2;
+      return 0;
     }
     default: {
-      return spacing.rhythm;
+      return 0;
     }
   }
 };
@@ -110,6 +115,21 @@ class AssetsScreen extends React.Component<Props> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, {
       asset,
     });
+  };
+
+  swipeoutBtns = (asset) => {
+    const { removeAsset } = this.props;
+    return [
+      {
+        component: (
+          <HideAssetButton
+            expanded={this.props.assetLayout === EXPANDED}
+            onPress={() => removeAsset(asset)}
+          />),
+        backgroundColor: 'transparent',
+        disabled: true,
+      },
+    ];
   };
 
   renderAsset = ({ item: asset }) => {
@@ -174,7 +194,13 @@ class AssetsScreen extends React.Component<Props> {
     switch (assetLayout) {
       case SIMPLIFIED: {
         return (
-          <AssetCardSimplified {...props} />
+          <Swipeout
+            right={this.swipeoutBtns(asset)}
+            sensitivity={10}
+            backgroundColor="transparent"
+          >
+            <AssetCardSimplified {...props} />
+          </Swipeout>
         );
       }
       case MINIMIZED: {
@@ -193,12 +219,31 @@ class AssetsScreen extends React.Component<Props> {
       }
       default: {
         return (
-          <Transition key={assetData.name} shared={assetData.name}>
-            <AssetCard {...props} icon={assetData.icon} />
-          </Transition>
+          <Swipeout
+            right={this.swipeoutBtns(asset)}
+            sensitivity={10}
+            backgroundColor="transparent"
+          >
+            <Transition key={assetData.name} shared={assetData.name}>
+              <AssetCard {...props} icon={assetData.icon} horizontalPadding />
+            </Transition>
+          </Swipeout>
         );
       }
     }
+  };
+
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          marginTop: -22,
+          height: 1,
+          width: '100%',
+          backgroundColor: 'transparent',
+        }}
+      />
+    );
   };
 
   render() {
@@ -265,6 +310,7 @@ class AssetsScreen extends React.Component<Props> {
             width: '100%',
           }}
           numColumns={columnAmount}
+          ItemSeparatorComponent={assetLayout === SIMPLIFIED ? this.renderSeparator : null}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -301,6 +347,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
+  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  updateAssets: (assets: Assets) => dispatch(updateAssetsAction(assets)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

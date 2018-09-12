@@ -33,6 +33,7 @@ const glyphMap = {
   'send-asset': '\uE833',
   'send-attachment': '\uE834',
   'chat-filled': '\uE81B',
+  'turn-off': '\uE81D',
 };
 
 type Props = {
