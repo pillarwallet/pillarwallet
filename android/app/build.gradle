@@ -32,7 +32,6 @@ repositories {
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-println(keystoreProperties)
 
 android {
   compileSdkVersion 26
@@ -85,10 +84,6 @@ android {
       // time so use 'dev' if not running on older SDKs.
       minSdkVersion 21
     }
-//    stage {
-//      minSdkVersion 21
-//      applicationIdSuffix ".staging"
-//    }
     prod {
       // The actual minSdkVersion for the application.
       minSdkVersion 21
