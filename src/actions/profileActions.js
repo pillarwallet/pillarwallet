@@ -7,7 +7,7 @@ const storage = Storage.getInstance('db');
 
 export const saveBaseFiatCurrencyAction = (currency: string) => {
   return async (dispatch: Function) => {
-    await storage.save('app_settings', { appSettings: { baseFiatCurrency: currency } });
+    storage.save('app_settings', { appSettings: { baseFiatCurrency: currency } });
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: {
@@ -19,7 +19,7 @@ export const saveBaseFiatCurrencyAction = (currency: string) => {
 
 export const changeRequestPinForTransactionAction = (value: boolean) => {
   return async (dispatch: Function) => {
-    await storage.save('app_settings', { appSettings: { requestPinForTransaction: value } });
+    storage.save('app_settings', { appSettings: { requestPinForTransaction: value } });
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: {
