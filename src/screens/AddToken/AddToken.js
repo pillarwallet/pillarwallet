@@ -71,7 +71,10 @@ class AddToken extends React.Component<Props> {
         symbol, name, iconUrl, ...rest
       }) => {
         const boundAssetToggleHandler = partial(this.handleAssetToggle, {
-          symbol, name, iconUrl, ...rest,
+          symbol,
+          name,
+          iconUrl,
+          ...rest,
         });
         const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
         return (
