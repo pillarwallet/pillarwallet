@@ -403,7 +403,6 @@ workflows:
             branches:
               only:
                   - master
-                  - force_cache_keys_for_ios_and_android
       - stage_android:
           requires:
             - build
@@ -411,15 +410,14 @@ workflows:
             branches:
               only:
                   - master
-                  - force_cache_keys_for_ios_and_android
-#      - release_to_prod:
-#          type: approval
-#          requires:
-#            - stage_ios
-#            - stage_android
-#      - prod_ios:
-#          requires:
-#            - release_to_prod
-#      - prod_android:
-#          requires:
-#            - release_to_prod
+      - release_to_prod:
+          type: approval
+          requires:
+            - stage_ios
+            - stage_android
+      - prod_ios:
+          requires:
+            - release_to_prod
+      - prod_android:
+          requires:
+            - release_to_prod
