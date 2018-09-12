@@ -7,7 +7,7 @@ import styled from 'styled-components/native';
 import { EXPANDED, EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
 // utils
-import { baseColors, UIColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, spacing } from 'utils/variables';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -60,8 +60,8 @@ const assetsLayouts = [{
 const AssetLayoutHolder = styled.View`
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
-  padding: 30px 0px 0px;
+  padding-right: ${spacing.rhythm - 4}px;
+  margin-bottom: ${spacing.rhythm}px;
   align-items: center;
   justify-content: space-between;
 `;
@@ -72,21 +72,15 @@ const AssetsLayout = styled.View`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-around;
-`;
-
-const AssetsLayoutImageHolder = styled.View`
-  elevation: 2;
-  box-shadow: 0px 1px 2px ${UIColors.defaultShadowColor};
-  border-radius: 15px;
+  align-items: flex-start;
+  justify-content: flex-start;
 `;
 
 const AssetsLayoutImage = styled(RNImage)`
-  height: 185px;
-  width: 150px;
-  border-radius: 15px;
+  height: 194px;
+  width: 132px;
 `;
+
 class AppearanceSettingsSection extends React.Component<Props, State> {
   state = {
     visibleModal: null,
@@ -105,10 +99,15 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
     const layouts = assetsLayouts.map(({ image, id, name }: Layout) => (
       <TouchableOpacity key={id} onPress={() => this.handleAssetsLayoutSelect(id)}>
         <AssetLayoutHolder>
-          <AssetsLayoutImageHolder>
-            <AssetsLayoutImage source={image} />
-          </AssetsLayoutImageHolder>
-          <BaseText style={{ fontSize: fontSizes.small, paddingTop: 15, color: baseColors.darkGray }}>{name}</BaseText>
+          <AssetsLayoutImage source={image} resizeMode="cover" />
+          <BaseText
+            style={{
+              fontSize: fontSizes.small,
+              color: baseColors.darkGray,
+            }}
+          >
+            {name}
+          </BaseText>
         </AssetLayoutHolder>
       </TouchableOpacity>
     ));
@@ -136,9 +135,9 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
           backgroundColor={baseColors.lightGray}
         >
           <SettingsModalTitle extraHorizontalSpacing>
-            Choose your asset list appeareance
+            Choose your asset list appearance
           </SettingsModalTitle>
-          <ScrollView contentContainerStyle={{ height: '100%', backgroundColor: 'red' }}>
+          <ScrollView contentContainerStyle={{ height: '100%', padding: spacing.rhythm - 4 }}>
             {this.renderAssetsLayouts()}
           </ScrollView>
         </SlideModal>
