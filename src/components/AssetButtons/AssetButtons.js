@@ -28,7 +28,7 @@ const AssetButtons = (props: Props) => {
       <CircleButton
         disabled={props.noBalance || props.isSendDisabled}
         label="Send"
-        icon="send"
+        icon="send-asset"
         onPress={props.onPressSend}
       />
     </AssetButtonsWrapper>

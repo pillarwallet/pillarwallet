@@ -156,12 +156,12 @@ class Contact extends React.Component<Props, State> {
               <React.Fragment>
                 <CircleButton
                   label="Send"
-                  icon="send"
+                  icon="send-asset"
                   onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
                 />
                 <CircleButton
                   label="Chat"
-                  icon="chat"
+                  icon="chat-filled"
                   onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
                 />
               </React.Fragment>

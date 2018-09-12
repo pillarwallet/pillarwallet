@@ -4,6 +4,10 @@ import {
   Animated,
   Easing,
   RefreshControl,
+  FlatList,
+  Dimensions,
+  Platform,
+  PixelRatio,
 } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -18,12 +22,16 @@ import {
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
+import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
+import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import Header from 'components/Header';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import { formatMoney } from 'utils/common';
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
+import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
+import { spacing, baseColors } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 type Props = {
@@ -36,7 +44,32 @@ type Props = {
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
+  assetsLayout?: string,
 }
+
+const smallScreen = () => {
+  if (Platform.OS === 'ios') {
+    return Dimensions.get('window').width * PixelRatio.get() < 790;
+  }
+  return Dimensions.get('window').width < 410;
+};
+
+const horizontalPadding = (layout) => {
+  switch (layout) {
+    case EXTRASMALL: {
+      return spacing.rhythm - (spacing.rhythm / 4);
+    }
+    case MINIMIZED: {
+      return spacing.rhythm - (spacing.rhythm / 4);
+    }
+    case SIMPLIFIED: {
+      return spacing.rhythm / 2;
+    }
+    default: {
+      return spacing.rhythm;
+    }
+  }
+};
 
 class AssetsScreen extends React.Component<Props> {
   static navigationOptions = {
@@ -45,6 +78,10 @@ class AssetsScreen extends React.Component<Props> {
       timing: Animated.timing,
       easing: Easing.easing,
     },
+  };
+
+  static defaultProps = {
+    assetsLayout: EXPANDED,
   };
 
   componentDidMount() {
@@ -75,17 +112,109 @@ class AssetsScreen extends React.Component<Props> {
     });
   };
 
-  renderAssets() {
+  renderAsset = ({ item: asset }) => {
     const {
       wallet,
-      assets,
-      balances,
-      rates,
       baseFiatCurrency,
+      assetsLayout,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    return Object.keys(assets)
+
+    const {
+      name,
+      symbol,
+      balanceInFiat,
+      balance,
+      iconMonoUrl,
+      wallpaperUrl,
+      decimals,
+      iconUrl,
+    } = asset;
+
+    const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
+    const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}`;
+    const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const formattedBalanceInFiat = formatMoney(balanceInFiat);
+    const displayAmount = formatMoney(balance, 4);
+
+    const assetData = {
+      name: name || symbol,
+      token: symbol,
+      amount: displayAmount,
+      contractAddress: asset.address,
+      description: asset.description,
+      balance,
+      balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
+      address: wallet.address,
+      icon: fullIconMonoUrl,
+      iconColor: fullIconUrl,
+      wallpaper: fullIconWallpaperUrl,
+      decimals,
+    };
+    const {
+      listed: isListed = true,
+      disclaimer,
+    } = assetsConfig[assetData.token] || {};
+
+    const props = {
+      id: assetData.token,
+      name: assetData.name,
+      token: assetData.token,
+      amount: assetData.amount,
+      balanceInFiat: assetData.balanceInFiat,
+      onPress: () => this.handleCardTap(assetData),
+      address: assetData.address,
+      icon: assetData.iconColor,
+      wallpaper: assetData.wallpaper,
+      isListed,
+      disclaimer,
+    };
+
+    switch (assetsLayout) {
+      case SIMPLIFIED: {
+        return (
+          <AssetCardSimplified {...props} />
+        );
+      }
+      case MINIMIZED: {
+        return (
+          <AssetCardMinimized {...props} smallScreen={smallScreen()} />
+        );
+      }
+      case EXTRASMALL: {
+        return (
+          <AssetCardMinimized
+            {...props}
+            smallScreen={smallScreen()}
+            extraSmall
+          />
+        );
+      }
+      default: {
+        return (
+          <Transition key={assetData.name} shared={assetData.name}>
+            <AssetCard {...props} icon={assetData.icon} />
+          </Transition>
+        );
+      }
+    }
+  };
+
+  render() {
+    const {
+      assets,
+      wallet,
+      assetsState,
+      fetchInitialAssets,
+      assetsLayout,
+      baseFiatCurrency,
+      rates,
+      balances,
+    } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+    const sortedAssets = Object.keys(assets)
       .map(id => assets[id])
       .map(({ symbol, balance, ...rest }) => ({
         symbol,
@@ -98,69 +227,7 @@ class AssetsScreen extends React.Component<Props> {
         balanceInFiat: rates[symbol] ? balance * rates[symbol][fiatCurrency] : 0,
         ...rest,
       }))
-      .sort((a, b) => b.balanceInFiat - a.balanceInFiat)
-      .map((asset) => {
-        const {
-          name,
-          symbol,
-          balanceInFiat,
-          balance,
-          iconMonoUrl,
-          wallpaperUrl,
-          decimals,
-        } = asset;
-
-        const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
-        const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}`;
-
-        const formattedBalanceInFiat = formatMoney(balanceInFiat);
-        const displayAmount = formatMoney(balance, 4);
-
-        const assetData = {
-          name: name || symbol,
-          token: symbol,
-          amount: displayAmount,
-          contractAddress: asset.address,
-          description: asset.description,
-          balance,
-          balanceInFiat: { amount: formattedBalanceInFiat, currency: fiatCurrency },
-          address: wallet.address,
-          icon: fullIconMonoUrl,
-          wallpaper: fullIconWallpaperUrl,
-          decimals,
-        };
-        const {
-          listed: isListed = true,
-          disclaimer,
-        } = assetsConfig[assetData.token] || {};
-
-        return (
-          <Transition key={assetData.name} shared={assetData.name}>
-            <AssetCard
-              id={assetData.token}
-              name={assetData.name}
-              token={assetData.token}
-              amount={assetData.amount}
-              balanceInFiat={assetData.balanceInFiat}
-              onPress={() => this.handleCardTap(assetData)}
-              address={assetData.address}
-              icon={assetData.icon}
-              wallpaper={assetData.wallpaper}
-              isListed={isListed}
-              disclaimer={disclaimer}
-            />
-          </Transition>
-        );
-      });
-  }
-
-  render() {
-    const {
-      assets,
-      wallet,
-      assetsState,
-      fetchInitialAssets,
-    } = this.props;
+      .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -176,19 +243,28 @@ class AssetsScreen extends React.Component<Props> {
       );
     }
 
+    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
+    const containerColor = assetsLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
+
     return (
-      <Container>
+      <Container color={containerColor}>
         <Header
           title="assets"
           onNextPress={this.goToAddTokenPage}
           nextIcon="more"
           headerRightFlex="2"
         />
-        <ScrollWrapper
+        <FlatList
+          key={assetsLayout}
+          data={sortedAssets}
+          keyExtractor={(item) => item.id}
+          renderItem={this.renderAsset}
+          style={{ width: '100%' }}
           contentContainerStyle={{
-            paddingLeft: 20,
-            paddingRight: 20,
+            paddingHorizontal: horizontalPadding(assetsLayout),
+            width: '100%',
           }}
+          numColumns={columnAmount}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -198,9 +274,7 @@ class AssetsScreen extends React.Component<Props> {
               }}
             />
           }
-        >
-          {this.renderAssets()}
-        </ScrollWrapper>
+        />
       </Container >
     );
   }
@@ -210,7 +284,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, assetsState, balances },
   rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
   wallet,
   assets,
@@ -218,6 +292,7 @@ const mapStateToProps = ({
   balances,
   rates,
   baseFiatCurrency,
+  assetsLayout,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

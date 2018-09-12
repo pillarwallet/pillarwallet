@@ -1,1 +1,15 @@
-package_name("com.pillarproject.wallet")
+for_lane :deploy_staging do
+  app_identifier("com.pillarproject.wallet.staging") # The bundle identifier of your app
+end
+
+for_lane :deploy_internal do
+  app_identifier("com.pillarproject.wallet") # The bundle identifier of your app
+end
+
+for_lane :deploy_alpha do
+  app_identifier("com.pillarproject.wallet") # The bundle identifier of your app
+end
+
+for_lane :deploy_beta do
+  app_identifier("com.pillarproject.wallet") # The bundle identifier of your app
+end
