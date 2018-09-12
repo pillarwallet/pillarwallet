@@ -109,21 +109,6 @@ jobs:
           path: ./toArchive
           destination: app_build
 
-  stage_android:
-    working_directory: ~/pillarwallet
-    macos:
-      xcode: "9.4.0"
-    environment:
-      FL_OUTPUT_DIR: output
-    shell: /bin/bash --login -o pipefail
-
-    steps:
-      - checkout
-      - run:
-          name: do android things
-          command: echo "do android things - just put this in as a place holder to show what circle releases will end up looking like.."
-
-
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
@@ -281,14 +266,6 @@ jobs:
           paths:
             - ~/.gradle
             - ~/.m2
-      # - run:
-      #     name: Run Tests
-      #     command: ./gradlew lint test
-      # - store_artifacts:
-      #     path: app/build/reports
-      #     destination: reports
-      # - store_test_results:
-      #     path: app/build/test-results
       - run:
           name: Android bundle
           command: yarn build:android
@@ -315,6 +292,104 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
+
+  stage_android:
+    working_directory: ~/pillarwallet/android
+    docker:
+      - image: circleci/android:api-26-node8-alpha
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -Dfile.encoding=UTF-8"'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+    steps:
+      - checkout:
+          path: ~/pillarwallet
+      - run:
+          name: Append circleCI build number to version
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            rm .env
+            cp environments/.env.staging ./.env
+            sed -i "s/_build_number_/$buildNumber/g" .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+      - restore_cache:
+          key: node-{{ checksum "../yarn.lock" }}
+      - run:
+            name: Authenticate with Artifactory
+            command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: cd .. && npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - run:
+            name: set Yarn to use Artifactory
+            command: cd .. && echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+      - run:
+          name: Install node dependencies
+          command: cd .. && yarn install
+      - save_cache:
+          key: node-{{ checksum "../yarn.lock" }}
+          paths:
+            - ~/pillarwallet/nodes_modules
+      - run:
+          name: Creating Gemfile in android dir
+          command: bundle init
+      - run:
+          name: Install fastlane gem
+          command: echo 'gem "fastlane"' >> Gemfile
+      - restore_cache:
+          key: gems-{{ checksum "Gemfile" }}
+      - run:
+          name: Bundle install
+          command: bundle check || bundle install --path vendor/bundle
+      - save_cache:
+          key: gems-{{ checksum "Gemfile" }}
+          paths:
+            - vendor/bundle
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+      - run:
+          name: Chmod permissions
+          command: sudo chmod +x ./gradlew
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+      - save_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          paths:
+            - ~/.gradle
+            - ~/.m2
+      - run:
+          name: Android bundle
+          command: yarn build:android
+      - run:
+          name: Initial build
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM -x bundleProdStagingJsAndAssets
+      - run:
+          name: Fastlane deploy to Google Play
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
+            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
+            bundle exec fastlane deploy_staging --verbose
+          environment:
+            BUNDLE_PATH: vendor/bundle
+      - store_artifacts:
+          path: app/build/outputs/apk
+          destination: apks
+      - run:
+          name: Announce Deployment
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
 
 workflows:
   version: 2
