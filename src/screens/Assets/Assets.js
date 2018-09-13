@@ -49,7 +49,7 @@ type Props = {
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
-  assetLayout?: string,
+  assetsLayout: string,
   removeAsset: Function,
 }
 
@@ -91,7 +91,7 @@ class AssetsScreen extends React.Component<Props> {
   };
 
   static defaultProps = {
-    assetLayout: SIMPLIFIED,
+    assetsLayout: EXPANDED,
   };
 
   componentDidMount() {
@@ -128,7 +128,7 @@ class AssetsScreen extends React.Component<Props> {
       {
         component: (
           <HideAssetButton
-            expanded={this.props.assetLayout === EXPANDED}
+            expanded={this.props.assetsLayout === EXPANDED}
             onPress={isThisETH ? this.showETHRemovalNotification : () => removeAsset(asset)}
             disabled={isThisETH}
           />),
@@ -150,7 +150,7 @@ class AssetsScreen extends React.Component<Props> {
     const {
       wallet,
       baseFiatCurrency,
-      assetLayout,
+      assetsLayout,
       removeAsset,
     } = this.props;
 
@@ -206,7 +206,7 @@ class AssetsScreen extends React.Component<Props> {
       disclaimer,
     };
 
-    switch (assetLayout) {
+    switch (assetsLayout) {
       case SIMPLIFIED: {
         return (
           <Swipeout
@@ -275,12 +275,11 @@ class AssetsScreen extends React.Component<Props> {
       wallet,
       assetsState,
       fetchInitialAssets,
-      assetLayout,
+      assetsLayout,
       baseFiatCurrency,
       rates,
       balances,
     } = this.props;
-
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const sortedAssets = Object.keys(assets)
@@ -312,8 +311,8 @@ class AssetsScreen extends React.Component<Props> {
       );
     }
 
-    const columnAmount = (assetLayout === MINIMIZED || assetLayout === EXTRASMALL) ? 3 : 1;
-    const containerColor = assetLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
+    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
+    const containerColor = assetsLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
 
     return (
       <Container color={containerColor}>
@@ -324,17 +323,18 @@ class AssetsScreen extends React.Component<Props> {
           headerRightFlex="2"
         />
         <FlatList
+          key={assetsLayout}
           data={sortedAssets}
           keyExtractor={(item) => item.id}
           renderItem={this.renderAsset}
           style={{ width: '100%' }}
           contentContainerStyle={{
-            paddingLeft: horizontalPadding(assetLayout, 'left'),
-            paddingRight: horizontalPadding(assetLayout, 'right'),
+            paddingLeft: horizontalPadding(assetsLayout, 'left'),
+            paddingRight: horizontalPadding(assetsLayout, 'right'),
             width: '100%',
           }}
           numColumns={columnAmount}
-          ItemSeparatorComponent={assetLayout === SIMPLIFIED ? this.renderSeparator : null}
+          ItemSeparatorComponent={assetsLayout === SIMPLIFIED ? this.renderSeparator : null}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -354,7 +354,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, assetsState, balances },
   rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
+  appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
   wallet,
   assets,
@@ -362,6 +362,7 @@ const mapStateToProps = ({
   balances,
   rates,
   baseFiatCurrency,
+  assetsLayout,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

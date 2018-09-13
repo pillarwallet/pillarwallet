@@ -11,19 +11,27 @@ import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import { SubHeading, BoldText } from 'components/Typography';
+import { SubHeading } from 'components/Typography';
 import IFrameModal from 'components/Modals/IFrameModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
-import { saveBaseFiatCurrencyAction, changeRequestPinForTransactionAction } from 'actions/profileActions';
+import {
+  saveBaseFiatCurrencyAction,
+  changeRequestPinForTransactionAction,
+  updateAppSettingsAction,
+} from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { baseColors, fontSizes, fontWeights, spacing } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
+import SettingsModalTitle from './SettingsModalTitle';
+
+// sections
+import AppearanceSettingsSection from './AppearanceSettingsSection';
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency }));
 const storage = new Storage('db');
@@ -40,13 +48,6 @@ const ListSeparator = styled.View`
   border-bottom-width: 1px;
   border-color: ${baseColors.lightGray};
   background-color: ${baseColors.lighterGray};
-`;
-
-const SettingsModalTitle = styled(BoldText)`
-  line-height: ${fontSizes.medium};
-  font-size: ${fontSizes.medium};
-  font-weight: ${fontWeights.bold};
-  margin: ${props => props.extraHorizontalSpacing ? `0 ${spacing.rhythm}px ${spacing.rhythm}px` : 0};
 `;
 
 const cityFormFields = [{
@@ -81,9 +82,11 @@ type Props = {
   saveBaseFiatCurrency: (currency: ?string) => Function,
   baseFiatCurrency: ?string,
   requestPinForTransaction: ?boolean,
+  appSettings: Object,
   wallet: Object,
   intercomNotificationsCount: number,
   changeRequestPinForTransaction: (value: boolean) => Function,
+  updateAppSettings: (path: string, value: any) => Function,
   updateUser: (walletId: string, field: Object) => Function,
   resetIncorrectPassword: () => Function,
   lockScreen: () => Function,
@@ -194,6 +197,8 @@ class Profile extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
       lockScreen,
+      updateAppSettings,
+      appSettings: { appearanceSettings },
     } = this.props;
 
     const {
@@ -381,6 +386,10 @@ class Profile extends React.Component<Props, State> {
             </SlideModal>
 
             <ListSeparator>
+              <SubHeading>APPEARANCE SETTINGS</SubHeading>
+            </ListSeparator>
+            <AppearanceSettingsSection settings={appearanceSettings} onUpdate={updateAppSettings} />
+            <ListSeparator>
               <SubHeading>ABOUT</SubHeading>
             </ListSeparator>
 
@@ -477,7 +486,7 @@ class Profile extends React.Component<Props, State> {
 const mapStateToProps = ({
   user: { data: user },
   wallet: { data: wallet },
-  appSettings: { data: { requestPinForTransaction, baseFiatCurrency } },
+  appSettings: { data: { requestPinForTransaction, baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
 }) => ({
   user,
@@ -485,6 +494,7 @@ const mapStateToProps = ({
   requestPinForTransaction,
   baseFiatCurrency,
   intercomNotificationsCount,
+  appSettings,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -494,6 +504,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
+  updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
 });

@@ -200,7 +200,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
       type: 'info',
       title: 'This asset cannot be switched off',
     });
-  }
+  };
 
   render() {
     const {

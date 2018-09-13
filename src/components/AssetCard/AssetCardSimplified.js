@@ -34,6 +34,10 @@ const AssetOutter = styled.View`
 `;
 
 const AssetWrapper = styled.View`
+  margin: ${Platform.select({
+    ios: `3px ${spacing.rhythm / 2}px 5px`,
+    android: `2px ${spacing.rhythm / 2}px 6px`,
+  })}
   flex-direction: row;
   shadow-color: ${UIColors.cardShadowColor};
   shadow-offset: 0 3px;
