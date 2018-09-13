@@ -110,6 +110,27 @@ export const generateWalletMnemonicAction = () => {
   };
 };
 
+export const generateWordsValidationAction = (mnemonicPhrase: string) => {
+  return async (dispatch: Function) => {
+    const mnemonicList = mnemonicPhrase.split(' ');
+    const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
+    const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
+
+    dispatch({
+      type: UPDATE_WALLET_MNEMONIC,
+      payload: {
+        original: mnemonicPhrase,
+        shuffled: shuffledMnemonicPhrase,
+        wordsToValidate,
+      },
+    });
+    dispatch({
+      type: SET_API_USER,
+      payload: {},
+    });
+  };
+};
+
 export const setPinForNewWalletAction = (pin: string) => {
   return async (dispatch: Function) => {
     dispatch({

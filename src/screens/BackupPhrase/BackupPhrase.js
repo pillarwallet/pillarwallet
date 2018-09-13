@@ -1,24 +1,37 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/Button';
-import { generateWalletMnemonicAction } from 'actions/walletActions';
+import { generateWalletMnemonicAction, generateWordsValidationAction } from 'actions/walletActions';
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 
 type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   generateWalletMnemonic: () => Function,
+  generateWordsValidation: (mnemonicPhrase: string) => Function,
 };
 
 class BackupPhrase extends React.Component<Props, {}> {
+  _didFocus: NavigationEventSubscription;
+
   componentDidMount() {
     this.props.generateWalletMnemonic();
+    this._didFocus = this.props.navigation.addListener(
+      'didFocus',
+      () => {
+        this.props.generateWordsValidation(this.props.wallet.onboarding.mnemonic.original);
+      },
+    );
+  }
+
+  componentWillUnmount() {
+    this._didFocus.remove();
   }
 
   render() {
@@ -45,6 +58,9 @@ const mapStateToProps = ({ wallet }) => ({ wallet });
 const mapDispatchToProps = (dispatch: Function) => ({
   generateWalletMnemonic: () => {
     dispatch(generateWalletMnemonicAction());
+  },
+  generateWordsValidation: (mnemonicPhrase: string) => {
+    dispatch(generateWordsValidationAction(mnemonicPhrase));
   },
 });
 
