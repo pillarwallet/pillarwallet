@@ -17,7 +17,7 @@ import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 
 import Header from 'components/Header';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -72,8 +72,10 @@ type State = {
   },
 };
 
-const AssetCardWrapper = styled(Wrapper)`
+const AssetCardWrapper = styled.View`
   flex: 1;
+  padding-left: 0;
+  padding-right: ${spacing.rhythm - 2}px;
 `;
 
 const AssetDescriptionWrapper = styled.View`
@@ -231,6 +233,7 @@ class AssetScreen extends React.Component<Props, State> {
                 wallpaper={assetData.wallpaper}
                 isListed={isListed}
                 disclaimer={disclaimer}
+                horizontalPadding
               />
             </Transition>
             <AssetButtons
