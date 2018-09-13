@@ -7,31 +7,31 @@ import Header from 'components/Header';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/Button';
-import { generateWalletMnemonicAction, generateWordsValidationAction } from 'actions/walletActions';
+import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 
 type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
-  generateWalletMnemonic: () => Function,
-  generateWordsValidation: (mnemonicPhrase: string) => Function,
+  generateWalletMnemonic: (mnemonicPhrase?: string) => Function,
 };
 
 class BackupPhrase extends React.Component<Props, {}> {
-  _didFocus: NavigationEventSubscription;
+  _willFocus: NavigationEventSubscription;
 
-  componentDidMount() {
-    this.props.generateWalletMnemonic();
-    this._didFocus = this.props.navigation.addListener(
-      'didFocus',
+  constructor(props) {
+    super(props);
+    const { generateWalletMnemonic, navigation, wallet } = this.props;
+    this._willFocus = navigation.addListener(
+      'willFocus',
       () => {
-        this.props.generateWordsValidation(this.props.wallet.onboarding.mnemonic.original);
+        generateWalletMnemonic(wallet.onboarding.mnemonic.original);
       },
     );
   }
 
   componentWillUnmount() {
-    this._didFocus.remove();
+    this._willFocus.remove();
   }
 
   render() {
@@ -56,11 +56,8 @@ class BackupPhrase extends React.Component<Props, {}> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  generateWalletMnemonic: () => {
-    dispatch(generateWalletMnemonicAction());
-  },
-  generateWordsValidation: (mnemonicPhrase: string) => {
-    dispatch(generateWordsValidationAction(mnemonicPhrase));
+  generateWalletMnemonic: (mnemonicPhrase?: string) => {
+    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
   },
 });
 

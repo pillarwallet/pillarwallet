@@ -88,30 +88,16 @@ export const resetWalletErrorAction = () => ({
 });
 
 const NUM_WORDS_TO_CHECK = 3;
-export const generateWalletMnemonicAction = () => {
-  return async (dispatch: Function) => {
-    const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
-    const mnemonicList = mnemonicPhrase.split(' ');
-    const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
-    const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
 
-    dispatch({
-      type: UPDATE_WALLET_MNEMONIC,
-      payload: {
-        original: mnemonicPhrase,
-        shuffled: shuffledMnemonicPhrase,
-        wordsToValidate,
-      },
-    });
-    dispatch({
-      type: SET_API_USER,
-      payload: {},
-    });
-  };
-};
-
-export const generateWordsValidationAction = (mnemonicPhrase: string) => {
+/**
+ * Generates a mnemonic phrase, and accepts mnemonic as a parameter.
+ * If parameter is passed just reshuffle the phrase
+ * and don't generate a new one.
+ * @param {String} mnemonicPhrase
+ */
+export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
   return async (dispatch: Function) => {
+    mnemonicPhrase = mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
     const mnemonicList = mnemonicPhrase.split(' ');
     const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
     const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
