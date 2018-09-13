@@ -139,7 +139,7 @@ export default class ContactCard extends React.Component<Props> {
     } else if (status === TYPE_SENT) {
       return (
         <Button
-          title="Cancel"
+          title="Request sent"
           onPress={onCancelInvitationPress}
           small
           secondary
