@@ -56,6 +56,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   contacts: Object,
+  resetHideRemoval: Function,
 };
 
 type State = {
@@ -116,8 +117,9 @@ class AssetScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const { fetchTransactionsHistory, wallet, navigation } = this.props;
-    const { assetData } = navigation.state.params;
+    const { assetData, resetHideRemoval } = navigation.state.params;
     fetchTransactionsHistory(wallet.address, assetData.token);
+    resetHideRemoval();
   }
 
   handleCardTap = () => {

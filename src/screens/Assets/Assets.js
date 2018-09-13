@@ -10,7 +10,7 @@ import {
   PixelRatio,
   View,
 } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
@@ -53,6 +53,10 @@ type Props = {
   removeAsset: Function,
 }
 
+type State = {
+  forceHideRemoval: boolean,
+}
+
 const smallScreen = () => {
   if (Platform.OS === 'ios') {
     return Dimensions.get('window').width * PixelRatio.get() < 650;
@@ -81,7 +85,17 @@ const isETH = (thisSymbol) => {
   return thisSymbol === ETH;
 };
 
-class AssetsScreen extends React.Component<Props> {
+class AssetsScreen extends React.Component<Props, State> {
+  didBlur: NavigationEventSubscription;
+  willFocus: NavigationEventSubscription;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      forceHideRemoval: false,
+    };
+  }
+
   static navigationOptions = {
     transitionConfig: {
       duration: 300,
@@ -104,12 +118,39 @@ class AssetsScreen extends React.Component<Props> {
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
+
+    this.willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => { this.setState({ forceHideRemoval: false }); },
+    );
+
+    this.didBlur = this.props.navigation.addListener(
+      'didBlur',
+      () => { this.setState({ forceHideRemoval: true }); },
+    );
+  }
+
+  componentWillUnmount() {
+    this.didBlur.remove();
+    this.willFocus.remove();
   }
 
   handleCardTap = (assetData: Object) => {
-    this.props.navigation.navigate(ASSET, {
-      assetData,
-    });
+    this.setState({ forceHideRemoval: true });
+    this.props.navigation.navigate(ASSET,
+      {
+        assetData,
+        test: 'test',
+        resetHideRemoval: this.resetHideRemoval,
+      },
+    );
+  };
+
+  // since navigation to ASSET screen is managed by another navigation
+  // the willFocus is not triggered after getting back to the screen -
+  // since it is never blurred
+  resetHideRemoval = () => {
+    this.setState({ forceHideRemoval: false });
   };
 
   goToAddTokenPage = () => {
@@ -153,6 +194,8 @@ class AssetsScreen extends React.Component<Props> {
       assetsLayout,
       removeAsset,
     } = this.props;
+
+    const { forceHideRemoval } = this.state;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -226,6 +269,7 @@ class AssetsScreen extends React.Component<Props> {
             smallScreen={smallScreen()}
             disabledRemove={isETH(symbol)}
             removeThisAsset={() => { removeAsset(asset); }}
+            forceHideRemoval={forceHideRemoval}
           />
         );
       }
@@ -236,6 +280,7 @@ class AssetsScreen extends React.Component<Props> {
             smallScreen={smallScreen()}
             disabledRemove={isETH(symbol)}
             removeThisAsset={() => { removeAsset(asset); }}
+            forceHideRemoval={forceHideRemoval}
             extraSmall
           />
         );
@@ -246,6 +291,8 @@ class AssetsScreen extends React.Component<Props> {
             right={this.swipeoutBtns(asset, isETH(symbol))}
             sensitivity={10}
             backgroundColor="transparent"
+            buttonWidth={80}
+            close={forceHideRemoval}
           >
             <Transition key={assetData.name} shared={assetData.name}>
               <AssetCard {...props} icon={assetData.icon} horizontalPadding />

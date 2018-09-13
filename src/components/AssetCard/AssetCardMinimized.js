@@ -27,6 +27,7 @@ type Props = {
   extraSmall?: boolean,
   disabledRemove?: boolean,
   removeThisAsset: Function,
+  forceHideRemoval?: boolean,
 }
 
 type State = {
@@ -158,14 +159,17 @@ class AssetCardMinimized extends React.Component<Props, State> {
     };
   }
 
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.forceHideRemoval !== this.props.forceHideRemoval && this.props.forceHideRemoval) {
+      this.hideRemoval();
+    }
+  }
+
   handleLongPress = () => {
-    this.setState({ showHide: !this.state.showHide });
     if (this.state.showHide) {
-      this.shake();
+      this.hideRemoval();
     } else {
-      this.state.shakeAnimation.stopAnimation(() => {
-        this.state.shakeAnimation.setValue(0);
-      });
+      this.showRemoval();
     }
   };
 
@@ -173,14 +177,19 @@ class AssetCardMinimized extends React.Component<Props, State> {
     const { onPress } = this.props;
     if (onPress) onPress();
     if (this.state.showHide) {
-      this.state.shakeAnimation.stopAnimation(() => {
-        this.setState({ showHide: false });
-        this.state.shakeAnimation.setValue(0);
-      });
+      this.hideRemoval();
     }
   };
 
-  shake = () => {
+  hideRemoval = () => {
+    this.state.shakeAnimation.stopAnimation(() => {
+      this.setState({ showHide: false });
+      this.state.shakeAnimation.setValue(0);
+    });
+  };
+
+  showRemoval = () => {
+    this.setState({ showHide: true });
     Animated.loop(
       Animated.timing(
         this.state.shakeAnimation,
@@ -192,7 +201,6 @@ class AssetCardMinimized extends React.Component<Props, State> {
       ),
     ).start();
   };
-
 
   showNotification = () => {
     Toast.show({
