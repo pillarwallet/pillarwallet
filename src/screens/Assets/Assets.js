@@ -13,11 +13,12 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
+import Swipeout from 'react-native-swipeout';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import type { Assets, Balances, Asset } from 'models/Asset';
 import Button from 'components/Button';
-import Swipeout from 'react-native-swipeout';
+import Toast from 'components/Toast';
 import {
   removeAssetAction,
   updateAssetsAction,
@@ -54,7 +55,7 @@ type Props = {
 
 const smallScreen = () => {
   if (Platform.OS === 'ios') {
-    return Dimensions.get('window').width * PixelRatio.get() < 790;
+    return Dimensions.get('window').width * PixelRatio.get() < 650;
   }
   return Dimensions.get('window').width < 410;
 };
@@ -74,6 +75,10 @@ const horizontalPadding = (layout, side) => {
       return side === 'left' ? 0 : spacing.rhythm - 2;
     }
   }
+};
+
+const isETH = (thisSymbol) => {
+  return thisSymbol === ETH;
 };
 
 class AssetsScreen extends React.Component<Props> {
@@ -117,15 +122,15 @@ class AssetsScreen extends React.Component<Props> {
     });
   };
 
-  swipeoutBtns = (asset, isETH) => {
+  swipeoutBtns = (asset, isThisETH) => {
     const { removeAsset } = this.props;
     return [
       {
         component: (
           <HideAssetButton
             expanded={this.props.assetLayout === EXPANDED}
-            onPress={isETH ? () => {} : () => removeAsset(asset)}
-            disabled={isETH}
+            onPress={isThisETH ? this.showETHRemovalNotification : () => removeAsset(asset)}
+            disabled={isThisETH}
           />),
         backgroundColor: 'transparent',
         disabled: true,
@@ -133,11 +138,20 @@ class AssetsScreen extends React.Component<Props> {
     ];
   };
 
+  showETHRemovalNotification = () => {
+    Toast.show({
+      message: 'Ethereum is essential for Pillar Wallet',
+      type: 'info',
+      title: 'This asset cannot be switched off',
+    });
+  };
+
   renderAsset = ({ item: asset }) => {
     const {
       wallet,
       baseFiatCurrency,
       assetLayout,
+      removeAsset,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -192,10 +206,6 @@ class AssetsScreen extends React.Component<Props> {
       disclaimer,
     };
 
-    const isETH = (thisSymbol) => {
-      return thisSymbol === ETH;
-    };
-
     switch (assetLayout) {
       case SIMPLIFIED: {
         return (
@@ -211,7 +221,12 @@ class AssetsScreen extends React.Component<Props> {
       }
       case MINIMIZED: {
         return (
-          <AssetCardMinimized {...props} smallScreen={smallScreen()} />
+          <AssetCardMinimized
+            {...props}
+            smallScreen={smallScreen()}
+            disabledRemove={isETH(symbol)}
+            removeThisAsset={() => { removeAsset(asset); }}
+          />
         );
       }
       case EXTRASMALL: {
@@ -219,6 +234,8 @@ class AssetsScreen extends React.Component<Props> {
           <AssetCardMinimized
             {...props}
             smallScreen={smallScreen()}
+            disabledRemove={isETH(symbol)}
+            removeThisAsset={() => { removeAsset(asset); }}
             extraSmall
           />
         );

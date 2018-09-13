@@ -35,7 +35,6 @@ export const HideAssetButton = (props: Props) => {
   return (
     <HideButtonWrapper expanded={expanded}>
       <TouchableOpacity
-        disabled={disabled}
         onPress={onPress}
         style={{
           justifyContent: 'center',
