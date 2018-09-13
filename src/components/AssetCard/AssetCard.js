@@ -30,7 +30,7 @@ const AssetWrapper = styled.View`
   margin-bottom: ${spacing.rhythm / 2};
   width: 100%;
   box-shadow: 0px 1px 2px ${UIColors.defaultShadowColor};
-  padding: ${props => props.horizontalPadding ? `2px ${spacing.rhythm}px` : '2px'};
+  padding: ${props => props.horizontalPadding ? `2px 2px 2px ${spacing.rhythm - 2}px` : '2px'};
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`

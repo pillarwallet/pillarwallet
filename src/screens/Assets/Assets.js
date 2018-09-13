@@ -59,7 +59,7 @@ const smallScreen = () => {
   return Dimensions.get('window').width < 410;
 };
 
-const horizontalPadding = (layout) => {
+const horizontalPadding = (layout, side) => {
   switch (layout) {
     case EXTRASMALL: {
       return spacing.rhythm - (spacing.rhythm / 4);
@@ -68,10 +68,10 @@ const horizontalPadding = (layout) => {
       return spacing.rhythm - (spacing.rhythm / 4);
     }
     case SIMPLIFIED: {
-      return 0;
+      return side === 'left' ? 0 : spacing.rhythm - 9;
     }
     default: {
-      return 0;
+      return side === 'left' ? 0 : spacing.rhythm - 2;
     }
   }
 };
@@ -86,7 +86,7 @@ class AssetsScreen extends React.Component<Props> {
   };
 
   static defaultProps = {
-    assetLayout: EXPANDED,
+    assetLayout: SIMPLIFIED,
   };
 
   componentDidMount() {
@@ -312,7 +312,8 @@ class AssetsScreen extends React.Component<Props> {
           renderItem={this.renderAsset}
           style={{ width: '100%' }}
           contentContainerStyle={{
-            paddingHorizontal: horizontalPadding(assetLayout),
+            paddingLeft: horizontalPadding(assetLayout, 'left'),
+            paddingRight: horizontalPadding(assetLayout, 'right'),
             width: '100%',
           }}
           numColumns={columnAmount}

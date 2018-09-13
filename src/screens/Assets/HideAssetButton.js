@@ -14,13 +14,13 @@ type Props = {
 
 const HideButtonWrapper = styled.View`
   padding: ${Platform.select({
-    ios: props => props.expanded ? `${spacing.rhythm / 2}px 6px` : `15px ${spacing.rhythm / 2}px`,
-    android: props => props.expanded ? `${spacing.rhythm / 2}px 6px` : `0 ${spacing.rhythm / 2}px 20px`,
+    ios: props => props.expanded ? `${spacing.rhythm / 2}px ${spacing.rhythm}px` : `15px ${spacing.rhythm / 2}px`,
+    android: props => props.expanded ? `${spacing.rhythm / 2}px ${spacing.rhythm}px` : `0 ${spacing.rhythm / 2}px 20px`,
   })};
   justify-content: center;
   align-items: flex-start;
   flex: 1;
-  margin-right: ${props => props.expanded ? spacing.rhythm : spacing.rhythm + 10}px;
+  margin-left: 6px;
 `;
 
 const HideButtonLabel = styled(BaseText)`

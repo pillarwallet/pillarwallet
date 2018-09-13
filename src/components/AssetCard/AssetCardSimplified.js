@@ -28,8 +28,8 @@ const defaultCircleColor = '#ACBCCD';
 
 const AssetOutter = styled.View`
   padding: ${Platform.select({
-    ios: `15px ${spacing.rhythm}px`,
-    android: `3px ${spacing.rhythm}px 27px`,
+    ios: `15px 9px 15px ${spacing.rhythm}px`,
+    android: `3px 9px 27px ${spacing.rhythm}px`,
   })}
 `;
 
