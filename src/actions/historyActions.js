@@ -45,8 +45,9 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         payload: walletSupportedAssets,
       });
     }
-
-    const historyNotifications = await api.fetchNotifications(walletId, TRANSACTION_EVENT);
+    const d = new Date();
+    d.setDate(d.getDate() - 7);
+    const historyNotifications = await api.fetchNotifications(walletId, TRANSACTION_EVENT, d.toISOString());
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
 

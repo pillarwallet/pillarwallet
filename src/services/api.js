@@ -137,14 +137,11 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
     .catch(() => []);
 };
 
-SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string) {
-  // temporary here: fetch last 7 days
-  const d = new Date();
-  d.setDate(d.getDate() - 7);
+SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({
       walletId,
-      fromTimestamp: d.toISOString(),
+      fromTimestamp,
       type,
     }))
     .then(({ data }) => data)
