@@ -20,6 +20,7 @@ export const baseColors = {
   whiterSmoke: '#f2f2f2',
   lighterGray: '#fafafa',
   mediumGray: '#C6CACD',
+  mediumLightGray: '#EDEDED',
   darkGray: '#8B939E',
   coolGrey: '#8b939e',
   slateBlack: '#0A1427',
