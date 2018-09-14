@@ -88,9 +88,16 @@ export const resetWalletErrorAction = () => ({
 });
 
 const NUM_WORDS_TO_CHECK = 3;
-export const generateWalletMnemonicAction = () => {
+
+/**
+ * Generates a mnemonic phrase, and accepts mnemonic as a parameter.
+ * If parameter is passed just reshuffle the phrase
+ * and don't generate a new one.
+ * @param {String} mnemonicPhrase
+ */
+export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
   return async (dispatch: Function) => {
-    const mnemonicPhrase = ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+    mnemonicPhrase = mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
     const mnemonicList = mnemonicPhrase.split(' ');
     const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
     const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
