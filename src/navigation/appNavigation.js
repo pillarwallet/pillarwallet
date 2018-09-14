@@ -15,7 +15,7 @@ import { BaseText } from 'components/Typography';
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
+import MarketScreen from 'screens/Market';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ContactScreen from 'screens/Contact';
@@ -169,6 +169,11 @@ const homeFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
+// ICO FLOW
+const icoFlow = FluidNavigator({
+  [ICO]: MarketScreen,
+}, FluidNavigatorConfig);
+
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
     <Image
@@ -246,7 +251,7 @@ const tabNavigation = createBottomTabNavigator(
       }),
     },
     [ICO]: {
-      screen: MarketplaceComingSoonScreen,
+      screen: icoFlow,
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconIcoActive, iconIco),
         tabBarLabel: tabBarLabel('Market'),

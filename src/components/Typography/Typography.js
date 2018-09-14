@@ -27,6 +27,14 @@ export const LightText = styled(BaseText)`
   color: ${UIColors.defaultTextColor};
 `;
 
+export const MediumText = styled(BaseText)`
+  font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Medium' : 'Aktiv Grotesk App'};
+  font-weight: 500;
+  include-font-padding: false;
+  text-align-vertical: center;
+  color: ${UIColors.defaultTextColor};
+`;
+
 
 export const Title = styled(BaseText)`
   font-size: ${fontSizes.extraLarge};
