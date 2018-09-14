@@ -109,6 +109,7 @@ const ButtonWrapper = styled.TouchableOpacity`
 const ButtonText = styled(BoldText)`
   color: ${props => props.theme.color};
   font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.medium};
+  padding-bottom: 1px;
 `;
 
 const Button = (props: Props) => {
