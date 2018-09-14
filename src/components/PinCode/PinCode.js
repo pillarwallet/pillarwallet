@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { Animated, Easing } from "react-native";
 import styled from 'styled-components/native';
 import KeyPad from 'components/KeyPad';
 import { Wrapper } from 'components/Layout';
@@ -19,11 +20,14 @@ type Props = {
 
 type State = {
   passCode: string[],
+  animateError: Animated.Value,
 };
 
 const PinDotsWrapper = styled(Wrapper)`
   justify-content: center;
 `;
+
+const PinDotsWrapperAnimated = Animated.createAnimatedComponent(PinDotsWrapper);
 
 export default class PinCode extends React.Component<Props, State> {
   resetPinCodeTimeout: any | TimeoutID;
@@ -36,6 +40,9 @@ export default class PinCode extends React.Component<Props, State> {
 
   state = {
     passCode: [],
+    animateError: new Animated.Value(4),
+    moveRight: new Animated.Value(0),
+    moveLeft: new Animated.Value(0),
   };
 
   handleButtonPressed = (value: any) => {
@@ -87,6 +94,83 @@ export default class PinCode extends React.Component<Props, State> {
     }
   };
 
+  // animatePinDots = () => {
+  //   Animated.spring(animateError, {
+  //     toValue: 4,
+  //     duration: 600,
+  //   }).start();
+  // };
+
+  componentDidMount() {
+    // this.animatePinDots();
+    Animated.sequence([
+      Animated.timing(
+        this.state.moveRight,
+        {
+          toValue: 25,
+          duration: 200,
+          easing: Easing.linear,
+        },
+      ),
+      Animated.timing(
+        this.state.moveRight,
+        {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.linear,
+        },
+      ),
+      Animated.timing(
+        this.state.moveLeft,
+        {
+          toValue: 25,
+          duration: 100,
+          easing: Easing.linear,
+        },
+      ),
+      Animated.timing(
+        this.state.moveLeft,
+        {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.linear,
+        },
+      ),
+      Animated.timing(
+        this.state.moveRight,
+        {
+          toValue: 25,
+          duration: 100,
+          easing: Easing.linear,
+        },
+      ),
+      Animated.timing(
+        this.state.moveRight,
+        {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.linear,
+        },
+      ),
+      Animated.timing(
+        this.state.moveLeft,
+        {
+          toValue: 25,
+          duration: 100,
+          easing: Easing.linear,
+        },
+      ),
+      Animated.timing(
+        this.state.moveLeft,
+        {
+          toValue: 0,
+          duration: 100,
+          easing: Easing.linear,
+        },
+      ),
+    ]).start();
+  }
+
   componentWillUnmount() {
     if (this.resetPinCodeTimeout) {
       clearTimeout(this.resetPinCodeTimeout);
@@ -96,12 +180,21 @@ export default class PinCode extends React.Component<Props, State> {
   render() {
     const { showForgotButton } = this.props;
     const numActiveDots = this.state.passCode.length;
+    const { moveRight, moveLeft } = this.state;
+
+    console.log(moveRight);
+    // console.log(this.props);
+    // console.log(this.state);
 
     return (
       <React.Fragment>
-        <PinDotsWrapper flex={1}>
+        <PinDotsWrapperAnimated flex={1} style={{
+            ...this.props.style,
+            paddingLeft: moveRight,
+            paddingRight: moveLeft,
+        }}>
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
-        </PinDotsWrapper>
+        </PinDotsWrapperAnimated>
         <KeyPad
           type="pincode"
           options={{ showForgotButton }}
