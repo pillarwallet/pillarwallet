@@ -411,14 +411,14 @@ workflows:
               only:
                   - master
                   - fix_android_package_for_staging
-      - release_to_prod:
-          type: approval
-          requires:
-            - stage_ios
-            - stage_android
-      - prod_ios:
-          requires:
-            - release_to_prod
-      - prod_android:
-          requires:
-            - release_to_prod
+#      - release_to_prod:
+#          type: approval
+#          requires:
+#            - stage_ios
+#            - stage_android
+#      - prod_ios:
+#          requires:
+#            - release_to_prod
+#      - prod_android:
+#          requires:
+#            - release_to_prod
