@@ -4,34 +4,37 @@ import { Text } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Header from 'components/Header';
 import Button from 'components/Button';
+import { ICO_CONFIRM } from 'constants/navigationConstants';
 import { Container, Wrapper } from 'components/Layout';
-import { PARTICIPATE_IN_ICO_FLOW } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
 }
 type State = {};
 
-class ICOScreen extends React.Component<Props, State> {
+class InstructionsScreen extends React.Component<Props, State> {
   navigateBack = () => {
     this.props.navigation.goBack();
   };
 
-  navigateToParticipate = () => {
-    this.props.navigation.navigate(PARTICIPATE_IN_ICO_FLOW);
-  }
+  navigateToConfirm = () => {
+    this.props.navigation.navigate(ICO_CONFIRM);
+  };
 
   render() {
     return (
       <Container>
-        <Header onClose={this.navigateBack} />
+        <Header
+          onBack={this.navigateBack}
+          title="funding instructions"
+        />
         <Wrapper flex={1} regularPadding center>
-          <Text>ICO</Text>
-          <Button block title="Participate" onPress={this.navigateToParticipate} />
+          <Text>Instructions</Text>
+          <Button block title="Next" onPress={this.navigateToConfirm} />
         </Wrapper>
       </Container>
     );
   }
 }
 
-export default ICOScreen;
+export default InstructionsScreen;

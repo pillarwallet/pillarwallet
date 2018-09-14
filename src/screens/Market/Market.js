@@ -11,6 +11,7 @@ import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import { spacing, baseColors } from 'utils/variables';
 import IcoCard from 'components/IcoCard';
+import { ICO_SINGLE } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -69,9 +70,14 @@ class MarketScreen extends React.Component<Props> {
         goalCurrency={ico.goalCurrency}
         endDate={ico.endDate}
         startDate={ico.startDate}
-        onPress={() => {}}
+        onPress={this.goToICO}
       />
     );
+  };
+
+  goToICO = () => {
+    const { navigation } = this.props;
+    navigation.navigate(ICO_SINGLE);
   };
 
   render() {

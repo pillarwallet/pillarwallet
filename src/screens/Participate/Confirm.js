@@ -5,33 +5,35 @@ import type { NavigationScreenProp } from 'react-navigation';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { Container, Wrapper } from 'components/Layout';
-import { PARTICIPATE_IN_ICO_FLOW } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
 }
 type State = {};
 
-class ICOScreen extends React.Component<Props, State> {
+class ConfirmScreen extends React.Component<Props, State> {
   navigateBack = () => {
     this.props.navigation.goBack();
   };
 
-  navigateToParticipate = () => {
-    this.props.navigation.navigate(PARTICIPATE_IN_ICO_FLOW);
-  }
+  endFlow = () => {
+    this.props.navigation.dismiss();
+  };
 
   render() {
     return (
       <Container>
-        <Header onClose={this.navigateBack} />
+        <Header
+          onBack={this.navigateBack}
+          title="review and confirm"
+        />
         <Wrapper flex={1} regularPadding center>
-          <Text>ICO</Text>
-          <Button block title="Participate" onPress={this.navigateToParticipate} />
+          <Text>Confirm</Text>
+          <Button block title="Confirm transaction" onPress={this.endFlow} />
         </Wrapper>
       </Container>
     );
   }
 }
 
-export default ICOScreen;
+export default ConfirmScreen;

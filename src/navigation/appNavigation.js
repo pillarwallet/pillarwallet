@@ -34,6 +34,10 @@ import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
 import NewChatListScreen from 'screens/Chat/NewChatList';
 import ChatScreen from 'screens/Chat/Chat';
+import ICOScreen from 'screens/ICO';
+import ParticipateScreen from 'screens/Participate';
+import InstructionsScreen from 'screens/Participate/Instructions';
+import ConfrimScreen from 'screens/Participate/Confirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -80,6 +84,11 @@ import {
   NEW_CHAT,
   CHAT,
   AUTH_FLOW,
+  ICO_SINGLE,
+  PARTICIPATE_IN_ICO_FLOW,
+  ICO_PARTICIPATE,
+  ICO_INSTRUCTIONS,
+  ICO_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -172,6 +181,7 @@ const homeFlow = createStackNavigator({
 // ICO FLOW
 const icoFlow = FluidNavigator({
   [ICO]: MarketScreen,
+  [ICO_SINGLE]: ICOScreen,
 }, FluidNavigatorConfig);
 
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
@@ -319,6 +329,13 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
+// PARTICIPATE IN ICO FLOW
+const participateInICOFlow = createStackNavigator({
+  [ICO_PARTICIPATE]: ParticipateScreen,
+  [ICO_INSTRUCTIONS]: InstructionsScreen,
+  [ICO_CONFIRM]: ConfrimScreen,
+}, StackNavigatorModalConfig);
+
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -327,6 +344,7 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
+    [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [CHAT]: ChatScreen,
