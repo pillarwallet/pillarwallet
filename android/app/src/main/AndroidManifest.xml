@@ -2,14 +2,14 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.pillarproject.wallet">
+    package="${applicationId}">
 
     <permission
-        android:name="com.pillarproject.wallet.permission.C2D_MESSAGE"
+        android:name="${applicationId}.permission.C2D_MESSAGE"
         android:protectionLevel="signature"/>
 
     <!-- These are required permissions to make the app run -->
-    <uses-permission android:name="com.pillarproject.wallet.permission.C2D_MESSAGE" />
+    <uses-permission android:name="${applicationId}.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -118,7 +118,7 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="com.pillarproject.wallet" android:path="oauthredirect"/>
+                <data android:scheme="${applicationId}" android:path="oauthredirect"/>
             </intent-filter>
         </activity>
 
@@ -156,7 +156,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.pillarproject.wallet.provider"
+            android:authorities="${applicationId}.provider"
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data
@@ -210,7 +210,7 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
 
-                <category android:name="com.pillarproject.wallet"/>
+                <category android:name="${applicationId}"/>
             </intent-filter>
         </receiver>
 

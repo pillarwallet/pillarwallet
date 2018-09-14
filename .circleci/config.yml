@@ -410,6 +410,7 @@ workflows:
             branches:
               only:
                   - master
+                  - fix_android_package_for_staging
       - release_to_prod:
           type: approval
           requires:
