@@ -162,7 +162,7 @@ const CameraIcon = styled(Icon)`
 `;
 
 const RecentConnectionsItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
 `;
 

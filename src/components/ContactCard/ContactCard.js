@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
-import { baseColors, UIColors, fontSizes, itemSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, itemSizes, spacing } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
+import Button from 'components/Button';
 import IconButton from 'components/IconButton';
 import ProfileImage from 'components/ProfileImage';
 import { noop } from 'utils/common';
@@ -30,11 +31,11 @@ type Props = {
 const ContactCardWrapper = styled.TouchableHighlight`
   background: ${baseColors.white};
   border: ${props => (props.noBorder ? 0 : '1px solid')};
-  border-color: ${UIColors.defaultBorderColor};
-  height: 75px;
-  padding: ${props => (props.noBorder ? '14px 0' : '14px')};
+  border-color: ${baseColors.lightGray};
+  height: 70px;
+  padding: ${props => (props.noBorder ? '8px 0' : '8px')};
   border-radius: 4px;
-  margin: ${props => props.noMargin ? `0 0 ${spacing.rhythm / 2}px` : `0 ${spacing.rhythm}px ${spacing.rhythm / 2}px`};
+  margin: ${props => props.noMargin ? 0 : `0 ${spacing.rhythm}px ${spacing.rhythm / 2}px`};
 `;
 
 const ContactCardInner = styled.View`
@@ -48,7 +49,7 @@ const ContactCardAvatarWrapper = styled.View`
   margin-right: 14px;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
-  shadow-radius: 2px     ;
+  shadow-radius: 2px;
   shadow-opacity: 0.1;
 `;
 
@@ -85,29 +86,6 @@ const ContactCardSide = styled.View`
 const ButtonIconWrapper = styled.View`
   margin-left: auto;
   flex-direction: row;
-`;
-
-const ActionTextWrapper = styled.TouchableOpacity`
-  // margin-left: auto;
-`;
-
-const CancelActionText = styled(BaseText)`
-  color: ${baseColors.fireEngineRed};
-  font-size: ${fontSizes.small};
-`;
-
-const ActionButton = styled.View`
-  background: ${baseColors.electricBlue};
-  padding: 0 20px;
-  height: 34px;
-  border-radius: 17px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const ActionButtonText = styled(BoldText)`
-  font-size: ${fontSizes.small};
-  color: ${baseColors.white};
 `;
 
 const maxContactInfoWidth = Dimensions.get('window').width - 220;
@@ -160,21 +138,20 @@ export default class ContactCard extends React.Component<Props> {
       );
     } else if (status === TYPE_SENT) {
       return (
-        <ActionTextWrapper onPress={onCancelInvitationPress}>
-          <CancelActionText>
-            Cancel
-          </CancelActionText>
-        </ActionTextWrapper>
+        <Button
+          title="Request Sent"
+          onPress={onCancelInvitationPress}
+          small
+          secondary
+        />
       );
     } else if (status === TYPE_INVITE) {
       return (
-        <ActionTextWrapper onPress={onSendInvitationPress}>
-          <ActionButton>
-            <ActionButtonText>
-              CONNECT
-            </ActionButtonText>
-          </ActionButton>
-        </ActionTextWrapper>
+        <Button
+          title="Connect"
+          onPress={onSendInvitationPress}
+          small
+        />
       );
     }
     return null;
