@@ -97,6 +97,9 @@ android {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
       signingConfig signingConfigs.staging
       applicationIdSuffix ".staging"
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+      zipAlignEnabled true
     }
     release {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
