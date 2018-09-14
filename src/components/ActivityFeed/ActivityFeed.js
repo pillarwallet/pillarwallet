@@ -207,7 +207,7 @@ class ActivityFeed extends React.Component<Props, State> {
         return (
           <TouchableOpacity onPress={() => onCancelInvitation(notification)}>
             <LabelText button>
-              Request sent
+              Request Sent
             </LabelText>
           </TouchableOpacity >
         );

@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
-import { baseColors, fontSizes, itemSizes } from 'utils/variables';
+import { baseColors, fontSizes, itemSizes, spacing } from 'utils/variables';
 import ContactCard from 'components/ContactCard';
 import Separator from 'components/Separator';
 import { SubHeading, BaseText } from 'components/Typography';
@@ -42,7 +42,7 @@ const LocalContactsSubHeading = styled(SubHeading)`
 const LocalContactsItem = styled.TouchableOpacity`
   align-items: center;
   width: 64px;
-  margin: 0 10px;
+  margin: 0 ${spacing.rhythm / 2}px;
 `;
 
 const LocalContactsItemAvatarWrapper = styled.View`
