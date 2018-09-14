@@ -2,7 +2,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="${applicationId}">
+    package="com.pillarproject.wallet">
 
     <permission
         android:name="${applicationId}.permission.C2D_MESSAGE"
