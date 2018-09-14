@@ -20,7 +20,6 @@ import type { Assets, Balances, Asset } from 'models/Asset';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import {
-  removeAssetAction,
   updateAssetsAction,
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
@@ -37,7 +36,7 @@ import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigati
 import assetsConfig from 'configs/assetsConfig';
 import { spacing, baseColors } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { HideAssetButton } from './HideAssetButton';
+import HideAssetButton from './HideAssetButton';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
@@ -50,7 +49,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
   assetsLayout: string,
-  removeAsset: Function,
+  updateAssets: Function,
 }
 
 type State = {
@@ -79,10 +78,6 @@ const horizontalPadding = (layout, side) => {
       return side === 'left' ? 0 : spacing.rhythm - 2;
     }
   }
-};
-
-const isETH = (thisSymbol) => {
-  return thisSymbol === ETH;
 };
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -140,7 +135,6 @@ class AssetsScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(ASSET,
       {
         assetData,
-        test: 'test',
         resetHideRemoval: this.resetHideRemoval,
       },
     );
@@ -163,20 +157,25 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
-  swipeoutBtns = (asset, isThisETH) => {
-    const { removeAsset } = this.props;
-    return [
-      {
-        component: (
-          <HideAssetButton
-            expanded={this.props.assetsLayout === EXPANDED}
-            onPress={isThisETH ? this.showETHRemovalNotification : () => removeAsset(asset)}
-            disabled={isThisETH}
-          />),
-        backgroundColor: 'transparent',
-        disabled: true,
-      },
-    ];
+  handleAssetRemoval = (asset: Asset) => () => {
+    const { assets, updateAssets } = this.props;
+    updateAssets(assets, [asset.symbol]);
+  }
+
+  renderSwipeoutBtns = (asset) => {
+    const { assetsLayout } = this.props;
+    const isExpanded = assetsLayout === EXPANDED;
+    const isETH = asset.symbol === ETH;
+    return [{
+      component: (
+        <HideAssetButton
+          expanded={isExpanded}
+          onPress={isETH ? this.showETHRemovalNotification : this.handleAssetRemoval(asset)}
+          disabled={isETH}
+        />),
+      backgroundColor: 'transparent',
+      disabled: true,
+    }];
   };
 
   showETHRemovalNotification = () => {
@@ -192,11 +191,9 @@ class AssetsScreen extends React.Component<Props, State> {
       wallet,
       baseFiatCurrency,
       assetsLayout,
-      removeAsset,
     } = this.props;
 
     const { forceHideRemoval } = this.state;
-
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const {
@@ -248,12 +245,13 @@ class AssetsScreen extends React.Component<Props, State> {
       isListed,
       disclaimer,
     };
+    const isETH = asset.symbol === ETH;
 
     switch (assetsLayout) {
       case SIMPLIFIED: {
         return (
           <Swipeout
-            right={this.swipeoutBtns(asset, isETH(symbol))}
+            right={this.renderSwipeoutBtns(asset)}
             sensitivity={10}
             backgroundColor="transparent"
             buttonWidth={80}
@@ -267,8 +265,8 @@ class AssetsScreen extends React.Component<Props, State> {
           <AssetCardMinimized
             {...props}
             smallScreen={smallScreen()}
-            disabledRemove={isETH(symbol)}
-            removeThisAsset={() => { removeAsset(asset); }}
+            disabledRemove={isETH}
+            onRemove={this.handleAssetRemoval(asset)}
             forceHideRemoval={forceHideRemoval}
           />
         );
@@ -278,8 +276,8 @@ class AssetsScreen extends React.Component<Props, State> {
           <AssetCardMinimized
             {...props}
             smallScreen={smallScreen()}
-            disabledRemove={isETH(symbol)}
-            removeThisAsset={() => { removeAsset(asset); }}
+            disabledRemove={isETH}
+            onRemove={this.handleAssetRemoval(asset)}
             forceHideRemoval={forceHideRemoval}
             extraSmall
           />
@@ -288,7 +286,7 @@ class AssetsScreen extends React.Component<Props, State> {
       default: {
         return (
           <Swipeout
-            right={this.swipeoutBtns(asset, isETH(symbol))}
+            right={this.renderSwipeoutBtns(asset)}
             sensitivity={10}
             backgroundColor="transparent"
             buttonWidth={80}
@@ -419,8 +417,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
-  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  updateAssets: (assets: Assets) => dispatch(updateAssetsAction(assets)),
+  updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

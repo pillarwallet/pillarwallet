@@ -30,7 +30,7 @@ const HideButtonLabel = styled(BaseText)`
   opacity: ${props => props.disabled ? 0.5 : 1}
 `;
 
-export const HideAssetButton = (props: Props) => {
+const HideAssetButton = (props: Props) => {
   const { onPress, expanded, disabled } = props;
   return (
     <HideButtonWrapper expanded={expanded}>
@@ -56,3 +56,5 @@ export const HideAssetButton = (props: Props) => {
     </HideButtonWrapper>
   );
 };
+
+export default HideAssetButton;

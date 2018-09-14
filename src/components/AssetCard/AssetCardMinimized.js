@@ -26,7 +26,7 @@ type Props = {
   smallScreen?: boolean,
   extraSmall?: boolean,
   disabledRemove?: boolean,
-  removeThisAsset: Function,
+  onRemove: Function,
   forceHideRemoval?: boolean,
 }
 
@@ -42,6 +42,8 @@ const AssetWrapper = styled(Animated.View)`
   justify-content: center;
   align-items: center;
 `;
+
+const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
   if (smallScreen && extraSmall) {
@@ -220,7 +222,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
       extraSmall,
       smallScreen,
       disabledRemove,
-      removeThisAsset,
+      onRemove,
     } = this.props;
     const { showHide, shakeAnimation } = this.state;
 
@@ -243,9 +245,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     return (
-      <AssetWrapper
-        style={animatedStyle}
-      >
+      <AssetWrapperAnimated style={animatedStyle}>
         <ShadowHolder smallScreen={smallScreen} extraSmall={extraSmall}>
           <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
             <InnerWrapper smallScreen={smallScreen}>
@@ -282,7 +282,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
         {!!showHide &&
         <HideAssetAddon>
           <TouchableOpacity
-            onPress={disabledRemove ? this.showNotification : removeThisAsset}
+            onPress={disabledRemove ? this.showNotification : onRemove}
             style={{
               justifyContent: 'center',
               alignItems: 'center',
@@ -298,7 +298,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
             />
           </TouchableOpacity>
         </HideAssetAddon>}
-      </AssetWrapper>
+      </AssetWrapperAnimated>
     );
   }
 }
