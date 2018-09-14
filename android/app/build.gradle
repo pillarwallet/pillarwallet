@@ -95,7 +95,6 @@ android {
     }
     staging {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
-      debuggable true
       signingConfig signingConfigs.staging
       applicationIdSuffix ".staging"
       minifyEnabled true
