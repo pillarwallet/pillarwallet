@@ -84,7 +84,7 @@ import {
   NEW_CHAT,
   CHAT,
   AUTH_FLOW,
-  ICO_SINGLE,
+  MARKET,
   PARTICIPATE_IN_ICO_FLOW,
   ICO_PARTICIPATE,
   ICO_INSTRUCTIONS,
@@ -117,12 +117,12 @@ const removeAppStateChangeListener = (callback) => {
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconHome = require('assets/icons/icon_home.png');
-const iconIco = require('assets/icons/icon_marketplace.png');
+const iconMarket = require('assets/icons/icon_marketplace.png');
 const iconChat = require('assets/icons/icon_chat.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
-const iconIcoActive = require('assets/icons/icon_marketplace_active.png');
+const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const StackNavigatorModalConfig = {
@@ -180,8 +180,8 @@ const homeFlow = createStackNavigator({
 
 // ICO FLOW
 const icoFlow = FluidNavigator({
-  [ICO]: MarketScreen,
-  [ICO_SINGLE]: ICOScreen,
+  [MARKET]: MarketScreen,
+  [ICO]: ICOScreen,
 }, FluidNavigatorConfig);
 
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
@@ -260,10 +260,10 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
-    [ICO]: {
+    [MARKET]: {
       screen: icoFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconIcoActive, iconIco),
+        tabBarIcon: tabBarIcon(iconMarketActive, iconMarket),
         tabBarLabel: tabBarLabel('Market'),
       }),
     },
