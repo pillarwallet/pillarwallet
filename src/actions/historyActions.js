@@ -54,7 +54,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     // check if some assets are not enabled
     const myAddress = wallet.address.toUpperCase();
     const missedAssets = mappedHistoryNotifications
-      .filter(tx => tx.fromAddress.toUpperCase() !== myAddress)
+      .filter(tx => tx.from.toUpperCase() !== myAddress)
       .reduce((memo, { asset: ticker }) => {
         if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
 
