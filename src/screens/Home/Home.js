@@ -36,7 +36,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: Object[],
   invitations: Object[],
-  historyNotifications: Object[],
   history: Object[],
   user: Object,
   wallet: Object,
@@ -511,7 +510,7 @@ class HomeScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   user: { data: user },
-  history: { data: history, historyNotifications },
+  history: { data: history },
   invitations: { data: invitations },
   wallet: { data: wallet },
   chat: { data: chats },
@@ -519,7 +518,6 @@ const mapStateToProps = ({
 }) => ({
   contacts,
   user,
-  historyNotifications,
   history,
   invitations,
   wallet,
