@@ -170,15 +170,18 @@ class SingleInput extends React.Component<Props, *> {
     const { options, onSelect } = this.props;
     const BUTTONS = options.map(({ label }) => label).concat('Cancel');
     const CANCEL_INDEX = options.length;
-    ActionSheet.show({
-      options: BUTTONS,
-      cancelButtonIndex: CANCEL_INDEX,
-      title: 'Choose currency',
-    }, index => {
-      const { value } = options[index] || {};
-      if (onSelect) onSelect(value);
-    },
-    );
+    // TODO: Move to custom ActionSheet similar to Toast ASAP.
+    // Try/catch required to prevent show called on dismounted instance which throws an error.
+    try {
+      ActionSheet.show({
+        options: BUTTONS,
+        cancelButtonIndex: CANCEL_INDEX,
+        title: 'Choose currency',
+      }, index => {
+        const { value } = options[index] || {};
+        if (onSelect && value) onSelect(value);
+      });
+    } catch (e) { } //eslint-disable-line
   }
 
   renderSelector = () => {
