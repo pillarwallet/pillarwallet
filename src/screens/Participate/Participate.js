@@ -10,7 +10,7 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import { ICO_INSTRUCTIONS } from 'constants/navigationConstants';
 import { Container, Wrapper, Footer } from 'components/Layout';
-import { BoldText, Label } from 'components/Typography';
+import { BaseText, BoldText, Label } from 'components/Typography';
 import SingleInput from 'components/TextInput/SingleInput';
 
 // utils
@@ -175,9 +175,9 @@ class ParticipateScreen extends React.Component<Props, State> {
           </SummaryRow>
         </Wrapper>
         <Footer style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-          <BoldText style={{ flex: 2, paddingRight: 20, fontSize: fontSizes.extraExtraSmall }}>
+          <BaseText style={{ flex: 2, paddingRight: 20, fontSize: fontSizes.extraExtraSmall }}>
             Your investment is fully secure and compliant to regulators’ orders and UK laws
-          </BoldText>
+          </BaseText>
           <Button small title="Next" onPress={this.handleSubmit} />
         </Footer>
       </Container>
