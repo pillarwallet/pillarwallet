@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Input, Label } from 'native-base';
-import { TextLink, BaseText } from 'components/Typography';
+import { Input, Label as NBLabel, ActionSheet } from 'native-base';
+import Icon from 'components/Icon';
+import { TextLink, BaseText, LightText } from 'components/Typography';
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { Image as RNImage, Platform } from 'react-native';
 
@@ -12,6 +13,11 @@ type inputPropsType = {
   onBlur?: Function,
   value: ?string,
   multiline?: boolean,
+}
+
+type Option = {
+  value: string,
+  label: string,
 }
 
 type Props = {
@@ -25,25 +31,35 @@ type Props = {
   label?: string,
   id?: string,
   iconColor?: string,
+  onSelect?: Function,
+  selectedOption?: string,
   errorMessage?: string,
   onPress?: Function,
   inputProps: inputPropsType,
   inputType: string,
   trim: boolean,
+  options: Option[],
 }
 
 type EventLike = {
   nativeEvent: Object,
 }
 
+const Label = styled(NBLabel)`
+  font-size: ${fontSizes.extraExtraSmall};
+  color: ${baseColors.darkGray};
+  padding-bottom: ${spacing.rhythm / 2}px;
+`;
+
 const Wrapper = styled.View`
-  margin: 20px 0 20px;
+  margin: 10px 0;
 `;
 
 const Item = styled.View`
-  height: 60px;
+  height: 52px;
   flex: 2;
   display: flex;
+  position: relative;
 `;
 
 const InputHolder = styled.View`
@@ -69,6 +85,24 @@ const ImageHolder = styled.TouchableOpacity`
   margin: 0 10px 0 20px;
 `;
 
+const OptionSelector = styled.TouchableOpacity`
+  position: absolute;
+  height: 100%;
+  width: 80px;
+  padding: 0 8px;
+  bottom: 0;
+  justify-content: space-around;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: ${baseColors.hawkesBlue}
+  z-index: 2;
+  left: 0;
+  border: 1px solid #ebebeb;
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+`;
+
 const Image = styled(RNImage)`
   height: 24px;
   width: 24px;
@@ -92,10 +126,10 @@ const InputField = styled(Input)`
   font-size: ${props => props.fontSize || fontSizes.extraExtraLarge};
   font-weight: ${props => props.fontWeight || fontWeights.bold}
   text-align: ${props => props.textAlign || 'right'};
-  background: #FFFFFF;
+  background: ${baseColors.white};
+  border-radius: 4;
   color: ${UIColors.defaultTextColor};
   border: ${props => `1px solid ${props.error ? 'tomato' : '#EBEBEB'}`};
-  border-radius: 4;
   padding: 0 12px;
 `;
 
@@ -105,6 +139,7 @@ class SingleInput extends React.Component<Props, *> {
     innerImageURI: '',
     outterImageText: '',
     trim: true,
+    options: [],
   };
 
   handleBlur = (e: EventLike) => {
@@ -131,6 +166,39 @@ class SingleInput extends React.Component<Props, *> {
     };
   }
 
+  handleSelectPress = () => {
+    const { options, onSelect } = this.props;
+    const BUTTONS = options.map(({ label }) => label).concat('Cancel');
+    const CANCEL_INDEX = options.length;
+    ActionSheet.show({
+      options: BUTTONS,
+      cancelButtonIndex: CANCEL_INDEX,
+      title: 'Choose currency',
+    }, index => {
+      const { value } = options[index] || {};
+      if (onSelect) onSelect(value);
+    },
+    );
+  }
+
+  renderSelector = () => {
+    const { selectedOption } = this.props;
+    return (
+      <OptionSelector onPress={this.handleSelectPress}>
+        <LightText>{selectedOption}</LightText>
+        <Icon
+          name="chevron-right"
+          style={{
+            fontSize: fontSizes.tiny,
+            transform: [{ rotate: '90deg' }],
+            color: baseColors.brightBlue,
+            marginTop: 4,
+          }}
+        />
+      </OptionSelector>
+    );
+  }
+
   render() {
     const {
       label,
@@ -140,14 +208,16 @@ class SingleInput extends React.Component<Props, *> {
       outterImageURI,
       outterImageText,
       onPress,
+      options,
     } = this.props;
     const { value = '' } = inputProps;
     return (
       <Wrapper>
-        {label && <Label>{label}</Label>}
+        {label && <Label>{label.toUpperCase()}</Label>}
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <InputHolder>
           <Item>
+            {!!options.length && this.renderSelector()}
             <InputField
               {...inputProps}
               error={!!errorMessage}

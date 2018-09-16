@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { baseColors, spacing } from 'utils/variables';
 
@@ -14,6 +14,7 @@ type ContainerProps = {
 
 type FooterProps = {
   children?: React.Node,
+  style?: StyleSheet.styles,
   column?: boolean,
 };
 
@@ -72,6 +73,7 @@ export const Footer = (props: FooterProps) => {
         flexDirection: 'column',
         justifyContent: 'flex-end',
         padding: spacing.rhythm,
+        ...props.style,
       }}
     >
       {props.children}
