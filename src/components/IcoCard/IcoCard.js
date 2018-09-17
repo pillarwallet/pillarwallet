@@ -8,25 +8,34 @@ import { getCurrencySymbol, formatMoney } from 'utils/common';
 import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
 import LinearGradient from 'react-native-linear-gradient';
 import Countdown from 'components/Countdown';
+import TruncatedText from 'components/TruncatedText';
 
 type Props = {
-  name: string,
+  id: string,
+  title: string,
   status?: string,
   onPress: Function,
   endDate: any,
   goalCurrency: string,
   goal: number,
-  raised: number
+  raised: number,
+  inner?: boolean,
+  description?: string,
 }
 
 const isLabelOutside = (raisedAmount) => { return raisedAmount <= 10; };
 
 const CardWrapper = styled.View`
+  width: 100%;
+`;
+
+const InnerWrapper = styled.View`
+  flex-direction: column;
+  padding-bottom: 10px;
   margin: ${Platform.select({
-    ios: `3px ${spacing.rhythm / 2}px 5px`,
-    android: `2px ${spacing.rhythm / 2}px 6px`,
+    ios: props => props.inner ? `3px ${spacing.rhythm / 2}px 10px` : `3px ${spacing.rhythm / 2}px 5px`,
+    android: props => props.inner ? `2px ${spacing.rhythm / 2}px 10px` : `2px ${spacing.rhythm / 2}px 6px`,
   })}
-  flex-direction: row;
   shadow-color: ${UIColors.cardShadowColor};
   shadow-offset: 0 3px;
   shadow-opacity: 1;
@@ -36,28 +45,21 @@ const CardWrapper = styled.View`
   background: ${baseColors.white};
 `;
 
-const InnerWrapper = styled.View`
-  flex: 1;
-  flex-direction: column;
-  padding-top: 12px;
-`;
-
 const Row = styled.View`
-  flex: 1;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: ${props => props.alignCenter ? 'center' : 'space-between'};
   align-items: ${props => props.alignTop ? 'flex-start' : 'center'};
-  padding: ${props => props.halfPadding ? spacing.rhythm / 2 : spacing.rhythm}px; 
+  padding: ${props => props.halfPadding ? '0 8px' : '0 16px'}; 
+  margin-top: ${props => props.marginTop ? props.marginTop : 0}px;
 `;
 
 const ProgressBar = styled.View`
-  flex: 1;
   flex-direction: row;
   background-color: ${baseColors.snowWhite};
   padding: 1px 0;
   align-items: center;
   justify-content: flex-start;
-  margin-top: 6px;
+  margin-bottom: ${spacing.rhythm / 2}px;
 `;
 
 const StyledLinearGradient = styled(LinearGradient)`
@@ -97,6 +99,8 @@ const TitleWrapper = styled.View`
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
+  margin-top: 28px;
+  margin-bottom: ${props => props.inner ? spacing.rhythm / 2 : 28}px;
 `;
 
 const Title = styled(MediumText)`
@@ -127,10 +131,10 @@ const LabelText = styled(MediumText)`
 `;
 
 const Column = styled.View`
+  width: ${props => props.width ? props.width : 'auto'};
   flex-direction: column;
-  align-items: flex-start;
+  align-items: ${props => props.center ? 'center' : 'flex-start'};
   justify-content: flex-start;
-  flex: 1;
   padding: ${spacing.rhythm / 2}px;
 `;
 
@@ -143,7 +147,7 @@ const ColumnLabel = styled(BaseText)`
 `;
 
 const ColumnValue = styled(MediumText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${props => props.xl ? fontSizes.medium : fontSizes.extraSmall};
   line-height: ${fontSizes.mediumLarge};
   color: ${baseColors.slateBlack};
   letter-spacing: ${fontTrackings.tiny};
@@ -151,13 +155,16 @@ const ColumnValue = styled(MediumText)`
 
 const IcoCard = (props: Props) => {
   const {
-    name,
+    id,
+    title,
     status,
     goal,
     raised,
     goalCurrency,
     endDate,
     onPress,
+    inner,
+    description,
   } = props;
 
   const raisedInPercent = (Math.floor((raised / goal) * 100));
@@ -167,10 +174,10 @@ const IcoCard = (props: Props) => {
   return (
     <CardWrapper>
       <TouchableWithoutFeedback onPress={onPress}>
-        <InnerWrapper>
+        <InnerWrapper inner={inner}>
           <Row>
-            <TitleWrapper>
-              <Title>{name}</Title>
+            <TitleWrapper inner={inner}>
+              <Title>{title}</Title>
               {!!status &&
               <Label>
                 <LabelText>
@@ -178,16 +185,49 @@ const IcoCard = (props: Props) => {
                 </LabelText>
               </Label>}
             </TitleWrapper>
+            {!inner &&
             <CachedImage
-              key={name}
+              key={id}
               style={{
                 height: 60,
                 width: 60,
               }}
               source={{ uri: 'https://mediaserver.responsesource.com/press-release/81489/TwentyThirty+offical+logo.png' }}
               resizeMode="contain"
-            />
+            />}
           </Row>
+          {!!inner && !!description &&
+          <Row>
+            <TruncatedText text={description} />
+          </Row>}
+          {!!inner &&
+          <Row alignCenter marginTop={26}>
+            <Column center>
+              <ColumnValue xl>
+                802
+              </ColumnValue>
+              <ColumnLabel>
+                Investors
+              </ColumnLabel>
+            </Column>
+            <Column center>
+              <ColumnValue xl>
+                63.6%
+              </ColumnValue>
+              <ColumnLabel>
+                Tokens sold
+              </ColumnLabel>
+            </Column>
+            <Column center>
+              <ColumnValue xl>
+                12 days
+              </ColumnValue>
+              <ColumnLabel>
+                Time left
+              </ColumnLabel>
+            </Column>
+          </Row>}
+          {!inner &&
           <ProgressBar>
             <StyledLinearGradient
               start={{ x: 0, y: 0 }}
@@ -201,9 +241,10 @@ const IcoCard = (props: Props) => {
             </StyledLinearGradient>
             {!!labelOutside &&
             <ProgressLabel outside={labelOutside}>{raisedInPercent}%</ProgressLabel>}
-          </ProgressBar>
+          </ProgressBar>}
+          {!inner &&
           <Row alignTop halfPadding>
-            <Column>
+            <Column width="33.33333%">
               <ColumnLabel>
                 Goal
               </ColumnLabel>
@@ -211,7 +252,7 @@ const IcoCard = (props: Props) => {
                 {goalCurrencySymbol}{formatMoney(goal, 0, 3, ',', '.', false)}
               </ColumnValue>
             </Column>
-            <Column>
+            <Column width="33.33333%">
               <ColumnLabel>
                 End date
               </ColumnLabel>
@@ -219,13 +260,13 @@ const IcoCard = (props: Props) => {
                 {endDate}
               </ColumnValue>
             </Column>
-            <Column>
+            <Column width="33.33333%">
               <ColumnLabel>
                 Time left
               </ColumnLabel>
               <Countdown endDate={endDate} />
             </Column>
-          </Row>
+          </Row>}
         </InnerWrapper>
       </TouchableWithoutFeedback>
     </CardWrapper>
