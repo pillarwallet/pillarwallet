@@ -12,6 +12,9 @@ import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
 import { USERNAME_EXISTS, API_REGISTRATION_FAILED } from 'constants/walletConstants';
 
+// temporary here
+import icosFixtures from 'fixtures/icos';
+
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
 type HistoryPayload = {
@@ -147,6 +150,10 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
     .then(({ data }) => data)
     .then(({ notifications }) => notifications)
     .catch(() => []);
+};
+
+SDKWrapper.prototype.fetchICOs = function () {
+  return Promise.resolve(icosFixtures);
 };
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
