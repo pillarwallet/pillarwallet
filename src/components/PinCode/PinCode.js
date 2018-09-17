@@ -104,16 +104,14 @@ export default class PinCode extends React.Component<Props, State> {
     const numActiveDots = this.state.passCode.length;
 
     if (this.props.pinError) {
-      Animated.sequence([
-        Animated.timing(
-          this.state.errorShake,
-          {
-            toValue: 1,
-            duration: 500,
-            easing: Easing.linear,
-          },
-        ),
-      ]).start();
+      Animated.timing(
+        this.state.errorShake,
+        {
+          toValue: 1,
+          duration: 500,
+          easing: Easing.linear,
+        },
+      ).start();
     }
 
     return (
