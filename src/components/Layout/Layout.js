@@ -14,7 +14,7 @@ type ContainerProps = {
 
 type FooterProps = {
   children?: React.Node,
-  style?: StyleSheet.styles,
+  style?: StyleSheet.Styles,
   column?: boolean,
 };
 

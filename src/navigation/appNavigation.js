@@ -179,10 +179,10 @@ const homeFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 // ICO FLOW
-const icoFlow = FluidNavigator({
+const icoFlow = createStackNavigator({
   [MARKET]: MarketScreen,
   [ICO]: ICOScreen,
-}, FluidNavigatorConfig);
+}, StackNavigatorConfig);
 
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
