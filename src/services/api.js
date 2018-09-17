@@ -13,7 +13,7 @@ import { fetchAssetBalances } from 'services/assets';
 import { USERNAME_EXISTS, API_REGISTRATION_FAILED } from 'constants/walletConstants';
 
 // temporary here
-import icosFixtures from 'fixtures/icos';
+import { icos as icosFixtures, icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
@@ -154,6 +154,16 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
 
 SDKWrapper.prototype.fetchICOs = function () {
   return Promise.resolve(icosFixtures);
+};
+
+SDKWrapper.prototype.fetchICOFundingInstructions = function (walletId, currency) {
+  const cryptos = ['ETH', 'BTC', 'LTC']; // mock purposes;
+  const fixtures = {
+    ...icoFundingInstructionsFixtures,
+    currency,
+    paymentType: cryptos.includes(currency) ? 'crypto_currency' : 'bank_transfer',
+  };
+  return Promise.resolve(fixtures);
 };
 
 SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {

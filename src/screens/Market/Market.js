@@ -12,7 +12,7 @@ import IcoCard from 'components/IcoCard';
 import { ICO } from 'constants/navigationConstants';
 
 // actions
-import { fetchICOsAction } from 'actions/marketActions';
+import { fetchICOsAction } from 'actions/icosActions';
 
 // types
 import type { ICO as ICOT } from 'models/ICO';
@@ -79,7 +79,7 @@ class MarketScreen extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ market: { data: { ICO: icos } }, user: { data: user } }) => ({
+const mapStateToProps = ({ icos: { data: icos }, user: { data: user } }) => ({
   icos,
   user,
 });

@@ -5,7 +5,7 @@ const yesterdayMockDate = new Date().setDate(todayMockDate.getDate() + -1);
 const tomorrowMockDate = new Date().setDate(todayMockDate.getDate() + 1);
 const nextWeekMockDate = new Date().setDate(todayMockDate.getDate() + 7);
 
-export default [{
+export const icos = [{
   id: '1', // This will be a UUID
   name: '2030.io',
   symbol: 'P01', // Assumed data
@@ -126,3 +126,16 @@ export default [{
     },
   ],
 }];
+
+export const icoFundingInstructions = {
+  account: 12345678,
+  iban: 'DHFA6DA4FD5SA4F6DS4FDS',
+  bic: 12345678,
+  reference: 'abcdef',
+  beneficiary: 'Alice Smith',
+  bankName: 'XYZ Bank',
+  currency: 'GBP',
+  paymentType: 'bank_transfer', // | crypto_currency
+  address: '3QJmV3qfvL9SuYo34YihAf3sRCW3qSinmm',
+};
+

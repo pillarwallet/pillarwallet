@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 
@@ -16,11 +17,15 @@ import SingleInput from 'components/TextInput/SingleInput';
 // utils
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 
+// actions
+import { fetchICOFundingInstructionsAction } from 'actions/icosActions';
+
 // constants
 import { GBP } from 'constants/assetsConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  fetchICOFundingInstructions: Function,
 }
 
 type State = {
@@ -125,6 +130,12 @@ class ParticipateScreen extends React.Component<Props, State> {
     selectedCurrency: GBP,
   }
 
+  componentDidMount() {
+    const { fetchICOFundingInstructions } = this.props;
+    const { selectedCurrency } = this.state;
+    fetchICOFundingInstructions(selectedCurrency);
+  }
+
   handleBackNavigation = () => {
     this.props.navigation.goBack(null);
   };
@@ -142,8 +153,11 @@ class ParticipateScreen extends React.Component<Props, State> {
   };
 
   handleCurrencySelect = (currency: string) => {
+    const { fetchICOFundingInstructions } = this.props;
     this.setState({
       selectedCurrency: currency,
+    }, () => {
+      fetchICOFundingInstructions(currency);
     });
   }
 
@@ -185,4 +199,9 @@ class ParticipateScreen extends React.Component<Props, State> {
   }
 }
 
-export default ParticipateScreen;
+const mapDispatchToProps = (dispatch) => ({
+  fetchICOFundingInstructions: (currency: string) =>
+    dispatch(fetchICOFundingInstructionsAction(currency)),
+});
+
+export default connect(null, mapDispatchToProps)(ParticipateScreen);

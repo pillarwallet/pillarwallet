@@ -42,3 +42,15 @@ export type ICO = {
   whitepaper: string,
   icos: Offer[],
 }
+
+export type ICOFundingInstructions = {
+  account: number,
+  iban: string,
+  bic: number,
+  reference: string,
+  beneficiary: string,
+  bankName: string,
+  currency: string,
+  paymentType: string,
+  address: string
+}
