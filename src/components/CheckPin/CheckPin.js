@@ -55,7 +55,7 @@ class CheckPin extends React.Component<Props, *> {
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""
           showForgotButton={false}
-          pinError={pinError}
+          pinError={!!pinError}
         />
       </CheckPinWrapper>
     );

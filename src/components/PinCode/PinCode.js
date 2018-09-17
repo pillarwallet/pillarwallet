@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing } from "react-native";
+import { Animated, Easing } from 'react-native';
 import styled from 'styled-components/native';
 import KeyPad from 'components/KeyPad';
 import { Wrapper } from 'components/Layout';
@@ -16,10 +16,12 @@ type Props = {
   onForgotPin?: Function,
   pageInstructions?: string,
   showForgotButton?: boolean,
+  pinError?: boolean,
 };
 
 type State = {
   passCode: string[],
+  errorShake: Animated.Value,
 };
 
 const PinDotsWrapper = styled(Wrapper)`
@@ -101,8 +103,6 @@ export default class PinCode extends React.Component<Props, State> {
     const { showForgotButton } = this.props;
     const numActiveDots = this.state.passCode.length;
 
-    console.log(this.props);
-
     if (this.props.pinError) {
       Animated.sequence([
         Animated.timing(
@@ -118,14 +118,17 @@ export default class PinCode extends React.Component<Props, State> {
 
     return (
       <React.Fragment>
-        <PinDotsWrapperAnimated flex={1} style={{
+        <PinDotsWrapperAnimated
+          flex={1}
+          style={{
             transform: [{
                 translateX: this.state.errorShake.interpolate({
                     inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
                     outputRange: [0, -10, 10, -10, 10, -5, 5, 0],
                 }),
             }],
-        }}>
+          }}
+        >
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
         </PinDotsWrapperAnimated>
         <KeyPad

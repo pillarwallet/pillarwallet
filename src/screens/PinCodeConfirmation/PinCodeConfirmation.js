@@ -61,7 +61,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
           onPinChanged={this.handlePinChange}
           pageInstructions="Confirm your Pincode"
           showForgotButton={false}
-          pinError={this.state.errorMessage}
+          pinError={!!this.state.errorMessage}
         />
       </Container>
     );

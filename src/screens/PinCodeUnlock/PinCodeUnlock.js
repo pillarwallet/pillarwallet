@@ -50,7 +50,7 @@ class PinCodeUnlock extends React.Component<Props, *> {
           onPinEntered={this.handlePinSubmit}
           pageInstructions=""
           onForgotPin={this.handleForgotPasscode}
-          pinError={pinError}
+          pinError={!!pinError}
         />
       </Container>
     );
