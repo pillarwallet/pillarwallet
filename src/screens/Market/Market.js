@@ -33,7 +33,7 @@ class MarketScreen extends React.Component<Props> {
       <IcoCard
         id={ico.id}
         title={ico.name}
-        phase={ico.icoPhase}
+        status={ico.icoStatus}
         goal={goal}
         raised={raised}
         iconUrl={ico.iconUrl}
