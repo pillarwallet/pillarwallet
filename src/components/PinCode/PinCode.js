@@ -20,7 +20,6 @@ type Props = {
 
 type State = {
   passCode: string[],
-  animateError: Animated.Value,
 };
 
 const PinDotsWrapper = styled(Wrapper)`
@@ -40,9 +39,7 @@ export default class PinCode extends React.Component<Props, State> {
 
   state = {
     passCode: [],
-    animateError: new Animated.Value(4),
-    moveRight: new Animated.Value(0),
-    moveLeft: new Animated.Value(0),
+    errorShake: new Animated.Value(0),
   };
 
   handleButtonPressed = (value: any) => {
@@ -94,83 +91,6 @@ export default class PinCode extends React.Component<Props, State> {
     }
   };
 
-  // animatePinDots = () => {
-  //   Animated.spring(animateError, {
-  //     toValue: 4,
-  //     duration: 600,
-  //   }).start();
-  // };
-
-  componentDidMount() {
-    // this.animatePinDots();
-    Animated.sequence([
-      Animated.timing(
-        this.state.moveRight,
-        {
-          toValue: 25,
-          duration: 200,
-          easing: Easing.linear,
-        },
-      ),
-      Animated.timing(
-        this.state.moveRight,
-        {
-          toValue: 0,
-          duration: 100,
-          easing: Easing.linear,
-        },
-      ),
-      Animated.timing(
-        this.state.moveLeft,
-        {
-          toValue: 25,
-          duration: 100,
-          easing: Easing.linear,
-        },
-      ),
-      Animated.timing(
-        this.state.moveLeft,
-        {
-          toValue: 0,
-          duration: 100,
-          easing: Easing.linear,
-        },
-      ),
-      Animated.timing(
-        this.state.moveRight,
-        {
-          toValue: 25,
-          duration: 100,
-          easing: Easing.linear,
-        },
-      ),
-      Animated.timing(
-        this.state.moveRight,
-        {
-          toValue: 0,
-          duration: 100,
-          easing: Easing.linear,
-        },
-      ),
-      Animated.timing(
-        this.state.moveLeft,
-        {
-          toValue: 25,
-          duration: 100,
-          easing: Easing.linear,
-        },
-      ),
-      Animated.timing(
-        this.state.moveLeft,
-        {
-          toValue: 0,
-          duration: 100,
-          easing: Easing.linear,
-        },
-      ),
-    ]).start();
-  }
-
   componentWillUnmount() {
     if (this.resetPinCodeTimeout) {
       clearTimeout(this.resetPinCodeTimeout);
@@ -180,18 +100,31 @@ export default class PinCode extends React.Component<Props, State> {
   render() {
     const { showForgotButton } = this.props;
     const numActiveDots = this.state.passCode.length;
-    const { moveRight, moveLeft } = this.state;
 
-    console.log(moveRight);
-    // console.log(this.props);
-    // console.log(this.state);
+    console.log(this.props);
+
+    if (this.props.pinError) {
+      Animated.sequence([
+        Animated.timing(
+          this.state.errorShake,
+          {
+            toValue: 1,
+            duration: 500,
+            easing: Easing.linear,
+          },
+        ),
+      ]).start();
+    }
 
     return (
       <React.Fragment>
         <PinDotsWrapperAnimated flex={1} style={{
-            ...this.props.style,
-            paddingLeft: moveRight,
-            paddingRight: moveLeft,
+            transform: [{
+                translateX: this.state.errorShake.interpolate({
+                    inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
+                    outputRange: [0, -10, 10, -10, 10, -5, 5, 0],
+                }),
+            }],
         }}>
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
         </PinDotsWrapperAnimated>
