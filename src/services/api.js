@@ -11,6 +11,7 @@ import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
 import { USERNAME_EXISTS, API_REGISTRATION_FAILED } from 'constants/walletConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
@@ -146,6 +147,33 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
     }))
     .then(({ data }) => data)
     .then(({ notifications }) => notifications)
+    .then(notifications => {
+      return notifications.map(notification => {
+        if (notification.type !== TRANSACTION_EVENT) return notification;
+
+        const {
+          type: notificationType,
+          payload: {
+            fromAddress,
+            toAddress,
+            txHash,
+            ...restPayload
+          },
+          ...rest
+        } = notification;
+
+        return {
+          type: notificationType,
+          payload: {
+            to: toAddress,
+            from: fromAddress,
+            hash: txHash,
+            ...restPayload,
+          },
+          ...rest,
+        };
+      });
+    })
     .catch(() => []);
 };
 

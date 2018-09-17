@@ -1,7 +1,6 @@
 // @flow
 import {
   SET_HISTORY,
-  UPDATE_HISTORY_NOTIFICATIONS,
   TRANSACTION_EVENT,
 } from 'constants/historyConstants';
 import { UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
@@ -20,10 +19,7 @@ export const fetchTransactionsHistoryAction = (walletAddress: string, asset: str
     if (!history.length) return;
     dispatch({
       type: SET_HISTORY,
-      payload: {
-        transactions: history,
-        asset,
-      },
+      payload: history,
     });
   };
 };
@@ -54,7 +50,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     // check if some assets are not enabled
     const myAddress = wallet.address.toUpperCase();
     const missedAssets = mappedHistoryNotifications
-      .filter(tx => tx.fromAddress.toUpperCase() !== myAddress)
+      .filter(tx => tx.from.toUpperCase() !== myAddress)
       .reduce((memo, { asset: ticker }) => {
         if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
 
@@ -72,7 +68,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     }
 
     dispatch({
-      type: UPDATE_HISTORY_NOTIFICATIONS,
+      type: SET_HISTORY,
       payload: mappedHistoryNotifications,
     });
   };

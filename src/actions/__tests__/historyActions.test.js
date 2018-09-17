@@ -45,7 +45,7 @@ describe('History Actions', () => {
       it('should call the dispatch function', () => {
         expect(dispatchMock).toBeCalledWith({
           type: SET_HISTORY,
-          payload: { transactions, asset },
+          payload: transactions,
         });
       });
     });
