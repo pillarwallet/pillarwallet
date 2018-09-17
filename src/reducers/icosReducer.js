@@ -17,7 +17,7 @@ const initialState = {
   instructions: {},
 };
 
-export default function invitationsReducer(
+export default function icosReducer(
   state: ICOsReducerState = initialState,
   action: ICOsReducerAction,
 ) {
