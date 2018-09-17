@@ -7,7 +7,7 @@ const nextWeekMockDate = new Date().setDate(todayMockDate.getDate() + 7);
 
 export default [{
   id: '1', // This will be a UUID
-  name: 'PROJECT001',
+  name: '2030.io',
   symbol: 'P01', // Assumed data
   address: '0xPROJECT001', // Assumed data
   decimals: 18, // Assumed data
@@ -30,7 +30,7 @@ export default [{
       nivauraProjectId: 1,
       baseCurrency: 'GBP',
       totalSupply: 100000000,
-      totalLocked: 2440000,
+      totalLocked: 9440000,
       icoAddress: null,
       icoStartingBlockNumber: null,
       nationalityRestriction: false,
@@ -87,7 +87,7 @@ export default [{
   ],
 }, {
   id: '3',
-  name: 'default2',
+  name: 'Takken',
   symbol: 'de2', // Assumed data
   address: '0xdefault2', // Assumed data
   decimals: 18, // Assumed data

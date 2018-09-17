@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
+import { format } from 'date-fns';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
@@ -20,6 +21,7 @@ type Props = {
   goal: number,
   raised: number,
   inner?: boolean,
+  iconUrl?: string,
   description?: string,
 }
 
@@ -165,11 +167,12 @@ const IcoCard = (props: Props) => {
     onPress,
     inner,
     description,
+    iconUrl,
   } = props;
 
   const raisedInPercent = (Math.floor((raised / goal) * 100));
   const labelOutside = isLabelOutside(raisedInPercent);
-  const goalCurrencySymbol = getCurrencySymbol(goalCurrency);
+  const goalCurrencySymbol = getCurrencySymbol(goalCurrency) || goalCurrency;
 
   return (
     <CardWrapper>
@@ -192,7 +195,7 @@ const IcoCard = (props: Props) => {
                 height: 60,
                 width: 60,
               }}
-              source={{ uri: 'https://mediaserver.responsesource.com/press-release/81489/TwentyThirty+offical+logo.png' }}
+              source={{ uri: iconUrl }}
               resizeMode="contain"
             />}
           </Row>
@@ -257,7 +260,7 @@ const IcoCard = (props: Props) => {
                 End date
               </ColumnLabel>
               <ColumnValue>
-                {endDate}
+                {format(new Date(endDate), 'D MMM YYYY')}
               </ColumnValue>
             </Column>
             <Column width="33.33333%">
