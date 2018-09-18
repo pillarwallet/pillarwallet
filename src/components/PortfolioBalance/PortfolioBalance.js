@@ -53,13 +53,9 @@ class PortfolioBalance extends React.Component<Props, {}> {
       label,
     } = this.props;
 
-    if (!Object.keys(rates).length || !Object.keys(assets).length) {
-      return null;
-    }
-
-    let portfolioBalance = this.calculatePortfolioBalance(assets, rates, balances);
+    const portfolioBalances = this.calculatePortfolioBalance(assets, rates, balances);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    portfolioBalance = formatMoney(portfolioBalance[fiatCurrency]);
+    const portfolioBalance = formatMoney(portfolioBalances[fiatCurrency] || 0);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
 
     return (
