@@ -192,7 +192,7 @@ class ICOScreen extends React.Component<Props, State> {
 
     return (
       <Container color={baseColors.snowWhite}>
-        <Header onClose={this.navigateBack} />
+        <Header onBack={this.navigateBack} title="ico" />
         <ScrollWrapper
           onScrollEndDrag={() => { }}
           refreshControl={
@@ -209,7 +209,7 @@ class ICOScreen extends React.Component<Props, State> {
                 id={id}
                 onPress={() => { }}
                 title={name}
-                status={icoPhase}
+                status={icoStatus}
                 goal={goal}
                 raised={raised}
                 goalCurrency={baseCurrency}
