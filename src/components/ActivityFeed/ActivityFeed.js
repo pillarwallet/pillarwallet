@@ -147,7 +147,6 @@ type Props = {
   customFeedData?: Object,
   contacts: Object,
   invitations: Object,
-  historyNotifications: Object,
   additionalFiltering?: Function,
 };
 
@@ -232,20 +231,9 @@ class ActivityFeed extends React.Component<Props, State> {
     resetUnread(contact.username);
   };
 
-  mapTransactionsHistory(history, historyNotifications, contacts) {
+  mapTransactionsHistory(history, contacts) {
     const concatedHistory = history
       .map(({ ...rest }) => ({ type: TRANSACTION_EVENT, ...rest }))
-      .concat(historyNotifications.map(({
-        toAddress,
-        fromAddress,
-        txHash,
-        ...rest
-      }) => ({
-        hash: txHash,
-        to: toAddress,
-        from: fromAddress,
-        ...rest,
-      })))
       .map(({ to, from, ...rest }) => {
         const contact = contacts.find(({ ethAddress }) => {
           return from.toUpperCase() === ethAddress.toUpperCase()
@@ -371,7 +359,6 @@ class ActivityFeed extends React.Component<Props, State> {
       notifications,
       contacts,
       invitations,
-      historyNotifications,
       history,
       additionalFiltering,
       customFeedData,
@@ -383,7 +370,7 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.state;
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-    const mappedHistory = this.mapTransactionsHistory(history, historyNotifications, mappedContacts);
+    const mappedHistory = this.mapTransactionsHistory(history, mappedContacts);
     const chatNotifications = [];
     /* chats.chats
       .map((
@@ -445,7 +432,7 @@ class ActivityFeed extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   notifications: { data: notifications },
-  history: { data: history, historyNotifications },
+  history: { data: history },
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
@@ -453,7 +440,6 @@ const mapStateToProps = ({
   contacts,
   notifications,
   history,
-  historyNotifications,
   invitations,
   assets: Object.values(assets),
   wallet,

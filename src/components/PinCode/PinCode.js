@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { Animated, Easing } from 'react-native';
 import styled from 'styled-components/native';
 import KeyPad from 'components/KeyPad';
 import { Wrapper } from 'components/Layout';
@@ -15,15 +16,19 @@ type Props = {
   onForgotPin?: Function,
   pageInstructions?: string,
   showForgotButton?: boolean,
+  pinError?: boolean,
 };
 
 type State = {
   passCode: string[],
+  errorShake: Animated.Value,
 };
 
 const PinDotsWrapper = styled(Wrapper)`
   justify-content: center;
 `;
+
+const PinDotsWrapperAnimated = Animated.createAnimatedComponent(PinDotsWrapper);
 
 export default class PinCode extends React.Component<Props, State> {
   resetPinCodeTimeout: any | TimeoutID;
@@ -36,7 +41,27 @@ export default class PinCode extends React.Component<Props, State> {
 
   state = {
     passCode: [],
+    errorShake: new Animated.Value(0),
   };
+
+  componentDidMount() {
+    if (this.props.pinError) {
+      Animated.timing(
+        this.state.errorShake,
+        {
+          toValue: 1,
+          duration: 500,
+          easing: Easing.linear,
+        },
+      ).start();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.resetPinCodeTimeout) {
+      clearTimeout(this.resetPinCodeTimeout);
+    }
+  }
 
   handleButtonPressed = (value: any) => {
     switch (value) {
@@ -87,21 +112,24 @@ export default class PinCode extends React.Component<Props, State> {
     }
   };
 
-  componentWillUnmount() {
-    if (this.resetPinCodeTimeout) {
-      clearTimeout(this.resetPinCodeTimeout);
-    }
-  }
-
   render() {
     const { showForgotButton } = this.props;
     const numActiveDots = this.state.passCode.length;
-
     return (
       <React.Fragment>
-        <PinDotsWrapper flex={1}>
+        <PinDotsWrapperAnimated
+          flex={1}
+          style={{
+            transform: [{
+                translateX: this.state.errorShake.interpolate({
+                    inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
+                    outputRange: [0, -10, 10, -10, 10, -5, 5, 0],
+                }),
+            }],
+          }}
+        >
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
-        </PinDotsWrapper>
+        </PinDotsWrapperAnimated>
         <KeyPad
           type="pincode"
           options={{ showForgotButton }}
