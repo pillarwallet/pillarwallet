@@ -48,7 +48,6 @@ type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string, indexFrom?: number) => Function,
   history: Transaction[],
-  historyNotifications: Object[],
   assets: Assets,
   balances: Balances,
   wallet: Object,
@@ -297,7 +296,7 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets, balances },
   rates: { data: rates },
-  history: { data: history, historyNotifications },
+  history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
@@ -306,7 +305,6 @@ const mapStateToProps = ({
   balances,
   rates,
   history,
-  historyNotifications,
   baseFiatCurrency,
 });
 

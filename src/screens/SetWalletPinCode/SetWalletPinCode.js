@@ -53,6 +53,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
           onPinChanged={this.handlePinChange}
           pageInstructions="Setup your Pincode"
           showForgotButton={false}
+          pinError={!!error}
         />
       </Container>
     );

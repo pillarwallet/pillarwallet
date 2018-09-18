@@ -8,7 +8,7 @@ import Icon from 'components/Icon';
 
 type Props = {
   title: string,
-  onPress: Function,
+  onPress?: Function,
   disabled?: boolean,
   secondary?: boolean,
   danger?: boolean,

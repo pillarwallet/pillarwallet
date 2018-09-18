@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
-import { baseColors, fontSizes, UIColors, itemSizes } from 'utils/variables';
+import { baseColors, fontSizes, itemSizes, spacing } from 'utils/variables';
 import ContactCard from 'components/ContactCard';
 import Separator from 'components/Separator';
 import { SubHeading, BaseText } from 'components/Typography';
@@ -25,11 +25,11 @@ const ContactCardList = styled.FlatList`
 
 const LocalContacts = styled.View`
   height: 140px;
-  background-color: ${baseColors.lightGray};
+  background-color: ${baseColors.lighterGray};
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-style: solid;
-  border-color: ${UIColors.defaultBorderColor};
+  border-color: ${baseColors.mediumLightGray};
 `;
 
 const LocalContactsScrollView = styled.ScrollView`
@@ -42,7 +42,7 @@ const LocalContactsSubHeading = styled(SubHeading)`
 const LocalContactsItem = styled.TouchableOpacity`
   align-items: center;
   width: 64px;
-  margin: 0 8px;
+  margin: 0 ${spacing.rhythm / 2}px;
 `;
 
 const LocalContactsItemAvatarWrapper = styled.View`
@@ -56,6 +56,8 @@ const LocalContactsItemAvatarWrapper = styled.View`
   shadow-radius: 2px;
   shadow-opacity: 0.1;
   margin-bottom: 8px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const LocalContactsItemName = styled(BaseText)`
