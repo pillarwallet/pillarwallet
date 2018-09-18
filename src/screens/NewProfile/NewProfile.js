@@ -180,6 +180,8 @@ class NewProfile extends React.Component<Props, State> {
   }
 
   render() {
+    console.log(this.state);
+    console.log(this.props);
     const { value, formOptions } = this.state;
     const { walletState, session, retry } = this.props;
     const isUsernameValid = value && value.username && value.username.length > 0;
