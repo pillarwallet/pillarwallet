@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { View, RefreshControl, FlatList } from 'react-native';
 import styled from 'styled-components/native';
+import { format } from 'date-fns';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
@@ -93,31 +94,48 @@ class ICOScreen extends React.Component<Props, State> {
     const { icoData } = navigation.state.params;
     const {
       id,
-      title,
-      status,
+      name,
+      symbol,
+      // address,
+      // decimals,
+      description,
+      iconUrl,
+      // socialMedia,
+      // website,
+      // whitepaper,
+      // nivauraProjectId,
+      baseCurrency,
+      totalSupply,
+      totalLocked,
+      // icoAddress,
+      // icoStartingBlockNumber,
+      nationalityRestriction,
+      plannedOpeningDate,
+      plannedClosingDate,
+      // links,
+      minimumContribution,
+      maximumContribution,
+      icoStatus,
+      icoPhase,
+      unitPrice,
+      supportedCurrencies,
       goal,
       raised,
-      goalCurrency,
-      endDate,
-      startDate,
-      description,
-      tokenPrice,
-      accepted,
-      maxSupply,
-      lockedTokens,
-      tokenType,
-      restricted,
-      minContribution,
-      maxContribution,
-      tokenIssue,
     } = icoData;
 
-    const goalCurrencySymbol = getCurrencySymbol(goalCurrency);
+    const startDate = format(new Date(plannedOpeningDate), 'D MMM YYYY');
+    const endDate = format(new Date(plannedClosingDate), 'D MMM YYYY');
+
+    // const {
+    //     : [ { service: 'twitter', username: 'example' } ],
+    // } = socialMedia,
+
+    const goalCurrencySymbol = getCurrencySymbol(baseCurrency) || baseCurrency;
 
     const icoInfo = [
       {
         label: 'Ticker',
-        value: 'TKN',
+        value: symbol,
       },
       {
         label: 'Dates',
@@ -125,7 +143,7 @@ class ICOScreen extends React.Component<Props, State> {
       },
       {
         label: 'Token price',
-        value: `${goalCurrencySymbol}${tokenPrice} per token`,
+        value: `${goalCurrencySymbol}${unitPrice} per token`,
       },
       {
         label: 'Goal',
@@ -133,35 +151,35 @@ class ICOScreen extends React.Component<Props, State> {
       },
       {
         label: 'Accepted',
-        value: accepted,
+        value: supportedCurrencies,
       },
       {
         label: 'Max Supply',
-        value: `${formatMoney(maxSupply, 0, 3, ',', '.', false)} TKN`,
+        value: `${formatMoney(totalSupply, 0, 3, ',', '.', false)} TKN`,
       },
       {
         label: 'Locked tokens',
-        value: `${formatMoney(lockedTokens, 0, 3, ',', '.', false)} TKN`,
+        value: `${formatMoney(totalLocked, 0, 3, ',', '.', false)} TKN`,
       },
       {
         label: 'Token type',
-        value: tokenType,
+        value: '',
       },
       {
         label: 'Restricted',
-        value: restricted,
+        value: nationalityRestriction || 'None',
       },
       {
         label: 'Min. contribution',
-        value: minContribution,
+        value: minimumContribution,
       },
       {
         label: 'Max. contribution',
-        value: maxContribution,
+        value: maximumContribution,
       },
       {
         label: 'Token issue',
-        value: tokenIssue,
+        value: icoStatus,
       },
     ];
 
@@ -183,14 +201,15 @@ class ICOScreen extends React.Component<Props, State> {
                 inner
                 id={id}
                 onPress={() => {}}
-                title={title}
-                status={status}
+                title={name}
+                status={icoPhase}
                 goal={goal}
                 raised={raised}
-                goalCurrency={goalCurrency}
-                endDate={endDate}
-                startDate={startDate}
+                goalCurrency={baseCurrency}
+                endDate={plannedClosingDate}
+                startDate={plannedOpeningDate}
                 description={description}
+                iconUrl={iconUrl}
               />
             </Transition>
           </ICOWrapper>

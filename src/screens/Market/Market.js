@@ -29,17 +29,18 @@ class MarketScreen extends React.Component<Props> {
     const ico = { ...item, ...item.icos[0] };
     const goal = ico.unitPrice * ico.totalSupply;
     const raised = ico.unitPrice * ico.totalLocked;
+    const allIcoData = { ...ico, goal, raised };
     return (
       <IcoCard
         id={ico.id}
         title={ico.name}
-        status={ico.icoStatus}
+        status={ico.icoPhase}
         goal={goal}
         raised={raised}
         iconUrl={ico.iconUrl}
         goalCurrency={ico.baseCurrency}
         endDate={ico.plannedClosingDate}
-        onPress={() => this.goToICO(ico)}
+        onPress={() => this.goToICO(allIcoData)}
       />
     );
   };

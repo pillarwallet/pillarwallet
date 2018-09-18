@@ -10,6 +10,7 @@ import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/v
 import LinearGradient from 'react-native-linear-gradient';
 import Countdown from 'components/Countdown';
 import TruncatedText from 'components/TruncatedText';
+import CircularProgress from 'components/CircularStatus';
 
 type Props = {
   id: string,
@@ -173,6 +174,8 @@ const IcoCard = (props: Props) => {
   const raisedInPercent = (Math.floor((raised / goal) * 100));
   const labelOutside = isLabelOutside(raisedInPercent);
   const goalCurrencySymbol = getCurrencySymbol(goalCurrency) || goalCurrency;
+  // Adroid does not show rounded corner on 50%;
+  const adjustedRaisedInPercent = raisedInPercent === 50 ? 50.5 : raisedInPercent;
 
   return (
     <CardWrapper>
@@ -269,6 +272,26 @@ const IcoCard = (props: Props) => {
               </ColumnLabel>
               <Countdown endDate={endDate} />
             </Column>
+          </Row>}
+          {!!inner &&
+          <Row alignCenter>
+            <CircularProgress
+              circleSize={180}
+              statusWidth={16}
+              status={adjustedRaisedInPercent}
+              label={raisedInPercent.toString()}
+              statusBackgroundWidth={22}
+            >
+              <CachedImage
+                key={id}
+                style={{
+                  height: 90,
+                  width: 90,
+                }}
+                source={{ uri: iconUrl }}
+                resizeMode="contain"
+              />
+            </CircularProgress>
           </Row>}
         </InnerWrapper>
       </TouchableWithoutFeedback>

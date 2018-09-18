@@ -1,0 +1,6 @@
+{
+  "name": "CircularStatus",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./CircularStatus.js"
+}
