@@ -44,6 +44,25 @@ export default class PinCode extends React.Component<Props, State> {
     errorShake: new Animated.Value(0),
   };
 
+  componentDidMount() {
+    if (this.props.pinError) {
+      Animated.timing(
+        this.state.errorShake,
+        {
+          toValue: 1,
+          duration: 500,
+          easing: Easing.linear,
+        },
+      ).start();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.resetPinCodeTimeout) {
+      clearTimeout(this.resetPinCodeTimeout);
+    }
+  }
+
   handleButtonPressed = (value: any) => {
     switch (value) {
       case KEYPAD_BUTTON_DELETE: return this.handleKeyPressDelete();
@@ -93,27 +112,9 @@ export default class PinCode extends React.Component<Props, State> {
     }
   };
 
-  componentWillUnmount() {
-    if (this.resetPinCodeTimeout) {
-      clearTimeout(this.resetPinCodeTimeout);
-    }
-  }
-
   render() {
     const { showForgotButton } = this.props;
     const numActiveDots = this.state.passCode.length;
-
-    if (this.props.pinError) {
-      Animated.timing(
-        this.state.errorShake,
-        {
-          toValue: 1,
-          duration: 500,
-          easing: Easing.linear,
-        },
-      ).start();
-    }
-
     return (
       <React.Fragment>
         <PinDotsWrapperAnimated
