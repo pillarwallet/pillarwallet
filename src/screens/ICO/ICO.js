@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { View, RefreshControl, FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import { format } from 'date-fns';
+import { format, distanceInWords } from 'date-fns';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
@@ -59,13 +59,16 @@ const Separator = styled(View)`
   background-color: ${baseColors.lightGray}
 `;
 
+const PENDING = 'Pending';
+
 class ICOScreen extends React.Component<Props, State> {
   navigateBack = () => {
     this.props.navigation.goBack();
   };
 
   navigateToParticipate = () => {
-    this.props.navigation.navigate(PARTICIPATE_IN_ICO_FLOW);
+    const { icoData } = this.props.navigation.state.params;
+    this.props.navigation.navigate(PARTICIPATE_IN_ICO_FLOW, { icoData });
   };
 
   renderIcoInfoRow = ({ item: icoInfo }: Object) => {
@@ -155,15 +158,15 @@ class ICOScreen extends React.Component<Props, State> {
       },
       {
         label: 'Max Supply',
-        value: `${formatMoney(totalSupply, 0, 3, ',', '.', false)} TKN`,
+        value: `${formatMoney(totalSupply, 0, 3, ',', '.', false)} ${symbol}`,
       },
       {
         label: 'Locked tokens',
-        value: `${formatMoney(totalLocked, 0, 3, ',', '.', false)} TKN`,
+        value: `${formatMoney(totalLocked, 0, 3, ',', '.', false)} ${symbol}`,
       },
       {
         label: 'Token type',
-        value: '',
+        value: 'ERC-20',
       },
       {
         label: 'Restricted',
@@ -182,16 +185,20 @@ class ICOScreen extends React.Component<Props, State> {
         value: icoStatus,
       },
     ];
+    const isPending = icoStatus === PENDING;
+    const participateBtnText = isPending
+      ? `Starts in ${distanceInWords(new Date(), new Date(plannedOpeningDate), { includeSeconds: true })}`
+      : 'Participate';
 
     return (
       <Container color={baseColors.snowWhite}>
         <Header onClose={this.navigateBack} />
         <ScrollWrapper
-          onScrollEndDrag={() => {}}
+          onScrollEndDrag={() => { }}
           refreshControl={
             <RefreshControl
               refreshing={false}
-              onRefresh={() => {}}
+              onRefresh={() => { }}
             />
           }
         >
@@ -200,7 +207,7 @@ class ICOScreen extends React.Component<Props, State> {
               <IcoCard
                 inner
                 id={id}
-                onPress={() => {}}
+                onPress={() => { }}
                 title={name}
                 status={icoPhase}
                 goal={goal}
@@ -229,7 +236,7 @@ class ICOScreen extends React.Component<Props, State> {
             refreshing={false}
           />
           <ButtonWrapper>
-            <Button block title="Participate" onPress={this.navigateToParticipate} />
+            <Button disabled={isPending} block title={participateBtnText} onPress={this.navigateToParticipate} />
           </ButtonWrapper>
         </ScrollWrapper>
       </Container>

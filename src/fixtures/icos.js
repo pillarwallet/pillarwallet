@@ -39,7 +39,7 @@ export const icos = [{
       links: [],
       minimumContribution: 10,
       maximumContribution: 200,
-      icoStatus: 'Pending',
+      icoStatus: 'Active',
       icoPhase: 'PreSale',
       unitPrice: 0.025,
       supportedCurrencies: 'GBP,ETH,BTC',
