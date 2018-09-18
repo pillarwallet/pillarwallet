@@ -38,6 +38,7 @@ export const loginAction = (pin: string) => {
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       api.init(wallet.privateKey);
+      console.log(wallet.privateKey);
 
       const { user = {} } = await storage.get('user');
       Crashlytics.setUserIdentifier(user.username);

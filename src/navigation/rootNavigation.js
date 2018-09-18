@@ -5,6 +5,7 @@ import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
+import WelcomeBackScreen from 'screens/WelcomeBack';
 import NewProfileScreen from 'screens/NewProfile';
 import SecurityConfirmScreen from 'screens/SecurityConfirm';
 import BackupPhraseScreen from 'screens/BackupPhrase';
@@ -28,6 +29,7 @@ import {
   BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
+  WELCOME_BACK,
   NEW_PROFILE,
   LEGAL_TERMS,
   IMPORT_WALLET,
@@ -67,6 +69,7 @@ const onBoardingFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
+  [WELCOME_BACK]: WelcomeBackScreen,
   [NEW_PROFILE]: NewProfileScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
 }, StackNavigatorConfig);
