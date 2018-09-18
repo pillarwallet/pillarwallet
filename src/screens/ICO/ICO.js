@@ -119,7 +119,7 @@ class ICOScreen extends React.Component<Props, State> {
       minimumContribution,
       maximumContribution,
       icoStatus,
-      icoPhase,
+      // icoPhase,
       unitPrice,
       supportedCurrencies,
       goal,
