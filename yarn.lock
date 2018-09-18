@@ -10054,6 +10054,14 @@ react-native-splash-screen@^3.1.1:
   version "3.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-splash-screen/-/react-native-splash-screen-3.1.1.tgz#1a4e46c9fdce53ff52af2a2cb4181788c4e30b30"
 
+react-native-swipeout@^2.3.6:
+  version "2.3.6"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-swipeout/-/react-native-swipeout-2.3.6.tgz#47dac8a835825cf3f2eef9e495574a3d9ab6d3fa"
+  dependencies:
+    create-react-class "^15.6.0"
+    prop-types "^15.5.10"
+    react-tween-state "^0.1.5"
+
 react-native-tab-view@^0.0.77:
   version "0.0.77"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-tab-view/-/react-native-tab-view-0.0.77.tgz#11ceb8e7c23100d07e628dc151b57797524d00d4"
