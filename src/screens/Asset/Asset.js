@@ -28,11 +28,11 @@ import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
 
-const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.snowWhite), baseColors.snowWhite];
+const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.white), baseColors.white];
 
 const AssetDescriptionToggleWrapperActiveColors = [
-  transparentize(1, baseColors.snowWhite),
-  transparentize(1, baseColors.snowWhite),
+  transparentize(1, baseColors.white),
+  transparentize(1, baseColors.white),
 ];
 
 const activeModalResetState = {
@@ -73,8 +73,7 @@ type State = {
 
 const AssetCardWrapper = styled.View`
   flex: 1;
-  padding-left: 0;
-  padding-right: ${spacing.rhythm - 2}px;
+  padding: 0 ${spacing.rhythm - 2}px;
 `;
 
 const AssetDescriptionWrapper = styled.View`
@@ -217,7 +216,7 @@ class AssetScreen extends React.Component<Props, State> {
             />
           }
         >
-          <AssetCardWrapper regularPadding>
+          <AssetCardWrapper>
             <Transition shared={assetData.name}>
               <AssetCard
                 id={assetData.token}
