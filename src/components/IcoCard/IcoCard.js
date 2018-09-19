@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { format, differenceInDays } from 'date-fns';
+import { format, differenceInDays, differenceInHours } from 'date-fns';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
@@ -21,7 +21,8 @@ type Props = {
   startDate: any,
   goalCurrency: string,
   goal: number,
-  raised: number,
+  tokensSold: number,
+  totalSupply: number,
   inner?: boolean,
   iconUrl?: string,
   description?: string,
@@ -162,7 +163,8 @@ const IcoCard = (props: Props) => {
     title,
     status,
     goal,
-    raised,
+    tokensSold,
+    totalSupply,
     goalCurrency,
     startDate,
     endDate,
@@ -173,41 +175,29 @@ const IcoCard = (props: Props) => {
     isPending,
   } = props;
 
-  // const raisedInPercent = (Math.floor((raised / goal) * 100));
-  const raisedInPercent = (Math.floor((raised / goal) * 100));
+  const tokensSoldInPercent = (tokensSold * 100) / totalSupply;
+  const progressInPercent = isPending ? 0 :
+    (Math.floor(
+      ((differenceInHours(new Date(), startDate) * 360) /
+      (differenceInHours(endDate, startDate) * 360)) * 100)
+    );
   const goalCurrencySymbol = getCurrencySymbol(goalCurrency) || goalCurrency;
-  const adjustedProgress = raisedInPercent < 7 ? 7 : raisedInPercent;
-  // Adroid does not show rounded corner on 50%;
-  const adjustedRaisedInPercent = (statusPercents) => {
-    switch (statusPercents) {
-      case 0: {
-        return 1;
-      }
-      case 50: {
-        return 50.5;
-      }
-      default: {
-        return statusPercents;
-      }
-    }
-  };
+  const adjustedProgress = progressInPercent < 7 ? 7 : progressInPercent;
 
   const timerLabel = isPending ? 'Starts in' : 'Time left';
   const InnerCountDown = () => {
-    const remainingTimeInDays = differenceInDays(new Date(), startDate);
+    const remainingTimeInDays = isPending ?
+      differenceInDays(startDate, new Date()) :
+      differenceInDays(endDate, new Date());
 
-    if (!isPending) {
+    if (remainingTimeInDays < 1) {
       return (
-        <Countdown endDate={endDate} fontSize={fontSizes.medium} />
-      );
-    } else if (remainingTimeInDays < 1) {
-      return (
-        <Countdown endDate={startDate} fontSize={fontSizes.medium} />
+        <Countdown endDate={isPending ? startDate : endDate} fontSize={fontSizes.medium} />
       );
     }
     return (
       <ColumnValue xl>
-        {remainingTimeInDays} days
+        {remainingTimeInDays} {remainingTimeInDays === 1 ? 'day' : 'days'}
       </ColumnValue>
     );
   };
@@ -245,15 +235,7 @@ const IcoCard = (props: Props) => {
           <Row alignCenter marginTop={26}>
             <Column center>
               <ColumnValue xl>
-                802
-              </ColumnValue>
-              <ColumnLabel>
-                Investors
-              </ColumnLabel>
-            </Column>
-            <Column center>
-              <ColumnValue xl>
-                63.6%
+                {tokensSoldInPercent}%
               </ColumnValue>
               <ColumnLabel>
                 Tokens sold
@@ -273,9 +255,9 @@ const IcoCard = (props: Props) => {
               end={{ x: 1, y: 0 }}
               colors={[baseColors.mantis, baseColors.oliveDrab]}
               progress={adjustedProgress}
-              full={raisedInPercent === 100}
+              full={progressInPercent === 100}
             >
-              <ProgressLabel>{raisedInPercent}%</ProgressLabel>
+              <ProgressLabel>{progressInPercent}%</ProgressLabel>
             </StyledLinearGradient>
           </ProgressBar>}
           {!inner &&
@@ -306,10 +288,11 @@ const IcoCard = (props: Props) => {
           {!!inner &&
           <Row alignCenter>
             <CircularProgress
+              isPending={isPending}
+              endDate={endDate}
+              startDate={startDate}
               circleSize={180}
               statusWidth={16}
-              status={adjustedRaisedInPercent(raisedInPercent)}
-              label={raisedInPercent.toString()}
               statusBackgroundWidth={22}
             >
               <CachedImage

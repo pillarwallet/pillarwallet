@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import { Svg, Path, G, Defs, LinearGradient, Stop, Text } from 'react-native-svg';
+import { differenceInHours } from 'date-fns';
 import { baseColors, fontSizes } from 'utils/variables';
 
 type Props = {
@@ -9,12 +10,46 @@ type Props = {
   statusWidth: number,
   statusBackgroundWidth: number,
   style?: Object,
-  status: number,
   children?: React.Node,
-  label: string,
+  isPending?: boolean,
+  endDate: any,
+  startDate: any,
 };
 
-export default class CircularProgress extends React.Component<Props, {}> {
+type State = {
+  label: string,
+  progress: number,
+}
+
+// Android does not show rounded corner on 25 and 50%;
+const getAdjustedProgressInPercent = (percents) => {
+  switch (percents) {
+    case 0: {
+      return 0.5;
+    }
+    case 25: {
+      return 25.5;
+    }
+    case 50: {
+      return 50.5;
+    }
+    default: {
+      return percents;
+    }
+  }
+};
+
+export default class CircularProgress extends React.Component<Props, State> {
+  interval: IntervalID;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      label: '0',
+      progress: 0,
+    };
+  }
+
   getCartesian(centerX: number, centerY: number, radius: number, angleInDeg: number) {
     const angleInRad = ((angleInDeg - 90) * Math.PI) / 180.0;
     return {
@@ -36,15 +71,55 @@ export default class CircularProgress extends React.Component<Props, {}> {
 
   clampStatus = (fill: number) => Math.min(100, Math.max(0, fill));
 
+  componentDidMount = () => {
+    const {
+      isPending,
+      endDate,
+      startDate,
+    } = this.props;
+
+    if (isPending) {
+      this.setState({
+        label: '0',
+        progress: 0.5,
+      });
+      return;
+    }
+
+    if (this.state.progress === 100) {
+      return;
+    }
+
+    this.interval = setInterval(() => {
+      const progressInPercent = Math.floor(
+        ((differenceInHours(new Date(), startDate) * 360) /
+          (differenceInHours(endDate, startDate) * 360)) * 100);
+
+      const adjustedProgressInPercent = getAdjustedProgressInPercent(progressInPercent);
+      if (this.state.progress !== adjustedProgressInPercent) {
+        this.setState({
+          label: adjustedProgressInPercent.toString(),
+          progress: adjustedProgressInPercent,
+        });
+      }
+
+      if (this.state.progress === 100) {
+        clearInterval(this.interval);
+      }
+    }, 1000);
+  };
+
   render() {
+    const {
+      label,
+      progress,
+    } = this.state;
     const {
       circleSize,
       statusWidth,
       statusBackgroundWidth,
       style,
-      status,
       children,
-      label,
     } = this.props;
 
     const paddingX = 40;
@@ -56,7 +131,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
     const backgroundPath = this.circlePath(halfSize, halfSize, halfSize - (statusWidth / 2), 0, 360);
 
     const circlePath = this.circlePath(halfSize, halfSize, halfSize - (statusWidth / 2), 0,
-      (360 * this.clampStatus(status)) / 100);
+      (360 * this.clampStatus(progress)) / 100);
     const offset = circleSize - (statusWidth * 2);
     const labelCircleSize = circleSize + 40;
     const halfLabelCircle = labelCircleSize / 2;
@@ -78,18 +153,21 @@ export default class CircularProgress extends React.Component<Props, {}> {
     const labelCirclePaddingY = (areaHeight - labelCircleSize) / 2;
 
     const end = this.getCartesian(halfLabelCircle, halfLabelCircle, halfLabelCircle - (statusWidth / 2),
-      ((360 * this.clampStatus(status)) / 100) * 0.9999);
+      ((360 * this.clampStatus(progress)) / 100) * 0.9999);
 
     const labelX = end.x + labelCirclePaddingX;
     const labelY = end.y + labelCirclePaddingY;
 
-    const strokeType = status < 10 ? baseColors.mantis : 'url(#grad)';
-    const textAnchorPos = (statusAmount) => {
-      if (statusAmount === 0 || statusAmount === 50 || statusAmount === 100) return 'middle';
-      if (statusAmount < 50) return 'start';
-      return 'end';
-    };
+    const strokeType = progress < 10 ? baseColors.mantis : 'url(#grad)';
 
+    const dxPos = () => {
+      if (progress === 100 || progress === 0 || progress === 0.5 || progress === 50.5) {
+        return -4;
+      } else if (progress > 47) {
+        return -15;
+      }
+      return 5;
+    };
     return (
       <View style={style}>
         <Svg
@@ -131,10 +209,11 @@ export default class CircularProgress extends React.Component<Props, {}> {
             <Text
               x={labelX}
               y={labelY}
-              dy="5"
+              dy={5}
+              dx={dxPos()}
               fontSize={fontSizes.tiny}
               fill={baseColors.darkGray}
-              textAnchor={textAnchorPos(parseInt(label, 2))}
+              textAnchor="middle"
             >
               {label}%
             </Text>

@@ -30,21 +30,21 @@ class MarketScreen extends React.Component<Props> {
   renderICOs = ({ item }: Object) => {
     const ico = { ...item, ...item.icos[0] };
     const goal = ico.unitPrice * ico.totalSupply;
-    const raised = ico.unitPrice * ico.totalLocked;
     const isPending = ico.icoStatus === PENDING;
     const allIcoData = {
       ...ico,
       goal,
-      raised,
       isPending,
     };
+    // TODO: pass proper "tokensSold" value (locked ≠ sold)
     return (
       <IcoCard
         id={ico.id}
         title={ico.name}
         status={ico.icoStatus}
         goal={goal}
-        raised={raised}
+        tokensSold={ico.totalLocked}
+        totalSupply={ico.totalSupply}
         iconUrl={ico.iconUrl}
         goalCurrency={ico.baseCurrency}
         startDate={ico.plannedOpeningDate}

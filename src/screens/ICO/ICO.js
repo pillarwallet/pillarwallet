@@ -191,7 +191,6 @@ class ICOScreen extends React.Component<Props, State> {
       unitPrice,
       supportedCurrencies,
       goal,
-      raised,
       isPending,
     } = icoData;
 
@@ -289,7 +288,8 @@ class ICOScreen extends React.Component<Props, State> {
               title={name}
               status={icoStatus}
               goal={goal}
-              raised={raised}
+              tokensSold={totalLocked}
+              totalSupply={totalSupply}
               goalCurrency={baseCurrency}
               endDate={plannedClosingDate}
               startDate={plannedOpeningDate}
