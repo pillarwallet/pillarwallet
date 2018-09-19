@@ -204,7 +204,7 @@ const IcoCard = (props: Props) => {
           </Row>
           {!!inner && !!description &&
           <Row>
-            <TruncatedText text={description} />
+            <TruncatedText lines={4} text={description} />
           </Row>}
           {!!inner &&
           <Row alignCenter marginTop={26}>

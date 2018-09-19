@@ -1,12 +1,20 @@
 // @flow
 import * as React from 'react';
-import { View, RefreshControl, FlatList } from 'react-native';
+import {
+  View,
+  RefreshControl,
+  TouchableNativeFeedback,
+  TouchableOpacity,
+  Platform,
+  Linking,
+} from 'react-native';
 import styled from 'styled-components/native';
 import { format, distanceInWords } from 'date-fns';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
@@ -30,12 +38,27 @@ const ButtonWrapper = styled(Wrapper)`
   padding: ${spacing.rhythm}px;
 `;
 
+const StyledFlatList = styled.FlatList`
+  margin-bottom: ${spacing.rhythm}px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.lightGray};
+`;
+
+const ContactsWrapper = styled(View)`
+  margin-bottom: ${spacing.rhythm}px;
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.lightGray};
+`;
+
 const ListRow = styled(View)`
   width: 100%;
   padding: 22px ${spacing.rhythm}px;
   flex-direction: row;
   background-color: ${baseColors.white};
   align-items: center;
+  justify-content: space-between;
 `;
 
 const ListRowItem = styled(BaseText)`
@@ -49,7 +72,8 @@ const ListRowItem = styled(BaseText)`
 
 const SeparatorWrapper = styled(View)`
   width: 100%;
-  padding: 0 ${spacing.rhythm}px;
+  padding-left: ${props => props.horizonalPadding ? spacing.rhythm : 0}px;
+  padding-right: ${props => props.horizonalPadding ? spacing.rhythm : 0}px;
   flex-direction: row;
 `;
 
@@ -71,6 +95,10 @@ class ICOScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(PARTICIPATE_IN_ICO_FLOW, { icoData });
   };
 
+  openLink = (address: string) => {
+    Linking.openURL(address).catch(() => {});
+  };
+
   renderIcoInfoRow = ({ item: icoInfo }: Object) => {
     return (
       <ListRow>
@@ -84,9 +112,52 @@ class ICOScreen extends React.Component<Props, State> {
     );
   };
 
-  renderSeparator = () => {
+  renderExternalLinksItem = ({ item: link }: Object) => {
+    if (Platform.OS === 'android') {
+      return (
+        <TouchableNativeFeedback
+          onPress={() => this.openLink(link.link)}
+          background={TouchableNativeFeedback.Ripple()}
+        >
+          <ListRow>
+            <ListRowItem label>
+              {link.label}
+            </ListRowItem>
+            <Icon
+              name="chevron-right"
+              style={{
+                fontSize: fontSizes.tiny,
+                color: baseColors.coolGrey,
+              }}
+            />
+          </ListRow>
+        </TouchableNativeFeedback>
+      );
+    }
     return (
-      <SeparatorWrapper>
+      <TouchableOpacity
+        onPress={() => this.openLink(link.link)}
+        underlayColor={baseColors.lightGray}
+      >
+        <ListRow>
+          <ListRowItem label>
+            {link.label}
+          </ListRowItem>
+          <Icon
+            name="chevron-right"
+            style={{
+              fontSize: fontSizes.tiny,
+              color: baseColors.coolGrey,
+            }}
+          />
+        </ListRow>
+      </TouchableOpacity>
+    );
+  };
+
+  renderSeparator = (padding?: number) => {
+    return (
+      <SeparatorWrapper horizonalPadding={padding}>
         <Separator />
       </SeparatorWrapper>
     );
@@ -104,8 +175,8 @@ class ICOScreen extends React.Component<Props, State> {
       description,
       iconUrl,
       // socialMedia,
-      // website,
-      // whitepaper,
+      website,
+      whitepaper,
       // nivauraProjectId,
       baseCurrency,
       totalSupply,
@@ -190,6 +261,17 @@ class ICOScreen extends React.Component<Props, State> {
       ? `Starts in ${distanceInWords(new Date(), new Date(plannedOpeningDate), { includeSeconds: true })}`
       : 'Participate';
 
+    const externalLinks = [
+      {
+        label: 'Whitepaper',
+        link: whitepaper,
+      },
+      {
+        label: 'Website',
+        link: website,
+      },
+    ];
+
     return (
       <Container color={baseColors.snowWhite}>
         <Header onBack={this.navigateBack} title="ico" />
@@ -220,21 +302,37 @@ class ICOScreen extends React.Component<Props, State> {
               />
             </Transition>
           </ICOWrapper>
-          <FlatList
+          <StyledFlatList
             keyExtractor={item => item.label}
             data={icoInfo}
             extraData={this.state}
             renderItem={this.renderIcoInfoRow}
-            ItemSeparatorComponent={this.renderSeparator}
+            ItemSeparatorComponent={() => this.renderSeparator(spacing.rhythm)}
             contentContainerStyle={{
               flexGrow: 1,
               backgroundColor: baseColors.white,
-              borderTopWidth: 1,
-              borderBottomWidth: 1,
-              borderColor: baseColors.lightGray,
             }}
             refreshing={false}
           />
+          <StyledFlatList
+            keyExtractor={item => item.label}
+            data={externalLinks}
+            extraData={this.state}
+            renderItem={this.renderExternalLinksItem}
+            ItemSeparatorComponent={() => this.renderSeparator()}
+            contentContainerStyle={{
+              flexGrow: 1,
+              backgroundColor: baseColors.white,
+            }}
+            refreshing={false}
+          />
+          <ContactsWrapper>
+            <ListRow>
+              <ListRowItem label>
+                Contacts
+              </ListRowItem>
+            </ListRow>
+          </ContactsWrapper>
           <ButtonWrapper>
             <Button disabled={isPending} block title={participateBtnText} onPress={this.navigateToParticipate} />
           </ButtonWrapper>

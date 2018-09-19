@@ -9,10 +9,12 @@ import { baseColors, spacing, fontSizes } from 'utils/variables';
 
 type Props = {
   text: string,
+  lines?: number,
 };
 
 type State = {
   expanded: boolean,
+  fullHeight: number,
 };
 
 const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.white), baseColors.white];
@@ -23,29 +25,35 @@ const AssetDescriptionToggleWrapperActiveColors = [
 ];
 
 const AssetDescriptionWrapper = styled.View`
-  height: ${props => (props.expanded ? 'auto' : '24px')};
   z-index: 10;
 `;
 
 const AssetDescriptionToggle = styled.TouchableOpacity`
-  padding: ${spacing.rhythm / 2}px 0 ${spacing.rhythm / 2}px;
 `;
 
 const AssetDescriptionToggleText = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.electricBlue};
-  line-height: 18px;
+  line-height: ${fontSizes.mediumLarge};
 `;
 
 const AssetDescriptionToggleWrapper = styled(LinearGradient)`
   position: absolute;
-  bottom: ${props => (props.expanded ? '-6px' : '-6px')};
+  bottom: ${props => (props.expanded ? 0 : 25)}px;
   right: 0;
   padding-left: 40px;
 `;
 
 const AssetDescription = styled(Paragraph)`
   padding-bottom: ${spacing.rhythm}px;
+  line-height: ${fontSizes.mediumLarge};
+`;
+
+const AbsoluteInvisibleTextToGetTheHeight = styled(Paragraph)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
 `;
 
 export default class TruncatedText extends React.Component<Props, State> {
@@ -53,6 +61,7 @@ export default class TruncatedText extends React.Component<Props, State> {
     super(props);
     this.state = {
       expanded: false,
+      fullHeight: 0,
     };
   }
 
@@ -60,13 +69,41 @@ export default class TruncatedText extends React.Component<Props, State> {
     this.setState({ expanded: !this.state.expanded });
   };
 
+  handleTextLayout = (e: any) => {
+    this.setState({ fullHeight: e.nativeEvent.layout.height });
+  };
+
   render() {
-    const { expanded } = this.state;
-    const { text } = this.props;
-    const shouldAssetDescriptionToggleShow = text.length > 40;
+    const {
+      expanded,
+      fullHeight,
+    } = this.state;
+    const {
+      text,
+      lines = 1,
+    } = this.props;
+
+    const truncatedHeight = lines * fontSizes.mediumLarge;
+    let shouldAssetDescriptionToggleShow = false;
+    if (fullHeight > truncatedHeight) {
+      shouldAssetDescriptionToggleShow = true;
+    }
+    const numberOfLines = !expanded ? lines : null;
+
     return (
-      <AssetDescriptionWrapper expanded={expanded}>
-        <AssetDescription small light>
+      <AssetDescriptionWrapper
+        expanded={expanded}
+      >
+        <AbsoluteInvisibleTextToGetTheHeight
+          onLayout={(e) => this.handleTextLayout(e)}
+        >
+          {text}
+        </AbsoluteInvisibleTextToGetTheHeight>
+        <AssetDescription
+          small
+          light
+          numberOfLines={numberOfLines}
+        >
           {text}
         </AssetDescription>
         <AssetDescriptionToggleWrapper
@@ -79,13 +116,12 @@ export default class TruncatedText extends React.Component<Props, State> {
           end={{ x: 0.5, y: 0 }}
           expanded={expanded}
         >
-          {shouldAssetDescriptionToggleShow && (
-            <AssetDescriptionToggle onPress={this.toggleText}>
-              <AssetDescriptionToggleText>
-                {expanded ? 'Less' : 'More'}
-              </AssetDescriptionToggleText>
-            </AssetDescriptionToggle>
-          )}
+          {!!shouldAssetDescriptionToggleShow &&
+          <AssetDescriptionToggle onPress={this.toggleText}>
+            <AssetDescriptionToggleText>
+              {expanded ? 'Less' : 'More'}
+            </AssetDescriptionToggleText>
+          </AssetDescriptionToggle>}
         </AssetDescriptionToggleWrapper>
       </AssetDescriptionWrapper>
     );

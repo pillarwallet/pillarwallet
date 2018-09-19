@@ -54,10 +54,11 @@ export default class CircularProgress extends React.Component<Props, {}> {
 
     const halfSize = circleSize / 2;
     const backgroundPath = this.circlePath(halfSize, halfSize, halfSize - (statusWidth / 2), 0, 360);
+
     const circlePath = this.circlePath(halfSize, halfSize, halfSize - (statusWidth / 2), 0,
       (360 * this.clampStatus(status)) / 100);
     const offset = circleSize - (statusWidth * 2);
-    const labelCircleSize = circleSize + 60;
+    const labelCircleSize = circleSize + 40;
     const halfLabelCircle = labelCircleSize / 2;
     const childTopPos = statusWidth + paddingY;
     const childLeftPos = statusWidth + paddingX;
@@ -125,8 +126,10 @@ export default class CircularProgress extends React.Component<Props, {}> {
             <Text
               x={labelX}
               y={labelY}
+              dy="5"
               fontSize={fontSizes.tiny}
               fill={baseColors.darkGray}
+              textAnchor={status > 50 ? 'end' : 'start'}
             >
               {label}%
             </Text>
