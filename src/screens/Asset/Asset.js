@@ -73,11 +73,13 @@ type State = {
 
 const AssetCardWrapper = styled.View`
   flex: 1;
-  padding: 0 ${spacing.rhythm - 2}px;
+  padding-left: 0;
+  padding-right: ${spacing.rhythm - 2}px;
 `;
 
 const AssetDescriptionWrapper = styled.View`
   height: ${props => (props.expanded ? 'auto' : '24px')};
+  padding: 0 ${spacing.rhythm - 2}px;
   z-index: 10;
 `;
 
