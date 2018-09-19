@@ -9,7 +9,7 @@ import {
   Linking,
 } from 'react-native';
 import styled from 'styled-components/native';
-import { format, distanceInWords } from 'date-fns';
+import { format } from 'date-fns';
 import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
@@ -20,6 +20,7 @@ import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import IcoCard from 'components/IcoCard';
 import { PARTICIPATE_IN_ICO_FLOW } from 'constants/navigationConstants';
 import { getCurrencySymbol, formatMoney } from 'utils/common';
+import Countdown from 'components/Countdown';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -34,7 +35,11 @@ const ICOWrapper = styled(Wrapper)`
 
 const ButtonWrapper = styled(Wrapper)`
   flex: 1;
+  width: 100%;
   padding: ${spacing.rhythm}px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 `;
 
 const StyledFlatList = styled.FlatList`
@@ -253,8 +258,9 @@ class ICOScreen extends React.Component<Props, State> {
         value: icoStatus,
       },
     ];
+
     const participateBtnText = isPending
-      ? `Starts in ${distanceInWords(new Date(), new Date(plannedOpeningDate), { includeSeconds: true })}`
+      ? 'Starts in '
       : 'Participate';
 
     const externalLinks = [
@@ -269,7 +275,7 @@ class ICOScreen extends React.Component<Props, State> {
     ];
 
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container color={baseColors.snowWhite} bottomPadding={120}>
         <Header onBack={this.navigateBack} title="ico" />
         <ScrollWrapper
           onScrollEndDrag={() => { }}
@@ -279,6 +285,9 @@ class ICOScreen extends React.Component<Props, State> {
               onRefresh={() => { }}
             />
           }
+          contentContainerStyle={{
+            paddingBottom: 100,
+          }}
         >
           <ICOWrapper>
             <IcoCard
@@ -329,10 +338,24 @@ class ICOScreen extends React.Component<Props, State> {
               </ListRowItem>
             </ListRow>
           </ContactsWrapper>
-          <ButtonWrapper>
-            <Button disabled={isPending} block title={participateBtnText} onPress={this.navigateToParticipate} />
-          </ButtonWrapper>
         </ScrollWrapper>
+        <ButtonWrapper>
+          <Button
+            disabledTransparent={isPending}
+            block
+            title={participateBtnText}
+            onPress={this.navigateToParticipate}
+          >
+            {!!isPending &&
+            <Countdown
+              endDate={plannedOpeningDate}
+              fontSize={fontSizes.medium}
+              fontColor={baseColors.white}
+              extendedDayLabel
+              lineHeight={fontSizes.large}
+            />}
+          </Button>
+        </ButtonWrapper>
       </Container>
     );
   }

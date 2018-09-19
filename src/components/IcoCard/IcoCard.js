@@ -52,7 +52,7 @@ const InnerWrapper = styled.View`
 const Row = styled.View`
   flex-direction: row;
   justify-content: ${props => props.alignCenter ? 'center' : 'space-between'};
-  align-items: ${props => props.alignTop ? 'flex-start' : 'center'};
+  align-items: ${props => props.alignVertical ? props.alignVertical : 'center'};
   padding: ${props => props.halfPadding ? '0 8px' : '0 16px'}; 
   margin-top: ${props => props.marginTop ? props.marginTop : 0}px;
 `;
@@ -150,7 +150,11 @@ const IcoCard = (props: Props) => {
 
     if (remainingTimeInDays < 1) {
       return (
-        <Countdown endDate={isPending ? startDate : endDate} fontSize={fontSizes.medium} />
+        <Countdown
+          endDate={isPending ? startDate : endDate}
+          fontSize={fontSizes.medium}
+          lineHeight={fontSizes.mediumLarge}
+        />
       );
     }
     return (
@@ -190,7 +194,7 @@ const IcoCard = (props: Props) => {
             <TruncatedText lines={4} text={description} />
           </Row>}
           {!!inner &&
-          <Row alignCenter marginTop={26}>
+          <Row alignVertical="flex-end" alignCenter marginTop={26}>
             <Column center>
               <ColumnValue xl>
                 {tokensSoldInPercent}%
@@ -213,7 +217,7 @@ const IcoCard = (props: Props) => {
             startDate={startDate}
           />}
           {!inner &&
-          <Row alignTop halfPadding>
+          <Row alignVertical="flex-start" halfPadding>
             <Column width="33.33333%">
               <ColumnLabel>
                 Goal
@@ -234,7 +238,7 @@ const IcoCard = (props: Props) => {
               <ColumnLabel>
                 {timerLabel}
               </ColumnLabel>
-              <Countdown endDate={isPending ? startDate : endDate} />
+              <Countdown endDate={isPending ? startDate : endDate} lineHeight={fontSizes.mediumLarge} />
             </Column>
           </Row>}
           {!!inner &&

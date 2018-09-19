@@ -7,6 +7,15 @@ import { fontSizes, fontTrackings, baseColors } from 'utils/variables';
 type Props = {
   endDate: string,
   fontSize?: number,
+  fontColor?: string,
+  lineHeight?: number,
+  extendedDayLabel?: boolean,
+}
+
+type ChildProps = {
+  children: React.Node,
+  fontSize?: number,
+  fontColor?: string,
 }
 
 type State = {
@@ -17,19 +26,23 @@ type State = {
   sec: number,
 }
 
-const CounterHolder = styled.View`
+const CounterHolder = styled.Text`
 `;
 
-const CountdownWrapper = styled.View`
+const CountdownWrapper = styled(MediumText)`
   flex-direction: row;
   flex-wrap: wrap;
+  letter-spacing: ${fontTrackings.tiny};
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
+  line-height: ${props => props.lineHeight ? props.lineHeight : fontSizes.small}px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const CountdownDigits = styled(MediumText)`
-  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
-  line-height: ${fontSizes.mediumLarge};
-  color: ${baseColors.slateBlack};
   letter-spacing: ${fontTrackings.tiny};
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
+  color: ${props => props.fontColor ? props.fontColor : baseColors.slateBlack};
 `;
 
 class Countdown extends React.Component<Props, State> {
@@ -107,17 +120,38 @@ class Countdown extends React.Component<Props, State> {
 
   render() {
     const countDown = this.state;
-    const { fontSize } = this.props;
+    const {
+      fontSize,
+      fontColor,
+      extendedDayLabel,
+      lineHeight,
+    } = this.props;
+    const daysLabel = countDown.days > 1 ? 'days' : 'day';
+
+    const StyledCountDownDigits = (props: ChildProps) => {
+      return (
+        <CountdownDigits
+          fontSize={fontSize}
+          fontColor={fontColor}
+        >
+          {props.children}
+        </CountdownDigits>
+      );
+    };
 
     return (
       <CounterHolder>
         {!!this.state.started &&
-        <CountdownWrapper>
+        <CountdownWrapper
+          fontSize={fontSize}
+          fontColor={fontColor}
+          lineHeight={lineHeight}
+        >
           {!!countDown.days &&
-          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.days)}d. </CountdownDigits>}
-          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.hours)}:</CountdownDigits>
-          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.min)}:</CountdownDigits>
-          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.sec)}</CountdownDigits>
+          <StyledCountDownDigits>{countDown.days} {extendedDayLabel ? daysLabel : 'd.'} </StyledCountDownDigits>}
+          <StyledCountDownDigits>{this.formatDoubleDigit(countDown.hours)}:</StyledCountDownDigits>
+          <StyledCountDownDigits>{this.formatDoubleDigit(countDown.min)}:</StyledCountDownDigits>
+          <StyledCountDownDigits>{this.formatDoubleDigit(countDown.sec)}</StyledCountDownDigits>
         </CountdownWrapper>}
       </CounterHolder>
     );
