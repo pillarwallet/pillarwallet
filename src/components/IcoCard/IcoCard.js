@@ -26,8 +26,6 @@ type Props = {
   description?: string,
 }
 
-const isLabelOutside = (raisedAmount) => { return raisedAmount <= 10; };
-
 const CardWrapper = styled.View`
   width: 100%;
 `;
@@ -171,11 +169,24 @@ const IcoCard = (props: Props) => {
     iconUrl,
   } = props;
 
+  // const raisedInPercent = (Math.floor((raised / goal) * 100));
   const raisedInPercent = (Math.floor((raised / goal) * 100));
-  const labelOutside = isLabelOutside(raisedInPercent);
   const goalCurrencySymbol = getCurrencySymbol(goalCurrency) || goalCurrency;
+  const adjustedProgress = raisedInPercent < 7 ? 7 : raisedInPercent;
   // Adroid does not show rounded corner on 50%;
-  const adjustedRaisedInPercent = raisedInPercent === 50 ? 50.5 : raisedInPercent;
+  const adjustedRaisedInPercent = (statusPercents) => {
+    switch (statusPercents) {
+      case 0: {
+        return 1;
+      }
+      case 50: {
+        return 50.5;
+      }
+      default: {
+        return statusPercents;
+      }
+    }
+  };
 
   return (
     <CardWrapper>
@@ -239,14 +250,11 @@ const IcoCard = (props: Props) => {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               colors={[baseColors.mantis, baseColors.oliveDrab]}
-              progress={raisedInPercent}
+              progress={adjustedProgress}
               full={raisedInPercent === 100}
             >
-              {!labelOutside &&
-              <ProgressLabel>{raisedInPercent}%</ProgressLabel>}
+              <ProgressLabel>{raisedInPercent}%</ProgressLabel>
             </StyledLinearGradient>
-            {!!labelOutside &&
-            <ProgressLabel outside={labelOutside}>{raisedInPercent}%</ProgressLabel>}
           </ProgressBar>}
           {!inner &&
           <Row alignTop halfPadding>
@@ -278,7 +286,7 @@ const IcoCard = (props: Props) => {
             <CircularProgress
               circleSize={180}
               statusWidth={16}
-              status={adjustedRaisedInPercent}
+              status={adjustedRaisedInPercent(raisedInPercent)}
               label={raisedInPercent.toString()}
               statusBackgroundWidth={22}
             >

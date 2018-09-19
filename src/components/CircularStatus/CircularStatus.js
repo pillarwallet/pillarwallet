@@ -84,6 +84,11 @@ export default class CircularProgress extends React.Component<Props, {}> {
     const labelY = end.y + labelCirclePaddingY;
 
     const strokeType = status < 10 ? baseColors.mantis : 'url(#grad)';
+    const textAnchorPos = (statusAmount) => {
+      if (statusAmount === 0 || statusAmount === 50 || statusAmount === 100) return 'middle';
+      if (statusAmount < 50) return 'start';
+      return 'end';
+    };
 
     return (
       <View style={style}>
@@ -129,7 +134,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
               dy="5"
               fontSize={fontSizes.tiny}
               fill={baseColors.darkGray}
-              textAnchor={status > 50 ? 'end' : 'start'}
+              textAnchor={textAnchorPos(parseInt(label, 2))}
             >
               {label}%
             </Text>
