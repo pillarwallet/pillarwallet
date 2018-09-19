@@ -24,12 +24,20 @@ type Props = {
   fetchICOs: Function,
 }
 
+const PENDING = 'Pending';
+
 class MarketScreen extends React.Component<Props> {
   renderICOs = ({ item }: Object) => {
     const ico = { ...item, ...item.icos[0] };
     const goal = ico.unitPrice * ico.totalSupply;
     const raised = ico.unitPrice * ico.totalLocked;
-    const allIcoData = { ...ico, goal, raised };
+    const isPending = ico.icoStatus === PENDING;
+    const allIcoData = {
+      ...ico,
+      goal,
+      raised,
+      isPending,
+    };
     return (
       <IcoCard
         id={ico.id}
@@ -39,8 +47,10 @@ class MarketScreen extends React.Component<Props> {
         raised={raised}
         iconUrl={ico.iconUrl}
         goalCurrency={ico.baseCurrency}
+        startDate={ico.plannedOpeningDate}
         endDate={ico.plannedClosingDate}
         onPress={() => this.goToICO(allIcoData)}
+        isPending={isPending}
       />
     );
   };

@@ -11,7 +11,6 @@ import {
 import styled from 'styled-components/native';
 import { format, distanceInWords } from 'date-fns';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -82,8 +81,6 @@ const Separator = styled(View)`
   height: 1px;
   background-color: ${baseColors.lightGray}
 `;
-
-const PENDING = 'Pending';
 
 class ICOScreen extends React.Component<Props, State> {
   navigateBack = () => {
@@ -195,6 +192,7 @@ class ICOScreen extends React.Component<Props, State> {
       supportedCurrencies,
       goal,
       raised,
+      isPending,
     } = icoData;
 
     const startDate = format(new Date(plannedOpeningDate), 'D MMM YYYY');
@@ -256,7 +254,6 @@ class ICOScreen extends React.Component<Props, State> {
         value: icoStatus,
       },
     ];
-    const isPending = icoStatus === PENDING;
     const participateBtnText = isPending
       ? `Starts in ${distanceInWords(new Date(), new Date(plannedOpeningDate), { includeSeconds: true })}`
       : 'Participate';
@@ -285,22 +282,21 @@ class ICOScreen extends React.Component<Props, State> {
           }
         >
           <ICOWrapper>
-            <Transition key={id} shared={id}>
-              <IcoCard
-                inner
-                id={id}
-                onPress={() => { }}
-                title={name}
-                status={icoStatus}
-                goal={goal}
-                raised={raised}
-                goalCurrency={baseCurrency}
-                endDate={plannedClosingDate}
-                startDate={plannedOpeningDate}
-                description={description}
-                iconUrl={iconUrl}
-              />
-            </Transition>
+            <IcoCard
+              inner
+              id={id}
+              onPress={() => { }}
+              title={name}
+              status={icoStatus}
+              goal={goal}
+              raised={raised}
+              goalCurrency={baseCurrency}
+              endDate={plannedClosingDate}
+              startDate={plannedOpeningDate}
+              description={description}
+              iconUrl={iconUrl}
+              isPending={isPending}
+            />
           </ICOWrapper>
           <StyledFlatList
             keyExtractor={item => item.label}

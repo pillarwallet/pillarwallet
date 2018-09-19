@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
@@ -18,12 +18,14 @@ type Props = {
   status?: string,
   onPress: Function,
   endDate: any,
+  startDate: any,
   goalCurrency: string,
   goal: number,
   raised: number,
   inner?: boolean,
   iconUrl?: string,
   description?: string,
+  isPending: boolean,
 }
 
 const CardWrapper = styled.View`
@@ -162,11 +164,13 @@ const IcoCard = (props: Props) => {
     goal,
     raised,
     goalCurrency,
+    startDate,
     endDate,
     onPress,
     inner,
     description,
     iconUrl,
+    isPending,
   } = props;
 
   // const raisedInPercent = (Math.floor((raised / goal) * 100));
@@ -186,6 +190,26 @@ const IcoCard = (props: Props) => {
         return statusPercents;
       }
     }
+  };
+
+  const timerLabel = isPending ? 'Starts in' : 'Time left';
+  const InnerCountDown = () => {
+    const remainingTimeInDays = differenceInDays(new Date(), startDate);
+
+    if (!isPending) {
+      return (
+        <Countdown endDate={endDate} fontSize={fontSizes.medium} />
+      );
+    } else if (remainingTimeInDays < 1) {
+      return (
+        <Countdown endDate={startDate} fontSize={fontSizes.medium} />
+      );
+    }
+    return (
+      <ColumnValue xl>
+        {remainingTimeInDays} days
+      </ColumnValue>
+    );
   };
 
   return (
@@ -236,11 +260,9 @@ const IcoCard = (props: Props) => {
               </ColumnLabel>
             </Column>
             <Column center>
-              <ColumnValue xl>
-                12 days
-              </ColumnValue>
+              <InnerCountDown />
               <ColumnLabel>
-                Time left
+                {timerLabel}
               </ColumnLabel>
             </Column>
           </Row>}
@@ -276,9 +298,9 @@ const IcoCard = (props: Props) => {
             </Column>
             <Column width="33.33333%">
               <ColumnLabel>
-                Time left
+                {timerLabel}
               </ColumnLabel>
-              <Countdown endDate={endDate} />
+              <Countdown endDate={isPending ? startDate : endDate} />
             </Column>
           </Row>}
           {!!inner &&

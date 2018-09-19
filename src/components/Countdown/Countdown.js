@@ -6,6 +6,7 @@ import { fontSizes, fontTrackings, baseColors } from 'utils/variables';
 
 type Props = {
   endDate: string,
+  fontSize?: number,
 }
 
 type State = {
@@ -21,10 +22,11 @@ const CounterHolder = styled.View`
 
 const CountdownWrapper = styled.View`
   flex-direction: row;
+  flex-wrap: wrap;
 `;
 
 const CountdownDigits = styled(MediumText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
   line-height: ${fontSizes.mediumLarge};
   color: ${baseColors.slateBlack};
   letter-spacing: ${fontTrackings.tiny};
@@ -105,15 +107,17 @@ class Countdown extends React.Component<Props, State> {
 
   render() {
     const countDown = this.state;
+    const { fontSize } = this.props;
 
     return (
       <CounterHolder>
         {!!this.state.started &&
         <CountdownWrapper>
-          <CountdownDigits>{this.formatDoubleDigit(countDown.days)}d. </CountdownDigits>
-          <CountdownDigits>{this.formatDoubleDigit(countDown.hours)}:</CountdownDigits>
-          <CountdownDigits>{this.formatDoubleDigit(countDown.min)}:</CountdownDigits>
-          <CountdownDigits>{this.formatDoubleDigit(countDown.sec)}</CountdownDigits>
+          {!!countDown.days &&
+          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.days)}d. </CountdownDigits>}
+          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.hours)}:</CountdownDigits>
+          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.min)}:</CountdownDigits>
+          <CountdownDigits fontSize={fontSize}>{this.formatDoubleDigit(countDown.sec)}</CountdownDigits>
         </CountdownWrapper>}
       </CounterHolder>
     );
