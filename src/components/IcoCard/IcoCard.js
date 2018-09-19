@@ -9,7 +9,7 @@ import { getCurrencySymbol, formatMoney } from 'utils/common';
 import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
 import Countdown from 'components/Countdown';
 import TruncatedText from 'components/TruncatedText';
-import CircularProgress from 'components/CircularStatus';
+import ProgressCircle from 'components/ProgressCircle';
 import ProgressBar from 'components/ProgressBar';
 
 type Props = {
@@ -239,7 +239,7 @@ const IcoCard = (props: Props) => {
           </Row>}
           {!!inner &&
           <Row alignCenter>
-            <CircularProgress
+            <ProgressCircle
               isPending={isPending}
               endDate={endDate}
               startDate={startDate}
@@ -256,7 +256,7 @@ const IcoCard = (props: Props) => {
                 source={{ uri: iconUrl }}
                 resizeMode="contain"
               />
-            </CircularProgress>
+            </ProgressCircle>
           </Row>}
         </InnerWrapper>
       </TouchableWithoutFeedback>
