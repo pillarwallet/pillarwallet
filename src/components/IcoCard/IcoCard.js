@@ -1,16 +1,16 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { format, differenceInDays, differenceInHours } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol, formatMoney } from 'utils/common';
 import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
-import LinearGradient from 'react-native-linear-gradient';
 import Countdown from 'components/Countdown';
 import TruncatedText from 'components/TruncatedText';
 import CircularProgress from 'components/CircularStatus';
+import ProgressBar from 'components/ProgressBar';
 
 type Props = {
   id: string,
@@ -55,42 +55,6 @@ const Row = styled.View`
   align-items: ${props => props.alignTop ? 'flex-start' : 'center'};
   padding: ${props => props.halfPadding ? '0 8px' : '0 16px'}; 
   margin-top: ${props => props.marginTop ? props.marginTop : 0}px;
-`;
-
-const ProgressBar = styled.View`
-  flex-direction: row;
-  background-color: ${baseColors.snowWhite};
-  padding: 1px 0;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: ${spacing.rhythm / 2}px;
-`;
-
-const StyledLinearGradient = styled(LinearGradient)`
-  padding: 1px;
-  height: 11px;
-  width: ${props => props.progress}%;
-  border-top-right-radius: ${props => props.full ? 0 : '9px'};
-  border-bottom-right-radius: ${props => props.full ? 0 : '9px'};
-  overflow: hidden;
-`;
-
-const ProgressLabel = styled(MediumText)`
-  font-size: ${fontSizes.tiny};
-  line-height: ${fontSizes.tiny};
-  letter-spacing: ${fontTrackings.tiny};
-  color: ${props => props.outside ? baseColors.oliveDrab : baseColors.white};
-  position: ${props => props.outside ? 'relative' : 'absolute'};
-  top: ${Platform.select({
-    ios: props => props.outside ? 'auto' : '1px',
-    android: props => props.outside ? 'auto' : '1.5px',
-  })};
-  right: ${props => props.outside ? 'auto' : '4px'};
-  margin-top: ${Platform.select({
-    ios: props => props.outside ? '1px' : '0',
-    android: props => props.outside ? '2px' : '0',
-  })};
-  margin-left: ${props => props.outside ? '2px' : 0};
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -176,13 +140,7 @@ const IcoCard = (props: Props) => {
   } = props;
 
   const tokensSoldInPercent = (tokensSold * 100) / totalSupply;
-  const progressInPercent = isPending ? 0 :
-    (Math.floor(
-      ((differenceInHours(new Date(), startDate) * 360) /
-      (differenceInHours(endDate, startDate) * 360)) * 100)
-    );
   const goalCurrencySymbol = getCurrencySymbol(goalCurrency) || goalCurrency;
-  const adjustedProgress = progressInPercent < 7 ? 7 : progressInPercent;
 
   const timerLabel = isPending ? 'Starts in' : 'Time left';
   const InnerCountDown = () => {
@@ -249,17 +207,11 @@ const IcoCard = (props: Props) => {
             </Column>
           </Row>}
           {!inner &&
-          <ProgressBar>
-            <StyledLinearGradient
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              colors={[baseColors.mantis, baseColors.oliveDrab]}
-              progress={adjustedProgress}
-              full={progressInPercent === 100}
-            >
-              <ProgressLabel>{progressInPercent}%</ProgressLabel>
-            </StyledLinearGradient>
-          </ProgressBar>}
+          <ProgressBar
+            isPending={isPending}
+            endDate={endDate}
+            startDate={startDate}
+          />}
           {!inner &&
           <Row alignTop halfPadding>
             <Column width="33.33333%">
