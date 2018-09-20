@@ -107,7 +107,7 @@ class MarketScreen extends React.Component<Props> {
           contentContainerStyle={{
             paddingHorizontal: spacing.rhythm / 2,
             width: '100%',
-            paddingBottom: 20,
+            paddingBottom: spacing.rhythm / 2,
           }}
           refreshControl={
             <RefreshControl

@@ -37,10 +37,11 @@ const ICOWrapper = styled(Wrapper)`
 const ButtonWrapper = styled(Wrapper)`
   flex: 1;
   width: 100%;
-  padding: 0 ${spacing.rhythm}px;
+  padding: ${spacing.rhythm}px;
   position: absolute;
-  bottom: ${spacing.rhythm}px
+  bottom: 0;
   left: 0;
+  background-color: ${baseColors.white};
 `;
 
 const StyledFlatList = styled.FlatList`
@@ -364,7 +365,7 @@ class ICOScreen extends React.Component<Props, State> {
             />
           }
           contentContainerStyle={{
-            paddingBottom: 100,
+            paddingBottom: 94,
           }}
         >
           <ICOWrapper>

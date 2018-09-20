@@ -54,7 +54,7 @@ const ProgressLabel = styled(MediumText)`
   margin-left: ${props => props.outside ? '2px' : 0};
 `;
 
-const BACKGROUND_FOR_LABEL = 7;
+const BACKGROUND_FOR_LABEL = 8;
 
 export default class ProgressBar extends React.Component<Props, State> {
   interval: IntervalID;

@@ -69,6 +69,7 @@ const TitleWrapper = styled.View`
   flex-wrap: wrap;
   margin-top: 28px;
   margin-bottom: ${props => props.inner ? spacing.rhythm / 2 : 28}px;
+  padding-right: ${spacing.rhythm / 2}px;
 `;
 
 const Title = styled(MediumText)`
@@ -119,6 +120,7 @@ const ColumnValue = styled(MediumText)`
   line-height: ${fontSizes.mediumLarge};
   color: ${baseColors.slateBlack};
   letter-spacing: ${fontTrackings.tiny};
+  margin-top: 2px;
 `;
 
 const IcoCard = (props: Props) => {
@@ -195,7 +197,7 @@ const IcoCard = (props: Props) => {
           </Row>}
           {!!inner &&
           <Row alignVertical="flex-end" alignCenter marginTop={26}>
-            <Column center>
+            <Column center width="50%">
               <ColumnValue xl>
                 {tokensSoldInPercent}%
               </ColumnValue>
@@ -203,7 +205,7 @@ const IcoCard = (props: Props) => {
                 Tokens sold
               </ColumnLabel>
             </Column>
-            <Column center>
+            <Column center width="50%">
               <InnerCountDown />
               <ColumnLabel>
                 {timerLabel}
