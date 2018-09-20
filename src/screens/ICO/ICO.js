@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Platform,
   Linking,
+  Image,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { format } from 'date-fns';
@@ -49,11 +50,17 @@ const StyledFlatList = styled.FlatList`
   border-color: ${baseColors.lightGray};
 `;
 
-const ContactsWrapper = styled(View)`
+const ContactsRow = styled(View)`
   margin-bottom: ${spacing.rhythm}px;
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${baseColors.lightGray};
+  width: 100%;
+  padding: 10px ${spacing.rhythm / 2}px 10px ${spacing.rhythm}px;
+  flex-direction: row;
+  background-color: ${baseColors.white};
+  align-items: flex-start;
+  justify-content: space-between;
 `;
 
 const ListRow = styled(View)`
@@ -87,6 +94,34 @@ const Separator = styled(View)`
   background-color: ${baseColors.lightGray}
 `;
 
+const ContactsButtonWrapper = styled(View)`
+  padding: 7px ${spacing.rhythm / 2}px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ContactsWrapper = styled(View)`
+  width: 60%;
+  flex-direction: row;
+  background-color: ${baseColors.white};
+  align-items: flex-start;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+`;
+
+const ContactsLabel = styled(BaseText)`
+  width: 40%;
+  font-size: ${fontSizes.small}px;
+  letter-spacing: ${fontTrackings.tiny}px;
+  line-height: ${fontSizes.medium}px;
+  color: ${baseColors.slateBlack};
+  margin-top: 13px;
+  padding-right: ${spacing.rhythm}px;
+`;
+
+const twitter = require('assets/icons/icon_twitter.png');
+const telegram = require('assets/icons/icon_telegram.png');
+
 class ICOScreen extends React.Component<Props, State> {
   navigateBack = () => {
     this.props.navigation.goBack();
@@ -97,7 +132,7 @@ class ICOScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(PARTICIPATE_IN_ICO_FLOW, { icoData });
   };
 
-  openLink = (address: string, inApp: boolean) => {
+  openLink = (address: string, inApp?: boolean) => {
     const { navigation } = this.props;
     const { icoData } = navigation.state.params;
 
@@ -137,6 +172,7 @@ class ICOScreen extends React.Component<Props, State> {
               style={{
                 fontSize: fontSizes.tiny,
                 color: baseColors.coolGrey,
+                alignSelf: 'center',
               }}
             />
           </ListRow>
@@ -172,6 +208,42 @@ class ICOScreen extends React.Component<Props, State> {
     );
   };
 
+  renderIconButton = (key: string, link: string, icon: string) => {
+    return (
+      <TouchableOpacity
+        key={key}
+        onPress={() => this.openLink(link)}
+      >
+        <ContactsButtonWrapper>
+          <Image
+            style={{
+              width: 30,
+              height: 30,
+            }}
+            resizeMode="contain"
+            source={icon}
+          />
+        </ContactsButtonWrapper>
+      </TouchableOpacity>
+    );
+  };
+
+  renderContactsButton(socMedia: any) {
+    return socMedia.map(social => {
+      switch (social.service) {
+        case 'twitter': {
+          return this.renderIconButton(social.username, `https://twitter.com/${social.username}`, twitter);
+        }
+        case 'telegram': {
+          return this.renderIconButton(social.username, `https://t.me/${social.username}`, telegram);
+        }
+        default: {
+          return null;
+        }
+      }
+    });
+  }
+
   render() {
     const { navigation } = this.props;
     const { icoData } = navigation.state.params;
@@ -183,7 +255,7 @@ class ICOScreen extends React.Component<Props, State> {
       // decimals,
       description,
       iconUrl,
-      // socialMedia,
+      socialMedia,
       website,
       whitepaper,
       // nivauraProjectId,
@@ -207,11 +279,6 @@ class ICOScreen extends React.Component<Props, State> {
 
     const startDate = format(new Date(plannedOpeningDate), 'D MMM YYYY');
     const endDate = format(new Date(plannedClosingDate), 'D MMM YYYY');
-
-    // const {
-    //     : [ { service: 'twitter', username: 'example' } ],
-    // } = socialMedia,
-
     const goalCurrencySymbol = getCurrencySymbol(baseCurrency) || baseCurrency;
 
     const icoInfo = [
@@ -342,13 +409,14 @@ class ICOScreen extends React.Component<Props, State> {
             }}
             refreshing={false}
           />
-          <ContactsWrapper>
-            <ListRow>
-              <ListRowItem label>
-                Contacts
-              </ListRowItem>
-            </ListRow>
-          </ContactsWrapper>
+          <ContactsRow>
+            <ContactsLabel>
+              Contacts
+            </ContactsLabel>
+            <ContactsWrapper>
+              {this.renderContactsButton(socialMedia)}
+            </ContactsWrapper>
+          </ContactsRow>
         </ScrollWrapper>
         <ButtonWrapper>
           <Button
