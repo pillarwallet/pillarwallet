@@ -38,6 +38,7 @@ import ICOScreen from 'screens/ICO';
 import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
 import ConfrimScreen from 'screens/Participate/Confirm';
+import ICOLinks from 'screens/ICOLinks';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -89,6 +90,7 @@ import {
   ICO_PARTICIPATE,
   ICO_INSTRUCTIONS,
   ICO_CONFIRM,
+  ICO_LINKS,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -182,6 +184,7 @@ const homeFlow = createStackNavigator({
 const icoFlow = createStackNavigator({
   [MARKET]: MarketScreen,
   [ICO]: ICOScreen,
+  [ICO_LINKS]: ICOLinks,
 }, StackNavigatorConfig);
 
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (

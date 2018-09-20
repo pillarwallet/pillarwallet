@@ -18,7 +18,7 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import IcoCard from 'components/IcoCard';
-import { PARTICIPATE_IN_ICO_FLOW } from 'constants/navigationConstants';
+import { PARTICIPATE_IN_ICO_FLOW, ICO_LINKS } from 'constants/navigationConstants';
 import { getCurrencySymbol, formatMoney } from 'utils/common';
 import Countdown from 'components/Countdown';
 
@@ -97,8 +97,15 @@ class ICOScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(PARTICIPATE_IN_ICO_FLOW, { icoData });
   };
 
-  openLink = (address: string) => {
-    Linking.openURL(address).catch(() => {});
+  openLink = (address: string, inApp: boolean) => {
+    const { navigation } = this.props;
+    const { icoData } = navigation.state.params;
+
+    if (inApp) {
+      navigation.navigate(address, { links: icoData.links });
+    } else {
+      Linking.openURL(address).catch(() => {});
+    }
   };
 
   renderIcoInfoRow = ({ item: icoInfo }: Object) => {
@@ -118,7 +125,7 @@ class ICOScreen extends React.Component<Props, State> {
     if (Platform.OS === 'android') {
       return (
         <TouchableNativeFeedback
-          onPress={() => this.openLink(link.link)}
+          onPress={() => this.openLink(link.link, link.inApp)}
           background={TouchableNativeFeedback.Ripple()}
         >
           <ListRow>
@@ -138,7 +145,7 @@ class ICOScreen extends React.Component<Props, State> {
     }
     return (
       <TouchableOpacity
-        onPress={() => this.openLink(link.link)}
+        onPress={() => this.openLink(link.link, link.inApp)}
         underlayColor={baseColors.lightGray}
       >
         <ListRow>
@@ -188,7 +195,6 @@ class ICOScreen extends React.Component<Props, State> {
       nationalityRestriction,
       plannedOpeningDate,
       plannedClosingDate,
-      // links,
       minimumContribution,
       maximumContribution,
       icoStatus,
@@ -272,10 +278,15 @@ class ICOScreen extends React.Component<Props, State> {
         label: 'Website',
         link: website,
       },
+      {
+        label: 'Links',
+        link: ICO_LINKS,
+        inApp: true,
+      },
     ];
 
     return (
-      <Container color={baseColors.snowWhite} bottomPadding={120}>
+      <Container color={baseColors.snowWhite}>
         <Header onBack={this.navigateBack} title="ico" />
         <ScrollWrapper
           onScrollEndDrag={() => { }}
