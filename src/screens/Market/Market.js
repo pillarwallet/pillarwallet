@@ -31,14 +31,14 @@ const ListHeader = styled.View`
 `;
 
 const PENDING = 'Pending';
+const ACTIVE = 'Active';
 
-const groupByIcosData = (array, property) => {
-  return array.reduce((memo, x) => {
-    if (!memo[x.icos[0][property]]) { memo[x.icos[0][property]] = []; }
-    memo[x.icos[0][property]].push(x);
-    return memo;
-  }, {});
-};
+const filterIcosByStatus = (icos: ICOT[], status: string) => (
+  icos.filter(({ icos: innerIcos }: Object) => {
+    const { icoStatus } = innerIcos[0];
+    return icoStatus === status;
+  })
+);
 
 class MarketScreen extends React.Component<Props> {
   renderICOs = ({ item }: Object) => {
@@ -85,8 +85,8 @@ class MarketScreen extends React.Component<Props> {
 
   render() {
     const { icos, fetchICOs } = this.props;
-    const sortedIcos = groupByIcosData(icos, 'icoStatus');
-    const { Active = [], Pending = [] } = sortedIcos;
+    const activeICOs = filterIcosByStatus(icos, ACTIVE);
+    const pendingICOs = filterIcosByStatus(icos, PENDING);
 
     return (
       <Container color={baseColors.snowWhite}>
@@ -99,8 +99,8 @@ class MarketScreen extends React.Component<Props> {
             return section.data.length ? this.renderListTitle(section.title) : null;
           }}
           sections={[
-            { title: 'ACTIVE ICOS', data: Active, extraData: icos },
-            { title: 'PENDING ICOS', data: Pending, extraData: icos },
+            { title: 'ACTIVE ICOS', data: activeICOs, extraData: icos },
+            { title: 'PENDING ICOS', data: pendingICOs, extraData: icos },
           ]}
           keyExtractor={(item) => item.id.toString()}
           style={{ width: '100%' }}

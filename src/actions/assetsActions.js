@@ -98,7 +98,7 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
 
     // @TODO: Extra "rates fetching" to it's own action ones required.
-    const rates = await getExchangeRates(Object.keys(assets));
+    const rates = await getExchangeRates(Object.keys(assets).concat('BTC')); // TEMPORARY ADD BTC WHICH IS NEED FOR ICO
     await storage.save('rates', { rates }, true);
     dispatch({ type: UPDATE_RATES, payload: rates });
   };
