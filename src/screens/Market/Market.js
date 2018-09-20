@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { RefreshControl, FlatList } from 'react-native';
+import { RefreshControl, View, SectionList } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
@@ -27,10 +27,18 @@ type Props = {
 }
 
 const ListHeader = styled.View`
-  padding: 0 ${spacing.rhythm / 2}px ${spacing.rhythm / 2}px;
+  padding: 0 ${spacing.rhythm / 2}px;
 `;
 
 const PENDING = 'Pending';
+
+const groupByIcosData = (array, property) => {
+  return array.reduce((memo, x) => {
+    if (!memo[x.icos[0][property]]) { memo[x.icos[0][property]] = []; }
+    memo[x.icos[0][property]].push(x);
+    return memo;
+  }, {});
+};
 
 class MarketScreen extends React.Component<Props> {
   renderICOs = ({ item }: Object) => {
@@ -61,10 +69,10 @@ class MarketScreen extends React.Component<Props> {
     );
   };
 
-  renderListTitle = () => {
+  renderListTitle = (titleText: string) => {
     return (
       <ListHeader>
-        <SubHeading>ACTIVE ICOS</SubHeading>
+        <SubHeading>{titleText}</SubHeading>
       </ListHeader>
     );
   };
@@ -77,21 +85,29 @@ class MarketScreen extends React.Component<Props> {
 
   render() {
     const { icos, fetchICOs } = this.props;
+    const sortedIcos = groupByIcosData(icos, 'icoStatus');
+    const { Active = [], Pending = [] } = sortedIcos;
+
     return (
       <Container color={baseColors.snowWhite}>
         <Header
           title="market"
         />
-        <FlatList
-          data={icos}
-          extraData={icos}
-          keyExtractor={(item) => item.id.toString()}
+        <SectionList
           renderItem={this.renderICOs}
+          renderSectionHeader={({ section }) => {
+            return section.data.length ? this.renderListTitle(section.title) : null;
+          }}
+          sections={[
+            { title: 'ACTIVE ICOS', data: Active, extraData: icos },
+            { title: 'PENDING ICOS', data: Pending, extraData: icos },
+          ]}
+          keyExtractor={(item) => item.id.toString()}
           style={{ width: '100%' }}
-          ListHeaderComponent={this.renderListTitle}
           contentContainerStyle={{
             paddingHorizontal: spacing.rhythm / 2,
             width: '100%',
+            paddingBottom: 20,
           }}
           refreshControl={
             <RefreshControl
@@ -99,6 +115,8 @@ class MarketScreen extends React.Component<Props> {
               onRefresh={fetchICOs}
             />
           }
+          stickySectionHeadersEnabled={false}
+          SectionSeparatorComponent={() => (<View style={{ marginTop: spacing.rhythm / 2 }} />)}
         />
       </Container >
     );
