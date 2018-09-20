@@ -13,7 +13,7 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
+import { validateUserDetailsAction, registerOnBackendAction, getUserInfoAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
@@ -119,6 +119,8 @@ class NewProfile extends React.Component<Props, State> {
     const { apiUser } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
     const inputDisabled = !!(apiUser && apiUser.id);
+    // const userInfo = api.userInfo(sdkWallet.walletId);
+    console.log(apiUser);
 
     this.state = {
       value,
@@ -170,20 +172,23 @@ class NewProfile extends React.Component<Props, State> {
   }
 
   goToNextScreen() {
-    const { navigation, retry, registerOnBackend } = this.props;
+    const { navigation, retry, registerOnBackend, user } = this.props;
     Keyboard.dismiss();
+    console.log('retry');
+    console.log(retry);
     if (retry) {
       registerOnBackend();
       return;
     }
+    console.log(user);
     navigation.navigate(LEGAL_TERMS);
   }
 
   render() {
-    console.log(this.state);
-    console.log(this.props);
     const { value, formOptions } = this.state;
     const { walletState, session, retry } = this.props;
+    // getUserInfo();
+    // console.log(walletState);
     const isUsernameValid = value && value.username && value.username.length > 0;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
@@ -229,15 +234,18 @@ class NewProfile extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet: { walletState, onboarding: { apiUser } },
   session: { data: session },
+  user: { data: user },
 }) => ({
   walletState,
   apiUser,
   session,
+  user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
   registerOnBackend: () => dispatch(registerOnBackendAction()),
+  // getUserInfo: () => dispatch(getUserInfoAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);

@@ -69,7 +69,6 @@ const onBoardingFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
-  [WELCOME_BACK]: WelcomeBackScreen,
   [NEW_PROFILE]: NewProfileScreen,
   [LEGAL_TERMS]: LegalTermsScreen,
 }, StackNavigatorConfig);

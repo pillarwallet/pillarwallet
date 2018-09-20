@@ -14,6 +14,7 @@ import {
   SET_API_USER,
 } from 'constants/walletConstants';
 import {
+  NEW_PROFILE,
   WELCOME_BACK,
   PIN_CODE_CONFIRMATION,
   SET_WALLET_PIN_CODE,
@@ -133,6 +134,6 @@ export const confirmPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    dispatch(NavigationActions.navigate({ routeName: WELCOME_BACK }));
+    dispatch(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
 };
