@@ -1,9 +1,10 @@
 // @flow
 import { SET_ICOS, SET_ICO_FUNDING_INSTRUCTIONS } from 'constants/icosConstants';
 
-export const fetchICOsAction = () => { // @TODO - add payload
+export const fetchICOsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const icos = await api.fetchICOs();
+    const { user: { data: { id: userId } } } = getState();
+    const icos = await api.fetchICOs(userId);
     dispatch({
       type: SET_ICOS,
       payload: icos,

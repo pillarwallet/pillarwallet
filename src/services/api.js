@@ -152,8 +152,12 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
     .catch(() => []);
 };
 
-SDKWrapper.prototype.fetchICOs = function () {
+SDKWrapper.prototype.fetchICOs = function (userId: string) { //eslint-disable-line
   return Promise.resolve(icosFixtures);
+  // return Promise.resolve()
+  //   .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
+  //   .then(({ data }) => data)
+  //   .catch((e) => []);
 };
 
 SDKWrapper.prototype.fetchICOFundingInstructions = function (walletId, currency) {
