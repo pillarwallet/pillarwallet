@@ -36,9 +36,9 @@ const ICOWrapper = styled(Wrapper)`
 const ButtonWrapper = styled(Wrapper)`
   flex: 1;
   width: 100%;
-  padding: ${spacing.rhythm}px;
+  padding: 0 ${spacing.rhythm}px;
   position: absolute;
-  bottom: 0;
+  bottom: ${spacing.rhythm}px
   left: 0;
 `;
 
@@ -61,7 +61,7 @@ const ListRow = styled(View)`
   padding: 22px ${spacing.rhythm}px;
   flex-direction: row;
   background-color: ${baseColors.white};
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 `;
 
