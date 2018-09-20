@@ -3,6 +3,7 @@ import * as React from 'react';
 import { RefreshControl, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native/index';
 
 // components
 import Header from 'components/Header';
@@ -10,6 +11,7 @@ import { Container } from 'components/Layout';
 import { spacing, baseColors } from 'utils/variables';
 import IcoCard from 'components/IcoCard';
 import { ICO } from 'constants/navigationConstants';
+import { SubHeading } from 'components/Typography';
 
 // actions
 import { fetchICOsAction } from 'actions/icosActions';
@@ -23,6 +25,10 @@ type Props = {
   user: Object,
   fetchICOs: Function,
 }
+
+const ListHeader = styled.View`
+  padding: 0 ${spacing.rhythm / 2}px ${spacing.rhythm / 2}px;
+`;
 
 const PENDING = 'Pending';
 
@@ -55,6 +61,14 @@ class MarketScreen extends React.Component<Props> {
     );
   };
 
+  renderListTitle = () => {
+    return (
+      <ListHeader>
+        <SubHeading>ACTIVE ICOS</SubHeading>
+      </ListHeader>
+    );
+  };
+
   goToICO = (icoData: ICOT) => {
     this.props.navigation.navigate(ICO, {
       icoData,
@@ -74,6 +88,7 @@ class MarketScreen extends React.Component<Props> {
           keyExtractor={(item) => item.id.toString()}
           renderItem={this.renderICOs}
           style={{ width: '100%' }}
+          ListHeaderComponent={this.renderListTitle}
           contentContainerStyle={{
             paddingHorizontal: spacing.rhythm / 2,
             width: '100%',
