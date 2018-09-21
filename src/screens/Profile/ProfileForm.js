@@ -12,6 +12,7 @@ import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
 const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
   padding-bottom: ${spacing.rhythm}px;
+  margin-top: 25px;
 `;
 
 const FormFooter = styled.View`
@@ -61,6 +62,8 @@ function InputTemplate(locals) {
       errorMessage={errorMessage}
       id={locals.label}
       inputProps={inputProps}
+      inputType="secondary"
+      noBorder
     />
   );
 }
