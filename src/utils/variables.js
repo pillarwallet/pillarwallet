@@ -38,6 +38,9 @@ export const baseColors = {
   pineGlade: '#b3b375',
   mantis: '#85bb4c',
   oliveDrab: '#5e9226',
+  gallery: '#efefef',
+  alabaster: '#fcfcfc',
+  aliceBlue: '#f7fbff',
 };
 
 export const brandColors = [

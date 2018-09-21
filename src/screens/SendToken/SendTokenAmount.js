@@ -80,6 +80,7 @@ function AmountInputTemplate(locals) {
       id="amount"
       inputProps={inputProps}
       inlineLabel
+      fontSize={fontSizes.giant}
     />
   );
 }

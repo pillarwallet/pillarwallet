@@ -82,6 +82,7 @@ function AddressInputTemplate(locals) {
       id="address"
       onPress={onIconPress}
       inputProps={inputProps}
+      fontSize={fontSizes.medium}
     />
   );
 }

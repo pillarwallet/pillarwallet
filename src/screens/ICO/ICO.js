@@ -17,7 +17,7 @@ import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
 import IcoCard from 'components/IcoCard';
 import { PARTICIPATE_IN_ICO_FLOW, ICO_LINKS } from 'constants/navigationConstants';
 import { getCurrencySymbol, formatMoney } from 'utils/common';
@@ -35,13 +35,7 @@ const ICOWrapper = styled(Wrapper)`
 `;
 
 const ButtonWrapper = styled(Wrapper)`
-  flex: 1;
   width: 100%;
-  padding: ${spacing.rhythm}px;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background-color: ${baseColors.white};
 `;
 
 const StyledFlatList = styled.FlatList`
@@ -364,78 +358,81 @@ class ICOScreen extends React.Component<Props, State> {
               onRefresh={() => { }}
             />
           }
-          contentContainerStyle={{
-            paddingBottom: 94,
-          }}
         >
-          <ICOWrapper>
-            <IcoCard
-              inner
-              id={id}
-              onPress={() => { }}
-              title={name}
-              status={icoStatus}
-              goal={goal}
-              tokensSold={totalLocked}
-              totalSupply={totalSupply}
-              goalCurrency={baseCurrency}
-              endDate={plannedClosingDate}
-              startDate={plannedOpeningDate}
-              description={description}
-              iconUrl={iconUrl}
-              isPending={isPending}
+          <Wrapper>
+            <ICOWrapper>
+              <IcoCard
+                inner
+                id={id}
+                onPress={() => { }}
+                title={name}
+                status={icoStatus}
+                goal={goal}
+                tokensSold={totalLocked}
+                totalSupply={totalSupply}
+                goalCurrency={baseCurrency}
+                endDate={plannedClosingDate}
+                startDate={plannedOpeningDate}
+                description={description}
+                iconUrl={iconUrl}
+                isPending={isPending}
+              />
+            </ICOWrapper>
+            <StyledFlatList
+              keyExtractor={item => item.label}
+              data={icoInfo}
+              extraData={this.state}
+              renderItem={this.renderIcoInfoRow}
+              ItemSeparatorComponent={() => this.renderSeparator(spacing.rhythm)}
+              contentContainerStyle={{
+                flexGrow: 1,
+                backgroundColor: baseColors.white,
+              }}
+              refreshing={false}
             />
-          </ICOWrapper>
-          <StyledFlatList
-            keyExtractor={item => item.label}
-            data={icoInfo}
-            extraData={this.state}
-            renderItem={this.renderIcoInfoRow}
-            ItemSeparatorComponent={() => this.renderSeparator(spacing.rhythm)}
-            contentContainerStyle={{
-              flexGrow: 1,
-              backgroundColor: baseColors.white,
-            }}
-            refreshing={false}
-          />
-          <StyledFlatList
-            keyExtractor={item => item.label}
-            data={externalLinks}
-            extraData={this.state}
-            renderItem={this.renderExternalLinksItem}
-            ItemSeparatorComponent={() => this.renderSeparator()}
-            contentContainerStyle={{
-              flexGrow: 1,
-              backgroundColor: baseColors.white,
-            }}
-            refreshing={false}
-          />
-          <ContactsRow>
-            <ContactsLabel>
-              Contacts
-            </ContactsLabel>
-            <ContactsWrapper>
-              {this.renderContactsButton(socialMedia)}
-            </ContactsWrapper>
-          </ContactsRow>
+            <StyledFlatList
+              keyExtractor={item => item.label}
+              data={externalLinks}
+              extraData={this.state}
+              renderItem={this.renderExternalLinksItem}
+              ItemSeparatorComponent={() => this.renderSeparator()}
+              contentContainerStyle={{
+                flexGrow: 1,
+                backgroundColor: baseColors.white,
+              }}
+              refreshing={false}
+            />
+            <ContactsRow>
+              <ContactsLabel>
+                Contacts
+              </ContactsLabel>
+              <ContactsWrapper>
+                {this.renderContactsButton(socialMedia)}
+              </ContactsWrapper>
+            </ContactsRow>
+          </Wrapper>
         </ScrollWrapper>
-        <ButtonWrapper>
-          <Button
-            disabledTransparent={isPending}
-            block
-            title={participateBtnText}
-            onPress={this.navigateToParticipate}
-          >
-            {!!isPending &&
-            <Countdown
-              endDate={plannedOpeningDate}
-              fontSize={fontSizes.medium}
-              fontColor={baseColors.white}
-              extendedDayLabel
-              lineHeight={fontSizes.large}
-            />}
-          </Button>
-        </ButtonWrapper>
+        <Footer
+          backgroundColor={baseColors.white}
+        >
+          <ButtonWrapper>
+            <Button
+              disabledTransparent={isPending}
+              block
+              title={participateBtnText}
+              onPress={this.navigateToParticipate}
+            >
+              {!!isPending &&
+              <Countdown
+                endDate={plannedOpeningDate}
+                fontSize={fontSizes.medium}
+                fontColor={baseColors.white}
+                extendedDayLabel
+                lineHeight={fontSizes.large}
+              />}
+            </Button>
+          </ButtonWrapper>
+        </Footer>
       </Container>
     );
   }

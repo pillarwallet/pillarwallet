@@ -16,6 +16,7 @@ type FooterProps = {
   children?: React.Node,
   style?: StyleSheet.Styles,
   column?: boolean,
+  backgroundColor?: string,
 };
 
 export const Center = styled.View`
@@ -58,6 +59,7 @@ const FooterInner = styled.KeyboardAvoidingView`
   margin-top: auto;
   padding: ${Platform.OS === 'ios' ? 0 : `${spacing.rhythm}px`};
   flex-direction: ${props => (props.column ? 'row' : 'column')};
+  background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
 `;
 
 export const Footer = (props: FooterProps) => {
@@ -75,6 +77,7 @@ export const Footer = (props: FooterProps) => {
         padding: spacing.rhythm,
         ...props.style,
       }}
+      backgroundColor={props.backgroundColor}
     >
       {props.children}
     </FooterInner>

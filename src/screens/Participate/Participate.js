@@ -1,28 +1,31 @@
 // @flow
 
 import * as React from 'react';
+import { StyleSheet, Platform, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 
 // components
+import { Switch } from 'native-base';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { ICO_INSTRUCTIONS } from 'constants/navigationConstants';
-import { Container, Wrapper, Footer } from 'components/Layout';
-import { BaseText, BoldText, Label } from 'components/Typography';
+import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
+import { BaseText } from 'components/Typography';
 import SingleInput from 'components/TextInput/SingleInput';
+import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 
 // utils
 import { baseColors, fontSizes, spacing } from 'utils/variables';
-import { parseNumber, formatAmount } from 'utils/common';
+import { parseNumber, formatAmount, formatMoney } from 'utils/common';
 
 // actions
 import { fetchICOFundingInstructionsAction } from 'actions/icosActions';
 
 // constants
-import { GBP } from 'constants/assetsConstants';
+import { GBP, ETH } from 'constants/assetsConstants';
 
 const { Form } = t.form;
 const TO_FUND = 'amountToFund';
@@ -67,6 +70,7 @@ function InputTemplate(locals) {
       errorMessage={errorMessage}
       inputProps={inputProps}
       inlineLabel
+      fontSize={fontSizes.large}
     />
   );
 }
@@ -107,21 +111,52 @@ const formStructure = t.struct({
   [TO_RECEIVE]: t.String,
 });
 
-const SummaryRow = styled.View`
-  margin: ${spacing.rhythm / 2}px 0;
-  flexDirection: row;
-  alignItems: flex-start;
-  justifyContent: space-between;
+
+const FooterInner = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
 `;
 
-const SummaryLabel = styled(Label)`
-  text-align:center;
-  font-size: ${fontSizes.extraSmall};
+const LegalText = styled(BaseText)`
+  flex: 1;
+  font-size: ${fontSizes.extraExtraSmall}px;
+  padding-right: 28px;
 `;
 
-const SummaryValue = styled(BoldText)`
-  font-size: ${fontSizes.medium};
-  padding-right: 2px;
+const SwitchWrapper = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px ${spacing.rhythm}px;
+  background-color: #ffffff;
+  border-bottom-color: ${baseColors.lightGray};
+  border-top-color: ${baseColors.lightGray};
+  border-bottom-width: ${StyleSheet.hairlineWidth};
+  border-top-width: ${StyleSheet.hairlineWidth};
+  margin-top: 30px;
+  flex: 1;
+`;
+
+const ItemLabelHolder = styled.View`
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: ${Platform.select({
+    ios: '10px',
+    android: '8px',
+  })};
+`;
+
+const ItemLabel = styled(BaseText)`
+  font-size: ${fontSizes.small};
+  padding-right: 10px;
+  flex: 1;
+  color: ${baseColors.slateBlack};
 `;
 
 class ParticipateScreen extends React.Component<Props, State> {
@@ -190,6 +225,7 @@ class ParticipateScreen extends React.Component<Props, State> {
   }
 
   handleSubmit = () => {
+    Keyboard.dismiss();
     this.props.navigation.navigate(ICO_INSTRUCTIONS);
   };
 
@@ -221,6 +257,8 @@ class ParticipateScreen extends React.Component<Props, State> {
       handleToReceiveChange: this.handleToReceiveChange,
       handleToFundChange: this.handleToFundChange,
     });
+    const amountInGBP = this.getAmountInGBP();
+
     return (
       <Container color={baseColors.snowWhite}>
         <Header
@@ -228,25 +266,42 @@ class ParticipateScreen extends React.Component<Props, State> {
           title="participate"
           onClose={this.handleDismiss}
         />
-        <Wrapper flex={1} regularPadding>
-          <Form
-            ref={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={value}
-          />
-          {selectedCurrency !== GBP && (
-            <SummaryRow>
-              <SummaryLabel>AMOUNT IN GBP</SummaryLabel>
-              <SummaryValue>{this.getAmountInGBP()}</SummaryValue>
-            </SummaryRow>
-          )}
-        </Wrapper>
-        <Footer style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-          <BaseText style={{ flex: 2, paddingRight: 20, fontSize: fontSizes.extraExtraSmall }}>
-            Your investment is fully secure and compliant to regulators’ orders and UK laws
-          </BaseText>
-          <Button small title="Next" onPress={this.handleSubmit} />
+        <ScrollWrapper style={{ flex: 1 }}>
+          <Wrapper flex={1} regularPadding>
+            <Form
+              ref={node => { this._form = node; }}
+              type={formStructure}
+              options={formOptions}
+              value={value}
+            />
+            {selectedCurrency !== GBP && (
+              <ListItemUnderlined
+                label="AMOUNT IN GBP"
+                value={`£${formatMoney(amountInGBP, 0, 3, ',', '.', false)}`}
+              />
+            )}
+          </Wrapper>
+          {selectedCurrency === ETH &&
+          <SwitchWrapper>
+            <ItemLabelHolder>
+              <ItemLabel>
+                Fund ETH directly from Pillar Wallet
+              </ItemLabel>
+              <Switch
+                onValueChange={() => {}}
+                value
+              />
+            </ItemLabelHolder>
+          </SwitchWrapper>
+          }
+        </ScrollWrapper>
+        <Footer style={{ backgroundColor: baseColors.snowWhite }}>
+          <FooterInner>
+            <LegalText>
+              Your investment is fully secure and compliant to regulators’ orders and UK laws
+            </LegalText>
+            <Button small title="Next" onPress={this.handleSubmit} />
+          </FooterInner>
         </Footer>
       </Container>
     );

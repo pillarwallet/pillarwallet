@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Input, Label as NBLabel, ActionSheet } from 'native-base';
+import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
-import { TextLink, BaseText, LightText } from 'components/Typography';
+import { TextLink, BaseText, LightText, MediumText } from 'components/Typography';
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { Image as RNImage, Platform } from 'react-native';
 
@@ -13,6 +13,7 @@ type inputPropsType = {
   onBlur?: Function,
   value: ?string,
   multiline?: boolean,
+  fontSize?: number,
 }
 
 type Option = {
@@ -39,13 +40,14 @@ type Props = {
   inputType: string,
   trim: boolean,
   options: Option[],
+  fontSize?: number,
 }
 
 type EventLike = {
   nativeEvent: Object,
 }
 
-const Label = styled(NBLabel)`
+const Label = styled(MediumText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
   padding-bottom: ${spacing.rhythm / 2}px;
@@ -71,8 +73,8 @@ const FloatImage = styled(RNImage)`
   position: absolute;
   height: 30px;
   width: 30px;
-  left: 14px;
-  top: 14px;
+  left: 12px;
+  top: 11px;
   tintColor: black;
   resizeMode: contain;
 `;
@@ -95,7 +97,7 @@ const OptionSelector = styled.TouchableOpacity`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: ${baseColors.hawkesBlue}
+  background: ${baseColors.aliceBlue}
   z-index: 2;
   left: 0;
   border: 1px solid #ebebeb;
@@ -123,14 +125,25 @@ const ErrorMessage = styled(BaseText)`
 `;
 
 const InputField = styled(Input)`
-  font-size: ${props => props.fontSize || fontSizes.extraExtraLarge};
-  font-weight: ${props => props.fontWeight || fontWeights.bold}
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraExtraLarge}px;
+  font-weight: ${props => props.fontWeight ? props.fontWeight : fontWeights.bold};
+  include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
-  background: ${baseColors.white};
+  background: ${props => props.backgrounded ? baseColors.alabaster : baseColors.white};
   border-radius: 4;
   color: ${UIColors.defaultTextColor};
-  border: ${props => `1px solid ${props.error ? 'tomato' : '#EBEBEB'}`};
+  border: ${props => `1px solid ${props.error ? 'tomato' : baseColors.gallery}`};
   padding: 0 12px;
+  font-family: ${Platform.select({
+    ios: 'Aktiv Grotesk App',
+    android: 'sans-serif',
+  })};
+`;
+
+const ChevronWrapper = styled.View`
+  flex-direction: column;
+  align-items: center;
+  justify-content; center;
 `;
 
 class SingleInput extends React.Component<Props, *> {
@@ -189,15 +202,25 @@ class SingleInput extends React.Component<Props, *> {
     return (
       <OptionSelector onPress={this.handleSelectPress}>
         <LightText>{selectedOption}</LightText>
-        <Icon
-          name="chevron-right"
-          style={{
-            fontSize: fontSizes.tiny,
-            transform: [{ rotate: '90deg' }],
-            color: baseColors.brightBlue,
-            marginTop: 4,
-          }}
-        />
+        <ChevronWrapper>
+          <Icon
+            name="chevron-right"
+            style={{
+              fontSize: 8,
+              transform: [{ rotate: '-90deg' }],
+              color: baseColors.electricBlue,
+            }}
+          />
+          <Icon
+            name="chevron-right"
+            style={{
+              fontSize: 8,
+              transform: [{ rotate: '90deg' }],
+              color: baseColors.electricBlue,
+              marginTop: 4,
+            }}
+          />
+        </ChevronWrapper>
       </OptionSelector>
     );
   }
@@ -212,6 +235,7 @@ class SingleInput extends React.Component<Props, *> {
       outterImageText,
       onPress,
       options,
+      fontSize,
     } = this.props;
     const { value = '' } = inputProps;
     return (
@@ -230,6 +254,9 @@ class SingleInput extends React.Component<Props, *> {
               value={value}
               style={{ paddingLeft: innerImageURI ? 54 : 12 }}
               placeholderTextColor={baseColors.mediumGray}
+              backgrounded={!!options.length}
+              textAlignVertical="center"
+              fontSize={fontSize}
             />
             {!!innerImageURI && <FloatImage
               source={this.resolveAssetSource(innerImageURI)}

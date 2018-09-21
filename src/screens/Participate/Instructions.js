@@ -9,8 +9,9 @@ import QRCode from 'react-native-qrcode';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import { ICO_CONFIRM } from 'constants/navigationConstants';
-import { Container, Wrapper, Footer } from 'components/Layout';
-import { BoldText, Label, BaseText } from 'components/Typography';
+import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
+import { BoldText, Label } from 'components/Typography';
+import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 
 // models
 import type { ICOFundingInstructions } from 'models/ICO';
@@ -28,26 +29,21 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const FooterRow = styled.View`
-  margin: ${spacing.rhythm / 2}px 0;
-  flexDirection: row;
-  alignItems: center;
-  justifyContent: space-between;
-`;
-
 const InstructionsLabel = styled(Label)`
   text-align:center;
   font-size: ${fontSizes.extraSmall};
   margin-bottom: 4px;
 `;
 
-const SummaryLabel = styled(Label)`
-  text-align:center;
-  font-size: ${fontSizes.extraSmall};
+const IntroText = styled(BoldText)`
+  font-size: ${fontSizes.extraSmall}px;
+  line-height: ${fontSizes.medium}px;
+  color: ${baseColors.darkGray};
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.small};
+  font-size: ${props => props.xl ? fontSizes.large : fontSizes.small};
+  text-align: center;
 `;
 
 const Instructions = styled.View`
@@ -55,6 +51,21 @@ const Instructions = styled.View`
   display: flex;
   align-items: center;
   margin: ${spacing.rhythm}px 0;
+`;
+
+const ListWrapper = styled.View`
+  width: 100%;
+  border-top-width: 1px;
+  border-top-color: ${baseColors.gallery};
+  background-color: ${baseColors.snowWhite};
+  padding: ${spacing.rhythm / 2}px ${spacing.rhythm}px;
+`;
+
+const FooterInner = styled.View`
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
 `;
 
 type Props = {
@@ -88,51 +99,52 @@ class InstructionsScreen extends React.Component<Props, State> {
     const { instructions } = this.props;
     return (
       <React.Fragment>
-        <Wrapper regularPadding>
-          <BaseText style={{ color: baseColors.darkGray }}>
-            Fund this bank account to purchase tokens.
-            After receiving you will be able to manage tokens within the Pillar Wallet.
-          </BaseText>
-          <Instructions>
-            <Row>
-              <InstructionsLabel>Reference Number</InstructionsLabel>
-              <Value style={{ color: baseColors.fireEngineRed }}>{instructions.reference}</Value>
-            </Row>
-            <Row>
-              <InstructionsLabel>Beneficiary</InstructionsLabel>
-              <Value>{instructions.beneficiary}</Value>
-            </Row>
-            <Row>
-              <InstructionsLabel>IBAN</InstructionsLabel>
-              <Value>{instructions.iban}</Value>
-            </Row>
-            <Row>
-              <InstructionsLabel>BIC</InstructionsLabel>
-              <Value>{instructions.bic}</Value>
-            </Row>
-            <Row>
-              <InstructionsLabel>Bank</InstructionsLabel>
-              <Value>{instructions.bankName}</Value>
-            </Row>
-          </Instructions>
-        </Wrapper>
-        <Footer style={{
-          backgroundColor: baseColors.snowWhite,
-          alignItems: 'stretch',
-          borderTopWidth: 1,
-          padding: 20,
-          borderTopColor: '#EBEBEB',
-        }}
+        <ScrollWrapper style={{ flex: 1 }}>
+          <Wrapper regularPadding>
+            <IntroText>
+              Fund this bank account to purchase tokens.
+              After receiving you will be able to manage tokens within the Pillar Wallet.
+            </IntroText>
+            <Instructions>
+              <Row>
+                <InstructionsLabel>Reference Number</InstructionsLabel>
+                <Value xl style={{ color: baseColors.fireEngineRed }}>{instructions.reference}</Value>
+              </Row>
+              <Row>
+                <InstructionsLabel>Beneficiary</InstructionsLabel>
+                <Value xl>{instructions.beneficiary}</Value>
+              </Row>
+              <Row>
+                <InstructionsLabel>IBAN</InstructionsLabel>
+                <Value xl>{instructions.iban}</Value>
+              </Row>
+              <Row>
+                <InstructionsLabel>BIC</InstructionsLabel>
+                <Value xl>{instructions.bic}</Value>
+              </Row>
+              <Row>
+                <InstructionsLabel>Bank</InstructionsLabel>
+                <Value xl>{instructions.bankName}</Value>
+              </Row>
+            </Instructions>
+          </Wrapper>
+          <ListWrapper>
+            <ListItemUnderlined
+              label="AMOUNT IN GBP"
+              value="00-00-00"
+            />
+            <ListItemUnderlined
+              label="TOKENS TO RECEIVE"
+              value="00-00-00"
+            />
+          </ListWrapper>
+        </ScrollWrapper>
+        <Footer
+          backgroundColor={baseColors.white}
         >
-          <FooterRow>
-            <SummaryLabel>AMOUNT IN GBP</SummaryLabel>
-            <Value>00-00-00</Value>
-          </FooterRow>
-          <FooterRow>
-            <SummaryLabel>TOKENS TO RECEIVE</SummaryLabel>
-            <Value>00-00-00</Value>
-          </FooterRow>
-          <Button style={{ marginTop: 20 }} title="Share Instructions" onPress={this.handleShare} />
+          <FooterInner>
+            <Button block title="Share Instructions" onPress={this.handleShare} />
+          </FooterInner>
         </Footer>
       </React.Fragment>
     );
@@ -142,39 +154,40 @@ class InstructionsScreen extends React.Component<Props, State> {
     const { instructions } = this.props;
     return (
       <React.Fragment>
-        <Wrapper regularPadding>
-          <Instructions>
-            <Row>
-              <InstructionsLabel>{instructions.currency} address to receive tokens</InstructionsLabel>
-              <Value style={{ fontSize: fontSizes.small }}>{instructions.address}</Value>
-            </Row>
-            <Row style={{ marginTop: spacing.rhythm * 2 }}>
-              <QRCode value={instructions.address} size={140} />
-            </Row>
-          </Instructions>
-        </Wrapper>
-        <Footer style={{
-          backgroundColor: baseColors.snowWhite,
-          alignItems: 'stretch',
-          borderTopWidth: 1,
-          padding: 20,
-          borderTopColor: '#EBEBEB',
-        }}
+        <ScrollWrapper style={{ flex: 1 }}>
+          <Wrapper regularPadding>
+            <Instructions>
+              <Row>
+                <InstructionsLabel>{instructions.currency} address to receive tokens</InstructionsLabel>
+                <Value style={{ fontSize: fontSizes.small }}>{instructions.address}</Value>
+              </Row>
+              <Row style={{ marginTop: spacing.rhythm }}>
+                <QRCode value={instructions.address} size={125} />
+              </Row>
+            </Instructions>
+          </Wrapper>
+          <ListWrapper>
+            <ListItemUnderlined
+              label="AMOUNT TO FUND"
+              value="00-00-00"
+            />
+            <ListItemUnderlined
+              label="TOKENS TO RECEIVE"
+              value="00-00-00"
+            />
+            <ListItemUnderlined
+              label="CONVERTING TO BTC"
+              value="00-00-00"
+            />
+          </ListWrapper>
+        </ScrollWrapper>
+        <Footer
+          backgroundColor={baseColors.white}
         >
-          <FooterRow>
-            <SummaryLabel>AMOUNT TO FUND</SummaryLabel>
-            <Value>00-00-00</Value>
-          </FooterRow>
-          <FooterRow>
-            <SummaryLabel>TOKENS TO RECEIVE</SummaryLabel>
-            <Value>00-00-00</Value>
-          </FooterRow>
-          <FooterRow>
-            <SummaryLabel>CONVERTING TO BTC</SummaryLabel>
-            <Value>00-00-00</Value>
-          </FooterRow>
-          <Button style={{ marginTop: 20 }} title="Share Address" onPress={this.handleCopyToClipBoard} />
-          <Button style={{ marginTop: 20 }} title="Share Address" onPress={this.handleShare} />
+          <FooterInner>
+            <Button block title="Copy to clipboard" onPress={this.handleCopyToClipBoard} />
+            <Button block style={{ marginTop: 20 }} title="Share Address" onPress={this.handleShare} />
+          </FooterInner>
         </Footer>
       </React.Fragment>
     );
@@ -183,7 +196,7 @@ class InstructionsScreen extends React.Component<Props, State> {
   render() {
     const { instructions } = this.props;
     return (
-      <Container>
+      <Container color={baseColors.white}>
         <Header
           onBack={this.handleBackNavigation}
           onClose={this.handleDismiss}
