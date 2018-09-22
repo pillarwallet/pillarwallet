@@ -180,7 +180,7 @@ const IcoCard = (props: Props) => {
                 </LabelText>
               </Label>}
             </TitleWrapper>
-            {!inner &&
+            {!inner && iconUrl &&
             <CachedImage
               key={id}
               style={{

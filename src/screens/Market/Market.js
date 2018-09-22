@@ -30,8 +30,8 @@ const ListHeader = styled.View`
   padding: 0 ${spacing.rhythm / 2}px;
 `;
 
-const PENDING = 'Pending';
-const ACTIVE = 'Active';
+const PENDING = 'PENDING';
+const ACTIVE = 'ACTIVE';
 
 const filterIcosByStatus = (icos: ICOT[], status: string) => (
   icos.filter(({ icos: innerIcos }: Object) => {
@@ -87,7 +87,6 @@ class MarketScreen extends React.Component<Props> {
     const { icos, fetchICOs } = this.props;
     const activeICOs = filterIcosByStatus(icos, ACTIVE);
     const pendingICOs = filterIcosByStatus(icos, PENDING);
-
     return (
       <Container color={baseColors.snowWhite}>
         <Header

@@ -6,6 +6,7 @@ import {
   SDK_PROVIDER,
   BCX_URL,
   NOTIFICATIONS_URL,
+  INVESTMENTS_URL,
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
@@ -13,7 +14,7 @@ import { fetchAssetBalances } from 'services/assets';
 import { USERNAME_EXISTS, API_REGISTRATION_FAILED } from 'constants/walletConstants';
 
 // temporary here
-import { icos as icosFixtures, icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
+import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
@@ -47,6 +48,7 @@ SDKWrapper.prototype.init = function (privateKey: string) {
     privateKey: privateKey.slice(2),
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
+    investmentsUrl: INVESTMENTS_URL,
   });
 };
 
@@ -153,11 +155,10 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
 };
 
 SDKWrapper.prototype.fetchICOs = function (userId: string) { //eslint-disable-line
-  return Promise.resolve(icosFixtures);
-  // return Promise.resolve()
-  //   .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
-  //   .then(({ data }) => data)
-  //   .catch((e) => []);
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.investments.icoList({ userId }))
+    .then(({ data }) => data.data)
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.fetchICOFundingInstructions = function (walletId, currency) {
