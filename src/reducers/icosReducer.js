@@ -23,7 +23,7 @@ export default function icosReducer(
 ) {
   switch (action.type) {
     case SET_ICOS:
-      const icos: ICO[] = state.data.concat(action.payload);
+      const icos: ICO[] = action.payload;
       return { ...state, data: icos };
     case SET_ICO_FUNDING_INSTRUCTIONS:
       const instructions: ICOFundingInstructions = action.payload;
