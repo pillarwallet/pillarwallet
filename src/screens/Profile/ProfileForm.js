@@ -112,19 +112,23 @@ LastNameStruct.getValidationErrorMessage = (lastName): string => {
 };
 
 EmailStruct.getValidationErrorMessage = (email): string => {
-  if (!!email && !isValidEmail(email)) {
-    return 'Please enter a valid email';
-  } else if (email.length > maxLength) {
-    return `Email should not be longer than ${maxLength} symbols`;
+  if (email) {
+    if (!isValidEmail(email)) {
+      return 'Please enter a valid email';
+    } else if (email.length > maxLength) {
+      return `Email should not be longer than ${maxLength} symbols`;
+    }
   }
   return 'Please specify your email';
 };
 
 CityStruct.getValidationErrorMessage = (city): string => {
-  if (!!city && !isValidCityName(city)) {
-    return 'Please enter a valid city';
-  } else if (city.length > maxLength) {
-    return `City should not be longer than ${maxLength} symbols`;
+  if (city) {
+    if (!isValidCityName(city)) {
+      return 'Please enter a valid city';
+    } else if (city.length > maxLength) {
+      return `City should not be longer than ${maxLength} symbols`;
+    }
   }
   return 'Please specify your city';
 };
