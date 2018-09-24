@@ -225,7 +225,7 @@ class ICOScreen extends React.Component<Props, State> {
 
   renderContactsButton(socMedia: any) {
     return socMedia.map(social => {
-      switch (social.service) {
+      switch (social.service.toLowerCase()) {
         case 'twitter': {
           return this.renderIconButton(social.username, `https://twitter.com/${social.username}`, twitter);
         }
@@ -402,6 +402,7 @@ class ICOScreen extends React.Component<Props, State> {
               }}
               refreshing={false}
             />
+            {!!socialMedia.length &&
             <ContactsRow>
               <ContactsLabel>
                 Contacts
@@ -410,6 +411,7 @@ class ICOScreen extends React.Component<Props, State> {
                 {this.renderContactsButton(socialMedia)}
               </ContactsWrapper>
             </ContactsRow>
+            }
           </Wrapper>
         </ScrollWrapper>
         <Footer
