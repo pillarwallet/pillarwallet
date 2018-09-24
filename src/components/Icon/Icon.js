@@ -37,6 +37,7 @@ const glyphMap = {
   litecoin: '\uE844',
   pound: '\uE846',
   bitcoin: '\uE847',
+  'turn-off': '\uE81D',
 };
 
 type Props = {

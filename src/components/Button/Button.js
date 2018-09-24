@@ -9,7 +9,7 @@ import Icon from 'components/Icon';
 type Props = {
   children?: React.Node,
   title: string,
-  onPress: Function,
+  onPress?: Function,
   disabled?: boolean,
   disabledTransparent?: boolean,
   secondary?: boolean,

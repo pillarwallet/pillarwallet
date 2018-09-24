@@ -75,12 +75,20 @@ export const sendAssetAction = ({
   };
 };
 
-export const updateAssetsAction = (assets: Assets) => {
-  return async (dispatch: Function) => {
-    await storage.save('assets', { assets }, true);
+export const updateAssetsAction = (assets: Assets, assetsToExclude?: string[] = []) => {
+  return (dispatch: Function) => {
+    const updatedAssets = Object.keys(assets)
+      .map(key => assets[key])
+      .reduce((memo, item) => {
+        if (!assetsToExclude.includes(item.symbol)) {
+          memo[item.symbol] = item;
+        }
+        return memo;
+      }, {});
+    storage.save('assets', { assets: updatedAssets }, true);
     dispatch({
       type: UPDATE_ASSETS,
-      payload: assets,
+      payload: updatedAssets,
     });
   };
 };

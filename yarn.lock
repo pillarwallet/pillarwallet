@@ -10045,6 +10045,13 @@ react-native-svg@^7.0.2:
     color "^2.0.1"
     lodash "^4.16.6"
     pegjs "^0.10.0"
+react-native-swipeout@^2.3.6:
+  version "2.3.6"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-swipeout/-/react-native-swipeout-2.3.6.tgz#47dac8a835825cf3f2eef9e495574a3d9ab6d3fa"
+  dependencies:
+    create-react-class "^15.6.0"
+    prop-types "^15.5.10"
+    react-tween-state "^0.1.5"
 
 react-native-tab-view@^0.0.77:
   version "0.0.77"

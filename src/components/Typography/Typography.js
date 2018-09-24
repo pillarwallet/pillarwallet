@@ -55,9 +55,9 @@ export const SubTitle = styled(BaseText)`
 
 export const SubHeading = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
-  font-weight: ${fontWeights.bold};
+  font-weight: ${fontWeights.book};
   color: ${baseColors.darkGray};
-  letter-spacing: 0.5;
+  letter-spacing: 0.4;
 `;
 
 export const Paragraph = styled(BaseText)`

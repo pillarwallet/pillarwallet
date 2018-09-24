@@ -17,7 +17,7 @@ import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 
 import Header from 'components/Header';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -28,11 +28,11 @@ import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
 
-const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.snowWhite), baseColors.snowWhite];
+const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.white), baseColors.white];
 
 const AssetDescriptionToggleWrapperActiveColors = [
-  transparentize(1, baseColors.snowWhite),
-  transparentize(1, baseColors.snowWhite),
+  transparentize(1, baseColors.white),
+  transparentize(1, baseColors.white),
 ];
 
 const activeModalResetState = {
@@ -48,7 +48,6 @@ type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistory: (walletAddress: string, asset: string, indexFrom?: number) => Function,
   history: Transaction[],
-  historyNotifications: Object[],
   assets: Assets,
   balances: Balances,
   wallet: Object,
@@ -56,6 +55,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   contacts: Object,
+  resetHideRemoval: Function,
 };
 
 type State = {
@@ -71,12 +71,15 @@ type State = {
   },
 };
 
-const AssetCardWrapper = styled(Wrapper)`
+const AssetCardWrapper = styled.View`
   flex: 1;
+  padding-left: 0;
+  padding-right: ${spacing.rhythm - 2}px;
 `;
 
 const AssetDescriptionWrapper = styled.View`
   height: ${props => (props.expanded ? 'auto' : '24px')};
+  padding: 0 ${spacing.rhythm - 2}px;
   z-index: 10;
 `;
 
@@ -116,8 +119,9 @@ class AssetScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const { fetchTransactionsHistory, wallet, navigation } = this.props;
-    const { assetData } = navigation.state.params;
+    const { assetData, resetHideRemoval } = navigation.state.params;
     fetchTransactionsHistory(wallet.address, assetData.token);
+    resetHideRemoval();
   }
 
   handleCardTap = () => {
@@ -214,7 +218,7 @@ class AssetScreen extends React.Component<Props, State> {
             />
           }
         >
-          <AssetCardWrapper regularPadding>
+          <AssetCardWrapper>
             <Transition shared={assetData.name}>
               <AssetCard
                 id={assetData.token}
@@ -229,6 +233,7 @@ class AssetScreen extends React.Component<Props, State> {
                 wallpaper={assetData.wallpaper}
                 isListed={isListed}
                 disclaimer={disclaimer}
+                horizontalPadding
               />
             </Transition>
             <AssetButtons
@@ -292,7 +297,7 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets, balances },
   rates: { data: rates },
-  history: { data: history, historyNotifications },
+  history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
 }) => ({
   wallet,
@@ -301,7 +306,6 @@ const mapStateToProps = ({
   balances,
   rates,
   history,
-  historyNotifications,
   baseFiatCurrency,
 });
 
