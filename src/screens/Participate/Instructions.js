@@ -140,7 +140,7 @@ class InstructionsScreen extends React.Component<Props, State> {
           </ListWrapper>
         </ScrollWrapper>
         <Footer
-          backgroundColor={baseColors.white}
+          backgroundColor={baseColors.snowWhite}
         >
           <FooterInner>
             <Button block title="Share Instructions" onPress={this.handleShare} />
@@ -182,7 +182,7 @@ class InstructionsScreen extends React.Component<Props, State> {
           </ListWrapper>
         </ScrollWrapper>
         <Footer
-          backgroundColor={baseColors.white}
+          backgroundColor={baseColors.snowWhite}
         >
           <FooterInner>
             <Button block title="Copy to clipboard" onPress={this.handleCopyToClipBoard} />
