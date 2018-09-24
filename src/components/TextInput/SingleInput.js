@@ -197,6 +197,7 @@ class SingleInput extends React.Component<Props, *> {
 
   handleSelectPress = () => {
     const { options, onSelect } = this.props;
+    if (options.length < 2) return;
     const BUTTONS = options.map(({ label }) => label).concat('Cancel');
     const CANCEL_INDEX = options.length;
     // TODO: Move to custom ActionSheet similar to Toast ASAP.
@@ -214,40 +215,42 @@ class SingleInput extends React.Component<Props, *> {
   }
 
   renderSelector = () => {
-    const { selectedOption } = this.props;
+    const { selectedOption, options } = this.props;
     return (
       <OptionSelector onPress={this.handleSelectPress}>
         <CurrencyWrapper>
           {!!selectedOption &&
-          <Icon
-            name={getCurrencyIcon(selectedOption)}
-            style={{
-              fontSize: fontSizes.extraLarge,
-              color: baseColors.manatee,
-              marginRight: 6,
-            }}
-          />}
+            <Icon
+              name={getCurrencyIcon(selectedOption)}
+              style={{
+                fontSize: fontSizes.extraLarge,
+                color: baseColors.manatee,
+                marginRight: 6,
+              }}
+            />}
           <BaseText>{selectedOption}</BaseText>
         </CurrencyWrapper>
-        <ChevronWrapper>
-          <Icon
-            name="chevron-right"
-            style={{
-              fontSize: 8,
-              transform: [{ rotate: '-90deg' }],
-              color: baseColors.electricBlue,
-            }}
-          />
-          <Icon
-            name="chevron-right"
-            style={{
-              fontSize: 8,
-              transform: [{ rotate: '90deg' }],
-              color: baseColors.electricBlue,
-              marginTop: 4,
-            }}
-          />
-        </ChevronWrapper>
+        {options.length > 1 &&
+          <ChevronWrapper>
+            <Icon
+              name="chevron-right"
+              style={{
+                fontSize: 8,
+                transform: [{ rotate: '-90deg' }],
+                color: baseColors.electricBlue,
+              }}
+            />
+            <Icon
+              name="chevron-right"
+              style={{
+                fontSize: 8,
+                transform: [{ rotate: '90deg' }],
+                color: baseColors.electricBlue,
+                marginTop: 4,
+              }}
+            />
+          </ChevronWrapper>
+        }
       </OptionSelector>
     );
   }
