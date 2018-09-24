@@ -41,6 +41,7 @@ export const baseColors = {
   gallery: '#efefef',
   alabaster: '#fcfcfc',
   aliceBlue: '#f7fbff',
+  manatee: '#a3a9b2',
 };
 
 export const brandColors = [

@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
-import { TextLink, BaseText, LightText, MediumText } from 'components/Typography';
+import { TextLink, BaseText, MediumText } from 'components/Typography';
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { Image as RNImage, Platform } from 'react-native';
 
@@ -90,10 +90,10 @@ const ImageHolder = styled.TouchableOpacity`
 const OptionSelector = styled.TouchableOpacity`
   position: absolute;
   height: 100%;
-  width: 80px;
-  padding: 0 8px;
+  width: 108px;
+  padding: 0 18px 0 12px;
   bottom: 0;
-  justify-content: space-around;
+  justify-content: space-between;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -140,11 +140,27 @@ const InputField = styled(Input)`
   })};
 `;
 
+const CurrencyWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+`;
+
 const ChevronWrapper = styled.View`
   flex-direction: column;
   align-items: center;
-  justify-content; center;
+  justify-content: center;
 `;
+
+const getCurrencyIcon = (currencyOpt: string) => {
+  switch (currencyOpt) {
+    case 'GBP': return 'pound';
+    case 'ETH': return 'ethereum';
+    case 'BTC': return 'bitcoin';
+    case 'LTC': return 'litecoin';
+    default: return currencyOpt;
+  }
+};
 
 class SingleInput extends React.Component<Props, *> {
   static defaultProps = {
@@ -201,7 +217,18 @@ class SingleInput extends React.Component<Props, *> {
     const { selectedOption } = this.props;
     return (
       <OptionSelector onPress={this.handleSelectPress}>
-        <LightText>{selectedOption}</LightText>
+        <CurrencyWrapper>
+          {!!selectedOption &&
+          <Icon
+            name={getCurrencyIcon(selectedOption)}
+            style={{
+              fontSize: fontSizes.extraLarge,
+              color: baseColors.manatee,
+              marginRight: 6,
+            }}
+          />}
+          <BaseText>{selectedOption}</BaseText>
+        </CurrencyWrapper>
         <ChevronWrapper>
           <Icon
             name="chevron-right"
