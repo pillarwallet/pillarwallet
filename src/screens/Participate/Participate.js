@@ -257,8 +257,6 @@ class ParticipateScreen extends React.Component<Props, State> {
       handleToReceiveChange: this.handleToReceiveChange,
       handleToFundChange: this.handleToFundChange,
     });
-    const amountInGBP = this.getAmountInGBP();
-
     return (
       <Container color={baseColors.snowWhite}>
         <Header
@@ -277,7 +275,7 @@ class ParticipateScreen extends React.Component<Props, State> {
             {selectedCurrency !== GBP && (
               <ListItemUnderlined
                 label="AMOUNT IN GBP"
-                value={`£${formatMoney(amountInGBP, 0, 3, ',', '.', false)}`}
+                value={`£${formatMoney(this.getAmountInGBP(), 0, 3, ',', '.', false)}`}
               />
             )}
           </Wrapper>
