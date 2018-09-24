@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Animated, Easing } from 'react-native';
 import styled from 'styled-components/native/index';
 import { differenceInHours } from 'date-fns';
 import LinearGradient from 'react-native-linear-gradient';
@@ -16,7 +16,9 @@ type Props = {
 type State = {
   label: string,
   progress: number,
+  progressAnimated: Object,
 }
+
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
@@ -30,11 +32,12 @@ const ProgressBarWrapper = styled.View`
 const StyledLinearGradient = styled(LinearGradient)`
   padding: 1px;
   height: 11px;
-  width: ${props => props.progress}%;
   border-top-right-radius: ${props => props.full ? 0 : '9px'};
   border-bottom-right-radius: ${props => props.full ? 0 : '9px'};
   overflow: hidden;
 `;
+
+const AnimatedStyledLinearGradient = Animated.createAnimatedComponent(StyledLinearGradient);
 
 const ProgressLabel = styled(MediumText)`
   font-size: ${fontSizes.tiny};
@@ -64,6 +67,7 @@ export default class ProgressBar extends React.Component<Props, State> {
     this.state = {
       label: '0',
       progress: BACKGROUND_FOR_LABEL,
+      progressAnimated: new Animated.Value(BACKGROUND_FOR_LABEL),
     };
   }
 
@@ -88,8 +92,10 @@ export default class ProgressBar extends React.Component<Props, State> {
 
     this.interval = setInterval(() => {
       const progressInPercent = Math.floor(
-        ((differenceInHours(new Date(), startDate) * 360) /
-          (differenceInHours(endDate, startDate) * 360)) * 100);
+        (
+          (differenceInHours(new Date(), startDate) * 360) /
+          (differenceInHours(endDate, startDate) * 360))
+        * 100);
 
       const adjustedProgress = progressInPercent < BACKGROUND_FOR_LABEL ? BACKGROUND_FOR_LABEL : progressInPercent;
 
@@ -98,6 +104,7 @@ export default class ProgressBar extends React.Component<Props, State> {
           label: progressInPercent.toString(),
           progress: adjustedProgress,
         });
+        this.animateProgress();
       }
 
       if (this.state.progress === 100) {
@@ -106,7 +113,19 @@ export default class ProgressBar extends React.Component<Props, State> {
     }, 1000);
   };
 
+  animateProgress = () => {
+    Animated.timing(
+      this.state.progressAnimated,
+      {
+        toValue: this.state.progress,
+        easing: Easing.linear,
+        duration: 300,
+      },
+    ).start();
+  };
+
   render() {
+    const { progressAnimated } = this.state;
     const {
       label,
       progress,
@@ -114,15 +133,20 @@ export default class ProgressBar extends React.Component<Props, State> {
 
     return (
       <ProgressBarWrapper>
-        <StyledLinearGradient
+        <AnimatedStyledLinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           colors={[baseColors.mantis, baseColors.oliveDrab]}
-          progress={progress}
           full={progress === 100}
+          style={{
+            width: progressAnimated.interpolate({
+              inputRange: [0, 100],
+              outputRange: ['0%', '100%'],
+            }),
+          }}
         >
           <ProgressLabel>{label}%</ProgressLabel>
-        </StyledLinearGradient>
+        </AnimatedStyledLinearGradient>
       </ProgressBarWrapper>
     );
   }

@@ -2,5 +2,5 @@
   "name": "ProgressCircle",
   "version": "0.0.0",
   "private": true,
-  "main": "./ProgressCircle.js"
+  "main": "./AnimatedProgressCircle.js"
 }
