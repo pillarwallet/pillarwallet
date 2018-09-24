@@ -45,7 +45,7 @@ class CheckPin extends React.Component<Props, *> {
         pinError = 'Invalid pincode';
         break;
       case EXISTING_PASSWORD:
-        pinError = 'Password must be different than current';
+        pinError = 'Password must be different than current one';
         break;
       default:
         pinError = null;

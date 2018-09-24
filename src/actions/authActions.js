@@ -119,7 +119,7 @@ export const checkPinAction = (
     } catch (e) {
       if (checkExisting) {
         if (onValidPin) {
-          onValidPin();
+          onValidPin(pin);
         }
       } else {
         dispatch({

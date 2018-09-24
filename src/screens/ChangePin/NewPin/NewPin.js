@@ -17,7 +17,7 @@ export default class NewPin extends React.Component<Props> {
   };
 
   render() {
-    const { navigation, pin } = this.props;
+    const { navigation } = this.props;
     return (
       <Container>
         <Header
@@ -27,7 +27,7 @@ export default class NewPin extends React.Component<Props> {
         />
         <CheckPin
           checkExisting
-          onPinValid={() => navigation.navigate(CHANGE_PIN_CONFIRM_NEW_PIN, { pin })}
+          onPinValid={(pin: string) => navigation.navigate(CHANGE_PIN_CONFIRM_NEW_PIN, { pin })}
         />
       </Container>
     );
