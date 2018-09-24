@@ -117,7 +117,7 @@ const getFormStructure = (maxContribution, minContribution) => {
     }
 
     if (amount < minContribution) {
-      return 'Amount should not exceed the minimum contribution.';
+      return 'Amount should not be less than the minimum contribution.';
     }
 
     return 'Amount should be specified.';
