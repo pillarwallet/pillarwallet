@@ -37,7 +37,7 @@ import ChatScreen from 'screens/Chat/Chat';
 import ICOScreen from 'screens/ICO';
 import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
-import ConfrimScreen from 'screens/Participate/Confirm';
+import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
 
 // components
@@ -55,6 +55,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
+import { fetchICOsAction } from 'actions/icosActions';
 
 // constants
 import {
@@ -336,7 +337,7 @@ const changePinFlow = createStackNavigator({
 const participateInICOFlow = createStackNavigator({
   [ICO_PARTICIPATE]: ParticipateScreen,
   [ICO_INSTRUCTIONS]: InstructionsScreen,
-  [ICO_CONFIRM]: ConfrimScreen,
+  [ICO_CONFIRM]: ConfirmScreen,
 }, StackNavigatorModalConfig);
 
 
@@ -361,6 +362,7 @@ type Props = {
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
+  fetchICOs: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -384,6 +386,7 @@ class AppFlow extends React.Component<Props, {}> {
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
+      fetchICOs,
       getExistingChats,
       assets,
       wallet,
@@ -393,6 +396,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
+    fetchICOs();
     getExistingChats();
     addAppStateChangeListener(this.handleAppStateChange);
   }
@@ -490,6 +494,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(fetchInviteNotificationsAction());
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
+  fetchICOs: () => dispatch(fetchICOsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

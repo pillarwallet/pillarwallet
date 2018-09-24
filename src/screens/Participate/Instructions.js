@@ -96,7 +96,8 @@ class InstructionsScreen extends React.Component<Props, State> {
   }
 
   renderFiatInstructions() {
-    const { instructions } = this.props;
+    const { instructions, navigation } = this.props;
+    const { amountToFund, tokensToReceive } = navigation.state.params;
     return (
       <React.Fragment>
         <ScrollWrapper style={{ flex: 1 }}>
@@ -131,11 +132,11 @@ class InstructionsScreen extends React.Component<Props, State> {
           <ListWrapper>
             <ListItemUnderlined
               label="AMOUNT IN GBP"
-              value="00-00-00"
+              value={amountToFund}
             />
             <ListItemUnderlined
               label="TOKENS TO RECEIVE"
-              value="00-00-00"
+              value={tokensToReceive}
             />
           </ListWrapper>
         </ScrollWrapper>

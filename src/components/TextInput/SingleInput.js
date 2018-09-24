@@ -100,7 +100,7 @@ const OptionSelector = styled.TouchableOpacity`
   background: ${baseColors.aliceBlue}
   z-index: 2;
   left: 0;
-  border: 1px solid #ebebeb;
+  border: 1px solid ${props => props.error ? 'tomato' : '#ebebeb'};
   border-bottom-left-radius: 4px;
   border-top-left-radius: 4px;
 `;
@@ -215,9 +215,9 @@ class SingleInput extends React.Component<Props, *> {
   }
 
   renderSelector = () => {
-    const { selectedOption, options } = this.props;
+    const { selectedOption, options, errorMessage } = this.props;
     return (
-      <OptionSelector onPress={this.handleSelectPress}>
+      <OptionSelector onPress={this.handleSelectPress} error={!!errorMessage}>
         <CurrencyWrapper>
           {!!selectedOption &&
             <Icon

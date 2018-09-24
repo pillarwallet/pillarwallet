@@ -106,11 +106,28 @@ const getFormOptions = (options) => {
   };
 };
 
-const formStructure = t.struct({
-  [TO_FUND]: t.String,
-  [TO_RECEIVE]: t.String,
-});
+const getFormStructure = (maxContribution, minContribution) => {
+  const Fund = t.refinement(t.String, (amount): boolean => {
+    return !!amount && amount <= maxContribution && amount >= minContribution;
+  });
 
+  Fund.getValidationErrorMessage = (amount): string => {
+    if (amount > maxContribution) {
+      return 'Amount should not exceed the maximum contribution.';
+    }
+
+    if (amount < minContribution) {
+      return 'Amount should not exceed the minimum contribution.';
+    }
+
+    return 'Amount should be specified.';
+  };
+
+  return t.struct({
+    [TO_FUND]: Fund,
+    [TO_RECEIVE]: t.String,
+  });
+};
 
 const FooterInner = styled.View`
   flex-direction: row;
@@ -192,7 +209,6 @@ class ParticipateScreen extends React.Component<Props, State> {
   }
 
   handleToFundChange = (fieldValue: string) => {
-    fieldValue = fieldValue || '0';
     let { icoData: { unitPrice } } = this.state;
     const { selectedCurrency } = this.state;
     const { rates } = this.props;
@@ -200,7 +216,8 @@ class ParticipateScreen extends React.Component<Props, State> {
     if (selectedCurrency !== GBP) {
       unitPrice /= rates[selectedCurrency][GBP]; // GBP is base atm for all ICOs
     }
-    const toReceiveValue = formatAmount(parseNumber(fieldValue) / unitPrice);
+    const fundAmount = fieldValue || '0';
+    const toReceiveValue = formatAmount(parseNumber(fundAmount) / unitPrice);
     const value = {
       [TO_FUND]: fieldValue,
       [TO_RECEIVE]: toReceiveValue,
@@ -209,14 +226,14 @@ class ParticipateScreen extends React.Component<Props, State> {
   }
 
   handleToReceiveChange = (fieldValue: string) => {
-    fieldValue = fieldValue || '0';
     let { icoData: { unitPrice } } = this.state;
     const { selectedCurrency } = this.state;
     const { rates } = this.props;
     if (selectedCurrency !== GBP) {
       unitPrice /= rates[selectedCurrency][GBP]; // GBP is base atm for all ICOs
     }
-    const toFundValue = formatAmount(parseNumber(fieldValue) * unitPrice);
+    const receiveAmount = fieldValue || '0';
+    const toFundValue = formatAmount(parseNumber(receiveAmount) * unitPrice);
     const value = {
       [TO_FUND]: toFundValue,
       [TO_RECEIVE]: fieldValue,
@@ -225,8 +242,12 @@ class ParticipateScreen extends React.Component<Props, State> {
   }
 
   handleSubmit = () => {
+    const formValues = this._form.getValue();
+    if (!formValues) return;
     Keyboard.dismiss();
-    this.props.navigation.navigate(ICO_INSTRUCTIONS);
+    this.props.navigation.navigate(ICO_INSTRUCTIONS, {
+      ...formValues,
+    });
   };
 
 
@@ -249,7 +270,7 @@ class ParticipateScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { value, selectedCurrency } = this.state;
+    const { value, selectedCurrency, icoData } = this.state;
     const formOptions = getFormOptions({
       onSelect: this.handleCurrencySelect,
       selectedOption: selectedCurrency,
@@ -257,6 +278,7 @@ class ParticipateScreen extends React.Component<Props, State> {
       handleToReceiveChange: this.handleToReceiveChange,
       handleToFundChange: this.handleToFundChange,
     });
+    const formStructure = getFormStructure(icoData.maximumContribution, icoData.minimumContribution);
     return (
       <Container color={baseColors.snowWhite}>
         <Header
