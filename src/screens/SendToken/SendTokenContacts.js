@@ -94,7 +94,7 @@ const getFormStructure = (ownAddress: string) => {
 
   Address.getValidationErrorMessage = (address): string => {
     if (ownAddress === address) {
-      return 'This is your Ethereum Address';
+      return 'You are not allowed to make transaction to yourself';
     }
     if (!isValidETHAddress(address)) {
       return 'Invalid Ethereum Address.';
