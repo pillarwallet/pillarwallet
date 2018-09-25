@@ -4,8 +4,10 @@ import {
   TRANSACTION_EVENT,
 } from 'constants/historyConstants';
 import { UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import Storage from 'services/storage';
 import { fetchAssetsBalancesAction, updateAssetsAction } from './assetsActions';
 
+const storage = Storage.getInstance('db');
 const TRANSACTIONS_HISTORY_STEP = 10;
 
 export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL', fromIndex: number = 0) => {
@@ -17,6 +19,7 @@ export const fetchTransactionsHistoryAction = (walletAddress: string, asset: str
       fromIndex,
     });
     if (!history.length) return;
+    storage.save('history', { history }, true);
     dispatch({
       type: SET_HISTORY,
       payload: history,
@@ -67,6 +70,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
     }
 
+    storage.save('history', { history: mappedHistoryNotifications }, true);
     dispatch({
       type: SET_HISTORY,
       payload: mappedHistoryNotifications,
