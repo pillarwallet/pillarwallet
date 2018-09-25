@@ -21,6 +21,7 @@ import { pipe, decodeETHAddress } from 'utils/common';
 type Props = {
   navigation: NavigationScreenProp<*>,
   localContacts: Object[],
+  wallet: Object,
 };
 
 type State = {
@@ -87,12 +88,15 @@ function AddressInputTemplate(locals) {
   );
 }
 
-const getFormStructure = () => {
+const getFormStructure = (ownAddress: string) => {
   const Address = t.refinement(t.String, (address): boolean => {
-    return address.length && isValidETHAddress(address);
+    return address.length && isValidETHAddress(address) && ownAddress !== address;
   });
 
   Address.getValidationErrorMessage = (address): string => {
+    if (ownAddress === address) {
+      return 'You are not allowed to make transaction to yourself';
+    }
     if (!isValidETHAddress(address)) {
       return 'Invalid Ethereum Address.';
     }
@@ -120,7 +124,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.state = {
       isScanning: false,
       value: { address: '' },
-      formStructure: getFormStructure(),
+      formStructure: getFormStructure(this.props.wallet.address),
     };
   }
 
@@ -229,8 +233,12 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ contacts: { data: localContacts } }) => ({
+const mapStateToProps = ({
+  contacts: { data: localContacts },
+  wallet: { data: wallet },
+}) => ({
   localContacts,
+  wallet,
 });
 
 export default connect(mapStateToProps)(SendTokenContacts);

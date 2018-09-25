@@ -287,9 +287,9 @@ class SendTokenAmount extends React.Component<Props, State> {
           />
           <ActionsWrapper>
             <SendTokenDetails>
-              <Label>Available Balance</Label>
+              <Label small>Available Balance</Label>
               <SendTokenDetailsValue>{formattedBalance} {token}</SendTokenDetailsValue>
-              <Label>Est. Network Fee</Label>
+              <Label small>Est. Network Fee</Label>
               <SendTokenDetailsValue>{txFeeInEth || 0} ETH</SendTokenDetailsValue>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
