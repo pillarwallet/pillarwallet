@@ -234,7 +234,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -253,7 +253,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -272,7 +272,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
