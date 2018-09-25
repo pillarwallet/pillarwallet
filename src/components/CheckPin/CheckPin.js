@@ -27,9 +27,17 @@ const CheckPinWrapper = styled(Wrapper)`
 `;
 
 class CheckPin extends React.Component<Props, *> {
+  static defaultProps = {
+    revealMnemonic: false,
+    checkExisting: false,
+  };
+
   handlePinSubmit = (pin: string) => {
     const {
-      checkPin, onPinValid, revealMnemonic = false, checkExisting = false,
+      checkPin,
+      onPinValid,
+      revealMnemonic,
+      checkExisting,
     } = this.props;
     const options = {
       mnemonic: revealMnemonic,
@@ -37,19 +45,20 @@ class CheckPin extends React.Component<Props, *> {
     checkPin(pin, onPinValid, options, checkExisting);
   };
 
-  render() {
-    const { wallet: { walletState }, isChecking } = this.props;
-    let pinError;
+  getPinError = (walletState: string) => {
     switch (walletState) {
       case INVALID_PASSWORD:
-        pinError = 'Invalid pincode';
-        break;
+        return 'Invalid pincode';
       case EXISTING_PASSWORD:
-        pinError = 'Password must be different than current one';
-        break;
+        return 'Password must be different from the current one';
       default:
-        pinError = null;
+        return null;
     }
+  };
+
+  render() {
+    const { wallet: { walletState }, isChecking } = this.props;
+    const pinError = this.getPinError(walletState);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING || isChecking) {
