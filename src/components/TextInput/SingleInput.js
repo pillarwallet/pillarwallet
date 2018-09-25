@@ -76,6 +76,7 @@ const Image = styled(RNImage)`
 `;
 
 const OutterImageText = styled(TextLink)`
+  font-size: ${fontSizes.extraExtraSmall};
   text-align: left;
 `;
 
@@ -85,17 +86,17 @@ const ErrorMessage = styled(BaseText)`
   justify-content: flex-end;
   text-align: left;
   min-height: 30px;
-  padding-bottom: ${spacing.rhythm / 2}px;;
+  padding-bottom: ${spacing.rhythm / 2}px;
 `;
 
 const InputField = styled(Input)`
   font-size: ${props => props.fontSize || fontSizes.extraExtraLarge};
   font-weight: ${props => props.fontWeight || fontWeights.bold}
   text-align: ${props => props.textAlign || 'right'};
-  background: #FFFFFF;
+  background: ${baseColors.lightGray};
   color: ${UIColors.defaultTextColor};
-  border: ${props => `1px solid ${props.error ? 'tomato' : '#EBEBEB'}`};
-  border-radius: 4;
+  border: ${props => `${props.error ? '1' : '0'}px solid ${props.error ? 'tomato' : '#EBEBEB'}`};
+  border-radius: 6;
   padding: 0 12px;
 `;
 
@@ -156,7 +157,7 @@ class SingleInput extends React.Component<Props, *> {
               numberOfLines={1}
               value={value}
               style={{ paddingLeft: innerImageURI ? 54 : 12 }}
-              placeholderTextColor={baseColors.mediumGray}
+              placeholderTextColor={baseColors.darkGray}
             />
             {!!innerImageURI && <FloatImage
               source={this.resolveAssetSource(innerImageURI)}

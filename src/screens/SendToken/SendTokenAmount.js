@@ -18,7 +18,7 @@ import Header from 'components/Header';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Balances } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
-import { fontSizes, spacing } from 'utils/variables';
+import { fontSizes, spacing, UIColors } from 'utils/variables';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -270,7 +270,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ icon, currency: token });
     const txFeeInEth = !!txFeeInWei && utils.formatEther(txFeeInWei);
     return (
-      <Container>
+      <Container color={UIColors.defaultBackgroundColor}>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
           onClose={this.props.navigation.dismiss}
