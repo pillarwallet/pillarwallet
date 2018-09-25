@@ -19,6 +19,9 @@ import { fetchICOsAction } from 'actions/icosActions';
 // types
 import type { ICO as ICOT } from 'models/ICO';
 
+// screens
+import MarketplaceComingSoon from 'screens/MarketplaceComingSoon';
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   icos: ICOT[],
@@ -84,7 +87,10 @@ class MarketScreen extends React.Component<Props> {
   };
 
   render() {
-    const { icos, fetchICOs } = this.props;
+    const { icos, fetchICOs, user } = this.props;
+    if (!user.icoService || !__DEV__) {
+      return <MarketplaceComingSoon />;
+    }
     const activeICOs = filterIcosByStatus(icos, ACTIVE);
     const pendingICOs = filterIcosByStatus(icos, PENDING);
     return (
