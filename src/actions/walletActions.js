@@ -29,6 +29,8 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
 
       api.init(importedWallet.privateKey);
       const apiUser = await api.validateAddress(importedWallet.address);
+      const userInfo = await api.userInfo('2f461791-de3e-4d82-885e-32b13ce16634');
+      apiUser.profileImage = userInfo.profileImage;
 
       const payload = {
         importedWallet,
@@ -60,6 +62,8 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
 
       api.init(importedWallet.privateKey);
       const apiUser = await api.validateAddress(importedWallet.address);
+      const userInfo = await api.userInfo('2f461791-de3e-4d82-885e-32b13ce16634');
+      apiUser.profileImage = userInfo.profileImage;
 
       const payload = {
         importedWallet,

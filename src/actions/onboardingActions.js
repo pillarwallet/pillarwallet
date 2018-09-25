@@ -43,8 +43,6 @@ export const registerWalletAction = () => {
     } = currentState.wallet.onboarding;
 
     const mnemonicPhrase = mnemonic.original;
-    console.log('register-wallet-api');
-    console.log(api);
 
     // STEP 0: Clear local storage
     await storage.removeAll();
@@ -101,8 +99,6 @@ export const registerWalletAction = () => {
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);
-    console.log(sdkWallet.walletId);
-    console.log(userInfo);
     if (Object.keys(userInfo).length) {
       await storage.save('user', { user: userInfo }, true);
     }
@@ -157,8 +153,6 @@ export const registerWalletAction = () => {
 export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { wallet: { data: wallet, onboarding: { apiUser } } } = getState();
-    console.log('registerOnBackendAction');
-    console.log(wallet);
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: API_REGISTRATION_STARTED,
@@ -225,7 +219,6 @@ export const validateUserDetailsAction = ({ username }: Object) => {
 
     api.init(wallet.privateKey);
     const apiUser = await api.usernameSearch(username);
-    console.log(apiUser);
     const usernameExists = !!Object.keys(apiUser).length;
     const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
     dispatch({
@@ -245,16 +238,6 @@ export const getUserInfoAction = () => {
     const {
       apiUser: user,
     } = currentState.wallet.onboarding;
-    // console.log('userInfo');
-    // console.log(currentState);
-    // console.log('api');
-    // console.log(api);
-    // const userInfoById = await api.userInfoById('3cdea911-953a-4031-8fb5-67ce0ac6ddd6');
-    // console.log('userInfoById');
-    // console.log(userInfoById);
-    // const getUserAvatar = await api.getUserAvatar('3cdea911-953a-4031-8fb5-67ce0ac6ddd6');
-    // console.log('getUserAvatar');
-    // console.log(getUserAvatar);
 
     const fcmToken = await firebase.messaging().getToken().catch(() => { });
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
@@ -263,8 +246,6 @@ export const getUserInfoAction = () => {
       await storage.save('user', { user: userInfo }, true);
     }
     const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
-    console.log('userInfo');
-    console.log(userInfo);
     dispatch({
       type: UPDATE_USER,
       payload: {
@@ -272,8 +253,5 @@ export const getUserInfoAction = () => {
         state: userState,
       },
     });
-
-    // const userInfo = await api.userInfo();
-    // console.log(userInfo);
   };
 };
