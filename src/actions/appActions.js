@@ -7,6 +7,7 @@ import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -33,6 +34,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { accessTokens = [] } = await storage.get('accessTokens');
       dispatch({ type: UPDATE_ACCESS_TOKENS, payload: accessTokens });
+
+      const { history = [] } = await storage.get('history');
+      dispatch({ type: SET_HISTORY, payload: history });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
       dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
