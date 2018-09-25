@@ -73,19 +73,19 @@ const { Form } = t.form;
 const maxLength = 100;
 const halfMaxLength = maxLength / 2;
 
-const FirstNameStruct = t.refinement(t.String, (firstName: string): boolean => {
+const FirstNameStruct = t.refinement(t.String, (firstName: string = ''): boolean => {
   return !!firstName.length && isValidName(firstName) && firstName.length <= halfMaxLength;
 });
 
-const LastNameStruct = t.refinement(t.String, (lastName: string): boolean => {
+const LastNameStruct = t.refinement(t.String, (lastName: string = ''): boolean => {
   return !!lastName.length && isValidName(lastName) && lastName.length <= halfMaxLength;
 });
 
-const EmailStruct = t.refinement(t.String, (email: string): boolean => {
+const EmailStruct = t.refinement(t.String, (email: string = ''): boolean => {
   return !!email.length && isValidEmail(email) && email.length <= maxLength;
 });
 
-const CityStruct = t.refinement(t.String, (city: string): boolean => {
+const CityStruct = t.refinement(t.String, (city: string = ''): boolean => {
   return !!city.length && isValidCityName(city) && city.length <= maxLength;
 });
 
