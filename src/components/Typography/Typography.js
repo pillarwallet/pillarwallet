@@ -65,7 +65,7 @@ export const TextLink = styled(BaseText)`
 `;
 
 export const Label = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${props => props.small ? fontSizes.small : fontSizes.extraSmall};
   color: ${props => props.color || baseColors.darkGray};
 `;
 
