@@ -18,7 +18,6 @@ import { Container, Wrapper } from 'components/Layout';
 type Props = {
   navigation: NavigationScreenProp<*>,
 }
-type State = {};
 
 const StyledFlatList = styled.FlatList`
   margin-bottom: ${spacing.rhythm}px;
@@ -58,7 +57,7 @@ const Separator = styled(View)`
   background-color: ${baseColors.lightGray}
 `;
 
-class ICOLinks extends React.Component<Props, State> {
+class ICOLinks extends React.Component<Props, {}> {
   navigateBack = () => {
     this.props.navigation.goBack();
   };
@@ -119,9 +118,6 @@ class ICOLinks extends React.Component<Props, State> {
   };
 
   render() {
-    // const { navigation } = this.props;
-    // const { links } = navigation.state.params;
-
     const externalLinks = [
       {
         label: 'Link 1',
@@ -141,7 +137,6 @@ class ICOLinks extends React.Component<Props, State> {
           <StyledFlatList
             keyExtractor={item => item.label}
             data={externalLinks}
-            extraData={this.state}
             renderItem={this.renderExternalLinksItem}
             ItemSeparatorComponent={() => this.renderSeparator()}
             contentContainerStyle={{

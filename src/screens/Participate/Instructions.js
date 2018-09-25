@@ -72,28 +72,25 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   instructions: ICOFundingInstructions,
 }
-type State = {};
 
-class InstructionsScreen extends React.Component<Props, State> {
+class InstructionsScreen extends React.Component<Props, {}> {
   handleBackNavigation = () => {
     this.props.navigation.goBack(null);
   };
 
   handleDismiss = () => {
     this.props.navigation.dismiss();
-  }
+  };
 
   navigateToConfirm = () => {
     this.props.navigation.navigate(ICO_CONFIRM);
   };
 
   handleShare = () => {
-
-  }
+  };
 
   handleCopyToClipBoard = () => {
-
-  }
+  };
 
   renderFiatInstructions() {
     const { instructions, navigation } = this.props;

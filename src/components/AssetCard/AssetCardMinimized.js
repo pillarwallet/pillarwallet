@@ -60,7 +60,7 @@ const ShadowHolder = styled.View`
   margin: ${Platform.select({
     ios: `4px ${spacing.rhythm / 4}px 6px`,
     android: `4px ${spacing.rhythm / 4}px 6px`,
-  })}
+  })};
   flex-direction: row;
   shadow-color: ${UIColors.cardShadowColor};
   shadow-offset: 0 3px;

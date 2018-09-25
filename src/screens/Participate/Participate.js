@@ -1,5 +1,4 @@
 // @flow
-
 import * as React from 'react';
 import { StyleSheet, Platform, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';

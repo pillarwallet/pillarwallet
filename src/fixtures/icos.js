@@ -1,5 +1,4 @@
 // @flow
-
 const todayMockDate = new Date();
 const yesterdayMockDate = new Date().setDate(todayMockDate.getDate() + -1);
 const tomorrowMockDate = new Date().setDate(todayMockDate.getDate() + 1);

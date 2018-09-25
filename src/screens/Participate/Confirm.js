@@ -9,31 +9,30 @@ import { Container, Wrapper } from 'components/Layout';
 type Props = {
   navigation: NavigationScreenProp<*>,
 }
-type State = {};
 
-class ConfirmScreen extends React.Component<Props, State> {
-  navigateBack = () => {
-    this.props.navigation.goBack();
+const ConfirmScreen = (props: Props) => {
+  const { navigation } = props;
+
+  const navigateBack = () => {
+    navigation.goBack();
   };
 
-  endFlow = () => {
-    this.props.navigation.dismiss();
+  const endFlow = () => {
+    navigation.dismiss();
   };
 
-  render() {
-    return (
-      <Container>
-        <Header
-          onBack={this.navigateBack}
-          title="review and confirm"
-        />
-        <Wrapper flex={1} regularPadding center>
-          <Text>Confirm</Text>
-          <Button block title="Confirm transaction" onPress={this.endFlow} />
-        </Wrapper>
-      </Container>
-    );
-  }
-}
+  return (
+    <Container>
+      <Header
+        onBack={navigateBack}
+        title="review and confirm"
+      />
+      <Wrapper flex={1} regularPadding center>
+        <Text>Confirm</Text>
+        <Button block title="Confirm transaction" onPress={endFlow} />
+      </Wrapper>
+    </Container>
+  );
+};
 
 export default ConfirmScreen;

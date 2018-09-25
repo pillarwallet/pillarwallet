@@ -26,8 +26,7 @@ type State = {
   sec: number,
 }
 
-const CounterHolder = styled.Text`
-`;
+const CounterHolder = styled.Text``;
 
 const CountdownWrapper = styled(MediumText)`
   flex-direction: row;
@@ -47,17 +46,13 @@ const CountdownDigits = styled(MediumText)`
 
 class Countdown extends React.Component<Props, State> {
   interval: IntervalID;
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      started: false,
-      days: 0,
-      hours: 0,
-      min: 0,
-      sec: 0,
-    };
-  }
+  state = {
+    started: false,
+    days: 0,
+    hours: 0,
+    min: 0,
+    sec: 0,
+  };
 
   componentDidMount() {
     const { endDate } = this.props;
@@ -110,23 +105,29 @@ class Countdown extends React.Component<Props, State> {
     clearInterval(this.interval);
   }
 
-  formatDoubleDigit(value: any) {
-    let thisValue = String(value);
-    while (thisValue.length < 2) {
-      thisValue = `0${thisValue}`;
+  formatDoubleDigit(value: number): string {
+    let formattedValue = String(value);
+    while (formattedValue.length < 2) {
+      formattedValue = `0${formattedValue}`;
     }
-    return thisValue;
+    return formattedValue;
   }
 
   render() {
-    const countDown = this.state;
+    const {
+      started,
+      days,
+      hours,
+      min,
+      sec,
+    } = this.state;
     const {
       fontSize,
       fontColor,
       extendedDayLabel,
       lineHeight,
     } = this.props;
-    const daysLabel = countDown.days > 1 ? 'days' : 'day';
+    const daysLabel = days > 1 ? 'days' : 'day';
 
     const StyledCountDownDigits = (props: ChildProps) => {
       return (
@@ -141,17 +142,17 @@ class Countdown extends React.Component<Props, State> {
 
     return (
       <CounterHolder>
-        {!!this.state.started &&
+        {!!started &&
         <CountdownWrapper
           fontSize={fontSize}
           fontColor={fontColor}
           lineHeight={lineHeight}
         >
-          {!!countDown.days &&
-          <StyledCountDownDigits>{countDown.days} {extendedDayLabel ? daysLabel : 'd.'} </StyledCountDownDigits>}
-          <StyledCountDownDigits>{this.formatDoubleDigit(countDown.hours)}:</StyledCountDownDigits>
-          <StyledCountDownDigits>{this.formatDoubleDigit(countDown.min)}:</StyledCountDownDigits>
-          <StyledCountDownDigits>{this.formatDoubleDigit(countDown.sec)}</StyledCountDownDigits>
+          {!!days &&
+          <StyledCountDownDigits>{days} {extendedDayLabel ? daysLabel : 'd.'} </StyledCountDownDigits>}
+          <StyledCountDownDigits>{this.formatDoubleDigit(hours)}:</StyledCountDownDigits>
+          <StyledCountDownDigits>{this.formatDoubleDigit(min)}:</StyledCountDownDigits>
+          <StyledCountDownDigits>{this.formatDoubleDigit(sec)}</StyledCountDownDigits>
         </CountdownWrapper>}
       </CounterHolder>
     );

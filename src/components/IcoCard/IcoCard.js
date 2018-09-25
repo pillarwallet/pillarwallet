@@ -39,7 +39,7 @@ const InnerWrapper = styled.View`
   margin: ${Platform.select({
     ios: props => props.inner ? `3px ${spacing.rhythm / 2}px 10px` : `3px ${spacing.rhythm / 2}px 5px`,
     android: props => props.inner ? `2px ${spacing.rhythm / 2}px 10px` : `2px ${spacing.rhythm / 2}px 6px`,
-  })}
+  })};
   shadow-color: ${UIColors.cardShadowColor};
   shadow-offset: 0 3px;
   shadow-opacity: 1;

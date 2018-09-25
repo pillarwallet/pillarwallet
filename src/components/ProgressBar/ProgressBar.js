@@ -19,7 +19,6 @@ type State = {
   progressAnimated: Object,
 }
 
-
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
   background-color: ${baseColors.snowWhite};
