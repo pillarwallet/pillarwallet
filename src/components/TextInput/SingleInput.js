@@ -197,7 +197,7 @@ const getCurrencyIcon = (currencyOpt: string) => {
 };
 
 class SingleInput extends React.Component<Props, *> {
-  fieldValue: string;
+  fieldValue: string = '';
 
   static defaultProps = {
     inputType: 'default',
