@@ -197,6 +197,8 @@ const getCurrencyIcon = (currencyOpt: string) => {
 };
 
 class SingleInput extends React.Component<Props, *> {
+  fieldValue: string;
+
   static defaultProps = {
     inputType: 'default',
     innerImageURI: '',
@@ -205,12 +207,9 @@ class SingleInput extends React.Component<Props, *> {
     options: [],
   };
 
-  handleBlur = (e: EventLike) => {
-    if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
-      return;
-    }
+  handleBlur = () => {
     const { inputProps: { onBlur }, trim } = this.props;
-    const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
+    const value = trim ? this.fieldValue.trim() : this.fieldValue;
     if (onBlur) {
       onBlur(value);
     }
@@ -218,8 +217,8 @@ class SingleInput extends React.Component<Props, *> {
 
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
-    const value = e.nativeEvent.text;
-    onChange(value);
+    this.fieldValue = e.nativeEvent.text;
+    onChange(this.fieldValue);
   };
 
   resolveAssetSource(uri: string | number) {
