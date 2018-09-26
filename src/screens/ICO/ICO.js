@@ -2,7 +2,6 @@
 import * as React from 'react';
 import {
   View,
-  RefreshControl,
   TouchableNativeFeedback,
   TouchableOpacity,
   Platform,
@@ -25,9 +24,7 @@ import Countdown from 'components/Countdown';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  // onPress: Function,
 }
-type State = {};
 
 const ICOWrapper = styled(Wrapper)`
   flex: 1;
@@ -117,7 +114,7 @@ const ContactsLabel = styled(BaseText)`
 const twitter = require('assets/icons/icon_twitter.png');
 const telegram = require('assets/icons/icon_telegram.png');
 
-class ICOScreen extends React.Component<Props, State> {
+class ICOScreen extends React.Component<Props, {}> {
   navigateBack = () => {
     this.props.navigation.goBack();
   };
@@ -350,15 +347,7 @@ class ICOScreen extends React.Component<Props, State> {
     return (
       <Container color={baseColors.snowWhite}>
         <Header onBack={this.navigateBack} title="ico" />
-        <ScrollWrapper
-          onScrollEndDrag={() => { }}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => { }}
-            />
-          }
-        >
+        <ScrollWrapper>
           <Wrapper>
             <ICOWrapper>
               <IcoCard
@@ -395,7 +384,7 @@ class ICOScreen extends React.Component<Props, State> {
               data={externalLinks}
               extraData={this.state}
               renderItem={this.renderExternalLinksItem}
-              ItemSeparatorComponent={() => this.renderSeparator()}
+              ItemSeparatorComponent={this.renderSeparator}
               contentContainerStyle={{
                 flexGrow: 1,
                 backgroundColor: baseColors.white,
@@ -415,9 +404,7 @@ class ICOScreen extends React.Component<Props, State> {
           </Wrapper>
         </ScrollWrapper>
         {totalLocked < totalSupply &&
-        <Footer
-          backgroundColor={baseColors.white}
-        >
+        <Footer backgroundColor={baseColors.white}>
           <ButtonWrapper>
             <Button
               disabledTransparent={isPending}
