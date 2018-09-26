@@ -40,6 +40,8 @@ type Props = {
   inputType: string,
   trim: boolean,
   options: Option[],
+  optionsTitle?: string,
+  optionsSelector?: Function,
   fontSize?: number,
   white?: boolean,
 }
@@ -107,8 +109,8 @@ const FloatImage = styled(RNImage)`
   width: 30px;
   left: 12px;
   top: 11px;
-  tintColor: black;
-  resizeMode: contain;
+  tint-color: black;
+  resize-mode: contain;
 `;
 
 const ImageHolder = styled.TouchableOpacity`
@@ -174,7 +176,7 @@ const InputField = styled(Input)`
   })};
 `;
 
-const CurrencyWrapper = styled.View`
+const SelectedOptionWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
@@ -185,16 +187,6 @@ const ChevronWrapper = styled.View`
   align-items: center;
   justify-content: center;
 `;
-
-const getCurrencyIcon = (currencyOpt: string) => {
-  switch (currencyOpt) {
-    case 'GBP': return 'pound';
-    case 'ETH': return 'ethereum';
-    case 'BTC': return 'bitcoin';
-    case 'LTC': return 'litecoin';
-    default: return currencyOpt;
-  }
-};
 
 class SingleInput extends React.Component<Props, *> {
   fieldValue: string = '';
@@ -229,7 +221,7 @@ class SingleInput extends React.Component<Props, *> {
   }
 
   handleSelectPress = () => {
-    const { options, onSelect } = this.props;
+    const { options, optionsTitle = '', onSelect } = this.props;
     if (options.length < 2) return;
     const BUTTONS = options.map(({ label }) => label).concat('Cancel');
     const CANCEL_INDEX = options.length;
@@ -239,7 +231,7 @@ class SingleInput extends React.Component<Props, *> {
       ActionSheet.show({
         options: BUTTONS,
         cancelButtonIndex: CANCEL_INDEX,
-        title: 'Choose currency',
+        title: optionsTitle,
       }, index => {
         const { value } = options[index] || {};
         if (onSelect && value) onSelect(value);
@@ -248,21 +240,18 @@ class SingleInput extends React.Component<Props, *> {
   }
 
   renderSelector = () => {
-    const { selectedOption, options, errorMessage } = this.props;
+    const {
+      selectedOption,
+      options,
+      optionsSelector,
+      errorMessage,
+    } = this.props;
     return (
       <OptionSelector onPress={this.handleSelectPress} error={!!errorMessage}>
-        <CurrencyWrapper>
-          {!!selectedOption &&
-            <Icon
-              name={getCurrencyIcon(selectedOption)}
-              style={{
-                fontSize: fontSizes.extraLarge,
-                color: baseColors.manatee,
-                marginRight: 6,
-              }}
-            />}
-          <BaseText>{selectedOption}</BaseText>
-        </CurrencyWrapper>
+        <SelectedOptionWrapper>
+          {!optionsSelector && <BaseText>{selectedOption}</BaseText>}
+          {!!optionsSelector && !!selectedOption && optionsSelector(selectedOption)}
+        </SelectedOptionWrapper>
         {options.length > 1 &&
           <ChevronWrapper>
             <Icon

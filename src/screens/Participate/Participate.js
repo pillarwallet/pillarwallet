@@ -14,6 +14,7 @@ import { ICO_INSTRUCTIONS } from 'constants/navigationConstants';
 import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import SingleInput from 'components/TextInput/SingleInput';
+import Icon from 'components/Icon';
 import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 
 // utils
@@ -63,6 +64,8 @@ function InputTemplate(locals) {
   return (
     <SingleInput
       options={config.options}
+      optionsTitle={config.optionsTitle || ''}
+      optionsSelector={config.optionsSelector}
       label={locals.label}
       onSelect={config.onSelect}
       selectedOption={config.selectedOption}
@@ -73,6 +76,33 @@ function InputTemplate(locals) {
     />
   );
 }
+
+const getCurrencyIcon = (currencyOpt: string) => {
+  switch (currencyOpt) {
+    case 'GBP': return 'pound';
+    case 'ETH': return 'ethereum';
+    case 'BTC': return 'bitcoin';
+    case 'LTC': return 'litecoin';
+    default: return currencyOpt;
+  }
+};
+
+const amountOptionsSelector = (selectedOption) => {
+  return (
+    <React.Fragment>
+      {!!selectedOption &&
+      <Icon
+        name={getCurrencyIcon(selectedOption)}
+        style={{
+          fontSize: fontSizes.extraLarge,
+          color: baseColors.manatee,
+          marginRight: 6,
+        }}
+      />}
+      <BaseText>{selectedOption}</BaseText>
+    </React.Fragment>
+  );
+};
 
 const getFormOptions = (options) => {
   const {
@@ -89,6 +119,8 @@ const getFormOptions = (options) => {
         label: 'Amount to fund',
         config: {
           options: currencyOptions,
+          optionsTitle: 'Choose currency',
+          optionsSelector: amountOptionsSelector,
           onSelect,
           selectedOption,
           onChange: handleToFundChange,
@@ -205,7 +237,7 @@ class ParticipateScreen extends React.Component<Props, State> {
 
   handleDismiss = () => {
     this.props.navigation.dismiss();
-  }
+  };
 
   handleToFundChange = (fieldValue: string) => {
     let { icoData: { unitPrice } } = this.state;
@@ -222,7 +254,7 @@ class ParticipateScreen extends React.Component<Props, State> {
       [TO_RECEIVE]: toReceiveValue,
     };
     this.setState({ value });
-  }
+  };
 
   handleToReceiveChange = (fieldValue: string) => {
     let { icoData: { unitPrice } } = this.state;
@@ -238,7 +270,7 @@ class ParticipateScreen extends React.Component<Props, State> {
       [TO_RECEIVE]: fieldValue,
     };
     this.setState({ value });
-  }
+  };
 
   handleSubmit = () => {
     const formValues = this._form.getValue();
@@ -249,7 +281,6 @@ class ParticipateScreen extends React.Component<Props, State> {
     });
   };
 
-
   // @TODO: add recalc on currency switch depending on the focused field
   handleCurrencySelect = (currency: string) => {
     const { fetchICOFundingInstructions } = this.props;
@@ -258,7 +289,7 @@ class ParticipateScreen extends React.Component<Props, State> {
     }, () => {
       fetchICOFundingInstructions(currency);
     });
-  }
+  };
 
   getAmountInGBP = () => {
     const { rates } = this.props;

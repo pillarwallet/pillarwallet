@@ -121,7 +121,7 @@ class MarketScreen extends React.Component<Props> {
             />
           }
           stickySectionHeadersEnabled={false}
-          SectionSeparatorComponent={() => (<View style={{ marginTop: spacing.rhythm / 2 }} />)}
+          SectionSeparatorComponent={() => <View style={{ marginTop: spacing.rhythm / 2 }} />}
         />
       </Container >
     );
