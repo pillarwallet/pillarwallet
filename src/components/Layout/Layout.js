@@ -2,7 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
-import { Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { baseColors, spacing } from 'utils/variables';
 
@@ -14,7 +14,9 @@ type ContainerProps = {
 
 type FooterProps = {
   children?: React.Node,
+  style?: StyleSheet.Styles,
   column?: boolean,
+  backgroundColor?: string,
 };
 
 export const Center = styled.View`
@@ -57,6 +59,7 @@ const FooterInner = styled.KeyboardAvoidingView`
   margin-top: auto;
   padding: ${Platform.OS === 'ios' ? 0 : `${spacing.rhythm}px`};
   flex-direction: ${props => (props.column ? 'row' : 'column')};
+  background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
 `;
 
 export const Footer = (props: FooterProps) => {
@@ -65,14 +68,16 @@ export const Footer = (props: FooterProps) => {
       enabled
       column={props.column}
       behavior={Platform.OS === 'ios' ? 'position' : null}
-      keyboardVerticalOffset={35}
+      keyboardVerticalOffset={20}
       contentContainerStyle={{
         alignItems: 'center',
         position: 'relative',
         flexDirection: 'column',
         justifyContent: 'flex-end',
         padding: spacing.rhythm,
+        ...props.style,
       }}
+      backgroundColor={props.backgroundColor}
     >
       {props.children}
     </FooterInner>
