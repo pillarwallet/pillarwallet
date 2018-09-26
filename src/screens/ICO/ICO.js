@@ -414,7 +414,7 @@ class ICOScreen extends React.Component<Props, State> {
             }
           </Wrapper>
         </ScrollWrapper>
-        {totalSupply !== totalLocked &&
+        {totalLocked < totalSupply &&
         <Footer
           backgroundColor={baseColors.white}
         >
