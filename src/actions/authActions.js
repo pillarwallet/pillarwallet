@@ -2,6 +2,7 @@
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import { getSaltedPin } from 'utils/wallet';
+import merge from 'lodash.merge';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
@@ -40,7 +41,10 @@ export const loginAction = (pin: string) => {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       api.init(wallet.privateKey);
 
-      const { user = {} } = await storage.get('user');
+      const { user: cachedUser = {} } = await storage.get('user');
+      const userInfo = await api.userInfo(cachedUser.walletId);
+      const user = merge({}, cachedUser, userInfo);
+      storage.save('user', { user });
       Crashlytics.setUserIdentifier(user.username);
       const userState = user.walletId ? REGISTERED : PENDING;
       dispatch({

@@ -6,13 +6,14 @@ export const TAB_NAVIGATION = 'TAB_NAVIGATION';
 export const ASSETS = 'ASSETS';
 export const PEOPLE = 'PEOPLE';
 export const ASSET = 'ASSET';
-export const ICO = 'ICO';
+export const MARKET = 'MARKET';
 export const ADD_TOKEN = 'ADD_TOKEN';
 export const PROFILE = 'PROFILE';
 export const REVEAL_BACKUP_PHRASE = 'REVEAL_BACKUP_PHRASE';
 export const CHAT_LIST = 'CHAT_LIST';
 export const NEW_CHAT = 'NEW_CHAT';
 export const CHAT = 'CHAT';
+export const ICO = 'ICO';
 
 // CHANGE PIN FLOW
 export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';
@@ -55,6 +56,13 @@ export const SEND_TOKEN_ASSETS = 'SEND_TOKEN_ASSETS';
 export const SEND_TOKEN_CONFIRM = 'SEND_TOKEN_CONFIRM';
 export const SEND_TOKEN_TRANSACTION = 'SEND_TOKEN_TRANSACTION';
 export const SEND_TOKEN_PIN_CONFIRM = 'SEND_TOKEN_PIN_CONFIRM'; // TODO: consider to extract to a common screen
+
+// PARTICIPATE IN ICO FLOW
+export const PARTICIPATE_IN_ICO_FLOW = 'PARTICIPATE_IN_ICO_FLOW';
+export const ICO_PARTICIPATE = 'ICO_PARTICIPATE';
+export const ICO_INSTRUCTIONS = 'ICO_INSTRUCTIONS';
+export const ICO_CONFIRM = 'ICO_CONFIRM';
+export const ICO_LINKS = 'ICO_LINKS';
 
 // PEOPLE FLOW
 export const CONTACT = 'CONTACT';
