@@ -47,6 +47,37 @@ type EventLike = {
   nativeEvent: Object,
 }
 
+const themes = {
+  default: {
+    backgroundColor: baseColors.lightGray,
+    borderColor: '#EBEBEB',
+    borderWidth: '0',
+    borderRadius: '6px',
+  },
+  white: {
+    backgroundColor: baseColors.white,
+    borderColor: baseColors.gallery,
+    borderWidth: '1px',
+    borderRadius: '4px',
+  },
+  withOptions: {
+    backgroundColor: baseColors.alabaster,
+    borderColor: baseColors.gallery,
+    borderWidth: '1px',
+    borderRadius: '4px',
+  },
+};
+
+const getTheme = (props: Props) => {
+  if (props.selectedOption) {
+    return themes.withOptions;
+  }
+  if (props.white) {
+    return themes.white;
+  }
+  return themes.default;
+};
+
 const Label = styled(MediumText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
@@ -112,6 +143,7 @@ const Image = styled(RNImage)`
 `;
 
 const OutterImageText = styled(TextLink)`
+  font-size: ${fontSizes.extraExtraSmall};
   text-align: left;
 `;
 
@@ -121,7 +153,7 @@ const ErrorMessage = styled(BaseText)`
   justify-content: flex-end;
   text-align: left;
   min-height: 30px;
-  padding-bottom: ${spacing.rhythm / 2}px;;
+  padding-bottom: ${spacing.rhythm / 2}px;
 `;
 
 const InputField = styled(Input)`
@@ -129,10 +161,11 @@ const InputField = styled(Input)`
   font-weight: ${props => props.fontWeight ? props.fontWeight : fontWeights.bold};
   include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
-  background: ${props => props.backgrounded ? baseColors.alabaster : baseColors.white};
-  border-radius: 4;
+  background: ${props => props.theme.backgroundColor};
+  border-radius: ${props => props.theme.borderRadius};
   color: ${UIColors.defaultTextColor};
-  border: ${props => `1px solid ${props.error ? 'tomato' : baseColors.gallery}`};
+  border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
+  border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
   padding: 0 12px;
   font-family: ${Platform.select({
     ios: 'Aktiv Grotesk App',
@@ -268,6 +301,7 @@ class SingleInput extends React.Component<Props, *> {
       fontSize,
     } = this.props;
     const { value = '' } = inputProps;
+    const theme = getTheme(this.props);
     return (
       <Wrapper>
         {label && <Label>{label.toUpperCase()}</Label>}
@@ -283,10 +317,11 @@ class SingleInput extends React.Component<Props, *> {
               numberOfLines={1}
               value={value}
               style={{ paddingLeft: innerImageURI ? 54 : 12 }}
-              placeholderTextColor={baseColors.mediumGray}
               backgrounded={!!options.length}
               textAlignVertical="center"
               fontSize={fontSize}
+              placeholderTextColor={baseColors.darkGray}
+              theme={theme}
             />
             {!!innerImageURI && <FloatImage
               source={this.resolveAssetSource(innerImageURI)}
