@@ -17,6 +17,10 @@ type State = {
   fullHeight: number,
 };
 
+type EventLike = {
+  nativeEvent: Object,
+};
+
 const DescriptionToggleWrapperColors = [transparentize(1, baseColors.white), baseColors.white];
 
 const DescriptionToggleWrapperActiveColors = [
@@ -66,7 +70,7 @@ export default class TruncatedText extends React.Component<Props, State> {
     this.setState({ expanded: !this.state.expanded });
   };
 
-  handleTextLayout = (e: any) => {
+  handleTextLayout = (e: EventLike) => {
     this.setState({ fullHeight: e.nativeEvent.layout.height });
   };
 
@@ -89,7 +93,7 @@ export default class TruncatedText extends React.Component<Props, State> {
 
     return (
       <DescriptionWrapper expanded={expanded}>
-        <InvisibleText onLayout={(e) => this.handleTextLayout(e)}>
+        <InvisibleText onLayout={this.handleTextLayout}>
           {text}
         </InvisibleText>
         <Description
