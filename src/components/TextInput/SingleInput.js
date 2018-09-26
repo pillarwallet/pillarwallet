@@ -41,6 +41,7 @@ type Props = {
   trim: boolean,
   options: Option[],
   fontSize?: number,
+  white?: boolean,
 }
 
 type EventLike = {
