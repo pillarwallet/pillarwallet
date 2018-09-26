@@ -10,9 +10,6 @@ type Props = {
   statusBackgroundWidth: number,
   style?: Object,
   children?: React.Node,
-  isPending?: boolean,
-  endDate: any,
-  startDate: any,
   label: string,
   progress: number,
 };
@@ -41,10 +38,6 @@ export default class CircularProgress extends React.Component<Props, {}> {
 
   render() {
     const {
-      circleSize,
-      statusWidth,
-      statusBackgroundWidth,
-      style,
       children,
       label,
       progress,
@@ -52,27 +45,24 @@ export default class CircularProgress extends React.Component<Props, {}> {
 
     const paddingX = 40;
     const paddingY = 30;
-    const areaWidth = circleSize + (paddingX * 2);
-    const areaHeight = circleSize + (paddingY * 2);
+    const halfSize = 90;
+    const labelCircleSize = 220;
+    const halfLabelCircle = 110;
+    const statusWidth = 16;
+    const areaWidth = 260;
+    const areaHeight = 240;
 
-    const halfSize = circleSize / 2;
     const backgroundPath = this.circlePath(halfSize, halfSize, halfSize - (statusWidth / 2), 0, 360);
-
     const circlePath = this.circlePath(halfSize, halfSize, halfSize - (statusWidth / 2), 0,
       (360 * this.clampStatus(progress)) / 100);
-    const offset = circleSize - (statusWidth * 2);
-    const labelCircleSize = circleSize + 40;
-    const halfLabelCircle = labelCircleSize / 2;
-    const childTopPos = statusWidth + paddingY;
-    const childLeftPos = statusWidth + paddingX;
 
     const childContainerStyle = {
       position: 'absolute',
-      left: childLeftPos,
-      top: childTopPos,
-      width: offset,
-      height: offset,
-      borderRadius: offset / 2,
+      left: 56,
+      top: 46,
+      width: 148,
+      height: 148,
+      borderRadius: 58,
       alignItems: 'center',
       justifyContent: 'center',
     };
@@ -97,7 +87,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
       return 5;
     };
     return (
-      <View style={style}>
+      <View>
         <Svg
           height={areaHeight}
           width={areaWidth}
@@ -120,7 +110,7 @@ export default class CircularProgress extends React.Component<Props, {}> {
             <Path
               d={backgroundPath}
               stroke={baseColors.snowWhite}
-              strokeWidth={statusBackgroundWidth || statusWidth}
+              strokeWidth={22}
               fill="transparent"
               x={paddingX}
               y={paddingY}

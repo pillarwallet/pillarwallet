@@ -9,8 +9,7 @@ import { getCurrencySymbol, formatMoney } from 'utils/common';
 import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
 import Countdown from 'components/Countdown';
 import TruncatedText from 'components/TruncatedText';
-import AnimatedProgressCircle from 'components/ProgressCircle';
-import ProgressBar from 'components/ProgressBar';
+import Progress from 'components/Progress';
 
 type Props = {
   id: string,
@@ -213,10 +212,10 @@ const IcoCard = (props: Props) => {
             </Column>
           </Row>}
           {!inner &&
-          <ProgressBar
+          <Progress
             isPending={isPending}
-            endDate={endDate}
-            startDate={startDate}
+            fullStatusValue={totalSupply}
+            currentStatusValue={tokensSold}
           />}
           {!inner &&
           <Row alignVertical="flex-start" halfPadding>
@@ -245,13 +244,11 @@ const IcoCard = (props: Props) => {
           </Row>}
           {!!inner &&
           <Row alignCenter>
-            <AnimatedProgressCircle
+            <Progress
               isPending={isPending}
-              endDate={endDate}
-              startDate={startDate}
-              circleSize={180}
-              statusWidth={16}
-              statusBackgroundWidth={22}
+              fullStatusValue={totalSupply}
+              currentStatusValue={tokensSold}
+              circle
             >
               <CachedImage
                 key={id}
@@ -262,7 +259,7 @@ const IcoCard = (props: Props) => {
                 source={{ uri: iconUrl }}
                 resizeMode="contain"
               />
-            </AnimatedProgressCircle>
+            </Progress>
           </Row>}
         </InnerWrapper>
       </TouchableWithoutFeedback>

@@ -2,16 +2,19 @@
 import * as React from 'react';
 import { Platform, Animated, Easing } from 'react-native';
 import styled from 'styled-components/native/index';
-import { differenceInHours } from 'date-fns';
 import LinearGradient from 'react-native-linear-gradient';
 import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
 import { MediumText } from 'components/Typography';
+import ProgressCircle from './ProgressCircle';
 
 type Props = {
   isPending?: boolean,
-  endDate: any,
-  startDate: any,
+  fullStatusValue: number,
+  currentStatusValue: number,
+  circle: boolean,
+  children?: React.Node,
 };
+
 
 type State = {
   label: string,
@@ -57,78 +60,101 @@ const ProgressLabel = styled(MediumText)`
 `;
 
 const BACKGROUND_FOR_LABEL = 8;
+const getAdjustedProgressInPercent = (percents) => {
+  switch (percents) {
+    case 0: return 0.5;
+    case 25: return 25.5;
+    case 50: return 50.5;
+    default: return percents;
+  }
+};
 
-export default class ProgressBar extends React.Component<Props, State> {
-  interval: IntervalID;
+const AnimatedProgressCircle = Animated.createAnimatedComponent(ProgressCircle);
 
+export default class Progress extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       label: '0',
-      progress: BACKGROUND_FOR_LABEL,
-      progressAnimated: new Animated.Value(BACKGROUND_FOR_LABEL),
+      progress: this.props.circle ? 0.5 : BACKGROUND_FOR_LABEL,
+      progressAnimated: new Animated.Value(this.props.circle ? 0.5 : BACKGROUND_FOR_LABEL),
     };
   }
+
+  static defaultProps = {
+    circle: false,
+  };
 
   componentDidMount = () => {
     const {
       isPending,
-      endDate,
-      startDate,
+      fullStatusValue,
+      currentStatusValue,
     } = this.props;
 
-    if (isPending) {
-      this.setState({
-        label: '0',
-        progress: BACKGROUND_FOR_LABEL,
-      });
-      return;
-    }
-
-    if (this.state.progress === 100) {
-      return;
-    }
-
-    this.interval = setInterval(() => {
-      const progressInPercent = Math.floor(
-        (
-          (differenceInHours(new Date(), startDate) * 360) /
-          (differenceInHours(endDate, startDate) * 360))
-        * 100);
-
-      const adjustedProgress = progressInPercent < BACKGROUND_FOR_LABEL ? BACKGROUND_FOR_LABEL : progressInPercent;
-
-      if (this.state.progress !== progressInPercent) {
-        this.setState({
-          label: progressInPercent.toString(),
-          progress: adjustedProgress,
-        });
-        this.animateProgress();
-      }
-
-      if (this.state.progress === 100) {
-        clearInterval(this.interval);
-      }
-    }, 1000);
+    if (!isPending) this.handleStatusValue(fullStatusValue, currentStatusValue);
   };
 
-  animateProgress = () => {
+  componentDidUpdate(prevProps: Props) {
+    const {
+      isPending,
+      fullStatusValue,
+      currentStatusValue,
+    } = this.props;
+
+    if (prevProps.currentStatusValue !== currentStatusValue || prevProps.isPending !== isPending) {
+      this.handleStatusValue(fullStatusValue, currentStatusValue);
+    }
+  }
+
+  handleStatusValue = (full: number, current: number) => {
+    const currentStatus = Math.floor((current * 100) / full);
+    const adjustedCurrentStatus = currentStatus > 100 ? 100 : currentStatus;
+    const adjustedBarProgress = adjustedCurrentStatus < BACKGROUND_FOR_LABEL
+      ? BACKGROUND_FOR_LABEL
+      : adjustedCurrentStatus;
+    const adjustedCircleProgress = getAdjustedProgressInPercent(adjustedCurrentStatus);
+    const thisProgress = this.props.circle ? adjustedCircleProgress : adjustedBarProgress;
+    this.setState({
+      label: adjustedCurrentStatus.toString(),
+      progress: thisProgress,
+    });
+    this.animateProgress(thisProgress);
+  };
+
+  animateProgress = (newProgress: number) => {
     Animated.timing(
       this.state.progressAnimated,
       {
-        toValue: this.state.progress,
+        toValue: newProgress,
         easing: Easing.linear,
-        duration: 300,
+        duration: 800,
       },
     ).start();
   };
 
   render() {
-    const { progressAnimated } = this.state;
     const {
+      progressAnimated,
       label,
       progress,
     } = this.state;
+
+    const {
+      circle,
+      children,
+    } = this.props;
+
+    if (circle) {
+      return (
+        <AnimatedProgressCircle
+          label={label}
+          progress={progressAnimated}
+        >
+          {children}
+        </AnimatedProgressCircle>
+      );
+    }
 
     return (
       <ProgressBarWrapper>

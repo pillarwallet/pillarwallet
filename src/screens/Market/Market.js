@@ -53,7 +53,7 @@ class MarketScreen extends React.Component<Props> {
       goal,
       isPending,
     };
-    // TODO: pass proper "tokensSold" value (locked ≠ sold)
+
     return (
       <IcoCard
         id={ico.id}
