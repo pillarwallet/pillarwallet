@@ -90,8 +90,8 @@ const generateFormOptions = (config: Object): Object => ({
       template: AmountInputTemplate,
       config,
       transformer: {
-        parse: (str = '') => str.toString(),
-        format: (value = '') => value.toString(),
+        parse: (str = '') => str.toString().replace(/,/g, '.'),
+        format: (value = '') => value.toString().replace(/,/g, '.'),
       },
     },
   },
