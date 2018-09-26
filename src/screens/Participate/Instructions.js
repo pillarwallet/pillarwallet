@@ -3,12 +3,12 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import { Clipboard, Share } from 'react-native';
 import QRCode from 'react-native-qrcode';
 
 // components
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { ICO_CONFIRM } from 'constants/navigationConstants';
 import { Container, Wrapper, ScrollWrapper, Footer } from 'components/Layout';
 import { BoldText, Label } from 'components/Typography';
 import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
@@ -82,15 +82,41 @@ class InstructionsScreen extends React.Component<Props, {}> {
     this.props.navigation.dismiss();
   };
 
-  navigateToConfirm = () => {
-    this.props.navigation.navigate(ICO_CONFIRM);
-  };
 
   handleShare = () => {
+    const instructionsCopy = this.getFiatInstructionsCopy(); // for now only fiat is available
+    Share.share({
+      message: instructionsCopy,
+      subject: 'Funding instructions',
+    }, {
+      dialogTitle: 'Share Funding instructions',
+      excludedActivityTypes: [
+        'com.apple.UIKit.activity.PostToTwitter',
+        'com.apple.UIKit.activity.PostToFacebook',
+      ],
+    });
   };
 
   handleCopyToClipBoard = () => {
+    const instructionsCopy = this.getFiatInstructionsCopy();
+    Clipboard.setString(instructionsCopy);
   };
+
+  getFiatInstructionsCopy = (): string => {
+    const { instructions, navigation } = this.props;
+    const { amountToFund } = navigation.state.params;
+    const listedInstructions = [
+      ['Reference Number', instructions.reference],
+      ['Beneficiary', instructions.beneficiary],
+      ['IBAN', instructions.iban],
+      ['BIC', instructions.bic],
+      ['Bank', instructions.bankName],
+      ['Amount in GBP', amountToFund],
+    ];
+    return listedInstructions
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('\n');
+  }
 
   renderFiatInstructions() {
     const { instructions, navigation } = this.props;
