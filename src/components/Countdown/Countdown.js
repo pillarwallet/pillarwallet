@@ -148,8 +148,7 @@ class Countdown extends React.Component<Props, State> {
           fontColor={fontColor}
           lineHeight={lineHeight}
         >
-          {!!days &&
-          <StyledCountDownDigits>{days} {extendedDayLabel ? daysLabel : 'd.'} </StyledCountDownDigits>}
+          {!!days && <StyledCountDownDigits>{days} {extendedDayLabel ? daysLabel : 'd.'} </StyledCountDownDigits>}
           <StyledCountDownDigits>{this.formatDoubleDigit(hours)}:</StyledCountDownDigits>
           <StyledCountDownDigits>{this.formatDoubleDigit(min)}:</StyledCountDownDigits>
           <StyledCountDownDigits>{this.formatDoubleDigit(sec)}</StyledCountDownDigits>

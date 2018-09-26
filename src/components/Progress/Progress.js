@@ -72,6 +72,10 @@ const getAdjustedProgressInPercent = (percents) => {
 const AnimatedProgressCircle = Animated.createAnimatedComponent(ProgressCircle);
 
 export default class Progress extends React.Component<Props, State> {
+  static defaultProps = {
+    circle: false,
+  };
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -81,11 +85,7 @@ export default class Progress extends React.Component<Props, State> {
     };
   }
 
-  static defaultProps = {
-    circle: false,
-  };
-
-  componentDidMount = () => {
+  componentDidMount() {
     const {
       isPending,
       fullStatusValue,
@@ -93,7 +93,7 @@ export default class Progress extends React.Component<Props, State> {
     } = this.props;
 
     if (!isPending) this.handleStatusValue(fullStatusValue, currentStatusValue);
-  };
+  }
 
   componentDidUpdate(prevProps: Props) {
     const {
