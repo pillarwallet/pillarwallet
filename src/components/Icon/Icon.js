@@ -33,6 +33,10 @@ const glyphMap = {
   'send-asset': '\uE833',
   'send-attachment': '\uE834',
   'chat-filled': '\uE81B',
+  ethereum: '\uE844',
+  litecoin: '\uE844',
+  pound: '\uE846',
+  bitcoin: '\uE847',
   'turn-off': '\uE81D',
 };
 
