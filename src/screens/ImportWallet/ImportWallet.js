@@ -184,6 +184,7 @@ class ImportWallet extends React.Component<Props, State> {
               onChange: this.handleValueChange('tWordsPhrase'),
               value: tWordsPhrase,
               multiline: true,
+              autoCapitalize: 'none',
             }}
             errorMessage={errorMessageTWordsPhrase}
             underlineColorAndroid="transparent"
