@@ -10045,6 +10045,7 @@ react-native-svg@^7.0.2:
     color "^2.0.1"
     lodash "^4.16.6"
     pegjs "^0.10.0"
+
 react-native-swipeout@^2.3.6:
   version "2.3.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-swipeout/-/react-native-swipeout-2.3.6.tgz#47dac8a835825cf3f2eef9e495574a3d9ab6d3fa"
@@ -10816,9 +10817,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.67:
-  version "1.0.67"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.67.tgz#f577549cd096569dd7d3be95abddd1364998a296"
+rn-signal-protocol-messaging@1.0.68:
+  version "1.0.68"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.68.tgz#bfa114dd57d3086d8b60fc2880c9172a896efba4"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
