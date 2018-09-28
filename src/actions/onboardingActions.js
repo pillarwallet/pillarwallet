@@ -24,10 +24,11 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
+import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
-import { UPDATE_ACCESS_TOKENS } from '../constants/accessTokensConstants';
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
@@ -51,6 +52,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
+    dispatch({ type: SET_HISTORY, payload: [] });
 
     // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));

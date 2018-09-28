@@ -8,7 +8,7 @@ import Separator from 'components/Separator';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import ProfileImage from 'components/ProfileImage';
-import { fontSizes, spacing, itemSizes } from 'utils/variables';
+import { fontSizes, spacing, itemSizes, UIColors } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
@@ -21,6 +21,7 @@ import { pipe, decodeETHAddress } from 'utils/common';
 type Props = {
   navigation: NavigationScreenProp<*>,
   localContacts: Object[],
+  wallet: Object,
 };
 
 type State = {
@@ -82,16 +83,20 @@ function AddressInputTemplate(locals) {
       id="address"
       onPress={onIconPress}
       inputProps={inputProps}
+      fontSize={fontSizes.medium}
     />
   );
 }
 
-const getFormStructure = () => {
+const getFormStructure = (ownAddress: string) => {
   const Address = t.refinement(t.String, (address): boolean => {
-    return address.length && isValidETHAddress(address);
+    return address.length && isValidETHAddress(address) && ownAddress !== address;
   });
 
   Address.getValidationErrorMessage = (address): string => {
+    if (ownAddress === address) {
+      return 'You are not allowed to make transaction to yourself';
+    }
     if (!isValidETHAddress(address)) {
       return 'Invalid Ethereum Address.';
     }
@@ -119,7 +124,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.state = {
       isScanning: false,
       value: { address: '' },
-      formStructure: getFormStructure(),
+      formStructure: getFormStructure(this.props.wallet.address),
     };
   }
 
@@ -193,7 +198,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     return (
-      <Container>
+      <Container color={UIColors.defaultBackgroundColor}>
         <Header onClose={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
         <FormWrapper>
           <Form
@@ -228,8 +233,12 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ contacts: { data: localContacts } }) => ({
+const mapStateToProps = ({
+  contacts: { data: localContacts },
+  wallet: { data: wallet },
+}) => ({
   localContacts,
+  wallet,
 });
 
 export default connect(mapStateToProps)(SendTokenContacts);

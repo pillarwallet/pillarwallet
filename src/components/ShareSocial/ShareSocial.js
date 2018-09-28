@@ -5,8 +5,6 @@ import Share from 'react-native-share';
 
 import { TouchableOpacity, TouchableNativeFeedback, Platform, Image, Linking } from 'react-native';
 import { Label } from 'components/Typography';
-import { spacing } from 'utils/variables';
-
 
 const ShareWrapper = styled.View`
   justify-content: center;
@@ -20,7 +18,7 @@ const ButtonsRow = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  padding: ${spacing.rhythm / 2}px 4px;
+  padding: 14px;
 `;
 
 const facebook = require('assets/icons/icon_facebook.png');
@@ -66,10 +64,10 @@ export default class ShareSocial extends React.Component<Props> {
             <ButtonWrapper>
               <Image
                 style={{
-                  width: 50,
-                  height: 50,
-                  resizeMode: 'contain',
+                  width: 30,
+                  height: 30,
                 }}
+                resizeMode="contain"
                 source={social.icon}
               />
             </ButtonWrapper>
@@ -86,10 +84,10 @@ export default class ShareSocial extends React.Component<Props> {
           <ButtonWrapper>
             <Image
               style={{
-                width: 50,
-                height: 50,
-                resizeMode: 'contain',
+                width: 30,
+                height: 30,
               }}
+              resizeMode="contain"
               source={social.icon}
             />
           </ButtonWrapper>

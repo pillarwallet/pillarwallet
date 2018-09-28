@@ -5,7 +5,7 @@ import { Item as NBItem, Input, Label } from 'native-base';
 import { fontSizes, fontWeights, baseColors } from 'utils/variables';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { View, TouchableOpacity, Platform } from 'react-native';
+import { View, TouchableOpacity, Platform, Dimensions } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -32,6 +32,7 @@ type Props = {
   footerAddonAction?: Function,
   autoCorrect?: boolean,
   viewWidth?: number,
+  noBorder?: boolean,
 }
 
 type State = {
@@ -41,6 +42,8 @@ type State = {
 type EventLike = {
   nativeEvent: Object,
 }
+
+const window = Dimensions.get('window');
 
 const inputTypes = {
   default: {
@@ -52,6 +55,15 @@ const inputTypes = {
     fontSize: fontSizes.extraExtraLarge,
     fontWeight: fontWeights.bold,
     textAlign: 'right',
+  },
+  secondary: {
+    backgroundColor: baseColors.lightGray,
+    borderBottomWidth: 0,
+    borderRadius: 6,
+    color: baseColors.slateBlack,
+    fontSize: fontSizes.small,
+    padding: '0 14px',
+    width: window.width - 65,
   },
 };
 
@@ -78,13 +90,18 @@ const PostFix = styled(BoldText)`
 `;
 
 const InputField = styled(Input)`
-  font-weight: ${props => props.inputType.fontWeight};
-  text-align: ${props => props.inputType.textAlign};
-  padding: 0;
+  ${props => props.inputType.fontWeight ? `font-weight: ${props.inputType.fontWeight};` : ''}
+  ${props => props.inputType.textAlign ? `text-align: ${props.inputType.textAlign};` : ''}
+  ${props => props.inputType.backgroundColor ? `background-color: ${props.inputType.backgroundColor};` : ''}
+  ${props => props.inputType.borderRadius ? `border-radius: ${props.inputType.borderRadius};` : ''}
+  ${props => props.inputType.width ? `width: ${props.inputType.width};` : ''}
+  ${props => props.inputType.color ? `color: ${props.inputType.color};` : ''}
+  padding: ${props => props.inputType.padding || 0};
 `;
 
 const Item = styled(NBItem)`
   border-bottom-color: ${props => props.isFocused ? baseColors.electricBlue : baseColors.mediumGray};
+  ${props => props.noBorder ? 'border-bottom-width: 0;' : ''}
 `;
 
 const InputFooter = styled(View)`
@@ -158,6 +175,7 @@ class TextInput extends React.Component<Props, State> {
       footerAddonAction,
       autoCorrect,
       viewWidth = 'auto',
+      noBorder,
     } = this.props;
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
@@ -170,6 +188,7 @@ class TextInput extends React.Component<Props, State> {
           error={!!errorMessage}
           style={inputProps.multiline && { height: 112 }}
           isFocused={isFocused}
+          noBorder={noBorder}
         >
           {!!label && <CustomLabel>{label.toUpperCase()}</CustomLabel>}
           <InputField

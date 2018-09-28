@@ -15,7 +15,7 @@ import { BaseText } from 'components/Typography';
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
 import AssetScreen from 'screens/Asset';
-import MarketplaceComingSoonScreen from 'screens/MarketplaceComingSoon';
+import MarketScreen from 'screens/Market';
 import ProfileScreen from 'screens/Profile';
 import PeopleScreen from 'screens/People';
 import ContactScreen from 'screens/Contact';
@@ -34,6 +34,11 @@ import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
 import NewChatListScreen from 'screens/Chat/NewChatList';
 import ChatScreen from 'screens/Chat/Chat';
+import ICOScreen from 'screens/ICO';
+import ParticipateScreen from 'screens/Participate';
+import InstructionsScreen from 'screens/Participate/Instructions';
+import ConfirmScreen from 'screens/Participate/Confirm';
+import ICOLinks from 'screens/ICOLinks';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -50,6 +55,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
+import { fetchICOsAction } from 'actions/icosActions';
 
 // constants
 import {
@@ -80,6 +86,12 @@ import {
   NEW_CHAT,
   CHAT,
   AUTH_FLOW,
+  MARKET,
+  PARTICIPATE_IN_ICO_FLOW,
+  ICO_PARTICIPATE,
+  ICO_INSTRUCTIONS,
+  ICO_CONFIRM,
+  ICO_LINKS,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -108,12 +120,12 @@ const removeAppStateChangeListener = (callback) => {
 const iconWallet = require('assets/icons/icon_wallet.png');
 const iconPeople = require('assets/icons/icon_people.png');
 const iconHome = require('assets/icons/icon_home.png');
-const iconIco = require('assets/icons/icon_marketplace.png');
+const iconMarket = require('assets/icons/icon_marketplace.png');
 const iconChat = require('assets/icons/icon_chat.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
-const iconIcoActive = require('assets/icons/icon_marketplace_active.png');
+const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const StackNavigatorModalConfig = {
@@ -167,6 +179,13 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [CONTACT]: ContactScreen,
+}, StackNavigatorConfig);
+
+// ICO FLOW
+const icoFlow = createStackNavigator({
+  [MARKET]: MarketScreen,
+  [ICO]: ICOScreen,
+  [ICO_LINKS]: ICOLinks,
 }, StackNavigatorConfig);
 
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
@@ -245,10 +264,10 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
-    [ICO]: {
-      screen: MarketplaceComingSoonScreen,
+    [MARKET]: {
+      screen: icoFlow,
       navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconIcoActive, iconIco),
+        tabBarIcon: tabBarIcon(iconMarketActive, iconMarket),
         tabBarLabel: tabBarLabel('Market'),
       }),
     },
@@ -314,6 +333,13 @@ const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
 }, StackNavigatorModalConfig);
 
+// PARTICIPATE IN ICO FLOW
+const participateInICOFlow = createStackNavigator({
+  [ICO_PARTICIPATE]: ParticipateScreen,
+  [ICO_INSTRUCTIONS]: InstructionsScreen,
+  [ICO_CONFIRM]: ConfirmScreen,
+}, StackNavigatorModalConfig);
+
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -322,6 +348,7 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
+    [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [CHAT]: ChatScreen,
@@ -335,6 +362,7 @@ type Props = {
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
+  fetchICOs: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
@@ -358,6 +386,7 @@ class AppFlow extends React.Component<Props, {}> {
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
+      fetchICOs,
       getExistingChats,
       assets,
       wallet,
@@ -367,6 +396,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
+    fetchICOs();
     getExistingChats();
     addAppStateChangeListener(this.handleAppStateChange);
   }
@@ -464,6 +494,7 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(fetchInviteNotificationsAction());
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
+  fetchICOs: () => dispatch(fetchICOsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

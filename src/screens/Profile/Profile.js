@@ -95,7 +95,6 @@ type Props = {
 
 type State = {
   visibleModal: string | null,
-  requestPinForTransaction: ?boolean,
   showCheckPinModal: boolean,
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
@@ -103,23 +102,19 @@ type State = {
 }
 
 class Profile extends React.Component<Props, State> {
+  static defaultProps = {
+    requestPinForTransaction: true,
+  };
+
   constructor(props: Props) {
     super(props);
-    const { requestPinForTransaction = true } = props;
     this.state = {
       visibleModal: null,
-      requestPinForTransaction,
       showCheckPinModal: false,
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
     };
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (prevProps.requestPinForTransaction !== this.props.requestPinForTransaction) {
-      this.setState({ requestPinForTransaction: this.props.requestPinForTransaction }); // eslint-disable-line
-    }
   }
 
   clearLocalStorage() {
@@ -143,10 +138,7 @@ class Profile extends React.Component<Props, State> {
   handleChangeRequestPinForTransaction = (value) => {
     const { changeRequestPinForTransaction } = this.props;
     changeRequestPinForTransaction(value);
-    this.setState({
-      requestPinForTransaction: !this.state.requestPinForTransaction,
-      showCheckPinModal: false,
-    });
+    this.setState({ showCheckPinModal: false });
   };
 
   handleCheckPinModalClose = () => {
@@ -199,10 +191,10 @@ class Profile extends React.Component<Props, State> {
       lockScreen,
       updateAppSettings,
       appSettings: { appearanceSettings },
+      requestPinForTransaction,
     } = this.props;
 
     const {
-      requestPinForTransaction,
       showCheckPinModal,
       showTermsConditionsModal,
       showPrivacyPolicyModal,
@@ -234,7 +226,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -253,7 +245,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
@@ -272,7 +264,7 @@ class Profile extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={this.toggleSlideModalOpen}
-          backgroundColor={baseColors.lightGray}
+          backgroundColor={baseColors.snowWhite}
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>

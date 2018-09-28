@@ -1,5 +1,4 @@
 // @flow
-
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
@@ -16,6 +15,7 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
@@ -87,6 +87,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
+      { type: SET_HISTORY, payload: [] },
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
@@ -125,6 +126,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
+      { type: SET_HISTORY, payload: [] },
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
