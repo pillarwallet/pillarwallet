@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 
 const glyphMap = {
   chat: '\uE801',
-  back: '\uE800',
+  back: '\uE819',
   close: '\uE802',
   help: '\uE803',
   'down-arrow': '\uE805',
