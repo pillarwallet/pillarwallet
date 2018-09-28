@@ -21,7 +21,7 @@ import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
-import TXDetails from 'components/TXDetails';
+import EventDetails from 'components/EventDetails';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
@@ -32,19 +32,12 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
-import {
-  TRANSACTION_SENT,
-  // TRANSACTION_SENT_PENDING,
-  TRANSACTION_RECEIVED,
-  // TRANSACTION_RECEIVED_PENDING,
-  CONNECTION_INCOMING,
-  CONNECTION_SENT,
-  CONNECTION_MADE,
-} from 'constants/eventsConstants';
 
+const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
+const TRANSACTION_SENT = 'TRANSACTION_SENT';
 const SOCIAL_TYPES = [
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -159,29 +152,23 @@ type Props = {
 
 type State = {
   showModal: boolean,
-  selectedTransaction: ?Transaction,
-  selectedEventData: ?Object,
+  selectedEventData: ?Object | ?Transaction,
   eventType: string,
+  eventStatus: string,
 };
 
 class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
-    selectedTransaction: null,
-    selectedEventData: {},
+    selectedEventData: null,
     eventType: '',
+    eventStatus: '',
   };
 
-  selectTransaction = (transaction: Transaction) => {
-    this.setState({
-      selectedTransaction: transaction,
-      showModal: true,
-    });
-  };
-
-  selectEvent = (eventData: Object, eventType) => {
+  selectEvent = (eventData: Object, eventType, eventStatus) => {
     this.setState({
       eventType,
+      eventStatus,
       selectedEventData: eventData,
       showModal: true,
     });
@@ -316,15 +303,11 @@ class ActivityFeed extends React.Component<Props, State> {
         );
       }
 
-      let transactionEvent;
-      if (isReceived) {
-        transactionEvent = TRANSACTION_RECEIVED;
-      } else {
-        transactionEvent = TRANSACTION_SENT;
-      }
-
       return (
-        <ActivityFeedItem key={index} onPress={() => this.selectEvent({ ...notification, value }, transactionEvent)}>
+        <ActivityFeedItem
+          key={index}
+          onPress={() => this.selectEvent({ ...notification, value }, type, notification.status)}
+        >
           <ActivityFeedItemCol fixedWidth="50px">
             <IconWrapper>
               {image}
@@ -346,13 +329,8 @@ class ActivityFeed extends React.Component<Props, State> {
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
 
     let onItemPress;
-    if (type === TYPE_ACCEPTED) {
-      // onItemPress = navigateToContact;
-      onItemPress = () => this.selectEvent(notification, CONNECTION_MADE);
-    } else if (type === TYPE_RECEIVED) {
-      onItemPress = () => this.selectEvent(notification, CONNECTION_INCOMING);
-    } else if (type === TYPE_SENT) {
-      onItemPress = () => this.selectEvent(notification, CONNECTION_SENT);
+    if (type === TYPE_ACCEPTED || type === TYPE_RECEIVED || type === TYPE_SENT) {
+      onItemPress = () => this.selectEvent(notification, CONNECTION_EVENT, type);
     } else if (type === CHAT) {
       onItemPress = partial(this.navigateToChat, {
         username: notification.username,
@@ -393,13 +371,14 @@ class ActivityFeed extends React.Component<Props, State> {
       history,
       additionalFiltering,
       customFeedData,
+      navigation,
     } = this.props;
 
     const {
       showModal,
-      selectedTransaction,
       selectedEventData,
       eventType,
+      eventStatus,
     } = this.state;
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
@@ -440,7 +419,6 @@ class ActivityFeed extends React.Component<Props, State> {
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
     return (
-
       <ActivityFeedWrapper>
         <ActivityFeedList
           data={processedHistory}
@@ -455,10 +433,14 @@ class ActivityFeed extends React.Component<Props, State> {
           title="transaction details"
           onModalHide={() => { this.setState({ showModal: false }); }}
           eventDetail
-          eventType={eventType}
-          eventData={selectedEventData}
         >
-          <TXDetails transaction={selectedTransaction} />
+          <EventDetails
+            eventData={selectedEventData}
+            eventType={eventType}
+            eventStatus={eventStatus}
+            onClose={() => { this.setState({ showModal: false }); }}
+            navigation={navigation}
+          />
         </SlideModal>
       </ActivityFeedWrapper>
     );
