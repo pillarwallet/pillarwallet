@@ -9937,9 +9937,9 @@ react-native-firebase@^4.2.0:
     react-native-parsed-text "^0.0.20"
     uuid "3.3.0"
 
-react-native-intercom@^12.0.0:
-  version "12.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-12.0.0.tgz#c1e5445730250f6430c4737f39c386758f106d24"
+react-native-intercom@^12.2.0:
+  version "12.2.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-12.2.0.tgz#a7ea3357e9613f09fb2333c5962973e037b989b5"
 
 react-native-iphone-x-helper@^1.0.1:
   version "1.0.3"
