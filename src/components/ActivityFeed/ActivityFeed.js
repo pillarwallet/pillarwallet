@@ -89,12 +89,12 @@ const ActivityFeedItemLabel = styled(BaseText)`
 `;
 
 const ActivityFeedItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small};
 `;
 
 const ActivityFeedItemAmount = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  color: ${props => props.received ? baseColors.jadeGreen : baseColors.fireEngineRed};
+  font-size: ${fontSizes.medium};
+  color: ${props => props.received ? baseColors.jadeGreen : baseColors.slateBlack};
 `;
 
 const ActivityFeedItemCol = styled.View`
@@ -413,7 +413,7 @@ class ActivityFeed extends React.Component<Props, State> {
           data={processedHistory}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
-          ItemSeparatorComponent={Separator}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={60} />}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
         />
