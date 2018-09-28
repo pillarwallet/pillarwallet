@@ -40,7 +40,7 @@ export const registerWalletAction = () => {
       mnemonic,
       pin,
       importedWallet,
-      apiUser: user,
+      apiUser,
     } = currentState.wallet.onboarding;
 
     const mnemonicPhrase = mnemonic.original;
@@ -82,12 +82,14 @@ export const registerWalletAction = () => {
 
     await storage.save('wallet', { wallet: encryptedWallet });
     await storage.save('app_settings', { appSettings: { wallet: +new Date() } });
+    const user = apiUser.username ? { username: apiUser.username } : {};
     await storage.save('user', { user });
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
-    // STEP 4: Initialize SDK annd register user
+
+    // STEP 4: Initialize SDK and register user
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission().catch(() => { });
     const fcmToken = await firebase.messaging().getToken().catch(() => { });
@@ -114,7 +116,6 @@ export const registerWalletAction = () => {
     });
 
     if (!registrationSucceed) {
-      await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: sdkWallet.reason,
