@@ -6,14 +6,16 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { TRANSACTIONS } from 'constants/activityConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
+import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 
 const ContactWrapper = styled.View`
@@ -122,11 +124,21 @@ class Contact extends React.Component<Props, State> {
   render() {
     const { navigation, contacts } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
+
+    // console.log('props', this.props);
+    // console.log('state', this.state);
+
     const contact = navigation.getParam('contact', {});
     const localContact = contacts.find(({ username }) => username === contact.username);
+    // console.log('localContact', localContact);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
+    // console.log('displayContact', displayContact);
     const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
+    const activityFeedEsData = {
+      title: 'Make your first step',
+      body: 'Your activity will appear here.',
+    };
     return (
       <Container>
         <Header
@@ -168,6 +180,13 @@ class Contact extends React.Component<Props, State> {
             )}
           </Wrapper>
         </Wrapper>
+        <ActivityFeed
+          feedTitle="activity."
+          navigation={navigation}
+          activeTab={TRANSACTIONS}
+          esData={activityFeedEsData}
+          additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
+        />
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />
@@ -178,8 +197,13 @@ class Contact extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ contacts: { data: contacts } }) => ({
+const mapStateToProps = ({
+  contacts: { data: contacts },
+  assets: { data: assets, balances },
+}) => ({
   contacts,
+  assets,
+  balances,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
