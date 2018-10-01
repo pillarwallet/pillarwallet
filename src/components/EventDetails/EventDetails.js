@@ -263,10 +263,6 @@ class EventDetails extends React.Component<Props, {}> {
             <EventBodyTitle>
               @{userData.username}
             </EventBodyTitle>
-            {!!userData.name &&
-            <EventBodyTitle color={baseColors.coolGrey}>
-              ({userData.name} {userData.lastName})
-            </EventBodyTitle>}
           </EventRow>
           {eventStatus === TYPE_RECEIVED &&
           <ButtonsWrapper>
