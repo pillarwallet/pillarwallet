@@ -36,7 +36,8 @@ const getEventInfo = (eventType, eventStatus) => {
       background: baseColors.rose,
       iconName: 'connection-circle',
     };
-  } else if (eventStatus === TYPE_ACCEPTED) {
+  }
+  if (eventStatus === TYPE_ACCEPTED) {
     return {
       title: 'Connection established',
       background: baseColors.cerulean,

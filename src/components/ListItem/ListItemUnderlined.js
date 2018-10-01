@@ -10,19 +10,22 @@ type Props = {
   spacedOut?: boolean,
   valueAddon?: React.Node,
 }
+
 const ItemWrapper = styled.View`
   margin-top: ${spacing.mediumLarge}px;
-  flexDirection: column;
+  flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   width: 100%;
 `;
+
 const ItemLabel = styled(BaseText)`
   text-align:center;
   font-size: ${fontSizes.extraExtraSmall}px;
   color: ${baseColors.darkGray};
   font-weight: ${fontWeights.medium};
 `;
+
 const ItemValueHolder = styled.View`
   border-bottom-width: 1px;
   border-color: ${baseColors.gallery};
@@ -33,12 +36,14 @@ const ItemValueHolder = styled.View`
   padding-right: ${spacing.mediumLarge}px;
   height: 48px;
 `;
+
 const ItemValue = styled(BoldText)`
   font-size: ${fontSizes.large}px;
   font-weight: ${fontWeights.bold};
   margin-bottom: ${spacing.medium}px;
   margin-top: ${props => props.spacedOut ? '8px' : '0'};
 `;
+
 const ListItemUnderlined = (props: Props) => {
   const {
     label,
