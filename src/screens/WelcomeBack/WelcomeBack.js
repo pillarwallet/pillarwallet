@@ -61,17 +61,19 @@ class WelcomeBack extends React.Component<Props, State> {
   };
 
   render() {
-    const { user } = this.props;
+    const { apiUser } = this.props;
+    console.log('welcome-back');
+    console.log(this.props);
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
           <ProfileImage
-            uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+            uri={`${apiUser.profileImage}?t=${apiUser.lastUpdateTime || 0}`}
             diameter={profileImageWidth}
             style={{ marginBottom: 47 }}
           />
           <Title
-            title={`Welcome back, ${user.username}!`}
+            title={`Welcome back, ${apiUser.username}!`}
             align="center"
             noBlueDot
           />
