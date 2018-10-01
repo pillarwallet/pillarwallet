@@ -1,11 +1,13 @@
 // @flow
 import * as React from 'react';
+import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
@@ -22,8 +24,7 @@ const ContactWrapper = styled.View`
   height: 218px;
   position: relative;
   justify-content: flex-end;
-  margin-top: 60px;
-  margin-bottom: 20px;
+  margin: 60px 20px 20px;
 `;
 
 const ContactHeader = styled.View`
@@ -73,6 +74,8 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
+  fetchTransactionsHistory: (walletAddress: string, asset?: string, indexFrom?: number) => Function,
+  wallet: Object,
 };
 
 type State = {
@@ -93,7 +96,13 @@ class Contact extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { navigation, contacts, syncContact } = this.props;
+    const {
+      fetchTransactionsHistory,
+      wallet,
+      navigation,
+      contacts,
+      syncContact,
+    } = this.props;
     const contact = navigation.getParam('contact', {});
 
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -107,6 +116,7 @@ class Contact extends React.Component<Props, State> {
           .catch(() => null);
       }
     }
+    fetchTransactionsHistory(wallet.address);
   }
 
   openOptionsModal = () => {
@@ -122,11 +132,13 @@ class Contact extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation, contacts } = this.props;
+    const {
+      navigation,
+      contacts,
+      fetchTransactionsHistory,
+      wallet,
+    } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
-
-    // console.log('props', this.props);
-    // console.log('state', this.state);
 
     const contact = navigation.getParam('contact', {});
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -147,7 +159,16 @@ class Contact extends React.Component<Props, State> {
           // onNextPress={this.openOptionsModal}
           // nextIcon="more"
         />
-        <Wrapper regularPadding>
+        <ScrollWrapper
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                fetchTransactionsHistory(wallet.address);
+              }}
+            />
+          }
+        >
           <ContactWrapper>
             <ContactHeader>
               <ContactHeaderBody>
@@ -179,14 +200,14 @@ class Contact extends React.Component<Props, State> {
               </React.Fragment>
             )}
           </Wrapper>
-        </Wrapper>
-        <ActivityFeed
-          feedTitle="activity."
-          navigation={navigation}
-          activeTab={TRANSACTIONS}
-          esData={activityFeedEsData}
-          additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
-        />
+          <ActivityFeed
+            feedTitle="activity."
+            navigation={navigation}
+            activeTab={TRANSACTIONS}
+            esData={activityFeedEsData}
+            additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
+          />
+        </ScrollWrapper>
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />
@@ -200,14 +221,19 @@ class Contact extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   assets: { data: assets, balances },
+  wallet: { data: wallet },
 }) => ({
   contacts,
   assets,
   balances,
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
+  fetchTransactionsHistory: (walletAddress, asset, indexFrom) => {
+    dispatch(fetchTransactionsHistoryAction(walletAddress, asset, indexFrom));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Contact);
