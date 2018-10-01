@@ -130,7 +130,7 @@
     "react-native-device-info": "^0.21.5",
     "react-native-firebase": "^4.2.0",
     "react-native-gifted-chat": "https://github.com/FaridSafi/react-native-gifted-chat",
-    "react-native-intercom": "^12.0.0",
+    "react-native-intercom": "^12.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
     "react-native-linear-gradient": "^2.4.0",
