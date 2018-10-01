@@ -7,9 +7,11 @@ import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
 
 type Props = {
+  children?: React.Node,
   title: string,
   onPress?: Function,
   disabled?: boolean,
+  disabledTransparent?: boolean,
   secondary?: boolean,
   danger?: boolean,
   primaryInverted?: boolean,
@@ -70,9 +72,17 @@ const themes = {
     borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
   },
+  disabledTransparent: {
+    background: baseColors.electricBlue,
+    color: baseColors.white,
+    opacity: 0.5,
+  },
 };
 
 const getTheme = (props: Props) => {
+  if (props.disabledTransparent) {
+    return themes.disabledTransparent;
+  }
   if (props.disabled) {
     return themes.disabled;
   }
@@ -124,6 +134,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   padding: 0 ${props => getButtonPadding(props)};
   background-color: ${props => props.theme.background};
+  opacity: ${props => props.theme.opacity ? props.theme.opacity : 1};
   margin-top: ${props => props.marginTop || '0px'};
   margin-bottom: ${props => props.marginBottom || '0px'};
   margin-left: ${props => props.marginLeft || '0px'};
@@ -155,8 +166,10 @@ const Button = (props: Props) => {
     marginRight,
     noPadding,
     disabled,
+    disabledTransparent,
     onPress,
     width,
+    children,
   } = props;
 
   return (
@@ -169,15 +182,18 @@ const Button = (props: Props) => {
       marginLeft={marginLeft}
       marginRight={marginRight}
       noPadding={noPadding}
-      onPress={disabled ? null : onPress}
+      onPress={(disabled || disabledTransparent) ? null : onPress}
       width={width}
+      disabled={disabled || disabledTransparent}
     >
       {!!icon && <ButtonIcon name={icon} theme={theme} />}
+      {!!props.title &&
       <ButtonText
         theme={theme}
         small={props.small}
       >{props.title}
-      </ButtonText>
+      </ButtonText>}
+      {children}
     </ButtonWrapper>
   );
 };

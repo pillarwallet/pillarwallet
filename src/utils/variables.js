@@ -39,6 +39,14 @@ export const baseColors = {
   dawnPink: '#f2eae4',
   rose: '#f5078d',
   cerulean: '#07b0f5',
+  beige: '#f7f7df',
+  coconutCream: '#e3e3bd',
+  pineGlade: '#b3b375',
+  mantis: '#85bb4c',
+  oliveDrab: '#5e9226',
+  alabaster: '#fcfcfc',
+  aliceBlue: '#f7fbff',
+  manatee: '#a3a9b2',
 };
 
 export const brandColors = [
@@ -71,6 +79,7 @@ export const fontSizes = {
   mediumLarge: 20,
   large: 22,
   extraLarge: 24,
+  extraLarger: 28,
   extraExtraLarge: 32,
   giant: 36,
   iosIcons: 32,

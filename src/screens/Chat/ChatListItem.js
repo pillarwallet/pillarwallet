@@ -37,7 +37,7 @@ const AvatarWrapper = styled.View`
   shadow-opacity: 0.2;
   shadow-radius: 2px;
   elevation: 5;
-  margin-top: 5px;
+  margin-top: 2px;
   margin-right: 10px;
 `;
 

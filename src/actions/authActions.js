@@ -2,11 +2,13 @@
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import { getSaltedPin } from 'utils/wallet';
+import merge from 'lodash.merge';
 import {
   DECRYPT_WALLET,
   UPDATE_WALLET_STATE,
   DECRYPTING,
   INVALID_PASSWORD,
+  EXISTING_PASSWORD,
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
@@ -39,7 +41,10 @@ export const loginAction = (pin: string) => {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       api.init(wallet.privateKey);
 
-      const { user = {} } = await storage.get('user');
+      const { user: cachedUser = {} } = await storage.get('user');
+      const userInfo = await api.userInfo(cachedUser.walletId);
+      const user = merge({}, cachedUser, userInfo);
+      storage.save('user', { user });
       Crashlytics.setUserIdentifier(user.username);
       const userState = user.walletId ? REGISTERED : PENDING;
       dispatch({
@@ -89,6 +94,7 @@ export const checkPinAction = (
   pin: string,
   onValidPin?: Function,
   options: DecryptionSettings = defaultDecryptionSettings,
+  checkExisting: boolean,
 ) => {
   return async (dispatch: Function) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -100,18 +106,31 @@ export const checkPinAction = (
     const saltedPin = getSaltedPin(pin);
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
-      dispatch({
-        type: DECRYPT_WALLET,
-        payload: wallet,
-      });
-      if (onValidPin) {
-        onValidPin();
+      if (checkExisting) {
+        dispatch({
+          type: UPDATE_WALLET_STATE,
+          payload: EXISTING_PASSWORD,
+        });
+      } else {
+        dispatch({
+          type: DECRYPT_WALLET,
+          payload: wallet,
+        });
+        if (onValidPin) {
+          onValidPin();
+        }
       }
     } catch (e) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: INVALID_PASSWORD,
-      });
+      if (checkExisting) {
+        if (onValidPin) {
+          onValidPin(pin);
+        }
+      } else {
+        dispatch({
+          type: UPDATE_WALLET_STATE,
+          payload: INVALID_PASSWORD,
+        });
+      }
     }
   };
 };
