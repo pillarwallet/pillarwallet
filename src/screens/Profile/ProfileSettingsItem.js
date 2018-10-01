@@ -51,16 +51,18 @@ const ListItem = styled.View`
 
 const Badge = styled(NBBadge)`
   position: absolute;
-  top: -3px;
+  top: -7px;
   right: 24px;
-  width: 24px;
   height: 24px;
+  justify-content: center;
 `;
 
 const BadgeText = styled(BaseText)`
   color: #fff;
   font-size: ${fontSizes.extraExtraSmall};
   text-align: center;
+  width: 100%;
+  padding: 0 2px;
 `;
 
 const ItemLabel = styled(BaseText)`
