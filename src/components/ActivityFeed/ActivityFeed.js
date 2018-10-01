@@ -369,9 +369,6 @@ class ActivityFeed extends React.Component<Props, State> {
       selectedTransaction,
     } = this.state;
 
-    // console.log('props', this.props);
-    // console.log('state', this.state);
-
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(history, mappedContacts);
     const chatNotifications = [];
@@ -397,8 +394,6 @@ class ActivityFeed extends React.Component<Props, State> {
     const feedData = customFeedData || allFeedData;
     const { activeTab, esData } = this.props;
 
-    // console.log('activeTab', activeTab);
-
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
         return type === TRANSACTION_EVENT;
@@ -409,12 +404,7 @@ class ActivityFeed extends React.Component<Props, State> {
       return true;
     });
 
-    // console.log('filteredHistory', filteredHistory);
-
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
-
-    // console.log('additionalFiltering', additionalFiltering);
-    // console.log('processedHistory', processedHistory);
 
     return (
 

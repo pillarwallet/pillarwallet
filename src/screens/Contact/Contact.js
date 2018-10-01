@@ -220,12 +220,11 @@ class Contact extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  assets: { data: assets, balances },
+  assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
   contacts,
   assets,
-  balances,
   wallet,
 });
 
