@@ -205,11 +205,8 @@ class NewProfile extends React.Component<Props, State> {
               <LoadingMessage>Checking username availability…</LoadingMessage>
             </LoadingMessageWrapper>
           }
-
         </Wrapper>
-
         <Footer>
-
           <Button
             small
             flexRight
@@ -217,7 +214,6 @@ class NewProfile extends React.Component<Props, State> {
             disabled={shouldNextButtonBeDisabled}
             title="Next"
           />
-
         </Footer>
       </Container>
     );

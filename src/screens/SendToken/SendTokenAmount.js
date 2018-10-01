@@ -297,7 +297,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             </TouchableOpacity>
           </ActionsWrapper>
         </Wrapper>
-        <Footer>
+        <Footer keyboardVerticalOffset={35}>
           <Button disabled={!session.isOnline} small flexRight title="Next" onPress={this.handleFormSubmit} />
         </Footer>
       </Container>
