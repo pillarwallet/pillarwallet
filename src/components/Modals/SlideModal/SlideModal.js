@@ -184,11 +184,7 @@ export default class SlideModal extends React.Component<Props, *> {
       }
 
       if (eventDetail) {
-        return (
-          <React.Fragment>
-            {children}
-          </React.Fragment>
-        );
+        return children;
       }
       return modalInner;
     };
