@@ -110,23 +110,31 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             Array [
               Object {
                 "backgroundColor": "#ffffff",
-                "borderTopLeftRadius": 20,
-                "borderTopRightRadius": 20,
+                "borderTopLeftRadius": 30,
+                "borderTopRightRadius": 30,
+                "elevation": 1,
                 "marginTop": "auto",
                 "paddingBottom": 0,
                 "paddingLeft": 20,
                 "paddingRight": 20,
                 "paddingTop": 0,
-                "shadowColor": "rgba(0,0,0,.5)",
+                "shadowColor": "rgba(0,0,0,.1)",
                 "shadowOffset": Object {
-                  "height": 5,
-                  "width": 10,
+                  "height": 2,
+                  "width": 0,
                 },
                 "shadowOpacity": 1,
-                "shadowRadius": 5,
+                "shadowRadius": 7,
               },
               undefined,
             ]
+          }
+          theme={
+            Object {
+              "background": "#ffffff",
+              "borderRadius": "30px",
+              "padding": "0 20px",
+            }
           }
         >
           <View
