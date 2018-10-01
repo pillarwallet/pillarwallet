@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { TouchableOpacity, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
@@ -21,8 +21,8 @@ import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
-import TXDetails from 'components/TXDetails';
 import Title from 'components/Title';
+import EventDetails from 'components/EventDetails';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
@@ -33,7 +33,7 @@ import {
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 
@@ -159,25 +159,30 @@ type Props = {
 
 type State = {
   showModal: boolean,
-  selectedTransaction: ?Transaction,
+  selectedEventData: ?Object | ?Transaction,
+  eventType: string,
+  eventStatus: string,
 };
 
 class ActivityFeed extends React.Component<Props, State> {
   state = {
     showModal: false,
-    selectedTransaction: null,
+    selectedEventData: null,
+    eventType: '',
+    eventStatus: '',
   };
 
-  selectTransaction = (transaction: Transaction) => {
+  selectEvent = (eventData: Object, eventType, eventStatus) => {
     this.setState({
-      selectedTransaction: transaction,
+      eventType,
+      eventStatus,
+      selectedEventData: eventData,
       showModal: true,
     });
   };
 
   getSocialAction = (type: string, notification: Object) => {
     const {
-      onCancelInvitation,
       onAcceptInvitation,
       onRejectInvitation,
     } = this.props;
@@ -211,11 +216,9 @@ class ActivityFeed extends React.Component<Props, State> {
         );
       case TYPE_SENT:
         return (
-          <TouchableOpacity onPress={() => onCancelInvitation(notification)}>
-            <LabelText button>
-              Request Sent
-            </LabelText>
-          </TouchableOpacity >
+          <LabelText button>
+            Request Sent
+          </LabelText>
         );
       case CHAT:
         return (
@@ -305,7 +308,10 @@ class ActivityFeed extends React.Component<Props, State> {
       }
 
       return (
-        <ActivityFeedItem key={index} onPress={() => this.selectTransaction({ ...notification, value })}>
+        <ActivityFeedItem
+          key={index}
+          onPress={() => this.selectEvent({ ...notification, value }, type, notification.status)}
+        >
           <ActivityFeedItemCol fixedWidth="50px">
             <IconWrapper>
               {image}
@@ -327,8 +333,8 @@ class ActivityFeed extends React.Component<Props, State> {
     const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
 
     let onItemPress;
-    if (type === TYPE_ACCEPTED) {
-      onItemPress = navigateToContact;
+    if (type === TYPE_ACCEPTED || type === TYPE_RECEIVED || type === TYPE_SENT) {
+      onItemPress = () => this.selectEvent(notification, CONNECTION_EVENT, type);
     } else if (type === CHAT) {
       onItemPress = partial(this.navigateToChat, {
         username: notification.username,
@@ -370,11 +376,14 @@ class ActivityFeed extends React.Component<Props, State> {
       additionalFiltering,
       customFeedData,
       feedTitle,
+      navigation,
     } = this.props;
 
     const {
       showModal,
-      selectedTransaction,
+      selectedEventData,
+      eventType,
+      eventStatus,
     } = this.state;
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
@@ -415,7 +424,6 @@ class ActivityFeed extends React.Component<Props, State> {
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
     return (
-
       <ActivityFeedWrapper>
         <ActivityFeedHeader>
           <Title subtitle title={feedTitle} />
@@ -432,8 +440,15 @@ class ActivityFeed extends React.Component<Props, State> {
           isVisible={showModal}
           title="transaction details"
           onModalHide={() => { this.setState({ showModal: false }); }}
+          eventDetail
         >
-          <TXDetails transaction={selectedTransaction} />
+          <EventDetails
+            eventData={selectedEventData}
+            eventType={eventType}
+            eventStatus={eventStatus}
+            onClose={() => { this.setState({ showModal: false }); }}
+            navigation={navigation}
+          />
         </SlideModal>
       </ActivityFeedWrapper>
     );

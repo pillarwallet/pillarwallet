@@ -298,7 +298,7 @@ class ChatScreen extends React.Component<Props, State> {
     resetUnread(this.state.contact.username);
 
     if (navigation.getParam('fromNewChatList', false) && (contacts.length - 1 > chats.length)) {
-      navigation.goBack(null);
+      navigation.goBack();
       navigation.setParams({ fromNewChatList: false });
     } else {
       navigation.navigate(CHAT_LIST);
