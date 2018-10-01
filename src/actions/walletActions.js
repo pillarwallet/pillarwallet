@@ -27,7 +27,11 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
 
       api.init(importedWallet.privateKey);
-      const apiUser = await api.validateAddress(importedWallet.address);
+      let apiUser = {};
+      const address = await api.validateAddress(importedWallet.address);
+      if (address.walletId) {
+        apiUser = await api.userInfo(address.walletId);
+      }
 
       const payload = {
         importedWallet,
@@ -58,7 +62,11 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
 
       api.init(importedWallet.privateKey);
-      const apiUser = await api.validateAddress(importedWallet.address);
+      let apiUser = {};
+      const address = await api.validateAddress(importedWallet.address);
+      if (address.walletId) {
+        apiUser = await api.userInfo(address.walletId);
+      }
 
       const payload = {
         importedWallet,

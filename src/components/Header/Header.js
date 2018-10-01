@@ -123,7 +123,7 @@ const Header = (props: Props) => {
             icon="back"
             color={light ? baseColors.white : UIColors.primary}
             onPress={() => onBack()}
-            fontSize={fontSizes.small}
+            fontSize={fontSizes.extraLarge}
           />
         }
         {showTitleLeft &&
