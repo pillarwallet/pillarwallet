@@ -17,6 +17,7 @@ type FooterProps = {
   style?: StyleSheet.Styles,
   column?: boolean,
   backgroundColor?: string,
+  keyboardVerticalOffset?: number,
 };
 
 export const Center = styled.View`
@@ -68,7 +69,7 @@ export const Footer = (props: FooterProps) => {
       enabled
       column={props.column}
       behavior={Platform.OS === 'ios' ? 'position' : null}
-      keyboardVerticalOffset={20}
+      keyboardVerticalOffset={props.keyboardVerticalOffset || 20}
       contentContainerStyle={{
         alignItems: 'center',
         position: 'relative',

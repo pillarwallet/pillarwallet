@@ -225,7 +225,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           onDismiss={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        <Footer>
+        <Footer keyboardVerticalOffset={35}>
           <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
         </Footer>
       </Container>
