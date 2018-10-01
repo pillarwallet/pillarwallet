@@ -5,7 +5,7 @@ import { Platform } from 'react-native';
 
 const glyphMap = {
   chat: '\uE801',
-  back: '\uE800',
+  back: '\uE819',
   close: '\uE802',
   help: '\uE803',
   'down-arrow': '\uE805',
@@ -38,6 +38,8 @@ const glyphMap = {
   pound: '\uE846',
   bitcoin: '\uE847',
   'turn-off': '\uE81D',
+  'pending-circle': '\uE822',
+  'connection-circle': '\uE823',
 };
 
 type Props = {
