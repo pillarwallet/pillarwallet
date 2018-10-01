@@ -41,12 +41,14 @@ export const loginAction = (pin: string) => {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       api.init(wallet.privateKey);
 
-      const { user: cachedUser = {} } = await storage.get('user');
-      const userInfo = await api.userInfo(cachedUser.walletId);
-      const user = merge({}, cachedUser, userInfo);
-      storage.save('user', { user });
-      Crashlytics.setUserIdentifier(user.username);
+      let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
+      if (userState === REGISTERED) {
+        const userInfo = await api.userInfo(user.walletId);
+        user = merge({}, user, userInfo);
+        storage.save('user', { user }, true);
+      }
+      Crashlytics.setUserIdentifier(user.username);
       dispatch({
         type: UPDATE_USER,
         payload: { user, state: userState },
