@@ -11,7 +11,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
-  API_REGISTRATION_STARTED,
+  REGISTERING,
   USERNAME_EXISTS,
   USERNAME_OK,
   CHECKING_USERNAME,
@@ -88,6 +88,10 @@ export const registerWalletAction = () => {
       payload: wallet,
     });
     // STEP 4: Initialize SDK annd register user
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: REGISTERING,
+    });
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission().catch(() => { });
     const fcmToken = await firebase.messaging().getToken().catch(() => { });
@@ -154,7 +158,7 @@ export const registerOnBackendAction = () => {
     const { wallet: { data: wallet, onboarding: { apiUser } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
-      payload: API_REGISTRATION_STARTED,
+      payload: REGISTERING,
     });
     let { user } = await storage.get('user');
     if (apiUser.username) {
