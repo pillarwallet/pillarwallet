@@ -203,8 +203,6 @@ class AssetScreen extends React.Component<Props, State> {
       receive: isReceiveActive = true,
       disclaimer,
     } = assetsConfig[assetData.token] || {};
-    // console.log('assetData');
-    // console.log(assetData);
     return (
       <Container>
         <Header onClose={this.handleCardTap} />

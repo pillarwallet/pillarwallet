@@ -139,13 +139,10 @@ class Contact extends React.Component<Props, State> {
       wallet,
     } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
-
     const contact = navigation.getParam('contact', {});
     const localContact = contacts.find(({ username }) => username === contact.username);
-    // console.log('localContact', localContact);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
-    // console.log('displayContact', displayContact);
     const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
     const activityFeedEsData = {
       title: 'Make your first step',
@@ -220,11 +217,9 @@ class Contact extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  assets: { data: assets },
   wallet: { data: wallet },
 }) => ({
   contacts,
-  assets,
   wallet,
 });
 
