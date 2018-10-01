@@ -95,6 +95,7 @@ const ActivityFeedItemName = styled(BaseText)`
 const ActivityFeedItemAmount = styled(BaseText)`
   font-size: ${fontSizes.medium};
   color: ${props => props.received ? baseColors.jadeGreen : baseColors.slateBlack};
+  text-align: right;
 `;
 
 const ActivityFeedItemCol = styled.View`
@@ -280,7 +281,7 @@ class ActivityFeed extends React.Component<Props, State> {
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
 
       let image;
-      if (contact) {
+      if (contact && Object.keys(contact).length !== 0) {
         image = (
           <ProfileImage
             uri={contact.profileImage}
@@ -308,7 +309,7 @@ class ActivityFeed extends React.Component<Props, State> {
             <ActivityFeedItemName>{nameOrAddress}</ActivityFeedItemName>
             <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol fixedWidth="120px" flexEnd>
+          <ActivityFeedItemCol flexEnd>
             <ActivityFeedItemAmount received={isReceived}>
               {directionSymbol} {formattedValue} {notification.asset}
             </ActivityFeedItemAmount>
