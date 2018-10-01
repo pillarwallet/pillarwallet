@@ -176,7 +176,6 @@ class ActivityFeed extends React.Component<Props, State> {
 
   getSocialAction = (type: string, notification: Object) => {
     const {
-      onCancelInvitation,
       onAcceptInvitation,
       onRejectInvitation,
     } = this.props;
@@ -210,11 +209,9 @@ class ActivityFeed extends React.Component<Props, State> {
         );
       case TYPE_SENT:
         return (
-          <TouchableOpacity onPress={() => onCancelInvitation(notification)}>
-            <LabelText button>
-              Request Sent
-            </LabelText>
-          </TouchableOpacity >
+          <LabelText button>
+            Request Sent
+          </LabelText>
         );
       case CHAT:
         return (
