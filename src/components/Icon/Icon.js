@@ -38,6 +38,8 @@ const glyphMap = {
   pound: '\uE846',
   bitcoin: '\uE847',
   'turn-off': '\uE81D',
+  'pending-circle': '\uE822',
+  'connection-circle': '\uE823',
 };
 
 type Props = {

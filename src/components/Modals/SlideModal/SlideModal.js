@@ -23,6 +23,37 @@ type Props = {
   centerTitle?: boolean,
   backgroundColor?: string,
   avoidKeyboard?: boolean,
+  eventDetail?: boolean,
+  eventType?: string,
+  eventData?: ?Object,
+};
+
+const themes = {
+  default: {
+    padding: `0 ${spacing.rhythm}px`,
+    borderRadius: '30px',
+    background: baseColors.white,
+  },
+  fullScreen: {
+    padding: 0,
+    borderRadius: 0,
+    background: baseColors.white,
+  },
+  eventDetail: {
+    padding: 0,
+    borderRadius: '30px',
+    background: 'transparent',
+  },
+};
+
+const getTheme = (props: Props) => {
+  if (props.fullScreen) {
+    return themes.fullScreen;
+  }
+  if (props.eventDetail) {
+    return themes.eventDetail;
+  }
+  return themes.default;
 };
 
 const ModalWrapper = styled.View`
@@ -34,12 +65,13 @@ const HeaderWrapper = styled.View`
 `;
 
 const ModalBackground = styled.View`
-  border-top-left-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
-  border-top-right-radius:  ${(props) => props.fullScreen ? '0' : `${spacing.rhythm}px`};
-  padding: ${(props) => props.fullScreen ? '0' : `0 ${spacing.rhythm}px`};
-  box-shadow: 10px 5px 5px rgba(0,0,0,.5);
+  border-top-left-radius: ${props => props.theme.borderRadius};
+  border-top-right-radius:  ${props => props.theme.borderRadius};
+  padding: ${props => props.theme.padding};
+  box-shadow: 0px 2px 7px rgba(0,0,0,.1);
+  elevation: 1;
   margin-top: auto;
-  background: ${baseColors.white};
+  background-color: ${props => props.theme.background};
 `;
 
 const ModalSubtitle = styled(SubTitle)`
@@ -87,13 +119,13 @@ export default class SlideModal extends React.Component<Props, *> {
       }
       clearTimeout(timer);
     }, TIMEOUT);
-  }
+  };
 
   handleScroll = () => {
     if (Toast.isVisible()) {
       Toast.close();
     }
-  }
+  };
 
   render() {
     const {
@@ -108,7 +140,10 @@ export default class SlideModal extends React.Component<Props, *> {
       centerTitle,
       backgroundColor,
       avoidKeyboard,
+      eventDetail,
     } = this.props;
+
+    const theme = getTheme(this.props);
 
     const showModalHeader = !fullScreen || showHeader;
 
@@ -138,6 +173,7 @@ export default class SlideModal extends React.Component<Props, *> {
       </React.Fragment>
     );
 
+
     const modalContent = () => {
       if (fullScreen) {
         return (
@@ -145,6 +181,10 @@ export default class SlideModal extends React.Component<Props, *> {
             {modalInner}
           </Container>
         );
+      }
+
+      if (eventDetail) {
+        return children;
       }
       return modalInner;
     };
@@ -167,9 +207,9 @@ export default class SlideModal extends React.Component<Props, *> {
           margin: 0,
         }}
       >
-        <ModalWrapper fullScreen={fullScreen}>
+        <ModalWrapper>
           <Root>
-            <ModalBackground fullScreen={fullScreen}>
+            <ModalBackground theme={theme}>
               {modalContent()}
             </ModalBackground>
           </Root>
