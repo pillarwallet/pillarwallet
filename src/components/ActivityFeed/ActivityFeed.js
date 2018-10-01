@@ -22,6 +22,7 @@ import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
 import TXDetails from 'components/TXDetails';
+import Title from 'components/Title';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
@@ -133,6 +134,10 @@ const IconWrapper = styled.View`
   margin-right: ${spacing.rhythm}px;
 `;
 
+const ActivityFeedHeader = styled.View`
+  padding: 0 ${spacing.rhythm}px;
+`;
+
 type Props = {
   history: Array<*>,
   assets: Asset[],
@@ -149,6 +154,7 @@ type Props = {
   contacts: Object,
   invitations: Object,
   additionalFiltering?: Function,
+  feedTitle?: string,
 };
 
 type State = {
@@ -363,6 +369,7 @@ class ActivityFeed extends React.Component<Props, State> {
       history,
       additionalFiltering,
       customFeedData,
+      feedTitle,
     } = this.props;
 
     const {
@@ -410,6 +417,9 @@ class ActivityFeed extends React.Component<Props, State> {
     return (
 
       <ActivityFeedWrapper>
+        <ActivityFeedHeader>
+          <Title subtitle title={feedTitle} />
+        </ActivityFeedHeader>
         <ActivityFeedList
           data={processedHistory}
           extraData={notifications}
