@@ -11,7 +11,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
-  API_REGISTRATION_STARTED,
+  REGISTERING,
   USERNAME_EXISTS,
   USERNAME_OK,
   CHECKING_USERNAME,
@@ -40,7 +40,7 @@ export const registerWalletAction = () => {
       mnemonic,
       pin,
       importedWallet,
-      apiUser: user,
+      apiUser,
     } = currentState.wallet.onboarding;
 
     const mnemonicPhrase = mnemonic.original;
@@ -82,12 +82,18 @@ export const registerWalletAction = () => {
 
     await storage.save('wallet', { wallet: encryptedWallet });
     await storage.save('app_settings', { appSettings: { wallet: +new Date() } });
+    const user = apiUser.username ? { username: apiUser.username } : {};
     await storage.save('user', { user });
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
+
     // STEP 4: Initialize SDK annd register user
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: REGISTERING,
+    });
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission().catch(() => { });
     const fcmToken = await firebase.messaging().getToken().catch(() => { });
@@ -114,7 +120,6 @@ export const registerWalletAction = () => {
     });
 
     if (!registrationSucceed) {
-      await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: sdkWallet.reason,
@@ -154,7 +159,7 @@ export const registerOnBackendAction = () => {
     const { wallet: { data: wallet, onboarding: { apiUser } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
-      payload: API_REGISTRATION_STARTED,
+      payload: REGISTERING,
     });
     let { user } = await storage.get('user');
     if (apiUser.username) {

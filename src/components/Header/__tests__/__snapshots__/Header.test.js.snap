@@ -72,7 +72,7 @@ exports[`Header should render Header correctly 1`] = `
         style={
           Object {
             "color": "#007AFF",
-            "fontSize": 16,
+            "fontSize": 24,
             "marginBottom": undefined,
             "marginLeft": undefined,
             "marginRight": undefined,

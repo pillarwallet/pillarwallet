@@ -21,7 +21,6 @@ import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
 import Permissions from 'react-native-permissions';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
@@ -92,9 +91,6 @@ const HomeHeaderBody = styled.View`
   align-items: center;
 `;
 
-const HomeHeaderProfileImage = styled(ProfileImage)`
-`;
-
 const HomeHeaderImageUsername = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -115,7 +111,7 @@ const HomeHeaderButton = styled(IconButton)`
   height: 44px;
 `;
 
-
+const HomeHeaderProfileImage = styled(ProfileImage)``;
 const AnimatedHomeHeaderProfileImage = Animated.createAnimatedComponent(HomeHeaderProfileImage);
 
 const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
@@ -127,7 +123,6 @@ const RecentConnections = styled.View`
   min-height: 160px;
   border-bottom-width: 1px;
   border-style: solid;
-  margin-top: 100px;
   background-color: ${baseColors.white};
   border-color: ${baseColors.duckEggBlue};
 `;
@@ -163,13 +158,6 @@ const CameraIcon = styled(Icon)`
 const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
-`;
-
-const EmptyStateWrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  margin: 6px 0 8px 0;
 `;
 
 class HomeScreen extends React.Component<Props, State> {
@@ -214,7 +202,7 @@ class HomeScreen extends React.Component<Props, State> {
       permissionsGranted: status === 'authorized',
       showCamera: !this.state.showCamera,
     });
-  }
+  };
 
   renderRecentConnections = () => {
     const { contacts, navigation } = this.props;
@@ -236,16 +224,6 @@ class HomeScreen extends React.Component<Props, State> {
       ));
   };
 
-  renderEmptyRCState = () => {
-    return (
-      <EmptyStateWrapper>
-        <EmptyStateParagraph
-          title="Chat with someone"
-          bodyText="Recent contacts live here. Get quick access to encrypted chat."
-        />
-      </EmptyStateWrapper>
-    );
-  };
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -262,7 +240,7 @@ class HomeScreen extends React.Component<Props, State> {
       activeTab,
       esData,
     });
-  }
+  };
 
   render() {
     const {
@@ -476,26 +454,27 @@ class HomeScreen extends React.Component<Props, State> {
             />
           }
         >
-          <RecentConnectionsWrapper>
-            <RecentConnections>
-              <RecentConnectionsSubtitle subtitle title="recent connections." />
-              {!this.props.contacts.length && this.renderEmptyRCState()}
-              {!!this.props.contacts.length &&
+          <View style={{ marginTop: 100 }}>
+            {!!this.props.contacts.length &&
+            <RecentConnectionsWrapper>
+              <RecentConnections>
+                <RecentConnectionsSubtitle subtitle title="recent connections." />
                 <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
                   {this.renderRecentConnections()}
-                </RecentConnectionsScrollView>}
-            </RecentConnections>
-          </RecentConnectionsWrapper>
-          <Tabs title="your activity." tabs={activityFeedTabs} />
-          <ActivityFeed
-            onCancelInvitation={cancelInvitation}
-            onRejectInvitation={rejectInvitation}
-            onAcceptInvitation={acceptInvitation}
-            navigation={navigation}
-            activeTab={this.state.activeTab}
-            esData={esData}
-            sortable
-          />
+                </RecentConnectionsScrollView>
+              </RecentConnections>
+            </RecentConnectionsWrapper>}
+            <Tabs title="your activity." tabs={activityFeedTabs} />
+            <ActivityFeed
+              onCancelInvitation={cancelInvitation}
+              onRejectInvitation={rejectInvitation}
+              onAcceptInvitation={acceptInvitation}
+              navigation={navigation}
+              activeTab={this.state.activeTab}
+              esData={esData}
+              sortable
+            />
+          </View>
         </Animated.ScrollView>
         <Camera
           isVisible={showCamera}

@@ -149,7 +149,8 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleBackAction = () => {
-    const { navigation } = this.props;
+    const { navigation, resetWalletError } = this.props;
+    resetWalletError();
     const navigateTo = navigation.getParam('navigateTo', null);
     if (navigateTo) {
       navigation.navigate(navigateTo);
@@ -183,6 +184,7 @@ class ImportWallet extends React.Component<Props, State> {
               onChange: this.handleValueChange('tWordsPhrase'),
               value: tWordsPhrase,
               multiline: true,
+              autoCapitalize: 'none',
             }}
             errorMessage={errorMessageTWordsPhrase}
             underlineColorAndroid="transparent"
