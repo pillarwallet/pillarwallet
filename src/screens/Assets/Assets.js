@@ -9,6 +9,7 @@ import {
   Platform,
   PixelRatio,
   View,
+  Alert,
 } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
@@ -140,9 +141,6 @@ class AssetsScreen extends React.Component<Props, State> {
     );
   };
 
-  // since navigation to ASSET screen is managed by another navigation
-  // the willFocus is not triggered after getting back to the screen -
-  // since it is never blurred
   resetHideRemoval = () => {
     this.setState({ forceHideRemoval: false });
   };
@@ -159,7 +157,14 @@ class AssetsScreen extends React.Component<Props, State> {
 
   handleAssetRemoval = (asset: Asset) => () => {
     const { assets, updateAssets } = this.props;
-    updateAssets(assets, [asset.symbol]);
+    Alert.alert(
+      'Are you sure?',
+      `This will hide ${asset.name} from your wallet`,
+      [
+        { text: 'Cancel', onPress: () => this.setState({ forceHideRemoval: true }), style: 'cancel' },
+        { text: 'Hide', onPress: () => updateAssets(assets, [asset.symbol]) },
+      ],
+    );
   }
 
   renderSwipeoutBtns = (asset) => {
@@ -255,6 +260,7 @@ class AssetsScreen extends React.Component<Props, State> {
             sensitivity={10}
             backgroundColor="transparent"
             buttonWidth={80}
+            close={forceHideRemoval}
           >
             <AssetCardSimplified {...props} />
           </Swipeout>
