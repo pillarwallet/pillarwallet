@@ -11,6 +11,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
+import { PEOPLE } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
@@ -27,6 +28,12 @@ type Props = {
 }
 
 class ConnectionRequests extends React.Component<Props> {
+  componentDidUpdate() {
+    const { navigation, invitations } = this.props;
+    const requests = invitations.filter(({ type }) => type === TYPE_RECEIVED);
+    if (!requests.length) navigation.navigate(PEOPLE);
+  }
+
   handleAcceptInvitationPress = (invitation) => () => {
     const { acceptInvitation } = this.props;
     acceptInvitation(invitation);
