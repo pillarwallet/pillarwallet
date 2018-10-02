@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { Platform } from 'react-native';
+import { Platform, Alert } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
@@ -189,7 +189,19 @@ class ActivityFeed extends React.Component<Props, State> {
               margin={0}
               icon="close"
               fontSize={fontSizes.extraSmall}
-              onPress={() => onRejectInvitation(notification)}
+              onPress={() => {
+                Alert.alert(
+                  'Are you sure?',
+                  `This will reject connection invitation from ${notification.username}`,
+                  [
+                    { text: 'Cancel' },
+                    {
+                      text: 'Reject',
+                      onPress: () => { onRejectInvitation(notification); },
+                    },
+                  ],
+                );
+              }}
             />
             <ActionCircleButton
               color={baseColors.white}
@@ -369,6 +381,9 @@ class ActivityFeed extends React.Component<Props, State> {
       additionalFiltering,
       customFeedData,
       navigation,
+      onRejectInvitation,
+      onAcceptInvitation,
+      onCancelInvitation,
     } = this.props;
 
     const {
@@ -435,7 +450,10 @@ class ActivityFeed extends React.Component<Props, State> {
             eventData={selectedEventData}
             eventType={eventType}
             eventStatus={eventStatus}
-            onClose={() => { this.setState({ showModal: false }); }}
+            onClose={() => this.setState({ showModal: false })}
+            onReject={() => onRejectInvitation(selectedEventData)}
+            onCancel={() => onCancelInvitation(selectedEventData)}
+            onAccept={() => onAcceptInvitation(selectedEventData)}
             navigation={navigation}
           />
         </SlideModal>
