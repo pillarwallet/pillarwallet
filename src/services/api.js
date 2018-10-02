@@ -11,7 +11,7 @@ import {
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
 import { fetchAssetBalances } from 'services/assets';
-import { USERNAME_EXISTS, API_REGISTRATION_FAILED } from 'constants/walletConstants';
+import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 // temporary here
@@ -66,7 +66,7 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
       }
       return {
         error: true,
-        reason: API_REGISTRATION_FAILED,
+        reason: REGISTRATION_FAILED,
       };
     });
 };
