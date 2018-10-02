@@ -3,7 +3,7 @@ import {
   SET_HISTORY,
   TRANSACTION_EVENT,
 } from 'constants/historyConstants';
-import { UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import Storage from 'services/storage';
 import { fetchAssetsBalancesAction, updateAssetsAction } from './assetsActions';
 
@@ -36,12 +36,20 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     } = getState();
 
     // load supported assets
-    let walletSupportedAssets = { ...supportedAssets };
+    let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
       walletSupportedAssets = await api.fetchSupportedAssets(walletId);
       dispatch({
         type: UPDATE_SUPPORTED_ASSETS,
         payload: walletSupportedAssets,
+      });
+      const currentAssetsTickers = Object.keys(currentAssets);
+      const updatedAssets = walletSupportedAssets
+        .filter(asset => currentAssetsTickers.includes(asset.symbol))
+        .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
+      dispatch({
+        type: UPDATE_ASSETS,
+        payload: updatedAssets,
       });
     }
     const d = new Date();
