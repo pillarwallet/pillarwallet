@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Linking, Alert } from 'react-native';
+import { Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
@@ -12,6 +12,7 @@ import { BaseText, BoldText } from 'components/Typography';
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import Button from 'components/Button';
 import { formatFullAmount } from 'utils/common';
+import { createAlert } from 'utils/alerts';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
 
@@ -20,6 +21,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
+  TYPE_REJECTED,
   TYPE_SENT,
 } from 'constants/invitationsConstants';
 import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
@@ -99,20 +101,7 @@ class EventDetails extends React.Component<Props, {}> {
 
   handleRejectConnection = (eventData) => {
     const { onClose, onReject } = this.props;
-    Alert.alert(
-      'Are you sure?',
-      `This will reject connection invitation from ${eventData.username}`,
-      [
-        { text: 'Cancel' },
-        {
-          text: 'Reject',
-          onPress: () => {
-            onClose();
-            onReject();
-          },
-        },
-      ],
-    );
+    createAlert(TYPE_REJECTED, eventData, () => { onClose(); onReject(); });
   };
 
   handleCancelConnection = () => {

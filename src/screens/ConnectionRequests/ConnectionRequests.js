@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { TYPE_RECEIVED } from 'constants/invitationsConstants';
+import { TYPE_RECEIVED, TYPE_REJECTED } from 'constants/invitationsConstants';
 import { spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
@@ -15,6 +15,7 @@ import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
 import Separator from 'components/Separator';
+import { createAlert } from 'utils/alerts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -33,7 +34,7 @@ class ConnectionRequests extends React.Component<Props> {
 
   handleRejectInvitatonPress = (invitation) => () => {
     const { rejectInvitation } = this.props;
-    rejectInvitation(invitation);
+    createAlert(TYPE_REJECTED, invitation, () => rejectInvitation(invitation));
   };
 
   handleCancelInvitationPress = (invitation) => () => {
