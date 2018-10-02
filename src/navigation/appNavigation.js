@@ -194,8 +194,8 @@ const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
       style={{
         width: 24,
         height: 24,
-        resizeMode: 'contain',
       }}
+      resizeMode="contain"
       source={focused ? iconActive : icon}
     />
     {!!hasAddon &&
