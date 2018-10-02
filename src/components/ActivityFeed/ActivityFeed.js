@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { Platform, Alert } from 'react-native';
+import { Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
@@ -25,6 +25,7 @@ import EventDetails from 'components/EventDetails';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
+import { createAlert } from 'utils/alerts';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -189,19 +190,7 @@ class ActivityFeed extends React.Component<Props, State> {
               margin={0}
               icon="close"
               fontSize={fontSizes.extraSmall}
-              onPress={() => {
-                Alert.alert(
-                  'Are you sure?',
-                  `This will reject connection invitation from ${notification.username}`,
-                  [
-                    { text: 'Cancel' },
-                    {
-                      text: 'Reject',
-                      onPress: () => { onRejectInvitation(notification); },
-                    },
-                  ],
-                );
-              }}
+              onPress={() => createAlert(TYPE_REJECTED, notification, () => onRejectInvitation(notification))}
             />
             <ActionCircleButton
               color={baseColors.white}
