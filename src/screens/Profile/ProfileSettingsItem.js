@@ -5,8 +5,7 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { Switch, Badge as NBBadge } from 'native-base';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { Platform, View, StyleSheet, TouchableNativeFeedback } from 'react-native';
-
+import { Platform, StyleSheet, TouchableNativeFeedback } from 'react-native';
 
 const StyledItemTouchable = styled.TouchableHighlight`
   display: flex;
@@ -50,11 +49,9 @@ const ListItem = styled.View`
 `;
 
 const Badge = styled(NBBadge)`
-  position: absolute;
-  top: -7px;
-  right: 24px;
   height: 24px;
   justify-content: center;
+  margin-right: 10px;
 `;
 
 const BadgeText = styled(BaseText)`
@@ -77,6 +74,12 @@ const ItemValue = styled(BaseText)`
   flex: 1;
   padding: 0 ${spacing.rhythm / 2}px
   align-self: stretch;
+`;
+
+const ListAddon = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 
 const ButtonWrapper = ({ onPress, children }) => {
@@ -125,7 +128,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
             <ItemLabel>{label}</ItemLabel>
             <ItemValue>{processedValue}</ItemValue>
           </ItemLabelHolder>
-          <View>
+          <ListAddon>
             {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             <Icon
               name="chevron-right"
@@ -134,7 +137,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
                 color: baseColors.coolGrey,
               }}
             />
-          </View>
+          </ListAddon>
         </ListItem>
       );
     }
