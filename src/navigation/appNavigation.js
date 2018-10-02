@@ -8,7 +8,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
+import { AppState, Animated, Easing, View, Platform, DeviceEventEmitter } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // screens
@@ -44,7 +44,7 @@ import ICOLinks from 'screens/ICOLinks';
 import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 import Toast from 'components/Toast';
-
+import { CachedImage } from 'react-native-cached-image';
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -190,7 +190,7 @@ const icoFlow = createStackNavigator({
 
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
-    <Image
+    <CachedImage
       style={{
         width: 24,
         height: 24,
