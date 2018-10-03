@@ -1,11 +1,13 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, TouchableOpacity, Animated, Easing } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
 import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
+import Icon from 'components/Icon';
+import Toast from 'components/Toast';
 
 type Props = {
   id: string,
@@ -23,16 +25,25 @@ type Props = {
   icon: string,
   smallScreen?: boolean,
   extraSmall?: boolean,
+  disabledRemove?: boolean,
+  onRemove: Function,
+  forceHideRemoval?: boolean,
 }
 
+type State = {
+  showHide: boolean,
+  shakeAnimation: Object,
+}
 
 const defaultCircleColor = '#ACBCCD';
 
-const AssetWrapper = styled.View`
+const AssetWrapper = styled(Animated.View)`
   width: 33.33333%;
   justify-content: center;
   align-items: center;
 `;
+
+const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
   if (smallScreen && extraSmall) {
@@ -48,14 +59,14 @@ const cardHeight = (smallScreen, extraSmall) => {
 const ShadowHolder = styled.View`
   margin: ${Platform.select({
     ios: `4px ${spacing.rhythm / 4}px 6px`,
-    android: `2px ${spacing.rhythm / 4}px 8px`,
-  })}
+    android: `4px ${spacing.rhythm / 4}px 6px`,
+  })};
   flex-direction: row;
   shadow-color: ${UIColors.cardShadowColor};
   shadow-offset: 0 3px;
   shadow-opacity: 1;
   shadow-radius: 6px;
-  elevation: 4;
+  elevation: 3;
   border-radius: 6px;
   background: ${baseColors.white};
   height: ${props => cardHeight(props.smallScreen, props.extraSmall)}px;
@@ -128,56 +139,168 @@ const DetailWrapper = styled.View`
   margin-top: 2px;
 `;
 
-const AssetCardMinimized = (props: Props) => {
-  const {
-    amount,
-    token,
-    balanceInFiat,
-    onPress,
-    disclaimer,
-    icon = '',
-    extraSmall,
-    smallScreen,
-  } = props;
+const HideAssetAddon = styled.View`
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  background-color: ${baseColors.burningFire};
+  position: absolute;
+  top: 0;
+  right: 2px;
+  elevation: 3;
+  justify-content: center;
+  align-items: center;
+`;
 
-  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-  return (
-    <AssetWrapper>
-      <ShadowHolder smallScreen={smallScreen} extraSmall={extraSmall}>
-        <TouchableWithoutFeedback onPress={onPress}>
-          <InnerWrapper smallScreen={smallScreen}>
-            <CardRow>
-              <IconCircle smallScreen={smallScreen}>
-                {!!icon &&
-                <CachedImage
-                  key={token}
-                  style={{
-                    height: smallScreen ? 20 : 36,
-                    width: smallScreen ? 20 : 36,
-                  }}
-                  source={{ uri: icon }}
-                  resizeMode="contain"
-                />}
-              </IconCircle>
-              <Name>{token}</Name>
-            </CardRow>
-            <CardRow>
-              <AmountWrapper extraSmall={extraSmall}>
-                <Amount>{amount}</Amount>
-                {!extraSmall &&
-                <DetailWrapper>
-                  {disclaimer
-                    ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
-                    : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                  }
-                </DetailWrapper>}
-              </AmountWrapper>
-            </CardRow>
-          </InnerWrapper>
-        </TouchableWithoutFeedback>
-      </ShadowHolder>
-    </AssetWrapper>
-  );
-};
+class AssetCardMinimized extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      showHide: false,
+      shakeAnimation: new Animated.Value(0),
+    };
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.forceHideRemoval !== this.props.forceHideRemoval && this.props.forceHideRemoval) {
+      this.hideRemoval();
+    }
+  }
+
+  handleLongPress = () => {
+    if (this.state.showHide) {
+      this.hideRemoval();
+    } else {
+      this.showRemoval();
+    }
+  };
+
+  handlePress = () => {
+    const { onPress } = this.props;
+    if (onPress) onPress();
+    if (this.state.showHide) {
+      this.hideRemoval();
+    }
+  };
+
+  hideRemoval = () => {
+    this.state.shakeAnimation.stopAnimation(() => {
+      this.setState({ showHide: false });
+      this.state.shakeAnimation.setValue(0);
+    });
+  };
+
+  showRemoval = () => {
+    this.setState({ showHide: true });
+    Animated.loop(
+      Animated.timing(
+        this.state.shakeAnimation,
+        {
+          toValue: 4,
+          easing: Easing.linear,
+          duration: 360,
+        },
+      ),
+    ).start();
+  };
+
+  showNotification = () => {
+    Toast.show({
+      message: 'Ethereum is essential for Pillar Wallet',
+      type: 'info',
+      title: 'This asset cannot be switched off',
+    });
+  };
+
+  render() {
+    const {
+      amount,
+      token,
+      balanceInFiat,
+      disclaimer,
+      icon = '',
+      extraSmall,
+      smallScreen,
+      disabledRemove,
+      onRemove,
+    } = this.props;
+    const { showHide, shakeAnimation } = this.state;
+
+    const animatedStyle = {
+      transform: [
+        {
+          translateY: shakeAnimation.interpolate({
+            inputRange: [0, 1, 2, 3, 4],
+            outputRange: [0, 2, 0, 2, 0],
+          }),
+        },
+        {
+          rotate: shakeAnimation.interpolate({
+            inputRange: [0, 1, 2, 3, 4],
+            outputRange: ['0deg', '2deg', '0deg', '-2deg', '0deg'],
+          }),
+        },
+      ],
+    };
+
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+    return (
+      <AssetWrapperAnimated style={animatedStyle}>
+        <ShadowHolder smallScreen={smallScreen} extraSmall={extraSmall}>
+          <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
+            <InnerWrapper smallScreen={smallScreen}>
+              <CardRow>
+                <IconCircle smallScreen={smallScreen}>
+                  {!!icon &&
+                  <CachedImage
+                    key={token}
+                    style={{
+                      height: smallScreen ? 20 : 36,
+                      width: smallScreen ? 20 : 36,
+                    }}
+                    source={{ uri: icon }}
+                    resizeMode="contain"
+                  />}
+                </IconCircle>
+                <Name>{token}</Name>
+              </CardRow>
+              <CardRow>
+                <AmountWrapper extraSmall={extraSmall}>
+                  <Amount>{amount}</Amount>
+                  {!extraSmall &&
+                  <DetailWrapper>
+                    {disclaimer
+                      ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
+                      : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                    }
+                  </DetailWrapper>}
+                </AmountWrapper>
+              </CardRow>
+            </InnerWrapper>
+          </TouchableWithoutFeedback>
+        </ShadowHolder>
+        {!!showHide &&
+        <HideAssetAddon>
+          <TouchableOpacity
+            onPress={disabledRemove ? this.showNotification : onRemove}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Icon
+              name="turn-off"
+              style={{
+                color: baseColors.white,
+                fontSize: fontSizes.small,
+                opacity: disabledRemove ? 0.5 : 1,
+              }}
+            />
+          </TouchableOpacity>
+        </HideAssetAddon>}
+      </AssetWrapperAnimated>
+    );
+  }
+}
 
 export default AssetCardMinimized;

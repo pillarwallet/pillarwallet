@@ -28,9 +28,11 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
 
       api.init(importedWallet.privateKey);
-      const apiUser = await api.validateAddress(importedWallet.address);
-      const userInfo = await api.userInfo('2f461791-de3e-4d82-885e-32b13ce16634');
-      apiUser.profileImage = userInfo.profileImage;
+      let apiUser = {};
+      const address = await api.validateAddress(importedWallet.address);
+      if (address.walletId) {
+        apiUser = await api.userInfo(address.walletId);
+      }
 
       const payload = {
         importedWallet,
@@ -61,9 +63,11 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
 
       api.init(importedWallet.privateKey);
-      const apiUser = await api.validateAddress(importedWallet.address);
-      const userInfo = await api.userInfo('2f461791-de3e-4d82-885e-32b13ce16634');
-      apiUser.profileImage = userInfo.profileImage;
+      let apiUser = {};
+      const address = await api.validateAddress(importedWallet.address);
+      if (address.walletId) {
+        apiUser = await api.userInfo(address.walletId);
+      }
 
       const payload = {
         importedWallet,
@@ -140,4 +144,4 @@ export const confirmPinForNewWalletAction = (pin: string) => {
     });
     dispatch(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
-};
+};git

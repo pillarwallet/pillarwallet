@@ -36,6 +36,7 @@
 		16891CC6211A6A59002BFCD6 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1930D3910B414B29A8A2F59D /* Feather.ttf */; };
 		16A4A6832111EBDA008E645C /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A4A6822111EBDA008E645C /* SwiftBridge.swift */; };
 		16A4A68721120C89008E645C /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A4A6802111EBA7008E645C /* libSignalMessagingSwift.a */; };
+		16CE22AC2163AC690098C3C7 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CE22A92163AC150098C3C7 /* libRNSVG.a */; };
 		16CF7AD52146D88000BEADDB /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CF7AD42146D87300BEADDB /* libRNShare.a */; };
 		1A35E955B6E8424F983EECB2 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54AE39B9C8BF45D98DEA6581 /* rubicon-icon-font.ttf */; };
 		1D07F721211B3CD8009D15F8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */; };
@@ -243,6 +244,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 958BF8F920F3CAD8003CF3A0;
 			remoteInfo = SignalMessagingSwift;
+		};
+		16CE22A82163AC150098C3C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = RNSVG;
+		};
+		16CE22AA2163AC150098C3C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 94DDAC5C1F3D024300EED511;
+			remoteInfo = "RNSVG-tvOS";
 		};
 		16CF7AD32146D87300BEADDB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -510,6 +525,7 @@
 		16A4A6812111EBD9008E645C /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		16A4A6822111EBDA008E645C /* SwiftBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridge.swift; path = pillarwallet/SwiftBridge.swift; sourceTree = "<group>"; };
 		16A4A6E6211227BF008E645C /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
+		16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
 		1930D3910B414B29A8A2F59D /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		1A7A6F4ED0218800D8189BB6 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -560,6 +576,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16CE22AC2163AC690098C3C7 /* libRNSVG.a in Frameworks */,
 				16CF7AD52146D88000BEADDB /* libRNShare.a in Frameworks */,
 				3C7B6731213EADC20053E053 /* MessageUI.framework in Frameworks */,
 				3C7B672F213EADB70053E053 /* Social.framework in Frameworks */,
@@ -813,6 +830,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		16CE22A42163AC150098C3C7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				16CE22A92163AC150098C3C7 /* libRNSVG.a */,
+				16CE22AB2163AC150098C3C7 /* libRNSVG-tvOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		16CF7AD02146D87300BEADDB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -863,6 +889,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */,
 				16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */,
 				165F273A21244AC70089F39A /* SplashScreen.xcodeproj */,
 				16891C74211A61AA002BFCD6 /* RNVectorIcons.xcodeproj */,
@@ -1109,6 +1136,10 @@
 					ProjectRef = 16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */;
 				},
 				{
+					ProductGroup = 16CE22A42163AC150098C3C7 /* Products */;
+					ProjectRef = 16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */;
+				},
+				{
 					ProductGroup = 16891C75211A61AA002BFCD6 /* Products */;
 					ProjectRef = 16891C74211A61AA002BFCD6 /* RNVectorIcons.xcodeproj */;
 				},
@@ -1303,6 +1334,20 @@
 			fileType = archive.ar;
 			path = libSignalMessagingSwift.a;
 			remoteRef = 16A4A67F2111EBA7008E645C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		16CE22A92163AC150098C3C7 /* libRNSVG.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSVG.a;
+			remoteRef = 16CE22A82163AC150098C3C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		16CE22AB2163AC150098C3C7 /* libRNSVG-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRNSVG-tvOS.a";
+			remoteRef = 16CE22AA2163AC150098C3C7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		16CF7AD42146D87300BEADDB /* libRNShare.a */ = {
@@ -1579,7 +1624,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\" 8dc1c480f8122e2a23511fa92b9a3c4a61bc9bb8 2f32aa4efe04421c95644fc2a5699b731225731a649f463dadf5374d5f87e58f";
+			shellScript = "\"${PODS_ROOT}/Fabric/run\" 7bc430094c38169c1b7afadcbde5dbc0c85ec8de e5a248dccbdb9c509812ddcb5baa17295923befa1e28672685d6d49e1a7e8453";
 		};
 		33DD1BC5398B1B80B72E6CB6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

@@ -18,6 +18,7 @@ import invitationsReducer from './invitationsReducer';
 import chatReducer from './chatReducer';
 import accessTokensReducer from './accessTokensReducer';
 import sessionReducer from './sessionReducer';
+import icosReducer from './icosReducer';
 
 const appReducer = combineReducers({
   navigation: navigationReducer,
@@ -33,6 +34,7 @@ const appReducer = combineReducers({
   chat: chatReducer,
   accessTokens: accessTokensReducer,
   session: sessionReducer,
+  icos: icosReducer,
 });
 
 const initialState = appReducer(undefined, {});

@@ -12,6 +12,7 @@ import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
 const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
   padding-bottom: ${spacing.rhythm}px;
+  margin-top: 25px;
 `;
 
 const FormFooter = styled.View`
@@ -61,6 +62,8 @@ function InputTemplate(locals) {
       errorMessage={errorMessage}
       id={locals.label}
       inputProps={inputProps}
+      inputType="secondary"
+      noBorder
     />
   );
 }
@@ -70,20 +73,20 @@ const { Form } = t.form;
 const maxLength = 100;
 const halfMaxLength = maxLength / 2;
 
-const FirstNameStruct = t.refinement(t.String, (firstName: string): boolean => {
-  return !!firstName.length && isValidName(firstName) && firstName.length <= halfMaxLength;
+const FirstNameStruct = t.refinement(t.String, (firstName: string = ''): boolean => {
+  return !!firstName && !!firstName.length && isValidName(firstName) && firstName.length <= halfMaxLength;
 });
 
-const LastNameStruct = t.refinement(t.String, (lastName: string): boolean => {
-  return !!lastName.length && isValidName(lastName) && lastName.length <= halfMaxLength;
+const LastNameStruct = t.refinement(t.String, (lastName: string = ''): boolean => {
+  return !!lastName && !!lastName.length && isValidName(lastName) && lastName.length <= halfMaxLength;
 });
 
-const EmailStruct = t.refinement(t.String, (email: string): boolean => {
-  return !!email.length && isValidEmail(email) && email.length <= maxLength;
+const EmailStruct = t.refinement(t.String, (email: string = ''): boolean => {
+  return !!email && !!email.length && isValidEmail(email) && email.length <= maxLength;
 });
 
-const CityStruct = t.refinement(t.String, (city: string): boolean => {
-  return !!city.length && isValidCityName(city) && city.length <= maxLength;
+const CityStruct = t.refinement(t.String, (city: string = ''): boolean => {
+  return !!city && !!city.length && isValidCityName(city) && city.length <= maxLength;
 });
 
 FirstNameStruct.getValidationErrorMessage = (firstName): string => {
@@ -109,19 +112,23 @@ LastNameStruct.getValidationErrorMessage = (lastName): string => {
 };
 
 EmailStruct.getValidationErrorMessage = (email): string => {
-  if (!!email && !isValidEmail(email)) {
-    return 'Please enter a valid email';
-  } else if (email.length > maxLength) {
-    return `Email should not be longer than ${maxLength} symbols`;
+  if (email) {
+    if (!isValidEmail(email)) {
+      return 'Please enter a valid email';
+    } else if (email.length > maxLength) {
+      return `Email should not be longer than ${maxLength} symbols`;
+    }
   }
   return 'Please specify your email';
 };
 
 CityStruct.getValidationErrorMessage = (city): string => {
-  if (!!city && !isValidCityName(city)) {
-    return 'Please enter a valid city';
-  } else if (city.length > maxLength) {
-    return `City should not be longer than ${maxLength} symbols`;
+  if (city) {
+    if (!isValidCityName(city)) {
+      return 'Please enter a valid city';
+    } else if (city.length > maxLength) {
+      return `City should not be longer than ${maxLength} symbols`;
+    }
   }
   return 'Please specify your city';
 };

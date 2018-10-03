@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Clipboard, Dimensions } from 'react-native';
+import { Clipboard } from 'react-native';
 import QRCode from 'react-native-qrcode';
 import { TextLink, BaseText } from 'components/Typography';
 import { Footer } from 'components/Layout';
@@ -11,10 +11,8 @@ import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import Toast from 'components/Toast';
 
-const { height } = Dimensions.get('window');
-
 const ContentWrapper = styled.View`
-  height: ${height / 2};
+  height: 300;
   justify-content: flex-start;
 `;
 

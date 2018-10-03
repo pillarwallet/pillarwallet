@@ -1,5 +1,4 @@
 // @flow
-
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
@@ -7,6 +6,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   ENCRYPTING,
+  REGISTERING,
 } from 'constants/walletConstants';
 import { ASSETS, NEW_WALLET, APP_FLOW } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
@@ -16,6 +16,7 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
 import { transformAssetsToObject } from 'utils/assets';
@@ -87,10 +88,12 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
+      { type: SET_HISTORY, payload: [] },
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
@@ -125,9 +128,11 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS, payload: {} },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
+      { type: SET_HISTORY, payload: [] },
       { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },

@@ -34,6 +34,19 @@ export const baseColors = {
   brightBlue: '#2f86eb',
   limeGreen: '#47d764',
   lightYellow: '#feffe0',
+  gallery: '#efefef',
+  veryLightBlue: '#e0edff',
+  dawnPink: '#f2eae4',
+  rose: '#f5078d',
+  cerulean: '#07b0f5',
+  beige: '#f7f7df',
+  coconutCream: '#e3e3bd',
+  pineGlade: '#b3b375',
+  mantis: '#85bb4c',
+  oliveDrab: '#5e9226',
+  alabaster: '#fcfcfc',
+  aliceBlue: '#f7fbff',
+  manatee: '#a3a9b2',
 };
 
 export const brandColors = [
@@ -66,6 +79,7 @@ export const fontSizes = {
   mediumLarge: 20,
   large: 22,
   extraLarge: 24,
+  extraLarger: 28,
   extraExtraLarge: 32,
   giant: 36,
   iosIcons: 32,
@@ -75,6 +89,10 @@ export const fontSizes = {
 
 export const spacing = {
   rhythm: 20,
+  small: 8,
+  medium: 12,
+  mediumLarge: 16,
+  large: 20,
 };
 
 export const itemSizes = {
@@ -83,8 +101,10 @@ export const itemSizes = {
 };
 
 export const fontTrackings = {
+  tiny: 0.1,
   small: 0.2,
   medium: 0.3,
+  mediumLarge: 0.4,
   large: 0.5,
 };
 
@@ -92,6 +112,7 @@ export const fontWeights = {
   thin: '100',
   light: '300',
   book: '400',
+  medium: '500',
   bold: '700',
   black: '900',
 };

@@ -8,16 +8,20 @@ import {
   Dimensions,
   Platform,
   PixelRatio,
+  View,
+  Alert,
 } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
+import Swipeout from 'react-native-swipeout';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import type { Assets, Balances } from 'models/Asset';
+import type { Assets, Balances, Asset } from 'models/Asset';
 import Button from 'components/Button';
-
+import Toast from 'components/Toast';
 import {
+  updateAssetsAction,
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
 } from 'actions/assetsActions';
@@ -27,12 +31,13 @@ import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import { formatMoney } from 'utils/common';
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED } from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, ETH } from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
 import { spacing, baseColors } from 'utils/variables';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import HideAssetButton from './HideAssetButton';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
@@ -44,17 +49,22 @@ type Props = {
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: string,
-  assetsLayout?: string,
+  assetsLayout: string,
+  updateAssets: Function,
+}
+
+type State = {
+  forceHideRemoval: boolean,
 }
 
 const smallScreen = () => {
   if (Platform.OS === 'ios') {
-    return Dimensions.get('window').width * PixelRatio.get() < 790;
+    return Dimensions.get('window').width * PixelRatio.get() < 650;
   }
   return Dimensions.get('window').width < 410;
 };
 
-const horizontalPadding = (layout) => {
+const horizontalPadding = (layout, side) => {
   switch (layout) {
     case EXTRASMALL: {
       return spacing.rhythm - (spacing.rhythm / 4);
@@ -63,15 +73,25 @@ const horizontalPadding = (layout) => {
       return spacing.rhythm - (spacing.rhythm / 4);
     }
     case SIMPLIFIED: {
-      return spacing.rhythm / 2;
+      return side === 'left' ? 0 : spacing.rhythm - 9;
     }
     default: {
-      return spacing.rhythm;
+      return side === 'left' ? 0 : spacing.rhythm - 2;
     }
   }
 };
 
-class AssetsScreen extends React.Component<Props> {
+class AssetsScreen extends React.Component<Props, State> {
+  didBlur: NavigationEventSubscription;
+  willFocus: NavigationEventSubscription;
+
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      forceHideRemoval: false,
+    };
+  }
+
   static navigationOptions = {
     transitionConfig: {
       duration: 300,
@@ -94,12 +114,35 @@ class AssetsScreen extends React.Component<Props> {
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
+
+    this.willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => { this.setState({ forceHideRemoval: false }); },
+    );
+
+    this.didBlur = this.props.navigation.addListener(
+      'didBlur',
+      () => { this.setState({ forceHideRemoval: true }); },
+    );
+  }
+
+  componentWillUnmount() {
+    this.didBlur.remove();
+    this.willFocus.remove();
   }
 
   handleCardTap = (assetData: Object) => {
-    this.props.navigation.navigate(ASSET, {
-      assetData,
-    });
+    this.setState({ forceHideRemoval: true });
+    this.props.navigation.navigate(ASSET,
+      {
+        assetData,
+        resetHideRemoval: this.resetHideRemoval,
+      },
+    );
+  };
+
+  resetHideRemoval = () => {
+    this.setState({ forceHideRemoval: false });
   };
 
   goToAddTokenPage = () => {
@@ -112,6 +155,42 @@ class AssetsScreen extends React.Component<Props> {
     });
   };
 
+  handleAssetRemoval = (asset: Asset) => () => {
+    const { assets, updateAssets } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      `This will hide ${asset.name} from your wallet`,
+      [
+        { text: 'Cancel', onPress: () => this.setState({ forceHideRemoval: true }), style: 'cancel' },
+        { text: 'Hide', onPress: () => updateAssets(assets, [asset.symbol]) },
+      ],
+    );
+  }
+
+  renderSwipeoutBtns = (asset) => {
+    const { assetsLayout } = this.props;
+    const isExpanded = assetsLayout === EXPANDED;
+    const isETH = asset.symbol === ETH;
+    return [{
+      component: (
+        <HideAssetButton
+          expanded={isExpanded}
+          onPress={isETH ? this.showETHRemovalNotification : this.handleAssetRemoval(asset)}
+          disabled={isETH}
+        />),
+      backgroundColor: 'transparent',
+      disabled: true,
+    }];
+  };
+
+  showETHRemovalNotification = () => {
+    Toast.show({
+      message: 'Ethereum is essential for Pillar Wallet',
+      type: 'info',
+      title: 'This asset cannot be switched off',
+    });
+  };
+
   renderAsset = ({ item: asset }) => {
     const {
       wallet,
@@ -119,6 +198,7 @@ class AssetsScreen extends React.Component<Props> {
       assetsLayout,
     } = this.props;
 
+    const { forceHideRemoval } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const {
@@ -170,16 +250,31 @@ class AssetsScreen extends React.Component<Props> {
       isListed,
       disclaimer,
     };
+    const isETH = asset.symbol === ETH;
 
     switch (assetsLayout) {
       case SIMPLIFIED: {
         return (
-          <AssetCardSimplified {...props} />
+          <Swipeout
+            right={this.renderSwipeoutBtns(asset)}
+            sensitivity={10}
+            backgroundColor="transparent"
+            buttonWidth={80}
+            close={forceHideRemoval}
+          >
+            <AssetCardSimplified {...props} />
+          </Swipeout>
         );
       }
       case MINIMIZED: {
         return (
-          <AssetCardMinimized {...props} smallScreen={smallScreen()} />
+          <AssetCardMinimized
+            {...props}
+            smallScreen={smallScreen()}
+            disabledRemove={isETH}
+            onRemove={this.handleAssetRemoval(asset)}
+            forceHideRemoval={forceHideRemoval}
+          />
         );
       }
       case EXTRASMALL: {
@@ -187,18 +282,42 @@ class AssetsScreen extends React.Component<Props> {
           <AssetCardMinimized
             {...props}
             smallScreen={smallScreen()}
+            disabledRemove={isETH}
+            onRemove={this.handleAssetRemoval(asset)}
+            forceHideRemoval={forceHideRemoval}
             extraSmall
           />
         );
       }
       default: {
         return (
-          <Transition key={assetData.name} shared={assetData.name}>
-            <AssetCard {...props} icon={assetData.icon} />
-          </Transition>
+          <Swipeout
+            right={this.renderSwipeoutBtns(asset)}
+            sensitivity={10}
+            backgroundColor="transparent"
+            buttonWidth={80}
+            close={forceHideRemoval}
+          >
+            <Transition key={assetData.name} shared={assetData.name}>
+              <AssetCard {...props} icon={assetData.icon} horizontalPadding />
+            </Transition>
+          </Swipeout>
         );
       }
     }
+  };
+
+  renderSeparator = () => {
+    return (
+      <View
+        style={{
+          marginTop: -22,
+          height: 1,
+          width: '100%',
+          backgroundColor: 'transparent',
+        }}
+      />
+    );
   };
 
   render() {
@@ -261,10 +380,12 @@ class AssetsScreen extends React.Component<Props> {
           renderItem={this.renderAsset}
           style={{ width: '100%' }}
           contentContainerStyle={{
-            paddingHorizontal: horizontalPadding(assetsLayout),
+            paddingLeft: horizontalPadding(assetsLayout, 'left'),
+            paddingRight: horizontalPadding(assetsLayout, 'right'),
             width: '100%',
           }}
           numColumns={columnAmount}
+          ItemSeparatorComponent={assetsLayout === SIMPLIFIED ? this.renderSeparator : null}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -302,6 +423,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
+  updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

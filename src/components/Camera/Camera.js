@@ -75,7 +75,6 @@ const ImageCircle = styled.Image`
   width: ${spacing.rhythm * 8};
   height: 160px;
   border-radius: 80px;
-  resizeMode: cover;
 `;
 
 const ResultScreen = styled.View`
@@ -215,6 +214,7 @@ class Camera extends React.Component<Props, State> {
   renderResult = () => (
     <ResultScreen>
       <ImageCircle
+        resizeMode="contain"
         source={{ uri: this.state.previewBase64 }}
       />
       <ResultScreenFooter>

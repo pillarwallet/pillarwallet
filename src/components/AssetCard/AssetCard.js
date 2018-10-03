@@ -22,6 +22,7 @@ type Props = {
     currency: string,
   },
   icon: string,
+  horizontalPadding?: boolean,
 }
 
 const AssetWrapper = styled.View`
@@ -29,7 +30,7 @@ const AssetWrapper = styled.View`
   margin-bottom: ${spacing.rhythm / 2};
   width: 100%;
   box-shadow: 0px 1px 2px ${UIColors.defaultShadowColor};
-  padding: 2px;
+  padding: ${props => props.horizontalPadding ? `2px 2px 2px ${spacing.rhythm - 2}px` : '2px'};
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -144,13 +145,14 @@ const AssetCard = (props: Props) => {
     isListed = true,
     disclaimer,
     icon = '',
+    horizontalPadding,
   } = props;
 
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
   const bgColor = isListed ? defaultCardColor : baseColors.white;
   const wallpaperUri = isListed ? wallpaper : undefined;
   return (
-    <AssetWrapper>
+    <AssetWrapper horizontalPadding={horizontalPadding}>
       <TouchableWithoutFeedback onPress={onPress}>
         <BackgroundHolder cardColor={bgColor}>
           <BackgroundImage source={{ uri: wallpaperUri }} />

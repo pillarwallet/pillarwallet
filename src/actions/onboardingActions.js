@@ -11,7 +11,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   GENERATING,
   UPDATE_WALLET_STATE,
-  API_REGISTRATION_STARTED,
+  REGISTERING,
   USERNAME_EXISTS,
   USERNAME_OK,
   CHECKING_USERNAME,
@@ -24,10 +24,11 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
+import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import { getExchangeRates } from 'services/assets';
-import { UPDATE_ACCESS_TOKENS } from '../constants/accessTokensConstants';
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
@@ -39,7 +40,7 @@ export const registerWalletAction = () => {
       mnemonic,
       pin,
       importedWallet,
-      apiUser: user,
+      apiUser,
     } = currentState.wallet.onboarding;
 
     const mnemonicPhrase = mnemonic.original;
@@ -51,6 +52,7 @@ export const registerWalletAction = () => {
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     dispatch({ type: UPDATE_ACCESS_TOKENS, payload: [] });
+    dispatch({ type: SET_HISTORY, payload: [] });
 
     // STEP 1: navigate to the new wallet screen
     dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
@@ -80,12 +82,18 @@ export const registerWalletAction = () => {
 
     await storage.save('wallet', { wallet: encryptedWallet });
     await storage.save('app_settings', { appSettings: { wallet: +new Date() } });
+    const user = apiUser.username ? { username: apiUser.username } : {};
     await storage.save('user', { user });
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
     });
+
     // STEP 4: Initialize SDK annd register user
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: REGISTERING,
+    });
     api.init(wallet.privateKey);
     await firebase.messaging().requestPermission().catch(() => { });
     const fcmToken = await firebase.messaging().getToken().catch(() => { });
@@ -112,7 +120,6 @@ export const registerWalletAction = () => {
     });
 
     if (!registrationSucceed) {
-      await storage.save('assets', { assets: {} });
       dispatch({
         type: UPDATE_WALLET_STATE,
         payload: sdkWallet.reason,
@@ -155,7 +162,7 @@ export const registerOnBackendAction = () => {
     const { wallet: { data: wallet, onboarding: { apiUser } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
-      payload: API_REGISTRATION_STARTED,
+      payload: REGISTERING,
     });
     let { user } = await storage.get('user');
     if (apiUser.username) {
