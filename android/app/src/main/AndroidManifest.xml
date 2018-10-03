@@ -160,6 +160,7 @@
             android:grantUriPermissions="true"
             android:exported="false">
             <meta-data
+                tools:replace="android:resource"
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/filepaths" />
         </provider>

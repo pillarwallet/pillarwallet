@@ -3,14 +3,16 @@ import * as React from 'react';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import { Text, Dimensions } from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
 import { Footer } from 'components/Layout';
+import IconButton from 'components/IconButton';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 
 type Props = {
   onModalHide?: Function,
@@ -94,20 +96,27 @@ const ResultScreenFooter = styled.View`
 `;
 
 const CameraButtonOuter = styled.TouchableOpacity`
-  border: 4px solid white;
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
+  border: 3px solid white;
+  width: 72px;
+  height: 72px;
+  border-radius: 36px;
   align-self: center;
   justify-content: center;
   align-items: center;
 `;
 
 const CameraButtonInner = styled.View`
-  width: 44px;
-  height: 44px;
-  background-color: ${baseColors.white};
-  border-radius: 22px;
+  width: 26px;
+  height: 26px;
+  background-color: ${baseColors.electricBlue};
+`;
+
+const FooterInner = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
 `;
 
 class Camera extends React.Component<Props, State> {
@@ -150,6 +159,22 @@ class Camera extends React.Component<Props, State> {
     return false;
   };
 
+  openGallery = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+    })
+      .then((image) => {
+        this.setState({
+          previewBase64: image.path,
+          showResult: true,
+          imageUri: image.path,
+        });
+    })
+      .catch((err) => console.log(err)); // eslint-disable-line;
+  }
+
   setImage = async () => {
     const { user, updateUserAvatar } = this.props;
     const { imageUri } = this.state;
@@ -179,9 +204,23 @@ class Camera extends React.Component<Props, State> {
   renderBottomBar = () => {
     return (
       <Footer>
-        <CameraButtonOuter onPress={this.takePicture} >
-          <CameraButtonInner />
-        </CameraButtonOuter>
+        <FooterInner>
+          <IconButton
+            icon="more"
+            onPress={() => this.openGallery()}
+            fontSize={fontSizes.extraLarge}
+            color={baseColors.white}
+          />
+          <CameraButtonOuter onPress={this.takePicture} >
+            <CameraButtonInner />
+          </CameraButtonOuter>
+          <IconButton
+            icon="up-arrow"
+            onPress={() => {}}
+            fontSize={fontSizes.extraLarge}
+            color={baseColors.white}
+          />
+        </FooterInner>
       </Footer>
     );
   };
@@ -214,7 +253,7 @@ class Camera extends React.Component<Props, State> {
   renderResult = () => (
     <ResultScreen>
       <ImageCircle
-        resizeMode="contain"
+        resizeMode="cover"
         source={{ uri: this.state.previewBase64 }}
       />
       <ResultScreenFooter>

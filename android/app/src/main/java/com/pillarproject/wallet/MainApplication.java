@@ -5,12 +5,13 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
-import com.horcrux.svg.SvgPackage;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import cl.json.RNSharePackage;
 import com.crypho.scrypt.RNScryptPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
@@ -20,7 +21,7 @@ import io.invertase.firebase.RNFirebasePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import org.reactnative.camera.RNCameraPackage;
 import com.airbnb.android.react.lottie.LottiePackage;
-import cl.json.RNSharePackage;
+import com.horcrux.svg.SvgPackage;
 import cl.json.ShareApplication;
 import com.ocetnik.timer.BackgroundTimerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
@@ -67,7 +68,8 @@ public class MainApplication extends Application implements ShareApplication, Re
           new IntercomPackage(),
           new LinearGradientPackage(),
           new RNFirebaseNotificationsPackage(),
-          new RandomBytesPackage()
+          new RandomBytesPackage(),
+          new PickerPackage()
       );
     }
 
