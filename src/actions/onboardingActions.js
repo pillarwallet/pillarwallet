@@ -143,12 +143,13 @@ export const registerWalletAction = () => {
 
     await storage.save('assets', { assets: initialAssets });
 
-    // STEP 6: all done, navigate to the assets or welcome back screen
+    // STEP 6: all done, navigate to the assets screen
     const navigateToAssetsAction = NavigationActions.navigate({
       routeName: APP_FLOW,
       params: {},
       action: NavigationActions.navigate({ routeName: ASSETS }),
     });
+
     dispatch(navigateToAssetsAction);
   };
 };
