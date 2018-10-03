@@ -425,9 +425,10 @@ class ActivityFeed extends React.Component<Props, State> {
 
     return (
       <ActivityFeedWrapper>
+        {!!feedTitle &&
         <ActivityFeedHeader>
           <Title subtitle title={feedTitle} />
-        </ActivityFeedHeader>
+        </ActivityFeedHeader>}
         <ActivityFeedList
           data={processedHistory}
           extraData={notifications}
