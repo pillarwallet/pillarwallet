@@ -7,7 +7,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
@@ -74,7 +74,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
-  fetchTransactionsHistory: (walletAddress: string, asset?: string, indexFrom?: number) => Function,
+  fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
   wallet: Object,
 };
 
@@ -97,7 +97,7 @@ class Contact extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      fetchTransactionsHistory,
+      fetchContactTransactions,
       wallet,
       navigation,
       contacts,
@@ -115,8 +115,8 @@ class Contact extends React.Component<Props, State> {
           .then(() => this.setState({ avatarRefreshed: true }))
           .catch(() => null);
       }
+      fetchContactTransactions(wallet.address, localContact.ethAddress);
     }
-    fetchTransactionsHistory(wallet.address);
   }
 
   openOptionsModal = () => {
@@ -135,12 +135,12 @@ class Contact extends React.Component<Props, State> {
     const {
       navigation,
       contacts,
-      fetchTransactionsHistory,
+      fetchContactTransactions,
       wallet,
     } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
-    const localContact = contacts.find(({ username }) => username === contact.username);
+    const localContact = contacts.find(({ username }) => username === contact.username) || {};
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
     const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
@@ -161,7 +161,7 @@ class Contact extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchTransactionsHistory(wallet.address);
+                fetchContactTransactions(wallet.address, displayContact.ethAddress);
               }}
             />
           }
@@ -197,13 +197,14 @@ class Contact extends React.Component<Props, State> {
               </React.Fragment>
             )}
           </Wrapper>
+          {isAccepted &&
           <ActivityFeed
             feedTitle="activity."
             navigation={navigation}
             activeTab={TRANSACTIONS}
             esData={activityFeedEsData}
             additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
-          />
+          />}
         </ScrollWrapper>
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
@@ -225,8 +226,8 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
-  fetchTransactionsHistory: (walletAddress, asset, indexFrom) => {
-    dispatch(fetchTransactionsHistoryAction(walletAddress, asset, indexFrom));
+  fetchContactTransactions: (walletAddress, contactAddress) => {
+    dispatch(fetchContactTransactionsAction(walletAddress, contactAddress));
   },
 });
 
