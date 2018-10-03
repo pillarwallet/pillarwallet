@@ -24,7 +24,7 @@ describe('History Actions', () => {
 
     describe('when transactions are found', () => {
       const asset = 'ASSET';
-      const transactions = [{}, {}];
+      const transactions = [{}];
 
       beforeEach(async () => {
         getState.mockImplementation(() => ({ history: { data: [] } }));

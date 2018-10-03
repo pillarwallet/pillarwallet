@@ -21,7 +21,7 @@ export const fetchTransactionsHistoryAction = (walletAddress: string, asset: str
     });
     if (!history.length) return;
 
-    const { history: { data: currentHistory} } = getState();
+    const { history: { data: currentHistory } } = getState();
     const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
     storage.save('history', { history: updatedHistory }, true);
 
