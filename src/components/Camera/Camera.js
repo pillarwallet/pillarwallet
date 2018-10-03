@@ -171,9 +171,9 @@ class Camera extends React.Component<Props, State> {
           showResult: true,
           imageUri: image.path,
         });
-    })
-      .catch((err) => console.log(err)); // eslint-disable-line;
-  }
+      })
+      .catch((err) => console.log(err)); // eslint-disable-line
+  };
 
   setImage = async () => {
     const { user, updateUserAvatar } = this.props;
