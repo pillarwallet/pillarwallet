@@ -17,7 +17,7 @@ import {
   CHECKING_USERNAME,
   SET_API_USER,
 } from 'constants/walletConstants';
-import { APP_FLOW, NEW_WALLET, ASSETS, WELCOME_BACK } from 'constants/navigationConstants';
+import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
@@ -144,16 +144,12 @@ export const registerWalletAction = () => {
     await storage.save('assets', { assets: initialAssets });
 
     // STEP 6: all done, navigate to the assets or welcome back screen
-    // if (!importedWallet) {
-      const navigateToAssetsAction = NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: NavigationActions.navigate({ routeName: ASSETS }),
-      });
-      dispatch(navigateToAssetsAction);
-    // } else {
-    //   dispatch(NavigationActions.navigate({ routeName: WELCOME_BACK }));
-    // }
+    const navigateToAssetsAction = NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName: ASSETS }),
+    });
+    dispatch(navigateToAssetsAction);
   };
 };
 
@@ -235,30 +231,6 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: usernameStatus,
-    });
-  };
-};
-
-export const getUserInfoAction = () => {
-  return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const currentState = getState();
-    const {
-      apiUser: user,
-    } = currentState.wallet.onboarding;
-
-    const fcmToken = await firebase.messaging().getToken().catch(() => { });
-    const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
-    const userInfo = await api.userInfo(sdkWallet.walletId);
-    if (Object.keys(userInfo).length) {
-      await storage.save('user', { user: userInfo }, true);
-    }
-    const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
-    dispatch({
-      type: UPDATE_USER,
-      payload: {
-        user: userInfo,
-        state: userState,
-      },
     });
   };
 };

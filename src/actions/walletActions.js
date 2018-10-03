@@ -15,7 +15,6 @@ import {
 } from 'constants/walletConstants';
 import {
   NEW_PROFILE,
-  WELCOME_BACK,
   PIN_CODE_CONFIRMATION,
   SET_WALLET_PIN_CODE,
 } from 'constants/navigationConstants';
@@ -144,4 +143,4 @@ export const confirmPinForNewWalletAction = (pin: string) => {
     });
     dispatch(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
-};git
+};

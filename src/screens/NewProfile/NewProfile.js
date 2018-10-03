@@ -7,13 +7,15 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { baseColors, spacing } from 'utils/variables';
 import { Container, Footer, Wrapper } from 'components/Layout';
-import { BaseText } from 'components/Typography';
+import { BaseText, Paragraph } from 'components/Typography';
 import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import { validateUserDetailsAction, registerOnBackendAction, getUserInfoAction } from 'actions/onboardingActions';
+import Title from 'components/Title';
+import ProfileImage from 'components/ProfileImage';
+import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
@@ -77,6 +79,8 @@ Username.getValidationErrorMessage = (username): string => {
 const formStructure = t.struct({
   username: Username,
 });
+
+const profileImageWidth = 144;
 
 const getDefaultFormOptions = (inputDisabled: boolean) => ({
   fields: {
@@ -170,7 +174,7 @@ class NewProfile extends React.Component<Props, State> {
   }
 
   goToNextScreen() {
-    const { navigation, retry, registerOnBackend, user } = this.props;
+    const { navigation, retry, registerOnBackend } = this.props;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
@@ -181,40 +185,67 @@ class NewProfile extends React.Component<Props, State> {
 
   render() {
     const { value, formOptions } = this.state;
-    const { walletState, session, retry } = this.props;
+    const {
+      walletState,
+      session,
+      retry,
+      apiUser,
+    } = this.props;
     const isUsernameValid = value && value.username && value.username.length > 0;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
       <Container>
-        <Header
-          title="choose username"
-          onBack={retry ? undefined : () => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
-        />
-        <Wrapper regularPadding>
-          <LoginForm
-            innerRef={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={value}
-            onChange={this.handleChange}
+        {apiUser.walletId &&
+        <Wrapper flex={1} center regularPadding>
+          <ProfileImage
+            uri={`${apiUser.profileImage}?t=${apiUser.lastUpdateTime || 0}`}
+            diameter={profileImageWidth}
+            style={{ marginBottom: 47 }}
           />
-          {isCheckingUsernameAvailability &&
+          <Title
+            title={`Welcome back, ${apiUser.username}!`}
+            align="center"
+            noBlueDot
+          />
+          <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
+            Your Pillar Wallet is now restored. We are happy to see you again.
+          </Paragraph>
+          <Button marginBottom="20px" onPress={this.handleSubmit} title="Go to wallet" />
+        </Wrapper>
+        }
+        {!apiUser.walletId &&
+        <Wrapper>
+          <Header
+            title="choose username"
+            onBack={retry ? undefined : () => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
+          />
+          <Wrapper regularPadding>
+            <LoginForm
+              innerRef={node => { this._form = node; }}
+              type={formStructure}
+              options={formOptions}
+              value={value}
+              onChange={this.handleChange}
+            />
+            {isCheckingUsernameAvailability &&
             <LoadingMessageWrapper>
               <Spinner />
               <LoadingMessage>Checking username availability…</LoadingMessage>
             </LoadingMessageWrapper>
-          }
+            }
+          </Wrapper>
+          <Footer>
+            <Button
+              small
+              flexRight
+              onPress={this.handleSubmit}
+              disabled={shouldNextButtonBeDisabled}
+              title="Next"
+            />
+          </Footer>
         </Wrapper>
-        <Footer>
-          <Button
-            small
-            flexRight
-            onPress={this.handleSubmit}
-            disabled={shouldNextButtonBeDisabled}
-            title="Next"
-          />
-        </Footer>
+        }
       </Container>
     );
   }
@@ -223,18 +254,15 @@ class NewProfile extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet: { walletState, onboarding: { apiUser } },
   session: { data: session },
-  user: { data: user },
 }) => ({
   walletState,
   apiUser,
   session,
-  user,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
   registerOnBackend: () => dispatch(registerOnBackendAction()),
-  // getUserInfo: () => dispatch(getUserInfoAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
