@@ -80,7 +80,7 @@ const formStructure = t.struct({
   username: Username,
 });
 
-const profileImageWidth = 144;
+const PROFILE_IMAGE_WIDTH = 144;
 
 const getDefaultFormOptions = (inputDisabled: boolean) => ({
   fields: {
@@ -183,69 +183,78 @@ class NewProfile extends React.Component<Props, State> {
     navigation.navigate(LEGAL_TERMS);
   }
 
-  render() {
+  renderChooseUsernameScreen() {
     const { value, formOptions } = this.state;
     const {
       walletState,
       session,
       retry,
-      apiUser,
     } = this.props;
     const isUsernameValid = value && value.username && value.username.length > 0;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
+      <Wrapper>
+        <Header
+          title="choose username"
+          onBack={retry ? undefined : () => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
+        />
+        <Wrapper regularPadding>
+          <LoginForm
+            innerRef={node => { this._form = node; }}
+            type={formStructure}
+            options={formOptions}
+            value={value}
+            onChange={this.handleChange}
+          />
+          {isCheckingUsernameAvailability &&
+          <LoadingMessageWrapper>
+            <Spinner />
+            <LoadingMessage>Checking username availability…</LoadingMessage>
+          </LoadingMessageWrapper>
+          }
+        </Wrapper>
+        <Footer>
+          <Button
+            small
+            flexRight
+            onPress={this.handleSubmit}
+            disabled={shouldNextButtonBeDisabled}
+            title="Next"
+          />
+        </Footer>
+      </Wrapper>
+    );
+  }
+
+  renderWelcomeBackScreen() {
+    const { apiUser } = this.props;
+    return (
+      <Wrapper flex={1} center regularPadding>
+        <ProfileImage
+          uri={apiUser.profileImage}
+          diameter={PROFILE_IMAGE_WIDTH}
+          style={{ marginBottom: 47 }}
+        />
+        <Title
+          title={`Welcome back, ${apiUser.username}!`}
+          align="center"
+          noBlueDot
+        />
+        <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
+          Your Pillar Wallet is now restored. We are happy to see you again.
+        </Paragraph>
+        <Button marginBottom="20px" onPress={this.handleSubmit} title="Next" />
+      </Wrapper>
+    );
+  }
+
+  render() {
+    const { apiUser } = this.props;
+    return (
       <Container>
-        {apiUser.walletId &&
-        <Wrapper flex={1} center regularPadding>
-          <ProfileImage
-            uri={`${apiUser.profileImage}?t=${apiUser.lastUpdateTime || 0}`}
-            diameter={profileImageWidth}
-            style={{ marginBottom: 47 }}
-          />
-          <Title
-            title={`Welcome back, ${apiUser.username}!`}
-            align="center"
-            noBlueDot
-          />
-          <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
-            Your Pillar Wallet is now restored. We are happy to see you again.
-          </Paragraph>
-          <Button marginBottom="20px" onPress={this.handleSubmit} title="Go to wallet" />
-        </Wrapper>
-        }
-        {!apiUser.walletId &&
-        <Wrapper>
-          <Header
-            title="choose username"
-            onBack={retry ? undefined : () => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
-          />
-          <Wrapper regularPadding>
-            <LoginForm
-              innerRef={node => { this._form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleChange}
-            />
-            {isCheckingUsernameAvailability &&
-            <LoadingMessageWrapper>
-              <Spinner />
-              <LoadingMessage>Checking username availability…</LoadingMessage>
-            </LoadingMessageWrapper>
-            }
-          </Wrapper>
-          <Footer>
-            <Button
-              small
-              flexRight
-              onPress={this.handleSubmit}
-              disabled={shouldNextButtonBeDisabled}
-              title="Next"
-            />
-          </Footer>
-        </Wrapper>
-        }
+        {!apiUser.walletId && this.renderChooseUsernameScreen()}
+        {apiUser.walletId && this.renderWelcomeBackScreen()}
       </Container>
     );
   }
