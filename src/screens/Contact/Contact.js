@@ -1,27 +1,30 @@
 // @flow
 import * as React from 'react';
+import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
-import { Container, Wrapper } from 'components/Layout';
+import { fetchContactTransactionsAction } from 'actions/historyActions';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
+import { TRANSACTIONS } from 'constants/activityConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
+import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 
 const ContactWrapper = styled.View`
   height: 218px;
   position: relative;
   justify-content: flex-end;
-  margin-top: 60px;
-  margin-bottom: 20px;
+  margin: 60px 20px 20px;
 `;
 
 const ContactHeader = styled.View`
@@ -71,6 +74,8 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   contacts: ApiUser[],
   syncContact: Function,
+  fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
+  wallet: Object,
 };
 
 type State = {
@@ -91,7 +96,13 @@ class Contact extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { navigation, contacts, syncContact } = this.props;
+    const {
+      fetchContactTransactions,
+      wallet,
+      navigation,
+      contacts,
+      syncContact,
+    } = this.props;
     const contact = navigation.getParam('contact', {});
 
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -104,6 +115,7 @@ class Contact extends React.Component<Props, State> {
           .then(() => this.setState({ avatarRefreshed: true }))
           .catch(() => null);
       }
+      fetchContactTransactions(wallet.address, localContact.ethAddress);
     }
   }
 
@@ -120,13 +132,22 @@ class Contact extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation, contacts } = this.props;
+    const {
+      navigation,
+      contacts,
+      fetchContactTransactions,
+      wallet,
+    } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
-    const localContact = contacts.find(({ username }) => username === contact.username);
+    const localContact = contacts.find(({ username }) => username === contact.username) || {};
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
     const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
+    const activityFeedEsData = {
+      title: 'Make your first step',
+      body: 'Your activity will appear here.',
+    };
     return (
       <Container>
         <Header
@@ -135,7 +156,16 @@ class Contact extends React.Component<Props, State> {
           // onNextPress={this.openOptionsModal}
           // nextIcon="more"
         />
-        <Wrapper regularPadding>
+        <ScrollWrapper
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                fetchContactTransactions(wallet.address, displayContact.ethAddress);
+              }}
+            />
+          }
+        >
           <ContactWrapper>
             <ContactHeader>
               <ContactHeaderBody>
@@ -167,7 +197,15 @@ class Contact extends React.Component<Props, State> {
               </React.Fragment>
             )}
           </Wrapper>
-        </Wrapper>
+          {isAccepted &&
+          <ActivityFeed
+            feedTitle="activity."
+            navigation={navigation}
+            activeTab={TRANSACTIONS}
+            esData={activityFeedEsData}
+            additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
+          />}
+        </ScrollWrapper>
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />
@@ -178,12 +216,19 @@ class Contact extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ contacts: { data: contacts } }) => ({
+const mapStateToProps = ({
+  contacts: { data: contacts },
+  wallet: { data: wallet },
+}) => ({
   contacts,
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   syncContact: userId => dispatch(syncContactAction(userId)),
+  fetchContactTransactions: (walletAddress, contactAddress) => {
+    dispatch(fetchContactTransactionsAction(walletAddress, contactAddress));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Contact);

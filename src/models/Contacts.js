@@ -4,6 +4,7 @@ export type ApiUser = {
   username: string,
   connectionKey: string,
   profileImage?: string,
+  ethAddress: string,
 };
 
 export type SearchResults = {
