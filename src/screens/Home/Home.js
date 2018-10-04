@@ -197,10 +197,23 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   toggleCamera = async () => {
-    const status = await Permissions.request('photo');
+    const statusPhoto = await Permissions.request('photo');
+    const statusCamera = await Permissions.request('camera');
     this.setState({
-      permissionsGranted: status === 'authorized',
-      showCamera: !this.state.showCamera,
+      permissionsGranted: statusPhoto === 'authorized' && statusCamera === 'authorized',
+    });
+    this.openModal();
+  };
+
+  closeModal = () => {
+    this.setState({
+      showCamera: false,
+    });
+  };
+
+  openModal = () => {
+    this.setState({
+      showCamera: true,
     });
   };
 
@@ -478,7 +491,7 @@ class HomeScreen extends React.Component<Props, State> {
         </Animated.ScrollView>
         <Camera
           isVisible={showCamera}
-          modalHide={this.toggleCamera}
+          modalHide={this.closeModal}
           permissionsGranted={permissionsGranted}
         />
       </Container>
