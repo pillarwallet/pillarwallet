@@ -10987,9 +10987,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.70:
-  version "1.0.70"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.70.tgz#b633e7370cc66761fd9afc4a2c18118821b5cd8e"
+rn-signal-protocol-messaging@1.0.71:
+  version "1.0.71"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.71.tgz#3e66c1b9d7a3dbefdeedbedbaa19fc11d73b77bf"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
