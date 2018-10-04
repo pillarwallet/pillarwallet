@@ -56,6 +56,7 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
+import { setupSentryAction } from 'actions/appActions';
 
 // constants
 import {
@@ -367,6 +368,7 @@ type Props = {
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
+  setupSentry: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
@@ -388,6 +390,7 @@ class AppFlow extends React.Component<Props, {}> {
       fetchAssetsBalances,
       fetchICOs,
       getExistingChats,
+      setupSentry,
       assets,
       wallet,
     } = this.props;
@@ -398,6 +401,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
+    setupSentry();
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -495,6 +499,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
   fetchICOs: () => dispatch(fetchICOsAction()),
+  setupSentry: () => dispatch(setupSentryAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);
