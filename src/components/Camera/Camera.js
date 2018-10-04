@@ -9,10 +9,11 @@ import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
 import { Footer } from 'components/Layout';
 import IconButton from 'components/IconButton';
+import Spinner from 'components/Spinner';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 
 type Props = {
   onModalHide?: Function,
@@ -27,11 +28,14 @@ type State = {
   showResult: boolean,
   previewBase64: string,
   imageUri: string,
+  cameraType: string,
+  isFlashOn: boolean,
+  isHardwareFlashOn: boolean,
+  isFrontFlashVisible: boolean,
 };
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
-
 
 const HeaderWrapper = styled.SafeAreaView`
   margin-bottom: auto;
@@ -44,12 +48,20 @@ const HeaderWrapperCamera = styled.SafeAreaView`
   position: absolute;
   top: 0;
   left: 0;
+  
+`;const FrontFlash = styled.View`
+  height: ${screenHeight}px;
+  width: ${screenWidth}px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #ffe8ce;
 `;
 
 const PhotoBoundaries = styled.View`
-  height: ${Dimensions.get('window').width - 40};
-  width: ${Dimensions.get('window').width - 40};
-  border-radius: ${Dimensions.get('window').width / 2};
+  height: ${screenWidth - 40};
+  width: ${screenWidth - 40};
+  border-radius: ${screenWidth / 2};
   border-width: 2;
   border-style: dashed;
   border-color: ${props => props.color};
@@ -73,19 +85,32 @@ const NoPermissions = styled.View`
   padding: 10px;
 `;
 
+const PreviewWrapper = styled.View`
+  width: 160px;
+  height: 160px;
+  border-radius: 80px;
+  justify-content: center;
+  align-items: center; 
+`;
+
 const ImageCircle = styled.Image`
-  width: ${spacing.rhythm * 8};
+  width: 160px;
   height: 160px;
   border-radius: 80px;
 `;
 
 const ResultScreen = styled.View`
-   flex: 1;
-   flex-direction: column;
-   justify-content: center;
-   align-items: center;
-   padding: 30px;
-   background-color: #ffffff;
+  height: ${screenHeight}px;
+  width: ${screenWidth}px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  background-color: #ffffff;
+  z-index: 2;
 `;
 
 const ResultScreenFooter = styled.View`
@@ -119,8 +144,15 @@ const FooterInner = styled.View`
   margin-bottom: 20px;
 `;
 
+const FRONT = 'front';
+const BACK = 'back';
+const FLASH_ON = 'on';
+const FLASH_OFF = 'off';
+
 class Camera extends React.Component<Props, State> {
   camera: ?Object;
+  hardwareFlashTimeout: TimeoutID;
+  frontFlashTimeout: TimeoutID;
 
   constructor(props: Props) {
     super(props);
@@ -128,6 +160,10 @@ class Camera extends React.Component<Props, State> {
       showResult: false,
       previewBase64: '',
       imageUri: '',
+      cameraType: FRONT,
+      isFlashOn: false,
+      isHardwareFlashOn: false,
+      isFrontFlashVisible: false,
     };
   }
 
@@ -136,21 +172,38 @@ class Camera extends React.Component<Props, State> {
   };
 
   getBackToCamera = () => {
-    this.setState({ showResult: false });
+    this.setState({
+      showResult: false,
+      previewBase64: '',
+      imageUri: '',
+    });
   };
 
   takePicture = () => {
+    const { isFlashOn, cameraType } = this.state;
     if (this.camera) {
+      if (isFlashOn && cameraType === FRONT) {
+        this.setState({ isFrontFlashVisible: true });
+        this.frontFlashTimeout = setTimeout(() => {
+          this.setState({ isFrontFlashVisible: false });
+          clearTimeout(this.frontFlashTimeout);
+        }, 500);
+      }
+
+      if (!isFlashOn) {
+        this.setState({
+          showResult: true,
+        });
+      }
+
       return this.camera.takePictureAsync({
-        base64: true,
-        forceUpOrientation: true,
-        fixOrientation: true,
-        mirrorImage: true,
+        mirrorImage: cameraType === FRONT,
+        skipProcessing: cameraType === BACK,
       })
         .then((res) => {
           this.setState({
-            previewBase64: `data:image/jpg;base64,${res.base64}`,
             showResult: true,
+            previewBase64: res.uri,
             imageUri: res.uri,
           });
         })
@@ -185,6 +238,43 @@ class Camera extends React.Component<Props, State> {
     this.props.modalHide();
   };
 
+  handleFlash = () => {
+    this.setState({
+      isFlashOn: !this.state.isFlashOn,
+      isHardwareFlashOn: this.state.cameraType === BACK && !this.state.isFlashOn,
+    });
+  };
+
+  handleCameraFlip = () => {
+    this.setState({
+      cameraType: this.state.cameraType === FRONT ? BACK : FRONT,
+      isHardwareFlashOn: false,
+    });
+
+    if (this.state.cameraType === FRONT && this.state.isFlashOn) {
+      this.hardwareFlashTimeout = setTimeout(() => {
+        this.setState({
+          isHardwareFlashOn: true,
+        });
+        clearTimeout(this.hardwareFlashTimeout);
+      }, 500);
+    }
+  };
+
+  closeCamera = () => {
+    const { modalHide } = this.props;
+    this.setState({
+      showResult: false,
+      previewBase64: '',
+      imageUri: '',
+      cameraType: FRONT,
+      isFlashOn: false,
+      isHardwareFlashOn: false,
+      isFrontFlashVisible: false,
+    });
+    modalHide();
+  };
+
   renderNoPermissions = () => {
     const { modalHide } = this.props;
     return (
@@ -206,7 +296,7 @@ class Camera extends React.Component<Props, State> {
       <Footer>
         <FooterInner>
           <IconButton
-            icon="more"
+            icon="search"
             onPress={() => this.openGallery()}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
@@ -216,7 +306,7 @@ class Camera extends React.Component<Props, State> {
           </CameraButtonOuter>
           <IconButton
             icon="up-arrow"
-            onPress={() => {}}
+            onPress={() => this.handleCameraFlip()}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
           />
@@ -225,51 +315,59 @@ class Camera extends React.Component<Props, State> {
     );
   };
 
-  renderCamera = (modalHide: Function) => (
-    <React.Fragment>
-      <RNCamera
-        ref={ref => {
-          this.camera = ref;
-        }}
-        style={{
-          width: screenWidth,
-          height: screenHeight,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        type="front"
-        ratio="16:9"
-      />
-      <HeaderWrapperCamera>
-        <Header light flexStart onClose={modalHide} />
-      </HeaderWrapperCamera>
-      <PhotoBoundariesWrapper pointerEvents="none">
-        <PhotoBoundaries color={baseColors.white} />
-      </PhotoBoundariesWrapper>
-      {this.renderBottomBar()}
-    </React.Fragment>
-  );
+  renderCamera = () => {
+    const {
+      cameraType,
+      isFlashOn,
+      isHardwareFlashOn,
+      isFrontFlashVisible,
+    } = this.state;
 
-  renderResult = () => (
-    <ResultScreen>
-      <ImageCircle
-        resizeMode="cover"
-        source={{ uri: this.state.previewBase64 }}
-      />
-      <ResultScreenFooter>
-        <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
-        <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
-      </ResultScreenFooter>
-    </ResultScreen>
-  );
+    const flashIcon = isFlashOn ? 'tick-circle' : 'remove';
+    return (
+      <React.Fragment>
+        <RNCamera
+          ref={ref => {
+            this.camera = ref;
+          }}
+          style={{
+            width: screenWidth,
+            height: screenHeight,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          ratio="16:9"
+          type={cameraType}
+          flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
+          skipProcessing
+        />
+        {!!isFrontFlashVisible && <FrontFlash />}
+        <HeaderWrapperCamera>
+          <Header light flexStart onClose={this.closeCamera} onBack={this.handleFlash} backIcon={flashIcon} />
+        </HeaderWrapperCamera>
+        <PhotoBoundariesWrapper pointerEvents="none">
+          <PhotoBoundaries color={baseColors.white} />
+        </PhotoBoundariesWrapper>
+        {this.renderBottomBar()}
+      </React.Fragment>
+    );
+  };
 
   render() {
     const { isVisible, modalHide } = this.props;
 
     const cameraScreenContent = this.props.permissionsGranted
-      ? this.renderCamera(modalHide)
+      ? this.renderCamera()
       : this.renderNoPermissions();
-    const content = this.state.showResult ? this.renderResult() : cameraScreenContent;
+
+    const preview = this.state.previewBase64
+      ? (
+        <ImageCircle
+          resizeMode="cover"
+          source={{ uri: this.state.previewBase64 }}
+        />
+      )
+      : (<Spinner />);
 
     const animationInTiming = 300;
     const animationOutTiming = 300;
@@ -287,7 +385,18 @@ class Camera extends React.Component<Props, State> {
           justifyContent: 'flex-start',
         }}
       >
-        {content}
+        {cameraScreenContent}
+        {!!this.state.showResult &&
+          <ResultScreen>
+            <PreviewWrapper>
+              {preview}
+            </PreviewWrapper>
+            <ResultScreenFooter>
+              <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
+              <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
+            </ResultScreenFooter>
+          </ResultScreen>
+        }
       </Modal>
     );
   }
