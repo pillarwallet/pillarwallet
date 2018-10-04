@@ -1,5 +1,6 @@
 // @flow
 import { NavigationActions } from 'react-navigation';
+import { Sentry } from 'react-native-sentry';
 import Storage from 'services/storage';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -44,5 +45,14 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+  };
+};
+
+export const setupSentryAction = () => {
+  return async () => {
+    const { user } = await storage.get('user');
+    if (!user) return;
+    const { username } = user;
+    Sentry.setUserContext({ username });
   };
 };
