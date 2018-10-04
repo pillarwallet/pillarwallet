@@ -99,9 +99,9 @@ class EventDetails extends React.Component<Props, {}> {
     onAccept();
   };
 
-  handleRejectConnection = (eventData) => {
+  handleRejectConnection = (userData) => {
     const { onClose, onReject } = this.props;
-    createAlert(TYPE_REJECTED, eventData, () => { onClose(); onReject(); });
+    createAlert(TYPE_REJECTED, userData, () => { onClose(); onReject(); });
   };
 
   handleCancelConnection = () => {
@@ -266,13 +266,13 @@ class EventDetails extends React.Component<Props, {}> {
               block
               title="Accept request"
               primaryInverted
-              onPress={() => { this.handleAcceptConnection(); }}
+              onPress={this.handleAcceptConnection}
             />
             <EventButton
               block
               title="Decline"
               dangerInverted
-              onPress={() => { this.handleRejectConnection(eventData); }}
+              onPress={() => { this.handleRejectConnection(userData); }}
             />
           </ButtonsWrapper>
           }
@@ -282,7 +282,7 @@ class EventDetails extends React.Component<Props, {}> {
               block
               title="Cancel request"
               dangerInverted
-              onPress={() => { this.handleCancelConnection(); }}
+              onPress={this.handleCancelConnection}
             />
           </ButtonsWrapper>
           }
