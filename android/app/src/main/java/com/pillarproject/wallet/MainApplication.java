@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
+import io.sentry.RNSentryPackage;
 import com.horcrux.svg.SvgPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -47,6 +48,7 @@ public class MainApplication extends Application implements ShareApplication, Re
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSentryPackage(),
           new SvgPackage(),
           new UdpSocketsModule(),
           new TcpSocketsModule(),
