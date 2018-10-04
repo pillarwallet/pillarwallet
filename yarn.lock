@@ -9965,7 +9965,7 @@ react-native-lightbox@^0.7.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-linear-gradient@^2.4.0:
+react-native-linear-gradient@2.4.0:
   version "2.4.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-linear-gradient/-/react-native-linear-gradient-2.4.0.tgz#51d8ea12bb72a59bede9edc87b694b16b64cf435"
   dependencies:
@@ -10817,9 +10817,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.69:
-  version "1.0.69"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.69.tgz#6454d5d16ef747619b39167cedcf0b05f59268dc"
+rn-signal-protocol-messaging@1.0.71:
+  version "1.0.71"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.71.tgz#3e66c1b9d7a3dbefdeedbedbaa19fc11d73b77bf"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

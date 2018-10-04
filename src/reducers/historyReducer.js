@@ -1,7 +1,6 @@
 // @flow
 import { SET_HISTORY, ADD_TRANSACTION } from 'constants/historyConstants';
 import type { Transaction } from 'models/Transaction';
-import { uniqBy } from 'utils/common';
 
 export type HistoryReducerState = {
   data: Transaction[],
@@ -31,12 +30,10 @@ export default function historyReducer(
         { data: trxs },
       );
     case SET_HISTORY:
-      const combinedTransactions = action.payload.concat(state.data);
-      const transactions = uniqBy(combinedTransactions, 'hash');
       return Object.assign(
         {},
         state,
-        { isFetched: true, data: transactions },
+        { isFetched: true, data: action.payload },
       );
     default:
       return state;
