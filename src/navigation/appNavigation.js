@@ -117,11 +117,11 @@ const removeAppStateChangeListener = (callback) => {
     : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
 };
 
-const iconWallet = require('assets/icons/icon_wallet.png');
-const iconPeople = require('assets/icons/icon_people.png');
-const iconHome = require('assets/icons/icon_home.png');
-const iconMarket = require('assets/icons/icon_marketplace.png');
-const iconChat = require('assets/icons/icon_chat.png');
+const iconWallet = require('assets/icons/icon_wallet_new.png');
+const iconPeople = require('assets/icons/icon_people_new.png');
+const iconHome = require('assets/icons/icon_home_new.png');
+const iconMarket = require('assets/icons/icon_marketplace_new.png');
+const iconChat = require('assets/icons/icon_chat_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
