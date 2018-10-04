@@ -8,7 +8,7 @@
 #import "React/RCTRootView.h"
 #import "Crashlytics/Crashlytics.h"
 #import "RNSplashScreen.h"
-
+#import "RNSentry.h"
 
 @implementation AppDelegate
 
@@ -29,6 +29,8 @@
                                                         moduleName:@"pillarwallet"
                                                 initialProperties:nil
                                                     launchOptions:launchOptions];
+    [RNSentry installWithRootView:rootView];
+
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     UIViewController *rootViewController = [UIViewController new];
     rootViewController.view = rootView;

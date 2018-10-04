@@ -57,7 +57,7 @@ task clean(type: Delete) {
   def var = new Properties()
   File localProperties = file("local.properties")
   if (localProperties.exists()) var.load(localProperties.newDataInputStream())
-  var.setProperty("ndk.dir", "")    
+  var.setProperty("ndk.dir", "")
   var.store(localProperties.newWriter(), null)
 }
 
