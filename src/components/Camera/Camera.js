@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
+import { Text, Dimensions, Platform, StatusBar } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
-import { Text, Dimensions } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
@@ -14,6 +14,7 @@ import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes } from 'utils/variables';
+import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
 
 type Props = {
   onModalHide?: Function,
@@ -55,15 +56,14 @@ const HeaderWrapperCamera = styled.SafeAreaView`
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #ffe8ce;
+  background-color: ${baseColors.blanchedAlmond};
 `;
 
 const PhotoBoundaries = styled.View`
   height: ${screenWidth - 40};
   width: ${screenWidth - 40};
-  border-radius: ${screenWidth / 2};
+  border-radius: ${(screenWidth - 40) / 2};
   border-width: 2;
-  border-style: dashed;
   border-color: ${props => props.color};
   background-color: transparent;
 `;
@@ -76,6 +76,12 @@ const PhotoBoundariesWrapper = styled.View`
   left: 0;
   justify-content: center;
   align-items: center;
+`;
+
+const Overlay = styled(Svg)`
+  position: absolute; 
+  top: 0;
+  left: 0;
 `;
 
 const NoPermissions = styled.View`
@@ -198,7 +204,6 @@ class Camera extends React.Component<Props, State> {
 
       return this.camera.takePictureAsync({
         mirrorImage: cameraType === FRONT,
-        skipProcessing: cameraType === BACK,
       })
         .then((res) => {
           this.setState({
@@ -216,6 +221,7 @@ class Camera extends React.Component<Props, State> {
     ImagePicker.openPicker({
       width: 300,
       height: 300,
+      cropperCircleOverlay: true,
       cropping: true,
     })
       .then((image) => {
@@ -323,6 +329,16 @@ class Camera extends React.Component<Props, State> {
       isFrontFlashVisible,
     } = this.state;
 
+    const cutOutD = screenWidth - 40;
+    const cutOutR = cutOutD / 2;
+    const centerYpos = Platform.OS === 'ios' ? screenHeight / 2 : (screenHeight - StatusBar.currentHeight) / 2;
+    const overlayPath = `
+    M 0 0 h${screenWidth} v${screenHeight} h-${screenWidth}Z
+    M 20,${centerYpos} m 0,0
+    a ${cutOutR},${cutOutR} 0 1,0 ${cutOutD},0
+    a ${cutOutR},${cutOutR} 0 1,0 -${cutOutD},0
+    `;
+    const overlayColor = isFlashOn && cameraType === FRONT ? baseColors.blanchedAlmond : baseColors.black;
     const flashIcon = isFlashOn ? 'tick-circle' : 'remove';
     return (
       <React.Fragment>
@@ -339,8 +355,18 @@ class Camera extends React.Component<Props, State> {
           ratio="16:9"
           type={cameraType}
           flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
-          skipProcessing
         />
+        <Overlay height={screenHeight} width={screenWidth}>
+          <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <Stop offset="0%" stopColor={overlayColor} stopOpacity="0.3" />
+            <Stop offset="100%" stopColor={overlayColor} stopOpacity="0.7" />
+          </LinearGradient>
+          <Path
+            d={overlayPath}
+            fill="url(#grad)"
+            fill-rule="evenodd"
+          />
+        </Overlay>
         {!!isFrontFlashVisible && <FrontFlash />}
         <HeaderWrapperCamera>
           <Header light flexStart onClose={this.closeCamera} onBack={this.handleFlash} backIcon={flashIcon} />
