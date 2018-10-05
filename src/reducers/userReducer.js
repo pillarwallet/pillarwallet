@@ -13,7 +13,9 @@ export type UserReducerAction = {
 }
 
 const initialState = {
-  data: {},
+  data: {
+    icoService: {},
+  },
   userState: null,
 };
 
