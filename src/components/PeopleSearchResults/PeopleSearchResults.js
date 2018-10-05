@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
+import { TYPE_INVITE, TYPE_ACCEPTED, TYPE_REJECTED } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { baseColors, fontSizes, itemSizes, spacing } from 'utils/variables';
 import ContactCard from 'components/ContactCard';
@@ -12,6 +12,7 @@ import Separator from 'components/Separator';
 import { SubHeading, BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import type { SearchResults, ApiUser } from 'models/Contacts';
+import { createAlert } from 'utils/alerts';
 import {
   sendInvitationAction,
   acceptInvitationAction,
@@ -96,7 +97,9 @@ class PeopleSearchResults extends React.Component<Props> {
   handleRejectInvitationPress = (user: ApiUser) => () => {
     const { rejectInvitation, invitations } = this.props;
     const invitation = invitations.find(({ id }) => id === user.id);
-    rejectInvitation(invitation);
+    if (invitation && Object.keys(invitation).length > 0) {
+      createAlert(TYPE_REJECTED, invitation, () => rejectInvitation(invitation));
+    }
   };
 
   renderContact = ({ item: user }) => {

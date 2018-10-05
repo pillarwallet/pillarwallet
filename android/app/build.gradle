@@ -19,6 +19,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-sentry/sentry.gradle"
 
 repositories {
   mavenLocal()
@@ -146,6 +147,7 @@ android {
 
 
 dependencies {
+    compile project(':react-native-sentry')
     compile project(':react-native-svg')
     compile project(':react-native-background-timer')
   compile 'com.android.support:multidex:1.0.1'

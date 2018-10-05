@@ -26,6 +26,7 @@ import EventDetails from 'components/EventDetails';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
+import { createAlert } from 'utils/alerts';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -196,7 +197,7 @@ class ActivityFeed extends React.Component<Props, State> {
               margin={0}
               icon="close"
               fontSize={fontSizes.extraSmall}
-              onPress={() => onRejectInvitation(notification)}
+              onPress={() => createAlert(TYPE_REJECTED, notification, () => onRejectInvitation(notification))}
             />
             <ActionCircleButton
               color={baseColors.white}
@@ -377,6 +378,9 @@ class ActivityFeed extends React.Component<Props, State> {
       customFeedData,
       feedTitle,
       navigation,
+      onRejectInvitation,
+      onAcceptInvitation,
+      onCancelInvitation,
     } = this.props;
 
     const {
@@ -447,7 +451,10 @@ class ActivityFeed extends React.Component<Props, State> {
             eventData={selectedEventData}
             eventType={eventType}
             eventStatus={eventStatus}
-            onClose={() => { this.setState({ showModal: false }); }}
+            onClose={() => this.setState({ showModal: false })}
+            onReject={() => onRejectInvitation(selectedEventData)}
+            onCancel={() => onCancelInvitation(selectedEventData)}
+            onAccept={() => onAcceptInvitation(selectedEventData)}
             navigation={navigation}
           />
         </SlideModal>

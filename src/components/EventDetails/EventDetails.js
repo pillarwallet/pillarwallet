@@ -12,6 +12,7 @@ import { BaseText, BoldText } from 'components/Typography';
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import Button from 'components/Button';
 import { formatFullAmount } from 'utils/common';
+import { createAlert } from 'utils/alerts';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
 
@@ -20,13 +21,9 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
+  TYPE_REJECTED,
   TYPE_SENT,
 } from 'constants/invitationsConstants';
-import {
-  cancelInvitationAction,
-  acceptInvitationAction,
-  rejectInvitationAction,
-} from 'actions/invitationsActions';
 import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
 
 import EventHeader from './EventHeader';
@@ -36,9 +33,9 @@ type Props = {
   contacts: Object[],
   wallet: Object,
   onClose: Function,
-  acceptInvitation: Function,
-  rejectInvitation: Function,
-  cancelInvitation: Function,
+  onAccept: Function,
+  onReject: Function,
+  onCancel: Function,
   navigation: NavigationScreenProp<*>,
   eventData: Object,
   eventType: string,
@@ -96,22 +93,21 @@ const viewTransactionOnBlockchain = (hash: string) => {
 };
 
 class EventDetails extends React.Component<Props, {}> {
-  handleAcceptConnection = (eventData) => {
-    const { acceptInvitation, onClose } = this.props;
-    acceptInvitation(eventData);
+  handleAcceptConnection = () => {
+    const { onClose, onAccept } = this.props;
     onClose();
+    onAccept();
   };
 
-  handleRejectConnection = (eventData) => {
-    const { rejectInvitation, onClose } = this.props;
-    rejectInvitation(eventData);
-    onClose();
+  handleRejectConnection = (userData) => {
+    const { onClose, onReject } = this.props;
+    createAlert(TYPE_REJECTED, userData, () => { onClose(); onReject(); });
   };
 
-  handleCancelConnection = (eventData) => {
-    const { cancelInvitation, onClose } = this.props;
-    cancelInvitation(eventData);
+  handleCancelConnection = () => {
+    const { onClose, onCancel } = this.props;
     onClose();
+    onCancel();
   };
 
   goToProfile = (contact) => {
@@ -270,13 +266,13 @@ class EventDetails extends React.Component<Props, {}> {
               block
               title="Accept request"
               primaryInverted
-              onPress={() => { this.handleAcceptConnection(eventData); }}
+              onPress={this.handleAcceptConnection}
             />
             <EventButton
               block
               title="Decline"
               dangerInverted
-              onPress={() => { this.handleRejectConnection(eventData); }}
+              onPress={() => { this.handleRejectConnection(userData); }}
             />
           </ButtonsWrapper>
           }
@@ -286,7 +282,7 @@ class EventDetails extends React.Component<Props, {}> {
               block
               title="Cancel request"
               dangerInverted
-              onPress={() => { this.handleCancelConnection(eventData); }}
+              onPress={this.handleCancelConnection}
             />
           </ButtonsWrapper>
           }
@@ -312,12 +308,6 @@ class EventDetails extends React.Component<Props, {}> {
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
-  acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
-  rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
-});
-
 const mapStateToProps = ({
   contacts: { data: contacts },
   wallet: { data: wallet },
@@ -326,4 +316,4 @@ const mapStateToProps = ({
   wallet,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);
+export default connect(mapStateToProps)(EventDetails);
