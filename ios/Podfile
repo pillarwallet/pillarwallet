@@ -54,7 +54,7 @@ target 'pillarwallet' do
 
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
 
-  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+  pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
 
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';

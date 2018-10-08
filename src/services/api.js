@@ -57,8 +57,8 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username }))
     .then(({ data }) => data)
-    .catch((e) => {
-      if (e.response.status === USERNAME_EXISTS_ERROR_CODE) {
+    .catch((e = {}) => {
+      if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
         return {
           error: true,
           reason: USERNAME_EXISTS,

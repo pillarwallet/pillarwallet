@@ -7,6 +7,7 @@ import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
+import { Sentry } from 'react-native-sentry';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import {
@@ -16,6 +17,10 @@ import {
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
+
+if (!__DEV__) {
+  Sentry.config('https://82eb3c51aa80408597cac8ae5c18f9d1@sentry.io/1294444').install();
+}
 
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');

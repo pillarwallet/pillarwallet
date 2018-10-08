@@ -19,6 +19,7 @@ import type { TransactionPayload } from 'models/Transaction';
 import type { Balances } from 'models/Asset';
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
+import { getBalance } from 'utils/assets';
 
 const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
 
@@ -146,7 +147,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
-    const { balance } = props.balances[this.assetData.token];
+    const balance = getBalance(props.balances, this.assetData.token);
     this.maxAmount = +balance;
     this.minAmount = 0.000000000000000001; // 1 Wei
     this.state = {
@@ -253,7 +254,7 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   checkIfEnoughForFee(balances: Balances, txFeeInWei): boolean {
     if (!balances[ETH]) return false;
-    const ethBalance = balances[ETH].balance;
+    const ethBalance = getBalance(balances, ETH);
     const balanceInWei = utils.parseUnits(ethBalance.toString(), 'ether');
     return balanceInWei.gte(txFeeInWei);
   }

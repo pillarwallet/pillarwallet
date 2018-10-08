@@ -1,5 +1,6 @@
 // @flow
 import { NavigationActions } from 'react-navigation';
+import { Sentry } from 'react-native-sentry';
 import Storage from 'services/storage';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -36,7 +37,12 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: UPDATE_ACCESS_TOKENS, payload: accessTokens });
 
       const { history = [] } = await storage.get('history');
-      dispatch({ type: SET_HISTORY, payload: history });
+      // TEMP FIX, REMOVE LATER
+      const filteredHistory = history.filter((el) => !!el.hash);
+      if (filteredHistory.length !== history.length) {
+        storage.save('history', { history: filteredHistory }, true);
+      }
+      dispatch({ type: SET_HISTORY, payload: filteredHistory });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
       dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
@@ -44,5 +50,14 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
     dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+  };
+};
+
+export const setupSentryAction = () => {
+  return async () => {
+    const { user } = await storage.get('user');
+    if (!user) return;
+    const { username } = user;
+    Sentry.setUserContext({ username });
   };
 };

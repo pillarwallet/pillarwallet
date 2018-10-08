@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
@@ -36,8 +35,8 @@
 		16891CC6211A6A59002BFCD6 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1930D3910B414B29A8A2F59D /* Feather.ttf */; };
 		16A4A6832111EBDA008E645C /* SwiftBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A4A6822111EBDA008E645C /* SwiftBridge.swift */; };
 		16A4A68721120C89008E645C /* libSignalMessagingSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A4A6802111EBA7008E645C /* libSignalMessagingSwift.a */; };
+		16CE22AC2163AC690098C3C7 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CE22A92163AC150098C3C7 /* libRNSVG.a */; };
 		16CF7AD52146D88000BEADDB /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CF7AD42146D87300BEADDB /* libRNShare.a */; };
-		16CF7B99215143B300BEADDB /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CF7B91215143A700BEADDB /* libRNSVG.a */; };
 		1A35E955B6E8424F983EECB2 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54AE39B9C8BF45D98DEA6581 /* rubicon-icon-font.ttf */; };
 		1D07F721211B3CD8009D15F8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */; };
 		23F435F37E804B0B8011559D /* AktivGrotesk-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ACB594E6440F44338EDE2EB7 /* AktivGrotesk-Bold.ttf */; };
@@ -67,6 +66,7 @@
 		E8197C7BA3C44222AC003DF5 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0324A5DFD23D42D79733EED0 /* Entypo.ttf */; };
 		EA4F15CCADAC44BFA9453C38 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DA123A58B3461382F464FA /* libRNOS.a */; };
 		EC113BA65B394361A4500F72 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 090B739AA78C4A9E8E5D2698 /* Foundation.ttf */; };
+		5CE273F7A2B74EA88EB55CA9 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C5092F5F060448BDB321EF04 /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -245,26 +245,26 @@
 			remoteGlobalIDString = 958BF8F920F3CAD8003CF3A0;
 			remoteInfo = SignalMessagingSwift;
 		};
+		16CE22A82163AC150098C3C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
+			remoteInfo = RNSVG;
+		};
+		16CE22AA2163AC150098C3C7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 94DDAC5C1F3D024300EED511;
+			remoteInfo = "RNSVG-tvOS";
+		};
 		16CF7AD32146D87300BEADDB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNShare;
-		};
-		16CF7B90215143A700BEADDB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 16CF7B5C215143A700BEADDB /* RNSVG.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
-			remoteInfo = RNSVG;
-		};
-		16CF7B92215143A700BEADDB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 16CF7B5C215143A700BEADDB /* RNSVG.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 94DDAC5C1F3D024300EED511;
-			remoteInfo = "RNSVG-tvOS";
 		};
 		2D16E6711FA4F8DC00B85C8A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -525,8 +525,8 @@
 		16A4A6812111EBD9008E645C /* pillarwallet-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pillarwallet-Bridging-Header.h"; sourceTree = "<group>"; };
 		16A4A6822111EBDA008E645C /* SwiftBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwiftBridge.swift; path = pillarwallet/SwiftBridge.swift; sourceTree = "<group>"; };
 		16A4A6E6211227BF008E645C /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
+		16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNShare.xcodeproj; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; };
-		16CF7B5C215143A700BEADDB /* RNSVG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		1930D3910B414B29A8A2F59D /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		1A7A6F4ED0218800D8189BB6 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -569,6 +569,7 @@
 		DAA37A6D0BC84F48AFD69262 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		E41429819AFB44C2B5C6BCF8 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		F1AE91BF7F0E413EB47F32BA /* libRNRandomBytes-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNRandomBytes-tvOS.a"; sourceTree = "<group>"; };
+		C5092F5F060448BDB321EF04 /* libz.tbd */ = {isa = PBXFileReference; name = "libz.tbd"; path = "usr/lib/libz.tbd"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = sourcecode.text-based-dylib-definition; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -576,7 +577,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16CF7B99215143B300BEADDB /* libRNSVG.a in Frameworks */,
+				16CE22AC2163AC690098C3C7 /* libRNSVG.a in Frameworks */,
 				16CF7AD52146D88000BEADDB /* libRNShare.a in Frameworks */,
 				3C7B6731213EADC20053E053 /* MessageUI.framework in Frameworks */,
 				3C7B672F213EADB70053E053 /* Social.framework in Frameworks */,
@@ -607,6 +608,7 @@
 				A9A60C1EA96A483EA7421C39 /* libTcpSockets.a in Frameworks */,
 				111D0E4BCBE44B3D826C91A9 /* libUdpSockets.a in Frameworks */,
 				162E1794211325E60028BE96 /* SignalProtocol.framework in Frameworks */,
+				5CE273F7A2B74EA88EB55CA9 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -830,19 +832,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		16CF7AD02146D87300BEADDB /* Products */ = {
+		16CE22A42163AC150098C3C7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				16CF7AD42146D87300BEADDB /* libRNShare.a */,
+				16CE22A92163AC150098C3C7 /* libRNSVG.a */,
+				16CE22AB2163AC150098C3C7 /* libRNSVG-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		16CF7B5D215143A700BEADDB /* Products */ = {
+		16CF7AD02146D87300BEADDB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				16CF7B91215143A700BEADDB /* libRNSVG.a */,
-				16CF7B93215143A700BEADDB /* libRNSVG-tvOS.a */,
+				16CF7AD42146D87300BEADDB /* libRNShare.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -854,6 +856,7 @@
 				3C7B672E213EADB60053E053 /* Social.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				1A7A6F4ED0218800D8189BB6 /* libPods-pillarwallet.a */,
+				C5092F5F060448BDB321EF04 /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -889,7 +892,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				16CF7B5C215143A700BEADDB /* RNSVG.xcodeproj */,
+				16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */,
 				16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */,
 				165F273A21244AC70089F39A /* SplashScreen.xcodeproj */,
 				16891C74211A61AA002BFCD6 /* RNVectorIcons.xcodeproj */,
@@ -991,6 +994,14 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		E35DBDD5BF42467987958DF8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			path = Application;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1007,6 +1018,7 @@
 				162E1796211325E60028BE96 /* Embed Frameworks */,
 				164D049C212D7418008344CE /* Setup Fabric */,
 				33DD1BC5398B1B80B72E6CB6 /* [CP] Embed Pods Frameworks */,
+				71A441A895804224BBCA1302 /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
 			);
@@ -1136,8 +1148,8 @@
 					ProjectRef = 16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */;
 				},
 				{
-					ProductGroup = 16CF7B5D215143A700BEADDB /* Products */;
-					ProjectRef = 16CF7B5C215143A700BEADDB /* RNSVG.xcodeproj */;
+					ProductGroup = 16CE22A42163AC150098C3C7 /* Products */;
+					ProjectRef = 16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */;
 				},
 				{
 					ProductGroup = 16891C75211A61AA002BFCD6 /* Products */;
@@ -1336,25 +1348,25 @@
 			remoteRef = 16A4A67F2111EBA7008E645C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		16CE22A92163AC150098C3C7 /* libRNSVG.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSVG.a;
+			remoteRef = 16CE22A82163AC150098C3C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		16CE22AB2163AC150098C3C7 /* libRNSVG-tvOS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libRNSVG-tvOS.a";
+			remoteRef = 16CE22AA2163AC150098C3C7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		16CF7AD42146D87300BEADDB /* libRNShare.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libRNShare.a;
 			remoteRef = 16CF7AD32146D87300BEADDB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		16CF7B91215143A700BEADDB /* libRNSVG.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNSVG.a;
-			remoteRef = 16CF7B90215143A700BEADDB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		16CF7B93215143A700BEADDB /* libRNSVG-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libRNSVG-tvOS.a";
-			remoteRef = 16CF7B92215143A700BEADDB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */ = {
@@ -1610,7 +1622,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
 		164D049C212D7418008344CE /* Setup Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1680,6 +1692,20 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		71A441A895804224BBCA1302 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Upload Debug Symbols to Sentry";
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
 		};
 /* End PBXShellScriptBuildPhase section */
 

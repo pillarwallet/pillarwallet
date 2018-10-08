@@ -243,8 +243,8 @@
         <!-- ADD FABRIC CONFIG HERE -->
         <!-- BEGIN FABRIC CONFIG -->
         <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="caabdf2a776e077aff8381eab0399b9e3fc1bbb8"/>
+                android:name="io.fabric.ApiKey"
+                android:value="7bc430094c38169c1b7afadcbde5dbc0c85ec8de"/>
         <!-- END FABRIC CONFIG -->
 
         <!-- ADD GOOGLE MAPS CONFIG HERE -->

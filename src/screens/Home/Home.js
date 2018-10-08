@@ -196,11 +196,18 @@ class HomeScreen extends React.Component<Props, State> {
     navigation.navigate(PROFILE);
   };
 
-  toggleCamera = async () => {
-    const status = await Permissions.request('photo');
+  openCamera = async () => {
+    const statusPhoto = await Permissions.request('photo');
+    const statusCamera = await Permissions.request('camera');
     this.setState({
-      permissionsGranted: status === 'authorized',
-      showCamera: !this.state.showCamera,
+      permissionsGranted: statusPhoto === 'authorized' && statusCamera === 'authorized',
+      showCamera: true,
+    });
+  };
+
+  closeCamera = () => {
+    this.setState({
+      showCamera: false,
     });
   };
 
@@ -389,7 +396,7 @@ class HomeScreen extends React.Component<Props, State> {
                     uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
                     userName={user.username}
                     diameter={profileImageWidth}
-                    onPress={this.toggleCamera}
+                    onPress={this.openCamera}
                     style={{
                       transform: [
                         { translateY: profileImagePositionY },
@@ -478,7 +485,7 @@ class HomeScreen extends React.Component<Props, State> {
         </Animated.ScrollView>
         <Camera
           isVisible={showCamera}
-          modalHide={this.toggleCamera}
+          modalHide={this.closeCamera}
           permissionsGranted={permissionsGranted}
         />
       </Container>
