@@ -120,5 +120,6 @@ export function fetchAssetBalances(assets: Asset[], walletAddress: string): Prom
 }
 
 export function getExchangeRates(assets: string[]): Promise<?Object> {
+  if (!assets.length) return Promise.resolve({});
   return cryptocompare.priceMulti(assets, supportedFiatCurrencies).catch(() => ({}));
 }
