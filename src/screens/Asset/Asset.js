@@ -23,6 +23,7 @@ import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney } from 'utils/common';
+import { getBalance } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import ReceiveModal from './ReceiveModal';
 
@@ -183,7 +184,7 @@ class AssetScreen extends React.Component<Props, State> {
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const balance = Number(balances[token] && balances[token].balance) || 0;
+    const balance = getBalance(balances, token);
     const isWalletEmpty = balance <= 0;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
