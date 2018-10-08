@@ -14,6 +14,8 @@ import {
   IMPORT_ERROR,
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
+  TWORDSPHRASE,
+  PRIVATEKEY,
 } from 'constants/walletConstants';
 import Button from 'components/Button';
 import { Container, ScrollWrapper } from 'components/Layout';
@@ -22,6 +24,8 @@ import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
+import Title from 'components/Title';
+import Tabs from 'components/Tabs';
 import { fontSizes, baseColors } from 'utils/variables';
 
 type Props = {
@@ -38,6 +42,7 @@ type State = {
   errorMessage: string,
   errorField: string,
   isScanning: boolean,
+  activeTab: string,
 };
 
 const window = Dimensions.get('window');
@@ -64,6 +69,7 @@ class ImportWallet extends React.Component<Props, State> {
     errorMessage: '',
     errorField: '',
     isScanning: false,
+    activeTab: TWORDSPHRASE,
   };
 
   constructor(props: Props) {
@@ -166,18 +172,51 @@ class ImportWallet extends React.Component<Props, State> {
     this.props.resetWalletError();
   };
 
+  setActiveTab = (activeTab) => {
+    this.setState({
+      activeTab,
+    });
+  };
+
   render() {
-    const { privateKey, tWordsPhrase, isScanning } = this.state;
+    const { privateKey, tWordsPhrase, isScanning, activeTab, } = this.state;
     const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
     const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
 
+    const restoreWalletTabs = [
+      {
+        id: TWORDSPHRASE,
+        name: '12 words',
+        onPress: () => this.setActiveTab(TWORDSPHRASE),
+      },
+      {
+        id: PRIVATEKEY,
+        name: 'Private key',
+        onPress: () => this.setActiveTab(PRIVATEKEY),
+      },
+    ];
+
+    const tabsInfo = {
+      TWORDSPHRASE: {
+        paragraphText: 'Restore your ERC-20 compatible Ethereum wallet using your 12 word backup phrase.',
+      },
+      PRIVATEKEY: {
+        paragraphText: 'Don&#39;t have your backup phrase? Use your private key instead.',
+      },
+    };
+
+    console.log('active-tab', activeTab);
+    console.log('tabs-info', tabsInfo);
+    console.log('tabs-info', tabsInfo.TWORDSPHRASE.paragraphText);
+    console.log('tab-info', tabsInfo.activeTab.paragraphText);
+
     return (
       <Container>
-        <Header title="restore wallet" onBack={this.handleBackAction} />
+        <Header onBack={this.handleBackAction} />
         <ScrollWrapper regularPadding>
-          <Paragraph>
-            Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
-          </Paragraph>
+          <Title noMargin title="restore wallet" dotColor={baseColors.freshEucalyptus} />
+          <Tabs tabs={restoreWalletTabs} />
+          <Paragraph>{tabsInfo.activeTab.paragraphText}</Paragraph>
           <TextInput
             label="Enter your 12 word backup phrase."
             inputProps={{
