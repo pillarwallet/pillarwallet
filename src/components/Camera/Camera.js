@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Text, Dimensions, Platform, StatusBar } from 'react-native';
+import type { NavigationScreenProp } from 'react-navigation';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -15,6 +16,7 @@ import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes } from 'utils/variables';
 import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
+import { handleImagePickAction } from 'actions/profileActions';
 
 type Props = {
   onModalHide?: Function,
@@ -23,6 +25,9 @@ type Props = {
   updateUserAvatar: Function,
   permissionsGranted: boolean,
   user: Object,
+  navigation: NavigationScreenProp<*>,
+  handleImagePick: Function,
+  isPickingImage: boolean,
 };
 
 type State = {
@@ -217,7 +222,9 @@ class Camera extends React.Component<Props, State> {
     return false;
   };
 
-  openGallery = () => {
+  openGallery = async () => {
+    this.props.handleImagePick(true, null);
+
     ImagePicker.openPicker({
       width: 300,
       height: 300,
@@ -225,6 +232,7 @@ class Camera extends React.Component<Props, State> {
       cropping: true,
     })
       .then((image) => {
+        this.props.handleImagePick(false);
         this.setState({
           previewBase64: image.path,
           showResult: true,
@@ -431,6 +439,7 @@ class Camera extends React.Component<Props, State> {
 const mapStateToProps = ({ user: { data: user } }) => ({ user });
 const mapDispatchToProps = (dispatch: Function) => ({
   updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
+  handleImagePick: (isPickingImage: boolean) => dispatch(handleImagePickAction(isPickingImage)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Camera);
