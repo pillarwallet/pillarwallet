@@ -6,6 +6,7 @@ import type { Assets, Balances, Rates } from 'models/Asset';
 import { BaseText } from 'components/Typography';
 import { connect } from 'react-redux';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
+import { getBalance } from 'utils/assets';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 type Props = {
@@ -25,7 +26,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
       .map(key => assets[key])
       .map(({ symbol }) => {
         const assetRates = rates[symbol] || {};
-        const balance = Number(balances[symbol] && balances[symbol].balance) || 0;
+        const balance = Number(getBalance(balances, symbol)) || 0;
         const assetFiatBalance = Object
           .keys(assetRates)
           .map(key => ({

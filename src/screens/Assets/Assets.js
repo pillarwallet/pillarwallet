@@ -36,6 +36,7 @@ import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLay
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
 import { spacing, baseColors } from 'utils/variables';
+import { getBalance } from 'utils/assets';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import HideAssetButton from './HideAssetButton';
 
@@ -337,7 +338,7 @@ class AssetsScreen extends React.Component<Props, State> {
       .map(id => assets[id])
       .map(({ symbol, balance, ...rest }) => ({
         symbol,
-        balance: Number(balances[symbol] && balances[symbol].balance) || 0,
+        balance: Number(getBalance(balances, symbol)) || 0,
         ...rest,
       }))
       .map(({ balance, symbol, ...rest }) => ({
