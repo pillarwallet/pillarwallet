@@ -401,7 +401,11 @@ class AppFlow extends React.Component<Props, {}> {
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
-    setupSentry();
+
+    if (!__DEV__) {
+      setupSentry();
+    }
+
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
