@@ -52,12 +52,12 @@ const InputWrapper = styled.View`
   align-items: center;
 `;
 
-const ScanButton = styled.TouchableOpacity`
+const InputButton = styled.TouchableOpacity`
   align-items: center;
   margin-left: 10px;
 `;
 
-const ScanText = styled(BaseText)`
+const ButtonText = styled(BaseText)`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.small};
 `;
@@ -178,10 +178,16 @@ class ImportWallet extends React.Component<Props, State> {
     });
   };
 
+  addMnemonic = () => {
+    console.log('add-mnemonic');
+  };
+
   render() {
     const { privateKey, tWordsPhrase, isScanning, activeTab, } = this.state;
-    const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
-    const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
+    // const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
+    // const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
+    console.log(privateKey);
+    console.log(tWordsPhrase);
 
     const restoreWalletTabs = [
       {
@@ -199,16 +205,29 @@ class ImportWallet extends React.Component<Props, State> {
     const tabsInfo = {
       TWORDSPHRASE: {
         paragraphText: 'Restore your ERC-20 compatible Ethereum wallet using your 12 word backup phrase.',
+        inputLabel: 'Word #1',
+        changeName: 'tWordsPhrase',
+        value: tWordsPhrase,
+        errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
+        buttonText: 'Next',
+        buttonPress: this.addMnemonic,
       },
       PRIVATEKEY: {
         paragraphText: 'Don&#39;t have your backup phrase? Use your private key instead.',
+        inputLabel: 'Private key',
+        changeName: 'privateKey',
+        value: privateKey,
+        errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
+        buttonText: 'Scan',
+        buttonPress: this.handleQRScannerOpen,
       },
     };
 
     console.log('active-tab', activeTab);
     console.log('tabs-info', tabsInfo);
-    console.log('tabs-info', tabsInfo.TWORDSPHRASE.paragraphText);
-    console.log('tab-info', tabsInfo.activeTab.paragraphText);
+    // console.log('tabs-info', tabsInfo.TWORDSPHRASE.paragraphText);
+    console.log('tabs-info', tabsInfo[activeTab].paragraphText);
+    // console.log('tab-info', tabsInfo.activeTab.paragraphText);
 
     return (
       <Container>
@@ -216,39 +235,30 @@ class ImportWallet extends React.Component<Props, State> {
         <ScrollWrapper regularPadding>
           <Title noMargin title="restore wallet" dotColor={baseColors.freshEucalyptus} />
           <Tabs tabs={restoreWalletTabs} />
-          <Paragraph>{tabsInfo.activeTab.paragraphText}</Paragraph>
-          <TextInput
-            label="Enter your 12 word backup phrase."
-            inputProps={{
-              onChange: this.handleValueChange('tWordsPhrase'),
-              value: tWordsPhrase,
-              multiline: true,
-              autoCapitalize: 'none',
-            }}
-            errorMessage={errorMessageTWordsPhrase}
-            underlineColorAndroid="transparent"
-          />
-          <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
+          <Paragraph>{tabsInfo[activeTab].paragraphText}</Paragraph>
           <InputWrapper>
             <TextInput
-              label="Use your Private Key"
+              label={tabsInfo[activeTab].inputLabel}
               inputProps={{
-                onChange: this.handleValueChange('privateKey'),
-                value: privateKey,
+                onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
+                value: tabsInfo[activeTab].value,
+                autoCapitalize: 'none',
               }}
-              errorMessage={errorMessagePrivateKey}
+              errorMessage={tabsInfo[activeTab].errorMessage}
               underlineColorAndroid="transparent"
               viewWidth={window.width - 95}
             />
-            <ScanButton onPress={this.handleQRScannerOpen}>
+            <InputButton onPress={tabsInfo[activeTab].buttonPress}>
+              {activeTab === 'PRIVATEKEY' &&
               <IconButton
                 icon="qrcode"
                 color={baseColors.electricBlue}
                 fontSize={fontSizes.extraLarge}
-                onPress={this.handleQRScannerOpen}
+                onPress={tabsInfo[activeTab].buttonPress}
               />
-              <ScanText>SCAN</ScanText>
-            </ScanButton>
+              }
+              <ButtonText>{tabsInfo[activeTab].buttonText}</ButtonText>
+            </InputButton>
           </InputWrapper>
           <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
         </ScrollWrapper>
