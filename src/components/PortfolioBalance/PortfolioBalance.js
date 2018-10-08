@@ -26,7 +26,7 @@ class PortfolioBalance extends React.Component<Props, {}> {
       .map(key => assets[key])
       .map(({ symbol }) => {
         const assetRates = rates[symbol] || {};
-        const balance = Number(getBalance(balances, symbol)) || 0;
+        const balance = getBalance(balances, symbol);
         const assetFiatBalance = Object
           .keys(assetRates)
           .map(key => ({

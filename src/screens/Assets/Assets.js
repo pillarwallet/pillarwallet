@@ -338,7 +338,7 @@ class AssetsScreen extends React.Component<Props, State> {
       .map(id => assets[id])
       .map(({ symbol, balance, ...rest }) => ({
         symbol,
-        balance: Number(getBalance(balances, symbol)) || 0,
+        balance: getBalance(balances, symbol),
         ...rest,
       }))
       .map(({ balance, symbol, ...rest }) => ({

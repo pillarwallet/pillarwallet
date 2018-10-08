@@ -184,7 +184,7 @@ class AssetScreen extends React.Component<Props, State> {
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const balance = Number(getBalance(balances, token)) || 0;
+    const balance = getBalance(balances, token);
     const isWalletEmpty = balance <= 0;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);

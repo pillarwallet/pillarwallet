@@ -9,5 +9,5 @@ export function transformAssetsToObject(assetsArray: Object[] = []): Object {
 }
 
 export function getBalance(balances: Balances = {}, asset: string = '') {
-  return balances[asset] ? balances[asset].balance : 0;
+  return balances[asset] ? Number(balances[asset].balance) : 0;
 }
