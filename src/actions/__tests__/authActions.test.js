@@ -39,7 +39,7 @@ describe('Wallet actions', () => {
   });
 
   beforeEach(() => {
-    store = mockStore({ assets: { data: {} } });
+    store = mockStore({ assets: { data: {} }, navigation: {} });
   });
 
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
