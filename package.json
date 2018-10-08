@@ -147,7 +147,7 @@
     "react-native-tcp": "^3.2.1",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^5.0.0",
-    "react-navigation": "2.9.3",
+    "react-navigation": "2.11.2",
     "react-navigation-fluid-transitions": "^0.2.0",
     "react-navigation-redux-helpers": "2.0.1",
     "react-navigation-tabs": "^0.5.1",
