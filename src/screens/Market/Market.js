@@ -88,7 +88,7 @@ class MarketScreen extends React.Component<Props> {
 
   render() {
     const { icos, fetchICOs, user } = this.props;
-    if (!user.icoService.userId && !__DEV__) {
+    if ((!user.icoService || !user.icoService.userId) && !__DEV__) {
       return <MarketplaceComingSoon />;
     }
     const activeICOs = filterIcosByStatus(icos, ACTIVE);
