@@ -106,8 +106,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       dispatch(updateAssetsAction(newAssets));
       dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
     }
-    const updatedHistory = uniqBy([...mappedHistoryNotifications, ...currentHistory], 'hash')
-      .filter(({ value }) => typeof value !== 'object');
+    const updatedHistory = uniqBy([...mappedHistoryNotifications, ...currentHistory], 'hash');
     storage.save('history', { history: updatedHistory }, true);
     dispatch({
       type: SET_HISTORY,
