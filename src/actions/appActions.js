@@ -38,7 +38,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { history = [] } = await storage.get('history');
       // TEMP FIX, REMOVE LATER
-      const filteredHistory = history.filter((el) => !!el.hash);
+      const filteredHistory = history
+        .filter(({ hash }) => !!hash)
+        .filter(({ value }) => typeof value !== 'object');
       if (filteredHistory.length !== history.length) {
         storage.save('history', { history: filteredHistory }, true);
       }
