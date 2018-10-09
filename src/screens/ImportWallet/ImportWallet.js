@@ -39,6 +39,7 @@ type Props = {
 type State = {
   privateKey: string,
   tWordsPhrase: string,
+  tWordsCount: number,
   errorMessage: string,
   errorField: string,
   isScanning: boolean,
@@ -66,10 +67,12 @@ class ImportWallet extends React.Component<Props, State> {
   state = {
     privateKey: '',
     tWordsPhrase: '',
+    tWordsCount: 1,
     errorMessage: '',
     errorField: '',
     isScanning: false,
     activeTab: TWORDSPHRASE,
+    tWordsPhraseFull: '',
   };
 
   constructor(props: Props) {
@@ -166,6 +169,7 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleValueChange = (field) => (value) => {
+    console.log('field', field);
     this.setState({
       [field]: value,
     });
@@ -178,16 +182,22 @@ class ImportWallet extends React.Component<Props, State> {
     });
   };
 
-  addMnemonic = () => {
-    console.log('add-mnemonic');
+  addWord = () => {
+    console.log('add-word');
+    console.log('word-count', this.state.tWordsCount);
+    this.setState({
+      tWordsCount: this.state.tWordsCount + 1,
+      tWordsPhraseFull: `${this.state.tWordsPhraseFull} ${this.state.tWordsPhrase}`,
+    });
   };
 
   render() {
-    const { privateKey, tWordsPhrase, isScanning, activeTab, } = this.state;
+    const { privateKey, tWordsPhrase, isScanning, activeTab, tWordsCount, tWordsPhraseFull } = this.state;
     // const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
     // const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
-    console.log(privateKey);
-    console.log(tWordsPhrase);
+    // console.log(privateKey);
+    console.log('tWordsPhrase', tWordsPhrase);
+    console.log('tWordsPhraseFull', tWordsPhraseFull);
 
     const restoreWalletTabs = [
       {
@@ -205,12 +215,12 @@ class ImportWallet extends React.Component<Props, State> {
     const tabsInfo = {
       TWORDSPHRASE: {
         paragraphText: 'Restore your ERC-20 compatible Ethereum wallet using your 12 word backup phrase.',
-        inputLabel: 'Word #1',
+        inputLabel: `Word #${tWordsCount}`,
         changeName: 'tWordsPhrase',
         value: tWordsPhrase,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
         buttonText: 'Next',
-        buttonPress: this.addMnemonic,
+        buttonPress: this.addWord,
       },
       PRIVATEKEY: {
         paragraphText: 'Don&#39;t have your backup phrase? Use your private key instead.',
@@ -223,10 +233,10 @@ class ImportWallet extends React.Component<Props, State> {
       },
     };
 
-    console.log('active-tab', activeTab);
-    console.log('tabs-info', tabsInfo);
+    // console.log('active-tab', activeTab);
+    // console.log('tabs-info', tabsInfo);
     // console.log('tabs-info', tabsInfo.TWORDSPHRASE.paragraphText);
-    console.log('tabs-info', tabsInfo[activeTab].paragraphText);
+    // console.log('tabs-info', tabsInfo[activeTab].paragraphText);
     // console.log('tab-info', tabsInfo.activeTab.paragraphText);
 
     return (
