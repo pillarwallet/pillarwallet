@@ -3,28 +3,40 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
-import { utils, providers } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
+
+// components
 import { Container, Footer, Wrapper } from 'components/Layout';
 import SingleInput from 'components/TextInput/SingleInput';
 import Button from 'components/Button';
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
 import { TextLink, Label, BaseText } from 'components/Typography';
 import Header from 'components/Header';
-import type { TransactionPayload } from 'models/Transaction';
-import type { Balances } from 'models/Asset';
+import SlideModal from 'components/Modals/SlideModal';
+
+// utils
 import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance } from 'utils/assets';
 
-const provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+// types
+import type { NavigationScreenProp } from 'react-navigation';
+import type { GasInfo } from 'models/GasInfo';
+import type { TransactionPayload } from 'models/Transaction';
+import type { Balances } from 'models/Asset';
+
+// constants
+import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
+
+// actions
+import { fetchGasInfoAction } from 'actions/historyActions';
+
 
 const { Form } = t.form;
-const gasLimit = 500000;
+const GAS_LIMIT = 500000;
+const MIN_TX_AMOUNT = 0.000000000000000001;
 
 const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
@@ -112,6 +124,15 @@ const SendTokenDetailsValue = styled(BaseText)`
   margin-bottom: ${spacing.rhythm / 2}px;
 `;
 
+const ButtonWrapper = styled.View`
+  margin-top: ${spacing.rhythm / 2}px;
+  margin-bottom: ${spacing.rhythm + 10}px;
+`;
+
+const Btn = styled(Button)`
+  margin-top: 14px;
+`;
+
 type Props = {
   token: string;
   address: string,
@@ -122,23 +143,33 @@ type Props = {
   formValues?: Object,
   balances: Balances,
   session: Object,
+  fetchGasInfo: Function,
+  gasInfo: GasInfo,
 }
 
 type State = {
   value: ?{
     amount: ?string,
   },
-  formStructure: t.struct,
-  txFeeInWei: ?Object, // BigNumber
+  transactionSpeed: string,
+  showModal: boolean,
 }
+
+const SLOW = 'min';
+const NORMAL = 'avg';
+const FAST = 'max';
+
+const SPEED_TYPES = {
+  [SLOW]: 'Slow',
+  [NORMAL]: 'Normal',
+  [FAST]: 'Fast',
+};
 
 class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
   gasPrice: Object; // BigNumber
-  gasPriceFetched: boolean = false;
   maxAmount: number;
-  minAmount: number;
   formSubmitted: boolean = false;
   enoughForFee: boolean = false;
   receiver: string;
@@ -147,45 +178,28 @@ class SendTokenAmount extends React.Component<Props, State> {
     super(props);
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
-    const balance = getBalance(props.balances, this.assetData.token);
-    this.maxAmount = +balance;
-    this.minAmount = 0.000000000000000001; // 1 Wei
     this.state = {
       value: null,
-      formStructure: getFormStructure(this.maxAmount, this.minAmount, this.enoughForFee, this.formSubmitted),
-      txFeeInWei: null,
+      transactionSpeed: SLOW,
+      showModal: false,
     };
   }
 
   componentDidMount() {
-    this.fetchGasPrice();
+    this.props.fetchGasInfo();
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
-      this.fetchGasPrice();
+      this.props.fetchGasInfo();
     }
   }
 
-  fetchGasPrice() {
-    provider.getGasPrice()
-      .then(gasPrice => {
-        const increasedGasPrice = gasPrice.mul(2);
-        this.gasPrice = increasedGasPrice;
-        this.gasPriceFetched = true;
-        const { token } = this.assetData;
-        const { balances } = this.props;
-        const { balance } = balances[token];
-        const txFeeInWei = this.gasPrice.mul(gasLimit);
-        this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-        this.enoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
-
-        this.setState({
-          txFeeInWei,
-          formStructure: getFormStructure(this.maxAmount, this.minAmount, this.enoughForFee, this.formSubmitted),
-        });
-      })
-      .catch(() => { });
+  handleGasPriceChange = (txSpeed: string) => () => {
+    this.setState({
+      transactionSpeed: txSpeed,
+      showModal: false,
+    });
   }
 
   handleChange = (value: Object) => {
@@ -194,50 +208,40 @@ class SendTokenAmount extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     this.formSubmitted = true;
-    const { txFeeInWei } = this.state;
-    const { token } = this.assetData;
-    const { balances } = this.props;
-    const { balance } = balances[token];
-    this.maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-    this.setState({
-      formStructure: getFormStructure(this.maxAmount, this.minAmount, this.enoughForFee, this.formSubmitted),
-    }, () => {
-      const value = this._form.getValue();
-      const { navigation } = this.props;
+    const txFeeInWei = this.getTxFeeInWei();
+    const value = this._form.getValue();
+    const { navigation } = this.props;
+    const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
+    if (!value) return;
+    const transactionPayload: TransactionPayload = {
+      to: this.receiver,
+      amount: value.amount,
+      gasLimit: GAS_LIMIT,
+      gasPrice,
+      txFeeInWei,
+      symbol: this.assetData.token,
+      contractAddress: this.assetData.contractAddress,
+      decimals: this.assetData.decimals,
+    };
 
-      if (!value || !this.gasPriceFetched) return;
-
-      const transactionPayload: TransactionPayload = {
-        to: this.receiver,
-        amount: value.amount,
-        gasLimit,
-        gasPrice: this.gasPrice.toNumber(),
-        txFeeInWei: txFeeInWei ? txFeeInWei.toNumber() : 0,
-        symbol: this.assetData.token,
-        contractAddress: this.assetData.contractAddress,
-        decimals: this.assetData.decimals,
-      };
-
-      Keyboard.dismiss();
-      navigation.navigate(SEND_TOKEN_CONFIRM, {
-        transactionPayload,
-      });
+    Keyboard.dismiss();
+    navigation.navigate(SEND_TOKEN_CONFIRM, {
+      transactionPayload,
     });
   };
 
   useMaxValue = () => {
-    if (!this.gasPriceFetched) return;
-    const { txFeeInWei } = this.state;
+    const txFeeInWei = this.getTxFeeInWei();
     const { balances } = this.props;
     const { token } = this.assetData;
     const { balance } = balances[token];
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
-
+    this.enoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
     this.setState({
       value: {
         amount: formatAmount(maxAmount),
       },
-    }, () => { this._form.getValue(); }); // trigger form validation
+    });
   };
 
   calculateMaxAmount(token: string, balance: string, txFeeInWei: ?Object): number {
@@ -259,18 +263,45 @@ class SendTokenAmount extends React.Component<Props, State> {
     return balanceInWei.gte(txFeeInWei);
   }
 
+  getTxFeeInWei = (txSpeed?: string) => {
+    txSpeed = txSpeed || this.state.transactionSpeed;
+    const { gasInfo } = this.props;
+    const gasPrice = gasInfo[txSpeed] || 0;
+    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return gasPriceWei.mul(GAS_LIMIT);
+  }
+
+  renderTxSpeedButtons = () => {
+    return Object.keys(SPEED_TYPES).map(txSpeed => {
+      const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
+      return (
+        <Btn
+          key={txSpeed}
+          primaryInverted
+          title={`${SPEED_TYPES[txSpeed]} - ${feeInEth} ETH`}
+          onPress={this.handleGasPriceChange(txSpeed)}
+        />
+      );
+    });
+  }
+
   render() {
     const {
       value,
-      formStructure,
-      txFeeInWei,
+      showModal,
+      transactionSpeed,
     } = this.state;
     const { session, balances } = this.props;
     const { token, icon } = this.assetData;
     const { balance } = balances[token];
     const formattedBalance = formatAmount(balance);
     const formOptions = generateFormOptions({ icon, currency: token });
-    const txFeeInEth = !!txFeeInWei && utils.formatEther(txFeeInWei);
+    const txFeeInWei = this.getTxFeeInWei();
+    const txFeeInEth = formatAmount(utils.formatEther(txFeeInWei));
+    const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
+    const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
+    const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted);
+
     return (
       <Container color={UIColors.defaultBackgroundColor}>
         <Header
@@ -291,7 +322,12 @@ class SendTokenAmount extends React.Component<Props, State> {
               <Label small>Available Balance</Label>
               <SendTokenDetailsValue>{formattedBalance} {token}</SendTokenDetailsValue>
               <Label small>Est. Network Fee</Label>
-              <SendTokenDetailsValue>{txFeeInEth || 0} ETH</SendTokenDetailsValue>
+              <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
+                <SendTokenDetailsValue>
+                  {txFeeInEth || 0} ETH
+                  <TextLink> ({SPEED_TYPES[transactionSpeed]})</TextLink>
+                </SendTokenDetailsValue>
+              </TouchableOpacity>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
               <TextLink>Send All</TextLink>
@@ -301,14 +337,32 @@ class SendTokenAmount extends React.Component<Props, State> {
         <Footer keyboardVerticalOffset={35}>
           <Button disabled={!session.isOnline} small flexRight title="Next" onPress={this.handleFormSubmit} />
         </Footer>
+        <SlideModal
+          isVisible={showModal}
+          title="transaction speed"
+          onModalHide={() => { this.setState({ showModal: false }); }}
+        >
+          <Label>Choose your gas price.</Label>
+          <Label>Faster transaction requires more fee.</Label>
+          <ButtonWrapper>{this.renderTxSpeedButtons()}</ButtonWrapper>
+        </SlideModal>
       </Container>
     );
   }
 }
 
-const mapStateToProps = ({ assets: { balances }, session: { data: session } }) => ({
+const mapStateToProps = ({
+  assets: { balances },
+  session: { data: session },
+  history: { gasInfo },
+}) => ({
   balances,
   session,
+  gasInfo,
 });
 
-export default connect(mapStateToProps)(SendTokenAmount);
+const mapDispatchToProps = (dispatch) => ({
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAmount);
