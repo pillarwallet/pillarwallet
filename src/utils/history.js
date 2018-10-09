@@ -15,7 +15,7 @@ export const buildHistoryTransaction = ({
   status: PENDING,
   gasUsed: parseFloat(utils.formatEther(gasPrice.mul(gasLimit))),
   gasPrice: Number(gasPrice),
-  value,
+  value: typeof value === 'object' ? value.toNumber() : value,
   from,
   hash,
   to,

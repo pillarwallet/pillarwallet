@@ -32,7 +32,7 @@ export type TransactionEthers = {
   from: string,
   hash: string,
   to: string,
-  value: number,
+  value: Object,
   gasPrice: Object,
   gasLimit: Object,
   asset: string,
