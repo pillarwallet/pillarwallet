@@ -12,7 +12,7 @@ export type Transaction = {
   gasUsed: number,
   gasPrice: number,
   status: string,
-  value: number,
+  value: Object,
   __v: number,
   receipt: Object,
 }
