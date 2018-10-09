@@ -233,12 +233,6 @@ class ImportWallet extends React.Component<Props, State> {
       },
     };
 
-    // console.log('active-tab', activeTab);
-    // console.log('tabs-info', tabsInfo);
-    // console.log('tabs-info', tabsInfo.TWORDSPHRASE.paragraphText);
-    // console.log('tabs-info', tabsInfo[activeTab].paragraphText);
-    // console.log('tab-info', tabsInfo.activeTab.paragraphText);
-
     return (
       <Container>
         <Header onBack={this.handleBackAction} />
