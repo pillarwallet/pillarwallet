@@ -15,6 +15,7 @@ export type AppSettingsReducerAction = {
 
 const initialState = {
   data: {
+    lastTxSyncDatetime: 0,
     appearanceSettings: {
       assetsLayout: EXPANDED,
     },
