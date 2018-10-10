@@ -200,7 +200,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       transactionSpeed: txSpeed,
       showModal: false,
     });
-  }
+  };
 
   handleChange = (value: Object) => {
     this.setState({ value });
@@ -234,7 +234,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const txFeeInWei = this.getTxFeeInWei();
     const { balances } = this.props;
     const { token } = this.assetData;
-    const { balance } = balances[token];
+    const balance = getBalance(balances, token);
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     this.enoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
     this.setState({
@@ -244,7 +244,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     });
   };
 
-  calculateMaxAmount(token: string, balance: string, txFeeInWei: ?Object): number {
+  calculateMaxAmount(token: string, balance: number | string, txFeeInWei: ?Object): number {
     if (typeof balance !== 'string') {
       balance = balance.toString();
     }
@@ -293,7 +293,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     } = this.state;
     const { session, balances } = this.props;
     const { token, icon } = this.assetData;
-    const { balance } = balances[token];
+    const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
     const formOptions = generateFormOptions({ icon, currency: token });
     const txFeeInWei = this.getTxFeeInWei();

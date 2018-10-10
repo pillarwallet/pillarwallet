@@ -8,6 +8,6 @@ export function transformAssetsToObject(assetsArray: Object[] = []): Object {
   }, {});
 }
 
-export function getBalance(balances: Balances = {}, asset: string = '') {
+export function getBalance(balances: Balances = {}, asset: string = ''): number {
   return balances[asset] ? Number(balances[asset].balance) : 0;
 }
