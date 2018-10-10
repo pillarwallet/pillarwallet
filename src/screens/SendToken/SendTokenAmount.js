@@ -180,7 +180,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.state = {
       value: null,
-      transactionSpeed: SLOW,
+      transactionSpeed: NORMAL,
       showModal: false,
     };
   }
@@ -269,7 +269,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const gasPrice = gasInfo[txSpeed] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
     return gasPriceWei.mul(GAS_LIMIT);
-  }
+  };
 
   renderTxSpeedButtons = () => {
     return Object.keys(SPEED_TYPES).map(txSpeed => {
@@ -283,7 +283,7 @@ class SendTokenAmount extends React.Component<Props, State> {
         />
       );
     });
-  }
+  };
 
   render() {
     const {
