@@ -168,8 +168,6 @@ const SPEED_TYPES = {
 class SendTokenAmount extends React.Component<Props, State> {
   _form: t.form;
   assetData: Object;
-  gasPrice: Object; // BigNumber
-  maxAmount: number;
   formSubmitted: boolean = false;
   enoughForFee: boolean = false;
   receiver: string;
