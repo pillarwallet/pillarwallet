@@ -41,7 +41,8 @@ const glyphMap = {
   'pending-circle': '\uE822',
   'connection-circle': '\uE823',
   flip: '\uE825',
-  flash: '\uE826',
+  'flash-off': '\uE826',
+  'flash-on': '\uE828',
   gallery: '\uE827',
 };
 

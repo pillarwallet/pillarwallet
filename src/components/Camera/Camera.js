@@ -347,7 +347,7 @@ class Camera extends React.Component<Props, State> {
     a ${cutOutR},${cutOutR} 0 1,0 -${cutOutD},0
     `;
     const overlayColor = isFlashOn && cameraType === FRONT ? baseColors.blanchedAlmond : baseColors.black;
-    const flashIcon = isFlashOn ? 'flash' : 'remove';
+    const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
     return (
       <React.Fragment>
         <RNCamera
