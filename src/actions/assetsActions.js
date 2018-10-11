@@ -47,10 +47,12 @@ export const sendAssetAction = ({
         amount,
         wallet,
       });
-      dispatch({
-        type: ADD_TRANSACTION,
-        payload: buildHistoryTransaction({ ...ETHTrx, asset: symbol }),
-      });
+      if (ETHTrx && ETHTrx.hash) {
+        dispatch({
+          type: ADD_TRANSACTION,
+          payload: buildHistoryTransaction({ ...ETHTrx, asset: symbol }),
+        });
+      }
       navigateToNextScreen();
       return;
     }
@@ -62,15 +64,17 @@ export const sendAssetAction = ({
       wallet,
       decimals,
     });
-    dispatch({
-      type: ADD_TRANSACTION,
-      payload: buildHistoryTransaction({
-        ...ERC20Trx,
-        asset: symbol,
-        value: amount * (10 ** decimals),
-        to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
-      }),
-    });
+    if (ERC20Trx && ERC20Trx.hash) {
+      dispatch({
+        type: ADD_TRANSACTION,
+        payload: buildHistoryTransaction({
+          ...ERC20Trx,
+          asset: symbol,
+          value: amount * (10 ** decimals),
+          to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+        }),
+      });
+    }
     navigateToNextScreen();
   };
 };

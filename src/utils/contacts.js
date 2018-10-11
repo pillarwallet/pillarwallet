@@ -10,7 +10,7 @@ export function excludeLocalContacts(globalContacts: ApiUser[] = [], localContac
 }
 
 export function getUserName(contact: ?Object) {
-  if (!contact) {
+  if (!contact || !contact.username) {
     return '';
   }
   return contact.username;

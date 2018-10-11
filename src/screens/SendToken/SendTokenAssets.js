@@ -13,6 +13,7 @@ import { Container } from 'components/Layout';
 import Separator from 'components/Separator';
 import { fontSizes, spacing } from 'utils/variables';
 import { formatAmount } from 'utils/common';
+import { getBalance } from 'utils/assets';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import assetsConfig from 'configs/assetsConfig';
@@ -73,7 +74,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
   renderAsset = ({ item }) => {
     const { balances, navigation } = this.props;
     const contact = navigation.getParam('contact', {});
-    const assetBalance = formatAmount(balances[item.symbol].balance);
+    const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const nextScreenAssetData = {
       token: item.symbol,
