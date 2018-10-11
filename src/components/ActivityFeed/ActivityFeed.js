@@ -21,10 +21,12 @@ import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
+import Title from 'components/Title';
 import EventDetails from 'components/EventDetails';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
+import { createAlert } from 'utils/alerts';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -89,12 +91,13 @@ const ActivityFeedItemLabel = styled(BaseText)`
 `;
 
 const ActivityFeedItemName = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${fontSizes.small};
 `;
 
 const ActivityFeedItemAmount = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  color: ${props => props.received ? baseColors.jadeGreen : baseColors.fireEngineRed};
+  font-size: ${fontSizes.medium};
+  color: ${props => props.received ? baseColors.jadeGreen : baseColors.slateBlack};
+  text-align: right;
 `;
 
 const ActivityFeedItemCol = styled.View`
@@ -132,6 +135,10 @@ const IconWrapper = styled.View`
   margin-right: ${spacing.rhythm}px;
 `;
 
+const ActivityFeedHeader = styled.View`
+  padding: 0 ${spacing.rhythm}px;
+`;
+
 type Props = {
   history: Array<*>,
   assets: Asset[],
@@ -148,6 +155,7 @@ type Props = {
   contacts: Object,
   invitations: Object,
   additionalFiltering?: Function,
+  feedTitle?: string,
 };
 
 type State = {
@@ -189,7 +197,7 @@ class ActivityFeed extends React.Component<Props, State> {
               margin={0}
               icon="close"
               fontSize={fontSizes.extraSmall}
-              onPress={() => onRejectInvitation(notification)}
+              onPress={() => createAlert(TYPE_REJECTED, notification, () => onRejectInvitation(notification))}
             />
             <ActionCircleButton
               color={baseColors.white}
@@ -283,7 +291,7 @@ class ActivityFeed extends React.Component<Props, State> {
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
 
       let image;
-      if (contact) {
+      if (contact && Object.keys(contact).length !== 0) {
         image = (
           <ProfileImage
             uri={contact.profileImage}
@@ -314,7 +322,7 @@ class ActivityFeed extends React.Component<Props, State> {
             <ActivityFeedItemName>{nameOrAddress}</ActivityFeedItemName>
             <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
           </ActivityFeedItemCol>
-          <ActivityFeedItemCol fixedWidth="120px" flexEnd>
+          <ActivityFeedItemCol flexEnd>
             <ActivityFeedItemAmount received={isReceived}>
               {directionSymbol} {formattedValue} {notification.asset}
             </ActivityFeedItemAmount>
@@ -368,7 +376,11 @@ class ActivityFeed extends React.Component<Props, State> {
       history,
       additionalFiltering,
       customFeedData,
+      feedTitle,
       navigation,
+      onRejectInvitation,
+      onAcceptInvitation,
+      onCancelInvitation,
     } = this.props;
 
     const {
@@ -417,11 +429,15 @@ class ActivityFeed extends React.Component<Props, State> {
 
     return (
       <ActivityFeedWrapper>
+        {!!feedTitle &&
+        <ActivityFeedHeader>
+          <Title subtitle title={feedTitle} />
+        </ActivityFeedHeader>}
         <ActivityFeedList
           data={processedHistory}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
-          ItemSeparatorComponent={Separator}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={60} />}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
         />
@@ -435,7 +451,10 @@ class ActivityFeed extends React.Component<Props, State> {
             eventData={selectedEventData}
             eventType={eventType}
             eventStatus={eventStatus}
-            onClose={() => { this.setState({ showModal: false }); }}
+            onClose={() => this.setState({ showModal: false })}
+            onReject={() => onRejectInvitation(selectedEventData)}
+            onCancel={() => onCancelInvitation(selectedEventData)}
+            onAccept={() => onAcceptInvitation(selectedEventData)}
             navigation={navigation}
           />
         </SlideModal>

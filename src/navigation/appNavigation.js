@@ -56,6 +56,7 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
+import { setupSentryAction } from 'actions/appActions';
 
 // constants
 import {
@@ -117,11 +118,11 @@ const removeAppStateChangeListener = (callback) => {
     : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
 };
 
-const iconWallet = require('assets/icons/icon_wallet.png');
-const iconPeople = require('assets/icons/icon_people.png');
-const iconHome = require('assets/icons/icon_home.png');
-const iconMarket = require('assets/icons/icon_marketplace.png');
-const iconChat = require('assets/icons/icon_chat.png');
+const iconWallet = require('assets/icons/icon_wallet_new.png');
+const iconPeople = require('assets/icons/icon_people_new.png');
+const iconHome = require('assets/icons/icon_home_new.png');
+const iconMarket = require('assets/icons/icon_marketplace_new.png');
+const iconChat = require('assets/icons/icon_chat_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
@@ -367,6 +368,7 @@ type Props = {
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
+  setupSentry: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
@@ -389,6 +391,7 @@ class AppFlow extends React.Component<Props, {}> {
       fetchAssetsBalances,
       fetchICOs,
       getExistingChats,
+      setupSentry,
       assets,
       wallet,
     } = this.props;
@@ -399,6 +402,11 @@ class AppFlow extends React.Component<Props, {}> {
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
+
+    if (!__DEV__) {
+      setupSentry();
+    }
+
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -500,6 +508,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
   fetchICOs: () => dispatch(fetchICOsAction()),
+  setupSentry: () => dispatch(setupSentryAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);

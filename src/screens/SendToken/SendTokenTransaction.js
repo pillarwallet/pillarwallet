@@ -26,7 +26,7 @@ class SendTokenTransaction extends React.Component<Props, State> {
         <Wrapper flex={1} center regularPadding>
           <TransactionSentAnimation />
           <Title title="Money is on its way" align="center" noBlueDot />
-          <Paragraph light center style={{ marginBottom: 30 }}>
+          <Paragraph small light center style={{ marginBottom: 30 }}>
             It will be settled in a few moments, depending on your gas price settings and Ethereum network load
           </Paragraph>
           <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" />

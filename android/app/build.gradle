@@ -19,6 +19,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-sentry/sentry.gradle"
 
 repositories {
   mavenLocal()
@@ -150,10 +151,10 @@ dependencies {
   compile project(':react-native-image-crop-picker')
   compile project(':react-native-svg')
   compile project(':react-native-background-timer')
+  compile project(':react-native-sentry')
   compile 'com.android.support:multidex:1.0.1'
   compile fileTree(dir: 'libs', include: ['*.jar'])
-
-
+  
   // Our dependencies
   compile "com.google.android.gms:play-services-base:15.0.1"
   compile "com.google.firebase:firebase-core:15.0.2"
