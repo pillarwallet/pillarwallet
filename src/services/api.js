@@ -220,6 +220,20 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
     .catch(() => []);
 };
 
+SDKWrapper.prototype.fetchGasInfo = function () {
+  return fetch('https://www.etherchain.org/api/gasPriceOracle')
+    .then(data => data.json())
+    .then(data => ({
+      min: data.safeLow,
+      avg: data.standard,
+      max: data.fast,
+    }))
+    .catch(() => ({}));
+  // return BCXSdk.gasInfo({ nBlocks: 10 })
+  //   .then(({ gasUsed }) => gasUsed)
+  //   .catch(() => ({}));
+};
+
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
   // TEMPORARY FETCH FROM BLOCKCHAIN DIRECTLY
   return fetchAssetBalances(assets, address);
