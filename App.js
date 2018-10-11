@@ -14,10 +14,6 @@ import Root from 'components/Root';
 import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
 
-if (!__DEV__) {
-  Sentry.config('https://82eb3c51aa80408597cac8ae5c18f9d1@sentry.io/1294444').install();
-}
-
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
 
@@ -30,6 +26,13 @@ type Props = {
 }
 
 class App extends React.Component<Props, *> {
+  constructor(props: Props) {
+    super(props);
+    if (!__DEV__) {
+      Sentry.config('https://82eb3c51aa80408597cac8ae5c18f9d1@sentry.io/1294444').install();
+    }
+  }
+
   componentWillUnmount() {
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
   }
