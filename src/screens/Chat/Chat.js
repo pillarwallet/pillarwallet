@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -253,6 +253,22 @@ const renderMessage = (props: Props) => (
   />
 );
 
+const parsePatterns = () => [
+  {
+    type: 'url',
+    style: { color: baseColors.clearBlue },
+    onPress: (url) => Linking.openURL(url),
+  },
+  {
+    type: 'email',
+    style: { color: baseColors.clearBlue },
+    onPress: (email) => Linking.openURL(`mailto:${email}`),
+  },
+  {
+    type: 'phone',
+    style: { color: baseColors.black },
+  },
+];
 
 class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
@@ -351,6 +367,7 @@ class ChatScreen extends React.Component<Props, State> {
             renderMessage={renderMessage}
             renderTime={renderTime}
             minInputToolbarHeight={52}
+            parsePatterns={parsePatterns}
           />}
         </Wrapper>
       </Container>
