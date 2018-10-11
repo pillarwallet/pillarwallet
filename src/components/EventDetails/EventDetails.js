@@ -110,7 +110,8 @@ class EventDetails extends React.Component<Props, {}> {
     onCancel();
   };
 
-  goToProfile = (contact) => {
+  goToProfile = (contact = {}) => {
+    if (!contact.username) return;
     const {
       navigation,
       onClose,
@@ -150,7 +151,7 @@ class EventDetails extends React.Component<Props, {}> {
         to,
         from,
         asset,
-        nbConfirmations,
+        nbConfirmations = 0,
         hash,
         gasUsed,
         gasPrice,
