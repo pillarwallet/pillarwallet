@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
+import { Platform, BackHandler, Keyboard, Dimensions, Text } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import {
@@ -18,15 +18,15 @@ import {
   PRIVATEKEY,
 } from 'constants/walletConstants';
 import Button from 'components/Button';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
 import Title from 'components/Title';
-import Tabs from 'components/Tabs';
-import { fontSizes, baseColors } from 'utils/variables';
+import WalletTabs from 'components/Tabs/WalletTabs';
+import { fontSizes, baseColors, UIColors, fontWeights, spacing } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -44,6 +44,7 @@ type State = {
   errorField: string,
   isScanning: boolean,
   activeTab: string,
+  tWordsPhraseFull: string,
 };
 
 const window = Dimensions.get('window');
@@ -56,11 +57,22 @@ const InputWrapper = styled.View`
 const InputButton = styled.TouchableOpacity`
   align-items: center;
   margin-left: 10px;
+  margin-top: 47px;
 `;
 
 const ButtonText = styled(BaseText)`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.medium};
+`;
+
+const FooterWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
+  margin-bottom: ${spacing.rhythm}px;
 `;
 
 class ImportWallet extends React.Component<Props, State> {
@@ -122,12 +134,12 @@ class ImportWallet extends React.Component<Props, State> {
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    const { privateKey, tWordsPhrase } = this.state;
+    const { privateKey, tWordsPhraseFull } = this.state;
 
     if (privateKey) {
       importWalletFromPrivateKey(privateKey);
-    } else if (tWordsPhrase) {
-      importWalletFromTWordsPhrase(tWordsPhrase);
+    } else if (tWordsPhraseFull) {
+      importWalletFromTWordsPhrase(tWordsPhraseFull);
     } else {
       this.setState({ errorField: '' });
     }
@@ -169,7 +181,6 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleValueChange = (field) => (value) => {
-    console.log('field', field);
     this.setState({
       [field]: value,
     });
@@ -183,26 +194,28 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   addWord = () => {
-    console.log('add-word');
-    console.log('word-count', this.state.tWordsCount);
     this.setState({
       tWordsCount: this.state.tWordsCount + 1,
-      tWordsPhraseFull: `${this.state.tWordsPhraseFull} ${this.state.tWordsPhrase}`,
+      tWordsPhraseFull: this.state.tWordsCount === 1 ?
+        this.state.tWordsPhrase :
+        `${this.state.tWordsPhraseFull} ${this.state.tWordsPhrase}`,
+      tWordsPhrase: '',
     });
   };
 
   render() {
-    const { privateKey, tWordsPhrase, isScanning, activeTab, tWordsCount, tWordsPhraseFull } = this.state;
-    // const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
-    // const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
-    // console.log(privateKey);
-    console.log('tWordsPhrase', tWordsPhrase);
-    console.log('tWordsPhraseFull', tWordsPhraseFull);
+    const {
+      privateKey,
+      tWordsPhrase,
+      isScanning,
+      activeTab,
+      tWordsCount,
+    } = this.state;
 
     const restoreWalletTabs = [
       {
         id: TWORDSPHRASE,
-        name: '12 words',
+        name: '12 word',
         onPress: () => this.setActiveTab(TWORDSPHRASE),
       },
       {
@@ -214,7 +227,9 @@ class ImportWallet extends React.Component<Props, State> {
 
     const tabsInfo = {
       TWORDSPHRASE: {
-        paragraphText: 'Restore your ERC-20 compatible Ethereum wallet using your 12 word backup phrase.',
+        textStart: 'Restore your ERC-20 compatible Ethereum wallet using your ',
+        textAttention: '12 word backup phrase',
+        textEnd: '.',
         inputLabel: `Word #${tWordsCount}`,
         changeName: 'tWordsPhrase',
         value: tWordsPhrase,
@@ -223,7 +238,9 @@ class ImportWallet extends React.Component<Props, State> {
         buttonPress: this.addWord,
       },
       PRIVATEKEY: {
-        paragraphText: 'Don&#39;t have your backup phrase? Use your private key instead.',
+        textStart: 'Don\'t have your backup phrase? Use your ',
+        textAttention: 'private key',
+        textEnd: ' instead.',
         inputLabel: 'Private key',
         changeName: 'privateKey',
         value: privateKey,
@@ -238,8 +255,13 @@ class ImportWallet extends React.Component<Props, State> {
         <Header onBack={this.handleBackAction} />
         <ScrollWrapper regularPadding>
           <Title noMargin title="restore wallet" dotColor={baseColors.freshEucalyptus} />
-          <Tabs tabs={restoreWalletTabs} />
-          <Paragraph>{tabsInfo[activeTab].paragraphText}</Paragraph>
+          <WalletTabs title="restore wallet" tabs={restoreWalletTabs} />
+          <Paragraph small light>{tabsInfo[activeTab].textStart}
+            <Text style={{ color: UIColors.defaultTextColor }}>
+              {tabsInfo[activeTab].textAttention}
+            </Text>
+            {tabsInfo[activeTab].textEnd}
+          </Paragraph>
           <InputWrapper>
             <TextInput
               label={tabsInfo[activeTab].inputLabel}
@@ -249,8 +271,11 @@ class ImportWallet extends React.Component<Props, State> {
                 autoCapitalize: 'none',
               }}
               errorMessage={tabsInfo[activeTab].errorMessage}
-              underlineColorAndroid="transparent"
               viewWidth={window.width - 95}
+              inputType="secondary"
+              lowerCase
+              labelBigger
+              noBorder
             />
             <InputButton onPress={tabsInfo[activeTab].buttonPress}>
               {activeTab === 'PRIVATEKEY' &&
@@ -264,8 +289,12 @@ class ImportWallet extends React.Component<Props, State> {
               <ButtonText>{tabsInfo[activeTab].buttonText}</ButtonText>
             </InputButton>
           </InputWrapper>
-          <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
         </ScrollWrapper>
+        <Footer>
+          <FooterWrapper>
+            <Button title="Restore wallet" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
+          </FooterWrapper>
+        </Footer>
         <QRCodeScanner
           isActive={isScanning}
           onDismiss={this.handleQRScannerClose}

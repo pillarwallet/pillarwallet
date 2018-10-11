@@ -2,10 +2,10 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
-import { fontSizes, fontWeights, baseColors } from 'utils/variables';
+import { fontSizes, fontWeights, baseColors, UIColors } from 'utils/variables';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { View, TouchableOpacity, Platform, Dimensions } from 'react-native';
+import { View, TouchableOpacity, Platform } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -33,6 +33,8 @@ type Props = {
   autoCorrect?: boolean,
   viewWidth?: number,
   noBorder?: boolean,
+  lowerCase?: boolean,
+  labelBigger?: boolean,
 }
 
 type State = {
@@ -42,8 +44,6 @@ type State = {
 type EventLike = {
   nativeEvent: Object,
 }
-
-const window = Dimensions.get('window');
 
 const inputTypes = {
   default: {
@@ -63,7 +63,6 @@ const inputTypes = {
     color: baseColors.slateBlack,
     fontSize: fontSizes.small,
     padding: '0 14px',
-    width: window.width - 65,
   },
 };
 
@@ -94,7 +93,6 @@ const InputField = styled(Input)`
   ${props => props.inputType.textAlign ? `text-align: ${props.inputType.textAlign};` : ''}
   ${props => props.inputType.backgroundColor ? `background-color: ${props.inputType.backgroundColor};` : ''}
   ${props => props.inputType.borderRadius ? `border-radius: ${props.inputType.borderRadius};` : ''}
-  ${props => props.inputType.width ? `width: ${props.inputType.width};` : ''}
   ${props => props.inputType.color ? `color: ${props.inputType.color};` : ''}
   padding: ${props => props.inputType.padding || 0};
 `;
@@ -119,12 +117,14 @@ const AddonText = styled(BaseText)`
 `;
 
 const CustomLabel = styled(Label)`
-  color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
+  color: ${props => props.labelBigger ? UIColors.defaultTextColor : baseColors.darkGray};
+  font-size: ${props => props.labelBigger ? fontSizes.small : fontSizes.extraSmall};
   letter-spacing: 0.5;
-  font-weight: 600;
+  font-weight: ${props => props.labelBigger ? fontWeights.bold : '600'};
   line-height: 24px;
-`;
+  padding-top: ${props => props.labelBigger ? '35px' : '5px'};
+  padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
+  `;
 
 class TextInput extends React.Component<Props, State> {
   state = {
@@ -176,12 +176,14 @@ class TextInput extends React.Component<Props, State> {
       autoCorrect,
       viewWidth = 'auto',
       noBorder,
+      lowerCase,
+      labelBigger,
     } = this.props;
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
     return (
-      <View style={{ paddingBottom: 10, width: viewWidth }}>
+      <View style={{ paddingBottom: 10 }}>
         <Item
           inlineLabel={inlineLabel}
           stackedLabel={!inlineLabel}
@@ -190,7 +192,7 @@ class TextInput extends React.Component<Props, State> {
           isFocused={isFocused}
           noBorder={noBorder}
         >
-          {!!label && <CustomLabel>{label.toUpperCase()}</CustomLabel>}
+          {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
           <InputField
             {...inputProps}
             onChange={this.handleChange}
@@ -200,7 +202,7 @@ class TextInput extends React.Component<Props, State> {
             value={value}
             inputType={inputType}
             autoCorrect={autoCorrect}
-            style={{ fontSize: inputType.fontSize }}
+            style={{ fontSize: inputType.fontSize, width: viewWidth }}
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}

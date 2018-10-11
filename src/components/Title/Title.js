@@ -13,6 +13,7 @@ type Props = {
   subtitle?: boolean,
   maxWidth?: number,
   noBlueDot?: boolean,
+  dotColor?: string,
 };
 
 const Wrapper = styled.View`
