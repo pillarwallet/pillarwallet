@@ -1,6 +1,7 @@
 // @flow
 import PouchDB from 'pouchdb-react-native';
 import merge from 'lodash.merge';
+import { Sentry } from 'react-native-sentry';
 
 function Storage(name: string, opts: ?Object) {
   this.db = new PouchDB(name, opts);
@@ -11,7 +12,9 @@ Storage.prototype.get = function (id: string) {
 };
 
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
-  return this.db.get(id).then((doc) => {
+  let conflicts;
+  return this.db.get(id, { conflicts: true }).then((doc) => {
+    conflicts = doc._conflicts;
     const options = { force: forceRewrite };
     const record = forceRewrite
       ? { _id: id, _rev: doc._rev, ...data }
@@ -25,7 +28,11 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
         data,
       );
     return this.db.put(record, options);
-  }).catch(() => this.db.post({ _id: id, ...data }));
+  })
+    .catch(() => this.db.post({ _id: id, ...data }))
+    .catch(() => {
+      Sentry.captureException(conflicts);
+    });
 };
 
 Storage.prototype.removeAll = function () {
