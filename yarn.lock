@@ -2562,9 +2562,9 @@ blob-polyfill@2.0.20171115:
   version "2.0.20171115"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blob-polyfill/-/blob-polyfill-2.0.20171115.tgz#8e5c2659dda443365fafd6dd421517653f1d5ffd"
 
-blockchain-explorer-sdk@0.1.156:
-  version "0.1.156"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blockchain-explorer-sdk/-/blockchain-explorer-sdk-0.1.156.tgz#b2b20e6646454db502e84a80a5bdc755b3084d48"
+blockchain-explorer-sdk@^0.1.163:
+  version "0.1.163"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/blockchain-explorer-sdk/-/blockchain-explorer-sdk-0.1.163.tgz#f874a9b3e27134294e82514b096a2e36fffa2a7e"
   dependencies:
     ajv "6.5.1"
     convict "4.2.0"
@@ -10987,9 +10987,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.79:
-  version "1.0.79"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.79.tgz#4b7706a3a8afca27e2125e0ef5a4fcb4c6bcb7c1"
+rn-signal-protocol-messaging@1.0.81:
+  version "1.0.81"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.81.tgz#19cfce539b4dbd8a09d66abf2e422e16545fc458"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

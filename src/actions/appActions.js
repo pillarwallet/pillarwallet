@@ -55,11 +55,17 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
   };
 };
 
-export const setupSentryAction = () => {
+export const setupSentryAction = (user: Object, wallet: Object) => {
   return async () => {
-    const { user } = await storage.get('user');
-    if (!user) return;
-    const { username } = user;
-    Sentry.setUserContext({ username });
+    const { id, username, walletId = '' } = user;
+    const { address } = wallet;
+    Sentry.setUserContext({
+      userID: id,
+      username,
+      extra: {
+        walletId,
+        ethAddress: address,
+      },
+    });
   };
 };
