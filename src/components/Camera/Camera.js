@@ -310,7 +310,7 @@ class Camera extends React.Component<Props, State> {
       <Footer>
         <FooterInner>
           <IconButton
-            icon="search"
+            icon="gallery"
             onPress={() => this.openGallery()}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
@@ -319,7 +319,7 @@ class Camera extends React.Component<Props, State> {
             <CameraButtonInner />
           </CameraButtonOuter>
           <IconButton
-            icon="up-arrow"
+            icon="flip"
             onPress={() => this.handleCameraFlip()}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
@@ -347,7 +347,7 @@ class Camera extends React.Component<Props, State> {
     a ${cutOutR},${cutOutR} 0 1,0 -${cutOutD},0
     `;
     const overlayColor = isFlashOn && cameraType === FRONT ? baseColors.blanchedAlmond : baseColors.black;
-    const flashIcon = isFlashOn ? 'tick-circle' : 'remove';
+    const flashIcon = isFlashOn ? 'flash' : 'remove';
     return (
       <React.Fragment>
         <RNCamera
