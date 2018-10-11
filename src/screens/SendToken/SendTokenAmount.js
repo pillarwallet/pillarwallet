@@ -145,10 +145,7 @@ type Props = {
   balances: Balances,
   session: Object,
   fetchGasInfo: Function,
-  gasInfo: {
-    gasPrice: GasInfo,
-    isFetched: boolean,
-  },
+  gasInfo: GasInfo,
   rates: Rates,
   baseFiatCurrency: string,
 }

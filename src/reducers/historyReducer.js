@@ -5,10 +5,7 @@ import type { GasInfo } from 'models/GasInfo';
 
 export type HistoryReducerState = {
   data: Transaction[],
-  gasInfo: {
-    gasPrice: GasInfo,
-    isFetched: boolean,
-  },
+  gasInfo: GasInfo,
   isFetched: boolean,
 }
 
