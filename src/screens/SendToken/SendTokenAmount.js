@@ -40,7 +40,6 @@ const MIN_TX_AMOUNT = 0.000000000000000001;
 
 const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
-    if (amount.toString() === '' && !formSubmitted) return true;
     if (!isValidNumber(amount.toString())) return false;
 
     amount = parseNumber(amount.toString());
