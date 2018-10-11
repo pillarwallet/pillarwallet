@@ -5,7 +5,10 @@ import type { GasInfo } from 'models/GasInfo';
 
 export type HistoryReducerState = {
   data: Transaction[],
-  gasInfo: GasInfo,
+  gasInfo: {
+    gasPrice: GasInfo,
+    isFetched: boolean,
+  },
   isFetched: boolean,
 }
 
@@ -16,7 +19,10 @@ export type HistoryReducerAction = {
 
 const initialState = {
   data: [],
-  gasInfo: {},
+  gasInfo: {
+    gasPrice: {},
+    isFetched: false,
+  },
   isFetched: false,
 };
 
@@ -39,7 +45,9 @@ export default function historyReducer(
         { isFetched: true, data: action.payload },
       );
     case SET_GAS_INFO: {
-      return { ...state, gasInfo: action.payload };
+      const gasPriceInfo = action.payload;
+      const isGasFetched = !!Object.keys(gasPriceInfo).length;
+      return { ...state, gasInfo: { gasPrice: gasPriceInfo, isFetched: isGasFetched } };
     }
     default:
       return state;

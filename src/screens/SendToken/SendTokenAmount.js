@@ -16,7 +16,7 @@ import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 
 // utils
-import { parseNumber, formatAmount, isValidNumber } from 'utils/common';
+import { parseNumber, formatAmount, isValidNumber, getCurrencySymbol } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance } from 'utils/assets';
 
@@ -24,11 +24,11 @@ import { getBalance } from 'utils/assets';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { GasInfo } from 'models/GasInfo';
 import type { TransactionPayload } from 'models/Transaction';
-import type { Balances } from 'models/Asset';
+import type { Balances, Rates } from 'models/Asset';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -130,6 +130,8 @@ const ButtonWrapper = styled.View`
 
 const Btn = styled(Button)`
   margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
 `;
 
 type Props = {
@@ -143,7 +145,12 @@ type Props = {
   balances: Balances,
   session: Object,
   fetchGasInfo: Function,
-  gasInfo: GasInfo,
+  gasInfo: {
+    gasPrice: GasInfo,
+    isFetched: boolean,
+  },
+  rates: Rates,
+  baseFiatCurrency: string,
 }
 
 type State = {
@@ -263,21 +270,26 @@ class SendTokenAmount extends React.Component<Props, State> {
   getTxFeeInWei = (txSpeed?: string) => {
     txSpeed = txSpeed || this.state.transactionSpeed;
     const { gasInfo } = this.props;
-    const gasPrice = gasInfo[txSpeed] || 0;
+    const gasPrice = gasInfo.gasPrice[txSpeed] || 0;
     const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
     return gasPriceWei.mul(GAS_LIMIT);
   };
 
   renderTxSpeedButtons = () => {
+    const { rates, baseFiatCurrency } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return Object.keys(SPEED_TYPES).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
+      const feeInFiat = parseFloat(feeInEth) * rates[ETH][fiatCurrency];
       return (
         <Btn
           key={txSpeed}
           primaryInverted
-          title={`${SPEED_TYPES[txSpeed]} - ${feeInEth} ETH`}
           onPress={this.handleGasPriceChange(txSpeed)}
-        />
+        >
+          <TextLink>{SPEED_TYPES[txSpeed]} - {feeInEth} ETH</TextLink>
+          <Label>{`${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)}`}</Label>
+        </Btn>
       );
     });
   };
@@ -288,7 +300,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       showModal,
       transactionSpeed,
     } = this.state;
-    const { session, balances } = this.props;
+    const { session, balances, gasInfo } = this.props;
     const { token, icon } = this.assetData;
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
@@ -298,7 +310,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
     const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted);
-
     return (
       <Container color={UIColors.defaultBackgroundColor}>
         <Header
@@ -332,7 +343,13 @@ class SendTokenAmount extends React.Component<Props, State> {
           </ActionsWrapper>
         </Wrapper>
         <Footer keyboardVerticalOffset={35}>
-          <Button disabled={!session.isOnline} small flexRight title="Next" onPress={this.handleFormSubmit} />
+          <Button
+            disabled={!session.isOnline || !gasInfo.isFetched}
+            small
+            flexRight
+            title="Next"
+            onPress={this.handleFormSubmit}
+          />
         </Footer>
         <SlideModal
           isVisible={showModal}
@@ -351,11 +368,15 @@ class SendTokenAmount extends React.Component<Props, State> {
 const mapStateToProps = ({
   assets: { balances },
   session: { data: session },
+  rates: { data: rates },
   history: { gasInfo },
+  appSettings: { data: { baseFiatCurrency } },
 }) => ({
+  rates,
   balances,
   session,
   gasInfo,
+  baseFiatCurrency,
 });
 
 const mapDispatchToProps = (dispatch) => ({
