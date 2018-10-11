@@ -45,6 +45,8 @@ type State = {
   isScanning: boolean,
   activeTab: string,
   tWordsPhraseFull: string,
+  inputEnabled: boolean,
+  restoreEnabled: boolean,
 };
 
 const window = Dimensions.get('window');
@@ -58,6 +60,7 @@ const InputButton = styled.TouchableOpacity`
   align-items: center;
   margin-left: 10px;
   margin-top: 47px;
+  ${props => props.disabled ? 'opacity: .3;' : ''}
 `;
 
 const ButtonText = styled(BaseText)`
@@ -85,6 +88,8 @@ class ImportWallet extends React.Component<Props, State> {
     isScanning: false,
     activeTab: TWORDSPHRASE,
     tWordsPhraseFull: '',
+    inputEnabled: false,
+    restoreEnabled: false,
   };
 
   constructor(props: Props) {
@@ -134,12 +139,12 @@ class ImportWallet extends React.Component<Props, State> {
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    const { privateKey, tWordsPhraseFull } = this.state;
+    const { privateKey, tWordsPhraseFull, tWordsPhrase } = this.state;
 
     if (privateKey) {
       importWalletFromPrivateKey(privateKey);
     } else if (tWordsPhraseFull) {
-      importWalletFromTWordsPhrase(tWordsPhraseFull);
+      importWalletFromTWordsPhrase(`${tWordsPhraseFull} ${tWordsPhrase.trim()}`);
     } else {
       this.setState({ errorField: '' });
     }
@@ -181,9 +186,19 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleValueChange = (field) => (value) => {
-    this.setState({
-      [field]: value,
-    });
+    if (this.state.tWordsCount === 12 && value) {
+      this.setState({
+        [field]: value,
+        restoreEnabled: true,
+        inputEnabled: false,
+      });
+    } else {
+      this.setState({
+        [field]: value,
+        inputEnabled: !!value,
+        restoreEnabled: false,
+      });
+    }
     this.props.resetWalletError();
   };
 
@@ -198,8 +213,9 @@ class ImportWallet extends React.Component<Props, State> {
       tWordsCount: this.state.tWordsCount + 1,
       tWordsPhraseFull: this.state.tWordsCount === 1 ?
         this.state.tWordsPhrase :
-        `${this.state.tWordsPhraseFull} ${this.state.tWordsPhrase}`,
+        `${this.state.tWordsPhraseFull} ${this.state.tWordsPhrase.trim()}`,
       tWordsPhrase: '',
+      inputEnabled: false,
     });
   };
 
@@ -210,6 +226,8 @@ class ImportWallet extends React.Component<Props, State> {
       isScanning,
       activeTab,
       tWordsCount,
+      inputEnabled,
+      restoreEnabled,
     } = this.state;
 
     const restoreWalletTabs = [
@@ -277,7 +295,10 @@ class ImportWallet extends React.Component<Props, State> {
               labelBigger
               noBorder
             />
-            <InputButton onPress={tabsInfo[activeTab].buttonPress}>
+            <InputButton
+              disabled={activeTab === 'TWORDSPHRASE' && !inputEnabled}
+              onPress={tabsInfo[activeTab].buttonPress}
+            >
               {activeTab === 'PRIVATEKEY' &&
               <IconButton
                 icon="qrcode"
@@ -290,11 +311,13 @@ class ImportWallet extends React.Component<Props, State> {
             </InputButton>
           </InputWrapper>
         </ScrollWrapper>
+        {(activeTab === 'PRIVATEKEY' || restoreEnabled) &&
         <Footer>
           <FooterWrapper>
             <Button title="Restore wallet" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
           </FooterWrapper>
         </Footer>
+        }
         <QRCodeScanner
           isActive={isScanning}
           onDismiss={this.handleQRScannerClose}
