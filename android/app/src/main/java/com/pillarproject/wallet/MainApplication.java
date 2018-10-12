@@ -5,25 +5,26 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.react.ReactApplication;
-import io.sentry.RNSentryPackage;
-import com.horcrux.svg.SvgPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
+import com.horcrux.svg.SvgPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import cl.json.RNSharePackage;
+import io.sentry.RNSentryPackage;
 import com.crypho.scrypt.RNScryptPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.peel.react.rnos.RNOSModule;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.robinpowered.react.Intercom.IntercomPackage;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import org.reactnative.camera.RNCameraPackage;
-import com.airbnb.android.react.lottie.LottiePackage;
-import cl.json.RNSharePackage;
-import cl.json.ShareApplication;
 import com.ocetnik.timer.BackgroundTimerPackage;
+import com.airbnb.android.react.lottie.LottiePackage;
+import cl.json.ShareApplication;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -47,29 +48,30 @@ public class MainApplication extends Application implements ShareApplication, Re
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new RNSentryPackage(),
-          new SvgPackage(),
-          new UdpSocketsModule(),
-          new TcpSocketsModule(),
-          new RNScryptPackage(),
-          new LottiePackage(),
-          new RNSharePackage(),
-          new BackgroundTimerPackage(),
-          new SplashScreenReactPackage(),
-          new RNFetchBlobPackage(),
-          new RNCameraPackage(),
-          new RNSignalClientPackage(),
-          new VectorIconsPackage(),
-          new RNOSModule(),
-          new RNFirebasePackage(),
-          new RNFirebaseMessagingPackage(),
-          new RNFirebaseCrashlyticsPackage(),
-          new RNDeviceInfo(),
-          new IntercomPackage(),
-          new LinearGradientPackage(),
-          new RNFirebaseNotificationsPackage(),
-          new RandomBytesPackage()
+        new MainReactPackage(),
+        new RNSentryPackage(),
+        new SvgPackage(),
+        new UdpSocketsModule(),
+        new TcpSocketsModule(),
+        new RNScryptPackage(),
+        new LottiePackage(),
+        new RNSharePackage(),
+        new BackgroundTimerPackage(),
+        new SplashScreenReactPackage(),
+        new RNFetchBlobPackage(),
+        new RNCameraPackage(),
+        new RNSignalClientPackage(),
+        new VectorIconsPackage(),
+        new RNOSModule(),
+        new RNFirebasePackage(),
+        new RNFirebaseMessagingPackage(),
+        new RNFirebaseCrashlyticsPackage(),
+        new RNDeviceInfo(),
+        new IntercomPackage(),
+        new LinearGradientPackage(),
+        new RNFirebaseNotificationsPackage(),
+        new RandomBytesPackage(),
+        new PickerPackage()
       );
     }
 
