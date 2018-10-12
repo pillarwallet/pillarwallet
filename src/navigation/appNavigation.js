@@ -56,7 +56,6 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
-import { setupSentryAction } from 'actions/appActions';
 
 // constants
 import {
@@ -368,7 +367,6 @@ type Props = {
   fetchTransactionsHistoryNotifications: Function,
   fetchInviteNotifications: Function,
   getExistingChats: Function,
-  setupSentry: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
   hasUnreadChatNotifications: boolean,
@@ -376,6 +374,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   wallet: Object,
   assets: Object,
+  isPickingImage: boolean,
 }
 
 let lockTimer;
@@ -390,7 +389,6 @@ class AppFlow extends React.Component<Props, {}> {
       fetchAssetsBalances,
       fetchICOs,
       getExistingChats,
-      setupSentry,
       assets,
       wallet,
     } = this.props;
@@ -401,11 +399,6 @@ class AppFlow extends React.Component<Props, {}> {
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
-
-    if (!__DEV__) {
-      setupSentry();
-    }
-
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -433,9 +426,11 @@ class AppFlow extends React.Component<Props, {}> {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
       navigation,
+      isPickingImage,
     } = this.props;
     BackgroundTimer.clearTimeout(lockTimer);
-    if (APP_LOGOUT_STATES.includes(nextAppState)) {
+
+    if (APP_LOGOUT_STATES.includes(nextAppState) && !isPickingImage) {
       lockTimer = BackgroundTimer.setTimeout(() => {
         navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
@@ -480,6 +475,7 @@ const mapStateToProps = ({
   },
   assets: { data: assets },
   wallet: { data: wallet },
+  appSettings: { data: { isPickingImage } },
 }) => ({
   userState,
   notifications,
@@ -488,6 +484,7 @@ const mapStateToProps = ({
   wallet,
   hasUnreadChatNotifications,
   intercomNotificationsCount,
+  isPickingImage,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -506,7 +503,6 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
   fetchICOs: () => dispatch(fetchICOsAction()),
-  setupSentry: () => dispatch(setupSentryAction()),
 });
 
 const ConnectedAppFlow = connect(mapStateToProps, mapDispatchToProps)(AppFlow);

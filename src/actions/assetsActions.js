@@ -23,7 +23,7 @@ import type { TransactionPayload } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import Storage from 'services/storage';
 import { transformAssetsToObject } from 'utils/assets';
-import { delay, noop } from 'utils/common';
+import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction } from 'utils/history';
 
 const storage = Storage.getInstance('db');
@@ -38,7 +38,11 @@ export const sendAssetAction = ({
   decimals,
 }: TransactionPayload, navigateToNextScreen: Function = noop) => {
   return async (dispatch: Function, getState: Function) => {
-    const { wallet: { data: wallet } } = getState();
+    const {
+      wallet: { data: wallet },
+      history: { data: currentHistory },
+    } = getState();
+
     if (symbol === ETH) {
       const ETHTrx = await transferETH({
         gasLimit,
@@ -48,10 +52,13 @@ export const sendAssetAction = ({
         wallet,
       });
       if (ETHTrx && ETHTrx.hash) {
+        const historyTx = buildHistoryTransaction({ ...ETHTrx, asset: symbol });
         dispatch({
           type: ADD_TRANSACTION,
-          payload: buildHistoryTransaction({ ...ETHTrx, asset: symbol }),
+          payload: historyTx,
         });
+        const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
+        storage.save('history', { history: updatedHistory }, true);
       }
       navigateToNextScreen();
       return;
@@ -65,15 +72,18 @@ export const sendAssetAction = ({
       decimals,
     });
     if (ERC20Trx && ERC20Trx.hash) {
+      const historyTx = buildHistoryTransaction({
+        ...ERC20Trx,
+        asset: symbol,
+        value: amount * (10 ** decimals),
+        to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+      });
       dispatch({
         type: ADD_TRANSACTION,
-        payload: buildHistoryTransaction({
-          ...ERC20Trx,
-          asset: symbol,
-          value: amount * (10 ** decimals),
-          to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
-        }),
+        payload: historyTx,
       });
+      const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
+      storage.save('history', { history: updatedHistory }, true);
     }
     navigateToNextScreen();
   };

@@ -22,6 +22,7 @@ import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
+import { setupSentryAction } from 'actions/appActions';
 
 const Crashlytics = firebase.crashlytics();
 
@@ -68,6 +69,9 @@ export const loginAction = (pin: string) => {
         type: DECRYPT_WALLET,
         payload: wallet,
       });
+      if (!__DEV__) {
+        dispatch(setupSentryAction(user, wallet));
+      }
       const routeName = activeScreen === AUTH_FLOW ? prevActiveScreen : activeScreen;
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
