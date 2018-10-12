@@ -166,18 +166,15 @@ class Camera extends React.Component<Props, State> {
   hardwareFlashTimeout: TimeoutID;
   frontFlashTimeout: TimeoutID;
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      showResult: false,
-      previewBase64: '',
-      imageUri: '',
-      cameraType: FRONT,
-      isFlashOn: false,
-      isHardwareFlashOn: false,
-      isFrontFlashVisible: false,
-    };
-  }
+  state = {
+    showResult: false,
+    previewBase64: '',
+    imageUri: '',
+    cameraType: FRONT,
+    isFlashOn: false,
+    isHardwareFlashOn: false,
+    isFrontFlashVisible: false,
+  };
 
   handleModalClose = () => {
     this.setState({ showResult: false });
@@ -224,7 +221,8 @@ class Camera extends React.Component<Props, State> {
   };
 
   openGallery = async () => {
-    this.props.handleImagePick(true, null);
+    const { handleImagePick } = this.props;
+    handleImagePick(true);
 
     ImagePicker.openPicker({
       width: 300,
@@ -233,7 +231,7 @@ class Camera extends React.Component<Props, State> {
       cropping: true,
     })
       .then((image) => {
-        this.props.handleImagePick(false);
+        handleImagePick(false);
         this.setState({
           previewBase64: image.path,
           showResult: true,
@@ -244,13 +242,13 @@ class Camera extends React.Component<Props, State> {
   };
 
   setImage = async () => {
-    const { user, updateUserAvatar } = this.props;
+    const { user, updateUserAvatar, modalHide } = this.props;
     const { imageUri } = this.state;
     const formData: any = new FormData();
     formData.append('walletId', user.walletId);
     formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
     updateUserAvatar(user.walletId, formData);
-    this.props.modalHide();
+    modalHide();
   };
 
   handleFlash = () => {
@@ -389,20 +387,15 @@ class Camera extends React.Component<Props, State> {
   };
 
   render() {
-    const { isVisible, modalHide } = this.props;
+    const { isVisible, modalHide, permissionsGranted } = this.props;
 
-    const cameraScreenContent = this.props.permissionsGranted
+    const cameraScreenContent = permissionsGranted
       ? this.renderCamera()
       : this.renderNoPermissions();
 
     const preview = this.state.previewBase64
-      ? (
-        <ImageCircle
-          resizeMode="cover"
-          source={{ uri: this.state.previewBase64 }}
-        />
-      )
-      : (<Spinner />);
+      ? <ImageCircle resizeMode="cover" source={{ uri: this.state.previewBase64 }} />
+      : <Spinner />;
 
     const animationInTiming = 300;
     const animationOutTiming = 300;
