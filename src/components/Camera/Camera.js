@@ -54,8 +54,9 @@ const HeaderWrapperCamera = styled.SafeAreaView`
   position: absolute;
   top: 0;
   left: 0;
-  
-`;const FrontFlash = styled.View`
+`;
+
+const FrontFlash = styled.View`
   height: ${screenHeight}px;
   width: ${screenWidth}px;
   position: absolute;
