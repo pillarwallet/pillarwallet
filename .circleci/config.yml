@@ -94,7 +94,9 @@ jobs:
             - vendor/bundle
       - run:
           name: Upload to TestFlight
-          command: cd ios && bundle exec fastlane deploy_staging
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            cd ios && bundle exec fastlane deploy_staging build_number:$buildNumber
       - run:
            name: Announce Deployment
            command: |
@@ -180,7 +182,9 @@ jobs:
             - vendor/bundle
       - run:
           name: Upload to TestFlight
-          command: cd ios && bundle exec fastlane deploy_prod
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            cd ios && bundle exec fastlane deploy_prod build_number:$buildNumber
       - run:
            name: Announce Deployment
            command: |
