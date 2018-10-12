@@ -54,6 +54,7 @@ target 'pillarwallet' do
 
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
 
+  pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
   pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
 
   post_install do |installer|

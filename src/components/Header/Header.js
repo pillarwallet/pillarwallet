@@ -24,6 +24,7 @@ type Props = {
   style?: Object,
   headerRightFlex?: string,
   overlay?: boolean,
+  backIcon?: string,
 }
 
 const Wrapper = styled.View`
@@ -99,6 +100,7 @@ const Header = (props: Props) => {
     headerRightFlex,
     overlay,
     flexStart,
+    backIcon,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
   const titleOnBack = title && onBack;
@@ -120,7 +122,7 @@ const Header = (props: Props) => {
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon
-            icon="back"
+            icon={backIcon || 'back'}
             color={light ? baseColors.white : UIColors.primary}
             onPress={() => onBack()}
             fontSize={fontSizes.extraLarge}
