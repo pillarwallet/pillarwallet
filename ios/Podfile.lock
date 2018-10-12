@@ -141,6 +141,7 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - Protobuf (3.6.1)
+  - QBImagePickerController (3.4.0)
   - React (0.56.0):
     - React/Core (= 0.56.0)
   - react-native-background-timer (2.1.0-alpha.6):
@@ -208,6 +209,11 @@ PODS:
     - React
   - RNDeviceInfo (0.21.5):
     - React
+  - RNImageCropPicker (0.21.2):
+    - QBImagePickerController
+    - React/Core
+    - RSKImageCropper
+  - RSKImageCropper (2.2.1)
   - Sentry (4.0.1):
     - Sentry/Core (= 4.0.1)
   - Sentry/Core (4.0.1)
@@ -252,6 +258,7 @@ DEPENDENCIES:
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -278,6 +285,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native-permissions
   RNDeviceInfo:
     :path: ../node_modules/react-native-device-info
+  RNImageCropPicker:
+    :path: ../node_modules/react-native-image-crop-picker
   SentryReactNative:
     :path: ../node_modules/react-native-sentry
   yoga:
@@ -316,6 +325,7 @@ SPEC CHECKSUMS:
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: 1fe0eb13d90b625d94c3b117c274dcfd2e760e11
   react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
   react-native-camera: 68ad5143d2d0636236d46c7de8d2a6455ca52a36
@@ -323,10 +333,12 @@ SPEC CHECKSUMS:
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
+  RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
+  RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
   Sentry: a38f7879924c02239e121b19d993d23bdd1684db
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: 8dcc3501c7aaddb74a4b263e25e74daf5e9f69d6
+PODFILE CHECKSUM: 36e1eefa0fca0b328a79e3281892f224db2f6e43
 
 COCOAPODS: 1.4.0

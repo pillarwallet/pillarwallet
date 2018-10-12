@@ -40,6 +40,10 @@ const glyphMap = {
   'turn-off': '\uE81D',
   'pending-circle': '\uE822',
   'connection-circle': '\uE823',
+  flip: '\uE825',
+  'flash-off': '\uE826',
+  'flash-on': '\uE828',
+  gallery: '\uE827',
 };
 
 type Props = {

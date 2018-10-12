@@ -65,6 +65,7 @@ android {
     multiDexEnabled true
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     // Deprecated. Used by net.openid:appauth
+    vectorDrawables.useSupportLibrary = true
   }
   dexOptions {
     javaMaxHeapSize "1G"
@@ -147,13 +148,13 @@ android {
 
 
 dependencies {
-    compile project(':react-native-sentry')
-    compile project(':react-native-svg')
-    compile project(':react-native-background-timer')
+  compile project(':react-native-image-crop-picker')
+  compile project(':react-native-svg')
+  compile project(':react-native-background-timer')
+  compile project(':react-native-sentry')
   compile 'com.android.support:multidex:1.0.1'
   compile fileTree(dir: 'libs', include: ['*.jar'])
-
-
+  
   // Our dependencies
   compile "com.google.android.gms:play-services-base:15.0.1"
   compile "com.google.firebase:firebase-core:15.0.2"
@@ -224,7 +225,6 @@ dependencies {
   compile "com.android.support:appcompat-v7:26.0.1"
   compile "com.facebook.react:react-native:+"  // From node_modules
 
-
   // Testing
   androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
   // We use a modified build of com.android.support.test:runner:1.0.1. Explanation in maven-test/README
@@ -233,7 +233,6 @@ dependencies {
   androidTestCompile 'com.google.code.findbugs:jsr305:3.0.0'
   androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
   androidTestCompile 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
-
 }
 
 configurations.all {

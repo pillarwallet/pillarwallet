@@ -8,6 +8,11 @@ class FirebaseMock {
         return null;
       };
     },
+    onNotificationOpened: () => {
+      return () => {
+        return null;
+      };
+    },
   })
 
   messaging = () => ({

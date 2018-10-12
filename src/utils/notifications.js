@@ -33,7 +33,7 @@ const connectionEvents = [
   TYPE_RECEIVED,
 ];
 
-export const processNotification = (notification: Object, myEthAddress: string): ?Object => {
+export const processNotification = (notification: Object, myEthAddress?: string): ?Object => {
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
