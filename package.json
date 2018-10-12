@@ -81,7 +81,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -130,6 +130,7 @@
     "react-native-device-info": "^0.21.5",
     "react-native-firebase": "^4.2.0",
     "react-native-gifted-chat": "https://github.com/FaridSafi/react-native-gifted-chat",
+    "react-native-image-crop-picker": "^0.21.2",
     "react-native-intercom": "^12.2.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
@@ -148,7 +149,7 @@
     "react-native-tcp": "^3.2.1",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^5.0.0",
-    "react-navigation": "2.9.3",
+    "react-navigation": "2.11.2",
     "react-navigation-fluid-transitions": "^0.2.0",
     "react-navigation-redux-helpers": "2.0.1",
     "react-navigation-tabs": "^0.5.1",
@@ -157,7 +158,7 @@
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
-    "rn-signal-protocol-messaging": "1.0.79",
+    "rn-signal-protocol-messaging": "1.0.81",
     "shuffle-array": "^1.0.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
