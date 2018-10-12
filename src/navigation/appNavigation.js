@@ -374,6 +374,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   wallet: Object,
   assets: Object,
+  isPickingImage: boolean,
 }
 
 let lockTimer;
@@ -425,9 +426,11 @@ class AppFlow extends React.Component<Props, {}> {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
       navigation,
+      isPickingImage,
     } = this.props;
     BackgroundTimer.clearTimeout(lockTimer);
-    if (APP_LOGOUT_STATES.includes(nextAppState)) {
+
+    if (APP_LOGOUT_STATES.includes(nextAppState) && !isPickingImage) {
       lockTimer = BackgroundTimer.setTimeout(() => {
         navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
@@ -469,6 +472,7 @@ const mapStateToProps = ({
   },
   assets: { data: assets },
   wallet: { data: wallet },
+  appSettings: { data: { isPickingImage } },
 }) => ({
   userState,
   notifications,
@@ -477,6 +481,7 @@ const mapStateToProps = ({
   wallet,
   hasUnreadChatNotifications,
   intercomNotificationsCount,
+  isPickingImage,
 });
 
 const mapDispatchToProps = (dispatch) => ({
