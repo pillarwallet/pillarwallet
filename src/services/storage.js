@@ -12,9 +12,7 @@ Storage.prototype.get = function (id: string) {
 };
 
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
-  let conflicts;
-  return this.db.get(id, { conflicts: true }).then((doc) => {
-    conflicts = doc._conflicts;
+  return this.db.get(id).then((doc) => {
     const options = { force: forceRewrite };
     const record = forceRewrite
       ? { _id: id, _rev: doc._rev, ...data }
@@ -29,9 +27,26 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
       );
     return this.db.put(record, options);
   })
-    .catch(() => this.db.post({ _id: id, ...data }))
-    .catch(() => {
-      Sentry.captureException(conflicts);
+    .catch(async (err) => {
+      if (err.status !== 404) {
+        const db = await this.db.allDocs();
+        Sentry.captureException({
+          id,
+          data,
+          err,
+          method: 'PUT',
+          db: JSON.stringify(db),
+        });
+      }
+      return this.db.post({ _id: id, ...data });
+    })
+    .catch((err) => {
+      Sentry.captureException({
+        id,
+        data,
+        err,
+        method: 'POST',
+      });
     });
 };
 

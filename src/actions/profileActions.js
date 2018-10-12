@@ -39,3 +39,14 @@ export const updateAppSettingsAction = (path: string, fieldValue: any) => {
     });
   };
 };
+
+export const handleImagePickAction = (isPickingImage: boolean) => {
+  return (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: {
+        isPickingImage,
+      },
+    });
+  };
+};

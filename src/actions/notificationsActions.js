@@ -3,6 +3,7 @@
 import debounce from 'lodash.debounce';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
+import { NavigationActions } from 'react-navigation';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -19,6 +20,7 @@ import {
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, SET_INITIAL_ROUTE } from 'constants/navigationConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -27,8 +29,14 @@ const BCX = 'BCX';
 const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
+let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
 let signalListener = null;
+
+const NOTIFICATION_ROUTES = {
+  [CONNECTION]: PEOPLE,
+  [BCX]: HOME,
+};
 
 export const startListeningIntercomNotificationsAction = () => {
   return async (dispatch: Function) => {
@@ -86,7 +94,6 @@ export const startListeningNotificationsAction = () => {
     if (notificationOpen) {
       dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
     }
-
     // TODO: remove it once signal payload matches the rest notifications.
     if (!signalListener) {
       // TODO: This is a temporary solution to reduces the possibility of the wrong notification order.
@@ -137,3 +144,36 @@ export const stopListeningNotificationsAction = () => {
   };
 };
 
+export const startListeningOnOpenNotificationAction = () => {
+  return (dispatch: Function, getState: Function) => { // eslint-disable-line
+    if (notificationsOpenerListener) return;
+    notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
+      const { navigation: { activeScreen } } = getState();
+      const { type } = processNotification(message.notification._data) || {};
+      const notificationRoute = NOTIFICATION_ROUTES[type] || null;
+      dispatch({
+        type: SET_INITIAL_ROUTE,
+        payload: notificationRoute,
+      });
+      if (activeScreen && activeScreen !== AUTH_FLOW) {
+        const routeName = notificationRoute || HOME;
+        const navigateToAppAction = NavigationActions.navigate({
+          routeName: APP_FLOW,
+          params: {},
+          action: NavigationActions.navigate({
+            routeName,
+          }),
+        });
+        dispatch(navigateToAppAction);
+      }
+    });
+  };
+};
+
+export const stopListeningOnOpenNotificationAction = () => {
+  return (dispatch: Function) => { // eslint-disable-line
+    if (!notificationsOpenerListener) return;
+    notificationsOpenerListener();
+    notificationsOpenerListener = null;
+  };
+};

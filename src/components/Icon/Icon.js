@@ -7,12 +7,12 @@ const glyphMap = {
   chat: '\uE801',
   back: '\uE819',
   close: '\uE802',
-  help: '\uE803',
+  help: '\uE874',
   'down-arrow': '\uE805',
   remove: '\uE806',
   mute: '\uE804',
   'up-arrow': '\uE808',
-  search: '\uE807',
+  search: '\uE873',
   settings: '\uE809',
   warning: '\uE80A',
   check: '\uE80B',
@@ -40,6 +40,10 @@ const glyphMap = {
   'turn-off': '\uE81D',
   'pending-circle': '\uE822',
   'connection-circle': '\uE823',
+  flip: '\uE825',
+  'flash-off': '\uE826',
+  'flash-on': '\uE828',
+  gallery: '\uE827',
 };
 
 type Props = {
