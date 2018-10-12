@@ -10094,6 +10094,10 @@ react-native-firebase@^4.2.0:
     react-native-parsed-text "^0.0.20"
     uuid "3.3.0"
 
+react-native-image-crop-picker@^0.21.2:
+  version "0.21.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.21.2.tgz#f0e7ad4615f1f7c79ba25e2e7708042e306d258e"
+
 react-native-intercom@^12.2.0:
   version "12.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-12.2.0.tgz#a7ea3357e9613f09fb2333c5962973e037b989b5"
