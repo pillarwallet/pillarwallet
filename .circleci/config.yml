@@ -43,6 +43,7 @@ jobs:
             rm .env
             cp environments/.env.staging ./.env
             sed -i.bak s/_build_number_/$buildNumber/g .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
       - run:
@@ -131,6 +132,7 @@ jobs:
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak s/_build_number_/$buildNumber/g .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
       - run:
@@ -406,7 +408,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - feature/fix-ios-version
       - stage_android:
           requires:
             - build

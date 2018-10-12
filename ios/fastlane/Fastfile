@@ -9,7 +9,7 @@ platform :ios do
   desc "Release to production TestFlight"
   lane :deploy_prod do |options|
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString options[:build_number]' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     match(type: "appstore",
           readonly: true,
@@ -33,7 +33,7 @@ platform :ios do
 
     # insert circleCI's build number as our build number
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString options[:build_number]' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     # ensure we don't have automatic code signing set up
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
