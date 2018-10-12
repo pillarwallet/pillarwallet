@@ -33,7 +33,7 @@ const TabOuterWrapper = styled.View`
 
 const TabItem = styled.TouchableOpacity`
   height: 32px;
-  padding: 0 10px;
+  padding: 0 15px;
   align-items: center;
   justify-content: center;
   background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
