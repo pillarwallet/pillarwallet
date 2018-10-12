@@ -408,7 +408,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/fix-ios-version
+                  - master
       - stage_android:
           requires:
             - build
