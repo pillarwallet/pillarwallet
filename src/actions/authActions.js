@@ -13,7 +13,7 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { ASSETS, APP_FLOW, AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
+import { APP_FLOW, AUTH_FLOW, ONBOARDING_FLOW, ASSETS } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -31,6 +31,7 @@ const chat = new ChatService();
 
 export const loginAction = (pin: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const { navigation: { prevActiveScreen, activeScreen } } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -68,18 +69,18 @@ export const loginAction = (pin: string) => {
         type: DECRYPT_WALLET,
         payload: wallet,
       });
-
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
-
-      const navigateToAssetsAction = NavigationActions.navigate({
+      const routeName = activeScreen === AUTH_FLOW ? prevActiveScreen : activeScreen;
+      const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: NavigationActions.navigate({ routeName: ASSETS }),
+        action: NavigationActions.navigate({
+          routeName: routeName || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
+        }),
       });
-
-      dispatch(navigateToAssetsAction);
+      dispatch(navigateToAppAction);
     } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,

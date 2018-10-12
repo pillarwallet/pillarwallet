@@ -445,6 +445,7 @@ class AppFlow extends React.Component<Props, {}> {
       hasUnreadNotifications,
       intercomNotificationsCount,
       hasUnreadChatNotifications,
+      navigation,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
@@ -452,11 +453,13 @@ class AppFlow extends React.Component<Props, {}> {
     }
 
     return (
-      <AppFlowNavigation screenProps={{
-        hasUnreadNotifications,
-        hasUnreadChatNotifications,
-        intercomNotificationsCount,
-      }}
+      <AppFlowNavigation
+        screenProps={{
+          hasUnreadNotifications,
+          hasUnreadChatNotifications,
+          intercomNotificationsCount,
+        }}
+        navigation={navigation}
       />
     );
   }
@@ -502,4 +505,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchICOs: () => dispatch(fetchICOsAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppFlow);
+const ConnectedAppFlow = connect(mapStateToProps, mapDispatchToProps)(AppFlow);
+ConnectedAppFlow.router = AppFlowNavigation.router;
+ConnectedAppFlow.navigationOptions = AppFlowNavigation.navigationOptions;
+
+export default ConnectedAppFlow;
