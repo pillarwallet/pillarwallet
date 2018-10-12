@@ -131,7 +131,7 @@ export const startListeningNotificationsAction = () => {
 };
 
 export const stopListeningNotificationsAction = () => {
-  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
+  return async (dispatch: Function) => { // eslint-disable-line
     // TODO: remove it once signal payload matches the rest notifications.
     if (signalListener) {
       signalListener();
@@ -143,7 +143,6 @@ export const stopListeningNotificationsAction = () => {
     notificationsListener = null;
   };
 };
-
 
 export const startListeningOnOpenNotificationAction = () => {
   return (dispatch: Function, getState: Function) => { // eslint-disable-line
@@ -170,7 +169,6 @@ export const startListeningOnOpenNotificationAction = () => {
     });
   };
 };
-
 
 export const stopListeningOnOpenNotificationAction = () => {
   return (dispatch: Function) => { // eslint-disable-line
