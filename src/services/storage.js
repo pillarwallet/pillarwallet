@@ -25,17 +25,28 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
         },
         data,
       );
-    return this.db.put(record, options) // eslint-disable-line
+    return this.db.put(record, options);
   })
     .catch(async (err) => {
       if (err.status !== 404) {
         const db = await this.db.allDocs();
-        Sentry.captureException({ id, data, err, method: 'PUT', db: JSON.stringify(db) });
+        Sentry.captureException({
+          id,
+          data,
+          err,
+          method: 'PUT',
+          db: JSON.stringify(db),
+        });
       }
-      return this.db.post({ _id: id, ...data })
+      return this.db.post({ _id: id, ...data });
     })
     .catch((err) => {
-      Sentry.captureException({ id, data, err, method: 'POST' });
+      Sentry.captureException({
+        id,
+        data,
+        err,
+        method: 'POST',
+      });
     });
 };
 
