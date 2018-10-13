@@ -9,7 +9,7 @@ import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
 import { resetUnreadAction } from 'actions/chatActions';
-import { fontSizes, baseColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, spacing, UIColors, fontWeights } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
@@ -124,10 +124,15 @@ const ButtonIconWrapper = styled.View`
 `;
 
 const LabelText = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  color: ${(props) => props.button ? baseColors.fireEngineRed : baseColors.darkGray};
+  font-size: ${(props) => props.button ? fontSizes.extraSmall : fontSizes.small};
+  color: ${(props) => props.button ? baseColors.electricBlue : baseColors.darkGray};
   margin-left: auto;
-  padding: 6px;
+  padding: ${(props) => props.button ? `0 ${spacing.rhythm}px` : '6px'};
+  ${props => props.button ? `border-color: ${UIColors.defaultBorderColor};` : ''}
+  ${props => props.button ? 'border-width: 1px;' : ''}
+  ${props => props.button ? 'border-radius: 40px;' : ''}
+  ${props => props.button ? 'height: 34px;' : ''}
+  ${props => props.button ? `font-weight: ${fontWeights.medium};` : ''}
 `;
 
 const IconWrapper = styled.View`
