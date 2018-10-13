@@ -190,7 +190,6 @@ export default class Toast extends React.Component<{}, State> {
               display: 'flex',
             }}
             iconStyle={{
-              // borderWidth: 2,
               borderWidth: 0,
               borderRadius: 16,
               paddingTop: Platform.OS === 'android' ? 8 : 7,
