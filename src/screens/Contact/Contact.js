@@ -144,10 +144,6 @@ class Contact extends React.Component<Props, State> {
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
     const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
-    const activityFeedEsData = {
-      title: 'Make your first step',
-      body: 'Your activity will appear here.',
-    };
     return (
       <Container>
         <Header
@@ -202,7 +198,6 @@ class Contact extends React.Component<Props, State> {
             feedTitle="activity."
             navigation={navigation}
             activeTab={TRANSACTIONS}
-            esData={activityFeedEsData}
             additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
           />}
         </ScrollWrapper>
