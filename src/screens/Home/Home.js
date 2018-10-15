@@ -480,6 +480,7 @@ class HomeScreen extends React.Component<Props, State> {
               activeTab={this.state.activeTab}
               esData={esData}
               sortable
+              showEmptyState
             />
           </View>
         </Animated.ScrollView>
