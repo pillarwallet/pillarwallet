@@ -435,7 +435,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
     return (
       <ActivityFeedWrapper>
-        {!!feedTitle && (processedHistory.length || showEmptyState) &&
+        {!!feedTitle && (!!processedHistory.length || !!showEmptyState) &&
         <ActivityFeedHeader>
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
@@ -446,7 +446,7 @@ class ActivityFeed extends React.Component<Props, State> {
           ItemSeparatorComponent={() => <Separator spaceOnLeft={60} />}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={
-            showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
+            !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
           }
         />
         <SlideModal
