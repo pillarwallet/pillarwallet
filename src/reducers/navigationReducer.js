@@ -29,24 +29,18 @@ const initialState = {
 };
 
 const NAVIGATION_ACTION = 'Navigation';
-const NAVIGATION_COMPLETE_TRANSITION = 'Navigation/COMPLETE_TRANSITION';
 
 function navigationReducer(state: NavigationReducerState = initialState, action: NavigationReducerAction) {
   if (action.type === SET_INITIAL_ROUTE) {
     return { ...state, activeScreen: action.payload };
   }
   if (action.type && action.type.includes(NAVIGATION_ACTION)) {
-    let newActiveScreen = (action.action ? action.action.routeName : action.routeName) || action.key;
-    let newPrevActiveScreen = state.activeScreen;
     const nextState = RootNavigation.router.getStateForAction(action, state) || state;
-    if (action.type === NAVIGATION_COMPLETE_TRANSITION) {
-      newActiveScreen = state.activeScreen;
-      newPrevActiveScreen = state.prevActiveScreen;
-    }
+    const newActiveScreen = RootNavigation.router.getPathAndParamsForState(nextState).path.split('/').slice(-1)[0];
     return {
       ...nextState,
       activeScreen: newActiveScreen,
-      prevActiveScreen: newPrevActiveScreen,
+      prevActiveScreen: state.activeScreen,
     };
   }
   return state;
