@@ -62,7 +62,6 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
       <Container>
         <Header
           onBack={this.handleBack}
-          onClose={this.props.navigation.dismiss}
           title="enter pincode"
         />
         <CheckPin onPinValid={this.handleTransaction} isChecking={isChecking} />
