@@ -311,7 +311,6 @@ class SendTokenAmount extends React.Component<Props, State> {
       <Container color={UIColors.defaultBackgroundColor}>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
-          onClose={this.props.navigation.dismiss}
           title={`send ${this.assetData.token}`}
         />
         <Wrapper regularPadding>
