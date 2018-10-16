@@ -147,9 +147,9 @@ android {
 
 
 dependencies {
-    compile project(':react-native-sentry')
-    compile project(':react-native-svg')
-    compile project(':react-native-background-timer')
+  compile project(':react-native-sentry')
+  compile project(':react-native-svg')
+  compile project(':react-native-background-timer')
   compile 'com.android.support:multidex:1.0.1'
   compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -234,6 +234,8 @@ dependencies {
   androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
   androidTestCompile 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
 
+  // Shadows
+  compile 'com.github.devlight.shadowlayout:library:1.0.2'
 }
 
 configurations.all {
