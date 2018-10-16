@@ -61,7 +61,6 @@ class SendTokenTransaction extends React.Component<Props, State> {
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
     const transactionStatusTitle = isSuccess ? 'Money is on its way' : 'Transaction failed';
-    console.log(error);
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
