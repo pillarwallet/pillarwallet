@@ -31,7 +31,7 @@ const chat = new ChatService();
 
 export const loginAction = (pin: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { navigation: { prevActiveScreen, activeScreen } } = getState();
+    const { navigation: { prevActiveScreen } } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -72,12 +72,11 @@ export const loginAction = (pin: string) => {
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
-      const routeName = activeScreen === AUTH_FLOW ? prevActiveScreen : activeScreen;
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
         action: NavigationActions.navigate({
-          routeName: routeName || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
+          routeName: prevActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
         }),
       });
       dispatch(navigateToAppAction);
