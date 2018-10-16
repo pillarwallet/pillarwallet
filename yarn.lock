@@ -10245,6 +10245,10 @@ react-native-tcp@^3.2.1:
     process "^0.11.9"
     util "^0.10.3"
 
+react-native-testfairy@^2.15.1:
+  version "2.15.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-testfairy/-/react-native-testfairy-2.15.1.tgz#d7f0bb0699786abbe5c1beb33e59ca04ff36bf96"
+
 react-native-udp@^2.1.0:
   version "2.3.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-udp/-/react-native-udp-2.3.1.tgz#88eb0f548ed8c7e35065392526ecf8ce2e2be91e"
