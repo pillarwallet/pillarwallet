@@ -199,7 +199,7 @@ class SendTokenContacts extends React.Component<Props, State> {
 
     return (
       <Container color={UIColors.defaultBackgroundColor}>
-        <Header onClose={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
+        <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
         <FormWrapper>
           <Form
             ref={node => {
