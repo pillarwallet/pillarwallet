@@ -110,7 +110,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     const contactUsername = contact.username;
     return (
       <Container>
-        <Header title={`send to ${contactUsername}`} centerTitle onClose={navigation.dismiss} />
+        <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} />
         <FlatList
           keyExtractor={item => item.symbol}
           data={assetsArray}
