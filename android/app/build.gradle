@@ -65,6 +65,7 @@ android {
     multiDexEnabled true
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     // Deprecated. Used by net.openid:appauth
+    vectorDrawables.useSupportLibrary = true
   }
   dexOptions {
     javaMaxHeapSize "1G"
@@ -147,13 +148,13 @@ android {
 
 
 dependencies {
-  compile project(':react-native-sentry')
+  compile project(':react-native-image-crop-picker')
   compile project(':react-native-svg')
   compile project(':react-native-background-timer')
+  compile project(':react-native-sentry')
   compile 'com.android.support:multidex:1.0.1'
   compile fileTree(dir: 'libs', include: ['*.jar'])
-
-
+  
   // Our dependencies
   compile "com.google.android.gms:play-services-base:15.0.1"
   compile "com.google.firebase:firebase-core:15.0.2"
@@ -223,7 +224,6 @@ dependencies {
   compile project(':react-native-device-info')
   compile "com.android.support:appcompat-v7:26.0.1"
   compile "com.facebook.react:react-native:+"  // From node_modules
-
 
   // Testing
   androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'

@@ -19,6 +19,7 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.ocetnik.timer.BackgroundTimerPackage;
 import com.peel.react.TcpSocketsModule;
 import com.peel.react.rnos.RNOSModule;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.robinpowered.react.Intercom.IntercomPackage;
 import com.tradle.react.UdpSocketsModule;
 
@@ -50,30 +51,31 @@ public class MainApplication extends Application implements ShareApplication, Re
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-          new RNSentryPackage(),
-          new SvgPackage(),
-          new UdpSocketsModule(),
-          new TcpSocketsModule(),
-          new RNScryptPackage(),
-          new LottiePackage(),
-          new RNSharePackage(),
-          new BackgroundTimerPackage(),
-          new SplashScreenReactPackage(),
-          new RNFetchBlobPackage(),
-          new RNCameraPackage(),
-          new RNSignalClientPackage(),
-          new VectorIconsPackage(),
-          new RNOSModule(),
-          new RNFirebasePackage(),
-          new RNFirebaseMessagingPackage(),
-          new RNFirebaseCrashlyticsPackage(),
-          new RNDeviceInfo(),
-          new IntercomPackage(),
-          new LinearGradientPackage(),
-          new RNFirebaseNotificationsPackage(),
-          new RandomBytesPackage(),
-          new NativeShadowPackage()
+        new MainReactPackage(),
+        new RNSentryPackage(),
+        new SvgPackage(),
+        new UdpSocketsModule(),
+        new TcpSocketsModule(),
+        new RNScryptPackage(),
+        new LottiePackage(),
+        new RNSharePackage(),
+        new BackgroundTimerPackage(),
+        new SplashScreenReactPackage(),
+        new RNFetchBlobPackage(),
+        new RNCameraPackage(),
+        new RNSignalClientPackage(),
+        new VectorIconsPackage(),
+        new RNOSModule(),
+        new RNFirebasePackage(),
+        new RNFirebaseMessagingPackage(),
+        new RNFirebaseCrashlyticsPackage(),
+        new RNDeviceInfo(),
+        new IntercomPackage(),
+        new LinearGradientPackage(),
+        new RNFirebaseNotificationsPackage(),
+        new RandomBytesPackage(),
+        new PickerPackage(),
+        new NativeShadowPackage()
       );
     }
 

@@ -3,6 +3,7 @@ import { uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
   TRANSACTION_EVENT,
+  SET_GAS_INFO,
 } from 'constants/historyConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -105,12 +106,10 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       dispatch(updateAssetsAction(newAssets));
       dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
     }
-
     const updatedHistory = uniqBy([...mappedHistoryNotifications, ...currentHistory], 'hash');
-    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt));
+    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0));
     storage.save('history', { history: updatedHistory }, true);
     storage.save('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } });
-
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: { lastTxSyncDatetime: lastCreatedAt },
@@ -118,6 +117,16 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     dispatch({
       type: SET_HISTORY,
       payload: updatedHistory,
+    });
+  };
+};
+
+export const fetchGasInfoAction = () => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const gasInfo = await api.fetchGasInfo();
+    dispatch({
+      type: SET_GAS_INFO,
+      payload: gasInfo,
     });
   };
 };

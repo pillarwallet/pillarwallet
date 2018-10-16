@@ -10,13 +10,13 @@ import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
+import {
+  startListeningOnOpenNotificationAction,
+  stopListeningOnOpenNotificationAction,
+} from 'actions/notificationsActions';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
-
-if (!__DEV__) {
-  Sentry.config('https://82eb3c51aa80408597cac8ae5c18f9d1@sentry.io/1294444').install();
-}
 
 const store = configureStore();
 const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
@@ -27,20 +27,32 @@ type Props = {
   isFetched: Boolean,
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
+  startListeningOnOpenNotification: Function,
+  stopListeningOnOpenNotification: Function,
 }
 
 class App extends React.Component<Props, *> {
+  constructor(props: Props) {
+    super(props);
+    if (!__DEV__) {
+      Sentry.config('https://82eb3c51aa80408597cac8ae5c18f9d1@sentry.io/1294444').install();
+    }
+  }
+
   componentWillUnmount() {
+    const { stopListeningOnOpenNotification } = this.props;
+    stopListeningOnOpenNotification();
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
   }
 
-  async componentDidMount() {
-    const { fetchAppSettingsAndRedirect } = this.props;
+  componentDidMount() {
+    const { fetchAppSettingsAndRedirect, startListeningOnOpenNotification } = this.props;
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+    startListeningOnOpenNotification();
   }
 
   handleConnectivityChange = isOnline => {
@@ -78,6 +90,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
+  startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
+  stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

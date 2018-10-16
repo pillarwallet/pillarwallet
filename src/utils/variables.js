@@ -47,6 +47,7 @@ export const baseColors = {
   alabaster: '#fcfcfc',
   aliceBlue: '#f7fbff',
   manatee: '#a3a9b2',
+  blanchedAlmond: '#ffe8ce',
 };
 
 export const brandColors = [

@@ -188,10 +188,6 @@ class AssetScreen extends React.Component<Props, State> {
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
     const shouldAssetDescriptionToggleShow = assetData.description.length > 40;
-    const activityFeedEsData = {
-      title: 'Make your first step',
-      body: 'Your activity will appear here.',
-    };
     const displayBalanceInFiat = {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
@@ -271,7 +267,6 @@ class AssetScreen extends React.Component<Props, State> {
             feedTitle="transactions."
             navigation={navigation}
             activeTab={TRANSACTIONS}
-            esData={activityFeedEsData}
             additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
           />
         </ScrollWrapper>
