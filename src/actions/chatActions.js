@@ -119,6 +119,8 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
       _id: `${message.serverTimestamp}_${index}`,
       text: message.content,
       createdAt: new Date(message.serverTimestamp),
+      status: message.status,
+      type: message.type,
       user: {
         _id: message.username,
         name: message.username,
