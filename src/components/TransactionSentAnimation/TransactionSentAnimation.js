@@ -22,9 +22,9 @@ export default class TransactionSentAnimation extends React.Component<{}> {
           width: 200,
           height: 200,
           marginBottom: -40,
-          marginTop: -10,
+          marginTop: -20,
         }}
-        speed={0.5}
+        speed={3}
         loop={false}
       />
     );
