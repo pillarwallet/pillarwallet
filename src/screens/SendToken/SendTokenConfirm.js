@@ -114,7 +114,6 @@ class SendTokenContacts extends React.Component<Props, State> {
         <Container>
           <Header
             onBack={() => this.props.navigation.goBack(null)}
-            onClose={this.handleModalDismissal}
             title="send"
           />
           <Wrapper regularPadding>
