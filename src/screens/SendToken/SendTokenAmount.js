@@ -316,11 +316,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
-    const displayBalanceInFiat = {
-      amount: formattedBalanceInFiat,
-      currency: fiatCurrency,
-    };
-    const currencySymbol = getCurrencySymbol(displayBalanceInFiat.currency);
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
     return (
       <Container color={UIColors.defaultBackgroundColor}>
         <Header
@@ -340,7 +336,7 @@ class SendTokenAmount extends React.Component<Props, State> {
             <SendTokenDetails>
               <Label small>Available Balance</Label>
               <SendTokenDetailsValue>
-                {formattedBalance} {token} ({currencySymbol}{displayBalanceInFiat.amount})
+                {formattedBalance} {token} ({currencySymbol}{formattedBalanceInFiat})
               </SendTokenDetailsValue>
               <Label small>Est. Network Fee</Label>
               <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
