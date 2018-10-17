@@ -50,6 +50,10 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
     });
 };
 
+Storage.prototype.getAllDocs = function () {
+  return this.db.allDocs();
+};
+
 Storage.prototype.removeAll = function () {
   return this.db.allDocs().then(result => {
     return Promise.all(result.rows.map(row => {
