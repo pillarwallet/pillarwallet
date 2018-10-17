@@ -39,6 +39,7 @@ import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
 import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
+import SendDebugDataScreen from 'screens/SendDebugData';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -92,6 +93,7 @@ import {
   ICO_INSTRUCTIONS,
   ICO_CONFIRM,
   ICO_LINKS,
+  SEND_DEBUG_DATA,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -351,6 +353,7 @@ const AppFlowNavigation = createStackNavigator(
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
+    [SEND_DEBUG_DATA]: SendDebugDataScreen,
     [CHAT]: ChatScreen,
   }, modalTransition,
 );
