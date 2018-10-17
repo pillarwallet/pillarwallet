@@ -127,7 +127,7 @@ const LabelText = styled(BaseText)`
   font-size: ${(props) => props.button ? fontSizes.extraSmall : fontSizes.small};
   color: ${(props) => props.button ? baseColors.electricBlue : baseColors.darkGray};
   margin-left: auto;
-  padding: ${(props) => props.button ? `0 ${spacing.rhythm}px` : '6px'};
+  padding: ${(props) => props.button ? `0 ${spacing.rhythm}px` : '6px 0'};
   ${props => props.button ? `border-color: ${UIColors.defaultBorderColor};` : ''}
   ${props => props.button ? 'border-width: 1px;' : ''}
   ${props => props.button ? 'border-radius: 40px;' : ''}
