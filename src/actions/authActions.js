@@ -31,7 +31,7 @@ const chat = new ChatService();
 
 export const loginAction = (pin: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { navigation: { prevActiveScreen } } = getState();
+    const { navigation: { prevActiveScreen, prevActiveScreenParams } } = getState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -77,6 +77,7 @@ export const loginAction = (pin: string) => {
         params: {},
         action: NavigationActions.navigate({
           routeName: prevActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
+          params: prevActiveScreenParams,
         }),
       });
       dispatch(navigateToAppAction);
