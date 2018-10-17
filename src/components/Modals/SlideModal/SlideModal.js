@@ -59,6 +59,19 @@ const getTheme = (props: Props) => {
 const HeaderWrapper = styled.View`
 `;
 
+const ContentWrapper = styled.View`
+  width: 100%;
+  height: 100%;
+`;
+
+const Backdrop = styled.TouchableWithoutFeedback`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
 const ModalBackground = styled.View`
   border-top-left-radius: ${props => props.theme.borderRadius};
   border-top-right-radius:  ${props => props.theme.borderRadius};
@@ -172,11 +185,9 @@ export default class SlideModal extends React.Component<Props, *> {
     const modalContent = () => {
       if (fullScreen) {
         return (
-          <Root>
-            <Container color={backgroundColor}>
-              {modalInner}
-            </Container>
-          </Root>
+          <Container color={backgroundColor}>
+            {modalInner}
+          </Container>
         );
       }
 
@@ -211,9 +222,20 @@ export default class SlideModal extends React.Component<Props, *> {
         avoidKeyboard={avoidKeyboard}
         style={{
           margin: 0,
+          position: 'relative',
+          zIndex: 10,
         }}
       >
-        {modalContent()}
+        <Root>
+          <ContentWrapper>
+            {!fullScreen &&
+              <Backdrop onPress={this.hideModal}>
+                <ContentWrapper />
+              </Backdrop>
+            }
+            {modalContent()}
+          </ContentWrapper>
+        </Root>
         {isVisible && fullScreenComponent}
       </Modal>
     );
