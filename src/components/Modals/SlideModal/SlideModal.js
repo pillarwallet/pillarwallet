@@ -56,11 +56,6 @@ const getTheme = (props: Props) => {
   return themes.default;
 };
 
-const ModalWrapper = styled.View`
-  width: 100%;
-  height: 100%;
-`;
-
 const HeaderWrapper = styled.View`
 `;
 
@@ -177,16 +172,27 @@ export default class SlideModal extends React.Component<Props, *> {
     const modalContent = () => {
       if (fullScreen) {
         return (
-          <Container color={backgroundColor}>
-            {modalInner}
-          </Container>
+          <Root>
+            <Container color={backgroundColor}>
+              {modalInner}
+            </Container>
+          </Root>
         );
       }
 
       if (eventDetail) {
-        return children;
+        return (
+          <ModalBackground theme={theme}>
+            { children }
+          </ModalBackground>
+        );
       }
-      return modalInner;
+
+      return (
+        <ModalBackground theme={theme}>
+          { modalInner }
+        </ModalBackground>
+      );
     };
 
     const animationTiming = 400;
@@ -207,13 +213,7 @@ export default class SlideModal extends React.Component<Props, *> {
           margin: 0,
         }}
       >
-        <ModalWrapper>
-          <Root>
-            <ModalBackground theme={theme}>
-              {modalContent()}
-            </ModalBackground>
-          </Root>
-        </ModalWrapper>
+        {modalContent()}
         {isVisible && fullScreenComponent}
       </Modal>
     );
