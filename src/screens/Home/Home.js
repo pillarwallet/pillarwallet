@@ -21,7 +21,7 @@ import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
 import Permissions from 'react-native-permissions';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -124,7 +124,7 @@ const RecentConnections = styled.View`
   border-bottom-width: 1px;
   border-style: solid;
   background-color: ${baseColors.white};
-  border-color: ${baseColors.duckEggBlue};
+  border-color: ${UIColors.defaultDividerColor};
 `;
 
 const RecentConnectionsWrapper = styled.View`

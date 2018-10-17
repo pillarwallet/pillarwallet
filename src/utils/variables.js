@@ -69,6 +69,7 @@ export const UIColors = {
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
   placeholderTextColor: baseColors.darkGray,
   cardShadowColor: 'rgba(16, 91, 170, 0.1)',
+  defaultDividerColor: baseColors.mediumLightGray,
 };
 
 export const fontSizes = {
