@@ -1,5 +1,6 @@
 // @flow
 import merge from 'lodash.merge';
+import { Sentry } from 'react-native-sentry';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -28,6 +29,11 @@ import { buildHistoryTransaction } from 'utils/history';
 
 const storage = Storage.getInstance('db');
 
+type TransactionStatus = {
+  isSuccess: boolean,
+  error: ?string,
+};
+
 export const sendAssetAction = ({
   gasLimit,
   amount,
@@ -42,7 +48,7 @@ export const sendAssetAction = ({
       wallet: { data: wallet },
       history: { data: currentHistory },
     } = getState();
-
+    let txStatus: TransactionStatus;
     if (symbol === ETH) {
       const ETHTrx = await transferETH({
         gasLimit,
@@ -50,8 +56,20 @@ export const sendAssetAction = ({
         to,
         amount,
         wallet,
+      }).catch((e) => {
+        Sentry.captureException({
+          tx: {
+            gasLimit,
+            gasPrice,
+            to,
+            amount,
+          },
+          type: 'ETH',
+          error: e.message,
+        });
+        return { error: e.message };
       });
-      if (ETHTrx && ETHTrx.hash) {
+      if (ETHTrx.hash) {
         const historyTx = buildHistoryTransaction({ ...ETHTrx, asset: symbol });
         dispatch({
           type: ADD_TRANSACTION,
@@ -60,7 +78,10 @@ export const sendAssetAction = ({
         const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
         storage.save('history', { history: updatedHistory }, true);
       }
-      navigateToNextScreen();
+      txStatus = ETHTrx.hash
+        ? { isSuccess: true, error: null }
+        : { isSuccess: false, error: ETHTrx.error };
+      navigateToNextScreen(txStatus);
       return;
     }
 
@@ -70,8 +91,20 @@ export const sendAssetAction = ({
       contractAddress,
       wallet,
       decimals,
+    }).catch((e) => {
+      Sentry.captureException({
+        tx: {
+          decimals,
+          contractAddress,
+          to,
+          amount,
+        },
+        type: 'ERC20',
+        error: e.message,
+      });
+      return { error: e.message };
     });
-    if (ERC20Trx && ERC20Trx.hash) {
+    if (ERC20Trx.hash) {
       const historyTx = buildHistoryTransaction({
         ...ERC20Trx,
         asset: symbol,
@@ -85,7 +118,10 @@ export const sendAssetAction = ({
       const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
       storage.save('history', { history: updatedHistory }, true);
     }
-    navigateToNextScreen();
+    txStatus = ERC20Trx.hash
+      ? { isSuccess: true, error: null }
+      : { isSuccess: false, error: ERC20Trx.error };
+    navigateToNextScreen(txStatus);
   };
 };
 
