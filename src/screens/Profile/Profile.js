@@ -5,7 +5,7 @@ import { FlatList, Alert, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
+import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE, SEND_DEBUG_DATA } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
@@ -26,6 +26,7 @@ import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'ac
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
+import { DEBUG_DATA_LOGGER } from 'react-native-dotenv';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 import SettingsModalTitle from './SettingsModalTitle';
@@ -423,20 +424,25 @@ class Profile extends React.Component<Props, State> {
               uri="https://pillarproject.io/en/legal/privacy/"
             />
 
+            {(!!DEBUG_DATA_LOGGER || !!__DEV__) &&
+            <React.Fragment>
+              <ListSeparator>
+                <SubHeading>DEBUG</SubHeading>
+              </ListSeparator>
 
-            {!!__DEV__ && (
-              <React.Fragment>
-                <ListSeparator>
-                  <SubHeading>DEBUG</SubHeading>
-                </ListSeparator>
+              {!!__DEV__ &&
+              <ProfileSettingsItem
+                key="clearStorage"
+                label="Clear Local Storage"
+                onPress={() => { this.clearLocalStorage(); }}
+              />}
 
-                <ProfileSettingsItem
-                  key="clearStorage"
-                  label="Clear Local Storage"
-                  onPress={() => { this.clearLocalStorage(); }}
-                />
-              </React.Fragment>
-            )}
+              <ProfileSettingsItem
+                key="sendDebugData"
+                label="Send Debug Data"
+                onPress={() => this.props.navigation.navigate(SEND_DEBUG_DATA)}
+              />
+            </React.Fragment>}
 
             <ListSeparator>
               <SubHeading>SYSTEM</SubHeading>
