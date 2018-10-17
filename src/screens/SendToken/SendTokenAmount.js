@@ -71,6 +71,7 @@ const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: bo
 };
 
 function AmountInputTemplate(locals) {
+  console.log('locals', locals);
   const { config: { icon } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
@@ -93,6 +94,7 @@ function AmountInputTemplate(locals) {
       inputProps={inputProps}
       inlineLabel
       fontSize={fontSizes.giant}
+      // innerImageText={valueInFiat}
     />
   );
 }
@@ -156,6 +158,7 @@ type State = {
   },
   transactionSpeed: string,
   showModal: boolean,
+  valueInFiat: string,
 }
 
 const SLOW = 'min';
@@ -183,6 +186,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       value: null,
       transactionSpeed: NORMAL,
       showModal: false,
+      valueInFiat: '',
     };
   }
 
@@ -204,7 +208,9 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   handleChange = (value: Object) => {
+    console.log('handleChange');
     this.setState({ value });
+    this.setState({ valueInFiat: value });
   };
 
   handleFormSubmit = () => {
@@ -296,6 +302,7 @@ class SendTokenAmount extends React.Component<Props, State> {
       value,
       showModal,
       transactionSpeed,
+      valueInFiat,
     } = this.state;
     const {
       session,

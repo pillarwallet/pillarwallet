@@ -29,6 +29,7 @@ type Props = {
   innerImageURI?: string,
   outterImageURI?: string,
   outterImageText: string,
+  innerImageText: string,
   label?: string,
   id?: string,
   iconColor?: string,
@@ -104,13 +105,21 @@ const InputHolder = styled.View`
 `;
 
 const FloatImage = styled(RNImage)`
-  position: absolute;
   height: 30px;
   width: 30px;
-  left: 12px;
-  top: 11px;
   tint-color: black;
   resize-mode: contain;
+`;
+
+const FloatImageView = styled.View`
+  position: absolute;
+  left: 12px;
+  top: 11px;
+  flex-direction: row;
+`;
+
+const FloatText = styled(BaseText)`
+  color: #8b8f96;
 `;
 
 const ImageHolder = styled.TouchableOpacity`
@@ -195,6 +204,7 @@ class SingleInput extends React.Component<Props, *> {
     inputType: 'default',
     innerImageURI: '',
     outterImageText: '',
+    innerImageText: '',
     trim: true,
     options: [],
   };
@@ -285,6 +295,7 @@ class SingleInput extends React.Component<Props, *> {
       innerImageURI,
       outterImageURI,
       outterImageText,
+      innerImageText,
       onPress,
       options,
       fontSize,
@@ -312,9 +323,16 @@ class SingleInput extends React.Component<Props, *> {
               placeholderTextColor={baseColors.darkGray}
               theme={theme}
             />
-            {!!innerImageURI && <FloatImage
-              source={this.resolveAssetSource(innerImageURI)}
-            />}
+            {!!innerImageURI &&
+            <FloatImageView>
+              <FloatImage
+                source={this.resolveAssetSource(innerImageURI)}
+              />
+              {!!innerImageText &&
+              <FloatText>{innerImageText}</FloatText>
+              }
+            </FloatImageView>
+            }
           </Item>
           {outterImageURI &&
             <ImageHolder onPress={onPress}>
