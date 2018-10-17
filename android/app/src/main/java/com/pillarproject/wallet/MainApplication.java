@@ -8,6 +8,7 @@ import com.facebook.react.ReactApplication;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.tradle.react.UdpSocketsModule;
+import com.testfairy.react.TestFairyPackage;
 import com.peel.react.TcpSocketsModule;
 import com.horcrux.svg.SvgPackage;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
@@ -49,6 +50,7 @@ public class MainApplication extends Application implements ShareApplication, Re
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+        new TestFairyPackage(),
         new RNSentryPackage(),
         new SvgPackage(),
         new UdpSocketsModule(),
