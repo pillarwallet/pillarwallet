@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -7,7 +8,6 @@ import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import { DEBUG_DATA_LOGGER } from 'react-native-dotenv';
 import Storage from 'services/storage';
-import connect from 'react-redux/es/connect/connect';
 
 const storage = Storage.getInstance('db');
 
