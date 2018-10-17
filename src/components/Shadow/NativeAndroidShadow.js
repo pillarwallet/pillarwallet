@@ -11,4 +11,4 @@ import { requireNativeComponent } from 'react-native';
  * - shadowColor: string
  */
 
-module.exports = requireNativeComponent('NativeShadow');
+export default requireNativeComponent('NativeShadow');
