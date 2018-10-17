@@ -17,6 +17,8 @@ import com.horcrux.svg.SvgPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.ocetnik.timer.BackgroundTimerPackage;
+import com.tradle.react.UdpSocketsModule;
+import com.testfairy.react.TestFairyPackage;
 import com.peel.react.TcpSocketsModule;
 import com.peel.react.rnos.RNOSModule;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
@@ -52,6 +54,7 @@ public class MainApplication extends Application implements ShareApplication, Re
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+        new TestFairyPackage(),
         new RNSentryPackage(),
         new SvgPackage(),
         new UdpSocketsModule(),

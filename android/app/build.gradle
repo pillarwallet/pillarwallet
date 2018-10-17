@@ -210,6 +210,7 @@ dependencies {
   compile project(':rn-signal-protocol-messaging')
   compile project(':react-native-intercom')
   compile project(':react-native-udp')
+  compile project(':react-native-testfairy')
   compile project(':react-native-tcp')
   compile project(':react-native-randombytes')
   compile project(':react-native-os')
