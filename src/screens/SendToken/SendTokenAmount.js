@@ -16,7 +16,7 @@ import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 
 // utils
-import { parseNumber, formatAmount, isValidNumber, getCurrencySymbol } from 'utils/common';
+import { parseNumber, formatAmount, isValidNumber, getCurrencySymbol, formatMoney } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { getBalance } from 'utils/assets';
 
@@ -297,7 +297,13 @@ class SendTokenAmount extends React.Component<Props, State> {
       showModal,
       transactionSpeed,
     } = this.state;
-    const { session, balances, gasInfo } = this.props;
+    const {
+      session,
+      balances,
+      gasInfo,
+      rates,
+      baseFiatCurrency,
+    } = this.props;
     const { token, icon } = this.assetData;
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
@@ -307,6 +313,14 @@ class SendTokenAmount extends React.Component<Props, State> {
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
     const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
+    const formattedBalanceInFiat = formatMoney(totalInFiat);
+    const displayBalanceInFiat = {
+      amount: formattedBalanceInFiat,
+      currency: fiatCurrency,
+    };
+    const currencySymbol = getCurrencySymbol(displayBalanceInFiat.currency);
     return (
       <Container color={UIColors.defaultBackgroundColor}>
         <Header
@@ -325,7 +339,9 @@ class SendTokenAmount extends React.Component<Props, State> {
           <ActionsWrapper>
             <SendTokenDetails>
               <Label small>Available Balance</Label>
-              <SendTokenDetailsValue>{formattedBalance} {token}</SendTokenDetailsValue>
+              <SendTokenDetailsValue>
+                {formattedBalance} {token} ({currencySymbol}{displayBalanceInFiat.amount})
+              </SendTokenDetailsValue>
               <Label small>Est. Network Fee</Label>
               <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
                 <SendTokenDetailsValue>
