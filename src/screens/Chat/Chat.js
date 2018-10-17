@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { View, Platform, Linking } from 'react-native';
+import { Alert, View, Platform, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -29,6 +29,7 @@ import {
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
 import { CHAT_LIST } from 'constants/navigationConstants';
+import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -42,6 +43,7 @@ type Props = {
   contact: Object,
   chats: any,
   contacts: Object,
+  currentMessage: Object,
 }
 
 type State = {
@@ -50,13 +52,18 @@ type State = {
   isFetching: boolean,
 }
 
+const isWarningMessage = (type) => {
+  return type === 'warning';
+};
+
 // chat elements
-const renderBubble = (props: Props) => (
-  <Bubble
+const renderBubble = (props: Props) => {
+  const isWarning = isWarningMessage(props.currentMessage.type);
+  return (<Bubble
     {...props}
     textStyle={{
       left: {
-        color: baseColors.slateBlack,
+        color: isWarning ? baseColors.white : baseColors.slateBlack,
         fontSize: fontSizes.extraSmall,
         fontFamily: Platform.select({
           ios: 'Aktiv Grotesk App',
@@ -76,10 +83,10 @@ const renderBubble = (props: Props) => (
     }}
     wrapperStyle={{
       left: {
-        backgroundColor: baseColors.white,
+        backgroundColor: isWarning ? baseColors.brightBlue : baseColors.white,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: baseColors.whiterSmoke,
+        borderColor: isWarning ? baseColors.brightBlue : baseColors.whiterSmoke,
         maxWidth: 262,
         marginTop: 5,
         marginBottom: 5,
@@ -92,8 +99,21 @@ const renderBubble = (props: Props) => (
         maxWidth: 262,
       },
     }}
-  />
-);
+    touchableProps={{
+      onPress: () => {
+        const { status } = props.currentMessage;
+
+        if (status === UNDECRYPTABLE_MESSAGE) {
+          // TODO: change the alert message text
+          Alert.alert(
+            'Cannot decrypt the message',
+            'We are using end-to-end encryption. You or your interlocutor should update chat keys.',
+          );
+        }
+      },
+    }}
+  />);
+};
 
 const renderCustomAvatar = (contact) => () => (
   <ProfileImage
@@ -216,7 +236,7 @@ const renderTime = (props: Props) => {
           fontSize: fontSizes.extraExtraSmall,
         },
         left: {
-          color: baseColors.darkGray,
+          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
           fontFamily: Platform.select({
             ios: 'Aktiv Grotesk App',
             android: 'AktivGrotesk-Regular',
