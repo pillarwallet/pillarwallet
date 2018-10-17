@@ -9,7 +9,7 @@ type Props = {
 }
 
 const EmptySectionTextWrapper = styled.View`
-  width: 232px;
+  width: 234px;
   align-items: center;
   justify-content: center;
 `;

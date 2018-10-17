@@ -107,7 +107,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
     }
     const updatedHistory = uniqBy([...mappedHistoryNotifications, ...currentHistory], 'hash');
-    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt));
+    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0));
     storage.save('history', { history: updatedHistory }, true);
     storage.save('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } });
     dispatch({

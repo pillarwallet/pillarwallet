@@ -163,7 +163,8 @@ class Profile extends React.Component<Props, State> {
     const { logoutUser } = this.props;
     Alert.alert(
       'Are you sure?',
-      'This action will delete the wallet from this device',
+      'This action will delete the wallet from this device. ' +
+      'If you wish to recover, you can re-import that wallet using your backup phrase.',
       [
         { text: 'Cancel' },
         { text: 'Delete', onPress: logoutUser },
@@ -393,8 +394,8 @@ class Profile extends React.Component<Props, State> {
             />
 
             <ProfileSettingsItem
-              key="supportCenter"
-              label="Support Center"
+              key="knowledgebase"
+              label="Knowledgebase"
               onPress={() => Intercom.displayHelpCenter()}
             />
 
