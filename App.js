@@ -8,6 +8,8 @@ import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
+import TestFairy from 'react-native-testfairy';
+import { SENTRY_DSN, TESTFAIRY_ACCESS_TOKEN } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
 import {
@@ -35,7 +37,8 @@ class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
-      Sentry.config('https://82eb3c51aa80408597cac8ae5c18f9d1@sentry.io/1294444').install();
+      Sentry.config(SENTRY_DSN).install();
+      TestFairy.begin(TESTFAIRY_ACCESS_TOKEN);
     }
   }
 
