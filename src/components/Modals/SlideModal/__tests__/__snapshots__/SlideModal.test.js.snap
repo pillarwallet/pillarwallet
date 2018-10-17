@@ -414,10 +414,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               "height": 320,
               "justifyContent": "flex-end",
               "left": 0,
-              "marginTop": -220,
+              "marginTop": -210,
               "opacity": 0,
               "paddingBottom": 10,
-              "paddingTop": 20,
+              "paddingTop": 30,
               "position": "absolute",
               "shadowColor": "#333",
               "shadowOffset": Object {
@@ -563,7 +563,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 Object {
                   "borderColor": "#C6CACD",
                   "borderRadius": 16,
-                  "borderWidth": 2,
+                  "borderWidth": 0,
                   "color": "#C6CACD",
                   "fontSize": undefined,
                   "height": 32,

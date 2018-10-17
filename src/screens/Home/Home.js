@@ -132,6 +132,7 @@ const RecentConnectionsWrapper = styled.View`
   shadow-radius: 6px;
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
+  padding-top: 100px;
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView``;
@@ -461,8 +462,7 @@ class HomeScreen extends React.Component<Props, State> {
             />
           }
         >
-          <View style={{ marginTop: 100 }}>
-            {!!this.props.contacts.length &&
+          {!!this.props.contacts.length &&
             <RecentConnectionsWrapper>
               <RecentConnections>
                 <RecentConnectionsSubtitle subtitle title="recent connections." />
@@ -471,18 +471,17 @@ class HomeScreen extends React.Component<Props, State> {
                 </RecentConnectionsScrollView>
               </RecentConnections>
             </RecentConnectionsWrapper>}
-            <Tabs title="your activity." tabs={activityFeedTabs} />
-            <ActivityFeed
-              onCancelInvitation={cancelInvitation}
-              onRejectInvitation={rejectInvitation}
-              onAcceptInvitation={acceptInvitation}
-              navigation={navigation}
-              activeTab={this.state.activeTab}
-              esData={esData}
-              sortable
-              showEmptyState
-            />
-          </View>
+          <Tabs title="your activity." tabs={activityFeedTabs} />
+          <ActivityFeed
+            onCancelInvitation={cancelInvitation}
+            onRejectInvitation={rejectInvitation}
+            onAcceptInvitation={acceptInvitation}
+            navigation={navigation}
+            activeTab={this.state.activeTab}
+            esData={esData}
+            sortable
+            showEmptyState
+          />
         </Animated.ScrollView>
         <Camera
           isVisible={showCamera}
