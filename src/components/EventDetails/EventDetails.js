@@ -199,7 +199,7 @@ class EventDetails extends React.Component<Props, {}> {
             <ListItemUnderlined
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
               value={relatedUserTitle}
-              valueAddon={(<EventProfileImage
+              valueAddon={(!!relatedUser.username && <EventProfileImage
                 uri={relatedUser.profileImage}
                 userName={relatedUserTitle}
                 diameter={40}

@@ -60,7 +60,7 @@ const TabWrapper = styled.View`
   padding: 10px 16px 10px;
   background: ${baseColors.white};
   border-bottom-width: 1px;
-  border-color: ${UIColors.defaultBorderColor};
+  border-color: ${UIColors.defaultDividerColor};
   border-style: solid;
 `;
 
