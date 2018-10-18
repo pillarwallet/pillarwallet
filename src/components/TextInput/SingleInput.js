@@ -116,6 +116,8 @@ const FloatImageView = styled.View`
   left: 12px;
   top: 11px;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
 `;
 
 const InnerImageText = styled(BaseText)`
