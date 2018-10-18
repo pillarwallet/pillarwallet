@@ -51,7 +51,7 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
 };
 
 Storage.prototype.getAllDocs = function () {
-  return this.db.allDocs();
+  return this.db.allDocs({ conflicts: true });
 };
 
 Storage.prototype.removeAll = function () {
