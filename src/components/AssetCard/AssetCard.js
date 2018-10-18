@@ -1,10 +1,12 @@
 // @flow
 import * as React from 'react';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
+import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -25,12 +27,21 @@ type Props = {
   horizontalPadding?: boolean,
 }
 
+const AssetOutter = styled.View`
+  padding: ${Platform.select({
+    ios: '17px 20px',
+    android: '10px 10px 8px 10px',
+  })};
+  background-color: transparent;
+  margin: ${Platform.select({
+    ios: 0,
+    android: '-12px 0 0 0',
+  })};
+`;
+
 const AssetWrapper = styled.View`
-  height: 130px;
-  margin-bottom: ${spacing.rhythm / 2};
+  height: 140px;
   width: 100%;
-  box-shadow: 0px 1px 2px ${UIColors.defaultShadowColor};
-  padding: ${props => props.horizontalPadding ? `2px 2px 2px ${spacing.rhythm - 2}px` : '2px'};
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -41,10 +52,8 @@ const BackgroundHolder = styled.View`
   flex: 1;
   flex-direction: row;
   border-radius: 12px;
-  height: 130px;
   border-radius: 20px;
   width: 100%;
-  elevation: 2;
   position: relative;
   background-color: ${props => (props.cardColor)};
 `;
@@ -152,38 +161,42 @@ const AssetCard = (props: Props) => {
   const bgColor = isListed ? defaultCardColor : baseColors.white;
   const wallpaperUri = isListed ? wallpaper : undefined;
   return (
-    <AssetWrapper horizontalPadding={horizontalPadding}>
-      <TouchableWithoutFeedback onPress={onPress}>
-        <BackgroundHolder cardColor={bgColor}>
-          <BackgroundImage source={{ uri: wallpaperUri }} />
-          <DetailsWrapper>
-            <Name isListed={isListed}>{name}</Name>
-            <AmountWrapper>
-              <Amount isListed={isListed}>{amount}</Amount>
-              <AmountToken isListed={isListed}> {token}</AmountToken>
-            </AmountWrapper>
-            {disclaimer
-              ? <Disclaimer>{disclaimer}</Disclaimer>
-              : <FiatAmount> {currencySymbol}{balanceInFiat.amount} </FiatAmount>
-            }
-          </DetailsWrapper>
-          {!!icon &&
-            <IconWrapper>
-              <IconCircle isListed={isListed}>
-                <CachedImage
-                  key={token}
-                  style={{
-                    height: 40,
-                    width: 40,
-                  }}
-                  source={{ uri: icon }}
-                  resizeMode="contain"
-                />
-              </IconCircle>
-            </IconWrapper>}
-        </BackgroundHolder>
-      </TouchableWithoutFeedback>
-    </AssetWrapper>
+    <AssetOutter horizontalPadding={horizontalPadding}>
+      <Shadow paddingFixAndroid={17}>
+        <AssetWrapper >
+          <TouchableWithoutFeedback onPress={onPress}>
+            <BackgroundHolder cardColor={bgColor}>
+              <BackgroundImage source={{ uri: wallpaperUri }} />
+              <DetailsWrapper>
+                <Name isListed={isListed}>{name}</Name>
+                <AmountWrapper>
+                  <Amount isListed={isListed}>{amount}</Amount>
+                  <AmountToken isListed={isListed}> {token}</AmountToken>
+                </AmountWrapper>
+                {disclaimer
+                  ? <Disclaimer>{disclaimer}</Disclaimer>
+                  : <FiatAmount> {currencySymbol}{balanceInFiat.amount} </FiatAmount>
+                }
+              </DetailsWrapper>
+              {!!icon &&
+                <IconWrapper>
+                  <IconCircle isListed={isListed}>
+                    <CachedImage
+                      key={token}
+                      style={{
+                        height: 40,
+                        width: 40,
+                      }}
+                      source={{ uri: icon }}
+                      resizeMode="contain"
+                    />
+                  </IconCircle>
+                </IconWrapper>}
+            </BackgroundHolder>
+          </TouchableWithoutFeedback>
+        </AssetWrapper>
+      </Shadow>
+    </AssetOutter>
   );
 };
 

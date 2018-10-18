@@ -4,7 +4,7 @@ import { TouchableOpacity, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { spacing, baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 
 type Props = {
   onPress: Function,
@@ -14,8 +14,8 @@ type Props = {
 
 const HideButtonWrapper = styled.View`
   padding: ${Platform.select({
-    ios: props => props.expanded ? `${spacing.rhythm / 2}px ${spacing.rhythm}px` : `15px ${spacing.rhythm / 2}px`,
-    android: props => props.expanded ? `${spacing.rhythm / 2}px ${spacing.rhythm}px` : `0 ${spacing.rhythm / 2}px 20px`,
+    ios: props => props.expanded ? '10px 20px' : '15px 10px',
+    android: props => props.expanded ? '10px 20px' : '10px 10px 20px',
   })};
   justify-content: center;
   align-items: flex-start;
