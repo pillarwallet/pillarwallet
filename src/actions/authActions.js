@@ -58,8 +58,11 @@ export const loginAction = (pin: string) => {
 
       const fcmToken = await firebase.messaging().getToken();
       chat.init({
+        userId: user.id,
         username: user.username,
         password: generateChatPassword(wallet.privateKey),
+        walletId: user.walletId,
+        ethAddress: wallet.address,
       })
         .then(() => chat.client.registerAccount())
         .then(() => chat.client.setFcmId(fcmToken))
