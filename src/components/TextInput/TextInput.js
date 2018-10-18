@@ -188,7 +188,7 @@ class TextInput extends React.Component<Props, State> {
           inlineLabel={inlineLabel}
           stackedLabel={!inlineLabel}
           error={!!errorMessage}
-          style={inputProps.multiline && { height: 160 }}
+          style={inputProps.multiline && { height: 140 }}
           isFocused={isFocused}
           noBorder={noBorder}
         >
@@ -205,8 +205,8 @@ class TextInput extends React.Component<Props, State> {
             style={{
               fontSize: inputType.fontSize,
               width: viewWidth,
-              lineHeight: inputProps.multiline ? 30 : 20,
               paddingRight: inputProps.multiline ? 50 : 0,
+              paddingTop: inputProps.multiline ? 10 : 0,
             }}
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
