@@ -270,7 +270,7 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header onBack={this.handleBackAction} title="restore wallet"/>
+        <Header onBack={this.handleBackAction} title="restore wallet" />
         <ScrollWrapper regularPadding>
           <WalletTabs title="restore wallet" tabs={restoreWalletTabs} />
           <Paragraph small light>{tabsInfo[activeTab].textStart}
