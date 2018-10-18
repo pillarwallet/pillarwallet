@@ -38,14 +38,11 @@ type Props = {
 type State = {
   privateKey: string,
   tWordsPhrase: string,
-  tWordsCount: number,
   errorMessage: string,
   errorField: string,
   isScanning: boolean,
   activeTab: string,
-  tWordsPhraseFull: string,
   inputEnabled: boolean,
-  restoreEnabled: boolean,
 };
 
 const window = Dimensions.get('window');
@@ -53,13 +50,6 @@ const window = Dimensions.get('window');
 const InputWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-`;
-
-const InputButton = styled.TouchableOpacity`
-  align-items: center;
-  margin-left: 10px;
-  margin-top: 47px;
-  ${props => props.disabled ? 'opacity: .3;' : ''}
 `;
 
 const ButtonText = styled(BaseText)`
@@ -77,18 +67,23 @@ const FooterWrapper = styled.View`
   margin-bottom: ${spacing.rhythm}px;
 `;
 
+const ButtonWrapper = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 14px;
+  margin-top: ${props => props.error ? 11 : 16}%;
+`;
+
 class ImportWallet extends React.Component<Props, State> {
   state = {
     privateKey: '',
     tWordsPhrase: '',
-    tWordsCount: 1,
     errorMessage: '',
     errorField: '',
     isScanning: false,
     activeTab: TWORDSPHRASE,
-    tWordsPhraseFull: '',
     inputEnabled: false,
-    restoreEnabled: false,
   };
 
   constructor(props: Props) {
@@ -138,12 +133,13 @@ class ImportWallet extends React.Component<Props, State> {
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    const { privateKey, tWordsPhraseFull, tWordsPhrase } = this.state;
+    const { privateKey, tWordsPhrase, activeTab } = this.state;
 
-    if (privateKey) {
+    if (activeTab === PRIVATEKEY) {
       importWalletFromPrivateKey(privateKey);
-    } else if (tWordsPhraseFull) {
-      importWalletFromTWordsPhrase(`${tWordsPhraseFull} ${tWordsPhrase.trim()}`);
+    } else if (activeTab === TWORDSPHRASE) {
+      const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
+      importWalletFromTWordsPhrase(trimmedPhrase);
     } else {
       this.setState({ errorField: '' });
     }
@@ -185,19 +181,9 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   handleValueChange = (field) => (value) => {
-    if (this.state.tWordsCount === 12 && value) {
-      this.setState({
-        [field]: value,
-        restoreEnabled: true,
-        inputEnabled: false,
-      });
-    } else {
-      this.setState({
-        [field]: value,
-        inputEnabled: !!value,
-        restoreEnabled: false,
-      });
-    }
+    this.setState({
+      [field]: value,
+    });
     this.props.resetWalletError();
   };
 
@@ -207,26 +193,12 @@ class ImportWallet extends React.Component<Props, State> {
     });
   };
 
-  addWord = () => {
-    this.setState({
-      tWordsCount: this.state.tWordsCount + 1,
-      tWordsPhraseFull: this.state.tWordsCount === 1 ?
-        this.state.tWordsPhrase :
-        `${this.state.tWordsPhraseFull} ${this.state.tWordsPhrase.trim()}`,
-      tWordsPhrase: '',
-      inputEnabled: false,
-    });
-  };
-
   render() {
     const {
       privateKey,
       tWordsPhrase,
       isScanning,
       activeTab,
-      tWordsCount,
-      inputEnabled,
-      restoreEnabled,
     } = this.state;
 
     const restoreWalletTabs = [
@@ -247,12 +219,10 @@ class ImportWallet extends React.Component<Props, State> {
         textStart: 'Restore your ERC-20 compatible Ethereum wallet using your ',
         textAttention: '12 word backup phrase',
         textEnd: '.',
-        inputLabel: `Word #${tWordsCount}`,
+        inputLabel: 'Backup phrase',
         changeName: 'tWordsPhrase',
         value: tWordsPhrase,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
-        buttonText: 'Next',
-        buttonPress: this.addWord,
       },
       PRIVATEKEY: {
         textStart: 'Don\'t have your backup phrase? Use your ',
@@ -262,8 +232,6 @@ class ImportWallet extends React.Component<Props, State> {
         changeName: 'privateKey',
         value: privateKey,
         errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
-        buttonText: 'Scan',
-        buttonPress: this.handleQRScannerOpen,
       },
     };
 
@@ -285,37 +253,34 @@ class ImportWallet extends React.Component<Props, State> {
                 onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
                 value: tabsInfo[activeTab].value,
                 autoCapitalize: 'none',
+                multiline: activeTab === TWORDSPHRASE,
+                numberOfLines: 3,
               }}
               errorMessage={tabsInfo[activeTab].errorMessage}
-              viewWidth={window.width - 95}
+              viewWidth={activeTab === TWORDSPHRASE ? window.width : window.width - 95}
               inputType="secondary"
               lowerCase
               labelBigger
               noBorder
             />
-            <InputButton
-              disabled={activeTab === 'TWORDSPHRASE' && !inputEnabled}
-              onPress={tabsInfo[activeTab].buttonPress}
-            >
-              {activeTab === 'PRIVATEKEY' &&
-              <IconButton
-                icon="qrcode"
-                color={baseColors.electricBlue}
-                fontSize={fontSizes.extraLarge}
-                onPress={tabsInfo[activeTab].buttonPress}
-              />
-              }
-              <ButtonText>{tabsInfo[activeTab].buttonText}</ButtonText>
-            </InputButton>
+            {activeTab === PRIVATEKEY &&
+              <ButtonWrapper error={!!tabsInfo[activeTab].errorMessage}>
+                <IconButton
+                  icon="qrcode"
+                  color={baseColors.electricBlue}
+                  fontSize={fontSizes.extraLarge}
+                  onPress={this.handleQRScannerOpen}
+                />
+                <ButtonText>Scan</ButtonText>
+              </ButtonWrapper>
+            }
           </InputWrapper>
         </ScrollWrapper>
-        {(activeTab === 'PRIVATEKEY' || restoreEnabled) &&
         <Footer>
           <FooterWrapper>
             <Button title="Restore wallet" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
           </FooterWrapper>
         </Footer>
-        }
         <QRCodeScanner
           isActive={isScanning}
           onDismiss={this.handleQRScannerClose}
