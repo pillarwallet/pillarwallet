@@ -71,8 +71,7 @@ const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: bo
 };
 
 function AmountInputTemplate(locals) {
-  console.log('locals', locals);
-  const { config: { icon } } = locals;
+  const { config: { icon, valueInFiatOutput } } = locals;
   const errorMessage = locals.error;
   const inputProps = {
     autoFocus: true,
@@ -94,7 +93,7 @@ function AmountInputTemplate(locals) {
       inputProps={inputProps}
       inlineLabel
       fontSize={fontSizes.giant}
-      // innerImageText={valueInFiat}
+      innerImageText={valueInFiatOutput}
     />
   );
 }
@@ -158,7 +157,6 @@ type State = {
   },
   transactionSpeed: string,
   showModal: boolean,
-  valueInFiat: string,
 }
 
 const SLOW = 'min';
@@ -186,7 +184,6 @@ class SendTokenAmount extends React.Component<Props, State> {
       value: null,
       transactionSpeed: NORMAL,
       showModal: false,
-      valueInFiat: '',
     };
   }
 
@@ -208,9 +205,7 @@ class SendTokenAmount extends React.Component<Props, State> {
   };
 
   handleChange = (value: Object) => {
-    console.log('handleChange');
     this.setState({ value });
-    this.setState({ valueInFiat: value });
   };
 
   handleFormSubmit = () => {
@@ -302,7 +297,6 @@ class SendTokenAmount extends React.Component<Props, State> {
       value,
       showModal,
       transactionSpeed,
-      valueInFiat,
     } = this.state;
     const {
       session,
@@ -314,7 +308,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const { token, icon } = this.assetData;
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
-    const formOptions = generateFormOptions({ icon, currency: token });
     const txFeeInWei = this.getTxFeeInWei();
     const txFeeInEth = formatAmount(utils.formatEther(txFeeInWei));
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
@@ -324,6 +317,11 @@ class SendTokenAmount extends React.Component<Props, State> {
     const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
+    const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
+    const valueInFiat = rates[token] ? currentValue * rates[token][fiatCurrency] : 0;
+    const formattedValueInFiat = formatMoney(valueInFiat);
+    const valueInFiatOutput = `= ${currencySymbol}${formattedValueInFiat}`;
+    const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
     return (
       <Container color={UIColors.defaultBackgroundColor}>
         <Header

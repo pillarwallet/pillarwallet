@@ -118,8 +118,8 @@ const FloatImageView = styled.View`
   flex-direction: row;
 `;
 
-const FloatText = styled(BaseText)`
-  color: #8b8f96;
+const InnerImageText = styled(BaseText)`
+  color: ${UIColors.placeholderTextColor};
 `;
 
 const ImageHolder = styled.TouchableOpacity`
@@ -316,7 +316,7 @@ class SingleInput extends React.Component<Props, *> {
               onBlur={this.handleBlur}
               numberOfLines={1}
               value={value}
-              style={{ paddingLeft: innerImageURI ? 54 : 12 }}
+              style={{ paddingLeft: innerImageURI ? 130 : 12 }}
               backgrounded={!!options.length}
               textAlignVertical="center"
               fontSize={fontSize}
@@ -329,7 +329,7 @@ class SingleInput extends React.Component<Props, *> {
                 source={this.resolveAssetSource(innerImageURI)}
               />
               {!!innerImageText &&
-              <FloatText>{innerImageText}</FloatText>
+              <InnerImageText>{innerImageText}</InnerImageText>
               }
             </FloatImageView>
             }
