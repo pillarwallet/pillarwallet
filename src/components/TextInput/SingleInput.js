@@ -29,6 +29,7 @@ type Props = {
   innerImageURI?: string,
   outterImageURI?: string,
   outterImageText: string,
+  innerImageText: string,
   label?: string,
   id?: string,
   iconColor?: string,
@@ -104,13 +105,23 @@ const InputHolder = styled.View`
 `;
 
 const FloatImage = styled(RNImage)`
-  position: absolute;
   height: 30px;
   width: 30px;
-  left: 12px;
-  top: 11px;
   tint-color: black;
   resize-mode: contain;
+`;
+
+const FloatImageView = styled.View`
+  position: absolute;
+  left: 12px;
+  top: 11px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+const InnerImageText = styled(BaseText)`
+  color: ${UIColors.placeholderTextColor};
 `;
 
 const ImageHolder = styled.TouchableOpacity`
@@ -195,6 +206,7 @@ class SingleInput extends React.Component<Props, *> {
     inputType: 'default',
     innerImageURI: '',
     outterImageText: '',
+    innerImageText: '',
     trim: true,
     options: [],
   };
@@ -285,6 +297,7 @@ class SingleInput extends React.Component<Props, *> {
       innerImageURI,
       outterImageURI,
       outterImageText,
+      innerImageText,
       onPress,
       options,
       fontSize,
@@ -305,16 +318,23 @@ class SingleInput extends React.Component<Props, *> {
               onBlur={this.handleBlur}
               numberOfLines={1}
               value={value}
-              style={{ paddingLeft: innerImageURI ? 54 : 12 }}
+              style={{ paddingLeft: innerImageURI ? 130 : 12 }}
               backgrounded={!!options.length}
               textAlignVertical="center"
               fontSize={fontSize}
               placeholderTextColor={baseColors.darkGray}
               theme={theme}
             />
-            {!!innerImageURI && <FloatImage
-              source={this.resolveAssetSource(innerImageURI)}
-            />}
+            {!!innerImageURI &&
+            <FloatImageView>
+              <FloatImage
+                source={this.resolveAssetSource(innerImageURI)}
+              />
+              {!!innerImageText &&
+              <InnerImageText>{innerImageText}</InnerImageText>
+              }
+            </FloatImageView>
+            }
           </Item>
           {outterImageURI &&
             <ImageHolder onPress={onPress}>

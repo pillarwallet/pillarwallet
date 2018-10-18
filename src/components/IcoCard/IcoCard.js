@@ -6,10 +6,11 @@ import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol, formatMoney } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
 import Countdown from 'components/Countdown';
 import TruncatedText from 'components/TruncatedText';
 import Progress from 'components/Progress';
+import { Shadow } from 'components/Shadow';
 
 type Props = {
   id: string,
@@ -32,18 +33,17 @@ const CardWrapper = styled.View`
   width: 100%;
 `;
 
-const InnerWrapper = styled.View`
-  flex-direction: column;
+const InnerWrapper = styled(Shadow)`
   padding-bottom: 10px;
   margin: ${Platform.select({
     ios: props => props.inner ? `3px ${spacing.rhythm / 2}px 10px` : `3px ${spacing.rhythm / 2}px 5px`,
     android: props => props.inner ? `2px ${spacing.rhythm / 2}px 10px` : `2px ${spacing.rhythm / 2}px 6px`,
   })};
-  shadow-color: ${UIColors.cardShadowColor};
-  shadow-offset: 0 3px;
-  shadow-opacity: 1;
-  shadow-radius: 6px;
-  elevation: 3;
+  
+`;
+
+const Sizer = styled.View`
+  flex-direction: column;
   border-radius: 8px;
   background: ${baseColors.white};
 `;
@@ -167,102 +167,104 @@ const IcoCard = (props: Props) => {
 
   return (
     <CardWrapper>
-      <TouchableWithoutFeedback onPress={onPress}>
-        <InnerWrapper inner={inner}>
-          <Row>
-            <TitleWrapper inner={inner}>
-              <Title>{title}</Title>
-              {!!status &&
-              <Label>
-                <LabelText>
-                  {status.toUpperCase()}
-                </LabelText>
-              </Label>}
-            </TitleWrapper>
-            {!inner && iconUrl &&
-            <CachedImage
-              key={id}
-              style={{
-                height: 60,
-                width: 60,
-              }}
-              source={{ uri: iconUrl }}
-              resizeMode="contain"
-            />}
-          </Row>
-          {!!inner && !!description &&
-          <Row>
-            <TruncatedText lines={4} text={description} />
-          </Row>}
-          {!!inner &&
-          <Row alignVertical="flex-end" alignCenter marginTop={26}>
-            <Column center width="50%">
-              <ColumnValue xl>
-                {tokensSoldInPercent}%
-              </ColumnValue>
-              <ColumnLabel>
-                Tokens sold
-              </ColumnLabel>
-            </Column>
-            <Column center width="50%">
-              <InnerCountDown />
-              <ColumnLabel>
-                {timerLabel}
-              </ColumnLabel>
-            </Column>
-          </Row>}
-          {!inner &&
-          <Progress
-            isPending={isPending}
-            fullStatusValue={totalSupply}
-            currentStatusValue={tokensSold}
-          />}
-          {!inner &&
-          <Row alignVertical="flex-start" halfPadding>
-            <Column width="33.33333%">
-              <ColumnLabel>
-                Goal
-              </ColumnLabel>
-              <ColumnValue>
-                {goalCurrencySymbol}{formatMoney(goal, 0, 3, ',', '.', false)}
-              </ColumnValue>
-            </Column>
-            <Column width="33.33333%">
-              <ColumnLabel>
-                End date
-              </ColumnLabel>
-              <ColumnValue>
-                {format(new Date(endDate), 'D MMM YYYY')}
-              </ColumnValue>
-            </Column>
-            <Column width="33.33333%">
-              <ColumnLabel>
-                {timerLabel}
-              </ColumnLabel>
-              <Countdown endDate={isPending ? startDate : endDate} lineHeight={fontSizes.mediumLarge} />
-            </Column>
-          </Row>}
-          {!!inner &&
-          <Row alignCenter>
+      <InnerWrapper inner={inner}>
+        <TouchableWithoutFeedback onPress={onPress}>
+          <Sizer>
+            <Row>
+              <TitleWrapper inner={inner}>
+                <Title>{title}</Title>
+                {!!status &&
+                <Label>
+                  <LabelText>
+                    {status.toUpperCase()}
+                  </LabelText>
+                </Label>}
+              </TitleWrapper>
+              {!inner && iconUrl &&
+              <CachedImage
+                key={id}
+                style={{
+                  height: 60,
+                  width: 60,
+                }}
+                source={{ uri: iconUrl }}
+                resizeMode="contain"
+              />}
+            </Row>
+            {!!inner && !!description &&
+            <Row>
+              <TruncatedText lines={4} text={description} />
+            </Row>}
+            {!!inner &&
+            <Row alignVertical="flex-end" alignCenter marginTop={26}>
+              <Column center width="50%">
+                <ColumnValue xl>
+                  {tokensSoldInPercent}%
+                </ColumnValue>
+                <ColumnLabel>
+                  Tokens sold
+                </ColumnLabel>
+              </Column>
+              <Column center width="50%">
+                <InnerCountDown />
+                <ColumnLabel>
+                  {timerLabel}
+                </ColumnLabel>
+              </Column>
+            </Row>}
+            {!inner &&
             <Progress
               isPending={isPending}
               fullStatusValue={totalSupply}
               currentStatusValue={tokensSold}
-              circle
-            >
-              <CachedImage
-                key={id}
-                style={{
-                  height: 90,
-                  width: 90,
-                }}
-                source={{ uri: iconUrl }}
-                resizeMode="contain"
-              />
-            </Progress>
-          </Row>}
-        </InnerWrapper>
-      </TouchableWithoutFeedback>
+            />}
+            {!inner &&
+            <Row alignVertical="flex-start" halfPadding>
+              <Column width="33.33333%">
+                <ColumnLabel>
+                  Goal
+                </ColumnLabel>
+                <ColumnValue>
+                  {goalCurrencySymbol}{formatMoney(goal, 0, 3, ',', '.', false)}
+                </ColumnValue>
+              </Column>
+              <Column width="33.33333%">
+                <ColumnLabel>
+                  End date
+                </ColumnLabel>
+                <ColumnValue>
+                  {format(new Date(endDate), 'D MMM YYYY')}
+                </ColumnValue>
+              </Column>
+              <Column width="33.33333%">
+                <ColumnLabel>
+                  {timerLabel}
+                </ColumnLabel>
+                <Countdown endDate={isPending ? startDate : endDate} lineHeight={fontSizes.mediumLarge} />
+              </Column>
+            </Row>}
+            {!!inner &&
+            <Row alignCenter>
+              <Progress
+                isPending={isPending}
+                fullStatusValue={totalSupply}
+                currentStatusValue={tokensSold}
+                circle
+              >
+                <CachedImage
+                  key={id}
+                  style={{
+                    height: 90,
+                    width: 90,
+                  }}
+                  source={{ uri: iconUrl }}
+                  resizeMode="contain"
+                />
+              </Progress>
+            </Row>}
+          </Sizer>
+        </TouchableWithoutFeedback>
+      </InnerWrapper>
     </CardWrapper>
   );
 };
