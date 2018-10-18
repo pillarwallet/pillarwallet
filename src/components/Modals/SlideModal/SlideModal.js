@@ -56,12 +56,20 @@ const getTheme = (props: Props) => {
   return themes.default;
 };
 
-const ModalWrapper = styled.View`
+const HeaderWrapper = styled.View`
+`;
+
+const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
 `;
 
-const HeaderWrapper = styled.View`
+const Backdrop = styled.TouchableWithoutFeedback`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 const ModalBackground = styled.View`
@@ -184,9 +192,18 @@ export default class SlideModal extends React.Component<Props, *> {
       }
 
       if (eventDetail) {
-        return children;
+        return (
+          <ModalBackground theme={theme}>
+            { children }
+          </ModalBackground>
+        );
       }
-      return modalInner;
+
+      return (
+        <ModalBackground theme={theme}>
+          { modalInner }
+        </ModalBackground>
+      );
     };
 
     const animationTiming = 400;
@@ -205,15 +222,20 @@ export default class SlideModal extends React.Component<Props, *> {
         avoidKeyboard={avoidKeyboard}
         style={{
           margin: 0,
+          position: 'relative',
+          zIndex: 10,
         }}
       >
-        <ModalWrapper>
-          <Root>
-            <ModalBackground theme={theme}>
-              {modalContent()}
-            </ModalBackground>
-          </Root>
-        </ModalWrapper>
+        <Root>
+          <ContentWrapper>
+            {!fullScreen &&
+              <Backdrop onPress={this.hideModal}>
+                <ContentWrapper />
+              </Backdrop>
+            }
+            {modalContent()}
+          </ContentWrapper>
+        </Root>
         {isVisible && fullScreenComponent}
       </Modal>
     );

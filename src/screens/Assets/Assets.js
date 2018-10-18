@@ -77,7 +77,7 @@ const horizontalPadding = (layout, side) => {
       return side === 'left' ? 0 : spacing.rhythm - 9;
     }
     default: {
-      return side === 'left' ? 0 : spacing.rhythm - 2;
+      return 0;
     }
   }
 };
@@ -166,7 +166,7 @@ class AssetsScreen extends React.Component<Props, State> {
         { text: 'Hide', onPress: () => updateAssets(assets, [asset.symbol]) },
       ],
     );
-  }
+  };
 
   renderSwipeoutBtns = (asset) => {
     const { assetsLayout } = this.props;
@@ -312,8 +312,8 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <View
         style={{
-          marginTop: -22,
-          height: 1,
+          marginTop: Platform.OS === 'ios' ? -22 : -10,
+          height: 0,
           width: '100%',
           backgroundColor: 'transparent',
         }}
@@ -386,7 +386,9 @@ class AssetsScreen extends React.Component<Props, State> {
             width: '100%',
           }}
           numColumns={columnAmount}
-          ItemSeparatorComponent={assetsLayout === SIMPLIFIED ? this.renderSeparator : null}
+          ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+            ? this.renderSeparator
+            : null}
           refreshControl={
             <RefreshControl
               refreshing={false}
