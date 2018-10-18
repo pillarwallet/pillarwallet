@@ -124,6 +124,12 @@ const SendTokenDetailsValue = styled(BaseText)`
   margin-bottom: ${spacing.rhythm / 2}px;
 `;
 
+const HelperText = styled(BaseText)`
+  font-size: ${fontSizes.small};
+  margin-bottom: ${spacing.rhythm / 2}px;
+  color: ${UIColors.placeholderTextColor};
+`;
+
 const ButtonWrapper = styled.View`
   margin-top: ${spacing.rhythm / 2}px;
   margin-bottom: ${spacing.rhythm + 10}px;
@@ -340,7 +346,8 @@ class SendTokenAmount extends React.Component<Props, State> {
             <SendTokenDetails>
               <Label small>Available Balance</Label>
               <SendTokenDetailsValue>
-                {formattedBalance} {token} ({currencySymbol}{formattedBalanceInFiat})
+                {formattedBalance} {token}
+                <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
               </SendTokenDetailsValue>
               <Label small>Est. Network Fee</Label>
               <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
