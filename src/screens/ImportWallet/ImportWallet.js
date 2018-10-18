@@ -25,7 +25,7 @@ import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
 import WalletTabs from 'components/Tabs/WalletTabs';
-import { fontSizes, baseColors, UIColors, fontWeights, spacing } from 'utils/variables';
+import { fontSizes, baseColors, UIColors, fontWeights } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
