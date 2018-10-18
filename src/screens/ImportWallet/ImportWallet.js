@@ -50,6 +50,7 @@ const window = Dimensions.get('window');
 const InputWrapper = styled.View`
   flex-direction: row;
   align-items: center;
+  margin-top: -20px;
 `;
 
 const ButtonText = styled(BaseText)`
@@ -64,7 +65,6 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: 0 20px;
   width: 100%;
-  margin-bottom: ${spacing.rhythm}px;
 `;
 
 const ButtonWrapper = styled.View`
