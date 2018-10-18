@@ -202,9 +202,9 @@ class TextInput extends React.Component<Props, State> {
             value={value}
             inputType={inputType}
             autoCorrect={autoCorrect}
-            style={{ 
-              fontSize: inputType.fontSize, 
-              width: viewWidth, 
+            style={{
+              fontSize: inputType.fontSize,
+              width: viewWidth,
               lineHeight: inputProps.multiline ? 30 : 20,
               paddingRight: inputProps.multiline ? 50 : 0,
             }}
