@@ -1,45 +1,49 @@
 package com.pillarproject.wallet;
 
 import android.app.Application;
-import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
-import com.facebook.react.ReactApplication;
-import lt.imas.react_native_signal.RNSignalClientPackage;
-import com.oblador.vectoricons.VectorIconsPackage;
-import com.tradle.react.UdpSocketsModule;
-import com.testfairy.react.TestFairyPackage;
-import com.peel.react.TcpSocketsModule;
-import com.horcrux.svg.SvgPackage;
-import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import cl.json.RNSharePackage;
-import io.sentry.RNSentryPackage;
-import com.crypho.scrypt.RNScryptPackage;
-import com.bitgo.randombytes.RandomBytesPackage;
-import com.peel.react.rnos.RNOSModule;
 import com.BV.LinearGradient.LinearGradientPackage;
-import com.robinpowered.react.Intercom.IntercomPackage;
-import com.reactnative.ivpusic.imagepicker.PickerPackage;
-import io.invertase.firebase.RNFirebasePackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import org.reactnative.camera.RNCameraPackage;
-import com.ocetnik.timer.BackgroundTimerPackage;
-import com.airbnb.android.react.lottie.LottiePackage;
-import cl.json.ShareApplication;
 import com.RNFetchBlob.RNFetchBlobPackage;
+import com.airbnb.android.react.lottie.LottiePackage;
+import com.bitgo.randombytes.RandomBytesPackage;
+import com.crashlytics.android.Crashlytics;
+import com.crypho.scrypt.RNScryptPackage;
+import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import io.fabric.sdk.android.Fabric;
-import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
+import com.horcrux.svg.SvgPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.ocetnik.timer.BackgroundTimerPackage;
+import com.tradle.react.UdpSocketsModule;
+import com.testfairy.react.TestFairyPackage;
+import com.peel.react.TcpSocketsModule;
+import com.peel.react.rnos.RNOSModule;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
+import com.robinpowered.react.Intercom.IntercomPackage;
+import com.tradle.react.UdpSocketsModule;
 
-import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
-import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
-import io.intercom.android.sdk.Intercom;
-// react-native-splash-screen >= 0.3.1
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import org.reactnative.camera.RNCameraPackage;
+
 import java.util.Arrays;
 import java.util.List;
+
+import cl.json.RNSharePackage;
+import cl.json.ShareApplication;
+import io.fabric.sdk.android.Fabric;
+import io.intercom.android.sdk.Intercom;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import io.sentry.RNSentryPackage;
+import lt.imas.react_native_signal.RNSignalClientPackage;
+import nativeShadow.NativeShadowPackage;
+
+// react-native-splash-screen >= 0.3.1
 
 
 public class MainApplication extends Application implements ShareApplication, ReactApplication {
@@ -73,7 +77,8 @@ public class MainApplication extends Application implements ShareApplication, Re
         new LinearGradientPackage(),
         new RNFirebaseNotificationsPackage(),
         new RandomBytesPackage(),
-        new PickerPackage()
+        new PickerPackage(),
+        new NativeShadowPackage()
       );
     }
 
