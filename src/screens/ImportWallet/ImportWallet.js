@@ -24,7 +24,6 @@ import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
-import Title from 'components/Title';
 import WalletTabs from 'components/Tabs/WalletTabs';
 import { fontSizes, baseColors, UIColors, fontWeights, spacing } from 'utils/variables';
 
