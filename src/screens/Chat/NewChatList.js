@@ -8,7 +8,7 @@ import type { NavigationScreenProp, NavigationEventSubscription } from 'react-na
 import { CHAT, CHAT_LIST } from 'constants/navigationConstants';
 import Header from 'components/Header';
 import EmptyChat from 'components/EmptyState/EmptyChat';
-import { baseColors } from 'utils/variables';
+import { UIColors } from 'utils/variables';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import ChatListItem from './ChatListItem';
@@ -72,7 +72,7 @@ class NewChatListScreen extends React.Component<Props, State> {
   renderSeparator = () => {
     return (
       <View style={{ paddingLeft: 74, paddingRight: 18 }}>
-        <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
+        <View style={{ height: 1, width: '100%', backgroundColor: UIColors.defaultDividerColor }} />
       </View>
     );
   };

@@ -32,8 +32,8 @@ const transactionSuccessText =
 
 const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
-    'transaction underpriced': 'Not enough gas',
-    'replacement transaction underpriced': '',
+    'transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
+    'replacement transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
   };
   const transactionFailureText = 'Something went wrong';
   return TRANSACTION_ERRORS[error] || transactionFailureText;

@@ -1,0 +1,6 @@
+{
+  "name": "Shadow",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./Shadow.js"
+}

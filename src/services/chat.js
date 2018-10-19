@@ -1,6 +1,6 @@
 // @flow
 import { SignalClient } from 'rn-signal-protocol-messaging';
-import { SIGNAL_SERVER_HOST } from 'react-native-dotenv';
+import { SENTRY_DSN, SIGNAL_SERVER_HOST } from 'react-native-dotenv';
 import { Platform } from 'react-native';
 
 
@@ -19,6 +19,9 @@ export default class Chat {
         SIGNAL_SERVER_HOST,
       );
     }
+
+    credentials.errorTrackingDSN = SENTRY_DSN;
+    credentials.isSendingLogs = !__DEV__;
     credentials.host = SIGNAL_SERVER_HOST;
     return this.client.init(credentials);
   }

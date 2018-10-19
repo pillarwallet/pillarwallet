@@ -13,6 +13,7 @@ type Props = {
   subtitle?: boolean,
   maxWidth?: number,
   noBlueDot?: boolean,
+  dotColor?: string,
 };
 
 const Wrapper = styled.View`
@@ -40,7 +41,7 @@ const Text = styled(BoldText)`
 const BlueDot = styled(BoldText)`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.extraExtraSmall};
-  background-color: ${baseColors.brightSkyBlue};
+  background-color: ${props => props.dotColor ? props.dotColor : baseColors.brightSkyBlue};
   align-self: flex-end;
   height: 4px;
   width: 4px;
@@ -55,7 +56,7 @@ const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
       <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
-      {!!props.title && !props.subtitle && !props.noBlueDot && <BlueDot />}
+      {!!props.title && !props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor} />}
     </Wrapper>
   );
 };

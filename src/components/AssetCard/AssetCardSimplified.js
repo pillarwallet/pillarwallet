@@ -3,9 +3,10 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
+import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -29,17 +30,18 @@ const defaultCircleColor = '#ACBCCD';
 const AssetOutter = styled.View`
   padding: ${Platform.select({
     ios: `15px 9px 15px ${spacing.rhythm}px`,
-    android: `3px 9px 27px ${spacing.rhythm}px`,
+    android: '8px 0 6px 10px',
+  })};
+  background-color: transparent;
+  margin: ${Platform.select({
+    ios: 0,
+    android: '-12px 0 0 0',
   })};
 `;
 
 const AssetWrapper = styled.View`
   flex-direction: row;
-  shadow-color: ${UIColors.cardShadowColor};
-  shadow-offset: 0 3px;
-  shadow-opacity: 1;
   shadow-radius: 6px;
-  elevation: 2;
   border-radius: 6px;
   background: ${baseColors.white};
   height: 70px;
@@ -138,37 +140,39 @@ const AssetCardSimplified = (props: Props) => {
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
   return (
     <AssetOutter>
-      <AssetWrapper>
-        <TouchableWithoutFeedback onPress={onPress}>
-          <InnerWrapper>
-            <IconCircle>
-              {!!icon &&
-              <CachedImage
-                key={token}
-                style={{
-                  height: 44,
-                  width: 44,
-                }}
-                source={{ uri: icon }}
-                resizeMode="contain"
-              />}
-            </IconCircle>
-            <DetailsWrapper>
-              <Name>{name}</Name>
-              <AmountWrapper>
-                <TokenAmountWrapper>
-                  <Amount>{amount}</Amount>
-                  <AmountToken> {token}</AmountToken>
-                </TokenAmountWrapper>
-                {disclaimer
-                  ? <Disclaimer>{disclaimer}</Disclaimer>
-                  : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                }
-              </AmountWrapper>
-            </DetailsWrapper>
-          </InnerWrapper>
-        </TouchableWithoutFeedback>
-      </AssetWrapper>
+      <Shadow>
+        <AssetWrapper>
+          <TouchableWithoutFeedback onPress={onPress}>
+            <InnerWrapper>
+              <IconCircle>
+                {!!icon &&
+                <CachedImage
+                  key={token}
+                  style={{
+                    height: 44,
+                    width: 44,
+                  }}
+                  source={{ uri: icon }}
+                  resizeMode="contain"
+                />}
+              </IconCircle>
+              <DetailsWrapper>
+                <Name>{name}</Name>
+                <AmountWrapper>
+                  <TokenAmountWrapper>
+                    <Amount>{amount}</Amount>
+                    <AmountToken> {token}</AmountToken>
+                  </TokenAmountWrapper>
+                  {disclaimer
+                    ? <Disclaimer>{disclaimer}</Disclaimer>
+                    : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                  }
+                </AmountWrapper>
+              </DetailsWrapper>
+            </InnerWrapper>
+          </TouchableWithoutFeedback>
+        </AssetWrapper>
+      </Shadow>
     </AssetOutter>
   );
 };

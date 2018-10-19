@@ -98,15 +98,18 @@ export const registerWalletAction = () => {
     await firebase.messaging().requestPermission().catch(() => { });
     const fcmToken = await firebase.messaging().getToken().catch(() => { });
     await Intercom.sendTokenToIntercom(fcmToken);
-    await chat.init({
-      username: user.username,
-      password: generateChatPassword(wallet.privateKey),
-    }).catch(() => null);
-    await chat.client.registerAccount().catch(() => null);
-    await chat.client.setFcmId(fcmToken).catch(() => null);
     const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
     const registrationSucceed = !!Object.keys(sdkWallet).length;
     const userInfo = await api.userInfo(sdkWallet.walletId);
+    await chat.init({
+      userId: sdkWallet.userId,
+      username: user.username,
+      password: generateChatPassword(wallet.privateKey),
+      walletId: sdkWallet.walletId,
+      ethAddress: wallet.address,
+    }).catch(() => null);
+    await chat.client.registerAccount().catch(() => null);
+    await chat.client.setFcmId(fcmToken).catch(() => null);
     if (Object.keys(userInfo).length) {
       await storage.save('user', { user: userInfo }, true);
     }
