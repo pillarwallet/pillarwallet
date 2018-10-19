@@ -44,6 +44,7 @@
     <uses-feature android:glEsVersion="0x00020000" android:required="false" />
 
     <application
+        tools:replace="android:allowBackup"
         android:name=".MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
