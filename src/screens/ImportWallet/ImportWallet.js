@@ -25,7 +25,7 @@ import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
 import WalletTabs from 'components/Tabs/WalletTabs';
-import { fontSizes, baseColors, UIColors, fontWeights } from 'utils/variables';
+import { fontSizes, baseColors, UIColors, fontWeights, spacing } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -72,7 +72,7 @@ const ButtonWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-left: 14px;
-  margin-top: ${props => props.error ? 11 : 16}%;
+  margin-top: ${props => props.error ? 32 : 50}px;
 `;
 
 class ImportWallet extends React.Component<Props, State> {
@@ -257,7 +257,7 @@ class ImportWallet extends React.Component<Props, State> {
                 numberOfLines: 3,
               }}
               errorMessage={tabsInfo[activeTab].errorMessage}
-              viewWidth={activeTab === TWORDSPHRASE ? window.width : window.width - 95}
+              viewWidth={activeTab === TWORDSPHRASE ? (window.width - spacing.rhythm * 2 - 2) : window.width - 95}
               inputType="secondary"
               lowerCase
               labelBigger
