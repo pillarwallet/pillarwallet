@@ -24,6 +24,15 @@ const ContactCardList = styled.FlatList`
   padding: 16px;
 `;
 
+const PeopleSearchResultsOverlay = styled.TouchableOpacity`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 100;
+`;
+
 const LocalContacts = styled.View`
   height: 140px;
   background-color: ${baseColors.lighterGray};
@@ -156,11 +165,19 @@ class PeopleSearchResults extends React.Component<Props> {
   render() {
     const { searchResults } = this.props;
     return (
+
       <React.Fragment>
+        <PeopleSearchResultsOverlay
+          onPress={Keyboard.dismiss}
+          accessible={false}
+        />
         {!!searchResults.localContacts.length && (
           <LocalContacts>
             <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
-            <LocalContactsScrollView horizontal>
+            <LocalContactsScrollView
+              keyboardShouldPersistTaps="always"
+              horizontal
+            >
               {this.renderLocalContacts(searchResults.localContacts)}
             </LocalContactsScrollView>
           </LocalContacts>
@@ -171,6 +188,7 @@ class PeopleSearchResults extends React.Component<Props> {
             renderItem={this.renderContact}
             onScroll={() => Keyboard.dismiss()}
             keyExtractor={({ username }) => username}
+            keyboardShouldPersistTaps="always"
             contentContainerStyle={{
               paddingBottom: 40,
             }}

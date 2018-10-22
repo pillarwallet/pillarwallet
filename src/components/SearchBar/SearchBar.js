@@ -58,6 +58,7 @@ type Props = {
   inputProps: inputPropsType,
   placeholder?: string,
   backgroundColor?: string,
+  customOnFocus?: Function,
 };
 
 type State = {
@@ -96,6 +97,7 @@ class SearchBar extends React.Component<Props, State> {
     if (onBlur) {
       onBlur(this.value);
     }
+    Keyboard.dismiss();
     this.setState({ isFocused: false });
   };
 
@@ -117,6 +119,10 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
+    const { customOnFocus } = this.props;
+    if (customOnFocus) {
+      customOnFocus();
+    }
     this.setState({ isFocused: true });
     Animated.timing(this.state.animShrink, {
       toValue: 80,
@@ -159,9 +165,9 @@ class SearchBar extends React.Component<Props, State> {
           <InputIcon source={searchIcon} />
         </Animated.View>
         {(isFocused || !!value) &&
-        <CancelButton onPress={this.handleCancel}>
-          <BaseText style={{ color: baseColors.electricBlue }}>Cancel</BaseText>
-        </CancelButton>
+          <CancelButton onPress={this.handleCancel}>
+            <BaseText style={{ color: baseColors.electricBlue }}>Cancel</BaseText>
+          </CancelButton>
         }
       </SearchHolder>
     );

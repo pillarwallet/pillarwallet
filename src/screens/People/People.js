@@ -43,6 +43,29 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   flex-direction: row;
 `;
 
+const HeaderWrapper = styled.View`
+  z-index: 20;
+  background: ${baseColors.white};
+`;
+
+const FullScreenOverlayWrapper = styled.TouchableOpacity`
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+`;
+
+const FullScreenOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.6);
+`;
+
 const ConnectionRequestBannerText = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
@@ -86,6 +109,7 @@ type Props = {
 
 type State = {
   query: string,
+  searchIsFocused: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
@@ -93,6 +117,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
   state = {
     query: '',
+    searchIsFocused: false,
   };
 
   constructor(props: Props) {
@@ -113,6 +138,19 @@ class PeopleScreen extends React.Component<Props, State> {
   handleSearchChange = (query: any) => {
     this.setState({ query });
     this.handleContactsSearch(query);
+  };
+
+  handleSearchFocus = () => {
+    this.setState({
+      searchIsFocused: true,
+    });
+  };
+
+  handleSearchBlur = () => {
+    Keyboard.dismiss();
+    this.setState({
+      searchIsFocused: false,
+    });
   };
 
   handleContactsSearch = (query: string) => {
@@ -153,7 +191,7 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { query } = this.state;
+    const { query, searchIsFocused } = this.state;
     const {
       searchResults,
       contactState,
@@ -168,16 +206,28 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="people" />
-        <Wrapper regularPadding>
-          <SearchBar
-            inputProps={{
-              onChange: this.handleSearchChange,
-              value: query,
-              autoCapitalize: 'none',
-            }}
-          />
-        </Wrapper>
+        <HeaderWrapper>
+          <Header title="people" />
+          <Wrapper zIndex={100} regularPadding>
+            <SearchBar
+              backgroundColor={baseColors.white}
+              customOnFocus={this.handleSearchFocus}
+              inputProps={{
+                onBlur: this.handleSearchBlur,
+                onChange: this.handleSearchChange,
+                value: query,
+                autoCapitalize: 'none',
+              }}
+            />
+          </Wrapper>
+        </HeaderWrapper>
+        {searchIsFocused && !inSearchMode &&
+          <FullScreenOverlayWrapper
+            onPress={this.handleSearchBlur}
+          >
+            <FullScreenOverlay />
+          </FullScreenOverlayWrapper>
+        }
         {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
