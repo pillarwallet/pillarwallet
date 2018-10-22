@@ -345,7 +345,7 @@ class ICOScreen extends React.Component<Props, {}> {
     ];
 
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header onBack={this.navigateBack} title="ico" />
         <ScrollWrapper>
           <Wrapper>

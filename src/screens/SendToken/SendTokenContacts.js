@@ -198,7 +198,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     return (
-      <Container color={UIColors.defaultBackgroundColor}>
+      <Container>
         <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
         <FormWrapper>
           <Form

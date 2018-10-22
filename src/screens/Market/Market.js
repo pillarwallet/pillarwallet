@@ -94,7 +94,7 @@ class MarketScreen extends React.Component<Props> {
     const activeICOs = filterIcosByStatus(icos, ACTIVE);
     const pendingICOs = filterIcosByStatus(icos, PENDING);
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header
           title="market"
         />

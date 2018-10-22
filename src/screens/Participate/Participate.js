@@ -310,7 +310,7 @@ class ParticipateScreen extends React.Component<Props, State> {
     });
     const formStructure = getFormStructure(icoData.maximumContribution, icoData.minimumContribution);
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header
           onBack={this.handleBackNavigation}
           title="participate"
