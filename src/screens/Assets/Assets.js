@@ -35,7 +35,7 @@ import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, ETH } from 'constan
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
-import { spacing, baseColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { getBalance } from 'utils/assets';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import HideAssetButton from './HideAssetButton';
