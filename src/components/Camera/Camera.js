@@ -17,6 +17,7 @@ import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes } from 'utils/variables';
 import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/profileActions';
+import {UIColors} from "../../utils/variables";
 
 type Props = {
   onModalHide?: Function,
@@ -121,7 +122,7 @@ const ResultScreen = styled.View`
   justify-content: center;
   align-items: center;
   padding: 30px;
-  background-color: #ffffff;
+  background-color: ${UIColors.defaultBackgroundColor};
   z-index: 2;
 `;
 

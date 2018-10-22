@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { Platform, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { baseColors, spacing } from 'utils/variables';
+import { UIColors, spacing } from 'utils/variables';
 
 type ContainerProps = {
   children?: React.Node,
@@ -25,7 +25,7 @@ export const Center = styled.View`
 `;
 
 const ContainerOuter = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : baseColors.white)};
+  background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
 `;
 
 const ContainerInner = styled.View`
