@@ -21,10 +21,11 @@ import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 
 const ContactWrapper = styled.View`
-  height: 218px;
+  height: 250px;
   position: relative;
   justify-content: flex-end;
-  margin: 60px 20px 20px;
+  margin: 5px 20px 20px;
+  padding-top: 50px;
 `;
 
 const ContactHeader = styled.View`
@@ -38,13 +39,12 @@ const ContactHeader = styled.View`
   align-items: center;
   position: relative;
   z-index: -1;
-  padding-top: 46px;
 `;
 
 const ContactHeaderBody = styled.View`
   height: 200px;
-  margin-top: -48px;
   justify-content: center;
+  padding: 55px 16px;
 `;
 
 const ContactHeaderName = styled(BoldText)`
@@ -53,20 +53,12 @@ const ContactHeaderName = styled(BoldText)`
 `;
 
 const ContactHeaderAvatarWrapper = styled.View`
-  height: 144px;
-  width: 144px;
-  border: 2px solid ${baseColors.white};
-  background: ${baseColors.cyan};
-  border-radius: 72px;
-  margin-right: 14px;
-  shadow-color: ${baseColors.black};
-  shadow-offset: 0 0;
-  shadow-radius: 2px;
-  shadow-opacity: 0.1;
+  height: 102px;
+  width: 102px;
   position: absolute;
-  top: -58px;
+  top: 0;
   left: 50%;
-  margin-left: -72px;
+  margin-left: -51px;
 `;
 
 type Props = {
@@ -172,8 +164,9 @@ class Contact extends React.Component<Props, State> {
               <ProfileImage
                 uri={userAvatar}
                 userName={displayContact.username}
-                diameter={140}
-                textStyle={{ fontSize: 32 }}
+                diameter={96}
+                borderWidth={3}
+                initialsSize={fontSizes.extraExtraLarge}
               />
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>

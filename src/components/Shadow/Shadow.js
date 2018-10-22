@@ -54,7 +54,7 @@ export const Shadow = (props: Props) => {
       shadowAngle={90}
       shadowRadius={shadowSpread}
       shadowDistance={shadowDistance}
-      shadowColor="#12105baa"
+      shadowColor="#14105baa"
       style={{ paddingRight: paddingFix, paddingBottom: paddingFix }}
     >
       <View style={{ width: '100%' }}>
