@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
-import { ImageBackground } from 'react-native';
-
+import { ImageBackground, View } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
@@ -57,8 +56,8 @@ type Props = {
   noShadow?: boolean,
 }
 
-const Wrapper = (props: { children: React.Node, noShadow?: boolean }) => {
-  const { children, noShadow } = props;
+const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
+  const { children, noShadow, diameter } = props;
 
   if (noShadow) {
     return (
@@ -70,7 +69,9 @@ const Wrapper = (props: { children: React.Node, noShadow?: boolean }) => {
 
   return (
     <Shadow>
-      { children }
+      <View style={{ height: diameter, width: diameter }}>
+        { children }
+      </View>
     </Shadow>
   );
 };
@@ -129,7 +130,7 @@ const ProfileImage = (props: Props) => {
   };
 
   return (
-    <Wrapper noShadow={noShadow}>
+    <Wrapper noShadow={noShadow} diameter={diameterWithBorder}>
       <ImageTouchable
         additionalContainerStyle={containerStyle}
         diameter={diameterWithBorder}

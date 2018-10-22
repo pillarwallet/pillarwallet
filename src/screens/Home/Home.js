@@ -406,6 +406,7 @@ class HomeScreen extends React.Component<Props, State> {
                         { perspective: 1000 },
                       ],
                     }}
+                    noShadow
                   >
                     <CameraIcon name="camera" />
                   </AnimatedHomeHeaderProfileImage>

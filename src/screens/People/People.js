@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
-  View,
   FlatList,
   Keyboard,
   Image,
@@ -23,7 +22,8 @@ import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
-import ContactCard from 'components/ContactCard';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
@@ -131,20 +131,12 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
-  renderSeparator = () => {
-    return (
-      <View style={{ marginTop: -4, borderRadius: 4 }}>
-        <View style={{ height: 1, width: '100%' }} />
-      </View>
-    );
-  };
-
   renderContact = ({ item }) => (
-    <ContactCard
+    <ListItemWithImage
+      label={item.username}
       onPress={this.handleContactCardPress(item)}
-      name={item.username}
-      key={item.id}
-      avatar={item.profileImage}
+      avatarUrl={item.profileImage}
+      navigateToProfile={this.handleContactCardPress(item)}
     />
   );
 
@@ -209,7 +201,7 @@ class PeopleScreen extends React.Component<Props, State> {
             data={sortedLocalContacts}
             keyExtractor={(item) => item.id}
             renderItem={this.renderContact}
-            ItemSeparatorComponent={this.renderSeparator}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
               paddingVertical: spacing.rhythm,

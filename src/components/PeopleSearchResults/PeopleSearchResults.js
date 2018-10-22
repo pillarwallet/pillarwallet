@@ -1,13 +1,13 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { TYPE_INVITE, TYPE_ACCEPTED, TYPE_REJECTED } from 'constants/invitationsConstants';
+import { TYPE_INVITE, TYPE_ACCEPTED, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
-import { baseColors, fontSizes, itemSizes, spacing } from 'utils/variables';
-import ContactCard from 'components/ContactCard';
+import { baseColors, fontSizes, itemSizes, spacing, fontWeights } from 'utils/variables';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { SubHeading, BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
@@ -21,11 +21,11 @@ import {
 } from 'actions/invitationsActions';
 
 const ContactCardList = styled.FlatList`
-  padding: 16px;
+  padding: 16px 0;
 `;
 
 const LocalContacts = styled.View`
-  height: 140px;
+  height: 145px;
   background-color: ${baseColors.lighterGray};
   border-top-width: 1px;
   border-bottom-width: 1px;
@@ -37,33 +37,35 @@ const LocalContactsScrollView = styled.ScrollView`
 `;
 
 const LocalContactsSubHeading = styled(SubHeading)`
-  margin: 16px;
+  margin: 22px 16px 13px;
+  font-weight: ${fontWeights.medium};
+`;
+
+const ListSubHeading = styled(SubHeading)`
+  margin: 6px ${spacing.mediumLarge}px 8px;
+  font-weight: ${fontWeights.medium};
 `;
 
 const LocalContactsItem = styled.TouchableOpacity`
   align-items: center;
-  width: 64px;
-  margin: 0 ${spacing.rhythm / 2}px;
-`;
-
-const LocalContactsItemAvatarWrapper = styled.View`
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  background-color: ${baseColors.cyan};
-  border: 2px solid white;
-  shadow-color: ${baseColors.black};
-  shadow-offset: 0 0;
-  shadow-radius: 2px;
-  shadow-opacity: 0.1;
-  margin-bottom: 8px;
-  align-items: center;
-  justify-content: center;
+  width: 66px;
+  margin: ${Platform.select({
+    ios: `0 ${spacing.rhythm / 2}px`,
+    android: `-6px ${spacing.rhythm / 2}px 0`,
+  })};
+  padding-top: ${Platform.select({
+    ios: '3px',
+    android: 0,
+  })};
 `;
 
 const LocalContactsItemName = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
+  margin-top: ${Platform.select({
+    ios: '3px',
+    android: '-4px',
+  })};
 `;
 
 type Props = {
@@ -103,7 +105,7 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   renderContact = ({ item: user }) => {
-    const { invitations, localContacts } = this.props;
+    const { invitations, localContacts, navigation } = this.props;
     const localContactsIds = localContacts.map(({ id }) => id);
     const invitation = invitations.find(({ id }) => id === user.id);
     let status = TYPE_INVITE;
@@ -115,19 +117,17 @@ class PeopleSearchResults extends React.Component<Props> {
     }
 
     return (
-      <ContactCard
-        onSendInvitationPress={this.handleSendInvitationPress(user)}
-        onAcceptInvitationPress={this.handleAcceptInvitationPress(user)}
-        onCancelInvitationPress={this.handleCancelInvitationPress(user)}
-        onRejectInvitationPress={this.handleRejectInvitationPress(user)}
-        name={user.username}
-        avatar={user.profileImage}
-        key={user.id}
-        status={status}
-        showActions
-        noBorder
-        disabled
-        noMargin
+      <ListItemWithImage
+        label={user.username}
+        avatarUrl={user.profileImage}
+        navigateToProfile={() => navigation.navigate(CONTACT, { contact: user })}
+        rejectInvitation={this.handleRejectInvitationPress(user)}
+        acceptInvitation={this.handleAcceptInvitationPress(user)}
+        buttonAction={status === TYPE_SENT
+          ? this.handleCancelInvitationPress(user)
+          : this.handleSendInvitationPress(user)}
+        buttonActionLabel={status === TYPE_SENT ? 'Request Sent' : 'Connect'}
+        secondaryButton={status === TYPE_SENT}
       />
     );
   };
@@ -140,14 +140,12 @@ class PeopleSearchResults extends React.Component<Props> {
           key={contact.username}
           onPress={() => navigation.navigate(CONTACT, { contact })}
         >
-          <LocalContactsItemAvatarWrapper>
-            <ProfileImage
-              uri={contact.profileImage}
-              userName={contact.username}
-              diameter={itemSizes.avaratCircleMedium}
-              textStyle={{ fontSize: fontSizes.medium }}
-            />
-          </LocalContactsItemAvatarWrapper>
+          <ProfileImage
+            uri={contact.profileImage}
+            userName={contact.username}
+            diameter={itemSizes.avaratCircleMedium}
+            textStyle={{ fontSize: fontSizes.medium }}
+          />
           <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
         </LocalContactsItem>
       ));
@@ -174,8 +172,8 @@ class PeopleSearchResults extends React.Component<Props> {
             contentContainerStyle={{
               paddingBottom: 40,
             }}
-            ListHeaderComponent={<SubHeading>ALL USERS</SubHeading>}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={42} />}
+            ListHeaderComponent={<ListSubHeading>ALL USERS</ListSubHeading>}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           />
         )}
       </React.Fragment>

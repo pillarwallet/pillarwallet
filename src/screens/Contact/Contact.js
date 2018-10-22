@@ -167,6 +167,7 @@ class Contact extends React.Component<Props, State> {
                 diameter={96}
                 borderWidth={3}
                 initialsSize={fontSizes.extraExtraLarge}
+                noShadow
               />
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>

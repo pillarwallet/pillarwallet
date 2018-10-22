@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors, spacing } from 'utils/variables';
+import { UIColors } from 'utils/variables';
 
 type Props = {
   spaceOnLeft?: number,
@@ -9,7 +9,6 @@ type Props = {
 
 const SeparatorWrapper = styled.View`
   padding-left: ${props => (props.spaceOnLeft ? props.spaceOnLeft : 44)}px;
-  margin-left: ${spacing.rhythm / 2}px;
 `;
 
 const SeparatorLine = styled.View`

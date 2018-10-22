@@ -32,6 +32,7 @@ type Props = {
   rejectInvitation?: Function,
   acceptInvitation?: Function,
   type?: string,
+  key?: number,
 }
 
 const ACTION = 'ACTION';
@@ -44,7 +45,6 @@ const ItemWrapper = styled.TouchableOpacity`
   justify-content: flex-start;
   padding: ${spacing.small}px ${spacing.mediumLarge}px;
   height: ${props => props.type !== DEFAULT ? 84 : 70}px;
-  border: 1px solid #dedede;
 `;
 
 const Row = styled.View`
@@ -330,12 +330,13 @@ const ListItemWithImage = (props: Props) => {
     onPress,
     timeSent,
     unreadCount,
+    key,
   } = props;
 
   const type = getType(props);
 
   return (
-    <ItemWrapper type={type} onPress={onPress}>
+    <ItemWrapper type={type} onPress={onPress} key={key}>
       <ImageWrapper>
         <ItemImage {...props} />
       </ImageWrapper>
