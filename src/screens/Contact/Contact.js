@@ -132,7 +132,7 @@ class Contact extends React.Component<Props, State> {
     } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
-    const localContact = contacts.find(({ username }) => username === contact.username) || {};
+    const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
     const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
