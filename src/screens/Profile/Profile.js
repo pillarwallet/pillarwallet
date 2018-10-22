@@ -446,7 +446,7 @@ class Profile extends React.Component<Props, State> {
                   key="repairDB"
                   label="Repair Local Storage"
                   onPress={repairStorage}
-              />}
+                />}
               <ProfileSettingsItem
                 key="sendDebugData"
                 label="Send Debug Data"
@@ -497,7 +497,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   appSettings: { data: { requestPinForTransaction, baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
-  session: { data: { hasDBConflicts }},
+  session: { data: { hasDBConflicts } },
 }) => ({
   user,
   wallet,
