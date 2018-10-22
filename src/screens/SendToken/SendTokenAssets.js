@@ -1,17 +1,14 @@
 // @flow
 import * as React from 'react';
-import { FlatList, TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
+import { FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { BaseText, BoldText } from 'components/Typography';
 import type { Assets, Balances } from 'models/Asset';
-import { CachedImage } from 'react-native-cached-image';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import Separator from 'components/Separator';
-import { fontSizes, spacing } from 'utils/variables';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
@@ -32,29 +29,6 @@ type NextScreenAssetData = {
   contractAddress: string,
   decimals: number,
 };
-
-const TokenName = styled(BoldText)`
-  font-size: ${fontSizes.small};
-`;
-
-const TokenListItem = styled.View`
-  margin: 0;
-  padding: ${spacing.rhythm / 2}px 0;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const TokenThumbnail = styled(CachedImage)`
-  width: 44px;
-  height: 44px;
-  margin-right: ${spacing.rhythm / 2}px;
-  border-radius: 22px;
-`;
-
-const TokenBalance = styled(BaseText)`
-  margin-left: auto;
-  font-size: ${fontSizes.medium};
-`;
 
 class SendTokenAssetsScreen extends React.Component<Props, {}> {
   navigateToNextScreen(nextScreenAssetData: NextScreenAssetData) {
@@ -85,16 +59,14 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     if (assetsConfig[item.symbol] && !assetsConfig[item.symbol].send) {
       return null;
     }
+
     return (
-      <TouchableOpacity onPress={() => this.navigateToNextScreen(nextScreenAssetData)}>
-        <TokenListItem>
-          <TokenThumbnail source={{ uri: fullIconUrl }} />
-          <TokenName>{item.name}</TokenName>
-          <TokenBalance>
-            {assetBalance} {item.symbol}
-          </TokenBalance>
-        </TokenListItem>
-      </TouchableOpacity>
+      <ListItemWithImage
+        onPress={() => this.navigateToNextScreen(nextScreenAssetData)}
+        label={item.name}
+        itemImageUrl={fullIconUrl}
+        itemValue={`${assetBalance} ${item.symbol}`}
+      />
     );
   };
 
@@ -115,11 +87,9 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
           keyExtractor={item => item.symbol}
           data={assetsArray}
           renderItem={this.renderAsset}
-          ItemSeparatorComponent={Separator}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           contentContainerStyle={{
             flexGrow: 1,
-            paddingLeft: spacing.rhythm,
-            paddingRight: spacing.rhythm,
           }}
           refreshing={false}
           onRefresh={() => this.refreshAssetsList()}

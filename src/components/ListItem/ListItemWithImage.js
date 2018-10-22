@@ -9,6 +9,7 @@ import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
 import Button from 'components/Button';
+import { Shadow } from 'components/Shadow';
 
 type Props = {
   label: string,
@@ -113,10 +114,17 @@ const ItemIcon = styled(Icon)`
   font-size: ${fontSizes.extraGiant};
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImageWrapper = styled.View`
   width: 54px;
   height: 54px;
   border-radius: 27px;
+  border: 2px solid ${baseColors.white};
+`;
+
+const TokenImage = styled(CachedImage)`
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
 `;
 
 const TimeWrapper = styled.View`
@@ -215,7 +223,11 @@ const ItemImage = (props: Props) => {
   }
   if (itemImageUrl) {
     return (
-      <TokenImage source={{ uri: itemImageUrl }} />
+      <Shadow shadowColorAndroid="#38105baa">
+        <TokenImageWrapper>
+          <TokenImage source={{ uri: itemImageUrl }} />
+        </TokenImageWrapper>
+      </Shadow>
     );
   }
   return (
