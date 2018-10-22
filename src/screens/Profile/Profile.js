@@ -446,8 +446,7 @@ class Profile extends React.Component<Props, State> {
                   key="repairDB"
                   label="Repair Local Storage"
                   onPress={repairStorage}
-                />
-              }
+              />}
               <ProfileSettingsItem
                 key="sendDebugData"
                 label="Send Debug Data"
