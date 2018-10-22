@@ -47,7 +47,7 @@ type Props = {
   userName?: string,
   containerStyle?: Object,
   imageStyle?: Object,
-  onPress?: Function,
+  onPress?: ?Function,
   diameter?: number,
   borderWidth?: number,
   style?: Object,

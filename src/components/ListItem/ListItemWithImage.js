@@ -13,25 +13,26 @@ import { Shadow } from 'components/Shadow';
 
 type Props = {
   label: string,
-  navigateToProfile?: Function,
+  navigateToProfile?: ?Function,
   subtext?: string,
   paragraph?: string,
   paragraphLines?: string,
   customAddon?: React.Node,
   onPress?: Function,
   avatarUrl?: string,
-  iconName?: string,
+  iconName?: ?string,
   itemImageUrl?: string,
   timeSent?: string,
   unreadCount?: number,
   itemValue?: string,
-  valueColor?: string,
+  valueColor?: ?string,
   buttonActionLabel?: string,
+  labelAsButton?: boolean,
   buttonAction?: Function,
   secondaryButton?: boolean,
-  actionLabel?: string,
-  rejectInvitation?: Function,
-  acceptInvitation?: Function,
+  actionLabel?: ?string,
+  rejectInvitation?: ?Function,
+  acceptInvitation?: ?Function,
   type?: string,
 }
 
@@ -101,9 +102,9 @@ const ItemSubText = styled.Text`
 `;
 
 const IconCircle = styled.View`
-  width: 54px;
-  height: 54px;
-  border-radius: 27px;
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
   background-color: ${baseColors.lightGray};
   align-items: center;
   justify-content: center;
@@ -212,6 +213,7 @@ const ItemImage = (props: Props) => {
     iconName,
     itemImageUrl,
     navigateToProfile,
+    type,
   } = props;
 
   if (iconName) {
@@ -235,8 +237,10 @@ const ItemImage = (props: Props) => {
       onPress={navigateToProfile}
       uri={avatarUrl}
       userName={label}
-      diameter={50}
+      diameter={type === ACTION ? 52 : 50}
+      borderWidth={type === ACTION ? 0 : 2}
       textStyle={{ fontSize: fontSizes.medium }}
+      noShadow={type === ACTION}
     />
   );
 };
@@ -248,6 +252,7 @@ const Addon = (props: Props) => {
     itemValue,
     valueColor,
     buttonActionLabel,
+    labelAsButton,
     buttonAction,
     secondaryButton,
     actionLabel,
@@ -265,8 +270,8 @@ const Addon = (props: Props) => {
 
   if (actionLabel) {
     return (
-      <ActionLabel button>
-        <ActionLabelText button>
+      <ActionLabel button={labelAsButton}>
+        <ActionLabelText button={labelAsButton}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>
@@ -348,7 +353,7 @@ const ListItemWithImage = (props: Props) => {
   return (
     <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
       <ImageWrapper>
-        <ItemImage {...props} />
+        <ItemImage {...props} type={type} />
       </ImageWrapper>
       <InfoWrapper type={type}>
         <Column type={type}>
