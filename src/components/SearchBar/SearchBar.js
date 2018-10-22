@@ -143,7 +143,7 @@ class SearchBar extends React.Component<Props, State> {
               inputRange: [0, 1],
               outputRange: ['0%', '1%'],
             }),
-            backgroundColor: backgroundColor || 'transparent',
+            backgroundColor: backgroundColor || baseColors.white,
           }}
         >
           <InputField

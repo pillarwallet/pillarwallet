@@ -364,10 +364,9 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
-    const containerColor = assetsLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
 
     return (
-      <Container color={containerColor}>
+      <Container>
         <Header
           title="assets"
           onNextPress={this.goToAddTokenPage}
