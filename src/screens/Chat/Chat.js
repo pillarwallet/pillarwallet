@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Alert, View, Platform, Linking } from 'react-native';
+import { Alert, View, Platform, Linking, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -88,8 +88,7 @@ const renderBubble = (props: Props) => {
         borderWidth: 1,
         borderColor: isWarning ? baseColors.brightBlue : baseColors.whiterSmoke,
         maxWidth: 262,
-        marginTop: 5,
-        marginBottom: 5,
+        marginTop: 4,
       },
       right: {
         backgroundColor: baseColors.lightYellow,
@@ -97,6 +96,7 @@ const renderBubble = (props: Props) => {
         borderWidth: 1,
         borderColor: baseColors.whiterSmoke,
         maxWidth: 262,
+        marginTop: 4,
       },
     }}
     touchableProps={{
@@ -150,7 +150,7 @@ const renderComposer = (props: Props) => {
         }),
         marginBottom: 5,
         fontSize: fontSizes.extraSmall,
-        lineHeight: fontSizes.extraSmall,
+        lineHeight: fontSizes.small,
       }}
       placeholder="Type your message here"
     />
@@ -216,6 +216,7 @@ const renderDay = (props: Props) => (
         ios: 'Aktiv Grotesk App',
         android: 'AktivGrotesk-Regular',
       }),
+      textTransform: 'capitalize',
     }}
     dateFormat="LL"
   />
@@ -290,6 +291,12 @@ const parsePatterns = () => [
   },
 ];
 
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: baseColors.snowWhite,
+  },
+});
+
 class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
@@ -362,7 +369,7 @@ class ChatScreen extends React.Component<Props, State> {
     const title = getUserName(contact).toLowerCase();
 
     return (
-      <Container>
+      <Container style={styles.container}>
         <Header title={title} onBack={this.handleChatDismissal} />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
