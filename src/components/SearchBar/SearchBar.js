@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
 import { Animated, Keyboard, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 
 const SearchHolder = styled.View`
   margin-bottom: 20px;
@@ -34,15 +35,15 @@ const InputField = styled.TextInput`
   color: ${baseColors.slateBlack};
 `;
 
-const searchIcon = require('assets/icons/icon_search.png');
-
-const InputIcon = styled(Image)`
+const InputIcon = styled(Icon)`
   flex: 0 0 20px;
   position: absolute;
   right: 12px;
-  top: 8px;
+  top: 7px;
   width: 24;
   height: 24;
+  color: ${baseColors.electricBlue};
+  font-size: 24px;
 `;
 
 type inputPropsType = {
@@ -156,7 +157,7 @@ class SearchBar extends React.Component<Props, State> {
             underlineColorAndroid="transparent"
             autoCorrect={false}
           />
-          <InputIcon source={searchIcon} />
+          <InputIcon name="search" />
         </Animated.View>
         {(isFocused || !!value) &&
         <CancelButton onPress={this.handleCancel}>
