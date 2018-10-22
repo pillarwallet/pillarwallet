@@ -83,6 +83,7 @@ export const fontSizes = {
   extraLarger: 28,
   extraExtraLarge: 32,
   giant: 36,
+  extraGiant: 46,
   iosIcons: 32,
   androidCloseIcon: 22,
   androidCheckmarkIcon: 26,
