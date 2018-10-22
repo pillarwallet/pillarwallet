@@ -27,15 +27,16 @@ Storage.prototype.repair = async function () {
   const docs = await this.getAllDocs().then(({ rows }) => rows.map(({ doc }) => doc));
   await this.db.destroy();
   this.db = new PouchDB(this.name, this.opts);
-  await docs.forEach(async doc => {
+  const promises = docs.map(doc => {
     const {
       _id,
       _rev,
       _conflicts,
       ...data
     } = doc;
-    await this.save(_id, data).catch(() => null);
+    return this.save(_id, data).catch(() => null);
   });
+  return Promise.all(promises);
 };
 
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
