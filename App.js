@@ -11,7 +11,7 @@ import { Sentry } from 'react-native-sentry';
 import TestFairy from 'react-native-testfairy';
 import { SENTRY_DSN, TESTFAIRY_ACCESS_TOKEN } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
-import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
+import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
 import {
   startListeningOnOpenNotificationAction,
   stopListeningOnOpenNotificationAction,
@@ -29,6 +29,7 @@ type Props = {
   isFetched: Boolean,
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
+  checkDBConflicts: Function,
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
 }
@@ -49,7 +50,8 @@ class App extends React.Component<Props, *> {
   }
 
   componentDidMount() {
-    const { fetchAppSettingsAndRedirect, startListeningOnOpenNotification } = this.props;
+    const { fetchAppSettingsAndRedirect, startListeningOnOpenNotification, checkDBConflicts } = this.props;
+    checkDBConflicts();
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
@@ -93,6 +95,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
+  checkDBConflicts: () => dispatch(checkDBConflictsAction()),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
 });

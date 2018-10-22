@@ -4,11 +4,38 @@ import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
 
 function Storage(name: string, opts: ?Object) {
+  this.name = name;
+  this.opts = opts;
   this.db = new PouchDB(name, opts);
 }
 
 Storage.prototype.get = function (id: string) {
   return this.db.get(id).catch(() => ({}));
+};
+
+Storage.prototype.getConflicts = function (): Promise<String[]> {
+  return this.getAllDocs()
+    .then(({ rows }) => (
+      rows.map(({ doc }) => doc._conflicts).reduce((memo, item) => memo.concat(item), [])
+    ));
+};
+
+/**
+ * V1 db repairment by dropping the whole db and re-populating it with the old data.
+ */
+Storage.prototype.repair = async function () {
+  const docs = await this.getAllDocs().then(({ rows }) => rows.map(({ doc }) => doc));
+  await this.db.destroy();
+  this.db = new PouchDB(this.name, this.opts);
+  await docs.forEach(async doc => {
+    const {
+      _id,
+      _rev,
+      _conflicts,
+      ...data
+    } = doc;
+    await this.save(_id, data).catch(() => null);
+  });
 };
 
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
