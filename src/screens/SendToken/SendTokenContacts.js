@@ -2,16 +2,15 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { Keyboard, TouchableOpacity } from 'react-native';
-import { BoldText } from 'components/Typography';
+import { Keyboard } from 'react-native';
 import Separator from 'components/Separator';
-import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT, CONTACT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
-import ProfileImage from 'components/ProfileImage';
-import { fontSizes, spacing, itemSizes, UIColors } from 'utils/variables';
+import { fontSizes, spacing, UIColors } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Header from 'components/Header';
@@ -34,28 +33,11 @@ type State = {
 
 const qrCode = require('assets/images/qr.png');
 
-const ContactName = styled(BoldText)`
-  font-size: ${fontSizes.small};
-`;
-
-const ContactListItem = styled.View`
-  margin: 0;
-  padding: ${spacing.rhythm / 2}px 0;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const ContactThumbnail = styled.View`
-  margin-right: ${spacing.rhythm / 2}px;
-`;
-
 const FormWrapper = styled.View`
   padding: 0 ${spacing.rhythm}px;
 `;
 
-const ContactCardList = styled.FlatList`
-  padding: 0 ${spacing.rhythm}px;
-`;
+const ContactCardList = styled.FlatList``;
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);
@@ -161,20 +143,14 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
+    const { navigation } = this.props;
     return (
-      <TouchableOpacity onPress={() => this.setUsersEthAddress(user.ethAddress)}>
-        <ContactListItem>
-          <ContactThumbnail>
-            <ProfileImage
-              uri={user.profileImage}
-              userName={user.userName}
-              diameter={itemSizes.avaratCircleSmall}
-              textStyle={{ fontSize: fontSizes.medium }}
-            />
-          </ContactThumbnail>
-          <ContactName>{user.username}</ContactName>
-        </ContactListItem>
-      </TouchableOpacity>
+      <ListItemWithImage
+        onPress={() => this.setUsersEthAddress(user.ethAddress)}
+        label={user.username}
+        avatarUrl={user.profileImage}
+        navigateToProfile={() => navigation.navigate(CONTACT, { contact: user })}
+      />
     );
   };
 
@@ -216,7 +192,7 @@ class SendTokenContacts extends React.Component<Props, State> {
           data={localContacts}
           renderItem={this.renderContact}
           keyExtractor={({ username }) => username}
-          ItemSeparatorComponent={Separator}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         />
         <QRCodeScanner
           validator={ETHValidator}

@@ -32,7 +32,6 @@ type Props = {
   rejectInvitation?: Function,
   acceptInvitation?: Function,
   type?: string,
-  key?: number,
 }
 
 const ACTION = 'ACTION';
@@ -330,13 +329,12 @@ const ListItemWithImage = (props: Props) => {
     onPress,
     timeSent,
     unreadCount,
-    key,
   } = props;
 
   const type = getType(props);
 
   return (
-    <ItemWrapper type={type} onPress={onPress} key={key}>
+    <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
       <ImageWrapper>
         <ItemImage {...props} />
       </ImageWrapper>
