@@ -80,7 +80,6 @@ class Contact extends React.Component<Props, State> {
     super(props);
     const { navigation } = this.props;
     const contact = navigation.getParam('contact', {});
-
     this.state = {
       isOptionsModalActive: false,
       avatarRefreshed: !contact.profileImage,
@@ -123,6 +122,14 @@ class Contact extends React.Component<Props, State> {
     });
   };
 
+  getUserAvatar = (isAccepted, avatarRefreshed, displayContact) => {
+    if (isAccepted) {
+      if (avatarRefreshed) return displayContact.profileImage;
+      return undefined;
+    }
+    return displayContact.profileImage;
+  };
+
   render() {
     const {
       navigation,
@@ -135,7 +142,7 @@ class Contact extends React.Component<Props, State> {
     const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
-    const userAvatar = avatarRefreshed ? displayContact.profileImage : undefined;
+    const userAvatar = this.getUserAvatar(isAccepted, avatarRefreshed, displayContact);
     return (
       <Container>
         <Header
