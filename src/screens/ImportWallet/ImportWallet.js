@@ -257,7 +257,7 @@ class ImportWallet extends React.Component<Props, State> {
                 numberOfLines: 3,
               }}
               errorMessage={tabsInfo[activeTab].errorMessage}
-              viewWidth={activeTab === TWORDSPHRASE ? (window.width - spacing.rhythm * 2 - 2) : window.width - 95}
+              viewWidth={activeTab === TWORDSPHRASE ? (window.width - (spacing.rhythm * 2) - 2) : window.width - 95}
               inputType="secondary"
               lowerCase
               labelBigger

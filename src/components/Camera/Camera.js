@@ -14,10 +14,9 @@ import Spinner from 'components/Spinner';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/profileActions';
-import {UIColors} from "../../utils/variables";
 
 type Props = {
   onModalHide?: Function,
