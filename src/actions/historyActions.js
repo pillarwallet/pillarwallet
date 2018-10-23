@@ -5,7 +5,7 @@ import {
   TRANSACTION_EVENT,
   SET_GAS_INFO,
 } from 'constants/historyConstants';
-import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
+import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS, ETH } from 'constants/assetsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import Storage from 'services/storage';
 import { fetchAssetsBalancesAction, updateAssetsAction } from './assetsActions';
@@ -65,6 +65,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetime } },
     } = getState();
+
     // load supported assets
     let walletSupportedAssets = [...supportedAssets];
     if (!supportedAssets.length) {
@@ -74,6 +75,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         payload: walletSupportedAssets,
       });
       const currentAssetsTickers = Object.keys(currentAssets);
+      if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
       const updatedAssets = walletSupportedAssets
         .filter(asset => currentAssetsTickers.includes(asset.symbol))
         .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
