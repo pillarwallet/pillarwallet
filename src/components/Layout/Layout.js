@@ -10,6 +10,7 @@ type ContainerProps = {
   children?: React.Node,
   center?: boolean,
   color?: string,
+  style?: Object,
 };
 
 type FooterProps = {
@@ -36,7 +37,7 @@ const ContainerInner = styled.View`
 
 export const Container = (props: ContainerProps) => {
   return (
-    <ContainerOuter color={props.color} forceInset={{ top: 'always' }}>
+    <ContainerOuter color={props.color} style={props.style} forceInset={{ top: 'always' }}>
       <ContainerInner center={props.center}>{props.children}</ContainerInner>
     </ContainerOuter>
   );
