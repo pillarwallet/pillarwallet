@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
-import { baseColors, fontSizes, itemSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, itemSizes, spacing, UIColors } from 'utils/variables';
 import { TYPE_RECEIVED, TYPE_SENT, TYPE_INVITE, TYPE_ACCEPTED } from 'constants/invitationsConstants';
 import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button';
@@ -29,7 +29,7 @@ type Props = {
 };
 
 const ContactCardWrapper = styled.TouchableHighlight`
-  background: ${baseColors.white};
+  background: ${UIColors.defaultBackgroundColor};
   border: ${props => (props.noBorder ? 0 : '1px solid')};
   border-color: ${baseColors.lightGray};
   height: 70px;

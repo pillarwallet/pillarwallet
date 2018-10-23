@@ -131,7 +131,7 @@ class ICOLinks extends React.Component<Props, {}> {
 
     // TODO: change StyledFlatList data to passed links
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header onBack={this.navigateBack} title="links" />
         <Wrapper>
           <StyledFlatList
