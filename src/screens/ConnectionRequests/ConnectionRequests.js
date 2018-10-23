@@ -82,7 +82,7 @@ class ConnectionRequests extends React.Component<Props> {
           extraData={invitations}
           keyExtractor={(item) => item.id}
           renderItem={this.renderInvitation}
-          ItemSeparatorComponent={Separator}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           contentContainerStyle={{
             paddingVertical: spacing.rhythm,
             paddingTop: 0,

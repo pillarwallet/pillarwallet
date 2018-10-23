@@ -108,7 +108,7 @@ const ProfileImage = (props: Props) => {
     imageStyle,
     onPress,
     style,
-    diameter = 50,
+    diameter = 52,
     borderWidth = 2,
     children,
     userName,

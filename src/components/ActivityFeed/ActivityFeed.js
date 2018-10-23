@@ -43,7 +43,9 @@ const SOCIAL_TYPES = [
 ];
 
 const ActivityFeedList = styled.FlatList``;
-const ActivityFeedWrapper = styled.View``;
+const ActivityFeedWrapper = styled.View`
+  ${props => props.color ? `background-color: ${props.color};` : ''}
+`;
 
 const ActivityFeedHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
@@ -67,6 +69,7 @@ type Props = {
   additionalFiltering?: Function,
   feedTitle?: string,
   showEmptyState?: boolean,
+  backgroundColor?: string,
 };
 
 type State = {
@@ -220,6 +223,7 @@ class ActivityFeed extends React.Component<Props, State> {
       onRejectInvitation,
       onAcceptInvitation,
       onCancelInvitation,
+      backgroundColor,
     } = this.props;
 
     const {
@@ -267,7 +271,7 @@ class ActivityFeed extends React.Component<Props, State> {
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
     return (
-      <ActivityFeedWrapper>
+      <ActivityFeedWrapper color={backgroundColor}>
         {!!feedTitle && (!!processedHistory.length || !!showEmptyState) &&
         <ActivityFeedHeader>
           <Title subtitle title={feedTitle} />

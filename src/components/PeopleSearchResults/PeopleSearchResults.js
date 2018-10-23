@@ -48,7 +48,10 @@ const ListSubHeading = styled(SubHeading)`
 
 const LocalContactsItem = styled.TouchableOpacity`
   align-items: center;
-  width: 66px;
+  width: ${Platform.select({
+    ios: '60px',
+    android: '74px',
+  })};
   margin: ${Platform.select({
     ios: `0 ${spacing.rhythm / 2}px`,
     android: `-6px ${spacing.rhythm / 2}px 0`,
