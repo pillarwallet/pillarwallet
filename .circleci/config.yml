@@ -418,7 +418,7 @@ workflows:
           filters:
             branches:
               only:
-                  - circle_ci_resource_class_upgrade
+                  - master
       - release_to_prod:
           type: approval
           requires:
