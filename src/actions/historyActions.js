@@ -86,6 +86,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         type: UPDATE_ASSETS,
         payload: updatedAssets,
       });
+      storage.save('assets', { assets: updatedAssets }, true);
     }
     const d = new Date(lastTxSyncDatetime * 1000);
     const historyNotifications = await api.fetchNotifications(walletId, TRANSACTION_EVENT, d.toISOString());
