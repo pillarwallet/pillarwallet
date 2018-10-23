@@ -6,7 +6,7 @@ import Header from 'components/Header';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import { Container } from 'components/Layout';
-import { spacing, baseColors } from 'utils/variables';
+import { spacing, baseColors, UIColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
 import { Keyboard } from 'react-native';
 
@@ -32,12 +32,12 @@ const themes = {
   default: {
     padding: `0 ${spacing.rhythm}px`,
     borderRadius: '30px',
-    background: baseColors.white,
+    background: UIColors.defaultBackgroundColor,
   },
   fullScreen: {
     padding: 0,
     borderRadius: 0,
-    background: baseColors.white,
+    background: UIColors.defaultBackgroundColor,
   },
   eventDetail: {
     padding: 0,

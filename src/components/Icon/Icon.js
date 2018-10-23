@@ -12,7 +12,7 @@ const glyphMap = {
   remove: '\uE806',
   mute: '\uE804',
   'up-arrow': '\uE808',
-  search: '\uE873',
+  search: '\uE851',
   settings: '\uE809',
   warning: '\uE80A',
   check: '\uE80B',

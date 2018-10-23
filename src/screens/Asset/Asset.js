@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Animated, Easing, Share, RefreshControl } from 'react-native';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { transparentize } from 'polished';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -29,11 +29,14 @@ import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
 
-const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.white), baseColors.white];
+const AssetDescriptionToggleWrapperColors = [
+  transparentize(1, UIColors.defaultBackgroundColor),
+  UIColors.defaultBackgroundColor,
+];
 
 const AssetDescriptionToggleWrapperActiveColors = [
-  transparentize(1, baseColors.white),
-  transparentize(1, baseColors.white),
+  transparentize(1, UIColors.defaultBackgroundColor),
+  transparentize(1, UIColors.defaultBackgroundColor),
 ];
 
 const activeModalResetState = {
