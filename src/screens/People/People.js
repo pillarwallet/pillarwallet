@@ -22,6 +22,7 @@ import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
+import { delay } from 'utils/common';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ContactCard from 'components/ContactCard';
@@ -66,6 +67,8 @@ const FullScreenOverlay = styled.View`
   height: 100%;
   background-color: rgba(0,0,0,.6);
 `;
+
+const AnimatedFullScreenOverlay = Animated.createAnimatedComponent(FullScreenOverlay);
 
 const ConnectionRequestBannerText = styled(BaseText)`
   font-size: ${fontSizes.medium};
@@ -144,21 +147,43 @@ class PeopleScreen extends React.Component<Props, State> {
     this.handleContactsSearch(query);
   };
 
+  animateFullScreenOverlayOpacity = (active: boolean) => {
+    const { fullScreenOverlayOpacity } = this.state;
+    if (!active) {
+      fullScreenOverlayOpacity.setValue(0);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 1,
+        duration: 80,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      fullScreenOverlayOpacity.setValue(1);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 0,
+        duration: 80,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
   handleSearchFocus = () => {
     this.setState({
       searchIsFocused: true,
     });
-    Animated.timing(this.state.fullScreenOverlayOpacity, {
-      toVaue: 1,
-      duration: 500,
-    }).start();
+    this.animateFullScreenOverlayOpacity(false);
   };
 
-  handleSearchBlur = () => {
-    Keyboard.dismiss();
+  async animateAfterDelay() {
+    await delay(80);
     this.setState({
       searchIsFocused: false,
     });
+  }
+
+  handleSearchBlur = () => {
+    Keyboard.dismiss();
+    this.animateFullScreenOverlayOpacity(true);
+    this.animateAfterDelay();
   };
 
   handleContactsSearch = (query: string) => {
@@ -196,6 +221,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
   onBlur = () => {
     Keyboard.dismiss();
+    this.animateFullScreenOverlayOpacity(true);
   };
 
   render() {
@@ -233,7 +259,7 @@ class PeopleScreen extends React.Component<Props, State> {
           <FullScreenOverlayWrapper
             onPress={this.handleSearchBlur}
           >
-            <FullScreenOverlay
+            <AnimatedFullScreenOverlay
               style={{
                 opacity: fullScreenOverlayOpacity,
               }}
