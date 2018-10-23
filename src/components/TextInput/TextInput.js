@@ -174,7 +174,7 @@ class TextInput extends React.Component<Props, State> {
       footerAddonText,
       footerAddonAction,
       autoCorrect,
-      viewWidth = 'auto',
+      viewWidth = '100%',
       noBorder,
       lowerCase,
       labelBigger,
@@ -205,7 +205,7 @@ class TextInput extends React.Component<Props, State> {
             style={{
               fontSize: inputType.fontSize,
               width: viewWidth,
-              paddingRight: inputProps.multiline ? 50 : 0,
+              paddingRight: inputProps.multiline ? 50 : 14,
               paddingTop: inputProps.multiline ? 10 : 0,
             }}
           />

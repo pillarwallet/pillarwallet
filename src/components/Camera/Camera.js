@@ -14,7 +14,7 @@ import Spinner from 'components/Spinner';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/profileActions';
 
@@ -121,7 +121,7 @@ const ResultScreen = styled.View`
   justify-content: center;
   align-items: center;
   padding: 30px;
-  background-color: #ffffff;
+  background-color: ${UIColors.defaultBackgroundColor};
   z-index: 2;
 `;
 

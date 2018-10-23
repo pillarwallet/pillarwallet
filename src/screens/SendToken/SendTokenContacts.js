@@ -8,7 +8,7 @@ import Separator from 'components/Separator';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import ProfileImage from 'components/ProfileImage';
-import { fontSizes, spacing, itemSizes, UIColors } from 'utils/variables';
+import { fontSizes, spacing, itemSizes } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import SingleInput from 'components/TextInput/SingleInput';
@@ -198,7 +198,7 @@ class SendTokenContacts extends React.Component<Props, State> {
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
 
     return (
-      <Container color={UIColors.defaultBackgroundColor}>
+      <Container>
         <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
         <FormWrapper>
           <Form

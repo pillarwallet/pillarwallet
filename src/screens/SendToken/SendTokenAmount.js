@@ -329,7 +329,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const valueInFiatOutput = `= ${currencySymbol}${formattedValueInFiat}`;
     const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
     return (
-      <Container color={UIColors.defaultBackgroundColor}>
+      <Container>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
           title={`send ${this.assetData.token}`}
