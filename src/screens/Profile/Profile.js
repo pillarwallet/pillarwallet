@@ -209,7 +209,7 @@ class Profile extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
