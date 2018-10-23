@@ -14,6 +14,7 @@ export type SessionReducerAction = {
 const initialState = {
   data: {
     isOnline: true,
+    hasDBConflicts: false,
   },
 };
 
