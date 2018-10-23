@@ -75,7 +75,10 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         payload: walletSupportedAssets,
       });
       const currentAssetsTickers = Object.keys(currentAssets);
+
+      // HACK: Dirty fix for users who removed somehow Eth from their assets list
       if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
+
       const updatedAssets = walletSupportedAssets
         .filter(asset => currentAssetsTickers.includes(asset.symbol))
         .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
