@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { Alert, View, Platform, Linking, StyleSheet } from 'react-native';
+import styled from 'styled-components/native';
+import { Alert, View, Platform, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -291,11 +292,9 @@ const parsePatterns = () => [
   },
 ];
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: baseColors.snowWhite,
-  },
-});
+const ChatContainer = styled(Container)`
+  backgroundColor: ${baseColors.snowWhite};
+`;
 
 class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
@@ -369,7 +368,7 @@ class ChatScreen extends React.Component<Props, State> {
     const title = getUserName(contact).toLowerCase();
 
     return (
-      <Container style={styles.container}>
+      <ChatContainer>
         <Header title={title} onBack={this.handleChatDismissal} />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
@@ -397,7 +396,7 @@ class ChatScreen extends React.Component<Props, State> {
             parsePatterns={parsePatterns}
           />}
         </Wrapper>
-      </Container>
+      </ChatContainer>
     );
   }
 }
