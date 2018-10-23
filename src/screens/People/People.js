@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   View,
   FlatList,
+  Animated,
   Keyboard,
   Image,
   KeyboardAvoidingView,
@@ -110,6 +111,8 @@ type Props = {
 type State = {
   query: string,
   searchIsFocused: boolean,
+  fullScreenOverlayOpacity: Animated.Value,
+
 }
 
 class PeopleScreen extends React.Component<Props, State> {
@@ -118,6 +121,7 @@ class PeopleScreen extends React.Component<Props, State> {
   state = {
     query: '',
     searchIsFocused: false,
+    fullScreenOverlayOpacity: new Animated.Value(0),
   };
 
   constructor(props: Props) {
@@ -144,6 +148,10 @@ class PeopleScreen extends React.Component<Props, State> {
     this.setState({
       searchIsFocused: true,
     });
+    Animated.timing(this.state.fullScreenOverlayOpacity, {
+      toVaue: 1,
+      duration: 500,
+    }).start();
   };
 
   handleSearchBlur = () => {
@@ -191,7 +199,7 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { query, searchIsFocused } = this.state;
+    const { query, searchIsFocused, fullScreenOverlayOpacity } = this.state;
     const {
       searchResults,
       contactState,
@@ -225,7 +233,11 @@ class PeopleScreen extends React.Component<Props, State> {
           <FullScreenOverlayWrapper
             onPress={this.handleSearchBlur}
           >
-            <FullScreenOverlay />
+            <FullScreenOverlay
+              style={{
+                opacity: fullScreenOverlayOpacity,
+              }}
+            />
           </FullScreenOverlayWrapper>
         }
         {!inSearchMode && !!pendingConnectionRequests &&
