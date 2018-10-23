@@ -22,6 +22,7 @@ import {
   updateAppSettingsAction,
 } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
+import { repairStorageAction } from 'actions/appActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
@@ -86,6 +87,8 @@ type Props = {
   appSettings: Object,
   wallet: Object,
   intercomNotificationsCount: number,
+  hasDBConflicts: boolean,
+  repairStorage: Function,
   changeRequestPinForTransaction: (value: boolean) => Function,
   updateAppSettings: (path: string, value: any) => Function,
   updateUser: (walletId: string, field: Object) => Function,
@@ -194,6 +197,8 @@ class Profile extends React.Component<Props, State> {
       updateAppSettings,
       appSettings: { appearanceSettings },
       requestPinForTransaction,
+      hasDBConflicts,
+      repairStorage,
     } = this.props;
 
     const {
@@ -436,7 +441,12 @@ class Profile extends React.Component<Props, State> {
                 label="Clear Local Storage"
                 onPress={() => { this.clearLocalStorage(); }}
               />}
-
+              {hasDBConflicts &&
+                <ProfileSettingsItem
+                  key="repairDB"
+                  label="Repair Local Storage"
+                  onPress={repairStorage}
+                />}
               <ProfileSettingsItem
                 key="sendDebugData"
                 label="Send Debug Data"
@@ -487,6 +497,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   appSettings: { data: { requestPinForTransaction, baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
+  session: { data: { hasDBConflicts } },
 }) => ({
   user,
   wallet,
@@ -494,6 +505,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   intercomNotificationsCount,
   appSettings,
+  hasDBConflicts,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -501,6 +513,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   changeRequestPinForTransaction: (value) => {
     dispatch(changeRequestPinForTransactionAction(value));
   },
+  repairStorage: () => dispatch(repairStorageAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
