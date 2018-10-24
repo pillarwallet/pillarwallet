@@ -45,11 +45,13 @@ export const Shadow = (props: Props) => {
     shadowColorAndroid = '#14105baa',
   } = props;
 
+  const pixelRatio = PixelRatio.get() < 0 ? 1 : PixelRatio.get();
+
   const widthWithPaddings = widthAndroid
-    ? widthAndroid + (((shadowDistance + shadowRadius) * 4) / PixelRatio.get())
+    ? widthAndroid + (((shadowDistance + shadowRadius) * 4) / pixelRatio)
     : '100%';
   const heightWithPaddings = heightAndroid
-    ? heightAndroid + (((shadowDistance + shadowRadius) * 4) / PixelRatio.get())
+    ? heightAndroid + (((shadowDistance + shadowRadius) * 4) / pixelRatio)
     : '100%';
 
   if (Platform.OS === 'ios') {

@@ -203,6 +203,7 @@ class EventDetails extends React.Component<Props, {}> {
                 uri={relatedUser.profileImage}
                 userName={relatedUserTitle}
                 diameter={40}
+                initialsSize={fontSizes.extraSmall}
                 style={{ marginBottom: 6 }}
                 onPress={() => this.goToProfile(relatedUser)}
               />)}
@@ -255,6 +256,7 @@ class EventDetails extends React.Component<Props, {}> {
               uri={userData.profileImage}
               userName={userData.username}
               diameter={40}
+              initialsSize={fontSizes.extraSmall}
               onPress={() => this.goToProfile(userData)}
             />
             <EventBodyTitle>

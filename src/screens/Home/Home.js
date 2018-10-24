@@ -136,6 +136,11 @@ const RecentConnectionsWrapper = styled.View`
 const RecentConnectionsScrollView = styled.ScrollView`
   background-color: ${baseColors.snowWhite};
   padding-left: 6px;
+  margin-top: -4px;
+  padding-top: ${Platform.select({
+    ios: '4px',
+    android: 0,
+  })};
 `;
 
 const RecentConnectionsItemProfileImage = styled(ProfileImage)`
@@ -153,9 +158,10 @@ const RecentConnectionsItem = styled.TouchableOpacity`
     android: '74px',
   })};
   margin: ${Platform.select({
-    ios: '0 8px 24px',
+    ios: '4px 8px 24px',
     android: '0',
   })};
+  b
 `;
 
 const CameraIcon = styled(Icon)`
@@ -167,7 +173,7 @@ const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
   margin-top: ${Platform.select({
-    ios: '4px',
+    ios: '-4px',
     android: '-4px',
   })};
 `;

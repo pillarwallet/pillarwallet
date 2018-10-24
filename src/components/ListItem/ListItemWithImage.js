@@ -99,6 +99,7 @@ const ItemSubText = styled.Text`
   color: ${baseColors.darkGray};
   font-size: 13px;
   line-height: ${fontSizes.small}
+  margin-top: 4px;
 `;
 
 const IconCircle = styled.View`
@@ -225,7 +226,7 @@ const ItemImage = (props: Props) => {
   }
   if (itemImageUrl) {
     return (
-      <Shadow shadowColorAndroid="#38105baa">
+      <Shadow shadowColorAndroid="#38105baa" heightAndroid={54} widthAndroid={54}>
         <TokenImageWrapper>
           <TokenImage source={{ uri: itemImageUrl }} />
         </TokenImageWrapper>
