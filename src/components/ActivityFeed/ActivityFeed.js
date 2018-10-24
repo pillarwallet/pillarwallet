@@ -59,7 +59,9 @@ const NOTIFICATION_LABELS = {
 };
 
 const ActivityFeedList = styled.FlatList``;
-const ActivityFeedWrapper = styled.View``;
+const ActivityFeedWrapper = styled.View`
+  background-color: ${baseColors.white};
+`;
 
 const ActivityFeedItem = styled.TouchableOpacity`
   background-color: transparent;
@@ -142,6 +144,9 @@ const IconWrapper = styled.View`
 
 const ActivityFeedHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
+  margin-bottom: -17px;
+  border-top-width: 1px;
+  border-top-color: ${baseColors.mediumLightGray};
 `;
 
 type Props = {
