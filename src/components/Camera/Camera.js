@@ -38,6 +38,7 @@ type State = {
   isFlashOn: boolean,
   isHardwareFlashOn: boolean,
   isFrontFlashVisible: boolean,
+  focusedScreen: boolean,
 };
 
 const screenWidth = Dimensions.get('window').width;
@@ -122,7 +123,7 @@ const ResultScreen = styled.View`
   align-items: center;
   padding: 30px;
   background-color: ${UIColors.defaultBackgroundColor};
-  z-index: 2;
+  z-index: 10;
 `;
 
 const ResultScreenFooter = styled.View`
@@ -174,7 +175,18 @@ class Camera extends React.Component<Props, State> {
     isFlashOn: false,
     isHardwareFlashOn: false,
     isFrontFlashVisible: false,
+    focusedScreen: false,
   };
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    navigation.addListener('willFocus', () =>
+      this.setState({ focusedScreen: true }),
+    );
+    navigation.addListener('willBlur', () =>
+      this.setState({ focusedScreen: false }),
+    );
+  }
 
   handleModalClose = () => {
     this.setState({ showResult: false });
@@ -189,6 +201,8 @@ class Camera extends React.Component<Props, State> {
   };
 
   takePicture = () => {
+    this.setState({ previewBase64: '' });
+
     const { isFlashOn, cameraType } = this.state;
     if (this.camera) {
       if (isFlashOn && cameraType === FRONT) {
@@ -335,6 +349,7 @@ class Camera extends React.Component<Props, State> {
       isFlashOn,
       isHardwareFlashOn,
       isFrontFlashVisible,
+      focusedScreen,
     } = this.state;
 
     const cutOutD = screenWidth - 40;
@@ -350,20 +365,22 @@ class Camera extends React.Component<Props, State> {
     const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
     return (
       <React.Fragment>
-        <RNCamera
-          ref={ref => {
-            this.camera = ref;
-          }}
-          style={{
-            width: screenWidth,
-            height: screenHeight,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          ratio="16:9"
-          type={cameraType}
-          flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
-        />
+        {!!focusedScreen &&
+          <RNCamera
+            ref={ref => {
+              this.camera = ref;
+            }}
+            style={{
+              width: screenWidth,
+              height: screenHeight,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            ratio="16:9"
+            type={cameraType}
+            flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
+          />
+        }
         <Overlay height={screenHeight} width={screenWidth}>
           <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
             <Stop offset="0%" stopColor={overlayColor} stopOpacity="0.3" />
