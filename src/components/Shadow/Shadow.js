@@ -45,7 +45,7 @@ export const Shadow = (props: Props) => {
     shadowColorAndroid = '#14105baa',
   } = props;
 
-  const pixelRatio = PixelRatio.get() < 0 ? 1 : PixelRatio.get();
+  const pixelRatio = PixelRatio.get();
 
   const widthWithPaddings = widthAndroid
     ? widthAndroid + (((shadowDistance + shadowRadius) * 4) / pixelRatio)
