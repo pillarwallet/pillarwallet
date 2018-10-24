@@ -49,13 +49,13 @@ const ToastHolder = styled.View`
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
   height: 320px;
-  margin-top: -${Platform.OS === 'android' ? 240 : 220}px;
+  margin-top: -${Platform.OS === 'android' ? 230 : 210}px;
   background-color: ${baseColors.white};
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
-  padding-top: ${isIphoneX() ? '40px' : '20px'};
+  padding-top: ${isIphoneX() ? '50px' : '30px'};
   padding-bottom: ${spacing.rhythm / 2}px;
   border-left-width: ${spacing.rhythm / 2}px;
   border-style: solid;
@@ -190,7 +190,7 @@ export default class Toast extends React.Component<{}, State> {
               display: 'flex',
             }}
             iconStyle={{
-              borderWidth: 2,
+              borderWidth: 0,
               borderRadius: 16,
               paddingTop: Platform.OS === 'android' ? 8 : 7,
               borderColor: baseColors.mediumGray,

@@ -5,7 +5,7 @@ import { FlatList, Alert, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE } from 'constants/navigationConstants';
+import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE, SEND_DEBUG_DATA } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
@@ -22,10 +22,12 @@ import {
   updateAppSettingsAction,
 } from 'actions/profileActions';
 import { updateUserAction } from 'actions/userActions';
+import { repairStorageAction } from 'actions/appActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
+import { DEBUG_DATA_LOGGER } from 'react-native-dotenv';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 import SettingsModalTitle from './SettingsModalTitle';
@@ -85,6 +87,8 @@ type Props = {
   appSettings: Object,
   wallet: Object,
   intercomNotificationsCount: number,
+  hasDBConflicts: boolean,
+  repairStorage: Function,
   changeRequestPinForTransaction: (value: boolean) => Function,
   updateAppSettings: (path: string, value: any) => Function,
   updateUser: (walletId: string, field: Object) => Function,
@@ -193,6 +197,8 @@ class Profile extends React.Component<Props, State> {
       updateAppSettings,
       appSettings: { appearanceSettings },
       requestPinForTransaction,
+      hasDBConflicts,
+      repairStorage,
     } = this.props;
 
     const {
@@ -203,7 +209,7 @@ class Profile extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header gray title="settings" onBack={() => navigation.goBack(null)} />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
@@ -423,20 +429,30 @@ class Profile extends React.Component<Props, State> {
               uri="https://pillarproject.io/en/legal/privacy/"
             />
 
+            {(!!DEBUG_DATA_LOGGER || !!__DEV__) &&
+            <React.Fragment>
+              <ListSeparator>
+                <SubHeading>DEBUG</SubHeading>
+              </ListSeparator>
 
-            {!!__DEV__ && (
-              <React.Fragment>
-                <ListSeparator>
-                  <SubHeading>DEBUG</SubHeading>
-                </ListSeparator>
-
+              {!!__DEV__ &&
+              <ProfileSettingsItem
+                key="clearStorage"
+                label="Clear Local Storage"
+                onPress={() => { this.clearLocalStorage(); }}
+              />}
+              {hasDBConflicts &&
                 <ProfileSettingsItem
-                  key="clearStorage"
-                  label="Clear Local Storage"
-                  onPress={() => { this.clearLocalStorage(); }}
-                />
-              </React.Fragment>
-            )}
+                  key="repairDB"
+                  label="Repair Local Storage"
+                  onPress={repairStorage}
+                />}
+              <ProfileSettingsItem
+                key="sendDebugData"
+                label="Send Debug Data"
+                onPress={() => this.props.navigation.navigate(SEND_DEBUG_DATA)}
+              />
+            </React.Fragment>}
 
             <ListSeparator>
               <SubHeading>SYSTEM</SubHeading>
@@ -481,6 +497,7 @@ const mapStateToProps = ({
   wallet: { data: wallet },
   appSettings: { data: { requestPinForTransaction, baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
+  session: { data: { hasDBConflicts } },
 }) => ({
   user,
   wallet,
@@ -488,6 +505,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   intercomNotificationsCount,
   appSettings,
+  hasDBConflicts,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -495,6 +513,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   changeRequestPinForTransaction: (value) => {
     dispatch(changeRequestPinForTransactionAction(value));
   },
+  repairStorage: () => dispatch(repairStorageAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),

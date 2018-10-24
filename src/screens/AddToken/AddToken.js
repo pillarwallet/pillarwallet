@@ -6,7 +6,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { List, ListItem, Body, Right, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { SubTitle, BoldText, LightText } from 'components/Typography';
@@ -31,6 +31,8 @@ const TokenSymbol = styled(LightText)`
 
 const TokenListItem = styled(ListItem)`
   margin: 0;
+  border-color: ${UIColors.defaultDividerColor};
+  border-bottom-width: 1px;
 `;
 
 const TokenThumbnail = styled(CachedImage)`

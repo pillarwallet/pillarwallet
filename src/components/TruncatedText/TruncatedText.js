@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { transparentize } from 'polished';
 import LinearGradient from 'react-native-linear-gradient';
 import { Paragraph, BaseText } from 'components/Typography';
-import { baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontSizes, UIColors } from 'utils/variables';
 
 
 type Props = {
@@ -21,11 +21,13 @@ type EventLike = {
   nativeEvent: Object,
 };
 
-const DescriptionToggleWrapperColors = [transparentize(1, baseColors.white), baseColors.white];
+const DescriptionToggleWrapperColors = [
+  transparentize(1, UIColors.defaultBackgroundColor), UIColors.defaultBackgroundColor,
+];
 
 const DescriptionToggleWrapperActiveColors = [
-  transparentize(1, baseColors.white),
-  transparentize(1, baseColors.white),
+  transparentize(1, UIColors.defaultBackgroundColor),
+  transparentize(1, UIColors.defaultBackgroundColor),
 ];
 
 const DescriptionWrapper = styled.View`

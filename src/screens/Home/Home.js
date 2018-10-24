@@ -21,7 +21,7 @@ import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
 import Permissions from 'react-native-permissions';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -124,7 +124,7 @@ const RecentConnections = styled.View`
   border-bottom-width: 1px;
   border-style: solid;
   background-color: ${baseColors.white};
-  border-color: ${baseColors.duckEggBlue};
+  border-color: ${UIColors.defaultDividerColor};
 `;
 
 const RecentConnectionsWrapper = styled.View`
@@ -132,6 +132,7 @@ const RecentConnectionsWrapper = styled.View`
   shadow-radius: 6px;
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
+  padding-top: 100px;
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView``;
@@ -350,7 +351,7 @@ class HomeScreen extends React.Component<Props, State> {
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
-      <Container>
+      <Container color={baseColors.white}>
         <LinearGradient
           colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
         >
@@ -461,8 +462,7 @@ class HomeScreen extends React.Component<Props, State> {
             />
           }
         >
-          <View style={{ marginTop: 100 }}>
-            {!!this.props.contacts.length &&
+          {!!this.props.contacts.length &&
             <RecentConnectionsWrapper>
               <RecentConnections>
                 <RecentConnectionsSubtitle subtitle title="recent connections." />
@@ -471,18 +471,17 @@ class HomeScreen extends React.Component<Props, State> {
                 </RecentConnectionsScrollView>
               </RecentConnections>
             </RecentConnectionsWrapper>}
-            <Tabs title="your activity." tabs={activityFeedTabs} />
-            <ActivityFeed
-              onCancelInvitation={cancelInvitation}
-              onRejectInvitation={rejectInvitation}
-              onAcceptInvitation={acceptInvitation}
-              navigation={navigation}
-              activeTab={this.state.activeTab}
-              esData={esData}
-              sortable
-              showEmptyState
-            />
-          </View>
+          <Tabs title="your activity." tabs={activityFeedTabs} />
+          <ActivityFeed
+            onCancelInvitation={cancelInvitation}
+            onRejectInvitation={rejectInvitation}
+            onAcceptInvitation={acceptInvitation}
+            navigation={navigation}
+            activeTab={this.state.activeTab}
+            esData={esData}
+            sortable
+            showEmptyState
+          />
         </Animated.ScrollView>
         <Camera
           isVisible={showCamera}

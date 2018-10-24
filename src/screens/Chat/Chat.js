@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
-import { View, Platform, Linking } from 'react-native';
+import styled from 'styled-components/native';
+import { Alert, View, Platform, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -29,6 +30,7 @@ import {
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
 import { CHAT_LIST } from 'constants/navigationConstants';
+import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -42,6 +44,7 @@ type Props = {
   contact: Object,
   chats: any,
   contacts: Object,
+  currentMessage: Object,
 }
 
 type State = {
@@ -50,13 +53,18 @@ type State = {
   isFetching: boolean,
 }
 
+const isWarningMessage = (type) => {
+  return type === 'warning';
+};
+
 // chat elements
-const renderBubble = (props: Props) => (
-  <Bubble
+const renderBubble = (props: Props) => {
+  const isWarning = isWarningMessage(props.currentMessage.type);
+  return (<Bubble
     {...props}
     textStyle={{
       left: {
-        color: baseColors.slateBlack,
+        color: isWarning ? baseColors.white : baseColors.slateBlack,
         fontSize: fontSizes.extraSmall,
         fontFamily: Platform.select({
           ios: 'Aktiv Grotesk App',
@@ -76,13 +84,12 @@ const renderBubble = (props: Props) => (
     }}
     wrapperStyle={{
       left: {
-        backgroundColor: baseColors.white,
+        backgroundColor: isWarning ? baseColors.brightBlue : baseColors.white,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: baseColors.whiterSmoke,
+        borderColor: isWarning ? baseColors.brightBlue : baseColors.whiterSmoke,
         maxWidth: 262,
-        marginTop: 5,
-        marginBottom: 5,
+        marginTop: 4,
       },
       right: {
         backgroundColor: baseColors.lightYellow,
@@ -90,10 +97,24 @@ const renderBubble = (props: Props) => (
         borderWidth: 1,
         borderColor: baseColors.whiterSmoke,
         maxWidth: 262,
+        marginTop: 4,
       },
     }}
-  />
-);
+    touchableProps={{
+      onPress: () => {
+        const { status } = props.currentMessage;
+
+        if (status === UNDECRYPTABLE_MESSAGE) {
+          // TODO: change the alert message text
+          Alert.alert(
+            'Cannot decrypt the message',
+            'We are using end-to-end encryption. You or your interlocutor should update chat keys.',
+          );
+        }
+      },
+    }}
+  />);
+};
 
 const renderCustomAvatar = (contact) => () => (
   <ProfileImage
@@ -130,7 +151,7 @@ const renderComposer = (props: Props) => {
         }),
         marginBottom: 5,
         fontSize: fontSizes.extraSmall,
-        lineHeight: fontSizes.extraSmall,
+        lineHeight: fontSizes.small,
       }}
       placeholder="Type your message here"
     />
@@ -196,6 +217,7 @@ const renderDay = (props: Props) => (
         ios: 'Aktiv Grotesk App',
         android: 'AktivGrotesk-Regular',
       }),
+      textTransform: 'capitalize',
     }}
     dateFormat="LL"
   />
@@ -216,7 +238,7 @@ const renderTime = (props: Props) => {
           fontSize: fontSizes.extraExtraSmall,
         },
         left: {
-          color: baseColors.darkGray,
+          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
           fontFamily: Platform.select({
             ios: 'Aktiv Grotesk App',
             android: 'AktivGrotesk-Regular',
@@ -269,6 +291,10 @@ const parsePatterns = () => [
     style: { color: baseColors.black },
   },
 ];
+
+const ChatContainer = styled(Container)`
+  backgroundColor: ${baseColors.snowWhite};
+`;
 
 class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
@@ -342,7 +368,7 @@ class ChatScreen extends React.Component<Props, State> {
     const title = getUserName(contact).toLowerCase();
 
     return (
-      <Container>
+      <ChatContainer>
         <Header title={title} onBack={this.handleChatDismissal} />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
@@ -370,7 +396,7 @@ class ChatScreen extends React.Component<Props, State> {
             parsePatterns={parsePatterns}
           />}
         </Wrapper>
-      </Container>
+      </ChatContainer>
     );
   }
 }

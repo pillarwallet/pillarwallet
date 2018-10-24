@@ -15,30 +15,42 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+
+// components
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import type { Assets, Balances, Asset } from 'models/Asset';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
-import {
-  updateAssetsAction,
-  fetchInitialAssetsAction,
-  fetchAssetsBalancesAction,
-} from 'actions/assetsActions';
 import AssetCard from 'components/AssetCard';
 import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import Header from 'components/Header';
 import { Container } from 'components/Layout';
-import { formatMoney } from 'utils/common';
+import HideAssetButton from 'screens/Assets/HideAssetButton';
+
+// types
+import type { Assets, Balances, Asset } from 'models/Asset';
+
+// actions
+import {
+  updateAssetsAction,
+  fetchInitialAssetsAction,
+  fetchAssetsBalancesAction,
+} from 'actions/assetsActions';
+
+// constants
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, ETH } from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+
+// configs
 import assetsConfig from 'configs/assetsConfig';
-import { spacing, baseColors } from 'utils/variables';
-import { getBalance } from 'utils/assets';
-import { SDK_PROVIDER } from 'react-native-dotenv';
-import HideAssetButton from './HideAssetButton';
+
+// utils
+import { formatMoney } from 'utils/common';
+import { spacing } from 'utils/variables';
+import { getBalance, getRate } from 'utils/assets';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
@@ -77,7 +89,7 @@ const horizontalPadding = (layout, side) => {
       return side === 'left' ? 0 : spacing.rhythm - 9;
     }
     default: {
-      return side === 'left' ? 0 : spacing.rhythm - 2;
+      return 0;
     }
   }
 };
@@ -166,7 +178,7 @@ class AssetsScreen extends React.Component<Props, State> {
         { text: 'Hide', onPress: () => updateAssets(assets, [asset.symbol]) },
       ],
     );
-  }
+  };
 
   renderSwipeoutBtns = (asset) => {
     const { assetsLayout } = this.props;
@@ -312,8 +324,8 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <View
         style={{
-          marginTop: -22,
-          height: 1,
+          marginTop: Platform.OS === 'ios' ? -22 : -10,
+          height: 0,
           width: '100%',
           backgroundColor: 'transparent',
         }}
@@ -344,7 +356,7 @@ class AssetsScreen extends React.Component<Props, State> {
       .map(({ balance, symbol, ...rest }) => ({
         balance,
         symbol,
-        balanceInFiat: rates[symbol] ? balance * rates[symbol][fiatCurrency] : 0,
+        balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
         ...rest,
       }))
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
@@ -364,10 +376,9 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
-    const containerColor = assetsLayout === EXPANDED ? baseColors.white : baseColors.snowWhite;
 
     return (
-      <Container color={containerColor}>
+      <Container>
         <Header
           title="assets"
           onNextPress={this.goToAddTokenPage}
@@ -386,7 +397,9 @@ class AssetsScreen extends React.Component<Props, State> {
             width: '100%',
           }}
           numColumns={columnAmount}
-          ItemSeparatorComponent={assetsLayout === SIMPLIFIED ? this.renderSeparator : null}
+          ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+            ? this.renderSeparator
+            : null}
           refreshControl={
             <RefreshControl
               refreshing={false}

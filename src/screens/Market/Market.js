@@ -8,7 +8,7 @@ import styled from 'styled-components/native/index';
 // components
 import Header from 'components/Header';
 import { Container } from 'components/Layout';
-import { spacing, baseColors } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import IcoCard from 'components/IcoCard';
 import { ICO } from 'constants/navigationConstants';
 import { SubHeading } from 'components/Typography';
@@ -94,7 +94,7 @@ class MarketScreen extends React.Component<Props> {
     const activeICOs = filterIcosByStatus(icos, ACTIVE);
     const pendingICOs = filterIcosByStatus(icos, PENDING);
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header
           title="market"
         />

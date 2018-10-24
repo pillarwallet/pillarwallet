@@ -8,6 +8,7 @@ type NavigationReducerState = {
   routes: Object[],
   activeScreen: ?string,
   prevActiveScreen: ?string,
+  prevActiveScreenParams: Object,
 }
 
 export type NavigationReducerAction = {
@@ -26,6 +27,7 @@ const initialState = {
   ),
   activeScreen: null,
   prevActiveScreen: null,
+  prevActiveScreenParams: {},
 };
 
 const NAVIGATION_ACTION = 'Navigation';
@@ -37,10 +39,12 @@ function navigationReducer(state: NavigationReducerState = initialState, action:
   if (action.type && action.type.includes(NAVIGATION_ACTION)) {
     const nextState = RootNavigation.router.getStateForAction(action, state) || state;
     const newActiveScreen = RootNavigation.router.getPathAndParamsForState(nextState).path.split('/').slice(-1)[0];
+    const prevActiveScreenParams = RootNavigation.router.getPathAndParamsForState(state).params;
     return {
       ...nextState,
       activeScreen: newActiveScreen,
       prevActiveScreen: state.activeScreen,
+      prevActiveScreenParams,
     };
   }
   return state;

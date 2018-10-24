@@ -8,8 +8,10 @@ import { Provider, connect } from 'react-redux';
 import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
+import TestFairy from 'react-native-testfairy';
+import { SENTRY_DSN, TESTFAIRY_ACCESS_TOKEN } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
-import { updateSessionNetworkStatusAction } from 'actions/sessionActions';
+import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
 import {
   startListeningOnOpenNotificationAction,
   stopListeningOnOpenNotificationAction,
@@ -27,6 +29,7 @@ type Props = {
   isFetched: Boolean,
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
+  checkDBConflicts: Function,
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
 }
@@ -35,7 +38,8 @@ class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
-      Sentry.config('https://82eb3c51aa80408597cac8ae5c18f9d1@sentry.io/1294444').install();
+      Sentry.config(SENTRY_DSN).install();
+      TestFairy.begin(TESTFAIRY_ACCESS_TOKEN);
     }
   }
 
@@ -46,7 +50,8 @@ class App extends React.Component<Props, *> {
   }
 
   componentDidMount() {
-    const { fetchAppSettingsAndRedirect, startListeningOnOpenNotification } = this.props;
+    const { fetchAppSettingsAndRedirect, startListeningOnOpenNotification, checkDBConflicts } = this.props;
+    checkDBConflicts();
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
@@ -90,6 +95,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
+  checkDBConflicts: () => dispatch(checkDBConflictsAction()),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
 });

@@ -121,7 +121,7 @@ class ICOLinks extends React.Component<Props, {}> {
     const { links } = this.props.navigation.state.params;
 
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header onBack={this.navigateBack} title="links" />
         <Wrapper>
           <StyledFlatList

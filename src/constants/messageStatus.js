@@ -1,0 +1,2 @@
+// @flow
+export const UNDECRYPTABLE_MESSAGE = 'UNDECRYPTABLE_MESSAGE';

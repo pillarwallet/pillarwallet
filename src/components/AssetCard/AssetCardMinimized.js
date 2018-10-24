@@ -1,11 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Platform, TouchableOpacity, Animated, Easing } from 'react-native';
+import { Platform, TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
+import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors, UIColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
 import Icon from 'components/Icon';
 import Toast from 'components/Toast';
 
@@ -43,6 +44,8 @@ const AssetWrapper = styled(Animated.View)`
   align-items: center;
 `;
 
+const { width } = Dimensions.get('window');
+const cardWidth = (width - 48) / 3;
 const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
@@ -56,20 +59,22 @@ const cardHeight = (smallScreen, extraSmall) => {
   return 105;
 };
 
-const ShadowHolder = styled.View`
+const ShadowHolder = styled(Shadow)`
   margin: ${Platform.select({
     ios: `4px ${spacing.rhythm / 4}px 6px`,
-    android: `4px ${spacing.rhythm / 4}px 6px`,
+    android: '0',
   })};
   flex-direction: row;
-  shadow-color: ${UIColors.cardShadowColor};
-  shadow-offset: 0 3px;
-  shadow-opacity: 1;
-  shadow-radius: 6px;
-  elevation: 3;
+`;
+
+const Sizer = styled.View`
+  height: ${props => cardHeight(props.smallScreen, props.extraSmall)}px;
   border-radius: 6px;
   background: ${baseColors.white};
-  height: ${props => cardHeight(props.smallScreen, props.extraSmall)}px;
+  width: ${Platform.select({
+    ios: '100%',
+    android: `${cardWidth}px`,
+  })};
 `;
 
 const InnerWrapper = styled.View`
@@ -246,38 +251,40 @@ class AssetCardMinimized extends React.Component<Props, State> {
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     return (
       <AssetWrapperAnimated style={animatedStyle}>
-        <ShadowHolder smallScreen={smallScreen} extraSmall={extraSmall}>
-          <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
-            <InnerWrapper smallScreen={smallScreen}>
-              <CardRow>
-                <IconCircle smallScreen={smallScreen}>
-                  {!!icon &&
-                  <CachedImage
-                    key={token}
-                    style={{
-                      height: smallScreen ? 20 : 36,
-                      width: smallScreen ? 20 : 36,
-                    }}
-                    source={{ uri: icon }}
-                    resizeMode="contain"
-                  />}
-                </IconCircle>
-                <Name>{token}</Name>
-              </CardRow>
-              <CardRow>
-                <AmountWrapper extraSmall={extraSmall}>
-                  <Amount>{amount}</Amount>
-                  {!extraSmall &&
-                  <DetailWrapper>
-                    {disclaimer
-                      ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
-                      : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                    }
-                  </DetailWrapper>}
-                </AmountWrapper>
-              </CardRow>
-            </InnerWrapper>
-          </TouchableWithoutFeedback>
+        <ShadowHolder shadowDistance={6}>
+          <Sizer smallScreen={smallScreen} extraSmall={extraSmall}>
+            <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
+              <InnerWrapper smallScreen={smallScreen}>
+                <CardRow>
+                  <IconCircle smallScreen={smallScreen}>
+                    {!!icon &&
+                    <CachedImage
+                      key={token}
+                      style={{
+                        height: smallScreen ? 20 : 36,
+                        width: smallScreen ? 20 : 36,
+                      }}
+                      source={{ uri: icon }}
+                      resizeMode="contain"
+                    />}
+                  </IconCircle>
+                  <Name>{token}</Name>
+                </CardRow>
+                <CardRow>
+                  <AmountWrapper extraSmall={extraSmall}>
+                    <Amount>{amount}</Amount>
+                    {!extraSmall &&
+                    <DetailWrapper>
+                      {disclaimer
+                        ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
+                        : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                      }
+                    </DetailWrapper>}
+                  </AmountWrapper>
+                </CardRow>
+              </InnerWrapper>
+            </TouchableWithoutFeedback>
+          </Sizer>
         </ShadowHolder>
         {!!showHide &&
         <HideAssetAddon>
