@@ -77,6 +77,7 @@ export default class IFrameModal extends React.Component<Props, State> {
           </ActivityIndicatorWrapper>
           }
           <WebView
+            originWhitelist={['*']}
             source={{ uri }}
             onLoad={this.handleLoadIFrame}
             style={{ opacity: isIFrameLoaded ? 1 : 0 }}

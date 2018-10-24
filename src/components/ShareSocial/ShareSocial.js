@@ -33,11 +33,11 @@ type Props = {
 
 const SOCIAL_NETWORKS = [{
   platform: 'facebook',
-  sharerUrl: 'https://twitter.com/intent/tweet?text=pillarproject.io/wallet',
+  sharerUrl: 'https://www.facebook.com/sharer/sharer.php?u=https%3A//pillarproject.io/wallet',
   icon: facebook,
 }, {
   platform: 'twitter',
-  sharerUrl: 'https://www.facebook.com/sharer/sharer.php?u=https%3A//pillarproject.io/wallet',
+  sharerUrl: 'https://twitter.com/intent/tweet?text=pillarproject.io/wallet',
   icon: twitter,
 }];
 

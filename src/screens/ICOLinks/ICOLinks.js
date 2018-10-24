@@ -70,12 +70,12 @@ class ICOLinks extends React.Component<Props, {}> {
     if (Platform.OS === 'android') {
       return (
         <TouchableNativeFeedback
-          onPress={() => this.openLink(link.link)}
+          onPress={() => this.openLink(link.url)}
           background={TouchableNativeFeedback.Ripple()}
         >
           <ListRow>
             <ListRowItem label>
-              {link.label}
+              {link.name}
             </ListRowItem>
             <Icon
               name="chevron-right"
@@ -90,12 +90,12 @@ class ICOLinks extends React.Component<Props, {}> {
     }
     return (
       <TouchableOpacity
-        onPress={() => this.openLink(link.link)}
+        onPress={() => this.openLink(link.url)}
         underlayColor={baseColors.lightGray}
       >
         <ListRow>
           <ListRowItem label>
-            {link.label}
+            {link.name}
           </ListRowItem>
           <Icon
             name="chevron-right"
@@ -118,25 +118,15 @@ class ICOLinks extends React.Component<Props, {}> {
   };
 
   render() {
-    const externalLinks = [
-      {
-        label: 'Link 1',
-        link: 'https://pillarproject.io/',
-      },
-      {
-        label: 'Link 2',
-        link: 'https://pillarproject.io/wallet',
-      },
-    ];
+    const { links } = this.props.navigation.state.params;
 
-    // TODO: change StyledFlatList data to passed links
     return (
       <Container>
         <Header onBack={this.navigateBack} title="links" />
         <Wrapper>
           <StyledFlatList
-            keyExtractor={item => item.label}
-            data={externalLinks}
+            keyExtractor={item => item.url}
+            data={links}
             renderItem={this.renderExternalLinksItem}
             ItemSeparatorComponent={() => this.renderSeparator()}
             contentContainerStyle={{
