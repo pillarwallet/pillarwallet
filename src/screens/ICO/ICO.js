@@ -267,6 +267,7 @@ class ICOScreen extends React.Component<Props, {}> {
       supportedCurrencies,
       goal,
       isPending,
+      links,
     } = icoData;
 
     const startDate = format(new Date(plannedOpeningDate), 'D MMM YYYY');
@@ -328,21 +329,29 @@ class ICOScreen extends React.Component<Props, {}> {
       ? 'Starts in '
       : 'Participate';
 
-    const externalLinks = [
-      {
+    const externalLinks = [];
+
+    if (whitepaper) {
+      externalLinks.push({
         label: 'Whitepaper',
         link: whitepaper,
-      },
-      {
+      });
+    }
+
+    if (website) {
+      externalLinks.push({
         label: 'Website',
         link: website,
-      },
-      {
+      });
+    }
+
+    if (links.length) {
+      externalLinks.push({
         label: 'Links',
-        link: ICO_LINKS,
+        link: icoData.links.length ? ICO_LINKS : null,
         inApp: true,
-      },
-    ];
+      });
+    }
 
     return (
       <Container>
