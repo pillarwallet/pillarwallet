@@ -20,6 +20,7 @@ import ListItemUnderlined from 'screens/Participate/ListItemUnderlined';
 // utils
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { parseNumber, formatAmount, formatMoney } from 'utils/common';
+import { getRate } from 'utils/assets';
 
 // actions
 import { fetchICOFundingInstructionsAction } from 'actions/icosActions';
@@ -245,7 +246,7 @@ class ParticipateScreen extends React.Component<Props, State> {
     const { rates } = this.props;
     // TEMPORARY HERE
     if (selectedCurrency !== GBP) {
-      unitPrice /= rates[selectedCurrency][GBP]; // GBP is base atm for all ICOs
+      unitPrice /= getRate(rates, selectedCurrency, GBP); // GBP is base atm for all ICOs
     }
     const fundAmount = fieldValue || '0';
     const toReceiveValue = formatAmount(parseNumber(fundAmount) / unitPrice);
@@ -261,7 +262,7 @@ class ParticipateScreen extends React.Component<Props, State> {
     const { selectedCurrency } = this.state;
     const { rates } = this.props;
     if (selectedCurrency !== GBP) {
-      unitPrice /= rates[selectedCurrency][GBP]; // GBP is base atm for all ICOs
+      unitPrice /= getRate(rates, selectedCurrency, GBP); // GBP is base atm for all ICOs
     }
     const receiveAmount = fieldValue || '0';
     const toFundValue = formatAmount(parseNumber(receiveAmount) * unitPrice);
@@ -295,7 +296,7 @@ class ParticipateScreen extends React.Component<Props, State> {
     const { rates } = this.props;
     const { value, selectedCurrency } = this.state;
     if (!value) return 0;
-    const val = rates[selectedCurrency][GBP] * parseNumber(value[TO_FUND]);
+    const val = getRate(rates, selectedCurrency, GBP) * parseNumber(value[TO_FUND]);
     return formatAmount(Math.round(val));
   };
 
@@ -310,7 +311,7 @@ class ParticipateScreen extends React.Component<Props, State> {
     });
     const formStructure = getFormStructure(icoData.maximumContribution, icoData.minimumContribution);
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container>
         <Header
           onBack={this.handleBackNavigation}
           title="participate"

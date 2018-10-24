@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Animated, Easing, Share, RefreshControl } from 'react-native';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { transparentize } from 'polished';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -23,17 +23,20 @@ import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney } from 'utils/common';
-import { getBalance } from 'utils/assets';
+import { getBalance, getRate } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
 
-const AssetDescriptionToggleWrapperColors = [transparentize(1, baseColors.white), baseColors.white];
+const AssetDescriptionToggleWrapperColors = [
+  transparentize(1, UIColors.defaultBackgroundColor),
+  UIColors.defaultBackgroundColor,
+];
 
 const AssetDescriptionToggleWrapperActiveColors = [
-  transparentize(1, baseColors.white),
-  transparentize(1, baseColors.white),
+  transparentize(1, UIColors.defaultBackgroundColor),
+  transparentize(1, UIColors.defaultBackgroundColor),
 ];
 
 const activeModalResetState = {
@@ -184,7 +187,7 @@ class AssetScreen extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const balance = getBalance(balances, token);
     const isWalletEmpty = balance <= 0;
-    const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
+    const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
     const shouldAssetDescriptionToggleShow = assetData.description.length > 40;

@@ -18,7 +18,7 @@ import SlideModal from 'components/Modals/SlideModal';
 // utils
 import { parseNumber, formatAmount, isValidNumber, getCurrencySymbol, formatMoney } from 'utils/common';
 import { fontSizes, spacing, UIColors } from 'utils/variables';
-import { getBalance } from 'utils/assets';
+import { getBalance, getRate } from 'utils/assets';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -284,7 +284,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return Object.keys(SPEED_TYPES).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getTxFeeInWei(txSpeed)));
-      const feeInFiat = parseFloat(feeInEth) * rates[ETH][fiatCurrency];
+      const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
       return (
         <Btn
           key={txSpeed}
@@ -320,16 +320,16 @@ class SendTokenAmount extends React.Component<Props, State> {
     const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
     const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const totalInFiat = rates[token] ? balance * rates[token][fiatCurrency] : 0;
+    const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const currencySymbol = getCurrencySymbol(fiatCurrency);
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
-    const valueInFiat = rates[token] ? currentValue * rates[token][fiatCurrency] : 0;
+    const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
     const formattedValueInFiat = formatMoney(valueInFiat);
     const valueInFiatOutput = `= ${currencySymbol}${formattedValueInFiat}`;
     const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
     return (
-      <Container color={UIColors.defaultBackgroundColor}>
+      <Container>
         <Header
           onBack={() => this.props.navigation.goBack(null)}
           title={`send ${this.assetData.token}`}

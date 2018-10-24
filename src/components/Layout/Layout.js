@@ -4,12 +4,13 @@ import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
 import { Platform, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { baseColors, spacing } from 'utils/variables';
+import { UIColors, spacing } from 'utils/variables';
 
 type ContainerProps = {
   children?: React.Node,
   center?: boolean,
   color?: string,
+  style?: Object,
 };
 
 type FooterProps = {
@@ -25,7 +26,7 @@ export const Center = styled.View`
 `;
 
 const ContainerOuter = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : baseColors.white)};
+  background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
 `;
 
 const ContainerInner = styled.View`
@@ -36,7 +37,7 @@ const ContainerInner = styled.View`
 
 export const Container = (props: ContainerProps) => {
   return (
-    <ContainerOuter color={props.color} forceInset={{ top: 'always' }}>
+    <ContainerOuter color={props.color} style={props.style} forceInset={{ top: 'always' }}>
       <ContainerInner center={props.center}>{props.children}</ContainerInner>
     </ContainerOuter>
   );

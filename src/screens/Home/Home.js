@@ -351,7 +351,7 @@ class HomeScreen extends React.Component<Props, State> {
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
-      <Container>
+      <Container color={baseColors.white}>
         <LinearGradient
           colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
         >

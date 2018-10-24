@@ -8,6 +8,8 @@ import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 
 const storage = Storage.getInstance('db');
@@ -66,6 +68,22 @@ export const setupSentryAction = (user: Object, wallet: Object) => {
         walletId,
         ethAddress: address,
       },
+    });
+  };
+};
+
+export const repairStorageAction = () => {
+  return async (dispatch: Function) => {
+    await storage.repair();
+    dispatch({
+      type: ADD_NOTIFICATION,
+      payload: {
+        message: 'Local storage has been repaired',
+      },
+    });
+    dispatch({
+      type: UPDATE_SESSION,
+      payload: { hasDBConflicts: false },
     });
   };
 };
