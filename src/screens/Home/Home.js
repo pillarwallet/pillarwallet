@@ -133,7 +133,11 @@ const RecentConnectionsWrapper = styled.View`
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
   padding-top: 100px;
-`;
+  `;
+
+const RecentConnectionsSpacer = styled.View`
+    min-height: 100px;
+  `;
 
 const RecentConnectionsScrollView = styled.ScrollView``;
 
@@ -462,7 +466,7 @@ class HomeScreen extends React.Component<Props, State> {
             />
           }
         >
-          {!!this.props.contacts.length &&
+          {this.props.contacts.length ?
             <RecentConnectionsWrapper>
               <RecentConnections>
                 <RecentConnectionsSubtitle subtitle title="recent connections." />
@@ -470,7 +474,10 @@ class HomeScreen extends React.Component<Props, State> {
                   {this.renderRecentConnections()}
                 </RecentConnectionsScrollView>
               </RecentConnections>
-            </RecentConnectionsWrapper>}
+            </RecentConnectionsWrapper> :
+
+            <RecentConnectionsSpacer />
+          }
           <Tabs title="your activity." tabs={activityFeedTabs} />
           <ActivityFeed
             onCancelInvitation={cancelInvitation}
