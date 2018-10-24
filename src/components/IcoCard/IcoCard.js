@@ -167,7 +167,7 @@ const IcoCard = (props: Props) => {
 
   return (
     <CardWrapper>
-      <InnerWrapper inner={inner}>
+      <InnerWrapper inner={inner} heightAndroid={174}>
         <TouchableWithoutFeedback onPress={onPress}>
           <Sizer>
             <Row>

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { ImageBackground, View } from 'react-native';
+import { ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
@@ -68,10 +68,8 @@ const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: nu
   }
 
   return (
-    <Shadow>
-      <View style={{ height: diameter, width: diameter }}>
-        { children }
-      </View>
+    <Shadow widthAndroid={diameter} heightAndroid={diameter}>
+      { children }
     </Shadow>
   );
 };
@@ -108,7 +106,7 @@ const ProfileImage = (props: Props) => {
     imageStyle,
     onPress,
     style,
-    diameter = 52,
+    diameter = 50,
     borderWidth = 2,
     children,
     userName,

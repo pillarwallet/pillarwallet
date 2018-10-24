@@ -8,10 +8,10 @@ import type { NavigationScreenProp, NavigationEventSubscription } from 'react-na
 import { CHAT, CHAT_LIST } from 'constants/navigationConstants';
 import Header from 'components/Header';
 import EmptyChat from 'components/EmptyState/EmptyChat';
-import { baseColors } from 'utils/variables';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Separator from 'components/Separator';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
-import ChatListItem from './ChatListItem';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -60,20 +60,11 @@ class NewChatListScreen extends React.Component<Props, State> {
     const contactInfo = contacts.find(({ username }) => contact.username === username) || {};
 
     return (
-      <ChatListItem
-        userName={contactInfo.username}
-        avatar={contactInfo.profileImage}
+      <ListItemWithImage
+        label={contactInfo.username}
+        avatarUrl={contactInfo.profileImage}
         onPress={() => this.handleChatItemClick(contactInfo)}
-        centerVertical
       />
-    );
-  };
-
-  renderSeparator = () => {
-    return (
-      <View style={{ paddingLeft: 74, paddingRight: 18 }}>
-        <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
-      </View>
     );
   };
 
@@ -109,7 +100,7 @@ class NewChatListScreen extends React.Component<Props, State> {
             extraData={this.props.contacts}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
-            ItemSeparatorComponent={this.renderSeparator}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             style={{ height: '100%' }}
             contentContainerStyle={{ height: '100%' }}
             ListEmptyComponent={

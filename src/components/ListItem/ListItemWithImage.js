@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
@@ -42,10 +42,10 @@ const DEFAULT = 'DEFAULT';
 
 const ItemWrapper = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
+  justify-content: center;
   padding: ${spacing.small}px ${spacing.mediumLarge}px;
-  height: ${props => props.type !== DEFAULT ? 84 : 70}px;
+  height: ${props => props.type === ACTION ? 84 : 70}px;
 `;
 
 const Row = styled.View`
@@ -70,17 +70,17 @@ const InfoWrapper = styled.View`
 `;
 
 const Column = styled.View`
-  padding-top: ${props => props.type === CHAT_ITEM ? `${spacing.small}px` : 0};
   flex-direction: column;
   align-items: ${props => props.rightColumn ? 'flex-end' : 'flex-start'};
   justify-content: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
+  margin-top: ${props => props.type === CHAT_ITEM ? '-2px' : 0};
   ${props => props.rightColumn ? '' : 'flex: 1'}
 `;
 
 const ItemTitle = styled(BaseText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium};
-  letter-spacing: 0.2px;
+  font-size: ${props => props.type === CHAT_ITEM ? fontSizes.extraSmall : fontSizes.small}px;
+  letter-spacing: ${props => props.type === CHAT_ITEM ? fontTrackings.tiny : fontTrackings.small}px;
   width: 100%;
   font-weight: ${props => props.type === ACTION ? fontWeights.book : fontWeights.bold};
   flex: 1;
@@ -88,16 +88,16 @@ const ItemTitle = styled(BaseText)`
 
 const ItemParagraph = styled.Text`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.small};
-  line-height: ${fontSizes.medium + 2};
-  letter-spacing: 0.1px;
+  font-size: ${fontSizes.extraSmall};
+  line-height: ${fontSizes.medium};
+  letter-spacing: ${fontTrackings.tiny}px;
   margin-top: 2px;
   flex: 1;
 `;
 
 const ItemSubText = styled.Text`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraExtraSmall};
+  font-size: 13px;
   line-height: ${fontSizes.small}
 `;
 
@@ -360,12 +360,9 @@ const ListItemWithImage = (props: Props) => {
           {!!label &&
             <Row>
               <ItemTitle type={type}>{label}</ItemTitle>
-              {(type === CHAT_ITEM) && timeSent &&
+              {(type === CHAT_ITEM && !!timeSent) &&
                 <TimeWrapper>
-                  {!!timeSent &&
-                  <TimeSent>
-                    {timeSent}
-                  </TimeSent>}
+                  <TimeSent>{timeSent}</TimeSent>
                 </TimeWrapper>
               }
             </Row>

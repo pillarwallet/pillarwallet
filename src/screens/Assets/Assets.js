@@ -74,9 +74,11 @@ const horizontalPadding = (layout, side) => {
       return spacing.rhythm - (spacing.rhythm / 4);
     }
     case SIMPLIFIED: {
+      if (Platform.OS === 'android') return 10;
       return side === 'left' ? 0 : spacing.rhythm - 9;
     }
     default: {
+      if (Platform.OS === 'android') return 10;
       return 0;
     }
   }
@@ -312,7 +314,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <View
         style={{
-          marginTop: Platform.OS === 'ios' ? -22 : -10,
+          marginTop: Platform.OS === 'ios' ? -8 : -4,
           height: 0,
           width: '100%',
           backgroundColor: 'transparent',
