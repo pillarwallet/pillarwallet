@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
+import { Platform, BackHandler, Keyboard, Dimensions, Text } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import {
@@ -14,15 +14,18 @@ import {
   IMPORT_ERROR,
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
+  TWORDSPHRASE,
+  PRIVATEKEY,
 } from 'constants/walletConstants';
 import Button from 'components/Button';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import { Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
-import { fontSizes, baseColors } from 'utils/variables';
+import WalletTabs from 'components/Tabs/WalletTabs';
+import { fontSizes, baseColors, UIColors, fontWeights, spacing } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -38,6 +41,8 @@ type State = {
   errorMessage: string,
   errorField: string,
   isScanning: boolean,
+  activeTab: string,
+  inputEnabled: boolean,
 };
 
 const window = Dimensions.get('window');
@@ -45,16 +50,29 @@ const window = Dimensions.get('window');
 const InputWrapper = styled.View`
   flex-direction: row;
   align-items: center;
+  margin-top: -20px;
 `;
 
-const ScanButton = styled.TouchableOpacity`
-  align-items: center;
-  margin-left: 10px;
-`;
-
-const ScanText = styled(BaseText)`
+const ButtonText = styled(BaseText)`
   color: ${baseColors.electricBlue};
   font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.medium};
+`;
+
+const FooterWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px;
+  width: 100%;
+`;
+
+const ButtonWrapper = styled.View`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 14px;
+  margin-top: ${props => props.error ? 32 : 50}px;
 `;
 
 class ImportWallet extends React.Component<Props, State> {
@@ -64,6 +82,8 @@ class ImportWallet extends React.Component<Props, State> {
     errorMessage: '',
     errorField: '',
     isScanning: false,
+    activeTab: TWORDSPHRASE,
+    inputEnabled: false,
   };
 
   constructor(props: Props) {
@@ -113,12 +133,13 @@ class ImportWallet extends React.Component<Props, State> {
 
   handleImportSubmit = () => {
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
-    const { privateKey, tWordsPhrase } = this.state;
+    const { privateKey, tWordsPhrase, activeTab } = this.state;
 
-    if (privateKey) {
+    if (activeTab === PRIVATEKEY) {
       importWalletFromPrivateKey(privateKey);
-    } else if (tWordsPhrase) {
-      importWalletFromTWordsPhrase(tWordsPhrase);
+    } else if (activeTab === TWORDSPHRASE) {
+      const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
+      importWalletFromTWordsPhrase(trimmedPhrase);
     } else {
       this.setState({ errorField: '' });
     }
@@ -166,53 +187,100 @@ class ImportWallet extends React.Component<Props, State> {
     this.props.resetWalletError();
   };
 
+  setActiveTab = (activeTab) => {
+    this.setState({
+      activeTab,
+    });
+  };
+
   render() {
-    const { privateKey, tWordsPhrase, isScanning } = this.state;
-    const errorMessageTWordsPhrase = this.getError(IMPORT_WALLET_TWORDS_PHRASE);
-    const errorMessagePrivateKey = this.getError(IMPORT_WALLET_PRIVATE_KEY);
+    const {
+      privateKey,
+      tWordsPhrase,
+      isScanning,
+      activeTab,
+    } = this.state;
+
+    const restoreWalletTabs = [
+      {
+        id: TWORDSPHRASE,
+        name: '12 word',
+        onPress: () => this.setActiveTab(TWORDSPHRASE),
+      },
+      {
+        id: PRIVATEKEY,
+        name: 'Private key',
+        onPress: () => this.setActiveTab(PRIVATEKEY),
+      },
+    ];
+
+    const tabsInfo = {
+      TWORDSPHRASE: {
+        textStart: 'Restore your ERC-20 compatible Ethereum wallet using your ',
+        textAttention: '12 word backup phrase',
+        textEnd: '.',
+        inputLabel: 'Backup phrase',
+        changeName: 'tWordsPhrase',
+        value: tWordsPhrase,
+        errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
+      },
+      PRIVATEKEY: {
+        textStart: 'Don\'t have your backup phrase? Use your ',
+        textAttention: 'private key',
+        textEnd: ' instead.',
+        inputLabel: 'Private key',
+        changeName: 'privateKey',
+        value: privateKey,
+        errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
+      },
+    };
 
     return (
       <Container>
-        <Header title="restore wallet" onBack={this.handleBackAction} />
+        <Header onBack={this.handleBackAction} title="restore wallet" />
         <ScrollWrapper regularPadding>
-          <Paragraph>
-            Restore your ERC-20 compatible Ethereum Wallet using your 12 word backup phrase or private key.
+          <WalletTabs title="restore wallet" tabs={restoreWalletTabs} />
+          <Paragraph small light>{tabsInfo[activeTab].textStart}
+            <Text style={{ color: UIColors.defaultTextColor }}>
+              {tabsInfo[activeTab].textAttention}
+            </Text>
+            {tabsInfo[activeTab].textEnd}
           </Paragraph>
-          <TextInput
-            label="Enter your 12 word backup phrase."
-            inputProps={{
-              onChange: this.handleValueChange('tWordsPhrase'),
-              value: tWordsPhrase,
-              multiline: true,
-              autoCapitalize: 'none',
-            }}
-            errorMessage={errorMessageTWordsPhrase}
-            underlineColorAndroid="transparent"
-          />
-          <Paragraph>Don&#39;t have your backup phrase? Use your private key instead.</Paragraph>
           <InputWrapper>
             <TextInput
-              label="Use your Private Key"
+              label={tabsInfo[activeTab].inputLabel}
               inputProps={{
-                onChange: this.handleValueChange('privateKey'),
-                value: privateKey,
+                onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
+                value: tabsInfo[activeTab].value,
+                autoCapitalize: 'none',
+                multiline: activeTab === TWORDSPHRASE,
+                numberOfLines: 3,
               }}
-              errorMessage={errorMessagePrivateKey}
-              underlineColorAndroid="transparent"
-              viewWidth={window.width - 95}
+              errorMessage={tabsInfo[activeTab].errorMessage}
+              viewWidth={activeTab === TWORDSPHRASE ? (window.width - (spacing.rhythm * 2) - 2) : window.width - 95}
+              inputType="secondary"
+              lowerCase
+              labelBigger
+              noBorder
             />
-            <ScanButton onPress={this.handleQRScannerOpen}>
-              <IconButton
-                icon="qrcode"
-                color={baseColors.electricBlue}
-                fontSize={fontSizes.extraLarge}
-                onPress={this.handleQRScannerOpen}
-              />
-              <ScanText>SCAN</ScanText>
-            </ScanButton>
+            {activeTab === PRIVATEKEY &&
+              <ButtonWrapper error={!!tabsInfo[activeTab].errorMessage}>
+                <IconButton
+                  icon="qrcode"
+                  color={baseColors.electricBlue}
+                  fontSize={fontSizes.extraLarge}
+                  onPress={this.handleQRScannerOpen}
+                />
+                <ButtonText>Scan</ButtonText>
+              </ButtonWrapper>
+            }
           </InputWrapper>
-          <Button title="Import" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
         </ScrollWrapper>
+        <Footer>
+          <FooterWrapper>
+            <Button title="Restore wallet" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
+          </FooterWrapper>
+        </Footer>
         <QRCodeScanner
           isActive={isScanning}
           onDismiss={this.handleQRScannerClose}

@@ -43,6 +43,7 @@ const SOCIAL_TYPES = [
 ];
 
 const ActivityFeedList = styled.FlatList``;
+
 const ActivityFeedWrapper = styled.View`
   ${props => props.color ? `background-color: ${props.color};` : ''}
 `;

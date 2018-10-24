@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { Dimensions } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import TextInput from 'components/TextInput';
@@ -8,6 +9,8 @@ import { Wrapper } from 'components/Layout';
 import { spacing } from 'utils/variables';
 import Button from 'components/Button';
 import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
+
+const window = Dimensions.get('window');
 
 const StyledWrapper = styled(Wrapper)`
   justify-content: space-between;
@@ -64,6 +67,7 @@ function InputTemplate(locals) {
       inputProps={inputProps}
       inputType="secondary"
       noBorder
+      viewWidth={window.width - 65}
     />
   );
 }

@@ -14,7 +14,7 @@ const SeparatorWrapper = styled.View`
 const SeparatorLine = styled.View`
   width: 100%;
   height: 1px;
-  background-color: ${UIColors.defaultBorderColor};
+  background-color: ${UIColors.defaultDividerColor};
 `;
 
 const Separator = (props: Props) => {

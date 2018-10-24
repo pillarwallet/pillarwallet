@@ -28,6 +28,7 @@ type NextScreenAssetData = {
   token: string,
   contractAddress: string,
   decimals: number,
+  icon: string,
 };
 
 class SendTokenAssetsScreen extends React.Component<Props, {}> {
@@ -37,10 +38,16 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
       token,
       contractAddress,
       decimals,
+      icon,
     } = nextScreenAssetData;
 
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
-      assetData: { token, contractAddress, decimals },
+      assetData: {
+        token,
+        contractAddress,
+        decimals,
+        icon,
+      },
       receiver: ethAddress,
     });
   }
@@ -50,11 +57,13 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     const contact = navigation.getParam('contact', {});
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
+    const fullIconMonoUrl = `${SDK_PROVIDER}/${item.iconMonoUrl}?size=2`;
     const nextScreenAssetData = {
       token: item.symbol,
       contractAddress: item.address,
       decimals: item.decimals,
       ethAddress: contact.ethAddress,
+      icon: fullIconMonoUrl,
     };
     if (assetsConfig[item.symbol] && !assetsConfig[item.symbol].send) {
       return null;

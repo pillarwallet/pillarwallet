@@ -35,6 +35,7 @@ const AssetOutter = styled.View`
     android: 0,
   })}
 `;
+
 const defaultCardColor = '#ACBCCD';
 
 const AssetWrapper = styled.View`
