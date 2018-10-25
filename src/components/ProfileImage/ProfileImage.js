@@ -59,19 +59,15 @@ type Props = {
 const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
   const { children, noShadow, diameter } = props;
 
-  if (noShadow) {
+  if (!noShadow) {
     return (
-      <React.Fragment>
+      <Shadow widthAndroid={diameter} heightAndroid={diameter}>
         { children }
-      </React.Fragment>
+      </Shadow>
     );
   }
 
-  return (
-    <Shadow widthAndroid={diameter} heightAndroid={diameter}>
-      { children }
-    </Shadow>
-  );
+  return children;
 };
 
 const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node, initialsSize?: number }) => {
