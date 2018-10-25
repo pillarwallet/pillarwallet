@@ -176,6 +176,7 @@ class PeopleScreen extends React.Component<Props, State> {
               value: query,
               autoCapitalize: 'none',
             }}
+            marginTop={15}
           />
         </Wrapper>
         {!inSearchMode && !!pendingConnectionRequests &&
