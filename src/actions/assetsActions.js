@@ -151,14 +151,18 @@ export const fetchAssetsBalancesAction = (assets: Assets, walletAddress: string)
     });
 
     const balances = await api.fetchBalances({ address: walletAddress, assets: Object.values(assets) });
-    const transformedBalances = transformAssetsToObject(balances);
-    await storage.save('balances', { balances: transformedBalances }, true);
-    dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
+    if (balances && balances.length) {
+      const transformedBalances = transformAssetsToObject(balances);
+      await storage.save('balances', { balances: transformedBalances }, true);
+      dispatch({ type: UPDATE_BALANCES, payload: transformedBalances });
+    }
 
     // @TODO: Extra "rates fetching" to it's own action ones required.
     const rates = await getExchangeRates(Object.keys(assets));
-    await storage.save('rates', { rates }, true);
-    dispatch({ type: UPDATE_RATES, payload: rates });
+    if (rates && Object.keys(rates).length) {
+      await storage.save('rates', { rates }, true);
+      dispatch({ type: UPDATE_RATES, payload: rates });
+    }
   };
 };
 
