@@ -20,7 +20,7 @@ const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
 const CircleButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
-  padding: 6px;
+  padding: 8px;
   margin: ${Platform.select({
     ios: '0 14px',
     android: 0,
@@ -76,6 +76,8 @@ const CircleButton = (props: Props) => {
         shadowRadius={9}
         shadowSpread={36}
         shadowColorAndroid="#1C105baa"
+        heightAndroid={65}
+        widthAndroid={65}
       >
         <InnerWrapper>
           <CircleButtonIconWrapper

@@ -45,7 +45,7 @@ const AssetWrapper = styled(Animated.View)`
 `;
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 48) / 3;
+const cardWidth = (width - 20) / 3;
 const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
@@ -251,7 +251,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     return (
       <AssetWrapperAnimated style={animatedStyle}>
-        <ShadowHolder shadowDistance={6}>
+        <ShadowHolder heightAndroid={cardHeight(smallScreen, extraSmall)}>
           <Sizer smallScreen={smallScreen} extraSmall={extraSmall}>
             <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
               <InnerWrapper smallScreen={smallScreen}>

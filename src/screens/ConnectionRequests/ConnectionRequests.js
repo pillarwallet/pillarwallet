@@ -11,10 +11,10 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { PEOPLE } from 'constants/navigationConstants';
+import { PEOPLE, CONTACT } from 'constants/navigationConstants';
 import { Container } from 'components/Layout';
 import Header from 'components/Header';
-import ContactCard from 'components/ContactCard';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { createAlert } from 'utils/alerts';
 
@@ -28,10 +28,15 @@ type Props = {
 }
 
 class ConnectionRequests extends React.Component<Props> {
+  redirectStarted = false;
+
   componentDidUpdate() {
     const { navigation, invitations } = this.props;
     const requests = invitations.filter(({ type }) => type === TYPE_RECEIVED);
-    if (!requests.length) navigation.navigate(PEOPLE);
+    if (!requests.length && !this.redirectStarted) {
+      this.redirectStarted = true; // HACK: redirect only once
+      navigation.navigate(PEOPLE);
+    }
   }
 
   handleAcceptInvitationPress = (invitation) => () => {
@@ -44,25 +49,18 @@ class ConnectionRequests extends React.Component<Props> {
     createAlert(TYPE_REJECTED, invitation, () => rejectInvitation(invitation));
   };
 
-  handleCancelInvitationPress = (invitation) => () => {
-    const { cancelInvitation } = this.props;
-    cancelInvitation(invitation);
+  renderInvitation = ({ item }) => {
+    const { navigation } = this.props;
+    return (
+      <ListItemWithImage
+        label={item.username}
+        avatarUrl={item.profileImage}
+        navigateToProfile={() => { navigation.navigate(CONTACT, { contact: item }); }}
+        rejectInvitation={this.handleRejectInvitatonPress(item)}
+        acceptInvitation={this.handleAcceptInvitationPress(item)}
+      />
+    );
   };
-
-  renderInvitation = ({ item }) => (
-    <ContactCard
-      noBorder
-      disabled
-      key={item.id}
-      onAcceptInvitationPress={this.handleAcceptInvitationPress(item)}
-      onRejectInvitationPress={this.handleRejectInvitatonPress(item)}
-      onCancelInvitationPress={this.handleCancelInvitationPress(item)}
-      name={item.username}
-      status={item.type}
-      showActions
-      avatar={item.profileImage}
-    />
-  );
 
   render() {
     const {
@@ -82,7 +80,7 @@ class ConnectionRequests extends React.Component<Props> {
           extraData={invitations}
           keyExtractor={(item) => item.id}
           renderItem={this.renderInvitation}
-          ItemSeparatorComponent={Separator}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           contentContainerStyle={{
             paddingVertical: spacing.rhythm,
             paddingTop: 0,
