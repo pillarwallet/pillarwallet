@@ -300,6 +300,7 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
+
   stage_android:
     working_directory: ~/pillarwallet/android
     resource_class: large
