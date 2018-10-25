@@ -163,6 +163,7 @@ const FLASH_ON = 'on';
 const FLASH_OFF = 'off';
 
 class Camera extends React.Component<Props, State> {
+  listeners: Object[];
   camera: ?Object;
   hardwareFlashTimeout: TimeoutID;
   frontFlashTimeout: TimeoutID;
@@ -180,12 +181,16 @@ class Camera extends React.Component<Props, State> {
 
   componentDidMount() {
     const { navigation } = this.props;
-    navigation.addListener('willFocus', () =>
-      this.setState({ focusedScreen: true }),
-    );
-    navigation.addListener('willBlur', () =>
-      this.setState({ focusedScreen: false }),
-    );
+    this.listeners = [
+      navigation.addListener('willFocus', () => this.setState({ focusedScreen: true })),
+      navigation.addListener('willBlur', () => this.setState({ focusedScreen: false })),
+    ];
+  }
+
+  componentWillUnmount() {
+    this.listeners.forEach((listener) => {
+      listener.remove();
+    });
   }
 
   handleModalClose = () => {
