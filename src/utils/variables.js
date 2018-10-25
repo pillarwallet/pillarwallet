@@ -70,6 +70,7 @@ export const UIColors = {
   placeholderTextColor: baseColors.darkGray,
   cardShadowColor: 'rgba(16, 91, 170, 0.1)',
   defaultDividerColor: baseColors.mediumLightGray,
+  actionButtonBorderColor: 'rgba(255, 255, 255, 0.37)',
 };
 
 export const fontSizes = {

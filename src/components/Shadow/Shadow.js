@@ -14,6 +14,7 @@ type Props = {
   shadowRadius?: number,
   shadowSpread?: number,
   paddingFixAndroid?: number,
+  shadowColorAndroid?: string,
 };
 
 const ShadowWrapper = styled.View`
@@ -33,6 +34,7 @@ export const Shadow = (props: Props) => {
     shadowRadius = 6,
     shadowSpread = 18,
     paddingFixAndroid,
+    shadowColorAndroid = '#14105baa',
   } = props;
 
   const paddingFix = paddingFixAndroid || shadowSpread - (shadowDistance / 2);
@@ -54,7 +56,7 @@ export const Shadow = (props: Props) => {
       shadowAngle={90}
       shadowRadius={shadowSpread}
       shadowDistance={shadowDistance}
-      shadowColor="#12105baa"
+      shadowColor={shadowColorAndroid}
       style={{ paddingRight: paddingFix, paddingBottom: paddingFix }}
     >
       <View style={{ width: '100%' }}>
