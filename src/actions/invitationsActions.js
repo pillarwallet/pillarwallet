@@ -210,6 +210,10 @@ export const acceptInvitationAction = (invitation: Object) => {
       type: UPDATE_ACCESS_TOKENS,
       payload: updatedAccessTokens,
     });
+    dispatch(({
+      type: ADD_NOTIFICATION,
+      payload: { message: 'Invitation accepted!' },
+    }));
   };
 };
 
