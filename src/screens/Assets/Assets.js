@@ -1,8 +1,6 @@
 // @flow
 import * as React from 'react';
 import {
-  Animated,
-  Easing,
   RefreshControl,
   FlatList,
   Dimensions,
@@ -12,7 +10,6 @@ import {
   Alert,
 } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -106,14 +103,6 @@ class AssetsScreen extends React.Component<Props, State> {
       forceHideRemoval: false,
     };
   }
-
-  static navigationOptions = {
-    transitionConfig: {
-      duration: 300,
-      timing: Animated.timing,
-      easing: Easing.easing,
-    },
-  };
 
   static defaultProps = {
     assetsLayout: EXPANDED,
@@ -313,9 +302,7 @@ class AssetsScreen extends React.Component<Props, State> {
             buttonWidth={80}
             close={forceHideRemoval}
           >
-            <Transition key={assetData.name} shared={assetData.name}>
-              <AssetCard {...props} icon={assetData.icon} horizontalPadding />
-            </Transition>
+            <AssetCard {...props} icon={assetData.icon} horizontalPadding />
           </Swipeout>
         );
       }

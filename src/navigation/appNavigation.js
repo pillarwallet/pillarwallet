@@ -6,7 +6,6 @@ import {
 } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
-import { FluidNavigator } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
 import { BaseText } from 'components/Typography';
@@ -143,13 +142,6 @@ const StackNavigatorModalConfig = {
   },
 };
 
-const FluidNavigatorConfig = {
-  navigationOptions: {
-    header: null,
-    gesturesEnabled: false,
-  },
-};
-
 const StackNavigatorConfig = {
   navigationOptions: {
     header: null,
@@ -164,10 +156,10 @@ const chatFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 // ASSETS FLOW
-const assetsFlow = FluidNavigator({
+const assetsFlow = createStackNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
-}, FluidNavigatorConfig);
+}, StackNavigatorConfig);
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({

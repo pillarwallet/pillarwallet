@@ -1,11 +1,10 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, Share, RefreshControl, Platform } from 'react-native';
+import { Share, RefreshControl, Platform } from 'react-native';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { transparentize } from 'polished';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -115,14 +114,6 @@ class AssetScreen extends React.Component<Props, State> {
     assetDescriptionExpanded: false,
   };
 
-  static navigationOptions = {
-    transitionConfig: {
-      duration: 200,
-      timing: Animated.timing,
-      easing: Easing.easing,
-    },
-  };
-
   componentDidMount() {
     const { fetchTransactionsHistory, wallet, navigation } = this.props;
     const { assetData, resetHideRemoval } = navigation.state.params;
@@ -207,7 +198,7 @@ class AssetScreen extends React.Component<Props, State> {
     } = assetsConfig[assetData.token] || {};
     return (
       <Container>
-        <Header onClose={this.handleCardTap} />
+        <Header onBack={this.handleCardTap} />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
@@ -221,23 +212,21 @@ class AssetScreen extends React.Component<Props, State> {
           }
         >
           <AssetCardWrapper>
-            <Transition shared={assetData.name}>
-              <AssetCard
-                id={assetData.token}
-                name={assetData.name}
-                token={assetData.token}
-                amount={displayAmount}
-                balanceInFiat={displayBalanceInFiat}
-                color={assetData.color}
-                onPress={this.handleCardTap}
-                address={assetData.address}
-                icon={assetData.icon}
-                wallpaper={assetData.wallpaper}
-                isListed={isListed}
-                disclaimer={disclaimer}
-                horizontalPadding
-              />
-            </Transition>
+            <AssetCard
+              id={assetData.token}
+              name={assetData.name}
+              token={assetData.token}
+              amount={displayAmount}
+              balanceInFiat={displayBalanceInFiat}
+              color={assetData.color}
+              onPress={this.handleCardTap}
+              address={assetData.address}
+              icon={assetData.icon}
+              wallpaper={assetData.wallpaper}
+              isListed={isListed}
+              disclaimer={disclaimer}
+              horizontalPadding
+            />
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
