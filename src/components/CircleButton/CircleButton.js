@@ -39,10 +39,15 @@ const CircleButtonIconWrapper = styled(LinearGradient)`
 `;
 
 const InnerWrapper = styled.View`
-  border-radius: 32;
-  width: 64px;
-  height: 64px;
+  border-radius: 33;
+  width: 66px;
+  height: 66px;
   border: 1px solid ${UIColors.actionButtonBorderColor};
+  shadow-color: rgba(0, 122, 255, 0.03);
+  shadow-offset: 0px -1px;
+  shadow-opacity: 1;
+  shadow-radius: 2px;
+  background-color: ${UIColors.actionButtonBorderColor};
 `;
 
 const CircleButtonIcon = styled(Icon)`
@@ -72,12 +77,13 @@ const CircleButton = (props: Props) => {
     >
       <Shadow
         shadowOffsetY={5}
-        shadowDistance={5}
-        shadowRadius={9}
-        shadowSpread={36}
-        shadowColorAndroid="#1C105baa"
-        heightAndroid={65}
-        widthAndroid={65}
+        shadowDistance={12}
+        shadowRadius={5}
+        shadowSpread={20}
+        shadowColorAndroid="#14123F6F"
+        shadowColoriOS={UIColors.actionButtonShadowColor}
+        heightAndroid={66}
+        widthAndroid={66}
       >
         <InnerWrapper>
           <CircleButtonIconWrapper

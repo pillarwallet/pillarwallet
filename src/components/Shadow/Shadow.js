@@ -15,12 +15,13 @@ type Props = {
   shadowSpread?: number,
   paddingFixAndroid?: number,
   shadowColorAndroid?: string,
+  shadowColoriOS?: string,
   widthAndroid?: number | string,
   heightAndroid?: number | string,
 };
 
 const ShadowWrapper = styled.View`
-  shadow-color: ${UIColors.cardShadowColor};
+  shadow-color: ${props => props.shadowColor};
   shadow-offset: ${props => `${props.shadowOffsetX}px ${props.shadowOffsetY}px`};
   shadow-opacity: 1;
   shadow-radius: ${props => props.shadowRadius}px;
@@ -42,6 +43,7 @@ export const Shadow = (props: Props) => {
     widthAndroid,
     heightAndroid,
     shadowColorAndroid = '#14105baa',
+    shadowColoriOS = UIColors.cardShadowColor,
   } = props;
 
   const pixelRatio = PixelRatio.get();
@@ -59,6 +61,7 @@ export const Shadow = (props: Props) => {
         shadowOffsetX={shadowOffsetX}
         shadowOffsetY={shadowOffsetY}
         shadowRadius={shadowRadius}
+        shadowColor={shadowColoriOS}
       >
         {children}
       </ShadowWrapper>
