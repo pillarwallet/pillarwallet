@@ -6,6 +6,7 @@ jobs:
       xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
+    resource_class: large
     shell: /bin/bash --login -o pipefail
 
     steps:
@@ -299,15 +300,15 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
-
   stage_android:
     working_directory: ~/pillarwallet/android
+    resource_class: large
     docker:
       - image: circleci/android:api-26-node8-alpha
     environment:
       TERM: dumb
-      _JAVA_OPTIONS: "-Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -Dfile.encoding=UTF-8"'
+      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
     steps:
@@ -394,7 +395,6 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
-
 workflows:
   version: 2
   build_and_deploy:
