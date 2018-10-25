@@ -79,14 +79,16 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       // HACK: Dirty fix for users who removed somehow Eth from their assets list
       if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
 
-      const updatedAssets = walletSupportedAssets
-        .filter(asset => currentAssetsTickers.includes(asset.symbol))
-        .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
-      dispatch({
-        type: UPDATE_ASSETS,
-        payload: updatedAssets,
-      });
-      storage.save('assets', { assets: updatedAssets }, true);
+      if (walletSupportedAssets.length) {
+        const updatedAssets = walletSupportedAssets
+          .filter(asset => currentAssetsTickers.includes(asset.symbol))
+          .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
+        dispatch({
+          type: UPDATE_ASSETS,
+          payload: updatedAssets,
+        });
+        storage.save('assets', { assets: updatedAssets }, true);
+      }
     }
     const d = new Date(lastTxSyncDatetime * 1000);
     const historyNotifications = await api.fetchNotifications(walletId, TRANSACTION_EVENT, d.toISOString());
