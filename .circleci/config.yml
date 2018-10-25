@@ -275,9 +275,6 @@ jobs:
             - ~/.gradle
             - ~/.m2
       - run:
-          name: Android bundle
-          command: yarn build:android
-      - run:
           name: Initial build
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
