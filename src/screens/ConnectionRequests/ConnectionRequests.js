@@ -28,10 +28,15 @@ type Props = {
 }
 
 class ConnectionRequests extends React.Component<Props> {
+  redirectStarted = false;
+
   componentDidUpdate() {
     const { navigation, invitations } = this.props;
     const requests = invitations.filter(({ type }) => type === TYPE_RECEIVED);
-    if (!requests.length) navigation.navigate(PEOPLE);
+    if (!requests.length && !this.redirectStarted) {
+      this.redirectStarted = true; // HACK: redirect only once
+      navigation.navigate(PEOPLE);
+    }
   }
 
   handleAcceptInvitationPress = (invitation) => () => {
