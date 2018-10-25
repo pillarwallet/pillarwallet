@@ -487,6 +487,7 @@ class HomeScreen extends React.Component<Props, State> {
           isVisible={showCamera}
           modalHide={this.closeCamera}
           permissionsGranted={permissionsGranted}
+          navigation={navigation}
         />
       </Container>
     );
