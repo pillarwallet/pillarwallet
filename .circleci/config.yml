@@ -413,7 +413,7 @@ workflows:
           filters:
             branches:
               only:
-                  - android_bundle_step
+                  - master
       - release_to_prod:
           type: approval
           requires:
