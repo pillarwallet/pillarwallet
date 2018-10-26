@@ -8,8 +8,10 @@ import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
-import { Container, ScrollWrapper } from 'components/Layout';
-import { SubTitle, BoldText, LightText } from 'components/Typography';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
+import SearchBar from 'components/SearchBar';
+import { SubTitleLight, SubHeading, BoldText, LightText } from 'components/Typography';
 import Header from 'components/Header';
 import {
   addAssetAction,
@@ -52,7 +54,17 @@ type Props = {
   removeAsset: Function,
 }
 
-class AddToken extends React.Component<Props> {
+type State = {
+  query: string,
+  isSearching: boolean,
+}
+
+class AddToken extends React.Component<Props, State> {
+  state = {
+    query: '',
+    isSearching: false,
+  };
+
   formChanged: boolean = false;
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
@@ -112,8 +124,17 @@ class AddToken extends React.Component<Props> {
     navigation.goBack(null);
   };
 
+  handleSearchChange = (query: string) => {
+    this.setState({
+      query,
+      isSearching: !!query && !!query.trim(),
+    });
+  };
+
   render() {
-    const titleText = 'manage tokens';
+    const titleText = 'add tokens';
+    const { query, isSearching } = this.state;
+
     let header;
     if (this.formChanged) {
       header = <Header title={titleText} nextText="Save" onNextPress={this.handleScreenDismissal} />;
@@ -124,14 +145,39 @@ class AddToken extends React.Component<Props> {
     return (
       <Container>
         {header}
-        <ScrollWrapper regularPadding>
-          <SubTitle>
-            Toggle ERC-20 tokens your wallet should display.
-          </SubTitle>
-          <List>
-            {this.generateAddTokenListItems()}
-          </List>
-        </ScrollWrapper>
+        <Wrapper regularPadding>
+          <SearchBar
+            inputProps={{
+              onChange: this.handleSearchChange,
+              value: query,
+              autoCapitalize: 'none',
+            }}
+            placeholder="Token smart contract address"
+          />
+        </Wrapper>
+        {!isSearching &&
+          <ScrollWrapper regularPadding>
+            <SubTitleLight>
+              or toggle the most popular tokens
+            </SubTitleLight>
+            <List>
+              {this.generateAddTokenListItems()}
+            </List>
+          </ScrollWrapper>
+        }
+        {isSearching &&
+          <ScrollWrapper regularPadding>
+            <SubHeading>
+              TOKENS FOUND
+            </SubHeading>
+            {/*<List></List>*/}
+          </ScrollWrapper>
+        }
+        {isSearching && false &&
+          <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+            <EmptyStateParagraph title="Token not found" bodyText="Please check smart contract address" />
+          </Wrapper>
+        }
       </Container>
     );
   }

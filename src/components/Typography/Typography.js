@@ -53,6 +53,10 @@ export const SubTitle = styled(BaseText)`
   margin: ${props => props.margin || '0 0 20px'};
 `;
 
+export const SubTitleLight = styled(SubTitle)`
+  color: ${baseColors.slateBlack};
+`;
+
 export const SubHeading = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
   font-weight: ${fontWeights.book};
