@@ -71,7 +71,7 @@ exports[`Header should render Header correctly 1`] = `
         name="back"
         style={
           Object {
-            "color": "#007AFF",
+            "color": "#0A1427",
             "fontSize": 24,
             "marginBottom": undefined,
             "marginLeft": undefined,

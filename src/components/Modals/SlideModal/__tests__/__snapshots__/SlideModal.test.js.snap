@@ -359,7 +359,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       name="close"
                       style={
                         Object {
-                          "color": "#007AFF",
+                          "color": "#0A1427",
                           "fontSize": 16,
                           "marginBottom": undefined,
                           "marginLeft": undefined,
