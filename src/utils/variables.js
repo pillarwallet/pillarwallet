@@ -63,6 +63,7 @@ export const UIColors = {
   danger: baseColors.burningFire,
   disabled: baseColors.mediumGray,
   defaultTextColor: baseColors.slateBlack,
+  defaultNavigationColor: baseColors.slateBlack,
   defaultBackgroundColor: baseColors.snowWhite,
   defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
   focusedBorderColor: baseColors.electricBlue,
