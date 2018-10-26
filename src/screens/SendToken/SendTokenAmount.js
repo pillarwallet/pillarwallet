@@ -309,6 +309,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const {
       value,
       showModal,
+      transactionSpeed,
     } = this.state;
     const {
       session,
@@ -321,7 +322,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
     const txFeeInWei = this.getTxFeeInWei();
-    const txFeeInEth = formatAmount(utils.formatEther(txFeeInWei));
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
     const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted);
@@ -365,8 +365,8 @@ class SendTokenAmount extends React.Component<Props, State> {
           <FooterInner>
             <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
               <SendTokenDetailsValue>
-                <Label small>Fee</Label>
-                <TextLink> {txFeeInEth || 0} ETH</TextLink>
+                <Label small>Fee:</Label>
+                <TextLink> {SPEED_TYPES[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
             </TouchableOpacity>
             <Button
