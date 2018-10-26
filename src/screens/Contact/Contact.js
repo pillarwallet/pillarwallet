@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -9,7 +9,6 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
@@ -21,44 +20,23 @@ import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 
 const ContactWrapper = styled.View`
-  height: 250px;
   position: relative;
-  justify-content: flex-end;
-  margin: 5px 20px 20px;
-  padding-top: 50px;
-`;
-
-const ContactHeader = styled.View`
-  height: 200px;
-  background: ${baseColors.cyan};
-  shadow-color: ${baseColors.black};
-  shadow-offset: 0 0;
-  shadow-radius: 2px;
-  shadow-opacity: 0.1;
-  border-radius: 12px;
-  align-items: center;
-  position: relative;
-  z-index: -1;
-`;
-
-const ContactHeaderBody = styled.View`
-  height: 200px;
   justify-content: center;
-  padding: 55px 16px;
+  align-items: center;
+  margin: 5px 20px 20px;
+  padding-top: 20px;
+  padding-top: ${Platform.select({
+    ios: '20px',
+    android: '14px',
+  })};
 `;
 
-const ContactHeaderName = styled(BoldText)`
-  font-size: ${fontSizes.extraExtraLarge};
-  color: ${baseColors.white};
-`;
-
-const ContactHeaderAvatarWrapper = styled.View`
-  height: 102px;
-  width: 102px;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  margin-left: -51px;
+const CircleButtonsWrapper = styled(Wrapper)`
+  margin-bottom: 35px;
+  margin-top: ${Platform.select({
+    ios: 0,
+    android: '-20px',
+  })}
 `;
 
 type Props = {
@@ -146,7 +124,7 @@ class Contact extends React.Component<Props, State> {
     return (
       <Container>
         <Header
-          title="contact"
+          title={displayContact.username}
           onBack={() => navigation.goBack(null)}
           // onNextPress={this.openOptionsModal}
           // nextIcon="more"
@@ -162,44 +140,39 @@ class Contact extends React.Component<Props, State> {
           }
         >
           <ContactWrapper>
-            <ContactHeader>
-              <ContactHeaderBody>
-                <ContactHeaderName>{displayContact.username}</ContactHeaderName>
-              </ContactHeaderBody>
-            </ContactHeader>
-            <ContactHeaderAvatarWrapper>
-              <ProfileImage
-                uri={userAvatar}
-                userName={displayContact.username}
-                diameter={96}
-                borderWidth={3}
-                initialsSize={fontSizes.extraExtraLarge}
-                noShadow
-              />
-            </ContactHeaderAvatarWrapper>
+            <ProfileImage
+              uri={userAvatar}
+              userName={displayContact.username}
+              diameter={172}
+              borderWidth={4}
+              initialsSize={fontSizes.extraExtraLarge}
+              noShadow
+              style={{ backgroundColor: baseColors.geyser }}
+            />
           </ContactWrapper>
-          <Wrapper center horizontal>
+          <CircleButtonsWrapper center horizontal>
             {isAccepted && (
               <React.Fragment>
-                <CircleButton
-                  label="Send"
-                  icon="send-asset"
-                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
-                />
                 <CircleButton
                   label="Chat"
                   icon="chat-filled"
                   onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
                 />
+                <CircleButton
+                  label="Send"
+                  icon="send-asset"
+                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+                />
               </React.Fragment>
             )}
-          </Wrapper>
+          </CircleButtonsWrapper>
           {isAccepted &&
           <ActivityFeed
             feedTitle="activity."
             navigation={navigation}
             activeTab={TRANSACTIONS}
             additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
+            showArrowsOnly
           />}
         </ScrollWrapper>
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>

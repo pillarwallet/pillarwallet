@@ -87,6 +87,7 @@ const AssetDescriptionWrapper = styled.View`
   height: ${props => (props.expanded ? 'auto' : '24px')};
   padding: 0 ${spacing.rhythm - 2}px;
   z-index: 10;
+  margin-bottom: 20px;
 `;
 
 const AssetDescriptionToggle = styled.TouchableOpacity`
