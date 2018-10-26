@@ -54,6 +54,7 @@ const TabItemText = styled(BaseText)`
 
 const ActivityFeedHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
+  margin-bottom: -8px;
 `;
 
 const TabWrapper = styled.View`
