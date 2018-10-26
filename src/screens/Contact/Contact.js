@@ -199,7 +199,7 @@ class Contact extends React.Component<Props, State> {
             navigation={navigation}
             activeTab={TRANSACTIONS}
             additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
-            onlyArrows
+            showArrowsOnly
           />}
         </ScrollWrapper>
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
