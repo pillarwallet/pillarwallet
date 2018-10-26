@@ -5,11 +5,10 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
-import { BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
@@ -20,44 +19,22 @@ import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 
+const avatarDiameter = 172;
+const avatarBorderWidth = 4;
+
 const ContactWrapper = styled.View`
-  height: 218px;
+  height: 118px;
   position: relative;
   justify-content: flex-end;
   margin: 60px 20px 20px;
 `;
 
-const ContactHeader = styled.View`
-  height: 200px;
-  background: ${baseColors.cyan};
-  shadow-color: ${baseColors.black};
-  shadow-offset: 0 0;
-  shadow-radius: 2px;
-  shadow-opacity: 0.1;
-  border-radius: 12px;
-  align-items: center;
-  position: relative;
-  z-index: -1;
-  padding-top: 46px;
-`;
-
-const ContactHeaderBody = styled.View`
-  height: 200px;
-  margin-top: -48px;
-  justify-content: center;
-`;
-
-const ContactHeaderName = styled(BoldText)`
-  font-size: ${fontSizes.extraExtraLarge};
-  color: ${baseColors.white};
-`;
-
 const ContactHeaderAvatarWrapper = styled.View`
-  height: 144px;
-  width: 144px;
-  border: 2px solid ${baseColors.white};
-  background: ${baseColors.cyan};
-  border-radius: 72px;
+  height: ${avatarDiameter + (avatarBorderWidth * 2)}px;
+  width: ${avatarDiameter + (avatarBorderWidth * 2)}px;
+  border: ${avatarBorderWidth}px solid ${baseColors.white};
+  background: ${baseColors.geyser};
+  border-radius: ${(avatarDiameter / 2) + avatarBorderWidth}px;
   margin-right: 14px;
   shadow-color: ${baseColors.black};
   shadow-offset: 0 0;
@@ -66,7 +43,11 @@ const ContactHeaderAvatarWrapper = styled.View`
   position: absolute;
   top: -58px;
   left: 50%;
-  margin-left: -72px;
+  margin-left: -${(avatarDiameter / 2) + avatarBorderWidth}px;
+`;
+
+const CircleButtonsWrapper = styled(Wrapper)`
+  margin-bottom: 35px;
 `;
 
 type Props = {
@@ -147,7 +128,7 @@ class Contact extends React.Component<Props, State> {
     return (
       <Container>
         <Header
-          title="contact"
+          title={displayContact.username}
           onBack={() => navigation.goBack(null)}
           // onNextPress={this.openOptionsModal}
           // nextIcon="more"
@@ -163,36 +144,32 @@ class Contact extends React.Component<Props, State> {
           }
         >
           <ContactWrapper>
-            <ContactHeader>
-              <ContactHeaderBody>
-                <ContactHeaderName>{displayContact.username}</ContactHeaderName>
-              </ContactHeaderBody>
-            </ContactHeader>
             <ContactHeaderAvatarWrapper>
               <ProfileImage
                 uri={userAvatar}
                 userName={displayContact.username}
-                diameter={140}
-                textStyle={{ fontSize: 32 }}
+                diameter={avatarDiameter}
+                large
+                style={{ backgroundColor: baseColors.geyser }}
               />
             </ContactHeaderAvatarWrapper>
           </ContactWrapper>
-          <Wrapper center horizontal>
+          <CircleButtonsWrapper center horizontal>
             {isAccepted && (
               <React.Fragment>
-                <CircleButton
-                  label="Send"
-                  icon="send-asset"
-                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
-                />
                 <CircleButton
                   label="Chat"
                   icon="chat-filled"
                   onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
                 />
+                <CircleButton
+                  label="Send"
+                  icon="send-asset"
+                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+                />
               </React.Fragment>
             )}
-          </Wrapper>
+          </CircleButtonsWrapper>
           {isAccepted &&
           <ActivityFeed
             feedTitle="activity."

@@ -48,6 +48,7 @@ export const baseColors = {
   aliceBlue: '#f7fbff',
   manatee: '#a3a9b2',
   blanchedAlmond: '#ffe8ce',
+  geyser: '#d1d7dd',
 };
 
 export const brandColors = [
@@ -85,6 +86,7 @@ export const fontSizes = {
   extraLarger: 28,
   extraExtraLarge: 32,
   giant: 36,
+  extraGiant: 48,
   iosIcons: 32,
   androidCloseIcon: 22,
   androidCheckmarkIcon: 26,
