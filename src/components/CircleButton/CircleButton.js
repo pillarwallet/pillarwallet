@@ -68,7 +68,6 @@ const CircleButtonText = styled(BaseText)`
   })}
 `;
 
-
 const CircleButton = (props: Props) => {
   return (
     <CircleButtonWrapper

@@ -45,11 +45,13 @@ const SOCIAL_TYPES = [
 const ActivityFeedList = styled.FlatList``;
 
 const ActivityFeedWrapper = styled.View`
-  ${props => props.color ? `background-color: ${props.color};` : ''}
+  background-color: ${props => props.color ? props.color : baseColors.white};
 `;
 
 const ActivityFeedHeader = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
+  border-top-width: 1px;
+  border-top-color: ${baseColors.mediumLightGray};
 `;
 
 type Props = {
@@ -72,6 +74,7 @@ type Props = {
   showEmptyState?: boolean,
   backgroundColor?: string,
   wrapperStyle?: Object,
+  showArrowsOnly?: boolean,
 };
 
 type State = {
@@ -144,6 +147,7 @@ class ActivityFeed extends React.Component<Props, State> {
       contacts,
       onAcceptInvitation,
       onRejectInvitation,
+      showArrowsOnly,
     } = this.props;
 
     const walletAddress = wallet.address;
@@ -177,6 +181,7 @@ class ActivityFeed extends React.Component<Props, State> {
           subtext={dateTime}
           itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
           valueColor={isReceived ? baseColors.jadeGreen : null}
+          showArrowsOnly={showArrowsOnly}
         />
       );
     }

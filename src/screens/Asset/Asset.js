@@ -157,7 +157,6 @@ class AssetScreen extends React.Component<Props, State> {
       <Container>
         <Header onBack={this.handleCardTap} />
         <ScrollWrapper
-          color={baseColors.white}
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
             <RefreshControl
@@ -207,7 +206,6 @@ class AssetScreen extends React.Component<Props, State> {
             activeTab={TRANSACTIONS}
             additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
             backgroundColor={baseColors.white}
-            wrapperStyle={{ borderTopWidth: 1, borderTopColor: baseColors.mediumLightGray }}
           />
         </ScrollWrapper>
 

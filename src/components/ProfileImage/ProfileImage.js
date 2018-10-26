@@ -54,6 +54,7 @@ type Props = {
   children?: React.Node,
   initialsSize?: number,
   noShadow?: boolean,
+  large?: boolean,
 }
 
 const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
