@@ -23,7 +23,7 @@ const CircleButtonWrapper = styled.TouchableOpacity`
   padding: 8px;
   margin: ${Platform.select({
     ios: '0 14px',
-    android: 0,
+    android: '0 6px',
   })}
 `;
 

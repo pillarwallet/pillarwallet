@@ -49,7 +49,7 @@ const ActivityFeedWrapper = styled.View`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacing.rhythm}px;
+  padding: 0 ${spacing.mediumLarge}px;
 `;
 
 type Props = {
@@ -71,6 +71,7 @@ type Props = {
   feedTitle?: string,
   showEmptyState?: boolean,
   backgroundColor?: string,
+  wrapperStyle?: Object,
 };
 
 type State = {
@@ -225,6 +226,7 @@ class ActivityFeed extends React.Component<Props, State> {
       onAcceptInvitation,
       onCancelInvitation,
       backgroundColor,
+      wrapperStyle,
     } = this.props;
 
     const {
@@ -271,8 +273,12 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
+    if (processedHistory.length < 1) {
+      return null;
+    }
+
     return (
-      <ActivityFeedWrapper color={backgroundColor}>
+      <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
         {!!feedTitle && (!!processedHistory.length || !!showEmptyState) &&
         <ActivityFeedHeader>
           <Title subtitle title={feedTitle} />

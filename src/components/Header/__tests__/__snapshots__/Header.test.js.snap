@@ -10,7 +10,6 @@ exports[`Header should render Header correctly 1`] = `
         "flexDirection": "row",
         "height": 40,
         "justifyContent": "flex-end",
-        "marginBottom": 20,
         "marginTop": 20,
         "paddingBottom": 0,
         "paddingLeft": 20,

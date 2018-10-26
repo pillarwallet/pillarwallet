@@ -35,7 +35,6 @@ const Wrapper = styled.View`
   align-items: flex-end;
   flex-direction: row;
   margin-top: ${spacing.rhythm};
-  margin-bottom: ${props => props.flexStart ? 'auto' : '20px'};
   z-index: 10;
 `;
 

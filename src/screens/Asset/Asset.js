@@ -1,9 +1,8 @@
 // @flow
 import * as React from 'react';
-import { Share, RefreshControl, Platform } from 'react-native';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { Share, RefreshControl, Platform, View } from 'react-native';
+import { baseColors, UIColors, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
-import { transparentize } from 'polished';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -11,13 +10,11 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
 import AssetCard from 'components/AssetCard';
-import LinearGradient from 'react-native-linear-gradient';
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
-
+import TruncatedText from 'components/TruncatedText';
 import Header from 'components/Header';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Paragraph, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
@@ -27,16 +24,6 @@ import assetsConfig from 'configs/assetsConfig';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
-
-const AssetDescriptionToggleWrapperColors = [
-  transparentize(1, UIColors.defaultBackgroundColor),
-  UIColors.defaultBackgroundColor,
-];
-
-const AssetDescriptionToggleWrapperActiveColors = [
-  transparentize(1, UIColors.defaultBackgroundColor),
-  transparentize(1, UIColors.defaultBackgroundColor),
-];
 
 const activeModalResetState = {
   type: null,
@@ -62,7 +49,6 @@ type Props = {
 };
 
 type State = {
-  assetDescriptionExpanded: boolean,
   activeModal: {
     type: string | null,
     opts: {
@@ -76,42 +62,21 @@ type State = {
 
 const AssetCardWrapper = styled.View`
   flex: 1;
+  justify-content: flex-start;
+  padding-bottom: 38px;
+  background-color: ${UIColors.defaultBackgroundColor};
+`;
+
+const CardInnerWrapper = styled.View`
   padding: ${Platform.select({
     ios: 0,
     android: '0 10px',
   })}
 `;
 
-const AssetDescriptionWrapper = styled.View`
-  height: ${props => (props.expanded ? 'auto' : '24px')};
-  padding: 0 ${spacing.rhythm - 2}px;
-  z-index: 10;
-`;
-
-const AssetDescriptionToggle = styled.TouchableOpacity`
-  padding: ${spacing.rhythm / 2}px;
-`;
-
-const AssetDescriptionToggleText = styled(BaseText)`
-  font-size: ${fontSizes.small};
-  color: ${baseColors.electricBlue};
-  line-height: 18px;
-`;
-
-const AssetDescriptionToggleWrapper = styled(LinearGradient)`
-  position: absolute;
-  bottom: ${props => (props.expanded ? '-6px' : '-6px')};
-  right: 0;
-  padding-left: 40px;
-`;
-
-const AssetDescription = styled(Paragraph)`
-  padding-bottom: ${spacing.rhythm}px;
-`;
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
-    assetDescriptionExpanded: false,
   };
 
   componentDidMount() {
@@ -159,12 +124,6 @@ class AssetScreen extends React.Component<Props, State> {
     }
   };
 
-  toggleAssetDescription = () => {
-    this.setState({
-      assetDescriptionExpanded: !this.state.assetDescriptionExpanded,
-    });
-  };
-
   render() {
     const {
       assets,
@@ -176,7 +135,6 @@ class AssetScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
     } = this.props;
-    const { assetDescriptionExpanded } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -185,7 +143,6 @@ class AssetScreen extends React.Component<Props, State> {
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
-    const shouldAssetDescriptionToggleShow = assetData.description.length > 40;
     const displayBalanceInFiat = {
       amount: formattedBalanceInFiat,
       currency: fiatCurrency,
@@ -200,6 +157,7 @@ class AssetScreen extends React.Component<Props, State> {
       <Container>
         <Header onBack={this.handleCardTap} />
         <ScrollWrapper
+          color={baseColors.white}
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
             <RefreshControl
@@ -212,21 +170,28 @@ class AssetScreen extends React.Component<Props, State> {
           }
         >
           <AssetCardWrapper>
-            <AssetCard
-              id={assetData.token}
-              name={assetData.name}
-              token={assetData.token}
-              amount={displayAmount}
-              balanceInFiat={displayBalanceInFiat}
-              color={assetData.color}
-              onPress={this.handleCardTap}
-              address={assetData.address}
-              icon={assetData.icon}
-              wallpaper={assetData.wallpaper}
-              isListed={isListed}
-              disclaimer={disclaimer}
-              horizontalPadding
-            />
+            <CardInnerWrapper>
+              <AssetCard
+                id={assetData.token}
+                name={assetData.name}
+                token={assetData.token}
+                amount={displayAmount}
+                balanceInFiat={displayBalanceInFiat}
+                color={assetData.color}
+                onPress={this.handleCardTap}
+                address={assetData.address}
+                icon={assetData.icon}
+                wallpaper={assetData.wallpaper}
+                isListed={isListed}
+                disclaimer={disclaimer}
+                horizontalPadding
+                innerCard
+              />
+            </CardInnerWrapper>
+            <View style={{ paddingHorizontal: spacing.mediumLarge, paddingTop: 10 }}>
+              <TruncatedText lines={1} text={assetData.description} />
+            </View>
+
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
@@ -234,29 +199,6 @@ class AssetScreen extends React.Component<Props, State> {
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
             />
-            <AssetDescriptionWrapper expanded={assetDescriptionExpanded}>
-              <AssetDescription small light>
-                {assetData.description}
-              </AssetDescription>
-              <AssetDescriptionToggleWrapper
-                colors={
-                  assetDescriptionExpanded
-                    ? AssetDescriptionToggleWrapperActiveColors
-                    : AssetDescriptionToggleWrapperColors
-                }
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0.5, y: 0 }}
-                expanded={assetDescriptionExpanded}
-              >
-                {shouldAssetDescriptionToggleShow && (
-                  <AssetDescriptionToggle onPress={this.toggleAssetDescription}>
-                    <AssetDescriptionToggleText>
-                      {assetDescriptionExpanded ? 'Less' : 'More'}
-                    </AssetDescriptionToggleText>
-                  </AssetDescriptionToggle>
-                )}
-              </AssetDescriptionToggleWrapper>
-            </AssetDescriptionWrapper>
           </AssetCardWrapper>
 
           <ActivityFeed
@@ -264,6 +206,8 @@ class AssetScreen extends React.Component<Props, State> {
             navigation={navigation}
             activeTab={TRANSACTIONS}
             additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
+            backgroundColor={baseColors.white}
+            wrapperStyle={{ borderTopWidth: 1, borderTopColor: baseColors.mediumLightGray }}
           />
         </ScrollWrapper>
 
