@@ -49,13 +49,13 @@ const themes = {
     borderWidth: '1px',
   },
   secondary: {
-    background: 'rgba(0,0,0,0)',
+    background: baseColors.white,
     color: baseColors.electricBlue,
-    borderColor: UIColors.defaultBorderColor,
+    borderColor: baseColors.electricBlue,
     borderWidth: '1px',
   },
   secondaryDanger: {
-    background: 'rgba(0,0,0,0)',
+    background: baseColors.white,
     color: baseColors.fireEngineRed,
     borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
