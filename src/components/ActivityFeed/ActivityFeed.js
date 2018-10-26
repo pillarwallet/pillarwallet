@@ -168,6 +168,7 @@ type Props = {
   additionalFiltering?: Function,
   feedTitle?: string,
   showEmptyState?: boolean,
+  showArrowsOnly?: boolean,
 };
 
 type State = {
@@ -279,6 +280,7 @@ class ActivityFeed extends React.Component<Props, State> {
       navigation,
       assets,
       contacts,
+      showArrowsOnly,
     } = this.props;
 
     const walletAddress = wallet.address;
@@ -303,7 +305,7 @@ class ActivityFeed extends React.Component<Props, State> {
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
 
       let image;
-      if (contact && Object.keys(contact).length !== 0) {
+      if (contact && Object.keys(contact).length !== 0 && !showArrowsOnly) {
         image = (
           <ProfileImage
             uri={contact.profileImage}
