@@ -121,7 +121,7 @@ const SendTokenDetails = styled.View``;
 
 const SendTokenDetailsValue = styled(BaseText)`
   font-size: ${fontSizes.small};
-  margin-bottom: ${spacing.rhythm / 2}px;
+  margin-bottom: 8px;
 `;
 
 const HelperText = styled(BaseText)`
@@ -139,6 +139,13 @@ const Btn = styled(Button)`
   margin-top: 14px;
   display: flex;
   justify-content: space-between;
+`;
+
+const FooterInner = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
 `;
 
 type Props = {
@@ -315,7 +322,6 @@ class SendTokenAmount extends React.Component<Props, State> {
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
     const txFeeInWei = this.getTxFeeInWei();
-    const txFeeInEth = formatAmount(utils.formatEther(txFeeInWei));
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
     const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted);
@@ -349,13 +355,6 @@ class SendTokenAmount extends React.Component<Props, State> {
                 {formattedBalance} {token}
                 <HelperText> ({currencySymbol}{formattedBalanceInFiat})</HelperText>
               </SendTokenDetailsValue>
-              <Label small>Est. Network Fee</Label>
-              <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
-                <SendTokenDetailsValue>
-                  {txFeeInEth || 0} ETH
-                  <TextLink> ({SPEED_TYPES[transactionSpeed]})</TextLink>
-                </SendTokenDetailsValue>
-              </TouchableOpacity>
             </SendTokenDetails>
             <TouchableOpacity onPress={this.useMaxValue}>
               <TextLink>Send All</TextLink>
@@ -363,13 +362,21 @@ class SendTokenAmount extends React.Component<Props, State> {
           </ActionsWrapper>
         </Wrapper>
         <Footer keyboardVerticalOffset={35}>
-          <Button
-            disabled={!session.isOnline || !gasInfo.isFetched}
-            small
-            flexRight
-            title="Next"
-            onPress={this.handleFormSubmit}
-          />
+          <FooterInner>
+            <TouchableOpacity onPress={() => this.setState({ showModal: true })}>
+              <SendTokenDetailsValue>
+                <Label small>Fee:</Label>
+                <TextLink> {SPEED_TYPES[transactionSpeed]}</TextLink>
+              </SendTokenDetailsValue>
+            </TouchableOpacity>
+            <Button
+              disabled={!session.isOnline || !gasInfo.isFetched}
+              small
+              flexRight
+              title="Next"
+              onPress={this.handleFormSubmit}
+            />
+          </FooterInner>
         </Footer>
         <SlideModal
           isVisible={showModal}
