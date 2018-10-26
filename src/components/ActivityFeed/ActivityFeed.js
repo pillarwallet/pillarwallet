@@ -59,7 +59,9 @@ const NOTIFICATION_LABELS = {
 };
 
 const ActivityFeedList = styled.FlatList``;
-const ActivityFeedWrapper = styled.View``;
+const ActivityFeedWrapper = styled.View`
+  background-color: ${baseColors.white};
+`;
 
 const ActivityFeedItem = styled.TouchableOpacity`
   background-color: transparent;
@@ -128,11 +130,12 @@ const LabelText = styled(BaseText)`
   color: ${(props) => props.button ? baseColors.electricBlue : baseColors.darkGray};
   margin-left: auto;
   padding: ${(props) => props.button ? `6px ${spacing.rhythm}px` : '6px 0'};
-  ${props => props.button ? `border-color: ${UIColors.defaultBorderColor};` : ''}
+  ${props => props.button ? `border-color: ${UIColors.primary};` : ''}
   ${props => props.button ? 'border-width: 1px;' : ''}
   ${props => props.button ? 'border-radius: 17px;' : ''}
   ${props => props.button ? 'height: 34px;' : ''}
   ${props => props.button ? `font-weight: ${fontWeights.medium};` : ''}
+  ${props => props.button ? `background-color: ${baseColors.white};` : ''}
 `;
 
 const IconWrapper = styled.View`
@@ -142,6 +145,9 @@ const IconWrapper = styled.View`
 
 const ActivityFeedHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
+  margin-bottom: -17px;
+  border-top-width: 1px;
+  border-top-color: ${baseColors.mediumLightGray};
 `;
 
 type Props = {
