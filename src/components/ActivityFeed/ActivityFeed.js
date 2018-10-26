@@ -177,11 +177,10 @@ class ActivityFeed extends React.Component<Props, State> {
           label={nameOrAddress}
           avatarUrl={contact.profileImage}
           navigateToProfile={Object.keys(contact).length !== 0 ? navigateToContact : null}
-          iconName={Object.keys(contact).length === 0 ? directionIcon : null}
+          iconName={Object.keys(contact).length === 0 || showArrowsOnly ? directionIcon : null}
           subtext={dateTime}
           itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
           valueColor={isReceived ? baseColors.jadeGreen : null}
-          showArrowsOnly={showArrowsOnly}
         />
       );
     }

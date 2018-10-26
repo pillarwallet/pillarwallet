@@ -140,35 +140,33 @@ class Contact extends React.Component<Props, State> {
             />
           }
         >
-          <View style={{backgroundColor: UIColors.defaultBackgroundColor, flex: 1}}>
-            <ContactWrapper>
-              <ProfileImage
-                uri={userAvatar}
-                userName={displayContact.username}
-                borderWidth={4}
-                initialsSize={fontSizes.extraGiant}
-                diameter={172}
-                large
-                style={{ backgroundColor: baseColors.geyser }}
-              />
-            </ContactWrapper>
-            <CircleButtonsWrapper center horizontal>
-              {isAccepted && (
-                <React.Fragment>
-                  <CircleButton
-                    label="Chat"
-                    icon="chat-filled"
-                    onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
-                  />
-                  <CircleButton
-                    label="Send"
-                    icon="send-asset"
-                    onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
-                  />
-                </React.Fragment>
-              )}
-            </CircleButtonsWrapper>
-          </View>
+          <ContactWrapper>
+            <ProfileImage
+              uri={userAvatar}
+              userName={displayContact.username}
+              borderWidth={4}
+              initialsSize={fontSizes.extraGiant}
+              diameter={172}
+              large
+              style={{ backgroundColor: baseColors.geyser }}
+            />
+          </ContactWrapper>
+          <CircleButtonsWrapper center horizontal>
+            {isAccepted && (
+              <React.Fragment>
+                <CircleButton
+                  label="Chat"
+                  icon="chat-filled"
+                  onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+                />
+                <CircleButton
+                  label="Send"
+                  icon="send-asset"
+                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+                />
+              </React.Fragment>
+            )}
+          </CircleButtonsWrapper>
           {isAccepted &&
           <ActivityFeed
             feedTitle="activity."

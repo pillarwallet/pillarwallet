@@ -49,6 +49,8 @@ export const baseColors = {
   manatee: '#a3a9b2',
   blanchedAlmond: '#ffe8ce',
   geyser: '#d1d7dd',
+  fairPink: '#f7ebe6',
+  tumbleweed: '#db9a84',
 };
 
 export const brandColors = [
