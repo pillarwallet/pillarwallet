@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import { RefreshControl, Platform, View } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
@@ -128,9 +128,6 @@ class Contact extends React.Component<Props, State> {
           onBack={() => navigation.goBack(null)}
         />
         <ScrollWrapper
-          contentContainerStyle={{
-            backgroundColor: baseColors.white,
-          }}
           refreshControl={
             <RefreshControl
               refreshing={false}
