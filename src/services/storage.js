@@ -39,8 +39,20 @@ Storage.prototype.repair = async function () {
   return Promise.all(promises);
 };
 
+const activeDocs = {};
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
   return this.db.get(id).then((doc) => {
+    if (activeDocs[id]) {
+      Sentry.captureMessage('Race condition spotted', {
+        extra: {
+          id,
+          data,
+          forceRewrite,
+        },
+      });
+    }
+
+    activeDocs[id] = true;
     const options = { force: forceRewrite };
     const record = forceRewrite
       ? { _id: id, _rev: doc._rev, ...data }
@@ -55,6 +67,10 @@ Storage.prototype.save = function (id: string, data: Object, forceRewrite: boole
       );
     return this.db.put(record, options);
   })
+    .then(doc => {
+      activeDocs[id] = false;
+      return doc;
+    })
     .catch(async (err) => {
       if (err.status !== 404) {
         const db = await this.db.allDocs();
