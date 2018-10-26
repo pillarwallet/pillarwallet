@@ -36,7 +36,7 @@ const InnerBackground = styled.View`
 `;
 
 const InnerUsername = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${props => (props.large ? fontSizes.extraGiant : fontSizes.medium)};
   color: ${baseColors.white};
 `;
 
@@ -49,10 +49,11 @@ type Props = {
   diameter?: number,
   style?: Object,
   children?: React.Node,
+  large?: boolean,
 }
 
-const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node }) => {
-  const { userName, innerComponent } = props;
+const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node, large?: boolean, }) => {
+  const { userName, innerComponent, large } = props;
   const initials = userName && getInitials(userName);
 
   return (
@@ -64,7 +65,7 @@ const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node 
       }
       {userName && !innerComponent &&
       <InnerBackground>
-        <InnerUsername>
+        <InnerUsername large={large}>
           {initials}
         </InnerUsername>
       </InnerBackground>
@@ -86,9 +87,10 @@ const ProfileImage = (props: Props) => {
     diameter,
     children,
     userName,
+    large,
   } = props;
 
-  const renderDefaultImage = () => <DefaultPicture userName={userName} innerComponent={children} />;
+  const renderDefaultImage = () => <DefaultPicture userName={userName} innerComponent={children} large={large} />;
 
   const renderImage = (data: Object) => {
     if (data.source === IMAGE_LOAD_FAILED) {
