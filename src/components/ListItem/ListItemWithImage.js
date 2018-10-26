@@ -82,7 +82,7 @@ const ItemTitle = styled(BaseText)`
   font-size: ${props => props.type === CHAT_ITEM ? fontSizes.extraSmall : fontSizes.small}px;
   letter-spacing: ${props => props.type === CHAT_ITEM ? fontTrackings.tiny : fontTrackings.small}px;
   width: 100%;
-  font-weight: ${props => props.type === ACTION ? fontWeights.book : fontWeights.bold};
+  font-weight: ${props => props.type === ACTION ? fontWeights.book : 600};
   flex: 1;
 `;
 
