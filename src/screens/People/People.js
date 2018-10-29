@@ -134,7 +134,7 @@ class PeopleScreen extends React.Component<Props, State> {
   componentDidMount() {
     const { fetchInviteNotifications, navigation } = this.props;
     fetchInviteNotifications();
-    this._willBlur = navigation.addListener('willBlur', this.onBlur);
+    this._willBlur = navigation.addListener('willBlur', this.onScreenBlur);
   }
 
   componentWillUnmount() {
@@ -146,7 +146,7 @@ class PeopleScreen extends React.Component<Props, State> {
     this.handleContactsSearch(query);
   };
 
-  animateFullScreenOverlayOpacity = (active: boolean) => {
+  animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
     const { fullScreenOverlayOpacity } = this.state;
     if (!active) {
       fullScreenOverlayOpacity.setValue(0);
@@ -161,7 +161,7 @@ class PeopleScreen extends React.Component<Props, State> {
         toValue: 0,
         duration: 80,
         useNativeDriver: true,
-      }).start();
+      }).start(() => onEnd && onEnd());
     }
   };
 
@@ -172,17 +172,15 @@ class PeopleScreen extends React.Component<Props, State> {
     this.animateFullScreenOverlayOpacity(false);
   };
 
-  async animateAfterDelay() {
-    await delay(80);
+  animateAfterDelay = () => {
     this.setState({
       searchIsFocused: false,
     });
-  }
+  };
 
   handleSearchBlur = () => {
     Keyboard.dismiss();
-    this.animateFullScreenOverlayOpacity(true);
-    this.animateAfterDelay();
+    this.animateFullScreenOverlayOpacity(true, this.animateAfterDelay);
   };
 
   handleContactsSearch = (query: string) => {
@@ -218,7 +216,7 @@ class PeopleScreen extends React.Component<Props, State> {
     />
   );
 
-  onBlur = () => {
+  onScreenBlur = () => {
     Keyboard.dismiss();
     this.animateFullScreenOverlayOpacity(true);
   };
@@ -255,9 +253,7 @@ class PeopleScreen extends React.Component<Props, State> {
           </Wrapper>
         </HeaderWrapper>
         {searchIsFocused && !inSearchMode &&
-          <FullScreenOverlayWrapper
-            onPress={this.handleSearchBlur}
-          >
+          <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
             <AnimatedFullScreenOverlay
               style={{
                 opacity: fullScreenOverlayOpacity,
