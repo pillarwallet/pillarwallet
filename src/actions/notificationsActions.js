@@ -12,7 +12,7 @@ import {
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { getExistingChatsAction } from 'actions/chatActions';
-
+import { navigate, getNavigationState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
   ADD_NOTIFICATION,
@@ -20,7 +20,7 @@ import {
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, SET_INITIAL_ROUTE } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -148,14 +148,13 @@ export const startListeningOnOpenNotificationAction = () => {
   return (dispatch: Function, getState: Function) => { // eslint-disable-line
     if (notificationsOpenerListener) return;
     notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
-      const { navigation: { activeScreen } } = getState();
+      const { lastActiveScreen } = getNavigationState();
       const { type } = processNotification(message.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
-      dispatch({
-        type: SET_INITIAL_ROUTE,
-        payload: notificationRoute,
+      updateNavigationLastScreenState({
+        lastActiveScreen: notificationRoute,
       });
-      if (activeScreen && activeScreen !== AUTH_FLOW) {
+      if (lastActiveScreen && lastActiveScreen !== AUTH_FLOW) {
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
           routeName: APP_FLOW,
@@ -164,7 +163,7 @@ export const startListeningOnOpenNotificationAction = () => {
             routeName,
           }),
         });
-        dispatch(navigateToAppAction);
+        navigate(navigateToAppAction);
       }
     });
   };

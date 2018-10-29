@@ -11,6 +11,9 @@ import { connect } from 'react-redux';
 import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
 import { BaseText } from 'components/Typography';
 
+// services
+import { updateNavigationLastScreenState } from 'services/navigation';
+
 // screens
 import AddTokenScreen from 'screens/AddToken';
 import AssetsScreen from 'screens/Assets';
@@ -432,9 +435,12 @@ class AppFlow extends React.Component<Props, {}> {
       isPickingImage,
     } = this.props;
     BackgroundTimer.clearTimeout(lockTimer);
-
     if (APP_LOGOUT_STATES.includes(nextAppState) && !isPickingImage) {
       lockTimer = BackgroundTimer.setTimeout(() => {
+        const pathAndParams = navigation.router.getPathAndParamsForState(navigation.state);
+        const lastActiveScreen = pathAndParams.path.split('/').slice(-1)[0];
+        const lastActiveScreenParams = pathAndParams.params;
+        updateNavigationLastScreenState({ lastActiveScreen, lastActiveScreenParams });
         navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();

@@ -20,6 +20,7 @@ import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { delay } from 'utils/common';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
+import { navigate, getNavigationState } from 'services/navigation';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import { setupSentryAction } from 'actions/appActions';
@@ -31,7 +32,7 @@ const chat = new ChatService();
 
 export const loginAction = (pin: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { navigation: { prevActiveScreen, prevActiveScreenParams } } = getState();
+    const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -79,11 +80,11 @@ export const loginAction = (pin: string) => {
         routeName: APP_FLOW,
         params: {},
         action: NavigationActions.navigate({
-          routeName: prevActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
-          params: prevActiveScreenParams,
+          routeName: lastActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
+          params: lastActiveScreenParams,
         }),
       });
-      dispatch(navigateToAppAction);
+      navigate(navigateToAppAction);
     } catch (e) {
       dispatch({
         type: UPDATE_WALLET_STATE,
@@ -180,8 +181,8 @@ export const resetIncorrectPasswordAction = () => {
 };
 
 export const lockScreenAction = () => {
-  return async (dispatch: Function) => {
-    dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
+  return async () => {
+    navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
   };
 };
 
@@ -190,7 +191,7 @@ export const logoutAction = () => {
     await storage.removeAll();
     dispatch({ type: LOG_OUT });
     await delay(200);
-    dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
   };
 };
