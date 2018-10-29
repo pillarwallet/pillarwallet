@@ -144,7 +144,6 @@ class Contact extends React.Component<Props, State> {
               borderWidth={4}
               initialsSize={fontSizes.extraGiant}
               diameter={172}
-              large
               style={{ backgroundColor: baseColors.geyser }}
             />
           </ContactWrapper>

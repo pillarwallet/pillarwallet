@@ -40,7 +40,6 @@ const AssetOutter = styled.View`
 const defaultCardColor = '#ACBCCD';
 const innerCardHeight = (Dimensions.get('window').width - 40) / 1.59; // 343X215 card size proportions
 
-
 const AssetWrapper = styled.View`
   height: ${props => props.innerCard ? innerCardHeight : 140}px;
   border-radius: 20px;
