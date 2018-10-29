@@ -67,7 +67,7 @@ const TabWrapper = styled.View`
 export default class Tabs extends React.Component<Props, State> {
   state = {
     activeTab: ALL,
-  }
+  };
 
   renderTabItems = (tabs: Tab[]) => {
     const { activeTab } = this.state;
@@ -87,7 +87,7 @@ export default class Tabs extends React.Component<Props, State> {
       );
     });
     return tabItems;
-  }
+  };
 
   render() {
     const { title, tabs } = this.props;

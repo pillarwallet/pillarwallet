@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, View, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { fontSizes, fontTrackings, baseColors, fontWeights, spacing } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -25,21 +25,23 @@ type Props = {
   },
   icon: string,
   horizontalPadding?: boolean,
+  innerCard?: boolean,
 }
 
 const AssetOutter = styled.View`
   width: 100%;
   padding-bottom: 6px;
   padding: ${Platform.select({
-    ios: '10px 20px',
+    ios: `10px ${spacing.mediumLarge}px`,
     android: 0,
   })}
 `;
 
 const defaultCardColor = '#ACBCCD';
+const innerCardHeight = (Dimensions.get('window').width - 40) / 1.59; // 343X215 card size proportions
 
 const AssetWrapper = styled.View`
-  height: 140px;
+  height: ${props => props.innerCard ? innerCardHeight : 140}px;
   border-radius: 20px;
   overflow: hidden;
   background-color: ${props => props.isListed ? defaultCardColor : baseColors.white}
@@ -66,16 +68,16 @@ const UpperRow = styled.View`
 `;
 
 const AmountWrapper = styled.View`
-  height: 30px;
-  flex-wrap: wrap;
   margin-top: 10px;
-  justify-content: flex-end;
+  width: 100%;
+  flex-direction: row;
 `;
 
 const Amount = styled(LightText)`
   font-size: ${fontSizes.extraLarge};
   line-height: ${fontSizes.extraLarge};
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
+  margin-right: ${props => props.innerCard ? '4px' : 0};
 `;
 
 const FiatAmount = styled(LightText)`
@@ -83,6 +85,7 @@ const FiatAmount = styled(LightText)`
   line-height: 14px;
   color: #fff;
   margin-left: -2px;
+  opacity: ${props => props.innerCard ? 0.7 : 1};
 `;
 
 const Disclaimer = styled(LightText)`
@@ -91,25 +94,27 @@ const Disclaimer = styled(LightText)`
   color: ${baseColors.burningFire};
 `;
 
-const AmountToken = styled(BoldText)`
-  font-size: ${fontSizes.medium};
+const AmountToken = styled(LightText)`
+  font-size: ${props => props.innerCard ? fontSizes.extraLarge : fontSizes.medium};
+  font-weight: ${props => props.innerCard ? fontWeights.book : fontWeights.bold};
   line-height: ${fontSizes.extraLarge};
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
 
 const DetailsWrapper = styled.View`
-  justify-content: flex-start;
+  justify-content: space-between;
   flex-direction: column;
-  padding: 20px;
+  padding: ${props => props.innerCard ? '20px 24px 26px' : '20px'};
   flex: 1;
+  height: 100%;
 `;
 
 
 const IconCircle = styled.View`
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
+  width: ${props => props.innerCard ? 44 : 40}px;
+  height: ${props => props.innerCard ? 44 : 40}px;
+  border-radius: ${props => props.innerCard ? 22 : 20}px;
   background: ${props => props.isListed ? 'rgba(255,255,255,0.1)' : 'rgba(198,202,205,0.6)'};
   position: relative;
   margin-right: ${Platform.select({
@@ -121,9 +126,10 @@ const IconCircle = styled.View`
 `;
 
 const Name = styled(BoldText)`
-  font-size: ${fontSizes.mediumLarge};
+  font-size: ${props => props.innerCard ? '34' : fontSizes.mediumLarge}px;
+  margin-top: ${props => props.innerCard ? '5px' : 0};
   letter-spacing: ${fontTrackings.medium};
-  line-height: ${fontSizes.mediumLarge};
+  line-height: ${props => props.innerCard ? '34' : fontSizes.mediumLarge};
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
@@ -138,21 +144,22 @@ const AssetCard = (props: Props) => {
     isListed = true,
     disclaimer,
     icon = '',
+    innerCard,
   } = props;
 
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
   const wallpaperUri = isListed ? wallpaper : undefined;
   return (
     <AssetOutter>
-      <Shadow heightAndroid={140}>
+      <Shadow heightAndroid={innerCard ? innerCardHeight : 140}>
         <TouchableWithoutFeedback onPress={onPress}>
-          <AssetWrapper isListed={isListed}>
+          <AssetWrapper innerCard={innerCard} isListed={isListed}>
             <BackgroundImage source={{ uri: wallpaperUri }} />
-            <DetailsWrapper>
+            <DetailsWrapper innerCard={innerCard}>
               <UpperRow>
-                <Name isListed={isListed}>{name}</Name>
+                <Name isListed={isListed} innerCard={innerCard}>{name}</Name>
                 {!!icon &&
-                  <IconCircle isListed={isListed}>
+                  <IconCircle isListed={isListed} innerCard={innerCard}>
                     <CachedImage
                       key={token}
                       style={{
@@ -166,13 +173,13 @@ const AssetCard = (props: Props) => {
               </UpperRow>
               <View style={{ flexDirection: 'column' }}>
                 <AmountWrapper>
-                  <Amount isListed={isListed}>{amount}</Amount>
-                  <AmountToken isListed={isListed}> {token}</AmountToken>
+                  <Amount isListed={isListed} innerCard={innerCard}>{amount}</Amount>
+                  <AmountToken isListed={isListed} innerCard={innerCard}>{token}</AmountToken>
                 </AmountWrapper>
                 <View style={{ marginTop: 8 }}>
                   {disclaimer
                     ? <Disclaimer>{disclaimer}</Disclaimer>
-                    : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                    : <FiatAmount innerCard={innerCard}>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
                   }
                 </View>
               </View>

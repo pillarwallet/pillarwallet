@@ -49,6 +49,8 @@ export const baseColors = {
   manatee: '#a3a9b2',
   blanchedAlmond: '#ffe8ce',
   geyser: '#d1d7dd',
+  fairPink: '#f7ebe6',
+  tumbleweed: '#db9a84',
 };
 
 export const brandColors = [
@@ -71,7 +73,9 @@ export const UIColors = {
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
   placeholderTextColor: baseColors.darkGray,
   cardShadowColor: 'rgba(16, 91, 170, 0.1)',
+  actionButtonShadowColor: 'rgba(18, 63, 111, 0.1)',
   defaultDividerColor: baseColors.mediumLightGray,
+  actionButtonBorderColor: 'rgba(255, 255, 255, 0.37)',
 };
 
 export const fontSizes = {
