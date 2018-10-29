@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { RefreshControl, View, SectionList } from 'react-native';
+import isEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
@@ -44,6 +45,14 @@ const filterIcosByStatus = (icos: ICOT[], status: string) => (
 );
 
 class MarketScreen extends React.Component<Props> {
+  shouldComponentUpdate(nextProps: Props) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    return !isEqual(this.props, nextProps);
+  }
+
   renderICOs = ({ item }: Object) => {
     const ico = { ...item, ...item.icos[0] };
     const goal = ico.unitPrice * ico.totalSupply;

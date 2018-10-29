@@ -9,6 +9,7 @@ import {
   View,
   Alert,
 } from 'react-native';
+import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
@@ -133,6 +134,15 @@ class AssetsScreen extends React.Component<Props, State> {
   componentWillUnmount() {
     this.didBlur.remove();
     this.willFocus.remove();
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
   }
 
   handleCardTap = (assetData: Object) => {

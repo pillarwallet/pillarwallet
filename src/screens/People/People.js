@@ -12,6 +12,7 @@ import {
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
@@ -107,6 +108,15 @@ class PeopleScreen extends React.Component<Props, State> {
 
   componentWillUnmount() {
     this._willBlur.remove();
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
   }
 
   handleSearchChange = (query: any) => {
