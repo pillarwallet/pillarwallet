@@ -181,8 +181,6 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchInviteNotifications } = this.props;
-    fetchInviteNotifications();
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }

@@ -101,8 +101,7 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { fetchInviteNotifications, navigation } = this.props;
-    fetchInviteNotifications();
+    const { navigation } = this.props;
     this._willBlur = navigation.addListener('willBlur', this.onBlur);
   }
 
