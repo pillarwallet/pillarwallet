@@ -245,8 +245,8 @@ class PeopleScreen extends React.Component<Props, State> {
           <Wrapper zIndex={100} regularPadding>
             <SearchBar
               backgroundColor={baseColors.white}
-              customOnFocus={this.handleSearchFocus}
               inputProps={{
+                onFocus: this.handleSearchFocus,
                 onBlur: this.handleSearchBlur,
                 onChange: this.handleSearchChange,
                 value: query,
