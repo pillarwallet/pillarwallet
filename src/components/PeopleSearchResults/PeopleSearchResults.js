@@ -84,24 +84,28 @@ type Props = {
 
 class PeopleSearchResults extends React.Component<Props> {
   handleSendInvitationPress = (user: ApiUser) => () => {
+    Keyboard.dismiss();
     this.props.sendInvitation(user);
   };
 
   handleAcceptInvitationPress = (user: ApiUser) => () => {
     const { acceptInvitation, invitations } = this.props;
     const invitation = invitations.find(({ id }) => id === user.id);
+    Keyboard.dismiss();
     acceptInvitation(invitation);
   };
 
   handleCancelInvitationPress = (user: ApiUser) => () => {
     const { cancelInvitation, invitations } = this.props;
     const invitation = invitations.find(({ id }) => id === user.id);
+    Keyboard.dismiss();
     cancelInvitation(invitation);
   };
 
   handleRejectInvitationPress = (user: ApiUser) => () => {
     const { rejectInvitation, invitations } = this.props;
     const invitation = invitations.find(({ id }) => id === user.id);
+    Keyboard.dismiss();
     if (invitation && Object.keys(invitation).length > 0) {
       createAlert(TYPE_REJECTED, invitation, () => rejectInvitation(invitation));
     }
@@ -161,7 +165,10 @@ class PeopleSearchResults extends React.Component<Props> {
         {!!searchResults.localContacts.length && (
           <LocalContacts>
             <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
-            <LocalContactsScrollView horizontal>
+            <LocalContactsScrollView
+              keyboardShouldPersistTaps="always"
+              horizontal
+            >
               {this.renderLocalContacts(searchResults.localContacts)}
             </LocalContactsScrollView>
           </LocalContacts>
@@ -172,6 +179,7 @@ class PeopleSearchResults extends React.Component<Props> {
             renderItem={this.renderContact}
             onScroll={() => Keyboard.dismiss()}
             keyExtractor={({ username }) => username}
+            keyboardShouldPersistTaps="always"
             contentContainerStyle={{
               paddingBottom: 40,
             }}
