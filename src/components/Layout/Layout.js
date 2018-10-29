@@ -54,8 +54,10 @@ export const Wrapper = styled.View`
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
-  margin: ${props => (props.regularPadding ? '0 20px' : '0')};
+  padding: ${props => (props.regularPadding ? '0 20px' : '0')};
   background-color: ${props => (props.color ? props.color : 'transparent')};
+  flex: 1;
+  height: 100%;
 `;
 
 const FooterInner = styled.KeyboardAvoidingView`
