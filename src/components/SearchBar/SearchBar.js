@@ -52,6 +52,7 @@ type inputPropsType = {
   backgroundColor?: string,
   onChange: Function,
   onBlur?: Function,
+  onFocus?: Function,
   value: ?string,
 };
 
@@ -99,6 +100,7 @@ class SearchBar extends React.Component<Props, State> {
     if (onBlur) {
       onBlur(this.value);
     }
+    Keyboard.dismiss();
     this.setState({ isFocused: false });
   };
 
@@ -120,6 +122,10 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
+    const { inputProps: { onFocus } } = this.props;
+    if (onFocus) {
+      onFocus();
+    }
     this.setState({ isFocused: true });
     Animated.timing(this.state.animShrink, {
       toValue: 80,
@@ -154,8 +160,8 @@ class SearchBar extends React.Component<Props, State> {
           }}
         >
           <InputField
-            onFocus={this.handleFocus}
             {...inputProps}
+            onFocus={this.handleFocus}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             value={value}
