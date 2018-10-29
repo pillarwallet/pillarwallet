@@ -160,9 +160,7 @@ class PeopleSearchResults extends React.Component<Props> {
   render() {
     const { searchResults } = this.props;
     return (
-
       <React.Fragment>
-
         {!!searchResults.localContacts.length && (
           <LocalContacts>
             <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>

@@ -166,9 +166,9 @@ class SearchBar extends React.Component<Props, State> {
           <InputIcon name="search" />
         </Animated.View>
         {(isFocused || !!value) &&
-          <CancelButton onPress={this.handleCancel}>
-            <BaseText style={{ color: baseColors.electricBlue }}>Cancel</BaseText>
-          </CancelButton>
+        <CancelButton onPress={this.handleCancel}>
+          <BaseText style={{ color: baseColors.electricBlue }}>Cancel</BaseText>
+        </CancelButton>
         }
       </SearchHolder>
     );
