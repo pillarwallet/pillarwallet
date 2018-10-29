@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
-import LinearGradient from 'react-native-linear-gradient';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
@@ -21,7 +20,7 @@ import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
 import Permissions from 'react-native-permissions';
-import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -120,11 +119,10 @@ const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
 const AnimatedHomeHeaderPortfolioBalance = Animated.createAnimatedComponent(HomeHeaderPortfolioBalance);
 
 const RecentConnections = styled.View`
-  min-height: 160px;
+  height: 150px;
   border-bottom-width: 1px;
   border-style: solid;
-  background-color: ${baseColors.white};
-  border-color: ${UIColors.defaultDividerColor};
+  border-color: ${UIColors.defaultBorderColor};
 `;
 
 const RecentConnectionsWrapper = styled.View`
@@ -139,20 +137,35 @@ const RecentConnectionsSpacer = styled.View`
     min-height: 100px;
   `;
 
-const RecentConnectionsScrollView = styled.ScrollView``;
+const RecentConnectionsScrollView = styled.ScrollView`
+  background-color: ${baseColors.snowWhite};
+  padding-left: 6px;
+  margin-top: -4px;
+  padding-top: ${Platform.select({
+    ios: '4px',
+    android: 0,
+  })};
+`;
 
 const RecentConnectionsItemProfileImage = styled(ProfileImage)`
   margin-bottom: ${spacing.rhythm / 2};
 `;
 
 const RecentConnectionsSubtitle = styled(Title)`
-  margin-left: ${spacing.rhythm}px;
+  margin-left: ${spacing.mediumLarge}px;
 `;
 
 const RecentConnectionsItem = styled.TouchableOpacity`
   align-items: center;
-  width: 64px;
-  margin: 0 8px;
+  width: ${Platform.select({
+    ios: '60px',
+    android: '74px',
+  })};
+  margin: ${Platform.select({
+    ios: '4px 8px 24px',
+    android: '0',
+  })};
+  b
 `;
 
 const CameraIcon = styled(Icon)`
@@ -161,8 +174,12 @@ const CameraIcon = styled(Icon)`
 `;
 
 const RecentConnectionsItemName = styled(BaseText)`
-  font-size: ${fontSizes.small};
+  font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
+  margin-top: ${Platform.select({
+    ios: '-4px',
+    android: '-4px',
+  })};
 `;
 
 class HomeScreen extends React.Component<Props, State> {
@@ -355,94 +372,88 @@ class HomeScreen extends React.Component<Props, State> {
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
-      <Container color={baseColors.white}>
-        <LinearGradient
-          colors={['rgba(255,255,255,1)', 'rgba(255,255,255,1)', 'rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
-        >
-
-          <AnimatedHomeHeader>
-            <HomeHeaderRow>
-              <HomeHeaderLeft>
-                <HomeHeaderButton
-                  icon="help"
-                  color={baseColors.darkGray}
-                  fontSize={24}
-                  onPress={() => Intercom.displayMessenger()}
-                />
-                {hasIntercomNotifications && <View
-                  style={{
-                    width: 8,
-                    height: 8,
-                    backgroundColor: baseColors.sunYellow,
-                    borderRadius: 4,
-                    position: 'absolute',
-                    top: 6,
-                    right: 8,
-                  }}
-                />}
-              </HomeHeaderLeft>
-
-              <HomeHeaderBody />
-
-              <HomeHeaderRight>
-                <HomeHeaderButton
-                  flexEnd
-                  icon="settings"
-                  color={baseColors.darkGray}
-                  fontSize={24}
-                  onPress={() => this.goToProfile()}
-                />
-              </HomeHeaderRight>
-            </HomeHeaderRow>
-            <HomeHeaderRow>
-              <HomeHeaderBody>
-                <HomeHeaderImageUsername>
-                  <AnimatedHomeHeaderProfileImage
-                    uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
-                    userName={user.username}
-                    diameter={profileImageWidth}
-                    onPress={this.openCamera}
-                    style={{
-                      transform: [
-                        { translateY: profileImagePositionY },
-                        { translateX: profileImagePositionX },
-                        { scale: profileImageScale },
-                        { perspective: 1000 },
-                      ],
-                    }}
-                  >
-                    <CameraIcon name="camera" />
-                  </AnimatedHomeHeaderProfileImage>
-                  <AnimatedHomeHeaderUsername
-                    onLayout={(event) => {
-                      const { width } = event.nativeEvent.layout;
-                      this.setState({
-                        usernameWidth: width,
-                      });
-                    }}
-                    style={{
-                      transform: [
-                        { translateX: profileUsernameTranslateX },
-                        { translateY: profileUsernameTranslateY },
-                      ],
-                    }}
-                  >
-                    {user.username}
-                  </AnimatedHomeHeaderUsername>
-                </HomeHeaderImageUsername>
-                <AnimatedHomeHeaderPortfolioBalance
+      <Container color={baseColors.snowWhite}>
+        <AnimatedHomeHeader>
+          <HomeHeaderRow>
+            <HomeHeaderLeft>
+              <HomeHeaderButton
+                icon="help"
+                color={baseColors.darkGray}
+                fontSize={24}
+                onPress={() => Intercom.displayMessenger()}
+              />
+              {hasIntercomNotifications && <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  backgroundColor: baseColors.sunYellow,
+                  borderRadius: 4,
+                  position: 'absolute',
+                  top: 6,
+                  right: 8,
+                }}
+              />}
+            </HomeHeaderLeft>
+            <HomeHeaderBody />
+            <HomeHeaderRight>
+              <HomeHeaderButton
+                flexEnd
+                icon="settings"
+                color={baseColors.darkGray}
+                fontSize={24}
+                onPress={() => this.goToProfile()}
+              />
+            </HomeHeaderRight>
+          </HomeHeaderRow>
+          <HomeHeaderRow>
+            <HomeHeaderBody>
+              <HomeHeaderImageUsername>
+                <AnimatedHomeHeaderProfileImage
+                  uri={`${user.profileImage}?t=${user.lastUpdateTime || 0}`}
+                  userName={user.username}
+                  diameter={profileImageWidth}
+                  onPress={this.openCamera}
                   style={{
                     transform: [
-                      { scale: profileBalanceScale },
-                      { translateY: profileBalancePositionY },
+                      { translateY: profileImagePositionY },
+                      { translateX: profileImagePositionX },
+                      { scale: profileImageScale },
+                      { perspective: 1000 },
                     ],
-                    opacity: profileBalanceOpacity,
                   }}
-                />
-              </HomeHeaderBody>
-            </HomeHeaderRow>
-          </AnimatedHomeHeader>
-        </LinearGradient>
+                  noShadow
+                >
+                  <CameraIcon name="camera" />
+                </AnimatedHomeHeaderProfileImage>
+                <AnimatedHomeHeaderUsername
+                  onLayout={(event) => {
+                    const { width } = event.nativeEvent.layout;
+                    this.setState({
+                      usernameWidth: width,
+                    });
+                  }}
+                  style={{
+                    transform: [
+                      { translateX: profileUsernameTranslateX },
+                      { translateY: profileUsernameTranslateY },
+                    ],
+                  }}
+                >
+                  {user.username}
+                </AnimatedHomeHeaderUsername>
+              </HomeHeaderImageUsername>
+              <AnimatedHomeHeaderPortfolioBalance
+                style={{
+                  transform: [
+                    { scale: profileBalanceScale },
+                    { translateY: profileBalancePositionY },
+                  ],
+                  opacity: profileBalanceOpacity,
+                }}
+              />
+            </HomeHeaderBody>
+          </HomeHeaderRow>
+        </AnimatedHomeHeader>
         <Animated.ScrollView
           stickyHeaderIndices={stickyHeaderIndices}
           style={{
@@ -469,7 +480,9 @@ class HomeScreen extends React.Component<Props, State> {
           {this.props.contacts.length ?
             <RecentConnectionsWrapper>
               <RecentConnections>
-                <RecentConnectionsSubtitle subtitle title="recent connections." />
+                <View style={{ backgroundColor: baseColors.snowWhite }}>
+                  <RecentConnectionsSubtitle subtitle title="recent connections." />
+                </View>
                 <RecentConnectionsScrollView horizontal nestedScrollEnabled overScrollMode="always">
                   {this.renderRecentConnections()}
                 </RecentConnectionsScrollView>
@@ -480,6 +493,7 @@ class HomeScreen extends React.Component<Props, State> {
           }
           <Tabs title="your activity." tabs={activityFeedTabs} />
           <ActivityFeed
+            backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}
             onRejectInvitation={rejectInvitation}
             onAcceptInvitation={acceptInvitation}
