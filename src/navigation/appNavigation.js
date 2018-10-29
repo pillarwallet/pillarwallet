@@ -285,10 +285,10 @@ const tabNavigation = createBottomTabNavigator(
       inactiveBackgroundColor: 'white',
       style: {
         backgroundColor: 'white',
-        elevation: 6,
+        elevation: 14,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
+        shadowOffset: { width: 0, height: -2 },
+        shadowOpacity: 0.0,
         shadowRadius: 2,
         borderTopColor: 'transparent',
         paddingTop: 5,
