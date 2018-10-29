@@ -4,25 +4,21 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
-import { Platform } from 'react-native';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
 import { resetUnreadAction } from 'actions/chatActions';
-import { fontSizes, baseColors, spacing, UIColors, fontWeights } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 
-import IconButton from 'components/IconButton';
-import Icon from 'components/Icon';
-import { BaseText } from 'components/Typography';
-import ProfileImage from 'components/ProfileImage';
 import EmptyTransactions from 'components/EmptyState/EmptyTransactions';
 import Separator from 'components/Separator';
 import SlideModal from 'components/Modals/SlideModal';
 import Title from 'components/Title';
 import EventDetails from 'components/EventDetails';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 
 import { getUserName } from 'utils/contacts';
 import { partial, uniqBy, formatAmount } from 'utils/common';
@@ -38,8 +34,6 @@ import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants'
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
 
-const TRANSACTION_RECEIVED = 'TRANSACTION_RECEIVED';
-const TRANSACTION_SENT = 'TRANSACTION_SENT';
 const SOCIAL_TYPES = [
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -48,99 +42,10 @@ const SOCIAL_TYPES = [
   CHAT,
 ];
 
-const NOTIFICATION_LABELS = {
-  [TYPE_ACCEPTED]: 'New connection',
-  [TYPE_RECEIVED]: 'Incoming connection',
-  [TYPE_SENT]: 'Request sent',
-  [TYPE_REJECTED]: 'Connection rejected',
-  [TRANSACTION_RECEIVED]: 'Received',
-  [TRANSACTION_SENT]: 'Sent',
-  [CHAT]: 'New message',
-};
-
 const ActivityFeedList = styled.FlatList``;
+
 const ActivityFeedWrapper = styled.View`
-  background-color: ${baseColors.white};
-`;
-
-const ActivityFeedItem = styled.TouchableOpacity`
-  background-color: transparent;
-  height: 74px;
-  padding: 0px ${spacing.rhythm}px;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: row;
-`;
-
-const ActivityFeedDirectionCircle = styled.View`
-  width: 40px;
-  border-radius: 20px;
-  height: 40px;
-  background-color: ${baseColors.lightGray};
-  align-items: center;
-  justify-content: center;
-`;
-
-const ActivityFeedDirectionCircleIcon = styled(Icon)`
-  color: ${baseColors.offBlue};
-  font-size: ${fontSizes.giant};
-`;
-
-const ActivityFeedItemLabel = styled(BaseText)`
-  color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraExtraSmall};
-  margin-bottom: 2px;
-`;
-
-const ActivityFeedItemName = styled(BaseText)`
-  font-size: ${fontSizes.small};
-`;
-
-const ActivityFeedItemAmount = styled(BaseText)`
-  font-size: ${fontSizes.medium};
-  color: ${props => props.received ? baseColors.jadeGreen : baseColors.slateBlack};
-  text-align: right;
-`;
-
-const ActivityFeedItemCol = styled.View`
-  flex: ${props => props.fixedWidth ? `0 0 ${props.fixedWidth}` : 1};
-  flex-direction: column;
-  align-items: ${props => props.flexEnd ? 'flex-end' : 'flex-start'};
-  justify-content: center;
-`;
-
-const ActionCircleButton = styled(IconButton)`
-  height: 34px;
-  width: 34px;
-  border-radius: 17px;
-  padding: ${Platform.OS === 'ios' ? 0 : 8}px;
-  margin: 0 0 0 10px;
-  justify-content: center;
-  align-items: center;
-  background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
-`;
-
-const ButtonIconWrapper = styled.View`
-  margin-left: auto;
-  flex-direction: row;
-`;
-
-const LabelText = styled(BaseText)`
-  font-size: ${(props) => props.button ? fontSizes.extraSmall : fontSizes.small};
-  color: ${(props) => props.button ? baseColors.electricBlue : baseColors.darkGray};
-  margin-left: auto;
-  padding: ${(props) => props.button ? `6px ${spacing.rhythm}px` : '6px 0'};
-  ${props => props.button ? `border-color: ${UIColors.primary};` : ''}
-  ${props => props.button ? 'border-width: 1px;' : ''}
-  ${props => props.button ? 'border-radius: 17px;' : ''}
-  ${props => props.button ? 'height: 34px;' : ''}
-  ${props => props.button ? `font-weight: ${fontWeights.medium};` : ''}
-  ${props => props.button ? `background-color: ${baseColors.white};` : ''}
-`;
-
-const IconWrapper = styled.View`
-  align-items: flex-start;
-  margin-right: ${spacing.rhythm}px;
+  background-color: ${props => props.color ? props.color : baseColors.white}
 `;
 
 const ActivityFeedHeader = styled.View`
@@ -168,6 +73,7 @@ type Props = {
   additionalFiltering?: Function,
   feedTitle?: string,
   showEmptyState?: boolean,
+  backgroundColor?: string,
   showArrowsOnly?: boolean,
 };
 
@@ -195,60 +101,6 @@ class ActivityFeed extends React.Component<Props, State> {
     });
   };
 
-  getSocialAction = (type: string, notification: Object) => {
-    const {
-      onAcceptInvitation,
-      onRejectInvitation,
-    } = this.props;
-
-    switch (type) {
-      case TYPE_RECEIVED:
-        return (
-          <ButtonIconWrapper>
-            <ActionCircleButton
-              color={baseColors.darkGray}
-              margin={0}
-              icon="close"
-              fontSize={fontSizes.extraSmall}
-              onPress={() => createAlert(TYPE_REJECTED, notification, () => onRejectInvitation(notification))}
-            />
-            <ActionCircleButton
-              color={baseColors.white}
-              margin={0}
-              accept
-              icon="check"
-              fontSize={fontSizes.extraSmall}
-              onPress={() => onAcceptInvitation(notification)}
-            />
-          </ButtonIconWrapper>
-        );
-      case TYPE_ACCEPTED:
-        return (
-          <LabelText>
-            Accepted
-          </LabelText>
-        );
-      case TYPE_SENT:
-        return (
-          <LabelText button>
-            Request Sent
-          </LabelText>
-        );
-      case CHAT:
-        return (
-          <LabelText>
-            Read
-          </LabelText>
-        );
-      default:
-        return (
-          <LabelText>
-            Dismissed
-          </LabelText>
-        );
-    }
-  };
-
   navigateToChat = (contact) => {
     const { navigation, resetUnread } = this.props;
     navigation.navigate(CHAT, { contact });
@@ -273,18 +125,34 @@ class ActivityFeed extends React.Component<Props, State> {
     return uniqBy(concatedHistory, 'hash');
   }
 
-  renderActivityFeedItem = ({ item: notification, index }: Object) => {
+  getRightLabel = (type: string) => {
+    switch (type) {
+      case TYPE_ACCEPTED:
+        return 'Connected';
+      case TYPE_SENT:
+        return 'Request Sent';
+      case CHAT:
+        return 'Read';
+      default:
+        return null;
+    }
+  };
+
+  renderActivityFeedItem = ({ item: notification }: Object) => {
     const { type } = notification;
     const {
       wallet,
       navigation,
       assets,
       contacts,
+      onAcceptInvitation,
+      onRejectInvitation,
       showArrowsOnly,
     } = this.props;
 
     const walletAddress = wallet.address;
-    const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM Do');
+    const dateTime = formatDate(new Date(notification.createdAt * 1000), 'MMM D');
+    const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
 
     if (type === TRANSACTION_EVENT) {
       const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
@@ -292,7 +160,6 @@ class ActivityFeed extends React.Component<Props, State> {
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === notification.asset) || {};
       const value = utils.formatUnits(new BigNumber(notification.value.toString()).toFixed(), decimals);
       const formattedValue = formatAmount(value);
-      const direction = isReceived ? TRANSACTION_RECEIVED : TRANSACTION_SENT;
       const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
       const directionIcon = isReceived ? 'received' : 'sent';
       let directionSymbol = isReceived ? '+' : '-';
@@ -304,48 +171,19 @@ class ActivityFeed extends React.Component<Props, State> {
       const contact = contacts
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
 
-      let image;
-      if (contact && Object.keys(contact).length !== 0 && !showArrowsOnly) {
-        image = (
-          <ProfileImage
-            uri={contact.profileImage}
-            userName={contact.username}
-            diameter={40}
-            textStyle={{ fontSize: fontSizes.medium }}
-          />
-        );
-      } else {
-        image = (
-          <ActivityFeedDirectionCircle>
-            <ActivityFeedDirectionCircleIcon name={directionIcon} />
-          </ActivityFeedDirectionCircle>
-        );
-      }
-
       return (
-        <ActivityFeedItem
-          key={index}
+        <ListItemWithImage
           onPress={() => this.selectEvent({ ...notification, value }, type, notification.status)}
-        >
-          <ActivityFeedItemCol fixedWidth="50px">
-            <IconWrapper>
-              {image}
-            </IconWrapper>
-          </ActivityFeedItemCol>
-          <ActivityFeedItemCol>
-            <ActivityFeedItemName>{nameOrAddress}</ActivityFeedItemName>
-            <ActivityFeedItemLabel>{NOTIFICATION_LABELS[direction]} · {dateTime}</ActivityFeedItemLabel>
-          </ActivityFeedItemCol>
-          <ActivityFeedItemCol flexEnd>
-            <ActivityFeedItemAmount received={isReceived}>
-              {directionSymbol} {formattedValue} {notification.asset}
-            </ActivityFeedItemAmount>
-          </ActivityFeedItemCol>
-        </ActivityFeedItem>
+          label={nameOrAddress}
+          avatarUrl={contact.profileImage}
+          navigateToProfile={Object.keys(contact).length !== 0 ? navigateToContact : null}
+          iconName={Object.keys(contact).length === 0 || showArrowsOnly ? directionIcon : null}
+          subtext={dateTime}
+          itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+          valueColor={isReceived ? baseColors.jadeGreen : null}
+        />
       );
     }
-
-    const navigateToContact = partial(navigation.navigate, CONTACT, { contact: notification });
 
     let onItemPress;
     if (type === TYPE_ACCEPTED || type === TYPE_RECEIVED || type === TYPE_SENT) {
@@ -357,28 +195,24 @@ class ActivityFeed extends React.Component<Props, State> {
       });
     }
 
-    const onProfileImagePress = ([TYPE_SENT, TYPE_RECEIVED].includes(type)) ? navigateToContact : undefined;
-
     return (
-      <ActivityFeedItem key={index} onPress={onItemPress} disabled={!onItemPress}>
-        <ActivityFeedItemCol fixedWidth="50px">
-          <ProfileImage
-            uri={notification.profileImage}
-            userName={notification.username}
-            diameter={36}
-            containerStyle={{ marginRight: 10 }}
-            textStyle={{ fontSize: 14 }}
-            onPress={onProfileImagePress}
-          />
-        </ActivityFeedItemCol>
-        <ActivityFeedItemCol fixedWidth="150px">
-          <ActivityFeedItemName>{notification.username}</ActivityFeedItemName>
-          <ActivityFeedItemLabel>{NOTIFICATION_LABELS[notification.type]} · {dateTime}</ActivityFeedItemLabel>
-        </ActivityFeedItemCol>
-        <ActivityFeedItemCol flexEnd>
-          {this.getSocialAction(type, notification)}
-        </ActivityFeedItemCol>
-      </ActivityFeedItem>
+      <ListItemWithImage
+        onPress={onItemPress}
+        label={notification.username}
+        avatarUrl={notification.profileImage}
+        navigateToProfile={navigateToContact}
+        subtext={dateTime}
+        rejectInvitation={notification.type === TYPE_RECEIVED
+          ? () => createAlert(TYPE_REJECTED, notification, () => onRejectInvitation(notification))
+          : null
+        }
+        acceptInvitation={notification.type === TYPE_RECEIVED
+          ? () => onAcceptInvitation(notification)
+          : null
+        }
+        actionLabel={this.getRightLabel(notification.type)}
+        labelAsButton={notification.type === TYPE_SENT}
+      />
     );
   };
 
@@ -395,6 +229,7 @@ class ActivityFeed extends React.Component<Props, State> {
       onRejectInvitation,
       onAcceptInvitation,
       onCancelInvitation,
+      backgroundColor,
     } = this.props;
 
     const {
@@ -442,7 +277,7 @@ class ActivityFeed extends React.Component<Props, State> {
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
     return (
-      <ActivityFeedWrapper>
+      <ActivityFeedWrapper color={backgroundColor}>
         {!!feedTitle && (!!processedHistory.length || !!showEmptyState) &&
         <ActivityFeedHeader>
           <Title subtitle title={feedTitle} />
@@ -451,7 +286,7 @@ class ActivityFeed extends React.Component<Props, State> {
           data={processedHistory}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={60} />}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={
             !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />

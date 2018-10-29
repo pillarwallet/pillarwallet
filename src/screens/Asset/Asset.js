@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Animated, Easing, Share, RefreshControl } from 'react-native';
+import { Animated, Easing, Share, RefreshControl, Platform } from 'react-native';
 import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { transparentize } from 'polished';
@@ -77,6 +77,10 @@ type State = {
 
 const AssetCardWrapper = styled.View`
   flex: 1;
+  padding: ${Platform.select({
+    ios: 0,
+    android: '0 10px',
+  })}
 `;
 
 const AssetDescriptionWrapper = styled.View`
