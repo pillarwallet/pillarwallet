@@ -115,7 +115,6 @@ type State = {
   query: string,
   searchIsFocused: boolean,
   fullScreenOverlayOpacity: Animated.Value,
-
 }
 
 class PeopleScreen extends React.Component<Props, State> {

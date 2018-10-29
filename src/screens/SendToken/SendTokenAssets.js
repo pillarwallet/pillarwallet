@@ -5,7 +5,7 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { BaseText, BoldText } from 'components/Typography';
-import type { Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balances } from 'models/Asset';
 import { CachedImage } from 'react-native-cached-image';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import Header from 'components/Header';
@@ -116,8 +116,8 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
   render() {
     const { assets, balances, navigation } = this.props;
     const assetsArray = Object.values(assets);
-    const filteredAssetsArray = assetsArray.filter((obj: any) => {
-      return getBalance(balances, obj.symbol) !== 0;
+    const nonEmptyAssets = assetsArray.filter((asset: any) => {
+      return getBalance(balances, asset.symbol) !== 0;
     });
     const contact = navigation.getParam('contact', {});
     const contactUsername = contact.username;
@@ -126,7 +126,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
         <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} />
         <FlatList
           keyExtractor={item => item.symbol}
-          data={filteredAssetsArray}
+          data={nonEmptyAssets}
           renderItem={this.renderAsset}
           ItemSeparatorComponent={Separator}
           contentContainerStyle={{
