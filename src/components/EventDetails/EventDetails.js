@@ -204,8 +204,10 @@ class EventDetails extends React.Component<Props, {}> {
                 userName={relatedUserTitle}
                 diameter={40}
                 initialsSize={fontSizes.extraSmall}
-                style={{ marginBottom: 6 }}
+                style={{ marginBottom: 4 }}
                 onPress={() => this.goToProfile(relatedUser)}
+                noShadow
+                borderWidth={0}
               />)}
             />
             {!isReceived &&
@@ -258,6 +260,8 @@ class EventDetails extends React.Component<Props, {}> {
               diameter={40}
               initialsSize={fontSizes.extraSmall}
               onPress={() => this.goToProfile(userData)}
+              noShadow
+              borderWidth={0}
             />
             <EventBodyTitle>
               @{userData.username}

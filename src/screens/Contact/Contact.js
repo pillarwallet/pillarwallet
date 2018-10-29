@@ -126,8 +126,6 @@ class Contact extends React.Component<Props, State> {
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
-          // onNextPress={this.openOptionsModal}
-          // nextIcon="more"
         />
         <ScrollWrapper
           refreshControl={
@@ -143,10 +141,9 @@ class Contact extends React.Component<Props, State> {
             <ProfileImage
               uri={userAvatar}
               userName={displayContact.username}
-              diameter={172}
               borderWidth={4}
-              initialsSize={fontSizes.extraExtraLarge}
-              noShadow
+              initialsSize={fontSizes.extraGiant}
+              diameter={172}
               style={{ backgroundColor: baseColors.geyser }}
             />
           </ContactWrapper>

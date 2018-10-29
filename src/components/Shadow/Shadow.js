@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Platform, PixelRatio } from 'react-native';
+import { Platform, PixelRatio, View } from 'react-native';
 import styled from 'styled-components/native';
 import { UIColors } from 'utils/variables';
 import NativeAndroidShadow from './NativeAndroidShadow';
@@ -15,12 +15,13 @@ type Props = {
   shadowSpread?: number,
   paddingFixAndroid?: number,
   shadowColorAndroid?: string,
+  shadowColoriOS?: string,
   widthAndroid?: number | string,
   heightAndroid?: number | string,
 };
 
 const ShadowWrapper = styled.View`
-  shadow-color: ${UIColors.cardShadowColor};
+  shadow-color: ${props => props.shadowColor};
   shadow-offset: ${props => `${props.shadowOffsetX}px ${props.shadowOffsetY}px`};
   shadow-opacity: 1;
   shadow-radius: ${props => props.shadowRadius}px;
@@ -28,7 +29,6 @@ const ShadowWrapper = styled.View`
 
 const ShadowInnerWrapper = styled.View`
   height: ${props => props.heightWithPaddings}px;
-  ${props => props.widthWithPaddings ? `width: ${props.widthWithPaddings}px;` : ''}
 `;
 
 export const Shadow = (props: Props) => {
@@ -43,15 +43,15 @@ export const Shadow = (props: Props) => {
     widthAndroid,
     heightAndroid,
     shadowColorAndroid = '#14105baa',
+    shadowColoriOS = UIColors.cardShadowColor,
   } = props;
 
   const pixelRatio = PixelRatio.get();
-
   const widthWithPaddings = widthAndroid
-    ? widthAndroid + (((shadowDistance + shadowRadius) * 4) / pixelRatio)
+    ? widthAndroid + (((shadowDistance + shadowSpread) * 2) / pixelRatio)
     : '100%';
   const heightWithPaddings = heightAndroid
-    ? heightAndroid + (((shadowDistance + shadowRadius) * 4) / pixelRatio)
+    ? heightAndroid + (((shadowDistance + shadowSpread) * 2) / pixelRatio)
     : '100%';
 
   if (Platform.OS === 'ios') {
@@ -61,24 +61,26 @@ export const Shadow = (props: Props) => {
         shadowOffsetX={shadowOffsetX}
         shadowOffsetY={shadowOffsetY}
         shadowRadius={shadowRadius}
+        shadowColor={shadowColoriOS}
       >
         {children}
       </ShadowWrapper>
     );
   }
   return (
-    <NativeAndroidShadow
-      shadowAngle={90}
-      shadowRadius={shadowSpread}
-      shadowDistance={shadowDistance}
-      shadowColor={shadowColorAndroid}
-    >
-      <ShadowInnerWrapper
-        widthWithPaddings={widthAndroid ? widthWithPaddings : null}
-        heightWithPaddings={heightWithPaddings}
+    <View style={{ width: widthWithPaddings }}>
+      <NativeAndroidShadow
+        shadowAngle={90}
+        shadowRadius={shadowSpread}
+        shadowDistance={shadowDistance}
+        shadowColor={shadowColorAndroid}
       >
-        {children}
-      </ShadowInnerWrapper>
-    </NativeAndroidShadow>
+        <ShadowInnerWrapper
+          heightWithPaddings={heightWithPaddings}
+        >
+          {children}
+        </ShadowInnerWrapper>
+      </NativeAndroidShadow>
+    </View>
   );
 };

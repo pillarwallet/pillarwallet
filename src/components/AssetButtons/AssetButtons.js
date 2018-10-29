@@ -11,15 +11,12 @@ type Props = {
   isReceiveDisabled?: boolean,
 }
 
-
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
-  flex: 1;
   justify-content: center;
-  margin: 20px 0;
-  padding: 10px;
+  padding: 0 10px;
+  margin: 0;
 `;
-
 
 const AssetButtons = (props: Props) => {
   return (

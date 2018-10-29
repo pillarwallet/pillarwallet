@@ -82,7 +82,7 @@ const ItemTitle = styled(BaseText)`
   font-size: ${props => props.type === CHAT_ITEM ? fontSizes.extraSmall : fontSizes.small}px;
   letter-spacing: ${props => props.type === CHAT_ITEM ? fontTrackings.tiny : fontTrackings.small}px;
   width: 100%;
-  font-weight: ${props => props.type === ACTION ? fontWeights.book : fontWeights.bold};
+  font-weight: ${props => props.type === ACTION ? fontWeights.book : 600};
   flex: 1;
 `;
 
@@ -106,14 +106,14 @@ const IconCircle = styled.View`
   width: 52px;
   height: 52px;
   border-radius: 26px;
-  background-color: ${baseColors.lightGray};
+  background-color: ${props => props.warm ? baseColors.fairPink : baseColors.lightGray};
   align-items: center;
   justify-content: center;
 `;
 
 const ItemIcon = styled(Icon)`
-  color: ${baseColors.offBlue};
   font-size: ${fontSizes.extraGiant};
+  color: ${props => props.warm ? baseColors.tumbleweed : baseColors.offBlue};
 `;
 
 const TokenImageWrapper = styled.View`
@@ -218,9 +218,10 @@ const ItemImage = (props: Props) => {
   } = props;
 
   if (iconName) {
+    const warm = iconName === 'sent';
     return (
-      <IconCircle>
-        <ItemIcon name={iconName} />
+      <IconCircle warm={warm}>
+        <ItemIcon name={iconName} warm={warm} />
       </IconCircle>
     );
   }
