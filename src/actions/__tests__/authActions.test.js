@@ -6,13 +6,11 @@ import {
   DECRYPT_WALLET,
   DECRYPTING,
 } from 'constants/walletConstants';
-import { APP_FLOW, ASSETS } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING } from 'constants/userConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
 import { loginAction } from '../authActions';
 
-const NAVIGATE = 'Navigation/NAVIGATE';
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
 
@@ -47,12 +45,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
       { type: DECRYPT_WALLET, payload: mockWallet },
-      {
-        type: NAVIGATE,
-        routeName: APP_FLOW,
-        params: {},
-        action: { type: NAVIGATE, routeName: ASSETS },
-      },
     ];
 
     const pin = '123456';
