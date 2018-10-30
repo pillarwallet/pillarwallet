@@ -36,11 +36,11 @@ class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   componentDidMount() {
+    this.props.getExistingChats();
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
       () => {
         this.props.setUnreadChatNotificationsStatus(false);
-        this.props.getExistingChats();
       },
     );
   }
