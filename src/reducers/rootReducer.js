@@ -5,7 +5,6 @@ import { combineReducers } from 'redux';
 import { LOG_OUT } from 'constants/authConstants';
 
 // reducers
-import navigationReducer from './navigationReducer';
 import walletReducer from './walletReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
@@ -21,7 +20,6 @@ import sessionReducer from './sessionReducer';
 import icosReducer from './icosReducer';
 
 const appReducer = combineReducers({
-  navigation: navigationReducer,
   wallet: walletReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,

@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import orderBy from 'lodash.orderby';
+import isEqual from 'lodash.isequal';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
@@ -46,6 +47,15 @@ class ChatListScreen extends React.Component<Props, State> {
 
   componentWillUnmount() {
     this._willFocus.remove();
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
   }
 
   handleChatItemClick = (contact) => {
