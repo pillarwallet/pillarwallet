@@ -370,7 +370,7 @@ class SendTokenAmount extends React.Component<Props, State> {
               </SendTokenDetailsValue>
             </TouchableOpacity>
             <Button
-              disabled={!session.isOnline || !gasInfo.isFetched}
+              disabled={!session.isOnline || !gasInfo.isFetched || !value || !parseFloat(value.amount)}
               small
               flexRight
               title="Next"
