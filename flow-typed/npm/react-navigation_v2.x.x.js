@@ -509,6 +509,7 @@ declare module 'react-navigation' {
   declare export type NavigationScreenProp<+S> = {
     +state: S,
     dispatch: NavigationDispatch,
+    router: Object,
     addListener: (
       eventName: string,
       callback: NavigationEventCallback

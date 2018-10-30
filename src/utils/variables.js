@@ -48,6 +48,9 @@ export const baseColors = {
   aliceBlue: '#f7fbff',
   manatee: '#a3a9b2',
   blanchedAlmond: '#ffe8ce',
+  geyser: '#d1d7dd',
+  fairPink: '#f7ebe6',
+  tumbleweed: '#db9a84',
 };
 
 export const brandColors = [
@@ -63,13 +66,16 @@ export const UIColors = {
   danger: baseColors.burningFire,
   disabled: baseColors.mediumGray,
   defaultTextColor: baseColors.slateBlack,
+  defaultNavigationColor: baseColors.slateBlack,
   defaultBackgroundColor: baseColors.snowWhite,
   defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
   focusedBorderColor: baseColors.electricBlue,
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
   placeholderTextColor: baseColors.darkGray,
   cardShadowColor: 'rgba(16, 91, 170, 0.1)',
+  actionButtonShadowColor: 'rgba(18, 63, 111, 0.1)',
   defaultDividerColor: baseColors.mediumLightGray,
+  actionButtonBorderColor: 'rgba(255, 255, 255, 0.37)',
 };
 
 export const fontSizes = {
@@ -84,6 +90,7 @@ export const fontSizes = {
   extraLarger: 28,
   extraExtraLarge: 32,
   giant: 36,
+  extraGiant: 48,
   iosIcons: 32,
   androidCloseIcon: 22,
   androidCheckmarkIcon: 26,

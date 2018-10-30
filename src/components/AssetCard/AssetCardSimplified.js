@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
@@ -29,14 +29,15 @@ const defaultCircleColor = '#ACBCCD';
 
 const AssetOutter = styled.View`
   padding: ${Platform.select({
-    ios: `15px 9px 15px ${spacing.rhythm}px`,
-    android: '8px 0 6px 10px',
+    ios: `8px 9px 10px ${spacing.rhythm}px`,
+    android: '2px 0 6px 0',
+  })};
+  margin-top: ${Platform.select({
+    ios: 0,
+    android: '-10px',
   })};
   background-color: transparent;
-  margin: ${Platform.select({
-    ios: 0,
-    android: '-12px 0 0 0',
-  })};
+  width: 100%;
 `;
 
 const AssetWrapper = styled.View`
@@ -45,14 +46,18 @@ const AssetWrapper = styled.View`
   border-radius: 6px;
   background: ${baseColors.white};
   height: 70px;
+  width: 100%;
 `;
 
 const InnerWrapper = styled.View`
-  flex: 1;
+  width: 100%;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 16px 15px 12px; 
+  padding: ${Platform.select({
+    ios: '15px 16px 15px 12px',
+    android: '15px 32px 15px 12px',
+  })};
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -63,7 +68,6 @@ const AmountWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  flex: 1;
 `;
 
 const TokenAmountWrapper = styled.View`
@@ -114,7 +118,7 @@ const IconCircle = styled.View`
   height: 44px;
   border-radius: 22px;
   background: ${props => props.color ? props.color : defaultCircleColor};
-  margin-right: 22px;
+  margin-right: 16px;
   align-items: center;
   justify-content: center;
 `;
@@ -124,7 +128,11 @@ const Name = styled(BoldText)`
   letter-spacing: ${fontTrackings.medium};
   line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
+  flex: 1;
 `;
+
+const { width } = Dimensions.get('window');
+const cardWidth = width - 20;
 
 const AssetCardSimplified = (props: Props) => {
   const {
@@ -139,10 +147,10 @@ const AssetCardSimplified = (props: Props) => {
 
   const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
   return (
-    <AssetOutter>
-      <Shadow>
-        <AssetWrapper>
-          <TouchableWithoutFeedback onPress={onPress}>
+    <AssetOutter cardWidth={cardWidth}>
+      <Shadow heightAndroid={70}>
+        <TouchableWithoutFeedback onPress={onPress}>
+          <AssetWrapper>
             <InnerWrapper>
               <IconCircle>
                 {!!icon &&
@@ -170,8 +178,8 @@ const AssetCardSimplified = (props: Props) => {
                 </AmountWrapper>
               </DetailsWrapper>
             </InnerWrapper>
-          </TouchableWithoutFeedback>
-        </AssetWrapper>
+          </AssetWrapper>
+        </TouchableWithoutFeedback>
       </Shadow>
     </AssetOutter>
   );

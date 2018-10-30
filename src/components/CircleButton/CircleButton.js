@@ -1,9 +1,11 @@
 // @flow
 import * as React from 'react';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'components/Icon';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
+import { Shadow } from 'components/Shadow';
 import LinearGradient from 'react-native-linear-gradient';
 
 type Props = {
@@ -13,17 +15,20 @@ type Props = {
   icon: string,
 }
 
-const CircleButtonIconWrapperColors = [baseColors.selago, baseColors.hawkesBlue];
+const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
 
 const CircleButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
-  margin: 0 14px;
-  padding: 6px;
+  padding: 8px;
+  margin: ${Platform.select({
+    ios: '0 14px',
+    android: '0 6px',
+  })}
 `;
 
 const CircleButtonIconWrapper = styled(LinearGradient)`
-  border-radius: 32;
+  border-radius: 31;
   width: 64px;
   height: 64px;
   background: ${props => props.disabled ? baseColors.lightGray : baseColors.white};
@@ -31,8 +36,18 @@ const CircleButtonIconWrapper = styled(LinearGradient)`
   display: flex;
   flex-direction: row;
   align-items: center;
-  box-shadow: 0 1px 1px ${UIColors.defaultShadowColor};
-  elevation: ${props => props.disabled ? 0 : 6};
+`;
+
+const InnerWrapper = styled.View`
+  border-radius: 33;
+  width: 66px;
+  height: 66px;
+  border: 1px solid ${UIColors.actionButtonBorderColor};
+  shadow-color: rgba(0, 122, 255, 0.03);
+  shadow-offset: 0px -1px;
+  shadow-opacity: 1;
+  shadow-radius: 2px;
+  background-color: ${UIColors.actionButtonBorderColor};
 `;
 
 const CircleButtonIcon = styled(Icon)`
@@ -45,10 +60,13 @@ const CircleButtonIcon = styled(Icon)`
 const CircleButtonText = styled(BaseText)`
   color: ${props => props.disabled ? baseColors.mediumGray : baseColors.electricBlue};
   text-align: center;
-  font-size: ${fontSizes.extraSmall};
-  margin-top: 10px;
+  font-size: ${fontSizes.small};
+  letter-spacing: ${fontTrackings.tiny}px;
+  margin-top: ${Platform.select({
+    ios: '10px',
+    android: '-2px',
+  })}
 `;
-
 
 const CircleButton = (props: Props) => {
   return (
@@ -56,20 +74,31 @@ const CircleButton = (props: Props) => {
       disabled={props.disabled}
       onPress={() => props.onPress()}
     >
-      <CircleButtonIconWrapper
-        disabled={props.disabled}
-        colors={CircleButtonIconWrapperColors}
+      <Shadow
+        shadowOffsetY={5}
+        shadowDistance={12}
+        shadowRadius={5}
+        shadowSpread={20}
+        shadowColorAndroid="#14123F6F"
+        shadowColoriOS={UIColors.actionButtonShadowColor}
+        heightAndroid={66}
+        widthAndroid={66}
       >
-        <CircleButtonIcon
-          disabled={props.disabled}
-          name={props.icon}
-        />
-      </CircleButtonIconWrapper>
-      <CircleButtonText
-        disabled={props.disabled}
-      >{props.label}
-      </CircleButtonText
-      >
+        <InnerWrapper>
+          <CircleButtonIconWrapper
+            disabled={props.disabled}
+            colors={CircleButtonIconWrapperColors}
+          >
+            <CircleButtonIcon
+              disabled={props.disabled}
+              name={props.icon}
+            />
+          </CircleButtonIconWrapper>
+        </InnerWrapper>
+      </Shadow>
+      <CircleButtonText disabled={props.disabled}>
+        {props.label}
+      </CircleButtonText>
     </CircleButtonWrapper>
   );
 };

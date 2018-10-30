@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import orderBy from 'lodash.orderby';
+import isEqual from 'lodash.isequal';
 import { FlatList, RefreshControl, View } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
@@ -9,10 +10,10 @@ import type { NavigationScreenProp, NavigationEventSubscription } from 'react-na
 import { CHAT, NEW_CHAT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
-import { baseColors } from 'utils/variables';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Separator from 'components/Separator';
 import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
-import ChatListItem from './ChatListItem';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -48,6 +49,15 @@ class ChatListScreen extends React.Component<Props, State> {
     this._willFocus.remove();
   }
 
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
+  }
+
   handleChatItemClick = (contact) => {
     const { navigation, resetUnread } = this.props;
     navigation.navigate(CHAT, { contact });
@@ -77,27 +87,19 @@ class ChatListScreen extends React.Component<Props, State> {
         timeSent = formatDate(lastMessageDate, 'MM/DD/YY');
       }
     }
-    const newMessageCopy = chatWithContact.unread > 1 ? 'New Messages' : 'New Message';
+    const newMessageCopy = unread > 1 ? 'New Messages' : 'New Message';
 
     if (!contact.username) return null;
 
     return (
-      <ChatListItem
-        userName={contactInfo.username}
-        avatar={contactInfo.profileImage}
-        message={unread ? newMessageCopy : lastMessage.content}
+      <ListItemWithImage
+        label={contactInfo.username}
+        avatarUrl={contactInfo.profileImage}
+        paragraph={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={unread}
         onPress={() => this.handleChatItemClick(contactInfo)}
       />
-    );
-  };
-
-  renderSeparator = () => {
-    return (
-      <View style={{ paddingLeft: 74, paddingRight: 18 }}>
-        <View style={{ height: 1, width: '100%', backgroundColor: baseColors.lightGray }} />
-      </View>
     );
   };
 
@@ -128,7 +130,7 @@ class ChatListScreen extends React.Component<Props, State> {
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
-            ItemSeparatorComponent={this.renderSeparator}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             style={{ height: '100%' }}
             contentContainerStyle={{ height: '100%' }}
             ListEmptyComponent={

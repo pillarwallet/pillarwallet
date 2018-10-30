@@ -7544,6 +7544,10 @@ lodash.isarray@^3.0.0:
   version "3.0.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
 
+lodash.isequal@^4.5.0:
+  version "4.5.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
+
 lodash.isnull@^3.0.0:
   version "3.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.isnull/-/lodash.isnull-3.0.0.tgz#fafbe59ea1dca27eed786534039dd84c2e07c56e"
@@ -11005,9 +11009,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.85:
-  version "1.0.85"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.85.tgz#c85fd29104c779171782c407ab2feecebbf0467b"
+rn-signal-protocol-messaging@1.0.86:
+  version "1.0.86"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.86.tgz#551d3ef8a4979a96f6ea8bd17a6979334abfe1b7"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

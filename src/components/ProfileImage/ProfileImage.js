@@ -1,12 +1,12 @@
 // @flow
 import * as React from 'react';
 import { ImageBackground } from 'react-native';
-
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/contacts';
 import { BaseText } from 'components/Typography';
+import { Shadow } from 'components/Shadow';
 
 const CircleImage = styled(CachedImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -22,9 +22,11 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.hasChildren ? baseColors.lightGray : baseColors.cyan)};
+  background-color: ${props => (props.needBackground ? baseColors.cyan : baseColors.lightGray)};
   ${props => (props.additionalContainerStyle)};
   position: relative;
+  border: ${props => `${props.borderWidth}px solid ${baseColors.white}`};
+  overflow: hidden;
 `;
 
 const InnerBackground = styled.View`
@@ -36,7 +38,7 @@ const InnerBackground = styled.View`
 `;
 
 const InnerUsername = styled(BaseText)`
-  font-size: ${fontSizes.medium};
+  font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
   color: ${baseColors.white};
 `;
 
@@ -45,26 +47,43 @@ type Props = {
   userName?: string,
   containerStyle?: Object,
   imageStyle?: Object,
-  onPress?: Function,
+  onPress?: ?Function,
   diameter?: number,
+  borderWidth?: number,
   style?: Object,
   children?: React.Node,
+  initialsSize?: number,
+  noShadow?: boolean,
 }
 
-const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node }) => {
-  const { userName, innerComponent } = props;
+const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
+  const { children, noShadow, diameter } = props;
+
+  if (!noShadow) {
+    return (
+      <Shadow widthAndroid={diameter} heightAndroid={diameter}>
+        { children }
+      </Shadow>
+    );
+  }
+
+  return children;
+};
+
+const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node, initialsSize?: number }) => {
+  const { userName, innerComponent, initialsSize } = props;
   const initials = userName && getInitials(userName);
 
   return (
     <React.Fragment>
       {innerComponent &&
-        <InnerBackground>
-          {innerComponent}
-        </InnerBackground>
+      <InnerBackground>
+        {innerComponent}
+      </InnerBackground>
       }
       {userName && !innerComponent &&
       <InnerBackground>
-        <InnerUsername>
+        <InnerUsername initialsSize={initialsSize}>
           {initials}
         </InnerUsername>
       </InnerBackground>
@@ -83,12 +102,19 @@ const ProfileImage = (props: Props) => {
     imageStyle,
     onPress,
     style,
-    diameter,
+    diameter = 50,
+    borderWidth = 2,
     children,
     userName,
+    initialsSize,
+    noShadow,
   } = props;
 
-  const renderDefaultImage = () => <DefaultPicture userName={userName} innerComponent={children} />;
+  const diameterWithBorder = diameter + (borderWidth * 2);
+
+  const renderDefaultImage = () => (
+    <DefaultPicture userName={userName} innerComponent={children} initialsSize={initialsSize} />
+  );
 
   const renderImage = (data: Object) => {
     if (data.source === IMAGE_LOAD_FAILED) {
@@ -98,27 +124,31 @@ const ProfileImage = (props: Props) => {
   };
 
   return (
-    <ImageTouchable
-      additionalContainerStyle={containerStyle}
-      diameter={diameter}
-      disabled={!onPress}
-      onPress={onPress}
-      transparent={uri}
-      style={style}
-      hasChildren={children}
-    >
-      {!uri && renderDefaultImage()}
-      {!!uri &&
-        <CircleImage
-          useQueryParamsInCacheKey
-          additionalImageStyle={imageStyle}
-          diameter={diameter}
-          renderImage={renderImage}
-          fallbackSource={IMAGE_LOAD_FAILED}
-          source={{ uri }}
-        />
-      }
-    </ImageTouchable>
+    <Wrapper noShadow={noShadow} diameter={diameterWithBorder}>
+      <ImageTouchable
+        additionalContainerStyle={containerStyle}
+        diameter={diameterWithBorder}
+        disabled={!onPress}
+        onPress={onPress}
+        transparent={uri}
+        style={style}
+        hasChildren={children}
+        borderWidth={borderWidth}
+        needBackground={!uri}
+      >
+        {!uri && renderDefaultImage()}
+        {!!uri &&
+          <CircleImage
+            useQueryParamsInCacheKey
+            additionalImageStyle={imageStyle}
+            diameter={diameter}
+            renderImage={renderImage}
+            fallbackSource={IMAGE_LOAD_FAILED}
+            source={{ uri }}
+          />
+        }
+      </ImageTouchable>
+    </Wrapper>
   );
 };
 

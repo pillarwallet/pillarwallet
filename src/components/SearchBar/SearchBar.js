@@ -8,6 +8,7 @@ import Icon from 'components/Icon';
 
 const SearchHolder = styled.View`
   margin-bottom: 20px;
+  margin-top: ${props => props.marginTop || '0'}px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -51,6 +52,7 @@ type inputPropsType = {
   backgroundColor?: string,
   onChange: Function,
   onBlur?: Function,
+  onFocus?: Function,
   value: ?string,
 };
 
@@ -59,6 +61,7 @@ type Props = {
   inputProps: inputPropsType,
   placeholder?: string,
   backgroundColor?: string,
+  marginTop?: number,
 };
 
 type State = {
@@ -97,6 +100,7 @@ class SearchBar extends React.Component<Props, State> {
     if (onBlur) {
       onBlur(this.value);
     }
+    Keyboard.dismiss();
     this.setState({ isFocused: false });
   };
 
@@ -118,6 +122,10 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
+    const { inputProps: { onFocus } } = this.props;
+    if (onFocus) {
+      onFocus();
+    }
     this.setState({ isFocused: true });
     Animated.timing(this.state.animShrink, {
       toValue: 80,
@@ -126,7 +134,12 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   render() {
-    const { inputProps, placeholder, backgroundColor } = this.props;
+    const {
+      inputProps,
+      placeholder,
+      backgroundColor,
+      marginTop,
+    } = this.props;
     const {
       animShrink,
       isFocused,
@@ -134,7 +147,7 @@ class SearchBar extends React.Component<Props, State> {
     const { value = '' } = inputProps;
 
     return (
-      <SearchHolder>
+      <SearchHolder marginTop={marginTop}>
         <Animated.View
           style={{
             ...animatedInputFieldStyles,
@@ -147,8 +160,8 @@ class SearchBar extends React.Component<Props, State> {
           }}
         >
           <InputField
-            onFocus={this.handleFocus}
             {...inputProps}
+            onFocus={this.handleFocus}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             value={value}
