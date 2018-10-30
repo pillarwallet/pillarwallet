@@ -188,10 +188,9 @@ export const lockScreenAction = () => {
 
 export const logoutAction = () => {
   return async (dispatch: Function) => {
-    await storage.removeAll();
-    dispatch({ type: LOG_OUT });
-    await delay(200);
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    await storage.removeAll();
   };
 };

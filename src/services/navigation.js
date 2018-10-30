@@ -15,7 +15,7 @@ let _state = {
 };
 
 export function setTopLevelNavigator(navigatorRef: Object) {
-  if (_navigator) return;
+  console.log(navigatorRef);
   _navigator = navigatorRef;
 }
 
