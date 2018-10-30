@@ -30,7 +30,10 @@ export function navigate(routeName: string | Object, params?: Object) {
 }
 
 export function getNavigationState() {
-  return _state;
+  return {
+    ..._state,
+    navigator: _navigator,
+  };
 }
 
 export function updateNavigationLastScreenState({
