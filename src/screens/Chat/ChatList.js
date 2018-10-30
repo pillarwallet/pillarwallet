@@ -6,7 +6,7 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
 import { isToday, isYesterday, format as formatDate } from 'date-fns';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
-import { CHAT, NEW_CHAT } from 'constants/navigationConstants';
+import { CHAT, NEW_CHAT, CONTACT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -59,7 +59,7 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   renderItem = ({ item: contact }: Object) => {
-    const { chats, contacts } = this.props;
+    const { chats, contacts, navigation } = this.props;
 
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const { lastMessage, unread } = chatWithContact;
@@ -85,6 +85,7 @@ class ChatListScreen extends React.Component<Props, State> {
       <ListItemWithImage
         label={contactInfo.username}
         avatarUrl={contactInfo.profileImage}
+        navigateToProfile={() => navigation.navigate(CONTACT, { contact: contactInfo })}
         paragraph={unread ? newMessageCopy : lastMessage.content}
         timeSent={timeSent}
         unreadCount={unread}
