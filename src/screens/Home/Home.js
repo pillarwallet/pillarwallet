@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
@@ -199,8 +200,6 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchInviteNotifications } = this.props;
-    fetchInviteNotifications();
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }
@@ -212,6 +211,15 @@ class HomeScreen extends React.Component<Props, State> {
 
   componentWillUnmount() {
     this._willFocus.remove();
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
   }
 
   goToProfile = () => {

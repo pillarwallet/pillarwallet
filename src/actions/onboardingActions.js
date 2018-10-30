@@ -28,6 +28,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
+import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 
 const storage = Storage.getInstance('db');
@@ -55,7 +56,7 @@ export const registerWalletAction = () => {
     dispatch({ type: SET_HISTORY, payload: [] });
 
     // STEP 1: navigate to the new wallet screen
-    dispatch(NavigationActions.navigate({ routeName: NEW_WALLET }));
+    navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
     await delay(50);
 
     // STEP 2: check if wallet was imported or create it from the mnemonic phrase otherwise
@@ -153,7 +154,7 @@ export const registerWalletAction = () => {
       action: NavigationActions.navigate({ routeName: ASSETS }),
     });
 
-    dispatch(navigateToAssetsAction);
+    navigate(navigateToAssetsAction);
   };
 };
 
@@ -203,7 +204,7 @@ export const registerOnBackendAction = () => {
       action: NavigationActions.navigate({ routeName: ASSETS }),
     });
 
-    dispatch(navigateToAssetsAction);
+    navigate(navigateToAssetsAction);
   };
 };
 
