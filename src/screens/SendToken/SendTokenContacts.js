@@ -188,12 +188,14 @@ class SendTokenContacts extends React.Component<Props, State> {
             value={value}
           />
         </FormWrapper>
-        <ContactCardList
-          data={localContacts}
-          renderItem={this.renderContact}
-          keyExtractor={({ username }) => username}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-        />
+        {(!value || !value.address.length) &&
+          <ContactCardList
+            data={localContacts}
+            renderItem={this.renderContact}
+            keyExtractor={({ username }) => username}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+          />
+        }
         <QRCodeScanner
           validator={ETHValidator}
           dataFormatter={decodeETHAddress}
@@ -201,9 +203,11 @@ class SendTokenContacts extends React.Component<Props, State> {
           onDismiss={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        <Footer keyboardVerticalOffset={35}>
-          <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
-        </Footer>
+        {!!value && !!value.address.length &&
+          <Footer keyboardVerticalOffset={35}>
+            <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
+          </Footer>
+        }
       </Container>
     );
   }
