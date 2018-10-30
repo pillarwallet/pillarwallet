@@ -148,13 +148,15 @@ export const startListeningOnOpenNotificationAction = () => {
   return (dispatch: Function, getState: Function) => { // eslint-disable-line
     if (notificationsOpenerListener) return;
     notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
-      const { lastActiveScreen } = getNavigationState();
+      const { navigator } = getNavigationState();
+      const pathAndParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state);
+      const currentFlow = pathAndParams.path.split('/')[0];
       const { type } = processNotification(message.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
       });
-      if (lastActiveScreen && lastActiveScreen !== AUTH_FLOW) {
+      if (notificationRoute && currentFlow !== AUTH_FLOW) {
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
           routeName: APP_FLOW,
