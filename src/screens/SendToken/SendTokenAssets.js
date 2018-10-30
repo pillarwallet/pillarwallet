@@ -58,6 +58,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     const assetBalance = formatAmount(getBalance(balances, item.symbol));
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const fullIconMonoUrl = `${SDK_PROVIDER}/${item.iconMonoUrl}?size=2`;
+    const assetShouldRender = assetsConfig[item.symbol] && !assetsConfig[item.symbol].send;
     const nextScreenAssetData = {
       token: item.symbol,
       contractAddress: item.address,
@@ -65,7 +66,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
       ethAddress: contact.ethAddress,
       icon: fullIconMonoUrl,
     };
-    if (assetsConfig[item.symbol] && !assetsConfig[item.symbol].send) {
+    if (assetShouldRender) {
       return null;
     }
 
@@ -85,8 +86,11 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
   };
 
   render() {
-    const { assets, navigation } = this.props;
+    const { assets, balances, navigation } = this.props;
     const assetsArray = Object.values(assets);
+    const nonEmptyAssets = assetsArray.filter((asset: any) => {
+      return getBalance(balances, asset.symbol) !== 0;
+    });
     const contact = navigation.getParam('contact', {});
     const contactUsername = contact.username;
     return (
@@ -94,7 +98,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
         <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} />
         <FlatList
           keyExtractor={item => item.symbol}
-          data={assetsArray}
+          data={nonEmptyAssets}
           renderItem={this.renderAsset}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
           contentContainerStyle={{

@@ -49,6 +49,8 @@ export const Wrapper = styled.View`
   ${({ fullScreen }) => fullScreen && 'height: 100%; width: 100%;'}
   ${({ flex }) => flex && `flex: ${flex};`}
   ${({ horizontal }) => horizontal && 'flex-direction: row;'}
+  ${({ zIndex }) => zIndex && `z-index: ${zIndex};`}
+
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
