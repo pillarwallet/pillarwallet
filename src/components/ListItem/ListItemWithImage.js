@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
@@ -338,64 +339,69 @@ const getType = (props: Props) => {
   return DEFAULT;
 };
 
-const ListItemWithImage = (props: Props) => {
-  const {
-    label,
-    subtext,
-    paragraph,
-    paragraphLines = 2,
-    customAddon,
-    onPress,
-    timeSent,
-    unreadCount,
-  } = props;
+class ListItemWithImage extends React.Component<Props, {}> {
+  shouldComponentUpdate(nextProps: Props) {
+    return !isEqual(this.props, nextProps);
+  }
 
-  const type = getType(props);
+  render() {
+    const {
+      label,
+      subtext,
+      paragraph,
+      paragraphLines = 2,
+      customAddon,
+      onPress,
+      timeSent,
+      unreadCount,
+    } = this.props;
 
-  return (
-    <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
-      <ImageWrapper>
-        <ItemImage {...props} type={type} />
-      </ImageWrapper>
-      <InfoWrapper type={type}>
-        <Column type={type}>
-          {!!label &&
-            <Row>
-              <ItemTitle type={type}>{label}</ItemTitle>
-              {(type === CHAT_ITEM && !!timeSent) &&
-                <TimeWrapper>
-                  <TimeSent>{timeSent}</TimeSent>
-                </TimeWrapper>
-              }
-            </Row>
-          }
-          {!!paragraph &&
-            <Row>
-              <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-              {type === CHAT_ITEM &&
-                <BadgePlacer>
-                  {!!unreadCount &&
-                  <ItemBadge>
-                    <UnreadNumber>
-                      {unreadCount}
-                    </UnreadNumber>
-                  </ItemBadge>
-                  }
-                </BadgePlacer>
-              }
-            </Row>
-          }
-          {!!subtext &&
-            <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
-          }
-        </Column>
-        <Column rightColumn type={type}>
-          <Addon {...props} type={type} />
-          {customAddon}
-        </Column>
-      </InfoWrapper>
-    </ItemWrapper>
-  );
-};
+    const type = getType(this.props);
+    return (
+      <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
+        <ImageWrapper>
+          <ItemImage {...this.props} type={type} />
+        </ImageWrapper>
+        <InfoWrapper type={type}>
+          <Column type={type}>
+            {!!label &&
+              <Row>
+                <ItemTitle type={type}>{label}</ItemTitle>
+                {(type === CHAT_ITEM && !!timeSent) &&
+                  <TimeWrapper>
+                    <TimeSent>{timeSent}</TimeSent>
+                  </TimeWrapper>
+                }
+              </Row>
+            }
+            {!!paragraph &&
+              <Row>
+                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+                {type === CHAT_ITEM &&
+                  <BadgePlacer>
+                    {!!unreadCount &&
+                      <ItemBadge>
+                        <UnreadNumber>
+                          {unreadCount}
+                        </UnreadNumber>
+                      </ItemBadge>
+                    }
+                  </BadgePlacer>
+                }
+              </Row>
+            }
+            {!!subtext &&
+              <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
+            }
+          </Column>
+          <Column rightColumn type={type}>
+            <Addon {...this.props} type={type} />
+            {customAddon}
+          </Column>
+        </InfoWrapper>
+      </ItemWrapper>
+    );
+  }
+}
 
 export default ListItemWithImage;
