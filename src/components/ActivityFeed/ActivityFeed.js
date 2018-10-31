@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
@@ -92,6 +93,11 @@ class ActivityFeed extends React.Component<Props, State> {
     eventStatus: '',
   };
 
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
+  }
+
   selectEvent = (eventData: Object, eventType, eventStatus) => {
     this.setState({
       eventType,
@@ -170,7 +176,6 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const contact = contacts
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
-
       return (
         <ListItemWithImage
           onPress={() => this.selectEvent({ ...notification, value }, type, notification.status)}
@@ -257,7 +262,6 @@ class ActivityFeed extends React.Component<Props, State> {
           createdAt: lastMessage.savedTimestamp,
         };
       }); */
-
     const allFeedData = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
       .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
@@ -289,10 +293,18 @@ class ActivityFeed extends React.Component<Props, State> {
         </ActivityFeedHeader>}
         <ActivityFeedList
           data={processedHistory}
+          initialNumToRender={5}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
+          getItemLayout={(data, index) => ({
+            length: 70,
+            offset: 70 * index,
+            index,
+          })}
+          maxToRenderPerBatch={5}
+          onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.createdAt.toString()}
           ListEmptyComponent={
             !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
           }
