@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
@@ -45,7 +46,7 @@ const AssetWrapper = styled(Animated.View)`
 `;
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 48) / 3;
+const cardWidth = (width - 20) / 3;
 const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
@@ -158,6 +159,11 @@ const HideAssetAddon = styled.View`
 `;
 
 class AssetCardMinimized extends React.Component<Props, State> {
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
+  }
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -251,7 +257,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     return (
       <AssetWrapperAnimated style={animatedStyle}>
-        <ShadowHolder shadowDistance={6}>
+        <ShadowHolder heightAndroid={cardHeight(smallScreen, extraSmall)}>
           <Sizer smallScreen={smallScreen} extraSmall={extraSmall}>
             <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
               <InnerWrapper smallScreen={smallScreen}>

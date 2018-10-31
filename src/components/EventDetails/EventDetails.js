@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Linking } from 'react-native';
 import styled from 'styled-components/native';
@@ -93,6 +94,10 @@ const viewTransactionOnBlockchain = (hash: string) => {
 };
 
 class EventDetails extends React.Component<Props, {}> {
+  shouldComponentUpdate(nextProps: Props) {
+    return !isEqual(this.props, nextProps);
+  }
+
   handleAcceptConnection = () => {
     const { onClose, onAccept } = this.props;
     onClose();
@@ -203,8 +208,11 @@ class EventDetails extends React.Component<Props, {}> {
                 uri={relatedUser.profileImage}
                 userName={relatedUserTitle}
                 diameter={40}
-                style={{ marginBottom: 6 }}
+                initialsSize={fontSizes.extraSmall}
+                style={{ marginBottom: 4 }}
                 onPress={() => this.goToProfile(relatedUser)}
+                noShadow
+                borderWidth={0}
               />)}
             />
             {!isReceived &&
@@ -255,7 +263,10 @@ class EventDetails extends React.Component<Props, {}> {
               uri={userData.profileImage}
               userName={userData.username}
               diameter={40}
+              initialsSize={fontSizes.extraSmall}
               onPress={() => this.goToProfile(userData)}
+              noShadow
+              borderWidth={0}
             />
             <EventBodyTitle>
               @{userData.username}

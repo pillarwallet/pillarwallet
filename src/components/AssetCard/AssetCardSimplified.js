@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
-import { LightText, BoldText } from 'components/Typography';
+import { LightText, BaseText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
@@ -29,14 +30,15 @@ const defaultCircleColor = '#ACBCCD';
 
 const AssetOutter = styled.View`
   padding: ${Platform.select({
-    ios: `15px 9px 15px ${spacing.rhythm}px`,
-    android: '8px 0 6px 10px',
+    ios: `8px 9px 10px ${spacing.rhythm}px`,
+    android: '2px 0 6px 0',
+  })};
+  margin-top: ${Platform.select({
+    ios: 0,
+    android: '-10px',
   })};
   background-color: transparent;
-  margin: ${Platform.select({
-    ios: 0,
-    android: '-12px 0 0 0',
-  })};
+  width: 100%;
 `;
 
 const AssetWrapper = styled.View`
@@ -45,14 +47,18 @@ const AssetWrapper = styled.View`
   border-radius: 6px;
   background: ${baseColors.white};
   height: 70px;
+  width: 100%;
 `;
 
 const InnerWrapper = styled.View`
-  flex: 1;
+  width: 100%;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 16px 15px 12px; 
+  padding: ${Platform.select({
+    ios: '15px 16px 15px 12px',
+    android: '15px 32px 15px 12px',
+  })};
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -63,7 +69,6 @@ const AmountWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  flex: 1;
 `;
 
 const TokenAmountWrapper = styled.View`
@@ -114,67 +119,79 @@ const IconCircle = styled.View`
   height: 44px;
   border-radius: 22px;
   background: ${props => props.color ? props.color : defaultCircleColor};
-  margin-right: 22px;
+  margin-right: 16px;
   align-items: center;
   justify-content: center;
 `;
 
-const Name = styled(BoldText)`
-  font-size: ${fontSizes.small};
-  letter-spacing: ${fontTrackings.medium};
+const Name = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  letter-spacing: ${fontTrackings.tiny};
   line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
+  flex: 1;
+  margin-top: 2px;
+  text-align-vertical: center;
 `;
 
-const AssetCardSimplified = (props: Props) => {
-  const {
-    name,
-    amount,
-    token,
-    balanceInFiat,
-    onPress,
-    disclaimer,
-    icon = '',
-  } = props;
+const { width } = Dimensions.get('window');
+const cardWidth = width - 20;
 
-  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-  return (
-    <AssetOutter>
-      <Shadow>
-        <AssetWrapper>
+class AssetCardSimplified extends React.Component<Props, {}> {
+  shouldComponentUpdate(nextProps: Props) {
+    return !isEqual(this.props, nextProps);
+  }
+
+  render() {
+    const {
+      name,
+      amount,
+      token,
+      balanceInFiat,
+      onPress,
+      disclaimer,
+      icon = '',
+    } = this.props;
+
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+    return (
+      <AssetOutter cardWidth={cardWidth}>
+        <Shadow heightAndroid={70}>
           <TouchableWithoutFeedback onPress={onPress}>
-            <InnerWrapper>
-              <IconCircle>
-                {!!icon &&
-                <CachedImage
-                  key={token}
-                  style={{
-                    height: 44,
-                    width: 44,
-                  }}
-                  source={{ uri: icon }}
-                  resizeMode="contain"
-                />}
-              </IconCircle>
-              <DetailsWrapper>
-                <Name>{name}</Name>
-                <AmountWrapper>
-                  <TokenAmountWrapper>
-                    <Amount>{amount}</Amount>
-                    <AmountToken> {token}</AmountToken>
-                  </TokenAmountWrapper>
-                  {disclaimer
-                    ? <Disclaimer>{disclaimer}</Disclaimer>
-                    : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                  }
-                </AmountWrapper>
-              </DetailsWrapper>
-            </InnerWrapper>
+            <AssetWrapper>
+              <InnerWrapper>
+                <IconCircle>
+                  {!!icon &&
+                    <CachedImage
+                      key={token}
+                      style={{
+                        height: 44,
+                        width: 44,
+                      }}
+                      source={{ uri: icon }}
+                      resizeMode="contain"
+                    />}
+                </IconCircle>
+                <DetailsWrapper>
+                  <Name>{name}</Name>
+                  <AmountWrapper>
+                    <TokenAmountWrapper>
+                      <Amount>{amount}</Amount>
+                      <AmountToken> {token}</AmountToken>
+                    </TokenAmountWrapper>
+                    {disclaimer
+                      ? <Disclaimer>{disclaimer}</Disclaimer>
+                      : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                    }
+                  </AmountWrapper>
+                </DetailsWrapper>
+              </InnerWrapper>
+            </AssetWrapper>
           </TouchableWithoutFeedback>
-        </AssetWrapper>
-      </Shadow>
-    </AssetOutter>
-  );
-};
+        </Shadow>
+      </AssetOutter>
+    );
+  }
+}
 
 export default AssetCardSimplified;

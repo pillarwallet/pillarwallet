@@ -5,11 +5,10 @@ import Intercom from 'react-native-intercom';
 import { StatusBar, NetInfo, AppState, Platform } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
-import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
-import TestFairy from 'react-native-testfairy';
-import { SENTRY_DSN, TESTFAIRY_ACCESS_TOKEN } from 'react-native-dotenv';
+import { setTopLevelNavigator } from 'services/navigation';
+import { SENTRY_DSN } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
 import {
@@ -21,7 +20,6 @@ import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
 
 const store = configureStore();
-const ReduxifiedRootNavigation = reduxifyNavigator(RootNavigation, 'root');
 
 type Props = {
   dispatch: Function,
@@ -39,7 +37,6 @@ class App extends React.Component<Props, *> {
     super(props);
     if (!__DEV__) {
       Sentry.config(SENTRY_DSN).install();
-      TestFairy.begin(TESTFAIRY_ACCESS_TOKEN);
     }
   }
 
@@ -76,22 +73,24 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { navigation, dispatch, isFetched } = this.props;
+    const { isFetched } = this.props;
     if (!isFetched) return null;
-
     return (
-      <ReduxifiedRootNavigation state={navigation} dispatch={dispatch} />
+      <RootNavigation
+        ref={(node) => {
+          if (!node) return;
+          setTopLevelNavigator(node);
+        }}
+      />
     );
   }
 }
 
-const mapStateToProps = ({ navigation, appSettings: { isFetched } }) => ({
-  navigation,
+const mapStateToProps = ({ appSettings: { isFetched } }) => ({
   isFetched,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatch,
   fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),

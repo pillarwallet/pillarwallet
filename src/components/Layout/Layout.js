@@ -49,11 +49,15 @@ export const Wrapper = styled.View`
   ${({ fullScreen }) => fullScreen && 'height: 100%; width: 100%;'}
   ${({ flex }) => flex && `flex: ${flex};`}
   ${({ horizontal }) => horizontal && 'flex-direction: row;'}
+  ${({ zIndex }) => zIndex && `z-index: ${zIndex};`}
+
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`
-  margin: ${props => (props.regularPadding ? '0 20px' : '0')};
+  padding: ${props => (props.regularPadding ? '0 20px' : '0')};
   background-color: ${props => (props.color ? props.color : 'transparent')};
+  flex: 1;
+  height: 100%;
 `;
 
 const FooterInner = styled.KeyboardAvoidingView`

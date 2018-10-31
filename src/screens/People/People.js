@@ -2,8 +2,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
-  View,
   FlatList,
+  Animated,
   Keyboard,
   Image,
   KeyboardAvoidingView,
@@ -13,6 +13,7 @@ import {
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
@@ -23,7 +24,8 @@ import { FETCHING, FETCHED } from 'constants/contactsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
-import ContactCard from 'components/ContactCard';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
@@ -42,6 +44,31 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   margin-bottom: 9px;
   flex-direction: row;
 `;
+
+const HeaderWrapper = styled.View`
+  z-index: 20;
+  background: ${baseColors.white};
+`;
+
+const FullScreenOverlayWrapper = styled.TouchableOpacity`
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+`;
+
+const FullScreenOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.6);
+`;
+
+const AnimatedFullScreenOverlay = Animated.createAnimatedComponent(FullScreenOverlay);
 
 const ConnectionRequestBannerText = styled(BaseText)`
   font-size: ${fontSizes.medium};
@@ -86,6 +113,8 @@ type Props = {
 
 type State = {
   query: string,
+  searchIsFocused: boolean,
+  fullScreenOverlayOpacity: Animated.Value,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
@@ -93,6 +122,8 @@ class PeopleScreen extends React.Component<Props, State> {
 
   state = {
     query: '',
+    searchIsFocused: false,
+    fullScreenOverlayOpacity: new Animated.Value(0),
   };
 
   constructor(props: Props) {
@@ -101,18 +132,63 @@ class PeopleScreen extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const { fetchInviteNotifications, navigation } = this.props;
-    fetchInviteNotifications();
-    this._willBlur = navigation.addListener('willBlur', this.onBlur);
+    const { navigation } = this.props;
+    this._willBlur = navigation.addListener('willBlur', this.onScreenBlur);
   }
 
   componentWillUnmount() {
     this._willBlur.remove();
   }
 
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
+  }
+
   handleSearchChange = (query: any) => {
     this.setState({ query });
     this.handleContactsSearch(query);
+  };
+
+  animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
+    const { fullScreenOverlayOpacity } = this.state;
+    if (!active) {
+      fullScreenOverlayOpacity.setValue(0);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 1,
+        duration: 80,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      fullScreenOverlayOpacity.setValue(1);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 0,
+        duration: 80,
+        useNativeDriver: true,
+      }).start(() => onEnd && onEnd());
+    }
+  };
+
+  handleSearchFocus = () => {
+    this.setState({
+      searchIsFocused: true,
+    });
+    this.animateFullScreenOverlayOpacity(false);
+  };
+
+  animateAfterDelay = () => {
+    this.setState({
+      searchIsFocused: false,
+    });
+  };
+
+  handleSearchBlur = () => {
+    Keyboard.dismiss();
+    this.animateFullScreenOverlayOpacity(true, this.animateAfterDelay);
   };
 
   handleContactsSearch = (query: string) => {
@@ -131,29 +207,22 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
-  renderSeparator = () => {
-    return (
-      <View style={{ marginTop: -4, borderRadius: 4 }}>
-        <View style={{ height: 1, width: '100%' }} />
-      </View>
-    );
-  };
-
   renderContact = ({ item }) => (
-    <ContactCard
+    <ListItemWithImage
+      label={item.username}
       onPress={this.handleContactCardPress(item)}
-      name={item.username}
-      key={item.id}
-      avatar={item.profileImage}
+      avatarUrl={item.profileImage}
+      navigateToProfile={this.handleContactCardPress(item)}
     />
   );
 
-  onBlur = () => {
+  onScreenBlur = () => {
     Keyboard.dismiss();
+    this.animateFullScreenOverlayOpacity(true);
   };
 
   render() {
-    const { query } = this.state;
+    const { query, searchIsFocused, fullScreenOverlayOpacity } = this.state;
     const {
       searchResults,
       contactState,
@@ -168,16 +237,31 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="people" />
-        <Wrapper regularPadding>
-          <SearchBar
-            inputProps={{
-              onChange: this.handleSearchChange,
-              value: query,
-              autoCapitalize: 'none',
-            }}
-          />
-        </Wrapper>
+        <HeaderWrapper>
+          <Header title="people" />
+          <Wrapper zIndex={100} regularPadding>
+            <SearchBar
+              backgroundColor={baseColors.white}
+              inputProps={{
+                onFocus: this.handleSearchFocus,
+                onBlur: this.handleSearchBlur,
+                onChange: this.handleSearchChange,
+                value: query,
+                autoCapitalize: 'none',
+              }}
+              marginTop={15}
+            />
+          </Wrapper>
+        </HeaderWrapper>
+        {searchIsFocused && !inSearchMode &&
+          <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
+            <AnimatedFullScreenOverlay
+              style={{
+                opacity: fullScreenOverlayOpacity,
+              }}
+            />
+          </FullScreenOverlayWrapper>
+        }
         {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
@@ -209,7 +293,8 @@ class PeopleScreen extends React.Component<Props, State> {
             data={sortedLocalContacts}
             keyExtractor={(item) => item.id}
             renderItem={this.renderContact}
-            ItemSeparatorComponent={this.renderSeparator}
+            initialNumToRender={8}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
               paddingVertical: spacing.rhythm,

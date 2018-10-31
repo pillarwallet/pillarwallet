@@ -35,7 +35,7 @@ const Wrapper = styled.View`
   align-items: flex-end;
   flex-direction: row;
   margin-top: ${spacing.rhythm};
-  margin-bottom: ${props => props.flexStart ? 'auto' : '20px'};
+  margin-bottom: ${props => props.flexStart ? 'auto' : 0};
   z-index: 10;
 `;
 
@@ -123,7 +123,7 @@ const Header = (props: Props) => {
         {onBack &&
           <BackIcon
             icon={backIcon || 'back'}
-            color={light ? baseColors.white : UIColors.primary}
+            color={light ? baseColors.white : UIColors.defaultNavigationColor}
             onPress={() => onBack()}
             fontSize={fontSizes.extraLarge}
           />
@@ -159,7 +159,7 @@ const Header = (props: Props) => {
               }
               <NextIcon
                 icon="close"
-                color={light ? baseColors.white : UIColors.primary}
+                color={light ? baseColors.white : UIColors.defaultNavigationColor}
                 onPress={onClose}
                 fontSize={fontSizes.small}
               />
