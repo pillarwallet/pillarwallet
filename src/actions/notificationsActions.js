@@ -107,7 +107,7 @@ export const startListeningNotificationsAction = () => {
           dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         }
       };
-      signalListener = firebase.messaging().onMessage(debounce(onMessage, 500));
+      signalListener = firebase.notifications().onNotification(debounce(onMessage, 500));
     }
     if (notificationsListener) return;
     notificationsListener = firebase.notifications().onNotification(message => {
