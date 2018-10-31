@@ -53,12 +53,11 @@ const TabItemText = styled(BaseText)`
 `;
 
 const ActivityFeedHeader = styled.View`
-  padding: 0 ${spacing.rhythm}px;
-  margin-bottom: -8px;
+  padding: 4px ${spacing.mediumLarge}px 0;
 `;
 
 const TabWrapper = styled.View`
-  padding: 10px 16px 10px;
+  padding: 8px 16px 12px;
   background: ${baseColors.white};
   border-bottom-width: 1px;
   border-color: ${UIColors.defaultDividerColor};
@@ -68,7 +67,7 @@ const TabWrapper = styled.View`
 export default class Tabs extends React.Component<Props, State> {
   state = {
     activeTab: ALL,
-  }
+  };
 
   renderTabItems = (tabs: Tab[]) => {
     const { activeTab } = this.state;
@@ -88,7 +87,7 @@ export default class Tabs extends React.Component<Props, State> {
       );
     });
     return tabItems;
-  }
+  };
 
   render() {
     const { title, tabs } = this.props;

@@ -1,8 +1,6 @@
 // @flow
 import * as React from 'react';
 import {
-  Animated,
-  Easing,
   RefreshControl,
   FlatList,
   Dimensions,
@@ -11,8 +9,8 @@ import {
   View,
   Alert,
 } from 'react-native';
+import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { Transition } from 'react-navigation-fluid-transitions';
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -86,9 +84,11 @@ const horizontalPadding = (layout, side) => {
       return spacing.rhythm - (spacing.rhythm / 4);
     }
     case SIMPLIFIED: {
+      if (Platform.OS === 'android') return 10;
       return side === 'left' ? 0 : spacing.rhythm - 9;
     }
     default: {
+      if (Platform.OS === 'android') return 10;
       return 0;
     }
   }
@@ -104,14 +104,6 @@ class AssetsScreen extends React.Component<Props, State> {
       forceHideRemoval: false,
     };
   }
-
-  static navigationOptions = {
-    transitionConfig: {
-      duration: 300,
-      timing: Animated.timing,
-      easing: Easing.easing,
-    },
-  };
 
   static defaultProps = {
     assetsLayout: EXPANDED,
@@ -142,6 +134,15 @@ class AssetsScreen extends React.Component<Props, State> {
   componentWillUnmount() {
     this.didBlur.remove();
     this.willFocus.remove();
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
   }
 
   handleCardTap = (assetData: Object) => {
@@ -311,9 +312,7 @@ class AssetsScreen extends React.Component<Props, State> {
             buttonWidth={80}
             close={forceHideRemoval}
           >
-            <Transition key={assetData.name} shared={assetData.name}>
-              <AssetCard {...props} icon={assetData.icon} horizontalPadding />
-            </Transition>
+            <AssetCard {...props} icon={assetData.icon} horizontalPadding />
           </Swipeout>
         );
       }
@@ -324,7 +323,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <View
         style={{
-          marginTop: Platform.OS === 'ios' ? -22 : -10,
+          marginTop: Platform.OS === 'ios' ? -8 : -4,
           height: 0,
           width: '100%',
           backgroundColor: 'transparent',

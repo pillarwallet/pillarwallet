@@ -2,6 +2,7 @@
 import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
 import Storage from 'services/storage';
+import { navigate } from 'services/navigation';
 import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
@@ -49,11 +50,11 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_HISTORY, payload: filteredHistory });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-      dispatch(NavigationActions.navigate({ routeName: AUTH_FLOW }));
+      navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
     }
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
-    dispatch(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
+    navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };
 

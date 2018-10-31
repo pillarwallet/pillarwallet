@@ -8,7 +8,6 @@ import {
   ENCRYPTING,
   REGISTERING,
 } from 'constants/walletConstants';
-import { ASSETS, NEW_WALLET, APP_FLOW } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -30,7 +29,6 @@ type SDK = {
   userInfo: Function,
 };
 
-const NAVIGATE = 'Navigation/NAVIGATE';
 const pillarSdk: SDK = new PillarSdk();
 pillarSdk.registerOnBackend = jest.fn(() => ({ userId: 1, walletId: 2 }));
 pillarSdk.updateUser = jest.fn(() => ({ username: 'snow', walletId: 2 }));
@@ -89,7 +87,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: [] },
-      { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -97,12 +94,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
-      {
-        type: NAVIGATE,
-        routeName: APP_FLOW,
-        params: {},
-        action: { type: NAVIGATE, routeName: ASSETS },
-      },
     ];
 
     return store.dispatch(registerWalletAction())
@@ -129,19 +120,12 @@ describe('Wallet actions', () => {
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: UPDATE_ACCESS_TOKENS, payload: [] },
       { type: SET_HISTORY, payload: [] },
-      { type: NAVIGATE, routeName: NEW_WALLET },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
-      {
-        type: NAVIGATE,
-        routeName: APP_FLOW,
-        params: {},
-        action: { type: NAVIGATE, routeName: ASSETS },
-      },
     ];
 
     return store.dispatch(registerWalletAction())

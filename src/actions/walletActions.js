@@ -20,6 +20,7 @@ import {
 } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
 import { generateWordsToValidate } from 'utils/wallet';
+import { navigate } from 'services/navigation';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
@@ -41,7 +42,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
         type: IMPORT_WALLET,
         payload,
       });
-      dispatch(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+      navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -76,7 +77,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         type: IMPORT_WALLET,
         payload,
       });
-      dispatch(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+      navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -131,7 +132,7 @@ export const setPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_SET_PIN,
       payload: pin,
     });
-    dispatch(NavigationActions.navigate({ routeName: PIN_CODE_CONFIRMATION }));
+    navigate(NavigationActions.navigate({ routeName: PIN_CODE_CONFIRMATION }));
   };
 };
 
@@ -141,6 +142,6 @@ export const confirmPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    dispatch(NavigationActions.navigate({ routeName: NEW_PROFILE }));
+    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
 };

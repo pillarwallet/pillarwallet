@@ -34,7 +34,7 @@ const ItemValueHolder = styled.View`
   justify-content: flex-end;
   width: 100%;
   padding-right: ${spacing.mediumLarge}px;
-  height: 48px;
+  height: 50px;
 `;
 
 const ItemValue = styled(BoldText)`
