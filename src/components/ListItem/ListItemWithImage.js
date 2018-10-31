@@ -82,7 +82,6 @@ const ItemTitle = styled(BaseText)`
   font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
   width: 100%;
-  font-weight: ${fontWeights.medium};
   flex: 1;
 `;
 

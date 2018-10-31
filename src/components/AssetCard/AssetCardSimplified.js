@@ -6,7 +6,7 @@ import { LightText, BaseText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors, fontWeights } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -128,7 +128,6 @@ const Name = styled(BaseText)`
   letter-spacing: ${fontTrackings.tiny};
   line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
-  font-weight: ${fontWeights.medium};
   flex: 1;
 `;
 
