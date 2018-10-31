@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Linking } from 'react-native';
 import styled from 'styled-components/native';
@@ -93,6 +94,10 @@ const viewTransactionOnBlockchain = (hash: string) => {
 };
 
 class EventDetails extends React.Component<Props, {}> {
+  shouldComponentUpdate(nextProps: Props) {
+    return !isEqual(this.props, nextProps);
+  }
+
   handleAcceptConnection = () => {
     const { onClose, onAccept } = this.props;
     onClose();

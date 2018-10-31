@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
@@ -134,55 +135,61 @@ const Name = styled(BoldText)`
 const { width } = Dimensions.get('window');
 const cardWidth = width - 20;
 
-const AssetCardSimplified = (props: Props) => {
-  const {
-    name,
-    amount,
-    token,
-    balanceInFiat,
-    onPress,
-    disclaimer,
-    icon = '',
-  } = props;
+class AssetCardSimplified extends React.Component<Props, {}> {
+  shouldComponentUpdate(nextProps: Props) {
+    return !isEqual(this.props, nextProps);
+  }
 
-  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-  return (
-    <AssetOutter cardWidth={cardWidth}>
-      <Shadow heightAndroid={70}>
-        <TouchableWithoutFeedback onPress={onPress}>
-          <AssetWrapper>
-            <InnerWrapper>
-              <IconCircle>
-                {!!icon &&
-                <CachedImage
-                  key={token}
-                  style={{
-                    height: 44,
-                    width: 44,
-                  }}
-                  source={{ uri: icon }}
-                  resizeMode="contain"
-                />}
-              </IconCircle>
-              <DetailsWrapper>
-                <Name>{name}</Name>
-                <AmountWrapper>
-                  <TokenAmountWrapper>
-                    <Amount>{amount}</Amount>
-                    <AmountToken> {token}</AmountToken>
-                  </TokenAmountWrapper>
-                  {disclaimer
-                    ? <Disclaimer>{disclaimer}</Disclaimer>
-                    : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                  }
-                </AmountWrapper>
-              </DetailsWrapper>
-            </InnerWrapper>
-          </AssetWrapper>
-        </TouchableWithoutFeedback>
-      </Shadow>
-    </AssetOutter>
-  );
-};
+  render() {
+    const {
+      name,
+      amount,
+      token,
+      balanceInFiat,
+      onPress,
+      disclaimer,
+      icon = '',
+    } = this.props;
+
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+    return (
+      <AssetOutter cardWidth={cardWidth}>
+        <Shadow heightAndroid={70}>
+          <TouchableWithoutFeedback onPress={onPress}>
+            <AssetWrapper>
+              <InnerWrapper>
+                <IconCircle>
+                  {!!icon &&
+                    <CachedImage
+                      key={token}
+                      style={{
+                        height: 44,
+                        width: 44,
+                      }}
+                      source={{ uri: icon }}
+                      resizeMode="contain"
+                    />}
+                </IconCircle>
+                <DetailsWrapper>
+                  <Name>{name}</Name>
+                  <AmountWrapper>
+                    <TokenAmountWrapper>
+                      <Amount>{amount}</Amount>
+                      <AmountToken> {token}</AmountToken>
+                    </TokenAmountWrapper>
+                    {disclaimer
+                      ? <Disclaimer>{disclaimer}</Disclaimer>
+                      : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                    }
+                  </AmountWrapper>
+                </DetailsWrapper>
+              </InnerWrapper>
+            </AssetWrapper>
+          </TouchableWithoutFeedback>
+        </Shadow>
+      </AssetOutter>
+    );
+  }
+}
 
 export default AssetCardSimplified;
