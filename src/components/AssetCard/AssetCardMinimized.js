@@ -159,7 +159,6 @@ const HideAssetAddon = styled.View`
 `;
 
 class AssetCardMinimized extends React.Component<Props, State> {
-
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
