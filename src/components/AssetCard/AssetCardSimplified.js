@@ -2,11 +2,11 @@
 import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
 import styled from 'styled-components/native';
-import { LightText, BoldText } from 'components/Typography';
+import { LightText, BaseText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
-import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import { spacing, fontSizes, fontTrackings, baseColors, fontWeights } from 'utils/variables';
 
 type Props = {
   id: string,
@@ -123,11 +123,12 @@ const IconCircle = styled.View`
   justify-content: center;
 `;
 
-const Name = styled(BoldText)`
-  font-size: ${fontSizes.small};
-  letter-spacing: ${fontTrackings.medium};
+const Name = styled(BaseText)`
+  font-size: ${fontSizes.medium};
+  letter-spacing: ${fontTrackings.tiny};
   line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
+  font-weight: ${fontWeights.medium};
   flex: 1;
 `;
 
