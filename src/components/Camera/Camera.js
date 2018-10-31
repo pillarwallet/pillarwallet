@@ -227,6 +227,7 @@ class Camera extends React.Component<Props, State> {
       return this.camera.takePictureAsync({
         mirrorImage: cameraType === FRONT,
         forceUpOrientation: true,
+        fixOrientation: true,
       })
         .then((res) => {
           this.setState({
