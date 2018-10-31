@@ -195,6 +195,7 @@ class AssetScreen extends React.Component<Props, State> {
                 disclaimer={disclaimer}
                 horizontalPadding
                 innerCard
+                assetData={assetData}
               />
             </CardInnerWrapper>
             <View style={{ paddingHorizontal: spacing.mediumLarge, paddingTop: 10 }}>
