@@ -42,10 +42,10 @@ const DEFAULT = 'DEFAULT';
 
 const ItemWrapper = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
+  align-items: center;
   justify-content: center;
   padding: ${spacing.small}px ${spacing.mediumLarge}px;
-  height: ${props => props.type === ACTION ? 84 : 70}px;
+  height: ${props => props.type === DEFAULT ? 70 : 84}px;
 `;
 
 const Row = styled.View`
@@ -79,17 +79,17 @@ const Column = styled.View`
 
 const ItemTitle = styled(BaseText)`
   color: ${baseColors.slateBlack};
-  font-size: ${props => props.type === CHAT_ITEM ? fontSizes.extraSmall : fontSizes.small}px;
-  letter-spacing: ${props => props.type === CHAT_ITEM ? fontTrackings.tiny : fontTrackings.small}px;
+  font-size: ${fontSizes.medium}px;
+  letter-spacing: ${fontTrackings.tiny}px;
   width: 100%;
-  font-weight: ${props => props.type === ACTION ? fontWeights.book : 600};
+  font-weight: ${props => props.type === ACTION ? fontWeights.book : 500};
   flex: 1;
 `;
 
 const ItemParagraph = styled.Text`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.medium};
+  font-size: ${fontSizes.small}px;
+  line-height: ${fontSizes.mediumLarge}px;
   letter-spacing: ${fontTrackings.tiny}px;
   margin-top: 2px;
   flex: 1;
