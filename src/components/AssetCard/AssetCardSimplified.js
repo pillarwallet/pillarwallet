@@ -154,7 +154,6 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       amount,
       token,
       balanceInFiat,
-      onPress,
       disclaimer,
       icon = '',
     } = this.props;
