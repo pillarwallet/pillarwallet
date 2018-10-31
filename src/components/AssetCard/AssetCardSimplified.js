@@ -129,6 +129,8 @@ const Name = styled(BaseText)`
   line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
   flex: 1;
+  margin-top: 2px;
+  text-align-vertical: center;
 `;
 
 const { width } = Dimensions.get('window');
