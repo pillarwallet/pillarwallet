@@ -14,7 +14,7 @@ import Toast from 'components/Toast';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SearchBar from 'components/SearchBar';
-import { SubTitleLight, SubHeading, BoldText, LightText } from 'components/Typography';
+import { SubHeading, BoldText, LightText } from 'components/Typography';
 import Header from 'components/Header';
 import {
   addAssetAction,
@@ -38,6 +38,12 @@ const TokenListItem = styled(ListItem)`
   margin: 0;
   border-color: ${UIColors.defaultDividerColor};
   border-bottom-width: 1px;
+`;
+
+const TokensWrapper = styled(Wrapper)`
+   backgroundColor: ${baseColors.white};
+   border-color: ${UIColors.defaultDividerColor};
+   border-top-width: 1;
 `;
 
 const FoundTokenListItemWrapper = styled.View`
@@ -65,6 +71,10 @@ const TokenStatus = styled(LightText)`
   font-size: ${fontSizes.small};
   line-height: ${fontSizes.medium};
   color: ${baseColors.darkGray};
+`;
+
+const ListHeading = styled(SubHeading)`
+  padding-top: 20;
 `;
 
 type Props = {
@@ -234,6 +244,7 @@ class AddToken extends React.Component<Props, State> {
   render() {
     const titleText = 'add tokens';
     const { query, isSearching, foundAssets } = this.state;
+    const { supportedAssets } = this.props;
 
     let header;
     if (this.formChanged) {
@@ -245,41 +256,40 @@ class AddToken extends React.Component<Props, State> {
     return (
       <Container>
         {header}
-        <Wrapper regularPadding>
+        <Wrapper regularPadding style={{ backgroundColor: baseColors.snowWhite }}>
           <SearchBar
             inputProps={{
               onChange: this.handleSearchChange,
               value: query,
               autoCapitalize: 'none',
             }}
-            placeholder="Token smart contract address"
+            placeholder="Token name"
+            marginTop={15}
           />
         </Wrapper>
-        {!isSearching &&
-          <ScrollWrapper regularPadding>
-            <SubTitleLight>
-              or toggle the most popular tokens
-            </SubTitleLight>
-            <List>
-              {this.generateAddTokenListItems()}
-            </List>
-          </ScrollWrapper>
-        }
-        {isSearching && !!foundAssets.length &&
-          <ScrollWrapper regularPadding>
-            <SubHeading>
-              TOKENS FOUND
-            </SubHeading>
-            <List>
-              {this.generateFoundTokenListItems()}
-            </List>
-          </ScrollWrapper>
-        }
-        {isSearching && !foundAssets.length &&
-          <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-            <EmptyStateParagraph title="Token not found" bodyText="Please check smart contract address" />
-          </Wrapper>
-        }
+        <TokensWrapper fullScreen>
+          {!isSearching &&
+            <ScrollWrapper regularPadding>
+              <ListHeading>TOP { supportedAssets.length } TOKENS</ListHeading>
+              <List>
+                {this.generateAddTokenListItems()}
+              </List>
+            </ScrollWrapper>
+          }
+          {isSearching && !!foundAssets.length &&
+            <ScrollWrapper regularPadding>
+              <ListHeading>TOKENS FOUND</ListHeading>
+              <List>
+                {this.generateFoundTokenListItems()}
+              </List>
+            </ScrollWrapper>
+          }
+          {isSearching && !foundAssets.length &&
+            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
+              <EmptyStateParagraph title="Token not found" bodyText="Please check smart contract address" />
+            </Wrapper>
+          }
+        </TokensWrapper>
       </Container>
     );
   }
