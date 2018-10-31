@@ -389,6 +389,7 @@ class AssetsScreen extends React.Component<Props, State> {
           data={sortedAssets}
           keyExtractor={(item) => item.id}
           renderItem={this.renderAsset}
+          initialNumToRender={5}
           style={{ width: '100%' }}
           contentContainerStyle={{
             paddingLeft: horizontalPadding(assetsLayout, 'left'),
