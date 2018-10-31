@@ -1,10 +1,11 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import ReduxAsyncQueue from 'redux-async-queue';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { initAppAndRedirectAction } from '../appActions';
 
-const mockStore = configureMockStore([thunk]);
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('App actions', () => {
   let store;
   beforeEach(() => {
