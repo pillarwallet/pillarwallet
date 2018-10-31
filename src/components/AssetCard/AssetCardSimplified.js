@@ -24,6 +24,7 @@ type Props = {
     currency: string,
   },
   icon: string,
+  assetData: Object,
 }
 
 const defaultCircleColor = '#ACBCCD';
@@ -142,13 +143,17 @@ class AssetCardSimplified extends React.Component<Props, {}> {
     return !isEqual(this.props, nextProps);
   }
 
+  handleOnPress = () => {
+    const { onPress, assetData } = this.props;
+    onPress(assetData);
+  }
+
   render() {
     const {
       name,
       amount,
       token,
       balanceInFiat,
-      onPress,
       disclaimer,
       icon = '',
     } = this.props;
@@ -157,7 +162,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
     return (
       <AssetOutter cardWidth={cardWidth}>
         <Shadow heightAndroid={70}>
-          <TouchableWithoutFeedback onPress={onPress}>
+          <TouchableWithoutFeedback onPress={this.handleOnPress}>
             <AssetWrapper>
               <InnerWrapper>
                 <IconCircle>
