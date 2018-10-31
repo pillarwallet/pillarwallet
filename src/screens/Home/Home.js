@@ -329,7 +329,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileBalanceScale = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [1, 0.2],
+      outputRange: [1, 0.8],
       extrapolate: 'clamp',
     });
 
