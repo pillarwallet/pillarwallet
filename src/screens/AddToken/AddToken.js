@@ -8,6 +8,9 @@ import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
+import erc20TokensSearch from 'utils/erc20TokensSearch';
+import Button from 'components/Button';
+import Toast from 'components/Toast';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SearchBar from 'components/SearchBar';
@@ -37,10 +40,31 @@ const TokenListItem = styled(ListItem)`
   border-bottom-width: 1px;
 `;
 
+const FoundTokenListItemWrapper = styled.View`
+  flex: 1;
+  flexDirection: row;
+  justifyContent: space-between;
+`;
+
+const FoundTokenListItemBodyWrapper = styled.View`
+  flex: 1;
+  flexDirection: row;
+`;
+
+const FoundTokenListItemStatusWrapper = styled.View`
+  justifyContent: center;
+`;
+
 const TokenThumbnail = styled(CachedImage)`
   width: 44px;
   height: 44px;
   border-radius: 22px;
+`;
+
+const TokenStatus = styled(LightText)`
+  font-size: ${fontSizes.small};
+  line-height: ${fontSizes.medium};
+  color: ${baseColors.darkGray};
 `;
 
 type Props = {
@@ -57,12 +81,14 @@ type Props = {
 type State = {
   query: string,
   isSearching: boolean,
+  foundAssets: Array<Object>,
 }
 
 class AddToken extends React.Component<Props, State> {
   state = {
     query: '',
     isSearching: false,
+    foundAssets: [],
   };
 
   formChanged: boolean = false;
@@ -109,6 +135,71 @@ class AddToken extends React.Component<Props, State> {
       });
   }
 
+  generateFoundTokenListItems() {
+    const { foundAssets } = this.state;
+    const { assets } = this.props;
+
+    return foundAssets.map(asset => {
+      const { symbol, name, addr } = asset;
+      const isAdded = !!assets[symbol];
+
+      // TODO: temp solution
+      const fullIconUrl = `${SDK_PROVIDER}/asset/images/tokens/icons/${symbol.toLowerCase()}Color.png?size=3`;
+      return (
+        <TokenListItem key={addr}>
+          <FoundTokenListItemWrapper>
+            <FoundTokenListItemBodyWrapper>
+              <TokenThumbnail source={{ uri: fullIconUrl }} />
+              <Body style={{ marginLeft: 20, marginRight: 10 }}>
+                <TokenName>{name}</TokenName>
+                <TokenSymbol>{symbol}</TokenSymbol>
+              </Body>
+            </FoundTokenListItemBodyWrapper>
+            <FoundTokenListItemStatusWrapper>
+              {!isAdded &&
+                <Button
+                  title="Add to wallet"
+                  onPress={() => this.addTokenToWallet(asset)}
+                  small
+                />
+              }
+              {isAdded &&
+                <TokenStatus>In wallet</TokenStatus>
+              }
+            </FoundTokenListItemStatusWrapper>
+          </FoundTokenListItemWrapper>
+        </TokenListItem>
+      );
+    });
+  }
+
+  // TODO: add token to wallet
+  addTokenToWallet = (asset: Object) => {
+    const { addAsset } = this.props;
+    const newAsset: Asset = {
+      id: asset.addr,
+      address: asset.addr,
+      decimals: asset.decimals,
+      description: asset.description,
+      name: asset.name,
+      symbol: asset.symbol,
+      iconMonoUrl: '',
+      iconUrl: '',
+      wallpaperUrl: '',
+    };
+    // this.formChanged = true;
+
+    addAsset(newAsset);
+    this.handleScreenDismissal();
+
+    Toast.show({
+      title: 'Added asset',
+      message: `Added asset "${asset.name}" to your wallet.`,
+      type: 'info',
+      autoClose: true,
+    });
+  };
+
   handleScreenDismissal = () => {
     const {
       navigation,
@@ -125,15 +216,24 @@ class AddToken extends React.Component<Props, State> {
   };
 
   handleSearchChange = (query: string) => {
+    const formatedQuery = !query ? '' : query.trim();
+    const isSearching = formatedQuery.length > 1;
+
     this.setState({
-      query,
-      isSearching: !!query && !!query.trim(),
+      query: formatedQuery,
+      isSearching,
     });
+
+    if (isSearching) {
+      this.setState({
+        foundAssets: erc20TokensSearch.findList(formatedQuery),
+      });
+    }
   };
 
   render() {
     const titleText = 'add tokens';
-    const { query, isSearching } = this.state;
+    const { query, isSearching, foundAssets } = this.state;
 
     let header;
     if (this.formChanged) {
@@ -165,15 +265,17 @@ class AddToken extends React.Component<Props, State> {
             </List>
           </ScrollWrapper>
         }
-        {isSearching &&
+        {isSearching && !!foundAssets.length &&
           <ScrollWrapper regularPadding>
             <SubHeading>
               TOKENS FOUND
             </SubHeading>
-            {/*<List></List>*/}
+            <List>
+              {this.generateFoundTokenListItems()}
+            </List>
           </ScrollWrapper>
         }
-        {isSearching && false &&
+        {isSearching && !foundAssets.length &&
           <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
             <EmptyStateParagraph title="Token not found" bodyText="Please check smart contract address" />
           </Wrapper>
