@@ -157,6 +157,7 @@
     "react-redux": "^5.0.7",
     "readable-stream": "1.0.33",
     "redux": "^3.7.2",
+    "redux-async-queue": "^1.0.0",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
     "rn-signal-protocol-messaging": "1.0.86",

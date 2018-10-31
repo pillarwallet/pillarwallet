@@ -30,6 +30,7 @@ import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
@@ -81,10 +82,10 @@ export const registerWalletAction = () => {
       .then(JSON.parse)
       .catch(() => ({}));
 
-    await storage.save('wallet', { wallet: encryptedWallet });
-    await storage.save('app_settings', { appSettings: { wallet: +new Date() } });
+    dispatch(saveDbAction('wallet', { wallet: encryptedWallet }));
+    dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
     const user = apiUser.username ? { username: apiUser.username } : {};
-    await storage.save('user', { user });
+    dispatch(saveDbAction('user', { user }));
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
       payload: wallet,
@@ -112,7 +113,7 @@ export const registerWalletAction = () => {
     await chat.client.registerAccount().catch(() => null);
     await chat.client.setFcmId(fcmToken).catch(() => null);
     if (Object.keys(userInfo).length) {
-      await storage.save('user', { user: userInfo }, true);
+      dispatch(saveDbAction('user', { user: userInfo }, true));
     }
     const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
@@ -145,7 +146,7 @@ export const registerWalletAction = () => {
       payload: initialAssets,
     });
 
-    await storage.save('assets', { assets: initialAssets });
+    dispatch(saveDbAction('assets', { assets: initialAssets }));
 
     // STEP 6: all done, navigate to the assets screen
     const navigateToAssetsAction = NavigationActions.navigate({
@@ -179,7 +180,7 @@ export const registerOnBackendAction = () => {
 
     const userInfo = await api.userInfo(sdkWallet.walletId);
     if (Object.keys(userInfo).length) {
-      await storage.save('user', { user: userInfo }, true);
+      dispatch(saveDbAction('user', { user: userInfo }, true));
     }
     const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
     dispatch({
