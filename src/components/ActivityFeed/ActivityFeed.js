@@ -86,16 +86,17 @@ type State = {
 };
 
 class ActivityFeed extends React.Component<Props, State> {
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
-    return !isEq;
-  }
   state = {
     showModal: false,
     selectedEventData: null,
     eventType: '',
     eventStatus: '',
   };
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
+  }
 
   selectEvent = (eventData: Object, eventType, eventStatus) => {
     this.setState({
