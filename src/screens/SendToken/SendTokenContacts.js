@@ -49,12 +49,13 @@ function AddressInputTemplate(locals) {
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: 'Recipient Address',
+    placeholder: 'Username or wallet address',
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'left',
     maxLength: 42,
-    fontSize: fontSizes.medium,
+    letterSpacing: 0.1,
+    fontSize: fontSizes.small,
     fontWeight: 300,
   };
   return (
@@ -65,7 +66,7 @@ function AddressInputTemplate(locals) {
       id="address"
       onPress={onIconPress}
       inputProps={inputProps}
-      fontSize={fontSizes.medium}
+      fontSize={fontSizes.small}
     />
   );
 }
@@ -170,7 +171,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
-
+    let contactsToRender = localContacts;
+    if (value && value.address.length) {
+      const searchStr = value.address.toLowerCase();
+      contactsToRender = localContacts.filter(({ username, ethAddress }) => {
+        return username.toLowerCase().includes(searchStr) || ethAddress.toLowerCase().includes(searchStr);
+      });
+    }
     return (
       <Container>
         <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
@@ -186,9 +193,9 @@ class SendTokenContacts extends React.Component<Props, State> {
             value={value}
           />
         </FormWrapper>
-        {(!value || !value.address.length) &&
+        {!!contactsToRender.length &&
           <ContactCardList
-            data={localContacts}
+            data={contactsToRender}
             renderItem={this.renderContact}
             keyExtractor={({ username }) => username}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
