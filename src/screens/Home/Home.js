@@ -63,7 +63,7 @@ type State = {
   scrollY: Animated.Value,
 };
 
-const profileImageWidth = 72;
+const profileImageWidth = 96;
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
@@ -100,6 +100,7 @@ const HomeHeaderImageUsername = styled.View`
 
 const HomeHeaderUsername = styled(BaseText)`
   font-size: ${fontSizes.mediumLarge};
+  margin-top: 20px;
 `;
 const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
@@ -298,13 +299,13 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [-profileImageWidth / 2, -20],
+      outputRange: [-profileImageWidth / 2, -32],
       extrapolate: 'clamp',
     });
 
     const profileUsernameTranslateY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, -60],
+      outputRange: [0, -83],
       extrapolate: 'clamp',
     });
 
@@ -316,13 +317,13 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileImagePositionY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [-60, -60],
+      outputRange: [-60, -72],
       extrapolate: 'clamp',
     });
 
     const profileImageScale = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [1, 0.5],
+      outputRange: [1, 0.375],
       extrapolate: 'clamp',
     });
 

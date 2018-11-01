@@ -10,14 +10,14 @@ const Wrapper = styled.View`
   flex-direction: row;
   align-self: center;
   justify-content: space-between;
-  width: 180;
+  width: 156;
 `;
 
 const PinDot = styled.View`
-  width: 20px;
-  height: 20px;
-  background-color: ${props => (props.active ? baseColors.electricBlue : baseColors.mediumGray)};
-  border-radius: 10;
+  width: 16px;
+  height: 16px;
+  background-color: ${props => (props.active ? baseColors.electricBlue : baseColors.mediumLightGray)};
+  border-radius: 8;
 `;
 
 type Props = {
