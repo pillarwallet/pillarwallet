@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
+import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
@@ -42,10 +43,10 @@ const DEFAULT = 'DEFAULT';
 
 const ItemWrapper = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
+  align-items: center;
   justify-content: center;
   padding: ${spacing.small}px ${spacing.mediumLarge}px;
-  height: ${props => props.type === ACTION ? 84 : 70}px;
+  height: ${props => props.type === DEFAULT ? 70 : 84}px;
 `;
 
 const Row = styled.View`
@@ -79,17 +80,16 @@ const Column = styled.View`
 
 const ItemTitle = styled(BaseText)`
   color: ${baseColors.slateBlack};
-  font-size: ${props => props.type === CHAT_ITEM ? fontSizes.extraSmall : fontSizes.small}px;
-  letter-spacing: ${props => props.type === CHAT_ITEM ? fontTrackings.tiny : fontTrackings.small}px;
+  font-size: ${fontSizes.medium}px;
+  letter-spacing: ${fontTrackings.tiny}px;
   width: 100%;
-  font-weight: ${props => props.type === ACTION ? fontWeights.book : 600};
   flex: 1;
 `;
 
 const ItemParagraph = styled.Text`
   color: ${baseColors.darkGray};
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.medium};
+  font-size: ${fontSizes.small}px;
+  line-height: ${fontSizes.mediumLarge}px;
   letter-spacing: ${fontTrackings.tiny}px;
   margin-top: 2px;
   flex: 1;
@@ -338,64 +338,73 @@ const getType = (props: Props) => {
   return DEFAULT;
 };
 
-const ListItemWithImage = (props: Props) => {
-  const {
-    label,
-    subtext,
-    paragraph,
-    paragraphLines = 2,
-    customAddon,
-    onPress,
-    timeSent,
-    unreadCount,
-  } = props;
+class ListItemWithImage extends React.Component<Props, {}> {
+  shouldComponentUpdate(nextProps: Props) {
+    const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
+      if (typeof val1 === 'function' && typeof val2 === 'function') return true;
+      return undefined;
+    });
+    return !isEq;
+  }
 
-  const type = getType(props);
+  render() {
+    const {
+      label,
+      subtext,
+      paragraph,
+      paragraphLines = 2,
+      customAddon,
+      onPress,
+      timeSent,
+      unreadCount,
+    } = this.props;
 
-  return (
-    <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
-      <ImageWrapper>
-        <ItemImage {...props} type={type} />
-      </ImageWrapper>
-      <InfoWrapper type={type}>
-        <Column type={type}>
-          {!!label &&
-            <Row>
-              <ItemTitle type={type}>{label}</ItemTitle>
-              {(type === CHAT_ITEM && !!timeSent) &&
-                <TimeWrapper>
-                  <TimeSent>{timeSent}</TimeSent>
-                </TimeWrapper>
-              }
-            </Row>
-          }
-          {!!paragraph &&
-            <Row>
-              <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-              {type === CHAT_ITEM &&
-                <BadgePlacer>
-                  {!!unreadCount &&
-                  <ItemBadge>
-                    <UnreadNumber>
-                      {unreadCount}
-                    </UnreadNumber>
-                  </ItemBadge>
-                  }
-                </BadgePlacer>
-              }
-            </Row>
-          }
-          {!!subtext &&
-            <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
-          }
-        </Column>
-        <Column rightColumn type={type}>
-          <Addon {...props} type={type} />
-          {customAddon}
-        </Column>
-      </InfoWrapper>
-    </ItemWrapper>
-  );
-};
+    const type = getType(this.props);
+    return (
+      <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
+        <ImageWrapper>
+          <ItemImage {...this.props} type={type} />
+        </ImageWrapper>
+        <InfoWrapper type={type}>
+          <Column type={type}>
+            {!!label &&
+              <Row>
+                <ItemTitle type={type}>{label}</ItemTitle>
+                {(type === CHAT_ITEM && !!timeSent) &&
+                  <TimeWrapper>
+                    <TimeSent>{timeSent}</TimeSent>
+                  </TimeWrapper>
+                }
+              </Row>
+            }
+            {!!paragraph &&
+              <Row>
+                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+                {type === CHAT_ITEM &&
+                  <BadgePlacer>
+                    {!!unreadCount &&
+                      <ItemBadge>
+                        <UnreadNumber>
+                          {unreadCount}
+                        </UnreadNumber>
+                      </ItemBadge>
+                    }
+                  </BadgePlacer>
+                }
+              </Row>
+            }
+            {!!subtext &&
+              <ItemSubText numberOfLines={1}>{subtext}</ItemSubText>
+            }
+          </Column>
+          <Column rightColumn type={type}>
+            <Addon {...this.props} type={type} />
+            {customAddon}
+          </Column>
+        </InfoWrapper>
+      </ItemWrapper>
+    );
+  }
+}
 
 export default ListItemWithImage;
