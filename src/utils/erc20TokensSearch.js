@@ -10,7 +10,7 @@ const includes = (value: string, searchValue: string): boolean => {
 const findList = (searchValue: string, size: number = 20): Array<Object> => {
   if (!searchValue) return [];
   return erc20Tokens.filter(token => {
-    const value = token.name + token.symbol + token.addr;
+    const value = token.name + token.symbol;
     return includes(value, searchValue);
   }).slice(0, size);
 };

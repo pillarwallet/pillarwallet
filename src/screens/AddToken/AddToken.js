@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
-import { List, ListItem, Body, Right, Switch } from 'native-base';
+import { List, ListItem, Body, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
@@ -36,35 +36,31 @@ const TokenSymbol = styled(LightText)`
 
 const TokenListItem = styled(ListItem)`
   margin: 0;
-  border-color: ${UIColors.defaultDividerColor};
-  border-bottom-width: 1px;
+  padding: 0 0 0 20px;
+  border-bottom-width: 0;
 `;
 
-const TokensWrapper = styled(Wrapper)`
+const TokensWrapper = styled(ScrollWrapper)`
    backgroundColor: ${baseColors.white};
    border-color: ${UIColors.defaultDividerColor};
    border-top-width: 1;
 `;
 
-const FoundTokenListItemWrapper = styled.View`
-  flex: 1;
-  flexDirection: row;
-  justifyContent: space-between;
-`;
-
 const FoundTokenListItemBodyWrapper = styled.View`
   flex: 1;
   flexDirection: row;
-`;
-
-const FoundTokenListItemStatusWrapper = styled.View`
-  justifyContent: center;
+  justifyContent: space-between;
+  padding: 15px 20px 15px 0;
+  border-color: ${UIColors.defaultDividerColor};
+  border-bottom-width: 1;
 `;
 
 const TokenThumbnail = styled(CachedImage)`
   width: 44px;
   height: 44px;
   border-radius: 22px;
+  background: ${baseColors.lightGray};
+  margin-right: 15px;
 `;
 
 const TokenStatus = styled(LightText)`
@@ -74,7 +70,7 @@ const TokenStatus = styled(LightText)`
 `;
 
 const ListHeading = styled(SubHeading)`
-  padding-top: 20;
+  padding: 20px 20px 0 20px;
 `;
 
 type Props = {
@@ -130,16 +126,18 @@ class AddToken extends React.Component<Props, State> {
         return (
           <TokenListItem key={symbol}>
             <TokenThumbnail source={{ uri: fullIconUrl }} />
-            <Body style={{ marginLeft: 20 }}>
-              <TokenName>{name}</TokenName>
-              <TokenSymbol>{symbol}</TokenSymbol>
-            </Body>
-            <Right>
-              <Switch
-                onValueChange={boundAssetToggleHandler}
-                value={!!assets[symbol]}
-              />
-            </Right>
+            <FoundTokenListItemBodyWrapper>
+              <Body>
+                <TokenName>{name}</TokenName>
+                <TokenSymbol>{symbol}</TokenSymbol>
+              </Body>
+              <Wrapper center>
+                <Switch
+                  onValueChange={boundAssetToggleHandler}
+                  value={!!assets[symbol]}
+                />
+              </Wrapper>
+            </FoundTokenListItemBodyWrapper>
           </TokenListItem>
         );
       });
@@ -154,30 +152,29 @@ class AddToken extends React.Component<Props, State> {
       const isAdded = !!assets[symbol];
 
       // TODO: temp solution
-      const fullIconUrl = `${SDK_PROVIDER}/asset/images/tokens/icons/${symbol.toLowerCase()}Color.png?size=3`;
+      const fullIconUrl = `${SDK_PROVIDER}/asset/images/tokens/icons/plrColor.png?size=3`;
+
       return (
         <TokenListItem key={addr}>
-          <FoundTokenListItemWrapper>
-            <FoundTokenListItemBodyWrapper>
-              <TokenThumbnail source={{ uri: fullIconUrl }} />
-              <Body style={{ marginLeft: 20, marginRight: 10 }}>
-                <TokenName>{name}</TokenName>
-                <TokenSymbol>{symbol}</TokenSymbol>
-              </Body>
-            </FoundTokenListItemBodyWrapper>
-            <FoundTokenListItemStatusWrapper>
+          <TokenThumbnail source={{ uri: fullIconUrl }} />
+          <FoundTokenListItemBodyWrapper>
+            <Body style={{ marginRight: 10 }}>
+              <TokenName>{name}</TokenName>
+              <TokenSymbol>{symbol}</TokenSymbol>
+            </Body>
+            <Wrapper center>
               {!isAdded &&
-                <Button
-                  title="Add to wallet"
-                  onPress={() => this.addTokenToWallet(asset)}
-                  small
-                />
+              <Button
+                title="Add to wallet"
+                onPress={() => this.addTokenToWallet(asset)}
+                small
+              />
               }
               {isAdded &&
-                <TokenStatus>In wallet</TokenStatus>
+              <TokenStatus>In wallet</TokenStatus>
               }
-            </FoundTokenListItemStatusWrapper>
-          </FoundTokenListItemWrapper>
+            </Wrapper>
+          </FoundTokenListItemBodyWrapper>
         </TokenListItem>
       );
     });
@@ -267,9 +264,9 @@ class AddToken extends React.Component<Props, State> {
             marginTop={15}
           />
         </Wrapper>
-        <TokensWrapper fullScreen>
+        <TokensWrapper>
           {!isSearching &&
-            <ScrollWrapper regularPadding>
+            <ScrollWrapper>
               <ListHeading>TOP { supportedAssets.length } TOKENS</ListHeading>
               <List>
                 {this.generateAddTokenListItems()}
@@ -277,7 +274,7 @@ class AddToken extends React.Component<Props, State> {
             </ScrollWrapper>
           }
           {isSearching && !!foundAssets.length &&
-            <ScrollWrapper regularPadding>
+            <ScrollWrapper>
               <ListHeading>TOKENS FOUND</ListHeading>
               <List>
                 {this.generateFoundTokenListItems()}

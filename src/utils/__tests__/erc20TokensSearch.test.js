@@ -46,11 +46,10 @@ describe('ERC20TokensSearch utils', () => {
         });
       });
 
-      describe('and the token(s) can be found by address, name or symbol', () => {
+      describe('and the token(s) can be found by name or symbol', () => {
         it('should return the array with token(s)', () => {
           expect(findList('PLR').length).toBe(1);
           expect(findList('Pillar').length).toBe(1);
-          expect(findList('0xe3818504c1b32bf1557b16c238b2e01fd3149c17').length).toBe(1);
         });
       });
 
