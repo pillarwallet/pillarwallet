@@ -30,6 +30,7 @@ type Props = {
   disabledRemove?: boolean,
   onRemove: Function,
   forceHideRemoval?: boolean,
+  assetData: Object,
 }
 
 type State = {
@@ -187,8 +188,8 @@ class AssetCardMinimized extends React.Component<Props, State> {
   };
 
   handlePress = () => {
-    const { onPress } = this.props;
-    if (onPress) onPress();
+    const { onPress, assetData } = this.props;
+    if (onPress) onPress(assetData);
     if (this.state.showHide) {
       this.hideRemoval();
     }
