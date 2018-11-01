@@ -6,9 +6,7 @@ import {
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
 import { excludeLocalContacts } from 'utils/contacts';
-import Storage from 'services/storage';
-
-const storage = Storage.getInstance('db');
+import { saveDbAction } from './dbActions';
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -71,7 +69,7 @@ export const syncContactAction = (userId: string) => {
     const updatedContacts = contacts
       .filter(({ id }) => id !== userId)
       .concat({ ...userInfo, createdAt: oldInfo.createdAt || currentDate });
-    await storage.save('contacts', { contacts: updatedContacts }, true);
+    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
     dispatch({
       type: UPDATE_CONTACTS,
