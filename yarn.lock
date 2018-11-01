@@ -10634,6 +10634,10 @@ reduce-function-call@^1.0.1:
   dependencies:
     balanced-match "^0.4.2"
 
+redux-async-queue@^1.0.0:
+  version "1.0.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/redux-async-queue/-/redux-async-queue-1.0.0.tgz#e3c0b5a01e150541735cd3bbd24561637cd21e9e"
+
 redux-devtools-extension@^2.13.2:
   version "2.13.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/redux-devtools-extension/-/redux-devtools-extension-2.13.5.tgz#3ff34f7227acfeef3964194f5f7fc2765e5c5a39"

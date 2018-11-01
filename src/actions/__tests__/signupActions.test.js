@@ -1,6 +1,7 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import ReduxAsyncQueue from 'redux-async-queue';
 import { ONBOARDING_FLOW } from 'constants/navigationConstants';
 import Storage from 'services/storage';
 import { confirmOTPAction } from '../signupActions';
@@ -8,7 +9,7 @@ import { confirmOTPAction } from '../signupActions';
 const storage = Storage.getInstance('db'); // should utilise db from config once setup
 
 const NAVIGATE = 'Navigation/NAVIGATE';
-const mockStore = configureMockStore([thunk]);
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 const store = mockStore({});
 describe('Signup actions', () => {
   xit('should expect series of actions to be dispatch on confirmOTPAction execution including storage update', () => {
