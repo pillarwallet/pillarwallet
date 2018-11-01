@@ -20,7 +20,7 @@ import {
   saveBaseFiatCurrencyAction,
   changeRequestPinForTransactionAction,
   updateAppSettingsAction,
-} from 'actions/profileActions';
+} from 'actions/appSettingsActions';
 import { updateUserAction } from 'actions/userActions';
 import { repairStorageAction } from 'actions/appActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
