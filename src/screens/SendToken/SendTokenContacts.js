@@ -67,6 +67,7 @@ function AddressInputTemplate(locals) {
       onPress={onIconPress}
       inputProps={inputProps}
       fontSize={fontSizes.small}
+      marginTop={30}
     />
   );
 }

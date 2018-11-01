@@ -45,6 +45,7 @@ type Props = {
   optionsSelector?: Function,
   fontSize?: number,
   white?: boolean,
+  marginTop?: number,
 }
 
 type EventLike = {
@@ -89,7 +90,7 @@ const Label = styled(MediumText)`
 `;
 
 const Wrapper = styled.View`
-  margin: 10px 0;
+  margin: ${props => props.marginTop || '0'}px 0 10px;
 `;
 
 const Item = styled.View`
@@ -301,11 +302,12 @@ class SingleInput extends React.Component<Props, *> {
       onPress,
       options,
       fontSize,
+      marginTop,
     } = this.props;
     const { value = '' } = inputProps;
     const theme = getTheme(this.props);
     return (
-      <Wrapper>
+      <Wrapper marginTop={marginTop}>
         {label && <Label>{label.toUpperCase()}</Label>}
         {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <InputHolder>
