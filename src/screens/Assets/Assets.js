@@ -393,7 +393,6 @@ class AssetsScreen extends React.Component<Props, State> {
           initialNumToRender={5}
           maxToRenderPerBatch={5}
           onEndReachedThreshold={0.5}
-          removeClippedSubviews
           style={{ width: '100%' }}
           contentContainerStyle={{
             paddingLeft: horizontalPadding(assetsLayout, 'left'),
