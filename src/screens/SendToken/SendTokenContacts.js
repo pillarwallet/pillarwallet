@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import Separator from 'components/Separator';
-import { SEND_TOKEN_AMOUNT, CONTACT } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
@@ -143,13 +143,11 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
-    const { navigation } = this.props;
     return (
       <ListItemWithImage
         onPress={() => this.setUsersEthAddress(user.ethAddress)}
         label={user.username}
         avatarUrl={user.profileImage}
-        navigateToProfile={() => navigation.navigate(CONTACT, { contact: user })}
       />
     );
   };

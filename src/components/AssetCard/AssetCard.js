@@ -27,6 +27,7 @@ type Props = {
   icon: string,
   horizontalPadding?: boolean,
   innerCard?: boolean,
+  assetData: Object,
 }
 
 const AssetOutter = styled.View`
@@ -139,13 +140,17 @@ class AssetCard extends React.Component<Props, {}> {
     return !isEqual(this.props, nextProps);
   }
 
+  handleOnPress = () => {
+    const { onPress, assetData } = this.props;
+    onPress(assetData);
+  }
+
   render() {
     const {
       name,
       amount,
       token,
       balanceInFiat,
-      onPress,
       wallpaper,
       isListed = true,
       disclaimer,
@@ -158,7 +163,7 @@ class AssetCard extends React.Component<Props, {}> {
     return (
       <AssetOutter>
         <Shadow heightAndroid={innerCard ? innerCardHeight : 140}>
-          <TouchableWithoutFeedback onPress={onPress}>
+          <TouchableWithoutFeedback onPress={this.handleOnPress}>
             <AssetWrapper innerCard={innerCard} isListed={isListed}>
               <BackgroundImage source={{ uri: wallpaperUri }} />
               <DetailsWrapper innerCard={innerCard}>
