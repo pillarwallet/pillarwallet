@@ -1,8 +1,6 @@
 // @flow
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
-import Storage from 'services/storage';
-
-const storage = Storage.getInstance('db');
+import { saveDbAction } from './dbActions';
 
 export const updateUserAction = (walletId: string, field: Object) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -10,7 +8,7 @@ export const updateUserAction = (walletId: string, field: Object) => {
     if (!Object.keys(user).length) return;
 
     const updatedUser = { ...user, lastUpdateTime: +new Date() };
-    await storage.save('user', { user: updatedUser }, true);
+    dispatch(saveDbAction('user', { user: updatedUser }, true));
 
     dispatch({
       type: UPDATE_USER,
@@ -31,7 +29,7 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
       profileImage: userAvatar.profileImage,
       lastUpdateTime: +new Date(),
     };
-    await storage.save('user', { user: updatedUser }, true);
+    dispatch(saveDbAction('user', { user: updatedUser }, true));
 
     dispatch({
       type: UPDATE_USER,

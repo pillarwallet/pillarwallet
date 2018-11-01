@@ -12,6 +12,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
+import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
 
@@ -45,7 +46,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
         .filter(({ hash }) => !!hash)
         .filter(({ value }) => typeof value !== 'object');
       if (filteredHistory.length !== history.length) {
-        storage.save('history', { history: filteredHistory }, true);
+        dispatch(saveDbAction('history', { history: filteredHistory }, true));
       }
       dispatch({ type: SET_HISTORY, payload: filteredHistory });
 

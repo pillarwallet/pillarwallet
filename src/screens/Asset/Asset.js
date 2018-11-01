@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Share, RefreshControl, Platform, View } from 'react-native';
+import isEqual from 'lodash.isequal';
 import { baseColors, UIColors, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -84,6 +85,15 @@ class AssetScreen extends React.Component<Props, State> {
     const { assetData, resetHideRemoval } = navigation.state.params;
     fetchTransactionsHistory(wallet.address, assetData.token);
     resetHideRemoval();
+  }
+
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isFocused = this.props.navigation.isFocused();
+    if (!isFocused) {
+      return false;
+    }
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
   }
 
   handleCardTap = () => {
@@ -185,6 +195,7 @@ class AssetScreen extends React.Component<Props, State> {
                 disclaimer={disclaimer}
                 horizontalPadding
                 innerCard
+                assetData={assetData}
               />
             </CardInnerWrapper>
             <View style={{ paddingHorizontal: spacing.mediumLarge, paddingTop: 10 }}>

@@ -300,7 +300,7 @@ const tabNavigation = createBottomTabNavigator(
       },
     },
     tabBarPosition: 'bottom',
-    animationEnabled: true,
+    animationEnabled: false,
     swipeEnabled: false,
     ...generateCustomBottomBar(),
   },

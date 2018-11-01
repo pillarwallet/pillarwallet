@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
-import { handleImagePickAction } from 'actions/profileActions';
+import { handleImagePickAction } from 'actions/appSettingsActions';
 
 type Props = {
   onModalHide?: Function,
@@ -227,6 +227,7 @@ class Camera extends React.Component<Props, State> {
       return this.camera.takePictureAsync({
         mirrorImage: cameraType === FRONT,
         forceUpOrientation: true,
+        fixOrientation: true,
       })
         .then((res) => {
           this.setState({

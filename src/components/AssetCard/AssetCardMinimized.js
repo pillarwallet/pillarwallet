@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, TouchableOpacity, Animated, Easing, Dimensions } from 'react-native';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
@@ -29,6 +30,7 @@ type Props = {
   disabledRemove?: boolean,
   onRemove: Function,
   forceHideRemoval?: boolean,
+  assetData: Object,
 }
 
 type State = {
@@ -158,6 +160,11 @@ const HideAssetAddon = styled.View`
 `;
 
 class AssetCardMinimized extends React.Component<Props, State> {
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
+    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    return !isEq;
+  }
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -181,8 +188,8 @@ class AssetCardMinimized extends React.Component<Props, State> {
   };
 
   handlePress = () => {
-    const { onPress } = this.props;
-    if (onPress) onPress();
+    const { onPress, assetData } = this.props;
+    if (onPress) onPress(assetData);
     if (this.state.showHide) {
       this.hideRemoval();
     }

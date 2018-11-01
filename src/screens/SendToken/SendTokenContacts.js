@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import Separator from 'components/Separator';
-import { SEND_TOKEN_AMOUNT, CONTACT } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
@@ -49,12 +49,13 @@ function AddressInputTemplate(locals) {
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
-    placeholder: 'Recipient Address',
+    placeholder: 'Username or wallet address',
     value: locals.value,
     keyboardType: locals.keyboardType,
     textAlign: 'left',
     maxLength: 42,
-    fontSize: fontSizes.medium,
+    letterSpacing: 0.1,
+    fontSize: fontSizes.small,
     fontWeight: 300,
   };
   return (
@@ -65,7 +66,7 @@ function AddressInputTemplate(locals) {
       id="address"
       onPress={onIconPress}
       inputProps={inputProps}
-      fontSize={fontSizes.medium}
+      fontSize={fontSizes.small}
     />
   );
 }
@@ -143,13 +144,11 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   renderContact = ({ item: user }) => {
-    const { navigation } = this.props;
     return (
       <ListItemWithImage
         onPress={() => this.setUsersEthAddress(user.ethAddress)}
         label={user.username}
         avatarUrl={user.profileImage}
-        navigateToProfile={() => navigation.navigate(CONTACT, { contact: user })}
       />
     );
   };
@@ -172,7 +171,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     const { isScanning, formStructure, value } = this.state;
 
     const formOptions = generateFormOptions({ onIconPress: this.handleQRScannerOpen });
-
+    let contactsToRender = localContacts;
+    if (value && value.address.length) {
+      const searchStr = value.address.toLowerCase();
+      contactsToRender = localContacts.filter(({ username, ethAddress }) => {
+        return username.toLowerCase().includes(searchStr) || ethAddress.toLowerCase().includes(searchStr);
+      });
+    }
     return (
       <Container>
         <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
@@ -188,12 +193,14 @@ class SendTokenContacts extends React.Component<Props, State> {
             value={value}
           />
         </FormWrapper>
-        <ContactCardList
-          data={localContacts}
-          renderItem={this.renderContact}
-          keyExtractor={({ username }) => username}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-        />
+        {!!contactsToRender.length &&
+          <ContactCardList
+            data={contactsToRender}
+            renderItem={this.renderContact}
+            keyExtractor={({ username }) => username}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+          />
+        }
         <QRCodeScanner
           validator={ETHValidator}
           dataFormatter={decodeETHAddress}
@@ -201,9 +208,11 @@ class SendTokenContacts extends React.Component<Props, State> {
           onDismiss={this.handleQRScannerClose}
           onRead={this.handleQRRead}
         />
-        <Footer keyboardVerticalOffset={35}>
-          <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
-        </Footer>
+        {!!value && !!value.address.length &&
+          <Footer keyboardVerticalOffset={35}>
+            <Button flexRight small disabled={!value.address.length} title="Next" onPress={this.handleFormSubmit} />
+          </Footer>
+        }
       </Container>
     );
   }

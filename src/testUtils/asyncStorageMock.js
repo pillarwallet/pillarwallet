@@ -17,14 +17,18 @@ export default class AsyncStorageMock {
 
   setItem = mock(jest.fn((key, value) => {
     return new Promise((resolve) => {
-      this.storageCache[key] = value;
-      resolve(value);
+      setTimeout(() => {
+        this.storageCache[key] = value;
+        resolve(value);
+      }, 20);
     });
   }));
 
   getItem = mock(jest.fn((key) => {
     return new Promise((resolve) => {
-      resolve(this.storageCache[key]);
+      setTimeout(() => {
+        resolve(this.storageCache[key]);
+      }, 20);
     });
   }));
 

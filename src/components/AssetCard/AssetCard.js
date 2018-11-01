@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, View, Dimensions } from 'react-native';
+import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
 import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
@@ -26,6 +27,7 @@ type Props = {
   icon: string,
   horizontalPadding?: boolean,
   innerCard?: boolean,
+  assetData: Object,
 }
 
 const AssetOutter = styled.View`
@@ -133,62 +135,72 @@ const Name = styled(BoldText)`
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
-const AssetCard = (props: Props) => {
-  const {
-    name,
-    amount,
-    token,
-    balanceInFiat,
-    onPress,
-    wallpaper,
-    isListed = true,
-    disclaimer,
-    icon = '',
-    innerCard,
-  } = props;
+class AssetCard extends React.Component<Props, {}> {
+  shouldComponentUpdate(nextProps: Props) {
+    return !isEqual(this.props, nextProps);
+  }
 
-  const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-  const wallpaperUri = isListed ? wallpaper : undefined;
-  return (
-    <AssetOutter>
-      <Shadow heightAndroid={innerCard ? innerCardHeight : 140}>
-        <TouchableWithoutFeedback onPress={onPress}>
-          <AssetWrapper innerCard={innerCard} isListed={isListed}>
-            <BackgroundImage source={{ uri: wallpaperUri }} />
-            <DetailsWrapper innerCard={innerCard}>
-              <UpperRow>
-                <Name isListed={isListed} innerCard={innerCard}>{name}</Name>
-                {!!icon &&
-                  <IconCircle isListed={isListed} innerCard={innerCard}>
-                    <CachedImage
-                      key={token}
-                      style={{
-                        height: 40,
-                        width: 40,
-                      }}
-                      source={{ uri: icon }}
-                      resizeMode="contain"
-                    />
-                  </IconCircle>}
-              </UpperRow>
-              <View style={{ flexDirection: 'column' }}>
-                <AmountWrapper>
-                  <Amount isListed={isListed} innerCard={innerCard}>{amount}</Amount>
-                  <AmountToken isListed={isListed} innerCard={innerCard}>{token}</AmountToken>
-                </AmountWrapper>
-                <View style={{ marginTop: 8 }}>
-                  {disclaimer
-                    ? <Disclaimer>{disclaimer}</Disclaimer>
-                    : <FiatAmount innerCard={innerCard}>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                  }
+  handleOnPress = () => {
+    const { onPress, assetData } = this.props;
+    onPress(assetData);
+  }
+
+  render() {
+    const {
+      name,
+      amount,
+      token,
+      balanceInFiat,
+      wallpaper,
+      isListed = true,
+      disclaimer,
+      icon = '',
+      innerCard,
+    } = this.props;
+
+    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+    const wallpaperUri = isListed ? wallpaper : undefined;
+    return (
+      <AssetOutter>
+        <Shadow heightAndroid={innerCard ? innerCardHeight : 140}>
+          <TouchableWithoutFeedback onPress={this.handleOnPress}>
+            <AssetWrapper innerCard={innerCard} isListed={isListed}>
+              <BackgroundImage source={{ uri: wallpaperUri }} />
+              <DetailsWrapper innerCard={innerCard}>
+                <UpperRow>
+                  <Name isListed={isListed} innerCard={innerCard}>{name}</Name>
+                  {!!icon &&
+                    <IconCircle isListed={isListed} innerCard={innerCard}>
+                      <CachedImage
+                        key={token}
+                        style={{
+                          height: 40,
+                          width: 40,
+                        }}
+                        source={{ uri: icon }}
+                        resizeMode="contain"
+                      />
+                    </IconCircle>}
+                </UpperRow>
+                <View style={{ flexDirection: 'column' }}>
+                  <AmountWrapper>
+                    <Amount isListed={isListed} innerCard={innerCard}>{amount}</Amount>
+                    <AmountToken isListed={isListed} innerCard={innerCard}>{token}</AmountToken>
+                  </AmountWrapper>
+                  <View style={{ marginTop: 8 }}>
+                    {disclaimer
+                      ? <Disclaimer>{disclaimer}</Disclaimer>
+                      : <FiatAmount innerCard={innerCard}>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+                    }
+                  </View>
                 </View>
-              </View>
-            </DetailsWrapper>
-          </AssetWrapper>
-        </TouchableWithoutFeedback>
-      </Shadow>
-    </AssetOutter>
-  );
-};
+              </DetailsWrapper>
+            </AssetWrapper>
+          </TouchableWithoutFeedback>
+        </Shadow>
+      </AssetOutter>
+    );
+  }
+}
 
 export default AssetCard;

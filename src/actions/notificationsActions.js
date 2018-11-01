@@ -20,7 +20,7 @@ import {
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT_LIST } from 'constants/navigationConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -36,6 +36,7 @@ let signalListener = null;
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
   [BCX]: HOME,
+  [SIGNAL]: CHAT_LIST,
 };
 
 export const startListeningIntercomNotificationsAction = () => {
