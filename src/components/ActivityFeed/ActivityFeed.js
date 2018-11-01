@@ -221,6 +221,22 @@ class ActivityFeed extends React.Component<Props, State> {
     );
   };
 
+  handleRejectInvitation = () => {
+    this.props.onRejectInvitation(this.state.selectedEventData);
+  };
+
+  handleCancelInvitation = () => {
+    this.props.onCancelInvitation(this.state.selectedEventData);
+  };
+
+  handleAcceptInvitation = () => {
+    this.props.onAcceptInvitation(this.state.selectedEventData);
+  };
+
+  handleClose = () => {
+    this.setState({ showModal: false });
+  };
+
   render() {
     const {
       notifications,
@@ -231,9 +247,6 @@ class ActivityFeed extends React.Component<Props, State> {
       customFeedData,
       feedTitle,
       navigation,
-      onRejectInvitation,
-      onAcceptInvitation,
-      onCancelInvitation,
       backgroundColor,
       wrapperStyle,
     } = this.props;
@@ -312,17 +325,17 @@ class ActivityFeed extends React.Component<Props, State> {
         <SlideModal
           isVisible={showModal}
           title="transaction details"
-          onModalHide={() => { this.setState({ showModal: false }); }}
+          onModalHide={this.handleClose}
           eventDetail
         >
           <EventDetails
             eventData={selectedEventData}
             eventType={eventType}
             eventStatus={eventStatus}
-            onClose={() => this.setState({ showModal: false })}
-            onReject={() => onRejectInvitation(selectedEventData)}
-            onCancel={() => onCancelInvitation(selectedEventData)}
-            onAccept={() => onAcceptInvitation(selectedEventData)}
+            onClose={this.handleClose}
+            onReject={this.handleRejectInvitation}
+            onCancel={this.handleCancelInvitation}
+            onAccept={this.handleAcceptInvitation}
             navigation={navigation}
           />
         </SlideModal>

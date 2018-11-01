@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import isEqual from 'lodash.isequal';
+import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
@@ -340,7 +340,11 @@ const getType = (props: Props) => {
 
 class ListItemWithImage extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
-    return !isEqual(this.props, nextProps);
+    const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
+      if (typeof val1 === 'function' && typeof val2 === 'function') return true;
+      return undefined;
+    });
+    return !isEq;
   }
 
   render() {
