@@ -293,6 +293,7 @@ class PeopleScreen extends React.Component<Props, State> {
             data={sortedLocalContacts}
             keyExtractor={(item) => item.id}
             renderItem={this.renderContact}
+            initialNumToRender={8}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{

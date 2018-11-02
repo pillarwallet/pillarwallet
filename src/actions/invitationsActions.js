@@ -16,9 +16,7 @@ import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
-import Storage from 'services/storage';
-
-const storage = Storage.getInstance('db');
+import { saveDbAction } from './dbActions';
 
 export const fetchInviteNotificationsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -83,9 +81,9 @@ export const fetchInviteNotificationsAction = () => {
         return { ...accessToken, userAccessToken: connectionKey };
       });
     });
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
-    await storage.save('contacts', { contacts: updatedContacts }, true);
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     dispatch({
       type: UPDATE_INVITATIONS,
@@ -129,7 +127,7 @@ export const sendInvitationAction = (user: ApiUser) => {
       connectionKey: accessKey,
       createdAt: +new Date() / 1000,
     };
-    await storage.save('invitations', { invitations: [...invitations, invitation] }, true);
+    dispatch(saveDbAction('invitations', { invitations: [...invitations, invitation] }, true));
 
     const updatedAccessTokens = accessTokens
       .filter(({ userId }) => userId !== user.id)
@@ -138,7 +136,7 @@ export const sendInvitationAction = (user: ApiUser) => {
         myAccessToken: accessKey,
         userAccessToken: '',
       });
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     dispatch({
       type: ADD_INVITATION,
@@ -181,13 +179,13 @@ export const acceptInvitationAction = (invitation: Object) => {
     }
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
     const updatedContacts = contacts
       .filter(({ id }) => id !== invitation.id)
       .concat(invitation)
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
-    await storage.save('contacts', { contacts: updatedContacts }, true);
+    dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
     const updatedAccessTokens = accessTokens
       .filter(({ userId }) => userId !== invitation.id)
@@ -196,7 +194,7 @@ export const acceptInvitationAction = (invitation: Object) => {
         myAccessToken: sourceUserAccessKey,
         userAccessToken: invitation.connectionKey,
       });
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     dispatch({
       type: UPDATE_INVITATIONS,
@@ -246,10 +244,10 @@ export const cancelInvitationAction = (invitation: Object) => {
     }));
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
     const updatedAccessTokens = accessTokens.filter(({ userId }) => userId !== invitation.id);
-    await storage.save('accessTokens', { accessTokens: updatedAccessTokens }, true);
+    dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     dispatch({
       type: UPDATE_INVITATIONS,
@@ -290,7 +288,7 @@ export const rejectInvitationAction = (invitation: Object) => {
     }));
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
-    await storage.save('invitations', { invitations: updatedInvitations }, true);
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
     dispatch({
       type: UPDATE_INVITATIONS,

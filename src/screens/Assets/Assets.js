@@ -257,12 +257,13 @@ class AssetsScreen extends React.Component<Props, State> {
       token: assetData.token,
       amount: assetData.amount,
       balanceInFiat: assetData.balanceInFiat,
-      onPress: () => this.handleCardTap(assetData),
+      onPress: this.handleCardTap,
       address: assetData.address,
       icon: assetData.iconColor,
       wallpaper: assetData.wallpaper,
       isListed,
       disclaimer,
+      assetData,
     };
     const isETH = asset.symbol === ETH;
 
@@ -389,6 +390,9 @@ class AssetsScreen extends React.Component<Props, State> {
           data={sortedAssets}
           keyExtractor={(item) => item.id}
           renderItem={this.renderAsset}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          onEndReachedThreshold={0.5}
           style={{ width: '100%' }}
           contentContainerStyle={{
             paddingLeft: horizontalPadding(assetsLayout, 'left'),

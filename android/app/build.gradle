@@ -154,7 +154,7 @@ dependencies {
   compile project(':react-native-sentry')
   compile 'com.android.support:multidex:1.0.1'
   compile fileTree(dir: 'libs', include: ['*.jar'])
-  
+
   // Our dependencies
   compile "com.google.android.gms:play-services-base:15.0.1"
   compile "com.google.firebase:firebase-core:15.0.2"
@@ -210,7 +210,6 @@ dependencies {
   compile project(':rn-signal-protocol-messaging')
   compile project(':react-native-intercom')
   compile project(':react-native-udp')
-  compile project(':react-native-testfairy')
   compile project(':react-native-tcp')
   compile project(':react-native-randombytes')
   compile project(':react-native-os')
