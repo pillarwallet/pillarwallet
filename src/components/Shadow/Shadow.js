@@ -52,8 +52,8 @@ export const Shadow = (props: Props) => {
   let sSpread = shadowSpread;
 
   if (pixelRatio < 2) {
-    sDistance = shadowDistance * pixelRatio / 2;
-    sSpread = shadowSpread * pixelRatio / 2;
+    sDistance = (shadowDistance * pixelRatio) / 2;
+    sSpread = (shadowSpread * pixelRatio) / 2;
   }
 
 
