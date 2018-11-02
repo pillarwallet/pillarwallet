@@ -130,11 +130,11 @@ const RecentConnectionsWrapper = styled.View`
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
   padding-top: 100px;
-  `;
+`;
 
 const RecentConnectionsSpacer = styled.View`
-    min-height: 100px;
-  `;
+  min-height: 100px;
+`;
 
 const RecentConnectionsScrollView = styled.ScrollView`
   background-color: ${baseColors.snowWhite};
