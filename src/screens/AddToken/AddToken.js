@@ -109,6 +109,25 @@ class AddToken extends React.Component<Props, State> {
     removeAsset(asset);
   };
 
+  generateTokenListItem({
+    symbol, name, fullIconUrl, actionBlock,
+  }) {
+    return (
+      <TokenListItem key={symbol}>
+        <TokenThumbnail source={{ uri: fullIconUrl }} />
+        <FoundTokenListItemBodyWrapper>
+          <Body>
+            <TokenName>{name}</TokenName>
+            <TokenSymbol>{symbol}</TokenSymbol>
+          </Body>
+          {!!actionBlock &&
+            <Wrapper center>{actionBlock}</Wrapper>
+          }
+        </FoundTokenListItemBodyWrapper>
+      </TokenListItem>
+    );
+  }
+
   generateAddTokenListItems() {
     const { assets, supportedAssets } = this.props;
     return supportedAssets
@@ -123,23 +142,14 @@ class AddToken extends React.Component<Props, State> {
           ...rest,
         });
         const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
-        return (
-          <TokenListItem key={symbol}>
-            <TokenThumbnail source={{ uri: fullIconUrl }} />
-            <FoundTokenListItemBodyWrapper>
-              <Body>
-                <TokenName>{name}</TokenName>
-                <TokenSymbol>{symbol}</TokenSymbol>
-              </Body>
-              <Wrapper center>
-                <Switch
-                  onValueChange={boundAssetToggleHandler}
-                  value={!!assets[symbol]}
-                />
-              </Wrapper>
-            </FoundTokenListItemBodyWrapper>
-          </TokenListItem>
-        );
+        const actionBlock = (<Switch
+          onValueChange={boundAssetToggleHandler}
+          value={!!assets[symbol]}
+        />);
+
+        return this.generateTokenListItem({
+          symbol, name, fullIconUrl, actionBlock,
+        });
       });
   }
 
@@ -149,34 +159,22 @@ class AddToken extends React.Component<Props, State> {
 
     return foundAssets.map(asset => {
       const {
-        symbol, name, address, iconUrl,
+        symbol, name, iconUrl,
       } = asset;
       const isAdded = !!assets[symbol];
       const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
 
-      return (
-        <TokenListItem key={address}>
-          <TokenThumbnail source={{ uri: fullIconUrl }} />
-          <FoundTokenListItemBodyWrapper>
-            <Body style={{ marginRight: 10 }}>
-              <TokenName>{name}</TokenName>
-              <TokenSymbol>{symbol}</TokenSymbol>
-            </Body>
-            <Wrapper center>
-              {!isAdded &&
-              <Button
-                title="Add to wallet"
-                onPress={() => this.addTokenToWallet(asset)}
-                small
-              />
-              }
-              {isAdded &&
-              <TokenStatus>In wallet</TokenStatus>
-              }
-            </Wrapper>
-          </FoundTokenListItemBodyWrapper>
-        </TokenListItem>
-      );
+      const actionBlock = (isAdded)
+        ? (<TokenStatus>In wallet</TokenStatus>)
+        : (<Button
+          title="Add to wallet"
+          onPress={() => this.addTokenToWallet(asset)}
+          small
+        />);
+
+      return this.generateTokenListItem({
+        symbol, name, fullIconUrl, actionBlock,
+      });
     });
   }
 
