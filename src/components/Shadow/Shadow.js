@@ -47,11 +47,21 @@ export const Shadow = (props: Props) => {
   } = props;
 
   const pixelRatio = PixelRatio.get();
+
+  let sDistance = shadowDistance;
+  let sSpread = shadowSpread;
+
+  if (pixelRatio < 2) {
+    sDistance = (shadowDistance * pixelRatio) / 2;
+    sSpread = (shadowSpread * pixelRatio) / 2;
+  }
+
+
   const widthWithPaddings = widthAndroid
-    ? widthAndroid + (((shadowDistance + shadowSpread) * 2) / pixelRatio)
+    ? widthAndroid + (((sDistance + sSpread) * 2) / pixelRatio)
     : '100%';
   const heightWithPaddings = heightAndroid
-    ? heightAndroid + (((shadowDistance + shadowSpread) * 2) / pixelRatio)
+    ? heightAndroid + (((sDistance + sSpread) * 2) / pixelRatio)
     : '100%';
 
   if (Platform.OS === 'ios') {
@@ -71,8 +81,8 @@ export const Shadow = (props: Props) => {
     <View style={{ width: widthWithPaddings }}>
       <NativeAndroidShadow
         shadowAngle={90}
-        shadowRadius={shadowSpread}
-        shadowDistance={shadowDistance}
+        shadowRadius={sSpread}
+        shadowDistance={sDistance}
         shadowColor={shadowColorAndroid}
       >
         <ShadowInnerWrapper
