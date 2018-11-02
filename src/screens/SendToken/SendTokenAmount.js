@@ -94,6 +94,7 @@ function AmountInputTemplate(locals) {
       inlineLabel
       fontSize={fontSizes.giant}
       innerImageText={valueInFiatOutput}
+      marginTop={30}
     />
   );
 }
