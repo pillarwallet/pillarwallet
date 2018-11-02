@@ -28,7 +28,6 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { getExistingChatsAction } from 'actions/chatActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 
 type Props = {
@@ -45,9 +44,7 @@ type Props = {
   rejectInvitation: Function,
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
-  getExistingChats: Function,
   intercomNotificationsCount: number,
-  chats: any,
 };
 
 type esDataType = {
@@ -167,7 +164,6 @@ const RecentConnectionsItem = styled.TouchableOpacity`
     ios: '4px 8px 24px',
     android: '0',
   })};
-  b
 `;
 
 const CameraIcon = styled(Icon)`
@@ -266,11 +262,9 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
-      getExistingChats,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
-    getExistingChats();
   };
 
   setActiveTab = (activeTab, esData?) => {
@@ -530,7 +524,6 @@ const mapStateToProps = ({
   history: { data: history },
   invitations: { data: invitations },
   wallet: { data: wallet },
-  chat: { data: chats },
   notifications: { intercomNotificationsCount },
 }) => ({
   contacts,
@@ -538,7 +531,6 @@ const mapStateToProps = ({
   history,
   invitations,
   wallet,
-  chats,
   intercomNotificationsCount,
 });
 
@@ -549,7 +541,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
-  getExistingChats: () => dispatch(getExistingChatsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
