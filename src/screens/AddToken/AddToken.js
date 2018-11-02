@@ -1,8 +1,10 @@
 // @flow
 import * as React from 'react';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
+import debounce from 'lodash.debounce';
 import { List, ListItem, Body, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
@@ -55,6 +57,11 @@ const FoundTokenListItemBodyWrapper = styled.View`
   border-bottom-width: 1;
 `;
 
+const TokenSearchStatusWrapper = styled(Wrapper)`
+  padding-bottom: 100px;
+  background-color: ${baseColors.white};
+`;
+
 const TokenThumbnail = styled(CachedImage)`
   width: 44px;
   height: 44px;
@@ -96,6 +103,11 @@ class AddToken extends React.Component<Props, State> {
     isSearching: false,
     foundAssets: [],
   };
+
+  constructor(props: Props) {
+    super(props);
+    this.searchAssets = debounce(this.searchAssets, 200);
+  }
 
   formChanged: boolean = false;
 
@@ -202,6 +214,17 @@ class AddToken extends React.Component<Props, State> {
     });
   };
 
+  searchAssets = (query) => {
+    const isSearching = query.length > 1;
+
+    this.setState({ isSearching });
+    if (isSearching) {
+      this.setState({
+        foundAssets: findAssets(this.props.supportedAssets, query),
+      });
+    }
+  };
+
   handleScreenDismissal = () => {
     const {
       navigation,
@@ -219,18 +242,11 @@ class AddToken extends React.Component<Props, State> {
 
   handleSearchChange = (query: string) => {
     const formatedQuery = !query ? '' : query.trim();
-    const isSearching = formatedQuery.length > 1;
 
     this.setState({
       query: formatedQuery,
-      isSearching,
     });
-
-    if (isSearching) {
-      this.setState({
-        foundAssets: findAssets(this.props.supportedAssets, formatedQuery),
-      });
-    }
+    this.searchAssets(formatedQuery);
   };
 
   render() {
@@ -276,12 +292,17 @@ class AddToken extends React.Component<Props, State> {
               </List>
             </ScrollWrapper>
           }
-          {isSearching && !foundAssets.length &&
-            <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-              <EmptyStateParagraph title="Token not found" bodyText="Please check smart contract address" />
-            </Wrapper>
-          }
         </TokensWrapper>
+        {isSearching && !foundAssets.length &&
+          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
+            <TokenSearchStatusWrapper center fullScreen>
+              <EmptyStateParagraph
+                title="Token not found"
+                bodyText="Check if the name was enetered correctly or add custom token"
+              />
+            </TokenSearchStatusWrapper>
+          </KeyboardAvoidingView>
+        }
       </Container>
     );
   }
