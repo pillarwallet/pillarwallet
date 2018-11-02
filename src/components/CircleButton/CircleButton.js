@@ -1,12 +1,10 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { ImageBackground, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'components/Icon';
-import { UIColors, baseColors, fontSizes, fontTrackings } from 'utils/variables';
+import { baseColors, fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
-import { Shadow } from 'components/Shadow';
-import LinearGradient from 'react-native-linear-gradient';
 
 type Props = {
   disabled?: boolean,
@@ -20,84 +18,70 @@ const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
 const CircleButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
-  padding: 8px;
-  margin: ${Platform.select({
-    ios: '0 14px',
-    android: '0 6px',
-  })}
+  padding: 8px 4px 0px;
 `;
 
-const CircleButtonIconWrapper = styled(LinearGradient)`
-  border-radius: 31;
-  width: 64px;
-  height: 64px;
-  background: ${props => props.disabled ? baseColors.lightGray : baseColors.white};
+const CircleButtonIconWrapper = styled.View`
+  border-radius: 46;
+  width: 92px;
+  height: 92px;
   justify-content: center;
   display: flex;
   flex-direction: row;
   align-items: center;
 `;
 
-const InnerWrapper = styled.View`
-  border-radius: 33;
-  width: 66px;
-  height: 66px;
-  border: 1px solid ${UIColors.actionButtonBorderColor};
-  shadow-color: rgba(0, 122, 255, 0.03);
-  shadow-offset: 0px -1px;
-  shadow-opacity: 1;
-  shadow-radius: 2px;
-  background-color: ${UIColors.actionButtonBorderColor};
-`;
-
 const CircleButtonIcon = styled(Icon)`
   font-size: ${fontSizes.extraLarge};
   color: ${props => props.disabled ? baseColors.mediumGray : baseColors.clearBlue};
+  opacity: ${props => props.disabled ? 0.7 : 1};
   justify-content: center;
   display: flex;
 `;
 
 const CircleButtonText = styled(BaseText)`
   color: ${props => props.disabled ? baseColors.mediumGray : baseColors.electricBlue};
+  opacity: ${props => props.disabled ? 0.7 : 1};
   text-align: center;
   font-size: ${fontSizes.small};
   letter-spacing: ${fontTrackings.tiny}px;
-  margin-top: ${Platform.select({
-    ios: '10px',
-    android: '-2px',
-  })}
+  margin-top: -6px;
 `;
 
+const actionButtonBackground = require('assets/images/bg_action_button.png');
+const actionButtonBackgroundDisabled = require('assets/images/bg_action_button_disabled.png');
+
+
 const CircleButton = (props: Props) => {
+  const {
+    disabled,
+    onPress,
+    icon,
+    label,
+  } = props;
+
   return (
     <CircleButtonWrapper
-      disabled={props.disabled}
-      onPress={() => props.onPress()}
+      disabled={disabled}
+      onPress={() => onPress()}
     >
-      <Shadow
-        shadowOffsetY={5}
-        shadowDistance={12}
-        shadowRadius={5}
-        shadowSpread={20}
-        shadowColorAndroid="#14123F6F"
-        shadowColoriOS={UIColors.actionButtonShadowColor}
-        heightAndroid={66}
-        widthAndroid={66}
+      <ImageBackground
+        source={disabled ? actionButtonBackgroundDisabled : actionButtonBackground}
+        style={{ width: 92, height: 92 }}
       >
-        <InnerWrapper>
-          <CircleButtonIconWrapper
-            disabled={props.disabled}
-            colors={CircleButtonIconWrapperColors}
-          >
-            <CircleButtonIcon
-              disabled={props.disabled}
-              name={props.icon}
-            />
-          </CircleButtonIconWrapper>
-        </InnerWrapper>
-      </Shadow>
-      <CircleButtonText disabled={props.disabled}>
-        {props.label}
+        <CircleButtonIconWrapper
+          disabled={disabled}
+          colors={CircleButtonIconWrapperColors}
+        >
+          <CircleButtonIcon
+            disabled={disabled}
+            name={icon}
+          />
+        </CircleButtonIconWrapper>
+
+      </ImageBackground>
+      <CircleButtonText disabled={disabled}>
+        {label}
       </CircleButtonText>
     </CircleButtonWrapper>
   );
