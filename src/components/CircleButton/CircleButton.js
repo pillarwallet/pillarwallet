@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { ImageBackground, Platform } from 'react-native';
+import { ImageBackground } from 'react-native';
 import styled from 'styled-components/native';
 import Icon from 'components/Icon';
 import { baseColors, fontSizes, fontTrackings } from 'utils/variables';
