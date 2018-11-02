@@ -8,7 +8,7 @@ import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
-import erc20TokensSearch from 'utils/erc20TokensSearch';
+import { findList as findAssets } from 'utils/erc20TokensSearch';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -148,14 +148,14 @@ class AddToken extends React.Component<Props, State> {
     const { assets } = this.props;
 
     return foundAssets.map(asset => {
-      const { symbol, name, addr } = asset;
+      const {
+        symbol, name, address, iconUrl,
+      } = asset;
       const isAdded = !!assets[symbol];
-
-      // TODO: temp solution
-      const fullIconUrl = `${SDK_PROVIDER}/asset/images/tokens/icons/plrColor.png?size=3`;
+      const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
 
       return (
-        <TokenListItem key={addr}>
+        <TokenListItem key={address}>
           <TokenThumbnail source={{ uri: fullIconUrl }} />
           <FoundTokenListItemBodyWrapper>
             <Body style={{ marginRight: 10 }}>
@@ -180,24 +180,21 @@ class AddToken extends React.Component<Props, State> {
     });
   }
 
-  // TODO: add token to wallet
-  addTokenToWallet = (asset: Object) => {
-    const { addAsset } = this.props;
-    const newAsset: Asset = {
-      id: asset.addr,
-      address: asset.addr,
-      decimals: asset.decimals,
-      description: asset.description,
-      name: asset.name,
-      symbol: asset.symbol,
-      iconMonoUrl: '',
-      iconUrl: '',
-      wallpaperUrl: '',
-    };
-    // this.formChanged = true;
+  addTokenToWallet = (asset: Asset) => {
+    const {
+      assets,
+      fetchAssetsBalances,
+      navigation,
+      updateAssets,
+      wallet,
+    } = this.props;
 
-    addAsset(newAsset);
-    this.handleScreenDismissal();
+    const updatedAssetList = { ...assets };
+    updatedAssetList[asset.symbol] = asset;
+
+    updateAssets(updatedAssetList);
+    fetchAssetsBalances(updatedAssetList, wallet.address);
+    navigation.goBack(null);
 
     Toast.show({
       title: 'Added asset',
@@ -233,7 +230,7 @@ class AddToken extends React.Component<Props, State> {
 
     if (isSearching) {
       this.setState({
-        foundAssets: erc20TokensSearch.findList(formatedQuery),
+        foundAssets: findAssets(this.props.supportedAssets, formatedQuery),
       });
     }
   };
