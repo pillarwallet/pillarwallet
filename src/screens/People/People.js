@@ -47,7 +47,7 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
 
 const HeaderWrapper = styled.View`
   z-index: 20;
-  background: ${baseColors.white};
+  background: ${UIColors.defaultBackgroundColor};
 `;
 
 const FullScreenOverlayWrapper = styled.TouchableOpacity`
