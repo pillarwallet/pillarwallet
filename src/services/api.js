@@ -10,7 +10,12 @@ import {
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
-import { fetchAssetBalances } from 'services/assets';
+import {
+  fetchAssetBalances,
+  fetchLastBlockNumber,
+  fetchTransactionInfo,
+  fetchTransactionReceipt,
+} from 'services/assets';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
@@ -232,6 +237,18 @@ SDKWrapper.prototype.fetchGasInfo = function () {
   // return BCXSdk.gasInfo({ nBlocks: 10 })
   //   .then(({ gasUsed }) => gasUsed)
   //   .catch(() => ({}));
+};
+
+SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
+  return fetchTransactionInfo(hash);
+};
+
+SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
+  return fetchTransactionReceipt(hash);
+};
+
+SDKWrapper.prototype.fetchLastBlockNumber = function () {
+  return fetchLastBlockNumber();
 };
 
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {

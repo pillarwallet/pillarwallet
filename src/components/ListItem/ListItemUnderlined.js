@@ -3,12 +3,14 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
 import { BoldText, BaseText } from 'components/Typography';
+import Spinner from 'components/Spinner';
 
 type Props = {
   label: string,
   value: any,
   spacedOut?: boolean,
   valueAddon?: React.Node,
+  showSpinner?: boolean,
 }
 
 const ItemWrapper = styled.View`
@@ -50,6 +52,7 @@ const ListItemUnderlined = (props: Props) => {
     value,
     spacedOut,
     valueAddon,
+    showSpinner,
   } = props;
   return (
     <ItemWrapper>
@@ -57,6 +60,8 @@ const ListItemUnderlined = (props: Props) => {
       <ItemValueHolder>
         {valueAddon}
         <ItemValue spacedOut={spacedOut}>{value}</ItemValue>
+        {!!showSpinner &&
+        <Spinner width={20} height={20} style={{ marginBottom: 16, marginLeft: 10 }} />}
       </ItemValueHolder>
     </ItemWrapper>
   );
