@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -8,7 +7,7 @@ import debounce from 'lodash.debounce';
 import { List, ListItem, Body, Switch } from 'native-base';
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes, fontWeights, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
 import { findList as findAssets } from 'utils/erc20TokensSearch';
 import Button from 'components/Button';
@@ -16,7 +15,7 @@ import Toast from 'components/Toast';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SearchBar from 'components/SearchBar';
-import { SubHeading, BoldText, LightText } from 'components/Typography';
+import { SubHeading, BaseText, BoldText, LightText } from 'components/Typography';
 import Header from 'components/Header';
 import {
   addAssetAction,
@@ -43,7 +42,7 @@ const TokenListItem = styled(ListItem)`
 `;
 
 const TokensWrapper = styled(ScrollWrapper)`
-   backgroundColor: ${baseColors.white};
+   background-color: ${baseColors.white};
    border-color: ${UIColors.defaultDividerColor};
    border-top-width: 1;
 `;
@@ -58,7 +57,8 @@ const FoundTokenListItemBodyWrapper = styled.View`
 `;
 
 const TokenSearchStatusWrapper = styled(Wrapper)`
-  padding-bottom: 100px;
+  padding-top: 100px;
+  padding-bottom: 60px;
   background-color: ${baseColors.white};
 `;
 
@@ -79,6 +79,22 @@ const TokenStatus = styled(LightText)`
 const ListHeading = styled(SubHeading)`
   padding: 20px 20px 0 20px;
 `;
+
+const Footer = styled(Wrapper)`
+  background: ${baseColors.white};
+  border-color: ${UIColors.defaultDividerColor};
+  border-top-width: 1;
+  padding: 15px 30px 20px 30px;
+`;
+
+const FooterText = styled(BaseText)`
+  font-size: ${fontSizes.extraExtraSmall};
+  font-weight: ${fontWeights.book};
+  line-height: ${fontSizes.medium};
+  color: ${baseColors.darkGray};
+  letter-spacing: 0.2;
+`;
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -256,7 +272,7 @@ class AddToken extends React.Component<Props, State> {
     return (
       <Container>
         <Header title="add tokens" onBack={this.handleScreenDismissal} />
-        <Wrapper regularPadding style={{ backgroundColor: baseColors.snowWhite }}>
+        <Wrapper regularPadding>
           <SearchBar
             inputProps={{
               onChange: this.handleSearchChange,
@@ -284,17 +300,21 @@ class AddToken extends React.Component<Props, State> {
               </List>
             </ScrollWrapper>
           }
-        </TokensWrapper>
-        {isSearching && !foundAssets.length &&
-          <KeyboardAvoidingView behavior="padding" enabled={Platform.OS === 'ios'}>
-            <TokenSearchStatusWrapper center fullScreen>
+          {isSearching && !foundAssets.length &&
+            <TokenSearchStatusWrapper center>
               <EmptyStateParagraph
                 title="Token not found"
                 bodyText="Check if the name was enetered correctly or add custom token"
               />
             </TokenSearchStatusWrapper>
-          </KeyboardAvoidingView>
-        }
+          }
+          <Footer>
+            <FooterText>
+              Alternatively, you can simply send the tokens to your Pillar wallet. It will appear in the Assets list
+              once the transaction is confirmed on the blockchain.
+            </FooterText>
+          </Footer>
+        </TokensWrapper>
       </Container>
     );
   }
