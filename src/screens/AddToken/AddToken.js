@@ -250,20 +250,12 @@ class AddToken extends React.Component<Props, State> {
   };
 
   render() {
-    const titleText = 'add tokens';
     const { query, isSearching, foundAssets } = this.state;
     const { supportedAssets } = this.props;
 
-    let header;
-    if (this.formChanged) {
-      header = <Header title={titleText} nextText="Save" onNextPress={this.handleScreenDismissal} />;
-    } else {
-      header = <Header title={titleText} onClose={this.handleScreenDismissal} />;
-    }
-
     return (
       <Container>
-        {header}
+        <Header title="add tokens" onBack={this.handleScreenDismissal} />
         <Wrapper regularPadding style={{ backgroundColor: baseColors.snowWhite }}>
           <SearchBar
             inputProps={{
