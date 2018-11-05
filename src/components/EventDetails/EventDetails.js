@@ -6,16 +6,19 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import type { Transaction } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 import { BaseText, BoldText } from 'components/Typography';
-import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import Button from 'components/Button';
-import { formatFullAmount } from 'utils/common';
-import { createAlert } from 'utils/alerts';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
+import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
+import { formatFullAmount } from 'utils/common';
+import { createAlert } from 'utils/alerts';
+import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // constants
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -33,10 +36,13 @@ type Props = {
   transaction: Transaction,
   contacts: Object[],
   wallet: Object,
+  history: Object[],
+  assets: Asset[],
   onClose: Function,
   onAccept: Function,
   onReject: Function,
   onCancel: Function,
+  updateTransactionStatus: Function,
   navigation: NavigationScreenProp<*>,
   eventData: Object,
   eventType: string,
@@ -93,9 +99,34 @@ const viewTransactionOnBlockchain = (hash: string) => {
   Linking.openURL(TX_DETAILS_URL + hash);
 };
 
+const PENDING_STATUS = 'pending';
+
 class EventDetails extends React.Component<Props, {}> {
+  timer: IntervalID;
+  timeout: TimeoutID;
+
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
+  }
+
+  componentDidMount() {
+    const {
+      eventType,
+      eventData,
+      updateTransactionStatus,
+    } = this.props;
+    if (eventType !== TRANSACTION_EVENT) return;
+
+    const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
+    if (txInfo.status !== PENDING_STATUS) return;
+
+    this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 1000);
+    this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
+  }
+
+  componentWillUnmount() {
+    if (this.timer) clearInterval(this.timer);
+    if (this.timeout) clearTimeout(this.timeout);
   }
 
   handleAcceptConnection = () => {
@@ -149,9 +180,12 @@ class EventDetails extends React.Component<Props, {}> {
       contacts,
       wallet: { address: myAddress },
       onClose,
+      history,
+      assets,
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:MM');
     if (eventType === TRANSACTION_EVENT) {
+      const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
       const {
         to,
         from,
@@ -160,11 +194,13 @@ class EventDetails extends React.Component<Props, {}> {
         hash,
         gasUsed,
         gasPrice,
-        value,
-      } = eventData;
+        status,
+      } = txInfo;
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
-      const isPending = eventStatus === 'pending';
+      const isPending = status === PENDING_STATUS;
+      const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
+      const value = utils.formatUnits(new BigNumber(txInfo.value.toString()).toFixed(), decimals);
       const recipientContact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase()) || {};
       const senderContact = contacts.find(({ ethAddress }) => from.toUpperCase() === ethAddress.toUpperCase()) || {};
       const relatedUser = isReceived ? senderContact : recipientContact;
@@ -184,6 +220,7 @@ class EventDetails extends React.Component<Props, {}> {
 
         eventTime = `${pendingHours}${pendingMinutes}${pendingSeconds} AGO`;
       }
+      if (!isPending && this.timer) clearInterval(this.timer);
 
       const amount = `${formatFullAmount(value)} ${asset}`;
       const fee = gasUsed ? Math.round(gasUsed * gasPrice) : 0;
@@ -192,7 +229,7 @@ class EventDetails extends React.Component<Props, {}> {
         <React.Fragment>
           <EventHeader
             eventType={TRANSACTION_EVENT}
-            eventStatus={eventStatus}
+            eventStatus={status}
             eventTime={eventTime}
             onClose={onClose}
           />
@@ -226,6 +263,7 @@ class EventDetails extends React.Component<Props, {}> {
               label="CONFIRMATIONS"
               valueAddon={(<Confirmations>{nbConfirmations}</Confirmations>)}
               value="of 6"
+              showSpinner
             />
             }
             <ButtonsWrapper>
@@ -323,9 +361,17 @@ class EventDetails extends React.Component<Props, {}> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   wallet: { data: wallet },
+  history: { data: history },
+  assets: { data: assets },
 }) => ({
   contacts,
   wallet,
+  history,
+  assets: Object.values(assets),
 });
 
-export default connect(mapStateToProps)(EventDetails);
+const mapDispatchToProps = (dispatch) => ({
+  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);
