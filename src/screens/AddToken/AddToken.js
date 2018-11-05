@@ -47,7 +47,7 @@ const TokensWrapper = styled(ScrollWrapper)`
    border-top-width: 1;
 `;
 
-const FoundTokenListItemBodyWrapper = styled.View`
+const TokenListItemBody = styled.View`
   flex: 1;
   flexDirection: row;
   justifyContent: space-between;
@@ -138,12 +138,12 @@ class AddToken extends React.Component<Props, State> {
   };
 
   generateTokenListItem({
-    symbol, name, fullIconUrl, actionBlock,
+    symbol, name, fullIconUrl, actionBlock, isLastItem,
   }) {
     return (
       <TokenListItem key={symbol}>
         <TokenThumbnail source={{ uri: fullIconUrl }} />
-        <FoundTokenListItemBodyWrapper>
+        <TokenListItemBody style={{ borderBottomWidth: isLastItem ? 0 : 1 }}>
           <Body>
             <TokenName>{name}</TokenName>
             <TokenSymbol>{symbol}</TokenSymbol>
@@ -151,18 +151,18 @@ class AddToken extends React.Component<Props, State> {
           {!!actionBlock &&
             <Wrapper center>{actionBlock}</Wrapper>
           }
-        </FoundTokenListItemBodyWrapper>
+        </TokenListItemBody>
       </TokenListItem>
     );
   }
 
   generateAddTokenListItems() {
     const { assets, supportedAssets } = this.props;
-    return supportedAssets
-      .filter(({ symbol }) => symbol !== ETH)
+    const filteredAssets = supportedAssets.filter(({ symbol }) => symbol !== ETH);
+    return filteredAssets
       .map(({
         symbol, name, iconUrl, ...rest
-      }) => {
+      }, index) => {
         const boundAssetToggleHandler = partial(this.handleAssetToggle, {
           symbol,
           name,
@@ -174,9 +174,9 @@ class AddToken extends React.Component<Props, State> {
           onValueChange={boundAssetToggleHandler}
           value={!!assets[symbol]}
         />);
-
+        const isLastItem = (filteredAssets.length - index) === 1;
         return this.generateTokenListItem({
-          symbol, name, fullIconUrl, actionBlock,
+          symbol, name, fullIconUrl, actionBlock, isLastItem,
         });
       });
   }
@@ -185,7 +185,7 @@ class AddToken extends React.Component<Props, State> {
     const { foundAssets } = this.state;
     const { assets } = this.props;
 
-    return foundAssets.map(asset => {
+    return foundAssets.map((asset, index) => {
       const {
         symbol, name, iconUrl,
       } = asset;
@@ -200,8 +200,9 @@ class AddToken extends React.Component<Props, State> {
           small
         />);
 
+      const isLastItem = (foundAssets.length - index) === 1;
       return this.generateTokenListItem({
-        symbol, name, fullIconUrl, actionBlock,
+        symbol, name, fullIconUrl, actionBlock, isLastItem,
       });
     });
   }
