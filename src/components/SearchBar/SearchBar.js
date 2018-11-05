@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 import { UIColors, baseColors } from 'utils/variables';
 import { Animated, Keyboard, Platform } from 'react-native';
 import { BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
+import IconButton from 'components/IconButton';
 
 const SearchHolder = styled.View`
   margin-bottom: 20px;
@@ -36,15 +36,11 @@ const InputField = styled.TextInput`
   color: ${baseColors.slateBlack};
 `;
 
-const InputIcon = styled(Icon)`
+const InputIcon = styled(IconButton)`
   flex: 0 0 20px;
   position: absolute;
   right: 12px;
   top: 7px;
-  width: 24;
-  height: 24;
-  color: ${baseColors.electricBlue};
-  font-size: 24px;
 `;
 
 type inputPropsType = {
@@ -133,6 +129,11 @@ class SearchBar extends React.Component<Props, State> {
     }).start();
   };
 
+  handleSubmit = () => {
+    const { inputProps: { onChange, value } } = this.props;
+    onChange(value);
+  };
+
   render() {
     const {
       inputProps,
@@ -170,7 +171,16 @@ class SearchBar extends React.Component<Props, State> {
             underlineColorAndroid="transparent"
             autoCorrect={false}
           />
-          <InputIcon name="search" />
+          <InputIcon
+            icon="search"
+            onPress={isFocused ? this.handleSubmit : this.handleFocus}
+            iconStyle={{
+              width: 24,
+              height: 24,
+              color: baseColors.electricBlue,
+              fontSize: 24,
+            }}
+          />
         </Animated.View>
         {(isFocused || !!value) &&
         <CancelButton onPress={this.handleCancel}>
