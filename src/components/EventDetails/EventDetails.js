@@ -102,8 +102,8 @@ const viewTransactionOnBlockchain = (hash: string) => {
 const PENDING_STATUS = 'pending';
 
 class EventDetails extends React.Component<Props, {}> {
-  timer: IntervalID;
-  timeout: TimeoutID;
+  timer: ?IntervalID;
+  timeout: ?TimeoutID;
 
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -127,6 +127,17 @@ class EventDetails extends React.Component<Props, {}> {
   componentWillUnmount() {
     if (this.timer) clearInterval(this.timer);
     if (this.timeout) clearTimeout(this.timeout);
+  }
+
+  componentDidUpdate() {
+    const { eventType, eventData, history } = this.props;
+    if (eventType !== TRANSACTION_EVENT || !this.timer) return;
+
+    const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
+    if (txInfo.status !== PENDING_STATUS && this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
   }
 
   handleAcceptConnection = () => {
@@ -220,7 +231,6 @@ class EventDetails extends React.Component<Props, {}> {
 
         eventTime = `${pendingHours}${pendingMinutes}${pendingSeconds} AGO`;
       }
-      if (!isPending && this.timer) clearInterval(this.timer);
 
       const amount = `${formatFullAmount(value)} ${asset}`;
       const fee = gasUsed ? Math.round(gasUsed * gasPrice) : 0;
