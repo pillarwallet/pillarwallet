@@ -29,7 +29,7 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-import { CHAT_LIST } from 'constants/navigationConstants';
+import { CHAT_LIST, CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
@@ -363,7 +363,7 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { messages } = this.props;
+    const { messages, navigation } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const title = getUserName(contact).toLowerCase();
 
@@ -394,6 +394,7 @@ class ChatScreen extends React.Component<Props, State> {
             renderTime={renderTime}
             minInputToolbarHeight={52}
             parsePatterns={parsePatterns}
+            onPressAvatar={() => navigation.navigate(CONTACT, { contact })}
           />}
         </Wrapper>
       </ChatContainer>
