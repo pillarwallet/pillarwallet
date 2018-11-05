@@ -1,13 +1,11 @@
 // @flow
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import Storage from 'services/storage';
 import set from 'lodash.set';
-
-const storage = Storage.getInstance('db');
+import { saveDbAction } from './dbActions';
 
 export const saveBaseFiatCurrencyAction = (currency: string) => {
   return (dispatch: Function) => {
-    storage.save('app_settings', { appSettings: { baseFiatCurrency: currency } });
+    dispatch(saveDbAction('app_settings', { appSettings: { baseFiatCurrency: currency } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: {
@@ -19,7 +17,7 @@ export const saveBaseFiatCurrencyAction = (currency: string) => {
 
 export const changeRequestPinForTransactionAction = (value: boolean) => {
   return (dispatch: Function) => {
-    storage.save('app_settings', { appSettings: { requestPinForTransaction: value } });
+    dispatch(saveDbAction('app_settings', { appSettings: { requestPinForTransaction: value } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: {
@@ -32,7 +30,7 @@ export const changeRequestPinForTransactionAction = (value: boolean) => {
 export const updateAppSettingsAction = (path: string, fieldValue: any) => {
   return (dispatch: Function) => {
     const settings = set({}, path, fieldValue);
-    storage.save('app_settings', { appSettings: settings });
+    dispatch(saveDbAction('app_settings', { appSettings: settings }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: settings,

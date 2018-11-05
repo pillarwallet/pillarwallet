@@ -5,7 +5,7 @@ import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
@@ -78,10 +78,10 @@ const Column = styled.View`
   ${props => props.rightColumn ? '' : 'flex: 1'}
 `;
 
-const ItemTitle = styled(BaseText)`
+const ItemTitle = styled(BoldText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium}px;
-  letter-spacing: ${fontTrackings.tiny}px;
+  font-size: ${fontSizes.small}px;
+  letter-spacing: ${fontTrackings.small}px;
   width: 100%;
   flex: 1;
 `;

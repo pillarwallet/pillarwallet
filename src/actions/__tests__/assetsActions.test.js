@@ -1,6 +1,7 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import ReduxAsyncQueue from 'redux-async-queue';
 import {
   UPDATE_ASSET,
   UPDATE_ASSETS_STATE,
@@ -15,7 +16,7 @@ import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
 
 const pillarSdk = new PillarSdk();
-const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
+const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 const mockWallet: Object = {
   address: '0x9c',
 };
