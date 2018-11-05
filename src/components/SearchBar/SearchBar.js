@@ -173,7 +173,7 @@ class SearchBar extends React.Component<Props, State> {
           />
           <InputIcon
             icon="search"
-            onPress={this.handleSubmit}
+            onPress={isFocused ? this.handleSubmit : this.handleFocus}
             iconStyle={{
               width: 24,
               height: 24,
