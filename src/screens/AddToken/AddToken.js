@@ -9,7 +9,6 @@ import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes, fontWeights, UIColors } from 'utils/variables';
 import { partial } from 'utils/common';
-import { findList as findAssets } from 'utils/erc20TokensSearch';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -22,8 +21,10 @@ import {
   removeAssetAction,
   updateAssetsAction,
   fetchAssetsBalancesAction,
+  searchAssetsAction,
+  resetSearchAssetsResultAction,
 } from 'actions/assetsActions';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, FETCHED } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 const TokenName = styled(BoldText)`
@@ -105,19 +106,21 @@ type Props = {
   updateAssets: Function,
   addAsset: Function,
   removeAsset: Function,
+  searchAssets: Function,
+  resetSearchAssetsResult: Function,
+  assetsSearchResults: Asset[],
+  assetsSearchState: string,
 }
 
 type State = {
   query: string,
   isSearching: boolean,
-  foundAssets: Array<Object>,
 }
 
 class AddToken extends React.Component<Props, State> {
   state = {
     query: '',
     isSearching: false,
-    foundAssets: [],
   };
 
   constructor(props: Props) {
@@ -182,10 +185,9 @@ class AddToken extends React.Component<Props, State> {
   }
 
   generateFoundTokenListItems() {
-    const { foundAssets } = this.state;
-    const { assets } = this.props;
+    const { assets, assetsSearchResults } = this.props;
 
-    return foundAssets.map((asset, index) => {
+    return assetsSearchResults.map((asset, index) => {
       const {
         symbol, name, iconUrl,
       } = asset;
@@ -200,7 +202,7 @@ class AddToken extends React.Component<Props, State> {
           small
         />);
 
-      const isLastItem = (foundAssets.length - index) === 1;
+      const isLastItem = (assetsSearchResults.length - index) === 1;
       return this.generateTokenListItem({
         symbol, name, fullIconUrl, actionBlock, isLastItem,
       });
@@ -231,14 +233,15 @@ class AddToken extends React.Component<Props, State> {
     });
   };
 
-  searchAssets = (query) => {
+  searchAssets = async (query) => {
+    const { searchAssets, resetSearchAssetsResult, assetsSearchResults } = this.props;
     const isSearching = query.length > 1;
 
     this.setState({ isSearching });
     if (isSearching) {
-      this.setState({
-        foundAssets: findAssets(this.props.supportedAssets, query),
-      });
+      searchAssets(query);
+    } else if (assetsSearchResults.length > 0) {
+      resetSearchAssetsResult();
     }
   };
 
@@ -267,8 +270,9 @@ class AddToken extends React.Component<Props, State> {
   };
 
   render() {
-    const { query, isSearching, foundAssets } = this.state;
-    const { supportedAssets } = this.props;
+    const { query, isSearching } = this.state;
+    const { supportedAssets, assetsSearchResults, assetsSearchState } = this.props;
+    const isAssetsSearchOver = assetsSearchState === FETCHED;
 
     return (
       <Container>
@@ -293,7 +297,7 @@ class AddToken extends React.Component<Props, State> {
               </List>
             </ScrollWrapper>
           }
-          {isSearching && !!foundAssets.length &&
+          {isSearching && !!assetsSearchResults.length &&
             <ScrollWrapper>
               <ListHeading>TOKENS FOUND</ListHeading>
               <List>
@@ -301,7 +305,7 @@ class AddToken extends React.Component<Props, State> {
               </List>
             </ScrollWrapper>
           }
-          {isSearching && !foundAssets.length &&
+          {isSearching && !assetsSearchResults.length && isAssetsSearchOver &&
             <TokenSearchStatusWrapper center>
               <EmptyStateParagraph
                 title="Token not found"
@@ -321,9 +325,18 @@ class AddToken extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ assets: { data: assets, supportedAssets }, wallet: { data: wallet } }) => ({
+const mapStateToProps = (
+  {
+    assets: {
+      data: assets, supportedAssets, assetsSearchState, assetsSearchResults,
+    },
+    wallet: { data: wallet },
+  },
+) => ({
   supportedAssets,
   assets,
+  assetsSearchState,
+  assetsSearchResults,
   wallet,
 });
 
@@ -334,6 +347,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAssetsBalances: (assets: Assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
+  searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
+  resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddToken);

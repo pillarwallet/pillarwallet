@@ -11,6 +11,7 @@ import {
   FETCHED_INITIAL,
   UPDATE_SUPPORTED_ASSETS,
   UPDATE_BALANCES,
+  UPDATE_ASSETS_SEARCH_RESULT,
 } from 'constants/assetsConstants';
 import { transformAssetsToObject } from 'utils/assets';
 import type { Asset } from 'models/Asset';
@@ -33,6 +34,7 @@ const initialState = {
   supportedAssets: [],
   balances: {},
   assetsState: null,
+  assetsSearchResults: [],
 };
 
 export default function assetsReducer(
@@ -77,6 +79,12 @@ export default function assetsReducer(
       );
     case UPDATE_BALANCES:
       return { ...state, balances: action.payload };
+    case UPDATE_ASSETS_SEARCH_RESULT:
+      return {
+        ...state,
+        assetsSearchState: FETCHED,
+        assetsSearchResults: action.payload,
+      };
     default:
       return state;
   }
