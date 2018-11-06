@@ -10,7 +10,12 @@ import {
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
-import { fetchAssetBalances } from 'services/assets';
+import {
+  fetchAssetBalances,
+  fetchLastBlockNumber,
+  fetchTransactionInfo,
+  fetchTransactionReceipt,
+} from 'services/assets';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
@@ -143,6 +148,13 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
     .catch(() => []);
 };
 
+SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.asset.search({ query, walletId }))
+    .then(({ data }) => data)
+    .catch(() => []);
+};
+
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({
@@ -232,6 +244,18 @@ SDKWrapper.prototype.fetchGasInfo = function () {
   // return BCXSdk.gasInfo({ nBlocks: 10 })
   //   .then(({ gasUsed }) => gasUsed)
   //   .catch(() => ({}));
+};
+
+SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
+  return fetchTransactionInfo(hash);
+};
+
+SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
+  return fetchTransactionReceipt(hash);
+};
+
+SDKWrapper.prototype.fetchLastBlockNumber = function () {
+  return fetchLastBlockNumber();
 };
 
 SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePayload) {
