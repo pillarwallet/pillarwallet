@@ -90,6 +90,10 @@ const renderBubble = (props: Props) => {
         borderColor: isWarning ? baseColors.brightBlue : baseColors.whiterSmoke,
         maxWidth: 262,
         marginTop: 4,
+        marginLeft: Platform.select({
+          ios: 10,
+          android: 16,
+        }),
       },
       right: {
         backgroundColor: baseColors.lightYellow,
@@ -133,7 +137,10 @@ const renderAvatar = (contact) => (props: Props) => (
     renderAvatar={renderCustomAvatar(contact)}
     containerStyle={{
       left: {
-        marginRight: 2,
+        marginRight: Platform.select({
+          ios: -2,
+          android: -14,
+       }),
       },
     }}
   />
