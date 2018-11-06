@@ -263,7 +263,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
     return (
       <AssetWrapperAnimated style={animatedStyle}>
         <ShadowHolder
-          heightAndroid={cardHeight(smallScreen, extraSmall)} 
+          heightAndroid={cardHeight(smallScreen, extraSmall)}
           heightIOS={cardHeight(smallScreen, extraSmall)}
           widthIOS={width / 3.6}
           marginVertical={4}
