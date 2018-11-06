@@ -526,7 +526,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   Object {
                     "color": "#8B939E",
                     "marginBottom": 10,
-                    "marginTop": 5,
                   },
                 ]
               }
