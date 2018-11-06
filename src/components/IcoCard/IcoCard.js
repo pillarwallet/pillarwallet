@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, Dimensions } from 'react-native';
 import { format, differenceInDays } from 'date-fns';
 import styled from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
@@ -29,11 +29,13 @@ type Props = {
   isPending: boolean,
 }
 
+const { width } = Dimensions.get('window');
+
 const CardWrapper = styled.View`
   width: 100%;
 `;
 
-const InnerWrapper = styled(Shadow)`
+const ShadowWrapper = styled(Shadow)`
   padding-bottom: 10px;
   margin: ${Platform.select({
     ios: props => props.inner ? `3px ${spacing.rhythm / 2}px 10px` : `3px ${spacing.rhythm / 2}px 5px`,
@@ -164,10 +166,10 @@ const IcoCard = (props: Props) => {
       </ColumnValue>
     );
   };
-
+  const height = inner ? 465 : 174;
   return (
     <CardWrapper>
-      <InnerWrapper inner={inner} heightAndroid={inner ? 465 : 174}>
+      <ShadowWrapper inner={inner} heightAndroid={height} widthIOS={width - 20} heightIOS={height - 4}>
         <TouchableWithoutFeedback onPress={onPress}>
           <Sizer>
             <Row>
@@ -264,7 +266,7 @@ const IcoCard = (props: Props) => {
             </Row>}
           </Sizer>
         </TouchableWithoutFeedback>
-      </InnerWrapper>
+      </ShadowWrapper>
     </CardWrapper>
   );
 };
