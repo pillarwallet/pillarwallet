@@ -88,6 +88,7 @@ const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.small}px;
   text-align: center;
   color: ${baseColors.darkGray};
+  margin-top: 4px;
 `;
 
 class AssetScreen extends React.Component<Props, State> {
@@ -179,7 +180,13 @@ class AssetScreen extends React.Component<Props, State> {
 
     return (
       <Container color={baseColors.white}>
-        <Header onBack={this.handleCardTap} title={assetData.name} />
+        <Header
+          onBack={this.handleCardTap}
+          title={assetData.name}
+          onNextPress={() => {}}
+          nextIcon="info-circle"
+          nextIconSize={fontSizes.mediumLarge}
+        />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
