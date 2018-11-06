@@ -28,7 +28,6 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
-import { getExistingChatsAction } from 'actions/chatActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 
 type Props = {
@@ -45,9 +44,7 @@ type Props = {
   rejectInvitation: Function,
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
-  getExistingChats: Function,
   intercomNotificationsCount: number,
-  chats: any,
 };
 
 type esDataType = {
@@ -63,7 +60,7 @@ type State = {
   scrollY: Animated.Value,
 };
 
-const profileImageWidth = 72;
+const profileImageWidth = 96;
 
 const HomeHeader = styled.View`
   padding: 0 ${spacing.rhythm}px;
@@ -100,6 +97,7 @@ const HomeHeaderImageUsername = styled.View`
 
 const HomeHeaderUsername = styled(BaseText)`
   font-size: ${fontSizes.mediumLarge};
+  margin-top: 20px;
 `;
 const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
@@ -132,11 +130,11 @@ const RecentConnectionsWrapper = styled.View`
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
   padding-top: 100px;
-  `;
+`;
 
 const RecentConnectionsSpacer = styled.View`
-    min-height: 100px;
-  `;
+  min-height: 100px;
+`;
 
 const RecentConnectionsScrollView = styled.ScrollView`
   background-color: ${baseColors.snowWhite};
@@ -166,7 +164,6 @@ const RecentConnectionsItem = styled.TouchableOpacity`
     ios: '4px 8px 24px',
     android: '0',
   })};
-  b
 `;
 
 const CameraIcon = styled(Icon)`
@@ -265,11 +262,9 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
-      getExistingChats,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
-    getExistingChats();
   };
 
   setActiveTab = (activeTab, esData?) => {
@@ -298,13 +293,13 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [-profileImageWidth / 2, -20],
+      outputRange: [-profileImageWidth / 2, -32],
       extrapolate: 'clamp',
     });
 
     const profileUsernameTranslateY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, -60],
+      outputRange: [0, -83],
       extrapolate: 'clamp',
     });
 
@@ -316,13 +311,13 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileImagePositionY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [-60, -60],
+      outputRange: [-60, -72],
       extrapolate: 'clamp',
     });
 
     const profileImageScale = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [1, 0.5],
+      outputRange: [1, 0.375],
       extrapolate: 'clamp',
     });
 
@@ -529,7 +524,6 @@ const mapStateToProps = ({
   history: { data: history },
   invitations: { data: invitations },
   wallet: { data: wallet },
-  chat: { data: chats },
   notifications: { intercomNotificationsCount },
 }) => ({
   contacts,
@@ -537,7 +531,6 @@ const mapStateToProps = ({
   history,
   invitations,
   wallet,
-  chats,
   intercomNotificationsCount,
 });
 
@@ -548,7 +541,6 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
-  getExistingChats: () => dispatch(getExistingChatsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

@@ -24,6 +24,7 @@ import { navigate, getNavigationState } from 'services/navigation';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import { setupSentryAction } from 'actions/appActions';
+import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
 
@@ -49,7 +50,7 @@ export const loginAction = (pin: string) => {
       if (userState === REGISTERED) {
         const userInfo = await api.userInfo(user.walletId);
         user = merge({}, user, userInfo);
-        storage.save('user', { user }, true);
+        dispatch(saveDbAction('user', { user }, true));
       }
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
@@ -162,7 +163,7 @@ export const changePinAction = (pin: string) => {
       .then(JSON.parse)
       .catch(() => ({}));
 
-    await storage.save('wallet', { wallet: encryptedWallet });
+    dispatch(saveDbAction('wallet', { wallet: encryptedWallet }));
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,

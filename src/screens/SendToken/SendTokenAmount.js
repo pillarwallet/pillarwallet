@@ -94,6 +94,7 @@ function AmountInputTemplate(locals) {
       inlineLabel
       fontSize={fontSizes.giant}
       innerImageText={valueInFiatOutput}
+      marginTop={30}
     />
   );
 }
@@ -369,13 +370,15 @@ class SendTokenAmount extends React.Component<Props, State> {
                 <TextLink> {SPEED_TYPES[transactionSpeed]}</TextLink>
               </SendTokenDetailsValue>
             </TouchableOpacity>
-            <Button
-              disabled={!session.isOnline || !gasInfo.isFetched}
-              small
-              flexRight
-              title="Next"
-              onPress={this.handleFormSubmit}
-            />
+            {!!value && !!parseFloat(value.amount) &&
+              <Button
+                disabled={!session.isOnline || !gasInfo.isFetched}
+                small
+                flexRight
+                title="Next"
+                onPress={this.handleFormSubmit}
+              />
+            }
           </FooterInner>
         </Footer>
         <SlideModal

@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
-import { handleImagePickAction } from 'actions/profileActions';
+import { handleImagePickAction } from 'actions/appSettingsActions';
 
 type Props = {
   onModalHide?: Function,

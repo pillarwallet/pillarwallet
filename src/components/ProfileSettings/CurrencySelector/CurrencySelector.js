@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Icon, Picker } from 'native-base';
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
-import { saveBaseFiatCurrencyAction } from 'actions/profileActions';
+import { saveBaseFiatCurrencyAction } from 'actions/appSettingsActions';
 
 type Props = {
   baseFiatCurrency: string,

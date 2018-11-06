@@ -22,7 +22,7 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  background-color: ${props => (props.needBackground ? baseColors.cyan : baseColors.lightGray)};
+  background-color: ${props => (props.needBackground ? baseColors.geyser : baseColors.lightGray)};
   ${props => (props.additionalContainerStyle)};
   position: relative;
   border: ${props => `${props.borderWidth}px solid ${baseColors.white}`};

@@ -7,10 +7,9 @@ import {
 } from 'constants/historyConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS, ETH } from 'constants/assetsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import Storage from 'services/storage';
 import { fetchAssetsBalancesAction, updateAssetsAction } from './assetsActions';
+import { saveDbAction } from './dbActions';
 
-const storage = Storage.getInstance('db');
 const TRANSACTIONS_HISTORY_STEP = 10;
 
 export const fetchTransactionsHistoryAction = (walletAddress: string, asset: string = 'ALL', fromIndex: number = 0) => {
@@ -25,7 +24,7 @@ export const fetchTransactionsHistoryAction = (walletAddress: string, asset: str
 
     const { history: { data: currentHistory } } = getState();
     const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
-    storage.save('history', { history: updatedHistory }, true);
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
     dispatch({
       type: SET_HISTORY,
@@ -47,7 +46,7 @@ export const fetchContactTransactionsAction = (myAddress: string, contactAddress
 
     const { history: { data: currentHistory } } = getState();
     const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
-    storage.save('history', { history: updatedHistory }, true);
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
     dispatch({
       type: SET_HISTORY,
@@ -87,7 +86,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
           type: UPDATE_ASSETS,
           payload: updatedAssets,
         });
-        storage.save('assets', { assets: updatedAssets }, true);
+        dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
       }
     }
     const d = new Date(lastTxSyncDatetime * 1000);
@@ -116,8 +115,8 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     }
     const updatedHistory = uniqBy([...mappedHistoryNotifications, ...currentHistory], 'hash');
     const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0));
-    storage.save('history', { history: updatedHistory }, true);
-    storage.save('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } });
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
       payload: { lastTxSyncDatetime: lastCreatedAt },
@@ -136,5 +135,38 @@ export const fetchGasInfoAction = () => {
       type: SET_GAS_INFO,
       payload: gasInfo,
     });
+  };
+};
+
+export const updateTransactionStatusAction = (hash: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      session: { data: { isOnline } },
+      history: { data: history },
+    } = getState();
+
+    if (!isOnline) return;
+
+    const txInfo = await api.fetchTxInfo(hash);
+    const txReceipt = await api.fetchTransactionReceipt(hash);
+    const lastBlockNumber = await api.fetchLastBlockNumber();
+    if (!txInfo || !txReceipt || !lastBlockNumber) return;
+
+    const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
+    const status = txReceipt.status ? 'confirmed' : 'failed';
+
+    const updatedHistory = history.map(tx => {
+      if (tx.hash !== hash) return tx;
+      return {
+        ...tx,
+        nbConfirmations,
+        status,
+      };
+    });
+    dispatch({
+      type: SET_HISTORY,
+      payload: updatedHistory,
+    });
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
   };
 };

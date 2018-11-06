@@ -1,6 +1,7 @@
 // @flow
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import ReduxAsyncQueue from 'redux-async-queue';
 import {
   UPDATE_WALLET_STATE,
   GENERATE_ENCRYPTED_WALLET,
@@ -34,7 +35,7 @@ pillarSdk.registerOnBackend = jest.fn(() => ({ userId: 1, walletId: 2 }));
 pillarSdk.updateUser = jest.fn(() => ({ username: 'snow', walletId: 2 }));
 pillarSdk.userInfo = jest.fn(() => ({ username: 'snow', walletId: 2 }));
 pillarSdk.fetchInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));
-const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk)]);
+const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 const mockWallet: Object = {
   address: '0x9c',

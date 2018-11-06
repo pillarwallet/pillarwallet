@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import isEqual from 'lodash.isequal';
+import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
-import { BaseText } from 'components/Typography';
+import { BaseText, BoldText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
@@ -78,10 +78,10 @@ const Column = styled.View`
   ${props => props.rightColumn ? '' : 'flex: 1'}
 `;
 
-const ItemTitle = styled(BaseText)`
+const ItemTitle = styled(BoldText)`
   color: ${baseColors.slateBlack};
-  font-size: ${fontSizes.medium}px;
-  letter-spacing: ${fontTrackings.tiny}px;
+  font-size: ${fontSizes.small}px;
+  letter-spacing: ${fontTrackings.small}px;
   width: 100%;
   flex: 1;
 `;
@@ -340,7 +340,11 @@ const getType = (props: Props) => {
 
 class ListItemWithImage extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
-    return !isEqual(this.props, nextProps);
+    const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
+      if (typeof val1 === 'function' && typeof val2 === 'function') return true;
+      return undefined;
+    });
+    return !isEq;
   }
 
   render() {

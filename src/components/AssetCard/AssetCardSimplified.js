@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
-import { LightText, BaseText, BoldText } from 'components/Typography';
+import { LightText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
@@ -24,6 +24,7 @@ type Props = {
     currency: string,
   },
   icon: string,
+  assetData: Object,
 }
 
 const defaultCircleColor = '#ACBCCD';
@@ -124,13 +125,12 @@ const IconCircle = styled.View`
   justify-content: center;
 `;
 
-const Name = styled(BaseText)`
-  font-size: ${fontSizes.medium};
-  letter-spacing: ${fontTrackings.tiny};
+const Name = styled(BoldText)`
+  font-size: ${fontSizes.small};
+  letter-spacing: ${fontTrackings.small};
   line-height: ${fontSizes.medium};
   color: ${baseColors.slateBlack};
   flex: 1;
-  margin-top: 2px;
   text-align-vertical: center;
 `;
 
@@ -142,13 +142,17 @@ class AssetCardSimplified extends React.Component<Props, {}> {
     return !isEqual(this.props, nextProps);
   }
 
+  handleOnPress = () => {
+    const { onPress, assetData } = this.props;
+    onPress(assetData);
+  }
+
   render() {
     const {
       name,
       amount,
       token,
       balanceInFiat,
-      onPress,
       disclaimer,
       icon = '',
     } = this.props;
@@ -157,7 +161,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
     return (
       <AssetOutter cardWidth={cardWidth}>
         <Shadow heightAndroid={70}>
-          <TouchableWithoutFeedback onPress={onPress}>
+          <TouchableWithoutFeedback onPress={this.handleOnPress}>
             <AssetWrapper>
               <InnerWrapper>
                 <IconCircle>

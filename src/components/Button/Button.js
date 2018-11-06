@@ -35,6 +35,7 @@ const themes = {
     color: '#ffffff',
     borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
+    shadow: true,
   },
   primaryInverted: {
     background: baseColors.white,
@@ -147,6 +148,8 @@ const ButtonWrapper = styled.TouchableOpacity`
   border-width:  ${props => props.theme.borderWidth};
   border-style: solid;
   flex-direction: row;
+  ${props => props.theme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
+  ${props => props.theme.shadow ? 'elevation: 1;' : ''}
 `;
 
 const ButtonText = styled(BoldText)`
