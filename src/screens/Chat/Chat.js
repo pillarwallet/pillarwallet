@@ -116,30 +116,6 @@ const renderBubble = (props: Props) => {
   />);
 };
 
-const renderCustomAvatar = (contact, navigation) => () => (
-  <ProfileImage
-    uri={contact.profileImage}
-    userName={contact.username}
-    diameter={34}
-    onPress={() => navigation.navigate(CONTACT, { contact })}
-    textStyle={{
-      fontSize: 16,
-    }}
-  />
-);
-
-const renderAvatar = (contact, navigation) => (props: Props) => (
-  <Avatar
-    {...props}
-    renderAvatar={renderCustomAvatar(contact, navigation)}
-    containerStyle={{
-      left: {
-        marginRight: 2,
-      },
-    }}
-  />
-);
-
 const renderComposer = (props: Props) => {
   return (
     <Composer
@@ -363,6 +339,42 @@ class ChatScreen extends React.Component<Props, State> {
     sendMessageByContact(contact.username, messages[0]);
   };
 
+  handleNavigationToContact = () => {
+    const { navigation } = this.props;
+    const { contact } = this.state;
+    navigation.navigate(CONTACT, { contact });
+  }
+
+  renderCustomAvatar = () => {
+    const { contact } = this.state;
+    return (
+      <ProfileImage
+        uri={contact.profileImage}
+        userName={contact.username}
+        diameter={34}
+        onPress={this.handleNavigationToContact}
+        textStyle={{
+          fontSize: 16,
+        }}
+      />
+    );
+  }
+
+  renderAvatar = () => {
+    const { contact } = this.state;
+    return (
+      <Avatar
+        {...contact}
+        renderAvatar={this.renderCustomAvatar}
+        containerStyle={{
+          left: {
+            marginRight: 2,
+          },
+        }}
+      />
+    );
+  };
+
   render() {
     const { messages, navigation } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
@@ -377,29 +389,29 @@ class ChatScreen extends React.Component<Props, State> {
         />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Spinner />
-          </View>}
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Spinner />
+            </View>}
           {!this.state.isFetching &&
-          <GiftedChat
-            messages={messages[contact.username]}
-            onSend={msgs => this.onSend(msgs)}
-            user={{
-              _id: this.props.user.username,
-            }}
-            renderBubble={renderBubble}
-            renderAvatar={renderAvatar(contact, navigation)}
-            renderComposer={renderComposer}
-            renderInputToolbar={renderInputToolbar}
-            renderDay={renderDay}
-            loadEarlier={showLoadEarlierButton}
-            onLoadEarlier={this.handleLoadEarlier}
-            renderLoadEarlier={renderLoadEarlier}
-            renderMessage={renderMessage}
-            renderTime={renderTime}
-            minInputToolbarHeight={52}
-            parsePatterns={parsePatterns}
-          />}
+            <GiftedChat
+              messages={messages[contact.username]}
+              onSend={msgs => this.onSend(msgs)}
+              user={{
+                _id: this.props.user.username,
+              }}
+              renderBubble={renderBubble}
+              renderAvatar={this.renderAvatar}
+              renderComposer={renderComposer}
+              renderInputToolbar={renderInputToolbar}
+              renderDay={renderDay}
+              loadEarlier={showLoadEarlierButton}
+              onLoadEarlier={this.handleLoadEarlier}
+              renderLoadEarlier={renderLoadEarlier}
+              renderMessage={renderMessage}
+              renderTime={renderTime}
+              minInputToolbarHeight={52}
+              parsePatterns={parsePatterns}
+            />}
         </Wrapper>
       </ChatContainer>
     );

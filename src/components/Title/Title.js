@@ -57,14 +57,9 @@ const BlueDot = styled(BoldText)`
 const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
-      {typeof props.onTitlePress !== 'undefined' &&
-        <TouchableOpacity onPress={props.onTitlePress}>
-          <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
-        </TouchableOpacity>
-      }
-      {typeof props.onTitlePress === 'undefined' &&
+      <TouchableOpacity onPress={props.onTitlePress}>
         <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
-      }
+      </TouchableOpacity>
       {!!props.title && !props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor} />}
     </Wrapper>
   );
