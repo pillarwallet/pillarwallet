@@ -9,6 +9,8 @@ import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
 import { fontSizes, fontTrackings, baseColors, fontWeights, spacing } from 'utils/variables';
 
+const { width } = Dimensions.get('window');
+
 type Props = {
   id: string,
   name: string,
@@ -160,9 +162,15 @@ class AssetCard extends React.Component<Props, {}> {
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     const wallpaperUri = isListed ? wallpaper : undefined;
+    const height = innerCard ? innerCardHeight : 140;
     return (
       <AssetOutter>
-        <Shadow heightAndroid={innerCard ? innerCardHeight : 140}>
+        <Shadow
+          heightAndroid={height}
+          heightIOS={height}
+          widthIOS={width - 30}
+          shadowRadius={20}
+        >
           <TouchableWithoutFeedback onPress={this.handleOnPress}>
             <AssetWrapper innerCard={innerCard} isListed={isListed}>
               <BackgroundImage source={{ uri: wallpaperUri }} />
