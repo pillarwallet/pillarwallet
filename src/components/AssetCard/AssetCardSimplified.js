@@ -160,7 +160,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     return (
       <AssetOutter cardWidth={cardWidth}>
-        <Shadow heightAndroid={70}>
+        <Shadow heightAndroid={70} widthIOS={cardWidth - 20} heightIOS={70}>
           <TouchableWithoutFeedback onPress={this.handleOnPress}>
             <AssetWrapper>
               <InnerWrapper>
