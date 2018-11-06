@@ -61,7 +61,13 @@ const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: nu
 
   if (!noShadow) {
     return (
-      <Shadow widthAndroid={diameter} heightAndroid={diameter}>
+      <Shadow
+        widthAndroid={diameter} 
+        heightAndroid={diameter}
+        widthIOS={diameter}
+        heightIOS={diameter}
+        shadowRadius={diameter / 2}
+      >
         { children }
       </Shadow>
     );

@@ -144,6 +144,7 @@
     "react-native-randombytes": "3.2.0",
     "react-native-scrypt": "^1.0.0",
     "react-native-sentry": "^0.39.0",
+    "react-native-shadow": "^1.2.2",
     "react-native-share": "^1.1.1",
     "react-native-splash-screen": "^3.1.1",
     "react-native-svg": "^7.0.2",
