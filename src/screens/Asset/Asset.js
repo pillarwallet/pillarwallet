@@ -65,12 +65,13 @@ type State = {
 const AssetCardWrapper = styled.View`
   flex: 1;
   justify-content: flex-start;
-  padding-top: 10px;
-  padding-bottom: 20px;
+  padding-top: 5px;
+  padding-bottom: 30px;
   background-color: ${baseColors.snowWhite};
   border-top-width: 1px;
   border-bottom-width: 1px;
   border-color: ${baseColors.mediumLightGray};
+  margin-top: 4px;
 `;
 
 const DataWrapper = styled.View`
@@ -228,6 +229,7 @@ class AssetScreen extends React.Component<Props, State> {
             additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
             backgroundColor={baseColors.white}
             noBorder
+            wrapperStyle={{ marginTop: 10 }}
           />
         </ScrollWrapper>
 
