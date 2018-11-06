@@ -5,6 +5,8 @@ import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import { List, ListItem, Body, Switch } from 'native-base';
+import { SDK_PROVIDER } from 'react-native-dotenv';
+
 import type { Assets, Asset } from 'models/Asset';
 import { connect } from 'react-redux';
 import { baseColors, fontSizes, fontWeights, UIColors } from 'utils/variables';
@@ -16,16 +18,18 @@ import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SearchBar from 'components/SearchBar';
 import { SubHeading, BaseText, BoldText, LightText } from 'components/Typography';
 import Header from 'components/Header';
+import Spinner from 'components/Spinner';
+
 import {
   addAssetAction,
   removeAssetAction,
   updateAssetsAction,
   fetchAssetsBalancesAction,
+  startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
 } from 'actions/assetsActions';
-import { ETH, FETCHED } from 'constants/assetsConstants';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { ETH, FETCHING, FETCHED } from 'constants/assetsConstants';
 
 const TokenName = styled(BoldText)`
   font-size: ${fontSizes.small};
@@ -96,6 +100,10 @@ const FooterText = styled(BaseText)`
   letter-spacing: 0.2;
 `;
 
+const SearchSpinner = styled(Wrapper)`
+  padding-top: 20;
+`;
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -107,6 +115,7 @@ type Props = {
   addAsset: Function,
   removeAsset: Function,
   searchAssets: Function,
+  startAssetsSearch: Function,
   resetSearchAssetsResult: Function,
   assetsSearchResults: Asset[],
   assetsSearchState: string,
@@ -114,18 +123,18 @@ type Props = {
 
 type State = {
   query: string,
-  inSearchMode: boolean,
 }
+
+const MIN_QUERY_LENGTH = 2;
 
 class AddToken extends React.Component<Props, State> {
   state = {
     query: '',
-    inSearchMode: false,
   };
 
   constructor(props: Props) {
     super(props);
-    this.searchAssets = debounce(this.searchAssets, 200);
+    this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
 
   formChanged: boolean = false;
@@ -177,6 +186,7 @@ class AddToken extends React.Component<Props, State> {
           onValueChange={boundAssetToggleHandler}
           value={!!assets[symbol]}
         />);
+
         const isLastItem = (filteredAssets.length - index) === 1;
         return this.renderTokenListItem({
           symbol, name, fullIconUrl, actionBlock, isLastItem,
@@ -188,14 +198,12 @@ class AddToken extends React.Component<Props, State> {
     const { assets, assetsSearchResults } = this.props;
 
     return assetsSearchResults.map((asset, index) => {
-      const {
-        symbol, name, iconUrl,
-      } = asset;
+      const { symbol, name, iconUrl } = asset;
       const isAdded = !!assets[symbol];
       const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
 
       const actionBlock = isAdded
-        ? <TokenStatus>In wallet</TokenStatus>
+        ? <TokenStatus>In your wallet</TokenStatus>
         : (<Button
           title="Add to wallet"
           onPress={() => this.addTokenToWallet(asset)}
@@ -213,7 +221,6 @@ class AddToken extends React.Component<Props, State> {
     const {
       assets,
       fetchAssetsBalances,
-      navigation,
       updateAssets,
       wallet,
     } = this.props;
@@ -223,7 +230,6 @@ class AddToken extends React.Component<Props, State> {
 
     updateAssets(updatedAssetList);
     fetchAssetsBalances(updatedAssetList, wallet.address);
-    navigation.goBack(null);
 
     Toast.show({
       title: 'Added asset',
@@ -233,16 +239,13 @@ class AddToken extends React.Component<Props, State> {
     });
   };
 
-  searchAssets = async (query) => {
-    const { searchAssets, resetSearchAssetsResult, assetsSearchResults } = this.props;
-    const inSearchMode = query.length > 1;
-
-    this.setState({ inSearchMode });
-    if (inSearchMode) {
-      searchAssets(query);
-    } else if (assetsSearchResults.length > 0) {
+  doAssetsSearch = (query: string) => {
+    const { searchAssets, resetSearchAssetsResult } = this.props;
+    if (query.length < MIN_QUERY_LENGTH) {
       resetSearchAssetsResult();
+      return;
     }
+    searchAssets(query);
   };
 
   handleScreenDismissal = () => {
@@ -266,13 +269,17 @@ class AddToken extends React.Component<Props, State> {
     this.setState({
       query: formattedQuery,
     });
-    this.searchAssets(formattedQuery);
+    this.props.startAssetsSearch();
+    this.doAssetsSearch(formattedQuery);
   };
 
   render() {
-    const { query, inSearchMode } = this.state;
+    const { query } = this.state;
     const { supportedAssets, assetsSearchResults, assetsSearchState } = this.props;
-    const isAssetsSearchOver = assetsSearchState === FETCHED;
+    const isSearchOver = assetsSearchState === FETCHED;
+    const isSearching = assetsSearchState === FETCHING;
+    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!assetsSearchState);
+    const resultsFound = !!assetsSearchResults.length;
 
     return (
       <Container>
@@ -295,17 +302,23 @@ class AddToken extends React.Component<Props, State> {
               <List>
                 {this.showTopTokensListItems()}
               </List>
+              <Footer>
+                <FooterText>
+                  Alternatively, you can simply send the tokens to your Pillar wallet. It will appear in the Assets list
+                  once the transaction is confirmed on the blockchain.
+                </FooterText>
+              </Footer>
             </ScrollWrapper>
           }
-          {inSearchMode && !!assetsSearchResults.length &&
+          {inSearchMode && resultsFound && isSearchOver &&
             <ScrollWrapper>
-              <ListHeading>TOKENS FOUND</ListHeading>
+              <ListHeading>FOUND TOKENS</ListHeading>
               <List>
                 {this.showFoundTokensListItems()}
               </List>
             </ScrollWrapper>
           }
-          {inSearchMode && !assetsSearchResults.length && isAssetsSearchOver &&
+          {inSearchMode && !resultsFound && isSearchOver &&
             <TokenSearchStatusWrapper center>
               <EmptyStateParagraph
                 title="Token not found"
@@ -313,12 +326,11 @@ class AddToken extends React.Component<Props, State> {
               />
             </TokenSearchStatusWrapper>
           }
-          <Footer>
-            <FooterText>
-              Alternatively, you can simply send the tokens to your Pillar wallet. It will appear in the Assets list
-              once the transaction is confirmed on the blockchain.
-            </FooterText>
-          </Footer>
+          {isSearching &&
+            <SearchSpinner center>
+              <Spinner />
+            </SearchSpinner>
+          }
         </TokensWrapper>
       </Container>
     );
@@ -327,7 +339,10 @@ class AddToken extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: {
-    data: assets, supportedAssets, assetsSearchState, assetsSearchResults,
+    data: assets,
+    supportedAssets,
+    assetsSearchState,
+    assetsSearchResults,
   },
   wallet: { data: wallet },
 }) => ({
@@ -345,6 +360,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAssetsBalances: (assets: Assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
+  startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
 });

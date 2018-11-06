@@ -7,11 +7,14 @@ import {
   REMOVE_ASSET,
   UPDATE_ASSETS_BALANCES,
   SET_INITIAL_ASSETS,
+  FETCHING,
   FETCHED,
   FETCHED_INITIAL,
   UPDATE_SUPPORTED_ASSETS,
   UPDATE_BALANCES,
   UPDATE_ASSETS_SEARCH_RESULT,
+  START_ASSETS_SEARCH,
+  RESET_ASSETS_SEARCH_RESULT,
 } from 'constants/assetsConstants';
 import { transformAssetsToObject } from 'utils/assets';
 import type { Asset } from 'models/Asset';
@@ -79,11 +82,23 @@ export default function assetsReducer(
       );
     case UPDATE_BALANCES:
       return { ...state, balances: action.payload };
+    case START_ASSETS_SEARCH:
+      return {
+        ...state,
+        assetsSearchState: FETCHING,
+        assetsSearchResults: [],
+      };
     case UPDATE_ASSETS_SEARCH_RESULT:
       return {
         ...state,
         assetsSearchState: FETCHED,
         assetsSearchResults: action.payload,
+      };
+    case RESET_ASSETS_SEARCH_RESULT:
+      return {
+        ...state,
+        assetsSearchState: null,
+        assetsSearchResults: [],
       };
     default:
       return state;

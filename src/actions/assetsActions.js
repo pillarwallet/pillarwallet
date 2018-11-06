@@ -4,8 +4,9 @@ import { Sentry } from 'react-native-sentry';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
-  UPDATE_ASSETS_SEARCH_STATE,
+  START_ASSETS_SEARCH,
   UPDATE_ASSETS_SEARCH_RESULT,
+  RESET_ASSETS_SEARCH_RESULT,
   ADD_ASSET,
   REMOVE_ASSET,
   SET_INITIAL_ASSETS,
@@ -215,14 +216,13 @@ export const removeAssetAction = (asset: Object) => ({
   payload: asset,
 });
 
+export const startAssetsSearchAction = () => ({
+  type: START_ASSETS_SEARCH,
+});
+
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: { walletId } } } = getState();
-
-    dispatch({
-      type: UPDATE_ASSETS_SEARCH_STATE,
-      payload: FETCHING,
-    });
 
     const assets = await api.assetsSearch(query, walletId);
 
@@ -233,11 +233,6 @@ export const searchAssetsAction = (query: string) => {
   };
 };
 
-export const resetSearchAssetsResultAction = () => {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: UPDATE_ASSETS_SEARCH_RESULT,
-      payload: [],
-    });
-  };
-};
+export const resetSearchAssetsResultAction = () => ({
+  type: RESET_ASSETS_SEARCH_RESULT,
+});
