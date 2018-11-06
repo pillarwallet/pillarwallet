@@ -50,8 +50,8 @@ const TokensWrapper = styled(ScrollWrapper)`
 
 const TokenListItemBody = styled.View`
   flex: 1;
-  flexDirection: row;
-  justifyContent: space-between;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 15px 20px 15px 0;
   border-color: ${UIColors.defaultDividerColor};
   border-bottom-width: 1;
@@ -114,13 +114,13 @@ type Props = {
 
 type State = {
   query: string,
-  isSearching: boolean,
+  inSearchMode: boolean,
 }
 
 class AddToken extends React.Component<Props, State> {
   state = {
     query: '',
-    isSearching: false,
+    inSearchMode: false,
   };
 
   constructor(props: Props) {
@@ -140,7 +140,7 @@ class AddToken extends React.Component<Props, State> {
     removeAsset(asset);
   };
 
-  generateTokenListItem({
+  renderTokenListItem({
     symbol, name, fullIconUrl, actionBlock, isLastItem,
   }) {
     return (
@@ -159,7 +159,7 @@ class AddToken extends React.Component<Props, State> {
     );
   }
 
-  generateAddTokenListItems() {
+  showTopTokensListItems() {
     const { assets, supportedAssets } = this.props;
     const filteredAssets = supportedAssets.filter(({ symbol }) => symbol !== ETH);
     return filteredAssets
@@ -178,13 +178,13 @@ class AddToken extends React.Component<Props, State> {
           value={!!assets[symbol]}
         />);
         const isLastItem = (filteredAssets.length - index) === 1;
-        return this.generateTokenListItem({
+        return this.renderTokenListItem({
           symbol, name, fullIconUrl, actionBlock, isLastItem,
         });
       });
   }
 
-  generateFoundTokenListItems() {
+  showFoundTokensListItems() {
     const { assets, assetsSearchResults } = this.props;
 
     return assetsSearchResults.map((asset, index) => {
@@ -194,8 +194,8 @@ class AddToken extends React.Component<Props, State> {
       const isAdded = !!assets[symbol];
       const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
 
-      const actionBlock = (isAdded)
-        ? (<TokenStatus>In wallet</TokenStatus>)
+      const actionBlock = isAdded
+        ? <TokenStatus>In wallet</TokenStatus>
         : (<Button
           title="Add to wallet"
           onPress={() => this.addTokenToWallet(asset)}
@@ -203,7 +203,7 @@ class AddToken extends React.Component<Props, State> {
         />);
 
       const isLastItem = (assetsSearchResults.length - index) === 1;
-      return this.generateTokenListItem({
+      return this.renderTokenListItem({
         symbol, name, fullIconUrl, actionBlock, isLastItem,
       });
     });
@@ -235,10 +235,10 @@ class AddToken extends React.Component<Props, State> {
 
   searchAssets = async (query) => {
     const { searchAssets, resetSearchAssetsResult, assetsSearchResults } = this.props;
-    const isSearching = query.length > 1;
+    const inSearchMode = query.length > 1;
 
-    this.setState({ isSearching });
-    if (isSearching) {
+    this.setState({ inSearchMode });
+    if (inSearchMode) {
       searchAssets(query);
     } else if (assetsSearchResults.length > 0) {
       resetSearchAssetsResult();
@@ -261,16 +261,16 @@ class AddToken extends React.Component<Props, State> {
   };
 
   handleSearchChange = (query: string) => {
-    const formatedQuery = !query ? '' : query.trim();
+    const formattedQuery = !query ? '' : query.trim();
 
     this.setState({
-      query: formatedQuery,
+      query: formattedQuery,
     });
-    this.searchAssets(formatedQuery);
+    this.searchAssets(formattedQuery);
   };
 
   render() {
-    const { query, isSearching } = this.state;
+    const { query, inSearchMode } = this.state;
     const { supportedAssets, assetsSearchResults, assetsSearchState } = this.props;
     const isAssetsSearchOver = assetsSearchState === FETCHED;
 
@@ -289,27 +289,27 @@ class AddToken extends React.Component<Props, State> {
           />
         </Wrapper>
         <TokensWrapper>
-          {!isSearching &&
+          {!inSearchMode &&
             <ScrollWrapper>
               <ListHeading>TOP { supportedAssets.length } TOKENS</ListHeading>
               <List>
-                {this.generateAddTokenListItems()}
+                {this.showTopTokensListItems()}
               </List>
             </ScrollWrapper>
           }
-          {isSearching && !!assetsSearchResults.length &&
+          {inSearchMode && !!assetsSearchResults.length &&
             <ScrollWrapper>
               <ListHeading>TOKENS FOUND</ListHeading>
               <List>
-                {this.generateFoundTokenListItems()}
+                {this.showFoundTokensListItems()}
               </List>
             </ScrollWrapper>
           }
-          {isSearching && !assetsSearchResults.length && isAssetsSearchOver &&
+          {inSearchMode && !assetsSearchResults.length && isAssetsSearchOver &&
             <TokenSearchStatusWrapper center>
               <EmptyStateParagraph
                 title="Token not found"
-                bodyText="Check if the name was enetered correctly or add custom token"
+                bodyText="Check if the name was entered correctly or add custom token"
               />
             </TokenSearchStatusWrapper>
           }
@@ -325,14 +325,12 @@ class AddToken extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (
-  {
-    assets: {
-      data: assets, supportedAssets, assetsSearchState, assetsSearchResults,
-    },
-    wallet: { data: wallet },
+const mapStateToProps = ({
+  assets: {
+    data: assets, supportedAssets, assetsSearchState, assetsSearchResults,
   },
-) => ({
+  wallet: { data: wallet },
+}) => ({
   supportedAssets,
   assets,
   assetsSearchState,
