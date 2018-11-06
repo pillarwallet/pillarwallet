@@ -169,6 +169,7 @@ const renderInputToolbar = (props: Props) => {
       primaryStyle={{
         justifyContent: 'center',
         alignItems: 'flex-start',
+        height: isIphoneX() ? 72 : 52,
       }}
       containerStyle={{
         bottom: 2,
@@ -380,9 +381,8 @@ class ChatScreen extends React.Component<Props, State> {
     const { messages } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const title = getUserName(contact).toLowerCase();
-    const bottomOffset = isIphoneX() ? 90 : 56;
     return (
-      <ChatContainer>
+      <ChatContainer inset={{ bottom: 0 }}>
         <Header
           title={title}
           onBack={this.handleChatDismissal}
@@ -412,7 +412,6 @@ class ChatScreen extends React.Component<Props, State> {
               renderTime={renderTime}
               minInputToolbarHeight={52}
               parsePatterns={parsePatterns}
-              bottomOffset={bottomOffset}
             />}
         </Wrapper>
       </ChatContainer>
