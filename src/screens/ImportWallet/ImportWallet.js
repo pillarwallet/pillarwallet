@@ -260,7 +260,7 @@ class ImportWallet extends React.Component<Props, State> {
             {activeTab === PRIVATEKEY &&
               <ButtonWrapper error={!!tabsInfo[activeTab].errorMessage}>
                 <IconButton
-                  icon="qrcode"
+                  icon="scan"
                   color={baseColors.electricBlue}
                   fontSize={fontSizes.extraLarge}
                   onPress={this.handleQRScannerOpen}

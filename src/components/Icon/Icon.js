@@ -16,7 +16,7 @@ const glyphMap = {
   settings: '\uE809',
   warning: '\uE80A',
   check: '\uE80B',
-  qrcode: '\uE87B',
+  qrcode: '\uE81C',
   send: '\uF1D9',
   all: '\uE80D',
   social: '\uE80E',
@@ -44,6 +44,7 @@ const glyphMap = {
   'flash-off': '\uE826',
   'flash-on': '\uE828',
   gallery: '\uE827',
+  scan: '\uE87B',
 };
 
 type Props = {

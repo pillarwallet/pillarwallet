@@ -322,7 +322,7 @@ class SingleInput extends React.Component<Props, *> {
           </Item>
           {outterIcon &&
           <IconButton
-            icon="qrcode"
+            icon="scan"
             color={baseColors.electricBlue}
             fontSize={fontSizes.extraLarge}
             onPress={onPress}
