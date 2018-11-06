@@ -11,6 +11,7 @@ type ContainerProps = {
   center?: boolean,
   color?: string,
   style?: Object,
+  inset?: Object,
 };
 
 type FooterProps = {
@@ -36,8 +37,11 @@ const ContainerInner = styled.View`
 `;
 
 export const Container = (props: ContainerProps) => {
+  const { inset = {} } = props;
+
+
   return (
-    <ContainerOuter color={props.color} style={props.style} forceInset={{ top: 'always' }}>
+    <ContainerOuter color={props.color} style={props.style} forceInset={{ top: 'always', ...inset }}>
       <ContainerInner center={props.center}>{props.children}</ContainerInner>
     </ContainerOuter>
   );

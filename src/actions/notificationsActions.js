@@ -146,10 +146,19 @@ export const stopListeningNotificationsAction = () => {
 };
 
 export const startListeningOnOpenNotificationAction = () => {
-  return (dispatch: Function, getState: Function) => { // eslint-disable-line
+  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
+    const notificationOpen = await firebase.notifications().getInitialNotification();
+    if (notificationOpen) {
+      const { type } = processNotification(notificationOpen.notification._data) || {};
+      const notificationRoute = NOTIFICATION_ROUTES[type] || null;
+      updateNavigationLastScreenState({
+        lastActiveScreen: notificationRoute,
+      });
+    }
     if (notificationsOpenerListener) return;
     notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
       const { navigator } = getNavigationState();
+      if (!navigator) return;
       const pathAndParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state);
       const currentFlow = pathAndParams.path.split('/')[0];
       const { type } = processNotification(message.notification._data) || {};
