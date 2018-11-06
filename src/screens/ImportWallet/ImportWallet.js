@@ -19,13 +19,13 @@ import {
 } from 'constants/walletConstants';
 import Button from 'components/Button';
 import { Container, ScrollWrapper, Footer } from 'components/Layout';
-import { Paragraph, BaseText } from 'components/Typography';
+import { Paragraph } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
 import IconButton from 'components/IconButton';
 import WalletTabs from 'components/Tabs/WalletTabs';
-import { fontSizes, baseColors, UIColors, fontWeights, spacing } from 'utils/variables';
+import { fontSizes, baseColors, UIColors, spacing } from 'utils/variables';
 
 type Props = {
   importWalletFromTWordsPhrase: (tWordsPhrase: string) => Function,
@@ -51,12 +51,6 @@ const InputWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   margin-top: -20px;
-`;
-
-const ButtonText = styled(BaseText)`
-  color: ${baseColors.electricBlue};
-  font-size: ${fontSizes.small};
-  font-weight: ${fontWeights.medium};
 `;
 
 const FooterWrapper = styled.View`
@@ -270,8 +264,13 @@ class ImportWallet extends React.Component<Props, State> {
                   color={baseColors.electricBlue}
                   fontSize={fontSizes.extraLarge}
                   onPress={this.handleQRScannerOpen}
+                  iconText="SCAN"
+                  style={{
+                    marginLeft: 5,
+                    marginBottom: 3,
+                    alignItems: 'center',
+                  }}
                 />
-                <ButtonText>Scan</ButtonText>
               </ButtonWrapper>
             }
           </InputWrapper>

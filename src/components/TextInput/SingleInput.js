@@ -3,9 +3,10 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
-import { TextLink, BaseText, MediumText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import { Image as RNImage, Platform } from 'react-native';
+import IconButton from 'components/IconButton';
 
 type inputPropsType = {
   placeholder?: string,
@@ -27,8 +28,8 @@ type Props = {
   alignRight?: boolean,
   postfix?: string,
   innerImageURI?: string,
-  outterImageURI?: string,
-  outterImageText: string,
+  outterIcon?: string,
+  outterIconText?: string,
   innerImageText: string,
   label?: string,
   id?: string,
@@ -125,14 +126,6 @@ const InnerImageText = styled(BaseText)`
   color: ${UIColors.placeholderTextColor};
 `;
 
-const ImageHolder = styled.TouchableOpacity`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin: 0 10px 0 20px;
-`;
-
 const OptionSelector = styled.TouchableOpacity`
   position: absolute;
   height: 100%;
@@ -149,17 +142,6 @@ const OptionSelector = styled.TouchableOpacity`
   border: 1px solid ${props => props.error ? 'tomato' : '#ebebeb'};
   border-bottom-left-radius: 4px;
   border-top-left-radius: 4px;
-`;
-
-const Image = styled(RNImage)`
-  height: 24px;
-  width: 24px;
-  margin-bottom: 5px;
-`;
-
-const OutterImageText = styled(TextLink)`
-  font-size: ${fontSizes.extraExtraSmall};
-  text-align: left;
 `;
 
 const ErrorMessage = styled(BaseText)`
@@ -296,8 +278,8 @@ class SingleInput extends React.Component<Props, *> {
       inputProps,
       errorMessage,
       innerImageURI,
-      outterImageURI,
-      outterImageText,
+      outterIcon,
+      outterIconText,
       innerImageText,
       onPress,
       options,
@@ -338,11 +320,20 @@ class SingleInput extends React.Component<Props, *> {
             </FloatImageView>
             }
           </Item>
-          {outterImageURI &&
-            <ImageHolder onPress={onPress}>
-              <Image source={this.resolveAssetSource(outterImageURI)} />
-              <OutterImageText>{outterImageText.toUpperCase()}</OutterImageText>
-            </ImageHolder>
+          {outterIcon &&
+          <IconButton
+            icon="qrcode"
+            color={baseColors.electricBlue}
+            fontSize={fontSizes.extraLarge}
+            onPress={onPress}
+            iconText={outterIconText}
+            style={{
+              marginRight: 7,
+              marginLeft: 22,
+              marginBottom: 3,
+              alignItems: 'center',
+            }}
+          />
           }
         </InputHolder>
       </Wrapper>
