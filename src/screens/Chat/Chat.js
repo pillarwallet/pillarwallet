@@ -29,7 +29,8 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-import { CHAT_LIST } from 'constants/navigationConstants';
+import { isIphoneX } from 'utils/common';
+import { CHAT_LIST, CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
@@ -120,32 +121,6 @@ const renderBubble = (props: Props) => {
   />);
 };
 
-const renderCustomAvatar = (contact) => () => (
-  <ProfileImage
-    uri={contact.profileImage}
-    userName={contact.username}
-    diameter={34}
-    textStyle={{
-      fontSize: 16,
-    }}
-  />
-);
-
-const renderAvatar = (contact) => (props: Props) => (
-  <Avatar
-    {...props}
-    renderAvatar={renderCustomAvatar(contact)}
-    containerStyle={{
-      left: {
-        marginRight: Platform.select({
-          ios: -2,
-          android: -14,
-       }),
-      },
-    }}
-  />
-);
-
 const renderComposer = (props: Props) => {
   return (
     <Composer
@@ -198,6 +173,7 @@ const renderInputToolbar = (props: Props) => {
       primaryStyle={{
         justifyContent: 'center',
         alignItems: 'flex-start',
+        height: isIphoneX() ? 72 : 52,
       }}
       containerStyle={{
         bottom: 2,
@@ -369,39 +345,81 @@ class ChatScreen extends React.Component<Props, State> {
     sendMessageByContact(contact.username, messages[0]);
   };
 
+  handleNavigationToContact = () => {
+    const { navigation } = this.props;
+    const { contact } = this.state;
+    navigation.navigate(CONTACT, { contact });
+  }
+
+  renderCustomAvatar = () => {
+    const { contact } = this.state;
+    return (
+      <ProfileImage
+        uri={contact.profileImage}
+        userName={contact.username}
+        diameter={34}
+        onPress={this.handleNavigationToContact}
+        textStyle={{
+          fontSize: 16,
+        }}
+      />
+    );
+  }
+
+  renderAvatar = () => {
+    const { contact } = this.state;
+    return (
+      <Avatar
+        {...contact}
+        renderAvatar={this.renderCustomAvatar}
+        containerStyle={{
+          left: {
+            marginRight: Platform.select({
+              ios: -2,
+              android: -14,
+            }),
+          },
+        }}
+      />
+    );
+  };
+
   render() {
     const { messages } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const title = getUserName(contact).toLowerCase();
-
     return (
-      <ChatContainer>
-        <Header title={title} onBack={this.handleChatDismissal} />
+      <ChatContainer inset={{ bottom: 0 }}>
+        <Header
+          title={title}
+          onBack={this.handleChatDismissal}
+          onTitlePress={this.handleNavigationToContact}
+        />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Spinner />
-          </View>}
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Spinner />
+            </View>}
           {!this.state.isFetching &&
-          <GiftedChat
-            messages={messages[contact.username]}
-            onSend={msgs => this.onSend(msgs)}
-            user={{
-              _id: this.props.user.username,
-            }}
-            renderBubble={renderBubble}
-            renderAvatar={renderAvatar(contact)}
-            renderComposer={renderComposer}
-            renderInputToolbar={renderInputToolbar}
-            renderDay={renderDay}
-            loadEarlier={showLoadEarlierButton}
-            onLoadEarlier={this.handleLoadEarlier}
-            renderLoadEarlier={renderLoadEarlier}
-            renderMessage={renderMessage}
-            renderTime={renderTime}
-            minInputToolbarHeight={52}
-            parsePatterns={parsePatterns}
-          />}
+            <GiftedChat
+              messages={messages[contact.username]}
+              onSend={msgs => this.onSend(msgs)}
+              user={{
+                _id: this.props.user.username,
+              }}
+              renderBubble={renderBubble}
+              renderAvatar={this.renderAvatar}
+              renderComposer={renderComposer}
+              renderInputToolbar={renderInputToolbar}
+              renderDay={renderDay}
+              loadEarlier={showLoadEarlierButton}
+              onLoadEarlier={this.handleLoadEarlier}
+              renderLoadEarlier={renderLoadEarlier}
+              renderMessage={renderMessage}
+              renderTime={renderTime}
+              minInputToolbarHeight={52}
+              parsePatterns={parsePatterns}
+            />}
         </Wrapper>
       </ChatContainer>
     );
