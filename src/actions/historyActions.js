@@ -137,3 +137,36 @@ export const fetchGasInfoAction = () => {
     });
   };
 };
+
+export const updateTransactionStatusAction = (hash: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      session: { data: { isOnline } },
+      history: { data: history },
+    } = getState();
+
+    if (!isOnline) return;
+
+    const txInfo = await api.fetchTxInfo(hash);
+    const txReceipt = await api.fetchTransactionReceipt(hash);
+    const lastBlockNumber = await api.fetchLastBlockNumber();
+    if (!txInfo || !txReceipt || !lastBlockNumber) return;
+
+    const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
+    const status = txReceipt.status ? 'confirmed' : 'failed';
+
+    const updatedHistory = history.map(tx => {
+      if (tx.hash !== hash) return tx;
+      return {
+        ...tx,
+        nbConfirmations,
+        status,
+      };
+    });
+    dispatch({
+      type: SET_HISTORY,
+      payload: updatedHistory,
+    });
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+  };
+};
