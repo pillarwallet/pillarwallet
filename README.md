@@ -1,22 +1,44 @@
 # Pillar Wallet
+
+## Requirements
+- Watchman `brew install watchman`
+- node versions `9.11.1`, `10.x` (The app was tested to run with those versions without problems)
+
+### android
+- java v1.8
+- android studio (suggested 3.2.1)
+
+### iOS
+- Homebrew
+- yarn v1.10.x
+- XCode 9.4 (Please refer to notes below to understand the problem with XCode 10)
+
+_note_: XCode 10 includes CommonCrypto as part of the sdk which triggers a `Redefinition of module` because `rn-signal-protocol-messaging` declares it as dependency,
+currently there's a fix being tested to work with XCode 10 and XCode 9.4, however while this note is here please use *XCode 9.4*
+
+## Install and Run
 To get started clone the repo and run
 
 `yarn install`
 
 This will download all the necessary packages to build the project. The project can be deployed using the simple command of `yarn start`. This will get your project running in development mode.
 
+_note_: if you want to keep the `metro server` running on its own console just run `yarn start`
+
 **Running on iOS:**
 
 The project may be run from the directory using 
 
-`yarn ios`
+`yarn run ios`
 
 
 **Running on Android:**
 
 Like yarn start, but also attempts to open your app in the iOS Simulator if you're on a Mac and have it installed.
 
-`yarn android`
+`yarn run android`
+
+_note_: after any compilation (i.e. after linking a native library) please restart the metro server
 
 ## Debugging
 
@@ -121,14 +143,6 @@ If Yarn was installed when the project was initialized, then dependencies will h
 Runs your app in development mode.
 
 Open it in the [Expo app](https://expo.io) on your phone to view it. It will reload if you save edits to your files, and you will see build errors and logs in the terminal.
-
-Sometimes you may need to reset or clear the React Native packager's cache. To do so, you can pass the `--reset-cache` flag to the start script:
-
-```
-npm start --reset-cache
-# or
-yarn start --reset-cache
-```
 
 #### `npm test`
 
