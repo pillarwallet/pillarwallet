@@ -40,8 +40,8 @@
     "run-s": "^0.0.0"
   },
   "scripts": {
-    "start": "react-native start",
-    "android": "react-native run-android",
+    "start": "react-native start --reset-cache",
+    "android": "react-native run-android --variant=devDebug",
     "ios": "react-native run-ios",
     "generate:ios:ipa": "mkdir  ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/pillarwallet/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
