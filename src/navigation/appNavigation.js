@@ -156,12 +156,16 @@ const StackNavigatorConfig = {
 const chatFlow = createStackNavigator({
   [CHAT_LIST]: ChatListScreen,
   [NEW_CHAT]: NewChatListScreen,
+  [CONTACT]: ContactScreen,
+  [CHAT]: ChatScreen,
+  [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
 // ASSETS FLOW
 const assetsFlow = createStackNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
+  [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
 // PEOPLE FLOW

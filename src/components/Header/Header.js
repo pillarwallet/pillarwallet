@@ -13,6 +13,7 @@ type Props = {
   onClose?: Function,
   onCloseText?: string,
   onNextPress?: Function,
+  onTitlePress?: Function,
   nextText?: string,
   nextIcon?: string,
   title?: string,
@@ -89,6 +90,7 @@ const Header = (props: Props) => {
     nextText,
     nextIcon,
     onNextPress,
+    onTitlePress,
     onClose,
     onCloseText,
     title,
@@ -134,7 +136,7 @@ const Header = (props: Props) => {
       </HeaderLeft>
       {showTitleCenter &&
         <HeaderBody onCloseText={onCloseText}>
-          <Title align="center" noMargin title={title} />
+          <Title align="center" noMargin title={title} onTitlePress={onTitlePress} />
         </HeaderBody >
       }
       {showRight &&

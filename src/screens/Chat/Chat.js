@@ -29,7 +29,7 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-import { CHAT_LIST } from 'constants/navigationConstants';
+import { CHAT_LIST, CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
@@ -116,21 +116,22 @@ const renderBubble = (props: Props) => {
   />);
 };
 
-const renderCustomAvatar = (contact) => () => (
+const renderCustomAvatar = (contact, navigation) => () => (
   <ProfileImage
     uri={contact.profileImage}
     userName={contact.username}
     diameter={34}
+    onPress={() => navigation.navigate(CONTACT, { contact })}
     textStyle={{
       fontSize: 16,
     }}
   />
 );
 
-const renderAvatar = (contact) => (props: Props) => (
+const renderAvatar = (contact, navigation) => (props: Props) => (
   <Avatar
     {...props}
-    renderAvatar={renderCustomAvatar(contact)}
+    renderAvatar={renderCustomAvatar(contact, navigation)}
     containerStyle={{
       left: {
         marginRight: 2,
@@ -363,13 +364,17 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { messages } = this.props;
+    const { messages, navigation } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const title = getUserName(contact).toLowerCase();
 
     return (
       <ChatContainer>
-        <Header title={title} onBack={this.handleChatDismissal} />
+        <Header
+          title={title}
+          onBack={this.handleChatDismissal}
+          onTitlePress={() => navigation.navigate(CONTACT, { contact })}
+        />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
           <View style={{ flex: 1, alignItems: 'center' }}>
@@ -383,7 +388,7 @@ class ChatScreen extends React.Component<Props, State> {
               _id: this.props.user.username,
             }}
             renderBubble={renderBubble}
-            renderAvatar={renderAvatar(contact)}
+            renderAvatar={renderAvatar(contact, navigation)}
             renderComposer={renderComposer}
             renderInputToolbar={renderInputToolbar}
             renderDay={renderDay}

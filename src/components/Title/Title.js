@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { BoldText } from 'components/Typography';
@@ -14,6 +15,7 @@ type Props = {
   maxWidth?: number,
   noBlueDot?: boolean,
   dotColor?: string,
+  onTitlePress?: Function,
 };
 
 const Wrapper = styled.View`
@@ -55,7 +57,14 @@ const BlueDot = styled(BoldText)`
 const Title = (props: Props) => {
   return (
     <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
-      <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
+      {typeof props.onTitlePress !== 'undefined' &&
+        <TouchableOpacity onPress={props.onTitlePress}>
+          <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
+        </TouchableOpacity>
+      }
+      {typeof props.onTitlePress === 'undefined' &&
+        <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
+      }
       {!!props.title && !props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor} />}
     </Wrapper>
   );
