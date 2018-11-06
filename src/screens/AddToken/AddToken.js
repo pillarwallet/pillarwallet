@@ -282,7 +282,7 @@ class AddToken extends React.Component<Props, State> {
     const resultsFound = !!assetsSearchResults.length;
 
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header title="add tokens" onBack={this.handleScreenDismissal} />
         <Wrapper regularPadding>
           <SearchBar
