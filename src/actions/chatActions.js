@@ -31,8 +31,7 @@ const mergeNewChats = (newChats, existingChats) => {
 export const getExistingChatsAction = () => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
-    const filteredChats = chats
-      .filter(_chat => !!_chat.lastMessage && !!_chat.username);
+    const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
     const {
       unreadCount: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
@@ -53,8 +52,7 @@ export const getExistingChatsAction = () => {
 export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
-    const filteredChats = chats
-      .filter(_chat => !!_chat.lastMessage && !!_chat.username);
+    const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
     const {
       unreadCount: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
