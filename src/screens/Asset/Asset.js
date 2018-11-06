@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
-import { Share, RefreshControl, Platform, View } from 'react-native';
+import { Share, RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
-import { baseColors, UIColors, spacing } from 'utils/variables';
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -10,16 +10,17 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
-import AssetCard from 'components/AssetCard';
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
-import TruncatedText from 'components/TruncatedText';
+// import TruncatedText from 'components/TruncatedText';
 import Header from 'components/Header';
 import { Container, ScrollWrapper } from 'components/Layout';
+import AssetPattern from 'components/AssetPattern';
+import { BoldText, BaseText } from 'components/Typography';
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
-import { formatMoney } from 'utils/common';
+import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
 import ReceiveModal from './ReceiveModal';
@@ -64,15 +65,28 @@ type State = {
 const AssetCardWrapper = styled.View`
   flex: 1;
   justify-content: flex-start;
-  padding-bottom: 38px;
-  background-color: ${UIColors.defaultBackgroundColor};
+  padding-top: 10px;
+  padding-bottom: 20px;
+  background-color: ${baseColors.snowWhite};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.mediumLightGray};
 `;
 
-const CardInnerWrapper = styled.View`
-  padding: ${Platform.select({
-    ios: 0,
-    android: '0 10px',
-  })}
+const DataWrapper = styled.View`
+  margin: ${spacing.large}px;
+  justify-content: center;
+`;
+
+const TokenValue = styled(BoldText)`
+  font-size: ${fontSizes.giant}px;
+  text-align: center;
+`;
+
+const ValueInFiat = styled(BaseText)`
+  font-size: ${fontSizes.small}px;
+  text-align: center;
+  color: ${baseColors.darkGray};
 `;
 
 class AssetScreen extends React.Component<Props, State> {
@@ -153,19 +167,18 @@ class AssetScreen extends React.Component<Props, State> {
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
     const displayAmount = formatMoney(balance, 4);
-    const displayBalanceInFiat = {
-      amount: formattedBalanceInFiat,
-      currency: fiatCurrency,
-    };
+    const currencySymbol = getCurrencySymbol(fiatCurrency);
+
     const {
       listed: isListed = true,
       send: isSendActive = true,
       receive: isReceiveActive = true,
-      disclaimer,
+      // disclaimer,
     } = assetsConfig[assetData.token] || {};
+
     return (
-      <Container>
-        <Header onBack={this.handleCardTap} />
+      <Container color={baseColors.white}>
+        <Header onBack={this.handleCardTap} title={assetData.name} />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
@@ -178,29 +191,26 @@ class AssetScreen extends React.Component<Props, State> {
             />
           }
         >
+          <AssetPattern
+            token={assetData.token}
+            icon={isListed ? assetData.iconColor : assetData.icon}
+            contractAddress={assetData.contractAddress}
+            isListed={isListed}
+          />
+          <DataWrapper>
+            <TokenValue>
+              {`${displayAmount}${token}`}
+            </TokenValue>
+            <ValueInFiat>
+              {`${currencySymbol}${formattedBalanceInFiat}`}
+            </ValueInFiat>
+          </DataWrapper>
           <AssetCardWrapper>
-            <CardInnerWrapper>
-              <AssetCard
-                id={assetData.token}
-                name={assetData.name}
-                token={assetData.token}
-                amount={displayAmount}
-                balanceInFiat={displayBalanceInFiat}
-                color={assetData.color}
-                onPress={this.handleCardTap}
-                address={assetData.address}
-                icon={assetData.icon}
-                wallpaper={assetData.wallpaper}
-                isListed={isListed}
-                disclaimer={disclaimer}
-                horizontalPadding
-                innerCard
-                assetData={assetData}
-              />
-            </CardInnerWrapper>
+            { /*
             <View style={{ paddingHorizontal: spacing.mediumLarge, paddingTop: 10 }}>
               <TruncatedText lines={1} text={assetData.description} />
-            </View>
+           </View
+           > */}
 
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
@@ -217,6 +227,7 @@ class AssetScreen extends React.Component<Props, State> {
             activeTab={TRANSACTIONS}
             additionalFiltering={data => data.filter(({ asset }) => asset === assetData.token)}
             backgroundColor={baseColors.white}
+            noBorder
           />
         </ScrollWrapper>
 
