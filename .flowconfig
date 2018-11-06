@@ -100,6 +100,9 @@ module.name_mapper='^services' -> '<PROJECT_ROOT>/src/services'
 module.name_mapper='^utils\/\(.*\)$' -> '<PROJECT_ROOT>/src/utils/\1'
 module.name_mapper='^utils' -> '<PROJECT_ROOT>/src/utils'
 
+module.name_mapper='^testUtils\/\(.*\)$' -> '<PROJECT_ROOT>/src/testUtils/\1'
+module.name_mapper='^testUtils' -> '<PROJECT_ROOT>/src/testUtils'
+
 module.name_mapper='^configs\/\(.*\)$' -> '<PROJECT_ROOT>/src/configs/\1'
 module.name_mapper='^configs' -> '<PROJECT_ROOT>/src/configs'
 

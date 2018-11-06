@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import { Platform, PixelRatio, View } from 'react-native';
+import { BoxShadow } from 'react-native-shadow';
 import styled from 'styled-components/native';
 import { UIColors } from 'utils/variables';
 import NativeAndroidShadow from './NativeAndroidShadow';
@@ -16,16 +17,13 @@ type Props = {
   paddingFixAndroid?: number,
   shadowColorAndroid?: string,
   shadowColoriOS?: string,
+  widthIOS: number,
+  heightIOS: number,
   widthAndroid?: number | string,
   heightAndroid?: number | string,
+  shadowBorder?: number,
+  marginVertical?: number
 };
-
-const ShadowWrapper = styled.View`
-  shadow-color: ${props => props.shadowColor};
-  shadow-offset: ${props => `${props.shadowOffsetX}px ${props.shadowOffsetY}px`};
-  shadow-opacity: 1;
-  shadow-radius: ${props => props.shadowRadius}px;
-`;
 
 const ShadowInnerWrapper = styled.View`
   height: ${props => props.heightWithPaddings}px;
@@ -34,14 +32,17 @@ const ShadowInnerWrapper = styled.View`
 export const Shadow = (props: Props) => {
   const {
     children,
-    style,
-    shadowOffsetX = 0,
-    shadowOffsetY = 3,
+    shadowOffsetX = 1,
+    shadowOffsetY = 2,
     shadowDistance = 4,
     shadowRadius = 6,
     shadowSpread = 18,
     widthAndroid,
     heightAndroid,
+    shadowBorder = 10,
+    marginVertical = 0,
+    widthIOS = 100,
+    heightIOS = 70,
     shadowColorAndroid = '#14105baa',
     shadowColoriOS = UIColors.cardShadowColor,
   } = props;
@@ -66,15 +67,23 @@ export const Shadow = (props: Props) => {
 
   if (Platform.OS === 'ios') {
     return (
-      <ShadowWrapper
-        style={style}
-        shadowOffsetX={shadowOffsetX}
-        shadowOffsetY={shadowOffsetY}
-        shadowRadius={shadowRadius}
-        shadowColor={shadowColoriOS}
+      <BoxShadow
+        setting={{
+          color: shadowColoriOS,
+          x: shadowOffsetX,
+          y: shadowOffsetY,
+          opacity: 1,
+          radius: shadowRadius,
+          width: widthIOS,
+          height: heightIOS,
+          border: shadowBorder,
+          style: {
+            marginVertical,
+          },
+        }}
       >
         {children}
-      </ShadowWrapper>
+      </BoxShadow >
     );
   }
   return (
