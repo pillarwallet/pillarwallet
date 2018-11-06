@@ -29,6 +29,7 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
+import { isIphoneX } from 'utils/common';
 import { CHAT_LIST, CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
@@ -376,16 +377,16 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { messages, navigation } = this.props;
+    const { messages } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const title = getUserName(contact).toLowerCase();
-
+    const bottomOffset = isIphoneX() ? 90 : 56;
     return (
       <ChatContainer>
         <Header
           title={title}
           onBack={this.handleChatDismissal}
-          onTitlePress={() => navigation.navigate(CONTACT, { contact })}
+          onTitlePress={this.handleNavigationToContact}
         />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
@@ -411,6 +412,7 @@ class ChatScreen extends React.Component<Props, State> {
               renderTime={renderTime}
               minInputToolbarHeight={52}
               parsePatterns={parsePatterns}
+              bottomOffset={bottomOffset}
             />}
         </Wrapper>
       </ChatContainer>

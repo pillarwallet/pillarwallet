@@ -158,7 +158,6 @@ const chatFlow = createStackNavigator({
   [NEW_CHAT]: NewChatListScreen,
   [CONTACT]: ContactScreen,
   [CHAT]: ChatScreen,
-  [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
 // ASSETS FLOW
