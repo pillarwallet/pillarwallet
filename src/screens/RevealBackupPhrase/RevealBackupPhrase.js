@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Wrapper } from 'components/Layout';
@@ -8,12 +9,14 @@ import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
 import { baseColors } from 'utils/variables';
+import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 
 type Props = {
   checkPin: (pin: string, onValidPin: Function) => Function,
   navigation: NavigationScreenProp<*>,
-}
+  resetIncorrectPassword: () => Function,
+};
 
 type State = {
   pinIsValid: boolean,
@@ -28,13 +31,14 @@ const PrivateKeyWrapper = styled(Paragraph)`
   border-style: solid;
 `;
 
-export default class RevealBackupPhrase extends React.Component<Props, State> {
+class RevealBackupPhrase extends React.Component<Props, State> {
   state = {
     pinIsValid: false,
     wallet: {},
   };
 
   handleScreenDismissal = () => {
+    this.props.resetIncorrectPassword();
     this.props.navigation.goBack(null);
   };
 
@@ -87,3 +91,9 @@ export default class RevealBackupPhrase extends React.Component<Props, State> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
+});
+
+export default connect(null, mapDispatchToProps)(RevealBackupPhrase);
