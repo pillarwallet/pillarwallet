@@ -3,6 +3,8 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { StyleSheet } from 'react-native';
 import Icon from 'components/Icon';
+import { BaseText } from 'components/Typography';
+import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 
 type Props = {
   icon: string,
@@ -13,11 +15,18 @@ type Props = {
   iconStyle?: StyleSheet.Styles,
   type?: string,
   margin?: number,
+  iconText?: string,
 }
 
 const IconButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   padding: 0;
+`;
+
+const ButtonText = styled(BaseText)`
+  color: ${baseColors.electricBlue};
+  font-size: ${fontSizes.extraExtraSmall};
+  font-weight: ${fontWeights.medium};
 `;
 
 const IconButton = (props: Props) => {
@@ -29,6 +38,7 @@ const IconButton = (props: Props) => {
     style,
     margin,
     type,
+    iconText,
     iconStyle = {},
   } = props;
   const iconParams = {
@@ -49,6 +59,7 @@ const IconButton = (props: Props) => {
   return (
     <IconButtonWrapper style={style} onPress={onPress}>
       <Icon {...iconParams} />
+      {!!iconText && <ButtonText>{iconText}</ButtonText>}
     </IconButtonWrapper>
   );
 };
