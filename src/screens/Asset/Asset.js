@@ -80,15 +80,15 @@ const DataWrapper = styled.View`
 `;
 
 const TokenValue = styled(BoldText)`
-  font-size: ${fontSizes.giant}px;
+  font-size: ${fontSizes.semiGiant}px;
   text-align: center;
 `;
 
 const ValueInFiat = styled(BaseText)`
-  font-size: ${fontSizes.small}px;
+  font-size: ${fontSizes.extraExtraSmall}px;
   text-align: center;
   color: ${baseColors.darkGray};
-  margin-top: 4px;
+  margin-top: 5px;
 `;
 
 class AssetScreen extends React.Component<Props, State> {

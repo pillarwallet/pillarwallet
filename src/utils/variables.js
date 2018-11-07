@@ -89,6 +89,7 @@ export const fontSizes = {
   extraLarge: 24,
   extraLarger: 28,
   extraExtraLarge: 32,
+  semiGiant: 34,
   giant: 36,
   extraGiant: 48,
   iosIcons: 32,
