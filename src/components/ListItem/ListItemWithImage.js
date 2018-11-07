@@ -299,6 +299,7 @@ const Addon = (props: Props) => {
         onPress={buttonAction}
         small
         primaryInverted={secondaryButton}
+        listItemButton
       />
     );
   }

@@ -46,7 +46,7 @@ const getEventInfo = (eventType, eventStatus) => {
   }
 
   return {
-    title: 'Request sent',
+    title: 'Requested',
     background: baseColors.electricBlue,
     iconName: 'connection-circle',
   };
