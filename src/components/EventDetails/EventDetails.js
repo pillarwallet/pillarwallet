@@ -21,7 +21,7 @@ import { createAlert } from 'utils/alerts';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 
 // constants
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
@@ -99,8 +99,6 @@ const viewTransactionOnBlockchain = (hash: string) => {
   Linking.openURL(TX_DETAILS_URL + hash);
 };
 
-const PENDING_STATUS = 'pending';
-
 class EventDetails extends React.Component<Props, {}> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
@@ -118,7 +116,7 @@ class EventDetails extends React.Component<Props, {}> {
     if (eventType !== TRANSACTION_EVENT) return;
 
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
-    if (txInfo.status !== PENDING_STATUS) return;
+    if (txInfo.status !== TX_PENDING_STATUS) return;
 
     this.timeout = setTimeout(() => updateTransactionStatus(eventData.hash), 1000);
     this.timer = setInterval(() => updateTransactionStatus(eventData.hash), 10000);
@@ -134,7 +132,7 @@ class EventDetails extends React.Component<Props, {}> {
     if (eventType !== TRANSACTION_EVENT || !this.timer) return;
 
     const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
-    if (txInfo.status !== PENDING_STATUS && this.timer) {
+    if (txInfo.status !== TX_PENDING_STATUS && this.timer) {
       clearInterval(this.timer);
       this.timer = null;
     }
@@ -209,7 +207,7 @@ class EventDetails extends React.Component<Props, {}> {
       } = txInfo;
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
-      const isPending = status === PENDING_STATUS;
+      const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = utils.formatUnits(new BigNumber(txInfo.value.toString()).toFixed(), decimals);
       const recipientContact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase()) || {};
