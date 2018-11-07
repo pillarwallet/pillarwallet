@@ -8,7 +8,6 @@ import {
   UPDATE_WALLET_STATE,
   DECRYPTING,
   INVALID_PASSWORD,
-  EXISTING_PASSWORD,
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
@@ -98,8 +97,8 @@ export const loginAction = (pin: string) => {
 };
 
 type DecryptionSettings = {
-  mnemonic: boolean
-}
+  mnemonic: boolean,
+};
 
 const defaultDecryptionSettings = {
   mnemonic: false,
@@ -109,7 +108,6 @@ export const checkPinAction = (
   pin: string,
   onValidPin?: Function,
   options: DecryptionSettings = defaultDecryptionSettings,
-  checkExisting: boolean,
 ) => {
   return async (dispatch: Function) => {
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -121,53 +119,42 @@ export const checkPinAction = (
     const saltedPin = getSaltedPin(pin);
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
-      if (checkExisting) {
-        dispatch({
-          type: UPDATE_WALLET_STATE,
-          payload: EXISTING_PASSWORD,
-        });
-      } else {
-        dispatch({
-          type: DECRYPT_WALLET,
-          payload: {
-            address: wallet.address,
-          },
-        });
-        if (onValidPin) {
-          onValidPin(pin, wallet);
-        }
+      dispatch({
+        type: DECRYPT_WALLET,
+        payload: {
+          address: wallet.address,
+        },
+      });
+      if (onValidPin) {
+        onValidPin(pin, wallet);
       }
     } catch (e) {
-      if (checkExisting) {
-        if (onValidPin) {
-          onValidPin(pin);
-        }
-      } else {
-        dispatch({
-          type: UPDATE_WALLET_STATE,
-          payload: INVALID_PASSWORD,
-        });
-      }
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: INVALID_PASSWORD,
+      });
     }
   };
 };
 
-export const changePinAction = (pin: string) => {
-  return async (dispatch: Function, getState: () => Object) => {
-    const { wallet: { data: wallet } } = getState();
+export const changePinAction = (newPin: string, currentPin: string) => {
+  return async (dispatch: Function) => {
+    const { wallet: encryptedWallet } = await storage.get('wallet');
 
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: ENCRYPTING,
     });
     await delay(50);
+    const currentSaltedPin = getSaltedPin(currentPin);
+    const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), currentSaltedPin);
 
-    const saltedPin = getSaltedPin(pin);
-    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
+    const newSaltedPin = getSaltedPin(newPin);
+    const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
-    dispatch(saveDbAction('wallet', { wallet: encryptedWallet }));
+    dispatch(saveDbAction('wallet', { wallet: newEncryptedWallet }));
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,

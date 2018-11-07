@@ -15,26 +15,25 @@ import Header from 'components/Header';
 import { validatePin } from 'utils/validators';
 
 type Props = {
-  changePin: (pin: string) => Function,
+  changePin: (newPin: string, currentPin: string) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
-}
+};
 
 type State = {
   pinError: string,
 };
-
-const mapStateToProps = ({ wallet }) => ({ wallet });
 
 class ConfirmNewPin extends React.Component<Props, State> {
   state = {
     pinError: '',
   };
 
-  handlePinSubmit = (pin: string) => {
+  handlePinSubmit = (enteredPin: string) => {
     const { navigation, changePin } = this.props;
-    const previousPin = navigation.getParam('pin');
-    const validationError = validatePin(pin, previousPin);
+    const currentPin = navigation.getParam('currentPin');
+    const newPin = navigation.getParam('newPin');
+    const validationError = validatePin(enteredPin, newPin);
 
     if (validationError) {
       this.setState({
@@ -43,7 +42,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
       return;
     }
 
-    changePin(pin);
+    changePin(enteredPin, currentPin);
   };
 
   handlePinChange = () => {
@@ -100,9 +99,11 @@ class ConfirmNewPin extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({ wallet }) => ({ wallet });
+
 const mapDispatchToProps = (dispatch: Function) => ({
-  changePin: (pin: string) => {
-    dispatch(changePinAction(pin));
+  changePin: (newPin: string, currentPin: string) => {
+    dispatch(changePinAction(newPin, currentPin));
   },
 });
 

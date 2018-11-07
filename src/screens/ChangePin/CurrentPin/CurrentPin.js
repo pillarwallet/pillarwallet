@@ -27,7 +27,7 @@ export default class CurrentPin extends React.Component<Props> {
         />
         <CheckPin
           revealMnemonic
-          onPinValid={() => navigation.navigate(CHANGE_PIN_NEW_PIN)}
+          onPinValid={(currentPin) => navigation.navigate(CHANGE_PIN_NEW_PIN, { currentPin })}
         />
       </Container>
     );
