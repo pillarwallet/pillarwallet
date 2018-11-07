@@ -185,6 +185,7 @@ class ActivityFeed extends React.Component<Props, State> {
           iconName={Object.keys(contact).length === 0 || showArrowsOnly ? directionIcon : null}
           subtext={dateTime}
           itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+          itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : null}
         />
       );
