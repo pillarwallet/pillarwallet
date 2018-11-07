@@ -109,7 +109,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
   navigateToChat = (contact) => {
     const { navigation, resetUnread } = this.props;
-    navigation.navigate(CHAT, { contact });
+    navigation.navigate(CHAT, { username: contact.username });
     resetUnread(contact.username);
   };
 
@@ -136,7 +136,7 @@ class ActivityFeed extends React.Component<Props, State> {
       case TYPE_ACCEPTED:
         return 'Connected';
       case TYPE_SENT:
-        return 'Request Sent';
+        return 'Requested';
       case CHAT:
         return 'Read';
       default:
@@ -185,6 +185,7 @@ class ActivityFeed extends React.Component<Props, State> {
           iconName={Object.keys(contact).length === 0 || showArrowsOnly ? directionIcon : null}
           subtext={dateTime}
           itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
+          itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : null}
         />
       );

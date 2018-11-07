@@ -11,6 +11,7 @@ import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
+import { Wrapper } from 'components/Layout';
 
 type Props = {
   label: string,
@@ -26,6 +27,7 @@ type Props = {
   timeSent?: string,
   unreadCount?: number,
   itemValue?: string,
+  itemStatusIcon?: string,
   valueColor?: ?string,
   buttonActionLabel?: string,
   labelAsButton?: boolean,
@@ -170,6 +172,12 @@ const ItemValue = styled(BaseText)`
   text-align: right;
 `;
 
+const ItemValueStatus = styled(Icon)`
+  margin-left: 7px;
+  color: ${baseColors.mediumGray};
+  font-size: ${fontSizes.medium};
+`;
+
 const IndicatorsRow = styled.View`
   flex-direction: row;
 `;
@@ -252,6 +260,7 @@ const Addon = (props: Props) => {
     type,
     unreadCount,
     itemValue,
+    itemStatusIcon,
     valueColor,
     buttonActionLabel,
     labelAsButton,
@@ -264,9 +273,14 @@ const Addon = (props: Props) => {
 
   if (itemValue) {
     return (
-      <ItemValue color={valueColor}>
-        {itemValue}
-      </ItemValue>
+      <Wrapper horizontal center>
+        <ItemValue color={valueColor}>
+          {itemValue}
+        </ItemValue>
+        {!!itemStatusIcon &&
+          <ItemValueStatus name={itemStatusIcon} />
+        }
+      </Wrapper>
     );
   }
 
@@ -299,6 +313,7 @@ const Addon = (props: Props) => {
         onPress={buttonAction}
         small
         primaryInverted={secondaryButton}
+        listItemButton
       />
     );
   }

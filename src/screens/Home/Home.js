@@ -97,7 +97,7 @@ const HomeHeaderImageUsername = styled.View`
 
 const HomeHeaderUsername = styled(BaseText)`
   font-size: ${fontSizes.mediumLarge};
-  margin-top: 20px;
+  margin-top: 30px;
 `;
 const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
@@ -109,7 +109,9 @@ const HomeHeaderButton = styled(IconButton)`
   height: 44px;
 `;
 
-const HomeHeaderProfileImage = styled(ProfileImage)``;
+const HomeHeaderProfileImage = styled(ProfileImage)`
+  margin-bottom: -24px;
+`;
 const AnimatedHomeHeaderProfileImage = Animated.createAnimatedComponent(HomeHeaderProfileImage);
 
 const HomeHeaderPortfolioBalance = styled(PortfolioBalance)`
@@ -129,7 +131,7 @@ const RecentConnectionsWrapper = styled.View`
   shadow-radius: 6px;
   shadow-opacity: 0.15;
   shadow-offset: 0px 6px;
-  padding-top: 100px;
+  padding-top: 124px;
 `;
 
 const RecentConnectionsSpacer = styled.View`
@@ -299,7 +301,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileUsernameTranslateY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, -83],
+      outputRange: [12, -77],
       extrapolate: 'clamp',
     });
 
@@ -329,7 +331,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileBalancePositionY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [0, -120],
+      outputRange: [24, -120],
       extrapolate: 'clamp',
     });
 
@@ -375,7 +377,7 @@ class HomeScreen extends React.Component<Props, State> {
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
         <AnimatedHomeHeader>
           <HomeHeaderRow>
             <HomeHeaderLeft>
