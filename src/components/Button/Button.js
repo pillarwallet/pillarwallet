@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import { Platform } from 'react-native';
+import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -27,6 +28,7 @@ type Props = {
   flexRight?: boolean,
   small?: boolean,
   icon?: string,
+  listItemButton?: boolean,
 };
 
 const themes = {
@@ -130,6 +132,16 @@ const getButtonPadding = (props: Props) => {
   }
   return `${spacing.rhythm * 2.5}px`;
 };
+
+const getButtonFontSize = (props: Props) => {
+  if (props.listItemButton) {
+    return `${fontSizes.small}px`;
+  } else if (props.small) {
+    return `${fontSizes.extraSmall}px`;
+  }
+  return `${fontSizes.medium}px`;
+};
+
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
@@ -154,8 +166,12 @@ const ButtonWrapper = styled.TouchableOpacity`
 
 const ButtonText = styled(BoldText)`
   color: ${props => props.theme.color};
-  font-size: ${props => props.small ? fontSizes.extraSmall : fontSizes.medium};
+  font-size: ${props => getButtonFontSize(props)};
   margin-bottom: 2px;
+  ${props => props.listItemButton ? `font-weight: ${fontWeights.book};` : ''}
+  ${props => props.listItemButton
+    ? `font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App'};`
+    : ''}
 `;
 
 const Button = (props: Props) => {
@@ -194,6 +210,7 @@ const Button = (props: Props) => {
       <ButtonText
         theme={theme}
         small={props.small}
+        listItemButton={props.listItemButton}
       >{props.title}
       </ButtonText>}
       {children}
