@@ -60,7 +60,7 @@ class ChatListScreen extends React.Component<Props, State> {
 
   handleChatItemClick = (contact) => {
     const { navigation, resetUnread } = this.props;
-    navigation.navigate(CHAT, { contact });
+    navigation.navigate(CHAT, { username: contact.username });
     resetUnread(contact.username);
   };
 
