@@ -236,7 +236,7 @@ class PeopleScreen extends React.Component<Props, State> {
     const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
 
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <HeaderWrapper>
           <Header title="people" />
           <Wrapper zIndex={100} regularPadding>

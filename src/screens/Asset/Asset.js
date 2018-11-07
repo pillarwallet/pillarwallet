@@ -164,7 +164,7 @@ class AssetScreen extends React.Component<Props, State> {
       disclaimer,
     } = assetsConfig[assetData.token] || {};
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header onBack={this.handleCardTap} />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
