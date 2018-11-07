@@ -1,5 +1,5 @@
 // @flow
-import { PENDING } from 'constants/historyConstants';
+import { TX_PENDING_STATUS } from 'constants/historyConstants';
 import { utils } from 'ethers';
 import type { Transaction, TransactionEthers } from 'models/Transaction';
 
@@ -12,7 +12,7 @@ export const buildHistoryTransaction = ({
   gasLimit,
   asset,
 }: TransactionEthers): Transaction => ({
-  status: PENDING,
+  status: TX_PENDING_STATUS,
   gasUsed: parseFloat(utils.formatEther(gasPrice.mul(gasLimit))),
   gasPrice: Number(gasPrice),
   value: typeof value === 'object' ? value.toString() : value,
