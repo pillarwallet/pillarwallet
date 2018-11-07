@@ -85,7 +85,6 @@ type Props = {
   baseFiatCurrency: ?string,
   requestPinForTransaction: ?boolean,
   appSettings: Object,
-  wallet: Object,
   intercomNotificationsCount: number,
   hasDBConflicts: boolean,
   repairStorage: Function,
@@ -189,7 +188,6 @@ class Profile extends React.Component<Props, State> {
   render() {
     const {
       user,
-      wallet,
       intercomNotificationsCount,
       baseFiatCurrency,
       navigation,
@@ -349,13 +347,11 @@ class Profile extends React.Component<Props, State> {
                 this.setState({ visibleModal: 'baseCurrency' })}
             />
 
-            {wallet.mnemonic &&
-              <ProfileSettingsItem
-                key="backupWallet"
-                label="Reveal backup phrase"
-                onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
-              />
-            }
+            <ProfileSettingsItem
+              key="backupWallet"
+              label="Reveal backup phrase"
+              onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
+            />
 
             <ProfileSettingsItem
               key="changePin"
@@ -494,13 +490,11 @@ class Profile extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  wallet: { data: wallet },
   appSettings: { data: { requestPinForTransaction, baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
 }) => ({
   user,
-  wallet,
   requestPinForTransaction,
   baseFiatCurrency,
   intercomNotificationsCount,

@@ -134,7 +134,7 @@ export const checkPinAction = (
           },
         });
         if (onValidPin) {
-          onValidPin();
+          onValidPin(pin, wallet);
         }
       }
     } catch (e) {
