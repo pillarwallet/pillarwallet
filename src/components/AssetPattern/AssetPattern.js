@@ -55,10 +55,9 @@ export default class AssetPattern extends React.Component<Props, State> {
     const sideIconsTop = uniqueCode[0];
     const innerIconsTop = uniqueCode[2] || uniqueCode[1];
     const sidePositionPositivity = uniqueCode[0] % 2 === 0;
-    const innerIconsLeft = 54 - (uniqueCode[0] / 2);
-    const sideIconsLeft = uniqueCode[2] ? 54 - (uniqueCode[2] / 2) : 54 - (uniqueCode[0] / 2);
-    const firstDiameterDecrease = uniqueCode[1] % 2 === 0 ? 36 : 19;
-    const secondDiameterDecrease = uniqueCode[1] % 2 !== 0 ? 36 : 19;
+    const sidePositionPositivity2 = uniqueCode[1] % 2 === 0;
+    const innerIconsLeft = (54 - (uniqueCode[0] / 2)) + (uniqueCode[1] / 1.5);
+    const sideIconsLeft = uniqueCode[2] ? (uniqueCode[2] / 2.5) + uniqueCode[1] : (uniqueCode[0] / 2.5) + uniqueCode[1];
 
     for (let i = 0; i < 5; i++) {
       let diameter = 108;
@@ -68,10 +67,12 @@ export default class AssetPattern extends React.Component<Props, State> {
       const verticalCenter = 250 / 2;
       let top = verticalCenter;
       let left = windowWidth / 2;
+      // let test;
 
       const topSideChange = (up: boolean, isInner: boolean, change: number) => {
         if (isInner && change > 60) change /= 2;
         if (!isInner && change > 80) change /= 2;
+        if (sidePositionPositivity2 !== sidePositionPositivity && !isInner) { change /= 4; }
         if (up) return change * -1;
         return change;
       };
@@ -82,38 +83,40 @@ export default class AssetPattern extends React.Component<Props, State> {
 
       if (i === 1 || i === 4) {
         zIndex = 1;
-        opacity = 0.1;
-        diameter -= firstDiameterDecrease;
+        opacity = 0.2;
+        diameter = 70;
         top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
         if (!compositionSymetrySideYAxis && i === 4) {
           top = verticalCenter + topSideChange(!sidePositionPositivity, false, sideIconsTop);
         }
+        // test = topSideChange(sidePositionPositivity, false, sideIconsTop);
       }
 
       if (i === 2 || i === 3) {
-        top = verticalCenter + topSideChange(sidePositionPositivity, true, innerIconsTop);
+        top = verticalCenter + topSideChange(sidePositionPositivity2, true, innerIconsTop);
         if (!compositionSymetrySideYAxis && i === 3) {
-          top = verticalCenter + topSideChange(!sidePositionPositivity, true, innerIconsTop);
+          top = verticalCenter + topSideChange(!sidePositionPositivity2, true, innerIconsTop);
         }
         zIndex = 2;
         opacity = 0.5;
-        diameter -= secondDiameterDecrease;
+        diameter = 90;
+        // test = topSideChange(sidePositionPositivity2, true, innerIconsTop)
       }
 
       if (i === 1) {
-        left = horizontalCenter - (sideIconsLeft + 80);
+        left = horizontalCenter - sideIconsLeft;
       }
 
       if (i === 2) {
-        left = horizontalCenter - innerIconsLeft - 40;
+        left = horizontalCenter - innerIconsLeft;
       }
 
       if (i === 3) {
-        left = horizontalCenter + innerIconsLeft + 40;
+        left = horizontalCenter + innerIconsLeft;
       }
 
       if (i === 4) {
-        left = horizontalCenter + sideIconsLeft + 80;
+        left = horizontalCenter + sideIconsLeft;
       }
 
       paternDetails.push(
