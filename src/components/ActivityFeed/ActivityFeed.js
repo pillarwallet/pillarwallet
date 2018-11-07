@@ -136,7 +136,7 @@ class ActivityFeed extends React.Component<Props, State> {
       case TYPE_ACCEPTED:
         return 'Connected';
       case TYPE_SENT:
-        return 'Request Sent';
+        return 'Requested';
       case CHAT:
         return 'Read';
       default:

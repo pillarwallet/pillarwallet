@@ -133,7 +133,7 @@ class PeopleSearchResults extends React.Component<Props> {
         buttonAction={status === TYPE_SENT
           ? this.handleCancelInvitationPress(user)
           : this.handleSendInvitationPress(user)}
-        buttonActionLabel={status === TYPE_SENT ? 'Request Sent' : 'Connect'}
+        buttonActionLabel={status === TYPE_SENT ? 'Requested' : 'Connect'}
         secondaryButton={status === TYPE_SENT}
       />
     );
