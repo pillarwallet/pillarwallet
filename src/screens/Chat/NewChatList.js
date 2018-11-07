@@ -48,7 +48,7 @@ class NewChatListScreen extends React.Component<Props, State> {
 
   handleChatItemClick = (contact) => {
     const { navigation } = this.props;
-    navigation.navigate(CHAT, { contact, fromNewChatList: true });
+    navigation.navigate(CHAT, { username: contact.username, fromNewChatList: true });
   };
 
   goToChatList = () => {

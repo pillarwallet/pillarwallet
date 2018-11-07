@@ -153,7 +153,7 @@ class Contact extends React.Component<Props, State> {
                 <CircleButton
                   label="Chat"
                   icon="chat-filled"
-                  onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+                  onPress={() => navigation.navigate(CHAT, { username: displayContact.username })}
                 />
                 <CircleButton
                   label="Send"
