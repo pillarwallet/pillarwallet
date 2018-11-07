@@ -59,9 +59,8 @@ export const resetUnreadAction = (contactUsername: string) => {
     } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
     const newChats = mergeNewChats(unreadChats, filteredChats);
     const augmentedChats = newChats.map(item => {
-      const unread = item.username === contactUsername ? 0 : (
-        unreadChats[item.username] ? unreadChats[item.username].count : 0
-      );
+      const unreadChatsCount = unreadChats[item.username] ? unreadChats[item.username].count : 0;
+      const unread = item.username === contactUsername ? 0 : unreadChatsCount;
       const lastMessage = item.lastMessage || {};
       if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
       return { ...item, unread, lastMessage };
