@@ -39,6 +39,7 @@ export const getExistingChatsAction = () => {
     const augmentedChats = newChats.map(item => {
       const unread = unreadChats[item.username] ? unreadChats[item.username].count : 0;
       const lastMessage = item.lastMessage || {};
+      if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
       return { ...item, unread, lastMessage };
     });
 
@@ -62,6 +63,7 @@ export const resetUnreadAction = (contactUsername: string) => {
         unreadChats[item.username] ? unreadChats[item.username].count : 0
       );
       const lastMessage = item.lastMessage || {};
+      if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
       return { ...item, unread, lastMessage };
     });
 
