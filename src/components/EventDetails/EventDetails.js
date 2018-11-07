@@ -182,7 +182,7 @@ class EventDetails extends React.Component<Props, {}> {
       onClose,
     } = this.props;
     onClose();
-    navigation.navigate(CHAT, { contact });
+    navigation.navigate(CHAT, { username: contact.username });
   };
 
   renderEventBody = (eventType, eventStatus) => {
