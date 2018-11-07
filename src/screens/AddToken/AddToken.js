@@ -1,6 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Animated, Keyboard } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
@@ -104,6 +105,25 @@ const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
 `;
 
+const FullScreenOverlayWrapper = styled.TouchableOpacity`
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+`;
+
+const FullScreenOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.6);
+`;
+
+const AnimatedFullScreenOverlay = Animated.createAnimatedComponent(FullScreenOverlay);
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -123,6 +143,8 @@ type Props = {
 
 type State = {
   query: string,
+  searchIsFocused: boolean,
+  fullScreenOverlayOpacity: Animated.Value,
 }
 
 const MIN_QUERY_LENGTH = 2;
@@ -130,12 +152,51 @@ const MIN_QUERY_LENGTH = 2;
 class AddToken extends React.Component<Props, State> {
   state = {
     query: '',
+    searchIsFocused: false,
+    fullScreenOverlayOpacity: new Animated.Value(0),
   };
 
   constructor(props: Props) {
     super(props);
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
+
+  animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
+    const { fullScreenOverlayOpacity } = this.state;
+    if (!active) {
+      fullScreenOverlayOpacity.setValue(0);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 1,
+        duration: 80,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      fullScreenOverlayOpacity.setValue(1);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 0,
+        duration: 80,
+        useNativeDriver: true,
+      }).start(() => onEnd && onEnd());
+    }
+  };
+
+  handleSearchFocus = () => {
+    this.setState({
+      searchIsFocused: true,
+    });
+    this.animateFullScreenOverlayOpacity(false);
+  };
+
+  animateAfterDelay = () => {
+    this.setState({
+      searchIsFocused: false,
+    });
+  };
+
+  handleSearchBlur = () => {
+    Keyboard.dismiss();
+    this.animateFullScreenOverlayOpacity(true, this.animateAfterDelay);
+  };
 
   formChanged: boolean = false;
 
@@ -274,7 +335,7 @@ class AddToken extends React.Component<Props, State> {
   };
 
   render() {
-    const { query } = this.state;
+    const { query, searchIsFocused, fullScreenOverlayOpacity } = this.state;
     const { supportedAssets, assetsSearchResults, assetsSearchState } = this.props;
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING;
@@ -283,18 +344,30 @@ class AddToken extends React.Component<Props, State> {
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <Header title="add tokens" onBack={this.handleScreenDismissal} />
-        <Wrapper regularPadding>
-          <SearchBar
-            inputProps={{
-              onChange: this.handleSearchChange,
-              value: query,
-              autoCapitalize: 'none',
-            }}
-            placeholder="Token name"
-            marginTop={15}
-          />
+        <Wrapper zIndex={100} style={{ backgroundColor: baseColors.snowWhite }}>
+          <Header title="add tokens" onBack={this.handleScreenDismissal} />
+          <Wrapper regularPadding>
+            <SearchBar
+              inputProps={{
+                onChange: this.handleSearchChange,
+                onFocus: this.handleSearchFocus,
+                value: query,
+                autoCapitalize: 'none',
+              }}
+              placeholder="Token name"
+              marginTop={15}
+            />
+          </Wrapper>
         </Wrapper>
+        {searchIsFocused && !inSearchMode &&
+          <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
+            <AnimatedFullScreenOverlay
+              style={{
+                opacity: fullScreenOverlayOpacity,
+              }}
+            />
+          </FullScreenOverlayWrapper>
+        }
         <TokensWrapper>
           {!inSearchMode &&
             <ScrollWrapper>
