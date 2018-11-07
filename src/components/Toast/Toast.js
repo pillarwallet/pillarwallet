@@ -175,7 +175,7 @@ export default class Toast extends React.Component<{}, State> {
           </IconHolder>
           <TextHolder>
             <BoldText>{toastOptions.title}</BoldText>
-            <BaseText style={{ marginTop: 5, marginBottom: 10, color: baseColors.darkGray }}>
+            <BaseText style={{ marginBottom: 10, color: baseColors.darkGray }}>
               {toastOptions.message}
             </BaseText>
           </TextHolder>

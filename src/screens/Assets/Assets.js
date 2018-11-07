@@ -363,7 +363,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
-        <Container center>
+        <Container center inset={{ bottom: 0 }}>
           <BaseText style={{ marginBottom: 20 }}>Loading default assets</BaseText>
           {assetsState !== FETCH_INITIAL_FAILED && (
             <Spinner />
@@ -378,7 +378,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
 
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header
           title="assets"
           onNextPress={this.goToAddTokenPage}
