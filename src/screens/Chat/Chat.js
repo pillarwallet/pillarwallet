@@ -30,7 +30,7 @@ import {
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
 import { isIphoneX } from 'utils/common';
-import { CHAT_LIST, CONTACT } from 'constants/navigationConstants';
+import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
@@ -53,6 +53,8 @@ type State = {
   showLoadEarlierButton: boolean,
   isFetching: boolean,
 }
+
+const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
 
 const isWarningMessage = (type) => {
   return type === 'warning';
@@ -173,7 +175,7 @@ const renderInputToolbar = (props: Props) => {
       primaryStyle={{
         justifyContent: 'center',
         alignItems: 'flex-start',
-        height: isIphoneX() ? 72 : 52,
+        height: INPUT_HEIGHT,
       }}
       containerStyle={{
         bottom: 2,
@@ -282,7 +284,8 @@ const ChatContainer = styled(Container)`
 class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
-    const contact = props.navigation.getParam('contact', {});
+    const username = props.navigation.getParam('username', '');
+    const contact = props.contacts.find(c => c.username === username) || {};
     this.state = {
       contact,
       showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
@@ -316,18 +319,10 @@ class ChatScreen extends React.Component<Props, State> {
       navigation,
       getExistingChats,
       resetUnread,
-      contacts,
-      chats,
     } = this.props;
     getExistingChats();
     resetUnread(this.state.contact.username);
-
-    if (navigation.getParam('fromNewChatList', false) && (contacts.length - 1 > chats.length)) {
-      navigation.goBack();
-      navigation.setParams({ fromNewChatList: false });
-    } else {
-      navigation.navigate(CHAT_LIST);
-    }
+    navigation.goBack(null);
   };
 
   handleLoadEarlier = () => {
@@ -417,7 +412,7 @@ class ChatScreen extends React.Component<Props, State> {
               renderLoadEarlier={renderLoadEarlier}
               renderMessage={renderMessage}
               renderTime={renderTime}
-              minInputToolbarHeight={52}
+              minInputToolbarHeight={INPUT_HEIGHT}
               parsePatterns={parsePatterns}
             />}
         </Wrapper>

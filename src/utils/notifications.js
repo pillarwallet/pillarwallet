@@ -41,6 +41,7 @@ export const processNotification = (notification: Object, myEthAddress?: string)
     return {
       message: 'New chat message',
       type: 'SIGNAL',
+      navigationParams: { username: parsedNotification.sender },
     };
   }
   if (connectionEvents.includes(parsedNotification.type)) {

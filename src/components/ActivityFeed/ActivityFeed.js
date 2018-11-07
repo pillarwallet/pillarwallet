@@ -109,7 +109,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
   navigateToChat = (contact) => {
     const { navigation, resetUnread } = this.props;
-    navigation.navigate(CHAT, { contact });
+    navigation.navigate(CHAT, { username: contact.username });
     resetUnread(contact.username);
   };
 
