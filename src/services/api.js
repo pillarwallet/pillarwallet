@@ -250,7 +250,7 @@ SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
   return fetchTransactionInfo(hash);
 };
 
-SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
+SDKWrapper.prototype.fetchTransactionReceipt = function (hash: string) {
   return fetchTransactionReceipt(hash);
 };
 
