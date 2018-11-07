@@ -377,7 +377,7 @@ class HomeScreen extends React.Component<Props, State> {
     const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
-      <Container color={baseColors.snowWhite}>
+      <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
         <AnimatedHomeHeader>
           <HomeHeaderRow>
             <HomeHeaderLeft>
