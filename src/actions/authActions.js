@@ -72,7 +72,9 @@ export const loginAction = (pin: string) => {
 
       dispatch({
         type: DECRYPT_WALLET,
-        payload: wallet,
+        payload: {
+          address: wallet.address,
+        },
       });
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
@@ -127,7 +129,9 @@ export const checkPinAction = (
       } else {
         dispatch({
           type: DECRYPT_WALLET,
-          payload: wallet,
+          payload: {
+            address: wallet.address,
+          },
         });
         if (onValidPin) {
           onValidPin();
@@ -167,7 +171,9 @@ export const changePinAction = (pin: string) => {
 
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
-      payload: wallet,
+      payload: {
+        address: wallet.address,
+      },
     });
   };
 };
