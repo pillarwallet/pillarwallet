@@ -30,7 +30,7 @@ import {
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
 import { isIphoneX } from 'utils/common';
-import { CHAT_LIST, CONTACT } from 'constants/navigationConstants';
+import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
