@@ -260,7 +260,7 @@ class EventDetails extends React.Component<Props, {}> {
                 borderWidth={0}
               />)}
             />
-            {!isReceived &&
+            {!isReceived && !isPending &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
               value={`${utils.formatEther(fee.toString())} ETH`}
