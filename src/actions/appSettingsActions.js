@@ -15,18 +15,6 @@ export const saveBaseFiatCurrencyAction = (currency: string) => {
   };
 };
 
-export const changeRequestPinForTransactionAction = (value: boolean) => {
-  return (dispatch: Function) => {
-    dispatch(saveDbAction('app_settings', { appSettings: { requestPinForTransaction: value } }));
-    dispatch({
-      type: UPDATE_APP_SETTINGS,
-      payload: {
-        requestPinForTransaction: value,
-      },
-    });
-  };
-};
-
 export const updateAppSettingsAction = (path: string, fieldValue: any) => {
   return (dispatch: Function) => {
     const settings = set({}, path, fieldValue);

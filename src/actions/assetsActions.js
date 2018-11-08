@@ -43,12 +43,9 @@ export const sendAssetAction = ({
   symbol,
   contractAddress,
   decimals,
-}: TransactionPayload, navigateToNextScreen: Function = noop) => {
+}: TransactionPayload, wallet: Object, navigateToNextScreen: Function = noop) => {
   return async (dispatch: Function, getState: Function) => {
-    const {
-      wallet: { data: wallet },
-      history: { data: currentHistory },
-    } = getState();
+    const { history: { data: currentHistory } } = getState();
     let txStatus: TransactionStatus;
     if (symbol === ETH) {
       const ETHTrx = await transferETH({
