@@ -446,6 +446,8 @@ workflows:
     jobs:
       - node
       - build
+          requires:
+            - node
       - stage_ios:
           requires:
             - build
