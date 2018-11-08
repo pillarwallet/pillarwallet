@@ -15,7 +15,7 @@ type Tab = {
 }
 
 type Props = {
-  title: string,
+  title?: string,
   tabs: Tab[],
 }
 
@@ -94,9 +94,11 @@ export default class Tabs extends React.Component<Props, State> {
 
     return (
       <TabOuterWrapper>
+        {!!title &&
         <ActivityFeedHeader>
           <Title subtitle title={title} />
         </ActivityFeedHeader>
+        }
         <TabWrapper>
           <TabWrapperScrollView horizontal>
             {this.renderTabItems(tabs)}

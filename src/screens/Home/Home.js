@@ -182,6 +182,11 @@ const RecentConnectionsItemName = styled(BaseText)`
   })};
 `;
 
+const TabsHeader = styled.View`
+  padding: 4px ${spacing.mediumLarge}px 0;
+  background-color: ${baseColors.white};
+`;
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
@@ -374,7 +379,7 @@ class HomeScreen extends React.Component<Props, State> {
       },
     ];
 
-    const stickyHeaderIndices = Platform.OS === 'android' ? null : [1];
+    const stickyHeaderIndices = this.props.contacts.length ? [2] : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -462,7 +467,7 @@ class HomeScreen extends React.Component<Props, State> {
         <Animated.ScrollView
           stickyHeaderIndices={stickyHeaderIndices}
           style={{
-            marginTop: -100,
+            marginTop: this.props.contacts.length ? -100 : -76,
           }}
           onScroll={Animated.event(
             [
@@ -496,7 +501,10 @@ class HomeScreen extends React.Component<Props, State> {
 
             <RecentConnectionsSpacer />
           }
-          <Tabs title="your activity." tabs={activityFeedTabs} />
+          <TabsHeader>
+            <Title subtitle title="your activity." />
+          </TabsHeader>
+          <Tabs tabs={activityFeedTabs} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}
