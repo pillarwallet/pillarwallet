@@ -9,7 +9,6 @@ import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE, SEND_DEBUG_DATA } from 'constant
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
-import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
 import { SubHeading } from 'components/Typography';
 import IFrameModal from 'components/Modals/IFrameModal';
@@ -18,7 +17,6 @@ import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
 import {
   saveBaseFiatCurrencyAction,
-  changeRequestPinForTransactionAction,
   updateAppSettingsAction,
 } from 'actions/appSettingsActions';
 import { updateUserAction } from 'actions/userActions';
@@ -83,12 +81,10 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   saveBaseFiatCurrency: (currency: ?string) => Function,
   baseFiatCurrency: ?string,
-  requestPinForTransaction: ?boolean,
   appSettings: Object,
   intercomNotificationsCount: number,
   hasDBConflicts: boolean,
   repairStorage: Function,
-  changeRequestPinForTransaction: (value: boolean) => Function,
   updateAppSettings: (path: string, value: any) => Function,
   updateUser: (walletId: string, field: Object) => Function,
   resetIncorrectPassword: () => Function,
@@ -98,22 +94,16 @@ type Props = {
 
 type State = {
   visibleModal: string | null,
-  showCheckPinModal: boolean,
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
-  static defaultProps = {
-    requestPinForTransaction: true,
-  };
-
   constructor(props: Props) {
     super(props);
     this.state = {
       visibleModal: null,
-      showCheckPinModal: false,
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
@@ -136,18 +126,6 @@ class Profile extends React.Component<Props, State> {
 
   togglePrivacyPolicyModal = () => {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
-  };
-
-  handleChangeRequestPinForTransaction = (value) => {
-    const { changeRequestPinForTransaction } = this.props;
-    changeRequestPinForTransaction(value);
-    this.setState({ showCheckPinModal: false });
-  };
-
-  handleCheckPinModalClose = () => {
-    const { resetIncorrectPassword } = this.props;
-    resetIncorrectPassword();
-    this.setState({ showCheckPinModal: false });
   };
 
   handleUserFieldUpdate = (field: Object) => {
@@ -194,13 +172,11 @@ class Profile extends React.Component<Props, State> {
       lockScreen,
       updateAppSettings,
       appSettings: { appearanceSettings },
-      requestPinForTransaction,
       hasDBConflicts,
       repairStorage,
     } = this.props;
 
     const {
-      showCheckPinModal,
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
@@ -359,27 +335,6 @@ class Profile extends React.Component<Props, State> {
               onPress={() => this.props.navigation.navigate(CHANGE_PIN_FLOW)}
             />
 
-            <ProfileSettingsItem
-              key="requestPin"
-              label="Request PIN for transaction"
-              value={requestPinForTransaction}
-              toggle
-              onPress={() => this.setState({ showCheckPinModal: true })}
-            />
-
-            <SlideModal
-              isVisible={showCheckPinModal}
-              onModalHide={this.handleCheckPinModalClose}
-              title="enter pincode"
-              centerTitle
-              fullScreen
-              showHeader
-            >
-              <Wrapper flex={1}>
-                <CheckPin onPinValid={() => this.handleChangeRequestPinForTransaction(!requestPinForTransaction)} />
-              </Wrapper>
-            </SlideModal>
-
             <ListSeparator>
               <SubHeading>APPEARANCE SETTINGS</SubHeading>
             </ListSeparator>
@@ -490,12 +445,11 @@ class Profile extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  appSettings: { data: { requestPinForTransaction, baseFiatCurrency }, data: appSettings },
+  appSettings: { data: { baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
 }) => ({
   user,
-  requestPinForTransaction,
   baseFiatCurrency,
   intercomNotificationsCount,
   appSettings,
@@ -504,9 +458,6 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
-  changeRequestPinForTransaction: (value) => {
-    dispatch(changeRequestPinForTransactionAction(value));
-  },
   repairStorage: () => dispatch(repairStorageAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
   updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
