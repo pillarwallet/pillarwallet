@@ -201,7 +201,7 @@ class AssetScreen extends React.Component<Props, State> {
         >
           <AssetPattern
             token={assetData.token}
-            icon={isListed ? assetData.iconColor : assetData.icon}
+            icon={assetData.iconColor}
             contractAddress={assetData.contractAddress}
             isListed={isListed}
           />

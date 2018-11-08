@@ -3,18 +3,16 @@ import * as React from 'react';
 import {
   RefreshControl,
   FlatList,
-  // Dimensions,
+  Dimensions,
   Platform,
-  // PixelRatio,
+  PixelRatio,
   View,
   Alert,
-  TouchableOpacity,
-  Text,
 } from 'react-native';
 import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-// import Swipeout from 'react-native-swipeout';
+import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
@@ -22,9 +20,9 @@ import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
-// import AssetCard from 'components/AssetCard';
-// import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
-// import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
+import AssetCard from 'components/AssetCard';
+import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
+import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import Header from 'components/Header';
 import { Container } from 'components/Layout';
 import HideAssetButton from 'screens/Assets/HideAssetButton';
@@ -45,13 +43,12 @@ import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLay
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 
 // configs
-// import assetsConfig from 'configs/assetsConfig';
+import assetsConfig from 'configs/assetsConfig';
 
 // utils
 import { formatMoney } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
-import AssetPattern from 'components/AssetPattern';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
@@ -71,12 +68,12 @@ type State = {
   forceHideRemoval: boolean,
 }
 
-// const smallScreen = () => {
-//   if (Platform.OS === 'ios') {
-//     return Dimensions.get('window').width * PixelRatio.get() < 650;
-//   }
-//   return Dimensions.get('window').width < 410;
-// };
+const smallScreen = () => {
+  if (Platform.OS === 'ios') {
+    return Dimensions.get('window').width * PixelRatio.get() < 650;
+  }
+  return Dimensions.get('window').width < 410;
+};
 
 const horizontalPadding = (layout, side) => {
   switch (layout) {
@@ -91,7 +88,7 @@ const horizontalPadding = (layout, side) => {
       return side === 'left' ? 0 : spacing.rhythm - 9;
     }
     default: {
-      // if (Platform.OS === 'android') return 10;
+      if (Platform.OS === 'android') return 10;
       return 0;
     }
   }
@@ -212,10 +209,10 @@ class AssetsScreen extends React.Component<Props, State> {
     const {
       wallet,
       baseFiatCurrency,
-      // assetsLayout,
+      assetsLayout,
     } = this.props;
 
-    // const { forceHideRemoval } = this.state;
+    const { forceHideRemoval } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const {
@@ -249,97 +246,78 @@ class AssetsScreen extends React.Component<Props, State> {
       wallpaper: fullIconWallpaperUrl,
       decimals,
     };
-    // const {
-    //   listed: isListed = true,
-    //   disclaimer,
-    // } = assetsConfig[assetData.token] || {};
+    const {
+      listed: isListed = true,
+      disclaimer,
+    } = assetsConfig[assetData.token] || {};
 
-    // const props = {
-    //   id: assetData.token,
-    //   name: assetData.name,
-    //   token: assetData.token,
-    //   amount: assetData.amount,
-    //   balanceInFiat: assetData.balanceInFiat,
-    //   onPress: this.handleCardTap,
-    //   address: assetData.address,
-    //   icon: assetData.iconColor,
-    //   wallpaper: assetData.wallpaper,
-    //   isListed,
-    //   disclaimer,
-    //   assetData,
-    // };
-    // const isETH = asset.symbol === ETH;
+    const props = {
+      id: assetData.token,
+      name: assetData.name,
+      token: assetData.token,
+      amount: assetData.amount,
+      balanceInFiat: assetData.balanceInFiat,
+      onPress: this.handleCardTap,
+      address: assetData.address,
+      icon: assetData.iconColor,
+      wallpaper: assetData.wallpaper,
+      isListed,
+      disclaimer,
+      assetData,
+    };
+    const isETH = asset.symbol === ETH;
 
-    const uniqueCode = [];
-    [...assetData.token].forEach((letter) => {
-      uniqueCode.push(letter.charCodeAt(0));
-    });
-
-    return (
-      <TouchableOpacity onPress={() => this.handleCardTap(assetData)}>
-        <AssetPattern
-          token={asset.symbol}
-          icon={assetData.iconColor}
-          contractAddress={assetData.contractAddress}
-          isListed
-        />
-        <Text style={{ flex: 1, textAlign: 'center' }}>
-          {uniqueCode}
-        </Text>
-      </TouchableOpacity>
-    );
-
-    // switch (assetsLayout) {
-    //   case SIMPLIFIED: {
-    //     return (
-    //       <Swipeout
-    //         right={this.renderSwipeoutBtns(asset)}
-    //         sensitivity={10}
-    //         backgroundColor="transparent"
-    //         buttonWidth={80}
-    //         close={forceHideRemoval}
-    //       >
-    //         <AssetCardSimplified {...props} />
-    //       </Swipeout>
-    //     );
-    //   }
-    //   case MINIMIZED: {
-    //     return (
-    //       <AssetCardMinimized
-    //         {...props}
-    //         smallScreen={smallScreen()}
-    //         disabledRemove={isETH}
-    //         onRemove={this.handleAssetRemoval(asset)}
-    //         forceHideRemoval={forceHideRemoval}
-    //       />
-    //     );
-    //   }
-    //   case EXTRASMALL: {
-    //     return (
-    //       <AssetCardMinimized
-    //         {...props}
-    //         smallScreen={smallScreen()}
-    //         disabledRemove={isETH}
-    //         onRemove={this.handleAssetRemoval(asset)}
-    //         forceHideRemoval={forceHideRemoval}
-    //         extraSmall
-    //       />
-    //     );
-    //   }
-    //   default: {
-    //     return (
-    //       <Swipeout
-    //         right={this.renderSwipeoutBtns(asset)}
-    //         sensitivity={10}
-    //         backgroundColor="transparent"
-    //         buttonWidth={80}
-    //         close={forceHideRemoval}
-    //       >
-    //         <AssetCard {...props} icon={assetData.icon} horizontalPadding />
-    //       </Swipeout>
-    //     );
-    //   }
-    // }
+    switch (assetsLayout) {
+      case SIMPLIFIED: {
+        return (
+          <Swipeout
+            right={this.renderSwipeoutBtns(asset)}
+            sensitivity={10}
+            backgroundColor="transparent"
+            buttonWidth={80}
+            close={forceHideRemoval}
+          >
+            <AssetCardSimplified {...props} />
+          </Swipeout>
+        );
+      }
+      case MINIMIZED: {
+        return (
+          <AssetCardMinimized
+            {...props}
+            smallScreen={smallScreen()}
+            disabledRemove={isETH}
+            onRemove={this.handleAssetRemoval(asset)}
+            forceHideRemoval={forceHideRemoval}
+          />
+        );
+      }
+      case EXTRASMALL: {
+        return (
+          <AssetCardMinimized
+            {...props}
+            smallScreen={smallScreen()}
+            disabledRemove={isETH}
+            onRemove={this.handleAssetRemoval(asset)}
+            forceHideRemoval={forceHideRemoval}
+            extraSmall
+          />
+        );
+      }
+      default: {
+        return (
+          <Swipeout
+            right={this.renderSwipeoutBtns(asset)}
+            sensitivity={10}
+            backgroundColor="transparent"
+            buttonWidth={80}
+            close={forceHideRemoval}
+          >
+            <AssetCard {...props} icon={assetData.icon} horizontalPadding />
+          </Swipeout>
+        );
+      }
+    }
   };
 
   renderSeparator = () => {

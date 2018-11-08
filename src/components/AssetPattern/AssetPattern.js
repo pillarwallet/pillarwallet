@@ -11,7 +11,6 @@ type State = {
 type Props = {
   token: string,
   icon: string,
-  contractAddress: string,
   isListed: boolean,
 }
 
@@ -22,6 +21,15 @@ const PatternWrapper = styled.View`
   height: 250px;
 `;
 
+const NoIconWrapper = styled.View`
+  width: 100%;
+  height: 220px;
+  margin-top: 14px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const noIconImageSource = require('assets/images/no_logo.png');
 
 //  opacity: ${props => props.opacity};
 const IconWrapper = styled.View`
@@ -43,8 +51,13 @@ const IconWrapper = styled.View`
   opacity: ${props => props.opacity};
 `;
 
+const NoIconImage = styled(CachedImage)`
+  height: 192px;
+  width: 192px;
+`;
+
 export default class AssetPattern extends React.Component<Props, State> {
-  generatePattern = (token: string, icon: string, contractAddress: string, isListed: boolean) => {
+  generatePattern = (token: string, icon: string, isListed: boolean) => {
     const paternDetails = [];
     const uniqueCode = [];
     [...token].forEach((letter) => {
@@ -152,18 +165,24 @@ export default class AssetPattern extends React.Component<Props, State> {
     return paternDetails;
   };
 
-
   render() {
     const {
       token,
       icon,
-      contractAddress,
       isListed,
     } = this.props;
 
+    if (!isListed || !icon) {
+      return (
+        <NoIconWrapper>
+          <NoIconImage source={noIconImageSource} />
+        </NoIconWrapper>
+      );
+    }
+
     return (
       <PatternWrapper>
-        {this.generatePattern(token, icon, contractAddress, isListed)}
+        {this.generatePattern(token, icon, isListed)}
       </PatternWrapper>
     );
   }

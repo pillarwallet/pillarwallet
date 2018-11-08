@@ -137,6 +137,8 @@ const Name = styled(BoldText)`
 const { width } = Dimensions.get('window');
 const cardWidth = width - 20;
 
+const genericTokenIcon = require('assets/icons/generic_token.png');
+
 class AssetCardSimplified extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -154,10 +156,12 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       token,
       balanceInFiat,
       disclaimer,
-      icon = '',
+      icon,
     } = this.props;
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+    const iconSource = icon ? { uri: icon } : genericTokenIcon;
+
     return (
       <AssetOutter cardWidth={cardWidth}>
         <Shadow heightAndroid={70} widthIOS={cardWidth - 20} heightIOS={70}>
@@ -165,16 +169,15 @@ class AssetCardSimplified extends React.Component<Props, {}> {
             <AssetWrapper>
               <InnerWrapper>
                 <IconCircle>
-                  {!!icon &&
-                    <CachedImage
-                      key={token}
-                      style={{
-                        height: 44,
-                        width: 44,
-                      }}
-                      source={{ uri: icon }}
-                      resizeMode="contain"
-                    />}
+                  <CachedImage
+                    key={token}
+                    style={{
+                      height: 44,
+                      width: 44,
+                    }}
+                    source={iconSource}
+                    resizeMode="contain"
+                  />
                 </IconCircle>
                 <DetailsWrapper>
                   <Name>{name}</Name>

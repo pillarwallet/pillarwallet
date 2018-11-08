@@ -137,6 +137,8 @@ const Name = styled(BoldText)`
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
+const genericTokenIcon = require('assets/icons/generic_token.png');
+
 class AssetCard extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -156,13 +158,15 @@ class AssetCard extends React.Component<Props, {}> {
       wallpaper,
       isListed = true,
       disclaimer,
-      icon = '',
+      icon,
       innerCard,
     } = this.props;
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     const wallpaperUri = isListed ? wallpaper : undefined;
     const height = innerCard ? innerCardHeight : 140;
+    const iconSource = icon ? { uri: icon } : genericTokenIcon;
+
     return (
       <AssetOutter>
         <Shadow
@@ -177,18 +181,17 @@ class AssetCard extends React.Component<Props, {}> {
               <DetailsWrapper innerCard={innerCard}>
                 <UpperRow>
                   <Name isListed={isListed} innerCard={innerCard}>{name}</Name>
-                  {!!icon &&
-                    <IconCircle isListed={isListed} innerCard={innerCard}>
-                      <CachedImage
-                        key={token}
-                        style={{
-                          height: 40,
-                          width: 40,
-                        }}
-                        source={{ uri: icon }}
-                        resizeMode="contain"
-                      />
-                    </IconCircle>}
+                  <IconCircle isListed={isListed} innerCard={innerCard}>
+                    <CachedImage
+                      key={token}
+                      style={{
+                        height: 40,
+                        width: 40,
+                      }}
+                      source={iconSource}
+                      resizeMode="contain"
+                    />
+                  </IconCircle>
                 </UpperRow>
                 <View style={{ flexDirection: 'column' }}>
                   <AmountWrapper>
