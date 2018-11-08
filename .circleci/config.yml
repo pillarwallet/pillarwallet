@@ -1,51 +1,5 @@
 version: 2
 jobs:
-  node:
-    working_directory: ~/react-native
-    docker:
-      - image: circleci/node:10
-    steps:
-      - checkout
-
-      - restore_cache:
-          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
-
-      - restore_cache:
-          key: yarn-v1-{{ checksum "package.json" }}-{{ arch }}
-
-      - run: yarn install
-
-      - save_cache:
-          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-          paths: 
-            - node_modules
-
-      - run:
-          name: lint
-          command: |
-            yarn run lint
-
-      - run:
-          name: flow
-          command: |
-            yarn run flow
-
-      - run:
-          name: jest tests
-          command: |
-            mkdir -p test-results/jest
-            yarn run test -w 2
-          environment:
-            JEST_JUNIT_OUTPUT: test-results/jest/junit.xml
-
-      - persist_to_workspace:
-          root: ~/react-native
-          paths:
-            - node_modules
-
-      - store_test_results:
-          path: test-results
-
   build:
     working_directory: ~/pillarwallet
     macos:
@@ -444,10 +398,7 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - node
       - build
-          requires:
-            - node
       - stage_ios:
           requires:
             - build
