@@ -35,6 +35,55 @@ import { saveDbAction } from './dbActions';
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
+const getTokenWalletAndRegister = async (api: Object, user: Object, wallet: Object, dispatch: Function) => {
+  api.init(wallet.privateKey);
+  await firebase.messaging().requestPermission().catch(() => { });
+  const fcmToken = await firebase.messaging().getToken().catch(() => { });
+
+  await Intercom.sendTokenToIntercom(fcmToken);
+  const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
+  const registrationSucceed = !!Object.keys(sdkWallet).length && !sdkWallet.error;
+  const userInfo = await api.userInfo(sdkWallet.walletId);
+  const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
+
+  if (Object.keys(userInfo).length) {
+    dispatch(saveDbAction('user', { user: userInfo }, true));
+  }
+
+  dispatch({
+    type: UPDATE_USER,
+    payload: {
+      user: userInfo,
+      state: userState,
+    },
+  });
+
+  if (!registrationSucceed) {
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: sdkWallet.reason,
+    });
+  }
+
+  return {
+    sdkWallet,
+    userInfo,
+    userState,
+    fcmToken,
+    registrationSucceed,
+  };
+};
+
+const navigateToAppFlow = () => {
+  const navigateToAssetsAction = NavigationActions.navigate({
+    routeName: APP_FLOW,
+    params: {},
+    action: NavigationActions.navigate({ routeName: ASSETS }),
+  });
+
+  navigate(navigateToAssetsAction);
+};
+
 export const registerWalletAction = () => {
   return async (dispatch: Function, getState: () => any, api: Object) => {
     const currentState = getState();
@@ -96,13 +145,15 @@ export const registerWalletAction = () => {
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
     });
-    api.init(wallet.privateKey);
-    await firebase.messaging().requestPermission().catch(() => { });
-    const fcmToken = await firebase.messaging().getToken().catch(() => { });
-    await Intercom.sendTokenToIntercom(fcmToken);
-    const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
-    const registrationSucceed = !!Object.keys(sdkWallet).length;
-    const userInfo = await api.userInfo(sdkWallet.walletId);
+    const {
+      sdkWallet,
+      userInfo,
+      fcmToken,
+      registrationSucceed,
+    } = await getTokenWalletAndRegister(api, user, wallet, dispatch);
+
+    if (!registrationSucceed) { return; }
+
     await chat.init({
       userId: sdkWallet.userId,
       username: user.username,
@@ -112,25 +163,6 @@ export const registerWalletAction = () => {
     }).catch(() => null);
     await chat.client.registerAccount().catch(() => null);
     await chat.client.setFcmId(fcmToken).catch(() => null);
-    if (Object.keys(userInfo).length) {
-      dispatch(saveDbAction('user', { user: userInfo }, true));
-    }
-    const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
-    dispatch({
-      type: UPDATE_USER,
-      payload: {
-        user: userInfo,
-        state: userState,
-      },
-    });
-
-    if (!registrationSucceed) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: sdkWallet.reason,
-      });
-      return;
-    }
 
     // STEP 5: get&store initial assets
     const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
@@ -149,13 +181,7 @@ export const registerWalletAction = () => {
     dispatch(saveDbAction('assets', { assets: initialAssets }));
 
     // STEP 6: all done, navigate to the assets screen
-    const navigateToAssetsAction = NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: NavigationActions.navigate({ routeName: ASSETS }),
-    });
-
-    navigate(navigateToAssetsAction);
+    navigateToAppFlow();
   };
 };
 
@@ -171,41 +197,14 @@ export const registerOnBackendAction = () => {
       user = apiUser;
     }
     await delay(1000);
-    api.init(wallet.privateKey);
-    await firebase.messaging().requestPermission().catch(() => { });
-    const fcmToken = await firebase.messaging().getToken().catch(() => { });
-    await Intercom.sendTokenToIntercom(fcmToken);
-    const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
-    const registrationSucceed = !sdkWallet.error;
 
-    const userInfo = await api.userInfo(sdkWallet.walletId);
-    if (Object.keys(userInfo).length) {
-      dispatch(saveDbAction('user', { user: userInfo }, true));
-    }
-    const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
-    dispatch({
-      type: UPDATE_USER,
-      payload: {
-        user: userInfo,
-        state: userState,
-      },
-    });
+    const {
+      registrationSucceed,
+    } = await getTokenWalletAndRegister(api, user, wallet, dispatch);
 
-    if (!registrationSucceed) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: sdkWallet.reason,
-      });
-      return;
-    }
+    if (!registrationSucceed) { return; }
 
-    const navigateToAssetsAction = NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: NavigationActions.navigate({ routeName: ASSETS }),
-    });
-
-    navigate(navigateToAssetsAction);
+    navigateToAppFlow();
   };
 };
 
