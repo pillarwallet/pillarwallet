@@ -156,6 +156,7 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
   const tabBarVisible = navigation.state.index < 1;
   return {
     tabBarVisible,
+    animationEnabled: true,
   };
 };
 
@@ -183,6 +184,7 @@ const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
+  [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -192,6 +194,7 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [CONTACT]: ContactScreen,
+  [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { RefreshControl, Platform } from 'react-native';
+import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -18,6 +18,7 @@ import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
+import { BaseText } from 'components/Typography';
 
 const ContactWrapper = styled.View`
   position: relative;
@@ -39,6 +40,33 @@ const CircleButtonsWrapper = styled(Wrapper)`
   })}
 `;
 
+const BadgePlacer = styled.View`
+  position: absolute;
+  top: 21px;
+  right: 14px;
+  width: 22px;
+  height: 22px;
+  flex-direction: row;
+`;
+
+const ItemBadge = styled.View`
+  height: 22px;
+  width: 22px;
+  border-width: 2px;
+  border-color: ${baseColors.white}
+  border-radius: 11px;
+  background-color: ${baseColors.sunYellow}
+  align-self: center;
+`;
+
+const UnreadCount = styled(BaseText)`
+  color: ${baseColors.black};
+  font-size: ${fontSizes.tiny};
+  align-self: center;
+  text-align: center;
+  margin-top: 2px;
+`;
+
 type Props = {
   name: string,
   navigation: NavigationScreenProp<*>,
@@ -46,6 +74,7 @@ type Props = {
   syncContact: Function,
   fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
   wallet: Object,
+  chats: Object[],
 };
 
 type State = {
@@ -108,12 +137,19 @@ class Contact extends React.Component<Props, State> {
     return displayContact.profileImage;
   };
 
+  getUnreadCount = (chats: Object[], username: string): number => {
+    const userChat = chats.find(chat => chat.username === username) || {};
+    const { unread = 0 } = userChat;
+    return unread;
+  };
+
   render() {
     const {
       navigation,
       contacts,
       fetchContactTransactions,
       wallet,
+      chats,
     } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
@@ -121,6 +157,7 @@ class Contact extends React.Component<Props, State> {
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
     const userAvatar = this.getUserAvatar(isAccepted, avatarRefreshed, displayContact);
+    const unreadCount = this.getUnreadCount(chats, displayContact.username);
     return (
       <Container inset={{ bottom: 0 }}>
         <Header
@@ -150,11 +187,20 @@ class Contact extends React.Component<Props, State> {
           <CircleButtonsWrapper center horizontal>
             {isAccepted && (
               <React.Fragment>
-                <CircleButton
-                  label="Chat"
-                  icon="chat-filled"
-                  onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
-                />
+                <View>
+                  <CircleButton
+                    label="Chat"
+                    icon="chat-filled"
+                    onPress={() => navigation.navigate(CHAT, { username: displayContact.username })}
+                  />
+                  {!!unreadCount &&
+                    <BadgePlacer>
+                      <ItemBadge>
+                        <UnreadCount>{unreadCount > 9 ? '9+' : unreadCount}</UnreadCount>
+                      </ItemBadge>
+                    </BadgePlacer>
+                  }
+                </View>
                 <CircleButton
                   label="Send"
                   icon="send-asset"
@@ -185,9 +231,11 @@ class Contact extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   wallet: { data: wallet },
+  chat: { data: { chats } },
 }) => ({
   contacts,
   wallet,
+  chats,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
