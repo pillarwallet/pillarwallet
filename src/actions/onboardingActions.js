@@ -35,14 +35,13 @@ import { saveDbAction } from './dbActions';
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-const getTokenWalletAndRegister = async (api: Object, user: Object, wallet: Object, dispatch: Function) => {
-  api.init(wallet.privateKey);
+const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Function) => {
   await firebase.messaging().requestPermission().catch(() => { });
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
   await Intercom.sendTokenToIntercom(fcmToken);
   const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
-  const registrationSucceed = !!Object.keys(sdkWallet).length && !sdkWallet.error;
+  const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
   const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
 
@@ -137,7 +136,9 @@ export const registerWalletAction = () => {
     dispatch(saveDbAction('user', { user }));
     dispatch({
       type: GENERATE_ENCRYPTED_WALLET,
-      payload: wallet,
+      payload: {
+        address: wallet.address,
+      },
     });
 
     // STEP 4: Initialize SDK annd register user
@@ -145,14 +146,14 @@ export const registerWalletAction = () => {
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
     });
+
+    api.init(wallet.privateKey);
     const {
       sdkWallet,
       userInfo,
       fcmToken,
       registrationSucceed,
-    } = await getTokenWalletAndRegister(api, user, wallet, dispatch);
-
-    if (!registrationSucceed) { return; }
+    } = await getTokenWalletAndRegister(api, user, dispatch);
 
     await chat.init({
       userId: sdkWallet.userId,
@@ -163,6 +164,8 @@ export const registerWalletAction = () => {
     }).catch(() => null);
     await chat.client.registerAccount().catch(() => null);
     await chat.client.setFcmId(fcmToken).catch(() => null);
+
+    if (!registrationSucceed) { return; }
 
     // STEP 5: get&store initial assets
     const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
@@ -187,7 +190,7 @@ export const registerWalletAction = () => {
 
 export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { wallet: { data: wallet, onboarding: { apiUser } } } = getState();
+    const { wallet: { onboarding: { apiUser } } } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
@@ -200,7 +203,7 @@ export const registerOnBackendAction = () => {
 
     const {
       registrationSucceed,
-    } = await getTokenWalletAndRegister(api, user, wallet, dispatch);
+    } = await getTokenWalletAndRegister(api, user, dispatch);
 
     if (!registrationSucceed) { return; }
 

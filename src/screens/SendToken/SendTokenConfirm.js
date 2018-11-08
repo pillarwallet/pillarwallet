@@ -14,20 +14,13 @@ import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
-import { SEND_TOKEN_PIN_CONFIRM, SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   sendAsset: Function,
-  appSettings: Object,
   session: Object,
-  wallet: Object,
   contacts: Object[],
-}
-
-type State = {
-  transactionPayload: Object,
-  isLoading: boolean,
 }
 
 const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
@@ -54,61 +47,26 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
 
-class SendTokenContacts extends React.Component<Props, State> {
-  constructor(props) {
-    super(props);
-    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
-    this.state = {
-      transactionPayload,
-      isLoading: false,
-    };
-  }
-
+class SendTokenContacts extends React.Component<Props, {}> {
   handleFormSubmit = () => {
-    const {
-      appSettings: {
-        requestPinForTransaction = true,
-      },
-      sendAsset,
-      navigation,
-    } = this.props;
-    const { transactionPayload } = this.state;
-    if (!requestPinForTransaction) {
-      this.setState({
-        isLoading: true,
-      }, () => sendAsset(transactionPayload, this.handleNavigationToTransactionState));
-      return;
-    }
+    const { navigation } = this.props;
+    const transactionPayload = navigation.getParam('transactionPayload', {});
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
     });
   };
 
-  handleNavigationToTransactionState = (params: ?Object) => {
-    const { navigation } = this.props;
-    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params });
-  }
-
-  handleModalDismissal = () => {
-    const { navigation } = this.props;
-    navigation.dismiss();
-  };
-
   render() {
-    const { contacts, session } = this.props;
+    const { contacts, session, navigation } = this.props;
     const {
-      transactionPayload: {
-        amount,
-        to,
-        txFeeInWei,
-        symbol,
-      },
-      isLoading,
-    } = this.state;
+      amount,
+      to,
+      txFeeInWei,
+      symbol,
+    } = navigation.getParam('transactionPayload', {});
 
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
-    const buttonTitle = isLoading ? 'Transaction in progress...' : 'Confirm Transaction';
     return (
       <React.Fragment>
         <Container>
@@ -140,7 +98,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         </Container>
         <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
           <FooterWrapper>
-            <Button disabled={!session.isOnline || isLoading} onPress={this.handleFormSubmit} title={buttonTitle} />
+            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
           </FooterWrapper>
         </KeyboardAvoidingView>
       </React.Fragment>
@@ -149,13 +107,9 @@ class SendTokenContacts extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: appSettings },
-  wallet: { data: wallet },
   contacts: { data: contacts },
   session: { data: session },
 }) => ({
-  appSettings,
-  wallet,
   contacts,
   session,
 });
