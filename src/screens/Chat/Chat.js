@@ -29,7 +29,8 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-import { CHAT_LIST } from 'constants/navigationConstants';
+import { isIphoneX } from 'utils/common';
+import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
@@ -52,6 +53,8 @@ type State = {
   showLoadEarlierButton: boolean,
   isFetching: boolean,
 }
+
+const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
 
 const isWarningMessage = (type) => {
   return type === 'warning';
@@ -90,6 +93,10 @@ const renderBubble = (props: Props) => {
         borderColor: isWarning ? baseColors.brightBlue : baseColors.whiterSmoke,
         maxWidth: 262,
         marginTop: 4,
+        marginLeft: Platform.select({
+          ios: 10,
+          android: 16,
+        }),
       },
       right: {
         backgroundColor: baseColors.lightYellow,
@@ -115,29 +122,6 @@ const renderBubble = (props: Props) => {
     }}
   />);
 };
-
-const renderCustomAvatar = (contact) => () => (
-  <ProfileImage
-    uri={contact.profileImage}
-    userName={contact.username}
-    diameter={34}
-    textStyle={{
-      fontSize: 16,
-    }}
-  />
-);
-
-const renderAvatar = (contact) => (props: Props) => (
-  <Avatar
-    {...props}
-    renderAvatar={renderCustomAvatar(contact)}
-    containerStyle={{
-      left: {
-        marginRight: 2,
-      },
-    }}
-  />
-);
 
 const renderComposer = (props: Props) => {
   return (
@@ -191,6 +175,7 @@ const renderInputToolbar = (props: Props) => {
       primaryStyle={{
         justifyContent: 'center',
         alignItems: 'flex-start',
+        height: INPUT_HEIGHT,
       }}
       containerStyle={{
         bottom: 2,
@@ -299,7 +284,8 @@ const ChatContainer = styled(Container)`
 class ChatScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
-    const contact = props.navigation.getParam('contact', {});
+    const username = props.navigation.getParam('username', '');
+    const contact = props.contacts.find(c => c.username === username) || {};
     this.state = {
       contact,
       showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
@@ -333,18 +319,10 @@ class ChatScreen extends React.Component<Props, State> {
       navigation,
       getExistingChats,
       resetUnread,
-      contacts,
-      chats,
     } = this.props;
     getExistingChats();
     resetUnread(this.state.contact.username);
-
-    if (navigation.getParam('fromNewChatList', false) && (contacts.length - 1 > chats.length)) {
-      navigation.goBack();
-      navigation.setParams({ fromNewChatList: false });
-    } else {
-      navigation.navigate(CHAT_LIST);
-    }
+    navigation.goBack(null);
   };
 
   handleLoadEarlier = () => {
@@ -362,39 +340,81 @@ class ChatScreen extends React.Component<Props, State> {
     sendMessageByContact(contact.username, messages[0]);
   };
 
+  handleNavigationToContact = () => {
+    const { navigation } = this.props;
+    const { contact } = this.state;
+    navigation.navigate(CONTACT, { contact });
+  }
+
+  renderCustomAvatar = () => {
+    const { contact } = this.state;
+    return (
+      <ProfileImage
+        uri={contact.profileImage}
+        userName={contact.username}
+        diameter={34}
+        onPress={this.handleNavigationToContact}
+        textStyle={{
+          fontSize: 16,
+        }}
+      />
+    );
+  }
+
+  renderAvatar = () => {
+    const { contact } = this.state;
+    return (
+      <Avatar
+        {...contact}
+        renderAvatar={this.renderCustomAvatar}
+        containerStyle={{
+          left: {
+            marginRight: Platform.select({
+              ios: -2,
+              android: -14,
+            }),
+          },
+        }}
+      />
+    );
+  };
+
   render() {
     const { messages } = this.props;
     const { contact, showLoadEarlierButton } = this.state;
     const title = getUserName(contact).toLowerCase();
-
     return (
-      <ChatContainer>
-        <Header title={title} onBack={this.handleChatDismissal} />
+      <ChatContainer inset={{ bottom: 0 }}>
+        <Header
+          title={title}
+          onBack={this.handleChatDismissal}
+          onTitlePress={this.handleNavigationToContact}
+        />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Spinner />
-          </View>}
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Spinner />
+            </View>}
           {!this.state.isFetching &&
-          <GiftedChat
-            messages={messages[contact.username]}
-            onSend={msgs => this.onSend(msgs)}
-            user={{
-              _id: this.props.user.username,
-            }}
-            renderBubble={renderBubble}
-            renderAvatar={renderAvatar(contact)}
-            renderComposer={renderComposer}
-            renderInputToolbar={renderInputToolbar}
-            renderDay={renderDay}
-            loadEarlier={showLoadEarlierButton}
-            onLoadEarlier={this.handleLoadEarlier}
-            renderLoadEarlier={renderLoadEarlier}
-            renderMessage={renderMessage}
-            renderTime={renderTime}
-            minInputToolbarHeight={52}
-            parsePatterns={parsePatterns}
-          />}
+            <GiftedChat
+              messages={messages[contact.username]}
+              onSend={msgs => this.onSend(msgs)}
+              user={{
+                _id: this.props.user.username,
+              }}
+              renderBubble={renderBubble}
+              renderAvatar={this.renderAvatar}
+              renderComposer={renderComposer}
+              renderInputToolbar={renderInputToolbar}
+              renderDay={renderDay}
+              loadEarlier={showLoadEarlierButton}
+              onLoadEarlier={this.handleLoadEarlier}
+              renderLoadEarlier={renderLoadEarlier}
+              renderMessage={renderMessage}
+              renderTime={renderTime}
+              minInputToolbarHeight={INPUT_HEIGHT}
+              parsePatterns={parsePatterns}
+            />}
         </Wrapper>
       </ChatContainer>
     );

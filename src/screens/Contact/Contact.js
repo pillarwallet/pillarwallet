@@ -122,7 +122,7 @@ class Contact extends React.Component<Props, State> {
     const displayContact = localContact || contact;
     const userAvatar = this.getUserAvatar(isAccepted, avatarRefreshed, displayContact);
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
@@ -153,7 +153,7 @@ class Contact extends React.Component<Props, State> {
                 <CircleButton
                   label="Chat"
                   icon="chat-filled"
-                  onPress={() => navigation.navigate(CHAT, { contact: displayContact })}
+                  onPress={() => navigation.navigate(CHAT, { username: displayContact.username })}
                 />
                 <CircleButton
                   label="Send"

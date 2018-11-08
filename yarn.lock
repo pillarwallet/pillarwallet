@@ -10206,6 +10206,10 @@ react-native-sentry@^0.39.0:
     "@sentry/wizard" "^0.11.0"
     raven-js "^3.24.2"
 
+react-native-shadow@^1.2.2:
+  version "1.2.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-shadow/-/react-native-shadow-1.2.2.tgz#08991cd14b71e32f2fc6363911c139d231949a66"
+
 react-native-share@^1.1.1:
   version "1.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-share/-/react-native-share-1.1.1.tgz#8c50c67c3fa519607f3352c03f56076c0481edeb"
@@ -11013,9 +11017,9 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.86:
-  version "1.0.86"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.86.tgz#551d3ef8a4979a96f6ea8bd17a6979334abfe1b7"
+rn-signal-protocol-messaging@1.0.88:
+  version "1.0.88"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.88.tgz#bc362aed5c60ac173be78355c7a502d5633b6064"
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

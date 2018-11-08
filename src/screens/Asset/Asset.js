@@ -179,7 +179,7 @@ class AssetScreen extends React.Component<Props, State> {
     } = assetsConfig[assetData.token] || {};
 
     return (
-      <Container color={baseColors.white}>
+      <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <Header
           onBack={this.handleCardTap}
           title={assetData.name}

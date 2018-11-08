@@ -148,6 +148,13 @@ SDKWrapper.prototype.fetchSupportedAssets = function (walletId: string) {
     .catch(() => []);
 };
 
+SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.asset.search({ query, walletId }))
+    .then(({ data }) => data)
+    .catch(() => []);
+};
+
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({
@@ -243,7 +250,7 @@ SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
   return fetchTransactionInfo(hash);
 };
 
-SDKWrapper.prototype.fetchTxInfo = function (hash: string) {
+SDKWrapper.prototype.fetchTransactionReceipt = function (hash: string) {
   return fetchTransactionReceipt(hash);
 };
 

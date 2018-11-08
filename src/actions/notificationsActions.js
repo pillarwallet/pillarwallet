@@ -20,7 +20,7 @@ import {
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT_LIST } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -36,7 +36,7 @@ let signalListener = null;
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
   [BCX]: HOME,
-  [SIGNAL]: CHAT_LIST,
+  [SIGNAL]: CHAT,
 };
 
 export const startListeningIntercomNotificationsAction = () => {
@@ -91,10 +91,7 @@ export const startListeningNotificationsAction = () => {
         await firebase.messaging().getToken();
       } catch (err) { return; } // eslint-disable-line
     }
-    const notificationOpen = await firebase.notifications().getInitialNotification();
-    if (notificationOpen) {
-      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
-    }
+
     // TODO: remove it once signal payload matches the rest notifications.
     if (!signalListener) {
       // TODO: This is a temporary solution to reduces the possibility of the wrong notification order.
@@ -104,7 +101,6 @@ export const startListeningNotificationsAction = () => {
         if (!notification) return;
         if (notification.type === SIGNAL) {
           dispatch(getExistingChatsAction());
-          // dispatch({ type: ADD_NOTIFICATION, payload: notification });
           dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         }
       };
@@ -146,24 +142,47 @@ export const stopListeningNotificationsAction = () => {
 };
 
 export const startListeningOnOpenNotificationAction = () => {
-  return (dispatch: Function, getState: Function) => { // eslint-disable-line
-    if (notificationsOpenerListener) return;
-    notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
-      const { navigator } = getNavigationState();
-      const pathAndParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state);
-      const currentFlow = pathAndParams.path.split('/')[0];
-      const { type } = processNotification(message.notification._data) || {};
+  return async (dispatch: Function, getState: Function) => { // eslint-disable-line
+    const notificationOpen = await firebase.notifications().getInitialNotification();
+    if (notificationOpen) {
+      const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
+        lastActiveScreenParams: navigationParams,
+      });
+      firebase.notifications().setBadge(0);
+    }
+    if (notificationsOpenerListener) return;
+    notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
+      firebase.notifications().setBadge(0);
+      const { navigator } = getNavigationState();
+      if (!navigator) return;
+      const pathAndParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state);
+      const currentFlow = pathAndParams.path.split('/')[0];
+      const { type, navigationParams = {} } = processNotification(message.notification._data) || {};
+      const notificationRoute = NOTIFICATION_ROUTES[type] || null;
+      updateNavigationLastScreenState({
+        lastActiveScreen: notificationRoute,
+        lastActiveScreenParams: navigationParams,
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
+        if (type === BCX) {
+          dispatch(fetchTransactionsHistoryNotificationsAction());
+        }
+        if (type === CONNECTION) {
+          dispatch(fetchInviteNotificationsAction());
+        }
+        if (type === SIGNAL) {
+          dispatch(getExistingChatsAction());
+        }
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
           routeName: APP_FLOW,
           params: {},
           action: NavigationActions.navigate({
             routeName,
+            params: navigationParams,
           }),
         });
         navigate(navigateToAppAction);

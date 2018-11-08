@@ -152,31 +152,51 @@ const StackNavigatorConfig = {
   },
 };
 
+const hideTabNavigatorOnChildView = ({ navigation }) => {
+  const tabBarVisible = navigation.state.index < 1;
+  return {
+    tabBarVisible,
+  };
+};
+
 // CHAT FLOW
 const chatFlow = createStackNavigator({
   [CHAT_LIST]: ChatListScreen,
   [NEW_CHAT]: NewChatListScreen,
+  [CONTACT]: ContactScreen,
+  [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
+
+chatFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // ASSETS FLOW
 const assetsFlow = createStackNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
+  [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
+
+assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
 const peopleFlow = createStackNavigator({
   [PEOPLE]: PeopleScreen,
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
+  [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
+
+peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // HOME FLOW
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
   [CONTACT]: ContactScreen,
+  [CHAT]: ChatScreen,
 }, StackNavigatorConfig);
+
+homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // ICO FLOW
 const icoFlow = createStackNavigator({
@@ -184,6 +204,8 @@ const icoFlow = createStackNavigator({
   [ICO]: ICOScreen,
   [ICO_LINKS]: ICOLinks,
 }, StackNavigatorConfig);
+
+icoFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
   <View style={{ padding: 4 }}>
@@ -349,7 +371,6 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [SEND_DEBUG_DATA]: SendDebugDataScreen,
-    [CHAT]: ChatScreen,
   }, modalTransition,
 );
 

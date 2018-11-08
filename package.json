@@ -40,8 +40,8 @@
     "run-s": "^0.0.0"
   },
   "scripts": {
-    "start": "react-native start",
-    "android": "react-native run-android",
+    "start": "react-native start --reset-cache",
+    "android": "react-native run-android --variant=devDebug",
     "ios": "react-native run-ios",
     "generate:ios:ipa": "mkdir  ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/pillarwallet/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
@@ -81,7 +81,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -144,6 +144,7 @@
     "react-native-randombytes": "3.2.0",
     "react-native-scrypt": "^1.0.0",
     "react-native-sentry": "^0.39.0",
+    "react-native-shadow": "^1.2.2",
     "react-native-share": "^1.1.1",
     "react-native-splash-screen": "^3.1.1",
     "react-native-svg": "^7.0.2",
@@ -161,7 +162,7 @@
     "redux-async-queue": "^1.0.0",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
-    "rn-signal-protocol-messaging": "1.0.86",
+    "rn-signal-protocol-messaging": "1.0.88",
     "shuffle-array": "^1.0.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
