@@ -8,43 +8,43 @@ jobs:
       - checkout
 
       - restore_cache:
-        key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
+          key: yarn-v1-{{ checksum "yarn.lock" }}-{{ arch }}
 
       - restore_cache:
-        key: yarn-v1-{{ checksum "package.json" }}-{{ arch }}
+          key: yarn-v1-{{ checksum "package.json" }}-{{ arch }}
 
       - run: yarn install
 
       - save_cache:
-        key: node-v1-{{ checksum "package.json" }}-{{ arch }}
-        paths: 
-          - node_modules
+          key: node-v1-{{ checksum "package.json" }}-{{ arch }}
+          paths: 
+            - node_modules
 
       - run:
-        name: lint
-        command: |
-          yarn run lint
+          name: lint
+          command: |
+            yarn run lint
 
       - run:
-        name: flow
-        command: |
-          yarn run flow
+          name: flow
+          command: |
+            yarn run flow
 
       - run:
-        name: jest tests
-        command: |
-          mkdir -p test-results/jest
-          yarn run test -w 2
-        environment:
-          JEST_JUNIT_OUTPUT: test-results/jest/junit.xml
+          name: jest tests
+          command: |
+            mkdir -p test-results/jest
+            yarn run test -w 2
+          environment:
+            JEST_JUNIT_OUTPUT: test-results/jest/junit.xml
 
       - persist_to_workspace:
-        root: ~/react-native
-        paths:
-          - node_modules
+          root: ~/react-native
+          paths:
+            - node_modules
 
       - store_test_results:
-        path: test-results
+          path: test-results
 
   build:
     working_directory: ~/pillarwallet
