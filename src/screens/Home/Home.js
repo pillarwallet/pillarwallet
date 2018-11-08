@@ -177,7 +177,7 @@ const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
   margin-top: ${Platform.select({
-    ios: '-4px',
+    ios: '4px',
     android: '-4px',
   })};
 `;
