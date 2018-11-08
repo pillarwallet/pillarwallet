@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
 import { PROFILE } from 'constants/navigationConstants';
-import { changePinAction } from 'actions/authActions';
+import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';
@@ -15,26 +15,26 @@ import Header from 'components/Header';
 import { validatePin } from 'utils/validators';
 
 type Props = {
-  changePin: (pin: string) => Function,
-  wallet: Object,
+  changePin: (newPin: string, currentPin: string) => Function,
+  walletState: ?string,
   navigation: NavigationScreenProp<*>,
-}
+  resetIncorrectPassword: () => Function,
+};
 
 type State = {
   pinError: string,
 };
-
-const mapStateToProps = ({ wallet }) => ({ wallet });
 
 class ConfirmNewPin extends React.Component<Props, State> {
   state = {
     pinError: '',
   };
 
-  handlePinSubmit = (pin: string) => {
+  handlePinSubmit = (enteredPin: string) => {
     const { navigation, changePin } = this.props;
-    const previousPin = navigation.getParam('pin');
-    const validationError = validatePin(pin, previousPin);
+    const currentPin = navigation.getParam('currentPin');
+    const newPin = navigation.getParam('newPin');
+    const validationError = validatePin(enteredPin, newPin);
 
     if (validationError) {
       this.setState({
@@ -43,7 +43,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
       return;
     }
 
-    changePin(pin);
+    changePin(enteredPin, currentPin);
   };
 
   handlePinChange = () => {
@@ -53,14 +53,15 @@ class ConfirmNewPin extends React.Component<Props, State> {
   };
 
   handleScreenDismissal = () => {
+    this.props.resetIncorrectPassword();
     this.props.navigation.dismiss();
   };
 
   render() {
+    const { walletState } = this.props;
     const { pinError } = this.state;
 
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
-    const { walletState } = this.props.wallet;
 
     if (walletState === ENCRYPTING) {
       return (
@@ -100,10 +101,13 @@ class ConfirmNewPin extends React.Component<Props, State> {
   }
 }
 
+const mapStateToProps = ({ wallet: { walletState } }) => ({ walletState });
+
 const mapDispatchToProps = (dispatch: Function) => ({
-  changePin: (pin: string) => {
-    dispatch(changePinAction(pin));
+  changePin: (newPin: string, currentPin: string) => {
+    dispatch(changePinAction(newPin, currentPin));
   },
+  resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConfirmNewPin);
