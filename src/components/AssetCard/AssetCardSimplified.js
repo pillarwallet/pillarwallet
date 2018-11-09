@@ -28,6 +28,7 @@ type Props = {
 }
 
 const defaultCircleColor = '#ACBCCD';
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetOutter = styled.View`
   padding: ${Platform.select({
@@ -137,8 +138,6 @@ const Name = styled(BoldText)`
 const { width } = Dimensions.get('window');
 const cardWidth = width - 20;
 
-const genericTokenIcon = require('assets/icons/generic_token.png');
-
 class AssetCardSimplified extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -147,7 +146,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
   handleOnPress = () => {
     const { onPress, assetData } = this.props;
     onPress(assetData);
-  }
+  };
 
   render() {
     const {
@@ -160,7 +159,6 @@ class AssetCardSimplified extends React.Component<Props, {}> {
     } = this.props;
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-    const iconSource = icon ? { uri: icon } : genericTokenIcon;
 
     return (
       <AssetOutter cardWidth={cardWidth}>
@@ -169,15 +167,17 @@ class AssetCardSimplified extends React.Component<Props, {}> {
             <AssetWrapper>
               <InnerWrapper>
                 <IconCircle>
+                  {!!icon &&
                   <CachedImage
                     key={token}
                     style={{
                       height: 44,
                       width: 44,
                     }}
-                    source={iconSource}
+                    source={{ uri: icon }}
+                    fallbackSource={genericToken}
                     resizeMode="contain"
-                  />
+                  />}
                 </IconCircle>
                 <DetailsWrapper>
                   <Name>{name}</Name>

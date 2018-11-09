@@ -180,7 +180,7 @@ class SendTokenContacts extends React.Component<Props, State> {
       });
     }
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
         <FormWrapper>
           <Form

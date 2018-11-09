@@ -55,7 +55,6 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 });
 
 const initialState = {
-  wallet: { data: mockWallet },
   assets: { data: { [ETH]: { balance: 10 } } },
 };
 
@@ -72,7 +71,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_ASSETS_STATE, payload: FETCHED },
     ];
 
-    return store.dispatch(sendAssetAction(mockTransaction))
+    return store.dispatch(sendAssetAction(mockTransaction, mockWallet))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

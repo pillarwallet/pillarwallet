@@ -43,6 +43,7 @@ const AssetOutter = styled.View`
 
 const defaultCardColor = '#ACBCCD';
 const innerCardHeight = (Dimensions.get('window').width - 40) / 1.59; // 343X215 card size proportions
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetWrapper = styled.View`
   height: ${props => props.innerCard ? innerCardHeight : 140}px;
@@ -137,8 +138,6 @@ const Name = styled(BoldText)`
   color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
 `;
 
-const genericTokenIcon = require('assets/icons/generic_token.png');
-
 class AssetCard extends React.Component<Props, {}> {
   shouldComponentUpdate(nextProps: Props) {
     return !isEqual(this.props, nextProps);
@@ -165,7 +164,6 @@ class AssetCard extends React.Component<Props, {}> {
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     const wallpaperUri = isListed ? wallpaper : undefined;
     const height = innerCard ? innerCardHeight : 140;
-    const iconSource = icon ? { uri: icon } : genericTokenIcon;
 
     return (
       <AssetOutter>
@@ -181,6 +179,7 @@ class AssetCard extends React.Component<Props, {}> {
               <DetailsWrapper innerCard={innerCard}>
                 <UpperRow>
                   <Name isListed={isListed} innerCard={innerCard}>{name}</Name>
+                  {!!icon &&
                   <IconCircle isListed={isListed} innerCard={innerCard}>
                     <CachedImage
                       key={token}
@@ -188,10 +187,11 @@ class AssetCard extends React.Component<Props, {}> {
                         height: 40,
                         width: 40,
                       }}
-                      source={iconSource}
+                      source={{ uri: icon }}
+                      fallbackSource={genericToken}
                       resizeMode="contain"
                     />
-                  </IconCircle>
+                  </IconCircle>}
                 </UpperRow>
                 <View style={{ flexDirection: 'column' }}>
                   <AmountWrapper>

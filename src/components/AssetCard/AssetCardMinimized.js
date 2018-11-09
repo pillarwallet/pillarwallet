@@ -40,8 +40,7 @@ type State = {
 }
 
 const defaultCircleColor = '#ACBCCD';
-
-const genericTokenIcon = require('assets/icons/generic_token.png');
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetWrapper = styled(Animated.View)`
   width: 33.33333%;
@@ -261,8 +260,6 @@ class AssetCardMinimized extends React.Component<Props, State> {
       ],
     };
 
-    const iconSource = icon ? { uri: icon } : genericTokenIcon;
-
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     return (
       <AssetWrapperAnimated style={animatedStyle}>
@@ -284,7 +281,8 @@ class AssetCardMinimized extends React.Component<Props, State> {
                         height: smallScreen ? 20 : 36,
                         width: smallScreen ? 20 : 36,
                       }}
-                      source={iconSource}
+                      source={{ uri: icon }}
+                      fallbackSource={genericToken}
                       resizeMode="contain"
                     />
                   </IconCircle>
