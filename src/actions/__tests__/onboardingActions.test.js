@@ -39,8 +39,13 @@ const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxA
 
 const mockWallet: Object = {
   address: '0x9c',
-  privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
 };
+const mockImportedWallet: Object = {
+  address: '0x9c',
+  privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
+  RNencrypt: () => Promise.resolve({ address: 'encry_pted' }),
+};
+
 const mockOnboarding: Object = {
   confirmedPin: '',
   importedWallet: null,
@@ -62,10 +67,6 @@ const mockExchangeRates = {
     USD: 748.92,
   },
 };
-
-Object.defineProperty(mockWallet, 'RNencrypt', {
-  value: () => Promise.resolve({ address: 'encry_pted' }),
-});
 
 describe('Wallet actions', () => {
   let store;
@@ -110,7 +111,7 @@ describe('Wallet actions', () => {
       wallet: {
         onboarding: {
           ...mockOnboarding,
-          importedWallet: mockWallet,
+          importedWallet: mockImportedWallet,
         },
       },
     });

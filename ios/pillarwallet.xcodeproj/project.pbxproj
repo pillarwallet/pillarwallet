@@ -1013,7 +1013,6 @@
 				60702656908C4144E1C18049 /* [CP] Copy Pods Resources */,
 				162E1796211325E60028BE96 /* Embed Frameworks */,
 				164D049C212D7418008344CE /* Setup Fabric */,
-				33DD1BC5398B1B80B72E6CB6 /* [CP] Embed Pods Frameworks */,
 				71A441A895804224BBCA1302 /* Upload Debug Symbols to Sentry */,
 			);
 			buildRules = (
@@ -1634,21 +1633,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Fabric/run\" 7bc430094c38169c1b7afadcbde5dbc0c85ec8de e5a248dccbdb9c509812ddcb5baa17295923befa1e28672685d6d49e1a7e8453";
-		};
-		33DD1BC5398B1B80B72E6CB6 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		60702656908C4144E1C18049 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

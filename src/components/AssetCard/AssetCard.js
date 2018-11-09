@@ -43,6 +43,7 @@ const AssetOutter = styled.View`
 
 const defaultCardColor = '#ACBCCD';
 const innerCardHeight = (Dimensions.get('window').width - 40) / 1.59; // 343X215 card size proportions
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetWrapper = styled.View`
   height: ${props => props.innerCard ? innerCardHeight : 140}px;
@@ -186,6 +187,7 @@ class AssetCard extends React.Component<Props, {}> {
                           width: 40,
                         }}
                         source={{ uri: icon }}
+                        fallbackSource={genericToken}
                         resizeMode="contain"
                       />
                     </IconCircle>}
