@@ -1,6 +1,6 @@
 // @flow
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { EXPANDED } from 'constants/assetsLayoutConstants';
+import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import merge from 'lodash.merge';
 
 export type AppSettingsReducerState = {
@@ -17,7 +17,7 @@ const initialState = {
   data: {
     lastTxSyncDatetime: 0,
     appearanceSettings: {
-      assetsLayout: EXPANDED,
+      assetsLayout: SIMPLIFIED,
     },
   },
   isFetched: false,
