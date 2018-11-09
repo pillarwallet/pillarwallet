@@ -24,6 +24,7 @@ type Props = {
   avatarUrl?: string,
   iconName?: ?string,
   itemImageUrl?: string,
+  fallbackSource?: Object,
   timeSent?: string,
   unreadCount?: number,
   itemValue?: string,
@@ -221,6 +222,7 @@ const ItemImage = (props: Props) => {
     avatarUrl,
     iconName,
     itemImageUrl,
+    fallbackSource,
     navigateToProfile,
     type,
   } = props;
@@ -237,7 +239,7 @@ const ItemImage = (props: Props) => {
     return (
       <Shadow shadowColorAndroid="#38105baa" heightAndroid={54} widthAndroid={54} heightIOS={54} widthIOS={54}>
         <TokenImageWrapper>
-          <TokenImage source={{ uri: itemImageUrl }} />
+          <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </TokenImageWrapper>
       </Shadow>
     );
