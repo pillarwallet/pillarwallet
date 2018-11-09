@@ -4,6 +4,8 @@ import {
   SET_HISTORY,
   TRANSACTION_EVENT,
   SET_GAS_INFO,
+  TX_CONFIRMED_STATUS,
+  TX_FAILED_STATUS,
 } from 'constants/historyConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS, ETH } from 'constants/assetsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -153,7 +155,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     if (!txInfo || !txReceipt || !lastBlockNumber) return;
 
     const nbConfirmations = lastBlockNumber - txReceipt.blockNumber;
-    const status = txReceipt.status ? 'confirmed' : 'failed';
+    const status = txReceipt.status ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS;
 
     const updatedHistory = history.map(tx => {
       if (tx.hash !== hash) return tx;

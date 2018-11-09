@@ -156,6 +156,7 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
   const tabBarVisible = navigation.state.index < 1;
   return {
     tabBarVisible,
+    animationEnabled: true,
   };
 };
 

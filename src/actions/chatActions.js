@@ -19,11 +19,11 @@ const mergeNewChats = (newChats, existingChats) => {
         content: '',
         username: _username,
         device: 1,
-        serverTimestamp: 0,
+        serverTimestamp: newChats[_username].latest,
         savedTimestamp: 0,
       },
       username: _username,
-      unread: newChats[_username],
+      unread: newChats[_username].count,
     }))
     .concat(existingChats);
 };
@@ -33,12 +33,13 @@ export const getExistingChatsAction = () => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
     const {
-      unreadCount: unreadChats = {},
+      unread: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
     const newChats = mergeNewChats(unreadChats, filteredChats);
     const augmentedChats = newChats.map(item => {
-      const unread = unreadChats[item.username] || 0;
+      const unread = unreadChats[item.username] ? unreadChats[item.username].count : 0;
       const lastMessage = item.lastMessage || {};
+      if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
       return { ...item, unread, lastMessage };
     });
 
@@ -54,13 +55,14 @@ export const resetUnreadAction = (contactUsername: string) => {
     const chats = await chat.client.getExistingChats().then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
     const {
-      unreadCount: unreadChats = {},
+      unread: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
     const newChats = mergeNewChats(unreadChats, filteredChats);
-
     const augmentedChats = newChats.map(item => {
-      const unread = item.username === contactUsername ? 0 : (unreadChats[item.username] || 0);
+      const unreadChatsCount = unreadChats[item.username] ? unreadChats[item.username].count : 0;
+      const unread = item.username === contactUsername ? 0 : unreadChatsCount;
       const lastMessage = item.lastMessage || {};
+      if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
       return { ...item, unread, lastMessage };
     });
 
@@ -108,7 +110,16 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
     dispatch({
       type: FETCHING_CHATS,
     });
-    await chat.client.addContact(username).catch(() => null);
+    await chat.client.addContact(username).catch(e => {
+      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+        Toast.show({
+          message: e.message,
+          type: 'warning',
+          title: 'Cannot retrieve remote user!',
+          autoClose: false,
+        });
+      }
+    });
     if (loadEarlier) {
       // TODO: split message loading in bunches and load earlier on lick
     }
