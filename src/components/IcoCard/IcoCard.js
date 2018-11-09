@@ -30,6 +30,7 @@ type Props = {
 }
 
 const { width } = Dimensions.get('window');
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const CardWrapper = styled.View`
   width: 100%;
@@ -190,6 +191,7 @@ const IcoCard = (props: Props) => {
                   width: 60,
                 }}
                 source={{ uri: iconUrl }}
+                fallbackSource={genericToken}
                 resizeMode="contain"
               />}
             </Row>
@@ -260,6 +262,7 @@ const IcoCard = (props: Props) => {
                     width: 90,
                   }}
                   source={{ uri: iconUrl }}
+                  fallbackSource={genericToken}
                   resizeMode="contain"
                 />
               </Progress>

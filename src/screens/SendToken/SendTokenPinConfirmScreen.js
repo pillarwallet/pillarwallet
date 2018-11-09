@@ -12,7 +12,7 @@ import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: (transactionPayload: TransactionPayload, navigate: Function) => Function,
+  sendAsset: (transactionPayload: TransactionPayload, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
 }
 
@@ -37,24 +37,24 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
-  handleTransaction = () => {
+  handleTransaction = (pin: string, wallet: Object) => {
     const { sendAsset } = this.props;
     const { transactionPayload } = this.state;
     this.setState({
       isChecking: true,
-    }, () => sendAsset(transactionPayload, this.handleNavigationToTransactionState));
-  }
+    }, () => sendAsset(transactionPayload, wallet, this.handleNavigationToTransactionState));
+  };
 
   handleNavigationToTransactionState = (params: ?Object) => {
     const { navigation } = this.props;
     navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params });
-  }
+  };
 
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
     navigation.goBack(null);
     resetIncorrectPassword();
-  }
+  };
 
   render() {
     const { isChecking } = this.state;
@@ -71,7 +71,9 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload, navigate) => dispatch(sendAssetAction(transaction, navigate)),
+  sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
+    dispatch(sendAssetAction(transaction, wallet, navigate));
+  },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
