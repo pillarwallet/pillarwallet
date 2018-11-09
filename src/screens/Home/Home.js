@@ -183,7 +183,7 @@ const RecentConnectionsItemName = styled(BaseText)`
 `;
 
 const TabsHeader = styled.View`
-  padding: 4px ${spacing.mediumLarge}px 0;
+  padding: 20px ${spacing.mediumLarge}px 12px;
   background-color: ${baseColors.white};
 `;
 
@@ -502,7 +502,7 @@ class HomeScreen extends React.Component<Props, State> {
             <RecentConnectionsSpacer />
           }
           <TabsHeader>
-            <Title subtitle title="your activity." />
+            <Title subtitle noMargin title="your activity." />
           </TabsHeader>
           <Tabs tabs={activityFeedTabs} />
           <ActivityFeed
