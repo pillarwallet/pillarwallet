@@ -24,7 +24,7 @@ type Props = {
   avatarUrl?: string,
   iconName?: ?string,
   itemImageUrl?: string,
-  fallbackSource?: Object,
+  fallbackSource?: string,
   timeSent?: string,
   unreadCount?: number,
   itemValue?: string,
@@ -237,7 +237,14 @@ const ItemImage = (props: Props) => {
   }
   if (itemImageUrl) {
     return (
-      <Shadow shadowColorAndroid="#38105baa" heightAndroid={54} widthAndroid={54} heightIOS={54} widthIOS={54}>
+      <Shadow
+        shadowColorAndroid="#38105baa"
+        heightAndroid={54}
+        widthAndroid={54}
+        heightIOS={48}
+        widthIOS={48}
+        shadowRadius={24}
+      >
         <TokenImageWrapper>
           <TokenImage source={{ uri: itemImageUrl }} fallbackSource={fallbackSource} />
         </TokenImageWrapper>
