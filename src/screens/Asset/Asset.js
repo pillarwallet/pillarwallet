@@ -184,7 +184,7 @@ class AssetScreen extends React.Component<Props, State> {
           onBack={this.handleCardTap}
           title={assetData.name}
           onNextPress={() => {}}
-          nextIcon="info-circle"
+          nextIcon="info-circle-inverse"
           nextIconSize={fontSizes.mediumLarge}
         />
         <ScrollWrapper
