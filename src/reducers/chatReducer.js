@@ -5,6 +5,7 @@ import {
   UPDATE_CHATS,
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
+  DELETE_CHAT,
 } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
@@ -85,16 +86,14 @@ export default function chatReducer(
         },
       );
     case UPDATE_CHATS:
-      return merge(
-        {},
-        state,
-        {
-          data: {
-            chats: action.payload,
-            isFetching: false,
-          },
+      return {
+        ...state,
+        data: {
+          chats: action.payload,
+          isFetching: false,
+          messages: { ...state.data.messages },
         },
-      );
+      };
     case RESET_UNREAD_MESSAGE:
       return merge(
         {},
@@ -119,6 +118,12 @@ export default function chatReducer(
           },
         },
       );
+    case DELETE_CHAT:
+      const currentState = merge({}, state);
+      const existingChat = currentState.data.chats.findIndex(x => x.username === action.payload);
+      delete currentState.data.chats[existingChat];
+      delete currentState.data.messages[action.payload];
+      return { ...currentState };
     default:
       return state;
   }

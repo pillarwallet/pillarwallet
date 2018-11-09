@@ -2,9 +2,11 @@
 import * as React from 'react';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { FlatList, RefreshControl, View, Alert } from 'react-native';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
+import Swipeout from 'react-native-swipeout';
+import styled from 'styled-components/native/index';
 import { isToday, isYesterday, format as formatDate } from 'date-fns';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT, NEW_CHAT, CONTACT } from 'constants/navigationConstants';
@@ -12,8 +14,11 @@ import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
-import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
+import Icon from 'components/Icon';
+import { BaseText } from 'components/Typography';
+import { getExistingChatsAction, resetUnreadAction, deleteChatAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+import { fontSizes, baseColors, spacing } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -23,6 +28,7 @@ type Props = {
   notifications: Object[],
   getExistingChats: Function,
   resetUnread: Function,
+  deleteChat: Function,
 }
 
 type State = {
@@ -31,6 +37,25 @@ type State = {
   receiverAvatar: string,
   chatList: Array<Object>,
 }
+
+const DeleteButttonWrapper = styled.TouchableOpacity`
+  height: 84px;
+  width: 64px;
+  justify-content: center;
+  align-items: center;
+  margin-right: ${spacing.mediumLarge}px;
+`;
+
+const ButtonIcon = styled(Icon)`
+  font-size: ${fontSizes.small}px;
+  color: ${baseColors.burningFire};
+`;
+
+const ButtonLabel = styled(BaseText)`
+  font-size: ${fontSizes.extraExtraSmall}px;
+  color: ${baseColors.burningFire};
+  margin-top: ${spacing.small}px;
+`;
 
 class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
@@ -68,6 +93,36 @@ class ChatListScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(NEW_CHAT);
   };
 
+  renderSwipeoutBtn = (username: string) => {
+    return [{
+      component: (
+        <DeleteButttonWrapper
+          onPress={() => { this.deleteChat(username); }}
+        >
+          <ButtonIcon
+            name="gallery"
+          />
+          <ButtonLabel>
+            Delete
+          </ButtonLabel>
+        </DeleteButttonWrapper>),
+      backgroundColor: 'transparent',
+      disabled: true,
+    }];
+  };
+
+  deleteChat = (username: string) => {
+    const { deleteChat } = this.props;
+    Alert.alert(
+      'Are you sure?',
+      `This will delete your chat with ${username}`,
+      [
+        { text: 'Cancel', onPress: () => {}, style: 'cancel' },
+        { text: 'Delete', onPress: () => deleteChat(username) },
+      ],
+    );
+  }
+
   renderItem = ({ item: contact }: Object) => {
     const { chats, contacts, navigation } = this.props;
 
@@ -92,15 +147,23 @@ class ChatListScreen extends React.Component<Props, State> {
     if (!contact.username) return null;
 
     return (
-      <ListItemWithImage
-        label={contactInfo.username}
-        avatarUrl={contactInfo.profileImage}
-        navigateToProfile={() => navigation.navigate(CONTACT, { contact: contactInfo })}
-        paragraph={unread ? newMessageCopy : lastMessage.content}
-        timeSent={timeSent}
-        unreadCount={unread}
-        onPress={() => this.handleChatItemClick(contactInfo)}
-      />
+      <Swipeout
+        right={this.renderSwipeoutBtn(contactInfo.username)}
+        sensitivity={10}
+        backgroundColor="transparent"
+        buttonWidth={80}
+        // close={true}
+      >
+        <ListItemWithImage
+          label={contactInfo.username}
+          avatarUrl={contactInfo.profileImage}
+          navigateToProfile={() => navigation.navigate(CONTACT, { contact: contactInfo })}
+          paragraph={unread ? newMessageCopy : lastMessage.content}
+          timeSent={timeSent}
+          unreadCount={unread}
+          onPress={() => this.handleChatItemClick(contactInfo)}
+        />
+      </Swipeout>
     );
   };
 
@@ -108,6 +171,7 @@ class ChatListScreen extends React.Component<Props, State> {
     const { chats, getExistingChats } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
+
     return (
       <Container>
         <Header
@@ -129,7 +193,7 @@ class ChatListScreen extends React.Component<Props, State> {
           <FlatList
             data={sortedChats}
             extraData={chats}
-            keyExtractor={(item) => item.username}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={this.renderItem}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             style={{ height: '100%' }}
@@ -160,6 +224,7 @@ const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   setUnreadChatNotificationsStatus: (status) => dispatch(setUnreadChatNotificationsStatusAction(status)),
+  deleteChat: (contactUsername) => dispatch(deleteChatAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatListScreen);

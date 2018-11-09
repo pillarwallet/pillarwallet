@@ -7,6 +7,7 @@ import {
   UPDATE_MESSAGES,
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
+  DELETE_CHAT,
 } from 'constants/chatConstants';
 
 const chat = new ChatService();
@@ -36,6 +37,7 @@ export const getExistingChatsAction = () => {
       unread: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount().then(JSON.parse).catch(() => ({}));
     const newChats = mergeNewChats(unreadChats, filteredChats);
+
     const augmentedChats = newChats.map(item => {
       const unread = unreadChats[item.username] ? unreadChats[item.username].count : 0;
       const lastMessage = item.lastMessage || {};
@@ -143,5 +145,16 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
       type: UPDATE_MESSAGES,
       payload: { messages: updatedMessages, username },
     });
+  };
+};
+
+export const deleteChatAction = (contactUsername: string) => {
+  return (dispatch: Function) => {
+    chat.client.deleteContact(contactUsername).then(() => {
+      dispatch({
+        type: DELETE_CHAT,
+        payload: contactUsername,
+      });
+    }).catch(() => []);
   };
 };
