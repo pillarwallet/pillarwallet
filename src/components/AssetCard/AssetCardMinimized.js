@@ -40,6 +40,7 @@ type State = {
 }
 
 const defaultCircleColor = '#ACBCCD';
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetWrapper = styled(Animated.View)`
   width: 33.33333%;
@@ -282,6 +283,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
                         width: smallScreen ? 20 : 36,
                       }}
                       source={{ uri: icon }}
+                      fallbackSource={genericToken}
                       resizeMode="contain"
                     />}
                   </IconCircle>
