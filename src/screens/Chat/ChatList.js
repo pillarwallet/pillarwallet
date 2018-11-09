@@ -32,10 +32,7 @@ type Props = {
 }
 
 type State = {
-  showChat: boolean,
-  receiver: string,
-  receiverAvatar: string,
-  chatList: Array<Object>,
+  forceClose: boolean,
 }
 
 const DeleteButttonWrapper = styled.TouchableOpacity`
@@ -59,6 +56,10 @@ const ButtonLabel = styled(BaseText)`
 
 class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
+
+  state = {
+    forceClose: false,
+  };
 
   componentDidMount() {
     this.props.getExistingChats();
@@ -93,14 +94,14 @@ class ChatListScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(NEW_CHAT);
   };
 
-  renderSwipeoutBtn = (username: string) => {
+  renderSwipeoutBtn = (username: string, unreadCount?: number) => {
     return [{
       component: (
         <DeleteButttonWrapper
-          onPress={() => { this.deleteChat(username); }}
+          onPress={() => { this.deleteChat(username, unreadCount); }}
         >
           <ButtonIcon
-            name="gallery"
+            name="delete"
           />
           <ButtonLabel>
             Delete
@@ -111,20 +112,34 @@ class ChatListScreen extends React.Component<Props, State> {
     }];
   };
 
-  deleteChat = (username: string) => {
+  deleteChat = (username: string, unreadCount: number = 0) => {
     const { deleteChat } = this.props;
+    const msg = unreadCount > 1 ? 'messages' : 'message';
+    const allertBody = unreadCount
+      ? `This will delete your chat with ${username}. Including ${unreadCount} unread ${msg}.`
+      : `This will delete your chat with ${username}.`;
+
     Alert.alert(
       'Are you sure?',
-      `This will delete your chat with ${username}`,
+      allertBody,
       [
-        { text: 'Cancel', onPress: () => {}, style: 'cancel' },
-        { text: 'Delete', onPress: () => deleteChat(username) },
+        { text: 'Cancel', onPress: () => { this.setState({ forceClose: true }); }, style: 'cancel' },
+        {
+          text: 'Delete',
+          onPress: () => {
+            this.setState({ forceClose: true });
+            deleteChat(username);
+          },
+        },
       ],
     );
   }
 
   renderItem = ({ item: contact }: Object) => {
+    if (!contact.username) return null;
+
     const { chats, contacts, navigation } = this.props;
+    const { forceClose } = this.state;
 
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const { lastMessage, unread } = chatWithContact;
@@ -144,15 +159,14 @@ class ChatListScreen extends React.Component<Props, State> {
     }
     const newMessageCopy = unread > 1 ? 'New Messages' : 'New Message';
 
-    if (!contact.username) return null;
-
     return (
       <Swipeout
-        right={this.renderSwipeoutBtn(contactInfo.username)}
+        right={this.renderSwipeoutBtn(contactInfo.username, unread)}
         sensitivity={10}
         backgroundColor="transparent"
         buttonWidth={80}
-        // close={true}
+        close={forceClose}
+        onClose={() => { this.setState({ forceClose: false }); }}
       >
         <ListItemWithImage
           label={contactInfo.username}
@@ -170,7 +184,9 @@ class ChatListScreen extends React.Component<Props, State> {
   render() {
     const { chats, getExistingChats } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
-    const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
+    const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc').filter((chat) => {
+      return chat !== undefined;
+    });
 
     return (
       <Container>
