@@ -106,7 +106,7 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   static defaultProps = {
-    assetsLayout: EXPANDED,
+    assetsLayout: SIMPLIFIED,
   };
 
   componentDidMount() {
