@@ -12,11 +12,12 @@ import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
-// import TruncatedText from 'components/TruncatedText';
+import SlideModal from 'components/Modals/SlideModal';
+
 import Header from 'components/Header';
 import { Container, ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
-import { BoldText, BaseText } from 'components/Typography';
+import { BoldText, BaseText, Paragraph } from 'components/Typography';
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
@@ -60,6 +61,7 @@ type State = {
       formValues?: Object,
     },
   },
+  showDescriptionModal: boolean,
 };
 
 const AssetCardWrapper = styled.View`
@@ -91,9 +93,15 @@ const ValueInFiat = styled(BaseText)`
   margin-top: 5px;
 `;
 
+const Description = styled(Paragraph)`
+  padding-bottom: ${spacing.mediumLarge}px;
+  line-height: ${fontSizes.mediumLarge};
+`;
+
 class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
+    showDescriptionModal: false,
   };
 
   componentDidMount() {
@@ -161,6 +169,7 @@ class AssetScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
     } = this.props;
+    const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -183,9 +192,9 @@ class AssetScreen extends React.Component<Props, State> {
         <Header
           onBack={this.handleCardTap}
           title={assetData.name}
-          onNextPress={() => {}}
+          onNextPress={() => { this.setState({ showDescriptionModal: true }); }}
           nextIcon="info-circle-inverse"
-          nextIconSize={fontSizes.mediumLarge}
+          nextIconSize={fontSizes.extraLarge}
         />
         <ScrollWrapper
           onScrollEndDrag={this.handleScrollWrapperEndDrag}
@@ -250,6 +259,12 @@ class AssetScreen extends React.Component<Props, State> {
           tokenName={assetData.name}
           handleOpenShareDialog={this.handleOpenShareDialog}
         />
+        <SlideModal
+          isVisible={showDescriptionModal}
+          onModalHide={() => { this.setState({ showDescriptionModal: false }); }}
+        >
+          <Description small light>{assetData.description}</Description>
+        </SlideModal>
       </Container>
     );
   }
