@@ -86,6 +86,11 @@ const ListHeading = styled(SubHeading)`
   padding: 20px 20px 0 20px;
 `;
 
+const HeaderWrapper = styled(Wrapper)`
+  background-color: ${baseColors.snowWhite};
+  z-index: 100;
+`;
+
 const Footer = styled(Wrapper)`
   background: ${baseColors.white};
   border-color: ${UIColors.defaultDividerColor};
@@ -344,7 +349,7 @@ class AddToken extends React.Component<Props, State> {
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <Wrapper zIndex={100} style={{ backgroundColor: baseColors.snowWhite }}>
+        <HeaderWrapper>
           <Header title="add tokens" onBack={this.handleScreenDismissal} />
           <Wrapper regularPadding>
             <SearchBar
@@ -358,7 +363,7 @@ class AddToken extends React.Component<Props, State> {
               marginTop={15}
             />
           </Wrapper>
-        </Wrapper>
+        </HeaderWrapper>
         {searchIsFocused && !inSearchMode &&
           <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
             <AnimatedFullScreenOverlay
