@@ -96,7 +96,7 @@ export default class AssetPattern extends React.Component<Props, State> {
 
       if (i === 1 || i === 4) {
         zIndex = 1;
-        opacity = 0.05;
+        opacity = 0.07;
         diameter = 70;
         top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
         if (!compositionSymetrySideYAxis && i === 4) {
@@ -110,7 +110,7 @@ export default class AssetPattern extends React.Component<Props, State> {
           top = verticalCenter + topSideChange(!sidePositionPositivity2, true, innerIconsTop);
         }
         zIndex = 2;
-        opacity = 0.3;
+        opacity = 0.15;
         diameter = 90;
       }
 
