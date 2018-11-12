@@ -145,6 +145,7 @@ class TextInput extends React.Component<Props, State> {
     super(props);
 
     this.rnInput = React.createRef();
+    this.multilineInputField = React.createRef();
   }
 
   handleBlur = (e: EventLike) => {
