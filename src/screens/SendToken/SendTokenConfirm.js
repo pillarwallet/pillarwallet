@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import {Platform, Keyboard, TextInput as RNTextInput} from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
@@ -15,8 +15,7 @@ import { sendAssetAction } from 'actions/assetsActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import TextInput from "../../components/TextInput";
-import {Footer, ScrollWrapper} from "../../components/Layout";
+import TextInput from '../../components/TextInput';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -46,23 +45,24 @@ const Value = styled(BoldText)`
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      note:null
-    }
+      note: null,
+    };
   }
+
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const transactionPayload = {...navigation.getParam('transactionPayload', {}),note:this.state.note};
+    const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
     });
   };
 
-  handleNoteChange(text){
-    this.setState({note:text});
+  handleNoteChange(text) {
+    this.setState({ note: text });
   }
 
   render() {
@@ -84,43 +84,43 @@ class SendTokenContacts extends React.Component<Props, State> {
             title="send"
           />
           <ScrollWrapper regularPadding>
-              <Title subtitle title="Review and Confirm"/>
-              <LabeledRow>
-                <Label>Amount</Label>
-                <Value>{amount} {symbol}</Value>
-              </LabeledRow>
-              {!!recipientUsername &&
-              <LabeledRow>
-                <Label>Recipient Username</Label>
-                <Value>{recipientUsername}</Value>
-              </LabeledRow>
-              }
-              <LabeledRow>
-                <Label>Recipient Address</Label>
-                <Value>{to}</Value>
-              </LabeledRow>
-              <LabeledRow>
-                <Label>Est. Network Fee</Label>
-                <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
-              </LabeledRow>
-              <TextInput
-                inputProps={{
-                  onChange: (text) => this.handleNoteChange(text),
-                  value: this.state.note,
-                  autoCapitalize: 'none',
-                  multiline: true,
-                  numberOfLines: 3,
-                  placeholder: "Add a note to this transaction"
-                }}
-                inputType="secondary"
-                labelBigger
-                noBorder
-                keyboardAvoidance
-              />
+            <Title subtitle title="Review and Confirm" />
+            <LabeledRow>
+              <Label>Amount</Label>
+              <Value>{amount} {symbol}</Value>
+            </LabeledRow>
+            {!!recipientUsername &&
+            <LabeledRow>
+              <Label>Recipient Username</Label>
+              <Value>{recipientUsername}</Value>
+            </LabeledRow>
+            }
+            <LabeledRow>
+              <Label>Recipient Address</Label>
+              <Value>{to}</Value>
+            </LabeledRow>
+            <LabeledRow>
+              <Label>Est. Network Fee</Label>
+              <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
+            </LabeledRow>
+            <TextInput
+              inputProps={{
+                onChange: (text) => this.handleNoteChange(text),
+                value: this.state.note,
+                autoCapitalize: 'none',
+                multiline: true,
+                numberOfLines: 3,
+                placeholder: 'Add a note to this transaction',
+              }}
+              inputType="secondary"
+              labelBigger
+              noBorder
+              keyboardAvoidance
+            />
           </ScrollWrapper>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
-              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction"/>
+              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
             </FooterWrapper>
           </Footer>
         </Container>

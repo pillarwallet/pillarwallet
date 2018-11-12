@@ -31,7 +31,7 @@ import {
 import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
 
 import EventHeader from './EventHeader';
-import ListItemParagraph from "../ListItem/ListItemParagraph";
+import ListItemParagraph from '../ListItem/ListItemParagraph';
 
 type Props = {
   transaction: Transaction,
@@ -147,7 +147,10 @@ class EventDetails extends React.Component<Props, {}> {
 
   handleRejectConnection = (userData) => {
     const { onClose, onReject } = this.props;
-    createAlert(TYPE_REJECTED, userData, () => { onClose(); onReject(); });
+    createAlert(TYPE_REJECTED, userData, () => {
+      onClose();
+      onReject();
+    });
   };
 
   handleCancelConnection = () => {
@@ -209,7 +212,7 @@ class EventDetails extends React.Component<Props, {}> {
       } = txInfo;
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
-      const hasNote = note && note!=="";
+      const hasNote = note && note !== '';
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = utils.formatUnits(new BigNumber(txInfo.value.toString()).toFixed(), decimals);
@@ -279,7 +282,7 @@ class EventDetails extends React.Component<Props, {}> {
             }
             {hasNote &&
             <ListItemParagraph
-              label={'NOTE'}
+              label="NOTE"
               value={note}
             />
             }
@@ -339,7 +342,9 @@ class EventDetails extends React.Component<Props, {}> {
               block
               title="Decline"
               dangerInverted
-              onPress={() => { this.handleRejectConnection(userData); }}
+              onPress={() => {
+                this.handleRejectConnection(userData);
+              }}
             />
           </ButtonsWrapper>
           }
