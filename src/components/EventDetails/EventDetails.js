@@ -31,6 +31,7 @@ import {
 import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
 
 import EventHeader from './EventHeader';
+import ListItemParagraph from "../ListItem/ListItemParagraph";
 
 type Props = {
   transaction: Transaction,
@@ -204,9 +205,11 @@ class EventDetails extends React.Component<Props, {}> {
         gasUsed,
         gasPrice,
         status,
+        note,
       } = txInfo;
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
+      const hasNote = note && note!=="";
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = utils.formatUnits(new BigNumber(txInfo.value.toString()).toFixed(), decimals);
@@ -272,6 +275,12 @@ class EventDetails extends React.Component<Props, {}> {
               valueAddon={(<Confirmations>{nbConfirmations}</Confirmations>)}
               value="of 6"
               showSpinner
+            />
+            }
+            {hasNote &&
+            <ListItemParagraph
+              label={'NOTE'}
+              value={note}
             />
             }
             <ButtonsWrapper>

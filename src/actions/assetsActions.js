@@ -43,6 +43,7 @@ export const sendAssetAction = ({
   symbol,
   contractAddress,
   decimals,
+  note,
 }: TransactionPayload, wallet: Object, navigateToNextScreen: Function = noop) => {
   return async (dispatch: Function, getState: Function) => {
     const { history: { data: currentHistory } } = getState();
@@ -68,7 +69,7 @@ export const sendAssetAction = ({
         return { error: e.message };
       });
       if (ETHTrx.hash) {
-        const historyTx = buildHistoryTransaction({ ...ETHTrx, asset: symbol });
+        const historyTx = buildHistoryTransaction({ ...ETHTrx, asset: symbol, note:note });
         dispatch({
           type: ADD_TRANSACTION,
           payload: historyTx,
@@ -108,6 +109,7 @@ export const sendAssetAction = ({
         asset: symbol,
         value: amount * (10 ** decimals),
         to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+        note: note,
       });
       dispatch({
         type: ADD_TRANSACTION,

@@ -5,7 +5,7 @@ import { Item as NBItem, Input, Label } from 'native-base';
 import { fontSizes, fontWeights, baseColors, UIColors } from 'utils/variables';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { View, TouchableOpacity, Platform } from 'react-native';
+import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 
 type inputPropsType = {
   placeholder?: string,
@@ -147,6 +147,12 @@ class TextInput extends React.Component<Props, State> {
     if (onBlur) {
       onBlur(value);
     }
+
+    if(Platform.OS === "ios" && this.props.inputProps.multiline && this.props.keyboardAvoidance){
+      this.setState({
+        isFocused:false
+      });
+    }
   };
 
   handleChange = (e: EventLike) => {
@@ -159,6 +165,20 @@ class TextInput extends React.Component<Props, State> {
     this.setState({
       isFocused: true,
     });
+  };
+
+  handleMultilineFocus = (event) => {
+    if (!this.state.isFocused) {
+      this.rnInput.focus();
+      this.setState({
+        isFocused:false
+      },()=>{
+        setTimeout(()=>{
+          this.multilineInputField._root.focus();
+          this.handleFocus();
+        },50);
+      });
+    }
   };
 
   render() {
@@ -195,10 +215,11 @@ class TextInput extends React.Component<Props, State> {
           {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
           <InputField
             {...inputProps}
+            innerRef={(input)=>this.multilineInputField = input}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             onEndEditing={() => this.handleBlur}
-            onFocus={this.handleFocus}
+            onFocus={Platform.OS === "ios" && inputProps.multiline && this.props.keyboardAvoidance ? this.handleMultilineFocus:this.handleFocus}
             value={value}
             inputType={inputType}
             autoCorrect={autoCorrect}
@@ -209,6 +230,7 @@ class TextInput extends React.Component<Props, State> {
               paddingTop: inputProps.multiline ? 10 : 0,
             }}
           />
+          <RNInput caretHidden={true} autoCorrect={false} ref={(ref)=>this.rnInput=ref}/>
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
         </Item>
