@@ -28,6 +28,7 @@ type Props = {
 }
 
 const defaultCircleColor = '#ACBCCD';
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetOutter = styled.View`
   padding: ${Platform.select({
@@ -145,7 +146,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
   handleOnPress = () => {
     const { onPress, assetData } = this.props;
     onPress(assetData);
-  }
+  };
 
   render() {
     const {
@@ -173,6 +174,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
                         width: 44,
                       }}
                       source={{ uri: icon }}
+                      fallbackSource={genericToken}
                       resizeMode="contain"
                     />}
                 </IconCircle>
