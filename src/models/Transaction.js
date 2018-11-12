@@ -15,6 +15,7 @@ export type Transaction = {
   value: string,
   __v: number,
   receipt: Object,
+  note: ?string
 }
 
 export type TransactionPayload = {
@@ -26,6 +27,7 @@ export type TransactionPayload = {
   symbol: string,
   contractAddress: ?string,
   decimals: number,
+  note: ?string
 }
 
 export type TransactionEthers = {
@@ -36,4 +38,5 @@ export type TransactionEthers = {
   gasPrice: Object,
   gasLimit: Object,
   asset: string,
+  note: ?string
 }
