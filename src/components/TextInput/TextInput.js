@@ -35,6 +35,9 @@ type Props = {
   noBorder?: boolean,
   lowerCase?: boolean,
   labelBigger?: boolean,
+  keyboardAvoidance?: boolean,
+  rnInput?: ?Function,
+  multilineInputField?: ?Function,
 }
 
 type State = {
@@ -167,7 +170,7 @@ class TextInput extends React.Component<Props, State> {
     });
   };
 
-  handleMultilineFocus = (event) => {
+  handleMultilineFocus = () => {
     if (!this.state.isFocused) {
       this.rnInput.focus();
       this.setState({
@@ -202,6 +205,8 @@ class TextInput extends React.Component<Props, State> {
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
+    const variableFocus = Platform.OS === "ios" && inputProps.multiline && this.props.keyboardAvoidance ?
+      this.handleMultilineFocus : this.handleFocus;
     return (
       <View style={{ paddingBottom: 10 }}>
         <Item
@@ -215,11 +220,11 @@ class TextInput extends React.Component<Props, State> {
           {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
           <InputField
             {...inputProps}
-            innerRef={(input)=>this.multilineInputField = input}
+            innerRef={(input) => this.multilineInputField = input}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             onEndEditing={() => this.handleBlur}
-            onFocus={Platform.OS === "ios" && inputProps.multiline && this.props.keyboardAvoidance ? this.handleMultilineFocus:this.handleFocus}
+            onFocus={variableFocus}
             value={value}
             inputType={inputType}
             autoCorrect={autoCorrect}
@@ -230,7 +235,7 @@ class TextInput extends React.Component<Props, State> {
               paddingTop: inputProps.multiline ? 10 : 0,
             }}
           />
-          <RNInput caretHidden={true} autoCorrect={false} ref={(ref)=>this.rnInput=ref}/>
+          <RNInput caretHidden={true} autoCorrect={false} ref={(ref) => this.rnInput = ref}/>
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
         </Item>
