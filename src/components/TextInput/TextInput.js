@@ -207,6 +207,7 @@ class TextInput extends React.Component<Props, State> {
               width: viewWidth,
               paddingRight: inputProps.multiline ? 50 : 14,
               paddingTop: inputProps.multiline ? 10 : 0,
+              textAlignVertical: inputProps.multiline ? 'top' : 'center',
             }}
           />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}

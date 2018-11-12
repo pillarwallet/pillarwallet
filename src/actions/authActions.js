@@ -190,6 +190,7 @@ export const logoutAction = () => {
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    chat.client.resetAccount().catch(() => null);
     await storage.removeAll();
   };
 };
