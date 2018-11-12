@@ -176,7 +176,8 @@ class SendTokenContacts extends React.Component<Props, State> {
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
       contactsToRender = localContacts.filter(({ username, ethAddress }) => {
-        return username.toLowerCase().includes(searchStr) || ethAddress.toLowerCase().includes(searchStr);
+        if (value.address.length < 3) return username.toLowerCase().includes(searchStr);
+        return username.toLowerCase().includes(searchStr) || ethAddress.toLowerCase().startsWith(searchStr);
       });
     }
     return (
