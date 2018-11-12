@@ -43,7 +43,7 @@ import AppFlow from './appNavigation';
 const StackNavigatorConfig = {
   navigationOptions: {
     header: null,
-    gesturesEnabled: false,
+    gesturesEnabled: true,
   },
 };
 

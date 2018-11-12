@@ -147,7 +147,12 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     });
     await delay(50);
     const currentSaltedPin = getSaltedPin(currentPin);
-    const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), currentSaltedPin);
+    const wallet = await ethers.Wallet.RNfromEncryptedWallet(
+      JSON.stringify(encryptedWallet),
+      currentSaltedPin,
+      {
+        mnemonic: true,
+      });
 
     const newSaltedPin = getSaltedPin(newPin);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
