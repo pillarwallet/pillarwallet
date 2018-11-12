@@ -159,9 +159,9 @@ class TextInput extends React.Component<Props, State> {
       onBlur(value);
     }
 
-    if(Platform.OS === "ios" && this.props.inputProps.multiline && this.props.keyboardAvoidance){
+    if (Platform.OS === 'ios' && this.props.inputProps.multiline && this.props.keyboardAvoidance) {
       this.setState({
-        isFocused:false
+        isFocused: false,
       });
     }
   };
@@ -182,12 +182,12 @@ class TextInput extends React.Component<Props, State> {
     if (!this.state.isFocused) {
       this.rnInput.current.focus();
       this.setState({
-        isFocused:false
-      },()=>{
-        setTimeout(()=>{
+        isFocused: false,
+      }, () => {
+        setTimeout(() => {
           this.multilineInputField._root.focus();
           this.handleFocus();
-        },50);
+        }, 50);
       });
     }
   };
@@ -213,7 +213,7 @@ class TextInput extends React.Component<Props, State> {
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
-    const variableFocus = Platform.OS === "ios" && inputProps.multiline && this.props.keyboardAvoidance ?
+    const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
     return (
       <View style={{ paddingBottom: 10 }}>
@@ -228,7 +228,7 @@ class TextInput extends React.Component<Props, State> {
           {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
           <InputField
             {...inputProps}
-            innerRef={(input) => this.multilineInputField = input}
+            innerRef={(input) => { this.multilineInputField = input; }}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             onEndEditing={() => this.handleBlur}
@@ -244,7 +244,7 @@ class TextInput extends React.Component<Props, State> {
             }}
           />
           <RNInput
-            caretHidden={true}
+            caretHidden
             autoCorrect={false}
             ref={this.rnInput}
           />
@@ -254,9 +254,9 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
           {!!footerAddonText &&
-            <TouchableOpacity onPress={footerAddonAction}>
-              <AddonText>{footerAddonText}</AddonText>
-            </TouchableOpacity>}
+          <TouchableOpacity onPress={footerAddonAction}>
+            <AddonText>{footerAddonText}</AddonText>
+          </TouchableOpacity>}
         </InputFooter>
       </View>
     );

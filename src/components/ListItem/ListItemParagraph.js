@@ -2,8 +2,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing, fontWeights, UIColors } from 'utils/variables';
-import { BoldText, BaseText, Paragraph } from 'components/Typography';
-import {ScrollView, Text, TouchableWithoutFeedback} from 'react-native';
+import { BaseText, Paragraph } from 'components/Typography';
+import { ScrollView, Text, TouchableWithoutFeedback } from 'react-native';
 
 type Props = {
   label: string,
@@ -48,9 +48,9 @@ const ListItemParagraph = (props: Props) => {
         <ScrollView>
           <TouchableWithoutFeedback>
             <Paragraph small light>
-                <Text style={{ color: UIColors.defaultTextColor }}>
-                  {value}
-                </Text>
+              <Text style={{ color: UIColors.defaultTextColor }}>
+                {value}
+              </Text>
             </Paragraph>
           </TouchableWithoutFeedback>
         </ScrollView>

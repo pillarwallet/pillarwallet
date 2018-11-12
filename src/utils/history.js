@@ -27,5 +27,5 @@ export const buildHistoryTransaction = ({
   transaction: {},
   __v: 0,
   receipt: {},
-  note:note,
+  note,
 });
