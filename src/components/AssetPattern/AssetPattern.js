@@ -80,7 +80,6 @@ export default class AssetPattern extends React.Component<Props, State> {
       const verticalCenter = 250 / 2;
       let top = verticalCenter;
       let left = windowWidth / 2;
-      // let test;
 
       const topSideChange = (up: boolean, isInner: boolean, change: number) => {
         if (isInner && change > 60) change /= 2;
@@ -96,13 +95,12 @@ export default class AssetPattern extends React.Component<Props, State> {
 
       if (i === 1 || i === 4) {
         zIndex = 1;
-        opacity = 0.2;
+        opacity = 0.1;
         diameter = 70;
         top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
         if (!compositionSymetrySideYAxis && i === 4) {
           top = verticalCenter + topSideChange(!sidePositionPositivity, false, sideIconsTop);
         }
-        // test = topSideChange(sidePositionPositivity, false, sideIconsTop);
       }
 
       if (i === 2 || i === 3) {
@@ -111,9 +109,8 @@ export default class AssetPattern extends React.Component<Props, State> {
           top = verticalCenter + topSideChange(!sidePositionPositivity2, true, innerIconsTop);
         }
         zIndex = 2;
-        opacity = 0.5;
+        opacity = 0.3;
         diameter = 90;
-        // test = topSideChange(sidePositionPositivity2, true, innerIconsTop)
       }
 
       if (i === 1) {
