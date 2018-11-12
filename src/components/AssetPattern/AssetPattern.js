@@ -110,7 +110,7 @@ export default class AssetPattern extends React.Component<Props, State> {
           top = verticalCenter + topSideChange(!sidePositionPositivity2, true, innerIconsTop);
         }
         zIndex = 2;
-        opacity = 0.15;
+        opacity = 0.1;
         diameter = 90;
       }
 
