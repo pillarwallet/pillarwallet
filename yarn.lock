@@ -12823,10 +12823,10 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.89:
-  version "1.0.89"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.89.tgz#0036dddde072210684ead4f3e795228d6329cddc"
-  integrity sha1-ADbd3eByIQaE6tTz55UijWMpzdw=
+rn-signal-protocol-messaging@1.0.91:
+  version "1.0.91"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.91.tgz#4e61919009759e5b31f489f09a17d82cf8475594"
+  integrity sha1-TmGRkAl1nlsx9InwmhfYLPhHVZQ=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
@@ -15105,9 +15105,9 @@ xcode@^0.9.1:
     simple-plist "^0.2.1"
     uuid "3.0.1"
 
-"xcode@git+https://github.com/apache/cordova-node-xcode.git#e7646f0680d509b590b839e567c217590451505b":
+"xcode@https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b":
   version "1.0.1-dev"
-  resolved "git+https://github.com/apache/cordova-node-xcode.git#e7646f0680d509b590b839e567c217590451505b"
+  resolved "https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b"
   dependencies:
     simple-plist "^0.2.1"
     uuid "3.0.1"
