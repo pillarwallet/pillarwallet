@@ -356,6 +356,7 @@ class AddToken extends React.Component<Props, State> {
             <SearchBar
               inputProps={{
                 onChange: this.handleSearchChange,
+                onBlur: this.handleSearchBlur,
                 onFocus: this.handleSearchFocus,
                 value: query,
                 autoCapitalize: 'none',
