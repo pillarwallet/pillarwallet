@@ -20,6 +20,9 @@ import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 import { BaseText } from 'components/Typography';
 
+const iconSend = require('assets/icons/icon_send.png');
+const iconChat = require('assets/icons/icon_chat.png');
+
 const ContactWrapper = styled.View`
   position: relative;
   justify-content: center;
@@ -190,7 +193,7 @@ class Contact extends React.Component<Props, State> {
                 <View>
                   <CircleButton
                     label="Chat"
-                    icon="chat-filled"
+                    icon={iconChat}
                     onPress={() => navigation.navigate(CHAT, { username: displayContact.username })}
                   />
                   {!!unreadCount &&
@@ -203,7 +206,7 @@ class Contact extends React.Component<Props, State> {
                 </View>
                 <CircleButton
                   label="Send"
-                  icon="send-asset"
+                  icon={iconSend}
                   onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
                 />
               </React.Fragment>
