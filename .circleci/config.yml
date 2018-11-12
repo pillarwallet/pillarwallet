@@ -412,7 +412,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/fix-build
+                  - master
       - release_to_prod:
           type: approval
           requires:
