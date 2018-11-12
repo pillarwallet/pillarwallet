@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, UIColors } from 'utils/variables';
+import { baseColors } from 'utils/variables';
 import { CachedImage } from 'react-native-cached-image';
 
 type State = {
@@ -27,6 +27,7 @@ const NoIconWrapper = styled.View`
   margin-top: 14px;
   align-items: center;
   justify-content: center;
+  opacity: ${props => props.isUnlisted ? 0.7 : 1};
 `;
 
 const noIconImageSource = require('assets/images/no_logo.png');
@@ -43,11 +44,11 @@ const IconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   elevation: 6;
-  shadow-color: ${UIColors.cardShadowColor};
+  shadow-color: ${baseColors.black};
   shadow-offset: 0px 3px;
-  shadow-opacity: 1;
+  shadow-opacity: 0.15;
   shadow-radius: 6px;
-  background-color: ${props => props.isListed ? baseColors.white : baseColors.mediumGray};
+  background-color: ${baseColors.white};
   opacity: ${props => props.opacity};
 `;
 
@@ -171,7 +172,7 @@ export default class AssetPattern extends React.Component<Props, State> {
 
     if (!isListed || !icon) {
       return (
-        <NoIconWrapper>
+        <NoIconWrapper isUnlisted={!isListed}>
           <NoIconImage source={noIconImageSource} />
         </NoIconWrapper>
       );

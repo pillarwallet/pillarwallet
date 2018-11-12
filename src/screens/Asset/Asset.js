@@ -93,8 +93,15 @@ const ValueInFiat = styled(BaseText)`
   margin-top: 5px;
 `;
 
+const Disclaimer = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall}px;
+  text-align: center;
+  color: ${baseColors.burningFire};
+  margin-top: 5px;
+`;
+
 const Description = styled(Paragraph)`
-  padding-bottom: ${spacing.mediumLarge}px;
+  padding-bottom: 40px;
   line-height: ${fontSizes.mediumLarge};
 `;
 
@@ -184,7 +191,7 @@ class AssetScreen extends React.Component<Props, State> {
       listed: isListed = true,
       send: isSendActive = true,
       receive: isReceiveActive = true,
-      // disclaimer,
+      disclaimer,
     } = assetsConfig[assetData.token] || {};
 
     return (
@@ -218,9 +225,15 @@ class AssetScreen extends React.Component<Props, State> {
             <TokenValue>
               {`${displayAmount}${token}`}
             </TokenValue>
+            {!!isListed &&
             <ValueInFiat>
               {`${currencySymbol}${formattedBalanceInFiat}`}
-            </ValueInFiat>
+            </ValueInFiat>}
+            {!isListed &&
+            <Disclaimer>
+              {disclaimer}
+            </Disclaimer>
+            }
           </DataWrapper>
           <AssetCardWrapper>
             { /*
