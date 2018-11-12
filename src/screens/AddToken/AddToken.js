@@ -153,6 +153,7 @@ type State = {
 }
 
 const MIN_QUERY_LENGTH = 2;
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 class AddToken extends React.Component<Props, State> {
   state = {
@@ -220,7 +221,7 @@ class AddToken extends React.Component<Props, State> {
   }) {
     return (
       <TokenListItem key={symbol}>
-        <TokenThumbnail source={{ uri: fullIconUrl }} />
+        <TokenThumbnail source={{ uri: fullIconUrl }} fallbackSource={genericToken} />
         <TokenListItemBody style={{ borderBottomWidth: isLastItem ? 0 : 1 }}>
           <Body>
             <TokenName>{name}</TokenName>
