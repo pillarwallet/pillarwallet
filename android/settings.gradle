@@ -4,7 +4,7 @@ project(':react-native-image-crop-picker').projectDir = new File(rootProject.pro
 include ':react-native-sentry'
 project(':react-native-sentry').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sentry/android')
 include ':react-native-svg'
-project(':react-native-svg').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-svg/android')
+project(':react-native-svg').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-svg/android')
 include ':react-native-background-timer'
 project(':react-native-background-timer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-timer/android')
 include ':react-native-splash-screen'
