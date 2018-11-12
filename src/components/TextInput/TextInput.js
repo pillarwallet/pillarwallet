@@ -36,8 +36,6 @@ type Props = {
   lowerCase?: boolean,
   labelBigger?: boolean,
   keyboardAvoidance?: boolean,
-  rnInput?: ?Function,
-  multilineInputField?: ?Function,
 }
 
 type State = {
@@ -130,6 +128,9 @@ const CustomLabel = styled(Label)`
   `;
 
 class TextInput extends React.Component<Props, State> {
+  rnInput: window.HTMLInputElement;
+  multilineInputField: window.HTMLInputElement;
+
   state = {
     isFocused: false,
   };
@@ -139,6 +140,12 @@ class TextInput extends React.Component<Props, State> {
     autoCorrect: false,
     trim: true,
   };
+
+  constructor(props: Props) {
+    super(props);
+
+    this.rnInput = React.createRef();
+  }
 
   handleBlur = (e: EventLike) => {
     if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
@@ -172,7 +179,7 @@ class TextInput extends React.Component<Props, State> {
 
   handleMultilineFocus = () => {
     if (!this.state.isFocused) {
-      this.rnInput.focus();
+      this.rnInput.current.focus();
       this.setState({
         isFocused:false
       },()=>{
@@ -235,7 +242,11 @@ class TextInput extends React.Component<Props, State> {
               paddingTop: inputProps.multiline ? 10 : 0,
             }}
           />
-          <RNInput caretHidden={true} autoCorrect={false} ref={(ref) => this.rnInput = ref}/>
+          <RNInput
+            caretHidden={true}
+            autoCorrect={false}
+            ref={this.rnInput}
+          />
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
         </Item>
