@@ -413,7 +413,7 @@ class AssetsScreen extends React.Component<Props, State> {
             />
           }
         />
-      </Container >
+      </Container>
     );
   }
 }
