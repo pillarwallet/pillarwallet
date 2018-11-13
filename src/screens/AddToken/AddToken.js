@@ -159,6 +159,7 @@ const genericToken = require('assets/images/tokens/genericToken.png');
 
 class AddToken extends React.Component<Props, State> {
   _willBlur: NavigationEventSubscription;
+  formChanged: boolean = false;
 
   state = {
     query: '',
@@ -219,8 +220,6 @@ class AddToken extends React.Component<Props, State> {
     Keyboard.dismiss();
     this.animateFullScreenOverlayOpacity(true, this.animateAfterDelay);
   };
-
-  formChanged: boolean = false;
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
