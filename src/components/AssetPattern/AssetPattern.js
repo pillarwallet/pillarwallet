@@ -64,10 +64,10 @@ export default class AssetPattern extends React.Component<Props, State> {
       uniqueCode.push(letter.charCodeAt(0));
     });
 
-    const compositionSymetrySideYAxis = uniqueCode[0] > uniqueCode[1] || !uniqueCode[2];
+    const compositionSymetrySideYAxis = uniqueCode[0] % 2 === 0 || !uniqueCode[2];
     const sideIconsTop = uniqueCode[0];
     const innerIconsTop = uniqueCode[2] || uniqueCode[1];
-    const sidePositionPositivity = uniqueCode[0] % 2 === 0;
+    const sidePositionPositivity = uniqueCode[0] > uniqueCode[1];
     const innerPositionPositivity = uniqueCode[1] % 2 === 0;
     const innerIconsLeft = (54 - (uniqueCode[0] / 2)) + (uniqueCode[1] / 1.5);
     const sideIconsLeft = uniqueCode[2] ? (uniqueCode[2] / 2.5) + uniqueCode[1] : (uniqueCode[0] / 2.5) + uniqueCode[1];
