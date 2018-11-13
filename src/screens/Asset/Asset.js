@@ -77,7 +77,7 @@ const AssetCardWrapper = styled.View`
 `;
 
 const DataWrapper = styled.View`
-  margin: ${spacing.large}px;
+  margin: 0 ${spacing.large}px ${spacing.large}px;
   justify-content: center;
 `;
 
@@ -101,7 +101,7 @@ const Disclaimer = styled(BaseText)`
 `;
 
 const Description = styled(Paragraph)`
-  padding-bottom: 40px;
+  padding-bottom: 90px;
   line-height: ${fontSizes.mediumLarge};
 `;
 

@@ -25,6 +25,7 @@ const NoIconWrapper = styled.View`
   width: 100%;
   height: 220px;
   margin-top: 14px;
+  margin-bottom: 20px;
   align-items: center;
   justify-content: center;
   opacity: ${props => props.isUnlisted ? 0.7 : 1};
@@ -32,7 +33,6 @@ const NoIconWrapper = styled.View`
 
 const noIconImageSource = require('assets/images/no_logo.png');
 
-//  opacity: ${props => props.opacity};
 const IconWrapper = styled.View`
   height: ${props => props.diameter}px;
   width: ${props => props.diameter}px;
@@ -43,13 +43,12 @@ const IconWrapper = styled.View`
   left: ${props => props.left}px;
   justify-content: center;
   align-items: center;
-  elevation: 6;
+  elevation: ${props => props.elevation};
   shadow-color: ${baseColors.black};
   shadow-offset: 0px 3px;
-  shadow-opacity: 0.15;
+  shadow-opacity: ${props => props.shadowOpacity};
   shadow-radius: 6px;
   background-color: ${baseColors.white};
-  opacity: ${props => props.opacity};
 `;
 
 const NoIconImage = styled(CachedImage)`
@@ -69,7 +68,7 @@ export default class AssetPattern extends React.Component<Props, State> {
     const sideIconsTop = uniqueCode[0];
     const innerIconsTop = uniqueCode[2] || uniqueCode[1];
     const sidePositionPositivity = uniqueCode[0] % 2 === 0;
-    const sidePositionPositivity2 = uniqueCode[1] % 2 === 0;
+    const innerPositionPositivity = uniqueCode[1] % 2 === 0;
     const innerIconsLeft = (54 - (uniqueCode[0] / 2)) + (uniqueCode[1] / 1.5);
     const sideIconsLeft = uniqueCode[2] ? (uniqueCode[2] / 2.5) + uniqueCode[1] : (uniqueCode[0] / 2.5) + uniqueCode[1];
 
@@ -78,17 +77,29 @@ export default class AssetPattern extends React.Component<Props, State> {
       let opacity = 1;
       let zIndex = 3;
       const horizontalCenter = windowWidth / 2;
-      const verticalCenter = 250 / 2;
-      let top = verticalCenter;
-      let left = windowWidth / 2;
+      let verticalCenter = 125;
+      let elevation = 6;
+      let shadowOpacity = 0.15;
 
       const topSideChange = (up: boolean, isInner: boolean, change: number) => {
         if (isInner && change > 60) change /= 2;
         if (!isInner && change > 80) change /= 2;
-        if (sidePositionPositivity2 !== sidePositionPositivity && !isInner) { change /= 4; }
+        if (innerPositionPositivity !== sidePositionPositivity && !isInner) { change /= 4; }
         if (up) return change * -1;
         return change;
       };
+
+      const biggestDistance = sideIconsTop > innerIconsTop ? sideIconsTop : innerIconsTop;
+
+      if (sidePositionPositivity && innerPositionPositivity && compositionSymetrySideYAxis) {
+        verticalCenter = 125 - (topSideChange(true, false, biggestDistance) / 2);
+      }
+      if (!sidePositionPositivity && !innerPositionPositivity && compositionSymetrySideYAxis) {
+        verticalCenter = 125 - (topSideChange(false, false, biggestDistance) / 2);
+      }
+
+      let top = verticalCenter;
+      let left = windowWidth / 2;
 
       if (i === 0) {
         top = compositionSymetrySideYAxis && sidePositionPositivity ? top - 20 : top;
@@ -96,22 +107,26 @@ export default class AssetPattern extends React.Component<Props, State> {
 
       if (i === 1 || i === 4) {
         zIndex = 1;
-        opacity = 0.07;
+        opacity = 0.3;
         diameter = 70;
         top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
         if (!compositionSymetrySideYAxis && i === 4) {
           top = verticalCenter + topSideChange(!sidePositionPositivity, false, sideIconsTop);
         }
+        elevation = 0;
+        shadowOpacity = 0;
       }
 
       if (i === 2 || i === 3) {
-        top = verticalCenter + topSideChange(sidePositionPositivity2, true, innerIconsTop);
+        top = verticalCenter + topSideChange(innerPositionPositivity, true, innerIconsTop);
         if (!compositionSymetrySideYAxis && i === 3) {
-          top = verticalCenter + topSideChange(!sidePositionPositivity2, true, innerIconsTop);
+          top = verticalCenter + topSideChange(!innerPositionPositivity, true, innerIconsTop);
         }
         zIndex = 2;
-        opacity = 0.1;
+        opacity = 0.5;
         diameter = 90;
+        elevation = 4;
+        shadowOpacity = 0.05;
       }
 
       if (i === 1) {
@@ -135,11 +150,12 @@ export default class AssetPattern extends React.Component<Props, State> {
           key={i}
           diameter={diameter}
           borderRadius={diameter / 2}
-          opacity={opacity}
           zIndex={zIndex}
           top={top}
           left={left}
           isListed={isListed}
+          elevation={elevation}
+          shadowOpacity={shadowOpacity}
           style={{
             transform: [
               { translateX: -(diameter / 2) },
@@ -150,8 +166,9 @@ export default class AssetPattern extends React.Component<Props, State> {
           <CachedImage
             key={token}
             style={{
-            height: diameter - 4,
-            width: diameter - 4,
+              height: diameter - 4,
+              width: diameter - 4,
+              opacity,
             }}
             source={{ uri: icon }}
             resizeMode="contain"
