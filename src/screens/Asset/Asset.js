@@ -101,7 +101,7 @@ const Disclaimer = styled(BaseText)`
 `;
 
 const Description = styled(Paragraph)`
-  padding-bottom: 90px;
+  padding-bottom: 80px;
   line-height: ${fontSizes.mediumLarge};
 `;
 

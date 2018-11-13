@@ -1,9 +1,13 @@
 // @flow
 import * as React from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, Image } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
 import { CachedImage } from 'react-native-cached-image';
+import {
+  ColorMatrix,
+  saturate,
+} from 'react-native-color-matrix-image-filters';
 
 type State = {
 }
@@ -80,6 +84,7 @@ export default class AssetPattern extends React.Component<Props, State> {
       let verticalCenter = 125;
       let elevation = 6;
       let shadowOpacity = 0.15;
+      let saturation = 1;
 
       const topSideChange = (up: boolean, isInner: boolean, change: number) => {
         if (isInner && change > 60) change /= 2;
@@ -107,7 +112,7 @@ export default class AssetPattern extends React.Component<Props, State> {
 
       if (i === 1 || i === 4) {
         zIndex = 1;
-        opacity = 0.3;
+        opacity = 0.15;
         diameter = 70;
         top = verticalCenter + topSideChange(sidePositionPositivity, false, sideIconsTop);
         if (!compositionSymetrySideYAxis && i === 4) {
@@ -115,6 +120,7 @@ export default class AssetPattern extends React.Component<Props, State> {
         }
         elevation = 0;
         shadowOpacity = 0;
+        saturation = 0.5;
       }
 
       if (i === 2 || i === 3) {
@@ -123,10 +129,11 @@ export default class AssetPattern extends React.Component<Props, State> {
           top = verticalCenter + topSideChange(!innerPositionPositivity, true, innerIconsTop);
         }
         zIndex = 2;
-        opacity = 0.5;
+        opacity = 0.3;
         diameter = 90;
         elevation = 4;
         shadowOpacity = 0.05;
+        saturation = 0.7;
       }
 
       if (i === 1) {
@@ -163,16 +170,31 @@ export default class AssetPattern extends React.Component<Props, State> {
             ],
           }}
         >
-          <CachedImage
-            key={token}
-            style={{
-              height: diameter - 4,
-              width: diameter - 4,
-              opacity,
-            }}
-            source={{ uri: icon }}
-            resizeMode="contain"
-          />
+          <ColorMatrix
+            matrix={saturate(saturation)}
+          >
+            <Image
+              style={{
+                height: diameter - 4,
+                width: diameter - 4,
+                opacity,
+              }}
+              source={{ uri: icon }}
+              resizeMode="contain"
+            />
+            {/*
+            <CachedImage
+              key={token}
+              style={{
+                height: diameter - 4,
+                width: diameter - 4,
+                opacity,
+              }}
+              source={{ uri: icon }}
+              resizeMode="contain"
+            />
+            */}
+          </ColorMatrix>
         </IconWrapper>,
       );
     }
