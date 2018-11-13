@@ -150,7 +150,7 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
 
 export const deleteChatAction = (contactUsername: string) => {
   return (dispatch: Function) => {
-    chat.client.deleteContact(contactUsername).then(() => {
+    chat.client.deleteContactMessages(contactUsername).then(() => {
       dispatch({
         type: DELETE_CHAT,
         payload: contactUsername,
