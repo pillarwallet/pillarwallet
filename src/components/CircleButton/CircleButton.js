@@ -30,18 +30,12 @@ const CircleButtonIconWrapper = styled.View`
   align-items: center;
 `;
 
-// const CircleButtonIcon = styled(Image)`
-//   font-size: ${fontSizes.extraLarge};
-//   color: ${props => props.disabled ? baseColors.mediumGray : baseColors.clearBlue};
-//   opacity: ${props => props.disabled ? 0.7 : 1};
-//   justify-content: center;
-//   display: flex;
-// `;
-
 const CircleButtonIcon = styled(Image)`
   height: 24px;
   width: 24px;
-  opacity: ${props => props.disabled ? 0.7 : 1};
+  opacity: ${props => props.disabled ? 0.3 : 1};
+  justify-content: center;
+  display: flex;
 `;
 
 const CircleButtonText = styled(BaseText)`
