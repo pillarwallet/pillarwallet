@@ -31,7 +31,6 @@ const storage = Storage.getInstance('db');
 let notificationsListener = null;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
-let signalListener = null;
 
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
@@ -92,22 +91,8 @@ export const startListeningNotificationsAction = () => {
       } catch (err) { return; } // eslint-disable-line
     }
 
-    // TODO: remove it once signal payload matches the rest notifications.
-    if (!signalListener) {
-      // TODO: This is a temporary solution to reduces the possibility of the wrong notification order.
-      // We're going to use websockets in the future.
-      const onMessage = message => {
-        const notification = processNotification(message._data, wallet.address.toUpperCase());
-        if (!notification) return;
-        if (notification.type === SIGNAL) {
-          dispatch(getExistingChatsAction());
-          dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        }
-      };
-      signalListener = firebase.notifications().onNotification(debounce(onMessage, 500));
-    }
     if (notificationsListener) return;
-    notificationsListener = firebase.notifications().onNotification(message => {
+    notificationsListener = firebase.notifications().onNotification(debounce(message => {
       if (!message._data || !Object.keys(message._data).length) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
@@ -116,6 +101,10 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchTransactionsHistoryAction(wallet.address, notification.asset));
         dispatch(fetchAssetsBalancesAction(assets, wallet.address));
       }
+      if (notification.type === SIGNAL) {
+        dispatch(getExistingChatsAction());
+        dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+      }
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());
       }
@@ -123,18 +112,12 @@ export const startListeningNotificationsAction = () => {
         dispatch({ type: ADD_NOTIFICATION, payload: notification });
         dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       }
-    });
+    }, 500));
   };
 };
 
 export const stopListeningNotificationsAction = () => {
   return async (dispatch: Function) => { // eslint-disable-line
-    // TODO: remove it once signal payload matches the rest notifications.
-    if (signalListener) {
-      signalListener();
-      signalListener = null;
-    }
-
     if (!notificationsListener) return;
     notificationsListener();
     notificationsListener = null;

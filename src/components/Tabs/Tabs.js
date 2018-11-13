@@ -15,7 +15,7 @@ type Tab = {
 }
 
 type Props = {
-  title: string,
+  title?: string,
   tabs: Tab[],
 }
 
@@ -57,7 +57,7 @@ const ActivityFeedHeader = styled.View`
 `;
 
 const TabWrapper = styled.View`
-  padding: 8px 16px 12px;
+  padding: 12px 16px;
   background: ${baseColors.white};
   border-bottom-width: 1px;
   border-color: ${UIColors.defaultDividerColor};
@@ -94,9 +94,11 @@ export default class Tabs extends React.Component<Props, State> {
 
     return (
       <TabOuterWrapper>
+        {!!title &&
         <ActivityFeedHeader>
-          <Title subtitle title={title} />
+          <Title subtitle noMargin title={title} />
         </ActivityFeedHeader>
+        }
         <TabWrapper>
           <TabWrapperScrollView horizontal>
             {this.renderTabItems(tabs)}

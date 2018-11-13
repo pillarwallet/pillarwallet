@@ -31,6 +31,8 @@ type NextScreenAssetData = {
   icon: string,
 };
 
+const genericToken = require('assets/images/tokens/genericToken.png');
+
 class SendTokenAssetsScreen extends React.Component<Props, {}> {
   navigateToNextScreen(nextScreenAssetData: NextScreenAssetData) {
     const {
@@ -75,6 +77,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
         onPress={() => this.navigateToNextScreen(nextScreenAssetData)}
         label={item.name}
         itemImageUrl={fullIconUrl}
+        fallbackSource={genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
       />
     );
@@ -94,7 +97,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     const contact = navigation.getParam('contact', {});
     const contactUsername = contact.username;
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} />
         <FlatList
           keyExtractor={item => item.symbol}

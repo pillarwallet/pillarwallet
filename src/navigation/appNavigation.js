@@ -148,7 +148,7 @@ const StackNavigatorModalConfig = {
 const StackNavigatorConfig = {
   navigationOptions: {
     header: null,
-    gesturesEnabled: false,
+    gesturesEnabled: true,
   },
 };
 
@@ -156,6 +156,7 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
   const tabBarVisible = navigation.state.index < 1;
   return {
     tabBarVisible,
+    animationEnabled: true,
   };
 };
 

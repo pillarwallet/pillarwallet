@@ -37,6 +37,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 const { Form } = t.form;
 const GAS_LIMIT = 500000;
 const MIN_TX_AMOUNT = 0.000000000000000001;
+const genericToken = require('assets/images/tokens/genericTokenIcon.png');
 
 const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
@@ -88,6 +89,7 @@ function AmountInputTemplate(locals) {
   return (
     <SingleInput
       innerImageURI={icon}
+      fallbackSource={genericToken}
       errorMessage={errorMessage}
       id="amount"
       inputProps={inputProps}

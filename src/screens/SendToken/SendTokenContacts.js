@@ -176,11 +176,13 @@ class SendTokenContacts extends React.Component<Props, State> {
     if (value && value.address.length) {
       const searchStr = value.address.toLowerCase();
       contactsToRender = localContacts.filter(({ username, ethAddress }) => {
-        return username.toLowerCase().includes(searchStr) || ethAddress.toLowerCase().includes(searchStr);
+        const usernameFound = username.toLowerCase().includes(searchStr);
+        if (value.address.length < 3) return usernameFound;
+        return usernameFound || ethAddress.toLowerCase().startsWith(searchStr);
       });
     }
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
         <FormWrapper>
           <Form

@@ -7,7 +7,7 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import styled from 'styled-components/native/index';
-import { isToday, isYesterday, format as formatDate } from 'date-fns';
+import { isToday, isYesterday, isThisYear, format as formatDate } from 'date-fns';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT, NEW_CHAT, CONTACT } from 'constants/navigationConstants';
 import EmptyChat from 'components/EmptyState/EmptyChat';
@@ -153,8 +153,10 @@ class ChatListScreen extends React.Component<Props, State> {
         timeSent = formatDate(lastMessageDate, 'HH:mm');
       } else if (isYesterday(lastMessageDate)) {
         timeSent = 'yesterday';
+      } else if (isThisYear(lastMessageDate)) {
+        timeSent = formatDate(lastMessageDate, 'D MMM');
       } else {
-        timeSent = formatDate(lastMessageDate, 'MM/DD/YY');
+        timeSent = formatDate(lastMessageDate, 'D MMM YYYY');
       }
     }
     const newMessageCopy = unread > 1 ? 'New Messages' : 'New Message';
