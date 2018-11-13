@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
-import forEach from 'lodash.foreach';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
@@ -14,7 +13,6 @@ import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import type { Assets } from 'models/Asset';
 import {
   fetchTransactionsHistoryAction,
   fetchTransactionsHistoryNotificationsAction,
@@ -42,9 +40,8 @@ type Props = {
   history: Object[],
   user: Object,
   wallet: Object,
-  assets: Assets,
   fetchTransactionsHistoryNotifications: Function,
-  fetchTransactionsHistory: (walletAddress: string, asset: string) => Function,
+  fetchTransactionsHistory: (walletAddress: string) => Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
@@ -210,15 +207,13 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { fetchTransactionsHistory, wallet, assets } = this.props;
+    const { fetchTransactionsHistory, wallet } = this.props;
 
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }
 
-    forEach(assets, (asset) => {
-      fetchTransactionsHistory(wallet.address, asset.symbol);
-    });
+    fetchTransactionsHistory(wallet.address);
 
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
@@ -549,7 +544,6 @@ const mapStateToProps = ({
   history: { data: history },
   invitations: { data: invitations },
   wallet: { data: wallet },
-  assets: { data: assets },
   notifications: { intercomNotificationsCount },
 }) => ({
   contacts,
@@ -557,7 +551,6 @@ const mapStateToProps = ({
   history,
   invitations,
   wallet,
-  assets,
   intercomNotificationsCount,
 });
 
@@ -566,7 +559,7 @@ const mapDispatchToProps = (dispatch) => ({
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchTransactionsHistory: (walletAddress, asset) => dispatch(fetchTransactionsHistoryAction(walletAddress, asset)),
+  fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
 });
