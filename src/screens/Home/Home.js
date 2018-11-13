@@ -213,6 +213,7 @@ class HomeScreen extends React.Component<Props, State> {
       firebase.notifications().setBadge(0);
     }
 
+    // TODO: remove this when notifications service becomes reliable
     fetchTransactionsHistory(wallet.address);
 
     this._willFocus = this.props.navigation.addListener(
