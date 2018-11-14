@@ -18,14 +18,22 @@ const AssetButtonsWrapper = styled.View`
   margin: 0;
 `;
 
+const iconReceive = require('assets/icons/icon_receive.png');
+const iconSend = require('assets/icons/icon_send.png');
+
 const AssetButtons = (props: Props) => {
   return (
     <AssetButtonsWrapper>
-      <CircleButton disabled={props.isReceiveDisabled} label="Receive" icon="qrcode" onPress={props.onPressReceive} />
+      <CircleButton
+        disabled={props.isReceiveDisabled}
+        label="Receive"
+        icon={iconReceive}
+        onPress={props.onPressReceive}
+      />
       <CircleButton
         disabled={props.noBalance || props.isSendDisabled}
         label="Send"
-        icon="send-asset"
+        icon={iconSend}
         onPress={props.onPressSend}
       />
     </AssetButtonsWrapper>
