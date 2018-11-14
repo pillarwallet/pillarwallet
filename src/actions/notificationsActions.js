@@ -60,7 +60,7 @@ export const startListeningIntercomNotificationsAction = () => {
 export const stopListeningIntercomNotificationsAction = () => {
   return () => {
     if (!intercomNotificationsListener) return;
-    Intercom.reset();
+    Intercom.logout();
     Intercom.removeEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
   };
 };
@@ -103,7 +103,19 @@ export const startListeningNotificationsAction = () => {
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
+
+        const { navigator } = getNavigationState();
+        if (!navigator) return;
+        const navParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state).params;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+        if (!!navParams.username && navParams.username === notification.navigationParams.username) return;
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            ...notification,
+            message: `${notification.message} from ${notification.navigationParams.username}`,
+          },
+        });
       }
       if (notification.type === CONNECTION) {
         dispatch(fetchInviteNotificationsAction());
