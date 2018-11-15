@@ -9,9 +9,6 @@ import {
   saturate,
 } from 'react-native-color-matrix-image-filters';
 
-type State = {
-}
-
 type Props = {
   token: string,
   icon: string,
@@ -60,7 +57,7 @@ const NoIconImage = styled(CachedImage)`
   width: 192px;
 `;
 
-export default class AssetPattern extends React.Component<Props, State> {
+export default class AssetPattern extends React.Component<Props, {}> {
   generatePattern = (token: string, icon: string, isListed: boolean) => {
     const paternDetails = [];
     const uniqueCode = [];
