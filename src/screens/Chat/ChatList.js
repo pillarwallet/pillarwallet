@@ -25,6 +25,7 @@ type Props = {
   setUnreadChatNotificationsStatus: Function,
   contacts: Object[],
   chats: Object[],
+  messages: Object[],
   notifications: Object[],
   getExistingChats: Function,
   resetUnread: Function,
@@ -113,7 +114,7 @@ class ChatListScreen extends React.Component<Props, State> {
   };
 
   deleteChat = (username: string, unreadCount: number = 0) => {
-    const { deleteChat } = this.props;
+    const { deleteChat, messages } = this.props;
     const msg = unreadCount > 1 ? 'messages' : 'message';
     const allertBody = unreadCount
       ? `This will delete your chat with ${username}. Including ${unreadCount} unread ${msg}.`
@@ -128,7 +129,7 @@ class ChatListScreen extends React.Component<Props, State> {
           text: 'Delete',
           onPress: () => {
             this.setState({ forceClose: true });
-            deleteChat(username);
+            deleteChat(username, messages);
           },
         },
       ],
@@ -209,7 +210,7 @@ class ChatListScreen extends React.Component<Props, State> {
           <FlatList
             data={sortedChats}
             extraData={chats}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             style={{ height: '100%' }}
@@ -228,11 +229,12 @@ class ChatListScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   contacts: { data: contacts },
-  chat: { data: { chats } },
+  chat: { data: { chats, messages } },
   notifications: { data: notifications },
 }) => ({
   contacts,
   chats,
+  messages,
   notifications,
 });
 
@@ -240,7 +242,7 @@ const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   setUnreadChatNotificationsStatus: (status) => dispatch(setUnreadChatNotificationsStatusAction(status)),
-  deleteChat: (contactUsername) => dispatch(deleteChatAction(contactUsername)),
+  deleteChat: (username, messages) => dispatch(deleteChatAction(username, messages)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatListScreen);

@@ -119,15 +119,13 @@ export default function chatReducer(
         },
       );
     case DELETE_CHAT:
-      const currentMessages = state.data.messages;
-      delete currentMessages[action.payload];
       return {
         ...state,
         data: {
           ...state.data,
-          messages: currentMessages,
+          messages: { ...action.payload.messages },
           chats: [...state.data.chats]
-            .filter(thisChat => thisChat.username !== action.payload),
+            .filter(thisChat => thisChat.username !== action.payload.username),
         },
       };
     default:

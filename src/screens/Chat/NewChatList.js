@@ -101,7 +101,7 @@ class NewChatListScreen extends React.Component<Props, State> {
           <FlatList
             data={sortedContactsForNewChats}
             extraData={chats}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
             style={{ height: '100%' }}

@@ -148,12 +148,13 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
   };
 };
 
-export const deleteChatAction = (contactUsername: string) => {
+export const deleteChatAction = (username: string, messages: Object) => {
+  delete messages[username];
   return (dispatch: Function) => {
-    chat.client.deleteContactMessages(contactUsername).then(() => {
+    chat.client.deleteContactMessages(username).then(() => {
       dispatch({
         type: DELETE_CHAT,
-        payload: contactUsername,
+        payload: { username, messages },
       });
     }).catch(() => []);
   };
