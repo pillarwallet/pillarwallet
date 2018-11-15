@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Keyboard } from 'react-native';
+import { Animated, FlatList, Keyboard } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import { List, ListItem, Body, Switch } from 'native-base';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -47,7 +47,9 @@ const TokenListItem = styled(ListItem)`
   border-bottom-width: 0;
 `;
 
-const TokensWrapper = styled(ScrollWrapper)`
+const TokensWrapper = styled(Wrapper)`
+   flex: 1;
+   height: 100%;
    background-color: ${baseColors.white};
    border-color: ${UIColors.defaultDividerColor};
    border-top-width: 1;
@@ -153,8 +155,12 @@ type State = {
 }
 
 const MIN_QUERY_LENGTH = 2;
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 class AddToken extends React.Component<Props, State> {
+  _willBlur: NavigationEventSubscription;
+  formChanged: boolean = false;
+
   state = {
     query: '',
     searchIsFocused: false,
@@ -164,6 +170,18 @@ class AddToken extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
+  }
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this._willBlur = navigation.addListener('willBlur', () => {
+      Keyboard.dismiss();
+      this.animateFullScreenOverlayOpacity(true);
+    });
+  }
+
+  componentWillUnmount() {
+    this._willBlur.remove();
   }
 
   animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
@@ -203,8 +221,6 @@ class AddToken extends React.Component<Props, State> {
     this.animateFullScreenOverlayOpacity(true, this.animateAfterDelay);
   };
 
-  formChanged: boolean = false;
-
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
     this.formChanged = true;
@@ -220,7 +236,7 @@ class AddToken extends React.Component<Props, State> {
   }) {
     return (
       <TokenListItem key={symbol}>
-        <TokenThumbnail source={{ uri: fullIconUrl }} />
+        <TokenThumbnail source={{ uri: fullIconUrl }} fallbackSource={genericToken} />
         <TokenListItemBody style={{ borderBottomWidth: isLastItem ? 0 : 1 }}>
           <Body>
             <TokenName>{name}</TokenName>
@@ -260,10 +276,10 @@ class AddToken extends React.Component<Props, State> {
       });
   }
 
-  showFoundTokensListItems() {
+  renderFoundTokensList() {
     const { assets, assetsSearchResults } = this.props;
 
-    return assetsSearchResults.map((asset, index) => {
+    const renderItem = ({ item: asset, index }) => {
       const { symbol, name, iconUrl } = asset;
       const isAdded = !!assets[symbol];
       const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
@@ -273,6 +289,7 @@ class AddToken extends React.Component<Props, State> {
         : (<Button
           title="Add to wallet"
           onPress={() => this.addTokenToWallet(asset)}
+          keyboardShouldPersistTaps="always"
           small
         />);
 
@@ -280,7 +297,18 @@ class AddToken extends React.Component<Props, State> {
       return this.renderTokenListItem({
         symbol, name, fullIconUrl, actionBlock, isLastItem,
       });
-    });
+    };
+
+    return (
+      <FlatList
+        data={assetsSearchResults}
+        keyExtractor={(item) => item.address}
+        renderItem={renderItem}
+        onScroll={() => Keyboard.dismiss()}
+        keyboardShouldPersistTaps="always"
+        ListHeaderComponent={() => <ListHeading>FOUND TOKENS</ListHeading>}
+      />
+    );
   }
 
   addTokenToWallet = (asset: Asset) => {
@@ -355,6 +383,7 @@ class AddToken extends React.Component<Props, State> {
             <SearchBar
               inputProps={{
                 onChange: this.handleSearchChange,
+                onBlur: this.handleSearchBlur,
                 onFocus: this.handleSearchFocus,
                 value: query,
                 autoCapitalize: 'none',
@@ -389,12 +418,9 @@ class AddToken extends React.Component<Props, State> {
             </ScrollWrapper>
           }
           {inSearchMode && resultsFound && isSearchOver &&
-            <ScrollWrapper>
-              <ListHeading>FOUND TOKENS</ListHeading>
-              <List>
-                {this.showFoundTokensListItems()}
-              </List>
-            </ScrollWrapper>
+            <Wrapper>
+              {this.renderFoundTokensList()}
+            </Wrapper>
           }
           {inSearchMode && !resultsFound && isSearchOver &&
             <TokenSearchStatusWrapper center>

@@ -6,13 +6,13 @@ project(':react-native-image-crop-picker').projectDir = new File(rootProject.pro
 include ':react-native-sentry'
 project(':react-native-sentry').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-sentry/android')
 include ':react-native-svg'
-project(':react-native-svg').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-svg/android')
+project(':react-native-svg').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-svg/android')
 include ':react-native-background-timer'
 project(':react-native-background-timer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-background-timer/android')
 include ':react-native-splash-screen'
 project(':react-native-splash-screen').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-splash-screen/android')
 include ':lottie-react-native'
-project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/src/android')
+project(':lottie-react-native').projectDir = new File(rootProject.projectDir, 'rn-libs/lottie-react-native/src/android')
 include ':react-native-scrypt'
 project(':react-native-scrypt').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-scrypt/android')
 include ':react-native-fetch-blob'
@@ -32,7 +32,7 @@ project(':react-native-randombytes').projectDir = new File(rootProject.projectDi
 include ':react-native-os'
 project(':react-native-os').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-os/android')
 include ':react-native-intercom'
-project(':react-native-intercom').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-intercom/android')
+project(':react-native-intercom').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-intercom/android')
 include ':react-native-firebase'
 project(':react-native-firebase').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-firebase/android')
 include ':react-native-device-info'

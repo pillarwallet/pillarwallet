@@ -31,6 +31,8 @@ type NextScreenAssetData = {
   icon: string,
 };
 
+const genericToken = require('assets/images/tokens/genericToken.png');
+
 class SendTokenAssetsScreen extends React.Component<Props, {}> {
   navigateToNextScreen(nextScreenAssetData: NextScreenAssetData) {
     const {
@@ -75,6 +77,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
         onPress={() => this.navigateToNextScreen(nextScreenAssetData)}
         label={item.name}
         itemImageUrl={fullIconUrl}
+        fallbackSource={genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
       />
     );

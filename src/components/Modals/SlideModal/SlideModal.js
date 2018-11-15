@@ -214,6 +214,7 @@ export default class SlideModal extends React.Component<Props, *> {
         onSwipe={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
+        onBackButtonPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
         animationIn="slideInUp"

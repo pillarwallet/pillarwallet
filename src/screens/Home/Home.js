@@ -13,7 +13,10 @@ import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
-import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import {
+  fetchTransactionsHistoryAction,
+  fetchTransactionsHistoryNotificationsAction,
+} from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
@@ -38,6 +41,7 @@ type Props = {
   user: Object,
   wallet: Object,
   fetchTransactionsHistoryNotifications: Function,
+  fetchTransactionsHistory: (walletAddress: string) => Function,
   fetchInviteNotifications: Function,
   acceptInvitation: Function,
   cancelInvitation: Function,
@@ -183,7 +187,7 @@ const RecentConnectionsItemName = styled(BaseText)`
 `;
 
 const TabsHeader = styled.View`
-  padding: 4px ${spacing.mediumLarge}px 0;
+  padding: 20px ${spacing.mediumLarge}px 12px;
   background-color: ${baseColors.white};
 `;
 
@@ -203,9 +207,15 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
+    const { fetchTransactionsHistory, wallet } = this.props;
+
     if (Platform.OS === 'ios') {
       firebase.notifications().setBadge(0);
     }
+
+    // TODO: remove this when notifications service becomes reliable
+    fetchTransactionsHistory(wallet.address);
+
     this._willFocus = this.props.navigation.addListener(
       'willFocus',
       () => { this.props.setUnreadNotificationsStatus(false); },
@@ -379,8 +389,8 @@ class HomeScreen extends React.Component<Props, State> {
       },
     ];
 
-    const stickyHeaderIndices = this.props.contacts.length ? [2] : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
+
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
         <AnimatedHomeHeader>
@@ -431,6 +441,11 @@ class HomeScreen extends React.Component<Props, State> {
                       { perspective: 1000 },
                     ],
                   }}
+                  borderWidth={user.profileImage ? 0 : 2}
+                  containerStyle={{
+                    borderRadius: user.profileImage ? 0 : profileImageWidth / 2,
+                    backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
+                  }}
                   noShadow
                 >
                   <CameraIcon name="camera" />
@@ -465,7 +480,7 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
         </AnimatedHomeHeader>
         <Animated.ScrollView
-          stickyHeaderIndices={stickyHeaderIndices}
+          stickyHeaderIndices={[2]}
           style={{
             marginTop: this.props.contacts.length ? -100 : -76,
           }}
@@ -502,7 +517,7 @@ class HomeScreen extends React.Component<Props, State> {
             <RecentConnectionsSpacer />
           }
           <TabsHeader>
-            <Title subtitle title="your activity." />
+            <Title subtitle noMargin title="your activity." />
           </TabsHeader>
           <Tabs tabs={activityFeedTabs} />
           <ActivityFeed
@@ -549,6 +564,7 @@ const mapDispatchToProps = (dispatch) => ({
   acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
   rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
+  fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
 });
