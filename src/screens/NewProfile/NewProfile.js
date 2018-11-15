@@ -72,10 +72,10 @@ const Username = t.refinement(t.String, (username): boolean => {
 
 Username.getValidationErrorMessage = (username): string => {
   if (username != null && username.length < MIN_USERNAME_LENGTH) {
-    return `Username should be longer than ${MIN_USERNAME_LENGTH} characters.`;
+    return `Username should be longer than ${MIN_USERNAME_LENGTH - 1} characters.`;
   }
   if (username != null && username.length > MAX_USERNAME_LENGTH) {
-    return `Username should be less than ${MAX_USERNAME_LENGTH} characters.`;
+    return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
   }
   if (username != null && !(usernameRegex.test(username))) {
     return 'Only use alpha-numeric characters, underscores, dashes or full stops.';
