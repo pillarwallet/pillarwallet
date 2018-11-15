@@ -136,7 +136,7 @@ class ChatListScreen extends React.Component<Props, State> {
   }
 
   renderItem = ({ item: contact }: Object) => {
-    if (!contact.username) return null;
+    if (!Object.keys(contact).length) return null;
 
     const { chats, contacts, navigation } = this.props;
     const { forceClose } = this.state;
@@ -186,9 +186,7 @@ class ChatListScreen extends React.Component<Props, State> {
   render() {
     const { chats, getExistingChats } = this.props;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
-    const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc').filter((chat) => {
-      return chat !== undefined;
-    });
+    const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
 
     return (
       <Container>
