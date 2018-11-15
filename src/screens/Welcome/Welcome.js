@@ -2,11 +2,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { ONBOARDING_HOME } from 'constants/navigationConstants';
+import { NEW_PROFILE, IMPORT_WALLET } from 'constants/navigationConstants';
 import { Wrapper, Container, Footer } from 'components/Layout';
+import { fontSizes } from 'utils/variables';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
-import IFrameModal from 'components/Modals/IFrameModal';
 import ButtonText from 'components/ButtonText';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -16,7 +16,6 @@ type Props = {
 
 type State = {
   shouldAnimate: boolean,
-  showTermsConditionsModal: boolean
 }
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
@@ -36,16 +35,16 @@ class Welcome extends React.Component<Props, State> {
 
   state = {
     shouldAnimate: true,
-    showTermsConditionsModal: false,
   };
 
   loginAction = () => {
-    this.props.navigation.navigate(ONBOARDING_HOME);
+    this.props.navigation.navigate(NEW_PROFILE);
   };
 
-  toggleTermsConditionsModal = () => {
-    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
-  }
+  toImportWallet = () => {
+    const { navigation } = this.props;
+    navigation.navigate(IMPORT_WALLET);
+  };
 
   componentDidMount() {
     this.listeners = [
@@ -61,7 +60,6 @@ class Welcome extends React.Component<Props, State> {
   }
 
   render() {
-    const { showTermsConditionsModal } = this.state;
     return (
       <Container>
         <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
@@ -69,14 +67,13 @@ class Welcome extends React.Component<Props, State> {
           <PillarLogo source={pillarLogoSource} />
         </Wrapper>
         <Footer>
-          <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />
-          <ButtonText buttonText="Terms and Conditions" onPress={this.toggleTermsConditionsModal} />
+          <Button block marginBottom="20px" onPress={this.loginAction} title="New wallet" />
+          <ButtonText
+            buttonText="Restore wallet"
+            onPress={this.toImportWallet}
+            fontSize={fontSizes.medium}
+          />
         </Footer>
-        <IFrameModal
-          isVisible={showTermsConditionsModal}
-          modalHide={this.toggleTermsConditionsModal}
-          uri="https://pillarproject.io/en/legal/terms-of-use/"
-        />
       </Container>
     );
   }

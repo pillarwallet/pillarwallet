@@ -12,16 +12,16 @@ type Props = {
 }
 
 const ButtonLabel = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
+  font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraSmall}px;
   color: rgb(32,119,253);
 `;
 
 const ButtonText = (props: Props) => {
-  const { buttonText, onPress } = props;
+  const { buttonText, onPress, fontSize } = props;
   if (Platform.OS === 'ios') {
     return (
       <TouchableOpacity onPress={onPress}>
-        <ButtonLabel>{buttonText}</ButtonLabel>
+        <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
       </TouchableOpacity>
     );
   }
@@ -35,7 +35,7 @@ const ButtonText = (props: Props) => {
         margin: 0,
       }}
       >
-        <ButtonLabel>{buttonText}</ButtonLabel>
+        <ButtonLabel fontSize={fontSize}>{buttonText}</ButtonLabel>
       </View>
     </TouchableNativeFeedback>
   );
