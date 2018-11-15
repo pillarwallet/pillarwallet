@@ -175,7 +175,7 @@ const renderInputToolbar = (props: Props) => {
       primaryStyle={{
         justifyContent: 'center',
         alignItems: 'flex-start',
-        height: INPUT_HEIGHT,
+        minHeight: INPUT_HEIGHT,
       }}
       containerStyle={{
         bottom: 2,
