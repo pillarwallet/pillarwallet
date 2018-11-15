@@ -5,3 +5,4 @@ export const UPDATE_CHATS = 'UPDATE_CHATS';
 export const FETCHING_CHATS = 'FETCHING_CHATS';
 export const RESET_UNREAD_MESSAGE = 'RESET_UNREAD_MESSAGE';
 export const CHAT = 'CHAT';
+export const DELETE_CHAT = 'DELETE_CHAT';
