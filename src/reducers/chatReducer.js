@@ -123,9 +123,15 @@ export default function chatReducer(
         ...state,
         data: {
           ...state.data,
-          messages: { ...action.payload.messages },
+          messages: Object.keys(state.data.messages)
+            .reduce((thisChat, key) => {
+              if (key !== action.payload) {
+                thisChat[key] = state.data.messages[key];
+              }
+              return thisChat;
+            }, {}),
           chats: [...state.data.chats]
-            .filter(thisChat => thisChat.username !== action.payload.username),
+            .filter(thisChat => thisChat.username !== action.payload),
         },
       };
     default:
