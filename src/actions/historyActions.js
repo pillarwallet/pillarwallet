@@ -2,10 +2,12 @@
 import { uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
-  TRANSACTION_EVENT,
+  TRANSACTION_PENDING_EVENT,
+  TRANSACTION_CONFIRMATION_EVENT,
   SET_GAS_INFO,
   TX_CONFIRMED_STATUS,
   TX_FAILED_STATUS,
+  TX_PENDING_STATUS,
 } from 'constants/historyConstants';
 import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS, ETH } from 'constants/assetsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -92,7 +94,11 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       }
     }
     const d = new Date(lastTxSyncDatetime * 1000);
-    const historyNotifications = await api.fetchNotifications(walletId, TRANSACTION_EVENT, d.toISOString());
+    const types = [
+      TRANSACTION_PENDING_EVENT,
+      TRANSACTION_CONFIRMATION_EVENT,
+    ];
+    const historyNotifications = await api.fetchNotifications(walletId, types.join(' '), d.toISOString());
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
 
@@ -101,6 +107,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const missedAssets = mappedHistoryNotifications
       .filter(tx => tx.from.toUpperCase() !== myAddress)
       .reduce((memo, { asset: ticker }) => {
+        if (!ticker) return memo;
         if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
 
         const supportedAsset = walletSupportedAssets.find(asset => asset.symbol === ticker);
@@ -115,7 +122,27 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       dispatch(updateAssetsAction(newAssets));
       dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
     }
-    const updatedHistory = uniqBy([...mappedHistoryNotifications, ...currentHistory], 'hash');
+
+    const minedTransactions = mappedHistoryNotifications
+      .filter(tx => tx.status !== TX_PENDING_STATUS)
+      .reduce((memo, tx) => {
+        memo[tx.hash] = tx;
+        return memo;
+      }, {});
+
+    // add new elements
+    let updatedHistory = uniqBy([...currentHistory, ...mappedHistoryNotifications], 'hash');
+    // update mined transactions
+    updatedHistory = updatedHistory.map(tx => {
+      if (!minedTransactions[tx.hash]) return tx;
+      const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
+      return {
+        ...tx,
+        status,
+        gasUsed,
+        blockNumber,
+      };
+    });
     const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0));
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));
