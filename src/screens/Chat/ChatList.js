@@ -12,6 +12,7 @@ import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
+import SearchBar from 'components/SearchBar';
 import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 
@@ -30,10 +31,17 @@ type State = {
   receiver: string,
   receiverAvatar: string,
   chatList: Array<Object>,
+  query: string,
+  filteredChats: ?Object[],
 }
 
 class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
+
+  // state = {
+  //   query: '',
+  //   filteredChats: null,
+  // };
 
   componentDidMount() {
     this.props.getExistingChats();
@@ -66,6 +74,28 @@ class ChatListScreen extends React.Component<Props, State> {
 
   goToNewChatList = () => {
     this.props.navigation.navigate(NEW_CHAT);
+  };
+
+  handleUserSearch = (query: string, sortedChats: Object) => {
+    if (!query || query.trim() === '' || query.length < 2) {
+      // this.setState({ filteredCountries: null, query });
+      return;
+    }
+    console.log('handle-sorted-query', query);
+    console.log('handle-sorted-chats', sortedChats);
+    // const filteredChats = sortedChats
+    //   .map(country => {
+    //     const index = country.name.toUpperCase().indexOf(query.toUpperCase());
+    //     return {
+    //       index,
+    //       country,
+    //     };
+    //   })
+    //   .filter(({ index }) => index > -1)
+    //   .sort((a, b) => a.index - b.index)
+    //   .map(({ country }) => country);
+    //
+    // this.setState({ filteredChats, query });
   };
 
   renderItem = ({ item: contact }: Object) => {
@@ -108,14 +138,26 @@ class ChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats } = this.props;
+    const { query } = this.state;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
+    console.log('chats', chats);
+    console.log('sortedChats', sortedChats);
     return (
       <Container>
         <Header
           title="chat"
           nextText="New chat"
           onNextPress={this.goToNewChatList}
+        />
+        <SearchBar
+          inputProps={{
+            onChange: this.handleUserSearch,
+            value: query,
+            sortedChats,
+            autoCapitalize: 'none',
+          }}
+          placeholder="Search chat"
         />
         <ChatWrapper
           style={{

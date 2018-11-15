@@ -58,6 +58,7 @@ type Props = {
   placeholder?: string,
   backgroundColor?: string,
   marginTop?: number,
+  sortedChats?: Object,
 };
 
 type State = {
@@ -83,9 +84,9 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleChange = (e: EventLike) => {
-    const { inputProps: { onChange } } = this.props;
+    const { inputProps: { onChange }, sortedChats } = this.props;
     this.value = e.nativeEvent.text;
-    onChange(this.value);
+    onChange(this.value, sortedChats);
   };
 
   handleBlur = () => {
