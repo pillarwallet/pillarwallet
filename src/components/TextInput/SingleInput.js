@@ -5,7 +5,8 @@ import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
-import { Image as RNImage, Platform } from 'react-native';
+import { Platform } from 'react-native';
+import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 
 type inputPropsType = {
@@ -28,6 +29,7 @@ type Props = {
   alignRight?: boolean,
   postfix?: string,
   innerImageURI?: string,
+  fallbackSource?: string,
   outterIcon?: string,
   outterIconText?: string,
   innerImageText: string,
@@ -106,7 +108,7 @@ const InputHolder = styled.View`
   flex-direction: row;
 `;
 
-const FloatImage = styled(RNImage)`
+const FloatImage = styled(CachedImage)`
   height: 30px;
   width: 30px;
   tint-color: black;
@@ -232,7 +234,7 @@ class SingleInput extends React.Component<Props, *> {
         if (onSelect && value) onSelect(value);
       });
     } catch (e) { } //eslint-disable-line
-  }
+  };
 
   renderSelector = () => {
     const {
@@ -270,7 +272,7 @@ class SingleInput extends React.Component<Props, *> {
         }
       </OptionSelector>
     );
-  }
+  };
 
   render() {
     const {
@@ -278,6 +280,7 @@ class SingleInput extends React.Component<Props, *> {
       inputProps,
       errorMessage,
       innerImageURI,
+      fallbackSource,
       outterIcon,
       outterIconText,
       innerImageText,
@@ -313,6 +316,7 @@ class SingleInput extends React.Component<Props, *> {
             <FloatImageView>
               <FloatImage
                 source={this.resolveAssetSource(innerImageURI)}
+                fallbackSource={fallbackSource}
               />
               {!!innerImageText &&
               <InnerImageText>{innerImageText}</InnerImageText>
