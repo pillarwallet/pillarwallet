@@ -157,13 +157,14 @@ class AssetCard extends React.Component<Props, {}> {
       wallpaper,
       isListed = true,
       disclaimer,
-      icon = '',
+      icon,
       innerCard,
     } = this.props;
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     const wallpaperUri = isListed ? wallpaper : undefined;
     const height = innerCard ? innerCardHeight : 140;
+
     return (
       <AssetOutter>
         <Shadow
@@ -179,18 +180,18 @@ class AssetCard extends React.Component<Props, {}> {
                 <UpperRow>
                   <Name isListed={isListed} innerCard={innerCard}>{name}</Name>
                   {!!icon &&
-                    <IconCircle isListed={isListed} innerCard={innerCard}>
-                      <CachedImage
-                        key={token}
-                        style={{
-                          height: 40,
-                          width: 40,
-                        }}
-                        source={{ uri: icon }}
-                        fallbackSource={genericToken}
-                        resizeMode="contain"
-                      />
-                    </IconCircle>}
+                  <IconCircle isListed={isListed} innerCard={innerCard}>
+                    <CachedImage
+                      key={token}
+                      style={{
+                        height: 40,
+                        width: 40,
+                      }}
+                      source={{ uri: icon }}
+                      fallbackSource={genericToken}
+                      resizeMode="contain"
+                    />
+                  </IconCircle>}
                 </UpperRow>
                 <View style={{ flexDirection: 'column' }}>
                   <AmountWrapper>

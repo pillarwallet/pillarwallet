@@ -235,7 +235,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
       token,
       balanceInFiat,
       disclaimer,
-      icon = '',
+      icon,
       extraSmall,
       smallScreen,
       disabledRemove,
@@ -275,7 +275,6 @@ class AssetCardMinimized extends React.Component<Props, State> {
               <InnerWrapper smallScreen={smallScreen}>
                 <CardRow>
                   <IconCircle smallScreen={smallScreen}>
-                    {!!icon &&
                     <CachedImage
                       key={token}
                       style={{
@@ -285,7 +284,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
                       source={{ uri: icon }}
                       fallbackSource={genericToken}
                       resizeMode="contain"
-                    />}
+                    />
                   </IconCircle>
                   <Name>{token}</Name>
                 </CardRow>
