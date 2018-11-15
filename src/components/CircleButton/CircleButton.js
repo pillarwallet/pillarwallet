@@ -1,8 +1,7 @@
 // @flow
 import * as React from 'react';
-import { ImageBackground } from 'react-native';
+import { ImageBackground, Image } from 'react-native';
 import styled from 'styled-components/native';
-import Icon from 'components/Icon';
 import { baseColors, fontSizes, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
@@ -31,10 +30,10 @@ const CircleButtonIconWrapper = styled.View`
   align-items: center;
 `;
 
-const CircleButtonIcon = styled(Icon)`
-  font-size: ${fontSizes.extraLarge};
-  color: ${props => props.disabled ? baseColors.mediumGray : baseColors.clearBlue};
-  opacity: ${props => props.disabled ? 0.7 : 1};
+const CircleButtonIcon = styled(Image)`
+  height: 24px;
+  width: 24px;
+  opacity: ${props => props.disabled ? 0.3 : 1};
   justify-content: center;
   display: flex;
 `;
@@ -75,7 +74,7 @@ const CircleButton = (props: Props) => {
         >
           <CircleButtonIcon
             disabled={disabled}
-            name={icon}
+            source={icon}
           />
         </CircleButtonIconWrapper>
 

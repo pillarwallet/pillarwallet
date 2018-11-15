@@ -147,7 +147,12 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     });
     await delay(50);
     const currentSaltedPin = getSaltedPin(currentPin);
-    const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), currentSaltedPin);
+    const wallet = await ethers.Wallet.RNfromEncryptedWallet(
+      JSON.stringify(encryptedWallet),
+      currentSaltedPin,
+      {
+        mnemonic: true,
+      });
 
     const newSaltedPin = getSaltedPin(newPin);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
@@ -185,6 +190,7 @@ export const logoutAction = () => {
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    chat.client.resetAccount().catch(() => null);
     await storage.removeAll();
   };
 };

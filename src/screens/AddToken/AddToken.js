@@ -1,8 +1,9 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Animated, FlatList, Keyboard } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import { List, ListItem, Body, Switch } from 'native-base';
 import { SDK_PROVIDER } from 'react-native-dotenv';
@@ -46,7 +47,9 @@ const TokenListItem = styled(ListItem)`
   border-bottom-width: 0;
 `;
 
-const TokensWrapper = styled(ScrollWrapper)`
+const TokensWrapper = styled(Wrapper)`
+   flex: 1;
+   height: 100%;
    background-color: ${baseColors.white};
    border-color: ${UIColors.defaultDividerColor};
    border-top-width: 1;
@@ -85,6 +88,11 @@ const ListHeading = styled(SubHeading)`
   padding: 20px 20px 0 20px;
 `;
 
+const HeaderWrapper = styled(Wrapper)`
+  background-color: ${baseColors.snowWhite};
+  z-index: 100;
+`;
+
 const Footer = styled(Wrapper)`
   background: ${baseColors.white};
   border-color: ${UIColors.defaultDividerColor};
@@ -104,6 +112,25 @@ const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
 `;
 
+const FullScreenOverlayWrapper = styled.TouchableOpacity`
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+`;
+
+const FullScreenOverlay = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,.6);
+`;
+
+const AnimatedFullScreenOverlay = Animated.createAnimatedComponent(FullScreenOverlay);
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -123,13 +150,21 @@ type Props = {
 
 type State = {
   query: string,
+  searchIsFocused: boolean,
+  fullScreenOverlayOpacity: Animated.Value,
 }
 
 const MIN_QUERY_LENGTH = 2;
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 class AddToken extends React.Component<Props, State> {
+  _willBlur: NavigationEventSubscription;
+  formChanged: boolean = false;
+
   state = {
     query: '',
+    searchIsFocused: false,
+    fullScreenOverlayOpacity: new Animated.Value(0),
   };
 
   constructor(props: Props) {
@@ -137,7 +172,54 @@ class AddToken extends React.Component<Props, State> {
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
 
-  formChanged: boolean = false;
+  componentDidMount() {
+    const { navigation } = this.props;
+    this._willBlur = navigation.addListener('willBlur', () => {
+      Keyboard.dismiss();
+      this.animateFullScreenOverlayOpacity(true);
+    });
+  }
+
+  componentWillUnmount() {
+    this._willBlur.remove();
+  }
+
+  animateFullScreenOverlayOpacity = (active: boolean, onEnd?: Function) => {
+    const { fullScreenOverlayOpacity } = this.state;
+    if (!active) {
+      fullScreenOverlayOpacity.setValue(0);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 1,
+        duration: 80,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      fullScreenOverlayOpacity.setValue(1);
+      Animated.timing(fullScreenOverlayOpacity, {
+        toValue: 0,
+        duration: 80,
+        useNativeDriver: true,
+      }).start(() => onEnd && onEnd());
+    }
+  };
+
+  handleSearchFocus = () => {
+    this.setState({
+      searchIsFocused: true,
+    });
+    this.animateFullScreenOverlayOpacity(false);
+  };
+
+  animateAfterDelay = () => {
+    this.setState({
+      searchIsFocused: false,
+    });
+  };
+
+  handleSearchBlur = () => {
+    Keyboard.dismiss();
+    this.animateFullScreenOverlayOpacity(true, this.animateAfterDelay);
+  };
 
   handleAssetToggle = (asset: Asset, enabled: Boolean) => {
     const { addAsset, removeAsset } = this.props;
@@ -154,7 +236,7 @@ class AddToken extends React.Component<Props, State> {
   }) {
     return (
       <TokenListItem key={symbol}>
-        <TokenThumbnail source={{ uri: fullIconUrl }} />
+        <TokenThumbnail source={{ uri: fullIconUrl }} fallbackSource={genericToken} />
         <TokenListItemBody style={{ borderBottomWidth: isLastItem ? 0 : 1 }}>
           <Body>
             <TokenName>{name}</TokenName>
@@ -194,10 +276,10 @@ class AddToken extends React.Component<Props, State> {
       });
   }
 
-  showFoundTokensListItems() {
+  renderFoundTokensList() {
     const { assets, assetsSearchResults } = this.props;
 
-    return assetsSearchResults.map((asset, index) => {
+    const renderItem = ({ item: asset, index }) => {
       const { symbol, name, iconUrl } = asset;
       const isAdded = !!assets[symbol];
       const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
@@ -207,6 +289,7 @@ class AddToken extends React.Component<Props, State> {
         : (<Button
           title="Add to wallet"
           onPress={() => this.addTokenToWallet(asset)}
+          keyboardShouldPersistTaps="always"
           small
         />);
 
@@ -214,7 +297,18 @@ class AddToken extends React.Component<Props, State> {
       return this.renderTokenListItem({
         symbol, name, fullIconUrl, actionBlock, isLastItem,
       });
-    });
+    };
+
+    return (
+      <FlatList
+        data={assetsSearchResults}
+        keyExtractor={(item) => item.address}
+        renderItem={renderItem}
+        onScroll={() => Keyboard.dismiss()}
+        keyboardShouldPersistTaps="always"
+        ListHeaderComponent={() => <ListHeading>FOUND TOKENS</ListHeading>}
+      />
+    );
   }
 
   addTokenToWallet = (asset: Asset) => {
@@ -274,7 +368,7 @@ class AddToken extends React.Component<Props, State> {
   };
 
   render() {
-    const { query } = this.state;
+    const { query, searchIsFocused, fullScreenOverlayOpacity } = this.state;
     const { supportedAssets, assetsSearchResults, assetsSearchState } = this.props;
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING;
@@ -283,18 +377,31 @@ class AddToken extends React.Component<Props, State> {
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <Header title="add tokens" onBack={this.handleScreenDismissal} />
-        <Wrapper regularPadding>
-          <SearchBar
-            inputProps={{
-              onChange: this.handleSearchChange,
-              value: query,
-              autoCapitalize: 'none',
-            }}
-            placeholder="Token name"
-            marginTop={15}
-          />
-        </Wrapper>
+        <HeaderWrapper>
+          <Header title="add tokens" onBack={this.handleScreenDismissal} />
+          <Wrapper regularPadding>
+            <SearchBar
+              inputProps={{
+                onChange: this.handleSearchChange,
+                onBlur: this.handleSearchBlur,
+                onFocus: this.handleSearchFocus,
+                value: query,
+                autoCapitalize: 'none',
+              }}
+              placeholder="Token name"
+              marginTop={15}
+            />
+          </Wrapper>
+        </HeaderWrapper>
+        {searchIsFocused && !inSearchMode &&
+          <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
+            <AnimatedFullScreenOverlay
+              style={{
+                opacity: fullScreenOverlayOpacity,
+              }}
+            />
+          </FullScreenOverlayWrapper>
+        }
         <TokensWrapper>
           {!inSearchMode &&
             <ScrollWrapper>
@@ -311,12 +418,9 @@ class AddToken extends React.Component<Props, State> {
             </ScrollWrapper>
           }
           {inSearchMode && resultsFound && isSearchOver &&
-            <ScrollWrapper>
-              <ListHeading>FOUND TOKENS</ListHeading>
-              <List>
-                {this.showFoundTokensListItems()}
-              </List>
-            </ScrollWrapper>
+            <Wrapper>
+              {this.renderFoundTokensList()}
+            </Wrapper>
           }
           {inSearchMode && !resultsFound && isSearchOver &&
             <TokenSearchStatusWrapper center>
