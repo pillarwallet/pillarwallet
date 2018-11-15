@@ -45,6 +45,7 @@ const glyphMap = {
   'flash-on': '\uE828',
   gallery: '\uE827',
   scan: '\uE87B',
+  delete: '\uE82A',
 };
 
 type Props = {
