@@ -56,6 +56,8 @@ class NewChatListScreen extends React.Component<Props, State> {
   };
 
   renderItem = ({ item: contact }: Object) => {
+    if (!contact.username) return null;
+
     const { contacts, navigation } = this.props;
     const contactInfo = contacts.find(({ username }) => contact.username === username) || {};
 
@@ -98,7 +100,7 @@ class NewChatListScreen extends React.Component<Props, State> {
         >
           <FlatList
             data={sortedContactsForNewChats}
-            extraData={this.props.contacts}
+            extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
             ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
