@@ -26,6 +26,7 @@ type Props = {
   headerRightFlex?: string,
   overlay?: boolean,
   backIcon?: string,
+  nextIconSize?: number,
 }
 
 const Wrapper = styled.View`
@@ -89,6 +90,7 @@ const Header = (props: Props) => {
     onBack,
     nextText,
     nextIcon,
+    nextIconSize,
     onNextPress,
     onTitlePress,
     onClose,
@@ -150,7 +152,7 @@ const Header = (props: Props) => {
                 icon={nextIcon}
                 color={light ? baseColors.white : UIColors.primary}
                 onPress={onNextPress}
-                fontSize={fontSizes.small}
+                fontSize={nextIconSize || fontSizes.small}
               />
             </IconWrapper>
           }

@@ -26,6 +26,7 @@ const glyphMap = {
   sent: '\uE812',
   camera: '\uE813',
   'info-circle': '\uE815',
+  'info-circle-inverse': '\uE82B',
   'tick-circle': '\uE816',
   'warning-circle': '\uE817',
   'chevron-right': '\uE818',
