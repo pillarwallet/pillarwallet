@@ -84,8 +84,11 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         return memo;
       }, {});
 
+    const pendingTransactions = mappedHistoryNotifications
+      .filter(tx => tx.status === TX_PENDING_STATUS);
+
     // add new records & update data for mined transactions
-    const updatedHistory = uniqBy([...currentHistory, ...mappedHistoryNotifications], 'hash')
+    const updatedHistory = uniqBy([...currentHistory, ...pendingTransactions], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
         const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
