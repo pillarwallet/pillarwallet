@@ -1,5 +1,9 @@
 // @flow
-import { TX_PENDING_STATUS } from 'constants/historyConstants';
+import {
+  TRANSACTION_CONFIRMATION_EVENT,
+  TRANSACTION_PENDING_EVENT,
+  TX_PENDING_STATUS,
+} from 'constants/historyConstants';
 import { utils } from 'ethers';
 import type { Transaction, TransactionEthers } from 'models/Transaction';
 
@@ -27,3 +31,10 @@ export const buildHistoryTransaction = ({
   __v: 0,
   receipt: {},
 });
+
+export const isTransactionEvent = (eventType: string) => {
+  return [
+    TRANSACTION_PENDING_EVENT,
+    TRANSACTION_CONFIRMATION_EVENT,
+  ].includes(eventType);
+};
