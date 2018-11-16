@@ -26,6 +26,7 @@ type State = {
   userCheck2: boolean,
   userCheck3: boolean,
   visibleModal: any,
+  scrollOffset?: any,
 };
 
 const CheckboxText = styled(BaseText)`
@@ -35,12 +36,8 @@ const CheckboxText = styled(BaseText)`
   line-height: 20px;
 `;
 
-const CheckboxTextLink = styled(TextLink)`
-  margin-right: 4px;
-`;
-
-const ModalInnerWrapper = styled.View`
-  padding: 10px 0 60px;
+const ModalInnerWrapper = styled.ScrollView`
+  padding: 10px 16px 60px;
 `;
 
 const PRIVATE_KEY_MODAL = 'PRIVATE_KEY_MODAL';
@@ -53,6 +50,7 @@ class LegalTerms extends React.Component<Props, State> {
     userCheck2: false,
     userCheck3: false,
     visibleModal: null,
+    scrollOffset: null,
   };
 
   handleConfirm = () => {
@@ -87,12 +85,19 @@ class LegalTerms extends React.Component<Props, State> {
     navigation.navigate(BACKUP_PHRASE);
   }
 
+  handleOnScroll = event => {
+    this.setState({
+      scrollOffset: event.nativeEvent.contentOffset.y,
+    });
+  };
+
   render() {
     const {
       userCheck1,
       userCheck2,
       userCheck3,
       visibleModal,
+      scrollOffset,
     } = this.state;
 
     const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3);
@@ -108,10 +113,10 @@ class LegalTerms extends React.Component<Props, State> {
             onPress={() => this.toggleCheckbox('userCheck1')}
           >
             <CheckboxText>
-              I’m happy to know that Pillar does not have access to my
-              <CheckboxTextLink onPress={() => { this.setState({ visibleModal: PRIVATE_KEY_MODAL }); }}>
+              {'I’m happy to know that Pillar does not have access to my '}
+              <TextLink onPress={() => { this.setState({ visibleModal: PRIVATE_KEY_MODAL }); }}>
                 private key
-              </CheckboxTextLink>
+              </TextLink>
             </CheckboxText>
           </Checkbox>
 
@@ -119,12 +124,12 @@ class LegalTerms extends React.Component<Props, State> {
             onPress={() => this.toggleCheckbox('userCheck2')}
           >
             <CheckboxText>
-              The only way to recover assets is to use the
-              <CheckboxTextLink
+              {'The only way to recover assets is to use the '}
+              <TextLink
                 onPress={() => { this.setState({ visibleModal: BACKUP_PHRASE_MODAL }); }}
               >
                  backup phrase
-              </CheckboxTextLink>
+              </TextLink>
             </CheckboxText>
           </Checkbox>
 
@@ -132,12 +137,12 @@ class LegalTerms extends React.Component<Props, State> {
             onPress={() => this.toggleCheckbox('userCheck3')}
           >
             <CheckboxText>
-              I have read, understand, and agree to the
-              <CheckboxTextLink
+              {'I have read, understand, and agree to the '}
+              <TextLink
                 onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
               >
                  Terms of Use
-              </CheckboxTextLink>
+              </TextLink>
             </CheckboxText>
           </Checkbox>
 
@@ -165,8 +170,17 @@ class LegalTerms extends React.Component<Props, State> {
           uri="https://pillarproject.io/en/legal/terms-of-use/"
         />
 
-        <SlideModal title="private key" isVisible={visibleModal === PRIVATE_KEY_MODAL} onModalHide={this.closeModals}>
-          <ModalInnerWrapper>
+        <SlideModal
+          title="private key"
+          isVisible={visibleModal === PRIVATE_KEY_MODAL}
+          onModalHide={this.closeModals}
+          fullScreen
+          showHeader
+          scrollOffset={scrollOffset}
+        >
+          <ModalInnerWrapper
+            onScroll={this.handleOnScroll}
+          >
             <Paragraph small>
               When you create an account with Pillar, you are generating a cryptographic set of numbers: your private
               key and your public key (address).
@@ -192,8 +206,16 @@ class LegalTerms extends React.Component<Props, State> {
           </ModalInnerWrapper>
         </SlideModal>
 
-        <SlideModal title="Backup phrase" isVisible={visibleModal === BACKUP_PHRASE} onModalHide={this.closeModals}>
-          <ModalInnerWrapper>
+        <SlideModal
+          title="Backup phrase"
+          isVisible={visibleModal === BACKUP_PHRASE_MODAL}
+          onModalHide={this.closeModals}
+          fullScreen
+          showHeader
+        >
+          <ModalInnerWrapper
+            onScroll={this.handleOnScroll}
+          >
             <Paragraph small>
               Your wallet private key is represented and secured by a 12 word backup phrase.
             </Paragraph>
@@ -204,12 +226,11 @@ class LegalTerms extends React.Component<Props, State> {
               Keep your backup phrase safe. If you lose it, Pillar will not be able to recover it for you.
             </Paragraph>
             <Paragraph small>
-              Make a backup of your 12 word phrase. Do NOT just store it on your computer.
-              Print it out on a piece of paper or save it to a USB drive. Consider the risk of flood or fire.
-              Multiple secure copies are recommended.
+              Do NOT just store it on your computer.Print it out on a piece of paper or save it to a USB drive.
+              Consider the risk of flood or fire. Multiple secure copies are recommended.
             </Paragraph>
             <Paragraph small>
-              Do not store your private key in Dropbox, Google Drive, or other cloud storage.
+              Do not store your backup phrase in Dropbox, Google Drive, or other cloud storage.
               If that account is compromised, your funds can be stolen.
             </Paragraph>
           </ModalInnerWrapper>

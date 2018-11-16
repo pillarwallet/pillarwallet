@@ -149,6 +149,8 @@ class NewProfile extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
+    Keyboard.dismiss();
+
     const { validateUserDetails, apiUser } = this.props;
 
     if (apiUser && apiUser.id) {

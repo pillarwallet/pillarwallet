@@ -56,7 +56,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
           title={apiUser.username ? `hello, ${apiUser.username}` : 'hello'}
           onBack={() => this.props.navigation.goBack(null)}
         />
-        <Wrapper regularPadding>
+        <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
           <Paragraph light small style={{ marginBottom: 50, marginTop: 10 }}>
             Set your pin-code. It will be used to access the wallet and confirm transactions.
           </Paragraph>
