@@ -4,37 +4,27 @@ import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, spacing } from 'utils/variables';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, Wrapper } from 'components/Layout';
-import { BaseText, Paragraph } from 'components/Typography';
-import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import { Paragraph } from 'components/Typography';
+import { LEGAL_TERMS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
-import Spinner from 'components/Spinner';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import Title from 'components/Title';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
+import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
 const maxUsernameLength = 20;
 
+const IntroParagraph = styled(Paragraph)`
+  margin: 10px 0 50px;
+`;
+
 const LoginForm = styled(Form)`
-  margin: 10px 0 40px;
-`;
-
-const LoadingMessageWrapper = styled.View`
-  align-items: center;
-  flex-direction: row;
-  margin: ${spacing.rhythm}px 0;
-  width: 100%;
-`;
-
-const LoadingMessage = styled(BaseText)`
-  color: ${baseColors.darkGray};
-  margin-left: 10px;
 `;
 
 function InputTemplate(locals) {
@@ -57,6 +47,9 @@ function InputTemplate(locals) {
       id={locals.label}
       label={locals.label}
       inputProps={inputProps}
+      inputType="secondary"
+      noBorder
+      loading={locals.config.isLoading}
     />
   );
 }
@@ -82,12 +75,15 @@ const formStructure = t.struct({
 
 const PROFILE_IMAGE_WIDTH = 144;
 
-const getDefaultFormOptions = (inputDisabled: boolean) => ({
+const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => ({
   fields: {
     username: {
+      auto: 'placeholders',
+      placeholder: 'User name',
       template: InputTemplate,
       maxLength: maxUsernameLength,
       config: {
+        isLoading,
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
@@ -98,6 +94,7 @@ const getDefaultFormOptions = (inputDisabled: boolean) => ({
 });
 
 type Props = {
+  wallet: Object,
   navigation: NavigationScreenProp<*>,
   validateUserDetails: Function,
   resetWalletState: Function,
@@ -106,6 +103,7 @@ type Props = {
   apiUser: Object,
   retry?: boolean,
   registerOnBackend: Function,
+  generateWalletMnemonic: (mnemonicPhrase?: string) => Function,
 };
 
 type State = {
@@ -117,12 +115,20 @@ type State = {
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
+  _willFocus: NavigationEventSubscription;
 
   constructor(props: Props) {
     super(props);
     const { apiUser } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
     const inputDisabled = !!(apiUser && apiUser.id);
+    const { generateWalletMnemonic, navigation, wallet } = this.props;
+    this._willFocus = navigation.addListener(
+      'willFocus',
+      () => {
+        generateWalletMnemonic(wallet.onboarding.mnemonic.original);
+      },
+    );
 
     this.state = {
       value,
@@ -144,6 +150,7 @@ class NewProfile extends React.Component<Props, State> {
 
   handleSubmit = () => {
     const { validateUserDetails, apiUser } = this.props;
+
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
       return;
@@ -163,24 +170,56 @@ class NewProfile extends React.Component<Props, State> {
           username: {
             hasError: { $set: true },
             error: { $set: 'Username taken' },
+            config: {
+              isLoading: { $set: false },
+            },
           },
         },
       });
       this.setState({ formOptions: options }); // eslint-disable-line
     }
+
+    if (walletState === CHECKING_USERNAME) {
+      const options = t.update(this.state.formOptions, {
+        fields: {
+          username: {
+            config: {
+              isLoading: { $set: true },
+            },
+          },
+        },
+      });
+      this.setState({ formOptions: options }); // eslint-disable-line
+    }
+
     if (walletState === USERNAME_OK) {
+      const options = t.update(this.state.formOptions, {
+        fields: {
+          username: {
+            config: {
+              isLoading: { $set: false },
+            },
+          },
+        },
+      });
+      this.setState({ formOptions: options }); // eslint-disable-line
       this.goToNextScreen();
     }
   }
 
   goToNextScreen() {
-    const { navigation, retry, registerOnBackend } = this.props;
+    const {
+      navigation,
+      retry,
+      registerOnBackend,
+      apiUser,
+    } = this.props;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
       return;
     }
-    navigation.navigate(LEGAL_TERMS);
+    navigation.navigate(apiUser && apiUser.id ? LEGAL_TERMS : SET_WALLET_PIN_CODE);
   }
 
   renderChooseUsernameScreen() {
@@ -194,36 +233,33 @@ class NewProfile extends React.Component<Props, State> {
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
-      <Wrapper>
-        <Header
-          title="choose username"
-          onBack={retry ? undefined : () => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
-        />
-        <Wrapper regularPadding>
-          <LoginForm
-            innerRef={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={value}
-            onChange={this.handleChange}
+      <React.Fragment>
+        <Wrapper>
+          <Header
+            title="let's get started"
+            onBack={retry ? undefined : () => this.props.navigation.goBack()}
           />
-          {isCheckingUsernameAvailability &&
-          <LoadingMessageWrapper>
-            <Spinner />
-            <LoadingMessage>Checking username availability…</LoadingMessage>
-          </LoadingMessageWrapper>
-          }
+          <Wrapper regularPadding>
+            <IntroParagraph light>
+              Choose your unique username now. It cannot be changed in future.
+            </IntroParagraph>
+            <LoginForm
+              innerRef={node => { this._form = node; }}
+              type={formStructure}
+              options={formOptions}
+              value={value}
+              onChange={this.handleChange}
+            />
+          </Wrapper>
         </Wrapper>
         <Footer>
           <Button
-            small
-            flexRight
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
           />
         </Footer>
-      </Wrapper>
+      </React.Fragment>
     );
   }
 
@@ -261,9 +297,11 @@ class NewProfile extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  wallet,
   wallet: { walletState, onboarding: { apiUser } },
   session: { data: session },
 }) => ({
+  wallet,
   walletState,
   apiUser,
   session,
@@ -272,6 +310,9 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) => ({
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
   registerOnBackend: () => dispatch(registerOnBackendAction()),
+  generateWalletMnemonic: (mnemonicPhrase?: string) => {
+    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
