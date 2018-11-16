@@ -102,12 +102,16 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleCancel = () => {
-    const { inputProps: { onChange } } = this.props;
+    const { inputProps: { onChange, onBlur } } = this.props;
     this.value = '';
     if (onChange) {
       onChange(this.value);
     }
     this.hideKeyboard();
+    if (onBlur) {
+      onBlur(this.value);
+    }
+    this.setState({ isFocused: false });
   };
 
   hideKeyboard = () => {
