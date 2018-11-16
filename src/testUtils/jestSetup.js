@@ -135,4 +135,5 @@ jest.setMock('react-native-cached-image', {
   ImageCacheManager: () => ({
     clearCache: () => Promise.resolve(),
   }),
+  CachedImage: jest.fn(),
 });
