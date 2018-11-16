@@ -15,6 +15,12 @@ import Separator from 'components/Separator';
 import SearchBar from 'components/SearchBar';
 import { getExistingChatsAction, resetUnreadAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+import styled from 'styled-components/native';
+import { spacing } from 'utils/variables';
+
+const SearchBarWrapper = styled.View`
+  padding: 15px ${spacing.rhythm}px 0;
+`;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -38,10 +44,14 @@ type State = {
 class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
-  // state = {
-  //   query: '',
-  //   filteredChats: null,
-  // };
+  state = {
+    showChat: false,
+    receiver: '',
+    receiverAvatar: '',
+    chatList: [],
+    query: '',
+    filteredChats: null,
+  };
 
   componentDidMount() {
     this.props.getExistingChats();
@@ -78,24 +88,14 @@ class ChatListScreen extends React.Component<Props, State> {
 
   handleUserSearch = (query: string, sortedChats: Object) => {
     if (!query || query.trim() === '' || query.length < 2) {
-      // this.setState({ filteredCountries: null, query });
+      this.setState({ filteredChats: null, query });
       return;
     }
-    console.log('handle-sorted-query', query);
-    console.log('handle-sorted-chats', sortedChats);
-    // const filteredChats = sortedChats
-    //   .map(country => {
-    //     const index = country.name.toUpperCase().indexOf(query.toUpperCase());
-    //     return {
-    //       index,
-    //       country,
-    //     };
-    //   })
-    //   .filter(({ index }) => index > -1)
-    //   .sort((a, b) => a.index - b.index)
-    //   .map(({ country }) => country);
-    //
-    // this.setState({ filteredChats, query });
+
+    const filteredChats = sortedChats
+      .filter((chat) => chat.username.toUpperCase().indexOf(query.toUpperCase()) !== -1);
+
+    this.setState({ filteredChats, query });
   };
 
   renderItem = ({ item: contact }: Object) => {
@@ -138,11 +138,9 @@ class ChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats } = this.props;
-    const { query } = this.state;
+    const { query, filteredChats } = this.state;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
-    console.log('chats', chats);
-    console.log('sortedChats', sortedChats);
     return (
       <Container>
         <Header
@@ -150,15 +148,17 @@ class ChatListScreen extends React.Component<Props, State> {
           nextText="New chat"
           onNextPress={this.goToNewChatList}
         />
-        <SearchBar
-          inputProps={{
-            onChange: this.handleUserSearch,
-            value: query,
-            sortedChats,
-            autoCapitalize: 'none',
-          }}
-          placeholder="Search chat"
-        />
+        <SearchBarWrapper>
+          <SearchBar
+            inputProps={{
+              onChange: this.handleUserSearch,
+              value: query,
+              sortedChats,
+              autoCapitalize: 'none',
+            }}
+            placeholder="Search chat"
+          />
+        </SearchBarWrapper>
         <ChatWrapper
           style={{
             paddingBottom: sortedChats.length ? 18 : 0,
@@ -171,7 +171,7 @@ class ChatListScreen extends React.Component<Props, State> {
           }
         >
           <FlatList
-            data={sortedChats}
+            data={filteredChats || sortedChats}
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
@@ -198,6 +198,8 @@ const mapStateToProps = ({
   contacts,
   chats,
   notifications,
+  query: '',
+  filteredChats: null,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -50,6 +50,7 @@ type inputPropsType = {
   onBlur?: Function,
   onFocus?: Function,
   value: ?string,
+  sortedChats?: Object[],
 };
 
 type Props = {
@@ -58,7 +59,6 @@ type Props = {
   placeholder?: string,
   backgroundColor?: string,
   marginTop?: number,
-  sortedChats?: Object,
 };
 
 type State = {
@@ -84,7 +84,7 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleChange = (e: EventLike) => {
-    const { inputProps: { onChange }, sortedChats } = this.props;
+    const { inputProps: { onChange, sortedChats } } = this.props;
     this.value = e.nativeEvent.text;
     onChange(this.value, sortedChats);
   };
