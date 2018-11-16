@@ -14,7 +14,7 @@ import {
   SET_API_USER,
 } from 'constants/walletConstants';
 import {
-  NEW_PROFILE,
+  LEGAL_TERMS,
   PIN_CODE_CONFIRMATION,
   SET_WALLET_PIN_CODE,
 } from 'constants/navigationConstants';
@@ -142,6 +142,6 @@ export const confirmPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
+    navigate(NavigationActions.navigate({ routeName: LEGAL_TERMS }));
   };
 };
