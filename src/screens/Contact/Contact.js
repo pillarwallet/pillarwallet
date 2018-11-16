@@ -86,6 +86,8 @@ type State = {
 };
 
 class Contact extends React.Component<Props, State> {
+  isComponentMounted: boolean = false;
+
   constructor(props: Props) {
     super(props);
     const { navigation } = this.props;
@@ -104,6 +106,7 @@ class Contact extends React.Component<Props, State> {
       contacts,
       syncContact,
     } = this.props;
+    this.isComponentMounted = true;
     const contact = navigation.getParam('contact', {});
 
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -113,11 +116,15 @@ class Contact extends React.Component<Props, State> {
         const defaultImageCacheManager = ImageCacheManager();
         defaultImageCacheManager
           .deleteUrl(localContact.profileImage)
-          .then(() => this.setState({ avatarRefreshed: true }))
+          .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
           .catch(() => null);
       }
       fetchContactTransactions(wallet.address, localContact.ethAddress);
     }
+  }
+
+  componentWillUnmount() {
+    this.isComponentMounted = false;
   }
 
   openOptionsModal = () => {
