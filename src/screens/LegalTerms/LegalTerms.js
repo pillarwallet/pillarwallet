@@ -2,17 +2,19 @@
 import * as React from 'react';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native/index';
 import Header from 'components/Header';
-import { Paragraph, TextLink } from 'components/Typography';
+import { Paragraph, TextLink, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
 import IFrameModal from 'components/Modals/IFrameModal';
-import { View } from 'react-native';
-import { fontSizes } from 'utils/variables';
-
+import { fontSizes, fontTrackings } from 'utils/variables';
+import SlideModal from 'components/Modals/SlideModal';
+import ButtonText from 'components/ButtonText';
+import { BACKUP_PHRASE } from 'constants/navigationConstants';
 
 type Props = {
   generateEncryptedWallet: () => Function,
@@ -23,29 +25,38 @@ type State = {
   userCheck1: boolean,
   userCheck2: boolean,
   userCheck3: boolean,
-  showTermsConditionsModal: boolean,
-  showPrivacyPolicyModal: boolean,
+  visibleModal: any,
 };
+
+const CheckboxText = styled(BaseText)`
+  font-size: ${fontSizes.small}px;
+  margin-top: 2px;
+  letter-spacing: ${fontTrackings.small}px;
+  line-height: 20px;
+`;
+
+const CheckboxTextLink = styled(TextLink)`
+  margin-right: 4px;
+`;
+
+const ModalInnerWrapper = styled.View`
+  padding: 10px 0 60px;
+`;
+
+const PRIVATE_KEY_MODAL = 'PRIVATE_KEY_MODAL';
+const BACKUP_PHRASE_MODAL = 'BACKUP_PHRASE_MODAL';
+const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
 
 class LegalTerms extends React.Component<Props, State> {
   state = {
     userCheck1: false,
     userCheck2: false,
     userCheck3: false,
-    showTermsConditionsModal: false,
-    showPrivacyPolicyModal: false,
+    visibleModal: null,
   };
 
   handleConfirm = () => {
     this.props.generateEncryptedWallet();
-  };
-
-  toggleTermsConditionsModal = () => {
-    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
-  };
-
-  togglePrivacyPolicyModal = () => {
-    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
   };
 
   toggleCheckbox = (field: string) => {
@@ -53,13 +64,11 @@ class LegalTerms extends React.Component<Props, State> {
     if (field === 'userCheck1') {
       this.setState({
         userCheck1: !userCheck1,
-        userCheck3: false,
       });
     }
     if (field === 'userCheck2') {
       this.setState({
         userCheck2: !userCheck2,
-        userCheck3: false,
       });
     }
     if (field === 'userCheck3') {
@@ -69,81 +78,142 @@ class LegalTerms extends React.Component<Props, State> {
     }
   };
 
+  closeModals = () => {
+    this.setState({ visibleModal: null });
+  };
+
+  backupWallet = () => {
+    const { navigation } = this.props;
+    navigation.navigate(BACKUP_PHRASE);
+  }
+
   render() {
     const {
       userCheck1,
       userCheck2,
       userCheck3,
-      showTermsConditionsModal,
-      showPrivacyPolicyModal,
+      visibleModal,
     } = this.state;
 
-    const userCanAcceptCheck3 = !(userCheck1 && userCheck2);
+    const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3);
 
     return (
       <Container>
-        <Header title="review" onBack={() => this.props.navigation.goBack(null)} />
+        <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
-          <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet I understand that:</Paragraph>
+          <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
+            With great power comes great responsibility. Make sure you are aware of the following.
+          </Paragraph>
           <Checkbox
-            text="Pillar does not have access to my private keys."
             onPress={() => this.toggleCheckbox('userCheck1')}
-          />
+          >
+            <CheckboxText>
+              I’m happy to know that Pillar does not have access to my
+              <CheckboxTextLink onPress={() => { this.setState({ visibleModal: PRIVATE_KEY_MODAL }); }}>
+                private key
+              </CheckboxTextLink>
+            </CheckboxText>
+          </Checkbox>
 
           <Checkbox
-            text="The only way to recover my assets is to use the 12-word backup phrase."
             onPress={() => this.toggleCheckbox('userCheck2')}
-          />
+          >
+            <CheckboxText>
+              The only way to recover assets is to use the
+              <CheckboxTextLink
+                onPress={() => { this.setState({ visibleModal: BACKUP_PHRASE_MODAL }); }}
+              >
+                 backup phrase
+              </CheckboxTextLink>
+            </CheckboxText>
+          </Checkbox>
+
+          <Checkbox
+            onPress={() => this.toggleCheckbox('userCheck3')}
+          >
+            <CheckboxText>
+              I have read, understand, and agree to the
+              <CheckboxTextLink
+                onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
+              >
+                 Terms of Use
+              </CheckboxTextLink>
+            </CheckboxText>
+          </Checkbox>
 
         </Wrapper>
         <Footer>
-
-          <Checkbox
-            text="I have read, understand, and agree to the Terms of Use."
-            onPress={() => this.toggleCheckbox('userCheck3')}
-            disabled={userCanAcceptCheck3}
-          />
-
           <MultiButtonWrapper>
             <Button
               block
-              title="Confirm and Finish"
+              title="Finish"
               onPress={this.handleConfirm}
-              disabled={!userCheck1 || !userCheck2 || !userCheck3}
+              disabled={userCannotProceed}
               marginBottom="20px"
             />
-            <View style={{
-              alignContent: 'center',
-              justifyContent: 'center',
-              flexDirection: 'row',
-            }}
-            >
-              <TextLink onPress={this.toggleTermsConditionsModal}>Terms & Conditions</TextLink>
-              <Paragraph style={{
-                marginRight: 4,
-                marginLeft: 4,
-                marginBottom: 0,
-                fontSize: fontSizes.small,
-              }}
-              >
-                and
-              </Paragraph>
-              <TextLink onPress={this.togglePrivacyPolicyModal}>Privacy Policy</TextLink>
-            </View>
+            <ButtonText
+              buttonText="Backup wallet"
+              onPress={this.backupWallet}
+              fontSize={fontSizes.medium}
+            />
           </MultiButtonWrapper>
         </Footer>
 
         <IFrameModal
-          isVisible={showTermsConditionsModal}
-          modalHide={this.toggleTermsConditionsModal}
+          isVisible={visibleModal === TERMS_OF_USE_MODAL}
+          modalHide={this.closeModals}
           uri="https://pillarproject.io/en/legal/terms-of-use/"
         />
 
-        <IFrameModal
-          isVisible={showPrivacyPolicyModal}
-          modalHide={this.togglePrivacyPolicyModal}
-          uri="https://pillarproject.io/en/legal/privacy/"
-        />
+        <SlideModal title="private key" isVisible={visibleModal === PRIVATE_KEY_MODAL} onModalHide={this.closeModals}>
+          <ModalInnerWrapper>
+            <Paragraph small>
+              When you create an account with Pillar, you are generating a cryptographic set of numbers: your private
+              key and your public key (address).
+            </Paragraph>
+            <Paragraph small>
+              Your public address can/should be shared and is how you transact with other individuals on the blockchain.
+            </Paragraph>
+            <Paragraph small>
+              Your private key should remain private and secure as it provides complete control over your wallet and all
+              the funds stored within.
+            </Paragraph>
+            <Paragraph small>
+              The handling of your private key(s) happens entirely on your device and is stored locally.
+              Pillar does not have access to it. We never transmit, receive or store your private key or pin code.
+            </Paragraph>
+            <Paragraph small>
+              In the Pillar wallet, your private key is represented by your backup phrase.
+              If you lose your backup phrase, it is gone forever.
+            </Paragraph>
+            <Paragraph small>
+              Do not lose it or share it with anyone.
+            </Paragraph>
+          </ModalInnerWrapper>
+        </SlideModal>
+
+        <SlideModal title="Backup phrase" isVisible={visibleModal === BACKUP_PHRASE} onModalHide={this.closeModals}>
+          <ModalInnerWrapper>
+            <Paragraph small>
+              Your wallet private key is represented and secured by a 12 word backup phrase.
+            </Paragraph>
+            <Paragraph small>
+              It is stored locally on your device. Pillar does not have access to it.
+            </Paragraph>
+            <Paragraph small>
+              Keep your backup phrase safe. If you lose it, Pillar will not be able to recover it for you.
+            </Paragraph>
+            <Paragraph small>
+              Make a backup of your 12 word phrase. Do NOT just store it on your computer.
+              Print it out on a piece of paper or save it to a USB drive. Consider the risk of flood or fire.
+              Multiple secure copies are recommended.
+            </Paragraph>
+            <Paragraph small>
+              Do not store your private key in Dropbox, Google Drive, or other cloud storage.
+              If that account is compromised, your funds can be stolen.
+            </Paragraph>
+          </ModalInnerWrapper>
+        </SlideModal>
       </Container>
     );
   }

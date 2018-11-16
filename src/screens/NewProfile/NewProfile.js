@@ -240,7 +240,7 @@ class NewProfile extends React.Component<Props, State> {
             onBack={retry ? undefined : () => this.props.navigation.goBack()}
           />
           <Wrapper regularPadding>
-            <IntroParagraph light>
+            <IntroParagraph light small>
               Choose your unique username now. It cannot be changed in future.
             </IntroParagraph>
             <LoginForm

@@ -63,7 +63,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
           showForgotButton={false}
           pinError={!!this.state.errorMessage}
           flex={false}
-          customStyle={{ marginTop: 105 }}
+          customStyle={{ marginTop: 100 }}
         />
       </Container>
     );

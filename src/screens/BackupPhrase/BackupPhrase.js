@@ -46,7 +46,7 @@ class BackupPhrase extends React.Component<Props, {}> {
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </Wrapper>
         <Footer>
-          <Button small flexRight onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
+          <Button onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
         </Footer>
       </Container>
     );
