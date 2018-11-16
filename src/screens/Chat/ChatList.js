@@ -19,7 +19,6 @@ import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import { getExistingChatsAction, resetUnreadAction, deleteChatAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
-import styled from 'styled-components/native';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
 
 const SearchBarWrapper = styled.View`
