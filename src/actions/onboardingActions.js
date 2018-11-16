@@ -4,6 +4,7 @@ import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
 import Intercom from 'react-native-intercom';
+import { ImageCacheManager } from 'react-native-cached-image';
 import ChatService from 'services/chat';
 import { getSaltedPin } from 'utils/wallet';
 import {
@@ -63,6 +64,9 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
       payload: sdkWallet.reason,
     });
   }
+
+  // invalidate image cache
+  ImageCacheManager().clearCache().catch(() => null);
 
   return {
     sdkWallet,
