@@ -61,7 +61,7 @@ export default class AssetPattern extends React.Component<Props, {}> {
   generatePattern = (token: string, icon: string, isListed: boolean) => {
     const paternDetails = [];
     const uniqueCode = [];
-    [...token].forEach((letter) => {
+    token.split('').forEach((letter) => {
       uniqueCode.push(letter.charCodeAt(0));
     });
 
