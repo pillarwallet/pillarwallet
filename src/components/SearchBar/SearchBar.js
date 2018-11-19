@@ -135,8 +135,8 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
-    const { inputProps: { onChange, value } } = this.props;
-    onChange(value);
+    const { inputProps: { onChange, value, sortedChats } } = this.props;
+    onChange(value, sortedChats);
   };
 
   render() {
