@@ -2,14 +2,15 @@
 import { uniqBy } from 'utils/common';
 import {
   SET_HISTORY,
-  TRANSACTION_EVENT,
+  TRANSACTION_PENDING_EVENT,
+  TRANSACTION_CONFIRMATION_EVENT,
   SET_GAS_INFO,
   TX_CONFIRMED_STATUS,
   TX_FAILED_STATUS,
+  TX_PENDING_STATUS,
 } from 'constants/historyConstants';
-import { UPDATE_SUPPORTED_ASSETS, UPDATE_ASSETS, ETH } from 'constants/assetsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { fetchAssetsBalancesAction, updateAssetsAction } from './assetsActions';
+import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
@@ -61,61 +62,44 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       user: { data: { walletId } },
-      assets: { data: currentAssets, supportedAssets },
-      wallet: { data: wallet },
       history: { data: currentHistory },
       appSettings: { data: { lastTxSyncDatetime } },
     } = getState();
 
-    // load supported assets
-    let walletSupportedAssets = [...supportedAssets];
-    if (!supportedAssets.length) {
-      walletSupportedAssets = await api.fetchSupportedAssets(walletId);
-      dispatch({
-        type: UPDATE_SUPPORTED_ASSETS,
-        payload: walletSupportedAssets,
-      });
-      const currentAssetsTickers = Object.keys(currentAssets);
-
-      // HACK: Dirty fix for users who removed somehow Eth from their assets list
-      if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
-
-      if (walletSupportedAssets.length) {
-        const updatedAssets = walletSupportedAssets
-          .filter(asset => currentAssetsTickers.includes(asset.symbol))
-          .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
-        dispatch({
-          type: UPDATE_ASSETS,
-          payload: updatedAssets,
-        });
-        dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
-      }
-    }
     const d = new Date(lastTxSyncDatetime * 1000);
-    const historyNotifications = await api.fetchNotifications(walletId, TRANSACTION_EVENT, d.toISOString());
+    const types = [
+      TRANSACTION_PENDING_EVENT,
+      TRANSACTION_CONFIRMATION_EVENT,
+    ];
+    const historyNotifications = await api.fetchNotifications(walletId, types.join(' '), d.toISOString());
     const mappedHistoryNotifications = historyNotifications
       .map(({ payload, type, createdAt }) => ({ ...payload, type, createdAt }));
 
-    // check if some assets are not enabled
-    const myAddress = wallet.address.toUpperCase();
-    const missedAssets = mappedHistoryNotifications
-      .filter(tx => tx.from.toUpperCase() !== myAddress)
-      .reduce((memo, { asset: ticker }) => {
-        if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
+    dispatch(checkForMissedAssetsAction(mappedHistoryNotifications));
 
-        const supportedAsset = walletSupportedAssets.find(asset => asset.symbol === ticker);
-        if (supportedAsset) {
-          memo[ticker] = supportedAsset;
-        }
+    const minedTransactions = mappedHistoryNotifications
+      .filter(tx => tx.status !== TX_PENDING_STATUS)
+      .reduce((memo, tx) => {
+        memo[tx.hash] = tx;
         return memo;
       }, {});
 
-    if (Object.keys(missedAssets).length) {
-      const newAssets = { ...currentAssets, ...missedAssets };
-      dispatch(updateAssetsAction(newAssets));
-      dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
-    }
-    const updatedHistory = uniqBy([...mappedHistoryNotifications, ...currentHistory], 'hash');
+    const pendingTransactions = mappedHistoryNotifications
+      .filter(tx => tx.status === TX_PENDING_STATUS);
+
+    // add new records & update data for mined transactions
+    const updatedHistory = uniqBy([...currentHistory, ...pendingTransactions], 'hash')
+      .map(tx => {
+        if (!minedTransactions[tx.hash]) return tx;
+        const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
+        return {
+          ...tx,
+          status,
+          gasUsed,
+          blockNumber,
+        };
+      });
+
     const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0));
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));

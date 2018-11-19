@@ -148,6 +148,7 @@ android {
 
 
 dependencies {
+  compile project(':react-native-color-matrix-image-filters')
   compile project(':react-native-image-crop-picker')
   compile project(':react-native-svg')
   compile project(':react-native-background-timer')

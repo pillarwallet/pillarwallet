@@ -155,10 +155,11 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       token,
       balanceInFiat,
       disclaimer,
-      icon = '',
+      icon,
     } = this.props;
 
     const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
+
     return (
       <AssetOutter cardWidth={cardWidth}>
         <Shadow heightAndroid={70} widthIOS={cardWidth - 20} heightIOS={70}>
@@ -167,16 +168,16 @@ class AssetCardSimplified extends React.Component<Props, {}> {
               <InnerWrapper>
                 <IconCircle>
                   {!!icon &&
-                    <CachedImage
-                      key={token}
-                      style={{
-                        height: 44,
-                        width: 44,
-                      }}
-                      source={{ uri: icon }}
-                      fallbackSource={genericToken}
-                      resizeMode="contain"
-                    />}
+                  <CachedImage
+                    key={token}
+                    style={{
+                      height: 44,
+                      width: 44,
+                    }}
+                    source={{ uri: icon }}
+                    fallbackSource={genericToken}
+                    resizeMode="contain"
+                  />}
                 </IconCircle>
                 <DetailsWrapper>
                   <Name>{name}</Name>
