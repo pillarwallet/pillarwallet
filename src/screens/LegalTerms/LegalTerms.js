@@ -226,7 +226,7 @@ class LegalTerms extends React.Component<Props, State> {
               Keep your backup phrase safe. If you lose it, Pillar will not be able to recover it for you.
             </Paragraph>
             <Paragraph small>
-              Do NOT just store it on your computer.Print it out on a piece of paper or save it to a USB drive.
+              Do NOT just store it on your computer. Print it out on a piece of paper or save it to a USB drive.
               Consider the risk of flood or fire. Multiple secure copies are recommended.
             </Paragraph>
             <Paragraph small>
