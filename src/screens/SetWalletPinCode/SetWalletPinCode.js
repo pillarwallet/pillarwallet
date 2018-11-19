@@ -45,20 +45,27 @@ class SetWalletPinCode extends React.Component<Props, State> {
 
   render() {
     const { error } = this.state;
-    const { wallet } = this.props;
+    const { wallet, navigation } = this.props;
     const { onboarding } = wallet;
     const { apiUser } = onboarding;
+    const returningUser = navigation.getParam('returningUser', false);
+    // not to show "hello, undefined" on back action.
+    const titleForNewUser = apiUser.username ? `hello, ${apiUser.username}` : 'hello';
+    const title = returningUser ? 'set pincode' : titleForNewUser;
 
     return (
       <Container>
         {!!error && <ErrorMessage>{error}</ErrorMessage>}
         <Header
-          title={apiUser.username ? `hello, ${apiUser.username}` : 'hello'}
+          title={title}
           onBack={() => this.props.navigation.goBack(null)}
         />
         <Wrapper regularPadding style={{ justifyContent: 'space-between', flex: 1 }}>
           <Paragraph light small style={{ marginBottom: 50, marginTop: 10 }}>
-            Set your pin-code. It will be used to access the wallet and confirm transactions.
+            {returningUser
+              ? 'It will be used to access the wallet and confirm transactions.'
+              : 'Set your pin-code. It will be used to access the wallet and confirm transactions.'
+            }
           </Paragraph>
           <PinCode
             onPinEntered={this.handlePinSubmit}

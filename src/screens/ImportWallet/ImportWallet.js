@@ -95,6 +95,7 @@ class ImportWallet extends React.Component<Props, State> {
   componentDidMount() {
     const { navigation } = this.props;
     const navigateTo = navigation.getParam('navigateTo', null);
+
     if (Platform.OS === 'android' && navigateTo) {
       BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
     }
@@ -126,6 +127,7 @@ class ImportWallet extends React.Component<Props, State> {
   }
 
   handleImportSubmit = () => {
+    Keyboard.dismiss();
     const { importWalletFromTWordsPhrase, importWalletFromPrivateKey } = this.props;
     const { privateKey, tWordsPhrase, activeTab } = this.state;
 

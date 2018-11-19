@@ -37,7 +37,6 @@ class BackupPhrase extends React.Component<Props, {}> {
   render() {
     const { onboarding: wallet } = this.props.wallet;
     if (!wallet.mnemonic) return null;
-
     return (
       <Container>
         <Header title="backup phrase" onBack={() => this.props.navigation.goBack(null)} />

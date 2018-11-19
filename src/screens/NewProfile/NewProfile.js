@@ -4,10 +4,10 @@ import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
-import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
-import { LEGAL_TERMS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
@@ -101,13 +101,13 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
 });
 
 type Props = {
-  wallet: Object,
   navigation: NavigationScreenProp<*>,
   validateUserDetails: Function,
   resetWalletState: Function,
   walletState: ?string,
   session: Object,
   apiUser: Object,
+  mnemonic: Object,
   retry?: boolean,
   registerOnBackend: Function,
   generateWalletMnemonic: (mnemonicPhrase?: string) => Function,
@@ -122,21 +122,12 @@ type State = {
 
 class NewProfile extends React.Component<Props, State> {
   _form: t.form;
-  _willFocus: NavigationEventSubscription;
 
   constructor(props: Props) {
     super(props);
     const { apiUser } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
     const inputDisabled = !!(apiUser && apiUser.id);
-    const { generateWalletMnemonic, navigation, wallet } = this.props;
-    this._willFocus = navigation.addListener(
-      'willFocus',
-      () => {
-        generateWalletMnemonic(wallet.onboarding.mnemonic.original);
-      },
-    );
-
     this.state = {
       value,
       formOptions: getDefaultFormOptions(inputDisabled),
@@ -157,15 +148,21 @@ class NewProfile extends React.Component<Props, State> {
 
   handleSubmit = () => {
     Keyboard.dismiss();
-
-    const { validateUserDetails, apiUser } = this.props;
+    const {
+      validateUserDetails,
+      apiUser,
+      generateWalletMnemonic,
+      mnemonic,
+    } = this.props;
 
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
       return;
     }
+
     const value = this._form.getValue();
     if (!value) return;
+    generateWalletMnemonic(mnemonic.original);
     validateUserDetails({ username: value.username });
   };
 
@@ -228,7 +225,9 @@ class NewProfile extends React.Component<Props, State> {
       registerOnBackend();
       return;
     }
-    navigation.navigate(apiUser && apiUser.id ? LEGAL_TERMS : SET_WALLET_PIN_CODE);
+    const navigationParams = {};
+    if (apiUser && apiUser.id) navigationParams.returningUser = true;
+    navigation.navigate(SET_WALLET_PIN_CODE, navigationParams);
   }
 
   renderChooseUsernameScreen() {
@@ -296,6 +295,7 @@ class NewProfile extends React.Component<Props, State> {
 
   render() {
     const { apiUser } = this.props;
+
     return (
       <Container>
         {!apiUser.walletId && this.renderChooseUsernameScreen()}
@@ -306,13 +306,12 @@ class NewProfile extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet,
-  wallet: { walletState, onboarding: { apiUser } },
+  wallet: { walletState, onboarding: { apiUser, mnemonic } },
   session: { data: session },
 }) => ({
-  wallet,
   walletState,
   apiUser,
+  mnemonic,
   session,
 });
 

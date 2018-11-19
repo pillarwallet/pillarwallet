@@ -12,11 +12,12 @@ import {
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
   SET_API_USER,
+  RESET_WALLET_IMPORT,
 } from 'constants/walletConstants';
 import {
   LEGAL_TERMS,
   PIN_CODE_CONFIRMATION,
-  SET_WALLET_PIN_CODE,
+  NEW_PROFILE,
 } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
 import { generateWordsToValidate } from 'utils/wallet';
@@ -42,7 +43,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
         type: IMPORT_WALLET,
         payload,
       });
-      navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -77,7 +78,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         type: IMPORT_WALLET,
         payload,
       });
-      navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -90,6 +91,15 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
     }
   };
 };
+
+export const resetWalletImportAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: RESET_WALLET_IMPORT,
+    });
+  };
+};
+
 
 export const resetWalletErrorAction = () => ({
   type: RESET_WALLET_ERROR,

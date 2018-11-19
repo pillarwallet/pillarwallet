@@ -19,6 +19,7 @@ import { BACKUP_PHRASE } from 'constants/navigationConstants';
 type Props = {
   generateEncryptedWallet: () => Function,
   navigation: NavigationScreenProp<*>,
+  onboarding: Object,
 };
 
 type State = {
@@ -100,6 +101,7 @@ class LegalTerms extends React.Component<Props, State> {
       scrollOffset,
     } = this.state;
 
+    const { onboarding } = this.props;
     const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3);
 
     return (
@@ -154,13 +156,14 @@ class LegalTerms extends React.Component<Props, State> {
               title="Finish"
               onPress={this.handleConfirm}
               disabled={userCannotProceed}
-              marginBottom="20px"
             />
+            {!onboarding.importedWallet &&
             <ButtonText
               buttonText="Backup wallet"
               onPress={this.backupWallet}
               fontSize={fontSizes.medium}
-            />
+              wrapperStyle={{ marginTop: 20 }}
+            />}
           </MultiButtonWrapper>
         </Footer>
 
@@ -240,10 +243,13 @@ class LegalTerms extends React.Component<Props, State> {
   }
 }
 
+
+const mapStateToProps = ({ wallet: { onboarding } }) => ({ onboarding });
+
 const mapDispatchToProps = (dispatch: Function) => ({
   generateEncryptedWallet: () => {
     dispatch(registerWalletAction());
   },
 });
 
-export default connect(null, mapDispatchToProps)(LegalTerms);
+export default connect(mapStateToProps, mapDispatchToProps)(LegalTerms);

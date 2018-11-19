@@ -8,10 +8,13 @@ import { fontSizes } from 'utils/variables';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
 import ButtonText from 'components/ButtonText';
+import { resetWalletImportAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
+import { connect } from 'react-redux';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  resetWalletImport: Function,
 }
 
 type State = {
@@ -47,8 +50,14 @@ class Welcome extends React.Component<Props, State> {
   };
 
   componentDidMount() {
+    const { resetWalletImport } = this.props;
+    resetWalletImport();
+
     this.listeners = [
-      this.props.navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
+      this.props.navigation.addListener('willFocus', () => {
+        resetWalletImport();
+        this.setState({ shouldAnimate: true });
+      }),
       this.props.navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
     ];
   }
@@ -79,4 +88,11 @@ class Welcome extends React.Component<Props, State> {
   }
 }
 
-export default Welcome;
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  resetWalletImport: () => {
+    dispatch(resetWalletImportAction());
+  },
+});
+
+export default connect(null, mapDispatchToProps)(Welcome);
