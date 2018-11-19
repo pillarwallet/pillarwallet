@@ -389,7 +389,6 @@ class HomeScreen extends React.Component<Props, State> {
       },
     ];
 
-    const stickyHeaderIndices = this.props.contacts.length ? [2] : [1];
     const hasIntercomNotifications = !!intercomNotificationsCount;
 
     return (
@@ -442,6 +441,11 @@ class HomeScreen extends React.Component<Props, State> {
                       { perspective: 1000 },
                     ],
                   }}
+                  borderWidth={user.profileImage ? 0 : 2}
+                  containerStyle={{
+                    borderRadius: user.profileImage ? 0 : profileImageWidth / 2,
+                    backgroundColor: user.profileImage ? 'transparent' : baseColors.lightGray,
+                  }}
                   noShadow
                 >
                   <CameraIcon name="camera" />
@@ -476,7 +480,7 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
         </AnimatedHomeHeader>
         <Animated.ScrollView
-          stickyHeaderIndices={stickyHeaderIndices}
+          stickyHeaderIndices={[2]}
           style={{
             marginTop: this.props.contacts.length ? -100 : -76,
           }}

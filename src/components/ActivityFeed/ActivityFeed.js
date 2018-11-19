@@ -51,7 +51,7 @@ const ActivityFeedWrapper = styled.View`
 
 const ActivityFeedHeader = styled.View`
   padding: 0 ${spacing.mediumLarge}px;
-  border-top-width: 1px;
+  border-top-width: ${props => props.noBorder ? 0 : '1px'};
   border-top-color: ${baseColors.mediumLightGray};
 `;
 
@@ -76,6 +76,7 @@ type Props = {
   backgroundColor?: string,
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
+  noBorder?: boolean,
 };
 
 type State = {
@@ -115,7 +116,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
   mapTransactionsHistory(history, contacts) {
     const concatedHistory = history
-      .map(({ ...rest }) => ({ type: TRANSACTION_EVENT, ...rest }))
+      .map(({ ...rest }) => ({ ...rest, type: TRANSACTION_EVENT }))
       .map(({ to, from, ...rest }) => {
         const contact = contacts.find(({ ethAddress }) => {
           return from.toUpperCase() === ethAddress.toUpperCase()
@@ -250,6 +251,7 @@ class ActivityFeed extends React.Component<Props, State> {
       navigation,
       backgroundColor,
       wrapperStyle,
+      noBorder,
     } = this.props;
 
     const {
@@ -302,7 +304,7 @@ class ActivityFeed extends React.Component<Props, State> {
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
         {!!feedTitle && (!!processedHistory.length || !!showEmptyState) &&
-        <ActivityFeedHeader>
+        <ActivityFeedHeader noBorder={noBorder}>
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
         <ActivityFeedList

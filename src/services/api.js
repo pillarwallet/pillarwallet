@@ -17,7 +17,7 @@ import {
   fetchTransactionReceipt,
 } from 'services/assets';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { isTransactionEvent } from 'utils/history';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -166,7 +166,7 @@ SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: stri
     .then(({ notifications }) => notifications)
     .then(notifications => {
       return notifications.map(notification => {
-        if (notification.type !== TRANSACTION_EVENT) return notification;
+        if (!isTransactionEvent(notification.type)) return notification;
 
         const {
           type: notificationType,

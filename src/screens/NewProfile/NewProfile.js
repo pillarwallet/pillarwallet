@@ -19,7 +19,8 @@ import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onbo
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
-const maxUsernameLength = 20;
+const MIN_USERNAME_LENGTH = 3;
+const MAX_USERNAME_LENGTH = 20;
 
 const LoginForm = styled(Form)`
   margin: 10px 0 40px;
@@ -63,12 +64,18 @@ function InputTemplate(locals) {
 
 const usernameRegex = /^[a-z0-9._-]+$/i;
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null && username.length <= maxUsernameLength && usernameRegex.test(username);
+  return username != null
+    && username.length >= MIN_USERNAME_LENGTH
+    && username.length <= MAX_USERNAME_LENGTH
+    && usernameRegex.test(username);
 });
 
 Username.getValidationErrorMessage = (username): string => {
-  if (username != null && username.length > maxUsernameLength) {
-    return `Username should be less than ${maxUsernameLength} characters.`;
+  if (username != null && username.length < MIN_USERNAME_LENGTH) {
+    return `Username should be longer than ${MIN_USERNAME_LENGTH - 1} characters.`;
+  }
+  if (username != null && username.length > MAX_USERNAME_LENGTH) {
+    return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
   }
   if (username != null && !(usernameRegex.test(username))) {
     return 'Only use alpha-numeric characters, underscores, dashes or full stops.';
@@ -86,7 +93,7 @@ const getDefaultFormOptions = (inputDisabled: boolean) => ({
   fields: {
     username: {
       template: InputTemplate,
-      maxLength: maxUsernameLength,
+      maxLength: MAX_USERNAME_LENGTH,
       config: {
         inputProps: {
           autoCapitalize: 'none',

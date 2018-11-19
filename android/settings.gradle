@@ -1,4 +1,6 @@
 include ':app'
+include ':react-native-color-matrix-image-filters'
+project(':react-native-color-matrix-image-filters').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-color-matrix-image-filters/android')
 include ':react-native-image-crop-picker'
 project(':react-native-image-crop-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-image-crop-picker/android')
 include ':react-native-sentry'
@@ -30,7 +32,7 @@ project(':react-native-randombytes').projectDir = new File(rootProject.projectDi
 include ':react-native-os'
 project(':react-native-os').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-os/android')
 include ':react-native-intercom'
-project(':react-native-intercom').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-intercom/android')
+project(':react-native-intercom').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-intercom/android')
 include ':react-native-firebase'
 project(':react-native-firebase').projectDir = new File(rootProject.projectDir, 'rn-libs/react-native-firebase/android')
 include ':react-native-device-info'
