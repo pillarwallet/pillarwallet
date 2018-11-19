@@ -20,7 +20,7 @@ import {
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -177,7 +177,10 @@ export const startListeningOnOpenNotificationAction = () => {
           params: {},
           action: NavigationActions.navigate({
             routeName,
-            params: navigationParams,
+            params: {
+              ...navigationParams,
+              backTo: type === SIGNAL ? CHAT_LIST : null,
+            },
           }),
         });
         navigate(navigateToAppAction);
