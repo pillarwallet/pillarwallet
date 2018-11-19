@@ -28,7 +28,6 @@ const ContactWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin: 5px 20px 20px;
-  padding-top: 20px;
   padding-top: ${Platform.select({
     ios: '20px',
     android: '14px',
@@ -78,6 +77,7 @@ type Props = {
   fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
   wallet: Object,
   chats: Object[],
+  session: Object,
 };
 
 type State = {
@@ -90,11 +90,13 @@ class Contact extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { navigation } = this.props;
+    const { navigation, contacts, session } = this.props;
     const contact = navigation.getParam('contact', {});
+    const localContact = contacts.find(({ username }) => username === contact.username);
+    const profileImage = localContact ? localContact.profileImage : contact.profileImage;
     this.state = {
       isOptionsModalActive: false,
-      avatarRefreshed: !contact.profileImage,
+      avatarRefreshed: !profileImage || !session.isOnline,
     };
   }
 
@@ -105,21 +107,24 @@ class Contact extends React.Component<Props, State> {
       navigation,
       contacts,
       syncContact,
+      session,
     } = this.props;
     this.isComponentMounted = true;
     const contact = navigation.getParam('contact', {});
 
     const localContact = contacts.find(({ username }) => username === contact.username);
-    if (localContact) {
+    if (localContact && session.isOnline) {
       syncContact(localContact.id);
-      if (localContact.profileImage) {
-        const defaultImageCacheManager = ImageCacheManager();
-        defaultImageCacheManager
-          .deleteUrl(localContact.profileImage)
-          .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
-          .catch(() => null);
-      }
       fetchContactTransactions(wallet.address, localContact.ethAddress);
+      if (!localContact.profileImage) { return; }
+
+      const defaultImageCacheManager = ImageCacheManager();
+      defaultImageCacheManager
+        .deleteUrl(localContact.profileImage, {
+          useQueryParamsInCacheKey: true,
+        })
+        .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
+        .catch(() => null);
     }
   }
 
@@ -242,10 +247,12 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   wallet: { data: wallet },
   chat: { data: { chats } },
+  session: { data: session },
 }) => ({
   contacts,
   wallet,
   chats,
+  session,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
