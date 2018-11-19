@@ -15,6 +15,7 @@ import {
   FETCH_INITIAL_FAILED,
   ETH,
   UPDATE_BALANCES,
+  UPDATE_SUPPORTED_ASSETS,
 } from 'constants/assetsConstants';
 import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
@@ -233,3 +234,59 @@ export const searchAssetsAction = (query: string) => {
 export const resetSearchAssetsResultAction = () => ({
   type: RESET_ASSETS_SEARCH_RESULT,
 });
+
+export const checkForMissedAssetsAction = (transactionNotifications: Object[]) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      assets: { data: currentAssets, supportedAssets },
+      wallet: { data: wallet },
+    } = getState();
+
+    // load supported assets
+    let walletSupportedAssets = [...supportedAssets];
+    if (!supportedAssets.length) {
+      walletSupportedAssets = await api.fetchSupportedAssets(walletId);
+      dispatch({
+        type: UPDATE_SUPPORTED_ASSETS,
+        payload: walletSupportedAssets,
+      });
+      const currentAssetsTickers = Object.keys(currentAssets);
+
+      // HACK: Dirty fix for users who removed somehow Eth from their assets list
+      if (!currentAssetsTickers.includes(ETH)) currentAssetsTickers.push(ETH);
+
+      if (walletSupportedAssets.length) {
+        const updatedAssets = walletSupportedAssets
+          .filter(asset => currentAssetsTickers.includes(asset.symbol))
+          .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
+        dispatch({
+          type: UPDATE_ASSETS,
+          payload: updatedAssets,
+        });
+        dispatch(saveDbAction('assets', { assets: updatedAssets }, true));
+      }
+    }
+
+    // check if some assets are not enabled
+    const myAddress = wallet.address.toUpperCase();
+    const missedAssets = transactionNotifications
+      .filter(tx => tx.from.toUpperCase() !== myAddress)
+      .reduce((memo, { asset: ticker }) => {
+        if (!ticker) return memo;
+        if (memo[ticker] !== undefined || currentAssets[ticker] !== undefined) return memo;
+
+        const supportedAsset = walletSupportedAssets.find(asset => asset.symbol === ticker);
+        if (supportedAsset) {
+          memo[ticker] = supportedAsset;
+        }
+        return memo;
+      }, {});
+
+    if (Object.keys(missedAssets).length) {
+      const newAssets = { ...currentAssets, ...missedAssets };
+      dispatch(updateAssetsAction(newAssets));
+      dispatch(fetchAssetsBalancesAction(newAssets, wallet.address));
+    }
+  };
+};
