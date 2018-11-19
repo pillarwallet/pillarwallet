@@ -116,7 +116,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
   mapTransactionsHistory(history, contacts) {
     const concatedHistory = history
-      .map(({ ...rest }) => ({ type: TRANSACTION_EVENT, ...rest }))
+      .map(({ ...rest }) => ({ ...rest, type: TRANSACTION_EVENT }))
       .map(({ to, from, ...rest }) => {
         const contact = contacts.find(({ ethAddress }) => {
           return from.toUpperCase() === ethAddress.toUpperCase()
