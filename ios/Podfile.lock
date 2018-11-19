@@ -207,6 +207,8 @@ PODS:
     - React/RCTBlob
   - ReactNativePermissions (1.1.1):
     - React
+  - RNColorMatrixImageFilters (4.0.0):
+    - React
   - RNDeviceInfo (0.21.5):
     - React
   - RNImageCropPicker (0.21.3):
@@ -257,6 +259,7 @@ DEPENDENCIES:
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
   - ReactNativePermissions (from `../node_modules/react-native-permissions`)
+  - RNColorMatrixImageFilters (from `../node_modules/react-native-color-matrix-image-filters`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
@@ -317,6 +320,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-intercom"
   ReactNativePermissions:
     :path: "../node_modules/react-native-permissions"
+  RNColorMatrixImageFilters:
+    :path: "../node_modules/react-native-color-matrix-image-filters"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNImageCropPicker:
@@ -366,6 +371,7 @@ SPEC CHECKSUMS:
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
   react-native-intercom: a8a5902058c14d7359bd1044d57fe409b0ed0df7
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
+  RNColorMatrixImageFilters: cf425050c778106f5f9844b69fc169758212b74d
   RNDeviceInfo: 568c5641057313b4912d08a7742ff0b2f753ed5c
   RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
   RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
@@ -373,6 +379,6 @@ SPEC CHECKSUMS:
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: 36e1eefa0fca0b328a79e3281892f224db2f6e43
+PODFILE CHECKSUM: f72a28dc777229390986fd0b035fd14fbf8c9e3a
 
 COCOAPODS: 1.5.3

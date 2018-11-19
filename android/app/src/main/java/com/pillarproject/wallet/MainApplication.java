@@ -41,6 +41,7 @@ import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
 import io.sentry.RNSentryPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import nativeShadow.NativeShadowPackage;
+import iyegoroff.RNColorMatrixImageFilters.RNColorMatrixImageFiltersPackage;
 
 // react-native-splash-screen >= 0.3.1
 
@@ -52,6 +53,7 @@ public class MainApplication extends Application implements ShareApplication, Re
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
+        new RNColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
         new RNSentryPackage(),
         new SvgPackage(),
