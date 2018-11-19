@@ -5,7 +5,6 @@ import { transparentize } from 'polished';
 import { BaseText, BoldText } from 'components/Typography';
 import { baseColors, fontSizes } from 'utils/variables';
 
-
 const MnemonicPhraseWrapper = styled.View`
   flex-direction: row;
   justify-content: space-around;
@@ -15,13 +14,6 @@ const MnemonicPhraseWrapper = styled.View`
   width: 100%;
   background-color: ${baseColors.electricBlue};
   border-radius: 12px;
-`;
-
-const Column = styled.View`
-  flex-direction: column;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  width: 100%;
 `;
 
 const MnemonicPhraseItem = styled.View`
@@ -62,17 +54,15 @@ const MnemonicPhrase = (props: Props) => {
 
   return (
     <MnemonicPhraseWrapper>
-      <Column>
-        {
-          mnemonicList.map((word, index) => (
-            <MnemonicPhraseItem key={`${word}+${index}`}>
-              <MnemonicPhraseIndex>{getIndex(index + 1)}</MnemonicPhraseIndex>
-              <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
-            </MnemonicPhraseItem>
-            ),
-          )
-        }
-      </Column>
+      {
+        mnemonicList.map((word, index) => (
+          <MnemonicPhraseItem key={`${word}+${index}`}>
+            <MnemonicPhraseIndex>{getIndex(index + 1)}</MnemonicPhraseIndex>
+            <MnemonicPhraseWord>{word}</MnemonicPhraseWord>
+          </MnemonicPhraseItem>
+          ),
+        )
+      }
     </MnemonicPhraseWrapper>
   );
 };
