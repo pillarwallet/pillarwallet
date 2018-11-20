@@ -2,19 +2,19 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { NEW_PROFILE, IMPORT_WALLET } from 'constants/navigationConstants';
+import { IMPORT_WALLET } from 'constants/navigationConstants';
 import { Wrapper, Container, Footer } from 'components/Layout';
 import { fontSizes } from 'utils/variables';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
 import ButtonText from 'components/ButtonText';
-import { resetWalletImportAction } from 'actions/walletActions';
+import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  resetWalletImport: Function,
+  navigateToNewWalletPage: Function,
 }
 
 type State = {
@@ -41,7 +41,7 @@ class Welcome extends React.Component<Props, State> {
   };
 
   loginAction = () => {
-    this.props.navigation.navigate(NEW_PROFILE);
+    this.props.navigateToNewWalletPage();
   };
 
   navigateToWalletImportPage = () => {
@@ -50,12 +50,8 @@ class Welcome extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { resetWalletImport } = this.props;
-    resetWalletImport();
-
     this.listeners = [
       this.props.navigation.addListener('willFocus', () => {
-        resetWalletImport();
         this.setState({ shouldAnimate: true });
       }),
       this.props.navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
@@ -90,8 +86,8 @@ class Welcome extends React.Component<Props, State> {
 
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  resetWalletImport: () => {
-    dispatch(resetWalletImportAction());
+  navigateToNewWalletPage: () => {
+    dispatch(navigateToNewWalletPageAction());
   },
 });
 
