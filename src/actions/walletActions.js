@@ -11,15 +11,15 @@ import {
   NEW_WALLET_CONFIRM_PIN,
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
-  SET_API_USER,
+  RESET_WALLET_IMPORT,
 } from 'constants/walletConstants';
 import {
-  NEW_PROFILE,
+  LEGAL_TERMS,
   PIN_CODE_CONFIRMATION,
-  SET_WALLET_PIN_CODE,
+  NEW_PROFILE,
 } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
-import { generateWordsToValidate } from 'utils/wallet';
+import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
@@ -42,7 +42,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
         type: IMPORT_WALLET,
         payload,
       });
-      navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -77,7 +77,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         type: IMPORT_WALLET,
         payload,
       });
-      navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE }));
+      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
     } catch (e) {
       dispatch({
         type: SET_WALLET_ERROR,
@@ -88,6 +88,15 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
         },
       });
     }
+  };
+};
+
+export const navigateToNewWalletPageAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: RESET_WALLET_IMPORT,
+    });
+    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   };
 };
 
@@ -106,7 +115,7 @@ const NUM_WORDS_TO_CHECK = 3;
  */
 export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
   return async (dispatch: Function) => {
-    mnemonicPhrase = mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+    mnemonicPhrase = generateMnemonicPhrase(mnemonicPhrase);
     const mnemonicList = mnemonicPhrase.split(' ');
     const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
     const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
@@ -118,10 +127,6 @@ export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
         shuffled: shuffledMnemonicPhrase,
         wordsToValidate,
       },
-    });
-    dispatch({
-      type: SET_API_USER,
-      payload: {},
     });
   };
 };
@@ -142,6 +147,6 @@ export const confirmPinForNewWalletAction = (pin: string) => {
       type: NEW_WALLET_CONFIRM_PIN,
       payload: pin,
     });
-    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
+    navigate(NavigationActions.navigate({ routeName: LEGAL_TERMS }));
   };
 };
