@@ -200,7 +200,7 @@ class ChatListScreen extends React.Component<Props, State> {
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     const filteredChats = (!query || query.trim() === '' || query.length < 2)
-      ? ''
+      ? sortedChats
       : sortedChats.filter((chat) => chat.username.toUpperCase().indexOf(query.toUpperCase()) !== -1);
 
     return (
@@ -233,7 +233,7 @@ class ChatListScreen extends React.Component<Props, State> {
           }
         >
           <FlatList
-            data={filteredChats || sortedChats}
+            data={filteredChats}
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
