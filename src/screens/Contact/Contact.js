@@ -28,7 +28,6 @@ const ContactWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin: 5px 20px 20px;
-  padding-top: 20px;
   padding-top: ${Platform.select({
     ios: '20px',
     android: '14px',
@@ -78,6 +77,7 @@ type Props = {
   fetchContactTransactions: (walletAddress: string, contactAddress: string, asset?: string) => Function,
   wallet: Object,
   chats: Object[],
+  session: Object,
 };
 
 type State = {
@@ -86,13 +86,18 @@ type State = {
 };
 
 class Contact extends React.Component<Props, State> {
+  isComponentMounted: boolean = false;
+  localContact: ?ApiUser;
+
   constructor(props: Props) {
     super(props);
-    const { navigation } = this.props;
+    const { navigation, contacts, session } = this.props;
     const contact = navigation.getParam('contact', {});
+    this.localContact = contacts.find(({ username }) => username === contact.username);
+    const profileImage = this.localContact ? this.localContact.profileImage : contact.profileImage;
     this.state = {
       isOptionsModalActive: false,
-      avatarRefreshed: !contact.profileImage,
+      avatarRefreshed: !profileImage || !session.isOnline,
     };
   }
 
@@ -100,24 +105,29 @@ class Contact extends React.Component<Props, State> {
     const {
       fetchContactTransactions,
       wallet,
-      navigation,
-      contacts,
       syncContact,
+      session,
     } = this.props;
-    const contact = navigation.getParam('contact', {});
+    this.isComponentMounted = true;
 
-    const localContact = contacts.find(({ username }) => username === contact.username);
-    if (localContact) {
+    const localContact = this.localContact; // eslint-disable-line
+    if (localContact && session.isOnline) {
       syncContact(localContact.id);
-      if (localContact.profileImage) {
-        const defaultImageCacheManager = ImageCacheManager();
-        defaultImageCacheManager
-          .deleteUrl(localContact.profileImage)
-          .then(() => this.setState({ avatarRefreshed: true }))
-          .catch(() => null);
-      }
       fetchContactTransactions(wallet.address, localContact.ethAddress);
+      if (!localContact.profileImage) { return; }
+
+      const defaultImageCacheManager = ImageCacheManager();
+      defaultImageCacheManager
+        .deleteUrl(localContact.profileImage, {
+          useQueryParamsInCacheKey: true,
+        })
+        .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
+        .catch(() => null);
     }
+  }
+
+  componentWillUnmount() {
+    this.isComponentMounted = false;
   }
 
   openOptionsModal = () => {
@@ -156,6 +166,7 @@ class Contact extends React.Component<Props, State> {
     } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
+    // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
@@ -235,10 +246,12 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   wallet: { data: wallet },
   chat: { data: { chats } },
+  session: { data: session },
 }) => ({
   contacts,
   wallet,
   chats,
+  session,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
