@@ -17,6 +17,8 @@ type Props = {
   pageInstructions?: string,
   showForgotButton?: boolean,
   pinError?: boolean,
+  flex: boolean,
+  customStyle?: Object,
 };
 
 type State = {
@@ -37,6 +39,7 @@ export default class PinCode extends React.Component<Props, State> {
     pageHeading: 'Enter Passcode',
     pageInstructions: 'Setup your Passcode',
     showForgotButton: true,
+    flex: true,
   };
 
   state = {
@@ -113,20 +116,23 @@ export default class PinCode extends React.Component<Props, State> {
   };
 
   render() {
-    const { showForgotButton } = this.props;
+    const { showForgotButton, flex, customStyle } = this.props;
     const numActiveDots = this.state.passCode.length;
     return (
       <React.Fragment>
         <PinDotsWrapperAnimated
-          flex={1}
-          style={{
-            transform: [{
+          flex={flex ? 1 : null}
+          style={[
+            {
+              transform: [{
                 translateX: this.state.errorShake.interpolate({
-                    inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
-                    outputRange: [0, -10, 10, -10, 10, -5, 5, 0],
+                  inputRange: [0, 0.08, 0.25, 0.41, 0.58, 0.75, 0.92, 1],
+                  outputRange: [0, -10, 10, -10, 10, -5, 5, 0],
                 }),
-            }],
-          }}
+              }],
+            },
+            customStyle,
+          ]}
         >
           <PinDots numAllDots={PASS_CODE_LENGTH} numActiveDots={numActiveDots} />
         </PinDotsWrapperAnimated>
