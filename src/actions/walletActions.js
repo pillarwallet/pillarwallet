@@ -11,7 +11,6 @@ import {
   NEW_WALLET_CONFIRM_PIN,
   IMPORT_WALLET_PRIVATE_KEY,
   IMPORT_WALLET_TWORDS_PHRASE,
-  SET_API_USER,
   RESET_WALLET_IMPORT,
 } from 'constants/walletConstants';
 import {
@@ -20,7 +19,7 @@ import {
   NEW_PROFILE,
 } from 'constants/navigationConstants';
 import shuffle from 'shuffle-array';
-import { generateWordsToValidate } from 'utils/wallet';
+import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
@@ -116,7 +115,7 @@ const NUM_WORDS_TO_CHECK = 3;
  */
 export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
   return async (dispatch: Function) => {
-    mnemonicPhrase = mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+    mnemonicPhrase = generateMnemonicPhrase(mnemonicPhrase);
     const mnemonicList = mnemonicPhrase.split(' ');
     const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
     const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
@@ -128,10 +127,6 @@ export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
         shuffled: shuffledMnemonicPhrase,
         wordsToValidate,
       },
-    });
-    dispatch({
-      type: SET_API_USER,
-      payload: {},
     });
   };
 };

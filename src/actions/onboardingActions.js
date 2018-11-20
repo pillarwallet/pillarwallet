@@ -5,7 +5,7 @@ import firebase from 'react-native-firebase';
 import { delay } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import ChatService from 'services/chat';
-import { getSaltedPin } from 'utils/wallet';
+import { generateMnemonicPhrase, getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
@@ -31,6 +31,7 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { saveDbAction } from './dbActions';
+import { generateWalletMnemonicAction } from './walletActions';
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
@@ -216,8 +217,10 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       payload: CHECKING_USERNAME,
     });
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
-    const mnemonicPhrase = mnemonic.original;
+    const mnemonicPhrase = generateMnemonicPhrase(mnemonic.original);
+    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
     await delay(200);
+
     let wallet = importedWallet;
     if (!wallet) {
       wallet = currentState.wallet.data.privateKey

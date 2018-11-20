@@ -14,7 +14,6 @@ import Button from 'components/Button';
 import Title from 'components/Title';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
-import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
@@ -107,10 +106,8 @@ type Props = {
   walletState: ?string,
   session: Object,
   apiUser: Object,
-  mnemonic: Object,
   retry?: boolean,
   registerOnBackend: Function,
-  generateWalletMnemonic: (mnemonicPhrase?: string) => Function,
 };
 
 type State = {
@@ -148,12 +145,7 @@ class NewProfile extends React.Component<Props, State> {
 
   handleSubmit = () => {
     Keyboard.dismiss();
-    const {
-      validateUserDetails,
-      apiUser,
-      generateWalletMnemonic,
-      mnemonic,
-    } = this.props;
+    const { validateUserDetails, apiUser } = this.props;
 
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
@@ -162,7 +154,6 @@ class NewProfile extends React.Component<Props, State> {
 
     const value = this._form.getValue();
     if (!value) return;
-    generateWalletMnemonic(mnemonic.original);
     validateUserDetails({ username: value.username });
   };
 
@@ -306,21 +297,17 @@ class NewProfile extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  wallet: { walletState, onboarding: { apiUser, mnemonic } },
+  wallet: { walletState, onboarding: { apiUser } },
   session: { data: session },
 }) => ({
   walletState,
   apiUser,
-  mnemonic,
   session,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   validateUserDetails: (user: Object) => dispatch(validateUserDetailsAction(user)),
   registerOnBackend: () => dispatch(registerOnBackendAction()),
-  generateWalletMnemonic: (mnemonicPhrase?: string) => {
-    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
-  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NewProfile);
