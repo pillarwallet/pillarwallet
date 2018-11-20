@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import MnemonicPhrase from 'components/MnemonicPhrase';
 import CheckPin from 'components/CheckPin';
@@ -62,14 +62,14 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       return (
         <Container>
           <Header title="backup phrase" onClose={this.handleScreenDismissal} />
-          <Wrapper regularPadding>
+          <ScrollWrapper regularPadding>
             <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
             <Paragraph light>
               Keep it secure as it&#39;s the only way to recover your account in an emergency.
               Don&#39;t email or screenshot it.
             </Paragraph>
             <MnemonicPhrase phrase={wallet.mnemonic} />
-          </Wrapper>
+          </ScrollWrapper>
         </Container>
       );
     }
