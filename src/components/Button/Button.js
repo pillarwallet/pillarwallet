@@ -25,6 +25,7 @@ type Props = {
   icon?: string,
   listItemButton?: boolean,
   alignTitleVertical?: boolean,
+  isSquare?: boolean,
 };
 
 const getTheme = (props: Props) => {
