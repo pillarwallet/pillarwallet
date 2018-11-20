@@ -2,50 +2,62 @@
 import * as React from 'react';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native/index';
 import Header from 'components/Header';
-import { Paragraph, TextLink } from 'components/Typography';
+import { Paragraph, TextLink, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
 import IFrameModal from 'components/Modals/IFrameModal';
-import { View } from 'react-native';
-import { fontSizes } from 'utils/variables';
-
+import { fontSizes, fontTrackings } from 'utils/variables';
+import SlideModal from 'components/Modals/SlideModal';
+import ButtonText from 'components/ButtonText';
+import { BACKUP_PHRASE } from 'constants/navigationConstants';
+import PrivateKeyModal from './PrivateKeyModal';
+import BackupPhraseModal from './BackupPhraseModal';
 
 type Props = {
   generateEncryptedWallet: () => Function,
   navigation: NavigationScreenProp<*>,
+  onboarding: Object,
 };
 
 type State = {
   userCheck1: boolean,
   userCheck2: boolean,
   userCheck3: boolean,
-  showTermsConditionsModal: boolean,
-  showPrivacyPolicyModal: boolean,
+  visibleModal: any,
+  scrollOffset?: any,
 };
+
+const CheckboxText = styled(BaseText)`
+  font-size: ${fontSizes.small}px;
+  margin-top: 2px;
+  letter-spacing: ${fontTrackings.small}px;
+  line-height: 20px;
+`;
+
+const ModalInnerWrapper = styled.ScrollView`
+  padding: 10px 16px 60px;
+`;
+
+const PRIVATE_KEY_MODAL = 'PRIVATE_KEY_MODAL';
+const BACKUP_PHRASE_MODAL = 'BACKUP_PHRASE_MODAL';
+const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
 
 class LegalTerms extends React.Component<Props, State> {
   state = {
     userCheck1: false,
     userCheck2: false,
     userCheck3: false,
-    showTermsConditionsModal: false,
-    showPrivacyPolicyModal: false,
+    visibleModal: null,
+    scrollOffset: null,
   };
 
   handleConfirm = () => {
     this.props.generateEncryptedWallet();
-  };
-
-  toggleTermsConditionsModal = () => {
-    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
-  };
-
-  togglePrivacyPolicyModal = () => {
-    this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
   };
 
   toggleCheckbox = (field: string) => {
@@ -53,13 +65,11 @@ class LegalTerms extends React.Component<Props, State> {
     if (field === 'userCheck1') {
       this.setState({
         userCheck1: !userCheck1,
-        userCheck3: false,
       });
     }
     if (field === 'userCheck2') {
       this.setState({
         userCheck2: !userCheck2,
-        userCheck3: false,
       });
     }
     if (field === 'userCheck3') {
@@ -69,85 +79,133 @@ class LegalTerms extends React.Component<Props, State> {
     }
   };
 
+  closeModals = () => {
+    this.setState({ visibleModal: null });
+  };
+
+  backupWallet = () => {
+    const { navigation } = this.props;
+    navigation.navigate(BACKUP_PHRASE);
+  };
+
+  handleOnScroll = event => {
+    this.setState({
+      scrollOffset: event.nativeEvent.contentOffset.y,
+    });
+  };
+
   render() {
     const {
       userCheck1,
       userCheck2,
       userCheck3,
-      showTermsConditionsModal,
-      showPrivacyPolicyModal,
+      visibleModal,
+      scrollOffset,
     } = this.state;
 
-    const userCanAcceptCheck3 = !(userCheck1 && userCheck2);
+    const { onboarding } = this.props;
+    const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3);
 
     return (
       <Container>
-        <Header title="review" onBack={() => this.props.navigation.goBack(null)} />
+        <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} />
         <Wrapper regularPadding>
-          <Paragraph style={{ marginBottom: 20 }}>By using the Pillar Wallet I understand that:</Paragraph>
+          <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
+            With great power comes great responsibility. Make sure you are aware of the following.
+          </Paragraph>
           <Checkbox
-            text="Pillar does not have access to my private keys."
             onPress={() => this.toggleCheckbox('userCheck1')}
-          />
+          >
+            <CheckboxText>
+              {'I’m happy to know that Pillar does not have access to my '}
+              <TextLink onPress={() => { this.setState({ visibleModal: PRIVATE_KEY_MODAL }); }}>
+                private key
+              </TextLink>
+            </CheckboxText>
+          </Checkbox>
 
           <Checkbox
-            text="The only way to recover my assets is to use the 12-word backup phrase."
             onPress={() => this.toggleCheckbox('userCheck2')}
-          />
+          >
+            <CheckboxText>
+              {'The only way to recover assets is to use the '}
+              <TextLink
+                onPress={() => { this.setState({ visibleModal: BACKUP_PHRASE_MODAL }); }}
+              >
+                 backup phrase
+              </TextLink>
+            </CheckboxText>
+          </Checkbox>
+
+          <Checkbox
+            onPress={() => this.toggleCheckbox('userCheck3')}
+          >
+            <CheckboxText>
+              {'I have read, understand, and agree to the '}
+              <TextLink
+                onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
+              >
+                 Terms of Use
+              </TextLink>
+            </CheckboxText>
+          </Checkbox>
 
         </Wrapper>
         <Footer>
-
-          <Checkbox
-            text="I have read, understand, and agree to the Terms of Use."
-            onPress={() => this.toggleCheckbox('userCheck3')}
-            disabled={userCanAcceptCheck3}
-          />
-
           <MultiButtonWrapper>
             <Button
               block
-              title="Confirm and Finish"
+              title="Finish"
               onPress={this.handleConfirm}
-              disabled={!userCheck1 || !userCheck2 || !userCheck3}
-              marginBottom="20px"
+              disabled={userCannotProceed}
             />
-            <View style={{
-              alignContent: 'center',
-              justifyContent: 'center',
-              flexDirection: 'row',
-            }}
-            >
-              <TextLink onPress={this.toggleTermsConditionsModal}>Terms & Conditions</TextLink>
-              <Paragraph style={{
-                marginRight: 4,
-                marginLeft: 4,
-                marginBottom: 0,
-                fontSize: fontSizes.small,
-              }}
-              >
-                and
-              </Paragraph>
-              <TextLink onPress={this.togglePrivacyPolicyModal}>Privacy Policy</TextLink>
-            </View>
+            {!onboarding.importedWallet &&
+            <ButtonText
+              buttonText="Backup wallet"
+              onPress={this.backupWallet}
+              fontSize={fontSizes.medium}
+              wrapperStyle={{ marginTop: 20 }}
+            />}
           </MultiButtonWrapper>
         </Footer>
 
         <IFrameModal
-          isVisible={showTermsConditionsModal}
-          modalHide={this.toggleTermsConditionsModal}
+          isVisible={visibleModal === TERMS_OF_USE_MODAL}
+          modalHide={this.closeModals}
           uri="https://pillarproject.io/en/legal/terms-of-use/"
         />
 
-        <IFrameModal
-          isVisible={showPrivacyPolicyModal}
-          modalHide={this.togglePrivacyPolicyModal}
-          uri="https://pillarproject.io/en/legal/privacy/"
-        />
+        <SlideModal
+          title="private key"
+          isVisible={visibleModal === PRIVATE_KEY_MODAL}
+          onModalHide={this.closeModals}
+          fullScreen
+          showHeader
+          scrollOffset={scrollOffset}
+        >
+          <ModalInnerWrapper onScroll={this.handleOnScroll}>
+            <PrivateKeyModal />
+          </ModalInnerWrapper>
+        </SlideModal>
+
+        <SlideModal
+          title="backup phrase"
+          isVisible={visibleModal === BACKUP_PHRASE_MODAL}
+          onModalHide={this.closeModals}
+          fullScreen
+          showHeader
+        >
+          <ModalInnerWrapper onScroll={this.handleOnScroll}>
+            <BackupPhraseModal />
+          </ModalInnerWrapper>
+        </SlideModal>
       </Container>
     );
   }
 }
+
+
+const mapStateToProps = ({ wallet: { onboarding } }) => ({ onboarding });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   generateEncryptedWallet: () => {
@@ -155,4 +213,4 @@ const mapDispatchToProps = (dispatch: Function) => ({
   },
 });
 
-export default connect(null, mapDispatchToProps)(LegalTerms);
+export default connect(mapStateToProps, mapDispatchToProps)(LegalTerms);

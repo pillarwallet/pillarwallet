@@ -5,12 +5,10 @@ import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, spacing } from 'utils/variables';
 import { Container, Footer, Wrapper } from 'components/Layout';
-import { BaseText, Paragraph } from 'components/Typography';
-import { LEGAL_TERMS, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import { Paragraph } from 'components/Typography';
+import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
-import Spinner from 'components/Spinner';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import Title from 'components/Title';
@@ -22,20 +20,11 @@ const { Form } = t.form;
 const MIN_USERNAME_LENGTH = 3;
 const MAX_USERNAME_LENGTH = 20;
 
+const IntroParagraph = styled(Paragraph)`
+  margin: 10px 0 50px;
+`;
+
 const LoginForm = styled(Form)`
-  margin: 10px 0 40px;
-`;
-
-const LoadingMessageWrapper = styled.View`
-  align-items: center;
-  flex-direction: row;
-  margin: ${spacing.rhythm}px 0;
-  width: 100%;
-`;
-
-const LoadingMessage = styled(BaseText)`
-  color: ${baseColors.darkGray};
-  margin-left: 10px;
 `;
 
 function InputTemplate(locals) {
@@ -58,6 +47,9 @@ function InputTemplate(locals) {
       id={locals.label}
       label={locals.label}
       inputProps={inputProps}
+      inputType="secondary"
+      noBorder
+      loading={locals.config.isLoading}
     />
   );
 }
@@ -89,12 +81,15 @@ const formStructure = t.struct({
 
 const PROFILE_IMAGE_WIDTH = 144;
 
-const getDefaultFormOptions = (inputDisabled: boolean) => ({
+const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => ({
   fields: {
     username: {
+      auto: 'placeholders',
+      placeholder: 'Username',
       template: InputTemplate,
       maxLength: MAX_USERNAME_LENGTH,
       config: {
+        isLoading,
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
@@ -130,7 +125,6 @@ class NewProfile extends React.Component<Props, State> {
     const { apiUser } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
     const inputDisabled = !!(apiUser && apiUser.id);
-
     this.state = {
       value,
       formOptions: getDefaultFormOptions(inputDisabled),
@@ -150,11 +144,14 @@ class NewProfile extends React.Component<Props, State> {
   };
 
   handleSubmit = () => {
+    Keyboard.dismiss();
     const { validateUserDetails, apiUser } = this.props;
+
     if (apiUser && apiUser.id) {
       this.goToNextScreen();
       return;
     }
+
     const value = this._form.getValue();
     if (!value) return;
     validateUserDetails({ username: value.username });
@@ -170,24 +167,58 @@ class NewProfile extends React.Component<Props, State> {
           username: {
             hasError: { $set: true },
             error: { $set: 'Username taken' },
+            config: {
+              isLoading: { $set: false },
+            },
           },
         },
       });
       this.setState({ formOptions: options }); // eslint-disable-line
     }
+
+    if (walletState === CHECKING_USERNAME) {
+      const options = t.update(this.state.formOptions, {
+        fields: {
+          username: {
+            config: {
+              isLoading: { $set: true },
+            },
+          },
+        },
+      });
+      this.setState({ formOptions: options }); // eslint-disable-line
+    }
+
     if (walletState === USERNAME_OK) {
+      const options = t.update(this.state.formOptions, {
+        fields: {
+          username: {
+            config: {
+              isLoading: { $set: false },
+            },
+          },
+        },
+      });
+      this.setState({ formOptions: options }); // eslint-disable-line
       this.goToNextScreen();
     }
   }
 
   goToNextScreen() {
-    const { navigation, retry, registerOnBackend } = this.props;
+    const {
+      navigation,
+      retry,
+      registerOnBackend,
+      apiUser,
+    } = this.props;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
       return;
     }
-    navigation.navigate(LEGAL_TERMS);
+    const navigationParams = {};
+    if (apiUser && apiUser.id) navigationParams.returningUser = true;
+    navigation.navigate(SET_WALLET_PIN_CODE, navigationParams);
   }
 
   renderChooseUsernameScreen() {
@@ -201,36 +232,33 @@ class NewProfile extends React.Component<Props, State> {
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
-      <Wrapper>
-        <Header
-          title="choose username"
-          onBack={retry ? undefined : () => this.props.navigation.goBack(PIN_CODE_CONFIRMATION)}
-        />
-        <Wrapper regularPadding>
-          <LoginForm
-            innerRef={node => { this._form = node; }}
-            type={formStructure}
-            options={formOptions}
-            value={value}
-            onChange={this.handleChange}
+      <React.Fragment>
+        <Wrapper>
+          <Header
+            title="let's get started"
+            onBack={retry ? undefined : () => this.props.navigation.goBack()}
           />
-          {isCheckingUsernameAvailability &&
-          <LoadingMessageWrapper>
-            <Spinner />
-            <LoadingMessage>Checking username availability…</LoadingMessage>
-          </LoadingMessageWrapper>
-          }
+          <Wrapper regularPadding>
+            <IntroParagraph light small>
+              Choose your unique username now. It cannot be changed in future.
+            </IntroParagraph>
+            <LoginForm
+              innerRef={node => { this._form = node; }}
+              type={formStructure}
+              options={formOptions}
+              value={value}
+              onChange={this.handleChange}
+            />
+          </Wrapper>
         </Wrapper>
         <Footer>
           <Button
-            small
-            flexRight
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
           />
         </Footer>
-      </Wrapper>
+      </React.Fragment>
     );
   }
 
@@ -258,6 +286,7 @@ class NewProfile extends React.Component<Props, State> {
 
   render() {
     const { apiUser } = this.props;
+
     return (
       <Container>
         {!apiUser.walletId && this.renderChooseUsernameScreen()}
