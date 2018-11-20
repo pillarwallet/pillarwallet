@@ -56,31 +56,6 @@ export const themes = {
   },
 };
 
-export const getTheme = (props) => {
-  if (props.disabledTransparent) {
-    return themes.disabledTransparent;
-  }
-  if (props.disabled) {
-    return themes.disabled;
-  }
-  if (props.secondary && props.danger) {
-    return themes.secondaryDanger;
-  }
-  if (props.danger) {
-    return themes.danger;
-  }
-  if (props.secondary) {
-    return themes.secondary;
-  }
-  if (props.primaryInverted) {
-    return themes.primaryInverted;
-  }
-  if (props.dangerInverted) {
-    return themes.dangerInverted;
-  }
-  return themes.primary;
-};
-
 export const ButtonIcon = styled(Icon)`
   font-size: ${fontSizes.medium};
   margin-right: 5px;
@@ -126,7 +101,7 @@ export const ButtonWrapper = styled.TouchableOpacity`
   margin-bottom: ${props => props.marginBottom || '0px'};
   margin-left: ${props => props.marginLeft || '0px'};
   margin-right: ${props => props.marginRight || '0px'};
-  border-radius: 40;
+  border-radius: ${({ isSquare }) => isSquare ? 0 : 40};
   width: ${props => props.block ? '100%' : 'auto'};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
