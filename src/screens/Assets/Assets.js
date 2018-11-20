@@ -68,8 +68,10 @@ type State = {
   forceHideRemoval: boolean,
 }
 
+const IS_IOS = Platform.OS === 'ios';
+
 const smallScreen = () => {
-  if (Platform.OS === 'ios') {
+  if (IS_IOS) {
     return Dimensions.get('window').width * PixelRatio.get() < 650;
   }
   return Dimensions.get('window').width < 410;
@@ -227,7 +229,7 @@ class AssetsScreen extends React.Component<Props, State> {
     } = asset;
 
     const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
-    const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}`;
+    const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
     const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
     const formattedBalanceInFiat = formatMoney(balanceInFiat);
     const displayAmount = formatMoney(balance, 4);
@@ -324,7 +326,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <View
         style={{
-          marginTop: Platform.OS === 'ios' ? -8 : -4,
+          marginTop: IS_IOS ? -8 : -4,
           height: 0,
           width: '100%',
           backgroundColor: 'transparent',
