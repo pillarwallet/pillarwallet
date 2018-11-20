@@ -162,6 +162,8 @@ export const startListeningOnOpenNotificationAction = () => {
         lastActiveScreenParams: navigationParams,
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
+        const backTo = null;
+        
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
         }
@@ -170,6 +172,7 @@ export const startListeningOnOpenNotificationAction = () => {
         }
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
+          backTo = CHAT_LIST;
         }
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
@@ -179,7 +182,7 @@ export const startListeningOnOpenNotificationAction = () => {
             routeName,
             params: {
               ...navigationParams,
-              backTo: type === SIGNAL ? CHAT_LIST : null,
+              backTo,
             },
           }),
         });
