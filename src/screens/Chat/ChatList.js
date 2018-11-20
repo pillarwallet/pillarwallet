@@ -260,8 +260,6 @@ const mapStateToProps = ({
   contacts,
   chats,
   notifications,
-  query: '',
-  filteredChats: null,
 });
 
 const mapDispatchToProps = (dispatch) => ({
