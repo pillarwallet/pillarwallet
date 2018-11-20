@@ -3,6 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import {
   FlatList,
+  ListView,
   Animated,
   Keyboard,
   Image,
@@ -11,6 +12,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import { List } from 'native-base';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
@@ -26,6 +28,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
 import SearchBar from 'components/SearchBar';
+import Button from 'components/Button/Button'
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
@@ -144,7 +147,7 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
-  renderContact = ({ item }) => (
+  renderContact = (item) => (
     <ListItemWithImage
       label={item.username}
       onPress={this.handleContactCardPress(item)}
@@ -171,6 +174,9 @@ class PeopleScreen extends React.Component<Props, State> {
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
+
+    const listViewDS = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2 });
+    const sortedLocalContactsDS = listViewDS.cloneWithRows(sortedLocalContacts);
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -226,25 +232,37 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !!sortedLocalContacts.length &&
-          <FlatList
-            data={sortedLocalContacts}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderContact}
-            initialNumToRender={8}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-            onScroll={() => Keyboard.dismiss()}
-            contentContainerStyle={{
-              paddingVertical: spacing.rhythm,
-              paddingTop: 0,
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchInviteNotifications } = this.props;
-                  fetchInviteNotifications();
-                }}
-              />
+          <List
+            disableRightSwipe
+            rightOpenValue={-210}
+            dataSource={sortedLocalContactsDS}
+            renderRow={this.renderContact}
+            renderRightHiddenRow={(data, secId, rowId, rowMap) =>
+              <styled.ConnectionRowActions>
+                <Button
+                  alignTitleVertical
+                  small
+                  onPress={() => alert('delete')}
+                  title="Mute"
+                  icon="mute"
+                />
+                <Button
+                  alignTitleVertical
+                  small
+                  disabled
+                  onPress={() => alert('delete')}
+                  title="Remove"
+                  icon="remove"
+                />
+                <Button
+                  alignTitleVertical
+                  danger
+                  small
+                  onPress={() => alert('delete')}
+                  title="Block"
+                  icon="warning"
+                />
+              </styled.ConnectionRowActions>
             }
           />
         }

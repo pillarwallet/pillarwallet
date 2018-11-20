@@ -1,6 +1,6 @@
-import { Animated } from 'react-native';
+import { Animated, View } from 'react-native';
 import styled from 'styled-components/native';
-import { Icon } from 'native-base';
+import { Button, Icon } from 'native-base';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
@@ -64,4 +64,19 @@ export const EmptyStateBGWrapper = styled.View`
   left: 0;
   width: 100%;
   padding: 0 20px 20px;
+`;
+
+export const ConnectionRowActions = styled.View`
+  flex-direction: row;
+`;
+
+export const ConnectionActionButton = styled(Button)`
+  flex: 1;
+  flex-direction: column;
+  height: 78px;
+`;
+
+export const ConnectionActionLabel = styled(BaseText)`
+  color: ${UIColors.white};
+  font-size: ${fontSizes.small};
 `;
