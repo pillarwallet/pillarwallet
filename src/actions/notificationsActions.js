@@ -163,7 +163,7 @@ export const startListeningOnOpenNotificationAction = () => {
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         let backTo = null;
-        
+
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
         }
