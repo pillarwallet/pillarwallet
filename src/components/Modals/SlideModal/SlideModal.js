@@ -26,6 +26,7 @@ type Props = {
   eventDetail?: boolean,
   eventType?: string,
   eventData?: ?Object,
+  scrollOffset?: any,
 };
 
 const themes = {
@@ -149,6 +150,7 @@ export default class SlideModal extends React.Component<Props, *> {
       backgroundColor,
       avoidKeyboard,
       eventDetail,
+      scrollOffset,
     } = this.props;
 
     const theme = getTheme(this.props);
@@ -217,6 +219,7 @@ export default class SlideModal extends React.Component<Props, *> {
         onBackButtonPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
+        scrollOffset={scrollOffset}
         animationIn="slideInUp"
         animationOut="slideOutDown"
         swipeDirection="down"
