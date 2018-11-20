@@ -285,9 +285,9 @@ class AddToken extends React.Component<Props, State> {
       const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
 
       const actionBlock = isAdded
-        ? <TokenStatus>In your wallet</TokenStatus>
+        ? <TokenStatus>Added</TokenStatus>
         : (<Button
-          title="Add to wallet"
+          title="Add"
           onPress={() => this.addTokenToWallet(asset)}
           keyboardShouldPersistTaps="always"
           small

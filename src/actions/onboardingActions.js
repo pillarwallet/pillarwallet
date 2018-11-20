@@ -6,7 +6,7 @@ import { delay } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import ChatService from 'services/chat';
-import { getSaltedPin } from 'utils/wallet';
+import { generateMnemonicPhrase, getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
@@ -32,6 +32,7 @@ import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { saveDbAction } from './dbActions';
+import { generateWalletMnemonicAction } from './walletActions';
 
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
@@ -40,7 +41,7 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   await firebase.messaging().requestPermission().catch(() => { });
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
-  await Intercom.sendTokenToIntercom(fcmToken);
+  await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
   const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
@@ -205,10 +206,7 @@ export const registerOnBackendAction = () => {
     }
     await delay(1000);
 
-    const {
-      registrationSucceed,
-    } = await getTokenWalletAndRegister(api, user, dispatch);
-
+    const { registrationSucceed } = await getTokenWalletAndRegister(api, user, dispatch);
     if (!registrationSucceed) { return; }
 
     navigateToAppFlow();
@@ -223,8 +221,10 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       payload: CHECKING_USERNAME,
     });
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
-    const mnemonicPhrase = mnemonic.original;
+    const mnemonicPhrase = generateMnemonicPhrase(mnemonic.original);
+    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
     await delay(200);
+
     let wallet = importedWallet;
     if (!wallet) {
       wallet = currentState.wallet.data.privateKey

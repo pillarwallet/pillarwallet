@@ -2,21 +2,23 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { ONBOARDING_HOME } from 'constants/navigationConstants';
+import { IMPORT_WALLET } from 'constants/navigationConstants';
 import { Wrapper, Container, Footer } from 'components/Layout';
+import { fontSizes } from 'utils/variables';
 import Button from 'components/Button';
 import AnimatedBackground from 'components/AnimatedBackground';
-import IFrameModal from 'components/Modals/IFrameModal';
 import ButtonText from 'components/ButtonText';
+import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import { CachedImage } from 'react-native-cached-image';
+import { connect } from 'react-redux';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  navigateToNewWalletPage: Function,
 }
 
 type State = {
   shouldAnimate: boolean,
-  showTermsConditionsModal: boolean
 }
 
 const pillarLogoSource = require('assets/images/landing-pillar-logo.png');
@@ -36,20 +38,22 @@ class Welcome extends React.Component<Props, State> {
 
   state = {
     shouldAnimate: true,
-    showTermsConditionsModal: false,
   };
 
   loginAction = () => {
-    this.props.navigation.navigate(ONBOARDING_HOME);
+    this.props.navigateToNewWalletPage();
   };
 
-  toggleTermsConditionsModal = () => {
-    this.setState({ showTermsConditionsModal: !this.state.showTermsConditionsModal });
-  }
+  navigateToWalletImportPage = () => {
+    const { navigation } = this.props;
+    navigation.navigate(IMPORT_WALLET);
+  };
 
   componentDidMount() {
     this.listeners = [
-      this.props.navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
+      this.props.navigation.addListener('willFocus', () => {
+        this.setState({ shouldAnimate: true });
+      }),
       this.props.navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
     ];
   }
@@ -61,7 +65,6 @@ class Welcome extends React.Component<Props, State> {
   }
 
   render() {
-    const { showTermsConditionsModal } = this.state;
     return (
       <Container>
         <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
@@ -69,17 +72,23 @@ class Welcome extends React.Component<Props, State> {
           <PillarLogo source={pillarLogoSource} />
         </Wrapper>
         <Footer>
-          <Button block marginBottom="20px" onPress={this.loginAction} title="Get Started" />
-          <ButtonText buttonText="Terms and Conditions" onPress={this.toggleTermsConditionsModal} />
+          <Button block marginBottom="20px" onPress={this.loginAction} title="New wallet" />
+          <ButtonText
+            buttonText="Restore wallet"
+            onPress={this.navigateToWalletImportPage}
+            fontSize={fontSizes.medium}
+          />
         </Footer>
-        <IFrameModal
-          isVisible={showTermsConditionsModal}
-          modalHide={this.toggleTermsConditionsModal}
-          uri="https://pillarproject.io/en/legal/terms-of-use/"
-        />
       </Container>
     );
   }
 }
 
-export default Welcome;
+
+const mapDispatchToProps = (dispatch: Function) => ({
+  navigateToNewWalletPage: () => {
+    dispatch(navigateToNewWalletPageAction());
+  },
+});
+
+export default connect(null, mapDispatchToProps)(Welcome);
