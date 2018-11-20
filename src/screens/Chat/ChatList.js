@@ -37,12 +37,7 @@ type Props = {
 }
 
 type State = {
-  showChat: boolean,
-  receiver: string,
-  receiverAvatar: string,
-  chatList: Array<Object>,
   query: string,
-  filteredChats: ?Object[],
   forceClose: boolean,
 }
 
@@ -69,12 +64,7 @@ class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
-    showChat: false,
-    receiver: '',
-    receiverAvatar: '',
-    chatList: [],
     query: '',
-    filteredChats: null,
     forceClose: false,
   };
 
@@ -111,16 +101,8 @@ class ChatListScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(NEW_CHAT);
   };
 
-  handleUserSearch = (query: string, sortedChats: Object) => {
-    if (!query || query.trim() === '' || query.length < 2) {
-      this.setState({ filteredChats: null, query });
-      return;
-    }
-
-    const filteredChats = sortedChats
-      .filter((chat) => chat.username.toUpperCase().indexOf(query.toUpperCase()) !== -1);
-
-    this.setState({ filteredChats, query });
+  handleUserSearch = (query: string) => {
+    this.setState({ query });
   };
 
   renderSwipeoutBtn = (username: string, unreadCount?: number) => {
@@ -214,9 +196,12 @@ class ChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats } = this.props;
-    const { query, filteredChats } = this.state;
+    const { query } = this.state;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
+    const filteredChats = (!query || query.trim() === '' || query.length < 2)
+      ? ''
+      : sortedChats.filter((chat) => chat.username.toUpperCase().indexOf(query.toUpperCase()) !== -1);
 
     return (
       <Container>
