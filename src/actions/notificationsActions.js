@@ -162,7 +162,7 @@ export const startListeningOnOpenNotificationAction = () => {
         lastActiveScreenParams: navigationParams,
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
-        const backTo = null;
+        let backTo = null;
         
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
