@@ -15,6 +15,8 @@ import { fontSizes, fontTrackings } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
 import { BACKUP_PHRASE } from 'constants/navigationConstants';
+import PrivateKeyModal from './PrivateKeyModal';
+import BackupPhraseModal from './BackupPhraseModal';
 
 type Props = {
   generateEncryptedWallet: () => Function,
@@ -181,61 +183,20 @@ class LegalTerms extends React.Component<Props, State> {
           showHeader
           scrollOffset={scrollOffset}
         >
-          <ModalInnerWrapper
-            onScroll={this.handleOnScroll}
-          >
-            <Paragraph small>
-              When you create an account with Pillar, you are generating a cryptographic set of numbers: your private
-              key and your public key (address).
-            </Paragraph>
-            <Paragraph small>
-              Your public address can/should be shared and is how you transact with other individuals on the blockchain.
-            </Paragraph>
-            <Paragraph small>
-              Your private key should remain private and secure as it provides complete control over your wallet and all
-              the funds stored within.
-            </Paragraph>
-            <Paragraph small>
-              The handling of your private key(s) happens entirely on your device and is stored locally.
-              Pillar does not have access to it. We never transmit, receive or store your private key or pin code.
-            </Paragraph>
-            <Paragraph small>
-              In the Pillar wallet, your private key is represented by your backup phrase.
-              If you lose your backup phrase, it is gone forever.
-            </Paragraph>
-            <Paragraph small>
-              Do not lose it or share it with anyone.
-            </Paragraph>
+          <ModalInnerWrapper onScroll={this.handleOnScroll}>
+            <PrivateKeyModal />
           </ModalInnerWrapper>
         </SlideModal>
 
         <SlideModal
-          title="Backup phrase"
+          title="backup phrase"
           isVisible={visibleModal === BACKUP_PHRASE_MODAL}
           onModalHide={this.closeModals}
           fullScreen
           showHeader
         >
-          <ModalInnerWrapper
-            onScroll={this.handleOnScroll}
-          >
-            <Paragraph small>
-              Your wallet private key is represented and secured by a 12 word backup phrase.
-            </Paragraph>
-            <Paragraph small>
-              It is stored locally on your device. Pillar does not have access to it.
-            </Paragraph>
-            <Paragraph small>
-              Keep your backup phrase safe. If you lose it, Pillar will not be able to recover it for you.
-            </Paragraph>
-            <Paragraph small>
-              Do NOT just store it on your computer. Print it out on a piece of paper or save it to a USB drive.
-              Consider the risk of flood or fire. Multiple secure copies are recommended.
-            </Paragraph>
-            <Paragraph small>
-              Do not store your backup phrase in Dropbox, Google Drive, or other cloud storage.
-              If that account is compromised, your funds can be stolen.
-            </Paragraph>
+          <ModalInnerWrapper onScroll={this.handleOnScroll}>
+            <BackupPhraseModal />
           </ModalInnerWrapper>
         </SlideModal>
       </Container>
