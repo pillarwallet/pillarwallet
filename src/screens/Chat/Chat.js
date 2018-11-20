@@ -322,7 +322,13 @@ class ChatScreen extends React.Component<Props, State> {
     } = this.props;
     getExistingChats();
     resetUnread(this.state.contact.username);
-    navigation.goBack(null);
+
+    const { backTo } = navigation.state.params;
+    if (backTo) {
+      navigation.navigate(backTo);
+    } else {
+      navigation.goBack(null);
+    }
   };
 
   handleLoadEarlier = () => {
@@ -344,7 +350,7 @@ class ChatScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     const { contact } = this.state;
     navigation.navigate(CONTACT, { contact });
-  }
+  };
 
   renderCustomAvatar = () => {
     const { contact } = this.state;
@@ -359,7 +365,7 @@ class ChatScreen extends React.Component<Props, State> {
         }}
       />
     );
-  }
+  };
 
   renderAvatar = () => {
     const { contact } = this.state;

@@ -20,7 +20,7 @@ import {
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -162,6 +162,8 @@ export const startListeningOnOpenNotificationAction = () => {
         lastActiveScreenParams: navigationParams,
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
+        let backTo = null;
+
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
         }
@@ -170,6 +172,7 @@ export const startListeningOnOpenNotificationAction = () => {
         }
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
+          backTo = CHAT_LIST;
         }
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
@@ -177,7 +180,10 @@ export const startListeningOnOpenNotificationAction = () => {
           params: {},
           action: NavigationActions.navigate({
             routeName,
-            params: navigationParams,
+            params: {
+              ...navigationParams,
+              backTo,
+            },
           }),
         });
         navigate(navigateToAppAction);
