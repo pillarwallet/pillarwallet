@@ -14,86 +14,23 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
-import styled from 'styled-components/native';
-import { Icon } from 'native-base';
 import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
-import { BaseText } from 'components/Typography';
-import NotificationCircle from 'components/NotificationCircle';
 import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
 
-const ConnectionRequestBanner = styled.TouchableHighlight`
-  height: 60px;
-  padding-left: 30px;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-  border-color: ${UIColors.defaultBorderColor};
-  align-items: center;
-  margin-bottom: 9px;
-  flex-direction: row;
-`;
-
-const HeaderWrapper = styled.View`
-  z-index: 20;
-  background: ${UIColors.defaultBackgroundColor};
-`;
-
-const FullScreenOverlayWrapper = styled.TouchableOpacity`
-  z-index: 10;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-`;
-
-const FullScreenOverlay = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,.6);
-`;
-
-const AnimatedFullScreenOverlay = Animated.createAnimatedComponent(FullScreenOverlay);
-
-const ConnectionRequestBannerText = styled(BaseText)`
-  font-size: ${fontSizes.medium};
-`;
-
-const ConnectionRequestBannerIcon = styled(Icon)`
-  font-size: ${fontSizes.medium};
-  color: ${baseColors.darkGray};
-  margin-left: auto;
-  margin-right: ${spacing.rhythm}px;
-`;
-
-const ConnectionRequestNotificationCircle = styled(NotificationCircle)`
-  margin-left: 10px;
-`;
-
-const EmptyStateBGWrapper = styled.View`
-  flex-direction: row;
-  justify-content: flex-start;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 0 20px 20px;
-`;
+import * as styled from './styles';
 
 const MIN_QUERY_LENGTH = 2;
 
@@ -237,7 +174,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <HeaderWrapper>
+        <styled.HeaderWrapper>
           <Header title="people" />
           <Wrapper zIndex={100} regularPadding>
             <SearchBar
@@ -252,31 +189,31 @@ class PeopleScreen extends React.Component<Props, State> {
               marginTop={15}
             />
           </Wrapper>
-        </HeaderWrapper>
+        </styled.HeaderWrapper>
         {searchIsFocused && !inSearchMode &&
-          <FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
-            <AnimatedFullScreenOverlay
+          <styled.FullScreenOverlayWrapper onPress={this.handleSearchBlur}>
+            <styled.AnimatedFullScreenOverlay
               style={{
                 opacity: fullScreenOverlayOpacity,
               }}
             />
-          </FullScreenOverlayWrapper>
+          </styled.FullScreenOverlayWrapper>
         }
         {!inSearchMode && !!pendingConnectionRequests &&
-          <ConnectionRequestBanner
+          <styled.ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
             underlayColor={baseColors.lightGray}
           >
             <React.Fragment>
-              <ConnectionRequestBannerText>
+              <styled.ConnectionRequestBannerText>
                 Connection requests
-              </ConnectionRequestBannerText>
-              <ConnectionRequestNotificationCircle>
+              </styled.ConnectionRequestBannerText>
+              <styled.ConnectionRequestNotificationCircle>
                 {pendingConnectionRequests}
-              </ConnectionRequestNotificationCircle>
-              <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
+              </styled.ConnectionRequestNotificationCircle>
+              <styled.ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
             </React.Fragment>
-          </ConnectionRequestBanner>
+          </styled.ConnectionRequestBanner>
         }
 
         {inSearchMode && contactState === FETCHED && usersFound &&
@@ -326,9 +263,9 @@ class PeopleScreen extends React.Component<Props, State> {
 
             {!inSearchMode && !sortedLocalContacts.length &&
               <Wrapper center fullScreen style={{ paddingBottom: 100 }}>
-                <EmptyStateBGWrapper>
+                <styled.EmptyStateBGWrapper>
                   <Image source={esBackground} />
-                </EmptyStateBGWrapper>
+                </styled.EmptyStateBGWrapper>
                 <EmptyStateParagraph
                   title="Nobody is here"
                   bodyText="Start building your connection list by inviting friends or by searching for someone"
