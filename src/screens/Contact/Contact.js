@@ -87,13 +87,14 @@ type State = {
 
 class Contact extends React.Component<Props, State> {
   isComponentMounted: boolean = false;
+  localContact: ?ApiUser;
 
   constructor(props: Props) {
     super(props);
     const { navigation, contacts, session } = this.props;
     const contact = navigation.getParam('contact', {});
-    const localContact = contacts.find(({ username }) => username === contact.username);
-    const profileImage = localContact ? localContact.profileImage : contact.profileImage;
+    this.localContact = contacts.find(({ username }) => username === contact.username);
+    const profileImage = this.localContact ? this.localContact.profileImage : contact.profileImage;
     this.state = {
       isOptionsModalActive: false,
       avatarRefreshed: !profileImage || !session.isOnline,
@@ -104,15 +105,12 @@ class Contact extends React.Component<Props, State> {
     const {
       fetchContactTransactions,
       wallet,
-      navigation,
-      contacts,
       syncContact,
       session,
     } = this.props;
     this.isComponentMounted = true;
-    const contact = navigation.getParam('contact', {});
 
-    const localContact = contacts.find(({ username }) => username === contact.username);
+    const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
       fetchContactTransactions(wallet.address, localContact.ethAddress);
@@ -168,6 +166,7 @@ class Contact extends React.Component<Props, State> {
     } = this.props;
     const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
+    // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
