@@ -80,13 +80,6 @@ class ImportWallet extends React.Component<Props, State> {
     inputEnabled: false,
   };
 
-  constructor(props: Props) {
-    super(props);
-    props.navigation.setParams({
-      handleImportSubmit: this.handleImportSubmit,
-    });
-  }
-
   physicalBackAction = () => {
     this.handleBackAction();
     return true;
@@ -279,7 +272,7 @@ class ImportWallet extends React.Component<Props, State> {
         </ScrollWrapper>
         <Footer>
           <FooterWrapper>
-            <Button title="Restore wallet" onPress={() => this.props.navigation.state.params.handleImportSubmit()} />
+            <Button title="Restore wallet" onPress={this.handleImportSubmit} />
           </FooterWrapper>
         </Footer>
         <QRCodeScanner

@@ -215,7 +215,7 @@ class TextInput extends React.Component<Props, State> {
             style={{
               fontSize: inputType.fontSize,
               width: viewWidth,
-              paddingRight: inputProps.multiline ? 58 + additionalRightPadding : 14 + additionalRightPadding,
+              paddingRight: (inputProps.multiline ? 58 : 14) + additionalRightPadding,
               paddingTop: inputProps.multiline ? 10 : 0,
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
             }}

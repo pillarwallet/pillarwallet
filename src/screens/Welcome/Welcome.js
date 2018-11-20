@@ -44,7 +44,7 @@ class Welcome extends React.Component<Props, State> {
     this.props.navigation.navigate(NEW_PROFILE);
   };
 
-  toImportWallet = () => {
+  navigateToWalletImportPage = () => {
     const { navigation } = this.props;
     navigation.navigate(IMPORT_WALLET);
   };
@@ -79,7 +79,7 @@ class Welcome extends React.Component<Props, State> {
           <Button block marginBottom="20px" onPress={this.loginAction} title="New wallet" />
           <ButtonText
             buttonText="Restore wallet"
-            onPress={this.toImportWallet}
+            onPress={this.navigateToWalletImportPage}
             fontSize={fontSizes.medium}
           />
         </Footer>

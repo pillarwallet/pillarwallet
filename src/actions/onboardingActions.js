@@ -39,7 +39,7 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   await firebase.messaging().requestPermission().catch(() => { });
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
-  await Intercom.sendTokenToIntercom(fcmToken);
+  await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
   const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
@@ -201,10 +201,7 @@ export const registerOnBackendAction = () => {
     }
     await delay(1000);
 
-    const {
-      registrationSucceed,
-    } = await getTokenWalletAndRegister(api, user, dispatch);
-
+    const { registrationSucceed } = await getTokenWalletAndRegister(api, user, dispatch);
     if (!registrationSucceed) { return; }
 
     navigateToAppFlow();

@@ -92,14 +92,9 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
   };
 };
 
-export const resetWalletImportAction = () => {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: RESET_WALLET_IMPORT,
-    });
-  };
-};
-
+export const resetWalletImportAction = () => ({
+  type: RESET_WALLET_IMPORT,
+});
 
 export const resetWalletErrorAction = () => ({
   type: RESET_WALLET_ERROR,

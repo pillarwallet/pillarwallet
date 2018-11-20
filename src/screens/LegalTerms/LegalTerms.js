@@ -84,7 +84,7 @@ class LegalTerms extends React.Component<Props, State> {
   backupWallet = () => {
     const { navigation } = this.props;
     navigation.navigate(BACKUP_PHRASE);
-  }
+  };
 
   handleOnScroll = event => {
     this.setState({

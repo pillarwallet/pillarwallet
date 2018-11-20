@@ -86,7 +86,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
   fields: {
     username: {
       auto: 'placeholders',
-      placeholder: 'User name',
+      placeholder: 'Username',
       template: InputTemplate,
       maxLength: MAX_USERNAME_LENGTH,
       config: {
