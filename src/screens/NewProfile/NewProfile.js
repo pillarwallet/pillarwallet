@@ -17,8 +17,8 @@ import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onbo
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 
 const { Form } = t.form;
-const MIN_USERNAME_LENGTH = 3;
-const MAX_USERNAME_LENGTH = 20;
+const MIN_USERNAME_LENGTH = 4;
+const MAX_USERNAME_LENGTH = 30;
 
 const IntroParagraph = styled(Paragraph)`
   margin: 10px 0 50px;
