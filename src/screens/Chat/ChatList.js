@@ -14,11 +14,16 @@ import EmptyChat from 'components/EmptyState/EmptyChat';
 import Header from 'components/Header';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
+import SearchBar from 'components/SearchBar';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import { getExistingChatsAction, resetUnreadAction, deleteChatAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import { fontSizes, baseColors, spacing } from 'utils/variables';
+
+const SearchBarWrapper = styled.View`
+  padding: 15px ${spacing.rhythm}px 0;
+`;
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -32,6 +37,7 @@ type Props = {
 }
 
 type State = {
+  query: string,
   forceClose: boolean,
 }
 
@@ -58,6 +64,7 @@ class ChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
+    query: '',
     forceClose: false,
   };
 
@@ -92,6 +99,10 @@ class ChatListScreen extends React.Component<Props, State> {
 
   goToNewChatList = () => {
     this.props.navigation.navigate(NEW_CHAT);
+  };
+
+  handleUserSearch = (query: string) => {
+    this.setState({ query });
   };
 
   renderSwipeoutBtn = (username: string, unreadCount?: number) => {
@@ -185,8 +196,16 @@ class ChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats } = this.props;
+    const { query } = this.state;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
+    const filteredChats = (!query || query.trim() === '' || query.length < 2)
+      ? sortedChats
+      : sortedChats.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
+    const emptyChatTitle = chats.length ? '' : 'Break the ice';
+    const emptyChatBodyText = chats.length
+      ? 'There is no such user in your chat history.'
+      : 'Start chatting with someone. Recent chats will appear here.';
 
     return (
       <Container>
@@ -195,6 +214,19 @@ class ChatListScreen extends React.Component<Props, State> {
           nextText="New chat"
           onNextPress={this.goToNewChatList}
         />
+        {chats.length > 6 &&
+        <SearchBarWrapper>
+          <SearchBar
+            inputProps={{
+              onChange: this.handleUserSearch,
+              value: query,
+              sortedChats,
+              autoCapitalize: 'none',
+            }}
+            placeholder="Search chat"
+          />
+        </SearchBarWrapper>
+        }
         <ChatWrapper
           style={{
             paddingBottom: sortedChats.length ? 18 : 0,
@@ -207,7 +239,7 @@ class ChatListScreen extends React.Component<Props, State> {
           }
         >
           <FlatList
-            data={sortedChats}
+            data={filteredChats}
             extraData={chats}
             keyExtractor={(item) => item.username}
             renderItem={this.renderItem}
@@ -216,8 +248,8 @@ class ChatListScreen extends React.Component<Props, State> {
             contentContainerStyle={{ height: '100%' }}
             ListEmptyComponent={
               <EmptyChat
-                title="Break the ice"
-                bodyText="Start chatting with someone. Recent chats will appear here."
+                title={emptyChatTitle}
+                bodyText={emptyChatBodyText}
               />}
           />
         </ChatWrapper>
