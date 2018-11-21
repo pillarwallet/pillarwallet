@@ -48,6 +48,11 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
 const HeaderWrapper = styled.View`
   z-index: 20;
   background: ${UIColors.defaultBackgroundColor};
+  elevation: 3;
+  shadow-color: #000;
+  shadow-offset: 0 2px;
+  shadow-opacity: 0.05;
+  shadow-radius: 2;
 `;
 
 const FullScreenOverlayWrapper = styled.TouchableOpacity`
@@ -115,6 +120,7 @@ type State = {
   query: string,
   searchIsFocused: boolean,
   fullScreenOverlayOpacity: Animated.Value,
+  scrollShadow: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
@@ -124,6 +130,7 @@ class PeopleScreen extends React.Component<Props, State> {
     query: '',
     searchIsFocused: false,
     fullScreenOverlayOpacity: new Animated.Value(0),
+    scrollShadow: false,
   };
 
   constructor(props: Props) {
@@ -222,7 +229,12 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { query, searchIsFocused, fullScreenOverlayOpacity } = this.state;
+    const {
+      query,
+      searchIsFocused,
+      fullScreenOverlayOpacity,
+      scrollShadow,
+    } = this.state;
     const {
       searchResults,
       contactState,
@@ -230,6 +242,7 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       localContacts,
     } = this.props;
+    console.log('scrollShadow', scrollShadow);
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
@@ -309,6 +322,23 @@ class PeopleScreen extends React.Component<Props, State> {
                 }}
               />
             }
+            onScrollEndDrag={(event) => {
+              // console.log( 'scroll end' );
+              // console.log('scroll end2');
+              // console.log('event', event);
+              // console.log(event.nativeEvent.contentOffset.y);
+              if (event.nativeEvent.contentOffset.y) {
+                this.setState({ scrollShadow: true });
+              }
+            }}
+
+            onMomentumScrollEnd={(event) => {
+              // console.log( 'momentum end' );
+              // console.log(event.nativeEvent.contentOffset.y);
+              if (event.nativeEvent.contentOffset.y) {
+                this.setState({ scrollShadow: true });
+              }
+            }}
           />
         }
 

@@ -501,6 +501,16 @@ class HomeScreen extends React.Component<Props, State> {
               onRefresh={this.refreshScreenData}
             />
           }
+          onScrollEndDrag={(event) => {
+            console.log('scroll end');
+            console.log('scroll end2');
+            console.log('event', event);
+            console.log(event.nativeEvent.contentOffset.y);
+          }}
+          onMomentumScrollEnd={(event) => {
+            console.log('momentum end');
+            console.log(event.nativeEvent.contentOffset.y);
+          }}
         >
           {this.props.contacts.length ?
             <RecentConnectionsWrapper>
