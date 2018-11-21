@@ -241,6 +241,7 @@ class PeopleScreen extends React.Component<Props, State> {
               <styled.ConnectionRowActions>
                 <Button
                   alignTitleVertical
+                  isSquare
                   small
                   onPress={() => alert('delete')}
                   title="Mute"
@@ -248,6 +249,7 @@ class PeopleScreen extends React.Component<Props, State> {
                 />
                 <Button
                   alignTitleVertical
+                  isSquare
                   small
                   disabled
                   onPress={() => alert('delete')}
@@ -256,6 +258,7 @@ class PeopleScreen extends React.Component<Props, State> {
                 />
                 <Button
                   alignTitleVertical
+                  isSquare
                   danger
                   small
                   onPress={() => alert('delete')}
