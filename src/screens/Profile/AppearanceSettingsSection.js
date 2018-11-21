@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { TouchableOpacity, Image as RNImage, ScrollView } from 'react-native';
+import { TouchableOpacity, Image as RNImage, ScrollView, Dimensions, ViewLayoutEvent } from 'react-native';
 import styled from 'styled-components/native';
 
 // constants
@@ -20,6 +20,8 @@ const MINIMIZED_IMG = require('assets/images/assetsMinified.png');
 const EXTRASMALL_IMG = require('assets/images/assetsExtraSmall.png');
 const EXPANDED_IMG = require('assets/images/assetsExtended.png');
 
+const halfScreenWidth = (Dimensions.get('window').width - 80) / 2;
+
 type Layout = {
   image: string,
   id: string,
@@ -36,6 +38,7 @@ type Props = {
 
 type State = {
   visibleModal: ?string,
+  scrollOffset?: any,
 }
 
 const assetsLayouts = [{
@@ -61,7 +64,7 @@ const AssetLayoutHolder = styled.View`
   display: flex;
   flex-direction: column;
   padding-right: ${spacing.rhythm - 4}px;
-  margin-bottom: ${spacing.rhythm}px;
+  margin-bottom: ${spacing.small}px;
   align-items: center;
   justify-content: space-between;
 `;
@@ -79,11 +82,13 @@ const AssetsLayout = styled.View`
 const AssetsLayoutImage = styled(RNImage)`
   height: 194px;
   width: 132px;
+  max-width: ${halfScreenWidth}px;
 `;
 
 class AppearanceSettingsSection extends React.Component<Props, State> {
   state = {
     visibleModal: null,
+    scrollOffset: null,
   }
 
   toggleSlideModalOpen = (visibleModal: ?string = null) => {
@@ -99,7 +104,7 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
     const layouts = assetsLayouts.map(({ image, id, name }: Layout) => (
       <TouchableOpacity key={id} onPress={() => this.handleAssetsLayoutSelect(id)}>
         <AssetLayoutHolder>
-          <AssetsLayoutImage source={image} resizeMode="cover" />
+          <AssetsLayoutImage source={image} resizeMode="contain" />
           <BaseText
             style={{
               fontSize: fontSizes.small,
@@ -114,8 +119,15 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
     return <AssetsLayout>{layouts}</AssetsLayout>;
   }
 
+  handleOnScroll = (e: ViewLayoutEvent) => {
+    this.setState({
+      scrollOffset: e.nativeEvent.contentOffset.y,
+    });
+  };
+
   render() {
     const { settings: { assetsLayout } } = this.props;
+    const { scrollOffset } = this.state;
     // TODO: add memoization
     const activeAssetsLayout = assetsLayouts.find(({ id }) => id === assetsLayout) || {};
 
@@ -133,11 +145,15 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
           showHeader
           onModalHide={this.toggleSlideModalOpen}
           backgroundColor={baseColors.lightGray}
+          scrollOffset={scrollOffset}
         >
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your asset list appearance
           </SettingsModalTitle>
-          <ScrollView contentContainerStyle={{ height: '100%', padding: spacing.rhythm - 4 }}>
+          <ScrollView
+            contentContainerStyle={{ padding: spacing.rhythm - 4 }}
+            onScroll={this.handleOnScroll}
+          >
             {this.renderAssetsLayouts()}
           </ScrollView>
         </SlideModal>
