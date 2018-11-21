@@ -16,6 +16,7 @@ import {
   PIN_SET,
   PIN_CONFIRMED,
   SET_API_USER,
+  RESET_WALLET_IMPORT,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -91,6 +92,11 @@ export default function newWalletReducer(
       return {
         ...state,
         onboarding: { ...state.onboarding, importedWallet, apiUser },
+      };
+    case RESET_WALLET_IMPORT:
+      return {
+        ...state,
+        onboarding: { ...state.onboarding, importedWallet: null, apiUser: {} },
       };
     case SET_API_USER:
       return {

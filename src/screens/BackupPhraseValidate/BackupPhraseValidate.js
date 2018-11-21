@@ -10,7 +10,7 @@ import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import IconButton from 'components/IconButton';
-import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+import { LEGAL_TERMS } from 'constants/navigationConstants';
 
 type State = {
   enteredWords: string[],
@@ -208,16 +208,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             {!!__DEV__ && (
             <MnemonicPhraseWord
               key="automagical"
-              onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
+              onPress={() => this.props.navigation.navigate(LEGAL_TERMS)}
             >
               <MnemonicPhraseWordText>debugskip</MnemonicPhraseWordText>
             </MnemonicPhraseWord>
             )}
           </ShuffledWordWrapper>
           <Button
-            small
-            flexRight
-            onPress={() => this.props.navigation.navigate(SET_WALLET_PIN_CODE)}
+            onPress={() => this.props.navigation.navigate(LEGAL_TERMS)}
             title="Next"
             disabled={!isFormValid}
           />
