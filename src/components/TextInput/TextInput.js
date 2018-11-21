@@ -2,10 +2,11 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Item as NBItem, Input, Label } from 'native-base';
-import { fontSizes, fontWeights, baseColors, UIColors } from 'utils/variables';
+import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
 import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
+import Spinner from 'components/Spinner';
 
 type inputPropsType = {
   placeholder?: string,
@@ -36,6 +37,7 @@ type Props = {
   lowerCase?: boolean,
   labelBigger?: boolean,
   keyboardAvoidance?: boolean,
+  loading?: boolean,
 }
 
 type State = {
@@ -68,7 +70,7 @@ const inputTypes = {
 };
 
 const FloatingButton = styled(IconButton)`
-  position:absolute;
+  position: absolute;
   right: 0;
   top: 20px;
   justify-content: center;
@@ -126,6 +128,12 @@ const CustomLabel = styled(Label)`
   padding-top: ${props => props.labelBigger ? '35px' : '5px'};
   padding-bottom: ${props => props.labelBigger ? '12px' : '0'};
   `;
+
+const AbsoluteSpinner = styled(Spinner)`
+  position: absolute;
+  right: ${spacing.mediumLarge}px;
+  top: 18px;
+`;
 
 class TextInput extends React.Component<Props, State> {
   rnInput: window.HTMLInputElement;
@@ -209,10 +217,12 @@ class TextInput extends React.Component<Props, State> {
       noBorder,
       lowerCase,
       labelBigger,
+      loading,
     } = this.props;
     const { value = '' } = inputProps;
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
+    const additionalRightPadding = loading ? 36 : 0;
     const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
       this.handleMultilineFocus : this.handleFocus;
     return (
@@ -239,7 +249,7 @@ class TextInput extends React.Component<Props, State> {
             style={{
               fontSize: inputType.fontSize,
               width: viewWidth,
-              paddingRight: inputProps.multiline ? 50 : 14,
+              paddingRight: (inputProps.multiline ? 58 : 14) + additionalRightPadding,
               paddingTop: inputProps.multiline ? 10 : 0,
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
             }}
@@ -249,6 +259,7 @@ class TextInput extends React.Component<Props, State> {
             autoCorrect={false}
             ref={this.rnInput}
           />
+          {!!loading && <AbsoluteSpinner width={30} height={30} />}
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
         </Item>
