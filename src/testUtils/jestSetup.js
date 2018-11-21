@@ -131,3 +131,10 @@ jest.setMock('cryptocompare', {
 });
 
 jest.setMock('react-native-share', {});
+
+jest.setMock('react-native-cached-image', {
+  ImageCacheManager: () => ({
+    clearCache: () => Promise.resolve(),
+  }),
+  CachedImage: jest.fn(),
+});

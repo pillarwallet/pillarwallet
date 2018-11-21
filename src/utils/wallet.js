@@ -1,6 +1,11 @@
 // @flow
 import { getRandomInt } from 'utils/common';
 import DeviceInfo from 'react-native-device-info';
+import ethers from 'ethers';
+
+export function generateMnemonicPhrase(mnemonicPhrase?: string) {
+  return mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+}
 
 export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
   const chosenWords = [];
