@@ -202,6 +202,10 @@ class ChatListScreen extends React.Component<Props, State> {
     const filteredChats = (!query || query.trim() === '' || query.length < 2)
       ? sortedChats
       : sortedChats.filter((chat) => chat.username.toUpperCase().indexOf(query.toUpperCase()) !== -1);
+    const emptyChatTitle = chats.length ? '' : 'Break the ice';
+    const emptyChatBodyText = chats.length
+      ? 'There is no such user in your chat history.'
+      : 'Start chatting with someone. Recent chats will appear here.';
 
     return (
       <Container>
@@ -210,6 +214,7 @@ class ChatListScreen extends React.Component<Props, State> {
           nextText="New chat"
           onNextPress={this.goToNewChatList}
         />
+        {chats.length > 6 &&
         <SearchBarWrapper>
           <SearchBar
             inputProps={{
@@ -221,6 +226,7 @@ class ChatListScreen extends React.Component<Props, State> {
             placeholder="Search chat"
           />
         </SearchBarWrapper>
+        }
         <ChatWrapper
           style={{
             paddingBottom: sortedChats.length ? 18 : 0,
@@ -242,8 +248,8 @@ class ChatListScreen extends React.Component<Props, State> {
             contentContainerStyle={{ height: '100%' }}
             ListEmptyComponent={
               <EmptyChat
-                title="Break the ice"
-                bodyText="Start chatting with someone. Recent chats will appear here."
+                title={emptyChatTitle}
+                bodyText={emptyChatBodyText}
               />}
           />
         </ChatWrapper>
