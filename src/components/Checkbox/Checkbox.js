@@ -3,16 +3,19 @@ import * as React from 'react';
 import { Animated, TouchableHighlight } from 'react-native';
 import { BaseText } from 'components/Typography';
 import styled from 'styled-components/native';
-import { UIColors, baseColors, fontSizes } from 'utils/variables';
+import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
+import Icon from 'components/Icon';
 
 const CheckboxBox = styled.View`
-  width: 40;
-  height: 40;
-  margin-right: 20px;
-  border-radius: 60;
-  flex: 0 0 40px;
-  border-width: 2;
+  width: 24;
+  height: 24;
+  margin-right: ${spacing.mediumLarge}px;
+  border-radius: 2px;
+  flex: 0 0 24px;
+  border-width: 1px;
   border-color: ${props => (props.active ? UIColors.primary : baseColors.mediumGray)}
+  justify-content: center;
+  align-items: center;
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -20,21 +23,24 @@ const CheckboxText = styled(BaseText)`
   font-size: ${fontSizes.medium};
 `;
 
+const TextWrapper = styled.View`
+  flex: 1;
+`;
+
 const CheckboxWrapper = styled.View`
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   margin-bottom: 20px;
   opacity: ${props => props.disabled ? 0.5 : 1};
 `;
 
-const CheckboxBoxAnimated = Animated.createAnimatedComponent(CheckboxBox);
-
 type Props = {
-  text: string,
+  text?: string,
   onPress: Function,
   disabled?: boolean,
   checked?: boolean,
+  children?: React.Node,
 };
 
 type State = {
@@ -61,7 +67,7 @@ export default class Checkbox extends React.Component<Props, State> {
     const { animateActive } = this.state;
     if (!checked) {
       Animated.spring(animateActive, {
-        toValue: 4,
+        toValue: 1,
         duration: 600,
       }).start();
     } else {
@@ -87,19 +93,27 @@ export default class Checkbox extends React.Component<Props, State> {
   };
 
   render() {
-    const { animateActive, checked } = this.state;
-    const { disabled, text } = this.props;
+    const { checked } = this.state;
+    const { disabled, text, children } = this.props;
     return (
       <TouchableHighlight
         onPress={() => this.toggleCheckBox()}
         underlayColor="transparent"
       >
         <CheckboxWrapper disabled={disabled}>
-          <CheckboxBoxAnimated
-            active={disabled ? false : checked}
-            style={{ borderWidth: animateActive }}
-          />
-          <CheckboxText>{text}</CheckboxText>
+          <CheckboxBox active={disabled ? false : checked}>
+            {!!checked &&
+            <Icon
+              name="check"
+              style={{
+                color: baseColors.brightBlue,
+                fontSize: fontSizes.extraExtraSmall,
+              }}
+            />
+            }
+          </CheckboxBox>
+          {!!text && <CheckboxText>{text}</CheckboxText>}
+          {!!children && <TextWrapper>{children}</TextWrapper>}
         </CheckboxWrapper>
       </TouchableHighlight>
     );
