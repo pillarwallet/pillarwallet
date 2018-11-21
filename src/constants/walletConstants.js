@@ -31,3 +31,4 @@ export const USERNAME_OK = 'USERNAME_OK';
 export const SET_API_USER = 'SET_API_USER';
 export const TWORDSPHRASE = 'TWORDSPHRASE';
 export const PRIVATEKEY = 'PRIVATEKEY';
+export const RESET_WALLET_IMPORT = 'RESET_WALLET_IMPORT';

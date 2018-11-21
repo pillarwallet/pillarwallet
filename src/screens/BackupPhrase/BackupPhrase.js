@@ -37,7 +37,6 @@ class BackupPhrase extends React.Component<Props, {}> {
   render() {
     const { onboarding: wallet } = this.props.wallet;
     if (!wallet.mnemonic) return null;
-
     return (
       <Container>
         <Header title="backup phrase" onBack={() => this.props.navigation.goBack(null)} />
@@ -46,7 +45,7 @@ class BackupPhrase extends React.Component<Props, {}> {
           <MnemonicPhrase phrase={wallet.mnemonic.original} />
         </ScrollWrapper>
         <Footer>
-          <Button small flexRight onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
+          <Button onPress={() => this.props.navigation.navigate(BACKUP_PHRASE_VALIDATE)} title="Next" />
         </Footer>
       </Container>
     );
