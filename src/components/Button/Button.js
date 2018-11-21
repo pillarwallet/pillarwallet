@@ -26,31 +26,26 @@ type Props = {
   listItemButton?: boolean,
   alignTitleVertical?: boolean,
   isSquare?: boolean,
+  height?: string,
 };
 
 const getTheme = (props: Props) => {
-  if (props.disabledTransparent) {
-    return styled.themes.disabledTransparent;
-  }
-  if (props.disabled) {
-    return styled.themes.disabled;
-  }
-  if (props.secondary && props.danger) {
-    return styled.themes.secondaryDanger;
-  }
-  if (props.danger) {
-    return styled.themes.danger;
-  }
-  if (props.secondary) {
-    return styled.themes.secondary;
-  }
-  if (props.primaryInverted) {
-    return styled.themes.primaryInverted;
-  }
-  if (props.dangerInverted) {
-    return styled.themes.dangerInverted;
-  }
-  return styled.themes.primary;
+  const propsKeys = Object.keys(props);
+  const themes = Object.keys(styled.themes);
+  let themeToUse = styled.themes.primary;
+
+  propsKeys.some((prop: string) => {
+    const indexOfTheme = themes.indexOf(prop);
+    const existTheme = indexOfTheme >= 0;
+
+    if (existTheme) {
+      themeToUse = styled.themes[prop];
+    }
+
+    return existTheme;
+  });
+
+  return themeToUse;
 };
 
 const Button = (props: Props) => {
@@ -67,6 +62,7 @@ const Button = (props: Props) => {
     disabledTransparent,
     onPress,
     width,
+    height,
     children,
   } = props;
 
@@ -82,6 +78,7 @@ const Button = (props: Props) => {
       noPadding={noPadding}
       onPress={(disabled || disabledTransparent) ? null : onPress}
       width={width}
+      height={height}
       disabled={disabled || disabledTransparent}
     >
       {!!icon && <styled.ButtonIcon name={icon} theme={theme} />}
@@ -106,6 +103,6 @@ type ButtonMiniProps = {
 
 export const ButtonMini = (props: ButtonMiniProps) => (
   <styled.ButtonMiniWrapper onPress={props.onPress}>
-    <ButtonMiniText>{props.title}</ButtonMiniText>
+    <styled.ButtonMiniText>{props.title}</styled.ButtonMiniText>
   </styled.ButtonMiniWrapper>
 );

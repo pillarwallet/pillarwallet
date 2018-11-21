@@ -2,17 +2,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
-  FlatList,
+  Alert,
   ListView,
   Animated,
   Keyboard,
   Image,
   KeyboardAvoidingView,
   Platform,
-  RefreshControl,
 } from 'react-native';
-import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { List } from 'native-base';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
@@ -21,14 +20,14 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors } from 'utils/variables';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
 import SearchBar from 'components/SearchBar';
-import Button from 'components/Button/Button'
+import Button from 'components/Button/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
@@ -59,6 +58,7 @@ type State = {
 
 class PeopleScreen extends React.Component<Props, State> {
   _willBlur: NavigationEventSubscription;
+  listViewDS = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
   state = {
     query: '',
@@ -148,17 +148,24 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderContact = (item) => (
-    <ListItemWithImage
-      label={item.username}
-      onPress={this.handleContactCardPress(item)}
-      avatarUrl={item.profileImage}
-      navigateToProfile={this.handleContactCardPress(item)}
-    />
+    <styled.ContactItem>
+      <ListItemWithImage
+        label={item.username}
+        onPress={this.handleContactCardPress(item)}
+        avatarUrl={item.profileImage}
+        navigateToProfile={this.handleContactCardPress(item)}
+      />
+      <Separator spaceOnLeft={82} />
+    </styled.ContactItem>
   );
 
   onScreenBlur = () => {
     Keyboard.dismiss();
     this.animateFullScreenOverlayOpacity(true);
+  };
+
+  manageConnection = (type: 'mute' | 'remove' | 'block', contactData: Object) => {
+    Alert.alert(`${type} ${contactData.username}`);
   };
 
   render() {
@@ -175,8 +182,8 @@ class PeopleScreen extends React.Component<Props, State> {
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
 
-    const listViewDS = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2 });
-    const sortedLocalContactsDS = listViewDS.cloneWithRows(sortedLocalContacts);
+    const sortedLocalContactsDS = this.listViewDS.cloneWithRows(sortedLocalContacts);
+    const swipeButtonsWidth = '78';
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -234,39 +241,45 @@ class PeopleScreen extends React.Component<Props, State> {
         {!inSearchMode && !!sortedLocalContacts.length &&
           <List
             disableRightSwipe
-            rightOpenValue={-210}
+            rightOpenValue={-228}
             dataSource={sortedLocalContactsDS}
             renderRow={this.renderContact}
-            renderRightHiddenRow={(data, secId, rowId, rowMap) =>
+            renderRightHiddenRow={(data) => (
               <styled.ConnectionRowActions>
                 <Button
                   alignTitleVertical
                   isSquare
+                  noPadding
                   small
-                  onPress={() => alert('delete')}
+                  height={swipeButtonsWidth}
+                  onPress={() => this.manageConnection('mute', data)}
                   title="Mute"
                   icon="mute"
                 />
                 <Button
                   alignTitleVertical
                   isSquare
+                  noPadding
                   small
-                  disabled
-                  onPress={() => alert('delete')}
+                  dark
+                  height={swipeButtonsWidth}
+                  onPress={() => this.manageConnection('remove', data)}
                   title="Remove"
                   icon="remove"
                 />
                 <Button
                   alignTitleVertical
                   isSquare
+                  noPadding
                   danger
                   small
-                  onPress={() => alert('delete')}
+                  height={swipeButtonsWidth}
+                  onPress={() => this.manageConnection('block', data)}
                   title="Block"
                   icon="warning"
                 />
               </styled.ConnectionRowActions>
-            }
+            )}
           />
         }
 

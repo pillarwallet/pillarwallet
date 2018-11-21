@@ -1,4 +1,5 @@
-import { Animated, View } from 'react-native';
+// @flow
+import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 import { Button, Icon } from 'native-base';
 import { BaseText } from 'components/Typography';
@@ -66,6 +67,10 @@ export const EmptyStateBGWrapper = styled.View`
   padding: 0 20px 20px;
 `;
 
+export const ContactItem = styled.View`
+  background-color: ${baseColors.lighterGray};
+`;
+
 export const ConnectionRowActions = styled.View`
   flex-direction: row;
 `;
@@ -77,6 +82,6 @@ export const ConnectionActionButton = styled(Button)`
 `;
 
 export const ConnectionActionLabel = styled(BaseText)`
-  color: ${UIColors.white};
+  color: ${baseColors.white};
   font-size: ${fontSizes.small};
 `;

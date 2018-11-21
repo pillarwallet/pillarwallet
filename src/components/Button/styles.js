@@ -1,3 +1,4 @@
+// @flow
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
 import { Button as NBButton } from 'native-base';
@@ -43,6 +44,12 @@ export const themes = {
     borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
   },
+  dark: {
+    background: baseColors.darkGray,
+    color: baseColors.white,
+    borderColor: UIColors.defaultBorderColor,
+    borderWidth: 0,
+  },
   disabled: {
     background: baseColors.lightGray,
     color: baseColors.darkGray,
@@ -63,12 +70,25 @@ export const ButtonIcon = styled(Icon)`
 `;
 
 const getButtonHeight = (props) => {
-  if (props.noPadding) {
+  if (props.height) {
+    return `${props.height}px`;
+  } else if (props.noPadding) {
     return '0';
   } else if (props.small) {
     return '34px';
   }
+
   return '56px';
+};
+
+const getButtonWidth = (props) => {
+  if (props.isSquare) {
+    return getButtonHeight(props);
+  } else if (props.block) {
+    return '100%';
+  }
+
+  return 'auto';
 };
 
 const getButtonPadding = (props) => {
@@ -102,7 +122,7 @@ export const ButtonWrapper = styled.TouchableOpacity`
   margin-left: ${props => props.marginLeft || '0px'};
   margin-right: ${props => props.marginRight || '0px'};
   border-radius: ${({ isSquare }) => isSquare ? 0 : 40};
-  width: ${props => props.block ? '100%' : 'auto'};
+  width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
   border-color: ${props => props.theme.borderColor};
