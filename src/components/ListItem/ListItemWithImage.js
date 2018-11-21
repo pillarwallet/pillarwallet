@@ -78,7 +78,8 @@ const Column = styled.View`
   align-items: ${props => props.rightColumn ? 'flex-end' : 'flex-start'};
   justify-content: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
   margin-top: ${props => props.type === CHAT_ITEM ? '-2px' : 0};
-  ${props => props.rightColumn ? '' : 'flex: 1'}
+  ${props => props.rightColumn ? 'padding-left: 10px' : 'flex: 1'}
+  
 `;
 
 const ItemTitle = styled(BoldText)`
