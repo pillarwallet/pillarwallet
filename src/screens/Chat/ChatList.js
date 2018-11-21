@@ -201,7 +201,7 @@ class ChatListScreen extends React.Component<Props, State> {
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     const filteredChats = (!query || query.trim() === '' || query.length < 2)
       ? sortedChats
-      : sortedChats.filter((chat) => chat.username.toUpperCase().indexOf(query.toUpperCase()) !== -1);
+      : sortedChats.filter(({ username }) => username.toUpperCase().includes(query.toUpperCase()));
     const emptyChatTitle = chats.length ? '' : 'Break the ice';
     const emptyChatBodyText = chats.length
       ? 'There is no such user in your chat history.'
