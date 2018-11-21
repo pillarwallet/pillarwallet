@@ -65,6 +65,7 @@ const LocalContactsItem = styled.TouchableOpacity`
 const LocalContactsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
+  padding: 0 4px;
   margin-top: ${Platform.select({
     ios: '3px',
     android: '-4px',

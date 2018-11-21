@@ -180,6 +180,7 @@ const CameraIcon = styled(Icon)`
 const RecentConnectionsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
+  padding: 0 4px;
   margin-top: ${Platform.select({
     ios: '4px',
     android: '-4px',
