@@ -229,7 +229,6 @@ class EventDetails extends React.Component<Props, {}> {
         eventTime = `${pendingHours}${pendingMinutes}${pendingSeconds} AGO`;
       }
 
-      const amount = `${formatFullAmount(value)} ${asset}`;
       const fee = gasUsed ? Math.round(gasUsed * gasPrice) : 0;
 
       return (
@@ -243,7 +242,8 @@ class EventDetails extends React.Component<Props, {}> {
           <EventBody>
             <ListItemUnderlined
               label={isReceived ? 'AMOUNT RECEIVED' : 'AMOUNT SENT'}
-              value={amount}
+              value={formatFullAmount(value)}
+              valueAdditionalText={asset}
             />
             <ListItemUnderlined
               label={isReceived ? 'SENDER' : 'RECIPIENT'}
@@ -262,7 +262,8 @@ class EventDetails extends React.Component<Props, {}> {
             {!isReceived && !isPending &&
             <ListItemUnderlined
               label="TRANSACTION FEE"
-              value={`${utils.formatEther(fee.toString())} ETH`}
+              value={utils.formatEther(fee.toString())}
+              valueAdditionalText="ETH"
             />
             }
             {isPending &&

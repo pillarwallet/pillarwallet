@@ -8,6 +8,7 @@ import Spinner from 'components/Spinner';
 type Props = {
   label: string,
   value: any,
+  valueAdditionalText?: string,
   spacedOut?: boolean,
   valueAddon?: React.Node,
   showSpinner?: boolean,
@@ -36,6 +37,7 @@ const ItemValueHolder = styled.View`
   justify-content: flex-end;
   width: 100%;
   height: 50px;
+  padding-right: ${spacing.mediumLarge}px;
 `;
 
 const ItemValue = styled(BoldText)`
@@ -44,7 +46,6 @@ const ItemValue = styled(BoldText)`
   margin-bottom: ${spacing.medium}px;
   margin-top: ${props => props.spacedOut ? '8px' : '0'};
   padding-left: ${props => props.additionalMargin ? '10px' : 0};
-  padding-right: ${spacing.mediumLarge}px;
   text-align: right;
   max-width: 230px;
 `;
@@ -53,6 +54,7 @@ const ListItemUnderlined = (props: Props) => {
   const {
     label,
     value,
+    valueAdditionalText,
     spacedOut,
     valueAddon,
     showSpinner,
@@ -70,6 +72,7 @@ const ListItemUnderlined = (props: Props) => {
         >
           {value}
         </ItemValue>
+        {!!valueAdditionalText && <ItemValue style={{ marginLeft: 4 }}>{valueAdditionalText}</ItemValue>}
         {!!showSpinner &&
         <Spinner width={20} height={20} style={{ marginBottom: 16, marginLeft: 10 }} />}
       </ItemValueHolder>
