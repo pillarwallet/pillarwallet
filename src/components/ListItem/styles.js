@@ -1,3 +1,4 @@
+// @flow
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
