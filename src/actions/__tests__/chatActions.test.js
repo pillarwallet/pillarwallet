@@ -42,7 +42,7 @@ describe('Chat Actions', () => {
       });
 
       it('should call the chatService.client.sendMessageByContact function', () => {
-        expect(chatService.client.sendMessageByContact).toBeCalledWith(username, message.text);
+        expect(chatService.client.sendMessageByContact).toBeCalledWith(username, message.text, 'chat');
       });
 
       it('should call the dispatch function', () => {

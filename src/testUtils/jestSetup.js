@@ -80,10 +80,11 @@ jest.setMock('react-native-intercom', {
 
 jest.setMock('rn-signal-protocol-messaging', {
   SignalClient: {
-    getExistingChats: () => Promise.resolve(),
+    getExistingMessages: () => Promise.resolve(),
     createClient: () => Promise.resolve(),
     init: () => Promise.resolve(),
     sendMessageByContact: () => Promise.resolve(),
+    sendSilentMessageByContact: () => Promise.resolve(),
     receiveNewMessagesByContact: () => Promise.resolve(),
     registerAccount: () => Promise.resolve(),
     setFcmId: () => Promise.resolve(),
@@ -130,3 +131,10 @@ jest.setMock('cryptocompare', {
 });
 
 jest.setMock('react-native-share', {});
+
+jest.setMock('react-native-cached-image', {
+  ImageCacheManager: () => ({
+    clearCache: () => Promise.resolve(),
+  }),
+  CachedImage: jest.fn(),
+});
