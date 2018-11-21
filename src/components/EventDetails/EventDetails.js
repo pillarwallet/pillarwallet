@@ -59,7 +59,6 @@ const EventBody = styled.View`
 `;
 
 const EventProfileImage = styled(ProfileImage)`
-  margin-right: 10px;
 `;
 
 const ButtonsWrapper = styled.View`
@@ -91,7 +90,7 @@ const EventBodyTitle = styled(BaseText)`
   font-size: ${fontSizes.large}px;
   font-weight: ${fontWeights.medium};
   color: ${props => props.color ? props.color : baseColors.slateBlack};
-  margin: 0 2px 2px;
+  margin: 0 10px 2px;
   text-align: center;
 `;
 

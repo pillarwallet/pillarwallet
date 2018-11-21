@@ -35,7 +35,6 @@ const ItemValueHolder = styled.View`
   align-items: flex-end;
   justify-content: flex-end;
   width: 100%;
-  padding-right: ${spacing.mediumLarge}px;
   height: 50px;
 `;
 
@@ -44,6 +43,10 @@ const ItemValue = styled(BoldText)`
   font-weight: ${fontWeights.bold};
   margin-bottom: ${spacing.medium}px;
   margin-top: ${props => props.spacedOut ? '8px' : '0'};
+  padding-left: ${props => props.additionalMargin ? '10px' : 0};
+  padding-right: ${spacing.mediumLarge}px;
+  text-align: right;
+  max-width: 230px;
 `;
 
 const ListItemUnderlined = (props: Props) => {
@@ -59,7 +62,14 @@ const ListItemUnderlined = (props: Props) => {
       <ItemLabel>{label}</ItemLabel>
       <ItemValueHolder>
         {valueAddon}
-        <ItemValue spacedOut={spacedOut}>{value}</ItemValue>
+        <ItemValue
+          spacedOut={spacedOut}
+          additionalMargin={valueAddon}
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {value}
+        </ItemValue>
         {!!showSpinner &&
         <Spinner width={20} height={20} style={{ marginBottom: 16, marginLeft: 10 }} />}
       </ItemValueHolder>
