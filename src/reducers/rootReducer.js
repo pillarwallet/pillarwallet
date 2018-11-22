@@ -18,6 +18,7 @@ import chatReducer from './chatReducer';
 import accessTokensReducer from './accessTokensReducer';
 import sessionReducer from './sessionReducer';
 import icosReducer from './icosReducer';
+import txNoteReducer from './txNoteReducer';
 
 const appReducer = combineReducers({
   wallet: walletReducer,
@@ -33,6 +34,7 @@ const appReducer = combineReducers({
   accessTokens: accessTokensReducer,
   session: sessionReducer,
   icos: icosReducer,
+  txNotes: txNoteReducer,
 });
 
 const initialState = appReducer(undefined, {});

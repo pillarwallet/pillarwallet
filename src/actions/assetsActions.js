@@ -79,8 +79,12 @@ export const sendAssetAction = ({
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
       txStatus = ETHTrx.hash
-        ? { isSuccess: true, error: null }
-        : { isSuccess: false, error: ETHTrx.error };
+        ? {
+          isSuccess: true, error: null, note, to, txHash: ETHTrx.hash,
+        }
+        : {
+          isSuccess: false, error: ETHTrx.error, note, to,
+        };
       navigateToNextScreen(txStatus);
       return;
     }
@@ -120,8 +124,12 @@ export const sendAssetAction = ({
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
     }
     txStatus = ERC20Trx.hash
-      ? { isSuccess: true, error: null }
-      : { isSuccess: false, error: ERC20Trx.error };
+      ? {
+        isSuccess: true, error: null, note, to, txHash: ERC20Trx.hash,
+      }
+      : {
+        isSuccess: false, error: ERC20Trx.error, note, to,
+      };
     navigateToNextScreen(txStatus);
   };
 };
