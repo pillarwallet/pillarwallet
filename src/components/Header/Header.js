@@ -27,6 +27,7 @@ type Props = {
   overlay?: boolean,
   backIcon?: string,
   nextIconSize?: number,
+  scrollShadow?: boolean,
 }
 
 const Wrapper = styled.View`
@@ -39,6 +40,11 @@ const Wrapper = styled.View`
   margin-top: ${spacing.rhythm};
   margin-bottom: ${props => props.flexStart ? 'auto' : 0};
   z-index: 10;
+  ${props => props.scrollShadow ? 'elevation: 3;' : ''}
+  ${props => props.scrollShadow ? 'shadow-color: #000;' : ''}
+  ${props => props.scrollShadow ? 'shadow-offset: 0 2px;' : ''}
+  ${props => props.scrollShadow ? 'shadow-opacity: 0.05;' : ''}
+  ${props => props.scrollShadow ? 'shadow-radius: 2;' : ''}
 `;
 
 const BackIcon = styled(IconButton)`
@@ -105,6 +111,7 @@ const Header = (props: Props) => {
     overlay,
     flexStart,
     backIcon,
+    scrollShadow,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
   const titleOnBack = title && onBack;
@@ -122,7 +129,14 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper overlay={overlay} noMargin={noMargin} flexStart={flexStart} style={style} noPadding={noPadding}>
+    <Wrapper
+      overlay={overlay}
+      noMargin={noMargin}
+      flexStart={flexStart}
+      style={style}
+      noPadding={noPadding}
+      scrollShadow={scrollShadow}
+    >
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon

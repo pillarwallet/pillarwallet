@@ -62,6 +62,7 @@ type State = {
     },
   },
   showDescriptionModal: boolean,
+  scrollShadow: boolean,
 };
 
 const AssetCardWrapper = styled.View`
@@ -109,6 +110,7 @@ class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
+    scrollShadow: false,
   };
 
   componentDidMount() {
@@ -176,7 +178,7 @@ class AssetScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
     } = this.props;
-    const { showDescriptionModal } = this.state;
+    const { showDescriptionModal, scrollShadow } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -202,9 +204,25 @@ class AssetScreen extends React.Component<Props, State> {
           onNextPress={() => { this.setState({ showDescriptionModal: true }); }}
           nextIcon="info-circle-inverse"
           nextIconSize={fontSizes.extraLarge}
+          scrollShadow={scrollShadow}
+          style={{
+            backgroundColor: baseColors.white,
+            marginTop: 0,
+            paddingTop: 20,
+            height: 60,
+          }}
         />
         <ScrollWrapper
-          onScrollEndDrag={this.handleScrollWrapperEndDrag}
+          onScrollBeginDrag={() => {
+            this.setState({ scrollShadow: true });
+          }}
+          onScrollEndDrag={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+            return this.handleScrollWrapperEndDrag;
+          }}
+          onMomentumScrollEnd={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
           refreshControl={
             <RefreshControl
               refreshing={false}

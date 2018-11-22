@@ -91,6 +91,11 @@ const ListHeading = styled(SubHeading)`
 const HeaderWrapper = styled(Wrapper)`
   background-color: ${baseColors.snowWhite};
   z-index: 100;
+  ${props => props.scrollShadow ? 'elevation: 3;' : ''}
+  ${props => props.scrollShadow ? 'shadow-color: #000;' : ''}
+  ${props => props.scrollShadow ? 'shadow-offset: 0 2px;' : ''}
+  ${props => props.scrollShadow ? 'shadow-opacity: 0.05;' : ''}
+  ${props => props.scrollShadow ? 'shadow-radius: 2;' : ''}
 `;
 
 const Footer = styled(Wrapper)`
@@ -152,6 +157,7 @@ type State = {
   query: string,
   searchIsFocused: boolean,
   fullScreenOverlayOpacity: Animated.Value,
+  scrollShadow?: boolean,
 }
 
 const MIN_QUERY_LENGTH = 2;
@@ -165,6 +171,7 @@ class AddToken extends React.Component<Props, State> {
     query: '',
     searchIsFocused: false,
     fullScreenOverlayOpacity: new Animated.Value(0),
+    scrollShadow: false,
   };
 
   constructor(props: Props) {
@@ -368,7 +375,12 @@ class AddToken extends React.Component<Props, State> {
   };
 
   render() {
-    const { query, searchIsFocused, fullScreenOverlayOpacity } = this.state;
+    const {
+      query,
+      searchIsFocused,
+      fullScreenOverlayOpacity,
+      scrollShadow,
+    } = this.state;
     const { supportedAssets, assetsSearchResults, assetsSearchState } = this.props;
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING;
@@ -377,7 +389,7 @@ class AddToken extends React.Component<Props, State> {
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <HeaderWrapper>
+        <HeaderWrapper scrollShadow={scrollShadow}>
           <Header title="add tokens" onBack={this.handleScreenDismissal} />
           <Wrapper regularPadding>
             <SearchBar
@@ -404,7 +416,17 @@ class AddToken extends React.Component<Props, State> {
         }
         <TokensWrapper>
           {!inSearchMode &&
-            <ScrollWrapper>
+            <ScrollWrapper
+              onScrollBeginDrag={() => {
+                this.setState({ scrollShadow: true });
+              }}
+              onScrollEndDrag={(event) => {
+                this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+              }}
+              onMomentumScrollEnd={(event) => {
+                this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+              }}
+            >
               <ListHeading>TOP { supportedAssets.length } TOKENS</ListHeading>
               <List>
                 {this.showTopTokensListItems()}

@@ -48,11 +48,11 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
 const HeaderWrapper = styled.View`
   z-index: 20;
   background: ${UIColors.defaultBackgroundColor};
-  elevation: 3;
-  shadow-color: #000;
-  shadow-offset: 0 2px;
-  shadow-opacity: 0.05;
-  shadow-radius: 2;
+  ${props => props.scrollShadow ? 'elevation: 3;' : ''}
+  ${props => props.scrollShadow ? 'shadow-color: #000;' : ''}
+  ${props => props.scrollShadow ? 'shadow-offset: 0 2px;' : ''}
+  ${props => props.scrollShadow ? 'shadow-opacity: 0.05;' : ''}
+  ${props => props.scrollShadow ? 'shadow-radius: 2;' : ''}
 `;
 
 const FullScreenOverlayWrapper = styled.TouchableOpacity`
@@ -120,7 +120,7 @@ type State = {
   query: string,
   searchIsFocused: boolean,
   fullScreenOverlayOpacity: Animated.Value,
-  scrollShadow: boolean,
+  scrollShadow?: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
@@ -242,7 +242,6 @@ class PeopleScreen extends React.Component<Props, State> {
       invitations,
       localContacts,
     } = this.props;
-    console.log('scrollShadow', scrollShadow);
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
@@ -250,7 +249,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <HeaderWrapper>
+        <HeaderWrapper scrollShadow={scrollShadow}>
           <Header title="people" />
           <Wrapper zIndex={100} regularPadding>
             <SearchBar
@@ -322,22 +321,14 @@ class PeopleScreen extends React.Component<Props, State> {
                 }}
               />
             }
-            onScrollEndDrag={(event) => {
-              // console.log( 'scroll end' );
-              // console.log('scroll end2');
-              // console.log('event', event);
-              // console.log(event.nativeEvent.contentOffset.y);
-              if (event.nativeEvent.contentOffset.y) {
-                this.setState({ scrollShadow: true });
-              }
+            onScrollBeginDrag={() => {
+              this.setState({ scrollShadow: true });
             }}
-
-            onMomentumScrollEnd={(event) => {
-              // console.log( 'momentum end' );
-              // console.log(event.nativeEvent.contentOffset.y);
-              if (event.nativeEvent.contentOffset.y) {
-                this.setState({ scrollShadow: true });
-              }
+            onScrollEndDrag={(event: Object) => {
+              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+            }}
+            onMomentumScrollEnd={(event: Object) => {
+              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
             }}
           />
         }
