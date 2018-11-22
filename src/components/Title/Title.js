@@ -38,6 +38,7 @@ const Text = styled(BoldText)`
     width: 100%;
     text-align: center;
   `}
+    max-width: 230px;
 `;
 
 const BlueDot = styled(BoldText)`
@@ -59,9 +60,24 @@ const Title = (props: Props) => {
     <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
       {props.onTitlePress ?
         <TouchableOpacity onPress={props.onTitlePress}>
-          <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>
+          <Text
+            align={props.align}
+            subtitle={props.subtitle}
+            ellipsizeMode="middle"
+            numberOfLines={1}
+          >
+            {props.title}
+          </Text>
         </TouchableOpacity>
-        : <Text align={props.align} subtitle={props.subtitle}>{props.title}</Text>}
+        :
+        <Text
+          align={props.align}
+          subtitle={props.subtitle}
+          ellipsizeMode="middle"
+          numberOfLines={1}
+        >
+          {props.title}
+        </Text>}
       {!!props.title && !props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor} />}
     </Wrapper>
   );
