@@ -12,6 +12,7 @@ import {
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { checkForMissedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
+import { getExistingTxNotesAction } from './txNoteActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
 
@@ -28,6 +29,8 @@ export const fetchTransactionsHistoryAction = (walletAddress: string, asset: str
     const { history: { data: currentHistory } } = getState();
     const updatedHistory = uniqBy([...history, ...currentHistory], 'hash');
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+    dispatch(getExistingTxNotesAction());
 
     dispatch({
       type: SET_HISTORY,
