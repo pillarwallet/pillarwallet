@@ -100,8 +100,10 @@ const HomeHeaderImageUsername = styled.View`
 `;
 
 const HomeHeaderUsername = styled(BaseText)`
-  font-size: ${fontSizes.mediumLarge};
+  font-size: ${fontSizes.mediumLarge}px;
+  line-height: ${fontSizes.mediumLarge}px;
   margin-top: 30px;
+  max-width: 200px;
 `;
 const AnimatedHomeHeaderUsername = Animated.createAnimatedComponent(HomeHeaderUsername);
 
@@ -311,19 +313,19 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [-profileImageWidth / 2, -32],
+      outputRange: [-profileImageWidth / 2, -30],
       extrapolate: 'clamp',
     });
 
     const profileUsernameTranslateY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [12, -77],
+      outputRange: [12, -94],
       extrapolate: 'clamp',
     });
 
     const profileImagePositionX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [(usernameWidth / 2), -10],
+      outputRange: [(usernameWidth / 2), 10],
       extrapolate: 'clamp',
     });
 
@@ -340,6 +342,12 @@ class HomeScreen extends React.Component<Props, State> {
     });
 
     const profileBalanceScale = scrollY.interpolate({
+      inputRange: [0, 100],
+      outputRange: [1, 0.8],
+      extrapolate: 'clamp',
+    });
+
+    const usernameScale = scrollY.interpolate({
       inputRange: [0, 100],
       outputRange: [1, 0.8],
       extrapolate: 'clamp',
@@ -452,6 +460,8 @@ class HomeScreen extends React.Component<Props, State> {
                   <CameraIcon name="camera" />
                 </AnimatedHomeHeaderProfileImage>
                 <AnimatedHomeHeaderUsername
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
                   onLayout={(event) => {
                     const { width } = event.nativeEvent.layout;
                     this.setState({
@@ -460,6 +470,7 @@ class HomeScreen extends React.Component<Props, State> {
                   }}
                   style={{
                     transform: [
+                      { scale: usernameScale },
                       { translateX: profileUsernameTranslateX },
                       { translateY: profileUsernameTranslateY },
                     ],
