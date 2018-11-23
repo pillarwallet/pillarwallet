@@ -78,6 +78,10 @@ android {
       // Android Lollipop without time consuming dex merging processes.
       minSdkVersion 21
     }
+    staging {
+      applicationIdSuffix ".staging"
+      minSdkVersion 21
+    }
     devRemoteKernel {
       minSdkVersion 21
     }
@@ -95,10 +99,9 @@ android {
     debug {
       debuggable true
     }
-    staging {
+    circleci {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
       signingConfig signingConfigs.staging
-      applicationIdSuffix ".staging"
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
