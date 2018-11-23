@@ -25,13 +25,16 @@ type Props = {
 }
 
 const WarningBanner = (props: Props) => {
-  return (
-    <WarningBannerBackground small={props.small} rounded={props.rounded}>
-      <WarningBannerText small={props.small}>
-        Do not send real ETH or ERC20 tokens.
-      </WarningBannerText>
-    </WarningBannerBackground>
-  );
+  if (__DEV__) {
+    return (
+      <WarningBannerBackground small={props.small} rounded={props.rounded}>
+        <WarningBannerText small={props.small}>
+          Do not send real ETH or ERC20 tokens.
+        </WarningBannerText>
+      </WarningBannerBackground>
+    );
+  }
+  return null;
 };
 
 export default WarningBanner;
