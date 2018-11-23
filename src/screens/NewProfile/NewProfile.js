@@ -255,15 +255,16 @@ class NewProfile extends React.Component<Props, State> {
             />
           </Wrapper>
         </Wrapper>
-        {!!value && !!value.username && value.username.length > 2 &&
         <Footer>
+          {!!value && !!value.username && value.username.length > 2 &&
           <Button
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
+            marginBottom={isIphoneX() ? '20px' : '0px'}
           />
+          }
         </Footer>
-        }
       </React.Fragment>
     );
   }
@@ -285,7 +286,7 @@ class NewProfile extends React.Component<Props, State> {
         <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
           Your Pillar Wallet is now restored. We are happy to see you again.
         </Paragraph>
-        <Button marginBottom={isIphoneX() ? '40px' : '20px'} onPress={this.handleSubmit} title="Next" />
+        <Button marginBottom="20px" onPress={this.handleSubmit} title="Next" />
       </Wrapper>
     );
   }
