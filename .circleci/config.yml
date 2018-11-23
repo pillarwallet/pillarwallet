@@ -147,7 +147,9 @@ jobs:
 
       - run:
           name: Upload to Hockeyapp
-          command: cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
 
   dev_build_android:
     <<: *defaults_android
