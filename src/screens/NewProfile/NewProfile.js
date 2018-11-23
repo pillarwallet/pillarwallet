@@ -15,6 +15,7 @@ import Title from 'components/Title';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
+import { isIphoneX } from 'utils/common';
 
 const { Form } = t.form;
 const MIN_USERNAME_LENGTH = 4;
@@ -95,6 +96,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
+          autoFocus: true,
         },
       },
     },
@@ -253,6 +255,7 @@ class NewProfile extends React.Component<Props, State> {
             />
           </Wrapper>
         </Wrapper>
+        {!!value && !!value.username && value.username.length > 2 &&
         <Footer>
           <Button
             onPress={this.handleSubmit}
@@ -260,6 +263,7 @@ class NewProfile extends React.Component<Props, State> {
             title="Next"
           />
         </Footer>
+        }
       </React.Fragment>
     );
   }
@@ -281,7 +285,7 @@ class NewProfile extends React.Component<Props, State> {
         <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
           Your Pillar Wallet is now restored. We are happy to see you again.
         </Paragraph>
-        <Button marginBottom="20px" onPress={this.handleSubmit} title="Next" />
+        <Button marginBottom={isIphoneX() ? '40px' : '20px'} onPress={this.handleSubmit} title="Next" />
       </Wrapper>
     );
   }
