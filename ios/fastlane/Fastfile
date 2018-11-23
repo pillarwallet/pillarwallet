@@ -143,7 +143,7 @@ platform :ios do
           git_branch: "develop",
           app_identifier: "com.pillarproject.wallet.staging",
           team_id: "J9DEY3FGPD",
-          force: true)
+          force_for_new_devices: true)
 
     # get our appstore provisioning profile
     match(type: "appstore",
@@ -165,14 +165,15 @@ platform :ios do
     # manually zip the results into an ipa
     sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
 
-    resign(
-      ipa: "pillarwallet-staging.ipa",
-      signing_identity: "iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)",
-      provisioning_profile: {
-        "com.pillarproject.wallet.staging" => ENV["sigh_com.pillarproject.wallet.staging_adhoc_profile-path"]
-      }
-    )
+    #resign(
+    #  ipa: "pillarwallet-staging.ipa",
+    #  signing_identity: "iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)",
+    #  provisioning_profile: {
+    #    "com.pillarproject.wallet.staging" => ENV["sigh_com.pillarproject.wallet.staging_adhoc_profile-path"]
+    #  }
+    #)
 
+    sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '" + ENV["sigh_com.pillarproject.wallet.staging_adhoc_profile-path"] + "'"
     #changelog = build_custom_changelog
     commit = last_git_commit
 
