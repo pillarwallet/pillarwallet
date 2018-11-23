@@ -3,6 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { fontSizes, baseColors, fontWeights } from 'utils/variables';
 import { BoldText } from 'components/Typography';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
 const WarningBannerBackground = styled.View`
   background-color: ${baseColors.fireEngineRed};
@@ -25,7 +26,7 @@ type Props = {
 }
 
 const WarningBanner = (props: Props) => {
-  if (__DEV__) {
+  if (NETWORK_PROVIDER === 'ropsten') {
     return (
       <WarningBannerBackground small={props.small} rounded={props.rounded}>
         <WarningBannerText small={props.small}>
