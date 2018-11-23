@@ -31,6 +31,8 @@ import {
 import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
 
 import EventHeader from './EventHeader';
+import ListItemParagraph from '../ListItem/ListItemParagraph';
+import { getTxNoteByContactAction } from '../../actions/txNoteActions';
 
 type Props = {
   transaction: Transaction,
@@ -47,6 +49,8 @@ type Props = {
   eventData: Object,
   eventType: string,
   eventStatus: string,
+  txNotes: Object,
+  getTxNoteByContact: Function,
 }
 
 const ContentWrapper = styled.View`
@@ -111,7 +115,11 @@ class EventDetails extends React.Component<Props, {}> {
       eventType,
       eventData,
       updateTransactionStatus,
+      getTxNoteByContact,
     } = this.props;
+
+    getTxNoteByContact(eventData.username);
+
     if (eventType !== TRANSACTION_EVENT) return;
 
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
@@ -145,7 +153,10 @@ class EventDetails extends React.Component<Props, {}> {
 
   handleRejectConnection = (userData) => {
     const { onClose, onReject } = this.props;
-    createAlert(TYPE_REJECTED, userData, () => { onClose(); onReject(); });
+    createAlert(TYPE_REJECTED, userData, () => {
+      onClose();
+      onReject();
+    });
   };
 
   handleCancelConnection = () => {
@@ -189,6 +200,7 @@ class EventDetails extends React.Component<Props, {}> {
       wallet: { address: myAddress },
       onClose,
       history,
+      txNotes,
       assets,
     } = this.props;
     let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:MM');
@@ -203,9 +215,18 @@ class EventDetails extends React.Component<Props, {}> {
         gasUsed,
         gasPrice,
         status,
+        note,
       } = txInfo;
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
+      let transactionNote = note;
+      if (txNotes.txNotes && txNotes.txNotes.length > 0) {
+        const txNote = txNotes.txNotes.find(txn => txn.txHash === eventData.hash);
+        if (txNote) {
+          transactionNote = txNote.text;
+        }
+      }
+      const hasNote = transactionNote && transactionNote !== '';
       const isPending = status === TX_PENDING_STATUS;
       const { decimals = 18 } = assets.find(({ symbol }) => symbol === asset) || {};
       const value = utils.formatUnits(new BigNumber(txInfo.value.toString()).toFixed(), decimals);
@@ -274,6 +295,12 @@ class EventDetails extends React.Component<Props, {}> {
               showSpinner
             />
             }
+            {hasNote &&
+            <ListItemParagraph
+              label="NOTE"
+              value={transactionNote}
+            />
+            }
             <ButtonsWrapper>
               <EventButton
                 block
@@ -330,7 +357,9 @@ class EventDetails extends React.Component<Props, {}> {
               block
               title="Decline"
               dangerInverted
-              onPress={() => { this.handleRejectConnection(userData); }}
+              onPress={() => {
+                this.handleRejectConnection(userData);
+              }}
             />
           </ButtonsWrapper>
           }
@@ -370,16 +399,19 @@ const mapStateToProps = ({
   contacts: { data: contacts },
   wallet: { data: wallet },
   history: { data: history },
+  txNotes: { data: txNotes },
   assets: { data: assets },
 }) => ({
   contacts,
   wallet,
   history,
+  txNotes,
   assets: Object.values(assets),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
+  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);
