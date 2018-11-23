@@ -1,5 +1,178 @@
 version: 2
+aliases:
+  - &restore_pod_cache
+    restore_cache:
+      keys:
+        - ios-pods-{{ checksum "./ios/Podfile.lock" }}
+        # Fall back to using the latest cache if no exact match is found.
+        - ios-pods-
+  - &install_pods
+    run:
+      name: Install CocoaPods
+      command: cd ios && bundle exec pod check || ((curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf) && bundle exec pod install)
+  - &save_pod_cache
+    save_cache:
+      key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
+      paths:
+        - ./ios/Pods
+
+  - &restore_gems_cache
+    restore_cache:
+      name: Restore cache
+      keys:
+        - v1-gems-{{ checksum "Gemfile.lock" }}
+        # Fall back to using the latest cache if no exact match is found.
+        - v1-gems-
+  - &install_gems
+    run:
+      name: Bundle install
+      command: bundle check || bundle install --path vendor/bundle
+      environment:
+        BUNDLE_JOBS: 4
+        BUNDLE_RETRY: 3
+  - &save_gems_cache
+    save_cache:
+      key: v1-gems-{{ checksum "Gemfile.lock" }}
+      paths:
+        - vendor/bundle
+
+  - &node_restore_cache
+    restore_cache:
+      key: node-{{ checksum "./yarn.lock" }}
+  - &node_artifactory_authenticate
+    run:
+      name: Authenticate with Artifactory
+      command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+  - &node_artifactory_set_registry
+    run:
+      name: set Registry to use Artifactory
+      command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+  - &node_install
+     run:
+      name: Install node dependencies
+      command: yarn install
+  - &node_save_cache
+    save_cache:
+      key: node-{{ checksum "./yarn.lock" }}
+      paths:
+        - ~/nodes_modules
+
+  - &gradle_restore_cache
+    restore_cache:
+      key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+  - &gradle_depencencies
+    run:
+      name: Download Dependencies
+      command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+  - &gradle_save_cache
+    save_cache:
+      key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+      paths:
+        - ~/android/.gradle
+        - ~/android/.m2
+  - &set_staging_env
+      run:
+        name: Set staging environment
+        command: |
+          cd ~/pillarwallet
+          git config user.email "devops@pillar.io"
+          git config user.name "Issabot"
+          npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+          export buildNumber=$(node -e "console.log(require('./package.json').version);")
+          rm .env
+          cp environments/.env.staging ./.env
+          sed -i "s/_build_number_/$buildNumber/g" .env
+          echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+
+# Default for iOS Build machine
+defaults_ios: &defaults_ios
+  working_directory: ~/pillarwallet
+  macos:
+    xcode: "9.4.0"
+  environment:
+    FL_OUTPUT_DIR: output
+    _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
+  resource_class: large
+  shell: /bin/bash --login -o pipefail
+
+# Default for Android Build machine
+defaults_android: &defaults_android
+    working_directory: ~/pillarwallet
+    resource_class: large
+    docker:
+      - image: circleci/android:api-26-node8-alpha
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+
+
+
 jobs:
+  build-and-test:
+    <<: *defaults_ios
+    steps:
+      - checkout
+      - *node_restore_cache
+      - *node_artifactory_authenticate
+      - *node_artifactory_set_registry
+      - *node_install
+      - *node_save_cache
+      - run:
+          name: Run validation
+          command: yarn validate
+
+  dev_build_ios:
+    <<: *defaults_ios
+    steps:
+      - checkout
+      - *node_restore_cache
+      - *node_artifactory_authenticate
+      - *node_artifactory_set_registry
+      - *node_install
+      - *node_save_cache
+
+      - *restore_gems_cache
+      - *install_gems
+      - *save_gems_cache
+
+      - *restore_pod_cache
+      - *install_pods
+      - *save_pod_cache
+
+      - *set_staging_env
+
+      - run:
+          name: Upload to Hockeyapp
+          command: cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
+
+  dev_build_android:
+    <<: *defaults_android
+    steps:
+      - checkout
+      - *node_restore_cache
+      - *node_artifactory_authenticate
+      - *node_artifactory_set_registry
+      - *node_install
+      - *node_save_cache
+
+      - *restore_gems_cache
+      - *install_gems
+      - *save_gems_cache
+
+      - *gradle_restore_cache
+      - *gradle_depencencies
+      - *gradle_save_cache
+
+      - *set_staging_env
+
+      - run:
+          name: Upload to Hockeyapp
+          command: cd android && bundle exec fastlane deploy_staging_build
+
   build:
     working_directory: ~/pillarwallet
     macos:
@@ -398,7 +571,26 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                  - master
+      - build-and-test
+      - dev_build_ios:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                  - develop
+#      - dev_build_android:
+#          requires:
+#            - build-and-test
+#          filters:
+#            branches:
+#              only:
+#                  - develop
       - stage_ios:
           requires:
             - build
