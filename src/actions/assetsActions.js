@@ -44,6 +44,7 @@ export const sendAssetAction = ({
   symbol,
   contractAddress,
   decimals,
+  note,
 }: TransactionPayload, wallet: Object, navigateToNextScreen: Function = noop) => {
   return async (dispatch: Function, getState: Function) => {
     const { history: { data: currentHistory } } = getState();
@@ -69,7 +70,7 @@ export const sendAssetAction = ({
         return { error: e.message };
       });
       if (ETHTrx.hash) {
-        const historyTx = buildHistoryTransaction({ ...ETHTrx, asset: symbol });
+        const historyTx = buildHistoryTransaction({ ...ETHTrx, asset: symbol, note });
         dispatch({
           type: ADD_TRANSACTION,
           payload: historyTx,
@@ -78,8 +79,12 @@ export const sendAssetAction = ({
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
       txStatus = ETHTrx.hash
-        ? { isSuccess: true, error: null }
-        : { isSuccess: false, error: ETHTrx.error };
+        ? {
+          isSuccess: true, error: null, note, to, txHash: ETHTrx.hash,
+        }
+        : {
+          isSuccess: false, error: ETHTrx.error, note, to,
+        };
       navigateToNextScreen(txStatus);
       return;
     }
@@ -109,6 +114,7 @@ export const sendAssetAction = ({
         asset: symbol,
         value: amount * (10 ** decimals),
         to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+        note,
       });
       dispatch({
         type: ADD_TRANSACTION,
@@ -118,8 +124,12 @@ export const sendAssetAction = ({
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
     }
     txStatus = ERC20Trx.hash
-      ? { isSuccess: true, error: null }
-      : { isSuccess: false, error: ERC20Trx.error };
+      ? {
+        isSuccess: true, error: null, note, to, txHash: ERC20Trx.hash,
+      }
+      : {
+        isSuccess: false, error: ERC20Trx.error, note, to,
+      };
     navigateToNextScreen(txStatus);
   };
 };
