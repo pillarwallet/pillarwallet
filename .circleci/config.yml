@@ -147,7 +147,7 @@ jobs:
 
       - run:
           name: Upload to Hockeyapp
-          command: cd ios && bundle exec fastlane deploy_staging_adhoc
+          command: cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
 
   dev_build_android:
     <<: *defaults_android
@@ -583,14 +583,14 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/fastlane_and_hockey
+                  - develop
 #      - dev_build_android:
 #          requires:
 #            - build-and-test
 #          filters:
 #            branches:
 #              only:
-#                  - feature/fastlane_and_hockey
+#                  - develop
       - stage_ios:
           requires:
             - build
