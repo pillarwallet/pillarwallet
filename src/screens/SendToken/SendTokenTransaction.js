@@ -17,12 +17,18 @@ import { baseColors, fontSizes } from 'utils/variables';
 
 // constants
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { connect } from 'react-redux';
+import { sendTxNoteByContactAction } from '../../actions/txNoteActions';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
+  contacts: Object,
+  sendTxNoteByContact: Function,
 }
 
-type State = {}
+type State = {
+  noteSent: boolean,
+}
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
@@ -45,6 +51,33 @@ const CancelText = styled(BoldText)`
 `;
 
 class SendTokenTransaction extends React.Component<Props, State> {
+  state = {
+    noteSent: false,
+  };
+
+  sendNote(cb, note, txHash, toUser) {
+    this.setState({
+      noteSent: true,
+    }, async () => {
+      await cb(toUser.username, { text: note, txHash });
+    });
+  }
+
+  componentDidUpdate() {
+    const {
+      navigation, sendTxNoteByContact, contacts,
+    } = this.props;
+    const {
+      isSuccess, note, to, txHash,
+    } = navigation.state.params;
+    if (isSuccess && note && note !== '') {
+      const toUser = contacts.find(x => { return x.ethAddress === to; });
+      if (toUser && !this.state.noteSent) {
+        this.sendNote(sendTxNoteByContact, note, txHash, toUser);
+      }
+    }
+  }
+
   handleDismissal = () => {
     const { navigation } = this.props;
     navigation.dismiss();
@@ -53,7 +86,7 @@ class SendTokenTransaction extends React.Component<Props, State> {
   handleNavigationBack = () => {
     const { navigation } = this.props;
     navigation.navigate(SEND_TOKEN_CONFIRM);
-  }
+  };
 
   render() {
     const { navigation } = this.props;
@@ -87,4 +120,14 @@ class SendTokenTransaction extends React.Component<Props, State> {
   }
 }
 
-export default SendTokenTransaction;
+const mapStateToProps = ({
+  contacts: { data: contacts },
+}) => ({
+  contacts,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  sendTxNoteByContact: (username, message) => dispatch(sendTxNoteByContactAction(username, message)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);
