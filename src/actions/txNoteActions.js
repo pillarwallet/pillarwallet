@@ -13,10 +13,17 @@ const extractTxNotes = (txNotesRaw) => {
   const txNotes = [];
   if (txNotesRaw && txNotesRaw.length > 0) {
     txNotesRaw.forEach(({ messages = {} }) => {
-      messages.messages.forEach(({ content }) => {
-        const txNote = JSON.parse(content);
-        txNotes.push(txNote);
-      });
+      if (Array.isArray(messages)) {
+        messages.forEach(({ content }) => {
+          const txNote = JSON.parse(content);
+          txNotes.push(txNote);
+        });
+      } else {
+        messages.messages.forEach(({ content }) => {
+          const txNote = JSON.parse(content);
+          txNotes.push(txNote);
+        });
+      }
     });
   }
   return txNotes;
