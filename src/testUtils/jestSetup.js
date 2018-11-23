@@ -80,10 +80,11 @@ jest.setMock('react-native-intercom', {
 
 jest.setMock('rn-signal-protocol-messaging', {
   SignalClient: {
-    getExistingChats: () => Promise.resolve(),
+    getExistingMessages: () => Promise.resolve(),
     createClient: () => Promise.resolve(),
     init: () => Promise.resolve(),
     sendMessageByContact: () => Promise.resolve(),
+    sendSilentMessageByContact: () => Promise.resolve(),
     receiveNewMessagesByContact: () => Promise.resolve(),
     registerAccount: () => Promise.resolve(),
     setFcmId: () => Promise.resolve(),

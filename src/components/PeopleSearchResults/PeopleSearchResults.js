@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { Keyboard, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
-import { TYPE_INVITE, TYPE_ACCEPTED, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
+import unionBy from 'lodash.unionby';
+import intersectionBy from 'lodash.intersectionby';
+import { TYPE_INVITE, TYPE_REJECTED, TYPE_SENT } from 'constants/invitationsConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { baseColors, fontSizes, itemSizes, spacing, fontWeights } from 'utils/variables';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -65,6 +67,7 @@ const LocalContactsItem = styled.TouchableOpacity`
 const LocalContactsItemName = styled(BaseText)`
   font-size: ${fontSizes.extraExtraSmall};
   color: ${baseColors.darkGray};
+  padding: 0 4px;
   margin-top: ${Platform.select({
     ios: '3px',
     android: '-4px',
@@ -120,7 +123,7 @@ class PeopleSearchResults extends React.Component<Props> {
       status = invitation.type;
     }
     if (localContactsIds.includes(user.id)) {
-      status = TYPE_ACCEPTED;
+      return null;
     }
 
     return (
@@ -139,9 +142,17 @@ class PeopleSearchResults extends React.Component<Props> {
     );
   };
 
-  renderLocalContacts = (contacts = []) => {
-    const { navigation } = this.props;
-    return contacts
+  renderLocalContacts = () => {
+    const {
+      navigation,
+      searchResults: { apiUsers, localContacts: resultsLocalContacts },
+      localContacts,
+    } = this.props;
+
+    const updatedLocalContact = intersectionBy(localContacts, apiUsers, 'id');
+    const filteredLocalContacts = unionBy(resultsLocalContacts, updatedLocalContact, 'id');
+
+    return filteredLocalContacts
       .map(contact => (
         <LocalContactsItem
           key={contact.username}
@@ -159,23 +170,24 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   render() {
-    const { searchResults } = this.props;
+    const { searchResults: { localContacts, apiUsers } } = this.props;
+
     return (
       <React.Fragment>
-        {!!searchResults.localContacts.length && (
+        {!!localContacts.length && (
           <LocalContacts>
             <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
             <LocalContactsScrollView
               keyboardShouldPersistTaps="always"
               horizontal
             >
-              {this.renderLocalContacts(searchResults.localContacts)}
+              {this.renderLocalContacts()}
             </LocalContactsScrollView>
           </LocalContacts>
         )}
-        {!!searchResults.apiUsers.length && (
+        {!!apiUsers.length && (
           <ContactCardList
-            data={searchResults.apiUsers}
+            data={apiUsers}
             renderItem={this.renderContact}
             onScroll={() => Keyboard.dismiss()}
             keyExtractor={({ username }) => username}
