@@ -102,7 +102,7 @@ export default function chatReducer(
           chats: state.data.chats
             .map(thisChat => {
               if (thisChat.username === action.payload.username) {
-                thisChat.lastMessage = action.payload.lastMessage;
+                if (action.payload.lastMessage) thisChat.lastMessage = action.payload.lastMessage;
                 thisChat.unread = 0;
               }
               return thisChat;

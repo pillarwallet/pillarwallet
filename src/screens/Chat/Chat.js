@@ -353,8 +353,9 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   handleNavigationToContact = () => {
-    const { navigation } = this.props;
+    const { navigation, resetUnread } = this.props;
     const { contact } = this.state;
+    resetUnread(this.state.contact.username);
     navigation.navigate(CONTACT, { contact });
   };
 
