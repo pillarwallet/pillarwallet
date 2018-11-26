@@ -232,7 +232,7 @@ class NewProfile extends React.Component<Props, State> {
       session,
       retry,
     } = this.props;
-    const isUsernameValid = value && value.username && value.username.length > 0;
+    const isUsernameValid = value && value.username && value.username.length > 3;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
@@ -256,7 +256,7 @@ class NewProfile extends React.Component<Props, State> {
           </Wrapper>
         </Wrapper>
         <Footer>
-          {!!value && !!value.username && value.username.length > 2 &&
+          {!!isUsernameValid &&
           <Button
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
