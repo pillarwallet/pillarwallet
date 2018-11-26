@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { Container, Wrapper } from 'components/Layout';
+import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
@@ -15,6 +15,7 @@ import { sendAssetAction } from 'actions/assetsActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import TextInput from '../../components/TextInput';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -23,13 +24,9 @@ type Props = {
   contacts: Object[],
 }
 
-const KeyboardAvoidingView = styled(RNKeyboardAvoidingView)`
-  flex: 1;
-  position: absolute;
-  bottom: 40;
-  left: 0;
-  width: 100%;
-`;
+type State = {
+  note: ?string
+}
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -47,14 +44,26 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium}
 `;
 
-class SendTokenContacts extends React.Component<Props, {}> {
+class SendTokenContacts extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      note: null,
+    };
+  }
+
   handleFormSubmit = () => {
+    Keyboard.dismiss();
     const { navigation } = this.props;
-    const transactionPayload = navigation.getParam('transactionPayload', {});
+    const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
     });
   };
+
+  handleNoteChange(text) {
+    this.setState({ note: text });
+  }
 
   render() {
     const { contacts, session, navigation } = this.props;
@@ -74,17 +83,17 @@ class SendTokenContacts extends React.Component<Props, {}> {
             onBack={() => this.props.navigation.goBack(null)}
             title="send"
           />
-          <Wrapper regularPadding>
+          <ScrollWrapper regularPadding>
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
               <Label>Amount</Label>
               <Value>{amount} {symbol}</Value>
             </LabeledRow>
             {!!recipientUsername &&
-              <LabeledRow>
-                <Label>Recipient Username</Label>
-                <Value>{recipientUsername}</Value>
-              </LabeledRow>
+            <LabeledRow>
+              <Label>Recipient Username</Label>
+              <Value>{recipientUsername}</Value>
+            </LabeledRow>
             }
             <LabeledRow>
               <Label>Recipient Address</Label>
@@ -94,13 +103,27 @@ class SendTokenContacts extends React.Component<Props, {}> {
               <Label>Est. Network Fee</Label>
               <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
             </LabeledRow>
-          </Wrapper>
+            <TextInput
+              inputProps={{
+                onChange: (text) => this.handleNoteChange(text),
+                value: this.state.note,
+                autoCapitalize: 'none',
+                multiline: true,
+                numberOfLines: 3,
+                placeholder: 'Add a note to this transaction',
+              }}
+              inputType="secondary"
+              labelBigger
+              noBorder
+              keyboardAvoidance
+            />
+          </ScrollWrapper>
+          <Footer keyboardVerticalOffset={40}>
+            <FooterWrapper>
+              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+            </FooterWrapper>
+          </Footer>
         </Container>
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={30}>
-          <FooterWrapper>
-            <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
-          </FooterWrapper>
-        </KeyboardAvoidingView>
       </React.Fragment>
     );
   }

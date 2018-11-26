@@ -15,10 +15,11 @@ import Title from 'components/Title';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
+import { isIphoneX } from 'utils/common';
 
 const { Form } = t.form;
-const MIN_USERNAME_LENGTH = 3;
-const MAX_USERNAME_LENGTH = 20;
+const MIN_USERNAME_LENGTH = 4;
+const MAX_USERNAME_LENGTH = 30;
 
 const IntroParagraph = styled(Paragraph)`
   margin: 10px 0 50px;
@@ -53,8 +54,8 @@ function InputTemplate(locals) {
     />
   );
 }
-
-const usernameRegex = /^[a-z0-9._-]+$/i;
+const usernameRegex = /^[a-z]+[a-z0-9-]+[a-z0-9]$/i;
+const startsWithNumberRegex = /[0-9]/i;
 const Username = t.refinement(t.String, (username): boolean => {
   return username != null
     && username.length >= MIN_USERNAME_LENGTH
@@ -70,7 +71,9 @@ Username.getValidationErrorMessage = (username): string => {
     return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
   }
   if (username != null && !(usernameRegex.test(username))) {
-    return 'Only use alpha-numeric characters, underscores, dashes or full stops.';
+    if (startsWithNumberRegex.test(username)) return 'Username can not start with a number';
+    if (username.startsWith('-') || username.endsWith('-')) return 'Username can not start or end with a dash';
+    return 'Only use alpha-numeric characters or dashes';
   }
   return 'Please specify the username.';
 };
@@ -93,6 +96,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
+          autoFocus: true,
         },
       },
     },
@@ -228,7 +232,7 @@ class NewProfile extends React.Component<Props, State> {
       session,
       retry,
     } = this.props;
-    const isUsernameValid = value && value.username && value.username.length > 0;
+    const isUsernameValid = value && value.username && value.username.length > 3;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
@@ -252,11 +256,14 @@ class NewProfile extends React.Component<Props, State> {
           </Wrapper>
         </Wrapper>
         <Footer>
+          {!!isUsernameValid &&
           <Button
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
+            marginBottom={isIphoneX() ? '20px' : '0px'}
           />
+          }
         </Footer>
       </React.Fragment>
     );

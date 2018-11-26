@@ -5,7 +5,7 @@ import { Item as NBItem, Input, Label } from 'native-base';
 import { fontSizes, fontWeights, baseColors, UIColors, spacing } from 'utils/variables';
 import IconButton from 'components/IconButton';
 import { BaseText, BoldText } from 'components/Typography';
-import { View, TouchableOpacity, Platform } from 'react-native';
+import { View, TouchableOpacity, Platform, TextInput as RNInput } from 'react-native';
 import Spinner from 'components/Spinner';
 
 type inputPropsType = {
@@ -36,6 +36,7 @@ type Props = {
   noBorder?: boolean,
   lowerCase?: boolean,
   labelBigger?: boolean,
+  keyboardAvoidance?: boolean,
   loading?: boolean,
 }
 
@@ -135,6 +136,9 @@ const AbsoluteSpinner = styled(Spinner)`
 `;
 
 class TextInput extends React.Component<Props, State> {
+  rnInput: window.HTMLInputElement;
+  multilineInputField: window.HTMLInputElement;
+
   state = {
     isFocused: false,
   };
@@ -145,6 +149,13 @@ class TextInput extends React.Component<Props, State> {
     trim: true,
   };
 
+  constructor(props: Props) {
+    super(props);
+
+    this.rnInput = React.createRef();
+    this.multilineInputField = React.createRef();
+  }
+
   handleBlur = (e: EventLike) => {
     if (Platform.OS === 'android' && e.nativeEvent.text === undefined) {
       return;
@@ -154,6 +165,12 @@ class TextInput extends React.Component<Props, State> {
     const value = trim ? e.nativeEvent.text.trim() : e.nativeEvent.text;
     if (onBlur) {
       onBlur(value);
+    }
+
+    if (Platform.OS === 'ios' && this.props.inputProps.multiline && this.props.keyboardAvoidance) {
+      this.setState({
+        isFocused: false,
+      });
     }
   };
 
@@ -167,6 +184,20 @@ class TextInput extends React.Component<Props, State> {
     this.setState({
       isFocused: true,
     });
+  };
+
+  handleMultilineFocus = () => {
+    if (!this.state.isFocused) {
+      this.rnInput.current.focus();
+      this.setState({
+        isFocused: false,
+      }, () => {
+        setTimeout(() => {
+          this.multilineInputField._root.focus();
+          this.handleFocus();
+        }, 50);
+      });
+    }
   };
 
   render() {
@@ -192,6 +223,8 @@ class TextInput extends React.Component<Props, State> {
     const { isFocused } = this.state;
     const inputType = inputTypes[this.props.inputType] || inputTypes.default;
     const additionalRightPadding = loading ? 36 : 0;
+    const variableFocus = Platform.OS === 'ios' && inputProps.multiline && this.props.keyboardAvoidance ?
+      this.handleMultilineFocus : this.handleFocus;
     return (
       <View style={{ paddingBottom: 10 }}>
         <Item
@@ -205,10 +238,11 @@ class TextInput extends React.Component<Props, State> {
           {!!label && <CustomLabel labelBigger={labelBigger}>{lowerCase ? label : label.toUpperCase()}</CustomLabel>}
           <InputField
             {...inputProps}
+            innerRef={(input) => { this.multilineInputField = input; }}
             onChange={this.handleChange}
             onBlur={this.handleBlur}
             onEndEditing={() => this.handleBlur}
-            onFocus={this.handleFocus}
+            onFocus={variableFocus}
             value={value}
             inputType={inputType}
             autoCorrect={autoCorrect}
@@ -220,6 +254,11 @@ class TextInput extends React.Component<Props, State> {
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
             }}
           />
+          <RNInput
+            caretHidden
+            autoCorrect={false}
+            ref={this.rnInput}
+          />
           {!!loading && <AbsoluteSpinner width={30} height={30} />}
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
@@ -227,9 +266,9 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           {errorMessage ? <ErrorMessage>{errorMessage}</ErrorMessage> : <View />}
           {!!footerAddonText &&
-            <TouchableOpacity onPress={footerAddonAction}>
-              <AddonText>{footerAddonText}</AddonText>
-            </TouchableOpacity>}
+          <TouchableOpacity onPress={footerAddonAction}>
+            <AddonText>{footerAddonText}</AddonText>
+          </TouchableOpacity>}
         </InputFooter>
       </View>
     );
