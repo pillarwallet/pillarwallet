@@ -81,7 +81,7 @@ aliases:
           export buildNumber=$(node -e "console.log(require('./package.json').version);")
           rm .env
           cp environments/.env.staging ./.env
-          sed -i "s/_build_number_/$buildNumber/g" .env
+          sed -i.bak "s/_build_number_/$buildNumber/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 # Default for iOS Build machine
@@ -147,7 +147,9 @@ jobs:
 
       - run:
           name: Upload to Hockeyapp
-          command: cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
 
   dev_build_android:
     <<: *defaults_android
@@ -216,7 +218,7 @@ jobs:
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
-            sed -i.bak s/_build_number_/$buildNumber/g .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -305,7 +307,7 @@ jobs:
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.production ./.env
-            sed -i.bak s/_build_number_/$buildNumber/g .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -399,7 +401,7 @@ jobs:
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.production ./.env
-            sed -i "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "../yarn.lock" }}
@@ -495,7 +497,7 @@ jobs:
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
-            sed -i "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "../yarn.lock" }}
