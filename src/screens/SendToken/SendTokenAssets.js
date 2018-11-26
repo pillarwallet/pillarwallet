@@ -6,9 +6,10 @@ import { connect } from 'react-redux';
 import type { Assets, Balances } from 'models/Asset';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import Header from 'components/Header';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
@@ -109,6 +110,18 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
           }}
           refreshing={false}
           onRefresh={() => this.refreshAssetsList()}
+          ListEmptyComponent={
+            <Wrapper
+              fullScreen
+              style={{
+                paddingTop: 90,
+                paddingBottom: 90,
+                alignItems: 'center',
+              }}
+            >
+              <EmptyStateParagraph title="No assets to send" bodyText="None of your assets have a balance" />
+            </Wrapper>
+          }
         />
       </Container>
     );
