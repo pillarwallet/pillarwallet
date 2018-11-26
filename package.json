@@ -110,6 +110,7 @@
     "dns.js": "^1.0.1",
     "ethers": "https://github.com/pillarwallet/ethers.js#master",
     "https-browserify": "~0.0.0",
+    "lodash.capitalize": "^4.2.1",
     "lodash.debounce": "^4.0.8",
     "lodash.intersectionby": "^4.7.0",
     "lodash.isequal": "^4.5.0",
