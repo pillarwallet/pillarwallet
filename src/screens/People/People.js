@@ -3,41 +3,42 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import {
   Alert,
-  ListView,
+  FlatList,
   Animated,
   Keyboard,
   Image,
   KeyboardAvoidingView,
   Platform,
+  RefreshControl,
 } from 'react-native';
-import { Button as NBButton, Icon, List } from 'native-base';
-import styled from 'styled-components/native';
+import Swipeout from 'react-native-swipeout';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
+import capitalize from 'lodash.capitalize';
+import styled from 'styled-components/native';
+import { Icon } from 'native-base';
 import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
+import { MUTE, BLOCK, REMOVE } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { Container, Wrapper } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import NotificationCircle from 'components/NotificationCircle';
 import Header from 'components/Header';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
-import SearchBar from 'components/SearchBar';
+import { BaseText } from 'components/Typography';
+import NotificationCircle from 'components/NotificationCircle';
 import Button from 'components/Button/Button';
+import SearchBar from 'components/SearchBar';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
-
-const MIN_QUERY_LENGTH = 2;
-
-const esBackground = require('assets/images/esLeftLong.png');
+import ManageConnectionModal from './ManageConnectionModal';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -100,24 +101,9 @@ const EmptyStateBGWrapper = styled.View`
   padding: 0 20px 20px;
 `;
 
-const ContactItem = styled.View`
-  background-color: ${baseColors.lighterGray};
-`;
+const MIN_QUERY_LENGTH = 2;
 
-const ConnectionRowActions = styled.View`
-  flex-direction: row;
-`;
-
-const ConnectionActionButton = styled(Button)`
-  flex: 1;
-  flex-direction: column;
-  height: 78px;
-`;
-
-const ConnectionActionLabel = styled(BaseText)`
-  color: ${baseColors.white};
-  font-size: ${fontSizes.small};
-`;
+const esBackground = require('assets/images/esLeftLong.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -135,16 +121,21 @@ type State = {
   query: string,
   searchIsFocused: boolean,
   fullScreenOverlayOpacity: Animated.Value,
+  showManageContactModal: boolean,
+  manageContactType?: MUTE | BLOCK | REMOVE,
+  manageContactId: ?string,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
   _willBlur: NavigationEventSubscription;
-  listViewDS = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
   state = {
     query: '',
     searchIsFocused: false,
     fullScreenOverlayOpacity: new Animated.Value(0),
+    showManageContactModal: false,
+    manageContactType: null,
+    manageContactId: null,
   };
 
   constructor(props: Props) {
@@ -228,16 +219,58 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
-  renderContact = (item) => (
-    <ContactItem>
+  manageConnection = (type: MUTE | REMOVE | BLOCK, contactData: Object) => {
+    // condition to avoid confirmation if MUTE should be considered here
+    this.setState({
+      showManageContactModal: true,
+      manageContactType: type,
+      manageContactId: contactData.id,
+    });
+  };
+
+  renderSwipeoutBtns = (data) => {
+    const swipeButtonsWidth = '78';
+    const swipeButtons = [
+      // { actionType: MUTE, icon: 'mute', primary: true },
+      { actionType: REMOVE, icon: 'remove', danger: true },
+      // { actionType: BLOCK, icon: 'warning', dark: true },
+    ];
+
+    return swipeButtons.map((buttonDefinition) => {
+      const { actionType, icon, ...btnProps } = buttonDefinition;
+
+      return {
+        component: (
+          <Button
+            alignTitleVertical
+            isSquare
+            noPadding
+            small
+            height={swipeButtonsWidth}
+            onPress={() => this.manageConnection(actionType, data)}
+            title={capitalize(actionType)}
+            icon={icon}
+            {...btnProps}
+          />
+        ),
+      };
+    });
+  };
+
+  renderContact = ({ item }) => (
+    <Swipeout
+      right={this.renderSwipeoutBtns(item)}
+      sensitivity={10}
+      backgroundColor="transparent"
+      buttonWidth={80}
+    >
       <ListItemWithImage
         label={item.username}
         onPress={this.handleContactCardPress(item)}
         avatarUrl={item.profileImage}
         navigateToProfile={this.handleContactCardPress(item)}
       />
-      <Separator spaceOnLeft={82} />
-    </ContactItem>
+    </Swipeout>
   );
 
   onScreenBlur = () => {
@@ -245,12 +278,21 @@ class PeopleScreen extends React.Component<Props, State> {
     this.animateFullScreenOverlayOpacity(true);
   };
 
-  manageConnection = (type: 'mute' | 'remove' | 'block', contactData: Object) => {
-    Alert.alert(`${type} ${contactData.username}`);
+  confirmManageAction = (manageContactType: MUTE | BLOCK | REMOVE, manageContactId: ?string) => {
+    const contactId = manageContactId || '';
+    this.setState({ showManageContactModal: false });
+    Alert.alert(`${manageContactType} ${contactId}`);
   };
 
   render() {
-    const { query, searchIsFocused, fullScreenOverlayOpacity } = this.state;
+    const {
+      query,
+      searchIsFocused,
+      fullScreenOverlayOpacity,
+      showManageContactModal,
+      manageContactType,
+      manageContactId,
+    } = this.state;
     const {
       searchResults,
       contactState,
@@ -262,9 +304,6 @@ class PeopleScreen extends React.Component<Props, State> {
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
-
-    const sortedLocalContactsDS = this.listViewDS.cloneWithRows(sortedLocalContacts);
-    const swipeButtonsWidth = '78';
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -320,47 +359,26 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !!sortedLocalContacts.length &&
-          <List
-            disableRightSwipe
-            rightOpenValue={-228}
-            dataSource={sortedLocalContactsDS}
-            renderRow={this.renderContact}
-            renderRightHiddenRow={(data) => (
-              <ConnectionRowActions>
-                <NBButton
-                  alignTitleVertical
-                  isSquare
-                  noPadding
-                  small
-                  height={swipeButtonsWidth}
-                  onPress={() => this.manageConnection('mute', data)}
-                  title="Mute"
-                  icon="mute"
-                />
-                <NBButton
-                  alignTitleVertical
-                  isSquare
-                  noPadding
-                  small
-                  dark
-                  height={swipeButtonsWidth}
-                  onPress={() => this.manageConnection('remove', data)}
-                  title="Remove"
-                  icon="remove"
-                />
-                <NBButton
-                  alignTitleVertical
-                  isSquare
-                  noPadding
-                  danger
-                  small
-                  height={swipeButtonsWidth}
-                  onPress={() => this.manageConnection('block', data)}
-                  title="Block"
-                  icon="warning"
-                />
-              </ConnectionRowActions>
-            )}
+          <FlatList
+            data={sortedLocalContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={this.renderContact}
+            initialNumToRender={8}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+            onScroll={() => Keyboard.dismiss()}
+            contentContainerStyle={{
+              paddingVertical: spacing.rhythm,
+              paddingTop: 0,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  const { fetchInviteNotifications } = this.props;
+                  fetchInviteNotifications();
+                }}
+              />
+            }
           />
         }
 
@@ -389,6 +407,13 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </KeyboardAvoidingView>
         }
+        <ManageConnectionModal
+          showManageContactModal={showManageContactModal}
+          manageContactType={manageContactType}
+          contact={sortedLocalContacts.filter((contact) => contact.id === manageContactId)[0] || {}}
+          onConfirm={() => this.confirmManageAction(manageContactType, manageContactId)}
+          onModalHide={() => { this.setState({ showManageContactModal: false }); }}
+        />
       </Container>
     );
   }
