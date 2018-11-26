@@ -188,6 +188,10 @@ const ButtonMiniText = styled(BoldText)`
 `;
 
 const getTheme = (props: Props) => {
+  if (props.secondary && props.danger) {
+    return themes.secondaryDanger;
+  }
+
   const propsKeys = Object.keys(props);
   const themesKeys = Object.keys(themes);
   let themeToUse = themes.primary;
