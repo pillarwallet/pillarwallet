@@ -24,7 +24,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { MUTE, BLOCK, REMOVE } from 'constants/connectionsConstants';
+import { REMOVE } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import Header from 'components/Header';
@@ -122,7 +122,7 @@ type State = {
   searchIsFocused: boolean,
   fullScreenOverlayOpacity: Animated.Value,
   showManageContactModal: boolean,
-  manageContactType?: MUTE | BLOCK | REMOVE,
+  manageContactType: ?string,
   manageContactId: ?string,
 }
 
@@ -219,11 +219,11 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
-  manageConnection = (type: MUTE | REMOVE | BLOCK, contactData: Object) => {
+  manageConnection = (manageContactType: ?string, contactData: Object) => {
     // condition to avoid confirmation if MUTE should be considered here
     this.setState({
       showManageContactModal: true,
-      manageContactType: type,
+      manageContactType,
       manageContactId: contactData.id,
     });
   };
@@ -278,10 +278,11 @@ class PeopleScreen extends React.Component<Props, State> {
     this.animateFullScreenOverlayOpacity(true);
   };
 
-  confirmManageAction = (manageContactType: MUTE | BLOCK | REMOVE, manageContactId: ?string) => {
+  confirmManageAction = (manageContactType: ?string, manageContactId: ?string) => {
+    const contactType = manageContactType || '';
     const contactId = manageContactId || '';
     this.setState({ showManageContactModal: false });
-    Alert.alert(`${manageContactType} ${contactId}`);
+    Alert.alert(`${contactType} ${contactId}`);
   };
 
   render() {
@@ -410,7 +411,7 @@ class PeopleScreen extends React.Component<Props, State> {
         <ManageConnectionModal
           showManageContactModal={showManageContactModal}
           manageContactType={manageContactType}
-          contact={sortedLocalContacts.filter((contact) => contact.id === manageContactId)[0] || {}}
+          contact={sortedLocalContacts.find((contact) => contact.id === manageContactId) || {}}
           onConfirm={() => this.confirmManageAction(manageContactType, manageContactId)}
           onModalHide={() => { this.setState({ showManageContactModal: false }); }}
         />

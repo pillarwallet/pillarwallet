@@ -1,7 +1,6 @@
 // @flow
 
 import * as React from 'react';
-import { MUTE, BLOCK, REMOVE } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
@@ -12,15 +11,17 @@ const subtitleDescription = {
   remove: 'After disconnecting you no longer be able to chat and send assets. You can re-establish connection later.',
 };
 
-const titleConfirmation = (manageContactType, username) => {
-  return `${manageContactType} ${username}?`;
+const titleConfirmation = (manageContactType: ?string, username: ?string) => {
+  const contactType = manageContactType || '';
+  const usernameToConfirm = username || '';
+  return `${contactType} ${usernameToConfirm}?`;
 };
 
 type Props = {
   onModalHide: Function,
   onConfirm: Function,
   showManageContactModal: boolean,
-  manageContactType: MUTE | BLOCK | REMOVE,
+  manageContactType: ?string,
   contact: Object,
 };
 
@@ -33,19 +34,20 @@ const ManageConnectionModal = (props: Props) => {
     contact,
   } = props;
 
+  const contactType = manageContactType || '';
   const { username } = contact;
-  const subtitle = manageContactType ?
-    subtitleDescription[manageContactType] : null;
+  const subtitle = contactType !== '' ?
+    subtitleDescription[contactType] : '';
 
   return (
     <SlideModal
       isVisible={showManageContactModal}
       onModalHide={() => onModalHide()}
-      title={titleConfirmation(manageContactType, username)}
+      title={titleConfirmation(contactType, username)}
       subtitle={subtitle}
     >
       <Button
-        title={`Confirm ${manageContactType}`}
+        title={`Confirm ${contactType}`}
         onPress={() => onConfirm()}
         style={{
           marginBottom: 20,
