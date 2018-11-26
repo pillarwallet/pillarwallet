@@ -8,7 +8,6 @@ import { utils } from 'ethers';
 import { format as formatDate } from 'date-fns';
 import { BigNumber } from 'bignumber.js';
 
-import { resetUnreadAction } from 'actions/chatActions';
 import { baseColors, spacing } from 'utils/variables';
 import type { Notification } from 'models/Notification';
 import type { Transaction } from 'models/Transaction';
@@ -66,7 +65,6 @@ type Props = {
   notifications: Notification[],
   activeTab: string,
   esData: Object,
-  resetUnread: Function,
   customFeedData?: Object,
   contacts: Object,
   invitations: Object,
@@ -109,9 +107,8 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   navigateToChat = (contact) => {
-    const { navigation, resetUnread } = this.props;
+    const { navigation } = this.props;
     navigation.navigate(CHAT, { username: contact.username });
-    resetUnread(contact.username);
   };
 
   mapTransactionsHistory(history, contacts) {
@@ -363,8 +360,4 @@ const mapStateToProps = ({
   wallet,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ActivityFeed);
+export default connect(mapStateToProps)(ActivityFeed);

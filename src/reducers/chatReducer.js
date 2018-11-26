@@ -95,16 +95,20 @@ export default function chatReducer(
         },
       };
     case RESET_UNREAD_MESSAGE:
-      return merge(
-        {},
-        state,
-        {
-          data: {
-            chats: action.payload,
-            isFetching: false,
-          },
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          chats: state.data.chats
+            .map(thisChat => {
+              if (thisChat.username === action.payload.username) {
+                thisChat.lastMessage = action.payload.lastMessage;
+                thisChat.unread = 0;
+              }
+              return thisChat;
+            }),
         },
-      );
+      };
     case UPDATE_MESSAGES:
       return merge(
         {},
