@@ -8750,6 +8750,11 @@ lodash.camelcase@^4.3.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
   integrity sha1-soqmKIorn8ZRA1x3EfZathkDMaY=
 
+lodash.capitalize@^4.2.1:
+  version "4.2.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.capitalize/-/lodash.capitalize-4.2.1.tgz#f826c9b4e2a8511d84e3aca29db05e1a4f3b72a9"
+  integrity sha1-+CbJtOKoUR2E46yinbBeGk87cqk=
+
 lodash.chunk@*:
   version "4.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.chunk/-/lodash.chunk-4.2.0.tgz#66e5ce1f76ed27b4303d8c6512e8d1216e8106bc"
