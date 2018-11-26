@@ -26,6 +26,7 @@ const mockTransaction: Object = {
   amount: 0.5,
   address: '000x124',
   gasPrice: 15000,
+  note: 'test note',
 };
 
 const mockAssets: Assets = {
