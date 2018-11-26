@@ -84,9 +84,9 @@ platform :android do
   desc "Deploy staging development build to hockeyapp"
   lane :deploy_staging_build do
     buildApp(
-      flavorName: 'staging',
+      flavorName: 'prod',
       hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN"],
-      apkName: 'app-staging-circleci.apk'
+      apkName: 'app-prod-staging.apk'
     )
   end
 
@@ -135,18 +135,18 @@ platform :android do
   private_lane :buildApp do |options|
 
     # clean
-    gradle(
-      task: 'clean',
-      flags: '--no-daemon'
-    )
+    #gradle(
+    #  task: 'clean',
+    #  flags: '--no-daemon'
+    #)
 
-    # build the release variant
-    gradle(
-      task: 'assemble',
-      build_type: 'circleci',
-      flavor: options[:flavorName],
-      flags: '--no-daemon'
-    )
+    ## build the release variant
+    #gradle(
+    #  task: 'assemble',
+    #  build_type: 'staging',
+    #  flavor: options[:flavorName],
+    #  flags: '--no-daemon'
+    #)
 
     # Generate the changelog based on commit messages since your last tag
     changelog = build_custom_changelog
