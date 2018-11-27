@@ -2,7 +2,7 @@
 
 ## Pull Request Review
 The following set of criteria and guideline has been set for code reviews
-[Pillar Pull Request and Code Review Guidelines] (CONTRIBUTING.md)
+[Pillar Pull Request and Code Review Guidelines](CONTRIBUTING.md)
 
 ## Requirements
 - Watchman `brew install watchman`
