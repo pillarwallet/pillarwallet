@@ -19,10 +19,14 @@ import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import { getExistingChatsAction, resetUnreadAction, deleteChatAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
-import { fontSizes, baseColors, spacing } from 'utils/variables';
+import { fontSizes, baseColors, spacing, UIColors } from 'utils/variables';
 
 const SearchBarWrapper = styled.View`
   padding: 15px ${spacing.rhythm}px 0;
+  background: ${UIColors.defaultBackgroundColor};
+  ${props => props.scrollShadow
+    ? 'elevation: 3; shadow-color: #000; shadow-offset: 0 2px; shadow-opacity: 0.05; shadow-radius: 2;'
+    : ''}
 `;
 
 type Props = {
@@ -39,6 +43,7 @@ type Props = {
 type State = {
   query: string,
   forceClose: boolean,
+  scrollShadow: boolean,
 }
 
 const DeleteButttonWrapper = styled.TouchableOpacity`
@@ -66,6 +71,7 @@ class ChatListScreen extends React.Component<Props, State> {
   state = {
     query: '',
     forceClose: false,
+    scrollShadow: false,
   };
 
   componentDidMount() {
@@ -196,7 +202,7 @@ class ChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats } = this.props;
-    const { query } = this.state;
+    const { query, scrollShadow } = this.state;
     const ChatWrapper = chats.length ? ScrollWrapper : View;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     const filteredChats = (!query || query.trim() === '' || query.length < 2)
@@ -215,7 +221,7 @@ class ChatListScreen extends React.Component<Props, State> {
           onNextPress={this.goToNewChatList}
         />
         {chats.length > 6 &&
-        <SearchBarWrapper>
+        <SearchBarWrapper scrollShadow={scrollShadow}>
           <SearchBar
             inputProps={{
               onChange: this.handleUserSearch,
@@ -237,6 +243,15 @@ class ChatListScreen extends React.Component<Props, State> {
               onRefresh={getExistingChats}
             />
           }
+          onScrollBeginDrag={() => {
+            this.setState({ scrollShadow: true });
+          }}
+          onScrollEndDrag={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
+          onMomentumScrollEnd={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
         >
           <FlatList
             data={filteredChats}

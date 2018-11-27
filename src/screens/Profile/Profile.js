@@ -24,7 +24,7 @@ import { repairStorageAction } from 'actions/appActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { baseColors, spacing } from 'utils/variables';
+import { baseColors, spacing, UIColors } from 'utils/variables';
 import { DEBUG_DATA_LOGGER } from 'react-native-dotenv';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
@@ -97,6 +97,7 @@ type State = {
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
+  scrollShadow: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -107,6 +108,7 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
+      scrollShadow: false,
     };
   }
 
@@ -180,11 +182,23 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
+      scrollShadow,
     } = this.state;
 
     return (
       <Container>
-        <Header gray title="settings" onBack={() => navigation.goBack(null)} />
+        <Header
+          gray
+          title="settings"
+          onBack={() => navigation.goBack(null)}
+          scrollShadow={scrollShadow}
+          style={{
+            backgroundColor: UIColors.defaultBackgroundColor,
+            marginTop: 0,
+            paddingTop: 20,
+            height: 60,
+          }}
+        />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
           fullScreen
@@ -277,7 +291,17 @@ class Profile extends React.Component<Props, State> {
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
-        <ScrollWrapper>
+        <ScrollWrapper
+          onScrollBeginDrag={() => {
+            this.setState({ scrollShadow: true });
+          }}
+          onScrollEndDrag={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
+          onMomentumScrollEnd={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
+        >
           <ListWrapper>
             <ListSeparator first>
               <SubHeading>PROFILE SETTINGS</SubHeading>

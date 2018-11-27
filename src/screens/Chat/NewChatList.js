@@ -12,6 +12,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+import { UIColors } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -23,14 +24,15 @@ type Props = {
 }
 
 type State = {
-  showChat: boolean,
-  receiver: string,
-  receiverAvatar: string,
-  chatList: Array<Object>,
+  scrollShadow: boolean,
 }
 
 class NewChatListScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
+
+  state = {
+    scrollShadow: false,
+  };
 
   componentDidMount() {
     this._willFocus = this.props.navigation.addListener(
@@ -73,6 +75,7 @@ class NewChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats, contacts } = this.props;
+    const { scrollShadow } = this.state;
     const contactsForNewChats = contacts.map((contact) => {
       const existingChat = chats.find(({ username }) => contact.username === username);
       if (existingChat) return {};
@@ -86,7 +89,17 @@ class NewChatListScreen extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="new chat" onBack={this.goToChatList} />
+        <Header
+          title="new chat"
+          onBack={this.goToChatList}
+          scrollShadow={scrollShadow}
+          style={{
+            backgroundColor: UIColors.defaultBackgroundColor,
+            marginTop: 0,
+            paddingTop: 20,
+            height: 60,
+          }}
+        />
         <ChatWrapper
           style={{
             paddingBottom: sortedContactsForNewChats.length ? 18 : 0,
@@ -97,6 +110,15 @@ class NewChatListScreen extends React.Component<Props, State> {
               onRefresh={getExistingChats}
             />
           }
+          onScrollBeginDrag={() => {
+            this.setState({ scrollShadow: true });
+          }}
+          onScrollEndDrag={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
+          onMomentumScrollEnd={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
         >
           <FlatList
             data={sortedContactsForNewChats}

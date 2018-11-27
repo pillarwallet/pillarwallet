@@ -17,7 +17,7 @@ import {
   LoadEarlier,
   Message,
 } from 'react-native-gifted-chat';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, fontSizes, spacing, UIColors } from 'utils/variables';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
@@ -395,6 +395,13 @@ class ChatScreen extends React.Component<Props, State> {
           title={title}
           onBack={this.handleChatDismissal}
           onTitlePress={this.handleNavigationToContact}
+          scrollShadow
+          style={{
+            backgroundColor: UIColors.defaultBackgroundColor,
+            marginTop: 0,
+            paddingTop: 20,
+            height: 60,
+          }}
         />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&

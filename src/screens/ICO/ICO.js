@@ -11,7 +11,7 @@ import {
 import styled from 'styled-components/native';
 import { format } from 'date-fns';
 import type { NavigationScreenProp } from 'react-navigation';
-import { baseColors, fontSizes, spacing, fontTrackings } from 'utils/variables';
+import { baseColors, fontSizes, spacing, fontTrackings, UIColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Header from 'components/Header';
@@ -25,6 +25,10 @@ import Countdown from 'components/Countdown';
 type Props = {
   navigation: NavigationScreenProp<*>,
 }
+
+type State = {
+  scrollShadow: boolean,
+};
 
 const ICOWrapper = styled(Wrapper)`
   flex: 1;
@@ -114,7 +118,11 @@ const ContactsLabel = styled(BaseText)`
 const twitter = require('assets/icons/icon_twitter.png');
 const telegram = require('assets/icons/icon_telegram.png');
 
-class ICOScreen extends React.Component<Props, {}> {
+class ICOScreen extends React.Component<Props, State> {
+  state = {
+    scrollShadow: false,
+  };
+
   navigateBack = () => {
     this.props.navigation.goBack();
   };
@@ -238,6 +246,7 @@ class ICOScreen extends React.Component<Props, {}> {
 
   render() {
     const { navigation } = this.props;
+    const { scrollShadow } = this.state;
     const { icoData } = navigation.state.params;
     const {
       id,
@@ -355,8 +364,28 @@ class ICOScreen extends React.Component<Props, {}> {
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <Header onBack={this.navigateBack} title="ico" />
-        <ScrollWrapper>
+        <Header
+          onBack={this.navigateBack}
+          title="ico"
+          scrollShadow={scrollShadow}
+          style={{
+            backgroundColor: UIColors.defaultBackgroundColor,
+            marginTop: 0,
+            paddingTop: 20,
+            height: 60,
+          }}
+        />
+        <ScrollWrapper
+          onScrollBeginDrag={() => {
+            this.setState({ scrollShadow: true });
+          }}
+          onScrollEndDrag={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
+          onMomentumScrollEnd={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
+        >
           <Wrapper>
             <ICOWrapper>
               <IcoCard

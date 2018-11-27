@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
@@ -83,6 +83,7 @@ type Props = {
 type State = {
   isOptionsModalActive: boolean,
   avatarRefreshed: boolean,
+  scrollShadow: boolean,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -98,6 +99,7 @@ class Contact extends React.Component<Props, State> {
     this.state = {
       isOptionsModalActive: false,
       avatarRefreshed: !profileImage || !session.isOnline,
+      scrollShadow: false,
     };
   }
 
@@ -164,7 +166,7 @@ class Contact extends React.Component<Props, State> {
       wallet,
       chats,
     } = this.props;
-    const { isOptionsModalActive, avatarRefreshed } = this.state;
+    const { isOptionsModalActive, avatarRefreshed, scrollShadow } = this.state;
     const contact = navigation.getParam('contact', {});
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -177,6 +179,13 @@ class Contact extends React.Component<Props, State> {
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
+          scrollShadow={scrollShadow}
+          style={{
+            backgroundColor: UIColors.defaultBackgroundColor,
+            marginTop: 0,
+            paddingTop: 20,
+            height: 60,
+          }}
         />
         <ScrollWrapper
           refreshControl={
@@ -187,6 +196,15 @@ class Contact extends React.Component<Props, State> {
               }}
             />
           }
+          onScrollBeginDrag={() => {
+            this.setState({ scrollShadow: true });
+          }}
+          onScrollEndDrag={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
+          onMomentumScrollEnd={(event: Object) => {
+            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+          }}
         >
           <ContactWrapper>
             <ProfileImage
