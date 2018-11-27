@@ -52,14 +52,10 @@ export const getExistingChatsAction = () => {
   };
 };
 
-export const resetUnreadAction = (contactUsername: string) => {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: RESET_UNREAD_MESSAGE,
-      payload: { username: contactUsername },
-    });
-  };
-};
+export const resetUnreadAction = (username: string) => ({
+  type: RESET_UNREAD_MESSAGE,
+  payload: { username },
+});
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
@@ -142,6 +138,6 @@ export const deleteChatAction = (username: string) => {
         type: DELETE_CHAT,
         payload: username,
       });
-    }).catch(() => []);
+    }).catch(() => null);
   };
 };
