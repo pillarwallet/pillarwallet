@@ -12,6 +12,7 @@ Each contributing member of the development team will work together to ensure ev
 > * The PR will contain unit and integration tests as appropriate. In most cases we will also want to have tests written for downstream actions ie a notification is sent based on a model or state change
 > * Threat Modeling and Tests that cover the threat model (coming soon)
 > * Tests pass before requesting PR review
+> * Do not use squash merges
 
 ## Code review process
 ### Expectations
@@ -23,3 +24,4 @@ Code review is a shared responsibility. We will strive to review and approve PRs
 PR Titles will be used to generate release notes for development, staging, and production releases. Commit messages should be descriptive and reference the ticket within Pivotal
 
 > PR Titles will be short, and sufficiently descriptive
+> Standard PR merge process should be used. No Squash merges as the PR merge is used to identify PRs and collect them for release notes
