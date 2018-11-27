@@ -101,11 +101,11 @@ ios/pillar-wallet/Supporting/EXBuildConstants.plist.bak
 
 ### Gems
 ios/.bundle/
-ios/Gemfile
+#ios/Gemfile
 ios/Gemfile.lock
 ios/vendor/
 android/.bundle/
-android/Gemfile
+#android/Gemfile
 android/Gemfile.lock
 android/vendor/
 

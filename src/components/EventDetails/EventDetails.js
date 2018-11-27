@@ -11,14 +11,16 @@ import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
+import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { formatFullAmount } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { updateTransactionStatusAction } from 'actions/historyActions';
+import { getTxNoteByContactAction } from 'actions/txNoteActions';
 
 // constants
 import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -31,8 +33,6 @@ import {
 import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
 
 import EventHeader from './EventHeader';
-import ListItemParagraph from '../ListItem/ListItemParagraph';
-import { getTxNoteByContactAction } from '../../actions/txNoteActions';
 
 type Props = {
   transaction: Transaction,
@@ -49,7 +49,7 @@ type Props = {
   eventData: Object,
   eventType: string,
   eventStatus: string,
-  txNotes: Object,
+  txNotes: Object[],
   getTxNoteByContact: Function,
 }
 
@@ -71,14 +71,6 @@ const ButtonsWrapper = styled.View`
 
 const EventButton = styled(Button)`
   margin-top: 14px;
-`;
-
-const Confirmations = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
-  font-weight: ${fontWeights.bold};
-  margin-bottom: ${spacing.medium}px;
-  margin-right: 4px;
-  color: ${baseColors.burningFire};
 `;
 
 const EventRow = styled.View`
@@ -210,7 +202,6 @@ class EventDetails extends React.Component<Props, {}> {
         to,
         from,
         asset,
-        nbConfirmations = 0,
         hash,
         gasUsed,
         gasPrice,
@@ -220,8 +211,8 @@ class EventDetails extends React.Component<Props, {}> {
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
       let transactionNote = note;
-      if (txNotes.txNotes && txNotes.txNotes.length > 0) {
-        const txNote = txNotes.txNotes.find(txn => txn.txHash === eventData.hash);
+      if (txNotes && txNotes.length > 0) {
+        const txNote = txNotes.find(txn => txn.txHash === eventData.hash);
         if (txNote) {
           transactionNote = txNote.text;
         }
@@ -287,15 +278,7 @@ class EventDetails extends React.Component<Props, {}> {
               valueAdditionalText="ETH"
             />
             }
-            {isPending &&
-            <ListItemUnderlined
-              label="CONFIRMATIONS"
-              valueAddon={(<Confirmations>{nbConfirmations}</Confirmations>)}
-              value="of 6"
-              showSpinner
-            />
-            }
-            {hasNote &&
+            {!!hasNote &&
             <ListItemParagraph
               label="NOTE"
               value={transactionNote}

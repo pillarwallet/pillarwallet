@@ -52,28 +52,10 @@ export const getExistingChatsAction = () => {
   };
 };
 
-export const resetUnreadAction = (contactUsername: string) => {
-  return async (dispatch: Function) => {
-    const chats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
-    const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
-    const {
-      unread: unreadChats = {},
-    } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
-    const newChats = mergeNewChats(unreadChats, filteredChats);
-    const augmentedChats = newChats.map(item => {
-      const unreadChatsCount = unreadChats[item.username] ? unreadChats[item.username].count : 0;
-      const unread = item.username === contactUsername ? 0 : unreadChatsCount;
-      const lastMessage = item.lastMessage || {};
-      if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
-      return { ...item, unread, lastMessage };
-    });
-
-    dispatch({
-      type: RESET_UNREAD_MESSAGE,
-      payload: augmentedChats,
-    });
-  };
-};
+export const resetUnreadAction = (username: string) => ({
+  type: RESET_UNREAD_MESSAGE,
+  payload: { username },
+});
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
@@ -156,6 +138,6 @@ export const deleteChatAction = (username: string) => {
         type: DELETE_CHAT,
         payload: username,
       });
-    }).catch(() => []);
+    }).catch(() => null);
   };
 };
