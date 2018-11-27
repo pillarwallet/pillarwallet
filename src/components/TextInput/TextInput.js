@@ -136,8 +136,8 @@ const AbsoluteSpinner = styled(Spinner)`
 `;
 
 class TextInput extends React.Component<Props, State> {
-  rnInput: window.HTMLInputElement;
-  multilineInputField: window.HTMLInputElement;
+  rnInput: Object;
+  multilineInputField: Object;
 
   state = {
     isFocused: false,
