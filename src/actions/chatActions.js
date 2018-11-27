@@ -52,11 +52,11 @@ export const getExistingChatsAction = () => {
   };
 };
 
-export const resetUnreadAction = (contactUsername: string, lastMessage: ?Object) => {
+export const resetUnreadAction = (contactUsername: string) => {
   return async (dispatch: Function) => {
     dispatch({
       type: RESET_UNREAD_MESSAGE,
-      payload: { username: contactUsername, lastMessage },
+      payload: { username: contactUsername },
     });
   };
 };

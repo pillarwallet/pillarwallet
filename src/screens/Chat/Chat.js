@@ -315,20 +315,9 @@ class ChatScreen extends React.Component<Props, State> {
   handleChatDismissal = () => {
     const {
       navigation,
-      messages,
       resetUnread,
     } = this.props;
-    const currentChatMessages = messages[this.state.contact.username];
-    const lastMessage = currentChatMessages[0];
-    if (lastMessage) {
-      resetUnread(this.state.contact.username, {
-        content: lastMessage.text,
-        username: this.state.contact.username,
-        device: 1,
-        serverTimestamp: lastMessage.createdAt,
-        savedTimestamp: 0,
-      });
-    }
+    resetUnread(this.state.contact.username);
     const { backTo } = navigation.state.params;
     if (backTo) {
       navigation.navigate(backTo);
@@ -449,7 +438,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) => ({
   sendMessageByContact: (username, message) => dispatch(sendMessageByContactAction(username, message)),
   getChatByContact: (username, avatar, loadEarlier) => dispatch(getChatByContactAction(username, avatar, loadEarlier)),
-  resetUnread: (contactUsername, lastMessage) => dispatch(resetUnreadAction(contactUsername, lastMessage)),
+  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);
