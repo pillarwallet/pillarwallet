@@ -287,7 +287,7 @@ class EventDetails extends React.Component<Props, {}> {
               valueAdditionalText="ETH"
             />
             }
-            {isPending &&
+            {!!isPending &&
             <ListItemUnderlined
               label="CONFIRMATIONS"
               valueAddon={(<Confirmations>{nbConfirmations}</Confirmations>)}
@@ -295,7 +295,7 @@ class EventDetails extends React.Component<Props, {}> {
               showSpinner
             />
             }
-            {hasNote &&
+            {!!hasNote &&
             <ListItemParagraph
               label="NOTE"
               value={transactionNote}
