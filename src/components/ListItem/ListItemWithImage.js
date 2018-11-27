@@ -38,6 +38,8 @@ type Props = {
   rejectInvitation?: ?Function,
   acceptInvitation?: ?Function,
   type?: string,
+  children?: React.Node,
+  small?: boolean
 }
 
 const ACTION = 'ACTION';
@@ -353,7 +355,7 @@ const Addon = (props: Props) => {
 };
 
 const getType = (props: Props) => {
-  if (props.subtext || props.iconName) {
+  if ((props.subtext && !props.small) || props.iconName) {
     return ACTION;
   }
   if (props.paragraph) {
@@ -381,6 +383,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       onPress,
       timeSent,
       unreadCount,
+      children,
     } = this.props;
 
     const type = getType(this.props);
@@ -424,6 +427,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
           <Column rightColumn type={type}>
             <Addon {...this.props} type={type} />
             {customAddon}
+            {children}
           </Column>
         </InfoWrapper>
       </ItemWrapper>
