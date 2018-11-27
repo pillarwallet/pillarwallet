@@ -73,8 +73,7 @@ export const getTxNoteByContactAction = (username: string) => {
     });
     await chat.client.receiveNewMessagesByContact(username, 'tx-note').catch(() => null);
 
-    await chat.client.getMessagesByContact(username, 'tx-note')
-      .then(JSON.parse).catch(() => []);
+    await chat.client.getMessagesByContact(username, 'tx-note').catch(() => []);
 
     await dispatch(getExistingTxNotesAction());
   };
