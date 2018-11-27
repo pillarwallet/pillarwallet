@@ -11,10 +11,8 @@ type TxNote = {
 };
 
 export type TxNoteReducerState = {
-  data: {
-    txNotes: TxNote[],
-    isFetching: boolean,
-  },
+  data: TxNote[],
+  isFetching: boolean,
 }
 
 export type TxNoteReducerAction = {
@@ -23,10 +21,8 @@ export type TxNoteReducerAction = {
 }
 
 const initialState = {
-  data: {
-    txNotes: [],
-    isFetching: false,
-  },
+  data: [],
+  isFetching: false,
 };
 
 export default function txNoteReducer(
@@ -36,25 +32,21 @@ export default function txNoteReducer(
   switch (action.type) {
     case ADD_TX_NOTE:
       const { txNote } = action.payload;
-      const txNotes = state.data.txNotes || [];
+      const txNotes = state.data || [];
       const allTxNotes = [txNote, ...txNotes];
       return merge(
         {},
         state,
         {
-          data: {
-            txNotes: allTxNotes,
-            isFetching: false,
-          },
+          data: allTxNotes,
+          isFetching: false,
         },
       );
     case UPDATE_TX_NOTES:
       return {
         ...state,
-        data: {
-          txNotes: action.payload,
-          isFetching: false,
-        },
+        data: action.payload,
+        isFetching: false,
       };
     default:
       return state;
