@@ -29,6 +29,7 @@ const BCX = 'BCX';
 const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
+let disabledPushNotificationsListener;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
 
@@ -77,18 +78,34 @@ export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
   };
 };
 
+export const fetchAllNotificationsAction = () => {
+  return async (dispatch: Function) => {
+    dispatch(fetchTransactionsHistoryNotificationsAction());
+    dispatch(fetchInviteNotificationsAction());
+  };
+};
+
 export const startListeningNotificationsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
       wallet: { data: wallet },
       assets: { data: assets },
     } = getState();
-    const enabled = await firebase.messaging().hasPermission();
+    let enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
       try {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
-      } catch (err) { return; } // eslint-disable-line
+        enabled = true;
+      } catch (err) { } // eslint-disable-line
+    }
+
+    if (!enabled) {
+      dispatch(fetchAllNotificationsAction());
+      disabledPushNotificationsListener = setInterval(() => {
+        dispatch(fetchAllNotificationsAction());
+      }, 10000);
+      return;
     }
 
     if (notificationsListener) return;
@@ -130,6 +147,7 @@ export const startListeningNotificationsAction = () => {
 
 export const stopListeningNotificationsAction = () => {
   return async (dispatch: Function) => { // eslint-disable-line
+    if (disabledPushNotificationsListener) clearInterval(disabledPushNotificationsListener);
     if (!notificationsListener) return;
     notificationsListener();
     notificationsListener = null;
