@@ -24,4 +24,5 @@ Code review is a shared responsibility. We will strive to review and approve PRs
 PR Titles will be used to generate release notes for development, staging, and production releases. Commit messages should be descriptive and reference the ticket within Pivotal
 
 > PR Titles will be short, and sufficiently descriptive
+> PR Body should include a link to the Pivotal Tracker link
 > Standard PR merge process should be used. No Squash merges as the PR merge is used to identify PRs and collect them for release notes
