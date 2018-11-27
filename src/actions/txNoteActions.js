@@ -1,38 +1,19 @@
 // @flow
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
+import { saveDbAction } from 'actions/dbActions';
+import { extractTxNotesFromMessages } from 'utils/txNotes';
 import {
   UPDATE_TX_NOTES,
   ADD_TX_NOTE,
 } from 'constants/txNoteConstants';
-import { saveDbAction } from './dbActions';
 
 const chat = new ChatService();
-
-const extractTxNotes = (txNotesRaw) => {
-  const txNotes = [];
-  if (txNotesRaw && txNotesRaw.length > 0) {
-    txNotesRaw.forEach(({ messages = {} }) => {
-      if (Array.isArray(messages)) {
-        messages.forEach(({ content }) => {
-          const txNote = JSON.parse(content);
-          txNotes.push(txNote);
-        });
-      } else {
-        messages.messages.forEach(({ content }) => {
-          const txNote = JSON.parse(content);
-          txNotes.push(txNote);
-        });
-      }
-    });
-  }
-  return txNotes;
-};
 
 export const getExistingTxNotesAction = () => {
   return async (dispatch: Function) => {
     const txNotesRaw = await chat.client.getExistingMessages('tx-note').then(JSON.parse).catch(() => []);
-    const txNotes = extractTxNotes(txNotesRaw);
+    const txNotes = extractTxNotesFromMessages(txNotesRaw);
     dispatch(saveDbAction('txNotes', { txNotes }, true));
     dispatch({
       type: UPDATE_TX_NOTES,
