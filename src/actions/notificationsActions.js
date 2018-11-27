@@ -104,7 +104,7 @@ export const startListeningNotificationsAction = () => {
       dispatch(fetchAllNotificationsAction());
       disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
-      }, 10000);
+      }, 30000);
       return;
     }
 
