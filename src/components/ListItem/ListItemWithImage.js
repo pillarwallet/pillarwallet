@@ -38,6 +38,7 @@ type Props = {
   rejectInvitation?: ?Function,
   acceptInvitation?: ?Function,
   type?: string,
+  children?: React.Node,
 }
 
 const ACTION = 'ACTION';
@@ -381,8 +382,9 @@ class ListItemWithImage extends React.Component<Props, {}> {
       onPress,
       timeSent,
       unreadCount,
+      children,
     } = this.props;
-
+    
     const type = getType(this.props);
     return (
       <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
@@ -424,6 +426,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
           <Column rightColumn type={type}>
             <Addon {...this.props} type={type} />
             {customAddon}
+            {children}
           </Column>
         </InfoWrapper>
       </ItemWrapper>
