@@ -251,6 +251,7 @@ class ImportWallet extends React.Component<Props, State> {
               lowerCase
               labelBigger
               noBorder
+              keyboardAvoidance
             />
             {activeTab === PRIVATEKEY &&
               <ButtonWrapper error={!!tabsInfo[activeTab].errorMessage}>

@@ -16,26 +16,44 @@ aliases:
       paths:
         - ./ios/Pods
 
-  - &restore_gems_cache
+  - &restore_gems_cache_ios
     restore_cache:
       name: Restore cache
       keys:
-        - v1-gems-{{ checksum "Gemfile.lock" }}
+        - ios-gems-{{ checksum "Gemfile.lock" }}
         # Fall back to using the latest cache if no exact match is found.
-        - v1-gems-
-  - &install_gems
+        - ios-gems-
+  - &restore_gems_cache_android
+    restore_cache:
+      name: Restore cache
+      keys:
+        - android-gems-{{ checksum "Gemfile.lock" }}
+        # Fall back to using the latest cache if no exact match is found.
+        - android-gems-
+  - &install_gems_ios
     run:
       name: Bundle install
-      command: bundle check || bundle install --path vendor/bundle
+      command: cd ios && bundle check || bundle install --path vendor/bundle
       environment:
         BUNDLE_JOBS: 4
         BUNDLE_RETRY: 3
-  - &save_gems_cache
+  - &install_gems_android
+    run:
+      name: Bundle install
+      command: cd android && bundle check || bundle install --path vendor/bundle
+      environment:
+        BUNDLE_JOBS: 4
+        BUNDLE_RETRY: 3
+  - &save_gems_cache_ios
     save_cache:
-      key: v1-gems-{{ checksum "Gemfile.lock" }}
+      key: ios-gems-{{ checksum "Gemfile.lock" }}
       paths:
         - vendor/bundle
-
+  - &save_gems_cache_android
+    save_cache:
+      key: android-gems-{{ checksum "Gemfile.lock" }}
+      paths:
+        - vendor/bundle
   - &node_restore_cache
     restore_cache:
       key: node-{{ checksum "./yarn.lock" }}
@@ -77,7 +95,7 @@ aliases:
           cd ~/pillarwallet
           git config user.email "devops@pillar.io"
           git config user.name "Issabot"
-          npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+          npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
           export buildNumber=$(node -e "console.log(require('./package.json').version);")
           rm .env
           cp environments/.env.staging ./.env
@@ -135,9 +153,9 @@ jobs:
       - *node_install
       - *node_save_cache
 
-      - *restore_gems_cache
-      - *install_gems
-      - *save_gems_cache
+      - *restore_gems_cache_ios
+      - *install_gems_ios
+      - *save_gems_cache_ios
 
       - *restore_pod_cache
       - *install_pods
@@ -161,9 +179,9 @@ jobs:
       - *node_install
       - *node_save_cache
 
-      - *restore_gems_cache
-      - *install_gems
-      - *save_gems_cache
+      - *restore_gems_cache_android
+      - *install_gems_android
+      - *save_gems_cache_android
 
       - *gradle_restore_cache
       - *gradle_depencencies
@@ -172,8 +190,17 @@ jobs:
       - *set_staging_env
 
       - run:
+          name: Initial build
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+
+      - run:
           name: Upload to Hockeyapp
-          command: cd android && bundle exec fastlane deploy_staging_build
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export ENVFILE=$(echo ~/pillarwallet/.env)
+            cd android && bundle exec fastlane deploy_staging_build
 
   build:
     working_directory: ~/pillarwallet
@@ -586,13 +613,13 @@ workflows:
             branches:
               only:
                   - develop
-#      - dev_build_android:
-#          requires:
-#            - build-and-test
-#          filters:
-#            branches:
-#              only:
-#                  - develop
+      - dev_build_android:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                  - develop
       - stage_ios:
           requires:
             - build
