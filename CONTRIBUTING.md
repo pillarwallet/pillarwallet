@@ -1,6 +1,6 @@
 # Pillar Pull Request (PR) Acceptance Criteria
 
-# Ground Rules
+## Ground Rules
 ### Expectations
 Each contributing member of the development team will work together to ensure every PR conforms to the set of requirements defined below. When reviewing a PR please review with this guide in mind, citing a specific piece of criteria as missing if applicable. It is expected that this list will change as the needs of the team evolve.
 
@@ -13,13 +13,13 @@ Each contributing member of the development team will work together to ensure ev
 > * Threat Modeling and Tests that cover the threat model (coming soon)
 > * Tests pass before requesting PR review
 
-# Code review process
+## Code review process
 ### Expectations
 Code review is a shared responsibility. We will strive to review and approve PRs within 2 hours during normal business hours. There are no tribes in review meaning any developer is capable of reviewing any other developers work.
 
 > Review feedback will be given within the PR on github and issues raised will be resolved there unless a larger conversation is needed
 
-# Code, commit message and labeling conventions
+## Code, commit message and labeling conventions
 PR Titles will be used to generate release notes for development, staging, and production releases. Commit messages should be descriptive and reference the ticket within Pivotal
 
 > PR Titles will be short, and sufficiently descriptive
