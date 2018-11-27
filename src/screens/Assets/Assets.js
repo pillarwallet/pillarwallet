@@ -407,23 +407,21 @@ class AssetsScreen extends React.Component<Props, State> {
       }
     });
 
-    const AddedAssetsWithBalance = addedAssets.length
-      ? addedAssets
-        .map(({ symbol, balance, ...rest }) => ({
-          symbol,
-          balance: getBalance(balances, symbol),
-          ...rest,
-        }))
-        .map(({ balance, symbol, ...rest }) => ({
-          balance,
-          symbol,
-          balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
-          ...rest,
-        }))
-      : [];
+    const addedAssetsWithBalance = addedAssets
+      .map(({ symbol, balance, ...rest }) => ({
+        symbol,
+        balance: getBalance(balances, symbol),
+        ...rest,
+      }))
+      .map(({ balance, symbol, ...rest }) => ({
+        balance,
+        symbol,
+        balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
+        ...rest,
+      }));
 
     const sections = [];
-    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: AddedAssetsWithBalance, extraData: assets });
+    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: addedAssetsWithBalance, extraData: assets });
     if (foundAssets.length) sections.push({ title: 'FOUND TOKENS', data: foundAssets, extraData: assets });
 
     const renderItem = ({ item: asset }) => {
@@ -637,8 +635,7 @@ class AssetsScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet: { data: wallet },
   assets: {
-    data:
-    assets,
+    data: assets,
     assetsState,
     balances,
     assetsSearchState,
