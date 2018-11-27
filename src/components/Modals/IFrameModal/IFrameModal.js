@@ -62,7 +62,6 @@ export default class IFrameModal extends React.Component<Props, State> {
         animationOutTiming={animationOutTiming}
         animationIn="slideInUp"
         animationOut="slideOutDown"
-        swipeDirection="down"
         onBackButtonPress={modalHide}
         onModalHide={this.handleModalClose}
         style={{
