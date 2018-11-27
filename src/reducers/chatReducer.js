@@ -10,11 +10,12 @@ import {
 import merge from 'lodash.merge';
 
 type Message = {
-  content: string,
-  device: number,
-  savedTimestamp: number,
-  serverTimestamp: number,
-  username: string,
+  _id: string,
+  text: string,
+  createdAt: Date,
+  status: string,
+  type: string,
+  user: Object,
 };
 
 type Chat = {
@@ -95,16 +96,30 @@ export default function chatReducer(
         },
       };
     case RESET_UNREAD_MESSAGE:
-      return merge(
-        {},
-        state,
-        {
-          data: {
-            chats: action.payload,
-            isFetching: false,
-          },
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          chats: state.data.chats
+            .map(_chat => {
+              let { lastMessage, unread } = _chat;
+              const { username: contactUsername } = _chat;
+              if (contactUsername === action.payload.username && state.data.messages[contactUsername].length) {
+                const { text, createdAt } = state.data.messages[contactUsername][0];
+                lastMessage = {
+                  content: text,
+                  username: contactUsername,
+                  device: 1,
+                  serverTimestamp: createdAt,
+                  savedTimestamp: 0,
+                };
+                unread = 0;
+                return { ..._chat, lastMessage, unread };
+              }
+              return _chat;
+            }),
         },
-      );
+      };
     case UPDATE_MESSAGES:
       return merge(
         {},

@@ -17,7 +17,7 @@ import Separator from 'components/Separator';
 import SearchBar from 'components/SearchBar';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
-import { getExistingChatsAction, resetUnreadAction, deleteChatAction } from 'actions/chatActions';
+import { getExistingChatsAction, deleteChatAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import { fontSizes, baseColors, spacing, UIColors } from 'utils/variables';
 
@@ -36,7 +36,6 @@ type Props = {
   chats: Object[],
   notifications: Object[],
   getExistingChats: Function,
-  resetUnread: Function,
   deleteChat: Function,
 }
 
@@ -98,9 +97,8 @@ class ChatListScreen extends React.Component<Props, State> {
   }
 
   handleChatItemClick = (contact) => {
-    const { navigation, resetUnread } = this.props;
+    const { navigation } = this.props;
     navigation.navigate(CHAT, { username: contact.username });
-    resetUnread(contact.username);
   };
 
   goToNewChatList = () => {
@@ -285,7 +283,6 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   setUnreadChatNotificationsStatus: (status) => dispatch(setUnreadChatNotificationsStatusAction(status)),
   deleteChat: (username) => dispatch(deleteChatAction(username)),
 });

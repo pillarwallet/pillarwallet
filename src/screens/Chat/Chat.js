@@ -24,7 +24,6 @@ import Icon from 'components/Icon';
 import {
   sendMessageByContactAction,
   getChatByContactAction,
-  getExistingChatsAction,
   resetUnreadAction,
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
@@ -40,7 +39,6 @@ type Props = {
   getChatByContact: Function,
   messages: Object,
   isFetching: boolean,
-  getExistingChats: Function,
   resetUnread: Function,
   contact: Object,
   chats: any,
@@ -317,12 +315,9 @@ class ChatScreen extends React.Component<Props, State> {
   handleChatDismissal = () => {
     const {
       navigation,
-      getExistingChats,
       resetUnread,
     } = this.props;
-    getExistingChats();
     resetUnread(this.state.contact.username);
-
     const { backTo } = navigation.state.params;
     if (backTo) {
       navigation.navigate(backTo);
@@ -347,8 +342,9 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   handleNavigationToContact = () => {
-    const { navigation } = this.props;
+    const { navigation, resetUnread } = this.props;
     const { contact } = this.state;
+    resetUnread(this.state.contact.username);
     navigation.navigate(CONTACT, { contact });
   };
 
@@ -443,7 +439,6 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch) => ({
   sendMessageByContact: (username, message) => dispatch(sendMessageByContactAction(username, message)),
   getChatByContact: (username, avatar, loadEarlier) => dispatch(getChatByContactAction(username, avatar, loadEarlier)),
-  getExistingChats: () => dispatch(getExistingChatsAction()),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
