@@ -11,7 +11,7 @@ import { TX_DETAILS_URL } from 'react-native-dotenv';
 import { format as formatDate, differenceInSeconds } from 'date-fns';
 import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
-import { BaseText, BoldText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
@@ -71,14 +71,6 @@ const ButtonsWrapper = styled.View`
 
 const EventButton = styled(Button)`
   margin-top: 14px;
-`;
-
-const Confirmations = styled(BoldText)`
-  font-size: ${fontSizes.large}px;
-  font-weight: ${fontWeights.bold};
-  margin-bottom: ${spacing.medium}px;
-  margin-right: 4px;
-  color: ${baseColors.burningFire};
 `;
 
 const EventRow = styled.View`
@@ -210,7 +202,6 @@ class EventDetails extends React.Component<Props, {}> {
         to,
         from,
         asset,
-        nbConfirmations = 0,
         hash,
         gasUsed,
         gasPrice,
@@ -285,14 +276,6 @@ class EventDetails extends React.Component<Props, {}> {
               label="TRANSACTION FEE"
               value={utils.formatEther(fee.toString())}
               valueAdditionalText="ETH"
-            />
-            }
-            {!!isPending &&
-            <ListItemUnderlined
-              label="CONFIRMATIONS"
-              valueAddon={(<Confirmations>{nbConfirmations}</Confirmations>)}
-              value="of 6"
-              showSpinner
             />
             }
             {!!hasNote &&
