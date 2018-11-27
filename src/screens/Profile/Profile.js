@@ -24,7 +24,7 @@ import { repairStorageAction } from 'actions/appActions';
 import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'actions/authActions';
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
-import { baseColors, spacing, UIColors } from 'utils/variables';
+import { baseColors, spacing } from 'utils/variables';
 import { DEBUG_DATA_LOGGER } from 'react-native-dotenv';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
@@ -192,12 +192,6 @@ class Profile extends React.Component<Props, State> {
           title="settings"
           onBack={() => navigation.goBack(null)}
           scrollShadow={scrollShadow}
-          style={{
-            backgroundColor: UIColors.defaultBackgroundColor,
-            marginTop: 0,
-            paddingTop: 20,
-            height: 60,
-          }}
         />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}

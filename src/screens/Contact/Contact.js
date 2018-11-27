@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { ImageCacheManager } from 'react-native-cached-image';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
@@ -180,12 +180,6 @@ class Contact extends React.Component<Props, State> {
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
           scrollShadow={scrollShadow}
-          style={{
-            backgroundColor: UIColors.defaultBackgroundColor,
-            marginTop: 0,
-            paddingTop: 20,
-            height: 60,
-          }}
         />
         <ScrollWrapper
           refreshControl={

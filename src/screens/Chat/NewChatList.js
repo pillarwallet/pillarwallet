@@ -12,7 +12,6 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
-import { UIColors } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -93,12 +92,6 @@ class NewChatListScreen extends React.Component<Props, State> {
           title="new chat"
           onBack={this.goToChatList}
           scrollShadow={scrollShadow}
-          style={{
-            backgroundColor: UIColors.defaultBackgroundColor,
-            marginTop: 0,
-            paddingTop: 20,
-            height: 60,
-          }}
         />
         <ChatWrapper
           style={{

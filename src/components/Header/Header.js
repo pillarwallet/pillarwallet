@@ -40,11 +40,17 @@ const Wrapper = styled.View`
   margin-top: ${spacing.rhythm};
   margin-bottom: ${props => props.flexStart ? 'auto' : 0};
   z-index: 10;
-  ${props => props.scrollShadow ? 'elevation: 3;' : ''}
-  ${props => props.scrollShadow ? 'shadow-color: #000;' : ''}
-  ${props => props.scrollShadow ? 'shadow-offset: 0 2px;' : ''}
-  ${props => props.scrollShadow ? 'shadow-opacity: 0.05;' : ''}
-  ${props => props.scrollShadow ? 'shadow-radius: 2;' : ''}
+  ${props => props.scrollShadow
+    ? `elevation: 3;
+    shadow-color: #000;
+    shadow-offset: 0 2px;
+    shadow-opacity: 0.05;
+    shadow-radius: 2;
+    background-color: ${UIColors.defaultBackgroundColor}
+    margin-top: 0;
+    padding-top: 20px;
+    height: 60px;`
+    : ''}
 `;
 
 const BackIcon = styled(IconButton)`

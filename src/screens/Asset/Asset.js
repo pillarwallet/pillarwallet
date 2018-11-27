@@ -207,9 +207,6 @@ class AssetScreen extends React.Component<Props, State> {
           scrollShadow={scrollShadow}
           style={{
             backgroundColor: baseColors.white,
-            marginTop: 0,
-            paddingTop: 20,
-            height: 60,
           }}
         />
         <ScrollWrapper

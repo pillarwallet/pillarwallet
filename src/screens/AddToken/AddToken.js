@@ -91,11 +91,9 @@ const ListHeading = styled(SubHeading)`
 const HeaderWrapper = styled(Wrapper)`
   background-color: ${baseColors.snowWhite};
   z-index: 100;
-  ${props => props.scrollShadow ? 'elevation: 3;' : ''}
-  ${props => props.scrollShadow ? 'shadow-color: #000;' : ''}
-  ${props => props.scrollShadow ? 'shadow-offset: 0 2px;' : ''}
-  ${props => props.scrollShadow ? 'shadow-opacity: 0.05;' : ''}
-  ${props => props.scrollShadow ? 'shadow-radius: 2;' : ''}
+  ${props => props.scrollShadow
+    ? 'elevation: 3; shadow-color: #000; shadow-offset: 0 2px; shadow-opacity: 0.05; shadow-radius: 2;'
+    : ''}
 `;
 
 const Footer = styled(Wrapper)`
