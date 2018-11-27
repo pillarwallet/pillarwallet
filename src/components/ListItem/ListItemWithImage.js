@@ -39,6 +39,7 @@ type Props = {
   acceptInvitation?: ?Function,
   type?: string,
   children?: React.Node,
+  small?: boolean
 }
 
 const ACTION = 'ACTION';
@@ -354,7 +355,7 @@ const Addon = (props: Props) => {
 };
 
 const getType = (props: Props) => {
-  if (props.subtext || props.iconName) {
+  if ((props.subtext && !props.small) || props.iconName) {
     return ACTION;
   }
   if (props.paragraph) {
