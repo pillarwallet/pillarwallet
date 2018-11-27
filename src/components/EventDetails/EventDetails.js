@@ -13,12 +13,14 @@ import type { Transaction } from 'models/Transaction';
 import type { Asset } from 'models/Asset';
 import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
+import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { formatFullAmount } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { updateTransactionStatusAction } from 'actions/historyActions';
+import { getTxNoteByContactAction } from 'actions/txNoteActions';
 
 // constants
 import { TRANSACTION_EVENT, TX_PENDING_STATUS } from 'constants/historyConstants';
@@ -31,8 +33,6 @@ import {
 import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
 
 import EventHeader from './EventHeader';
-import ListItemParagraph from '../ListItem/ListItemParagraph';
-import { getTxNoteByContactAction } from '../../actions/txNoteActions';
 
 type Props = {
   transaction: Transaction,
@@ -49,7 +49,7 @@ type Props = {
   eventData: Object,
   eventType: string,
   eventStatus: string,
-  txNotes: Object,
+  txNotes: Object[],
   getTxNoteByContact: Function,
 }
 
@@ -220,8 +220,8 @@ class EventDetails extends React.Component<Props, {}> {
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
       let transactionNote = note;
-      if (txNotes.txNotes && txNotes.txNotes.length > 0) {
-        const txNote = txNotes.txNotes.find(txn => txn.txHash === eventData.hash);
+      if (txNotes && txNotes.length > 0) {
+        const txNote = txNotes.find(txn => txn.txHash === eventData.hash);
         if (txNote) {
           transactionNote = txNote.text;
         }
@@ -287,7 +287,7 @@ class EventDetails extends React.Component<Props, {}> {
               valueAdditionalText="ETH"
             />
             }
-            {isPending &&
+            {!!isPending &&
             <ListItemUnderlined
               label="CONFIRMATIONS"
               valueAddon={(<Confirmations>{nbConfirmations}</Confirmations>)}
@@ -295,7 +295,7 @@ class EventDetails extends React.Component<Props, {}> {
               showSpinner
             />
             }
-            {hasNote &&
+            {!!hasNote &&
             <ListItemParagraph
               label="NOTE"
               value={transactionNote}
