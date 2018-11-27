@@ -1,3 +1,4 @@
+fastlane_require "indentation"
 default_platform(:ios)
 
 platform :ios do
@@ -86,39 +87,26 @@ platform :ios do
     changelog_notes = changelog_from_git_commits(
       merge_commit_filtering: "only_include_merges"
     )
-
     custom_changelog = ""
-
     pr_merges = changelog_notes.split(/Merge/)
-
     pr_merges = pr_merges.grep(/\.*pull request\.*/)
-
     pr_merges = pr_merges.reject { |text| text.match(/Merge.from/) }
-
     pr_merges.each do |merge_text|
-
         pr_number = merge_text.match(/pull request [#]([0-9]+).*/i).captures[0]
-
         result = github_api(
           api_token: ENV["GITHUB_TOKEN"],
           http_method: "GET",
           path: "/repos/pillarwallet/pillarwallet/pulls/#{pr_number}"
         )
-
         pr_body = "#{result[:json]['body']}"
-
         custom_changelog << "- #{result[:json]['title']}"
-
         unless pr_body.nil? || pr_body.empty? then
           custom_changelog << "\n#{pr_body.indent(4)}"
         end
-
         custom_changelog << "\n"
-
     end
 
     UI.message "Changelog: #{custom_changelog}"
-
     custom_changelog
   end
 
@@ -174,12 +162,12 @@ platform :ios do
     #)
 
     sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '" + ENV["sigh_com.pillarproject.wallet.staging_adhoc_profile-path"] + "'"
-    #changelog = build_custom_changelog
+    changelog = build_custom_changelog
     commit = last_git_commit
 
     hockey(
       api_token: ENV["HOCKEY_APP_TOKEN"],
-      #notes: changelog,
+      notes: changelog,
       commit_sha: commit[:commit_hash],
       notify: "1",
       ipa: "pillarwallet-staging.ipa"
