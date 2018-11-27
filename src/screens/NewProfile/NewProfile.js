@@ -15,6 +15,7 @@ import Title from 'components/Title';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
+import { isIphoneX } from 'utils/common';
 
 const { Form } = t.form;
 const MIN_USERNAME_LENGTH = 4;
@@ -95,6 +96,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, isLoading?: boolean) => (
         inputProps: {
           autoCapitalize: 'none',
           disabled: inputDisabled,
+          autoFocus: true,
         },
       },
     },
@@ -230,7 +232,7 @@ class NewProfile extends React.Component<Props, State> {
       session,
       retry,
     } = this.props;
-    const isUsernameValid = value && value.username && value.username.length > 0;
+    const isUsernameValid = value && value.username && value.username.length > 3;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
@@ -254,11 +256,14 @@ class NewProfile extends React.Component<Props, State> {
           </Wrapper>
         </Wrapper>
         <Footer>
+          {!!isUsernameValid &&
           <Button
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
+            marginBottom={isIphoneX() ? '20px' : '0px'}
           />
+          }
         </Footer>
       </React.Fragment>
     );
