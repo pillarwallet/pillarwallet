@@ -186,7 +186,7 @@ class Profile extends React.Component<Props, State> {
     } = this.state;
 
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header
           gray
           title="settings"

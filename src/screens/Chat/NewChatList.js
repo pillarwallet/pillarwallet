@@ -87,7 +87,7 @@ class NewChatListScreen extends React.Component<Props, State> {
     const ChatWrapper = sortedContactsForNewChats.length ? ScrollWrapper : View;
 
     return (
-      <Container>
+      <Container inset={{ bottom: 0 }}>
         <Header
           title="new chat"
           onBack={this.goToChatList}

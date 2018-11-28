@@ -283,9 +283,9 @@ class AssetsScreen extends React.Component<Props, State> {
       iconUrl,
     } = asset;
 
-    const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
+    const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
-    const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const formattedBalanceInFiat = formatMoney(balanceInFiat);
     const displayAmount = formatMoney(balance, 4);
 
