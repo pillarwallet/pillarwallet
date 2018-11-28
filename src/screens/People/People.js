@@ -23,7 +23,7 @@ import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
-import { REMOVE } from 'constants/connectionsConstants';
+import { DISCONNECT } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
@@ -95,6 +95,7 @@ type State = {
   showManageContactModal: boolean,
   manageContactType: string,
   manageContactId: string,
+  forceHideRemoval: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
@@ -103,11 +104,29 @@ class PeopleScreen extends React.Component<Props, State> {
     showManageContactModal: false,
     manageContactType: '',
     manageContactId: '',
+    forceHideRemoval: false,
   };
 
   constructor(props: Props) {
     super(props);
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
+  }
+
+  componentDidMount() {
+    this.willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => { this.setState({ forceHideRemoval: false }); },
+    );
+
+    this.didBlur = this.props.navigation.addListener(
+      'didBlur',
+      () => { this.setState({ forceHideRemoval: true }); },
+    );
+  }
+
+  componentWillUnmount() {
+    this.didBlur.remove();
+    this.willFocus.remove();
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -150,11 +169,11 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderSwipeoutBtns = (data) => {
-    const swipeButtonsWidth = '78';
+    const swipeButtonsWidth = '80';
     const swipeButtons = [
-      // { actionType: MUTE, icon: 'mute', primary: true },
-      { actionType: REMOVE, icon: 'remove', danger: true },
-      // { actionType: BLOCK, icon: 'warning', dark: true },
+      // { actionType: MUTE, icon: 'mute', primaryInverted: true },
+      { actionType: DISCONNECT, icon: 'remove', primaryInverted: true },
+      // { actionType: BLOCK, icon: 'warning', dangerInverted: true },
     ];
 
     return swipeButtons.map((buttonDefinition) => {
@@ -172,6 +191,10 @@ class PeopleScreen extends React.Component<Props, State> {
             title={capitalize(actionType)}
             icon={icon}
             {...btnProps}
+            style={{
+              backgroundColor: baseColors.lighterGray,
+              borderColor: baseColors.lighterGray,
+            }}
           />
         ),
       };
@@ -184,6 +207,7 @@ class PeopleScreen extends React.Component<Props, State> {
       sensitivity={10}
       backgroundColor="transparent"
       buttonWidth={80}
+      close={this.state.forceHideRemoval}
     >
       <ListItemWithImage
         label={item.username}
@@ -219,6 +243,7 @@ class PeopleScreen extends React.Component<Props, State> {
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
+    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -307,7 +332,7 @@ class PeopleScreen extends React.Component<Props, State> {
         <ManageConnectionModal
           showManageContactModal={showManageContactModal}
           manageContactType={manageContactType}
-          contact={sortedLocalContacts.find((contact) => contact.id === manageContactId) || {}}
+          contact={contact}
           onConfirm={() => this.confirmManageAction(manageContactType, manageContactId)}
           onModalHide={() => { this.setState({ showManageContactModal: false }); }}
         />

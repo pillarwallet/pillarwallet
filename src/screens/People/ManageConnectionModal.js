@@ -8,7 +8,7 @@ const subtitleDescription = {
   block: `You will no longer be able to find this user, chat, and make any transactions.
   Your chat history will be erased on your device. No notifications on this user's actions will be received.
   This user will not  be able to see any of your activity. You can unblock the user from your blocked list.`,
-  remove: 'After disconnecting you no longer be able to chat and send assets. You can re-establish connection later.',
+  disconnect: 'After disconnecting you no longer be able to chat and send assets. You can re-establish connection later.',
 };
 
 const titleConfirmation = (manageContactType: string, username: string) => {
@@ -42,13 +42,13 @@ const ManageConnectionModal = (props: Props) => {
   return (
     <SlideModal
       isVisible={showManageContactModal}
-      onModalHide={() => onModalHide()}
+      onModalHide={onModalHide}
       title={titleConfirmation(contactType, username)}
       subtitle={subtitle}
     >
       <Button
         title={`Confirm ${contactType}`}
-        onPress={() => onConfirm()}
+        onPress={onConfirm}
         style={{
           marginBottom: 20,
         }}
@@ -56,7 +56,7 @@ const ManageConnectionModal = (props: Props) => {
       <Button
         danger
         title="Cancel"
-        onPress={() => onModalHide()}
+        onPress={onModalHide}
         style={{
           marginBottom: 20,
         }}
