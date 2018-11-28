@@ -12,15 +12,19 @@ import { Keyboard } from 'react-native';
 
 type Props = {
   title?: string,
+  fullWidthTitle?: boolean,
+  noBlueDotOnTitle?: boolean,
   children?: React.Node,
   subtitle?: string,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   onModalHidden?: Function,
+  hasClose?: boolean,
   fullScreen?: boolean,
   isVisible: boolean,
   showHeader?: boolean,
   centerTitle?: boolean,
+  noWrapTitle?: boolean,
   backgroundColor?: string,
   avoidKeyboard?: boolean,
   eventDetail?: boolean,
@@ -114,6 +118,7 @@ const ModalOverflow = styled.View`
 export default class SlideModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
+    hasClose: true,
   };
 
   hideModal = () => {
@@ -140,13 +145,17 @@ export default class SlideModal extends React.Component<Props, *> {
     const {
       children,
       title,
+      fullWidthTitle,
+      noBlueDotOnTitle,
       fullScreenComponent,
       onModalHidden,
+      hasClose,
       fullScreen,
       subtitle,
       isVisible,
       showHeader,
       centerTitle,
+      noWrapTitle,
       backgroundColor,
       avoidKeyboard,
       eventDetail,
@@ -164,9 +173,13 @@ export default class SlideModal extends React.Component<Props, *> {
             <Header
               noMargin={!fullScreen}
               centerTitle={centerTitle}
+              noWrapTitle={noWrapTitle}
               noPadding={!fullScreen}
               title={title}
+              fullWidthTitle={fullWidthTitle}
+              noBlueDotOnTitle={noBlueDotOnTitle}
               onClose={this.hideModal}
+              hasClose={hasClose}
             />
           </HeaderWrapper>
         }

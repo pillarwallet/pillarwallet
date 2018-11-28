@@ -11,13 +11,17 @@ import IconButton from 'components/IconButton';
 type Props = {
   onBack?: Function,
   onClose?: Function,
+  hasClose?: boolean,
   onCloseText?: string,
   onNextPress?: Function,
   onTitlePress?: Function,
   nextText?: string,
   nextIcon?: string,
   title?: string,
+  fullWidthTitle?: boolean,
+  noBlueDotOnTitle?: boolean,
   centerTitle?: boolean,
+  noWrapTitle?: boolean,
   noPadding?: boolean,
   noMargin?: boolean,
   flexStart?: boolean,
@@ -32,7 +36,7 @@ type Props = {
 const Wrapper = styled.View`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: 40px;
+  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '40px'};
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
@@ -94,9 +98,13 @@ const Header = (props: Props) => {
     onNextPress,
     onTitlePress,
     onClose,
+    hasClose,
     onCloseText,
     title,
+    fullWidthTitle,
+    noBlueDotOnTitle,
     centerTitle,
+    noWrapTitle,
     noPadding,
     noMargin,
     style,
@@ -122,7 +130,14 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper overlay={overlay} noMargin={noMargin} flexStart={flexStart} style={style} noPadding={noPadding}>
+    <Wrapper
+      overlay={overlay}
+      noMargin={noMargin}
+      flexStart={flexStart}
+      style={style}
+      noPadding={noPadding}
+      noWrapTitle={noWrapTitle}
+    >
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
           <BackIcon
@@ -133,13 +148,25 @@ const Header = (props: Props) => {
           />
         }
         {showTitleLeft &&
-          <Title noMargin title={title} />
+          <Title
+            noMargin
+            title={title}
+            noBlueDot={noBlueDotOnTitle}
+            fullWidth={fullWidthTitle}
+          />
         }
       </HeaderLeft>
       {showTitleCenter &&
         <HeaderBody onCloseText={onCloseText}>
-          <Title align="center" noMargin title={title} onTitlePress={onTitlePress} />
-        </HeaderBody >
+          <Title
+            align="center"
+            noMargin
+            title={title}
+            onTitlePress={onTitlePress}
+            noBlueDot={noBlueDotOnTitle}
+            fullWidth={fullWidthTitle}
+          />
+        </HeaderBody>
       }
       {showRight &&
         <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
@@ -156,7 +183,7 @@ const Header = (props: Props) => {
               />
             </IconWrapper>
           }
-          {onClose &&
+          {onClose && hasClose &&
             <IconWrapper>
               {onCloseText &&
                 <CloseIconText light={light} >{onCloseText}</CloseIconText>

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { baseColors } from 'utils/variables';
+import { DISCONNECT } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
@@ -15,7 +16,7 @@ const subtitleDescription = {
 const titleConfirmation = (manageContactType: string, username: string) => {
   const contactType = manageContactType;
   const usernameToConfirm = username;
-  return `${contactType} ${usernameToConfirm}?`;
+  return `Are you sure you want to ${contactType} ${contactType === DISCONNECT ? 'from' : '' } ${usernameToConfirm}?`;
 };
 
 type Props = {
@@ -45,6 +46,10 @@ const ManageConnectionModal = (props: Props) => {
       isVisible={showManageContactModal}
       onModalHide={onModalHide}
       title={titleConfirmation(contactType, username)}
+      noBlueDotOnTitle
+      fullWidthTitle
+      noWrapTitle
+      hasClose={false}
       subtitle={subtitle}
     >
       <Button
