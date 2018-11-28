@@ -183,8 +183,8 @@ class PeopleScreen extends React.Component<Props, State> {
         component: (
           <Button
             alignTitleVertical
-            isSquare
             noPadding
+            isSquare
             small
             height={swipeButtonsWidth}
             onPress={() => this.manageConnection(actionType, data)}
@@ -194,6 +194,9 @@ class PeopleScreen extends React.Component<Props, State> {
             style={{
               backgroundColor: baseColors.lighterGray,
               borderColor: baseColors.lighterGray,
+              paddingRight: 5,
+              paddingLeft: 5,
+              width: 90,
             }}
           />
         ),
@@ -206,7 +209,7 @@ class PeopleScreen extends React.Component<Props, State> {
       right={this.renderSwipeoutBtns(item)}
       sensitivity={10}
       backgroundColor="transparent"
-      buttonWidth={80}
+      buttonWidth={90}
       close={this.state.forceHideRemoval}
     >
       <ListItemWithImage
