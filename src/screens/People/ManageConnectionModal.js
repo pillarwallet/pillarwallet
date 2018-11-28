@@ -11,9 +11,9 @@ const subtitleDescription = {
   remove: 'After disconnecting you no longer be able to chat and send assets. You can re-establish connection later.',
 };
 
-const titleConfirmation = (manageContactType: ?string, username: ?string) => {
-  const contactType = manageContactType || '';
-  const usernameToConfirm = username || '';
+const titleConfirmation = (manageContactType: string, username: string) => {
+  const contactType = manageContactType;
+  const usernameToConfirm = username;
   return `${contactType} ${usernameToConfirm}?`;
 };
 
@@ -21,7 +21,7 @@ type Props = {
   onModalHide: Function,
   onConfirm: Function,
   showManageContactModal: boolean,
-  manageContactType: ?string,
+  manageContactType: string,
   contact: Object,
 };
 
@@ -34,7 +34,7 @@ const ManageConnectionModal = (props: Props) => {
     contact,
   } = props;
 
-  const contactType = manageContactType || '';
+  const contactType = manageContactType;
   const { username } = contact;
   const subtitle = contactType !== '' ?
     subtitleDescription[contactType] : '';
