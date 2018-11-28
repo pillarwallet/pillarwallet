@@ -86,7 +86,7 @@ type Props = {
 
 type State = {
   query: string,
-  scrollShadow?: boolean,
+  scrollShadow: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
@@ -161,6 +161,7 @@ class PeopleScreen extends React.Component<Props, State> {
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={contactState}
           navigation={navigation}
+          scrollShadow={scrollShadow}
         />
         {!inSearchMode && !!pendingConnectionRequests &&
           <ConnectionRequestBanner

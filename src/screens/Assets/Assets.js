@@ -83,6 +83,7 @@ type Props = {
 type State = {
   forceHideRemoval: boolean,
   query: string,
+  scrollShadow: boolean,
 }
 
 const IS_IOS = Platform.OS === 'ios';
@@ -137,6 +138,7 @@ class AssetsScreen extends React.Component<Props, State> {
     this.state = {
       forceHideRemoval: false,
       query: '',
+      scrollShadow: false,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
@@ -539,7 +541,7 @@ class AssetsScreen extends React.Component<Props, State> {
       assetsSearchState,
       navigation,
     } = this.props;
-    const { query } = this.state;
+    const { query, scrollShadow } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const sortedAssets = Object.keys(assets)
@@ -584,6 +586,7 @@ class AssetsScreen extends React.Component<Props, State> {
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={assetsSearchState}
           navigation={navigation}
+          scrollShadow={scrollShadow}
         />
         <TokensWrapper>
           {inSearchMode && isSearchOver &&
@@ -625,6 +628,15 @@ class AssetsScreen extends React.Component<Props, State> {
                 }}
               />
             }
+            onScrollBeginDrag={() => {
+              this.setState({ scrollShadow: true });
+            }}
+            onScrollEndDrag={(event: Object) => {
+              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+            }}
+            onMomentumScrollEnd={(event: Object) => {
+              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
+            }}
           />}
         </TokensWrapper>
       </Container>
