@@ -1,6 +1,7 @@
 // @flow
 
 import * as React from 'react';
+import { baseColors } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
@@ -47,18 +48,23 @@ const ManageConnectionModal = (props: Props) => {
       subtitle={subtitle}
     >
       <Button
+        primaryInverted
         title={`Confirm ${contactType}`}
         onPress={onConfirm}
         style={{
           marginBottom: 20,
+          backgroundColor: baseColors.lighterGray,
+          borderColor: baseColors.mediumGray,
         }}
       />
       <Button
-        danger
+        dangerInverted
         title="Cancel"
         onPress={onModalHide}
         style={{
           marginBottom: 20,
+          backgroundColor: baseColors.lighterGray,
+          borderColor: baseColors.mediumGray,
         }}
       />
     </SlideModal>
