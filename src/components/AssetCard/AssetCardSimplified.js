@@ -123,7 +123,6 @@ class AssetCardSimplified extends React.Component<Props, {}> {
             <AssetWrapper>
               <InnerWrapper>
                 <IconCircle>
-                  {!!icon &&
                   <CachedImage
                     key={token}
                     style={{
@@ -133,7 +132,7 @@ class AssetCardSimplified extends React.Component<Props, {}> {
                     source={{ uri: icon }}
                     fallbackSource={genericToken}
                     resizeMode="contain"
-                  />}
+                  />
                 </IconCircle>
                 <DetailsWrapper>
                   <Name>{name}</Name>
