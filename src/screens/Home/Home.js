@@ -141,7 +141,7 @@ const RecentConnectionsWrapper = styled.View`
 `;
 
 const RecentConnectionsSpacer = styled.View`
-  min-height: 100px;
+  min-height: 124px;
 `;
 
 const RecentConnectionsScrollView = styled.ScrollView`
@@ -494,7 +494,7 @@ class HomeScreen extends React.Component<Props, State> {
         <Animated.ScrollView
           stickyHeaderIndices={[2]}
           style={{
-            marginTop: this.props.contacts.length ? -100 : -76,
+            marginTop: -100,
           }}
           onScroll={Animated.event(
             [
