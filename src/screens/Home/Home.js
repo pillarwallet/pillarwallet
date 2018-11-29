@@ -62,6 +62,7 @@ type State = {
   esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
+  scrollShadow: boolean,
 };
 
 const profileImageWidth = 96;
@@ -207,6 +208,7 @@ class HomeScreen extends React.Component<Props, State> {
       title: 'Make your first step',
       body: 'Your activity will appear here.',
     },
+    scrollShadow: false,
   };
 
   componentDidMount() {
@@ -309,6 +311,7 @@ class HomeScreen extends React.Component<Props, State> {
       scrollY,
       esData,
       usernameWidth,
+      scrollShadow,
     } = this.state;
 
     const profileUsernameTranslateX = scrollY.interpolate({
@@ -504,7 +507,14 @@ class HomeScreen extends React.Component<Props, State> {
                 },
               },
             ],
-            { useNativeDriver: true },
+            {
+              useNativeDriver: true,
+              listener: (event: Object) => {
+                this.setState({
+                  scrollShadow: event.nativeEvent.contentOffset.y > (this.props.contacts.length ? 330 : 180),
+                });
+              },
+            },
           )}
           scrollEventThrottle={16}
           refreshControl={
@@ -531,7 +541,7 @@ class HomeScreen extends React.Component<Props, State> {
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
-          <Tabs tabs={activityFeedTabs} />
+          <Tabs tabs={activityFeedTabs} scrollShadow={scrollShadow} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}

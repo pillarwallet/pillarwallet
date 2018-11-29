@@ -17,6 +17,7 @@ type Tab = {
 type Props = {
   title?: string,
   tabs: Tab[],
+  scrollShadow?: boolean,
 }
 
 type State = {
@@ -29,6 +30,9 @@ const TabWrapperScrollView = styled.ScrollView`
 
 const TabOuterWrapper = styled.View`
   background-color: ${baseColors.white};
+  ${props => props.scrollShadow
+    ? 'elevation: 3; shadow-color: #000; shadow-offset: 0 2px; shadow-opacity: 0.05; shadow-radius: 2;'
+    : ''}
 `;
 
 const TabItem = styled.TouchableOpacity`
@@ -90,10 +94,10 @@ export default class Tabs extends React.Component<Props, State> {
   };
 
   render() {
-    const { title, tabs } = this.props;
+    const { title, tabs, scrollShadow } = this.props;
 
     return (
-      <TabOuterWrapper>
+      <TabOuterWrapper scrollShadow={scrollShadow}>
         {!!title &&
         <ActivityFeedHeader>
           <Title subtitle noMargin title={title} />
