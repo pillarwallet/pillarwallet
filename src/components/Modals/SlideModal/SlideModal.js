@@ -16,6 +16,7 @@ type Props = {
   noBlueDotOnTitle?: boolean,
   children?: React.Node,
   subtitle?: string,
+  subtitleColor?: string,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   onModalHidden?: Function,
@@ -89,6 +90,8 @@ const ModalBackground = styled.View`
 
 const ModalSubtitle = styled(SubTitle)`
   padding: 10px 0;
+  color: red;
+  color: ${({ subtitleColor }) => subtitleColor || UIColors.primary};
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -152,6 +155,7 @@ export default class SlideModal extends React.Component<Props, *> {
       hasClose,
       fullScreen,
       subtitle,
+      subtitleColor,
       isVisible,
       showHeader,
       centerTitle,
@@ -184,7 +188,7 @@ export default class SlideModal extends React.Component<Props, *> {
           </HeaderWrapper>
         }
         {subtitle &&
-          <ModalSubtitle>{subtitle}</ModalSubtitle>
+          <ModalSubtitle subtitleColor={subtitleColor}>{subtitle}</ModalSubtitle>
         }
         <ModalContent
           fullScreen={fullScreen}

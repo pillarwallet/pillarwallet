@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
-  Alert,
   FlatList,
   Keyboard,
   Image,
@@ -11,7 +10,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
@@ -99,6 +98,9 @@ type State = {
 }
 
 class PeopleScreen extends React.Component<Props, State> {
+  didBlur: NavigationEventSubscription;
+  willFocus: NavigationEventSubscription;
+
   state = {
     query: '',
     showManageContactModal: false,
@@ -163,6 +165,7 @@ class PeopleScreen extends React.Component<Props, State> {
     // condition to avoid confirmation if MUTE should be considered here
     this.setState({
       showManageContactModal: true,
+      forceHideRemoval: false,
       manageContactType,
       manageContactId: contactData.id,
     });
@@ -221,11 +224,18 @@ class PeopleScreen extends React.Component<Props, State> {
     </Swipeout>
   );
 
-  confirmManageAction = (manageContactType: string, manageContactId: string) => {
-    const contactType = manageContactType;
-    const contactId = manageContactId;
-    this.setState({ showManageContactModal: false });
-    Alert.alert(`${contactType} ${contactId}`);
+  confirmManageAction = () => {
+    // here will be called the action to manageContactType (block, disconnect, mute)
+    /*
+    const {
+      manageContactType,
+      manageContactId,
+    } = this.state;
+    */
+    this.setState({
+      showManageContactModal: false,
+      forceHideRemoval: true,
+    });
   };
 
   render() {
@@ -336,8 +346,13 @@ class PeopleScreen extends React.Component<Props, State> {
           showManageContactModal={showManageContactModal}
           manageContactType={manageContactType}
           contact={contact}
-          onConfirm={() => this.confirmManageAction(manageContactType, manageContactId)}
-          onModalHide={() => { this.setState({ showManageContactModal: false }); }}
+          onConfirm={() => this.confirmManageAction()}
+          onModalHide={() => {
+            this.setState({
+              showManageContactModal: false,
+              forceHideRemoval: true,
+            });
+          }}
         />
       </Container>
     );
