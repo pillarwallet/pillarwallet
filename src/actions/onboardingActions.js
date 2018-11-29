@@ -135,7 +135,12 @@ export const registerWalletAction = () => {
       .then(JSON.parse)
       .catch(() => ({}));
 
-    dispatch(saveDbAction('wallet', { wallet: encryptedWallet }));
+    dispatch(saveDbAction('wallet', {
+      wallet: {
+        ...encryptedWallet,
+        backupStatus: { isImported: !!importedWallet },
+      },
+    }));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
     const user = apiUser.username ? { username: apiUser.username } : {};
     dispatch(saveDbAction('user', { user }));

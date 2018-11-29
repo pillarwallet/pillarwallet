@@ -17,6 +17,7 @@ import {
   PIN_CONFIRMED,
   SET_API_USER,
   RESET_WALLET_IMPORT,
+  UPDATE_WALLET_IMPORT_STATE,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -32,6 +33,7 @@ export type WalletReducerState = {
     code: string,
     message: string,
   },
+  backupStatus: Object,
 }
 
 export type WalletReducerAction = {
@@ -56,6 +58,10 @@ const initialState = {
     apiUser: {},
   },
   walletState: null,
+  backupStatus: {
+    isImported: false,
+    isBackuped: false,
+  },
   error: null,
 };
 
@@ -92,6 +98,7 @@ export default function newWalletReducer(
       return {
         ...state,
         onboarding: { ...state.onboarding, importedWallet, apiUser },
+        backupStatus: { ...state.backupStatus, isImported: true },
       };
     case RESET_WALLET_IMPORT:
       return {
@@ -103,6 +110,11 @@ export default function newWalletReducer(
         ...state,
         onboarding: { ...state.onboarding, apiUser: action.payload },
       };
+    case UPDATE_WALLET_IMPORT_STATE:
+      return merge(
+        {},
+        state, { backupStatus: action.payload },
+      );
     default:
       return state;
   }
