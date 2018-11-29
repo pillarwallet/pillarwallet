@@ -196,15 +196,13 @@ const getTheme = (props: Props) => {
   const themesKeys = Object.keys(themes);
   let themeToUse = themes.primary;
 
-  propsKeys.some((prop: string) => {
+  propsKeys.forEach((prop: string) => {
     const indexOfTheme = themesKeys.indexOf(prop);
     const existTheme = indexOfTheme >= 0;
 
-    if (existTheme) {
+    if (existTheme && props[prop]) {
       themeToUse = themes[prop];
     }
-
-    return existTheme;
   });
 
   return themeToUse;
