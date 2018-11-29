@@ -3,11 +3,11 @@ import * as React from 'react';
 import { Platform, Dimensions } from 'react-native';
 import isEqual from 'lodash.isequal';
 import styled from 'styled-components/native';
-import { LightText, BoldText } from 'components/Typography';
+import { BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
-import { getCurrencySymbol } from 'utils/common';
 import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
+import AssetInfo from './AssetInfo';
 
 type Props = {
   id: string,
@@ -67,48 +67,6 @@ const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
   z-index: 10;
 `;
 
-const AmountWrapper = styled.View`
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-`;
-
-const TokenAmountWrapper = styled.View`
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: baseline;
-  align-self: flex-end;
-  margin: 4px 0;
-`;
-
-const Amount = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
-  color: ${baseColors.slateBlack};
-`;
-
-const FiatAmount = styled(LightText)`
-  font-size: ${fontSizes.extraExtraSmall}px;
-  line-height: ${fontSizes.extraExtraSmall}px;
-  color: ${baseColors.darkGray};
-  align-self: flex-end;
-  text-align: right;
-`;
-
-const Disclaimer = styled(LightText)`
-  font-size: ${fontSizes.extraSmall};
-  line-height: ${fontSizes.small};
-  color: ${baseColors.burningFire};
-  align-self: flex-end;
-  text-align: right;
-`;
-
-const AmountToken = styled(BoldText)`
-  font-size: ${fontSizes.small}px;
-  line-height: ${fontSizes.small}px;
-  color: ${baseColors.slateBlack};
-`;
-
 const DetailsWrapper = styled.View`
   flex: 1;
   flex-direction: row;
@@ -158,8 +116,6 @@ class AssetCardSimplified extends React.Component<Props, {}> {
       icon,
     } = this.props;
 
-    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
-
     return (
       <AssetOutter cardWidth={cardWidth}>
         <Shadow heightAndroid={70} widthIOS={cardWidth - 20} heightIOS={70}>
@@ -167,7 +123,6 @@ class AssetCardSimplified extends React.Component<Props, {}> {
             <AssetWrapper>
               <InnerWrapper>
                 <IconCircle>
-                  {!!icon &&
                   <CachedImage
                     key={token}
                     style={{
@@ -177,20 +132,16 @@ class AssetCardSimplified extends React.Component<Props, {}> {
                     source={{ uri: icon }}
                     fallbackSource={genericToken}
                     resizeMode="contain"
-                  />}
+                  />
                 </IconCircle>
                 <DetailsWrapper>
                   <Name>{name}</Name>
-                  <AmountWrapper>
-                    <TokenAmountWrapper>
-                      <Amount>{amount}</Amount>
-                      <AmountToken> {token}</AmountToken>
-                    </TokenAmountWrapper>
-                    {disclaimer
-                      ? <Disclaimer>{disclaimer}</Disclaimer>
-                      : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                    }
-                  </AmountWrapper>
+                  <AssetInfo
+                    token={token}
+                    amount={amount}
+                    disclaimer={disclaimer}
+                    balanceInFiat={balanceInFiat}
+                  />
                 </DetailsWrapper>
               </InnerWrapper>
             </AssetWrapper>
