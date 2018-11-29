@@ -6,6 +6,7 @@ import { DISCONNECT } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
+/* eslint max-len:0 */
 const subtitleDescription = {
   block: `You will no longer be able to find this user, chat, and make any transactions.
   Your chat history will be erased on your device. No notifications on this user's actions will be received.
@@ -16,7 +17,7 @@ const subtitleDescription = {
 const titleConfirmation = (manageContactType: string, username: string) => {
   const contactType = manageContactType;
   const usernameToConfirm = username;
-  return `Are you sure you want to ${contactType} ${contactType === DISCONNECT ? 'from' : '' } ${usernameToConfirm}?`;
+  return `Are you sure you want to ${contactType} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}?`;
 };
 
 type Props = {
@@ -51,6 +52,7 @@ const ManageConnectionModal = (props: Props) => {
       noWrapTitle
       hasClose={false}
       subtitle={subtitle}
+      subtitleColor={baseColors.darkGray}
     >
       <Button
         primaryInverted
