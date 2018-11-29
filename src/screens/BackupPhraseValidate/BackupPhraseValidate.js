@@ -10,7 +10,7 @@ import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import IconButton from 'components/IconButton';
-import { LEGAL_TERMS } from 'constants/navigationConstants';
+import { LEGAL_TERMS, PROFILE } from 'constants/navigationConstants';
 
 type State = {
   enteredWords: string[],
@@ -186,6 +186,15 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     });
   };
 
+  handlePassedValidation = () => {
+    const { navigation } = this.props;
+    if (navigation.getParam('backupViaSettings', false)) {
+      navigation.navigate(PROFILE);
+    } else {
+      navigation.navigate(LEGAL_TERMS);
+    }
+  };
+
   render() {
     const { onboarding: wallet } = this.props.wallet;
     const { isFormValid } = this.state;
@@ -208,14 +217,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             {!!__DEV__ && (
             <MnemonicPhraseWord
               key="automagical"
-              onPress={() => this.props.navigation.navigate(LEGAL_TERMS)}
+              onPress={this.handlePassedValidation}
             >
               <MnemonicPhraseWordText>debugskip</MnemonicPhraseWordText>
             </MnemonicPhraseWord>
             )}
           </ShuffledWordWrapper>
           <Button
-            onPress={() => this.props.navigation.navigate(LEGAL_TERMS)}
+            onPress={this.handlePassedValidation}
             title="Next"
             disabled={!isFormValid}
           />
