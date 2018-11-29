@@ -19,6 +19,7 @@ Each contributing member of the development team will work together to ensure ev
 Code review is a shared responsibility. We will strive to review and approve PRs within 2 hours during normal business hours. There are no tribes in review meaning any developer is capable of reviewing any other developers work.
 
 > Review feedback will be given within the PR on github and issues raised will be resolved there unless a larger conversation is needed
+> Please consider any post-merge comments that could prevent an issue or become a future improvement. Depending on the comment, a new PR could be raised or a story could be added to the icebox for future review.
 
 ## Code, commit message and labeling conventions
 PR Titles will be used to generate release notes for development, staging, and production releases. Commit messages should be descriptive and reference the ticket within Pivotal
