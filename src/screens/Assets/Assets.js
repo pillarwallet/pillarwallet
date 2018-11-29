@@ -3,12 +3,15 @@ import * as React from 'react';
 import {
   RefreshControl,
   FlatList,
+  SectionList,
   Dimensions,
   Platform,
   PixelRatio,
   View,
   Alert,
+  Keyboard,
 } from 'react-native';
+import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -16,16 +19,20 @@ import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
-import { BaseText } from 'components/Typography';
+import { SubHeading, BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import AssetCard from 'components/AssetCard';
 import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
-import Header from 'components/Header';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import HideAssetButton from 'screens/Assets/HideAssetButton';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import SearchBlock from 'components/SearchBlock';
+import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import AssetInfo from 'components/AssetCard/AssetInfo';
+import Separator from 'components/Separator';
 
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -35,10 +42,13 @@ import {
   updateAssetsAction,
   fetchInitialAssetsAction,
   fetchAssetsBalancesAction,
+  startAssetsSearchAction,
+  searchAssetsAction,
+  resetSearchAssetsResultAction,
 } from 'actions/assetsActions';
 
 // constants
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, ETH } from 'constants/assetsConstants';
+import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 
@@ -49,6 +59,7 @@ import assetsConfig from 'configs/assetsConfig';
 import { formatMoney } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
+import debounce from 'lodash.debounce';
 
 type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
@@ -62,13 +73,21 @@ type Props = {
   baseFiatCurrency: string,
   assetsLayout: string,
   updateAssets: Function,
+  startAssetsSearch: Function,
+  searchAssets: Function,
+  resetSearchAssetsResult: Function,
+  assetsSearchResults: Asset[],
+  assetsSearchState: string,
 }
 
 type State = {
   forceHideRemoval: boolean,
+  query: string,
 }
 
 const IS_IOS = Platform.OS === 'ios';
+const MIN_QUERY_LENGTH = 2;
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 const smallScreen = () => {
   if (IS_IOS) {
@@ -96,6 +115,19 @@ const horizontalPadding = (layout, side) => {
   }
 };
 
+const ListHeading = styled(SubHeading)`
+  padding: 20px 20px 0 20px;
+`;
+
+const TokensWrapper = styled(Wrapper)`
+   flex: 1;
+   height: 100%;
+`;
+
+const SearchSpinner = styled(Wrapper)`
+  padding-top: 20;
+`;
+
 class AssetsScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
@@ -104,7 +136,9 @@ class AssetsScreen extends React.Component<Props, State> {
     super(props);
     this.state = {
       forceHideRemoval: false,
+      query: '',
     };
+    this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
 
   static defaultProps = {
@@ -155,6 +189,25 @@ class AssetsScreen extends React.Component<Props, State> {
         resetHideRemoval: this.resetHideRemoval,
       },
     );
+  };
+
+  handleSearchChange = (query: string) => {
+    const formattedQuery = !query ? '' : query.trim();
+
+    this.setState({
+      query: formattedQuery,
+    });
+    this.props.startAssetsSearch();
+    this.doAssetsSearch(formattedQuery);
+  };
+
+  doAssetsSearch = (query: string) => {
+    const { searchAssets, resetSearchAssetsResult } = this.props;
+    if (query.length < MIN_QUERY_LENGTH) {
+      resetSearchAssetsResult();
+      return;
+    }
+    searchAssets(query);
   };
 
   resetHideRemoval = () => {
@@ -228,9 +281,9 @@ class AssetsScreen extends React.Component<Props, State> {
       iconUrl,
     } = asset;
 
-    const fullIconMonoUrl = `${SDK_PROVIDER}/${iconMonoUrl}?size=2`;
+    const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
     const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
-    const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
     const formattedBalanceInFiat = formatMoney(balanceInFiat);
     const displayAmount = formatMoney(balance, 4);
 
@@ -335,6 +388,144 @@ class AssetsScreen extends React.Component<Props, State> {
     );
   };
 
+  renderFoundTokensList() {
+    const {
+      assets,
+      assetsSearchResults,
+      baseFiatCurrency,
+      balances,
+      rates,
+    } = this.props;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const addedAssets = [];
+    const foundAssets = [];
+    assetsSearchResults.forEach((result) => {
+      if (!assets[result.symbol]) {
+        foundAssets.push(result);
+      } else {
+        addedAssets.push(result);
+      }
+    });
+
+    const addedAssetsWithBalance = addedAssets
+      .map(({ symbol, balance, ...rest }) => ({
+        symbol,
+        balance: getBalance(balances, symbol),
+        ...rest,
+      }))
+      .map(({ balance, symbol, ...rest }) => ({
+        balance,
+        symbol,
+        balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
+        ...rest,
+      }));
+
+    const sections = [];
+    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: addedAssetsWithBalance, extraData: assets });
+    if (foundAssets.length) sections.push({ title: 'FOUND TOKENS', data: foundAssets, extraData: assets });
+
+    const renderItem = ({ item: asset }) => {
+      const {
+        symbol,
+        name,
+        iconUrl,
+        balance = 0,
+        balanceInFiat = 0,
+      } = asset;
+
+      const isAdded = !!assets[symbol];
+      const amount = formatMoney(balance, 4);
+      const blncInFiat = { amount: formatMoney(balanceInFiat), currency: fiatCurrency };
+      const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+
+      const {
+        disclaimer,
+      } = assetsConfig[symbol] || {};
+
+      return (
+        <ListItemWithImage
+          label={name}
+          subtext={symbol}
+          itemImageUrl={fullIconUrl}
+          fallbackSource={genericToken}
+          buttonActionLabel={!isAdded ? 'Add' : ''}
+          buttonAction={!isAdded ? () => this.addTokenToWallet(asset) : () => {}}
+          small
+        >
+          {!!isAdded &&
+          <AssetInfo
+            token={symbol}
+            amount={amount}
+            disclaimer={disclaimer}
+            balanceInFiat={blncInFiat}
+          />
+          }
+        </ListItemWithImage>
+      );
+    };
+
+    return (
+      <SectionList
+        renderItem={renderItem}
+        renderSectionHeader={({ section }) => {
+          return assetsSearchResults.length ? this.renderListTitle(section.title) : null;
+        }}
+        sections={sections}
+        keyExtractor={(item) => item.symbol}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          width: '100%',
+        }}
+        stickySectionHeadersEnabled={false}
+        ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+        ListEmptyComponent={
+          <Wrapper
+            fullScreen
+            style={{
+              paddingTop: 90,
+              paddingBottom: 90,
+              alignItems: 'center',
+            }}
+          >
+            <EmptyStateParagraph
+              title="Token not found"
+              bodyText="Check if the name was entered correctly or add custom token"
+            />
+          </Wrapper>
+        }
+        onScroll={() => Keyboard.dismiss()}
+      />
+    );
+  }
+
+  renderListTitle = (title: string) => {
+    return (
+      <ListHeading>{title}</ListHeading>
+    );
+  }
+
+  addTokenToWallet = (asset: Asset) => {
+    const {
+      assets,
+      fetchAssetsBalances,
+      updateAssets,
+      wallet,
+    } = this.props;
+
+    const updatedAssetList = { ...assets };
+    updatedAssetList[asset.symbol] = asset;
+
+    updateAssets(updatedAssetList);
+    fetchAssetsBalances(updatedAssetList, wallet.address);
+
+    Toast.show({
+      title: 'Added asset',
+      message: `Added asset "${asset.name}" to your wallet.`,
+      type: 'info',
+      autoClose: true,
+    });
+  };
+
   render() {
     const {
       assets,
@@ -345,7 +536,10 @@ class AssetsScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       balances,
+      assetsSearchState,
+      navigation,
     } = this.props;
+    const { query } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const sortedAssets = Object.keys(assets)
@@ -378,43 +572,61 @@ class AssetsScreen extends React.Component<Props, State> {
     }
 
     const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
+    const isSearchOver = assetsSearchState === FETCHED;
+    const isSearching = assetsSearchState === FETCHING && query.length >= MIN_QUERY_LENGTH;
+    const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!assetsSearchState);
 
     return (
       <Container inset={{ bottom: 0 }}>
-        <Header
-          title="assets"
-          onNextPress={this.goToAddTokenPage}
-          nextIcon="more"
-          headerRightFlex="2"
+        <SearchBlock
+          headerProps={{ title: 'assets' }}
+          searchInputPlaceholder="Search or add new asset"
+          onSearchChange={(q) => this.handleSearchChange(q)}
+          itemSearchState={assetsSearchState}
+          navigation={navigation}
         />
-        <FlatList
-          key={assetsLayout}
-          data={sortedAssets}
-          keyExtractor={(item) => item.id}
-          renderItem={this.renderAsset}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
-          onEndReachedThreshold={0.5}
-          style={{ width: '100%' }}
-          contentContainerStyle={{
-            paddingLeft: horizontalPadding(assetsLayout, 'left'),
-            paddingRight: horizontalPadding(assetsLayout, 'right'),
-            width: '100%',
-          }}
-          numColumns={columnAmount}
-          ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-            ? this.renderSeparator
-            : null}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {
-                const { fetchAssetsBalances } = this.props;
-                fetchAssetsBalances(assets, wallet.address);
-              }}
-            />
+        <TokensWrapper>
+          {inSearchMode && isSearchOver &&
+          <Wrapper>
+            {this.renderFoundTokensList()}
+          </Wrapper>
           }
-        />
+          {isSearching &&
+          <SearchSpinner center>
+            <Spinner />
+          </SearchSpinner>
+          }
+          {!inSearchMode &&
+          <FlatList
+            key={assetsLayout}
+            data={sortedAssets}
+            keyExtractor={(item) => item.id}
+            renderItem={this.renderAsset}
+            initialNumToRender={5}
+            maxToRenderPerBatch={5}
+            onEndReachedThreshold={0.5}
+            style={{ width: '100%' }}
+            contentContainerStyle={{
+              paddingVertical: 6,
+              paddingLeft: horizontalPadding(assetsLayout, 'left'),
+              paddingRight: horizontalPadding(assetsLayout, 'right'),
+              width: '100%',
+            }}
+            numColumns={columnAmount}
+            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+              ? this.renderSeparator
+              : null}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  const { fetchAssetsBalances } = this.props;
+                  fetchAssetsBalances(assets, wallet.address);
+                }}
+              />
+            }
+          />}
+        </TokensWrapper>
       </Container>
     );
   }
@@ -422,7 +634,13 @@ class AssetsScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   wallet: { data: wallet },
-  assets: { data: assets, assetsState, balances },
+  assets: {
+    data: assets,
+    assetsState,
+    balances,
+    assetsSearchState,
+    assetsSearchResults,
+  },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
 }) => ({
@@ -430,6 +648,8 @@ const mapStateToProps = ({
   assets,
   assetsState,
   balances,
+  assetsSearchState,
+  assetsSearchResults,
   rates,
   baseFiatCurrency,
   assetsLayout,
@@ -443,6 +663,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
   updateAssets: (assets: Assets, assetsToExclude: string[]) => dispatch(updateAssetsAction(assets, assetsToExclude)),
+  startAssetsSearch: () => dispatch(startAssetsSearchAction()),
+  searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
+  resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);
