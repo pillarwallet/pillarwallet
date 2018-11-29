@@ -25,6 +25,11 @@ const mockOnboarding: Object = {
   pin: '',
 };
 
+const mockBackupStatus: Object = {
+  isImported: false,
+  isBackuped: false,
+};
+
 describe('Wallet reducer', () => {
   it('should handle GENERATE_ENCRYPTED_WALLET', () => {
     const updateAction = { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet };
@@ -33,6 +38,7 @@ describe('Wallet reducer', () => {
       error: null,
       onboarding: mockOnboarding,
       walletState: CREATED,
+      backupStatus: mockBackupStatus,
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);
   });
@@ -49,6 +55,7 @@ describe('Wallet reducer', () => {
       error: null,
       onboarding: mockOnboarding,
       walletState: DECRYPTED,
+      backupStatus: mockBackupStatus,
     };
     expect(reducer(undefined, updateAction)).toEqual(expected);
   });
