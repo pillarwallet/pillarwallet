@@ -176,7 +176,13 @@ export default class Toast extends React.Component<{}, State> {
             />
           </IconHolder>
           <TextHolder>
-            {!!toastOptions.title && <BoldText>{toastOptions.title}</BoldText>}
+            {!!toastOptions.title &&
+            <BoldText
+              style={{ marginTop: Platform.OS === 'android' ? 0 : -2 }}
+            >
+              {toastOptions.title}
+            </BoldText>
+            }
             <BaseText style={{ marginBottom: 10, color: baseColors.darkGray, marginTop: -2 }}>
               {toastOptions.message}
             </BaseText>
@@ -190,7 +196,7 @@ export default class Toast extends React.Component<{}, State> {
               justifyContent: 'flex-start',
               alignItems: 'center',
               display: 'flex',
-              marginTop: -8,
+              marginTop: -6,
             }}
             iconStyle={{
               borderWidth: 0,

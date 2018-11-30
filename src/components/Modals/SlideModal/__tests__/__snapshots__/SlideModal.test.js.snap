@@ -529,7 +529,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "display": "flex",
                 "flex": 2,
                 "justifyContent": "flex-start",
-                "marginTop": -8,
+                "marginTop": -6,
                 "opacity": 1,
                 "paddingBottom": 0,
                 "paddingLeft": 0,
