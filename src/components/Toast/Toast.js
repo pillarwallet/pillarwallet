@@ -74,6 +74,7 @@ const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
 
 const TextHolder = styled.View`
   flex: 9;
+  align-items: flex-start;
 `;
 
 const IconHolder = styled.View`
@@ -176,7 +177,7 @@ export default class Toast extends React.Component<{}, State> {
           </IconHolder>
           <TextHolder>
             {!!toastOptions.title && <BoldText>{toastOptions.title}</BoldText>}
-            <BaseText style={{ marginBottom: 10, color: baseColors.darkGray }}>
+            <BaseText style={{ marginBottom: 10, color: baseColors.darkGray, marginTop: -2 }}>
               {toastOptions.message}
             </BaseText>
           </TextHolder>
@@ -189,7 +190,7 @@ export default class Toast extends React.Component<{}, State> {
               justifyContent: 'flex-start',
               alignItems: 'center',
               display: 'flex',
-              marginTop: -6,
+              marginTop: -8,
             }}
             iconStyle={{
               borderWidth: 0,
