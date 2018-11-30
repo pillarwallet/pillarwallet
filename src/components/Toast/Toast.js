@@ -13,7 +13,7 @@ type ToastOptions = {
   autoClose?: boolean,
   type: string,
   message: string,
-  title: string,
+  title: ?string,
 };
 
 type State = {
@@ -67,7 +67,7 @@ const ToastWrapper = styled.View`
   elevation: 9;
   z-index: 1000;
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: center;
 `;
 
 const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
