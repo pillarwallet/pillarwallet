@@ -57,10 +57,30 @@ export const resetUnreadAction = (username: string) => ({
   payload: { username },
 });
 
-export const sendMessageByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function) => {
+export const sendMessageByContactAction = (payload: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { contact: { id: userId, username }, message } = payload;
+    const {
+      accessTokens: { data: accessTokens },
+    } = getState();
+    const connectionAccessTokens = accessTokens.filter(({ userId: connectionUserId }) => connectionUserId === userId);
+    if (!Object.keys(connectionAccessTokens).length) {
+      Toast.show({
+        message: 'Session with user not found!',
+        type: 'warning',
+        title: 'Cannot send the message',
+        autoClose: false,
+      });
+      return;
+    }
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens[0];
     try {
-      await chat.client.sendMessageByContact(username, message.text, 'chat');
+      await chat.client.sendMessageByContact('chat', {
+        username,
+        userId,
+        userConnectionAccessToken,
+        message: message.text,
+      });
     } catch (e) {
       Toast.show({
         message: 'Unable to contact the server!',
