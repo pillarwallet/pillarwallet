@@ -169,9 +169,9 @@ class Profile extends React.Component<Props, State> {
     );
   };
 
-  handleBackup = (isBackupAction?: boolean) => {
+  handleBackup = (isBackedUp?: boolean) => {
     const { navigation } = this.props;
-    if (isBackupAction) {
+    if (!isBackedUp) {
       // DO BACKUP
       navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true });
     } else {
@@ -195,7 +195,7 @@ class Profile extends React.Component<Props, State> {
 
     const {
       isImported,
-      // isBackuped,
+      isBackedUp,
     } = backupStatus;
 
     const {
@@ -204,7 +204,7 @@ class Profile extends React.Component<Props, State> {
       showSystemInfoModal,
     } = this.state;
 
-    const isBackupNeeded = !isImported; // TODO: check if wallet is backuped
+    const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -349,8 +349,8 @@ class Profile extends React.Component<Props, State> {
 
             <ProfileSettingsItem
               key="backupWallet"
-              label={isBackupNeeded ? 'Backup Wallet' : 'Reveal backup phrase'}
-              onPress={() => this.handleBackup(isBackupNeeded)}
+              label={isWalletBackedUp ? 'Reveal backup phrase' : 'Backup Wallet'}
+              onPress={() => this.handleBackup(isWalletBackedUp)}
             />
 
             <ProfileSettingsItem

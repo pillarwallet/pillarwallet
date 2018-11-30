@@ -18,6 +18,7 @@ import {
   SET_API_USER,
   RESET_WALLET_IMPORT,
   UPDATE_WALLET_IMPORT_STATE,
+  BACKUP_WALLET,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -60,7 +61,7 @@ const initialState = {
   walletState: null,
   backupStatus: {
     isImported: false,
-    isBackuped: false,
+    isBackedUp: false,
   },
   error: null,
 };
@@ -113,7 +114,14 @@ export default function newWalletReducer(
     case UPDATE_WALLET_IMPORT_STATE:
       return merge(
         {},
-        state, { backupStatus: action.payload },
+        state, { backupStatus: { ...state.backupStatus, ...action.payload } },
+      );
+
+    case BACKUP_WALLET:
+      return merge(
+        {},
+        state,
+        { backupStatus: { ...state.backupStatus, isBackedUp: true } },
       );
     default:
       return state;
