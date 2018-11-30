@@ -229,7 +229,7 @@ class AssetsScreen extends React.Component<Props, State> {
       `This will hide ${asset.name} from your wallet`,
       [
         { text: 'Cancel', onPress: () => this.setState({ forceHideRemoval: true }), style: 'cancel' },
-        { text: 'Hide', onPress: () => updateAssets(assets, [asset.symbol]) },
+        { text: 'Hide', onPress: () => { this.hideTokenFromWallet(asset); updateAssets(assets, [asset.symbol]); } },
       ],
     );
   };
@@ -471,8 +471,8 @@ class AssetsScreen extends React.Component<Props, State> {
 
     addAsset(asset);
     Toast.show({
-      title: 'Added asset',
-      message: `Added asset "${asset.name}" to your wallet.`,
+      title: null,
+      message: `${asset.name} (${asset.symbol}) has been added`,
       type: 'info',
       autoClose: true,
     });
@@ -490,8 +490,8 @@ class AssetsScreen extends React.Component<Props, State> {
 
     removeAsset(asset);
     Toast.show({
-      title: 'Hid asset',
-      message: `Hid asset "${asset.name}" from your wallet.`,
+      title: null,
+      message: `${asset.name} (${asset.symbol}) has been hidden`,
       type: 'info',
       autoClose: true,
     });
