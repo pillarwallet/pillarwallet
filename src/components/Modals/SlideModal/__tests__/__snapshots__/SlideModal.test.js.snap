@@ -484,6 +484,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             style={
               Array [
                 Object {
+                  "alignItems": "flex-start",
                   "flexBasis": 0,
                   "flexGrow": 9,
                   "flexShrink": 1,
@@ -505,6 +506,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   Object {
                     "color": "#8B939E",
                     "marginBottom": 10,
+                    "marginTop": -2,
                   },
                 ]
               }
@@ -527,7 +529,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "display": "flex",
                 "flex": 2,
                 "justifyContent": "flex-start",
-                "marginTop": -6,
+                "marginTop": -8,
                 "opacity": 1,
                 "paddingBottom": 0,
                 "paddingLeft": 0,
