@@ -64,8 +64,6 @@ export const sendMessageByContactAction = (payload: Object) => {
       accessTokens: { data: accessTokens },
     } = getState();
     const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
-    console.log(accessTokens);
-    console.log(connectionAccessTokens);
     if (!Object.keys(connectionAccessTokens).length) {
       return;
     }
