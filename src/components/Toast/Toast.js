@@ -44,12 +44,12 @@ const typeIcons = {
 const ToastHolder = styled.View`
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
-  height: 320px;
-  margin-top: -${Platform.OS === 'android' ? 230 : 210}px;
   background-color: ${baseColors.white};
   position: absolute;
   left: 0;
@@ -67,7 +67,7 @@ const ToastWrapper = styled.View`
   elevation: 9;
   z-index: 1000;
   justify-content: flex-end;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
@@ -80,7 +80,8 @@ const IconHolder = styled.View`
   display: flex;
   flex: 2;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 2px;
 `;
 
 export default class Toast extends React.Component<{}, State> {
@@ -174,7 +175,7 @@ export default class Toast extends React.Component<{}, State> {
             />
           </IconHolder>
           <TextHolder>
-            <BoldText>{toastOptions.title}</BoldText>
+            {!!toastOptions.title && <BoldText>{toastOptions.title}</BoldText>}
             <BaseText style={{ marginBottom: 10, color: baseColors.darkGray }}>
               {toastOptions.message}
             </BaseText>
@@ -185,9 +186,10 @@ export default class Toast extends React.Component<{}, State> {
             color={baseColors.mediumGray}
             style={{
               flex: 2,
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
               alignItems: 'center',
               display: 'flex',
+              marginTop: -6,
             }}
             iconStyle={{
               borderWidth: 0,

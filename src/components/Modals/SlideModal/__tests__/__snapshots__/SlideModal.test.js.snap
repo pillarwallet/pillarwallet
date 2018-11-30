@@ -408,16 +408,14 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         style={
           Array [
             Object {
-              "alignItems": "center",
+              "alignItems": "flex-start",
               "backgroundColor": "#ffffff",
               "borderColor": "#2f86eb",
               "borderLeftWidth": 10,
               "borderStyle": "solid",
               "elevation": 9,
-              "height": 320,
               "justifyContent": "flex-end",
               "left": 0,
-              "marginTop": -210,
               "opacity": 0,
               "paddingBottom": 10,
               "paddingTop": 30,
@@ -447,8 +445,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           style={
             Array [
               Object {
+                "alignItems": "flex-start",
                 "display": "flex",
                 "flexDirection": "row",
+                "justifyContent": "flex-start",
               },
               undefined,
             ]
@@ -463,7 +463,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                   "flexBasis": 0,
                   "flexGrow": 2,
                   "flexShrink": 1,
-                  "justifyContent": "center",
+                  "justifyContent": "flex-start",
+                  "paddingTop": 2,
                 },
                 undefined,
               ]
@@ -501,31 +502,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     "includeFontPadding": false,
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "Aktiv Grotesk App",
-                      "fontWeight": "600",
-                      "includeFontPadding": false,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              
-            </Text>
-            <Text
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "Aktiv Grotesk App",
-                    "fontWeight": "400",
-                    "includeFontPadding": false,
-                    "textAlignVertical": "center",
-                  },
                   Object {
                     "color": "#8B939E",
                     "marginBottom": 10,
@@ -550,7 +526,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 "alignItems": "center",
                 "display": "flex",
                 "flex": 2,
-                "justifyContent": "center",
+                "justifyContent": "flex-start",
+                "marginTop": -6,
                 "opacity": 1,
                 "paddingBottom": 0,
                 "paddingLeft": 0,
