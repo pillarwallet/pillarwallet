@@ -79,6 +79,7 @@ describe('Chat Actions', () => {
 
     describe('when sendMessageByContact throws the exception', () => {
       let contact;
+
       beforeEach(async () => {
         contact = {
           username: 'test-username',
