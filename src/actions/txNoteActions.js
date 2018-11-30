@@ -22,8 +22,9 @@ export const getExistingTxNotesAction = () => {
   };
 };
 
-export const sendTxNoteByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function) => {
+export const sendTxNoteByContactAction = (payload: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const { contact: { id: userId, username }, message } = payload;
     await chat.client.addContact(username).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -34,9 +35,22 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
         });
       }
     });
+    const {
+      accessTokens: { data: accessTokens },
+    } = getState();
+    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
+    if (!Object.keys(connectionAccessTokens).length) {
+      return;
+    }
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
     try {
       const content = JSON.stringify({ text: message.text, txHash: message.txHash });
-      await chat.client.sendSilentMessageByContact(username, content, 'tx-note');
+      await chat.client.sendSilentMessageByContact('tx-note', {
+        username,
+        userId,
+        userConnectionAccessToken,
+        message: content,
+      });
     } catch (e) {
       Toast.show({
         message: 'Unable to contact the server!',

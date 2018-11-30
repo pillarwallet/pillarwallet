@@ -63,17 +63,13 @@ export const sendMessageByContactAction = (payload: Object) => {
     const {
       accessTokens: { data: accessTokens },
     } = getState();
-    const connectionAccessTokens = accessTokens.filter(({ userId: connectionUserId }) => connectionUserId === userId);
+    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
+    console.log(accessTokens);
+    console.log(connectionAccessTokens);
     if (!Object.keys(connectionAccessTokens).length) {
-      Toast.show({
-        message: 'Session with user not found!',
-        type: 'warning',
-        title: 'Cannot send the message',
-        autoClose: false,
-      });
       return;
     }
-    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens[0];
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
     try {
       await chat.client.sendMessageByContact('chat', {
         username,
