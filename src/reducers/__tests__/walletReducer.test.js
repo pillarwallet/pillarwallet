@@ -27,7 +27,7 @@ const mockOnboarding: Object = {
 
 const mockBackupStatus: Object = {
   isImported: false,
-  isBackuped: false,
+  isBackedUp: false,
 };
 
 describe('Wallet reducer', () => {
