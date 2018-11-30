@@ -20,7 +20,7 @@ import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
-import { SubHeading, BaseText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
@@ -118,10 +118,6 @@ const horizontalPadding = (layout, side) => {
     }
   }
 };
-
-const ListHeading = styled(SubHeading)`
-  padding: 20px 20px 0 20px;
-`;
 
 const TokensWrapper = styled(Wrapper)`
    flex: 1;
@@ -440,9 +436,6 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <SectionList
         renderItem={renderItem}
-        renderSectionHeader={({ section }) => {
-          return assetsSearchResults.length ? this.renderListTitle(section.title) : null;
-        }}
         sections={sections}
         keyExtractor={(item) => item.symbol}
         style={{ width: '100%' }}
@@ -468,12 +461,6 @@ class AssetsScreen extends React.Component<Props, State> {
         }
         onScroll={() => Keyboard.dismiss()}
       />
-    );
-  }
-
-  renderListTitle = (title: string) => {
-    return (
-      <ListHeading>{title}</ListHeading>
     );
   }
 
