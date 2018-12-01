@@ -2,10 +2,10 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
-import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
+import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
 
 type Props = {
   children?: React.Node,
@@ -29,6 +29,9 @@ type Props = {
   small?: boolean,
   icon?: string,
   listItemButton?: boolean,
+  alignTitleVertical?: boolean,
+  isSquare?: boolean,
+  height?: string,
 };
 
 const themes = {
@@ -69,6 +72,12 @@ const themes = {
     borderColor: UIColors.defaultBorderColor,
     borderWidth: 0,
   },
+  dark: {
+    background: baseColors.darkGray,
+    color: baseColors.white,
+    borderColor: baseColors.darkGray,
+    borderWidth: 0,
+  },
   disabled: {
     background: baseColors.lightGray,
     color: baseColors.darkGray,
@@ -82,47 +91,35 @@ const themes = {
   },
 };
 
-const getTheme = (props: Props) => {
-  if (props.disabledTransparent) {
-    return themes.disabledTransparent;
-  }
-  if (props.disabled) {
-    return themes.disabled;
-  }
-  if (props.secondary && props.danger) {
-    return themes.secondaryDanger;
-  }
-  if (props.danger) {
-    return themes.danger;
-  }
-  if (props.secondary) {
-    return themes.secondary;
-  }
-  if (props.primaryInverted) {
-    return themes.primaryInverted;
-  }
-  if (props.dangerInverted) {
-    return themes.dangerInverted;
-  }
-  return themes.primary;
-};
-
 const ButtonIcon = styled(Icon)`
   font-size: ${fontSizes.medium};
   margin-right: 5px;
   color: ${props => props.theme.color};
 `;
 
-const getButtonHeight = (props: Props) => {
-  if (props.noPadding) {
+const getButtonHeight = (props) => {
+  if (props.height) {
+    return `${props.height}px`;
+  } else if (props.noPadding) {
     return '0';
   } else if (props.small) {
     return '34px';
   }
+
   return '56px';
 };
 
-const getButtonPadding = (props: Props) => {
+const getButtonWidth = (props) => {
+  if (props.isSquare) {
+    return getButtonHeight(props);
+  } else if (props.block) {
+    return '100%';
+  }
+
+  return 'auto';
+};
+
+const getButtonPadding = (props) => {
   if (props.noPadding) {
     return '0';
   } else if (props.small) {
@@ -133,7 +130,7 @@ const getButtonPadding = (props: Props) => {
   return `${spacing.rhythm * 2.5}px`;
 };
 
-const getButtonFontSize = (props: Props) => {
+const getButtonFontSize = (props) => {
   if (props.listItemButton) {
     return `${fontSizes.small}px`;
   } else if (props.small) {
@@ -152,14 +149,15 @@ const ButtonWrapper = styled.TouchableOpacity`
   margin-bottom: ${props => props.marginBottom || '0px'};
   margin-left: ${props => props.marginLeft || '0px'};
   margin-right: ${props => props.marginRight || '0px'};
-  border-radius: 40;
-  width: ${props => props.block ? '100%' : 'auto'};
+  border-radius: ${({ isSquare }) => isSquare ? 0 : 40};
+  width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
   border-color: ${props => props.theme.borderColor};
   border-width:  ${props => props.theme.borderWidth};
   border-style: solid;
-  flex-direction: row;
+  flex-direction: ${({ alignTitleVertical }) =>
+    alignTitleVertical ? 'column' : 'row'};
   ${props => props.theme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
   ${props => props.theme.shadow ? 'elevation: 1;' : ''}
 `;
@@ -173,6 +171,42 @@ const ButtonText = styled(BoldText)`
     ? `font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App'};`
     : ''}
 `;
+
+const ButtonMiniWrapper = styled(NBButton)`
+  padding: 10px 20px;
+  background-color: ${baseColors.electricBlue};
+  border-radius: 17;
+  box-shadow: 0px .5px .5px ${baseColors.electricBlue};
+  height: 34px;
+  width: auto;
+`;
+
+const ButtonMiniText = styled(BoldText)`
+  font-size: 14px;
+  letter-spacing: 0.3;
+  color: #fff;
+`;
+
+const getTheme = (props: Props) => {
+  if (props.secondary && props.danger) {
+    return themes.secondaryDanger;
+  }
+
+  const propsKeys = Object.keys(props);
+  const themesKeys = Object.keys(themes);
+  let themeToUse = themes.primary;
+
+  propsKeys.forEach((prop: string) => {
+    const indexOfTheme = themesKeys.indexOf(prop);
+    const existTheme = indexOfTheme >= 0;
+
+    if (existTheme && props[prop]) {
+      themeToUse = themes[prop];
+    }
+  });
+
+  return themeToUse;
+};
 
 const Button = (props: Props) => {
   const theme = getTheme(props);
@@ -188,6 +222,7 @@ const Button = (props: Props) => {
     disabledTransparent,
     onPress,
     width,
+    height,
     children,
   } = props;
 
@@ -203,6 +238,7 @@ const Button = (props: Props) => {
       noPadding={noPadding}
       onPress={(disabled || disabledTransparent) ? null : onPress}
       width={width}
+      height={height}
       disabled={disabled || disabledTransparent}
     >
       {!!icon && <ButtonIcon name={icon} theme={theme} />}
@@ -220,26 +256,10 @@ const Button = (props: Props) => {
 
 export default Button;
 
-
 type ButtonMiniProps = {
   onPress: Function,
   title: string,
 };
-
-const ButtonMiniWrapper = styled(NBButton)`
-  padding: 10px 20px;
-  background-color: ${baseColors.electricBlue};
-  border-radius: 17;
-  box-shadow: 0px .5px .5px ${baseColors.electricBlue};
-  height: 34px;
-  width: auto;
-`;
-
-const ButtonMiniText = styled(BoldText)`
-  font-size: 14px;
-  letter-spacing: 0.3;
-  color: #fff;
-`;
 
 export const ButtonMini = (props: ButtonMiniProps) => (
   <ButtonMiniWrapper onPress={props.onPress}>
