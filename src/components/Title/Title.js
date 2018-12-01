@@ -11,6 +11,7 @@ type Props = {
   style?: Object,
   noMargin?: boolean,
   align?: string,
+  fullWidth?: boolean,
   subtitle?: boolean,
   maxWidth?: number,
   noBlueDot?: boolean,
@@ -38,7 +39,7 @@ const Text = styled(BoldText)`
     width: 100%;
     text-align: center;
   `}
-    max-width: 230px;
+  max-width: ${({ fullWidth }) => fullWidth ? '400px' : '230px'};
 `;
 
 const BlueDot = styled(BoldText)`
@@ -56,25 +57,35 @@ const BlueDot = styled(BoldText)`
 
 
 const Title = (props: Props) => {
+  const ellipsized = !props.fullWidth ? {
+    ellipsizeMode: 'middle',
+    numberOfLines: 1,
+  } : {};
+
   return (
-    <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
+    <Wrapper
+      noMargin={props.noMargin}
+      style={props.style}
+      align={props.align}
+      maxWidth={props.maxWidth}
+    >
       {props.onTitlePress ?
         <TouchableOpacity onPress={props.onTitlePress}>
           <Text
+            fullWidth={props.fullWidth}
             align={props.align}
             subtitle={props.subtitle}
-            ellipsizeMode="middle"
-            numberOfLines={1}
+            {...ellipsized}
           >
             {props.title}
           </Text>
         </TouchableOpacity>
         :
         <Text
+          fullWidth={props.fullWidth}
           align={props.align}
           subtitle={props.subtitle}
-          ellipsizeMode="middle"
-          numberOfLines={1}
+          {...ellipsized}
         >
           {props.title}
         </Text>}
