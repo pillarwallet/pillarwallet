@@ -1,12 +1,16 @@
 // @flow
+import partition from 'lodash.partition';
 import {
   UPDATE_SEARCH_RESULTS,
   FETCHING,
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
+  DISCONNECT_CONTACT,
 } from 'constants/contactsConstants';
+import Toast from 'components/Toast';
 import { excludeLocalContacts } from 'utils/contacts';
 import { saveDbAction } from './dbActions';
+import { deleteContactAction } from './chatActions';
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -75,5 +79,54 @@ export const syncContactAction = (userId: string) => {
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
+  };
+};
+
+export const disconnectContactAction = (contactId: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    try {
+      const {
+        user: { data: { walletId, accessToken } },
+        contacts: { data: localContacts },
+        accessTokens: { data: accessTokens },
+      } = getState();
+
+      const { myAccessToken = null } = accessTokens[0] || {};
+
+      if (!myAccessToken) {
+        Toast.show({
+          message: 'If you imported the wallet currently we can\'t delete contact',
+          type: 'warning',
+          title: 'Cannot delete contact',
+          autoClose: false,
+        });
+        return;
+      }
+
+      const [contactToDisconnect, updatedContacts] = partition(localContacts, (contact) =>
+        contact.id === contactId);
+
+      await deleteContactAction(contactToDisconnect[0].username);
+      await api.connection.disconnect(contactId, accessToken, walletId);
+
+      dispatch({
+        type: DISCONNECT_CONTACT,
+        payload: contactToDisconnect[0] || {},
+      });
+
+      dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+
+      dispatch({
+        type: UPDATE_CONTACTS,
+        payload: updatedContacts,
+      });
+    } catch (e) {
+      Toast.show({
+        message: 'Please try again',
+        type: 'warning',
+        title: 'Cannot delete contact',
+        autoClose: false,
+      });
+    }
   };
 };
