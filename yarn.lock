@@ -809,10 +809,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.11.755":
-  version "1.12.802"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.12.802.tgz#32c83905389e427515a9e9cb75a8bca26e3d7fcc"
-  integrity sha1-Msg5BTieQnUVqenLdai8om49f8w=
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.15.1052":
+  version "1.15.1052"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.15.1052.tgz#6ce22da78b9d29eb5d0941d6c721db59d29bea05"
+  integrity sha1-bOItp4udKetdCUHWxyHbWdKb6gU=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -8833,6 +8833,11 @@ lodash.padstart@^4.1.0:
   version "4.6.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.padstart/-/lodash.padstart-4.6.1.tgz#d2e3eebff0d9d39ad50f5cbd1b52a7bce6bb611b"
   integrity sha1-0uPuv/DZ05rVD1y9G1KnvOa7YRs=
+
+lodash.partition@^4.6.0:
+  version "4.6.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.partition/-/lodash.partition-4.6.0.tgz#a38e46b73469e0420b0da1212e66d414be364ba4"
+  integrity sha1-o45GtzRp4EILDaEhLmbUFL42S6Q=
 
 lodash.set@^4.3.2:
   version "4.3.2"
