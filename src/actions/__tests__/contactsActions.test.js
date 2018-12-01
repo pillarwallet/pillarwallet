@@ -4,7 +4,11 @@ import {
   FETCHING,
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
+  DISCONNECT_CONTACT,
 } from 'constants/contactsConstants';
+import Toast from 'components/Toast';
+import * as chatActions from '../chatActions';
+import * as dbActions from '../dbActions';
 import * as actions from '../contactsActions';
 
 describe('Contacts Actions', () => {
@@ -27,101 +31,186 @@ describe('Contacts Actions', () => {
     },
   ];
 
+  const accessTokens = {
+    data: [
+      {
+        userId: 'user-foo-bar',
+        myAccessToken: 'my-personal-access-token',
+        userAccessKey: 'user-foo-bar-access-token',
+      },
+    ],
+  };
+
   const getStateMock = () => {
     return {
-      user: { data: { walletId: 'some-wallet-id' } },
-      contacts: { data: mockLocalContacts },
-      accessTokens: {
-        data: [
-          {
-            userId: 'user-foo-bar',
-            myAccessToken: 'my-personal-access-token',
-            userAccessKey: 'user-foo-bar-access-token',
-          },
-        ],
+      user: {
+        data: {
+          id: 'current-user-id',
+          username: 'current-user',
+          walletId: 'some-wallet-current-user',
+        },
       },
+      contacts: { data: mockLocalContacts },
+      accessTokens,
+    };
+  };
+
+  const getStateMockNoAccessToken = () => {
+    return {
+      user: {
+        data: {
+          id: 'current-user-id',
+          username: 'current-user',
+          walletId: 'some-wallet-current-user',
+        },
+      },
+      contacts: { data: mockLocalContacts },
+      accessTokens: { data: [] },
     };
   };
 
   const apiMock = {
     userSearch: async () => [mockLocalContacts[1]],
     userInfoById: async () => mockLocalContacts[0],
+    connection: {
+      disconnect: async () => ({
+        result: 'success',
+        message: 'Connection is successfully disconnected',
+      }),
+    },
   };
-
-  const RealDate = Date;
-
-  beforeEach(() => {
-    global.Date = class extends RealDate {
-      constructor() {
-        return new RealDate('2017-11-25T12:34:56z');
-      }
-    };
-  });
 
   afterEach(() => {
     dispatchMock.mockClear();
-    global.Date = RealDate;
   });
 
-  it('should search contacts', async () => {
-    await actions.searchContactsAction('')(dispatchMock, getStateMock, apiMock);
+  describe('Search', () => {
+    it('should search contacts', async () => {
+      await actions.searchContactsAction('')(dispatchMock, getStateMock, apiMock);
 
-    expect(dispatchMock).toBeCalledWith({
-      type: UPDATE_CONTACTS_STATE,
-      payload: FETCHING,
-    });
+      expect(dispatchMock).toBeCalledWith({
+        type: UPDATE_CONTACTS_STATE,
+        payload: FETCHING,
+      });
 
-    expect(dispatchMock).toBeCalledWith({
-      type: UPDATE_SEARCH_RESULTS,
-      payload: {
-        apiUsers: [],
-        localContacts: mockLocalContacts,
-      },
-    });
-  });
-
-  it('should reset search contacts', async () => {
-    await actions.resetSearchContactsStateAction()(dispatchMock);
-
-    expect(dispatchMock).toBeCalledWith({
-      type: UPDATE_CONTACTS_STATE,
-      payload: null,
-    });
-  });
-
-  it('should sync contacts', async () => {
-    await actions.syncContactAction(mockLocalContacts[0].id)(dispatchMock, getStateMock, apiMock);
-
-    const createdAt = +new Date() / 1000;
-    const updatedContactsMock = mockLocalContacts;
-    const updateContactFirst = Object.assign({}, updatedContactsMock[0], { createdAt });
-    const updateContactSecond = Object.assign({}, updatedContactsMock[1]);
-
-    expect(dispatchMock).toBeCalledWith({
-      type: UPDATE_CONTACTS,
-      payload: [updateContactSecond, updateContactFirst],
-    });
-  });
-
-  it('should return and do nothing if accessToken does not exist', async () => {
-    const getStateMockNoAccessToken = () => {
-      return {
-        user: { data: { walletId: 'some-wallet-id' } },
-        contacts: { data: mockLocalContacts },
-        accessTokens: {
-          data: [
-            {
-              userId: 'user-inexistent',
-              myAccessToken: 'my-personal-access-token',
-              userAccessKey: 'user-foo-bar-access-token',
-            },
-          ],
+      expect(dispatchMock).toBeCalledWith({
+        type: UPDATE_SEARCH_RESULTS,
+        payload: {
+          apiUsers: [],
+          localContacts: mockLocalContacts,
         },
-      };
-    };
+      });
+    });
 
-    const action = await actions.syncContactAction(mockLocalContacts[0].id)(
-      dispatchMock, getStateMockNoAccessToken, apiMock);
-    expect(action).toBe(undefined);
+    it('should reset search contacts', async () => {
+      await actions.resetSearchContactsStateAction()(dispatchMock);
+
+      expect(dispatchMock).toBeCalledWith({
+        type: UPDATE_CONTACTS_STATE,
+        payload: null,
+      });
+    });
+  });
+
+  describe('Sync', () => {
+    const RealDate = Date;
+
+    beforeEach(() => {
+      global.Date = class extends RealDate {
+        constructor() {
+          return new RealDate('2017-11-25T12:34:56z');
+        }
+      };
+      jest.spyOn(dbActions, 'saveDbAction').mockImplementation(() => Promise.resolve());
+    });
+
+    afterEach(() => {
+      global.Date = RealDate;
+    });
+
+    it('should sync contacts', async () => {
+      await actions.syncContactAction(mockLocalContacts[0].id)(dispatchMock, getStateMock, apiMock);
+
+      const createdAt = +new Date() / 1000;
+      const updatedContactsMock = mockLocalContacts;
+      const updateContactFirst = Object.assign({}, updatedContactsMock[0], { createdAt });
+      const updateContactSecond = Object.assign({}, updatedContactsMock[1]);
+
+      expect(dispatchMock).toBeCalledWith({
+        type: UPDATE_CONTACTS,
+        payload: [updateContactSecond, updateContactFirst],
+      });
+    });
+
+    it('should return and do nothing if accessToken does not exist', async () => {
+      const stateWithNoAccessToken = () => {
+        return {
+          user: { data: { walletId: 'some-wallet-id' } },
+          contacts: { data: mockLocalContacts },
+          accessTokens: {
+            data: [
+              {
+                userId: 'user-inexistent',
+                myAccessToken: 'my-personal-access-token',
+                userAccessKey: 'user-foo-bar-access-token',
+              },
+            ],
+          },
+        };
+      };
+
+      const action = await actions.syncContactAction(mockLocalContacts[0].id)(
+        dispatchMock, stateWithNoAccessToken, apiMock);
+      expect(action).toBe(undefined);
+    });
+  });
+
+  describe('Manage', () => {
+    describe('calling deleteContactAction', () => {
+      beforeEach(() => {
+        jest.spyOn(dbActions, 'saveDbAction').mockImplementation(() => Promise.resolve());
+      });
+
+      it('should disconnect contact', async () => {
+        jest.spyOn(chatActions, 'deleteContactAction').mockImplementation(() => Promise.resolve());
+        await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMock, apiMock);
+
+        expect(chatActions.deleteContactAction).toBeCalledWith('loremipsum');
+
+        expect(dispatchMock).toBeCalledWith({
+          type: UPDATE_CONTACTS,
+          payload: [mockLocalContacts[0]],
+        });
+
+        expect(dispatchMock).toBeCalledWith({
+          type: DISCONNECT_CONTACT,
+          payload: mockLocalContacts[1],
+        });
+      });
+
+      it('should not disconnect contact if contact is not deleted in signal', async () => {
+        jest.spyOn(chatActions, 'deleteContactAction').mockImplementation(() => Promise.reject());
+        await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMock, apiMock);
+
+        expect(dispatchMock).not.toBeCalledWith({
+          type: DISCONNECT_CONTACT,
+          payload: mockLocalContacts[1],
+        });
+      });
+    });
+
+    it('should not allow to disconnect if accessToken is not present (reimport wallet)', async () => {
+      jest.spyOn(Toast, 'show');
+      await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMockNoAccessToken, apiMock);
+
+      expect(Toast.show).toBeCalledWith({
+        message: 'If you imported the wallet currently we can\'t delete contact',
+        type: 'warning',
+        title: 'Cannot delete contact',
+        autoClose: false,
+      });
+
+      Toast.show.mockRestore();
+    });
   });
 });
