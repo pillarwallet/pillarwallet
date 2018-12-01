@@ -106,8 +106,8 @@ export const disconnectContactAction = (contactId: string) => {
       const [contactToDisconnect, updatedContacts] = partition(localContacts, (contact) =>
         contact.id === contactId);
 
-      await deleteContactAction(contactToDisconnect[0].username);
       await api.connection.disconnect(contactId, accessToken, walletId);
+      await deleteContactAction(contactToDisconnect[0].username);
 
       dispatch({
         type: DISCONNECT_CONTACT,
