@@ -16,6 +16,8 @@ export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: { walletId } }, contacts: { data: localContacts } } = getState();
 
+    console.log({ api, state: getState() })
+
     dispatch({
       type: UPDATE_CONTACTS_STATE,
       payload: FETCHING,
@@ -86,14 +88,16 @@ export const disconnectContactAction = (contactId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     try {
       const {
-        user: { data: { walletId, accessToken } },
+        user: { data: { walletId } },
         contacts: { data: localContacts },
         accessTokens: { data: accessTokens },
       } = getState();
 
-      const { myAccessToken = null } = accessTokens[0] || {};
+      const { userAccessToken, myAccessToken = null } = accessTokens.find((accessToken) => accessToken.userId === contactId) || {};
 
-      if (!myAccessToken) {
+      console.log({ getState: getState(), walletId, contactId, userAccessToken, myAccessToken, api })
+
+      if (!userAccessToken) {
         Toast.show({
           message: 'If you imported the wallet currently we can\'t delete contact',
           type: 'warning',
@@ -106,7 +110,10 @@ export const disconnectContactAction = (contactId: string) => {
       const [contactToDisconnect, updatedContacts] = partition(localContacts, (contact) =>
         contact.id === contactId);
 
-      await api.connection.disconnect(contactId, accessToken, walletId);
+      console.log(userAccessToken, myAccessToken)
+      await api.pillarWalletSdk.connection.disconnect({ targetUserId: contactId, accessKey: myAccessToken, walletId });
+      console.log('hell yeah')
+
       await deleteContactAction(contactToDisconnect[0].username);
 
       dispatch({
@@ -121,6 +128,7 @@ export const disconnectContactAction = (contactId: string) => {
         payload: updatedContacts,
       });
     } catch (e) {
+      console.log({ error: e })
       Toast.show({
         message: 'Please try again',
         type: 'warning',
