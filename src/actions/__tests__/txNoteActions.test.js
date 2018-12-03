@@ -75,9 +75,9 @@ describe('Transaction Notes Actions', () => {
 
       it('should call the Toast.show function', () => {
         expect(Toast.show).toBeCalledWith({
-          message: 'Unable to contact the server!',
+          message: 'Unable to contact the server',
           type: 'warning',
-          title: 'Cannot send the transaction note.',
+          title: 'Cannot send the transaction note',
           autoClose: false,
         });
       });

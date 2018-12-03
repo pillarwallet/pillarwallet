@@ -80,7 +80,7 @@ export const repairStorageAction = () => {
     dispatch({
       type: ADD_NOTIFICATION,
       payload: {
-        message: 'Local storage has been repaired',
+        message: 'Local storage repaired',
       },
     });
     dispatch({
