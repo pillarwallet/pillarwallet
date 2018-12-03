@@ -17,6 +17,7 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import { scrollShadowProps } from 'utils/commonProps';
 
 // components
 import { SubHeading, BaseText } from 'components/Typography';
@@ -628,15 +629,7 @@ class AssetsScreen extends React.Component<Props, State> {
                 }}
               />
             }
-            onScrollBeginDrag={() => {
-              this.setState({ scrollShadow: true });
-            }}
-            onScrollEndDrag={(event: Object) => {
-              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-            }}
-            onMomentumScrollEnd={(event: Object) => {
-              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-            }}
+            {...scrollShadowProps(this, 'scrollShadow')}
           />}
         </TokensWrapper>
       </Container>

@@ -50,6 +50,7 @@ type State = {
   contact: Object,
   showLoadEarlierButton: boolean,
   isFetching: boolean,
+  scrollShadow: boolean,
 }
 
 const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
@@ -288,6 +289,7 @@ class ChatScreen extends React.Component<Props, State> {
       contact,
       showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
       isFetching: true,
+      scrollShadow: false,
     };
   }
 
@@ -383,7 +385,7 @@ class ChatScreen extends React.Component<Props, State> {
 
   render() {
     const { messages } = this.props;
-    const { contact, showLoadEarlierButton } = this.state;
+    const { contact, showLoadEarlierButton, scrollShadow } = this.state;
     const title = getUserName(contact).toLowerCase();
     return (
       <ChatContainer inset={{ bottom: 0 }}>
@@ -391,7 +393,7 @@ class ChatScreen extends React.Component<Props, State> {
           title={title}
           onBack={this.handleChatDismissal}
           onTitlePress={this.handleNavigationToContact}
-          scrollShadow
+          scrollShadow={scrollShadow}
         />
         <Wrapper fullScreen flex={1}>
           {!!this.state.isFetching &&

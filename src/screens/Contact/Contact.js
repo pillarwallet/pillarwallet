@@ -19,6 +19,7 @@ import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 import { BaseText } from 'components/Typography';
+import { scrollShadowProps } from 'utils/commonProps';
 
 const iconSend = require('assets/icons/icon_send.png');
 const iconChat = require('assets/icons/icon_chat.png');
@@ -190,15 +191,7 @@ class Contact extends React.Component<Props, State> {
               }}
             />
           }
-          onScrollBeginDrag={() => {
-            this.setState({ scrollShadow: true });
-          }}
-          onScrollEndDrag={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
-          onMomentumScrollEnd={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
+          {...scrollShadowProps(this, 'scrollShadow')}
         >
           <ContactWrapper>
             <ProfileImage

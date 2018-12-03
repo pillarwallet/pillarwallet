@@ -24,6 +24,7 @@ import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
+import { scrollShadowProps } from 'utils/commonProps';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
@@ -210,16 +211,6 @@ class AssetScreen extends React.Component<Props, State> {
           }}
         />
         <ScrollWrapper
-          onScrollBeginDrag={() => {
-            this.setState({ scrollShadow: true });
-          }}
-          onScrollEndDrag={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-            return this.handleScrollWrapperEndDrag;
-          }}
-          onMomentumScrollEnd={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -229,6 +220,7 @@ class AssetScreen extends React.Component<Props, State> {
               }}
             />
           }
+          {...scrollShadowProps(this, 'scrollShadow')}
         >
           <AssetPattern
             token={assetData.token}

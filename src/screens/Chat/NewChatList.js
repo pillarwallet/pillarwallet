@@ -12,6 +12,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
+import { scrollShadowProps } from 'utils/commonProps';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -103,15 +104,7 @@ class NewChatListScreen extends React.Component<Props, State> {
               onRefresh={getExistingChats}
             />
           }
-          onScrollBeginDrag={() => {
-            this.setState({ scrollShadow: true });
-          }}
-          onScrollEndDrag={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
-          onMomentumScrollEnd={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
+          {...scrollShadowProps(this, 'scrollShadow')}
         >
           <FlatList
             data={sortedContactsForNewChats}

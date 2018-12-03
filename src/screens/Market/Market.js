@@ -13,6 +13,7 @@ import { spacing } from 'utils/variables';
 import IcoCard from 'components/IcoCard';
 import { ICO } from 'constants/navigationConstants';
 import { SubHeading } from 'components/Typography';
+import { scrollShadowProps } from 'utils/commonProps';
 
 // actions
 import { fetchICOsAction } from 'actions/icosActions';
@@ -29,6 +30,9 @@ type Props = {
   user: Object,
   fetchICOs: Function,
 }
+type State = {
+  scrollShadow: boolean,
+}
 
 const ListHeader = styled.View`
   padding: 0 ${spacing.rhythm / 2}px;
@@ -44,7 +48,14 @@ const filterIcosByStatus = (icos: ICOT[], status: string) => (
   })
 );
 
-class MarketScreen extends React.Component<Props> {
+class MarketScreen extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      scrollShadow: false,
+    };
+  }
+
   shouldComponentUpdate(nextProps: Props) {
     const isFocused = this.props.navigation.isFocused();
     if (!isFocused) {
@@ -97,6 +108,7 @@ class MarketScreen extends React.Component<Props> {
 
   render() {
     const { icos, fetchICOs, user } = this.props;
+    const { scrollShadow } = this.state;
     if ((!user.icoService || !user.icoService.userId) && !__DEV__) {
       return <MarketplaceComingSoon />;
     }
@@ -106,6 +118,7 @@ class MarketScreen extends React.Component<Props> {
       <Container inset={{ bottom: 0 }}>
         <Header
           title="market"
+          scrollShadow={scrollShadow}
         />
         <SectionList
           renderItem={this.renderICOs}
@@ -131,6 +144,7 @@ class MarketScreen extends React.Component<Props> {
           }
           stickySectionHeadersEnabled={false}
           SectionSeparatorComponent={() => <View style={{ marginTop: spacing.rhythm / 2 }} />}
+          {...scrollShadowProps(this, 'scrollShadow')}
         />
       </Container >
     );

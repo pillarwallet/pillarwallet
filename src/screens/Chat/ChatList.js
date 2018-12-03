@@ -20,6 +20,7 @@ import { BaseText } from 'components/Typography';
 import { getExistingChatsAction, deleteChatAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import { fontSizes, baseColors, spacing, UIColors } from 'utils/variables';
+import { scrollShadowProps } from 'utils/commonProps';
 
 const SearchBarWrapper = styled.View`
   padding: 15px ${spacing.rhythm}px 0;
@@ -241,15 +242,7 @@ class ChatListScreen extends React.Component<Props, State> {
               onRefresh={getExistingChats}
             />
           }
-          onScrollBeginDrag={() => {
-            this.setState({ scrollShadow: true });
-          }}
-          onScrollEndDrag={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
-          onMomentumScrollEnd={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
+          {...scrollShadowProps(this, 'scrollShadow')}
         >
           <FlatList
             data={filteredChats}

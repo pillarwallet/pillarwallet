@@ -54,7 +54,9 @@ export const Wrapper = styled.View`
   ${({ flex }) => flex && `flex: ${flex};`}
   ${({ horizontal }) => horizontal && 'flex-direction: row;'}
   ${({ zIndex }) => zIndex && `z-index: ${zIndex};`}
-
+  ${props => props.scrollShadow
+    ? 'elevation: 3; shadow-color: #000; shadow-offset: 0 2px; shadow-opacity: 0.05; shadow-radius: 2;'
+    : ''}
 `;
 
 export const ScrollWrapper = styled(KeyboardAwareScrollView)`

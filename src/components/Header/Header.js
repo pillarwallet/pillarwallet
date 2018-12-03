@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Left, Body, Right } from 'native-base';
 import { TextLink, BaseText } from 'components/Typography';
+import { Wrapper } from 'components/Layout';
 import { UIColors, baseColors, fontSizes, spacing } from 'utils/variables';
 import { noop } from 'utils/common';
 import Title from 'components/Title';
@@ -30,7 +31,7 @@ type Props = {
   scrollShadow?: boolean,
 }
 
-const Wrapper = styled.View`
+const StyledWrapper = styled(Wrapper)`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
   height: 40px;
@@ -41,12 +42,7 @@ const Wrapper = styled.View`
   margin-bottom: ${props => props.flexStart ? 'auto' : 0};
   z-index: 10;
   ${props => props.scrollShadow
-    ? `elevation: 3;
-    shadow-color: #000;
-    shadow-offset: 0 2px;
-    shadow-opacity: 0.05;
-    shadow-radius: 2;
-    background-color: ${UIColors.defaultBackgroundColor}
+    ? `background-color: ${UIColors.defaultBackgroundColor}
     margin-top: 0;
     padding-top: 20px;
     height: 60px;`
@@ -135,7 +131,7 @@ const Header = (props: Props) => {
   };
 
   return (
-    <Wrapper
+    <StyledWrapper
       overlay={overlay}
       noMargin={noMargin}
       flexStart={flexStart}
@@ -191,7 +187,7 @@ const Header = (props: Props) => {
           }
         </HeaderRight>
       }
-    </Wrapper>
+    </StyledWrapper>
   );
 };
 

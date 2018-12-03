@@ -31,6 +31,7 @@ import NotificationCircle from 'components/NotificationCircle';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
+import { scrollShadowProps } from 'utils/commonProps';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -39,7 +40,6 @@ const ConnectionRequestBanner = styled.TouchableHighlight`
   border-bottom-width: 1px;
   border-color: ${UIColors.defaultBorderColor};
   align-items: center;
-  margin-bottom: 9px;
   flex-direction: row;
 `;
 
@@ -161,9 +161,13 @@ class PeopleScreen extends React.Component<Props, State> {
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={contactState}
           navigation={navigation}
-          scrollShadow={scrollShadow}
+          scrollShadow={!pendingConnectionRequests ? scrollShadow : false}
         />
         {!inSearchMode && !!pendingConnectionRequests &&
+        <Wrapper
+          scrollShadow={scrollShadow}
+          style={{ backgroundColor: UIColors.defaultBackgroundColor }}
+        >
           <ConnectionRequestBanner
             onPress={this.handleConnectionsRequestBannerPress}
             underlayColor={baseColors.lightGray}
@@ -178,6 +182,7 @@ class PeopleScreen extends React.Component<Props, State> {
               <ConnectionRequestBannerIcon type="Entypo" name="chevron-thin-right" />
             </React.Fragment>
           </ConnectionRequestBanner>
+        </Wrapper>
         }
 
         {inSearchMode && contactState === FETCHED && usersFound &&
@@ -199,7 +204,7 @@ class PeopleScreen extends React.Component<Props, State> {
             onScroll={() => Keyboard.dismiss()}
             contentContainerStyle={{
               paddingVertical: spacing.rhythm,
-              paddingTop: 0,
+              paddingTop: !pendingConnectionRequests ? 0 : 6,
             }}
             refreshControl={
               <RefreshControl
@@ -210,15 +215,7 @@ class PeopleScreen extends React.Component<Props, State> {
                 }}
               />
             }
-            onScrollBeginDrag={() => {
-              this.setState({ scrollShadow: true });
-            }}
-            onScrollEndDrag={(event: Object) => {
-              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-            }}
-            onMomentumScrollEnd={(event: Object) => {
-              this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-            }}
+            {...scrollShadowProps(this, 'scrollShadow')}
           />
         }
 

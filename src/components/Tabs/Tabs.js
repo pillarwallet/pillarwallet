@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
+import { Wrapper } from 'components/Layout';
 import { ALL } from 'constants/activityConstants';
 import { UIColors, baseColors, spacing, fontSizes } from 'utils/variables';
 
@@ -28,11 +29,8 @@ const TabWrapperScrollView = styled.ScrollView`
   flex-direction: row;
 `;
 
-const TabOuterWrapper = styled.View`
+const TabOuterWrapper = styled(Wrapper)`
   background-color: ${baseColors.white};
-  ${props => props.scrollShadow
-    ? 'elevation: 3; shadow-color: #000; shadow-offset: 0 2px; shadow-opacity: 0.05; shadow-radius: 2;'
-    : ''}
 `;
 
 const TabItem = styled.TouchableOpacity`
@@ -103,7 +101,7 @@ export default class Tabs extends React.Component<Props, State> {
           <Title subtitle noMargin title={title} />
         </ActivityFeedHeader>
         }
-        <TabWrapper>
+        <TabWrapper thisClass={this}>
           <TabWrapperScrollView horizontal>
             {this.renderTabItems(tabs)}
           </TabWrapperScrollView>
