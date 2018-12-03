@@ -5,7 +5,12 @@ import { FlatList, Alert, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { CHANGE_PIN_FLOW, REVEAL_BACKUP_PHRASE, SEND_DEBUG_DATA } from 'constants/navigationConstants';
+import {
+  CHANGE_PIN_FLOW,
+  REVEAL_BACKUP_PHRASE,
+  SEND_DEBUG_DATA,
+  BACKUP_WALLET_IN_SETTINGS_FLOW,
+} from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
@@ -90,6 +95,7 @@ type Props = {
   resetIncorrectPassword: () => Function,
   lockScreen: () => Function,
   logoutUser: () => Function,
+  backupStatus: Object,
 }
 
 type State = {
@@ -163,6 +169,16 @@ class Profile extends React.Component<Props, State> {
     );
   };
 
+  handleBackup = (isBackedUp?: boolean) => {
+    const { navigation } = this.props;
+    if (!isBackedUp) {
+      // DO BACKUP
+      navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true });
+    } else {
+      navigation.navigate(REVEAL_BACKUP_PHRASE);
+    }
+  };
+
   render() {
     const {
       user,
@@ -174,13 +190,21 @@ class Profile extends React.Component<Props, State> {
       appSettings: { appearanceSettings },
       hasDBConflicts,
       repairStorage,
+      backupStatus,
     } = this.props;
+
+    const {
+      isImported,
+      isBackedUp,
+    } = backupStatus;
 
     const {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
     } = this.state;
+
+    const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -325,8 +349,8 @@ class Profile extends React.Component<Props, State> {
 
             <ProfileSettingsItem
               key="backupWallet"
-              label="Reveal backup phrase"
-              onPress={() => this.props.navigation.navigate(REVEAL_BACKUP_PHRASE)}
+              label={isWalletBackedUp ? 'Reveal backup phrase' : 'Backup Wallet'}
+              onPress={() => this.handleBackup(isWalletBackedUp)}
             />
 
             <ProfileSettingsItem
@@ -448,12 +472,14 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
+  wallet: { backupStatus },
 }) => ({
   user,
   baseFiatCurrency,
   intercomNotificationsCount,
   appSettings,
   hasDBConflicts,
+  backupStatus,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
