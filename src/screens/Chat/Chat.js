@@ -31,6 +31,7 @@ import { getUserName } from 'utils/contacts';
 import { isIphoneX } from 'utils/common';
 import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
+import { scrollShadowProps } from 'utils/commonProps';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -419,6 +420,7 @@ class ChatScreen extends React.Component<Props, State> {
               renderTime={renderTime}
               minInputToolbarHeight={INPUT_HEIGHT}
               parsePatterns={parsePatterns}
+              listViewProps={{ ...scrollShadowProps(this, 'scrollShadow') }}
             />}
         </Wrapper>
       </ChatContainer>

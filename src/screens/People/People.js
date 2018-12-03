@@ -191,6 +191,7 @@ class PeopleScreen extends React.Component<Props, State> {
             navigation={navigation}
             invitations={invitations}
             localContacts={sortedLocalContacts}
+            listViewProps={{ ...scrollShadowProps(this, 'scrollShadow') }}
           />
         }
 
