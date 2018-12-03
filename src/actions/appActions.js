@@ -12,6 +12,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
+import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
@@ -24,6 +25,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
     const { appSettings = {} } = await storage.get('app_settings');
+    const { wallet } = await storage.get('wallet');
+
     if (appSettings.wallet) {
       const { assets = {} } = await storage.get('assets');
       dispatch({ type: UPDATE_ASSETS, payload: assets });
@@ -51,6 +54,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       dispatch({ type: SET_HISTORY, payload: filteredHistory });
 
       dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
+
+      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
+
       navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
       return;
     }
