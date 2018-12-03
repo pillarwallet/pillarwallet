@@ -430,7 +430,7 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-      Toast.show({ message: lastNotification.message, type: 'info', title: 'Notification' });
+      Toast.show({ message: lastNotification.message, type: 'info', title: lastNotification.title });
     }
   }
 
