@@ -1,5 +1,9 @@
 # Pillar Wallet
 
+## Pull Request Review
+The following set of criteria and guideline has been set for code reviews
+[Pillar Pull Request and Code Review Guidelines](CONTRIBUTING.md)
+
 ## Requirements
 - Watchman `brew install watchman`
 - node versions `9.11.1`, `10.x` (The app was tested to run with those versions without problems)
@@ -27,7 +31,7 @@ _note_: if you want to keep the `metro server` running on its own console just r
 
 **Running on iOS:**
 
-The project may be run from the directory using 
+The project may be run from the directory using
 
 `yarn run ios`
 
@@ -45,11 +49,11 @@ _note_: after any compilation (i.e. after linking a native library) please resta
 First, you need to install the [React Native Debugger](https://github.com/jhen0409/react-native-debugger)
 `brew update && brew cask install react-native-debugger`
 
-Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devices, you will see the in-app developer menu. Tap “Debug JS Remotely”. The React Native Debugger will be opened automatically. Open source files in the Sources tab, you can set breakpoints here. 
+Press *⌘+D* on iOS simulator, *⌘+M* on Android emulator, or shake real devices, you will see the in-app developer menu. Tap “Debug JS Remotely”. The React Native Debugger will be opened automatically. Open source files in the Sources tab, you can set breakpoints here.
 
 **Network Requests**
 
-If you head to the `Network` and find your XHR requests are not being logged, you will notice that you are unable to see any. 
+If you head to the `Network` and find your XHR requests are not being logged, you will notice that you are unable to see any.
 You must first enable them by right clicking in the `React Devtools` or `Redux Devtools` section and clicking `Enable Network Inspect`.
 
 **Useful Links on Debugging:**
