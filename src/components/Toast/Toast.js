@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Platform } from 'react-native';
+import { Animated } from 'react-native';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
@@ -44,7 +44,7 @@ const typeIcons = {
 const ToastHolder = styled.View`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: flex-start;
 `;
 
@@ -66,22 +66,24 @@ const ToastWrapper = styled.View`
   shadow-radius: 10;
   elevation: 9;
   z-index: 1000;
-  justify-content: flex-end;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
 `;
 
 const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
 
 const TextHolder = styled.View`
   flex: 9;
-  align-items: flex-start;
+  align-self: stretch;
+  justify-content: center;
 `;
 
 const IconHolder = styled.View`
   display: flex;
   flex: 2;
+  align-self: stretch;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   padding-top: 2px;
 `;
 
@@ -177,13 +179,11 @@ export default class Toast extends React.Component<{}, State> {
           </IconHolder>
           <TextHolder>
             {!!toastOptions.title &&
-            <BoldText
-              style={{ marginTop: Platform.OS === 'android' ? 0 : -2 }}
-            >
+            <BoldText>
               {toastOptions.title}
             </BoldText>
             }
-            <BaseText style={{ marginBottom: 10, color: baseColors.darkGray, marginTop: -2 }}>
+            <BaseText style={{ color: baseColors.darkGray }}>
               {toastOptions.message}
             </BaseText>
           </TextHolder>
@@ -193,19 +193,18 @@ export default class Toast extends React.Component<{}, State> {
             color={baseColors.mediumGray}
             style={{
               flex: 2,
-              justifyContent: 'flex-start',
+              justifyContent: 'center',
               alignItems: 'center',
+              alignSelf: 'stretch',
               display: 'flex',
-              marginTop: -6,
             }}
             iconStyle={{
               borderWidth: 0,
-              borderRadius: 16,
-              paddingTop: Platform.OS === 'android' ? 8 : 7,
-              borderColor: baseColors.mediumGray,
-              height: 32,
               width: 32,
               textAlign: 'center',
+              alignSelf: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           />
         </ToastHolder>
