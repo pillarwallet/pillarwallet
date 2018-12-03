@@ -72,11 +72,13 @@ describe('Contacts Actions', () => {
   const apiMock = {
     userSearch: async () => [mockLocalContacts[1]],
     userInfoById: async () => mockLocalContacts[0],
-    connection: {
-      disconnect: async () => ({
-        result: 'success',
-        message: 'Connection is successfully disconnected',
-      }),
+    pillarWalletSdk: {
+      connection: {
+        disconnect: async () => ({
+          result: 'success',
+          message: 'Connection is successfully disconnected',
+        }),
+      },
     },
   };
 

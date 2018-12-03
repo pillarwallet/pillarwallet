@@ -17,7 +17,7 @@ import isEqual from 'lodash.isequal';
 import capitalize from 'lodash.capitalize';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
+import { searchContactsAction, resetSearchContactsStateAction, disconnectContactAction } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
@@ -226,12 +226,17 @@ class PeopleScreen extends React.Component<Props, State> {
 
   confirmManageAction = () => {
     // here will be called the action to manageContactType (block, disconnect, mute)
-    /*
     const {
       manageContactType,
       manageContactId,
     } = this.state;
-    */
+
+    console.log('to delete')
+    if (manageContactType === DISCONNECT) {
+      console.log('deleting')
+      this.props.disconnectContact(manageContactId);
+    }
+
     this.setState({
       showManageContactModal: false,
       forceHideRemoval: true,
@@ -377,6 +382,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   searchContacts: (query) => dispatch(searchContactsAction(query)),
   resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
+  disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);
