@@ -42,6 +42,8 @@ import InstructionsScreen from 'screens/Participate/Instructions';
 import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
 import SendDebugDataScreen from 'screens/SendDebugData';
+import BackupPhraseScreen from 'screens/BackupPhrase';
+import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -96,6 +98,9 @@ import {
   ICO_CONFIRM,
   ICO_LINKS,
   SEND_DEBUG_DATA,
+  BACKUP_PHRASE,
+  BACKUP_PHRASE_VALIDATE,
+  BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -124,12 +129,12 @@ const removeAppStateChangeListener = (callback) => {
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
-const iconMarket = require('assets/icons/icon_marketplace_new.png');
+// const iconMarket = require('assets/icons/icon_marketplace_new.png');
 const iconChat = require('assets/icons/icon_chat_new.png');
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
-const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
+// const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const StackNavigatorModalConfig = {
@@ -284,13 +289,13 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
-    [MARKET]: {
-      screen: icoFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconMarketActive, iconMarket),
-        tabBarLabel: tabBarLabel('Market'),
-      }),
-    },
+    // [MARKET]: {
+    //   screen: icoFlow,
+    //   navigationOptions: () => ({
+    //     tabBarIcon: tabBarIcon(iconMarketActive, iconMarket),
+    //     tabBarLabel: tabBarLabel('Market'),
+    //   }),
+    // },
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
@@ -360,6 +365,12 @@ const participateInICOFlow = createStackNavigator({
   [ICO_CONFIRM]: ConfirmScreen,
 }, StackNavigatorModalConfig);
 
+// WALLET BACKUP IN SETTINGS FLOW
+const backupWalletFlow = createStackNavigator({
+  [BACKUP_PHRASE]: BackupPhraseScreen,
+  [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
+}, StackNavigatorModalConfig);
+
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -372,6 +383,7 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [SEND_DEBUG_DATA]: SendDebugDataScreen,
+    [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
   }, modalTransition,
 );
 
