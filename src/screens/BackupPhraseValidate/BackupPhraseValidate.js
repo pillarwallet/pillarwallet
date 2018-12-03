@@ -10,7 +10,8 @@ import { Paragraph, Label, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import IconButton from 'components/IconButton';
-import { LEGAL_TERMS } from 'constants/navigationConstants';
+import { LEGAL_TERMS, PROFILE } from 'constants/navigationConstants';
+import { backupWalletAction } from 'actions/walletActions';
 
 type State = {
   enteredWords: string[],
@@ -20,6 +21,7 @@ type State = {
 type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
+  backupWallet: Function,
 };
 
 const WordInputFields = styled.View`
@@ -186,6 +188,16 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     });
   };
 
+  handlePassedValidation = () => {
+    const { navigation, backupWallet } = this.props;
+    backupWallet();
+    if (navigation.getParam('backupViaSettings', false)) {
+      navigation.navigate(PROFILE);
+    } else {
+      navigation.navigate(LEGAL_TERMS);
+    }
+  };
+
   render() {
     const { onboarding: wallet } = this.props.wallet;
     const { isFormValid } = this.state;
@@ -208,14 +220,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             {!!__DEV__ && (
             <MnemonicPhraseWord
               key="automagical"
-              onPress={() => this.props.navigation.navigate(LEGAL_TERMS)}
+              onPress={this.handlePassedValidation}
             >
               <MnemonicPhraseWordText>debugskip</MnemonicPhraseWordText>
             </MnemonicPhraseWord>
             )}
           </ShuffledWordWrapper>
           <Button
-            onPress={() => this.props.navigation.navigate(LEGAL_TERMS)}
+            onPress={this.handlePassedValidation}
             title="Next"
             disabled={!isFormValid}
           />
@@ -226,5 +238,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapDispatchToProps = (dispatch: Function) => ({
+  backupWallet: () => dispatch(backupWalletAction()),
+});
 
-export default connect(mapStateToProps)(BackupPhraseValidate);
+export default connect(mapStateToProps, mapDispatchToProps)(BackupPhraseValidate);
