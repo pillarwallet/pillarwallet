@@ -11,7 +11,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getExistingChatsAction } from 'actions/chatActions';
+import { getExistingChatsAction, getChatByContactAction } from 'actions/chatActions';
 import { navigate, getNavigationState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -90,6 +90,7 @@ export const startListeningNotificationsAction = () => {
     const {
       wallet: { data: wallet },
       assets: { data: assets },
+      contacts: { data: contacts },
     } = getState();
     let enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
@@ -120,12 +121,15 @@ export const startListeningNotificationsAction = () => {
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
-
         const { navigator } = getNavigationState();
         if (!navigator) return;
         const navParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state).params;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        if (!!navParams.username && navParams.username === notification.navigationParams.username) return;
+        if (!!navParams.username && navParams.username === notification.navigationParams.username) {
+          const contact = contacts.find(c => c.username === navParams.username) || {};
+          dispatch(getChatByContactAction(navParams.username, contact.profileImage));
+          return;
+        }
         dispatch({
           type: ADD_NOTIFICATION,
           payload: {
@@ -173,7 +177,7 @@ export const startListeningOnOpenNotificationAction = () => {
       if (!navigator) return;
       const pathAndParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state);
       const currentFlow = pathAndParams.path.split('/')[0];
-      const { type, navigationParams = {} } = processNotification(message.notification._data) || {};
+      const { type, navigationParams = {}, asset } = processNotification(message.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
@@ -183,7 +187,13 @@ export const startListeningOnOpenNotificationAction = () => {
         let backTo = null;
 
         if (type === BCX) {
+          const {
+            wallet: { data: wallet },
+            assets: { data: assets },
+          } = getState();
           dispatch(fetchTransactionsHistoryNotificationsAction());
+          dispatch(fetchTransactionsHistoryAction(wallet, asset));
+          dispatch(fetchAssetsBalancesAction(assets, wallet));
         }
         if (type === CONNECTION) {
           dispatch(fetchInviteNotificationsAction());
