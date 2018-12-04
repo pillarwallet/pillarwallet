@@ -144,7 +144,7 @@ export const sendInvitationAction = (user: ApiUser) => {
     });
     dispatch(({
       type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation sent!' },
+      payload: { message: 'Invitation sent' },
     }));
     dispatch({
       type: UPDATE_ACCESS_TOKENS,
@@ -210,7 +210,7 @@ export const acceptInvitationAction = (invitation: Object) => {
     });
     dispatch(({
       type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation accepted!' },
+      payload: { message: 'Connection request accepted' },
     }));
   };
 };
@@ -232,7 +232,7 @@ export const cancelInvitationAction = (invitation: Object) => {
     if (!cancelledInvitation) {
       dispatch(({
         type: ADD_NOTIFICATION,
-        payload: { message: 'User already accepted yours invitation' },
+        payload: { title: invitation.username, message: 'Already accepted your request' },
       }));
       dispatch(fetchInviteNotificationsAction());
       return;
@@ -240,7 +240,7 @@ export const cancelInvitationAction = (invitation: Object) => {
 
     dispatch(({
       type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation cancelled!' },
+      payload: { message: 'Invitation cancelled' },
     }));
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
@@ -266,7 +266,6 @@ export const rejectInvitationAction = (invitation: Object) => {
       user: { data: { walletId } },
       invitations: { data: invitations },
     } = getState();
-
     const rejectedInvitation = await api.rejectInvitation(
       invitation.id,
       invitation.connectionKey,
@@ -284,7 +283,7 @@ export const rejectInvitationAction = (invitation: Object) => {
 
     dispatch(({
       type: ADD_NOTIFICATION,
-      payload: { message: 'Invitation rejected!' },
+      payload: { message: 'Invitation rejected' },
     }));
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);
