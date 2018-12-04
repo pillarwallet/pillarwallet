@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
+import { baseColors, fontSizes } from 'utils/variables';
 import { DISCONNECT } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -54,34 +54,34 @@ const ManageConnectionModal = (props: Props) => {
       subtitle={subtitle}
       subtitleStyles={{
         color: baseColors.darkGray,
-        fontSize: 16,
+        fontSize: fontSizes.small,
         lineHeight: 21,
         letterSpacing: 0.1,
         marginTop: 7,
         marginBottom: 22,
       }}
       titleStyles={{
-        fontSize: 16,
+        fontSize: fontSizes.small,
         lineHeight: 21,
         letterSpacing: 0.1,
       }}
     >
       <Button
-        primaryInverted
+        dangerInverted
         title={`Confirm ${contactType}`}
         onPress={onConfirm}
         style={{
-          marginBottom: 20,
+          marginBottom: 13,
           backgroundColor: baseColors.lighterGray,
           borderColor: baseColors.mediumGray,
         }}
       />
       <Button
-        dangerInverted
+        primaryInverted
         title="Cancel"
         onPress={onModalHide}
         style={{
-          marginBottom: 20,
+          marginBottom: 58,
           backgroundColor: baseColors.lighterGray,
           borderColor: baseColors.mediumGray,
         }}

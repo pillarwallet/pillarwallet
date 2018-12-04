@@ -33,6 +33,7 @@ type Props = {
   alignTitleVertical?: boolean,
   isSquare?: boolean,
   height?: string,
+  textStyle?: ?Object,
 };
 
 const themes = {
@@ -251,7 +252,9 @@ const Button = (props: Props) => {
         small={props.small}
         extraSmall={props.extraSmall}
         listItemButton={props.listItemButton}
-      >{props.title}
+        style={props.textStyle}
+      >
+        {props.title}
       </ButtonText>}
       {children}
     </ButtonWrapper>

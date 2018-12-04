@@ -200,6 +200,9 @@ class PeopleScreen extends React.Component<Props, State> {
               marginLeft: 2,
               marginRight: 2,
             }}
+            textStyle={{
+              marginTop: 12,
+            }}
           />
         ),
         backgroundColor: baseColors.lighterGray,
