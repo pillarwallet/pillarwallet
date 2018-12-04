@@ -99,6 +99,7 @@ export const registerWalletAction = () => {
     } = currentState.wallet.onboarding;
 
     const mnemonicPhrase = mnemonic.original;
+    const { isBackedUp } = currentState.wallet.backupStatus;
 
     // STEP 0: Clear local storage
     await storage.removeAll();
@@ -135,7 +136,12 @@ export const registerWalletAction = () => {
       .then(JSON.parse)
       .catch(() => ({}));
 
-    dispatch(saveDbAction('wallet', { wallet: encryptedWallet }));
+    dispatch(saveDbAction('wallet', {
+      wallet: {
+        ...encryptedWallet,
+        backupStatus: { isImported: !!importedWallet, isBackedUp },
+      },
+    }));
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
     const user = apiUser.username ? { username: apiUser.username } : {};
     dispatch(saveDbAction('user', { user }));

@@ -39,37 +39,58 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   if (!parsedNotification) return result;
   if (parsedNotification.type === 'signal') {
     return {
-      message: 'New chat message',
-      type: 'SIGNAL',
+      message: 'New message',
+      title: parsedNotification.sender,
       navigationParams: { username: parsedNotification.sender },
     };
   }
+
   if (connectionEvents.includes(parsedNotification.type)) {
-    result = {
-      message: 'Connection update',
-      type: 'CONNECTION',
-    };
+    if (parsedNotification.type === 'connectionRequestedEvent') {
+      result = {
+        title: parsedNotification.senderUserData.username,
+        message: 'Connection request',
+        type: 'CONNECTION',
+      };
+    } else if (parsedNotification.type === 'connectionAcceptedEvent') {
+      result = {
+        title: parsedNotification.senderUserData.username,
+        message: 'Accepted your connection request',
+        type: 'CONNECTION',
+      };
+    } else {
+      result = {
+        message: 'Connection update',
+        type: 'CONNECTION',
+      };
+    }
   }
   if (notification.type === 'BCX') {
     if (!parsedNotification || !validBcxTransaction(parsedNotification)) return result;
 
     let message = '';
+    let title = '';
     const { asset, status, value } = parsedNotification;
     const sender = parsedNotification.fromAddress.toUpperCase();
     const receiver = parsedNotification.toAddress.toUpperCase();
     const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
 
     if (receiver === myEthAddress && status === 'pending') {
-      message = `New incoming transaction ${amount} ${asset}`;
+      title = `${amount} ${asset}`;
+      message = 'Received';
     } else if (receiver === myEthAddress && status === 'confirmed') {
-      message = `Transaction of ${amount} ${asset} confirmed`;
+      title = `${amount} ${asset}`;
+      message = 'Transaction confirmed';
     } else if (sender === myEthAddress && status === 'pending') {
+      title = `${amount} ${asset}`;
       message = 'Transaction sent';
     } else if (sender === myEthAddress && status === 'confirmed') {
-      message = `Your transaction of ${amount} ${asset} was received`;
+      title = `${amount} ${asset}`;
+      message = 'Transaction was received';
     }
 
     result = {
+      title,
       message,
       asset,
       status,
