@@ -31,6 +31,7 @@ type Props = {
   overlay?: boolean,
   backIcon?: string,
   nextIconSize?: number,
+  titleStyles?: ?Object,
 }
 
 const Wrapper = styled.View`
@@ -113,6 +114,7 @@ const Header = (props: Props) => {
     overlay,
     flexStart,
     backIcon,
+    titleStyles,
   } = props;
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
   const titleOnBack = title && onBack;
@@ -153,6 +155,7 @@ const Header = (props: Props) => {
             title={title}
             noBlueDot={noBlueDotOnTitle}
             fullWidth={fullWidthTitle}
+            titleStyles={titleStyles}
           />
         }
       </HeaderLeft>
@@ -165,6 +168,7 @@ const Header = (props: Props) => {
             onTitlePress={onTitlePress}
             noBlueDot={noBlueDotOnTitle}
             fullWidth={fullWidthTitle}
+            titleStyles={titleStyles}
           />
         </HeaderBody>
       }

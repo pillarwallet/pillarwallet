@@ -17,6 +17,7 @@ type Props = {
   noBlueDot?: boolean,
   dotColor?: string,
   onTitlePress?: Function,
+  titleStyles?: ?Object,
 };
 
 const Wrapper = styled.View`
@@ -76,6 +77,7 @@ const Title = (props: Props) => {
             align={props.align}
             subtitle={props.subtitle}
             {...ellipsized}
+            style={props.titleStyles}
           >
             {props.title}
           </Text>
@@ -86,6 +88,7 @@ const Title = (props: Props) => {
           align={props.align}
           subtitle={props.subtitle}
           {...ellipsized}
+          style={props.titleStyles}
         >
           {props.title}
         </Text>}

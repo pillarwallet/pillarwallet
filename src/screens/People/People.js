@@ -172,7 +172,7 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderSwipeoutBtns = (data) => {
-    const swipeButtonsWidth = '80';
+    const swipeButtonsWidth = '70';
     const swipeButtons = [
       // { actionType: MUTE, icon: 'mute', primaryInverted: true },
       { actionType: DISCONNECT, icon: 'remove', primaryInverted: true },
@@ -188,7 +188,7 @@ class PeopleScreen extends React.Component<Props, State> {
             alignTitleVertical
             noPadding
             isSquare
-            small
+            extraSmall
             height={swipeButtonsWidth}
             onPress={() => this.manageConnection(actionType, data)}
             title={capitalize(actionType)}
@@ -197,12 +197,12 @@ class PeopleScreen extends React.Component<Props, State> {
             style={{
               backgroundColor: baseColors.lighterGray,
               borderColor: baseColors.lighterGray,
-              paddingRight: 5,
-              paddingLeft: 5,
-              width: 90,
+              marginLeft: 2,
+              marginRight: 2,
             }}
           />
         ),
+        backgroundColor: baseColors.lighterGray,
       };
     });
   };
@@ -210,10 +210,12 @@ class PeopleScreen extends React.Component<Props, State> {
   renderContact = ({ item }) => (
     <Swipeout
       right={this.renderSwipeoutBtns(item)}
-      sensitivity={10}
       backgroundColor="transparent"
-      buttonWidth={90}
+      sensitivity={10}
       close={this.state.forceHideRemoval}
+      style={{
+        paddingRight: 14,
+      }}
     >
       <ListItemWithImage
         label={item.username}
