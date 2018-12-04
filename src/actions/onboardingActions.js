@@ -42,7 +42,7 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   const fcmToken = await firebase.messaging().getToken().catch(() => { });
 
   await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-  const sdkWallet = await api.registerOnBackend(fcmToken, user.username);
+  const sdkWallet = await api.registerOnAuthServer(fcmToken, user.username);
   const registrationSucceed = !sdkWallet.error;
   const userInfo = await api.userInfo(sdkWallet.walletId);
   const userState = Object.keys(userInfo).length ? REGISTERED : PENDING;
