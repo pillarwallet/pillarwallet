@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Animated, Platform } from 'react-native';
+import { Animated } from 'react-native';
 import merge from 'lodash.merge';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
@@ -13,7 +13,7 @@ type ToastOptions = {
   autoClose?: boolean,
   type: string,
   message: string,
-  title: string,
+  title?: ?string,
 };
 
 type State = {
@@ -26,7 +26,6 @@ const toastInitialOptions = {
   autoClose: true,
   type: 'info',
   message: '',
-  title: '',
 };
 
 const typeColors = {
@@ -44,12 +43,12 @@ const typeIcons = {
 const ToastHolder = styled.View`
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
 `;
 
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
-  height: 320px;
-  margin-top: -${Platform.OS === 'android' ? 230 : 210}px;
   background-color: ${baseColors.white};
   position: absolute;
   left: 0;
@@ -66,21 +65,25 @@ const ToastWrapper = styled.View`
   shadow-radius: 10;
   elevation: 9;
   z-index: 1000;
-  justify-content: flex-end;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: center;
 `;
 
 const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
 
 const TextHolder = styled.View`
   flex: 9;
+  align-self: stretch;
+  justify-content: center;
 `;
 
 const IconHolder = styled.View`
   display: flex;
   flex: 2;
+  align-self: stretch;
   align-items: center;
   justify-content: center;
+  padding-top: 2px;
 `;
 
 export default class Toast extends React.Component<{}, State> {
@@ -174,8 +177,12 @@ export default class Toast extends React.Component<{}, State> {
             />
           </IconHolder>
           <TextHolder>
-            <BoldText>{toastOptions.title}</BoldText>
-            <BaseText style={{ marginBottom: 10, color: baseColors.darkGray }}>
+            {!!toastOptions.title &&
+            <BoldText>
+              {toastOptions.title}
+            </BoldText>
+            }
+            <BaseText style={{ color: baseColors.darkGray }}>
               {toastOptions.message}
             </BaseText>
           </TextHolder>
@@ -187,16 +194,16 @@ export default class Toast extends React.Component<{}, State> {
               flex: 2,
               justifyContent: 'center',
               alignItems: 'center',
+              alignSelf: 'stretch',
               display: 'flex',
             }}
             iconStyle={{
               borderWidth: 0,
-              borderRadius: 16,
-              paddingTop: Platform.OS === 'android' ? 8 : 7,
-              borderColor: baseColors.mediumGray,
-              height: 32,
               width: 32,
               textAlign: 'center',
+              alignSelf: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           />
         </ToastHolder>
