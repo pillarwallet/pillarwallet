@@ -30,7 +30,7 @@ export const sendTxNoteByContactAction = (payload: Object) => {
         Toast.show({
           message: e.message,
           type: 'warning',
-          title: 'Cannot retrieve remote user!',
+          title: 'Cannot retrieve remote user',
           autoClose: false,
         });
       }
@@ -53,9 +53,9 @@ export const sendTxNoteByContactAction = (payload: Object) => {
       });
     } catch (e) {
       Toast.show({
-        message: 'Unable to contact the server!',
+        message: 'Unable to contact the server',
         type: 'warning',
-        title: 'Cannot send the transaction note.',
+        title: 'Cannot send the transaction note',
         autoClose: false,
       });
       return;
@@ -80,7 +80,7 @@ export const getTxNoteByContactAction = (username: string) => {
         Toast.show({
           message: e.message,
           type: 'warning',
-          title: 'Cannot retrieve remote user!',
+          title: 'Cannot retrieve remote user',
           autoClose: false,
         });
       }
