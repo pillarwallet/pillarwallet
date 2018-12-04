@@ -237,6 +237,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install brew
+          command: /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+      - run:
+          name: check pip
+          command: pip --version
+      - run:
+          name: Install AWS CLI
+          command: sudo pip install awscli
+      - run:
           name: Append circleCI build number to version
           command: |
             git config user.email "devops@pillar.io"
@@ -300,6 +309,21 @@ jobs:
            command: |
              chmod +x .circleci/announceDeployment.sh
              .circleci/announceDeployment.sh "Pillar Wallet" "Staging TestFlight"
+      - run:
+          name: Copy staging iOS artifact to S3
+          command: |
+            export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
+            cd ./ios/
+            touch ios-s3-URL-stage.txt
+            aws s3 cp pillarwallet-staging.ipa $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
+            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-stage.txt
+      - run:
+          name: Announce staging iOS URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "staging" "iOS" "$(cat ~/pillarwallet/ios/ios-s3-URL-stage.txt)"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -383,6 +407,21 @@ jobs:
            command: |
              chmod +x .circleci/announceDeployment.sh
              .circleci/announceDeployment.sh "Pillar Wallet" "Production TestFlight"
+      - run:
+          name: Copy production iOS artifact to S3
+          command: |
+            export AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
+            cd ./ios/
+            touch ios-s3-URL-prod.txt
+            aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
+            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
+      - run:
+          name: Announce production iOS URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$(cat ~/pillarwallet/ios/ios-s3-URL-prod.txt)"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -476,11 +515,26 @@ jobs:
           path: app/build/outputs/apk
           destination: apks
       - run:
+          name: Copy prod android artifact to S3
+          command: |
+            export AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            touch android-s3-URL-prod.txt
+            aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/app-prod-release-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/app-prod-release-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
+      - run:
           name: Announce Deployment
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
+      - run:
+          name: Announce Prod Android URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-prod.txt)"
 
   stage_android:
     working_directory: ~/pillarwallet/android
@@ -496,6 +550,15 @@ jobs:
     steps:
       - checkout:
           path: ~/pillarwallet
+      - run:
+          name: Install Python
+          command: sudo apt-get update && sudo apt-get install python
+      - run:
+          name: Install Python dependencies
+          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+      - run:
+          name: Install AWS CLI
+          command: sudo pip install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -566,11 +629,26 @@ jobs:
           path: app/build/outputs/apk
           destination: apks
       - run:
+          name: Copy stage android artifact to S3
+          command: |
+            export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            touch android-s3-URL-stage.txt
+            aws s3 cp app-prod-staging.apk $PILLAR_STAGE_ARTIFACTS_BUCKET/app-prod-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/app-prod-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
+      - run:
           name: Announce Deployment
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
+      - run:
+          name: Announce Stage Android URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-stage.txt)"
 
 workflows:
   version: 2
