@@ -252,7 +252,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
   showETHRemovalNotification = () => {
     Toast.show({
-      message: 'Ethereum is essential for Pillar Wallet',
+      message: 'Ethereum is essential for Pillar',
       type: 'info',
       title: 'This asset cannot be switched off',
     });
