@@ -13,7 +13,7 @@ type ToastOptions = {
   autoClose?: boolean,
   type: string,
   message: string,
-  title: ?string,
+  title?: ?string,
 };
 
 type State = {
@@ -26,7 +26,6 @@ const toastInitialOptions = {
   autoClose: true,
   type: 'info',
   message: '',
-  title: '',
 };
 
 const typeColors = {
