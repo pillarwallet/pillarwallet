@@ -16,7 +16,6 @@ type Props = {
   noBlueDotOnTitle?: boolean,
   children?: React.Node,
   subtitle?: string,
-  subtitleColor?: string,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   onModalHidden?: Function,
@@ -32,6 +31,8 @@ type Props = {
   eventType?: string,
   eventData?: ?Object,
   scrollOffset?: any,
+  subtitleStyles?: ?Object,
+  titleStyles?: ?Object,
 };
 
 const themes = {
@@ -91,7 +92,7 @@ const ModalBackground = styled.View`
 const ModalSubtitle = styled(SubTitle)`
   padding: 10px 0;
   color: red;
-  color: ${({ subtitleColor }) => subtitleColor || UIColors.primary};
+  color: ${UIColors.primary};
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -122,6 +123,8 @@ export default class SlideModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
     hasClose: true,
+    subtitleStyles: {},
+    titleStyles: {},
   };
 
   hideModal = () => {
@@ -155,7 +158,6 @@ export default class SlideModal extends React.Component<Props, *> {
       hasClose,
       fullScreen,
       subtitle,
-      subtitleColor,
       isVisible,
       showHeader,
       centerTitle,
@@ -164,6 +166,8 @@ export default class SlideModal extends React.Component<Props, *> {
       avoidKeyboard,
       eventDetail,
       scrollOffset,
+      subtitleStyles,
+      titleStyles,
     } = this.props;
 
     const theme = getTheme(this.props);
@@ -180,6 +184,7 @@ export default class SlideModal extends React.Component<Props, *> {
               noWrapTitle={noWrapTitle}
               noPadding={!fullScreen}
               title={title}
+              titleStyles={titleStyles}
               fullWidthTitle={fullWidthTitle}
               noBlueDotOnTitle={noBlueDotOnTitle}
               onClose={this.hideModal}
@@ -188,7 +193,11 @@ export default class SlideModal extends React.Component<Props, *> {
           </HeaderWrapper>
         }
         {subtitle &&
-          <ModalSubtitle subtitleColor={subtitleColor}>{subtitle}</ModalSubtitle>
+          <ModalSubtitle
+            style={subtitleStyles}
+          >
+            {subtitle}
+          </ModalSubtitle>
         }
         <ModalContent
           fullScreen={fullScreen}
