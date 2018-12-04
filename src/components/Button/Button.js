@@ -27,6 +27,7 @@ type Props = {
   noPadding?: boolean,
   flexRight?: boolean,
   small?: boolean,
+  extraSmall?: boolean,
   icon?: string,
   listItemButton?: boolean,
   alignTitleVertical?: boolean,
@@ -135,6 +136,8 @@ const getButtonFontSize = (props) => {
     return `${fontSizes.small}px`;
   } else if (props.small) {
     return `${fontSizes.extraSmall}px`;
+  } else if (props.extraSmall) {
+    return `${fontSizes.extraExtraSmall}px`;
   }
   return `${fontSizes.medium}px`;
 };
@@ -246,6 +249,7 @@ const Button = (props: Props) => {
       <ButtonText
         theme={theme}
         small={props.small}
+        extraSmall={props.extraSmall}
         listItemButton={props.listItemButton}
       >{props.title}
       </ButtonText>}

@@ -52,7 +52,19 @@ const ManageConnectionModal = (props: Props) => {
       noWrapTitle
       hasClose={false}
       subtitle={subtitle}
-      subtitleColor={baseColors.darkGray}
+      subtitleStyles={{
+        color: baseColors.darkGray,
+        fontSize: 16,
+        lineHeight: 21,
+        letterSpacing: 0.1,
+        marginTop: 7,
+        marginBottom: 22,
+      }}
+      titleStyles={{
+        fontSize: 16,
+        lineHeight: 21,
+        letterSpacing: 0.1,
+      }}
     >
       <Button
         primaryInverted

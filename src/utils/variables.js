@@ -3,7 +3,7 @@ export const baseColors = {
   sunYellow: '#f8e71c',
   burningFire: '#F56C07',
   periwinkle: '#9191ff',
-  fireEngineRed: '#ff0005',
+  fireEngineRed: '#F56C07',
   warmPurple: '#b2329c',
   electricBlue: '#007AFF',
   duckEggBlue: '#e6eefa',
