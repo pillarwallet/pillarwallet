@@ -58,6 +58,11 @@ const mockOnboarding: Object = {
   pin: '',
 };
 
+const mockBackupStatus: Object = {
+  isImported: false,
+  isBackedUp: false,
+};
+
 const storage = Storage.getInstance('db');
 
 const mockExchangeRates = {
@@ -80,6 +85,7 @@ describe('Wallet actions', () => {
     store = mockStore({
       wallet: {
         onboarding: mockOnboarding,
+        backupStatus: mockBackupStatus,
       },
     });
     const expectedActions = [
@@ -113,6 +119,7 @@ describe('Wallet actions', () => {
           ...mockOnboarding,
           importedWallet: mockImportedWallet,
         },
+        backupStatus: mockBackupStatus,
       },
     });
     const expectedActions = [
