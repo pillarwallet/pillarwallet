@@ -10,6 +10,7 @@ import {
   View,
   Alert,
   Keyboard,
+  Switch,
 } from 'react-native';
 import styled from 'styled-components/native';
 import isEqual from 'lodash.isequal';
@@ -20,7 +21,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { scrollShadowProps } from 'utils/commonProps';
 
 // components
-import { SubHeading, BaseText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
@@ -32,7 +33,6 @@ import HideAssetButton from 'screens/Assets/HideAssetButton';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import AssetInfo from 'components/AssetCard/AssetInfo';
 import Separator from 'components/Separator';
 
 // types
@@ -46,19 +46,21 @@ import {
   startAssetsSearchAction,
   searchAssetsAction,
   resetSearchAssetsResultAction,
+  addAssetAction,
+  removeAssetAction,
 } from 'actions/assetsActions';
 
 // constants
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
-import { ASSET, ADD_TOKEN, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { ASSET } from 'constants/navigationConstants';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
 
 // utils
 import { formatMoney } from 'utils/common';
-import { spacing } from 'utils/variables';
+import { spacing, baseColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import debounce from 'lodash.debounce';
 
@@ -79,6 +81,8 @@ type Props = {
   resetSearchAssetsResult: Function,
   assetsSearchResults: Asset[],
   assetsSearchState: string,
+  addAsset: Function,
+  removeAsset: Function,
 }
 
 type State = {
@@ -116,10 +120,6 @@ const horizontalPadding = (layout, side) => {
     }
   }
 };
-
-const ListHeading = styled(SubHeading)`
-  padding: 20px 20px 0 20px;
-`;
 
 const TokensWrapper = styled(Wrapper)`
    flex: 1;
@@ -213,18 +213,16 @@ class AssetsScreen extends React.Component<Props, State> {
     searchAssets(query);
   };
 
+  handleAssetToggle = (asset: Asset, added: Boolean) => {
+    if (!added) {
+      this.addTokenToWallet(asset);
+    } else {
+      this.hideTokenFromWallet(asset);
+    }
+  };
+
   resetHideRemoval = () => {
     this.setState({ forceHideRemoval: false });
-  };
-
-  goToAddTokenPage = () => {
-    this.props.navigation.navigate(ADD_TOKEN);
-  };
-
-  goToSendTokenFlow = (asset: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, {
-      asset,
-    });
   };
 
   handleAssetRemoval = (asset: Asset) => () => {
@@ -234,7 +232,7 @@ class AssetsScreen extends React.Component<Props, State> {
       `This will hide ${asset.name} from your wallet`,
       [
         { text: 'Cancel', onPress: () => this.setState({ forceHideRemoval: true }), style: 'cancel' },
-        { text: 'Hide', onPress: () => updateAssets(assets, [asset.symbol]) },
+        { text: 'Hide', onPress: () => { this.hideTokenFromWallet(asset); updateAssets(assets, [asset.symbol]); } },
       ],
     );
   };
@@ -257,7 +255,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
   showETHRemovalNotification = () => {
     Toast.show({
-      message: 'Ethereum is essential for Pillar Wallet',
+      message: 'Ethereum is essential for Pillar',
       type: 'info',
       title: 'This asset cannot be switched off',
     });
@@ -395,13 +393,10 @@ class AssetsScreen extends React.Component<Props, State> {
     const {
       assets,
       assetsSearchResults,
-      baseFiatCurrency,
-      balances,
-      rates,
     } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const addedAssets = [];
     const foundAssets = [];
+
     assetsSearchResults.forEach((result) => {
       if (!assets[result.symbol]) {
         foundAssets.push(result);
@@ -410,21 +405,8 @@ class AssetsScreen extends React.Component<Props, State> {
       }
     });
 
-    const addedAssetsWithBalance = addedAssets
-      .map(({ symbol, balance, ...rest }) => ({
-        symbol,
-        balance: getBalance(balances, symbol),
-        ...rest,
-      }))
-      .map(({ balance, symbol, ...rest }) => ({
-        balance,
-        symbol,
-        balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
-        ...rest,
-      }));
-
     const sections = [];
-    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: addedAssetsWithBalance, extraData: assets });
+    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: addedAssets, extraData: assets });
     if (foundAssets.length) sections.push({ title: 'FOUND TOKENS', data: foundAssets, extraData: assets });
 
     const renderItem = ({ item: asset }) => {
@@ -432,18 +414,10 @@ class AssetsScreen extends React.Component<Props, State> {
         symbol,
         name,
         iconUrl,
-        balance = 0,
-        balanceInFiat = 0,
       } = asset;
 
       const isAdded = !!assets[symbol];
-      const amount = formatMoney(balance, 4);
-      const blncInFiat = { amount: formatMoney(balanceInFiat), currency: fiatCurrency };
       const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
-
-      const {
-        disclaimer,
-      } = assetsConfig[symbol] || {};
 
       return (
         <ListItemWithImage
@@ -451,18 +425,13 @@ class AssetsScreen extends React.Component<Props, State> {
           subtext={symbol}
           itemImageUrl={fullIconUrl}
           fallbackSource={genericToken}
-          buttonActionLabel={!isAdded ? 'Add' : ''}
-          buttonAction={!isAdded ? () => this.addTokenToWallet(asset) : () => {}}
           small
         >
-          {!!isAdded &&
-          <AssetInfo
-            token={symbol}
-            amount={amount}
-            disclaimer={disclaimer}
-            balanceInFiat={blncInFiat}
+          <Switch
+            thumbColor={baseColors.electricBlue}
+            onValueChange={() => this.handleAssetToggle(asset, isAdded)}
+            value={!!isAdded}
           />
-          }
         </ListItemWithImage>
       );
     };
@@ -470,9 +439,6 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <SectionList
         renderItem={renderItem}
-        renderSectionHeader={({ section }) => {
-          return assetsSearchResults.length ? this.renderListTitle(section.title) : null;
-        }}
         sections={sections}
         keyExtractor={(item) => item.symbol}
         style={{ width: '100%' }}
@@ -501,29 +467,34 @@ class AssetsScreen extends React.Component<Props, State> {
     );
   }
 
-  renderListTitle = (title: string) => {
-    return (
-      <ListHeading>{title}</ListHeading>
-    );
-  }
-
   addTokenToWallet = (asset: Asset) => {
     const {
-      assets,
-      fetchAssetsBalances,
-      updateAssets,
-      wallet,
+      addAsset,
     } = this.props;
 
-    const updatedAssetList = { ...assets };
-    updatedAssetList[asset.symbol] = asset;
-
-    updateAssets(updatedAssetList);
-    fetchAssetsBalances(updatedAssetList, wallet.address);
-
+    addAsset(asset);
     Toast.show({
-      title: 'Added asset',
-      message: `Added asset "${asset.name}" to your wallet.`,
+      title: null,
+      message: `${asset.name} (${asset.symbol}) has been added`,
+      type: 'info',
+      autoClose: true,
+    });
+  };
+
+  hideTokenFromWallet = (asset: Asset) => {
+    const {
+      removeAsset,
+    } = this.props;
+
+    if (asset.symbol === ETH) {
+      this.showETHRemovalNotification();
+      return;
+    }
+
+    removeAsset(asset);
+    Toast.show({
+      title: null,
+      message: `${asset.name} (${asset.symbol}) has been hidden`,
       type: 'info',
       autoClose: true,
     });
@@ -671,6 +642,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   startAssetsSearch: () => dispatch(startAssetsSearchAction()),
   searchAssets: (query: string) => dispatch(searchAssetsAction(query)),
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
+  addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
+  removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

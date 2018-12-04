@@ -20,6 +20,7 @@ type Props = {
 
 const IconButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
+  align-items: center;
   padding: 0;
 `;
 

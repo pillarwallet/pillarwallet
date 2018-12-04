@@ -230,7 +230,7 @@ class AssetScreen extends React.Component<Props, State> {
           />
           <DataWrapper>
             <TokenValue>
-              {`${displayAmount}${token}`}
+              {`${displayAmount} ${token}`}
             </TokenValue>
             {!!isListed &&
             <ValueInFiat>
