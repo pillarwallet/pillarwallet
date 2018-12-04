@@ -109,8 +109,9 @@ const InputFooter = styled(View)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  padding: 0 2px; 
   margin-bottom: 6px;
-  margin-top: 6px;
+  margin-top: -4px;
 `;
 
 const AddonText = styled(BaseText)`
@@ -132,7 +133,10 @@ const CustomLabel = styled(Label)`
 const AbsoluteSpinner = styled(Spinner)`
   position: absolute;
   right: ${spacing.mediumLarge}px;
-  top: 18px;
+  top: ${Platform.select({
+    ios: '11px',
+    android: '12px',
+  })};
 `;
 
 class TextInput extends React.Component<Props, State> {
@@ -252,13 +256,16 @@ class TextInput extends React.Component<Props, State> {
               paddingRight: (inputProps.multiline ? 58 : 14) + additionalRightPadding,
               paddingTop: inputProps.multiline ? 10 : 0,
               textAlignVertical: inputProps.multiline ? 'top' : 'center',
+              marginBottom: 10,
             }}
           />
+          {Platform.OS === 'ios' &&
           <RNInput
             caretHidden
             autoCorrect={false}
             ref={this.rnInput}
-          />
+            style={{ marginTop: -10 }}
+          />}
           {!!loading && <AbsoluteSpinner width={30} height={30} />}
           {!!icon && <FloatingButton onPress={onIconPress} icon={icon} color={iconColor} fontSize={30} />}
           {!!postfix && <PostFix>{postfix}</PostFix>}
