@@ -63,7 +63,7 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
       await chat.client.sendMessageByContact(username, message.text, 'chat');
     } catch (e) {
       Toast.show({
-        message: 'Unable to contact the server!',
+        message: 'Unable to contact the server',
         type: 'warning',
         title: 'Cannot send the message',
         autoClose: false,
@@ -99,7 +99,7 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
         Toast.show({
           message: e.message,
           type: 'warning',
-          title: 'Cannot retrieve remote user!',
+          title: 'Cannot retrieve remote user',
           autoClose: false,
         });
       }
