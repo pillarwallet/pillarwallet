@@ -408,16 +408,14 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         style={
           Array [
             Object {
-              "alignItems": "flex-end",
+              "alignItems": "center",
               "backgroundColor": "#ffffff",
               "borderColor": "#2f86eb",
               "borderLeftWidth": 10,
               "borderStyle": "solid",
               "elevation": 9,
-              "height": 320,
-              "justifyContent": "flex-end",
+              "justifyContent": "center",
               "left": 0,
-              "marginTop": -210,
               "opacity": 0,
               "paddingBottom": 10,
               "paddingTop": 30,
@@ -447,8 +445,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           style={
             Array [
               Object {
+                "alignItems": "flex-start",
                 "display": "flex",
                 "flexDirection": "row",
+                "justifyContent": "center",
               },
               undefined,
             ]
@@ -459,11 +459,13 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               Array [
                 Object {
                   "alignItems": "center",
+                  "alignSelf": "stretch",
                   "display": "flex",
                   "flexBasis": 0,
                   "flexGrow": 2,
                   "flexShrink": 1,
                   "justifyContent": "center",
+                  "paddingTop": 2,
                 },
                 undefined,
               ]
@@ -483,9 +485,11 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             style={
               Array [
                 Object {
+                  "alignSelf": "stretch",
                   "flexBasis": 0,
                   "flexGrow": 9,
                   "flexShrink": 1,
+                  "justifyContent": "center",
                 },
                 undefined,
               ]
@@ -501,34 +505,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     "includeFontPadding": false,
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "Aktiv Grotesk App",
-                      "fontWeight": "600",
-                      "includeFontPadding": false,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              
-            </Text>
-            <Text
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "Aktiv Grotesk App",
-                    "fontWeight": "400",
-                    "includeFontPadding": false,
-                    "textAlignVertical": "center",
-                  },
                   Object {
                     "color": "#8B939E",
-                    "marginBottom": 10,
                   },
                 ]
               }
@@ -548,6 +526,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
             style={
               Object {
                 "alignItems": "center",
+                "alignSelf": "stretch",
                 "display": "flex",
                 "flex": 2,
                 "justifyContent": "center",
@@ -563,17 +542,17 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               name="close"
               style={
                 Object {
-                  "borderColor": "#C6CACD",
-                  "borderRadius": 16,
+                  "alignItems": "center",
+                  "alignSelf": "center",
                   "borderWidth": 0,
                   "color": "#C6CACD",
                   "fontSize": undefined,
-                  "height": 32,
+                  "justifyContent": "center",
                   "marginBottom": undefined,
                   "marginLeft": undefined,
                   "marginRight": undefined,
                   "marginTop": undefined,
-                  "paddingTop": 7,
+                  "paddingTop": 0,
                   "textAlign": "center",
                   "width": 32,
                 }

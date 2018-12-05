@@ -102,7 +102,7 @@ describe('Chat Actions', () => {
 
       it('should call the Toast.show function', () => {
         expect(Toast.show).toBeCalledWith({
-          message: 'Unable to contact the server!',
+          message: 'Unable to contact the server',
           type: 'warning',
           title: 'Cannot send the message',
           autoClose: false,

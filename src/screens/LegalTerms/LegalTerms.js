@@ -22,6 +22,7 @@ type Props = {
   generateEncryptedWallet: () => Function,
   navigation: NavigationScreenProp<*>,
   onboarding: Object,
+  backupStatus: Object,
 };
 
 type State = {
@@ -103,8 +104,10 @@ class LegalTerms extends React.Component<Props, State> {
       scrollOffset,
     } = this.state;
 
-    const { onboarding } = this.props;
+    const { backupStatus } = this.props;
+    const { isBackedUp, isImported } = backupStatus;
     const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3);
+    const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <Container>
@@ -159,7 +162,7 @@ class LegalTerms extends React.Component<Props, State> {
               onPress={this.handleConfirm}
               disabled={userCannotProceed}
             />
-            {!onboarding.importedWallet &&
+            {!isWalletBackedUp &&
             <ButtonText
               buttonText="Backup wallet"
               onPress={this.backupWallet}
@@ -205,7 +208,7 @@ class LegalTerms extends React.Component<Props, State> {
 }
 
 
-const mapStateToProps = ({ wallet: { onboarding } }) => ({ onboarding });
+const mapStateToProps = ({ wallet: { onboarding, backupStatus } }) => ({ onboarding, backupStatus });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   generateEncryptedWallet: () => {
