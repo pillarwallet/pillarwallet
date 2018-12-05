@@ -127,7 +127,7 @@ export const startListeningNotificationsAction = () => {
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         if (!!navParams.username && navParams.username === notification.navigationParams.username) {
           const contact = contacts.find(c => c.username === navParams.username) || {};
-          dispatch(getChatByContactAction(navParams.username, contact.profileImage));
+          dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
           return;
         }
         dispatch({
