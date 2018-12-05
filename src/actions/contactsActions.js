@@ -112,9 +112,9 @@ export const disconnectContactAction = (contactId: string) => {
 
       console.log(userAccessToken, myAccessToken)
       await api.pillarWalletSdk.connection.disconnect({ targetUserId: contactId, accessKey: myAccessToken, walletId });
-      console.log('hell yeah')
 
       await deleteContactAction(contactToDisconnect[0].username);
+      console.log('yeah')
 
       dispatch({
         type: DISCONNECT_CONTACT,
