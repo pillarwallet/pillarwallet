@@ -12,6 +12,36 @@ type Props = {
   showManageContactModal: boolean,
 };
 
+const buttonStyle = {
+  marginBottom: 13,
+  backgroundColor: baseColors.lighterGray,
+  borderColor: baseColors.mediumGray,
+};
+
+const manageModalButtons = [
+  {
+    manageType: MUTE,
+    primaryInverted: true,
+    title: 'Mute',
+    icon: 'mute',
+    style: { ...buttonStyle, marginTop: 23 },
+  },
+  {
+    manageType: DISCONNECT,
+    primaryInverted: true,
+    title: 'Disconnect',
+    icon: 'remove',
+    style: buttonStyle,
+  },
+  {
+    manageType: BLOCK,
+    dangerInverted: true,
+    title: 'Report / Block',
+    icon: 'warning',
+    style: { ...buttonStyle, marginBottom: 58 },
+  },
+];
+
 const ManageConnectionModal = (props: Props) => {
   const {
     onModalHide,
@@ -21,6 +51,19 @@ const ManageConnectionModal = (props: Props) => {
 
   const iconMarginRight = '8';
   const iconSize = 'small';
+
+  const manageContactButtons = manageModalButtons.map((manageButton) => {
+    const { manageType, ...manageButtonProps } = manageButton;
+    return (
+      <Button
+        key={`modalButton-${manageType}`}
+        iconSize={iconSize}
+        iconMarginRight={iconMarginRight}
+        onPress={() => onManageContact(manageType)}
+        {...manageButtonProps}
+      />
+    );
+  });
 
   return (
     <SlideModal
@@ -34,46 +77,7 @@ const ManageConnectionModal = (props: Props) => {
         letterSpacing: 0.1,
       }}
     >
-      <Button
-        primaryInverted
-        title="Mute"
-        icon="mute"
-        iconSize={iconSize}
-        iconMarginRight={iconMarginRight}
-        onPress={() => onManageContact(MUTE)}
-        style={{
-          marginBottom: 13,
-          marginTop: 23,
-          backgroundColor: baseColors.lighterGray,
-          borderColor: baseColors.mediumGray,
-        }}
-      />
-      <Button
-        primaryInverted
-        title="Disconnect"
-        icon="remove"
-        iconSize={iconSize}
-        iconMarginRight={iconMarginRight}
-        onPress={() => onManageContact(DISCONNECT)}
-        style={{
-          marginBottom: 13,
-          backgroundColor: baseColors.lighterGray,
-          borderColor: baseColors.mediumGray,
-        }}
-      />
-      <Button
-        dangerInverted
-        title="Report / Block"
-        icon="warning"
-        iconSize={iconSize}
-        iconMarginRight={iconMarginRight}
-        onPress={() => onManageContact(BLOCK)}
-        style={{
-          marginBottom: 58,
-          backgroundColor: baseColors.lighterGray,
-          borderColor: baseColors.mediumGray,
-        }}
-      />
+      {manageContactButtons}
     </SlideModal>
   );
 };
