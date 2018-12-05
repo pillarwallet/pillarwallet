@@ -110,9 +110,9 @@ class EventDetails extends React.Component<Props, {}> {
       getTxNoteByContact,
     } = this.props;
 
-    getTxNoteByContact(eventData.username);
-
     if (eventType !== TRANSACTION_EVENT) return;
+
+    if (Object.keys(eventData.contact).length) getTxNoteByContact(eventData.contact.username, eventData.contact.id);
 
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
     if (txInfo.status !== TX_PENDING_STATUS) return;
@@ -394,7 +394,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
-  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
+  getTxNoteByContact: (username, userId) => dispatch(getTxNoteByContactAction(username, userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);
