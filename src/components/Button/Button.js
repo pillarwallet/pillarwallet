@@ -29,6 +29,8 @@ type Props = {
   small?: boolean,
   extraSmall?: boolean,
   icon?: string,
+  iconMarginRight?: ?string,
+  iconSize?: ?string,
   listItemButton?: boolean,
   alignTitleVertical?: boolean,
   isSquare?: boolean,
@@ -94,8 +96,8 @@ const themes = {
 };
 
 const ButtonIcon = styled(Icon)`
-  font-size: ${fontSizes.medium};
-  margin-right: 5px;
+  font-size: ${({ iconSize = 'medium' }) => fontSizes[iconSize]};
+  margin-right: ${({ marginRight }) => marginRight || '5px'};
   color: ${props => props.theme.color};
 `;
 
@@ -219,6 +221,8 @@ const Button = (props: Props) => {
     marginTop,
     marginBottom,
     icon,
+    iconMarginRight,
+    iconSize,
     marginLeft,
     marginRight,
     noPadding,
@@ -245,7 +249,14 @@ const Button = (props: Props) => {
       height={height}
       disabled={disabled || disabledTransparent}
     >
-      {!!icon && <ButtonIcon name={icon} theme={theme} />}
+      {!!icon &&
+        <ButtonIcon
+          marginRight={iconMarginRight}
+          iconSize={iconSize}
+          name={icon}
+          theme={theme}
+        />
+      }
       {!!props.title &&
       <ButtonText
         theme={theme}

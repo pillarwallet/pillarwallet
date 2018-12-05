@@ -20,6 +20,7 @@ type Props = {
   title?: string,
   fullWidthTitle?: boolean,
   noBlueDotOnTitle?: boolean,
+  dotColor?: string,
   centerTitle?: boolean,
   noWrapTitle?: boolean,
   noPadding?: boolean,
@@ -104,6 +105,7 @@ const Header = (props: Props) => {
     title,
     fullWidthTitle,
     noBlueDotOnTitle,
+    dotColor,
     centerTitle,
     noWrapTitle,
     noPadding,
@@ -154,6 +156,7 @@ const Header = (props: Props) => {
             noMargin
             title={title}
             noBlueDot={noBlueDotOnTitle}
+            dotColor={dotColor}
             fullWidth={fullWidthTitle}
             titleStyles={titleStyles}
           />
@@ -167,6 +170,7 @@ const Header = (props: Props) => {
             title={title}
             onTitlePress={onTitlePress}
             noBlueDot={noBlueDotOnTitle}
+            dotColor={dotColor}
             fullWidth={fullWidthTitle}
             titleStyles={titleStyles}
           />
