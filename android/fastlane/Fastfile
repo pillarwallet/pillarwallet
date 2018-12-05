@@ -24,7 +24,7 @@ platform :android do
     )
     upload_to_play_store(
       track: 'internal',
-      apk: 'app/build/outputs/apk/app-prod-staging.apk',
+      apk: 'app/build/outputs/apk/app-staging-release.apk',
       json_key_data: ENV['GOOGLE_JSON_DATA'],
       package_name: 'com.pillarproject.wallet.staging',
       skip_upload_aab: true,
@@ -86,7 +86,7 @@ platform :android do
     buildApp(
       flavorName: 'prod',
       hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN"],
-      apkName: 'app-prod-staging.apk'
+      apkName: 'app-staging-release.apk'
     )
   end
 
