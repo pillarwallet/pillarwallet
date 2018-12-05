@@ -30,6 +30,7 @@ import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import type { SearchResults } from 'models/Contacts';
 import { scrollShadowProps } from 'utils/commonProps';
 
@@ -163,6 +164,7 @@ class PeopleScreen extends React.Component<Props, State> {
           navigation={navigation}
           scrollShadow={!pendingConnectionRequests ? scrollShadow : false}
         />
+
         {!inSearchMode && !!pendingConnectionRequests &&
         <Wrapper
           scrollShadow={scrollShadow}
@@ -196,28 +198,29 @@ class PeopleScreen extends React.Component<Props, State> {
         }
 
         {!inSearchMode && !!sortedLocalContacts.length &&
-          <FlatList
-            data={sortedLocalContacts}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderContact}
-            initialNumToRender={8}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-            onScroll={() => Keyboard.dismiss()}
-            contentContainerStyle={{
-              paddingVertical: spacing.rhythm,
-              paddingTop: !pendingConnectionRequests ? 0 : 6,
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchInviteNotifications } = this.props;
-                  fetchInviteNotifications();
-                }}
-              />
-            }
-            {...scrollShadowProps(this, 'scrollShadow')}
-          />
+          <ScrollWithShadow>
+            <FlatList
+              data={sortedLocalContacts}
+              keyExtractor={(item) => item.id}
+              renderItem={this.renderContact}
+              initialNumToRender={8}
+              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+              onScroll={() => Keyboard.dismiss()}
+              contentContainerStyle={{
+                paddingVertical: spacing.rhythm,
+                paddingTop: !pendingConnectionRequests ? 0 : 6,
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={() => {
+                    const { fetchInviteNotifications } = this.props;
+                    fetchInviteNotifications();
+                  }}
+                />
+              }
+            />
+          </ScrollWithShadow>
         }
 
         {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&

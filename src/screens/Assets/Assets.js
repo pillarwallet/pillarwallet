@@ -18,7 +18,6 @@ import type { NavigationEventSubscription, NavigationScreenProp } from 'react-na
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-import { scrollShadowProps } from 'utils/commonProps';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -34,6 +33,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -560,49 +560,52 @@ class AssetsScreen extends React.Component<Props, State> {
           navigation={navigation}
           scrollShadow={scrollShadow}
         />
-        <TokensWrapper>
-          {inSearchMode && isSearchOver &&
-          <Wrapper>
-            {this.renderFoundTokensList()}
-          </Wrapper>
-          }
-          {isSearching &&
-          <SearchSpinner center>
-            <Spinner />
-          </SearchSpinner>
-          }
-          {!inSearchMode &&
-          <FlatList
-            key={assetsLayout}
-            data={sortedAssets}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderAsset}
-            initialNumToRender={5}
-            maxToRenderPerBatch={5}
-            onEndReachedThreshold={0.5}
-            style={{ width: '100%' }}
-            contentContainerStyle={{
-              paddingVertical: 6,
-              paddingLeft: horizontalPadding(assetsLayout, 'left'),
-              paddingRight: horizontalPadding(assetsLayout, 'right'),
-              width: '100%',
-            }}
-            numColumns={columnAmount}
-            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-              ? this.renderSeparator
-              : null}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchAssetsBalances } = this.props;
-                  fetchAssetsBalances(assets, wallet.address);
-                }}
-              />
+        <ScrollWithShadow>
+          <TokensWrapper>
+            {inSearchMode && isSearchOver &&
+            <Wrapper>
+              {this.renderFoundTokensList()}
+            </Wrapper>
             }
-            {...scrollShadowProps(this, 'scrollShadow')}
-          />}
-        </TokensWrapper>
+            {isSearching &&
+            <SearchSpinner center>
+              <Spinner />
+            </SearchSpinner>
+            }
+            {!inSearchMode &&
+            <ScrollWithShadow>
+              <FlatList
+                key={assetsLayout}
+                data={sortedAssets}
+                keyExtractor={(item) => item.id}
+                renderItem={this.renderAsset}
+                initialNumToRender={5}
+                maxToRenderPerBatch={5}
+                onEndReachedThreshold={0.5}
+                style={{ width: '100%' }}
+                contentContainerStyle={{
+                  paddingVertical: 6,
+                  paddingLeft: horizontalPadding(assetsLayout, 'left'),
+                  paddingRight: horizontalPadding(assetsLayout, 'right'),
+                  width: '100%',
+                }}
+                numColumns={columnAmount}
+                ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+                  ? this.renderSeparator
+                  : null}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={false}
+                    onRefresh={() => {
+                      const { fetchAssetsBalances } = this.props;
+                      fetchAssetsBalances(assets, wallet.address);
+                    }}
+                  />
+                }
+              />
+            </ScrollWithShadow>}
+          </TokensWrapper>
+        </ScrollWithShadow>
       </Container>
     );
   }
