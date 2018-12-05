@@ -635,8 +635,8 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
             touch android-s3-URL-stage.txt
-            aws s3 cp app-staging-release.apk $PILLAR_STAGE_ARTIFACTS_BUCKET/app-staging-release.apk-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/aapp-staging-release.apk-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
+            aws s3 cp app-staging-release.apk $DEVELOPMENT_RELEASE_BUCKET/app-staging-release.apk-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $DEVELOPMENT_RELEASE_BUCKET/aapp-staging-release.apk-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
 #      - run:
 #          name: Announce Deployment
 #          command: |
