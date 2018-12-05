@@ -14,6 +14,7 @@ type Props = {
   title?: string,
   fullWidthTitle?: boolean,
   noBlueDotOnTitle?: boolean,
+  dotColor?: string,
   children?: React.Node,
   subtitle?: string,
   fullScreenComponent?: ?React.Node,
@@ -153,6 +154,7 @@ export default class SlideModal extends React.Component<Props, *> {
       title,
       fullWidthTitle,
       noBlueDotOnTitle,
+      dotColor,
       fullScreenComponent,
       onModalHidden,
       hasClose,
@@ -187,6 +189,7 @@ export default class SlideModal extends React.Component<Props, *> {
               titleStyles={titleStyles}
               fullWidthTitle={fullWidthTitle}
               noBlueDotOnTitle={noBlueDotOnTitle}
+              dotColor={dotColor}
               onClose={this.hideModal}
               hasClose={hasClose}
             />
