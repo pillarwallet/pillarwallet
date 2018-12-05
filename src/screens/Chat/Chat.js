@@ -294,7 +294,7 @@ class ChatScreen extends React.Component<Props, State> {
   componentDidMount() {
     const { contact } = this.state;
     const { getChatByContact } = this.props;
-    getChatByContact(contact.username, contact.profileImage);
+    getChatByContact(contact.username, contact.id, contact.profileImage);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -304,7 +304,7 @@ class ChatScreen extends React.Component<Props, State> {
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const prevChatWithContact = prevChats.find(({ username }) => contact.username === username) || {};
     if (chatWithContact.unread !== prevChatWithContact.unread) {
-      getChatByContact(contact.username, contact.profileImage);
+      getChatByContact(contact.username, contact.id, contact.profileImage);
     }
 
     if (this.state.isFetching && !isFetching) {
@@ -329,7 +329,7 @@ class ChatScreen extends React.Component<Props, State> {
   handleLoadEarlier = () => {
     const { getChatByContact } = this.props;
     const { contact } = this.state;
-    getChatByContact(contact.username, contact.profileImage, true);
+    getChatByContact(contact.username, contact.id, contact.profileImage, true);
     this.setState({
       showLoadEarlierButton: false,
     });
@@ -437,7 +437,12 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   sendMessageByContact: payload => dispatch(sendMessageByContactAction(payload)),
-  getChatByContact: (username, avatar, loadEarlier) => dispatch(getChatByContactAction(username, avatar, loadEarlier)),
+  getChatByContact: (
+    username,
+    userId,
+    avatar,
+    loadEarlier,
+  ) => dispatch(getChatByContactAction(username, userId, avatar, loadEarlier)),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 
