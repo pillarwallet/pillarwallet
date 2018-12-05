@@ -616,15 +616,15 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
-#      - run:
-#          name: Fastlane deploy to Google Play
-#          command: |
-#            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-#            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-#            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
-#            bundle exec fastlane deploy_staging --verbose
-#          environment:
-#            BUNDLE_PATH: vendor/bundle
+      - run:
+          name: Fastlane deploy to Google Play
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
+            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
+            bundle exec fastlane deploy_staging --verbose
+          environment:
+            BUNDLE_PATH: vendor/bundle
       - store_artifacts:
           path: app/build/outputs/apk
           destination: apks
@@ -635,20 +635,20 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
             touch android-s3-URL-stage.txt
-            aws s3 cp app-staging-release.apk $DEVELOPMENT_RELEASE_BUCKET/app-staging-release.apk-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $DEVELOPMENT_RELEASE_BUCKET/aapp-staging-release.apk-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
-#      - run:
-#          name: Announce Deployment
-#          command: |
-#            cd ~/pillarwallet
-#            chmod +x .circleci/announceDeployment.sh
-#            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
-#      - run:
-#          name: Announce Stage Android URL
-#          command: |
-#            cd ~/pillarwallet
-#            chmod +x .circleci/announceURLs.sh
-#            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-stage.txt)"
+            aws s3 cp app-prod-staging.apk $PILLAR_STAGE_ARTIFACTS_BUCKET/app-prod-staging.apk-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/app-prod-staging.apk-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
+      - run:
+          name: Announce Deployment
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
+      - run:
+          name: Announce Stage Android URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-stage.txt)"
 
 workflows:
   version: 2
@@ -658,7 +658,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/automate-s3-url-distribution
+                  - master
       - build-and-test
       - dev_build_ios:
           requires:
@@ -674,28 +674,28 @@ workflows:
             branches:
               only:
                   - develop
-#      - stage_ios:
-#          requires:
-#            - build
-#          filters:
-#            branches:
-#              only:
-#                  - master
+      - stage_ios:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                  - master
       - stage_android:
           requires:
             - build
           filters:
             branches:
               only:
-                  - feature/automate-s3-url-distribution
-#      - release_to_prod:
-#          type: approval
-#          requires:
-#            - stage_ios
-#            - stage_android
-#      - prod_ios:
-#          requires:
-#            - release_to_prod
-#      - prod_android:
-#          requires:
-#            - release_to_prod
+                  - master
+      - release_to_prod:
+          type: approval
+          requires:
+            - stage_ios
+            - stage_android
+      - prod_ios:
+          requires:
+            - release_to_prod
+      - prod_android:
+          requires:
+            - release_to_prod
