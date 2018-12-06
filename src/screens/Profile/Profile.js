@@ -348,6 +348,7 @@ class Profile extends React.Component<Props, State> {
             <ProfileSettingsItem
               key="backupWallet"
               label={isWalletBackedUp ? 'Reveal backup phrase' : 'Backup Wallet'}
+              warningNotification={!isWalletBackedUp}
               onPress={() => this.handleBackup(isWalletBackedUp)}
             />
 
