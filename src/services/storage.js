@@ -3,9 +3,12 @@ import PouchDB from 'pouchdb-react-native';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
 
-function Storage(name: string, opts: ?Object) {
+function Storage(name: string, opts: ?Object = {}) {
   this.name = name;
-  this.opts = opts;
+  this.opts = {
+    auto_compaction: true,
+    ...opts,
+  };
   this.db = new PouchDB(name, opts);
 }
 
@@ -41,61 +44,63 @@ Storage.prototype.repair = async function () {
 
 const activeDocs = {};
 Storage.prototype.save = function (id: string, data: Object, forceRewrite: boolean = false) {
-  return this.db.get(id).then((doc) => {
-    if (activeDocs[id]) {
-      Sentry.captureMessage('Race condition spotted', {
-        extra: {
-          id,
-          data,
-          forceRewrite,
-        },
-      });
-    }
+  return this.db.get(id)
+    .catch(err => {
+      if (err.status !== 404) {
+        throw err;
+      }
+      return {};
+    })
+    .then(doc => {
+      if (activeDocs[id]) {
+        Sentry.captureMessage('Race condition spotted', {
+          extra: {
+            id,
+            data,
+            forceRewrite,
+          },
+        });
+      }
 
-    activeDocs[id] = true;
-    const options = { force: forceRewrite };
-    const record = forceRewrite
-      ? { _id: id, _rev: doc._rev, ...data }
-      : merge(
-        {},
-        doc,
-        {
-          _id: id,
-          _rev: doc._rev,
-        },
-        data,
-      );
-    return this.db.put(record, options);
-  })
+      activeDocs[id] = true;
+      const options = { force: forceRewrite };
+      const record = forceRewrite
+        ? { _id: id, _rev: doc._rev, ...data }
+        : merge(
+          {},
+          doc,
+          {
+            _id: id,
+            _rev: doc._rev,
+          },
+          data,
+        );
+      return this.db.put(record, options);
+    })
     .then(doc => {
       activeDocs[id] = false;
       return doc;
     })
-    .catch(async (err) => {
-      if (err.status !== 404) {
-        const db = await this.db.allDocs();
+    .catch((err) => {
+      if (err.status !== 409) {
         Sentry.captureException({
           id,
           data,
           err,
-          method: 'PUT',
-          db: JSON.stringify(db),
         });
+        throw err;
       }
-      return this.db.post({ _id: id, ...data });
-    })
-    .catch((err) => {
-      Sentry.captureException({
-        id,
-        data,
-        err,
-        method: 'POST',
-      });
+      activeDocs[id] = false;
+      return this.save(id, data, forceRewrite);
     });
 };
 
 Storage.prototype.getAllDocs = function () {
   return this.db.allDocs({ conflicts: true });
+};
+
+Storage.prototype.viewCleanup = function () {
+  return this.db.viewCleanup();
 };
 
 Storage.prototype.removeAll = function () {
