@@ -8,7 +8,6 @@ import Intercom from 'react-native-intercom';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
-  SEND_DEBUG_DATA,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -422,11 +421,6 @@ class Profile extends React.Component<Props, State> {
                   label="Repair Local Storage"
                   onPress={repairStorage}
                 />}
-              <ProfileSettingsItem
-                key="sendDebugData"
-                label="Send Debug Data"
-                onPress={() => this.props.navigation.navigate(SEND_DEBUG_DATA)}
-              />
             </React.Fragment>}
 
             <ListSeparator>
