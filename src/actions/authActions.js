@@ -57,7 +57,7 @@ export const loginAction = (pin: string) => {
         payload: { user, state: userState },
       });
 
-      const fcmToken = await firebase.messaging().getToken();
+      const fcmToken = await firebase.messaging().getToken().catch(() => null);
       chat.init({
         userId: user.id,
         username: user.username,
@@ -78,6 +78,7 @@ export const loginAction = (pin: string) => {
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
+      await storage.viewCleanup().catch(() => null);
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
