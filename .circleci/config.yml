@@ -316,8 +316,8 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd ./ios/
             touch ios-s3-URL-stage.txt
-            aws s3 cp pillarwallet-staging.ipa $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
-            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-stage.txt
+            aws s3 cp pillarwallet-staging.ipa $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
+            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-stage.txt
       - run:
           name: Announce staging iOS URL
           command: |
@@ -414,8 +414,8 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
             cd ./ios/
             touch ios-s3-URL-prod.txt
-            aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
-            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
+            aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
+            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
       - run:
           name: Announce production iOS URL
           command: |
@@ -521,8 +521,8 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
             cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
             touch android-s3-URL-prod.txt
-            aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/app-prod-release-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/app-prod-release-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
+            aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
       - run:
           name: Announce Deployment
           command: |
@@ -635,8 +635,8 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
             touch android-s3-URL-stage.txt
-            aws s3 cp app-prod-staging.apk $PILLAR_STAGE_ARTIFACTS_BUCKET/app-prod-staging.apk-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/app-prod-staging.apk-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
+            aws s3 cp app-prod-staging.apk $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
       - run:
           name: Announce Deployment
           command: |
