@@ -103,6 +103,7 @@ class SendTokenContacts extends React.Component<Props, State> {
               <Label>Est. Network Fee</Label>
               <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
             </LabeledRow>
+            {!!recipientUsername &&
             <TextInput
               inputProps={{
                 onChange: (text) => this.handleNoteChange(text),
@@ -117,6 +118,7 @@ class SendTokenContacts extends React.Component<Props, State> {
               noBorder
               keyboardAvoidance
             />
+            }
           </ScrollWrapper>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
