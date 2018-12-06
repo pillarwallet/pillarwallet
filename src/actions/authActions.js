@@ -57,7 +57,7 @@ export const loginAction = (pin: string) => {
         payload: { user, state: userState },
       });
 
-      const fcmToken = await firebase.messaging().getToken();
+      const fcmToken = await firebase.messaging().getToken().catch(() => null);
       chat.init({
         userId: user.id,
         username: user.username,
