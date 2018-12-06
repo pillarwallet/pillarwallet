@@ -17,6 +17,7 @@ import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 import { BaseText } from 'components/Typography';
+import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
 const iconSend = require('assets/icons/icon_send.png');
@@ -82,6 +83,8 @@ type Props = {
 type State = {
   avatarRefreshed: boolean,
   showManageContactModal: boolean,
+  showConfirmationModal: boolean,
+  manageContactType: string,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -97,6 +100,8 @@ class Contact extends React.Component<Props, State> {
     this.state = {
       avatarRefreshed: !profileImage || !session.isOnline,
       showManageContactModal: false,
+      showConfirmationModal: false,
+      manageContactType: '',
     };
   }
 
@@ -144,7 +149,22 @@ class Contact extends React.Component<Props, State> {
   };
 
   manageContact = (manageContactType: string) => {
-    Alert.alert(manageContactType);
+    this.setState({
+      showManageContactModal: false,
+      manageContactType,
+    });
+
+    setTimeout(() => {
+      this.setState({ showConfirmationModal: true })
+    }, 1000)
+  };
+
+  confirmManageAction = () => {
+    this.setState({
+      showConfirmationModal: false,
+    });
+
+    Alert.alert(this.state.manageContactType);
   };
 
   render() {
@@ -155,7 +175,13 @@ class Contact extends React.Component<Props, State> {
       wallet,
       chats,
     } = this.props;
-    const { avatarRefreshed, showManageContactModal } = this.state;
+    const {
+      avatarRefreshed,
+      showManageContactModal,
+      showConfirmationModal,
+      manageContactType,
+    } = this.state;
+
     const contact = navigation.getParam('contact', {});
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -163,6 +189,7 @@ class Contact extends React.Component<Props, State> {
     const displayContact = localContact || contact;
     const userAvatar = this.getUserAvatar(isAccepted, avatarRefreshed, displayContact);
     const unreadCount = this.getUnreadCount(chats, displayContact.username);
+
     return (
       <Container inset={{ bottom: 0 }}>
         <Header
@@ -231,6 +258,15 @@ class Contact extends React.Component<Props, State> {
           onManageContact={this.manageContact}
           onModalHide={() => {
             this.setState({ showManageContactModal: false });
+          }}
+        />
+        <ConnectionConfirmationModal
+          showConfirmationModal={showConfirmationModal}
+          manageContactType={manageContactType}
+          contact={contact}
+          onConfirm={this.confirmManageAction}
+          onModalHide={() => {
+            this.setState({ showConfirmationModal: false });
           }}
         />
       </Container>

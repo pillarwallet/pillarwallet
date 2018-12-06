@@ -23,16 +23,16 @@ const titleConfirmation = (manageContactType: string, username: string) => {
 type Props = {
   onModalHide: Function,
   onConfirm: Function,
-  showManageContactModal: boolean,
+  showConfirmationModal: boolean,
   manageContactType: string,
   contact: Object,
 };
 
-const ManageConnectionModal = (props: Props) => {
+const ConnectionConfirmationModal = (props: Props) => {
   const {
     onModalHide,
     onConfirm,
-    showManageContactModal,
+    showConfirmationModal,
     manageContactType,
     contact,
   } = props;
@@ -44,7 +44,7 @@ const ManageConnectionModal = (props: Props) => {
 
   return (
     <SlideModal
-      isVisible={showManageContactModal}
+      isVisible={showConfirmationModal}
       onModalHide={onModalHide}
       title={titleConfirmation(contactType, username)}
       noBlueDotOnTitle
@@ -90,4 +90,4 @@ const ManageConnectionModal = (props: Props) => {
   );
 };
 
-export default ManageConnectionModal;
+export default ConnectionConfirmationModal;
