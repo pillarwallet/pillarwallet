@@ -3,9 +3,12 @@ import PouchDB from 'pouchdb-react-native';
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
 
-function Storage(name: string, opts: ?Object) {
+function Storage(name: string, opts: ?Object = {}) {
   this.name = name;
-  this.opts = opts;
+  this.opts = {
+    auto_compaction: true,
+    ...opts,
+  };
   this.db = new PouchDB(name, opts);
 }
 
