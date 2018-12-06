@@ -69,6 +69,8 @@ export const loginAction = (pin: string) => {
         .then(() => chat.client.setFcmId(fcmToken))
         .catch(() => null);
 
+      await storage.viewCleanup().catch(() => null);
+
       dispatch({
         type: DECRYPT_WALLET,
         payload: {
@@ -78,7 +80,6 @@ export const loginAction = (pin: string) => {
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
-      await storage.viewCleanup().catch(() => null);
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
