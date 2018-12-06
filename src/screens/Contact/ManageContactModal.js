@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { baseColors, fontSizes } from 'utils/variables';
-import { DISCONNECT, BLOCK, MUTE } from 'constants/connectionsConstants';
+import { DISCONNECT } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
@@ -19,6 +19,7 @@ const buttonStyle = {
 };
 
 const manageModalButtons = [
+  /*
   {
     manageType: MUTE,
     primaryInverted: true,
@@ -26,13 +27,15 @@ const manageModalButtons = [
     icon: 'mute',
     style: { ...buttonStyle, marginTop: 23 },
   },
+  */
   {
     manageType: DISCONNECT,
     primaryInverted: true,
     title: 'Disconnect',
     icon: 'remove',
-    style: buttonStyle,
+    style: { ...buttonStyle, marginTop: 23, marginBottom: 58 },
   },
+  /*
   {
     manageType: BLOCK,
     dangerInverted: true,
@@ -40,6 +43,7 @@ const manageModalButtons = [
     icon: 'warning',
     style: { ...buttonStyle, marginBottom: 58 },
   },
+  */
 ];
 
 const ManageConnectionModal = (props: Props) => {

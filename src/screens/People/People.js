@@ -35,7 +35,7 @@ import Button from 'components/Button/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
-import ManageConnectionModal from './ManageConnectionModal';
+import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -91,7 +91,7 @@ type Props = {
 
 type State = {
   query: string,
-  showManageContactModal: boolean,
+  showConfirmationModal: boolean,
   manageContactType: string,
   manageContactId: string,
   forceHideRemoval: boolean,
@@ -103,7 +103,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
   state = {
     query: '',
-    showManageContactModal: false,
+    showConfirmationModal: false,
     manageContactType: '',
     manageContactId: '',
     forceHideRemoval: false,
@@ -164,7 +164,7 @@ class PeopleScreen extends React.Component<Props, State> {
   manageConnection = (manageContactType: string, contactData: Object) => {
     // condition to avoid confirmation if MUTE should be considered here
     this.setState({
-      showManageContactModal: true,
+      showConfirmationModal: true,
       forceHideRemoval: false,
       manageContactType,
       manageContactId: contactData.id,
@@ -238,7 +238,7 @@ class PeopleScreen extends React.Component<Props, State> {
     } = this.state;
     */
     this.setState({
-      showManageContactModal: false,
+      showConfirmationModal: false,
       forceHideRemoval: true,
     });
   };
@@ -246,7 +246,7 @@ class PeopleScreen extends React.Component<Props, State> {
   render() {
     const {
       query,
-      showManageContactModal,
+      showConfirmationModal,
       manageContactType,
       manageContactId,
     } = this.state;
@@ -347,14 +347,14 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </KeyboardAvoidingView>
         }
-        <ManageConnectionModal
-          showManageContactModal={showManageContactModal}
+        <ConnectionConfirmationModal
+          showConfirmationModal={showConfirmationModal}
           manageContactType={manageContactType}
           contact={contact}
           onConfirm={() => this.confirmManageAction()}
           onModalHide={() => {
             this.setState({
-              showManageContactModal: false,
+              showConfirmationModal: false,
               forceHideRemoval: true,
             });
           }}
