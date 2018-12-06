@@ -29,7 +29,6 @@ import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'ac
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
-import { DEBUG_DATA_LOGGER } from 'react-native-dotenv';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 import SettingsModalTitle from './SettingsModalTitle';
@@ -403,7 +402,7 @@ class Profile extends React.Component<Props, State> {
               uri="https://pillarproject.io/en/legal/privacy/"
             />
 
-            {(!!DEBUG_DATA_LOGGER || !!__DEV__) &&
+            {(!!hasDBConflicts || !!__DEV__) &&
             <React.Fragment>
               <ListSeparator>
                 <SubHeading>DEBUG</SubHeading>
