@@ -70,10 +70,15 @@ export const processNotification = (notification: Object, myEthAddress?: string)
 
     let message = '';
     let title = '';
-    const { asset, status, value } = parsedNotification;
+    const {
+      asset,
+      status,
+      value,
+      decimals,
+    } = parsedNotification;
     const sender = parsedNotification.fromAddress.toUpperCase();
     const receiver = parsedNotification.toAddress.toUpperCase();
-    const amount = utils.formatUnits(utils.bigNumberify(value.toString()));
+    const amount = utils.formatUnits(utils.bigNumberify(value.toString()), decimals);
 
     if (receiver === myEthAddress && status === 'pending') {
       title = `${amount} ${asset}`;
