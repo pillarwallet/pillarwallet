@@ -155,8 +155,8 @@ class Contact extends React.Component<Props, State> {
     });
 
     setTimeout(() => {
-      this.setState({ showConfirmationModal: true })
-    }, 1000)
+      this.setState({ showConfirmationModal: true });
+    }, 1000);
   };
 
   confirmManageAction = () => {
