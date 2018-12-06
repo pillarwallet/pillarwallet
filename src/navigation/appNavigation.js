@@ -41,7 +41,6 @@ import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
 import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
-import SendDebugDataScreen from 'screens/SendDebugData';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 
@@ -50,6 +49,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 import Toast from 'components/Toast';
 
+// actions
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -97,7 +97,6 @@ import {
   ICO_INSTRUCTIONS,
   ICO_CONFIRM,
   ICO_LINKS,
-  SEND_DEBUG_DATA,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -382,7 +381,6 @@ const AppFlowNavigation = createStackNavigator(
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
-    [SEND_DEBUG_DATA]: SendDebugDataScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
   }, modalTransition,
 );
