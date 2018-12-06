@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Alert, RefreshControl, Platform, View } from 'react-native';
+import { RefreshControl, Platform, View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -163,8 +163,6 @@ class Contact extends React.Component<Props, State> {
     this.setState({
       showConfirmationModal: false,
     });
-
-    Alert.alert(this.state.manageContactType);
   };
 
   render() {
