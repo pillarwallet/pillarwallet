@@ -71,21 +71,22 @@ describe('API service', () => {
 
   it('Should successfully register an account with the given username and fcm token and return userId', async () => {
     const result = await sdkWrapper.registerOnAuthServer('uniqueFCMToken', 'uniqueUsernameString');
-    expect(result).toBeTruthy();
-    expect(result).toHaveProperty('userId');
+    expect(result).toBe(mockResponseSuccess.data);
   });
 
   it('Should fail to register an account with a duplicate username and return USERNAME_EXISTS reason', async () => {
     const result = await sdkWrapper.registerOnAuthServer('anyFCMToken', 'duplicateUsernameString');
-    expect(result).toBeTruthy();
-    expect(result).toHaveProperty('error', true);
-    expect(result).toHaveProperty('reason', USERNAME_EXISTS);
+    expect(result).toEqual({
+      error: true,
+      reason: USERNAME_EXISTS,
+    });
   });
 
   it('Should fail to register an account with empty parameters and return REGISTRATION_FAILED reason', async () => {
     const result = await sdkWrapper.registerOnAuthServer('', '');
-    expect(result).toBeTruthy();
-    expect(result).toHaveProperty('error', true);
-    expect(result).toHaveProperty('reason', REGISTRATION_FAILED);
+    expect(result).toEqual({
+      error: true,
+      reason: REGISTRATION_FAILED,
+    });
   });
 });
