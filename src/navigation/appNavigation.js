@@ -212,30 +212,35 @@ const icoFlow = createStackNavigator({
 
 icoFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
-  <View style={{ padding: 4 }}>
-    <Image
-      style={{
-        width: 24,
-        height: 24,
-      }}
-      resizeMode="contain"
-      source={focused ? iconActive : icon}
-    />
-    {!!hasAddon &&
-      <View
+const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
+  const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
+
+  return (
+    <View style={{ padding: 4 }}>
+      <Image
         style={{
-          width: 8,
-          height: 8,
-          backgroundColor: baseColors.sunYellow,
-          borderRadius: 4,
-          position: 'absolute',
-          top: 4,
-          right: 4,
+          width: 24,
+          height: 24,
         }}
-      />}
-  </View>
-);
+        resizeMode="contain"
+        source={focused ? iconActive : icon}
+      />
+      {!!hasAddon &&
+        <View
+          style={{
+            width: 8,
+            height: 8,
+            backgroundColor: notificationColor,
+            borderRadius: 4,
+            position: 'absolute',
+            top: 4,
+            right: 4,
+          }}
+        />
+      }
+    </View>
+  );
+};
 
 const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
   <BaseText
@@ -284,7 +289,8 @@ const tabNavigation = createBottomTabNavigator(
         tabBarIcon: tabBarIcon(
           iconHomeActive,
           iconHome,
-          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
+          !screenProps.isWalletBackedUp || (!navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
+          !screenProps.isWalletBackedUp),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -403,6 +409,7 @@ type Props = {
   intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
+  backupStatus: Object,
   assets: Object,
   isPickingImage: boolean,
 }
@@ -479,11 +486,18 @@ class AppFlow extends React.Component<Props, {}> {
       intercomNotificationsCount,
       hasUnreadChatNotifications,
       navigation,
+      backupStatus,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
+
+    const {
+      isImported,
+      isBackedUp,
+    } = backupStatus;
+    const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <AppFlowNavigation
@@ -491,6 +505,7 @@ class AppFlow extends React.Component<Props, {}> {
           hasUnreadNotifications,
           hasUnreadChatNotifications,
           intercomNotificationsCount,
+          isWalletBackedUp,
         }}
         navigation={navigation}
       />
@@ -507,7 +522,7 @@ const mapStateToProps = ({
     hasUnreadChatNotifications,
   },
   assets: { data: assets },
-  wallet: { data: wallet },
+  wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage } },
 }) => ({
   userState,
@@ -515,6 +530,7 @@ const mapStateToProps = ({
   hasUnreadNotifications,
   assets,
   wallet,
+  backupStatus,
   hasUnreadChatNotifications,
   intercomNotificationsCount,
   isPickingImage,
