@@ -41,6 +41,7 @@ export const processNotification = (notification: Object, myEthAddress?: string)
     return {
       message: 'New message',
       title: parsedNotification.sender,
+      type: 'SIGNAL',
       navigationParams: { username: parsedNotification.sender },
     };
   }
