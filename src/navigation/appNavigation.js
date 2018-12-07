@@ -449,9 +449,9 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (!isWalletBackedUp) {
       Toast.show({
-        message: 'Set your Backup in Settings screen',
+        message: 'Please go to settings to complete wallet backup. Pillar cannot help you retrieve your wallet if lost.',
         type: 'warning',
-        title: 'Backup your wallet',
+        title: 'WARNING - Your funds are currently at risk.',
         autoClose: false,
       });
     }
