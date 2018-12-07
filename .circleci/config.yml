@@ -237,12 +237,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install brew
-          command: /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      - run:
-          name: check pip
-          command: pip --version
-      - run:
           name: Install AWS CLI
           command: sudo pip install awscli
       - run:
@@ -343,12 +337,6 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: Install brew
-          command: /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      - run:
-          name: check pip
-          command: pip --version
       - run:
           name: Install AWS CLI
           command: sudo pip install awscli
