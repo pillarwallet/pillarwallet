@@ -192,8 +192,8 @@ export const startListeningOnOpenNotificationAction = () => {
             assets: { data: assets },
           } = getState();
           dispatch(fetchTransactionsHistoryNotificationsAction());
-          dispatch(fetchTransactionsHistoryAction(wallet, asset));
-          dispatch(fetchAssetsBalancesAction(assets, wallet));
+          dispatch(fetchTransactionsHistoryAction(wallet.address, asset));
+          dispatch(fetchAssetsBalancesAction(assets, wallet.address));
         }
         if (type === CONNECTION) {
           dispatch(fetchInviteNotificationsAction());
