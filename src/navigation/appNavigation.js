@@ -430,6 +430,7 @@ class AppFlow extends React.Component<Props, {}> {
       getExistingChats,
       assets,
       wallet,
+      backupStatus,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -439,6 +440,21 @@ class AppFlow extends React.Component<Props, {}> {
     fetchICOs();
     getExistingChats();
     addAppStateChangeListener(this.handleAppStateChange);
+
+    const {
+      isImported,
+      isBackedUp,
+    } = backupStatus;
+    const isWalletBackedUp = isImported || isBackedUp;
+
+    if (!isWalletBackedUp) {
+      Toast.show({
+        message: 'Set your Backup in Settings screen',
+        type: 'warning',
+        title: 'Backup your wallet',
+        autoClose: false,
+      });
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
