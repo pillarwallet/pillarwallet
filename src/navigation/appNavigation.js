@@ -289,7 +289,9 @@ const tabNavigation = createBottomTabNavigator(
         tabBarIcon: tabBarIcon(
           iconHomeActive,
           iconHome,
-          !screenProps.isWalletBackedUp || (!navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
+          !screenProps.isWalletBackedUp ||
+          (!navigation.isFocused() &&
+            (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
           !screenProps.isWalletBackedUp),
         tabBarLabel: tabBarLabel('Home'),
       }),
