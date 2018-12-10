@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Container, Wrapper, Footer } from 'components/Layout';
+import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
 import Header from 'components/Header';
@@ -127,7 +127,7 @@ class LegalTerms extends React.Component<Props, State> {
     return (
       <Container>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} />
-        <Wrapper regularPadding>
+        <ScrollWrapper regularPadding>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
             With great power comes great responsibility. Make sure you are aware of the following.
           </Paragraph>
@@ -181,7 +181,7 @@ class LegalTerms extends React.Component<Props, State> {
             </CheckboxText>
           </Checkbox>
 
-        </Wrapper>
+        </ScrollWrapper>
         <Footer>
           <MultiButtonWrapper>
             <Button
