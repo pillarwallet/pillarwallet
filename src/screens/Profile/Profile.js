@@ -15,7 +15,7 @@ import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import { SubHeading } from 'components/Typography';
-import IFrameModal from 'components/Modals/IFrameModal';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
@@ -390,16 +390,16 @@ class Profile extends React.Component<Props, State> {
               onPress={this.togglePrivacyPolicyModal}
             />
 
-            <IFrameModal
+            <HTMLContentModal
               isVisible={showTermsConditionsModal}
               modalHide={this.toggleTermsConditionsModal}
-              uri="https://pillarproject.io/en/legal/terms-of-use/"
+              htmlEndpoint="https://pillarproject.io/en/legal/terms-of-use/"
             />
 
-            <IFrameModal
+            <HTMLContentModal
               isVisible={showPrivacyPolicyModal}
               modalHide={this.togglePrivacyPolicyModal}
-              uri="https://pillarproject.io/en/legal/privacy/"
+              htmlEndpoint="https://pillarproject.io/en/legal/privacy/"
             />
 
             {(!!hasDBConflicts || !!__DEV__) &&

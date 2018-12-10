@@ -10,7 +10,7 @@ import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
-import IFrameModal from 'components/Modals/IFrameModal';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
@@ -47,6 +47,7 @@ const ModalInnerWrapper = styled.ScrollView`
 const PRIVATE_KEY_MODAL = 'PRIVATE_KEY_MODAL';
 const BACKUP_PHRASE_MODAL = 'BACKUP_PHRASE_MODAL';
 const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
+const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
 
 class LegalTerms extends React.Component<Props, State> {
   state = {
@@ -153,6 +154,19 @@ class LegalTerms extends React.Component<Props, State> {
             </CheckboxText>
           </Checkbox>
 
+          <Checkbox
+            onPress={() => this.toggleCheckbox('userCheck3')}
+          >
+            <CheckboxText>
+              {'I have read, understand, and agree to the '}
+              <TextLink
+                onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
+              >
+                Privacy Policy
+              </TextLink>
+            </CheckboxText>
+          </Checkbox>
+
         </Wrapper>
         <Footer>
           <MultiButtonWrapper>
@@ -172,10 +186,16 @@ class LegalTerms extends React.Component<Props, State> {
           </MultiButtonWrapper>
         </Footer>
 
-        <IFrameModal
+        <HTMLContentModal
           isVisible={visibleModal === TERMS_OF_USE_MODAL}
           modalHide={this.closeModals}
-          uri="https://pillarproject.io/en/legal/terms-of-use/"
+          htmlEndpoint="https://pillarproject.io/en/legal/terms-of-use/"
+        />
+
+        <HTMLContentModal
+          isVisible={visibleModal === PRIVACY_POLICY_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="https://pillarproject.io/en/legal/privacy/"
         />
 
         <SlideModal
