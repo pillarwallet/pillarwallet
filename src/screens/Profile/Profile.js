@@ -393,13 +393,13 @@ class Profile extends React.Component<Props, State> {
             <HTMLContentModal
               isVisible={showTermsConditionsModal}
               modalHide={this.toggleTermsConditionsModal}
-              htmlEndpoint="https://pillarproject.io/en/legal/terms-of-use/"
+              htmlEndpoint="terms_of_service"
             />
 
             <HTMLContentModal
               isVisible={showPrivacyPolicyModal}
               modalHide={this.togglePrivacyPolicyModal}
-              htmlEndpoint="https://pillarproject.io/en/legal/privacy/"
+              htmlEndpoint="privacy_policy"
             />
 
             {(!!hasDBConflicts || !!__DEV__) &&

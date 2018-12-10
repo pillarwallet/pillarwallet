@@ -22,6 +22,12 @@ type State = {
   htmlData: string,
 };
 
+type CustomNode = {
+  name: string,
+}
+
+const LEGAL_HTML_ENDPOINT = 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/';
+
 const ActivityIndicatorWrapper = styled.View`
   flex: 1;
   align-items: center;
@@ -55,7 +61,6 @@ const styles = StyleSheet.create({
     ...titleStyle,
     ...commonFontFamily,
     fontSize: fontSizes.medium,
-    marginBottom: 60,
   },
   p: {
     ...commonTextStyle,
@@ -85,22 +90,34 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     };
   }
 
-  componentDidMount() {
-    const { htmlEndpoint } = this.props;
-    fetch(htmlEndpoint)
-      .then((resp) => { return resp.text(); })
-      .then((text) => {
-        this.setState({
-          isHtmlFetched: true,
-          htmlData: text.replace(/(\r\n\t|\n|\r\t)/gm, ''),
-        });
-      })
-      .catch((() => {}));
+  componentDidUpdate(prevProps: Props) {
+    const { isVisible, htmlEndpoint } = this.props;
+    const htmlEndpointFull = `${LEGAL_HTML_ENDPOINT}${htmlEndpoint}.html`;
+
+    if (prevProps.isVisible !== isVisible && !!isVisible) {
+      fetch(htmlEndpointFull)
+        .then((resp) => { return resp.text(); })
+        .then((text) => {
+          this.setState({
+            isHtmlFetched: true,
+            htmlData: text.replace(/(\r\n\t|\n|\r\t)/gm, ''),
+          });
+        })
+        .catch((() => {}));
+    }
   }
 
   handleModalClose = () => {
     this.setState({ isHtmlFetched: false });
   };
+
+  renderNode(node: CustomNode) {
+    if (node.name === 'iframe' || node.name === 'script') {
+      return null;
+    }
+    // If the function returns undefined (not null), the default renderer will be used for that node.
+    return undefined;
+  }
 
   render() {
     const {
@@ -140,6 +157,7 @@ export default class HTMLContentModal extends React.Component<Props, State> {
             <HTMLView
               value={htmlData}
               stylesheet={styles}
+              renderNode={this.renderNode}
             />
           </ScrollWrapper>
           }
