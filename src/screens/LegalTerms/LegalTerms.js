@@ -29,6 +29,7 @@ type State = {
   userCheck1: boolean,
   userCheck2: boolean,
   userCheck3: boolean,
+  userCheck4: boolean,
   visibleModal: any,
   scrollOffset?: any,
 };
@@ -54,6 +55,7 @@ class LegalTerms extends React.Component<Props, State> {
     userCheck1: false,
     userCheck2: false,
     userCheck3: false,
+    userCheck4: false,
     visibleModal: null,
     scrollOffset: null,
   };
@@ -63,7 +65,13 @@ class LegalTerms extends React.Component<Props, State> {
   };
 
   toggleCheckbox = (field: string) => {
-    const { userCheck1, userCheck2, userCheck3 } = this.state;
+    const {
+      userCheck1,
+      userCheck2,
+      userCheck3,
+      userCheck4,
+    } = this.state;
+
     if (field === 'userCheck1') {
       this.setState({
         userCheck1: !userCheck1,
@@ -77,6 +85,11 @@ class LegalTerms extends React.Component<Props, State> {
     if (field === 'userCheck3') {
       this.setState({
         userCheck3: !userCheck3,
+      });
+    }
+    if (field === 'userCheck4') {
+      this.setState({
+        userCheck4: !userCheck4,
       });
     }
   };
@@ -101,13 +114,14 @@ class LegalTerms extends React.Component<Props, State> {
       userCheck1,
       userCheck2,
       userCheck3,
+      userCheck4,
       visibleModal,
       scrollOffset,
     } = this.state;
 
     const { backupStatus } = this.props;
     const { isBackedUp, isImported } = backupStatus;
-    const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3);
+    const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3 && userCheck4);
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
@@ -155,7 +169,7 @@ class LegalTerms extends React.Component<Props, State> {
           </Checkbox>
 
           <Checkbox
-            onPress={() => this.toggleCheckbox('userCheck3')}
+            onPress={() => this.toggleCheckbox('userCheck4')}
           >
             <CheckboxText>
               {'I have read, understand, and agree to the '}
@@ -189,13 +203,13 @@ class LegalTerms extends React.Component<Props, State> {
         <HTMLContentModal
           isVisible={visibleModal === TERMS_OF_USE_MODAL}
           modalHide={this.closeModals}
-          htmlEndpoint="https://pillarproject.io/en/legal/terms-of-use/"
+          htmlEndpoint="terms_of_service"
         />
 
         <HTMLContentModal
           isVisible={visibleModal === PRIVACY_POLICY_MODAL}
           modalHide={this.closeModals}
-          htmlEndpoint="https://pillarproject.io/en/legal/privacy/"
+          htmlEndpoint="privacy_policy"
         />
 
         <SlideModal
