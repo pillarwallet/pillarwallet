@@ -237,12 +237,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install brew
-          command: /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-      - run:
-          name: check pip
-          command: pip --version
-      - run:
           name: Install AWS CLI
           command: sudo pip install awscli
       - run:
@@ -343,6 +337,9 @@ jobs:
 
     steps:
       - checkout
+      - run:
+          name: Install AWS CLI
+          command: sudo pip install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -445,6 +442,15 @@ jobs:
     steps:
       - checkout:
           path: ~/pillarwallet
+      - run:
+          name: Install Python
+          command: sudo apt-get update && sudo apt-get install python
+      - run:
+          name: Install Python dependencies
+          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+      - run:
+          name: Install AWS CLI
+          command: sudo pip install awscli
       - run:
           name: Append circleCI build number to version
           command: |
