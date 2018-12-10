@@ -809,10 +809,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.11.755":
-  version "1.12.802"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.12.802.tgz#32c83905389e427515a9e9cb75a8bca26e3d7fcc"
-  integrity sha1-Msg5BTieQnUVqenLdai8om49f8w=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.15.1084":
+  version "1.15.1084"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.15.1084.tgz#71583f5378a186a14f9988532aa83764a1900cba"
+  integrity sha1-cVg/U3ihhqFPmYhTKqg3ZKGQDLo=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
