@@ -158,6 +158,7 @@ export default class HTMLContentModal extends React.Component<Props, State> {
               value={htmlData}
               stylesheet={styles}
               renderNode={this.renderNode}
+              style={{ marginBottom: 10 }}
             />
           </ScrollWrapper>
           }
