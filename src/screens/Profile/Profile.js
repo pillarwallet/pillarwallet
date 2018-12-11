@@ -8,7 +8,6 @@ import Intercom from 'react-native-intercom';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
-  SEND_DEBUG_DATA,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -16,7 +15,7 @@ import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import { SubHeading } from 'components/Typography';
-import IFrameModal from 'components/Modals/IFrameModal';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
@@ -30,7 +29,6 @@ import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'ac
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
-import { DEBUG_DATA_LOGGER } from 'react-native-dotenv';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 import SettingsModalTitle from './SettingsModalTitle';
@@ -392,19 +390,19 @@ class Profile extends React.Component<Props, State> {
               onPress={this.togglePrivacyPolicyModal}
             />
 
-            <IFrameModal
+            <HTMLContentModal
               isVisible={showTermsConditionsModal}
               modalHide={this.toggleTermsConditionsModal}
-              uri="https://pillarproject.io/en/legal/terms-of-use/"
+              htmlEndpoint="terms_of_service"
             />
 
-            <IFrameModal
+            <HTMLContentModal
               isVisible={showPrivacyPolicyModal}
               modalHide={this.togglePrivacyPolicyModal}
-              uri="https://pillarproject.io/en/legal/privacy/"
+              htmlEndpoint="privacy_policy"
             />
 
-            {(!!DEBUG_DATA_LOGGER || !!__DEV__) &&
+            {(!!hasDBConflicts || !!__DEV__) &&
             <React.Fragment>
               <ListSeparator>
                 <SubHeading>DEBUG</SubHeading>
@@ -422,11 +420,6 @@ class Profile extends React.Component<Props, State> {
                   label="Repair Local Storage"
                   onPress={repairStorage}
                 />}
-              <ProfileSettingsItem
-                key="sendDebugData"
-                label="Send Debug Data"
-                onPress={() => this.props.navigation.navigate(SEND_DEBUG_DATA)}
-              />
             </React.Fragment>}
 
             <ListSeparator>

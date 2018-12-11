@@ -57,7 +57,7 @@ export const loginAction = (pin: string) => {
         payload: { user, state: userState },
       });
 
-      const fcmToken = await firebase.messaging().getToken();
+      const fcmToken = await firebase.messaging().getToken().catch(() => null);
       chat.init({
         userId: user.id,
         username: user.username,
@@ -68,6 +68,8 @@ export const loginAction = (pin: string) => {
         .then(() => chat.client.registerAccount())
         .then(() => chat.client.setFcmId(fcmToken))
         .catch(() => null);
+
+      await storage.viewCleanup().catch(() => null);
 
       dispatch({
         type: DECRYPT_WALLET,
