@@ -40,3 +40,23 @@ dependencies {
     compile 'io.intercom.android:intercom-sdk-base:5.+'
 }
 
+rootProject.subprojects { project ->
+    buildscript {
+        repositories {
+            jcenter {
+                url 'https://dl.bintray.com/android/android-tools/'
+            }
+            jcenter {
+                url 'https://firebase.bintray.com/gradle'
+            }
+            jcenter {
+                url 'https://google.bintray.com/flexbox-layout/'
+            }
+            maven {
+                url 'https://maven.google.com'
+            }
+        }
+    }
+}
+
+
