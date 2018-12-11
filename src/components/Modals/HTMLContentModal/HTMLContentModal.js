@@ -1,12 +1,11 @@
 // @flow
 import * as React from 'react';
-import { StyleSheet, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import HTMLView from 'react-native-htmlview';
 import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
-import { baseColors, fontSizes, UIColors } from 'utils/variables';
 import Spinner from 'components/Spinner';
 
 type Props = {
@@ -34,48 +33,10 @@ const ActivityIndicatorWrapper = styled.View`
   justify-content: center;
 `;
 
-const titleStyle = {
-  margin: 0,
-  fontWeight: '700',
-  color: UIColors.defaultTextColor,
-};
-
-const commonFontFamily = {
+const commonTextStyle = {
+  color: 'black',
   fontFamily: Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App',
 };
-
-const commonTextStyle = {
-  ...commonFontFamily,
-  margin: 0,
-  color: UIColors.defaultTextColor,
-  fontSize: fontSizes.extraSmall,
-};
-
-const styles = StyleSheet.create({
-  h1: {
-    ...titleStyle,
-    ...commonFontFamily,
-    fontSize: fontSizes.extraLarge,
-  },
-  h2: {
-    ...titleStyle,
-    ...commonFontFamily,
-    fontSize: fontSizes.medium,
-  },
-  p: {
-    ...commonTextStyle,
-  },
-  ul: {
-    ...commonTextStyle,
-  },
-  li: {
-    ...commonTextStyle,
-  },
-  a: {
-    ...commonTextStyle,
-    color: baseColors.electricBlue,
-  },
-});
 
 export default class HTMLContentModal extends React.Component<Props, State> {
   static defaultProps = {
@@ -148,17 +109,18 @@ export default class HTMLContentModal extends React.Component<Props, State> {
         <Container>
           <Header onClose={modalHide} />
           {!isHtmlFetched &&
-            <ActivityIndicatorWrapper>
-              <Spinner />
-            </ActivityIndicatorWrapper>
+          <ActivityIndicatorWrapper>
+            <Spinner />
+          </ActivityIndicatorWrapper>
           }
           {!!isHtmlFetched &&
           <ScrollWrapper regularPadding>
             <HTMLView
               value={htmlData}
-              stylesheet={styles}
+              textComponentProps={{ style: commonTextStyle }}
               renderNode={this.renderNode}
               style={{ marginBottom: 10 }}
+              paragraphBreak={null}
             />
           </ScrollWrapper>
           }
@@ -167,3 +129,4 @@ export default class HTMLContentModal extends React.Component<Props, State> {
     );
   }
 }
+
