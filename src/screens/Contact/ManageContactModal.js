@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import { baseColors, fontSizes } from 'utils/variables';
+import { baseColors } from 'utils/variables';
 import { DISCONNECT } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
