@@ -77,14 +77,14 @@ aliases:
 
   - &gradle_restore_cache
     restore_cache:
-      key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+      key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
   - &gradle_depencencies
     run:
       name: Download Dependencies
       command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
   - &gradle_save_cache
     save_cache:
-      key: android-jars-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
+      key: android-jars-v1-{{ checksum "./android/build.gradle" }}-{{ checksum  "./android/app/build.gradle" }}
       paths:
         - ~/android/.gradle
         - ~/android/.m2
