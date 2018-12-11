@@ -1,6 +1,9 @@
 buildscript {
     repositories {
         jcenter()
+        jcenter {
+            url 'https://google.bintray.com/flexbox-layout/'
+        }
     }
 
     dependencies {
