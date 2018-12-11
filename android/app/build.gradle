@@ -250,5 +250,15 @@ configurations.all {
   }
 }
 
+rootProject.subprojects { project ->
+  buildscript {
+    repositories {
+      jcenter {
+        url 'https://dl.bintray.com/android/android-tools/'
+      }
+    }
+  }
+}
+
 // This has to be down here for some reason
 apply plugin: 'com.google.gms.google-services'
