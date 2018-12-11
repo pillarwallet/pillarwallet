@@ -7,7 +7,6 @@ import {
   START_ASSETS_SEARCH,
   UPDATE_ASSETS_SEARCH_RESULT,
   RESET_ASSETS_SEARCH_RESULT,
-  ADD_ASSET,
   REMOVE_ASSET,
   SET_INITIAL_ASSETS,
   FETCHING,
@@ -25,7 +24,7 @@ import {
   getExchangeRates,
 } from 'services/assets';
 import type { TransactionPayload } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction } from 'utils/history';
@@ -214,10 +213,21 @@ export const fetchInitialAssetsAction = (walletAddress: string) => {
   };
 };
 
-export const addAssetAction = (asset: Object) => ({
-  type: ADD_ASSET,
-  payload: asset,
-});
+export const addAssetAction = (asset: Asset) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    const {
+      assets: { data: assets },
+      wallet: { data: wallet },
+    } = getState();
+    const updatedAssets = { ...assets, [asset.symbol]: { ...asset } };
+    dispatch(saveDbAction('assets', { assets: updatedAssets }));
+    dispatch({
+      type: UPDATE_ASSETS,
+      payload: updatedAssets,
+    });
+    dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+  };
+};
 
 export const removeAssetAction = (asset: Object) => ({
   type: REMOVE_ASSET,
