@@ -430,7 +430,6 @@ class AppFlow extends React.Component<Props, {}> {
       getExistingChats,
       assets,
       wallet,
-      backupStatus,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -440,21 +439,6 @@ class AppFlow extends React.Component<Props, {}> {
     fetchICOs();
     getExistingChats();
     addAppStateChangeListener(this.handleAppStateChange);
-
-    const {
-      isImported,
-      isBackedUp,
-    } = backupStatus;
-    const isWalletBackedUp = isImported || isBackedUp;
-
-    if (!isWalletBackedUp) {
-      Toast.show({
-        message: 'Please go to settings to complete wallet backup. Pillar cannot help you retrieve your wallet if lost.', // eslint-disable-line max-len
-        type: 'warning',
-        title: 'WARNING - Your funds are currently at risk.',
-        autoClose: false,
-      });
-    }
   }
 
   componentDidUpdate(prevProps: Props) {
