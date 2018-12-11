@@ -256,6 +256,9 @@ rootProject.subprojects { project ->
       jcenter {
         url 'https://dl.bintray.com/android/android-tools/'
       }
+      jcenter {
+        url 'https://firebase.bintray.com/gradle'
+      }
     }
   }
 }
