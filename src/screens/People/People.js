@@ -351,7 +351,7 @@ class PeopleScreen extends React.Component<Props, State> {
           showConfirmationModal={showConfirmationModal}
           manageContactType={manageContactType}
           contact={contact}
-          onConfirm={() => this.confirmManageAction()}
+          onConfirm={this.confirmManageAction}
           onModalHide={() => {
             this.setState({
               showConfirmationModal: false,
