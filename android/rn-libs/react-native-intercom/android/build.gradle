@@ -37,25 +37,9 @@ repositories {
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
-    compile 'io.intercom.android:intercom-sdk-base:5.+'
-}
-
-rootProject.subprojects { project ->
-    buildscript {
-        repositories {
-            jcenter {
-                url 'https://dl.bintray.com/android/android-tools/'
-            }
-            jcenter {
-                url 'https://firebase.bintray.com/gradle'
-            }
-            jcenter {
-                url 'https://google.bintray.com/flexbox-layout/'
-            }
-            maven {
-                url 'https://maven.google.com'
-            }
-        }
+    compile 'com.google.android:flexbox:1.0.0'
+    compile ('io.intercom.android:intercom-sdk-base:5.+') {
+        exclude group: 'com.google.android', module: 'flexbox'
     }
 }
 
