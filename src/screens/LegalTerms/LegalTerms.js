@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Container, Wrapper, Footer } from 'components/Layout';
+import { Container, ScrollWrapper, Footer } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native/index';
 import Header from 'components/Header';
@@ -10,7 +10,7 @@ import MultiButtonWrapper from 'components/MultiButtonWrapper';
 import Checkbox from 'components/Checkbox';
 import { connect } from 'react-redux';
 import { registerWalletAction } from 'actions/onboardingActions';
-import IFrameModal from 'components/Modals/IFrameModal';
+import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import { fontSizes, fontTrackings } from 'utils/variables';
 import SlideModal from 'components/Modals/SlideModal';
 import ButtonText from 'components/ButtonText';
@@ -29,6 +29,7 @@ type State = {
   userCheck1: boolean,
   userCheck2: boolean,
   userCheck3: boolean,
+  userCheck4: boolean,
   visibleModal: any,
   scrollOffset?: any,
 };
@@ -47,12 +48,14 @@ const ModalInnerWrapper = styled.ScrollView`
 const PRIVATE_KEY_MODAL = 'PRIVATE_KEY_MODAL';
 const BACKUP_PHRASE_MODAL = 'BACKUP_PHRASE_MODAL';
 const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
+const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
 
 class LegalTerms extends React.Component<Props, State> {
   state = {
     userCheck1: false,
     userCheck2: false,
     userCheck3: false,
+    userCheck4: false,
     visibleModal: null,
     scrollOffset: null,
   };
@@ -62,7 +65,13 @@ class LegalTerms extends React.Component<Props, State> {
   };
 
   toggleCheckbox = (field: string) => {
-    const { userCheck1, userCheck2, userCheck3 } = this.state;
+    const {
+      userCheck1,
+      userCheck2,
+      userCheck3,
+      userCheck4,
+    } = this.state;
+
     if (field === 'userCheck1') {
       this.setState({
         userCheck1: !userCheck1,
@@ -76,6 +85,11 @@ class LegalTerms extends React.Component<Props, State> {
     if (field === 'userCheck3') {
       this.setState({
         userCheck3: !userCheck3,
+      });
+    }
+    if (field === 'userCheck4') {
+      this.setState({
+        userCheck4: !userCheck4,
       });
     }
   };
@@ -100,19 +114,20 @@ class LegalTerms extends React.Component<Props, State> {
       userCheck1,
       userCheck2,
       userCheck3,
+      userCheck4,
       visibleModal,
       scrollOffset,
     } = this.state;
 
     const { backupStatus } = this.props;
     const { isBackedUp, isImported } = backupStatus;
-    const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3);
+    const userCannotProceed = !(userCheck1 && userCheck2 && userCheck3 && userCheck4);
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <Container>
         <Header title="almost there" onBack={() => this.props.navigation.goBack(null)} />
-        <Wrapper regularPadding>
+        <ScrollWrapper regularPadding>
           <Paragraph light small style={{ marginTop: 10, marginBottom: 50 }}>
             With great power comes great responsibility. Make sure you are aware of the following.
           </Paragraph>
@@ -153,7 +168,20 @@ class LegalTerms extends React.Component<Props, State> {
             </CheckboxText>
           </Checkbox>
 
-        </Wrapper>
+          <Checkbox
+            onPress={() => this.toggleCheckbox('userCheck4')}
+          >
+            <CheckboxText>
+              {'I have read, understand, and agree to the '}
+              <TextLink
+                onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
+              >
+                Privacy Policy
+              </TextLink>
+            </CheckboxText>
+          </Checkbox>
+
+        </ScrollWrapper>
         <Footer>
           <MultiButtonWrapper>
             <Button
@@ -172,10 +200,16 @@ class LegalTerms extends React.Component<Props, State> {
           </MultiButtonWrapper>
         </Footer>
 
-        <IFrameModal
+        <HTMLContentModal
           isVisible={visibleModal === TERMS_OF_USE_MODAL}
           modalHide={this.closeModals}
-          uri="https://pillarproject.io/en/legal/terms-of-use/"
+          htmlEndpoint="terms_of_service"
+        />
+
+        <HTMLContentModal
+          isVisible={visibleModal === PRIVACY_POLICY_MODAL}
+          modalHide={this.closeModals}
+          htmlEndpoint="privacy_policy"
         />
 
         <SlideModal

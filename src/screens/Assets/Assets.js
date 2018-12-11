@@ -465,9 +465,7 @@ class AssetsScreen extends React.Component<Props, State> {
   }
 
   addTokenToWallet = (asset: Asset) => {
-    const {
-      addAsset,
-    } = this.props;
+    const { addAsset } = this.props;
 
     addAsset(asset);
     Toast.show({
