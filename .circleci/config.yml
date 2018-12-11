@@ -679,7 +679,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/android-build-fails
+                  - develop
       - stage_ios:
           requires:
             - build
