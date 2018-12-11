@@ -74,9 +74,7 @@ const ManageConnectionModal = (props: Props) => {
       isVisible={showManageContactModal}
       onModalHide={onModalHide}
       title="manage"
-      dotColor={baseColors.warmPurple}
       titleStyles={{
-        fontSize: fontSizes.small,
         lineHeight: 21,
         letterSpacing: 0.1,
       }}

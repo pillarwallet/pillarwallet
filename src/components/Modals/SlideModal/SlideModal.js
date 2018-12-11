@@ -92,7 +92,6 @@ const ModalBackground = styled.View`
 
 const ModalSubtitle = styled(SubTitle)`
   padding: 10px 0;
-  color: red;
   color: ${UIColors.primary};
 `;
 

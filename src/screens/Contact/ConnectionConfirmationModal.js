@@ -61,7 +61,6 @@ const ConnectionConfirmationModal = (props: Props) => {
         marginBottom: 22,
       }}
       titleStyles={{
-        fontSize: fontSizes.small,
         lineHeight: 21,
         letterSpacing: 0.1,
       }}
