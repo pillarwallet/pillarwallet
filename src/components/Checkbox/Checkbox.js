@@ -31,7 +31,6 @@ const CheckboxWrapper = styled.View`
   flex-direction: row;
   align-items: flex-start;
   width: 100%;
-  margin-bottom: 20px;
   opacity: ${props => props.disabled ? 0.5 : 1};
 `;
 
@@ -99,6 +98,7 @@ export default class Checkbox extends React.Component<Props, State> {
       <TouchableHighlight
         onPress={() => this.toggleCheckBox()}
         underlayColor="transparent"
+        style={{ marginBottom: 20 }}
       >
         <CheckboxWrapper disabled={disabled}>
           <CheckboxBox active={disabled ? false : checked}>

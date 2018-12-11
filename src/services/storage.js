@@ -108,7 +108,7 @@ Storage.prototype.removeAll = function () {
     return Promise.all(result.rows.map(row => {
       return this.db.remove(row.id, row.value.rev);
     }));
-  });
+  }).then(() => this.db.compact());
 };
 
 Storage.getInstance = function (name: string, opts: ?Object) {
