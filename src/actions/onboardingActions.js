@@ -31,6 +31,7 @@ import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import Toast from 'components/Toast';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
 
@@ -99,7 +100,7 @@ export const registerWalletAction = () => {
     } = currentState.wallet.onboarding;
 
     const mnemonicPhrase = mnemonic.original;
-    const { isBackedUp } = currentState.wallet.backupStatus;
+    const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
     // STEP 0: Clear local storage
     await storage.removeAll();
@@ -195,6 +196,17 @@ export const registerWalletAction = () => {
     dispatch(saveDbAction('assets', { assets: initialAssets }));
 
     // STEP 6: all done, navigate to the assets screen
+
+    const isWalletBackedUp = isImported || isBackedUp;
+    if (!isWalletBackedUp) {
+      Toast.show({
+        message: 'Please go to settings to complete wallet backup. Pillar cannot help you retrieve your wallet if lost.', // eslint-disable-line max-len
+        type: 'warning',
+        title: 'WARNING - Your funds are currently at risk.',
+        autoClose: false,
+      });
+    }
+
     navigateToAppFlow();
   };
 };
