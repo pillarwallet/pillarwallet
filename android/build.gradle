@@ -2,7 +2,9 @@
 
 buildscript {
   repositories {
-    jcenter()
+    jcenter(
+        url 'https://dl.bintray.com/android/android-tools/'
+    )
     maven {
       url 'https://maven.google.com/'
       name 'Google'
@@ -12,9 +14,6 @@ buildscript {
     }
     maven {
       url "$rootDir/../node_modules/react-native/android"
-    }
-    maven {
-      url "$rootDir/../node_modules/react-native-vector-icons/android"
     }
   }
   dependencies {
