@@ -13,6 +13,9 @@ buildscript {
     maven {
       url "$rootDir/../node_modules/react-native/android"
     }
+    maven {
+      url "$rootDir/../node_modules/react-native-vector-icons/android"
+    }
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.3'
@@ -65,4 +68,3 @@ ext {
   googlePlayServicesVersion = "15.0.0"
   buildToolsVersion = "25.0.2"
 }
-
