@@ -2,7 +2,7 @@
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
-import { delay } from 'utils/common';
+import { delay, uniqBy } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import ChatService from 'services/chat';
@@ -21,17 +21,21 @@ import {
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import {
+  TYPE_ACCEPTED,
+  TYPE_RECEIVED,
+  UPDATE_INVITATIONS,
+} from 'constants/invitationsConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
+import { ToastWalletBackup } from 'utils/toasts';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
-import { ToastWalletBackup } from 'utils/toasts';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
 
@@ -77,6 +81,27 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
     fcmToken,
     registrationSucceed,
   };
+};
+
+const finishRegistration = async (api: Object, userInfo: Object, dispatch: Function) => {
+  // get & store initial assets
+  const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
+  const rates = await getExchangeRates(Object.keys(initialAssets));
+
+  dispatch({
+    type: UPDATE_RATES,
+    payload: rates,
+  });
+
+  dispatch({
+    type: SET_INITIAL_ASSETS,
+    payload: initialAssets,
+  });
+
+  dispatch(saveDbAction('assets', { assets: initialAssets }));
+
+  // restore access tokens
+  dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
@@ -180,24 +205,10 @@ export const registerWalletAction = () => {
 
     if (!registrationSucceed) { return; }
 
-    // STEP 5: get&store initial assets
-    const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
-    const rates = await getExchangeRates(Object.keys(initialAssets));
-
-    dispatch({
-      type: UPDATE_RATES,
-      payload: rates,
-    });
-
-    dispatch({
-      type: SET_INITIAL_ASSETS,
-      payload: initialAssets,
-    });
-
-    dispatch(saveDbAction('assets', { assets: initialAssets }));
+    // STEP 5: finish registration
+    await finishRegistration(api, userInfo, dispatch);
 
     // STEP 6: all done, navigate to the assets screen
-
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp);
   };
@@ -221,9 +232,10 @@ export const registerOnBackendAction = () => {
     }
     await delay(1000);
 
-    const { registrationSucceed } = await getTokenWalletAndRegister(api, user, dispatch);
+    const { registrationSucceed, userInfo } = await getTokenWalletAndRegister(api, user, dispatch);
     if (!registrationSucceed) { return; }
 
+    await finishRegistration(api, userInfo, dispatch);
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp);
   };
@@ -262,3 +274,55 @@ export const validateUserDetailsAction = ({ username }: Object) => {
     });
   };
 };
+
+function restoreAccessTokensAction(walletId: string) {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const restoredAccessTokens = [];
+    const userAccessTokens = await api.fetchAccessTokens(walletId);
+
+    // get connectionRequestedEvent & connectionAcceptedEvent notifications
+    const types = [
+      TYPE_RECEIVED,
+      TYPE_ACCEPTED,
+    ];
+    const rawNotifications = await api.fetchNotifications(walletId, types.join(' '));
+    if (!rawNotifications.length) return;
+
+    const notifications = rawNotifications
+      .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
+      .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
+      .sort((a, b) => b.createdAt - a.createdAt);
+
+    // split into groups
+    let receivedConnectionRequests = notifications.filter(notification => notification.type === TYPE_RECEIVED);
+    let sentConnectionRequests = notifications.filter(notification => notification.type === TYPE_ACCEPTED);
+
+    // remove duplicates
+    receivedConnectionRequests = uniqBy(receivedConnectionRequests, 'id');
+    sentConnectionRequests = uniqBy(sentConnectionRequests, 'id');
+
+    userAccessTokens.forEach(token => {
+      // check in received connection requests
+      let found = receivedConnectionRequests.find(({ id }) => id === token.contactId);
+
+      // not found? check in sent connection requests
+      if (!found) {
+        found = sentConnectionRequests.find(({ id }) => id === token.contactId);
+      }
+
+      // can't find again? then skip this connection
+      if (!found) return;
+
+      restoredAccessTokens.push({
+        myAccessToken: token.accessKey,
+        userId: token.contactId,
+        userAccessToken: found.connectionKey,
+      });
+    });
+    dispatch({
+      type: UPDATE_ACCESS_TOKENS,
+      payload: restoredAccessTokens,
+    });
+    dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
+  };
+}
