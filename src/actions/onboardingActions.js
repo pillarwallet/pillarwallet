@@ -269,7 +269,7 @@ export const validateUserDetailsAction = ({ username }: Object) => {
 function restoreAccessTokensAction(walletId: string) {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const restoredAccessTokens = [];
-    const backupedAccessTokens = await api.fetchBackupedAccessTokens(walletId);
+    const userAccessTokens = await api.fetchAccessTokens(walletId);
 
     // get connectionRequestedEvent & connectionAcceptedEvent notifications
     const types = [
@@ -292,7 +292,7 @@ function restoreAccessTokensAction(walletId: string) {
     receivedConnectionRequests = uniqBy(receivedConnectionRequests, 'id');
     sentConnectionRequests = uniqBy(sentConnectionRequests, 'id');
 
-    backupedAccessTokens.forEach(token => {
+    userAccessTokens.forEach(token => {
       // check in received connection requests
       let found = receivedConnectionRequests.find(({ id }) => id === token.contactId);
 
