@@ -112,6 +112,18 @@ export const startListeningNotificationsAction = () => {
     if (notificationsListener) return;
     notificationsListener = firebase.notifications().onNotification(debounce(message => {
       if (!message._data || !Object.keys(message._data).length) return;
+      if (message._data.support && message._body) {
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            message: message._body,
+            autoClose: false,
+            messageType: 'info',
+            title: message._title,
+          },
+        });
+        return;
+      }
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
       if (notification.type === BCX) {
