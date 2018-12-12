@@ -39,9 +39,18 @@ const GAS_LIMIT = 500000;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 const genericToken = require('assets/images/tokens/genericTokenIcon.png');
 
-const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: boolean, formSubmitted: boolean) => {
+const getFormStructure = (
+  maxAmount: number,
+  minAmount: number,
+  enoughForFee: boolean,
+  formSubmitted: boolean,
+  decimals: number) => {
   const Amount = t.refinement(t.String, (amount): boolean => {
     if (!isValidNumber(amount.toString())) return false;
+
+    if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+      return false;
+    }
 
     amount = parseNumber(amount.toString());
     const isValid = enoughForFee && amount <= maxAmount && amount >= minAmount;
@@ -62,6 +71,8 @@ const getFormStructure = (maxAmount: number, minAmount: number, enoughForFee: bo
       return 'Amount should not exceed the sum of total balance and est. network fee';
     } else if (amount < minAmount) {
       return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
+    } else if (decimals === 0 && amount.toString().indexOf('.') > -1) {
+      return 'Amount should not contain decimal places';
     }
     return 'Amount should be specified.';
   };
@@ -321,13 +332,13 @@ class SendTokenAmount extends React.Component<Props, State> {
       rates,
       baseFiatCurrency,
     } = this.props;
-    const { token, icon } = this.assetData;
+    const { token, icon, decimals } = this.assetData;
     const balance = getBalance(balances, token);
     const formattedBalance = formatAmount(balance);
     const txFeeInWei = this.getTxFeeInWei();
     const maxAmount = this.calculateMaxAmount(token, balance, txFeeInWei);
     const isEnoughForFee = this.checkIfEnoughForFee(balances, txFeeInWei);
-    const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted);
+    const formStructure = getFormStructure(maxAmount, MIN_TX_AMOUNT, isEnoughForFee, this.formSubmitted, decimals);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = balance * getRate(rates, token, fiatCurrency);
     const formattedBalanceInFiat = formatMoney(totalInFiat);
