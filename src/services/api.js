@@ -342,3 +342,11 @@ SDKWrapper.prototype.rejectInvitation = function (targetUserId: string, accessKe
     .then(({ data }) => data)
     .catch(() => null);
 };
+
+SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
+  console.log('api fetchAccessTokens', walletId);
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
+    .then(({ data }) => data)
+    .catch(() => []);
+};
