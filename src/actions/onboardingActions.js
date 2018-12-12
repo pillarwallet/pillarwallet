@@ -31,7 +31,7 @@ import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
-import Toast from 'components/Toast';
+import { ToastWalletBackup } from 'utils/toasts';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
 
@@ -79,13 +79,14 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   };
 };
 
-const navigateToAppFlow = () => {
+const navigateToAppFlow = (isWalletBackedUp: boolean) => {
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: ASSETS }),
   });
 
+  ToastWalletBackup(isWalletBackedUp);
   navigate(navigateToAssetsAction);
 };
 
@@ -198,22 +199,18 @@ export const registerWalletAction = () => {
     // STEP 6: all done, navigate to the assets screen
 
     const isWalletBackedUp = isImported || isBackedUp;
-    if (!isWalletBackedUp) {
-      Toast.show({
-        message: 'Please go to settings to complete wallet backup. Pillar cannot help you retrieve your wallet if lost.', // eslint-disable-line max-len
-        type: 'warning',
-        title: 'WARNING - Your funds are currently at risk.',
-        autoClose: false,
-      });
-    }
-
-    navigateToAppFlow();
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 
 export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { wallet: { onboarding: { apiUser } } } = getState();
+    const {
+      wallet: {
+        onboarding: { apiUser },
+        backupStatus: { isBackedUp, isImported },
+      },
+    } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
@@ -227,7 +224,8 @@ export const registerOnBackendAction = () => {
     const { registrationSucceed } = await getTokenWalletAndRegister(api, user, dispatch);
     if (!registrationSucceed) { return; }
 
-    navigateToAppFlow();
+    const isWalletBackedUp = isImported || isBackedUp;
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 

@@ -440,8 +440,8 @@ class HomeScreen extends React.Component<Props, State> {
                   backgroundColor: baseColors.burningFire,
                   borderRadius: 4,
                   position: 'absolute',
-                  top: 4,
-                  right: 1,
+                  top: 6,
+                  right: -6,
                 }}
               />}
               <HomeHeaderButton

@@ -22,7 +22,7 @@ import Storage from 'services/storage';
 import { navigate, getNavigationState } from 'services/navigation';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
-import Toast from 'components/Toast';
+import { ToastWalletBackup } from 'utils/toasts';
 import { setupSentryAction } from 'actions/appActions';
 import { saveDbAction } from './dbActions';
 
@@ -96,15 +96,7 @@ export const loginAction = (pin: string) => {
       } = getState().wallet.backupStatus;
 
       const isWalletBackedUp = isImported || isBackedUp;
-
-      if (!isWalletBackedUp) {
-        Toast.show({
-          message: 'Please go to settings to complete wallet backup. Pillar cannot help you retrieve your wallet if lost.', // eslint-disable-line max-len
-          type: 'warning',
-          title: 'WARNING - Your funds are currently at risk.',
-          autoClose: false,
-        });
-      }
+      ToastWalletBackup(isWalletBackedUp);
 
       navigate(navigateToAppAction);
     } catch (e) {
