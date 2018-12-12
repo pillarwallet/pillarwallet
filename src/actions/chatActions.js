@@ -73,7 +73,7 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
 
     const timestamp = new Date(message.createdAt).getTime();
     const msg = {
-      _id: timestamp,
+      _id: timestamp.toString(),
       createdAt: timestamp,
       text: message.text,
       user: {
