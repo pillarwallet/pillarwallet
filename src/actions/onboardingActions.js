@@ -32,7 +32,7 @@ import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
-import { ToastWalletBackup } from 'utils/toasts';
+import { toastWalletBackup } from 'utils/toasts';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
@@ -111,7 +111,7 @@ const navigateToAppFlow = (isWalletBackedUp: boolean) => {
     action: NavigationActions.navigate({ routeName: ASSETS }),
   });
 
-  ToastWalletBackup(isWalletBackedUp);
+  toastWalletBackup(isWalletBackedUp);
   navigate(navigateToAssetsAction);
 };
 
