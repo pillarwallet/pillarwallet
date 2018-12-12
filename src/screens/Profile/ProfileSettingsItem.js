@@ -76,6 +76,12 @@ const ItemValue = styled(BaseText)`
   align-self: stretch;
 `;
 
+const WarningIcon = styled(Icon)`
+  font-size: ${fontSizes.large};
+  margin-right: 10px;
+  color: ${baseColors.burningFire};
+`;
+
 const ListAddon = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -108,6 +114,7 @@ const ButtonWrapper = ({ onPress, children }) => {
 type Props = {
   label: string,
   notificationsCount?: number,
+  warningNotification?: ?boolean,
   onPress?: ?Function,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
@@ -120,6 +127,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
       toggle,
       onPress,
       notificationsCount,
+      warningNotification,
     } = this.props;
     if (!toggle) {
       return (
@@ -130,6 +138,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
           </ItemLabelHolder>
           <ListAddon>
             {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
+            {!!warningNotification && <WarningIcon name="warning-circle" />}
             <Icon
               name="chevron-right"
               style={{
