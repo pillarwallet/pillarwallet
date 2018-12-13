@@ -49,6 +49,7 @@ type Props = {
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   intercomNotificationsCount: number,
+  backupStatus: Object,
 };
 
 type esDataType = {
@@ -302,6 +303,7 @@ class HomeScreen extends React.Component<Props, State> {
       rejectInvitation,
       intercomNotificationsCount,
       navigation,
+      backupStatus,
     } = this.props;
     const {
       showCamera,
@@ -310,6 +312,11 @@ class HomeScreen extends React.Component<Props, State> {
       esData,
       usernameWidth,
     } = this.state;
+
+    const {
+      isImported,
+      isBackedUp,
+    } = backupStatus;
 
     const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
@@ -399,6 +406,7 @@ class HomeScreen extends React.Component<Props, State> {
     ];
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
+    const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -425,6 +433,17 @@ class HomeScreen extends React.Component<Props, State> {
             </HomeHeaderLeft>
             <HomeHeaderBody />
             <HomeHeaderRight>
+              {!isWalletBackedUp && <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  backgroundColor: baseColors.burningFire,
+                  borderRadius: 4,
+                  position: 'absolute',
+                  top: 6,
+                  right: -6,
+                }}
+              />}
               <HomeHeaderButton
                 flexEnd
                 icon="settings"
@@ -560,7 +579,7 @@ const mapStateToProps = ({
   user: { data: user },
   history: { data: history },
   invitations: { data: invitations },
-  wallet: { data: wallet },
+  wallet: { data: wallet, backupStatus },
   notifications: { intercomNotificationsCount },
 }) => ({
   contacts,
@@ -569,6 +588,7 @@ const mapStateToProps = ({
   invitations,
   wallet,
   intercomNotificationsCount,
+  backupStatus,
 });
 
 const mapDispatchToProps = (dispatch) => ({
