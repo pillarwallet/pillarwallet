@@ -51,7 +51,7 @@ import {
 
 // constants
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
-import { SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
+import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET } from 'constants/navigationConstants';
 
 // configs
@@ -595,8 +595,7 @@ class AssetsScreen extends React.Component<Props, State> {
               width: '100%',
             }}
             numColumns={columnAmount}
-            // ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED)
+            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
               ? this.renderSeparator
               : null}
             refreshControl={
