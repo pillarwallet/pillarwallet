@@ -6,16 +6,16 @@ import t from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, Wrapper } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { BoldText, Paragraph } from 'components/Typography';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
-import Title from 'components/Title';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 import { isIphoneX } from 'utils/common';
+import { fontSizes, fontWeights } from 'utils/variables';
 
 const { Form } = t.form;
 const MIN_USERNAME_LENGTH = 4;
@@ -25,7 +25,24 @@ const IntroParagraph = styled(Paragraph)`
   margin: 10px 0 50px;
 `;
 
-const LoginForm = styled(Form)`
+const LoginForm = styled(Form)``;
+
+const UsernameWrapper = styled(Wrapper)`
+  margin: 36px 0 20px;
+  align-self: center;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  top: 2px;
+`;
+
+const Text = styled(BoldText)`
+  line-height: ${fontSizes.large};
+  font-size: ${fontSizes.large};
+  font-weight: ${fontWeights.bold};
+  width: 100%;
+  text-align: center;
+  max-width: 230px;
 `;
 
 function InputTemplate(locals) {
@@ -278,11 +295,10 @@ class NewProfile extends React.Component<Props, State> {
           diameter={PROFILE_IMAGE_WIDTH}
           style={{ marginBottom: 47 }}
         />
-        <Title
-          title={`Welcome back, ${apiUser.username}!`}
-          align="center"
-          noBlueDot
-        />
+        <UsernameWrapper>
+          <Text>Welcome back,</Text>
+          <Text>${apiUser.username}.</Text>
+        </UsernameWrapper>
         <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
           Your Pillar Wallet is now restored. We are happy to see you again.
         </Paragraph>
