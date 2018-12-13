@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
+import { Alert } from 'react-native';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -38,6 +39,14 @@ const NOTIFICATION_ROUTES = {
   [BCX]: HOME,
   [SIGNAL]: CHAT,
 };
+
+function checkForSupportAlert(messageData) {
+  if (messageData && messageData.support && messageData.message) {
+    Alert.alert(messageData.title, messageData.message);
+    return true;
+  }
+  return false;
+}
 
 export const startListeningIntercomNotificationsAction = () => {
   return async (dispatch: Function) => {
@@ -112,18 +121,7 @@ export const startListeningNotificationsAction = () => {
     if (notificationsListener) return;
     notificationsListener = firebase.notifications().onNotification(debounce(message => {
       if (!message._data || !Object.keys(message._data).length) return;
-      if (message._data.support && message._body) {
-        dispatch({
-          type: ADD_NOTIFICATION,
-          payload: {
-            message: message._body,
-            autoClose: false,
-            messageType: 'info',
-            title: message._title,
-          },
-        });
-        return;
-      }
+      if (checkForSupportAlert(message._data)) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
       if (notification.type === BCX) {
@@ -174,6 +172,7 @@ export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
+      checkForSupportAlert(notificationOpen.notification._data);
       const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
@@ -184,6 +183,7 @@ export const startListeningOnOpenNotificationAction = () => {
     }
     if (notificationsOpenerListener) return;
     notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
+      checkForSupportAlert(message.notification._data);
       firebase.notifications().setBadge(0);
       const { navigator } = getNavigationState();
       if (!navigator) return;
