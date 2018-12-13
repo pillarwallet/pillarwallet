@@ -22,6 +22,7 @@ import Storage from 'services/storage';
 import { navigate, getNavigationState } from 'services/navigation';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
+import { toastWalletBackup } from 'utils/toasts';
 import { setupSentryAction } from 'actions/appActions';
 import { saveDbAction } from './dbActions';
 
@@ -88,6 +89,15 @@ export const loginAction = (pin: string) => {
           params: lastActiveScreenParams,
         }),
       });
+
+      const {
+        isImported,
+        isBackedUp,
+      } = getState().wallet.backupStatus;
+
+      const isWalletBackedUp = isImported || isBackedUp;
+      toastWalletBackup(isWalletBackedUp);
+
       navigate(navigateToAppAction);
     } catch (e) {
       dispatch({
