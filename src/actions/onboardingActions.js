@@ -32,6 +32,7 @@ import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
+import { toastWalletBackup } from 'utils/toasts';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
@@ -103,13 +104,14 @@ const finishRegistration = async (api: Object, userInfo: Object, dispatch: Funct
   dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
 };
 
-const navigateToAppFlow = () => {
+const navigateToAppFlow = (isWalletBackedUp: boolean) => {
   const navigateToAssetsAction = NavigationActions.navigate({
     routeName: APP_FLOW,
     params: {},
     action: NavigationActions.navigate({ routeName: ASSETS }),
   });
 
+  toastWalletBackup(isWalletBackedUp);
   navigate(navigateToAssetsAction);
 };
 
@@ -124,7 +126,7 @@ export const registerWalletAction = () => {
     } = currentState.wallet.onboarding;
 
     const mnemonicPhrase = mnemonic.original;
-    const { isBackedUp } = currentState.wallet.backupStatus;
+    const { isBackedUp, isImported } = currentState.wallet.backupStatus;
 
     // STEP 0: Clear local storage
     await storage.removeAll();
@@ -207,13 +209,19 @@ export const registerWalletAction = () => {
     await finishRegistration(api, userInfo, dispatch);
 
     // STEP 6: all done, navigate to the assets screen
-    navigateToAppFlow();
+    const isWalletBackedUp = isImported || isBackedUp;
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 
 export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    const { wallet: { onboarding: { apiUser } } } = getState();
+    const {
+      wallet: {
+        onboarding: { apiUser },
+        backupStatus: { isBackedUp, isImported },
+      },
+    } = getState();
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
@@ -228,7 +236,8 @@ export const registerOnBackendAction = () => {
     if (!registrationSucceed) { return; }
 
     await finishRegistration(api, userInfo, dispatch);
-    navigateToAppFlow();
+    const isWalletBackedUp = isImported || isBackedUp;
+    navigateToAppFlow(isWalletBackedUp);
   };
 };
 
