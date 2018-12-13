@@ -14,7 +14,6 @@ import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
-import { isIphoneX } from 'utils/common';
 import { fontSizes, fontWeights } from 'utils/variables';
 
 const { Form } = t.form;
@@ -278,7 +277,6 @@ class NewProfile extends React.Component<Props, State> {
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
-            marginBottom={isIphoneX() ? '20px' : '0px'}
           />
           }
         </Footer>
