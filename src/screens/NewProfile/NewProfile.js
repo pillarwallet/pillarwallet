@@ -15,7 +15,6 @@ import Title from 'components/Title';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
-import { isIphoneX } from 'utils/common';
 
 const { Form } = t.form;
 const MIN_USERNAME_LENGTH = 4;
@@ -261,7 +260,6 @@ class NewProfile extends React.Component<Props, State> {
             onPress={this.handleSubmit}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
-            marginBottom={isIphoneX() ? '20px' : '0px'}
           />
           }
         </Footer>
