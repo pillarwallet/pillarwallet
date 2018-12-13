@@ -24,7 +24,7 @@ import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
-import AssetCard from 'components/AssetCard';
+// import AssetCard from 'components/AssetCard';
 import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
 import { Container, Wrapper } from 'components/Layout';
@@ -108,13 +108,15 @@ const horizontalPadding = (layout, side) => {
     case MINIMIZED: {
       return spacing.rhythm - (spacing.rhythm / 4);
     }
-    case SIMPLIFIED: {
+    // case SIMPLIFIED: {
+    //   if (Platform.OS === 'android') return 10;
+    //   return side === 'left' ? 0 : spacing.rhythm - 9;
+    // }
+    default: {
+      // if (Platform.OS === 'android') return 10;
+      // return 0;
       if (Platform.OS === 'android') return 10;
       return side === 'left' ? 0 : spacing.rhythm - 9;
-    }
-    default: {
-      if (Platform.OS === 'android') return 10;
-      return 0;
     }
   }
 };
@@ -235,13 +237,13 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   renderSwipeoutBtns = (asset) => {
-    const { assetsLayout } = this.props;
-    const isExpanded = assetsLayout === EXPANDED;
+    // const { assetsLayout } = this.props;
+    // const isExpanded = assetsLayout === EXPANDED;
     const isETH = asset.symbol === ETH;
     return [{
       component: (
         <HideAssetButton
-          expanded={isExpanded}
+          // expanded={isExpanded}
           onPress={isETH ? this.showETHRemovalNotification : this.handleAssetRemoval(asset)}
           disabled={isETH}
         />),
@@ -321,19 +323,19 @@ class AssetsScreen extends React.Component<Props, State> {
     const isETH = asset.symbol === ETH;
 
     switch (assetsLayout) {
-      case SIMPLIFIED: {
-        return (
-          <Swipeout
-            right={this.renderSwipeoutBtns(asset)}
-            sensitivity={10}
-            backgroundColor="transparent"
-            buttonWidth={80}
-            close={forceHideRemoval}
-          >
-            <AssetCardSimplified {...props} />
-          </Swipeout>
-        );
-      }
+      // case SIMPLIFIED: {
+      //   return (
+      //     <Swipeout
+      //       right={this.renderSwipeoutBtns(asset)}
+      //       sensitivity={10}
+      //       backgroundColor="transparent"
+      //       buttonWidth={80}
+      //       close={forceHideRemoval}
+      //     >
+      //       <AssetCardSimplified {...props} />
+      //     </Swipeout>
+      //   );
+      // }
       case MINIMIZED: {
         return (
           <AssetCardMinimized
@@ -366,9 +368,20 @@ class AssetsScreen extends React.Component<Props, State> {
             buttonWidth={80}
             close={forceHideRemoval}
           >
-            <AssetCard {...props} icon={assetData.icon} horizontalPadding />
+            <AssetCardSimplified {...props} />
           </Swipeout>
         );
+        // return (
+        //   <Swipeout
+        //     right={this.renderSwipeoutBtns(asset)}
+        //     sensitivity={10}
+        //     backgroundColor="transparent"
+        //     buttonWidth={80}
+        //     close={forceHideRemoval}
+        //   >
+        //     <AssetCard {...props} icon={assetData.icon} horizontalPadding />
+        //   </Swipeout>
+        // );
       }
     }
   };
