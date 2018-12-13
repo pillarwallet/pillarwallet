@@ -5,7 +5,7 @@ import styled from 'styled-components/native';
 import Header from 'components/Header';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
-import { Container } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import { spacing, baseColors, UIColors } from 'utils/variables';
 import { SubTitle } from 'components/Typography';
 import { Keyboard } from 'react-native';
@@ -63,6 +63,8 @@ const HeaderWrapper = styled.View`
 const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
+  ${props => props.fullScreen ? 'padding-top: 20px' : ''};
+  ${props => props.bgColor ? `background-color: ${props.bgColor}` : ''}  
 `;
 
 const Backdrop = styled.TouchableWithoutFeedback`
@@ -147,7 +149,7 @@ export default class SlideModal extends React.Component<Props, *> {
       isVisible,
       showHeader,
       centerTitle,
-      backgroundColor,
+      backgroundColor = baseColors.lightGray,
       avoidKeyboard,
       eventDetail,
       scrollOffset,
@@ -187,9 +189,9 @@ export default class SlideModal extends React.Component<Props, *> {
     const modalContent = () => {
       if (fullScreen) {
         return (
-          <Container color={backgroundColor}>
+          <Wrapper fullScreen>
             {modalInner}
-          </Container>
+          </Wrapper>
         );
       }
 
@@ -216,6 +218,8 @@ export default class SlideModal extends React.Component<Props, *> {
         onSwipe={this.hideModal}
         onModalHide={onModalHidden}
         onBackdropPress={this.hideModal}
+        backdropOpacity={fullScreen ? 1 : 0.7}
+        backdropColor={fullScreen ? backgroundColor : baseColors.black}
         onBackButtonPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
@@ -231,7 +235,7 @@ export default class SlideModal extends React.Component<Props, *> {
         }}
       >
         <Root>
-          <ContentWrapper>
+          <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor}>
             {!fullScreen &&
               <Backdrop onPress={this.hideModal}>
                 <ContentWrapper />
