@@ -297,7 +297,7 @@ class NewProfile extends React.Component<Props, State> {
         />
         <UsernameWrapper>
           <Text>Welcome back,</Text>
-          <Text>${apiUser.username}.</Text>
+          <Text>{apiUser.username}.</Text>
         </UsernameWrapper>
         <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
           Your Pillar Wallet is now restored. We are happy to see you again.
