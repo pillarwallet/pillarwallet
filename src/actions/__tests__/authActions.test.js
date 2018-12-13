@@ -37,7 +37,13 @@ describe('Wallet actions', () => {
   });
 
   beforeEach(() => {
-    store = mockStore({ assets: { data: {} }, navigation: {} });
+    store = mockStore({
+      assets: { data: {} },
+      navigation: {},
+      wallet: {
+        backupStatus: { isBackedUp: false, isImported: false },
+      },
+    });
   });
 
   it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {

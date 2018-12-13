@@ -3,6 +3,9 @@
 buildscript {
   repositories {
     jcenter()
+    jcenter {
+        url 'https://dl.bintray.com/android/android-tools/'
+    }
     maven {
       url 'https://maven.google.com/'
       name 'Google'
@@ -65,4 +68,3 @@ ext {
   googlePlayServicesVersion = "15.0.0"
   buildToolsVersion = "25.0.2"
 }
-

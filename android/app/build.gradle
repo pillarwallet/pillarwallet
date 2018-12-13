@@ -28,6 +28,15 @@ repositories {
     // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
     url "https://maven.google.com"
   }
+  jcenter {
+    url 'https://google.bintray.com/flexbox-layout/'
+  }
+  maven {
+    url 'https://google.bintray.com/flexbox-layout/'
+  }
+  maven {
+    url 'https://jitpack.io'
+  }
 }
 
 def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -245,6 +254,25 @@ configurations.all {
     if (requested.group == 'com.android.support') {
       if (!requested.name.startsWith("multidex")) {
         details.useVersion '26.0.1'
+      }
+    }
+  }
+}
+
+rootProject.subprojects { project ->
+  buildscript {
+    repositories {
+      jcenter {
+        url 'https://dl.bintray.com/android/android-tools/'
+      }
+      jcenter {
+        url 'https://firebase.bintray.com/gradle'
+      }
+      maven {
+        url 'https://maven.google.com'
+      }
+      maven {
+        url 'https://jitpack.io'
       }
     }
   }
