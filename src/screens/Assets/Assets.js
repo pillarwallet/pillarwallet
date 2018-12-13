@@ -51,7 +51,7 @@ import {
 
 // constants
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
-import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
+import { SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
 import { ASSET } from 'constants/navigationConstants';
 
 // configs
@@ -108,13 +108,15 @@ const horizontalPadding = (layout, side) => {
     case MINIMIZED: {
       return spacing.rhythm - (spacing.rhythm / 4);
     }
-    case SIMPLIFIED: {
+    // case SIMPLIFIED: {
+    //   if (Platform.OS === 'android') return 10;
+    //   return side === 'left' ? 0 : spacing.rhythm - 9;
+    // }
+    default: {
+      // if (Platform.OS === 'android') return 10;
+      // return 0;
       if (Platform.OS === 'android') return 10;
       return side === 'left' ? 0 : spacing.rhythm - 9;
-    }
-    default: {
-      if (Platform.OS === 'android') return 10;
-      return 0;
     }
   }
 };
@@ -593,7 +595,8 @@ class AssetsScreen extends React.Component<Props, State> {
               width: '100%',
             }}
             numColumns={columnAmount}
-            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+            // ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED)
               ? this.renderSeparator
               : null}
             refreshControl={
