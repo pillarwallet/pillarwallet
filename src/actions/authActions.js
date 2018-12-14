@@ -12,14 +12,14 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, AUTH_FLOW, ONBOARDING_FLOW, ASSETS } from 'constants/navigationConstants';
+import { APP_FLOW, AUTH_FLOW, ONBOARDING_FLOW, ASSETS, CHAT, CHAT_LIST } from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { delay } from 'utils/common';
 import { generateChatPassword } from 'utils/chat';
 import Storage from 'services/storage';
-import { navigate, getNavigationState } from 'services/navigation';
+import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import { toastWalletBackup } from 'utils/toasts';
@@ -81,13 +81,27 @@ export const loginAction = (pin: string) => {
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
+
+      const pathAndParams = getNavigationPathAndParamsState();
+      if (!pathAndParams) return;
+      const currentFlow = pathAndParams.path.split('/')[0];
+
+      const navigateToLastActiveScreen = NavigationActions.navigate({
+        routeName: lastActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
+        params: lastActiveScreenParams,
+      });
+
+      const isOpeningAChatNotification = lastActiveScreen === CHAT && currentFlow === AUTH_FLOW;
+      const navigateToRoute = isOpeningAChatNotification ?
+        NavigationActions.navigate({
+          routeName: CHAT_LIST,
+          params: {},
+          action: navigateToLastActiveScreen,
+        }) : navigateToLastActiveScreen;
       const navigateToAppAction = NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
-        action: NavigationActions.navigate({
-          routeName: lastActiveScreen || ASSETS, // current active screen will be always AUTH_FLOW due to login/logout
-          params: lastActiveScreenParams,
-        }),
+        action: navigateToRoute,
       });
 
       const {
