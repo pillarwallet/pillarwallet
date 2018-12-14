@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
+import { Alert } from 'react-native';
 import { processNotification } from 'utils/notifications';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
@@ -12,7 +13,7 @@ import {
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { getExistingChatsAction, getChatByContactAction } from 'actions/chatActions';
-import { navigate, getNavigationState, updateNavigationLastScreenState } from 'services/navigation';
+import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
   ADD_NOTIFICATION,
@@ -38,6 +39,14 @@ const NOTIFICATION_ROUTES = {
   [BCX]: HOME,
   [SIGNAL]: CHAT,
 };
+
+function checkForSupportAlert(messageData) {
+  if (messageData && messageData.support && messageData.message) {
+    Alert.alert(messageData.title, messageData.message);
+    return true;
+  }
+  return false;
+}
 
 export const startListeningIntercomNotificationsAction = () => {
   return async (dispatch: Function) => {
@@ -112,6 +121,7 @@ export const startListeningNotificationsAction = () => {
     if (notificationsListener) return;
     notificationsListener = firebase.notifications().onNotification(debounce(message => {
       if (!message._data || !Object.keys(message._data).length) return;
+      if (checkForSupportAlert(message._data)) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
       if (!notification) return;
       if (notification.type === BCX) {
@@ -121,9 +131,8 @@ export const startListeningNotificationsAction = () => {
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
-        const { navigator } = getNavigationState();
-        if (!navigator) return;
-        const navParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state).params;
+        const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+        if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         if (!!navParams.username && navParams.username === notification.navigationParams.username) {
           const contact = contacts.find(c => c.username === navParams.username) || {};
@@ -162,6 +171,7 @@ export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
     const notificationOpen = await firebase.notifications().getInitialNotification();
     if (notificationOpen) {
+      checkForSupportAlert(notificationOpen.notification._data);
       const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
@@ -172,10 +182,10 @@ export const startListeningOnOpenNotificationAction = () => {
     }
     if (notificationsOpenerListener) return;
     notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
+      checkForSupportAlert(message.notification._data);
       firebase.notifications().setBadge(0);
-      const { navigator } = getNavigationState();
-      if (!navigator) return;
-      const pathAndParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state);
+      const pathAndParams = getNavigationPathAndParamsState();
+      if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
       const { type, navigationParams = {}, asset } = processNotification(message.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
