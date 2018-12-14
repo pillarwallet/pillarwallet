@@ -22,7 +22,7 @@ const FormFooter = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: 10px 20px;
   width: 100%;
 `;
 
