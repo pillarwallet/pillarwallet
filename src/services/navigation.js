@@ -36,6 +36,11 @@ export function getNavigationState() {
   };
 }
 
+export function getNavigationPathAndParamsState() {
+  if (!_navigator) return null;
+  return _navigator._navigation.router.getPathAndParamsForState(_navigator._navigation.state);
+}
+
 export function updateNavigationLastScreenState({
   lastActiveScreen,
   lastActiveScreenParams = {},
