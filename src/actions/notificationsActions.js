@@ -12,7 +12,7 @@ import {
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { getExistingChatsAction, getChatByContactAction } from 'actions/chatActions';
-import { navigate, getNavigationState, updateNavigationLastScreenState } from 'services/navigation';
+import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
   ADD_NOTIFICATION,
@@ -121,9 +121,8 @@ export const startListeningNotificationsAction = () => {
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
-        const { navigator } = getNavigationState();
-        if (!navigator) return;
-        const navParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state).params;
+        const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+        if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         if (!!navParams.username && navParams.username === notification.navigationParams.username) {
           const contact = contacts.find(c => c.username === navParams.username) || {};
@@ -173,9 +172,8 @@ export const startListeningOnOpenNotificationAction = () => {
     if (notificationsOpenerListener) return;
     notificationsOpenerListener = firebase.notifications().onNotificationOpened((message) => {
       firebase.notifications().setBadge(0);
-      const { navigator } = getNavigationState();
-      if (!navigator) return;
-      const pathAndParams = navigator._navigation.router.getPathAndParamsForState(navigator._navigation.state);
+      const pathAndParams = getNavigationPathAndParamsState();
+      if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
       const { type, navigationParams = {}, asset } = processNotification(message.notification._data) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
