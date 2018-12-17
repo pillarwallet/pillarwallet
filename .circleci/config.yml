@@ -169,6 +169,16 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
 
+      - run:
+          name: prepare to archive ipa file
+          command: |
+            mkdir -p ./toArchive
+            cp ./ios/pillarwallet-staging.ipa ./toArchive
+
+      - store_artifacts:
+          path: ./toArchive
+          destination: app_build
+
   dev_build_android:
     <<: *defaults_android
     steps:
@@ -201,6 +211,10 @@ jobs:
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_staging_build
+
+      - store_artifacts:
+          path: android/app/build/outputs/apk
+          destination: apks
 
   build:
     working_directory: ~/pillarwallet
