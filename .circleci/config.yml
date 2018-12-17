@@ -683,6 +683,13 @@ workflows:
               only:
                   - master
       - build-and-test
+      - whitesource:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only:
+                  - develop
       - dev_build_ios:
           requires:
             - build-and-test
@@ -690,13 +697,6 @@ workflows:
             branches:
               only:
                   - develop
-      - whitesource:
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only:
-                  - feature/add-whitesource
       - dev_build_android:
           requires:
             - build-and-test
