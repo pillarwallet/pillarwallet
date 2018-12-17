@@ -450,8 +450,15 @@ class ChatScreen extends React.Component<Props, State> {
                 const { y } = contentOffset;
                 const contentOffsetReal = parseInt(contentHeight - layoutHeight, 10);
                 const contentOffsetY = parseInt(y, 10);
-                if (contentOffsetReal !== contentOffsetY && !shadowOpacity) {
-                  this.setState({ shadowOpacity: 1 });
+
+                if (Platform.OS === 'android') {
+                  if (contentOffsetReal !== contentOffsetY && !shadowOpacity) {
+                    this.setState({ shadowOpacity: 1 });
+                  } else if ((contentOffsetReal === contentOffsetY) && shadowOpacity) {
+                    this.setState({ shadowOpacity: 0 });
+                  }
+                } else if ((contentOffsetReal > 0 && contentOffsetReal !== contentOffsetY) && !shadowOpacity) {
+                    this.setState({ shadowOpacity: 1 });
                 } else if (contentOffsetReal === contentOffsetY && shadowOpacity) {
                   this.setState({ shadowOpacity: 0 });
                 }
