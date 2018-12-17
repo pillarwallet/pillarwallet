@@ -20,15 +20,11 @@ type Props = {
   headerProps: Object,
   itemSearchState?: ?string,
   searchInputPlaceholder?: string,
-  scrollShadow: boolean,
 }
 
 const HeaderWrapper = styled(Wrapper)`
   background-color: ${baseColors.snowWhite};
   z-index: 100;
-  ${props => props.scrollShadow
-    ? 'elevation: 3; shadow-color: #000; shadow-offset: 0 2px; shadow-opacity: 0.05; shadow-radius: 2;'
-    : ''}
 `;
 
 const FullScreenOverlayWrapper = styled.TouchableOpacity`
@@ -129,7 +125,6 @@ class SearchBlock extends React.Component<Props, State> {
       headerProps,
       itemSearchState,
       searchInputPlaceholder,
-      scrollShadow,
     } = this.props;
     const {
       query,
@@ -140,7 +135,7 @@ class SearchBlock extends React.Component<Props, State> {
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!itemSearchState);
     return (
       <React.Fragment>
-        <HeaderWrapper scrollShadow={scrollShadow}>
+        <HeaderWrapper>
           <Header {...headerProps} />
           <Wrapper regularPadding>
             <SearchBar

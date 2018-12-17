@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { FlatList, RefreshControl } from 'react-native';
+import { RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { TYPE_RECEIVED, TYPE_REJECTED } from 'constants/invitationsConstants';
@@ -16,6 +16,7 @@ import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import { createAlert } from 'utils/alerts';
 
 type Props = {
@@ -74,8 +75,7 @@ class ConnectionRequests extends React.Component<Props> {
           title="connection requests"
           onBack={() => this.props.navigation.goBack(null)}
         />
-
-        <FlatList
+        <ScrollWithShadow
           data={invitations.filter(({ type }) => type === TYPE_RECEIVED)}
           extraData={invitations}
           keyExtractor={(item) => item.id}

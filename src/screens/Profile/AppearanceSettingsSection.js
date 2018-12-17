@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { TouchableOpacity, Image as RNImage, ScrollView, Dimensions, ViewLayoutEvent } from 'react-native';
+import { TouchableOpacity, Image as RNImage, Dimensions, ViewLayoutEvent } from 'react-native';
 import styled from 'styled-components/native';
 
 // constants
@@ -12,6 +12,7 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 // components
 import { BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import SettingsModalTitle from './SettingsModalTitle';
 
@@ -152,12 +153,12 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
           <SettingsModalTitle extraHorizontalSpacing>
             Choose your asset list appearance
           </SettingsModalTitle>
-          <ScrollView
+          <ScrollWithShadow
             contentContainerStyle={{ padding: spacing.rhythm - 4 }}
             onScroll={this.handleOnScroll}
           >
             {this.renderAssetsLayouts()}
-          </ScrollView>
+          </ScrollWithShadow>
         </SlideModal>
       </React.Fragment>
     );

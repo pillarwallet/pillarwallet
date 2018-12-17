@@ -2,8 +2,8 @@
 import * as React from 'react';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
-import { FlatList, RefreshControl, View, Alert } from 'react-native';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { RefreshControl, Alert } from 'react-native';
+import { Container } from 'components/Layout';
 import { connect } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import styled from 'styled-components/native/index';
@@ -17,17 +17,14 @@ import Separator from 'components/Separator';
 import SearchBar from 'components/SearchBar';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import { getExistingChatsAction, deleteChatAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
 import { fontSizes, baseColors, spacing, UIColors } from 'utils/variables';
-import { scrollShadowProps } from 'utils/commonProps';
 
 const SearchBarWrapper = styled.View`
   padding: 15px ${spacing.rhythm}px 0;
   background: ${UIColors.defaultBackgroundColor};
-  ${props => props.scrollShadow
-    ? 'elevation: 3; shadow-color: #000; shadow-offset: 0 2px; shadow-opacity: 0.05; shadow-radius: 2;'
-    : ''}
 `;
 
 type Props = {
@@ -43,7 +40,6 @@ type Props = {
 type State = {
   query: string,
   forceClose: boolean,
-  scrollShadow: boolean,
 }
 
 const DeleteButttonWrapper = styled.TouchableOpacity`
@@ -71,7 +67,6 @@ class ChatListScreen extends React.Component<Props, State> {
   state = {
     query: '',
     forceClose: false,
-    scrollShadow: false,
   };
 
   componentDidMount() {
@@ -201,8 +196,7 @@ class ChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats } = this.props;
-    const { query, scrollShadow } = this.state;
-    const ChatWrapper = chats.length ? ScrollWrapper : View;
+    const { query } = this.state;
     const sortedChats = orderBy(chats, ['lastMessage.serverTimestamp', 'username'], 'desc');
     const filteredChats = (!query || query.trim() === '' || query.length < 2)
       ? sortedChats
@@ -220,7 +214,7 @@ class ChatListScreen extends React.Component<Props, State> {
           onNextPress={this.goToNewChatList}
         />
         {chats.length > 6 &&
-        <SearchBarWrapper scrollShadow={scrollShadow}>
+        <SearchBarWrapper>
           <SearchBar
             inputProps={{
               onChange: this.handleUserSearch,
@@ -232,8 +226,15 @@ class ChatListScreen extends React.Component<Props, State> {
           />
         </SearchBarWrapper>
         }
-        <ChatWrapper
-          style={{
+        <ScrollWithShadow
+          data={filteredChats}
+          extraData={chats}
+          keyExtractor={(item) => item.username}
+          renderItem={this.renderItem}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+          style={{ width: '100%' }}
+          contentContainerStyle={{
+            width: '100%',
             paddingBottom: sortedChats.length ? 18 : 0,
           }}
           refreshControl={
@@ -242,23 +243,12 @@ class ChatListScreen extends React.Component<Props, State> {
               onRefresh={getExistingChats}
             />
           }
-          {...scrollShadowProps(this, 'scrollShadow')}
-        >
-          <FlatList
-            data={filteredChats}
-            extraData={chats}
-            keyExtractor={(item) => item.username}
-            renderItem={this.renderItem}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-            style={{ height: '100%' }}
-            contentContainerStyle={{ height: '100%' }}
-            ListEmptyComponent={
-              <EmptyChat
-                title={emptyChatTitle}
-                bodyText={emptyChatBodyText}
-              />}
-          />
-        </ChatWrapper>
+          ListEmptyComponent={
+            <EmptyChat
+              title={emptyChatTitle}
+              bodyText={emptyChatBodyText}
+            />}
+        />
       </Container>
     );
   }

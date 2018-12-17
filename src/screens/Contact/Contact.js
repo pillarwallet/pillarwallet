@@ -8,7 +8,7 @@ import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
@@ -19,7 +19,7 @@ import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 import { BaseText } from 'components/Typography';
-import { scrollShadowProps } from 'utils/commonProps';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 
 const iconSend = require('assets/icons/icon_send.png');
 const iconChat = require('assets/icons/icon_chat.png');
@@ -84,7 +84,6 @@ type Props = {
 type State = {
   isOptionsModalActive: boolean,
   avatarRefreshed: boolean,
-  scrollShadow: boolean,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -100,7 +99,6 @@ class Contact extends React.Component<Props, State> {
     this.state = {
       isOptionsModalActive: false,
       avatarRefreshed: !profileImage || !session.isOnline,
-      scrollShadow: false,
     };
   }
 
@@ -167,7 +165,7 @@ class Contact extends React.Component<Props, State> {
       wallet,
       chats,
     } = this.props;
-    const { isOptionsModalActive, avatarRefreshed, scrollShadow } = this.state;
+    const { isOptionsModalActive, avatarRefreshed } = this.state;
     const contact = navigation.getParam('contact', {});
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -180,9 +178,8 @@ class Contact extends React.Component<Props, State> {
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
-          scrollShadow={scrollShadow}
         />
-        <ScrollWrapper
+        <ScrollWithShadow
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -191,7 +188,6 @@ class Contact extends React.Component<Props, State> {
               }}
             />
           }
-          {...scrollShadowProps(this, 'scrollShadow')}
         >
           <ContactWrapper>
             <ProfileImage
@@ -236,7 +232,7 @@ class Contact extends React.Component<Props, State> {
             additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
             showArrowsOnly
           />}
-        </ScrollWrapper>
+        </ScrollWithShadow>
         <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
           <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />

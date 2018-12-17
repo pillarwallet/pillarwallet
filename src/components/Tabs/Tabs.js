@@ -18,7 +18,6 @@ type Tab = {
 type Props = {
   title?: string,
   tabs: Tab[],
-  scrollShadow?: boolean,
 }
 
 type State = {
@@ -92,10 +91,10 @@ export default class Tabs extends React.Component<Props, State> {
   };
 
   render() {
-    const { title, tabs, scrollShadow } = this.props;
+    const { title, tabs } = this.props;
 
     return (
-      <TabOuterWrapper scrollShadow={scrollShadow}>
+      <TabOuterWrapper>
         {!!title &&
         <ActivityFeedHeader>
           <Title subtitle noMargin title={title} />

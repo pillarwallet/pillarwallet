@@ -2,8 +2,6 @@
 import * as React from 'react';
 import {
   RefreshControl,
-  FlatList,
-  SectionList,
   Dimensions,
   Platform,
   PixelRatio,
@@ -418,10 +416,6 @@ class AssetsScreen extends React.Component<Props, State> {
       }
     });
 
-    const sections = [];
-    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: addedAssets, extraData: assets });
-    if (foundAssets.length) sections.push({ title: 'FOUND TOKENS', data: foundAssets, extraData: assets });
-
     const renderItem = ({ item: asset }) => {
       const {
         symbol,
@@ -450,9 +444,9 @@ class AssetsScreen extends React.Component<Props, State> {
     };
 
     return (
-      <SectionList
+      <ScrollWithShadow
         renderItem={renderItem}
-        sections={sections}
+        data={[...addedAssets, ...foundAssets]}
         keyExtractor={(item) => item.symbol}
         style={{ width: '100%' }}
         contentContainerStyle={{
@@ -571,52 +565,48 @@ class AssetsScreen extends React.Component<Props, State> {
           navigation={navigation}
           scrollShadow={scrollShadow}
         />
-        <ScrollWithShadow>
-          <TokensWrapper>
-            {inSearchMode && isSearchOver &&
-            <Wrapper>
-              {this.renderFoundTokensList()}
-            </Wrapper>
-            }
-            {isSearching &&
-            <SearchSpinner center>
-              <Spinner />
-            </SearchSpinner>
-            }
-            {!inSearchMode &&
-            <ScrollWithShadow>
-              <FlatList
-                key={assetsLayout}
-                data={sortedAssets}
-                keyExtractor={(item) => item.id}
-                renderItem={this.renderAsset}
-                initialNumToRender={5}
-                maxToRenderPerBatch={5}
-                onEndReachedThreshold={0.5}
-                style={{ width: '100%' }}
-                contentContainerStyle={{
-                  paddingVertical: 6,
-                  paddingLeft: horizontalPadding(assetsLayout, 'left'),
-                  paddingRight: horizontalPadding(assetsLayout, 'right'),
-                  width: '100%',
-                }}
-                numColumns={columnAmount}
-                ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-                  ? this.renderSeparator
-                  : null}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={false}
-                    onRefresh={() => {
-                      const { fetchAssetsBalances } = this.props;
-                      fetchAssetsBalances(assets, wallet.address);
-                    }}
-                  />
-                }
-              />
-            </ScrollWithShadow>}
-          </TokensWrapper>
-        </ScrollWithShadow>
+        <TokensWrapper>
+          {inSearchMode && isSearchOver &&
+          <Wrapper style={{ flex: 1 }}>
+            {this.renderFoundTokensList()}
+          </Wrapper>
+          }
+          {isSearching &&
+          <SearchSpinner center>
+            <Spinner />
+          </SearchSpinner>
+          }
+          {!inSearchMode &&
+            <ScrollWithShadow
+              key={assetsLayout}
+              data={sortedAssets}
+              keyExtractor={(item) => item.id}
+              renderItem={this.renderAsset}
+              initialNumToRender={5}
+              maxToRenderPerBatch={5}
+              onEndReachedThreshold={0.5}
+              style={{ width: '100%' }}
+              contentContainerStyle={{
+                paddingVertical: 6,
+                paddingLeft: horizontalPadding(assetsLayout, 'left'),
+                paddingRight: horizontalPadding(assetsLayout, 'right'),
+                width: '100%',
+              }}
+              numColumns={columnAmount}
+              ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+                ? this.renderSeparator
+                : null}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={() => {
+                    const { fetchAssetsBalances } = this.props;
+                    fetchAssetsBalances(assets, wallet.address);
+                  }}
+                />
+              }
+            />}
+        </TokensWrapper>
       </Container>
     );
   }

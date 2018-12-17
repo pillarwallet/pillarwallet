@@ -13,6 +13,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
 import { SubHeading, BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import type { SearchResults, ApiUser } from 'models/Contacts';
 import { createAlert } from 'utils/alerts';
 import {
@@ -22,7 +23,7 @@ import {
   rejectInvitationAction,
 } from 'actions/invitationsActions';
 
-const ContactCardList = styled.FlatList`
+const ContactCardList = styled(ScrollWithShadow)`
   padding: 16px 0;
 `;
 

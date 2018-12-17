@@ -28,7 +28,6 @@ type Props = {
   overlay?: boolean,
   backIcon?: string,
   nextIconSize?: number,
-  scrollShadow?: boolean,
 }
 
 const StyledWrapper = styled(Wrapper)`
@@ -41,12 +40,6 @@ const StyledWrapper = styled(Wrapper)`
   margin-top: ${spacing.rhythm};
   margin-bottom: ${props => props.flexStart ? 'auto' : 0};
   z-index: 10;
-  ${props => props.scrollShadow
-    ? `background-color: ${UIColors.defaultBackgroundColor}
-    margin-top: 0;
-    padding-top: 20px;
-    height: 60px;`
-    : ''}
 `;
 
 const BackIcon = styled(IconButton)`
@@ -113,8 +106,8 @@ const Header = (props: Props) => {
     overlay,
     flexStart,
     backIcon,
-    scrollShadow,
   } = props;
+
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
   const titleOnBack = title && onBack;
   const showTitleCenter = titleOnBack || centerTitle;
@@ -137,7 +130,6 @@ const Header = (props: Props) => {
       flexStart={flexStart}
       style={style}
       noPadding={noPadding}
-      scrollShadow={scrollShadow}
     >
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&

@@ -27,11 +27,11 @@ import {
   resetUnreadAction,
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
+import { ScrollShadow } from 'components/ScrollWithShadow/ScrollShadow';
 import { getUserName } from 'utils/contacts';
 import { isIphoneX } from 'utils/common';
 import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
-import { scrollShadowProps } from 'utils/commonProps';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -51,7 +51,7 @@ type State = {
   contact: Object,
   showLoadEarlierButton: boolean,
   isFetching: boolean,
-  scrollShadow: boolean,
+  shadowOpacity: number,
 }
 
 const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
@@ -290,7 +290,7 @@ class ChatScreen extends React.Component<Props, State> {
       contact,
       showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
       isFetching: true,
-      scrollShadow: false,
+      shadowOpacity: 0,
     };
   }
 
@@ -400,43 +400,65 @@ class ChatScreen extends React.Component<Props, State> {
 
   render() {
     const { messages } = this.props;
-    const { contact, showLoadEarlierButton, scrollShadow } = this.state;
+    const { contact, showLoadEarlierButton, shadowOpacity } = this.state;
     const title = getUserName(contact).toLowerCase();
+
     return (
       <ChatContainer inset={{ bottom: 0 }}>
         <Header
           title={title}
           onBack={this.handleChatDismissal}
           onTitlePress={this.handleNavigationToContact}
-          scrollShadow={scrollShadow}
         />
+        {!!this.state.isFetching &&
         <Wrapper fullScreen flex={1}>
-          {!!this.state.isFetching &&
-            <View style={{ flex: 1, alignItems: 'center' }}>
-              <Spinner />
-            </View>}
-          {!this.state.isFetching &&
-            <GiftedChat
-              messages={messages[contact.username]}
-              onSend={msgs => this.onSend(msgs)}
-              user={{
-                _id: this.props.user.username,
-              }}
-              renderBubble={renderBubble}
-              renderAvatar={this.renderAvatar}
-              renderComposer={renderComposer}
-              renderInputToolbar={renderInputToolbar}
-              renderDay={renderDay}
-              loadEarlier={showLoadEarlierButton}
-              onLoadEarlier={this.handleLoadEarlier}
-              renderLoadEarlier={renderLoadEarlier}
-              renderMessage={renderMessage}
-              renderTime={renderTime}
-              minInputToolbarHeight={INPUT_HEIGHT}
-              parsePatterns={parsePatterns}
-              listViewProps={{ ...scrollShadowProps(this, 'scrollShadow') }}
-            />}
-        </Wrapper>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Spinner />
+          </View>
+        </Wrapper>}
+        {!this.state.isFetching &&
+        <Wrapper fullScreen flex={1}>
+          <ScrollShadow shadowOpacity={shadowOpacity} />
+          <GiftedChat
+            messages={messages[contact.username]}
+            onSend={msgs => this.onSend(msgs)}
+            user={{
+              _id: this.props.user.username,
+            }}
+            renderBubble={renderBubble}
+            renderAvatar={this.renderAvatar}
+            renderComposer={renderComposer}
+            renderInputToolbar={renderInputToolbar}
+            renderDay={renderDay}
+            loadEarlier={showLoadEarlierButton}
+            onLoadEarlier={this.handleLoadEarlier}
+            renderLoadEarlier={renderLoadEarlier}
+            renderMessage={renderMessage}
+            renderTime={renderTime}
+            minInputToolbarHeight={INPUT_HEIGHT}
+            parsePatterns={parsePatterns}
+            listViewProps={{
+              onEndReached: ({ distanceFromEnd }) => {
+                if (distanceFromEnd > 0) {
+                  this.setState({ shadowOpacity: 1 });
+                }
+              },
+              onScroll: ({ nativeEvent }) => {
+                const { contentSize, contentOffset, layoutMeasurement } = nativeEvent;
+                const { height: contentHeight } = contentSize;
+                const { height: layoutHeight } = layoutMeasurement;
+                const { y } = contentOffset;
+                const contentOffsetReal = parseInt(contentHeight - layoutHeight, 10);
+                const contentOffsetY = parseInt(y, 10);
+                if (contentOffsetReal !== contentOffsetY && !shadowOpacity) {
+                  this.setState({ shadowOpacity: 1 });
+                } else if (contentOffsetReal === contentOffsetY && shadowOpacity) {
+                  this.setState({ shadowOpacity: 0 });
+                }
+              },
+            }}
+          />
+        </Wrapper>}
       </ChatContainer>
     );
   }

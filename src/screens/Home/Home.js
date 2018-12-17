@@ -13,6 +13,7 @@ import Intercom from 'react-native-intercom';
 import { BaseText } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
+import { ScrollShadow } from 'components/ScrollWithShadow/ScrollShadow';
 import {
   fetchTransactionsHistoryAction,
   fetchTransactionsHistoryNotificationsAction,
@@ -63,7 +64,6 @@ type State = {
   esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
-  scrollShadow: boolean,
 };
 
 const profileImageWidth = 96;
@@ -209,7 +209,6 @@ class HomeScreen extends React.Component<Props, State> {
       title: 'Make your first step',
       body: 'Your activity will appear here.',
     },
-    scrollShadow: false,
   };
 
   componentDidMount() {
@@ -313,7 +312,6 @@ class HomeScreen extends React.Component<Props, State> {
       scrollY,
       esData,
       usernameWidth,
-      scrollShadow,
     } = this.state;
 
     const {
@@ -372,6 +370,12 @@ class HomeScreen extends React.Component<Props, State> {
     const profileBalanceOpacity = scrollY.interpolate({
       inputRange: [0, 20, 100],
       outputRange: [1, 0, 0],
+      extrapolate: 'clamp',
+    });
+
+    const shadowOpacity = scrollY.interpolate({
+      inputRange: [0, 120, 170],
+      outputRange: [0, 0, 1],
       extrapolate: 'clamp',
     });
 
@@ -513,6 +517,7 @@ class HomeScreen extends React.Component<Props, State> {
             </HomeHeaderBody>
           </HomeHeaderRow>
         </AnimatedHomeHeader>
+        <ScrollShadow shadowOpacity={shadowOpacity} topPosition={67} />
         <Animated.ScrollView
           stickyHeaderIndices={[2]}
           style={{
@@ -528,11 +533,6 @@ class HomeScreen extends React.Component<Props, State> {
             ],
             {
               useNativeDriver: true,
-              listener: (event: Object) => {
-                this.setState({
-                  scrollShadow: event.nativeEvent.contentOffset.y > (this.props.contacts.length ? 330 : 180),
-                });
-              },
             },
           )}
           scrollEventThrottle={16}
@@ -560,7 +560,7 @@ class HomeScreen extends React.Component<Props, State> {
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
-          <Tabs tabs={activityFeedTabs} scrollShadow={scrollShadow} />
+          <Tabs tabs={activityFeedTabs} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}

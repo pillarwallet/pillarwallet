@@ -11,7 +11,7 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
 } from 'constants/navigationConstants';
 import { supportedFiatCurrencies, defaultFiatCurrency } from 'constants/assetsConstants';
-import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import { SubHeading } from 'components/Typography';
@@ -19,6 +19,7 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import {
   saveBaseFiatCurrencyAction,
   updateAppSettingsAction,
@@ -101,7 +102,6 @@ type State = {
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
-  scrollShadow: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
@@ -112,7 +112,6 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
-      scrollShadow: false,
     };
   }
 
@@ -202,7 +201,6 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
-      scrollShadow,
     } = this.state;
 
     const isWalletBackedUp = isImported || isBackedUp;
@@ -213,7 +211,6 @@ class Profile extends React.Component<Props, State> {
           gray
           title="settings"
           onBack={() => navigation.goBack(null)}
-          scrollShadow={scrollShadow}
         />
         <SlideModal
           isVisible={this.state.visibleModal === 'country'}
@@ -307,17 +304,7 @@ class Profile extends React.Component<Props, State> {
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
-        <ScrollWrapper
-          onScrollBeginDrag={() => {
-            this.setState({ scrollShadow: true });
-          }}
-          onScrollEndDrag={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
-          onMomentumScrollEnd={(event: Object) => {
-            this.setState({ scrollShadow: !!event.nativeEvent.contentOffset.y });
-          }}
-        >
+        <ScrollWithShadow>
           <ListWrapper>
             <ListSeparator first>
               <SubHeading>PROFILE SETTINGS</SubHeading>
@@ -472,8 +459,7 @@ class Profile extends React.Component<Props, State> {
               <SystemInfoModal headerOnClose={() => this.setState({ showSystemInfoModal: false })} />
             </SlideModal>
           </ListWrapper>
-
-        </ScrollWrapper>
+        </ScrollWithShadow>
       </Container >
     );
   }

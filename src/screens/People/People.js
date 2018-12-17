@@ -2,7 +2,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
-  FlatList,
   Keyboard,
   Image,
   KeyboardAvoidingView,
@@ -32,7 +31,6 @@ import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ScrollWithShadow from 'components/ScrollWithShadow';
 import type { SearchResults } from 'models/Contacts';
-import { scrollShadowProps } from 'utils/commonProps';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -87,13 +85,11 @@ type Props = {
 
 type State = {
   query: string,
-  scrollShadow: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
   state = {
     query: '',
-    scrollShadow: false,
   };
 
   constructor(props: Props) {
@@ -141,7 +137,7 @@ class PeopleScreen extends React.Component<Props, State> {
   );
 
   render() {
-    const { query, scrollShadow } = this.state;
+    const { query } = this.state;
     const {
       searchResults,
       contactState,
@@ -162,12 +158,10 @@ class PeopleScreen extends React.Component<Props, State> {
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={contactState}
           navigation={navigation}
-          scrollShadow={!pendingConnectionRequests ? scrollShadow : false}
         />
 
         {!inSearchMode && !!pendingConnectionRequests &&
         <Wrapper
-          scrollShadow={scrollShadow}
           style={{ backgroundColor: UIColors.defaultBackgroundColor }}
         >
           <ConnectionRequestBanner
@@ -193,34 +187,31 @@ class PeopleScreen extends React.Component<Props, State> {
             navigation={navigation}
             invitations={invitations}
             localContacts={sortedLocalContacts}
-            listViewProps={{ ...scrollShadowProps(this, 'scrollShadow') }}
           />
         }
 
         {!inSearchMode && !!sortedLocalContacts.length &&
-          <ScrollWithShadow>
-            <FlatList
-              data={sortedLocalContacts}
-              keyExtractor={(item) => item.id}
-              renderItem={this.renderContact}
-              initialNumToRender={8}
-              ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-              onScroll={() => Keyboard.dismiss()}
-              contentContainerStyle={{
-                paddingVertical: spacing.rhythm,
-                paddingTop: !pendingConnectionRequests ? 0 : 6,
-              }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={false}
-                  onRefresh={() => {
-                    const { fetchInviteNotifications } = this.props;
-                    fetchInviteNotifications();
-                  }}
-                />
-              }
-            />
-          </ScrollWithShadow>
+          <ScrollWithShadow
+            data={sortedLocalContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={this.renderContact}
+            initialNumToRender={8}
+            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+            onScroll={() => Keyboard.dismiss()}
+            contentContainerStyle={{
+              paddingVertical: spacing.rhythm,
+              paddingTop: !pendingConnectionRequests ? 0 : 6,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() => {
+                  const { fetchInviteNotifications } = this.props;
+                  fetchInviteNotifications();
+                }}
+              />
+            }
+          />
         }
 
         {(!inSearchMode || !this.props.searchResults.apiUsers.length) &&

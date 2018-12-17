@@ -1,8 +1,8 @@
 // @flow
 import * as React from 'react';
 import orderBy from 'lodash.orderby';
-import { FlatList, RefreshControl, View } from 'react-native';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { RefreshControl } from 'react-native';
+import { Container } from 'components/Layout';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { CHAT, CHAT_LIST, CONTACT } from 'constants/navigationConstants';
@@ -10,9 +10,9 @@ import Header from 'components/Header';
 import EmptyChat from 'components/EmptyState/EmptyChat';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { setUnreadChatNotificationsStatusAction } from 'actions/notificationsActions';
-import { scrollShadowProps } from 'utils/commonProps';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -23,16 +23,8 @@ type Props = {
   getExistingChats: Function,
 }
 
-type State = {
-  scrollShadow: boolean,
-}
-
-class NewChatListScreen extends React.Component<Props, State> {
+class NewChatListScreen extends React.Component<Props, {}> {
   _willFocus: NavigationEventSubscription;
-
-  state = {
-    scrollShadow: false,
-  };
 
   componentDidMount() {
     this._willFocus = this.props.navigation.addListener(
@@ -75,7 +67,6 @@ class NewChatListScreen extends React.Component<Props, State> {
 
   render() {
     const { chats, getExistingChats, contacts } = this.props;
-    const { scrollShadow } = this.state;
     const contactsForNewChats = contacts.map((contact) => {
       const existingChat = chats.find(({ username }) => contact.username === username);
       if (existingChat) return {};
@@ -85,42 +76,35 @@ class NewChatListScreen extends React.Component<Props, State> {
     const sortedContactsForNewChats = orderBy(contactsForNewChats
       .filter(value => Object.keys(value).length !== 0), [user => user.username.toLowerCase()], 'asc');
 
-    const ChatWrapper = sortedContactsForNewChats.length ? ScrollWrapper : View;
-
     return (
       <Container inset={{ bottom: 0 }}>
         <Header
           title="new chat"
           onBack={this.goToChatList}
-          scrollShadow={scrollShadow}
         />
-        <ChatWrapper
-          style={{
+        <ScrollWithShadow
+          data={sortedContactsForNewChats}
+          extraData={chats}
+          keyExtractor={(item) => item.username}
+          renderItem={this.renderItem}
+          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+          style={{ width: '100%' }}
+          contentContainerStyle={{
+            width: '100%',
             paddingBottom: sortedContactsForNewChats.length ? 18 : 0,
           }}
+          ListEmptyComponent={
+            <EmptyChat
+              title="No new connections"
+              bodyText="Check recent chats for existing chats"
+            />}
           refreshControl={
             <RefreshControl
               refreshing={false}
               onRefresh={getExistingChats}
             />
           }
-          {...scrollShadowProps(this, 'scrollShadow')}
-        >
-          <FlatList
-            data={sortedContactsForNewChats}
-            extraData={chats}
-            keyExtractor={(item) => item.username}
-            renderItem={this.renderItem}
-            ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-            style={{ height: '100%' }}
-            contentContainerStyle={{ height: '100%' }}
-            ListEmptyComponent={
-              <EmptyChat
-                title="No new connections"
-                bodyText="Check recent chats for existing chats"
-              />}
-          />
-        </ChatWrapper>
+        />
       </Container>
     );
   }

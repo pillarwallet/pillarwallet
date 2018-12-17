@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import SearchBar from 'components/SearchBar';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import { Wrapper } from 'components/Layout';
 import { baseColors, spacing } from 'utils/variables';
 import countries from 'utils/countries.json';
@@ -66,7 +66,7 @@ export default class CountrySelect extends React.Component<Props, State> {
             backgroundColor={baseColors.white}
           />
         </SearchBarWrapper>
-        <FlatList
+        <ScrollWithShadow
           data={filteredCountries || sortedCountries}
           extraData={filteredCountries}
           renderItem={renderItem}

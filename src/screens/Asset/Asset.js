@@ -13,9 +13,9 @@ import type { Assets, Balances } from 'models/Asset';
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
-
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import Header from 'components/Header';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { Container } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
 import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -24,7 +24,6 @@ import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import assetsConfig from 'configs/assetsConfig';
-import { scrollShadowProps } from 'utils/commonProps';
 import ReceiveModal from './ReceiveModal';
 
 const RECEIVE = 'RECEIVE';
@@ -179,7 +178,7 @@ class AssetScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
     } = this.props;
-    const { showDescriptionModal, scrollShadow } = this.state;
+    const { showDescriptionModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -205,12 +204,11 @@ class AssetScreen extends React.Component<Props, State> {
           onNextPress={() => { this.setState({ showDescriptionModal: true }); }}
           nextIcon="info-circle-inverse"
           nextIconSize={fontSizes.extraLarge}
-          scrollShadow={scrollShadow}
           style={{
             backgroundColor: baseColors.white,
           }}
         />
-        <ScrollWrapper
+        <ScrollWithShadow
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -220,7 +218,6 @@ class AssetScreen extends React.Component<Props, State> {
               }}
             />
           }
-          {...scrollShadowProps(this, 'scrollShadow')}
         >
           <AssetPattern
             token={assetData.token}
@@ -243,12 +240,6 @@ class AssetScreen extends React.Component<Props, State> {
             }
           </DataWrapper>
           <AssetCardWrapper>
-            { /*
-            <View style={{ paddingHorizontal: spacing.mediumLarge, paddingTop: 10 }}>
-              <TruncatedText lines={1} text={assetData.description} />
-           </View
-           > */}
-
             <AssetButtons
               onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
@@ -267,7 +258,7 @@ class AssetScreen extends React.Component<Props, State> {
             noBorder
             wrapperStyle={{ marginTop: 10 }}
           />
-        </ScrollWrapper>
+        </ScrollWithShadow>
 
         <ReceiveModal
           isVisible={this.state.activeModal.type === RECEIVE}

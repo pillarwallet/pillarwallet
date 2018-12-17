@@ -1,20 +1,18 @@
 // @flow
 import * as React from 'react';
-import { Animated } from 'react-native';
+import { FlatList, Animated } from 'react-native';
 import styled from 'styled-components/native';
-import LinearGradient from 'react-native-linear-gradient';
-import { transparentize } from 'polished';
+import { ScrollShadow } from './ScrollShadow';
 
 type Props = {
-  children: React.Node,
+  children?: React.Node,
+  onScroll?: Function,
+  componentProp?: string,
 };
 
 type State = {
-  showShadow: boolean,
-  shadowOpacity: Object,
+  scrollY: Animated.Value,
 }
-
-const gradientShadow = ['rgba(0, 0, 0, 0.07)', transparentize(1, 'rgba(0, 0, 0, 0.07)')];
 
 export const Center = styled.View`
   align-items: center;
@@ -26,68 +24,91 @@ const ShadowWrapper = styled.View`
   flex: 1;
 `;
 
-const ShadowHolder = styled(LinearGradient)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 10px;
-  z-index: 2;
-`;
-
-const ShadowHolderAnimated = Animated.createAnimatedComponent(ShadowHolder);
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 export default class ScrollWithShadow extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      showShadow: false,
-      shadowOpacity: new Animated.Value(0),
+      scrollY: new Animated.Value(0),
     };
   }
 
-  onScrolling = (event: Object) => {
-    this.setState({ showShadow: !!event.nativeEvent.contentOffset.y });
-  };
+  renderScroller = (props: Props) => {
+    const {
+      children,
+      onScroll,
+    } = props;
 
-  animateShadow = (shouldShow: boolean) => {
-    const { shadowOpacity } = this.state;
-    Animated.timing(shadowOpacity, {
-      toValue: shouldShow ? 1 : 0,
-      duration: 300,
-    }).start();
-  };
+    const { scrollY } = this.state;
 
-  componentDidUpdate(prevProps: Object, prevState: Object) {
-    const { showShadow } = this.state;
-    if (prevState.showShadow !== showShadow) {
-      this.animateShadow(showShadow);
+    const allOtherProps = Object.keys(props).reduce((object, key) => {
+      if (key !== 'onScroll') {
+        object[key] = props[key];
+      }
+      return object;
+    }, {});
+
+    if (Object.keys(props).includes('renderItem')) {
+      return (
+        <AnimatedFlatList
+          {...allOtherProps}
+          onScroll={
+            Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: { y: scrollY },
+                },
+              },
+            ],
+            {
+              useNativeDriver: true,
+              listener: () => {
+                if (onScroll) onScroll();
+              },
+            },
+          )}
+        />
+      );
     }
-  }
+
+    return (
+      <Animated.ScrollView
+        {...allOtherProps}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: { y: scrollY },
+              },
+            },
+          ],
+          {
+            useNativeDriver: true,
+            listener: () => {
+              if (onScroll) onScroll();
+            },
+          },
+        )}
+      >
+        {children}
+      </Animated.ScrollView>
+    );
+  };
 
   render() {
-    const { children } = this.props;
-    const { shadowOpacity } = this.state;
-    const childrenWithProps = React.Children.map(children, child => {
-      return React.cloneElement(child, {
-        onScrollBeginDrag: () => { this.setState({ showShadow: true }); },
-        onScrollEndDrag: (e: Object) => { this.onScrolling(e); },
-        onMomentumScrollEnd: (e: Object) => { this.onScrolling(e); },
-      });
+    const { scrollY } = this.state;
+    const shadowOpacity = scrollY.interpolate({
+      inputRange: [0, 10],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
     });
 
     return (
       <ShadowWrapper>
-        <ShadowHolderAnimated
-          colors={gradientShadow}
-          style={{
-            opacity: shadowOpacity.interpolate({
-              inputRange: [0, 1],
-              outputRange: [0, 1],
-            }),
-          }}
-        />
-        {childrenWithProps}
+        <ScrollShadow shadowOpacity={shadowOpacity} />
+        {this.renderScroller(this.props)}
       </ShadowWrapper>
     );
   }
