@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-navigation';
 import { Platform, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { UIColors, spacing } from 'utils/variables';
+import { isIphoneX } from 'utils/common';
 
 type ContainerProps = {
   children?: React.Node,
@@ -80,7 +81,7 @@ export const Footer = (props: FooterProps) => {
       enabled
       column={props.column}
       behavior={Platform.OS === 'ios' ? 'position' : null}
-      keyboardVerticalOffset={props.keyboardVerticalOffset || 20}
+      keyboardVerticalOffset={isIphoneX() ? 40 : 20}
       contentContainerStyle={{
         alignItems: 'center',
         position: 'relative',

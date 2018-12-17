@@ -41,7 +41,6 @@ import ParticipateScreen from 'screens/Participate';
 import InstructionsScreen from 'screens/Participate/Instructions';
 import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
-import SendDebugDataScreen from 'screens/SendDebugData';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 
@@ -50,6 +49,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import AndroidTabBarComponent from 'components/AndroidTabBarComponent';
 import Toast from 'components/Toast';
 
+// actions
 import {
   stopListeningNotificationsAction,
   startListeningNotificationsAction,
@@ -97,7 +97,6 @@ import {
   ICO_INSTRUCTIONS,
   ICO_CONFIRM,
   ICO_LINKS,
-  SEND_DEBUG_DATA,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
@@ -213,30 +212,35 @@ const icoFlow = createStackNavigator({
 
 icoFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-const tabBarIcon = (iconActive, icon, hasAddon) => ({ focused }) => (
-  <View style={{ padding: 4 }}>
-    <Image
-      style={{
-        width: 24,
-        height: 24,
-      }}
-      resizeMode="contain"
-      source={focused ? iconActive : icon}
-    />
-    {!!hasAddon &&
-      <View
+const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => ({ focused }) => {
+  const notificationColor = warningNotification ? baseColors.burningFire : baseColors.sunYellow;
+
+  return (
+    <View style={{ padding: 4 }}>
+      <Image
         style={{
-          width: 8,
-          height: 8,
-          backgroundColor: baseColors.sunYellow,
-          borderRadius: 4,
-          position: 'absolute',
-          top: 4,
-          right: 4,
+          width: 24,
+          height: 24,
         }}
-      />}
-  </View>
-);
+        resizeMode="contain"
+        source={focused ? iconActive : icon}
+      />
+      {!!hasAddon &&
+        <View
+          style={{
+            width: 8,
+            height: 8,
+            backgroundColor: notificationColor,
+            borderRadius: 4,
+            position: 'absolute',
+            top: 4,
+            right: 4,
+          }}
+        />
+      }
+    </View>
+  );
+};
 
 const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
   <BaseText
@@ -285,7 +289,10 @@ const tabNavigation = createBottomTabNavigator(
         tabBarIcon: tabBarIcon(
           iconHomeActive,
           iconHome,
-          !navigation.isFocused() && (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
+          !screenProps.isWalletBackedUp ||
+          (!navigation.isFocused() &&
+            (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
+          !screenProps.isWalletBackedUp),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -382,7 +389,6 @@ const AppFlowNavigation = createStackNavigator(
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
-    [SEND_DEBUG_DATA]: SendDebugDataScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
   }, modalTransition,
 );
@@ -405,6 +411,7 @@ type Props = {
   intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
+  backupStatus: Object,
   assets: Object,
   isPickingImage: boolean,
 }
@@ -442,7 +449,12 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-      Toast.show({ message: lastNotification.message, type: 'info', title: lastNotification.title });
+      Toast.show({
+        message: lastNotification.message,
+        type: lastNotification.messageType,
+        title: lastNotification.title,
+        autoClose: lastNotification.autoClose,
+      });
     }
   }
 
@@ -481,11 +493,18 @@ class AppFlow extends React.Component<Props, {}> {
       intercomNotificationsCount,
       hasUnreadChatNotifications,
       navigation,
+      backupStatus,
     } = this.props;
     if (!userState) return null;
     if (userState === PENDING) {
       return <RetryApiRegistration />;
     }
+
+    const {
+      isImported,
+      isBackedUp,
+    } = backupStatus;
+    const isWalletBackedUp = isImported || isBackedUp;
 
     return (
       <AppFlowNavigation
@@ -493,6 +512,7 @@ class AppFlow extends React.Component<Props, {}> {
           hasUnreadNotifications,
           hasUnreadChatNotifications,
           intercomNotificationsCount,
+          isWalletBackedUp,
         }}
         navigation={navigation}
       />
@@ -509,7 +529,7 @@ const mapStateToProps = ({
     hasUnreadChatNotifications,
   },
   assets: { data: assets },
-  wallet: { data: wallet },
+  wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage } },
 }) => ({
   userState,
@@ -517,6 +537,7 @@ const mapStateToProps = ({
   hasUnreadNotifications,
   assets,
   wallet,
+  backupStatus,
   hasUnreadChatNotifications,
   intercomNotificationsCount,
   isPickingImage,

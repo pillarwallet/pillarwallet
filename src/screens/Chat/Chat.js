@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Alert, View, Platform, Linking } from 'react-native';
+import { Alert, View, Platform, Linking, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -298,6 +298,15 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     const { getChatByContact } = this.props;
     getChatByContact(contact.username, contact.profileImage);
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
+    }
+  }
+
+  componentWillUnmount() {
+    if (Platform.OS === 'android') {
+      BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -349,6 +358,11 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     resetUnread(this.state.contact.username);
     navigation.navigate(CONTACT, { contact });
+  };
+
+  physicalBackAction = () => {
+    this.handleChatDismissal();
+    return true;
   };
 
   renderCustomAvatar = () => {
