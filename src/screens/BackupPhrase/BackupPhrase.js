@@ -38,8 +38,11 @@ class BackupPhrase extends React.Component<Props, State> {
     this._willFocus = navigation.addListener(
       'willFocus',
       () => {
-        if (this._isBackupingViaSettings) return;
-        generateWalletMnemonic(wallet.onboarding.mnemonic.original);
+        if (this._isBackupingViaSettings && this.state.wallet.mnemonic !== undefined) {
+          generateWalletMnemonic(this.state.wallet.mnemonic);
+        } else {
+          generateWalletMnemonic(wallet.onboarding.mnemonic.original);
+        }
       },
     );
     this.state = {
@@ -66,6 +69,7 @@ class BackupPhrase extends React.Component<Props, State> {
 
   render() {
     const { pinIsValid, wallet } = this.state;
+
     const { wallet: wlt, navigation } = this.props;
     const mnemonic = this._isBackupingViaSettings
       ? wallet.mnemonic
