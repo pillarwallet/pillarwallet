@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform, BackHandler, Keyboard, Dimensions, Text } from 'react-native';
+import { Platform, BackHandler, Keyboard, Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import {
@@ -19,7 +19,7 @@ import {
 } from 'constants/walletConstants';
 import Button from 'components/Button';
 import { Container, ScrollWrapper, Footer } from 'components/Layout';
-import { Paragraph } from 'components/Typography';
+import { Paragraph, BaseText } from 'components/Typography';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -230,9 +230,9 @@ class ImportWallet extends React.Component<Props, State> {
         <ScrollWrapper regularPadding>
           <WalletTabs title="restore wallet" tabs={restoreWalletTabs} />
           <Paragraph small light>{tabsInfo[activeTab].textStart}
-            <Text style={{ color: UIColors.defaultTextColor }}>
+            <BaseText style={{ color: UIColors.defaultTextColor }}>
               {tabsInfo[activeTab].textAttention}
-            </Text>
+            </BaseText>
             {tabsInfo[activeTab].textEnd}
           </Paragraph>
           <InputWrapper>
