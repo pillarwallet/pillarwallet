@@ -24,14 +24,19 @@ import PillarSdk from 'services/api';
 import Storage from 'services/storage';
 
 type SDK = {
-  registerOnBackend: Function,
+  registerOnAuthServer: Function,
   fetchInitialAssets: Function,
   updateUser: Function,
   userInfo: Function,
 };
 
 const pillarSdk: SDK = new PillarSdk();
-pillarSdk.registerOnBackend = jest.fn(() => ({ userId: 1, walletId: 2 }));
+pillarSdk.registerOnAuthServer = jest.fn(() => ({
+  userId: 1,
+  walletId: 2,
+  refreshToken: 'uniqueRefreshToken',
+  accessToken: 'uniqueAccessToken',
+}));
 pillarSdk.updateUser = jest.fn(() => ({ username: 'snow', walletId: 2 }));
 pillarSdk.userInfo = jest.fn(() => ({ username: 'snow', walletId: 2 }));
 pillarSdk.fetchInitialAssets = jest.fn(() => transformAssetsToObject(mockInitialAssets));

@@ -71,7 +71,10 @@ export function transferERC20(options: ERC20TransferOptions) {
   } = options;
   wallet.provider = providers.getDefaultProvider(PROVIDER);
   const contract = new Contract(contractAddress, CONTRACT_ABI, wallet);
-  return contract.transfer(to, utils.parseUnits(amount.toString(), decimals));
+  if (decimals > 0) {
+    return contract.transfer(to, utils.parseUnits(amount.toString(), decimals));
+  }
+  return contract.transfer(to, utils.bigNumberify(amount.toString()));
 }
 
 export function transferETH(options: ETHTransferOptions) {

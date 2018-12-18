@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes } from 'utils/variables';
+import { BaseText } from 'components/Typography';
 
 type Props = {
   title: string,
@@ -14,13 +15,13 @@ const EmptySectionTextWrapper = styled.View`
   justify-content: center;
 `;
 
-const EmptySectionTitle = styled.Text`
+const EmptySectionTitle = styled(BaseText)`
   font-size: ${fontSizes.large};
   color: ${baseColors.slateBlack};
   margin-bottom: 6px;
 `;
 
-const EmptySectionText = styled.Text`
+const EmptySectionText = styled(BaseText)`
   font-size: ${fontSizes.small};
   color: ${baseColors.darkGray};
   text-align: center;
