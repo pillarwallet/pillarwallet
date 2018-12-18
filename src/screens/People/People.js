@@ -174,9 +174,9 @@ class PeopleScreen extends React.Component<Props, State> {
   renderSwipeoutBtns = (data) => {
     const swipeButtonsWidth = '70';
     const swipeButtons = [
-      // { actionType: MUTE, icon: 'mute', primaryInverted: true },
-      { actionType: DISCONNECT, icon: 'remove', primaryInverted: true },
-      // { actionType: BLOCK, icon: 'warning', dangerInverted: true },
+      // { actionType: MUTE, icon: 'mute'},
+      { actionType: DISCONNECT, icon: 'remove' },
+      // { actionType: BLOCK, icon: 'warning'},
     ];
 
     return swipeButtons.map((buttonDefinition) => {
@@ -185,23 +185,20 @@ class PeopleScreen extends React.Component<Props, State> {
       return {
         component: (
           <Button
-            alignTitleVertical
+            square
             noPadding
-            isSquare
             extraSmall
             height={swipeButtonsWidth}
             onPress={() => this.manageConnection(actionType, data)}
             title={capitalize(actionType)}
             icon={icon}
+            iconSize="small"
             {...btnProps}
             style={{
-              backgroundColor: baseColors.lighterGray,
-              borderColor: baseColors.lighterGray,
-              marginLeft: 2,
-              marginRight: 2,
+              marginTop: 2,
             }}
             textStyle={{
-              marginTop: 12,
+              marginTop: 8,
             }}
           />
         ),
