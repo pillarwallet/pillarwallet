@@ -22,9 +22,8 @@ export const getExistingTxNotesAction = () => {
   };
 };
 
-export const sendTxNoteByContactAction = (payload: Object) => {
+export const sendTxNoteByContactAction = (username: string, userId: string, message: Object) => {
   return async (dispatch: Function, getState: Function) => {
-    const { contact: { id: userId, username }, message } = payload;
     const {
       accessTokens: { data: accessTokens },
     } = getState();
