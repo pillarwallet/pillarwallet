@@ -108,11 +108,15 @@ class EventDetails extends React.Component<Props, {}> {
       eventData,
       updateTransactionStatus,
       getTxNoteByContact,
+      contacts,
     } = this.props;
 
     if (eventType !== TRANSACTION_EVENT) return;
 
-    if (Object.keys(eventData.contact).length) getTxNoteByContact(eventData.contact.username, eventData.contact.id);
+    if (contacts.find(contact => contact.username === eventData.username)
+      && Object.keys(eventData.contact).length) {
+      getTxNoteByContact(eventData.contact.username, eventData.contact.id);
+    }
 
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
     if (txInfo.status !== TX_PENDING_STATUS) return;
