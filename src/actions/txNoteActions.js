@@ -22,9 +22,8 @@ export const getExistingTxNotesAction = () => {
   };
 };
 
-export const sendTxNoteByContactAction = (payload: Object) => {
+export const sendTxNoteByContactAction = (username: string, userId: string, message: Object) => {
   return async (dispatch: Function, getState: Function) => {
-    const { contact: { id: userId, username }, message } = payload;
     await chat.client.addContact(username).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
