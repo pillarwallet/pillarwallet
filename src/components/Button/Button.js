@@ -31,7 +31,7 @@ type Props = {
   icon?: string,
   iconSize?: string,
   listItemButton?: boolean,
-  height?: string,
+  height?: number,
   textStyle?: ?Object,
 };
 
@@ -97,7 +97,7 @@ const themes = {
     borderWidth: 0,
     flexDirection: 'column',
     borderRadius: 0,
-    iconMarginRight: 0,
+    iconHorizontalMargin: 0,
   },
 };
 
@@ -126,10 +126,10 @@ const getButtonWidth = (props) => {
 const getButtonPadding = (props) => {
   if (props.noPadding) {
     return '0';
-  } else if (props.small) {
+  } else if (props.small || props.block) {
     return `${spacing.rhythm}px`;
-  } else if (props.block) {
-    return `${spacing.rhythm}px`;
+  } else if (props.square) {
+    return '4px';
   }
   return `${spacing.rhythm * 2.5}px`;
 };
@@ -147,8 +147,8 @@ const getButtonFontSize = (props) => {
 
 const ButtonIcon = styled(Icon)`
   font-size: ${({ iconSize = 'medium' }) => fontSizes[iconSize]};
-  margin-horizontal: ${props => props.theme.iconMarginRight || props.theme.iconMarginRight === 0
-    ? props.theme.iconMarginRight
+  margin-horizontal: ${props => props.theme.iconHorizontalMargin || props.theme.iconHorizontalMargin === 0
+    ? props.theme.iconHorizontalMargin
     : props.marginRight || 5}px;
   color: ${props => props.theme.color};
   align-self: center;
