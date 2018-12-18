@@ -40,7 +40,7 @@ describe('Transaction Notes Actions', () => {
         chatService.client.addContact = jest.fn().mockImplementation(() => Promise.resolve());
         chatService.client.sendSilentMessageByContact = jest.fn().mockImplementation(() => Promise.resolve());
 
-        await sendTxNoteByContactAction({ contact, message })(dispatchMock, getState);
+        await sendTxNoteByContactAction(contact.username, contact.id, message)(dispatchMock, getState);
       });
 
       afterEach(() => {
@@ -86,7 +86,7 @@ describe('Transaction Notes Actions', () => {
         chatService.client.sendSilentMessageByContact = jest.fn().mockImplementation(() => Promise.reject());
         jest.spyOn(Toast, 'show');
 
-        await sendTxNoteByContactAction({ contact, message: {} })(dispatchMock, getState);
+        await sendTxNoteByContactAction(contact.username, contact.id, {})(dispatchMock, getState);
       });
 
       afterEach(() => {

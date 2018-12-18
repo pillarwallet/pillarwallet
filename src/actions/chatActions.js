@@ -57,9 +57,8 @@ export const resetUnreadAction = (username: string) => ({
   payload: { username },
 });
 
-export const sendMessageByContactAction = (payload: Object) => {
+export const sendMessageByContactAction = (username: string, userId: string, message: Object) => {
   return async (dispatch: Function, getState: Function) => {
-    const { contact: { id: userId, username }, message } = payload;
     const {
       accessTokens: { data: accessTokens },
     } = getState();
