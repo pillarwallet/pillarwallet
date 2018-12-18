@@ -17,7 +17,7 @@ const subtitleDescription = {
 const titleConfirmation = (manageContactType: string, username: string) => {
   const contactType = manageContactType;
   const usernameToConfirm = username;
-  return `Are you sure you want to ${contactType} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}?`;
+  return `${contactType} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}`;
 };
 
 type Props = {
@@ -47,7 +47,6 @@ const ConnectionConfirmationModal = (props: Props) => {
       isVisible={showConfirmationModal}
       onModalHide={onModalHide}
       title={titleConfirmation(contactType, username)}
-      noBlueDotOnTitle
       fullWidthTitle
       noWrapTitle
       hasClose={false}
@@ -60,10 +59,6 @@ const ConnectionConfirmationModal = (props: Props) => {
         marginTop: 7,
         marginBottom: 22,
       }}
-      titleStyles={{
-        lineHeight: 21,
-        letterSpacing: 0.1,
-      }}
     >
       <Button
         dangerInverted
@@ -71,8 +66,6 @@ const ConnectionConfirmationModal = (props: Props) => {
         onPress={onConfirm}
         style={{
           marginBottom: 13,
-          backgroundColor: baseColors.lighterGray,
-          borderColor: baseColors.mediumGray,
         }}
       />
       <Button
@@ -81,8 +74,6 @@ const ConnectionConfirmationModal = (props: Props) => {
         onPress={onModalHide}
         style={{
           marginBottom: 58,
-          backgroundColor: baseColors.lighterGray,
-          borderColor: baseColors.mediumGray,
         }}
       />
     </SlideModal>

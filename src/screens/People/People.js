@@ -172,7 +172,6 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderSwipeoutBtns = (data) => {
-    const swipeButtonsWidth = '70';
     const swipeButtons = [
       // { actionType: MUTE, icon: 'mute'},
       { actionType: DISCONNECT, icon: 'remove' },
@@ -186,9 +185,8 @@ class PeopleScreen extends React.Component<Props, State> {
         component: (
           <Button
             square
-            noPadding
             extraSmall
-            height={swipeButtonsWidth}
+            height={80}
             onPress={() => this.manageConnection(actionType, data)}
             title={capitalize(actionType)}
             icon={icon}
@@ -198,7 +196,7 @@ class PeopleScreen extends React.Component<Props, State> {
               marginTop: 2,
             }}
             textStyle={{
-              marginTop: 8,
+              marginTop: 9,
             }}
           />
         ),
@@ -216,6 +214,7 @@ class PeopleScreen extends React.Component<Props, State> {
       style={{
         paddingRight: 14,
       }}
+      buttonWidth={80}
     >
       <ListItemWithImage
         label={item.username}

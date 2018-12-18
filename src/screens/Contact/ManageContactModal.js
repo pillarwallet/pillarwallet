@@ -1,10 +1,10 @@
 // @flow
 
 import * as React from 'react';
-import { baseColors } from 'utils/variables';
 import { DISCONNECT } from 'constants/connectionsConstants';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
+
 
 type Props = {
   onModalHide: Function,
@@ -14,8 +14,6 @@ type Props = {
 
 const buttonStyle = {
   marginBottom: 13,
-  backgroundColor: baseColors.lighterGray,
-  borderColor: baseColors.mediumGray,
 };
 
 const manageModalButtons = [
@@ -74,10 +72,6 @@ const ManageConnectionModal = (props: Props) => {
       isVisible={showManageContactModal}
       onModalHide={onModalHide}
       title="manage"
-      titleStyles={{
-        lineHeight: 21,
-        letterSpacing: 0.1,
-      }}
     >
       {manageContactButtons}
     </SlideModal>
