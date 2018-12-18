@@ -61,7 +61,7 @@ describe('Chat Actions', () => {
 
       it('should call the dispatch function', () => {
         const msg = {
-          _id: timestamp,
+          _id: timestamp.toString(),
           createdAt: timestamp,
           text: message.text,
           user: {

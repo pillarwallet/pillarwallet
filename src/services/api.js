@@ -76,6 +76,30 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
     });
 };
 
+SDKWrapper.prototype.registerOnAuthServer = function (fcm: string, username: string) {
+  return Promise.resolve()
+    .then(() => {
+      return this.pillarWalletSdk.wallet.registerAuthServer({
+        fcmToken: fcm,
+        username,
+        privateKey: PillarSdk.accessKeys.privateKey,
+      });
+    })
+    .then(({ data }) => data)
+    .catch((e = {}) => {
+      if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
+        return {
+          error: true,
+          reason: USERNAME_EXISTS,
+        };
+      }
+      return {
+        error: true,
+        reason: REGISTRATION_FAILED,
+      };
+    });
+};
+
 SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.asset.defaults({ walletId }))
@@ -317,4 +341,11 @@ SDKWrapper.prototype.rejectInvitation = function (targetUserId: string, accessKe
     }))
     .then(({ data }) => data)
     .catch(() => null);
+};
+
+SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
+    .then(({ data }) => data)
+    .catch(() => []);
 };

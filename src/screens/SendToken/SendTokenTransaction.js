@@ -5,12 +5,11 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { View, TouchableOpacity } from 'react-native';
 
 // components
-import { Container, Wrapper, Footer } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import { Paragraph, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Animation from 'components/Animation';
-import ShareSocial from 'components/ShareSocial';
 
 // utils
 import { baseColors, fontSizes } from 'utils/variables';
@@ -110,11 +109,13 @@ class SendTokenTransaction extends React.Component<Props, State> {
             </View>
           }
         </Wrapper>
+        {/*
         {isSuccess &&
           <Footer>
             <ShareSocial label="Share the love" facebook instagram twitter />
           </Footer>
         }
+        */}
       </Container>
     );
   }
