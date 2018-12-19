@@ -51,7 +51,6 @@ const ManageConnectionModal = (props: Props) => {
     showManageContactModal,
   } = props;
 
-  const iconMarginRight = '8';
   const iconSize = 'small';
 
   const manageContactButtons = manageModalButtons.map((manageButton) => {
@@ -60,7 +59,6 @@ const ManageConnectionModal = (props: Props) => {
       <Button
         key={`modalButton-${manageType}`}
         iconSize={iconSize}
-        iconMarginRight={iconMarginRight}
         onPress={() => onManageContact(manageType)}
         {...manageButtonProps}
       />

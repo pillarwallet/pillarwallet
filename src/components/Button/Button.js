@@ -149,9 +149,9 @@ const ButtonIcon = styled(Icon)`
   font-size: ${({ iconSize = 'medium' }) => fontSizes[iconSize]};
   margin-horizontal: ${props => props.theme.iconHorizontalMargin || props.theme.iconHorizontalMargin === 0
     ? props.theme.iconHorizontalMargin
-    : props.marginRight || 5}px;
+    : props.marginRight || 8}px;
   color: ${props => props.theme.color};
-  align-self: center;
+  line-height: ${props => getButtonFontSize(props)};
 `;
 
 const ButtonWrapper = styled.TouchableOpacity`
@@ -181,7 +181,7 @@ const ButtonWrapper = styled.TouchableOpacity`
 const ButtonText = styled(BoldText)`
   color: ${props => props.theme.color};
   font-size: ${props => getButtonFontSize(props)};
-  margin-bottom: ${props => props.extraSmall ? 0 : '2px'};
+  margin-bottom: ${props => props.extraSmall ? '2px' : 0};
   ${props => props.listItemButton || props.extraSmall ? `font-weight: ${fontWeights.book};` : ''}
   ${props => props.listItemButton || props.extraSmall
     ? `font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App'};`
