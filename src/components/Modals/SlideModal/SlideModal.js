@@ -20,7 +20,7 @@ type Props = {
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   onModalHidden?: Function,
-  hasClose?: boolean,
+  noClose?: boolean,
   fullScreen?: boolean,
   isVisible: boolean,
   showHeader?: boolean,
@@ -65,6 +65,7 @@ const getTheme = (props: Props) => {
 };
 
 const HeaderWrapper = styled.View`
+  width: 100%;
 `;
 
 const ContentWrapper = styled.View`
@@ -124,7 +125,6 @@ const ModalOverflow = styled.View`
 export default class SlideModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
-    hasClose: true,
     subtitleStyles: {},
     titleStyles: {},
     backgroundColor: baseColors.lightGray,
@@ -159,7 +159,7 @@ export default class SlideModal extends React.Component<Props, *> {
       dotColor,
       fullScreenComponent,
       onModalHidden,
-      hasClose,
+      noClose,
       fullScreen,
       subtitle,
       isVisible,
@@ -192,8 +192,8 @@ export default class SlideModal extends React.Component<Props, *> {
               fullWidthTitle={fullWidthTitle}
               noBlueDotOnTitle={noBlueDotOnTitle}
               dotColor={dotColor}
-              onClose={this.hideModal}
-              hasClose={hasClose}
+              onClose={!noClose ? this.hideModal : () => {}}
+              noClose={noClose}
             />
           </HeaderWrapper>
         }

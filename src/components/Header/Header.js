@@ -11,7 +11,7 @@ import IconButton from 'components/IconButton';
 type Props = {
   onBack?: Function,
   onClose?: Function,
-  hasClose?: boolean,
+  noClose?: boolean,
   onCloseText?: string,
   onNextPress?: Function,
   onTitlePress?: Function,
@@ -100,7 +100,7 @@ const Header = (props: Props) => {
     onNextPress,
     onTitlePress,
     onClose,
-    hasClose,
+    noClose,
     onCloseText,
     title,
     fullWidthTitle,
@@ -176,7 +176,7 @@ const Header = (props: Props) => {
           />
         </HeaderBody>
       }
-      {showRight &&
+      {showRight && !noClose &&
         <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
@@ -191,7 +191,7 @@ const Header = (props: Props) => {
               />
             </IconWrapper>
           }
-          {onClose && hasClose &&
+          {onClose &&
             <IconWrapper>
               {onCloseText &&
                 <CloseIconText light={light} >{onCloseText}</CloseIconText>

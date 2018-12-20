@@ -49,7 +49,7 @@ const ConnectionConfirmationModal = (props: Props) => {
       title={titleConfirmation(contactType, username)}
       fullWidthTitle
       noWrapTitle
-      hasClose={false}
+      noClose
       subtitle={subtitle}
       subtitleStyles={{
         color: baseColors.darkGray,
