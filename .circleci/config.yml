@@ -671,7 +671,7 @@ jobs:
           name: execute whitesource
           command: |
             cd .whitesource/
-            chmod +x wss_agent.sh && ./wss_agent.sh -apiKey $WHITESOURCE_API_KEY -c ./whitesource-fs-agent.config  -project pillarwallet -d ~/pillarwallet
+            chmod +x wss_agent.sh && ./wss_agent.sh -apiKey $WHITESOURCE_API_KEY -c ./whitesource-fs-agent.config  -project pillarwallet -f files.list
 
 workflows:
   version: 2
