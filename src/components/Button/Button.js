@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform } from 'react-native';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -184,7 +183,7 @@ const ButtonText = styled(BoldText)`
   margin-bottom: ${props => props.extraSmall ? '2px' : 0};
   ${props => props.listItemButton || props.extraSmall ? `font-weight: ${fontWeights.book};` : ''}
   ${props => props.listItemButton || props.extraSmall
-    ? `font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App'};`
+    ? 'font-family: Aktiv Grotesk App;'
     : ''}
 `;
 
