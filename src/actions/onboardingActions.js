@@ -33,6 +33,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
 import { toastWalletBackup } from 'utils/toasts';
+import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
@@ -55,6 +56,14 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   if (Object.keys(userInfo).length) {
     dispatch(saveDbAction('user', { user: userInfo }, true));
   }
+
+  const oAuthTokens = {
+    refreshToken: sdkWallet.refreshToken,
+    accessToken: sdkWallet.accessToken,
+  };
+
+  const updateOAuth = updateOAuthTokensCB(dispatch);
+  updateOAuth(oAuthTokens);
 
   dispatch({
     type: UPDATE_USER,
