@@ -202,13 +202,19 @@ export const registerWalletAction = () => {
       registrationSucceed,
     } = await getTokenWalletAndRegister(api, user, dispatch);
 
-    await chat.init({
+    let signalCredentials = {
       userId: sdkWallet.userId,
       username: user.username,
-      password: generateChatPassword(wallet.privateKey),
       walletId: sdkWallet.walletId,
       ethAddress: wallet.address,
-    }).catch(() => null);
+    };
+    const { oAuthTokens: { data: OAuthTokens } } = getState();
+    if (Object.keys(OAuthTokens)) {
+      signalCredentials = { ...signalCredentials, ...OAuthTokens };
+    } else {
+      signalCredentials = { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
+    }
+    await chat.init(signalCredentials).catch(() => null);
     await chat.client.registerAccount().catch(() => null);
     await chat.client.setFcmId(fcmToken).catch(() => null);
 
