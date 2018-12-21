@@ -40,6 +40,7 @@ describe('Wallet actions', () => {
     store = mockStore({
       assets: { data: {} },
       navigation: {},
+      oAuthTokens: { data: {} },
       wallet: {
         backupStatus: { isBackedUp: false, isImported: false },
       },
