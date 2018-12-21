@@ -13,6 +13,7 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
+import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
@@ -42,6 +43,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { accessTokens = [] } = await storage.get('accessTokens');
       dispatch({ type: UPDATE_ACCESS_TOKENS, payload: accessTokens });
+
+      const { oAuthTokens = {} } = await storage.get('oAuthTokens');
+      dispatch({ type: UPDATE_OAUTH_TOKENS, payload: oAuthTokens });
 
       const { history = [] } = await storage.get('history');
       // TEMP FIX, REMOVE LATER
