@@ -88,7 +88,7 @@ const ItemTitle = styled(BoldText)`
   flex: 1;
 `;
 
-const ItemParagraph = styled.Text`
+const ItemParagraph = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: ${fontSizes.small}px;
   line-height: ${fontSizes.mediumLarge}px;
@@ -97,7 +97,7 @@ const ItemParagraph = styled.Text`
   flex: 1;
 `;
 
-const ItemSubText = styled.Text`
+const ItemSubText = styled(BaseText)`
   color: ${baseColors.darkGray};
   font-size: 13px;
   line-height: ${fontSizes.small}
