@@ -89,6 +89,7 @@ describe('Wallet actions', () => {
   it(`should expect series of actions with payload to be dispatch 
   on registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
+      oAuthTokens: { data: {} },
       wallet: {
         onboarding: mockOnboarding,
         backupStatus: mockBackupStatus,
@@ -121,6 +122,7 @@ describe('Wallet actions', () => {
   it(`should expect series of actions with payload to be 
   dispatch on registerWalletAction execution when wallet was imported`, () => {
     store = mockStore({
+      oAuthTokens: { data: {} },
       wallet: {
         onboarding: {
           ...mockOnboarding,

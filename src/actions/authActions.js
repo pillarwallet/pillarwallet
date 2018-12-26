@@ -62,13 +62,19 @@ export const loginAction = (pin: string) => {
       });
 
       const fcmToken = await firebase.messaging().getToken().catch(() => null);
-      chat.init({
+      let signalCredentials = {
         userId: user.id,
         username: user.username,
-        password: generateChatPassword(wallet.privateKey),
         walletId: user.walletId,
         ethAddress: wallet.address,
-      })
+      };
+      const { oAuthTokens: { data: OAuthTokens } } = getState();
+      if (Object.keys(OAuthTokens)) {
+        signalCredentials = { ...signalCredentials, ...OAuthTokens };
+      } else {
+        signalCredentials = { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
+      }
+      chat.init(signalCredentials)
         .then(() => chat.client.registerAccount())
         .then(() => chat.client.setFcmId(fcmToken))
         .catch(() => null);
