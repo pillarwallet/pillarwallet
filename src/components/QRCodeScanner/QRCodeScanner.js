@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Vibration, Dimensions, Text, Platform } from 'react-native';
+import { Vibration, Dimensions, Platform } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
@@ -8,6 +8,7 @@ import Permissions from 'react-native-permissions';
 import { noop } from 'utils/common';
 import { baseColors } from 'utils/variables';
 import Header from 'components/Header';
+import { BaseText } from 'components/Typography';
 import styled from 'styled-components/native';
 
 const AUTHORIZED = 'AUTHORIZED';
@@ -146,9 +147,9 @@ export default class QRCodeScanner extends React.Component<Props, State> {
           <Header light flexStart onClose={this.handleAnimationDismiss} />
         </HeaderWrapper>
         <NoPermissions>
-          <Text style={{ color: baseColors.white }}>
+          <BaseText style={{ color: baseColors.white }}>
             Camera permissions not granted - cannot open the QR scanner.
-          </Text>
+          </BaseText>
         </NoPermissions>
       </React.Fragment>
     );

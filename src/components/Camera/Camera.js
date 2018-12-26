@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Text, Dimensions, Platform, StatusBar } from 'react-native';
+import { Dimensions, Platform, StatusBar } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
@@ -11,6 +11,7 @@ import Header from 'components/Header';
 import { Footer } from 'components/Layout';
 import IconButton from 'components/IconButton';
 import Spinner from 'components/Spinner';
+import { BaseText } from 'components/Typography';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
@@ -317,9 +318,9 @@ class Camera extends React.Component<Props, State> {
           <Header light flexStart onClose={modalHide} />
         </HeaderWrapper>
         <NoPermissions>
-          <Text style={{ color: 'white' }}>
+          <BaseText style={{ color: 'white' }}>
             Camera permissions not granted - cannot open camera preview.
-          </Text>
+          </BaseText>
         </NoPermissions>
       </React.Fragment>
     );
