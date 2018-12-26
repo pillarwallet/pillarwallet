@@ -2,9 +2,9 @@
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { saveDbAction } from 'actions/dbActions';
 
-type OAuthTokens = {
-  refreshToken: string,
-  accessToken: string,
+export type OAuthTokens = {
+  refreshToken?: string,
+  accessToken?: string,
 };
 
 export const updateOAuthTokensCB = (dispatch: Function) => {
