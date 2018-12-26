@@ -4,7 +4,7 @@ import { TouchableOpacity, Image as RNImage, ScrollView, Dimensions, ViewLayoutE
 import styled from 'styled-components/native';
 
 // constants
-import { EXPANDED, EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
+import { EXTRASMALL, MINIMIZED, SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
 // utils
 import { baseColors, fontSizes, spacing } from 'utils/variables';
@@ -18,7 +18,7 @@ import SettingsModalTitle from './SettingsModalTitle';
 const SIMPLIFIED_IMG = require('assets/images/assetsSimplified.png');
 const MINIMIZED_IMG = require('assets/images/assetsMinified.png');
 const EXTRASMALL_IMG = require('assets/images/assetsExtraSmall.png');
-const EXPANDED_IMG = require('assets/images/assetsExtended.png');
+// const EXPANDED_IMG = require('assets/images/assetsExtended.png');
 
 const halfScreenWidth = (Dimensions.get('window').width - 80) / 2;
 
@@ -54,11 +54,12 @@ const assetsLayouts = [{
   name: 'Extra Small',
   id: EXTRASMALL,
 },
-{
-  image: EXPANDED_IMG,
-  name: 'Extended',
-  id: EXPANDED,
-}];
+// {
+//   image: EXPANDED_IMG,
+//   name: 'Extended',
+//   id: EXPANDED,
+// }
+];
 
 const AssetLayoutHolder = styled.View`
   display: flex;
@@ -129,7 +130,8 @@ class AppearanceSettingsSection extends React.Component<Props, State> {
     const { settings: { assetsLayout } } = this.props;
     const { scrollOffset } = this.state;
     // TODO: add memoization
-    const activeAssetsLayout = assetsLayouts.find(({ id }) => id === assetsLayout) || {};
+    // add fallback if EXTENDED was set before
+    const activeAssetsLayout = assetsLayouts.find(({ id }) => id === assetsLayout) || { name: 'Simplified' };
 
     return (
       <React.Fragment>

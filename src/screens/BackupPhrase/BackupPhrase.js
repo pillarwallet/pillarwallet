@@ -29,22 +29,27 @@ type State = {
 
 class BackupPhrase extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
-  _isBackupingViaSettings: boolean;
+  _isBackingupViaSettings: boolean;
 
   constructor(props) {
     super(props);
     const { generateWalletMnemonic, navigation, wallet } = this.props;
-    this._isBackupingViaSettings = navigation.getParam('backupViaSettings', false);
+    this._isBackingupViaSettings = navigation.getParam('backupViaSettings', false);
     this._willFocus = navigation.addListener(
       'willFocus',
       () => {
-        if (this._isBackupingViaSettings) return;
-        generateWalletMnemonic(wallet.onboarding.mnemonic.original);
+        if (this._isBackingupViaSettings) {
+          if (this.state.wallet.mnemonic) {
+            generateWalletMnemonic(this.state.wallet.mnemonic);
+          }
+        } else {
+          generateWalletMnemonic(wallet.onboarding.mnemonic.original);
+        }
       },
     );
     this.state = {
-      pinIsValid: !this._isBackupingViaSettings,
-      wallet: this._isBackupingViaSettings ? {} : wallet,
+      pinIsValid: !this._isBackingupViaSettings,
+      wallet: this._isBackingupViaSettings ? {} : wallet,
     };
   }
 
@@ -66,8 +71,9 @@ class BackupPhrase extends React.Component<Props, State> {
 
   render() {
     const { pinIsValid, wallet } = this.state;
+
     const { wallet: wlt, navigation } = this.props;
-    const mnemonic = this._isBackupingViaSettings
+    const mnemonic = this._isBackingupViaSettings
       ? wallet.mnemonic
       : wlt.onboarding.mnemonic.original;
 
@@ -91,7 +97,7 @@ class BackupPhrase extends React.Component<Props, State> {
         <Footer>
           <Button
             onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE,
-              { backupViaSettings: this._isBackupingViaSettings })}
+              { backupViaSettings: this._isBackingupViaSettings })}
             title="Next"
           />
         </Footer>

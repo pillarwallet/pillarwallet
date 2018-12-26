@@ -35,7 +35,7 @@ import Button from 'components/Button/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import type { SearchResults } from 'models/Contacts';
-import ManageConnectionModal from './ManageConnectionModal';
+import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -91,7 +91,7 @@ type Props = {
 
 type State = {
   query: string,
-  showManageContactModal: boolean,
+  showConfirmationModal: boolean,
   manageContactType: string,
   manageContactId: string,
   forceHideRemoval: boolean,
@@ -103,7 +103,7 @@ class PeopleScreen extends React.Component<Props, State> {
 
   state = {
     query: '',
-    showManageContactModal: false,
+    showConfirmationModal: false,
     manageContactType: '',
     manageContactId: '',
     forceHideRemoval: false,
@@ -164,7 +164,7 @@ class PeopleScreen extends React.Component<Props, State> {
   manageConnection = (manageContactType: string, contactData: Object) => {
     // condition to avoid confirmation if MUTE should be considered here
     this.setState({
-      showManageContactModal: true,
+      showConfirmationModal: true,
       forceHideRemoval: false,
       manageContactType,
       manageContactId: contactData.id,
@@ -172,11 +172,10 @@ class PeopleScreen extends React.Component<Props, State> {
   };
 
   renderSwipeoutBtns = (data) => {
-    const swipeButtonsWidth = '70';
     const swipeButtons = [
-      // { actionType: MUTE, icon: 'mute', primaryInverted: true },
-      { actionType: DISCONNECT, icon: 'remove', primaryInverted: true },
-      // { actionType: BLOCK, icon: 'warning', dangerInverted: true },
+      // { actionType: MUTE, icon: 'mute'},
+      { actionType: DISCONNECT, icon: 'remove' },
+      // { actionType: BLOCK, icon: 'warning'},
     ];
 
     return swipeButtons.map((buttonDefinition) => {
@@ -185,23 +184,19 @@ class PeopleScreen extends React.Component<Props, State> {
       return {
         component: (
           <Button
-            alignTitleVertical
-            noPadding
-            isSquare
+            square
             extraSmall
-            height={swipeButtonsWidth}
+            height={80}
             onPress={() => this.manageConnection(actionType, data)}
             title={capitalize(actionType)}
             icon={icon}
+            iconSize="small"
             {...btnProps}
             style={{
-              backgroundColor: baseColors.lighterGray,
-              borderColor: baseColors.lighterGray,
-              marginLeft: 2,
-              marginRight: 2,
+              marginTop: 2,
             }}
             textStyle={{
-              marginTop: 12,
+              marginTop: 9,
             }}
           />
         ),
@@ -219,6 +214,7 @@ class PeopleScreen extends React.Component<Props, State> {
       style={{
         paddingRight: 14,
       }}
+      buttonWidth={80}
     >
       <ListItemWithImage
         label={item.username}
@@ -243,7 +239,7 @@ class PeopleScreen extends React.Component<Props, State> {
     }
 
     this.setState({
-      showManageContactModal: false,
+      showConfirmationModal: false,
       forceHideRemoval: true,
     });
   };
@@ -251,7 +247,7 @@ class PeopleScreen extends React.Component<Props, State> {
   render() {
     const {
       query,
-      showManageContactModal,
+      showConfirmationModal,
       manageContactType,
       manageContactId,
     } = this.state;
@@ -352,14 +348,14 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </KeyboardAvoidingView>
         }
-        <ManageConnectionModal
-          showManageContactModal={showManageContactModal}
+        <ConnectionConfirmationModal
+          showConfirmationModal={showConfirmationModal}
           manageContactType={manageContactType}
           contact={contact}
-          onConfirm={() => this.confirmManageAction()}
+          onConfirm={this.confirmManageAction}
           onModalHide={() => {
             this.setState({
-              showManageContactModal: false,
+              showConfirmationModal: false,
               forceHideRemoval: true,
             });
           }}

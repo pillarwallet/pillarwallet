@@ -2,6 +2,7 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
+import { Sentry } from 'react-native-sentry';
 import {
   SDK_PROVIDER,
   BCX_URL,
@@ -63,6 +64,34 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
     .then(() => this.pillarWalletSdk.wallet.register({ fcmToken: fcm, username }))
     .then(({ data }) => data)
     .catch((e = {}) => {
+      if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
+        return {
+          error: true,
+          reason: USERNAME_EXISTS,
+        };
+      }
+      return {
+        error: true,
+        reason: REGISTRATION_FAILED,
+      };
+    });
+};
+
+SDKWrapper.prototype.registerOnAuthServer = function (fcm: string, username: string) {
+  return Promise.resolve()
+    .then(() => {
+      return this.pillarWalletSdk.wallet.registerAuthServer({
+        fcmToken: fcm,
+        username,
+        privateKey: PillarSdk.accessKeys.privateKey,
+      });
+    })
+    .then(({ data }) => data)
+    .catch((e = {}) => {
+      Sentry.captureException({
+        type: 'Registration error',
+        error: e,
+      });
       if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
         return {
           error: true,
@@ -317,4 +346,11 @@ SDKWrapper.prototype.rejectInvitation = function (targetUserId: string, accessKe
     }))
     .then(({ data }) => data)
     .catch(() => null);
+};
+
+SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
+    .then(({ data }) => data)
+    .catch(() => []);
 };

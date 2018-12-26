@@ -17,22 +17,22 @@ const subtitleDescription = {
 const titleConfirmation = (manageContactType: string, username: string) => {
   const contactType = manageContactType;
   const usernameToConfirm = username;
-  return `Are you sure you want to ${contactType} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}?`;
+  return `${contactType} ${contactType === DISCONNECT ? 'from' : ''} ${usernameToConfirm}`;
 };
 
 type Props = {
   onModalHide: Function,
   onConfirm: Function,
-  showManageContactModal: boolean,
+  showConfirmationModal: boolean,
   manageContactType: string,
   contact: Object,
 };
 
-const ManageConnectionModal = (props: Props) => {
+const ConnectionConfirmationModal = (props: Props) => {
   const {
     onModalHide,
     onConfirm,
-    showManageContactModal,
+    showConfirmationModal,
     manageContactType,
     contact,
   } = props;
@@ -44,13 +44,12 @@ const ManageConnectionModal = (props: Props) => {
 
   return (
     <SlideModal
-      isVisible={showManageContactModal}
+      isVisible={showConfirmationModal}
       onModalHide={onModalHide}
       title={titleConfirmation(contactType, username)}
-      noBlueDotOnTitle
       fullWidthTitle
       noWrapTitle
-      hasClose={false}
+      noClose
       subtitle={subtitle}
       subtitleStyles={{
         color: baseColors.darkGray,
@@ -60,11 +59,6 @@ const ManageConnectionModal = (props: Props) => {
         marginTop: 7,
         marginBottom: 22,
       }}
-      titleStyles={{
-        fontSize: fontSizes.small,
-        lineHeight: 21,
-        letterSpacing: 0.1,
-      }}
     >
       <Button
         dangerInverted
@@ -72,8 +66,6 @@ const ManageConnectionModal = (props: Props) => {
         onPress={onConfirm}
         style={{
           marginBottom: 13,
-          backgroundColor: baseColors.lighterGray,
-          borderColor: baseColors.mediumGray,
         }}
       />
       <Button
@@ -82,12 +74,10 @@ const ManageConnectionModal = (props: Props) => {
         onPress={onModalHide}
         style={{
           marginBottom: 58,
-          backgroundColor: baseColors.lighterGray,
-          borderColor: baseColors.mediumGray,
         }}
       />
     </SlideModal>
   );
 };
 
-export default ManageConnectionModal;
+export default ConnectionConfirmationModal;
