@@ -5,7 +5,6 @@ import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
 import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
-import { Platform } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 
@@ -166,10 +165,7 @@ const InputField = styled(Input)`
   border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
   border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
   padding: 0 12px;
-  font-family: ${Platform.select({
-    ios: 'Aktiv Grotesk App',
-    android: 'sans-serif',
-  })};
+  font-family: 'Aktiv Grotesk App';
 `;
 
 const SelectedOptionWrapper = styled.View`

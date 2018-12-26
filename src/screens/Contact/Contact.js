@@ -9,16 +9,16 @@ import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
-import Button from 'components/Button';
 import { CHAT, SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
-import SlideModal from 'components/Modals/SlideModal';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
 import type { ApiUser } from 'models/Contacts';
 import { BaseText } from 'components/Typography';
+import ConnectionConfirmationModal from './ConnectionConfirmationModal';
+import ManageContactModal from './ManageContactModal';
 
 const iconSend = require('assets/icons/icon_send.png');
 const iconChat = require('assets/icons/icon_chat.png');
@@ -81,8 +81,10 @@ type Props = {
 };
 
 type State = {
-  isOptionsModalActive: boolean,
   avatarRefreshed: boolean,
+  showManageContactModal: boolean,
+  showConfirmationModal: boolean,
+  manageContactType: string,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -96,8 +98,10 @@ class Contact extends React.Component<Props, State> {
     this.localContact = contacts.find(({ username }) => username === contact.username);
     const profileImage = this.localContact ? this.localContact.profileImage : contact.profileImage;
     this.state = {
-      isOptionsModalActive: false,
       avatarRefreshed: !profileImage || !session.isOnline,
+      showManageContactModal: false,
+      showConfirmationModal: false,
+      manageContactType: '',
     };
   }
 
@@ -130,18 +134,6 @@ class Contact extends React.Component<Props, State> {
     this.isComponentMounted = false;
   }
 
-  openOptionsModal = () => {
-    this.setState({
-      isOptionsModalActive: true,
-    });
-  };
-
-  closeOptionsModal = () => {
-    this.setState({
-      isOptionsModalActive: false,
-    });
-  };
-
   getUserAvatar = (isAccepted, avatarRefreshed, displayContact) => {
     if (isAccepted) {
       if (avatarRefreshed) return displayContact.profileImage;
@@ -156,6 +148,23 @@ class Contact extends React.Component<Props, State> {
     return unread;
   };
 
+  manageContact = (manageContactType: string) => {
+    this.setState({
+      showManageContactModal: false,
+      manageContactType,
+    });
+
+    setTimeout(() => {
+      this.setState({ showConfirmationModal: true });
+    }, 1000);
+  };
+
+  confirmManageAction = () => {
+    this.setState({
+      showConfirmationModal: false,
+    });
+  };
+
   render() {
     const {
       navigation,
@@ -164,7 +173,13 @@ class Contact extends React.Component<Props, State> {
       wallet,
       chats,
     } = this.props;
-    const { isOptionsModalActive, avatarRefreshed } = this.state;
+    const {
+      avatarRefreshed,
+      showManageContactModal,
+      showConfirmationModal,
+      manageContactType,
+    } = this.state;
+
     const contact = navigation.getParam('contact', {});
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
@@ -172,11 +187,15 @@ class Contact extends React.Component<Props, State> {
     const displayContact = localContact || contact;
     const userAvatar = this.getUserAvatar(isAccepted, avatarRefreshed, displayContact);
     const unreadCount = this.getUnreadCount(chats, displayContact.username);
+
     return (
       <Container inset={{ bottom: 0 }}>
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
+          nextIcon="more"
+          nextIconSize={fontSizes.extraLarge}
+          onNextPress={() => { this.setState({ showManageContactModal: true }); }}
         />
         <ScrollWrapper
           refreshControl={
@@ -232,11 +251,22 @@ class Contact extends React.Component<Props, State> {
             showArrowsOnly
           />}
         </ScrollWrapper>
-        <SlideModal title="manage" isVisible={isOptionsModalActive} onModalHide={this.closeOptionsModal}>
-          <Button secondary block marginBottom="10px" onPress={() => {}} title="Mute" />
-          <Button secondary block marginBottom="10px" onPress={() => {}} title="Remove connection" />
-          <Button secondary danger block marginBottom="10px" onPress={() => {}} title="Report / Block" />
-        </SlideModal>
+        <ManageContactModal
+          showManageContactModal={showManageContactModal}
+          onManageContact={this.manageContact}
+          onModalHide={() => {
+            this.setState({ showManageContactModal: false });
+          }}
+        />
+        <ConnectionConfirmationModal
+          showConfirmationModal={showConfirmationModal}
+          manageContactType={manageContactType}
+          contact={contact}
+          onConfirm={this.confirmManageAction}
+          onModalHide={() => {
+            this.setState({ showConfirmationModal: false });
+          }}
+        />
       </Container>
     );
   }

@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Alert, View, Platform, Linking } from 'react-native';
+import { Alert, View, Platform, Linking, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -67,19 +67,13 @@ const renderBubble = (props: Props) => {
       left: {
         color: isWarning ? baseColors.white : baseColors.slateBlack,
         fontSize: fontSizes.extraSmall,
-        fontFamily: Platform.select({
-          ios: 'Aktiv Grotesk App',
-          android: 'AktivGrotesk-Regular',
-        }),
+        fontFamily: 'Aktiv Grotesk App',
         fontWeight: '400',
       },
       right: {
         color: baseColors.slateBlack,
         fontSize: fontSizes.extraSmall,
-        fontFamily: Platform.select({
-          ios: 'Aktiv Grotesk App',
-          android: 'AktivGrotesk-Regular',
-        }),
+        fontFamily: 'Aktiv Grotesk App',
         fontWeight: '400',
       },
     }}
@@ -196,10 +190,7 @@ const renderDay = (props: Props) => (
       color: baseColors.darkGray,
       fontWeight: '400',
       fontSize: fontSizes.extraSmall,
-      fontFamily: Platform.select({
-        ios: 'Aktiv Grotesk App',
-        android: 'AktivGrotesk-Regular',
-      }),
+      fontFamily: 'Aktiv Grotesk App',
       textTransform: 'capitalize',
     }}
     dateFormat="LL"
@@ -213,19 +204,13 @@ const renderTime = (props: Props) => {
       textStyle={{
         right: {
           color: baseColors.darkGray,
-          fontFamily: Platform.select({
-            ios: 'Aktiv Grotesk App',
-            android: 'AktivGrotesk-Regular',
-          }),
+          fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
           fontSize: fontSizes.extraExtraSmall,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: Platform.select({
-            ios: 'Aktiv Grotesk App',
-            android: 'AktivGrotesk-Regular',
-          }),
+          fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
           fontSize: fontSizes.extraExtraSmall,
         },
@@ -295,6 +280,15 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     const { getChatByContact } = this.props;
     getChatByContact(contact.username, contact.profileImage);
+    if (Platform.OS === 'android') {
+      BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
+    }
+  }
+
+  componentWillUnmount() {
+    if (Platform.OS === 'android') {
+      BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
+    }
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -346,6 +340,11 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     resetUnread(this.state.contact.username);
     navigation.navigate(CONTACT, { contact });
+  };
+
+  physicalBackAction = () => {
+    this.handleChatDismissal();
+    return true;
   };
 
   renderCustomAvatar = () => {

@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Platform } from 'react-native';
 import { Button as NBButton } from 'native-base';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -29,10 +28,9 @@ type Props = {
   small?: boolean,
   extraSmall?: boolean,
   icon?: string,
+  iconSize?: string,
   listItemButton?: boolean,
-  alignTitleVertical?: boolean,
-  isSquare?: boolean,
-  height?: string,
+  height?: number,
   textStyle?: ?Object,
 };
 
@@ -91,13 +89,16 @@ const themes = {
     color: baseColors.white,
     opacity: 0.5,
   },
+  square: {
+    background: 'transparent',
+    color: baseColors.burningFire,
+    borderColor: 'transparent',
+    borderWidth: 0,
+    flexDirection: 'column',
+    borderRadius: 0,
+    iconHorizontalMargin: 0,
+  },
 };
-
-const ButtonIcon = styled(Icon)`
-  font-size: ${fontSizes.medium};
-  margin-right: 5px;
-  color: ${props => props.theme.color};
-`;
 
 const getButtonHeight = (props) => {
   if (props.height) {
@@ -112,7 +113,7 @@ const getButtonHeight = (props) => {
 };
 
 const getButtonWidth = (props) => {
-  if (props.isSquare) {
+  if (props.square) {
     return getButtonHeight(props);
   } else if (props.block) {
     return '100%';
@@ -124,10 +125,10 @@ const getButtonWidth = (props) => {
 const getButtonPadding = (props) => {
   if (props.noPadding) {
     return '0';
-  } else if (props.small) {
+  } else if (props.small || props.block) {
     return `${spacing.rhythm}px`;
-  } else if (props.block) {
-    return `${spacing.rhythm}px`;
+  } else if (props.square) {
+    return '4px';
   }
   return `${spacing.rhythm * 2.5}px`;
 };
@@ -143,6 +144,15 @@ const getButtonFontSize = (props) => {
   return `${fontSizes.medium}px`;
 };
 
+const ButtonIcon = styled(Icon)`
+  font-size: ${({ iconSize = 'medium' }) => fontSizes[iconSize]};
+  margin-horizontal: ${props => props.theme.iconHorizontalMargin || props.theme.iconHorizontalMargin === 0
+    ? props.theme.iconHorizontalMargin
+    : props.marginRight || 8}px;
+  color: ${props => props.theme.color};
+  line-height: ${props => getButtonFontSize(props)};
+`;
+
 const ButtonWrapper = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
@@ -153,15 +163,16 @@ const ButtonWrapper = styled.TouchableOpacity`
   margin-bottom: ${props => props.marginBottom || '0px'};
   margin-left: ${props => props.marginLeft || '0px'};
   margin-right: ${props => props.marginRight || '0px'};
-  border-radius: ${({ isSquare }) => isSquare ? 0 : 40};
+  border-radius: ${props => props.theme.borderRadius || props.theme.borderRadius === 0
+    ? props.theme.borderRadius
+    : 40}px;
   width: ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
   align-self: ${props => props.flexRight ? 'flex-end' : 'auto'} ;
   border-color: ${props => props.theme.borderColor};
-  border-width:  ${props => props.theme.borderWidth};
+  border-width: ${props => props.theme.borderWidth};
   border-style: solid;
-  flex-direction: ${({ alignTitleVertical }) =>
-    alignTitleVertical ? 'column' : 'row'};
+  flex-direction: ${props => props.theme.flexDirection ? props.theme.flexDirection : 'row'}
   ${props => props.theme.shadow ? 'box-shadow: 0px 2px 7px rgba(0,0,0,.12);' : ''}
   ${props => props.theme.shadow ? 'elevation: 1;' : ''}
 `;
@@ -169,10 +180,10 @@ const ButtonWrapper = styled.TouchableOpacity`
 const ButtonText = styled(BoldText)`
   color: ${props => props.theme.color};
   font-size: ${props => getButtonFontSize(props)};
-  margin-bottom: 2px;
-  ${props => props.listItemButton ? `font-weight: ${fontWeights.book};` : ''}
-  ${props => props.listItemButton
-    ? `font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App'};`
+  margin-bottom: ${props => props.extraSmall ? '2px' : 0};
+  ${props => props.listItemButton || props.extraSmall ? `font-weight: ${fontWeights.book};` : ''}
+  ${props => props.listItemButton || props.extraSmall
+    ? 'font-family: Aktiv Grotesk App;'
     : ''}
 `;
 
@@ -219,6 +230,7 @@ const Button = (props: Props) => {
     marginTop,
     marginBottom,
     icon,
+    iconSize,
     marginLeft,
     marginRight,
     noPadding,
@@ -245,7 +257,14 @@ const Button = (props: Props) => {
       height={height}
       disabled={disabled || disabledTransparent}
     >
-      {!!icon && <ButtonIcon name={icon} theme={theme} />}
+      {!!icon &&
+        <ButtonIcon
+          marginRight={marginRight}
+          iconSize={iconSize}
+          name={icon}
+          theme={theme}
+        />
+      }
       {!!props.title &&
       <ButtonText
         theme={theme}

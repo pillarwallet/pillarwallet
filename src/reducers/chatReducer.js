@@ -104,7 +104,10 @@ export default function chatReducer(
             .map(_chat => {
               let { lastMessage, unread } = _chat;
               const { username: contactUsername } = _chat;
-              if (contactUsername === action.payload.username && state.data.messages[contactUsername].length) {
+              if (contactUsername === action.payload.username
+                && Object.keys(state.data.messages).length
+                && state.data.messages[contactUsername] !== undefined
+                && state.data.messages[contactUsername].length) {
                 const { text, createdAt } = state.data.messages[contactUsername][0];
                 lastMessage = {
                   content: text,
