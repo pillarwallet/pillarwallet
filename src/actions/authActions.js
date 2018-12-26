@@ -23,6 +23,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import { toastWalletBackup } from 'utils/toasts';
+import { updateOAuthTokensCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { saveDbAction } from './dbActions';
 
@@ -35,6 +36,8 @@ export const loginAction = (pin: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
+    const { oAuthTokens } = await storage.get('oAuthTokens');
+    const updateOAuth = updateOAuthTokensCB(dispatch);
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
@@ -43,7 +46,7 @@ export const loginAction = (pin: string) => {
     const saltedPin = getSaltedPin(pin);
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
-      api.init(wallet.privateKey);
+      api.init(wallet.privateKey, oAuthTokens, updateOAuth);
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
