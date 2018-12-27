@@ -16,8 +16,6 @@ export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: { walletId } }, contacts: { data: localContacts } } = getState();
 
-    console.log({ api, state: getState() })
-
     dispatch({
       type: UPDATE_CONTACTS_STATE,
       payload: FETCHING,
@@ -93,9 +91,7 @@ export const disconnectContactAction = (contactId: string) => {
         accessTokens: { data: accessTokens },
       } = getState();
 
-      const { userAccessToken, myAccessToken = null } = accessTokens.find((accessToken) => accessToken.userId === contactId) || {};
-
-      console.log({ getState: getState(), walletId, contactId, userAccessToken, myAccessToken, api })
+      const { userAccessToken, myAccessToken } = accessTokens.find((accessToken) => accessToken.userId === contactId) || {};
 
       if (!userAccessToken) {
         Toast.show({
@@ -110,11 +106,8 @@ export const disconnectContactAction = (contactId: string) => {
       const [contactToDisconnect, updatedContacts] = partition(localContacts, (contact) =>
         contact.id === contactId);
 
-      console.log(userAccessToken, myAccessToken)
-      await api.pillarWalletSdk.connection.disconnect({ targetUserId: contactId, accessKey: myAccessToken, walletId });
-
+      await api.pillarWalletSdk.connection.disconnect({ targetUserId: contactId, sourceUserAccessKey: myAccessToken, targetUserAccessKey: userAccessToken, walletId });
       await deleteContactAction(contactToDisconnect[0].username);
-      console.log('yeah')
 
       dispatch({
         type: DISCONNECT_CONTACT,
@@ -128,7 +121,6 @@ export const disconnectContactAction = (contactId: string) => {
         payload: updatedContacts,
       });
     } catch (e) {
-      console.log({ error: e })
       Toast.show({
         message: 'Please try again',
         type: 'warning',
