@@ -81,6 +81,10 @@ export const fetchInviteNotificationsAction = () => {
         return { ...accessToken, userAccessToken: connectionKey };
       });
     });
+
+    // TODO: Find connection status, filter out removed connections,
+    // add connection status (muted, blocked) to existing connections
+
     dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
     dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));

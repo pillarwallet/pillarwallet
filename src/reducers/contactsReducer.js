@@ -4,11 +4,12 @@ import {
   UPDATE_SEARCH_RESULTS,
   UPDATE_CONTACTS_STATE,
   FETCHED,
+  DISCONNECT_CONTACT,
 } from 'constants/contactsConstants';
 import type { SearchResults } from 'models/Contacts';
 
 export type ContactsReducerState = {
-  data: Object[],
+  data: any,
   contactState: ?string,
   searchResults: SearchResults,
 }
@@ -36,6 +37,11 @@ export default function contactsReducer(
       return { ...state, contactState: action.payload };
     case UPDATE_CONTACTS:
       return { ...state, data: action.payload };
+    case DISCONNECT_CONTACT:
+      return {
+        ...state,
+        data: state.data.filter((item) => item.username !== action.payload),
+      };
     case UPDATE_SEARCH_RESULTS:
       return { ...state, searchResults: action.payload, contactState: FETCHED };
     default:
