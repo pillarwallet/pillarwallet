@@ -683,13 +683,7 @@ workflows:
               only:
                   - master
       - build-and-test
-      - whitesource:
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only:
-                  - develop
+      - whitesource
       - dev_build_ios:
           requires:
             - build-and-test
