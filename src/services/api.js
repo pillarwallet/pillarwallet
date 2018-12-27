@@ -348,6 +348,19 @@ SDKWrapper.prototype.rejectInvitation = function (targetUserId: string, accessKe
     .catch(() => null);
 };
 
+SDKWrapper.prototype.disconnectUser =
+  function (targetUserId: string, sourceUserAccessKey: string, targetUserAccessKey: string, walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connection.disconnect({
+        targetUserId,
+        sourceUserAccessKey,
+        targetUserAccessKey,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  };
+
 SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
