@@ -119,7 +119,6 @@ export const sendInvitationAction = (user: ApiUser) => {
     }
 
     const accessKey = generateAccessKey();
-    console.log({ sendInvitation: accessKey })
     const sentInvitation = await api.sendInvitation(user.id, accessKey, walletId);
     if (!sentInvitation) return;
     const invitation = {
@@ -163,7 +162,6 @@ export const acceptInvitationAction = (invitation: Object) => {
       accessTokens: { data: accessTokens },
     } = getState();
     const sourceUserAccessKey = generateAccessKey();
-    console.log({ acceptInvitation: sourceUserAccessKey, invitation })
 
     const acceptedInvitation = await api.acceptInvitation(
       invitation.id,

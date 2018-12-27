@@ -232,9 +232,7 @@ class PeopleScreen extends React.Component<Props, State> {
       manageContactId,
     } = this.state;
 
-    console.log('to delete')
     if (manageContactType === DISCONNECT) {
-      console.log('deleting')
       this.props.disconnectContact(manageContactId);
     }
 
