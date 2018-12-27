@@ -84,6 +84,7 @@ type Props = {
   contactState: ?string,
   user: Object,
   fetchInviteNotifications: Function,
+  disconnectContact: Function,
   resetSearchContactsState: Function,
   invitations: Object[],
   localContacts: Object[],
