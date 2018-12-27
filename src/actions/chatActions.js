@@ -133,13 +133,25 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
 };
 
 export const deleteChatAction = (username: string) => {
-  return (dispatch: Function) => {
-    chat.client.deleteContactMessages(username, 'chat').then(() => {
+  return async (dispatch: Function) => {
+    try {
+      await chat.client.deleteContactMessages(username, 'chat');
+
       dispatch({
         type: DELETE_CHAT,
         payload: username,
       });
-    }).catch(() => null);
+
+      return true;
+    } catch (e) {
+      Toast.show({
+        message: `Unable to delete chat for ${username}!`,
+        type: 'warning',
+        title: 'Cannot delete chat',
+        autoClose: false,
+      });
+      return false;
+    }
   };
 };
 
