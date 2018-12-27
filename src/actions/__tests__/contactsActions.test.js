@@ -4,7 +4,6 @@ import {
   FETCHING,
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
-  DISCONNECT_CONTACT,
 } from 'constants/contactsConstants';
 import Toast from 'components/Toast';
 import * as chatActions from '../chatActions';
@@ -18,14 +17,12 @@ describe('Contacts Actions', () => {
     {
       id: 'user-foo-bar',
       username: 'foobar',
-      connectionKey: 'some-connection-key-foobar',
       profileImage: 'foobar-image',
       ethAddress: 'eth-address-foobar',
     },
     {
       id: 'user-lorem-ipsum',
       username: 'loremipsum',
-      connectionKey: 'some-connection-key-loremipsum',
       profileImage: 'loremipsum-image',
       ethAddress: 'eth-address-loremipsum',
     },
@@ -38,6 +35,11 @@ describe('Contacts Actions', () => {
         myAccessToken: 'my-personal-access-token',
         userAccessKey: 'user-foo-bar-access-token',
       },
+      {
+        userId: 'user-lorem-ipsum',
+        myAccessToken: 'my-personal-access-token-2',
+        userAccessKey: 'user-foo-bar-access-token-2',
+      },
     ],
   };
 
@@ -45,11 +47,10 @@ describe('Contacts Actions', () => {
     return {
       user: {
         data: {
-          id: 'current-user-id',
-          username: 'current-user',
           walletId: 'some-wallet-current-user',
         },
       },
+      invitations: { data: [] },
       contacts: { data: mockLocalContacts },
       accessTokens,
     };
@@ -64,6 +65,7 @@ describe('Contacts Actions', () => {
           walletId: 'some-wallet-current-user',
         },
       },
+      invitations: { data: [] },
       contacts: { data: mockLocalContacts },
       accessTokens: { data: [] },
     };
@@ -72,12 +74,11 @@ describe('Contacts Actions', () => {
   const apiMock = {
     userSearch: async () => [mockLocalContacts[1]],
     userInfoById: async () => mockLocalContacts[0],
-    connection: {
-      disconnect: async () => ({
-        result: 'success',
-        message: 'Connection is successfully disconnected',
-      }),
-    },
+    disconnect: async () => mockLocalContacts[0],
+    disconnectUser: async () => ({
+      result: 'success',
+      message: 'Connection is successfully disconnected',
+    }),
   };
 
   afterEach(() => {
@@ -181,11 +182,6 @@ describe('Contacts Actions', () => {
           type: UPDATE_CONTACTS,
           payload: [mockLocalContacts[0]],
         });
-
-        expect(dispatchMock).toBeCalledWith({
-          type: DISCONNECT_CONTACT,
-          payload: mockLocalContacts[1],
-        });
       });
 
       it('should not disconnect contact if contact is not deleted in signal', async () => {
@@ -193,8 +189,8 @@ describe('Contacts Actions', () => {
         await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMock, apiMock);
 
         expect(dispatchMock).not.toBeCalledWith({
-          type: DISCONNECT_CONTACT,
-          payload: mockLocalContacts[1],
+          type: UPDATE_CONTACTS,
+          payload: mockLocalContacts[0],
         });
       });
     });
@@ -204,7 +200,7 @@ describe('Contacts Actions', () => {
       await actions.disconnectContactAction('user-lorem-ipsum')(dispatchMock, getStateMockNoAccessToken, apiMock);
 
       expect(Toast.show).toBeCalledWith({
-        message: 'If you imported the wallet currently we can\'t delete contact',
+        message: 'It\'s currently impossible to delete contact on imported wallet',
         type: 'warning',
         title: 'Cannot delete contact',
         autoClose: false,

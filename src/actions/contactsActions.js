@@ -5,8 +5,9 @@ import {
   FETCHING,
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
-  DISCONNECT_CONTACT,
 } from 'constants/contactsConstants';
+import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import Toast from 'components/Toast';
 import { excludeLocalContacts } from 'utils/contacts';
 import { saveDbAction } from './dbActions';
@@ -84,18 +85,17 @@ export const syncContactAction = (userId: string) => {
 
 export const disconnectContactAction = (contactId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+      contacts: { data: contacts },
+      accessTokens: { data: accessTokens },
+    } = getState();
+
     try {
-      const {
-        user: { data: { walletId, accessToken } },
-        contacts: { data: localContacts },
-        accessTokens: { data: accessTokens },
-      } = getState();
-
-      const { myAccessToken = null } = accessTokens[0] || {};
-
-      if (!myAccessToken) {
+      if (accessTokens.length < 1 || !accessTokens[0].myAccessToken) {
         Toast.show({
-          message: 'If you imported the wallet currently we can\'t delete contact',
+          message: 'It\'s currently impossible to delete contact on imported wallet',
           type: 'warning',
           title: 'Cannot delete contact',
           autoClose: false,
@@ -103,29 +103,54 @@ export const disconnectContactAction = (contactId: string) => {
         return;
       }
 
-      const [contactToDisconnect, updatedContacts] = partition(localContacts, (contact) =>
+      const userRelatedAccessTokens = accessTokens.find(token => token.userId === contactId);
+      const { myAccessToken = '', userAccessToken = '' } = userRelatedAccessTokens;
+
+      await api.disconnectUser(
+        contactId,
+        myAccessToken,
+        userAccessToken,
+        walletId,
+      );
+
+      const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
         contact.id === contactId);
 
-      await api.connection.disconnect(contactId, accessToken, walletId);
       await deleteContactAction(contactToDisconnect[0].username);
 
-      dispatch({
-        type: DISCONNECT_CONTACT,
-        payload: contactToDisconnect[0] || {},
-      });
+      await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
-      dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+      const updatedAccessTokens = accessTokens
+        .filter(({ userId }) => userId !== contactId);
+
+      await dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
+
+      const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
+
+      await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
 
       dispatch({
         type: UPDATE_CONTACTS,
         payload: updatedContacts,
+      });
+      dispatch({
+        type: UPDATE_ACCESS_TOKENS,
+        payload: updatedAccessTokens,
+      });
+      dispatch({
+        type: UPDATE_INVITATIONS,
+        payload: updatedInvitations,
+      });
+
+      Toast.show({
+        message: 'Successfully Disconencted',
+        type: 'info',
       });
     } catch (e) {
       Toast.show({
         message: 'Please try again',
         type: 'warning',
         title: 'Cannot delete contact',
-        autoClose: false,
       });
     }
   };
