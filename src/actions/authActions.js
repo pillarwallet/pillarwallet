@@ -69,11 +69,9 @@ export const loginAction = (pin: string) => {
         ethAddress: wallet.address,
       };
       const { oAuthTokens: { data: OAuthTokens } } = getState();
-      if (Object.keys(OAuthTokens)) {
-        signalCredentials = { ...signalCredentials, ...OAuthTokens };
-      } else {
-        signalCredentials = { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
-      }
+      signalCredentials = Object.keys(OAuthTokens) ?
+        { ...signalCredentials, ...OAuthTokens } :
+        { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
       chat.init(signalCredentials)
         .then(() => chat.client.registerAccount())
         .then(() => chat.client.setFcmId(fcmToken))
