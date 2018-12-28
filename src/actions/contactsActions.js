@@ -94,17 +94,16 @@ export const disconnectContactAction = (contactId: string) => {
 
     try {
       if (accessTokens.length < 1 || !accessTokens[0].myAccessToken) {
-        Toast.show({
-          message: 'It\'s currently impossible to delete contact on imported wallet',
-          type: 'warning',
-          title: 'Cannot delete contact',
-          autoClose: false,
-        });
-        return;
+        throw new Error('It\'s currently impossible to delete contact on imported wallet');
       }
 
       const userRelatedAccessTokens = accessTokens.find(token => token.userId === contactId);
-      const { myAccessToken = '', userAccessToken = '' } = userRelatedAccessTokens;
+
+      if (!userRelatedAccessTokens) {
+        throw new Error('Contact doesn\'t exist on this wallet');
+      }
+
+      const { myAccessToken, userAccessToken } = userRelatedAccessTokens;
 
       await api.disconnectUser(
         contactId,
@@ -116,17 +115,7 @@ export const disconnectContactAction = (contactId: string) => {
       const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
         contact.id === contactId);
 
-      const disconnectParams = {
-        targetUserId: contactId,
-        sourceUserAccessKey: myAccessToken,
-        targetUserAccessKey: userAccessToken,
-        walletId,
-      };
-
-      await api.pillarWalletSdk.connection.disconnect(disconnectParams);
       await dispatch(deleteContactAction(contactToDisconnect[0].username));
-
-      await dispatch(deleteChatAction(contactToDisconnect[0].username));
 
       await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
 
@@ -154,14 +143,18 @@ export const disconnectContactAction = (contactId: string) => {
       });
 
       Toast.show({
-        message: 'Successfully Disconencted',
+        message: 'Successfully Disconected',
         type: 'info',
       });
     } catch (e) {
+      const message = e.message === 'Request failed with status code 404' ?
+        'Please try again' : e.message;
+
       Toast.show({
-        message: 'Please try again',
+        message,
         type: 'warning',
         title: 'Cannot delete contact',
+        autoClose: false,
       });
     }
   };
