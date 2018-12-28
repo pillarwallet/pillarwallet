@@ -11,7 +11,7 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import Toast from 'components/Toast';
 import { excludeLocalContacts } from 'utils/contacts';
 import { saveDbAction } from './dbActions';
-import { deleteChatAction, deleteContactAction } from './chatActions';
+import { deleteContactAction } from './chatActions';
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
