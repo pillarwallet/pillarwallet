@@ -2,6 +2,7 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
+import { Sentry } from 'react-native-sentry';
 import {
   SDK_PROVIDER,
   BCX_URL,
@@ -87,6 +88,10 @@ SDKWrapper.prototype.registerOnAuthServer = function (fcm: string, username: str
     })
     .then(({ data }) => data)
     .catch((e = {}) => {
+      Sentry.captureException({
+        type: 'Registration error',
+        error: e,
+      });
       if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
         return {
           error: true,

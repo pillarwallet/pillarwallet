@@ -670,6 +670,23 @@ jobs:
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-stage.txt)"
 
+  whitesource:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: circleci/openjdk:8-node-browsers
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/pillarwallet/workspace
+      - run :
+          name: Setup WhiteSource
+          command: curl -LJO https://github.com/whitesource/fs-agent-distribution/raw/master/standAlone/wss_agent.sh
+      - run:
+          name: execute whitesource
+          command: |
+            cd .whitesource/
+            chmod +x wss_agent.sh && ./wss_agent.sh -apiKey $WHITESOURCE_API_KEY -c ./whitesource-fs-agent.config  -project pillarwallet -f files.list
+
 workflows:
   version: 2
   build_and_deploy:
@@ -680,6 +697,9 @@ workflows:
               only:
                   - master
       - build-and-test
+      - whitesource:
+          requires:
+            - build-and-test
       - dev_build_ios:
           requires:
             - build-and-test
