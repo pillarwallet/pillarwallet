@@ -27,7 +27,7 @@ const Wrapper = styled.View`
   top: 2px;
   ${({ maxWidth }) => maxWidth && `
     width: maxWidth;
-  `};
+  `}
   ${({ fullWidth }) => fullWidth ? 'width: 100%;' : ''}
 `;
 
@@ -54,34 +54,48 @@ const Title = (props: Props) => {
     numberOfLines: 1,
   } : {};
 
+  const {
+    noMargin,
+    style,
+    align,
+    maxWidth,
+    fullWidth,
+    subtitle,
+    onTitlePress,
+    titleStyles,
+    title,
+    noBlueDot,
+    dotColor,
+  } = props;
+
   return (
     <Wrapper
-      noMargin={props.noMargin}
-      style={props.style}
-      align={props.align}
-      maxWidth={props.maxWidth}
-      fullWidth={props.fullWidth}
+      noMargin={noMargin}
+      style={style}
+      align={align}
+      maxWidth={maxWidth}
+      fullWidth={fullWidth}
     >
       {props.onTitlePress ?
-        <TouchableOpacity onPress={props.onTitlePress}>
+        <TouchableOpacity onPress={onTitlePress}>
           <Text
-            fullWidth={props.fullWidth}
-            align={props.align}
-            subtitle={props.subtitle}
+            align={align}
+            subtitle={subtitle}
             {...ellipsized}
-            style={props.titleStyles}
+            style={titleStyles}
+            fullWidth={fullWidth}
           >
-            {props.title}
-            {!props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor}>.</BlueDot>}
+            {title}
+            {!subtitle && !noBlueDot && <BlueDot dotColor={dotColor}>.</BlueDot>}
           </Text>
         </TouchableOpacity>
         :
         <Text
-          fullWidth={props.fullWidth}
-          align={props.align}
-          subtitle={props.subtitle}
+          align={align}
+          subtitle={subtitle}
           {...ellipsized}
-          style={props.titleStyles}
+          style={titleStyles}
+          fullWidth={fullWidth}
         >
           {props.title}
           {!props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor}>.</BlueDot>}

@@ -17,8 +17,7 @@ export default class Animation extends React.Component<Props, {}> {
     style: {
       width: 140,
       height: 140,
-      marginBottom: -10,
-      marginTop: -10,
+      marginBottom: 10,
     },
     speed: 3,
     loop: false,
