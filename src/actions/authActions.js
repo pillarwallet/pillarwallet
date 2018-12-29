@@ -46,11 +46,11 @@ export const loginAction = (pin: string) => {
     const saltedPin = getSaltedPin(pin);
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
-      api.init(wallet.privateKey, oAuthTokens, updateOAuth);
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
+        api.init(wallet.privateKey, updateOAuth, oAuthTokens);
         const userInfo = await api.userInfo(user.walletId);
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
