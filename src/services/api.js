@@ -51,15 +51,15 @@ export default function SDKWrapper() {
   this.pillarWalletSdk = null;
 }
 
-SDKWrapper.prototype.init = function (privateKey: string, oAuthTokens?: ?OAuthTokens, updateOAuth?: ?Function) {
+SDKWrapper.prototype.init = function (privateKey: string, updateOAuth?: ?Function, oAuthTokensStored?: ?OAuthTokens) {
   this.pillarWalletSdk = new PillarSdk({
     privateKey: privateKey.slice(2),
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
     investmentsUrl: INVESTMENTS_URL,
+    updateOAuthFn: updateOAuth,
+    oAuthTokens: oAuthTokensStored,
   });
-  console.log(oAuthTokens);
-  console.log(updateOAuth);
 };
 
 SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string) {

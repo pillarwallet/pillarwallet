@@ -63,7 +63,7 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   };
 
   const updateOAuth = updateOAuthTokensCB(dispatch);
-  updateOAuth(oAuthTokens);
+  await updateOAuth(oAuthTokens);
 
   dispatch({
     type: UPDATE_USER,
