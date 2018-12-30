@@ -11,6 +11,7 @@ type Props = {
   style?: Object,
   noMargin?: boolean,
   align?: string,
+  fullWidth?: boolean,
   subtitle?: boolean,
   maxWidth?: number,
   noBlueDot?: boolean,
@@ -28,6 +29,7 @@ const Wrapper = styled.View`
   ${({ maxWidth }) => maxWidth && `
     width: maxWidth;
   `}
+  ${({ fullWidth }) => fullWidth ? 'width: 100%;' : ''}
 `;
 
 const Text = styled(BoldText)`
@@ -38,7 +40,7 @@ const Text = styled(BoldText)`
     width: 100%;
     text-align: center;
   `}
-    max-width: 230px;
+  ${({ fullWidth }) => !fullWidth ? 'max-width: 230px;' : 'width: 100%;'}
 `;
 
 const BlueDot = styled(BoldText)`
@@ -56,8 +58,16 @@ const BlueDot = styled(BoldText)`
 
 
 const Title = (props: Props) => {
+  const {
+    noMargin,
+    style,
+    align,
+    maxWidth,
+    fullWidth,
+  } = props;
+
   return (
-    <Wrapper noMargin={props.noMargin} style={props.style} align={props.align} maxWidth={props.maxWidth}>
+    <Wrapper noMargin={noMargin} style={style} align={align} maxWidth={maxWidth} fullWidth={fullWidth}>
       {props.onTitlePress ?
         <TouchableOpacity onPress={props.onTitlePress}>
           <Text
@@ -65,6 +75,7 @@ const Title = (props: Props) => {
             subtitle={props.subtitle}
             ellipsizeMode="middle"
             numberOfLines={1}
+            fullWidth={fullWidth}
           >
             {props.title}
           </Text>
@@ -75,6 +86,7 @@ const Title = (props: Props) => {
           subtitle={props.subtitle}
           ellipsizeMode="middle"
           numberOfLines={1}
+          fullWidth={fullWidth}
         >
           {props.title}
         </Text>}
