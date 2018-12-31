@@ -203,6 +203,8 @@ export const registerWalletAction = () => {
     await chat.client.registerAccount().catch(() => null);
     await chat.client.setFcmId(fcmToken).catch(() => null);
 
+    chat.setupWebSocket();
+
     if (!registrationSucceed) { return; }
 
     // STEP 5: finish registration

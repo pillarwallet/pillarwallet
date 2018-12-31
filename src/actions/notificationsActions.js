@@ -23,6 +23,9 @@ import {
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
 
+import { parseWebSocketResponse } from 'utils/chat';
+import ChatService from 'services/chat';
+
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
 const BCX = 'BCX';
@@ -33,6 +36,9 @@ let notificationsListener = null;
 let disabledPushNotificationsListener;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
+
+const chat = new ChatService();
+let chatWebSocket;
 
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
@@ -235,5 +241,34 @@ export const stopListeningOnOpenNotificationAction = () => {
     if (!notificationsOpenerListener) return;
     notificationsOpenerListener();
     notificationsOpenerListener = null;
+  };
+};
+
+const unsetWebSocketClient = () => {
+  chat.setWebSocketRunning(false);
+  if (chatWebSocket === undefined) return;
+  chatWebSocket.close();
+};
+
+export const startListeningChatWebSocketAction = () => {
+  return async (dispatch: Function) => {
+    chatWebSocket = chat.getWebSocketInstance();
+    if (chatWebSocket === undefined) return;
+    chatWebSocket.addEventListener('open', () => {
+      chat.setWebSocketRunning(true);
+    });
+    chatWebSocket.addEventListener('message', (message) => {
+      dispatch(parseWebSocketResponse(message));
+    });
+    chatWebSocket.addEventListener('error', (error) => {
+      console.log('ws error', error);
+    });
+    chatWebSocket.addEventListener('close', unsetWebSocketClient);
+  };
+};
+
+export const stopListeningChatWebSocketAction = () => {
+  return () => {
+    unsetWebSocketClient();
   };
 };

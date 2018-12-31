@@ -70,6 +70,8 @@ export const loginAction = (pin: string) => {
         .then(() => chat.client.setFcmId(fcmToken))
         .catch(() => null);
 
+      chat.setupWebSocket();
+
       await storage.viewCleanup().catch(() => null);
 
       dispatch({
