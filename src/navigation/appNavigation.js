@@ -55,6 +55,8 @@ import {
   startListeningNotificationsAction,
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
+  startListeningChatWebSocketAction,
+  stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -400,6 +402,8 @@ type Props = {
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
+  startListeningChatWebSocket: Function,
+  stopListeningChatWebSocket: Function,
   fetchICOs: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
@@ -423,6 +427,7 @@ class AppFlow extends React.Component<Props, {}> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
+      startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
@@ -433,6 +438,7 @@ class AppFlow extends React.Component<Props, {}> {
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
+    startListeningChatWebSocket();
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
@@ -459,9 +465,10 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    const { stopListeningNotifications, stopListeningIntercomNotifications } = this.props;
+    const { stopListeningNotifications, stopListeningIntercomNotifications, stopListeningChatWebSocket } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
+    stopListeningChatWebSocket();
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -469,6 +476,7 @@ class AppFlow extends React.Component<Props, {}> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
+      stopListeningChatWebSocket,
       navigation,
       isPickingImage,
     } = this.props;
@@ -482,6 +490,7 @@ class AppFlow extends React.Component<Props, {}> {
         navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
+        stopListeningChatWebSocket();
       }, SLEEP_TIMEOUT);
     }
   };
@@ -548,6 +557,8 @@ const mapDispatchToProps = (dispatch) => ({
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
+  stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
+  startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },

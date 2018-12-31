@@ -9,6 +9,7 @@ import {
   FETCHING_CHATS,
   DELETE_CHAT,
 } from 'constants/chatConstants';
+import { prepareWebSocketRequest } from 'utils/chat';
 
 const chat = new ChatService();
 
@@ -60,7 +61,14 @@ export const resetUnreadAction = (username: string) => ({
 export const sendMessageByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
     try {
-      await chat.client.sendMessageByContact(username, message.text, 'chat');
+      if (chat.isWebSocketRunning()) {
+        const chatWebSocket = chat.getWebSocketInstance();
+        chat.client.encryptWebSocketMessageByContact(username, message.text, 'chat').then((request) => {
+          chatWebSocket.send(prepareWebSocketRequest(request));
+        }).catch(() => null);
+      } else {
+        await chat.client.sendMessageByContact(username, message.text, 'chat');
+      }
     } catch (e) {
       Toast.show({
         message: 'Unable to contact the server',
@@ -138,6 +146,15 @@ export const deleteChatAction = (username: string) => {
         type: DELETE_CHAT,
         payload: username,
       });
+    }).catch(() => null);
+  };
+};
+
+export const parseWebSocketMessageAction = (message: Object) => {
+  return () => {
+    chat.client.decodeWebSocketMessage(message).then(() => {
+      if (!Object.keys(message).length) return;
+      console.log('parseWebSocketMessageAction', message);
     }).catch(() => null);
   };
 };
