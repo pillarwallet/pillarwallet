@@ -110,12 +110,25 @@ export const sendMessageByContactAction = (username: string, userId: string, mes
   };
 };
 
-export const getChatByContactAction = (username: string, avatar: string, loadEarlier: boolean = false) => {
-  return async (dispatch: Function) => {
+export const getChatByContactAction = (
+  username: string,
+  userId: string,
+  avatar: string,
+  loadEarlier: boolean = false,
+) => {
+  return async (dispatch: Function, getState: Function) => {
     dispatch({
       type: FETCHING_CHATS,
     });
-    await chat.client.addContact(username).catch(e => {
+    const {
+      accessTokens: { data: accessTokens },
+    } = getState();
+    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
+    if (!Object.keys(connectionAccessTokens).length) {
+      return;
+    }
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
+    await chat.client.addContact(username, userId, userConnectionAccessToken).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
