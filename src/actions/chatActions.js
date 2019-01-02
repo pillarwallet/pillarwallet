@@ -58,8 +58,16 @@ export const resetUnreadAction = (username: string) => ({
   payload: { username },
 });
 
-export const sendMessageByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function) => {
+export const sendMessageByContactAction = (username: string, userId: string, message: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accessTokens: { data: accessTokens },
+    } = getState();
+    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
+    if (!Object.keys(connectionAccessTokens).length) {
+      return;
+    }
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
     try {
       if (chat.isWebSocketRunning()) {
         const chatWebSocket = chat.getWebSocketInstance();
@@ -67,7 +75,12 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
           chatWebSocket.send(prepareWebSocketRequest(request));
         }).catch(() => null);
       } else {
-        await chat.client.sendMessageByContact(username, message.text, 'chat');
+        await chat.client.sendMessageByContact('chat', {
+          username,
+          userId,
+          userConnectionAccessToken,
+          message: message.text,
+        });
       }
     } catch (e) {
       Toast.show({
