@@ -18,7 +18,7 @@ import { fontSizes, fontWeights } from 'utils/variables';
 
 const { Form } = t.form;
 const MIN_USERNAME_LENGTH = 4;
-const MAX_USERNAME_LENGTH = 6;
+const MAX_USERNAME_LENGTH = 30;
 
 const IntroParagraph = styled(Paragraph)`
   margin: 10px 0 50px;
@@ -84,16 +84,16 @@ Username.getValidationErrorMessage = (username): string => {
   if (!usernameRegex.test(username)) {
     if (startsWithNumberRegex.test(username)) return 'Username can not start with a number';
     if (startsOrEndsWithDash.test(username)) return 'Username can not start or end with a dash';
-    return 'Only use alpha-numeric characters or dashes';
+    return 'Only use alpha-numeric characters or dashes.';
   }
-  if (username.length === MIN_USERNAME_LENGTH - 1) {
+  if (username.length < MIN_USERNAME_LENGTH) {
     return `Username should be longer than ${MIN_USERNAME_LENGTH - 1} characters.`;
   }
   if (username.length > MAX_USERNAME_LENGTH) {
     return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
   }
 
-  return 'Please specify the username';
+  return 'Please specify the username.';
 };
 
 const formStructure = t.struct({
@@ -164,7 +164,7 @@ class NewProfile extends React.Component<Props, State> {
     const options = t.update(this.state.formOptions, {
       fields: {
         username: {
-          hasError: { $set: !isValidUsername },
+          hasError: { $set: !isValidUsername && value.username },
           error: { $set: errorMessage },
         },
       },
