@@ -251,14 +251,16 @@ const unsetWebSocketClient = () => {
 };
 
 export const startListeningChatWebSocketAction = () => {
-  return async (dispatch: Function) => {
+  return async () => {
     chatWebSocket = chat.getWebSocketInstance();
     if (chatWebSocket === undefined) return;
     chatWebSocket.addEventListener('open', () => {
+      console.log('ws open');
       chat.setWebSocketRunning(true);
     });
     chatWebSocket.addEventListener('message', (message) => {
-      dispatch(parseWebSocketResponse(message));
+      console.log('ws message');
+      chat.client.decryptWebSocketMessage(parseWebSocketResponse(message)).then(console.log).catch(() => null);
     });
     chatWebSocket.addEventListener('error', (error) => {
       console.log('ws error', error);
