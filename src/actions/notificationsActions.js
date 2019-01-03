@@ -23,7 +23,6 @@ import {
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
 
-import { parseWebSocketResponse } from 'utils/chat';
 import ChatService from 'services/chat';
 
 const CONNECTION = 'CONNECTION';
@@ -38,7 +37,6 @@ let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
 
 const chat = new ChatService();
-let chatWebSocket;
 
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
@@ -245,27 +243,37 @@ export const stopListeningOnOpenNotificationAction = () => {
 };
 
 const unsetWebSocketClient = () => {
-  chat.setWebSocketRunning(false);
-  if (chatWebSocket === undefined) return;
-  chatWebSocket.close();
+  const chatWebSocket = chat.getWebSocketInstance();
+  chatWebSocket.stop();
 };
 
 export const startListeningChatWebSocketAction = () => {
   return async () => {
-    chatWebSocket = chat.getWebSocketInstance();
-    if (chatWebSocket === undefined) return;
-    chatWebSocket.addEventListener('open', () => {
+    const chatWebSocket = chat.getWebSocketInstance();
+    chatWebSocket.listen();
+    chatWebSocket.onOpen(() => {
       console.log('ws open');
-      chat.setWebSocketRunning(true);
+      const request = chatWebSocket.prepareRequest(
+        1,
+        'GET',
+        '/v1/messages',
+      );
+      if (request == null) return;
+      chatWebSocket.send(request, () => {
+        console.log('message sent!');
+      });
     });
-    chatWebSocket.addEventListener('message', (message) => {
-      console.log('ws message');
-      chat.client.decryptWebSocketMessage(parseWebSocketResponse(message)).then(console.log).catch(() => null);
+    chatWebSocket.onMessage(message => {
+      console.log('new ws message', message);
     });
-    chatWebSocket.addEventListener('error', (error) => {
-      console.log('ws error', error);
-    });
-    chatWebSocket.addEventListener('close', unsetWebSocketClient);
+    // chatWebSocket.send(webSocketRequest);
+    //   console.log('ws message');
+    //   chat.client.decryptWebSocketMessage(parseWebSocketResponse(message)).then(console.log).catch(() => null);
+    // });
+    // chatWebSocket.addEventListener('error', (error) => {
+    //   console.log('ws error', error);
+    // });
+    // chatWebSocket.addEventListener('close', unsetWebSocketClient);
   };
 };
 
