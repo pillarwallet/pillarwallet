@@ -253,18 +253,9 @@ export const startListeningChatWebSocketAction = () => {
     chatWebSocket.listen();
     chatWebSocket.onOpen(() => {
       console.log('ws open');
-      const request = chatWebSocket.prepareRequest(
-        1,
-        'GET',
-        '/v1/messages',
-      );
-      if (request == null) return;
-      chatWebSocket.send(request, () => {
-        console.log('message sent!');
-      });
     });
     chatWebSocket.onMessage(message => {
-      console.log('new ws message', message);
+      console.log('new ws message: ', message);
     });
     // chatWebSocket.send(webSocketRequest);
     //   console.log('ws message');
