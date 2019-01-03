@@ -9,7 +9,6 @@ import {
   FETCHING_CHATS,
   DELETE_CHAT,
 } from 'constants/chatConstants';
-import { prepareWebSocketRequest } from 'utils/chat';
 
 const chat = new ChatService();
 
@@ -69,11 +68,10 @@ export const sendMessageByContactAction = (username: string, userId: string, mes
     }
     const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
     try {
-      if (chat.isWebSocketRunning()) {
-        const chatWebSocket = chat.getWebSocketInstance();
-        chat.client.encryptWebSocketMessageByContact(username, message.text, 'chat').then((request) => {
-          chatWebSocket.send(prepareWebSocketRequest(request));
-        }).catch(() => null);
+      const chatWebSocket = chat.getWebSocketInstance();
+      if (chatWebSocket.isRunning()) {
+        console.log('sending ws');
+        // TODO: get encrypted body from native client and forward to websockets chatWebSocket.send(..)
       } else {
         await chat.client.sendMessageByContact('chat', {
           username,
