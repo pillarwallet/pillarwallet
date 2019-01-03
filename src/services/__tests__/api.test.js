@@ -1,6 +1,6 @@
 // @flow
 import SDKWrapper from 'services/api';
-import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { USERNAME_EXISTS, REGISTRATION_FAILED, UNREGISTRATION_FAILED } from 'constants/walletConstants';
 
 const sdkWrapper = new SDKWrapper();
 
@@ -35,6 +35,22 @@ const mockErrorDuplicate: Object = {
 
 const mockGeneralFailure: Object = {};
 
+const unregisterMockSuccess = {
+  data: {
+    result: 'success',
+    message: 'Successfully unregistered address on BCX',
+  },
+};
+
+const unregisterMockFailure = {
+  response: {
+    data: {
+      error: true,
+      reason: UNREGISTRATION_FAILED,
+    },
+  },
+};
+
 type WalletRegisterAuth = {
   privateKey: string,
   username: string,
@@ -57,9 +73,27 @@ const registerAuthServerMock = jest.fn((walletRegisterAuth: WalletRegisterAuth) 
   });
 });
 
+type WalletUnRegister = {
+  walletId: string,
+  blockchainAddress: ?string,
+  blockchain: string,
+}
+
+const unregisterWalletMock = jest.fn((walletUnregister: WalletUnRegister) => {
+  const { walletId, blockchainAddress } = walletUnregister;
+  return new Promise((resolve, reject) => {
+    if (walletId && blockchainAddress) {
+      resolve(unregisterMockSuccess);
+    } else {
+      reject(unregisterMockFailure);
+    }
+  });
+});
+
 const mockPillarSDK: Object = {
   wallet: {
     registerAuthServer: registerAuthServerMock,
+    unregisterAddress: unregisterWalletMock,
   },
 };
 
@@ -87,6 +121,29 @@ describe('API service', () => {
     expect(result).toEqual({
       error: true,
       reason: REGISTRATION_FAILED,
+    });
+  });
+
+  it('Should succesfully unregister wallet', async () => {
+    const { address } = mockWallet;
+    const result = await sdkWrapper.unregisterWallet(mockResponseSuccess.data.walletId, address);
+    expect(result).toBe(unregisterMockSuccess.data);
+  });
+
+  it('Should fail to unregister wallet if walletId is empty', async () => {
+    const { address } = mockWallet;
+    const result = await sdkWrapper.unregisterWallet('', address);
+    expect(result).toEqual({
+      error: true,
+      reason: UNREGISTRATION_FAILED,
+    });
+  });
+
+  it('Should fail to unregister wallet if blockchainAddress is empty', async () => {
+    const result = await sdkWrapper.unregisterWallet('some wallet id', '');
+    expect(result).toEqual({
+      error: true,
+      reason: UNREGISTRATION_FAILED,
     });
   });
 });

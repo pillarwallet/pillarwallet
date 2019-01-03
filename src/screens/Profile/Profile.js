@@ -456,7 +456,7 @@ class Profile extends React.Component<Props, State> {
           </ListWrapper>
 
         </ScrollWrapper>
-      </Container >
+      </Container>
     );
   }
 }

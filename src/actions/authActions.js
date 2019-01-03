@@ -212,10 +212,16 @@ export const lockScreenAction = () => {
 };
 
 export const logoutAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      wallet: { data: { address: blockchainAddress } },
+    } = getState();
+
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
+    await api.unregisterWallet(walletId, blockchainAddress);
     chat.client.resetAccount().catch(() => null);
     await storage.removeAll();
   };

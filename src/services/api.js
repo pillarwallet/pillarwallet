@@ -17,7 +17,7 @@ import {
   fetchTransactionInfo,
   fetchTransactionReceipt,
 } from 'services/assets';
-import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { USERNAME_EXISTS, REGISTRATION_FAILED, UNREGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 
 // temporary here
@@ -353,4 +353,20 @@ SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
     .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
     .then(({ data }) => data)
     .catch(() => []);
+};
+
+SDKWrapper.prototype.unregisterWallet = function (
+  walletId: string,
+  blockchainAddress: string,
+  blockchain?: ?string = '',
+) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.wallet.unregisterAddress({ walletId, blockchainAddress, blockchain }))
+    .then(({ data }) => data)
+    .catch(() => {
+      return {
+        error: true,
+        reason: UNREGISTRATION_FAILED,
+      };
+    });
 };
