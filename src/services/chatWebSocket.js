@@ -1,5 +1,5 @@
 // @flow
-
+import { SignalClient } from 'rn-signal-protocol-messaging';
 import protobufjs from 'protobufjs';
 
 const subProtocolProtobufJson = require('models/protobuf/SubProtocol.json');
@@ -68,6 +68,22 @@ export default class ChatWebSocket {
       console.log('err', e);
     }
     if (typeof callback === 'function') callback();
+  }
+
+  sendSignalMessage(apiBody: Object) {
+    const { destination } = apiBody.messages[0];
+    const requestBody = JSON.stringify(apiBody);
+    const request = this.prepareRequest(
+      1,
+      'PUT',
+      `/v1/messages/${destination}`,
+      requestBody,
+      ['content-type:application/json;'],
+    );
+    if (request == null) throw new Error();
+    this.send(request, () => {
+      SignalClient.saveSentMessage(requestBody);
+    });
   }
 
   stop(callback?: Function) {

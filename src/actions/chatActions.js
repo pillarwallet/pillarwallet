@@ -70,8 +70,13 @@ export const sendMessageByContactAction = (username: string, userId: string, mes
     try {
       const chatWebSocket = chat.getWebSocketInstance();
       if (chatWebSocket.isRunning()) {
-        console.log('sending ws');
-        // TODO: get encrypted body from native client and forward to websockets chatWebSocket.send(..)
+        const apiBody = await chat.client.prepareApiBody('chat', {
+          username,
+          userId,
+          userConnectionAccessToken,
+          message: message.text,
+        });
+        chatWebSocket.sendSignalMessage(JSON.parse(apiBody));
       } else {
         await chat.client.sendMessageByContact('chat', {
           username,
