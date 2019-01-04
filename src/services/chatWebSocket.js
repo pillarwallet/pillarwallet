@@ -3,11 +3,14 @@ import { SignalClient } from 'rn-signal-protocol-messaging';
 import protobufjs from 'protobufjs';
 
 const subProtocolProtobufJson = require('models/protobuf/SubProtocol.json');
+// const textsecureProtobufJson = require('models/protobuf/SubProtocol.json');
 
-const WEBSOCKET_MESSAGE_TYPES = {
+export const WEBSOCKET_MESSAGE_TYPES = {
   REQUEST: 1,
   RESPONSE: 2,
 };
+
+let keepaliveTimer;
 
 export default class ChatWebSocket {
   credentials: Object;
@@ -38,6 +41,14 @@ export default class ChatWebSocket {
     }
   }
 
+  keepalive() {
+    if (!this.isRunning()) return;
+    const request = this.prepareRequest((new Date()).getTime(), 'GET', '/v1/keepalive');
+    if (request == null) return;
+    this.send(request);
+    keepaliveTimer = setTimeout(() => this.keepalive(), 60000); // 60s keepalive
+  }
+
   onMessage(callback?: Function) {
     if (this.isRunning()) {
       this.ws.addEventListener('message', (incoming: Object) => {
@@ -47,16 +58,36 @@ export default class ChatWebSocket {
           bytes: String,
         });
         if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST) {
-          const request = this.prepareResponse(
-            message.request.id,
-            200,
-            'OK',
-          );
-          if (request != null) this.send(request);
-        } else if (message.type === WEBSOCKET_MESSAGE_TYPES.RESPONSE
-          && typeof message.response.body !== 'undefined'
-          && message.response.body.trim() !== '') {
-          message.response.body = Buffer.from(message.response.body, 'base64').toString('utf8');
+          const requestResponse = this.prepareResponse(message.request.id, 200, 'OK');
+          if (requestResponse != null) this.send(requestResponse);
+        }
+        const receivedType = message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST ? 'request' : 'response';
+        if (typeof message[receivedType].body !== 'undefined'
+          && message[receivedType].body.trim() !== '') {
+          if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST
+            && message[receivedType].verb === 'PUT'
+            && message[receivedType].path === '/api/v1/message') {
+            SignalClient.decodeReceivedBody(message[receivedType].body);
+            // dispatch(getExistingChatsAction());
+            // const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+            // if (!navParams) return;
+            // dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+            // if (!!navParams.username && navParams.username === notification.navigationParams.username) {
+            //   const contact = contacts.find(c => c.username === navParams.username) || {};
+            //   dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
+            //   return;
+            // }
+            // dispatch({
+            //   type: ADD_NOTIFICATION,
+            //   payload: {
+            //     ...notification,
+            //     message: `${notification.message} from ${notification.navigationParams.username}`,
+            //   },
+            // });
+          } else {
+            message[receivedType].body = Buffer.from(message[receivedType].body, 'base64')
+              .toString('utf8');
+          }
         }
         if (typeof callback === 'function') callback(message);
       });
@@ -82,7 +113,7 @@ export default class ChatWebSocket {
     );
     if (request == null) throw new Error();
     this.send(request, () => {
-      SignalClient.saveSentMessage(requestBody);
+      // SignalClient.saveSentMessage(requestBody);
     });
   }
 
@@ -94,14 +125,27 @@ export default class ChatWebSocket {
 
   onOpen(callback?: Function) {
     this.ws.addEventListener('open', () => {
-      if (typeof callback === 'function') callback();
+      if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
+      this.keepalive();
       this.setRunning(true);
+      if (typeof callback === 'function') callback();
+    });
+    this.ws.addEventListener('close', () => {
+      console.log('ws closed');
+      this.setRunning(false);
+    });
+    this.ws.addEventListener('error', (error: Object) => {
+      console.log('ws error', error);
+      this.setRunning(false);
     });
   }
 
   setRunning(state: boolean) {
     this.running = state;
-    if (!state) delete this.ws;
+    if (!state) {
+      delete this.ws;
+      if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
+    }
   }
 
   isRunning(): boolean {
