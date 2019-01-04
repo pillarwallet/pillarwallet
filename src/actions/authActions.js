@@ -224,6 +224,7 @@ export const logoutAction = () => {
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     chat.client.resetAccount().catch(() => null);
+    await firebase.iid().delete().catch(() => {});
     await storage.removeAll();
   };
 };
