@@ -84,6 +84,7 @@ export const fetchInviteNotificationsAction = () => {
 
     // TODO: Find connection status, filter out removed connections,
     // add connection status (muted, blocked) to existing connections
+    console.log({ contacts, groupedNotifications, updatedContacts, inviteNotifications })
 
     dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));

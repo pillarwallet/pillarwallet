@@ -11,7 +11,7 @@ import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import Toast from 'components/Toast';
 import { excludeLocalContacts } from 'utils/contacts';
 import { saveDbAction } from './dbActions';
-import { deleteContactAction } from './chatActions';
+import { deleteChatAction, deleteContactAction } from './chatActions';
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -115,6 +115,7 @@ export const disconnectContactAction = (contactId: string) => {
       const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
         contact.id === contactId);
 
+      await dispatch(deleteChatAction(contactToDisconnect[0].username));
       await dispatch(deleteContactAction(contactToDisconnect[0].username));
 
       await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));

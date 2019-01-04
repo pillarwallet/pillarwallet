@@ -107,15 +107,13 @@ export const startListeningNotificationsAction = () => {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
         enabled = true;
-      } catch (err) { } // eslint-disable-line
-    }
 
-    if (!enabled) {
-      dispatch(fetchAllNotificationsAction());
-      disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
-      }, 30000);
-      return;
+        disabledPushNotificationsListener = setInterval(() => {
+          dispatch(fetchAllNotificationsAction());
+        }, 30000);
+        return;
+      } catch (err) { } // eslint-disable-line
     }
 
     if (notificationsListener) return;
