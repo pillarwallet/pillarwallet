@@ -33,7 +33,11 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
       let apiUser = {};
       const address = await api.validateAddress(importedWallet.address);
       if (address.walletId) {
-        apiUser = await api.userInfo(address.walletId);
+        apiUser = {
+          id: address.id,
+          walletId: address.walletId,
+          username: address.username,
+        };
       }
 
       const payload = {
