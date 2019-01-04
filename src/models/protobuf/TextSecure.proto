@@ -1,0 +1,70 @@
+/**
+ * Copyright (C) 2013 - 2015 Open WhisperSystems
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+
+syntax = "proto2";
+
+package signal.websocket;
+
+message Envelope {
+  enum Type {
+    UNKNOWN             = 0;
+    CIPHERTEXT          = 1;
+    KEY_EXCHANGE        = 2;
+    PREKEY_BUNDLE       = 3;
+    RECEIPT             = 5;
+    UNIDENTIFIED_SENDER = 6;
+  }
+
+  optional Type   type             = 1;
+  optional string source           = 2;
+  optional uint32 sourceDevice     = 7;
+  optional string relay            = 3;
+  optional uint64 timestamp        = 5;
+  optional bytes  legacyMessage    = 6; // Contains an encrypted DataMessage XXX -- Remove after 10/01/15
+  optional bytes  content          = 8; // Contains an encrypted Content
+  optional string serverGuid       = 9;
+  optional uint64 server_timestamp = 10;
+}
+
+message ProvisioningUuid {
+  optional string uuid = 1;
+}
+
+message ServerCertificate {
+    message Certificate {
+        optional uint32 id  = 1;
+        optional bytes  key = 2;
+    }
+
+    optional bytes certificate = 1;
+    optional bytes signature   = 2;
+}
+
+message SenderCertificate {
+    message Certificate {
+        optional string            sender        = 1;
+        optional uint32            senderDevice  = 2;
+        optional fixed64           expires       = 3;
+        optional bytes             identityKey   = 4;
+        optional ServerCertificate signer        = 5;
+    }
+
+    optional bytes certificate = 1;
+    optional bytes signature   = 2;
+}

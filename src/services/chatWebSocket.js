@@ -3,7 +3,7 @@ import { SignalClient } from 'rn-signal-protocol-messaging';
 import protobufjs from 'protobufjs';
 
 const subProtocolProtobufJson = require('models/protobuf/SubProtocol.json');
-// const textsecureProtobufJson = require('models/protobuf/SubProtocol.json');
+const textSecureProtobufJson = require('models/protobuf/TextSecure.json');
 
 export const WEBSOCKET_MESSAGE_TYPES = {
   REQUEST: 1,
@@ -15,13 +15,16 @@ let keepaliveTimer;
 export default class ChatWebSocket {
   credentials: Object;
   WebSocketMessage: Object;
+  TextSecureEnvelope: Object;
   ws: WebSocket;
   running: boolean;
 
   constructor(credentials: Object) {
     this.credentials = credentials;
-    const root = protobufjs.Root.fromJSON(subProtocolProtobufJson);
-    this.WebSocketMessage = root.lookupType('signal.websocket.WebSocketMessage');
+    const rootWebSocketMessage = protobufjs.Root.fromJSON(subProtocolProtobufJson);
+    this.WebSocketMessage = rootWebSocketMessage.lookupType('signal.websocket.WebSocketMessage');
+    const rootTextSecureEnvelope = protobufjs.Root.fromJSON(textSecureProtobufJson);
+    this.TextSecureEnvelope = rootTextSecureEnvelope.lookupType('signal.websocket.Envelope');
     this.running = false;
   }
 
@@ -51,7 +54,7 @@ export default class ChatWebSocket {
 
   onMessage(callback?: Function) {
     if (this.isRunning()) {
-      this.ws.addEventListener('message', (incoming: Object) => {
+      this.ws.addEventListener('message', async (incoming: Object) => {
         const buffer = new Uint8Array(incoming.data);
         const received = this.WebSocketMessage.decode(buffer);
         const message = this.WebSocketMessage.toObject(received, {
@@ -67,23 +70,14 @@ export default class ChatWebSocket {
           if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST
             && message[receivedType].verb === 'PUT'
             && message[receivedType].path === '/api/v1/message') {
-            SignalClient.decodeReceivedBody(message[receivedType].body);
-            // dispatch(getExistingChatsAction());
-            // const { params: navParams = null } = getNavigationPathAndParamsState() || {};
-            // if (!navParams) return;
-            // dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-            // if (!!navParams.username && navParams.username === notification.navigationParams.username) {
-            //   const contact = contacts.find(c => c.username === navParams.username) || {};
-            //   dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
-            //   return;
-            // }
-            // dispatch({
-            //   type: ADD_NOTIFICATION,
-            //   payload: {
-            //     ...notification,
-            //     message: `${notification.message} from ${notification.navigationParams.username}`,
-            //   },
-            // });
+            const encryptedBody = message[receivedType].body;
+            const b64EncodedBytes = await SignalClient.decodeReceivedBody(encryptedBody)
+              .catch(() => null);
+            const textSecureEnvelope = this.TextSecureEnvelope.decode(Buffer.from(b64EncodedBytes, 'base64'));
+            const receivedSignalMessage = this.TextSecureEnvelope.toObject(textSecureEnvelope, {
+              bytes: String,
+            });
+            message.receivedSignalMessage = receivedSignalMessage;
           } else {
             message[receivedType].body = Buffer.from(message[receivedType].body, 'base64')
               .toString('utf8');
