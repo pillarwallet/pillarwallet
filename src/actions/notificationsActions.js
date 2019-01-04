@@ -248,23 +248,36 @@ const unsetWebSocketClient = () => {
 };
 
 export const startListeningChatWebSocketAction = () => {
-  return async () => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      contacts: { data: contacts },
+    } = getState();
     const chatWebSocket = chat.getWebSocketInstance();
     chatWebSocket.listen();
     chatWebSocket.onOpen(() => {
       console.log('ws open');
     });
     chatWebSocket.onMessage(message => {
-      console.log('new ws message: ', message);
+      if (typeof message.receivedSignalMessage !== 'undefined') {
+        const { source: senderUsername } = message.receivedSignalMessage;
+        dispatch(getExistingChatsAction());
+        const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+        if (!navParams) return;
+        dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+        if (!!navParams.username && navParams.username === senderUsername) {
+          const contact = contacts.find(c => c.username === navParams.username) || {};
+          dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
+          // return;
+        }
+        // dispatch({
+        //   type: ADD_NOTIFICATION,
+        //   payload: {
+        //     ...notification,
+        //     message: `${notification.message} from ${notification.navigationParams.username}`,
+        //   },
+        // });
+      }
     });
-    // chatWebSocket.send(webSocketRequest);
-    //   console.log('ws message');
-    //   chat.client.decryptWebSocketMessage(parseWebSocketResponse(message)).then(console.log).catch(() => null);
-    // });
-    // chatWebSocket.addEventListener('error', (error) => {
-    //   console.log('ws error', error);
-    // });
-    // chatWebSocket.addEventListener('close', unsetWebSocketClient);
   };
 };
 
