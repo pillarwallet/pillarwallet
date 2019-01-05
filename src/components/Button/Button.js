@@ -31,6 +31,10 @@ type Props = {
   listItemButton?: boolean,
 };
 
+type State = {
+  addonWasTapped: boolean,
+};
+
 const themes = {
   primary: {
     background: baseColors.electricBlue,
@@ -174,49 +178,72 @@ const ButtonText = styled(BoldText)`
     : ''}
 `;
 
-const Button = (props: Props) => {
-  const theme = getTheme(props);
-  const {
-    block,
-    marginTop,
-    marginBottom,
-    icon,
-    marginLeft,
-    marginRight,
-    noPadding,
-    disabled,
-    disabledTransparent,
-    onPress,
-    width,
-    children,
-  } = props;
+class Button extends React.Component<Props, State> {
+  state = {
+    addonWasTapped: false,
+  };
 
-  return (
-    <ButtonWrapper
-      {...props}
-      theme={theme}
-      block={block}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
-      marginLeft={marginLeft}
-      marginRight={marginRight}
-      noPadding={noPadding}
-      onPress={(disabled || disabledTransparent) ? null : onPress}
-      width={width}
-      disabled={disabled || disabledTransparent}
-    >
-      {!!icon && <ButtonIcon name={icon} theme={theme} />}
-      {!!props.title &&
-      <ButtonText
+  componentDidUpdate() {
+    // this way the button will be unable to accept a second tap immediatly
+    // avoiding "multiple requests" issues
+    setTimeout(() => {
+      this.setState({ addonWasTapped: false });
+    }, 200);
+  }
+
+  buttonPressed = () => {
+    const { onPress } = this.props;
+    this.setState({ addonWasTapped: true });
+
+    if (onPress) onPress();
+  }
+
+  render() {
+    const theme = getTheme(this.props);
+    const { addonWasTapped } = this.state;
+    const {
+      block,
+      marginTop,
+      marginBottom,
+      icon,
+      marginLeft,
+      marginRight,
+      noPadding,
+      disabled,
+      disabledTransparent,
+      listItemButton,
+      small,
+      width,
+      children,
+    } = this.props;
+
+    return (
+      <ButtonWrapper
+        {...this.props}
         theme={theme}
-        small={props.small}
-        listItemButton={props.listItemButton}
-      >{props.title}
-      </ButtonText>}
-      {children}
-    </ButtonWrapper>
-  );
-};
+        block={block}
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        marginLeft={marginLeft}
+        marginRight={marginRight}
+        noPadding={noPadding}
+        onPress={(disabled || disabledTransparent || addonWasTapped) ? null : this.buttonPressed}
+        width={width}
+        disabled={disabled || disabledTransparent}
+      >
+        {!!icon && <ButtonIcon name={icon} theme={theme} />}
+        {!!this.props.title &&
+        <ButtonText
+          theme={theme}
+          small={small}
+          listItemButton={listItemButton}
+        >{this.props.title}
+        </ButtonText>}
+        {children}
+      </ButtonWrapper>
+    );
+  }
+}
 
 export default Button;
 
