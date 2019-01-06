@@ -12,7 +12,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getExistingChatsAction, getChatByContactAction } from 'actions/chatActions';
+import { getExistingChatsAction, getChatByContactAction, increaseChatUnreadAction } from 'actions/chatActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -254,28 +254,35 @@ export const startListeningChatWebSocketAction = () => {
     } = getState();
     const chatWebSocket = chat.getWebSocketInstance();
     chatWebSocket.listen();
-    chatWebSocket.onOpen(() => {
-      console.log('ws open');
-    });
+    chatWebSocket.onOpen();
     chatWebSocket.onMessage(message => {
       if (typeof message.receivedSignalMessage !== 'undefined') {
-        const { source: senderUsername } = message.receivedSignalMessage;
-        dispatch(getExistingChatsAction());
+        console.log(message.receivedSignalMessage);
+        const { source: senderUsername, timestamp } = message.receivedSignalMessage;
+        dispatch(increaseChatUnreadAction(senderUsername, timestamp));
         const { params: navParams = null } = getNavigationPathAndParamsState() || {};
         if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         if (!!navParams.username && navParams.username === senderUsername) {
           const contact = contacts.find(c => c.username === navParams.username) || {};
-          dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
-          // return;
+          dispatch(getChatByContactAction(
+            navParams.username,
+            contact.id,
+            contact.profileImage,
+            false,
+            message.receivedSignalMessage,
+          ));
+          return;
         }
-        // dispatch({
-        //   type: ADD_NOTIFICATION,
-        //   payload: {
-        //     ...notification,
-        //     message: `${notification.message} from ${notification.navigationParams.username}`,
-        //   },
-        // });
+        const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
+        if (notification == null) return;
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            ...notification,
+            message: `${notification.message} from ${senderUsername}`,
+          },
+        });
       }
     });
   };

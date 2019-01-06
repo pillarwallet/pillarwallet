@@ -56,6 +56,7 @@ export default class ChatWebSocket {
     if (this.isRunning()) {
       this.ws.addEventListener('message', async (incoming: Object) => {
         const buffer = new Uint8Array(incoming.data);
+        if (buffer === undefined || !buffer.length) return;
         const received = this.WebSocketMessage.decode(buffer);
         const message = this.WebSocketMessage.toObject(received, {
           bytes: String,
@@ -71,13 +72,15 @@ export default class ChatWebSocket {
             && message[receivedType].verb === 'PUT'
             && message[receivedType].path === '/api/v1/message') {
             const encryptedBody = message[receivedType].body;
-            const b64EncodedBytes = await SignalClient.decodeReceivedBody(encryptedBody)
+            const b64EncodedBytes = await SignalClient.decryptReceivedBody(encryptedBody)
               .catch(() => null);
-            const textSecureEnvelope = this.TextSecureEnvelope.decode(Buffer.from(b64EncodedBytes, 'base64'));
-            const receivedSignalMessage = this.TextSecureEnvelope.toObject(textSecureEnvelope, {
-              bytes: String,
-            });
-            message.receivedSignalMessage = receivedSignalMessage;
+            const decodedBytes = Buffer.from(b64EncodedBytes, 'base64');
+            if (decodedBytes !== undefined && decodedBytes.length) {
+              const textSecureEnvelope = this.TextSecureEnvelope.decode(decodedBytes);
+              message.receivedSignalMessage = this.TextSecureEnvelope.toObject(textSecureEnvelope, {
+                bytes: String,
+              });
+            }
           } else {
             message[receivedType].body = Buffer.from(message[receivedType].body, 'base64')
               .toString('utf8');
@@ -93,22 +96,6 @@ export default class ChatWebSocket {
       console.log('err', e);
     }
     if (typeof callback === 'function') callback();
-  }
-
-  sendSignalMessage(apiBody: Object) {
-    const { destination } = apiBody.messages[0];
-    const requestBody = JSON.stringify(apiBody);
-    const request = this.prepareRequest(
-      1,
-      'PUT',
-      `/v1/messages/${destination}`,
-      requestBody,
-      ['content-type:application/json;'],
-    );
-    if (request == null) throw new Error();
-    this.send(request, () => {
-      // SignalClient.saveSentMessage(requestBody);
-    });
   }
 
   stop(callback?: Function) {
