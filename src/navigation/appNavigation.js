@@ -438,12 +438,12 @@ class AppFlow extends React.Component<Props, {}> {
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
-    startListeningChatWebSocket();
     fetchAssetsBalances(assets, wallet.address);
     fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
+    startListeningChatWebSocket();
     addAppStateChangeListener(this.handleAppStateChange);
   }
 

@@ -37,7 +37,6 @@ export const getExistingChatsAction = () => {
       unread: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
     const newChats = mergeNewChats(unreadChats, filteredChats);
-
     const augmentedChats = newChats.map(item => {
       const unread = unreadChats[item.username] ? unreadChats[item.username].count : 0;
       const lastMessage = item.lastMessage || {};
@@ -45,6 +44,30 @@ export const getExistingChatsAction = () => {
       return { ...item, unread, lastMessage };
     });
 
+    dispatch({
+      type: UPDATE_CHATS,
+      payload: augmentedChats,
+    });
+  };
+};
+
+export const increaseChatUnreadAction = (username: String, timestamp: number) => {
+  return async (dispatch: Function, getState: Function) => {
+    let { chat: chats } = getState();
+    const unreadChats = Object();
+    unreadChats[username] = { count: 1, latest: timestamp };
+    if (chats === undefined || !chats.length) {
+      const existingChats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
+      const filteredChats = existingChats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
+      chats = mergeNewChats(unreadChats, filteredChats);
+    }
+    console.log(chats);
+    const augmentedChats = chats.map(item => {
+      const unread = unreadChats[item.username] ? unreadChats[item.username].count : 0;
+      const lastMessage = item.lastMessage || {};
+      if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
+      return { ...item, unread, lastMessage };
+    });
     dispatch({
       type: UPDATE_CHATS,
       payload: augmentedChats,
@@ -68,23 +91,12 @@ export const sendMessageByContactAction = (username: string, userId: string, mes
     }
     const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
     try {
-      const chatWebSocket = chat.getWebSocketInstance();
-      if (chatWebSocket.isRunning()) {
-        const apiBody = await chat.client.prepareApiBody('chat', {
-          username,
-          userId,
-          userConnectionAccessToken,
-          message: message.text,
-        });
-        chatWebSocket.sendSignalMessage(JSON.parse(apiBody));
-      } else {
-        await chat.client.sendMessageByContact('chat', {
-          username,
-          userId,
-          userConnectionAccessToken,
-          message: message.text,
-        });
-      }
+      await chat.sendMessage('chat', {
+        username,
+        userId,
+        userConnectionAccessToken,
+        message: message.text,
+      });
     } catch (e) {
       Toast.show({
         message: 'Unable to contact the server',
@@ -118,6 +130,7 @@ export const getChatByContactAction = (
   userId: string,
   avatar: string,
   loadEarlier: boolean = false,
+  receivedMessage?: String,
 ) => {
   return async (dispatch: Function, getState: Function) => {
     dispatch({
@@ -144,10 +157,16 @@ export const getChatByContactAction = (
     if (loadEarlier) {
       // TODO: split message loading in bunches and load earlier on lick
     }
-    await chat.client.receiveNewMessagesByContact(username, 'chat').catch(() => null);
-    const receivedMessages = await chat.client.getMessagesByContact(username, 'chat')
-      .then(JSON.parse).catch(() => []);
 
+    if (typeof receivedMessage !== 'undefined') {
+      await chat.client.decryptSignalMessage('chat', JSON.stringify(receivedMessage));
+    }
+
+    await chat.client.receiveNewMessagesByContact(username, 'chat')
+      .catch(() => null);
+    const receivedMessages = await chat.client.getMessagesByContact(username, 'chat')
+      .then(JSON.parse)
+      .catch(() => []);
     const updatedMessages = await receivedMessages.map((message, index) => ({
       _id: `${message.serverTimestamp}_${index}`,
       text: message.content,
@@ -159,7 +178,8 @@ export const getChatByContactAction = (
         name: message.username,
         avatar,
       },
-    })).sort((a, b) => b.createdAt - a.createdAt);
+    }))
+      .sort((a, b) => b.createdAt - a.createdAt);
 
     dispatch({
       type: UPDATE_MESSAGES,

@@ -19,7 +19,7 @@ export default class Chat {
     webSocketInstance = new ChatWebSocketService(credentials);
 
     if (Platform.OS === 'ios') {
-      return this.client.createClient(credentials);
+      return this.client.createClient(credentials.username, credentials.password, credentials.host);
     }
 
     credentials.errorTrackingDSN = SENTRY_DSN;
@@ -29,5 +29,32 @@ export default class Chat {
 
   getWebSocketInstance(): ChatWebSocketService {
     return webSocketInstance || new ChatWebSocketService({});
+  }
+
+  async sendMessage(tag: string, payload: Object) {
+    const chatWebSocket = this.getWebSocketInstance();
+    if (chatWebSocket.isRunning()) {
+      const { username, message } = payload;
+      const apiBody = await SignalClient.prepareApiBody(tag, payload);
+      const requestId = (new Date()).getTime();
+      const request = chatWebSocket.prepareRequest(
+        requestId,
+        'PUT',
+        `/v1/messages/${username}`,
+        apiBody,
+        ['content-type:application/json;'],
+      );
+      if (request == null) throw new Error();
+      chatWebSocket.send(request, () => {
+        const timestamp = (new Date()).getTime() / 1000;
+        SignalClient.saveSentMessage('chat', {
+          username,
+          message,
+          timestamp,
+        });
+      });
+    } else {
+      await SignalClient.sendMessageByContact(tag, payload);
+    }
   }
 }
