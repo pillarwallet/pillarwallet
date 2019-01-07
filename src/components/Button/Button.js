@@ -186,9 +186,11 @@ class Button extends React.Component<Props, State> {
   componentDidUpdate() {
     // this way the button will be unable to accept a second tap immediatly
     // avoiding "multiple requests" issues
-    setTimeout(() => {
-      this.setState({ addonWasTapped: false });
-    }, 500);
+    if (this.state.addonWasTapped) {
+      setTimeout(() => {
+        this.setState({ addonWasTapped: false });
+      }, 500);
+    }
   }
 
   buttonPressed = () => {
@@ -217,6 +219,8 @@ class Button extends React.Component<Props, State> {
       children,
     } = this.props;
 
+    const isDisabled = disabled || disabledTransparent || addonWasTapped;
+
     return (
       <ButtonWrapper
         {...this.props}
@@ -227,9 +231,9 @@ class Button extends React.Component<Props, State> {
         marginLeft={marginLeft}
         marginRight={marginRight}
         noPadding={noPadding}
-        onPress={(disabled || disabledTransparent || addonWasTapped) ? null : this.buttonPressed}
+        onPress={isDisabled ? null : this.buttonPressed}
         width={width}
-        disabled={disabled || disabledTransparent || addonWasTapped}
+        disabled={isDisabled}
       >
         {!!icon && <ButtonIcon name={icon} theme={theme} />}
         {!!this.props.title &&
