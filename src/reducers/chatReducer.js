@@ -6,6 +6,8 @@ import {
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
   DELETE_CHAT,
+  NEW_WEBSOCKET_MESSAGE,
+  RESET_WEBSOCKET_MESSAGES,
 } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
@@ -36,6 +38,7 @@ export type ChateducerState = {
     messages: {
       [string]: Message[],
     },
+    webSocketMessages: Object[],
     isFetching: boolean,
   },
 }
@@ -49,6 +52,7 @@ const initialState = {
   data: {
     chats: [],
     messages: {},
+    webSocketMessages: [],
     isFetching: false,
   },
 };
@@ -90,6 +94,7 @@ export default function chatReducer(
       return {
         ...state,
         data: {
+          ...state.data,
           chats: action.payload,
           isFetching: false,
           messages: { ...state.data.messages },
@@ -150,6 +155,29 @@ export default function chatReducer(
             }, {}),
           chats: [...state.data.chats]
             .filter(thisChat => thisChat.username !== action.payload),
+        },
+      };
+    case NEW_WEBSOCKET_MESSAGE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          webSocketMessages: [
+            ...state.data.webSocketMessages.filter(
+              chatMessage => chatMessage.source !== action.payload.source ||
+                (chatMessage.source === action.payload.source &&
+                  chatMessage.timestamp !== action.payload.timestamp),
+            ),
+            action.payload,
+          ],
+        },
+      };
+    case RESET_WEBSOCKET_MESSAGES:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          webSocketMessages: [],
         },
       };
     default:

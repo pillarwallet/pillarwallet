@@ -8,6 +8,8 @@ import {
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
   DELETE_CHAT,
+  NEW_WEBSOCKET_MESSAGE,
+  RESET_WEBSOCKET_MESSAGES,
 } from 'constants/chatConstants';
 
 const chat = new ChatService();
@@ -30,12 +32,27 @@ const mergeNewChats = (newChats, existingChats) => {
 };
 
 export const getExistingChatsAction = () => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      chat: { data: { webSocketMessages } },
+    } = getState();
     const chats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
     const {
       unread: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
+    webSocketMessages.forEach(wsMessage => {
+      if (!unreadChats[wsMessage.source]) {
+        unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };
+      } else {
+        const { count, latest } = unreadChats[wsMessage.source];
+        unreadChats[wsMessage.source] = {
+          ...unreadChats[wsMessage.source],
+          count: count + 1,
+          latest: latest > wsMessage.timestamp ? latest : wsMessage.timestamp,
+        };
+      }
+    });
     const newChats = mergeNewChats(unreadChats, filteredChats);
     const augmentedChats = newChats.map(item => {
       const unread = unreadChats[item.username] ? unreadChats[item.username].count : 0;
@@ -44,30 +61,6 @@ export const getExistingChatsAction = () => {
       return { ...item, unread, lastMessage };
     });
 
-    dispatch({
-      type: UPDATE_CHATS,
-      payload: augmentedChats,
-    });
-  };
-};
-
-export const increaseChatUnreadAction = (username: String, timestamp: number) => {
-  return async (dispatch: Function, getState: Function) => {
-    let { chat: chats } = getState();
-    const unreadChats = Object();
-    unreadChats[username] = { count: 1, latest: timestamp };
-    if (chats === undefined || !chats.length) {
-      const existingChats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
-      const filteredChats = existingChats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
-      chats = mergeNewChats(unreadChats, filteredChats);
-    }
-    console.log(chats);
-    const augmentedChats = chats.map(item => {
-      const unread = unreadChats[item.username] ? unreadChats[item.username].count : 0;
-      const lastMessage = item.lastMessage || {};
-      if (unreadChats[item.username]) lastMessage.serverTimestamp = unreadChats[item.username].latest;
-      return { ...item, unread, lastMessage };
-    });
     dispatch({
       type: UPDATE_CHATS,
       payload: augmentedChats,
@@ -130,7 +123,6 @@ export const getChatByContactAction = (
   userId: string,
   avatar: string,
   loadEarlier: boolean = false,
-  receivedMessage?: String,
 ) => {
   return async (dispatch: Function, getState: Function) => {
     dispatch({
@@ -138,6 +130,7 @@ export const getChatByContactAction = (
     });
     const {
       accessTokens: { data: accessTokens },
+      chat: { data: { webSocketMessages } },
     } = getState();
     const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
     if (!Object.keys(connectionAccessTokens).length) {
@@ -158,15 +151,23 @@ export const getChatByContactAction = (
       // TODO: split message loading in bunches and load earlier on lick
     }
 
-    if (typeof receivedMessage !== 'undefined') {
-      await chat.client.decryptSignalMessage('chat', JSON.stringify(receivedMessage));
-    }
+    await webSocketMessages
+      .filter(wsMessage => wsMessage.source === username)
+      .forEach(async (wsMessage) => {
+        await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
+        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp);
+      });
+
+    dispatch({
+      type: RESET_WEBSOCKET_MESSAGES,
+    });
 
     await chat.client.receiveNewMessagesByContact(username, 'chat')
       .catch(() => null);
     const receivedMessages = await chat.client.getMessagesByContact(username, 'chat')
       .then(JSON.parse)
       .catch(() => []);
+
     const updatedMessages = await receivedMessages.map((message, index) => ({
       _id: `${message.serverTimestamp}_${index}`,
       text: message.content,
@@ -199,11 +200,11 @@ export const deleteChatAction = (username: string) => {
   };
 };
 
-export const parseWebSocketMessageAction = (message: Object) => {
-  return () => {
-    chat.client.decodeWebSocketMessage(message).then(() => {
-      if (!Object.keys(message).length) return;
-      console.log('parseWebSocketMessageAction', message);
-    }).catch(() => null);
+export const webSocketChatMessageReceivedAction = (message: Object) => {
+  return (dispatch: Function) => {
+    dispatch({
+      type: NEW_WEBSOCKET_MESSAGE,
+      payload: message,
+    });
   };
 };

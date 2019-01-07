@@ -12,7 +12,11 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getExistingChatsAction, getChatByContactAction, increaseChatUnreadAction } from 'actions/chatActions';
+import {
+  getExistingChatsAction,
+  getChatByContactAction,
+  webSocketChatMessageReceivedAction,
+} from 'actions/chatActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -249,17 +253,16 @@ const unsetWebSocketClient = () => {
 
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
-    const {
-      contacts: { data: contacts },
-    } = getState();
     const chatWebSocket = chat.getWebSocketInstance();
     chatWebSocket.listen();
     chatWebSocket.onOpen();
-    chatWebSocket.onMessage(message => {
+    chatWebSocket.onMessage(async message => {
       if (typeof message.receivedSignalMessage !== 'undefined') {
-        console.log(message.receivedSignalMessage);
-        const { source: senderUsername, timestamp } = message.receivedSignalMessage;
-        dispatch(increaseChatUnreadAction(senderUsername, timestamp));
+        const {
+          contacts: { data: contacts },
+        } = getState();
+        const { source: senderUsername } = message.receivedSignalMessage;
+        dispatch(webSocketChatMessageReceivedAction(message.receivedSignalMessage));
         const { params: navParams = null } = getNavigationPathAndParamsState() || {};
         if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
@@ -270,7 +273,6 @@ export const startListeningChatWebSocketAction = () => {
             contact.id,
             contact.profileImage,
             false,
-            message.receivedSignalMessage,
           ));
           return;
         }

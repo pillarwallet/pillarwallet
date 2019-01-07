@@ -57,4 +57,20 @@ export default class Chat {
       await SignalClient.sendMessageByContact(tag, payload);
     }
   }
+
+  async deleteMessage(username: string, timestamp: number) {
+    const chatWebSocket = this.getWebSocketInstance();
+    if (chatWebSocket.isRunning()) {
+      const requestId = (new Date()).getTime();
+      const request = chatWebSocket.prepareRequest(
+        requestId,
+        'DELETE',
+        `/v1/messages/${username}/${timestamp}`,
+      );
+      if (request == null) throw new Error();
+      chatWebSocket.send(request);
+    } else {
+      // await SignalClient.deleteMessage(username, timestamp);
+    }
+  }
 }
