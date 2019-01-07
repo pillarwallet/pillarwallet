@@ -203,47 +203,32 @@ class Button extends React.Component<Props, State> {
   render() {
     const theme = getTheme(this.props);
     const { addonWasTapped } = this.state;
-    const {
-      block,
-      marginTop,
-      marginBottom,
-      icon,
-      marginLeft,
-      marginRight,
-      noPadding,
-      disabled,
-      disabledTransparent,
-      listItemButton,
-      small,
-      width,
-      children,
-    } = this.props;
-
+    const { disabled, disabledTransparent } = this.props;
     const isDisabled = disabled || disabledTransparent || addonWasTapped;
 
     return (
       <ButtonWrapper
         {...this.props}
         theme={theme}
-        block={block}
-        marginTop={marginTop}
-        marginBottom={marginBottom}
-        marginLeft={marginLeft}
-        marginRight={marginRight}
-        noPadding={noPadding}
+        block={this.props.block}
+        marginTop={this.props.marginTop}
+        marginBottom={this.props.marginBottom}
+        marginLeft={this.props.marginLeft}
+        marginRight={this.props.marginRight}
+        noPadding={this.props.noPadding}
         onPress={isDisabled ? null : this.buttonPressed}
-        width={width}
+        width={this.props.width}
         disabled={isDisabled}
       >
-        {!!icon && <ButtonIcon name={icon} theme={theme} />}
+        {!!this.props.icon && <ButtonIcon name={this.props.icon} theme={theme} />}
         {!!this.props.title &&
         <ButtonText
           theme={theme}
-          small={small}
-          listItemButton={listItemButton}
+          small={this.props.small}
+          listItemButton={this.props.listItemButton}
         >{this.props.title}
         </ButtonText>}
-        {children}
+        {this.props.children}
       </ButtonWrapper>
     );
   }
