@@ -263,6 +263,7 @@ export const startListeningChatWebSocketAction = () => {
         } = getState();
         const { source: senderUsername } = message.receivedSignalMessage;
         dispatch(webSocketChatMessageReceivedAction(message.receivedSignalMessage));
+        dispatch(getExistingChatsAction());
         const { params: navParams = null } = getNavigationPathAndParamsState() || {};
         if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
