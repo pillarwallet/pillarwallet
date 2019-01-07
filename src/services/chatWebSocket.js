@@ -93,7 +93,7 @@ export default class ChatWebSocket {
 
   send(data: Uint8Array, callback?: Function) {
     try { this.ws.send(data); } catch (e) {
-      console.log('err', e);
+      //
     }
     if (typeof callback === 'function') callback();
   }
@@ -112,11 +112,9 @@ export default class ChatWebSocket {
       if (typeof callback === 'function') callback();
     });
     this.ws.addEventListener('close', () => {
-      console.log('ws closed');
       this.setRunning(false);
     });
-    this.ws.addEventListener('error', (error: Object) => {
-      console.log('ws error', error);
+    this.ws.addEventListener('error', () => {
       this.setRunning(false);
     });
   }
@@ -147,7 +145,6 @@ export default class ChatWebSocket {
     };
     const err = this.WebSocketMessage.verify(request);
     if (err) {
-      console.log(err);
       return null;
     }
     const requestMessage = this.WebSocketMessage.create(request);
@@ -168,7 +165,6 @@ export default class ChatWebSocket {
     };
     const err = this.WebSocketMessage.verify(response);
     if (err) {
-      console.log(err);
       return null;
     }
     const responseMessage = this.WebSocketMessage.create(response);
