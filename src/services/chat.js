@@ -70,7 +70,7 @@ export default class Chat {
       if (request == null) throw new Error();
       chatWebSocket.send(request);
     } else {
-      // await SignalClient.deleteMessage(username, timestamp);
+      await SignalClient.deleteSignalMessage(username, timestamp);
     }
   }
 }
