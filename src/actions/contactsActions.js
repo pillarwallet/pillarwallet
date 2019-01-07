@@ -144,7 +144,7 @@ export const disconnectContactAction = (contactId: string) => {
       });
 
       Toast.show({
-        message: 'Successfully Disconected',
+        message: 'Successfully Disconnected',
         type: 'info',
       });
     } catch (e) {
