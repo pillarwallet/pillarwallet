@@ -188,7 +188,7 @@ class Button extends React.Component<Props, State> {
     // avoiding "multiple requests" issues
     setTimeout(() => {
       this.setState({ addonWasTapped: false });
-    }, 200);
+    }, 500);
   }
 
   buttonPressed = () => {
@@ -229,7 +229,7 @@ class Button extends React.Component<Props, State> {
         noPadding={noPadding}
         onPress={(disabled || disabledTransparent || addonWasTapped) ? null : this.buttonPressed}
         width={width}
-        disabled={disabled || disabledTransparent}
+        disabled={disabled || disabledTransparent || addonWasTapped}
       >
         {!!icon && <ButtonIcon name={icon} theme={theme} />}
         {!!this.props.title &&
