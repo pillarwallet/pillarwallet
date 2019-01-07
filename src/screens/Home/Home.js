@@ -321,7 +321,7 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileUsernameTranslateX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [-profileImageWidth / 2, -30],
+      outputRange: [-profileImageWidth / 2, -profileImageWidth / 2],
       extrapolate: 'clamp',
     });
 
@@ -333,13 +333,13 @@ class HomeScreen extends React.Component<Props, State> {
 
     const profileImagePositionX = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [(usernameWidth / 2), 10],
+      outputRange: [(usernameWidth / 2), 0],
       extrapolate: 'clamp',
     });
 
     const profileImagePositionY = scrollY.interpolate({
       inputRange: [0, 100],
-      outputRange: [-60, -72],
+      outputRange: [-60, -73],
       extrapolate: 'clamp',
     });
 
@@ -423,7 +423,7 @@ class HomeScreen extends React.Component<Props, State> {
               <HomeHeaderButton
                 icon="help"
                 color={baseColors.darkGray}
-                fontSize={24}
+                fontSize={28}
                 onPress={() => Intercom.displayMessenger()}
               />
               {hasIntercomNotifications && <View
@@ -495,6 +495,7 @@ class HomeScreen extends React.Component<Props, State> {
                     });
                   }}
                   style={{
+                    paddingHorizontal: 10,
                     transform: [
                       { scale: usernameScale },
                       { translateX: profileUsernameTranslateX },
@@ -517,11 +518,11 @@ class HomeScreen extends React.Component<Props, State> {
             </HomeHeaderBody>
           </HomeHeaderRow>
         </AnimatedHomeHeader>
-        <ScrollShadow shadowOpacity={shadowOpacity} topPosition={67} />
+        <ScrollShadow shadowOpacity={shadowOpacity} topPosition={77} />
         <Animated.ScrollView
           stickyHeaderIndices={[2]}
           style={{
-            marginTop: -100,
+            marginTop: -90,
           }}
           onScroll={Animated.event(
             [
