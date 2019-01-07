@@ -70,27 +70,29 @@ function InputTemplate(locals) {
     />
   );
 }
-const usernameRegex = /^[a-z]+[a-z0-9-]+[a-z0-9]$/i;
-const startsWithNumberRegex = /[0-9]/i;
+const usernameRegex = /^[a-z]+([a-z0-9-]+[a-z0-9])?$/i;
+const startsWithNumberRegex = /^[0-9]/i;
+const startsOrEndsWithDash = /(^-|-$)/i;
 const Username = t.refinement(t.String, (username): boolean => {
-  return username != null
+  return username !== null
     && username.length >= MIN_USERNAME_LENGTH
     && username.length <= MAX_USERNAME_LENGTH
     && usernameRegex.test(username);
 });
 
 Username.getValidationErrorMessage = (username): string => {
-  if (username != null && username.length < MIN_USERNAME_LENGTH) {
+  if (!usernameRegex.test(username)) {
+    if (startsWithNumberRegex.test(username)) return 'Username can not start with a number';
+    if (startsOrEndsWithDash.test(username)) return 'Username can not start or end with a dash';
+    return 'Only use alpha-numeric characters or dashes.';
+  }
+  if (username.length < MIN_USERNAME_LENGTH) {
     return `Username should be longer than ${MIN_USERNAME_LENGTH - 1} characters.`;
   }
-  if (username != null && username.length > MAX_USERNAME_LENGTH) {
+  if (username.length > MAX_USERNAME_LENGTH) {
     return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
   }
-  if (username != null && !(usernameRegex.test(username))) {
-    if (startsWithNumberRegex.test(username)) return 'Username can not start with a number';
-    if (username.startsWith('-') || username.endsWith('-')) return 'Username can not start or end with a dash';
-    return 'Only use alpha-numeric characters or dashes';
-  }
+
   return 'Please specify the username.';
 };
 
@@ -152,11 +154,18 @@ class NewProfile extends React.Component<Props, State> {
   }
 
   handleChange = (value: Object) => {
+    // Because the idea is to display the inputError label on proper circumstances
+    // here we don't validate minimum length, that's done on
+    // this.renderChooseUsernameScreen() const shouldNextButtonBeDisabled
+    const validateUsername = t.validate(value, formStructure);
+    const isValidUsername = validateUsername.isValid();
+    const { message: errorMessage = '' } = validateUsername.firstError() || {};
+
     const options = t.update(this.state.formOptions, {
       fields: {
         username: {
-          hasError: { $set: false },
-          error: { $set: '' },
+          hasError: { $set: !isValidUsername && value.username },
+          error: { $set: errorMessage },
         },
       },
     });
@@ -248,7 +257,11 @@ class NewProfile extends React.Component<Props, State> {
       session,
       retry,
     } = this.props;
-    const isUsernameValid = value && value.username && value.username.length > 3;
+    const {
+      fields: { username: { hasError: usernameHasErrors = false } },
+    } = formOptions;
+
+    const isUsernameValid = value && value.username && !usernameHasErrors;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
     return (
