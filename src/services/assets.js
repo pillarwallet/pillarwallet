@@ -51,6 +51,7 @@ type ERC20TransferOptions = {
   amount: number,
   wallet: Object,
   decimals: number,
+  nonce?: number,
 }
 
 type ETHTransferOptions = {
@@ -59,6 +60,7 @@ type ETHTransferOptions = {
   amount: number,
   to: Address,
   wallet: Object,
+  nonce?: number,
 }
 
 export function transferERC20(options: ERC20TransferOptions) {
@@ -68,13 +70,14 @@ export function transferERC20(options: ERC20TransferOptions) {
     amount,
     wallet,
     decimals = 18,
+    nonce,
   } = options;
   wallet.provider = providers.getDefaultProvider(PROVIDER);
   const contract = new Contract(contractAddress, CONTRACT_ABI, wallet);
   if (decimals > 0) {
-    return contract.transfer(to, utils.parseUnits(amount.toString(), decimals));
+    return contract.transfer(to, utils.parseUnits(amount.toString(), decimals), { nonce });
   }
-  return contract.transfer(to, utils.bigNumberify(amount.toString()));
+  return contract.transfer(to, utils.bigNumberify(amount.toString()), { nonce });
 }
 
 export function transferETH(options: ETHTransferOptions) {
@@ -84,12 +87,14 @@ export function transferETH(options: ETHTransferOptions) {
     gasPrice,
     gasLimit,
     amount,
+    nonce,
   } = options;
   const trx = {
     gasLimit,
     gasPrice: utils.bigNumberify(gasPrice),
     value: utils.parseEther(amount.toString()),
     to,
+    nonce,
   };
   wallet.provider = providers.getDefaultProvider(PROVIDER);
   return wallet.sendTransaction(trx);
