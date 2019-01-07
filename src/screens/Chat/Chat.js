@@ -67,19 +67,13 @@ const renderBubble = (props: Props) => {
       left: {
         color: isWarning ? baseColors.white : baseColors.slateBlack,
         fontSize: fontSizes.extraSmall,
-        fontFamily: Platform.select({
-          ios: 'Aktiv Grotesk App',
-          android: 'AktivGrotesk-Regular',
-        }),
+        fontFamily: 'Aktiv Grotesk App',
         fontWeight: '400',
       },
       right: {
         color: baseColors.slateBlack,
         fontSize: fontSizes.extraSmall,
-        fontFamily: Platform.select({
-          ios: 'Aktiv Grotesk App',
-          android: 'AktivGrotesk-Regular',
-        }),
+        fontFamily: 'Aktiv Grotesk App',
         fontWeight: '400',
       },
     }}
@@ -196,10 +190,7 @@ const renderDay = (props: Props) => (
       color: baseColors.darkGray,
       fontWeight: '400',
       fontSize: fontSizes.extraSmall,
-      fontFamily: Platform.select({
-        ios: 'Aktiv Grotesk App',
-        android: 'AktivGrotesk-Regular',
-      }),
+      fontFamily: 'Aktiv Grotesk App',
       textTransform: 'capitalize',
     }}
     dateFormat="LL"
@@ -213,19 +204,13 @@ const renderTime = (props: Props) => {
       textStyle={{
         right: {
           color: baseColors.darkGray,
-          fontFamily: Platform.select({
-            ios: 'Aktiv Grotesk App',
-            android: 'AktivGrotesk-Regular',
-          }),
+          fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
           fontSize: fontSizes.extraExtraSmall,
         },
         left: {
           color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: Platform.select({
-            ios: 'Aktiv Grotesk App',
-            android: 'AktivGrotesk-Regular',
-          }),
+          fontFamily: 'Aktiv Grotesk App',
           fontWeight: '400',
           fontSize: fontSizes.extraExtraSmall,
         },

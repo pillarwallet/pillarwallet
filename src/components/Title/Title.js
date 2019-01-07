@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, fontWeights } from 'utils/variables';
 import { BoldText } from 'components/Typography';
@@ -17,13 +17,12 @@ type Props = {
   noBlueDot?: boolean,
   dotColor?: string,
   onTitlePress?: Function,
+  titleStyles?: ?Object,
 };
 
 const Wrapper = styled.View`
   margin: ${props => props.noMargin ? '0' : '16px 0'};
   align-self: ${props => props.align ? props.align : 'flex-start'};
-  justify-content: flex-end;
-  align-items: baseline;
   position: relative;
   top: 2px;
   ${({ maxWidth }) => maxWidth && `
@@ -44,53 +43,64 @@ const Text = styled(BoldText)`
 `;
 
 const BlueDot = styled(BoldText)`
-  color: ${baseColors.electricBlue};
-  font-size: ${fontSizes.extraExtraSmall};
-  background-color: ${props => props.dotColor ? props.dotColor : baseColors.brightSkyBlue};
-  align-self: flex-end;
-  height: 4px;
-  width: 4px;
-  position: relative;
-  top: -9px;
-  left: 6px;
-  margin-bottom: -4px;
+  color: ${baseColors.brightSkyBlue};
+  font-size: ${Platform.OS === 'ios' ? 30 : 26}px;
 `;
 
 
 const Title = (props: Props) => {
+  const ellipsized = !props.fullWidth ? {
+    ellipsizeMode: 'middle',
+    numberOfLines: 1,
+  } : {};
+
   const {
     noMargin,
     style,
     align,
     maxWidth,
     fullWidth,
+    subtitle,
+    onTitlePress,
+    titleStyles,
+    title,
+    noBlueDot,
+    dotColor,
   } = props;
 
   return (
-    <Wrapper noMargin={noMargin} style={style} align={align} maxWidth={maxWidth} fullWidth={fullWidth}>
+    <Wrapper
+      noMargin={noMargin}
+      style={style}
+      align={align}
+      maxWidth={maxWidth}
+      fullWidth={fullWidth}
+    >
       {props.onTitlePress ?
-        <TouchableOpacity onPress={props.onTitlePress}>
+        <TouchableOpacity onPress={onTitlePress}>
           <Text
-            align={props.align}
-            subtitle={props.subtitle}
-            ellipsizeMode="middle"
-            numberOfLines={1}
+            align={align}
+            subtitle={subtitle}
+            {...ellipsized}
+            style={titleStyles}
             fullWidth={fullWidth}
           >
-            {props.title}
+            {title}
+            {!subtitle && !noBlueDot && <BlueDot dotColor={dotColor}>.</BlueDot>}
           </Text>
         </TouchableOpacity>
         :
         <Text
-          align={props.align}
-          subtitle={props.subtitle}
-          ellipsizeMode="middle"
-          numberOfLines={1}
+          align={align}
+          subtitle={subtitle}
+          {...ellipsized}
+          style={titleStyles}
           fullWidth={fullWidth}
         >
           {props.title}
-        </Text>}
-      {!!props.title && !props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor} />}
+          {!props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor}>.</BlueDot>}
+        </Text>
+      }
     </Wrapper>
   );
 };

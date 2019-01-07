@@ -1,12 +1,17 @@
 // @flow
+import partition from 'lodash.partition';
 import {
   UPDATE_SEARCH_RESULTS,
   FETCHING,
   UPDATE_CONTACTS_STATE,
   UPDATE_CONTACTS,
 } from 'constants/contactsConstants';
+import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
+import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
+import Toast from 'components/Toast';
 import { excludeLocalContacts } from 'utils/contacts';
 import { saveDbAction } from './dbActions';
+import { deleteChatAction, deleteContactAction } from './chatActions';
 
 export const searchContactsAction = (query: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -75,5 +80,83 @@ export const syncContactAction = (userId: string) => {
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
+  };
+};
+
+export const disconnectContactAction = (contactId: string) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      invitations: { data: invitations },
+      contacts: { data: contacts },
+      accessTokens: { data: accessTokens },
+    } = getState();
+
+    try {
+      if (accessTokens.length < 1 || !accessTokens[0].myAccessToken) {
+        throw new Error('It\'s currently impossible to delete contact on imported wallet');
+      }
+
+      const userRelatedAccessTokens = accessTokens.find(token => token.userId === contactId);
+
+      if (!userRelatedAccessTokens) {
+        throw new Error('Contact doesn\'t exist on this wallet');
+      }
+
+      const { myAccessToken, userAccessToken } = userRelatedAccessTokens;
+
+      await api.disconnectUser(
+        contactId,
+        myAccessToken,
+        userAccessToken,
+        walletId,
+      );
+
+      const [contactToDisconnect, updatedContacts] = partition(contacts, (contact) =>
+        contact.id === contactId);
+
+      await dispatch(deleteChatAction(contactToDisconnect[0].username));
+      await dispatch(deleteContactAction(contactToDisconnect[0].username));
+
+      await dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
+
+      const updatedAccessTokens = accessTokens
+        .filter(({ userId }) => userId !== contactId);
+
+      await dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
+
+      const updatedInvitations = invitations.filter(({ id }) => id !== contactId);
+
+      await dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+
+      dispatch({
+        type: UPDATE_CONTACTS,
+        payload: updatedContacts,
+      });
+
+      dispatch({
+        type: UPDATE_ACCESS_TOKENS,
+        payload: updatedAccessTokens,
+      });
+      dispatch({
+        type: UPDATE_INVITATIONS,
+        payload: updatedInvitations,
+      });
+
+      Toast.show({
+        message: 'Successfully Disconnected',
+        type: 'info',
+      });
+    } catch (e) {
+      const message = e.message === 'Request failed with status code 404' ?
+        'Please try again' : e.message;
+
+      Toast.show({
+        message,
+        type: 'warning',
+        title: 'Cannot delete contact',
+        autoClose: false,
+      });
+    }
   };
 };
