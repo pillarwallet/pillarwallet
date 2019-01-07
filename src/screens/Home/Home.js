@@ -40,6 +40,7 @@ import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
+import BadgeImage from 'components/BadgeImage';
 import Camera from 'components/Camera';
 import Permissions from 'react-native-permissions';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
@@ -70,6 +71,7 @@ type Props = {
   intercomNotificationsCount: number,
   backupStatus: Object,
   fetchBadges: Function,
+  badges: Object,
 };
 
 type esDataType = {
@@ -215,6 +217,48 @@ const TabsHeader = styled.View`
   background-color: ${baseColors.white};
 `;
 
+const BadgesWrapper = styled.View`
+  padding-top: 0;
+`;
+
+const Badges = styled.View`
+  height: 170px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${UIColors.defaultBorderColor};
+`;
+
+const BadgesSubtitle = styled(Title)`
+  margin-left: ${spacing.mediumLarge}px;
+`;
+
+const BadgesScrollView = styled.ScrollView`
+  background-color: ${baseColors.snowWhite};
+  padding-left: 6px;
+  margin-top: -4px;
+  padding-top: ${Platform.select({
+    ios: '4px',
+    android: 0,
+  })};
+`;
+
+const BadgesItem = styled.TouchableOpacity`
+  align-items: center;
+  width: 96px;
+  margin: ${Platform.select({
+    ios: '4px 4px 0',
+    android: '0',
+  })};
+`;
+
+const BadgesItemImage = styled(BadgeImage)`
+  margin-bottom: ${spacing.rhythm / 2};
+`;
+
+const BadgesSpacer = styled.View`
+  min-height: 0;
+`;
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
@@ -305,6 +349,16 @@ class HomeScreen extends React.Component<Props, State> {
       });
   };
 
+  renderBadges = () => {
+    const { badges } = this.props;
+    return Object.keys(badges)
+      .map(badgeId => (
+        <BadgesItem key={badgeId}>
+          <BadgesItemImage uri={`http://localhost:3900/images/badges/${badgeId}.png`} />
+        </BadgesItem>
+      ));
+  };
+
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
@@ -332,6 +386,7 @@ class HomeScreen extends React.Component<Props, State> {
       intercomNotificationsCount,
       navigation,
       backupStatus,
+      badges,
     } = this.props;
     const {
       showCamera,
@@ -539,7 +594,7 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
         </AnimatedHomeHeader>
         <Animated.ScrollView
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={[3]}
           style={{
             marginTop: this.props.contacts.length ? -100 : -76,
           }}
@@ -575,6 +630,20 @@ class HomeScreen extends React.Component<Props, State> {
 
             <RecentConnectionsSpacer />
           }
+          {badges && Object.keys(badges).length ?
+            <BadgesWrapper>
+              <Badges>
+                <View style={{ backgroundColor: baseColors.snowWhite }}>
+                  <BadgesSubtitle subtitle title="game of badges." />
+                </View>
+                <BadgesScrollView horizontal nestedScrollEnabled overScrollMode="always">
+                  {this.renderBadges()}
+                </BadgesScrollView>
+              </Badges>
+            </BadgesWrapper> :
+
+            <BadgesSpacer />
+          }
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
@@ -609,6 +678,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   wallet: { data: wallet, backupStatus },
   notifications: { intercomNotificationsCount },
+  badges: { data: badges },
 }) => ({
   contacts,
   user,
@@ -617,6 +687,7 @@ const mapStateToProps = ({
   wallet,
   intercomNotificationsCount,
   backupStatus,
+  badges,
 });
 
 const mapDispatchToProps = (dispatch) => ({

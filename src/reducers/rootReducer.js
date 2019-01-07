@@ -39,6 +39,7 @@ import icosReducer from './icosReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
+import badgesReducer from './badgesReducer';
 
 const appReducer = combineReducers({
   wallet: walletReducer,
@@ -57,6 +58,7 @@ const appReducer = combineReducers({
   txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
+  badges: badgesReducer,
 });
 
 const initialState = appReducer(undefined, {});
