@@ -35,6 +35,7 @@ import {
   fetchTransactionInfo,
   fetchTransactionReceipt,
 } from 'services/assets';
+import { fetchBadges } from 'services/badges';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
@@ -347,6 +348,10 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   //   return { balance: response.balance, symbol: response.ticker };
   // });
   // return Promise.all(promises).catch(() => []);
+};
+
+SDKWrapper.prototype.fetchBadges = function ({ address }) {
+  return fetchBadges(address).catch(() => ({}));
 };
 
 SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey: string, walletId: string) {

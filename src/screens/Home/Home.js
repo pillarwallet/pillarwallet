@@ -49,6 +49,7 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 
 type Props = {
@@ -68,6 +69,7 @@ type Props = {
   homeNotifications: Object[],
   intercomNotificationsCount: number,
   backupStatus: Object,
+  fetchBadges: Function,
 };
 
 type esDataType = {
@@ -307,9 +309,11 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
+      fetchBadges,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
+    fetchBadges();
   };
 
   setActiveTab = (activeTab, esData?) => {
@@ -623,6 +627,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
+  fetchBadges: () => dispatch(fetchBadgesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
