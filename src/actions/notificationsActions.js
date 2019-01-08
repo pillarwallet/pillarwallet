@@ -16,7 +16,7 @@ import {
   getExistingChatsAction,
   getChatByContactAction,
   webSocketChatMessageReceivedAction,
-  retryWebSocketSendMessageWithBodyAction,
+  addContactAndSendWebSocketMessageAction,
 } from 'actions/chatActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
@@ -269,7 +269,7 @@ export const startListeningChatWebSocketAction = () => {
             wsMessageSent => wsMessageSent.webSocketRequestId === message.response.status.id,
           );
           if (Object.keys(messageSent)) {
-            dispatch(retryWebSocketSendMessageWithBodyAction(messageSent.body));
+            dispatch(addContactAndSendWebSocketMessageAction(messageSent.tag, messageSent.params));
           }
         }
         if (message.response.status === 200) {
