@@ -8,7 +8,7 @@ type Props = {
 };
 
 const SeparatorWrapper = styled.View`
-  padding-left: ${props => (props.spaceOnLeft ? props.spaceOnLeft : 44)}px;
+  padding-left: ${props => props.spaceOnLeft ? props.spaceOnLeft : 44}px;
 `;
 
 const SeparatorLine = styled.View`

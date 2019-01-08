@@ -17,6 +17,7 @@ import {
   getChatByContactAction,
   webSocketChatMessageReceivedAction,
   addContactAndSendWebSocketMessageAction,
+  deleteChatAction,
 } from 'actions/chatActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
@@ -118,15 +119,13 @@ export const startListeningNotificationsAction = () => {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
         enabled = true;
-      } catch (err) { } // eslint-disable-line
-    }
 
-    if (!enabled) {
-      dispatch(fetchAllNotificationsAction());
-      disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
-      }, 30000);
-      return;
+        disabledPushNotificationsListener = setInterval(() => {
+          dispatch(fetchAllNotificationsAction());
+        }, 30000);
+        return;
+      } catch (err) { } // eslint-disable-line
     }
 
     if (notificationsListener) return;
@@ -134,6 +133,7 @@ export const startListeningNotificationsAction = () => {
       if (!message._data || !Object.keys(message._data).length) return;
       if (checkForSupportAlert(message._data)) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
+
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
@@ -159,6 +159,10 @@ export const startListeningNotificationsAction = () => {
         });
       }
       if (notification.type === CONNECTION) {
+        if (notification.message === 'Disconnected your connection') {
+          dispatch(deleteChatAction(notification.title));
+        }
+
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type !== SIGNAL) {
