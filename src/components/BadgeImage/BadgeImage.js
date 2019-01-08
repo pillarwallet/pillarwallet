@@ -6,6 +6,8 @@ type Props = {
   uri: string,
 };
 
+const defaultBadge = require('assets/images/defaultBadge.png');
+
 const BadgeImage = ({ uri }: Props) => (
   <CachedImage
     key={uri}
@@ -15,6 +17,7 @@ const BadgeImage = ({ uri }: Props) => (
     }}
     source={{ uri }}
     resizeMode="contain"
+    fallbackSource={defaultBadge}
   />
 );
 
