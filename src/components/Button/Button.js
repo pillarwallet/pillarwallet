@@ -31,8 +31,11 @@ type Props = {
   iconSize?: string,
   listItemButton?: boolean,
   height?: number,
-  shouldIgnoreTap?: boolean,
   textStyle?: ?Object,
+};
+
+type State = {
+  shouldIgnoreTap?: boolean,
 };
 
 const themes = {
@@ -224,46 +227,75 @@ const getTheme = (props: Props) => {
   return themeToUse;
 };
 
-const Button = (props: Props) => {
-  const theme = getTheme(props);
-  const {
-    disabled,
-    disabledTransparent,
-    shouldIgnoreTap,
-    onPress,
-    children,
-  } = props;
-  const isDisabled = disabled || disabledTransparent || shouldIgnoreTap;
+class Button extends React.Component<Props, State> {
+  state = { shouldIgnoreTap: false };
+  enableButtonTimeout = null;
 
-  return (
-    <ButtonWrapper
-      {...props}
-      theme={theme}
-      onPress={isDisabled ? null : onPress}
-      disabled={isDisabled}
-    >
-      {!!props.icon &&
-        <ButtonIcon
-          marginRight={props.marginRight}
-          iconSize={props.iconSize}
-          name={props.icon}
-          theme={theme}
-        />
+  componentDidUpdate() {
+    this.enableButtonAfterTap();
+  }
+
+  componentWillUnmount() {
+    if (!this.enableButtonTimeout) { return; }
+
+    clearTimeout(this.enableButtonTimeout);
+    this.enableButtonTimeout = null;
+  }
+
+  enableButtonAfterTap() {
+    this.enableButtonTimeout = setTimeout(() => {
+      if (this.state.shouldIgnoreTap) {
+        this.setState({ shouldIgnoreTap: false });
       }
-      {!!props.title &&
-      <ButtonText
+    }, 500);
+  }
+
+  handlePress = () => {
+    const { onPress } = this.props;
+    this.setState({ shouldIgnoreTap: true });
+    if (onPress) onPress();
+  }
+
+  render() {
+    const theme = getTheme(this.props);
+    const {
+      disabled,
+      disabledTransparent,
+      shouldIgnoreTap,
+      children,
+    } = this.props;
+    const isDisabled = disabled || disabledTransparent || this.state.shouldIgnoreTap;
+
+    return (
+      <ButtonWrapper
+        {...this.props}
         theme={theme}
-        small={props.small}
-        extraSmall={props.extraSmall}
-        listItemButton={props.listItemButton}
-        style={props.textStyle}
+        onPress={isDisabled ? null : this.handlePress}
+        disabled={isDisabled}
       >
-        {props.title}
-      </ButtonText>}
-      {children}
-    </ButtonWrapper>
-  );
-};
+        {!!this.props.icon &&
+          <ButtonIcon
+            marginRight={this.props.marginRight}
+            iconSize={this.props.iconSize}
+            name={this.props.icon}
+            theme={theme}
+          />
+        }
+        {!!this.props.title &&
+        <ButtonText
+          theme={theme}
+          small={this.props.small}
+          extraSmall={this.props.extraSmall}
+          listItemButton={this.props.listItemButton}
+          style={this.props.textStyle}
+        >
+          {this.props.title}
+        </ButtonText>}
+        {children}
+      </ButtonWrapper>
+    );
+  }
+}
 
 export default Button;
 
