@@ -33,7 +33,7 @@ type Props = {
 const StyledWrapper = styled(Wrapper)`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: 40px;
+  height: 45px;
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
