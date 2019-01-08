@@ -52,6 +52,9 @@ type State = {
   showLoadEarlierButton: boolean,
   isFetching: boolean,
   shadowOpacity: number,
+  contentHeight?: number,
+  layoutHeight?: number,
+  contentOffsetY?: number,
 }
 
 const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
@@ -398,9 +401,31 @@ class ChatScreen extends React.Component<Props, State> {
     );
   };
 
+  handleShadow = (layoutHeight, contentHeight, contentOffsetY) => {
+    const { shadowOpacity } = this.state;
+    if (contentOffsetY === undefined) {
+      this.setState({ shadowOpacity: 0 });
+      return;
+    }
+    const contentOffsetHeight = parseInt(contentHeight, 10) - parseInt(layoutHeight, 10);
+
+    if (contentOffsetHeight - contentOffsetY <= 0 && shadowOpacity) {
+      this.setState({ shadowOpacity: 0 });
+    } else if (contentOffsetHeight - contentOffsetY > 0 && !shadowOpacity) {
+      this.setState({ shadowOpacity: 1 });
+    }
+  };
+
   render() {
     const { messages } = this.props;
-    const { contact, showLoadEarlierButton, shadowOpacity } = this.state;
+    const {
+      contact,
+      showLoadEarlierButton,
+      shadowOpacity,
+      contentHeight,
+      layoutHeight,
+      contentOffsetY,
+    } = this.state;
     const title = getUserName(contact).toLowerCase();
 
     return (
@@ -438,30 +463,28 @@ class ChatScreen extends React.Component<Props, State> {
             minInputToolbarHeight={INPUT_HEIGHT}
             parsePatterns={parsePatterns}
             listViewProps={{
-              onEndReached: ({ distanceFromEnd }) => {
-                if (distanceFromEnd > 0) {
-                  this.setState({ shadowOpacity: 1 });
-                }
-              },
               onScroll: ({ nativeEvent }) => {
-                const { contentSize, contentOffset, layoutMeasurement } = nativeEvent;
-                const { height: contentHeight } = contentSize;
-                const { height: layoutHeight } = layoutMeasurement;
+                const { contentOffset } = nativeEvent;
                 const { y } = contentOffset;
-                const contentOffsetReal = parseInt(contentHeight - layoutHeight, 10);
-                const contentOffsetY = parseInt(y, 10);
-
-                if (Platform.OS === 'android') {
-                  if (contentOffsetReal !== contentOffsetY && !shadowOpacity) {
-                    this.setState({ shadowOpacity: 1 });
-                  } else if ((contentOffsetReal === contentOffsetY) && shadowOpacity) {
-                    this.setState({ shadowOpacity: 0 });
-                  }
-                } else if ((contentOffsetReal > 0 && contentOffsetReal !== contentOffsetY) && !shadowOpacity) {
-                    this.setState({ shadowOpacity: 1 });
-                } else if (contentOffsetReal === contentOffsetY && shadowOpacity) {
-                  this.setState({ shadowOpacity: 0 });
+                this.setState({ contentOffsetY: y });
+                this.handleShadow(layoutHeight, contentHeight, y);
+              },
+              onContentSizeChange: (w, h) => {
+                this.setState({ contentHeight: h });
+                if (h > layoutHeight && contentOffsetY === undefined) {
+                  this.setState({ shadowOpacity: 1 });
+                  return;
                 }
+                this.handleShadow(layoutHeight, h, contentOffsetY);
+              },
+              onLayout: (event) => {
+                const { height } = event.nativeEvent.layout;
+                this.setState({ layoutHeight: height });
+                if (contentHeight > height && contentOffsetY === undefined) {
+                  this.setState({ shadowOpacity: 1 });
+                  return;
+                }
+                this.handleShadow(height, contentOffsetY, shadowOpacity);
               },
             }}
           />
