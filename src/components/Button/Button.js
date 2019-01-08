@@ -261,7 +261,6 @@ class Button extends React.Component<Props, State> {
     const {
       disabled,
       disabledTransparent,
-      shouldIgnoreTap,
       children,
     } = this.props;
     const isDisabled = disabled || disabledTransparent || this.state.shouldIgnoreTap;
