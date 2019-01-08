@@ -6,8 +6,10 @@ import {
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
   DELETE_CHAT,
-  NEW_WEBSOCKET_MESSAGE,
-  RESET_WEBSOCKET_MESSAGES,
+  ADD_WEBSOCKET_SENT_MESSAGE,
+  ADD_WEBSOCKET_RECEIVED_MESSAGE,
+  REMOVE_WEBSOCKET_SENT_MESSAGE,
+  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
 } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
@@ -38,7 +40,10 @@ export type ChateducerState = {
     messages: {
       [string]: Message[],
     },
-    webSocketMessages: Object[],
+    webSocketMessages: {
+      sent: Object[],
+      received: Object[],
+    },
     isFetching: boolean,
   },
 }
@@ -52,7 +57,10 @@ const initialState = {
   data: {
     chats: [],
     messages: {},
-    webSocketMessages: [],
+    webSocketMessages: {
+      sent: [],
+      received: [],
+    },
     isFetching: false,
   },
 };
@@ -157,27 +165,65 @@ export default function chatReducer(
             .filter(thisChat => thisChat.username !== action.payload),
         },
       };
-    case NEW_WEBSOCKET_MESSAGE:
+    case ADD_WEBSOCKET_RECEIVED_MESSAGE:
       return {
         ...state,
         data: {
           ...state.data,
-          webSocketMessages: [
-            ...state.data.webSocketMessages.filter(
-              chatMessage => chatMessage.source !== action.payload.source ||
-                (chatMessage.source === action.payload.source &&
-                  chatMessage.timestamp !== action.payload.timestamp),
-            ),
-            action.payload,
-          ],
+          webSocketMessages: {
+            ...state.data.webSocketMessages,
+            received: [
+              ...state.data.webSocketMessages.received.filter(
+                chatMessage => chatMessage.source !== action.payload.source || (
+                  chatMessage.source === action.payload.source &&
+                  chatMessage.timestamp !== action.payload.timestamp
+                ),
+              ),
+              action.payload,
+            ],
+          },
         },
       };
-    case RESET_WEBSOCKET_MESSAGES:
+    case ADD_WEBSOCKET_SENT_MESSAGE:
       return {
         ...state,
         data: {
           ...state.data,
-          webSocketMessages: [],
+          webSocketMessages: {
+            ...state.data.webSocketMessages,
+            sent: [
+              ...state.data.webSocketMessages.sent.filter(
+                chatMessage => chatMessage.webSocketRequestId !== action.payload.webSocketRequestId,
+              ),
+              action.payload,
+            ],
+          },
+        },
+      };
+    case REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          webSocketMessages: {
+            ...state.data.webSocketMessages,
+            received: state.data.webSocketMessages.received.filter(
+              chatMessage => chatMessage.source !== action.payload,
+            ),
+          },
+        },
+      };
+    case REMOVE_WEBSOCKET_SENT_MESSAGE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          webSocketMessages: {
+            ...state.data.webSocketMessages,
+            sent: state.data.webSocketMessages.sent.filter(
+              chatMessage => chatMessage.webSocketRequestId !== action.payload,
+            ),
+          },
         },
       };
     default:

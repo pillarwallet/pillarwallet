@@ -8,8 +8,9 @@ import {
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
   DELETE_CHAT,
-  NEW_WEBSOCKET_MESSAGE,
-  RESET_WEBSOCKET_MESSAGES,
+  ADD_WEBSOCKET_SENT_MESSAGE,
+  ADD_WEBSOCKET_RECEIVED_MESSAGE,
+  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
 } from 'constants/chatConstants';
 
 const chat = new ChatService();
@@ -34,14 +35,14 @@ const mergeNewChats = (newChats, existingChats) => {
 export const getExistingChatsAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      chat: { data: { webSocketMessages } },
+      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
     const chats = await chat.client.getExistingMessages('chat').then(JSON.parse).catch(() => []);
     const filteredChats = chats.filter(_chat => !!_chat.lastMessage && !!_chat.username);
     const {
       unread: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
-    webSocketMessages.forEach(wsMessage => {
+    webSocketMessagesReceived.forEach(wsMessage => {
       if (!unreadChats[wsMessage.source]) {
         unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };
       } else {
@@ -89,6 +90,12 @@ export const sendMessageByContactAction = (username: string, userId: string, mes
         userId,
         userConnectionAccessToken,
         message: message.text,
+      }, (requestBody) => {
+        // callback is ran if websocket message sent
+        dispatch({
+          type: ADD_WEBSOCKET_SENT_MESSAGE,
+          payload: requestBody,
+        });
       });
     } catch (e) {
       Toast.show({
@@ -130,14 +137,14 @@ export const getChatByContactAction = (
     });
     const {
       accessTokens: { data: accessTokens },
-      chat: { data: { webSocketMessages } },
+      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
     const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
     if (!Object.keys(connectionAccessTokens).length) {
       return;
     }
     const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(username, userId, userConnectionAccessToken).catch(e => {
+    await chat.client.addContact(username, userId, userConnectionAccessToken, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -151,7 +158,7 @@ export const getChatByContactAction = (
       // TODO: split message loading in bunches and load earlier on lick
     }
 
-    await webSocketMessages
+    await webSocketMessagesReceived
       .filter(wsMessage => wsMessage.source === username)
       .forEach(async (wsMessage) => {
         await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
@@ -159,7 +166,8 @@ export const getChatByContactAction = (
       });
 
     dispatch({
-      type: RESET_WEBSOCKET_MESSAGES,
+      type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
+      payload: username,
     });
 
     await chat.client.receiveNewMessagesByContact(username, 'chat')
@@ -189,6 +197,23 @@ export const getChatByContactAction = (
   };
 };
 
+export const retryWebSocketSendMessageWithBodyAction = (body: Object) => {
+  return async () => {
+    const { destination: username, userId, userConnectionAccessToken } = body.messages[0];
+    await chat.client.addContact(username, userId, userConnectionAccessToken, true).catch(e => {
+      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+        Toast.show({
+          message: e.message,
+          type: 'warning',
+          title: 'Cannot retrieve remote user',
+          autoClose: false,
+        });
+      }
+    });
+    // TODO: send message
+  };
+};
+
 export const deleteChatAction = (username: string) => {
   return (dispatch: Function) => {
     chat.client.deleteContactMessages(username, 'chat').then(() => {
@@ -203,7 +228,7 @@ export const deleteChatAction = (username: string) => {
 export const webSocketChatMessageReceivedAction = (message: Object) => {
   return (dispatch: Function) => {
     dispatch({
-      type: NEW_WEBSOCKET_MESSAGE,
+      type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
       payload: message,
     });
   };

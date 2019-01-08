@@ -31,7 +31,7 @@ export default class Chat {
     return webSocketInstance || new ChatWebSocketService({});
   }
 
-  async sendMessage(tag: string, payload: Object) {
+  async sendMessage(tag: string, payload: Object, webSocketSendCallback?: Function) {
     const chatWebSocket = this.getWebSocketInstance();
     if (chatWebSocket.isRunning()) {
       const { username, message } = payload;
@@ -46,6 +46,13 @@ export default class Chat {
       );
       if (request == null) throw new Error();
       chatWebSocket.send(request, () => {
+        apiBody.webSocketRequestId = requestId;
+        if (typeof webSocketSendCallback === 'function') {
+          webSocketSendCallback({
+            body: JSON.parse(apiBody),
+            webSocketRequestId: requestId,
+          });
+        }
         const timestamp = (new Date()).getTime() / 1000;
         SignalClient.saveSentMessage('chat', {
           username,

@@ -32,7 +32,7 @@ export const sendTxNoteByContactAction = (username: string, userId: string, mess
       return;
     }
     const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(username, userId, userConnectionAccessToken).catch(e => {
+    await chat.client.addContact(username, userId, userConnectionAccessToken, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -82,7 +82,7 @@ export const getTxNoteByContactAction = (username: string, userId: string) => {
       return;
     }
     const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(username, userId, userConnectionAccessToken).catch(e => {
+    await chat.client.addContact(username, userId, userConnectionAccessToken, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
