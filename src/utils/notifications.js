@@ -6,6 +6,7 @@ import {
   TYPE_BLOCKED,
   TYPE_REJECTED,
   TYPE_RECEIVED,
+  TYPE_DISCONNECTED,
 } from 'constants/invitationsConstants';
 
 
@@ -31,6 +32,7 @@ const connectionEvents = [
   TYPE_BLOCKED,
   TYPE_REJECTED,
   TYPE_RECEIVED,
+  TYPE_DISCONNECTED,
 ];
 
 export const processNotification = (notification: Object, myEthAddress?: string): ?Object => {
@@ -57,6 +59,12 @@ export const processNotification = (notification: Object, myEthAddress?: string)
       result = {
         title: parsedNotification.senderUserData.username,
         message: 'Accepted your connection request',
+        type: 'CONNECTION',
+      };
+    } else if (parsedNotification.type === 'connectionDisconnectedEvent') {
+      result = {
+        title: parsedNotification.senderUserData.username,
+        message: 'Disconnected your connection',
         type: 'CONNECTION',
       };
     } else {

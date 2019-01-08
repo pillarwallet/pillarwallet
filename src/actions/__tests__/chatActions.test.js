@@ -1,8 +1,8 @@
 // @flow
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
-import { sendMessageByContactAction } from 'actions/chatActions';
-import { ADD_MESSAGE } from 'constants/chatConstants';
+import { sendMessageByContactAction, deleteContactAction } from 'actions/chatActions';
+import { ADD_MESSAGE, DELETE_CONTACT } from 'constants/chatConstants';
 
 describe('Chat Actions', () => {
   const dispatchMock = jest.fn();
@@ -87,6 +87,57 @@ describe('Chat Actions', () => {
 
       it('should NOT call the dispatch function', () => {
         expect(dispatchMock).not.toBeCalled();
+      });
+    });
+  });
+
+  describe('Delete Contact', () => {
+    describe('on success', () => {
+      beforeEach(async () => {
+        chatService.client.deleteContact = jest.fn().mockImplementation(() => Promise.resolve());
+      });
+
+      afterEach(() => {
+        chatService.client.deleteContact.mockRestore();
+      });
+
+      it('should delete contact from signal', async () => {
+        const username = 'usernameFooBar';
+        const deleteContact = await deleteContactAction(username)(dispatchMock);
+
+        expect(chatService.client.deleteContact).toBeCalledWith(username);
+
+        expect(dispatchMock).toBeCalledWith({
+          type: DELETE_CONTACT,
+          payload: username,
+        });
+        expect(deleteContact).toBe(true);
+      });
+    });
+
+    describe('on error', () => {
+      beforeEach(async () => {
+        chatService.client.deleteContact = jest.fn().mockImplementation(() => Promise.reject());
+        jest.spyOn(Toast, 'show');
+      });
+
+      afterEach(() => {
+        chatService.client.deleteContact.mockRestore();
+        Toast.show.mockRestore();
+      });
+
+
+      it('should throw an error if signal fails', async () => {
+        const deleteContact = await deleteContactAction('someuser')(dispatchMock);
+
+        expect(Toast.show).toBeCalledWith({
+          message: 'Unable to contact the server!',
+          type: 'warning',
+          title: 'Cannot delete contact',
+          autoClose: false,
+        });
+
+        expect(deleteContact).toBe(false);
       });
     });
   });

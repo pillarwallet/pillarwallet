@@ -8,17 +8,20 @@ import {
   Platform,
   RefreshControl,
 } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import Swipeout from 'react-native-swipeout';
+import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
 import orderBy from 'lodash.orderby';
 import isEqual from 'lodash.isequal';
+import capitalize from 'lodash.capitalize';
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
-import { searchContactsAction, resetSearchContactsStateAction } from 'actions/contactsActions';
+import { searchContactsAction, resetSearchContactsStateAction, disconnectContactAction } from 'actions/contactsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { CONTACT, CONNECTION_REQUESTS } from 'constants/navigationConstants';
 import { TYPE_RECEIVED } from 'constants/invitationsConstants';
 import { FETCHING, FETCHED } from 'constants/contactsConstants';
+import { DISCONNECT } from 'constants/connectionsConstants';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Container, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
@@ -27,10 +30,12 @@ import Separator from 'components/Separator';
 import Spinner from 'components/Spinner';
 import { BaseText } from 'components/Typography';
 import NotificationCircle from 'components/NotificationCircle';
+import Button from 'components/Button/Button';
 import PeopleSearchResults from 'components/PeopleSearchResults';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ScrollWithShadow from 'components/ScrollWithShadow';
 import type { SearchResults } from 'models/Contacts';
+import ConnectionConfirmationModal from 'screens/Contact/ConnectionConfirmationModal';
 
 const ConnectionRequestBanner = styled.TouchableHighlight`
   height: 60px;
@@ -78,6 +83,7 @@ type Props = {
   contactState: ?string,
   user: Object,
   fetchInviteNotifications: Function,
+  disconnectContact: Function,
   resetSearchContactsState: Function,
   invitations: Object[],
   localContacts: Object[],
@@ -85,16 +91,44 @@ type Props = {
 
 type State = {
   query: string,
+  showConfirmationModal: boolean,
+  manageContactType: string,
+  manageContactId: string,
+  forceHideRemoval: boolean,
 }
 
 class PeopleScreen extends React.Component<Props, State> {
+  didBlur: NavigationEventSubscription;
+  willFocus: NavigationEventSubscription;
+
   state = {
     query: '',
+    showConfirmationModal: false,
+    manageContactType: '',
+    manageContactId: '',
+    forceHideRemoval: false,
   };
 
   constructor(props: Props) {
     super(props);
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
+  }
+
+  componentDidMount() {
+    this.willFocus = this.props.navigation.addListener(
+      'willFocus',
+      () => { this.setState({ forceHideRemoval: false }); },
+    );
+
+    this.didBlur = this.props.navigation.addListener(
+      'didBlur',
+      () => { this.setState({ forceHideRemoval: true }); },
+    );
+  }
+
+  componentWillUnmount() {
+    this.didBlur.remove();
+    this.willFocus.remove();
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -127,17 +161,94 @@ class PeopleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(CONNECTION_REQUESTS);
   };
 
+  manageConnection = (manageContactType: string, contactData: Object) => {
+    // condition to avoid confirmation if MUTE should be considered here
+    this.setState({
+      showConfirmationModal: true,
+      forceHideRemoval: false,
+      manageContactType,
+      manageContactId: contactData.id,
+    });
+  };
+
+  renderSwipeoutBtns = (data) => {
+    const swipeButtons = [
+      // { actionType: MUTE, icon: 'mute'},
+      { actionType: DISCONNECT, icon: 'remove' },
+      // { actionType: BLOCK, icon: 'warning'},
+    ];
+
+    return swipeButtons.map((buttonDefinition) => {
+      const { actionType, icon, ...btnProps } = buttonDefinition;
+
+      return {
+        component: (
+          <Button
+            square
+            extraSmall
+            height={80}
+            onPress={() => this.manageConnection(actionType, data)}
+            title={capitalize(actionType)}
+            icon={icon}
+            iconSize="small"
+            {...btnProps}
+            style={{
+              marginTop: 2,
+            }}
+            textStyle={{
+              marginTop: 9,
+            }}
+          />
+        ),
+        backgroundColor: baseColors.lighterGray,
+      };
+    });
+  };
+
   renderContact = ({ item }) => (
-    <ListItemWithImage
-      label={item.username}
-      onPress={this.handleContactCardPress(item)}
-      avatarUrl={item.profileImage}
-      navigateToProfile={this.handleContactCardPress(item)}
-    />
+    <Swipeout
+      right={this.renderSwipeoutBtns(item)}
+      backgroundColor="transparent"
+      sensitivity={10}
+      close={this.state.forceHideRemoval}
+      style={{
+        paddingRight: 14,
+      }}
+      buttonWidth={80}
+    >
+      <ListItemWithImage
+        label={item.username}
+        onPress={this.handleContactCardPress(item)}
+        avatarUrl={item.profileImage}
+        navigateToProfile={this.handleContactCardPress(item)}
+      />
+    </Swipeout>
   );
 
+  confirmManageAction = () => {
+    // here will be called the action to manageContactType (block, disconnect, mute)
+    const {
+      manageContactType,
+      manageContactId,
+    } = this.state;
+
+    if (manageContactType === DISCONNECT) {
+      this.props.disconnectContact(manageContactId);
+    }
+
+    this.setState({
+      showConfirmationModal: false,
+      forceHideRemoval: true,
+    });
+  };
+
   render() {
-    const { query } = this.state;
+    const {
+      query,
+      showConfirmationModal,
+      manageContactType,
+      manageContactId,
+    } = this.state;
     const {
       searchResults,
       contactState,
@@ -149,6 +260,7 @@ class PeopleScreen extends React.Component<Props, State> {
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
+    const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -239,6 +351,18 @@ class PeopleScreen extends React.Component<Props, State> {
             }
           </KeyboardAvoidingView>
         }
+        <ConnectionConfirmationModal
+          showConfirmationModal={showConfirmationModal}
+          manageContactType={manageContactType}
+          contact={contact}
+          onConfirm={this.confirmManageAction}
+          onModalHide={() => {
+            this.setState({
+              showConfirmationModal: false,
+              forceHideRemoval: true,
+            });
+          }}
+        />
       </Container>
     );
   }
@@ -262,6 +386,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   searchContacts: (query) => dispatch(searchContactsAction(query)),
   resetSearchContactsState: () => dispatch(resetSearchContactsStateAction()),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
+  disconnectContact: (contactId: string) => dispatch(disconnectContactAction(contactId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PeopleScreen);

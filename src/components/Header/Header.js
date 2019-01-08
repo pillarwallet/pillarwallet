@@ -12,13 +12,18 @@ import IconButton from 'components/IconButton';
 type Props = {
   onBack?: Function,
   onClose?: Function,
+  noClose?: boolean,
   onCloseText?: string,
   onNextPress?: Function,
   onTitlePress?: Function,
   nextText?: string,
   nextIcon?: string,
   title?: string,
+  fullWidthTitle?: boolean,
+  noBlueDotOnTitle?: boolean,
+  dotColor?: string,
   centerTitle?: boolean,
+  noWrapTitle?: boolean,
   noPadding?: boolean,
   noMargin?: boolean,
   flexStart?: boolean,
@@ -28,12 +33,13 @@ type Props = {
   overlay?: boolean,
   backIcon?: string,
   nextIconSize?: number,
+  titleStyles?: ?Object,
 }
 
 const StyledWrapper = styled(Wrapper)`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: 45px;
+  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '45px'};
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
@@ -95,9 +101,14 @@ const Header = (props: Props) => {
     onNextPress,
     onTitlePress,
     onClose,
+    noClose,
     onCloseText,
     title,
+    fullWidthTitle,
+    noBlueDotOnTitle,
+    dotColor,
     centerTitle,
+    noWrapTitle,
     noPadding,
     noMargin,
     style,
@@ -106,6 +117,7 @@ const Header = (props: Props) => {
     overlay,
     flexStart,
     backIcon,
+    titleStyles,
   } = props;
 
   const showRight = nextText || nextIcon || onBack || onClose || centerTitle;
@@ -130,6 +142,7 @@ const Header = (props: Props) => {
       flexStart={flexStart}
       style={style}
       noPadding={noPadding}
+      noWrapTitle={noWrapTitle}
     >
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
@@ -141,15 +154,31 @@ const Header = (props: Props) => {
           />
         }
         {showTitleLeft &&
-          <Title noMargin title={title} />
+          <Title
+            noMargin
+            title={title}
+            noBlueDot={noBlueDotOnTitle}
+            dotColor={dotColor}
+            fullWidth={fullWidthTitle}
+            titleStyles={titleStyles}
+          />
         }
       </HeaderLeft>
       {showTitleCenter &&
         <HeaderBody onCloseText={onCloseText}>
-          <Title align="center" noMargin title={title} onTitlePress={onTitlePress} />
-        </HeaderBody >
+          <Title
+            align="center"
+            noMargin
+            title={title}
+            onTitlePress={onTitlePress}
+            noBlueDot={noBlueDotOnTitle}
+            dotColor={dotColor}
+            fullWidth={fullWidthTitle}
+            titleStyles={titleStyles}
+          />
+        </HeaderBody>
       }
-      {showRight &&
+      {showRight && !noClose &&
         <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
           {nextText &&
             <TextLink onPress={onNextPress}>{nextText}</TextLink>
