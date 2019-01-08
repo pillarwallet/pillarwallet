@@ -86,7 +86,26 @@ type Props = {
 };
 
 class PeopleSearchResults extends React.Component<Props> {
+  state = {};
+
+  componentDidUpdate() {
+    const { invitations } = this.props;
+    const ignoreTaps = {};
+
+    invitations.forEach(({ username }) => {
+      const shouldIgnoreTapForUser = this.state[`shouldIgnoreTapFor${username}`] || false;
+      if (shouldIgnoreTapForUser) {
+        ignoreTaps[`shouldIgnoreTapFor${username}`] = false;
+      }
+    });
+
+    if (Object.keys(ignoreTaps).length > 0) {
+      this.setState(ignoreTaps);
+    }
+  }
+
   handleSendInvitationPress = (user: ApiUser) => () => {
+    this.setState({ [`shouldIgnoreTapFor${user.username}`]: true });
     Keyboard.dismiss();
     this.props.sendInvitation(user);
   };
@@ -125,6 +144,7 @@ class PeopleSearchResults extends React.Component<Props> {
     if (localContactsIds.includes(user.id)) {
       return null;
     }
+    const shouldIgnoreTap = this.state[`shouldIgnoreTapFor${user.username}`] || false;
 
     return (
       <ListItemWithImage
@@ -137,6 +157,7 @@ class PeopleSearchResults extends React.Component<Props> {
           ? this.handleCancelInvitationPress(user)
           : this.handleSendInvitationPress(user)}
         buttonActionLabel={status === TYPE_SENT ? 'Requested' : 'Connect'}
+        shouldIgnoreTap={shouldIgnoreTap}
         secondaryButton={status === TYPE_SENT}
       />
     );

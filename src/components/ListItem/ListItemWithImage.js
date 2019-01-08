@@ -277,6 +277,7 @@ const Addon = (props: Props) => {
     actionLabel,
     rejectInvitation,
     acceptInvitation,
+    shouldIgnoreTap,
   } = props;
 
   if (itemValue) {
@@ -321,6 +322,7 @@ const Addon = (props: Props) => {
         onPress={buttonAction}
         small
         primaryInverted={secondaryButton}
+        shouldIgnoreTap={shouldIgnoreTap}
         listItemButton
       />
     );
