@@ -26,6 +26,7 @@ import {
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import { TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -151,11 +152,15 @@ export const startListeningNotificationsAction = () => {
         });
       }
       if (notification.type === CONNECTION) {
-        if (notification.message === 'Disconnected your connection') {
+        if (notification.status === TYPE_DISCONNECTED) {
           dispatch(deleteChatAction(notification.title));
         }
 
-        dispatch(fetchInviteNotificationsAction());
+        // to understand why this param exists please refer to
+        // https://www.pivotaltracker.com/story/show/162246711/comments/198210833
+        const connectionToExclude = notification.status === TYPE_REJECTED ? notification : {};
+
+        dispatch(fetchInviteNotificationsAction(connectionToExclude));
       }
       if (notification.type !== SIGNAL) {
         dispatch({ type: ADD_NOTIFICATION, payload: notification });

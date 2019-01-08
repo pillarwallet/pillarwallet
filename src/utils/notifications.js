@@ -49,23 +49,37 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   }
 
   if (connectionEvents.includes(parsedNotification.type)) {
-    if (parsedNotification.type === 'connectionRequestedEvent') {
+    if (parsedNotification.type === TYPE_RECEIVED) {
       result = {
         title: parsedNotification.senderUserData.username,
         message: 'Connection request',
         type: 'CONNECTION',
+        status: TYPE_RECEIVED,
+        id: parsedNotification.senderUserData.id,
       };
-    } else if (parsedNotification.type === 'connectionAcceptedEvent') {
+    } else if (parsedNotification.type === TYPE_ACCEPTED) {
       result = {
         title: parsedNotification.senderUserData.username,
         message: 'Accepted your connection request',
         type: 'CONNECTION',
+        status: TYPE_ACCEPTED,
+        id: parsedNotification.senderUserData.id,
       };
-    } else if (parsedNotification.type === 'connectionDisconnectedEvent') {
+    } else if (parsedNotification.type === TYPE_DISCONNECTED) {
       result = {
         title: parsedNotification.senderUserData.username,
         message: 'Disconnected your connection',
         type: 'CONNECTION',
+        status: TYPE_DISCONNECTED,
+        id: parsedNotification.senderUserData.id,
+      };
+    } else if (parsedNotification.type === TYPE_REJECTED) {
+      result = {
+        title: parsedNotification.senderUserData.username,
+        message: 'Rejected your connection request',
+        type: 'CONNECTION',
+        status: TYPE_REJECTED,
+        id: parsedNotification.senderUserData.id,
       };
     } else {
       result = {

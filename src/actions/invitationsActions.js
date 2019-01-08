@@ -19,7 +19,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { saveDbAction } from './dbActions';
 
-export const fetchInviteNotificationsAction = () => {
+export const fetchInviteNotificationsAction = (connectionToExclude?: Object = {}) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       invitations: { data: invitations },
@@ -62,7 +62,8 @@ export const fetchInviteNotificationsAction = () => {
       ...groupedNotifications.connectionCancelledEvent,
       ...groupedNotifications.connectionAcceptedEvent,
       ...groupedNotifications.connectionRejectedEvent,
-    ].map(({ id: userId }) => userId);
+      connectionToExclude,
+    ].map(({ id: userId }) => userId).filter((invitationToExclude) => invitationToExclude);
 
     const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
       .filter(({ id }) => !invitationsToExclude.includes(id));
@@ -75,8 +76,7 @@ export const fetchInviteNotificationsAction = () => {
     // clean up local contacts
     const acceptedConnectionsIds = groupedNotifications.connectionAcceptedEvent.map(({ id: acceptedConnectionId }) =>
       acceptedConnectionId);
-    const consistentLocalContacts = groupedNotifications.connectionAcceptedEvent
-      .filter(({ id: contactId }) => acceptedConnectionsIds.includes(contactId));
+    const consistentLocalContacts = contacts.filter(({ id: contactId }) => acceptedConnectionsIds.includes(contactId));
     const updatedContacts = uniqBy(newConnections.concat(consistentLocalContacts), 'id')
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
 
