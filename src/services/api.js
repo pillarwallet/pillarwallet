@@ -351,7 +351,23 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
 };
 
 SDKWrapper.prototype.fetchBadges = function ({ address }) {
-  return fetchBadges(address).catch(() => ({}));
+  return fetchBadges(address)
+    .then(() => ({
+      '0': 1,
+      '1': 2,
+      '2': 3,
+      '3': 4,
+      '4': 5,
+    }))
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.fetchBadgesInfo = function ({ address, ids }) { // eslint-disable-line
+  return Promise.resolve()
+    .then(() => fetch('http://localhost:3900/js/badges.json'))
+    .then(data => data.json())
+    .then(data => data.reduce((memo, badge) => ({ ...memo, [badge.id]: badge }), {}))
+    .catch(() => ({}));
 };
 
 SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
