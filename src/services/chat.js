@@ -46,12 +46,8 @@ export default class Chat {
       );
       if (request == null) throw new Error();
       chatWebSocket.send(request, () => {
-        apiBody.webSocketRequestId = requestId;
         if (typeof webSocketSendCallback === 'function') {
-          webSocketSendCallback({
-            body: JSON.parse(apiBody),
-            webSocketRequestId: requestId,
-          });
+          webSocketSendCallback(requestId);
         }
         const timestamp = (new Date()).getTime() / 1000;
         SignalClient.saveSentMessage('chat', {

@@ -193,7 +193,7 @@ export default function chatReducer(
             ...state.data.webSocketMessages,
             sent: [
               ...state.data.webSocketMessages.sent.filter(
-                chatMessage => chatMessage.webSocketRequestId !== action.payload.webSocketRequestId,
+                chatMessage => chatMessage.requestId !== action.payload.requestId,
               ),
               action.payload,
             ],
@@ -221,7 +221,7 @@ export default function chatReducer(
           webSocketMessages: {
             ...state.data.webSocketMessages,
             sent: state.data.webSocketMessages.sent.filter(
-              chatMessage => chatMessage.webSocketRequestId !== action.payload,
+              chatMessage => chatMessage.requestId !== action.payload,
             ),
           },
         },

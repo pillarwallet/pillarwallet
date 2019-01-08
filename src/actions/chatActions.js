@@ -85,16 +85,21 @@ export const sendMessageByContactAction = (username: string, userId: string, mes
     }
     const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
     try {
-      await chat.sendMessage('chat', {
+      const params = {
         username,
         userId,
         userConnectionAccessToken,
         message: message.text,
-      }, (requestBody) => {
+      };
+      await chat.sendMessage('chat', params, (requestId) => {
         // callback is ran if websocket message sent
         dispatch({
           type: ADD_WEBSOCKET_SENT_MESSAGE,
-          payload: requestBody,
+          payload: {
+            tag: 'chat',
+            params,
+            requestId,
+          },
         });
       });
     } catch (e) {
@@ -197,20 +202,21 @@ export const getChatByContactAction = (
   };
 };
 
-export const retryWebSocketSendMessageWithBodyAction = (body: Object) => {
+export const addContactAndSendWebSocketMessageAction = (tag: string, params: Object) => {
   return async () => {
-    const { destination: username, userId, userConnectionAccessToken } = body.messages[0];
-    await chat.client.addContact(username, userId, userConnectionAccessToken, true).catch(e => {
-      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
-        Toast.show({
-          message: e.message,
-          type: 'warning',
-          title: 'Cannot retrieve remote user',
-          autoClose: false,
-        });
-      }
-    });
-    // TODO: send message
+    const { username, userId, userConnectionAccessToken } = params;
+    chat.client.addContact(username, userId, userConnectionAccessToken, true)
+      .then(chat.sendMessage(tag, params))
+      .catch(e => {
+        if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+          Toast.show({
+            message: e.message,
+            type: 'warning',
+            title: 'Cannot retrieve remote user',
+            autoClose: false,
+          });
+        }
+      });
   };
 };
 
