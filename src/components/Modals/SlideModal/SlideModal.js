@@ -12,21 +12,28 @@ import { Keyboard } from 'react-native';
 
 type Props = {
   title?: string,
+  fullWidthTitle?: boolean,
+  noBlueDotOnTitle?: boolean,
+  dotColor?: string,
   children?: React.Node,
   subtitle?: string,
   fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   onModalHidden?: Function,
+  noClose?: boolean,
   fullScreen?: boolean,
   isVisible: boolean,
   showHeader?: boolean,
   centerTitle?: boolean,
+  noWrapTitle?: boolean,
   backgroundColor?: string,
   avoidKeyboard?: boolean,
   eventDetail?: boolean,
   eventType?: string,
   eventData?: ?Object,
   scrollOffset?: any,
+  subtitleStyles?: ?Object,
+  titleStyles?: ?Object,
 };
 
 const themes = {
@@ -58,6 +65,7 @@ const getTheme = (props: Props) => {
 };
 
 const HeaderWrapper = styled.View`
+  width: 100%;
 `;
 
 const ContentWrapper = styled.View`
@@ -87,6 +95,7 @@ const ModalBackground = styled.View`
 
 const ModalSubtitle = styled(SubTitle)`
   padding: 10px 0;
+  color: ${UIColors.primary};
 `;
 
 const getModalContentPadding = (showHeader: boolean) => {
@@ -116,6 +125,9 @@ const ModalOverflow = styled.View`
 export default class SlideModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
+    subtitleStyles: {},
+    titleStyles: {},
+    backgroundColor: baseColors.lightGray,
   };
 
   hideModal = () => {
@@ -142,17 +154,24 @@ export default class SlideModal extends React.Component<Props, *> {
     const {
       children,
       title,
+      fullWidthTitle,
+      noBlueDotOnTitle,
+      dotColor,
       fullScreenComponent,
       onModalHidden,
+      noClose,
       fullScreen,
       subtitle,
       isVisible,
       showHeader,
       centerTitle,
-      backgroundColor = baseColors.lightGray,
+      noWrapTitle,
+      backgroundColor,
       avoidKeyboard,
       eventDetail,
       scrollOffset,
+      subtitleStyles,
+      titleStyles,
     } = this.props;
 
     const theme = getTheme(this.props);
@@ -166,14 +185,24 @@ export default class SlideModal extends React.Component<Props, *> {
             <Header
               noMargin={!fullScreen}
               centerTitle={centerTitle}
+              noWrapTitle={noWrapTitle}
               noPadding={!fullScreen}
               title={title}
-              onClose={this.hideModal}
+              titleStyles={titleStyles}
+              fullWidthTitle={fullWidthTitle}
+              noBlueDotOnTitle={noBlueDotOnTitle}
+              dotColor={dotColor}
+              onClose={!noClose ? this.hideModal : () => {}}
+              noClose={noClose}
             />
           </HeaderWrapper>
         }
         {subtitle &&
-          <ModalSubtitle>{subtitle}</ModalSubtitle>
+          <ModalSubtitle
+            style={subtitleStyles}
+          >
+            {subtitle}
+          </ModalSubtitle>
         }
         <ModalContent
           fullScreen={fullScreen}
