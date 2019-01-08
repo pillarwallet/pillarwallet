@@ -82,10 +82,6 @@
 	<string>Allow Pillar Wallet recognize speech</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>AktivGrotesk-Bold.ttf</string>
-		<string>AktivGrotesk-Light.ttf</string>
-		<string>AktivGrotesk-Medium.ttf</string>
-		<string>AktivGrotesk-Regular.ttf</string>
 		<string>PillarIcons.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
@@ -104,6 +100,10 @@
 		<string>FontAwesome5_Brands.ttf</string>
 		<string>FontAwesome5_Regular.ttf</string>
 		<string>FontAwesome5_Solid.ttf</string>
+		<string>Aktiv Grotesk App_bold.ttf</string>
+		<string>Aktiv Grotesk App_light.ttf</string>
+		<string>Aktiv Grotesk App_medium.ttf</string>
+		<string>Aktiv Grotesk App.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

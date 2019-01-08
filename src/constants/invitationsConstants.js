@@ -12,3 +12,4 @@ export const TYPE_ACCEPTED = 'connectionAcceptedEvent';
 export const TYPE_BLOCKED = 'connectionBlockedEvent';
 export const TYPE_CANCELLED = 'connectionCancelledEvent';
 export const TYPE_REJECTED = 'connectionRejectedEvent';
+export const TYPE_DISCONNECTED = 'connectionDisconnectedEvent';

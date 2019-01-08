@@ -8,6 +8,7 @@ import {
   RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
   DELETE_CHAT,
+  DELETE_CONTACT,
 } from 'constants/chatConstants';
 
 const chat = new ChatService();
@@ -132,12 +133,47 @@ export const getChatByContactAction = (username: string, avatar: string, loadEar
 };
 
 export const deleteChatAction = (username: string) => {
-  return (dispatch: Function) => {
-    chat.client.deleteContactMessages(username, 'chat').then(() => {
+  return async (dispatch: Function) => {
+    try {
+      await chat.client.deleteContactMessages(username, 'chat');
+
       dispatch({
         type: DELETE_CHAT,
         payload: username,
       });
-    }).catch(() => null);
+
+      return true;
+    } catch (e) {
+      Toast.show({
+        message: `Unable to delete chat for ${username}!`,
+        type: 'warning',
+        title: 'Cannot delete chat',
+        autoClose: false,
+      });
+      return false;
+    }
+  };
+};
+
+export const deleteContactAction = (username: string) => {
+  return async (dispatch: Function) => {
+    try {
+      await chat.client.deleteContact(username);
+
+      dispatch({
+        type: DELETE_CONTACT,
+        payload: username,
+      });
+
+      return true;
+    } catch (e) {
+      Toast.show({
+        message: 'Unable to contact the server!',
+        type: 'warning',
+        title: 'Cannot delete contact',
+        autoClose: false,
+      });
+      return false;
+    }
   };
 };
