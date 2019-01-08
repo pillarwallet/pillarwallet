@@ -16,6 +16,7 @@ import {
   getExistingChatsAction,
   getChatByContactAction,
   webSocketChatMessageReceivedAction,
+  retryWebSocketSendMessageWithBodyAction,
 } from 'actions/chatActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
@@ -26,7 +27,9 @@ import {
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import { REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
 
+import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import ChatService from 'services/chat';
 
 const CONNECTION = 'CONNECTION';
@@ -257,6 +260,25 @@ export const startListeningChatWebSocketAction = () => {
     chatWebSocket.listen();
     chatWebSocket.onOpen();
     chatWebSocket.onMessage(async message => {
+      if (message.type === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
+        if (message.response.message.toLowerCase() === 'gone') {
+          const {
+            chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
+          } = getState();
+          const messageSent = webSocketMessagesSent.find(
+            wsMessageSent => wsMessageSent.webSocketRequestId === message.response.status.id,
+          );
+          if (Object.keys(messageSent)) {
+            dispatch(retryWebSocketSendMessageWithBodyAction(messageSent.body));
+          }
+        }
+        if (message.response.status === 200) {
+          dispatch({
+            type: REMOVE_WEBSOCKET_SENT_MESSAGE,
+            payload: message.response.status.id,
+          });
+        }
+      }
       if (typeof message.receivedSignalMessage !== 'undefined') {
         const {
           contacts: { data: contacts },

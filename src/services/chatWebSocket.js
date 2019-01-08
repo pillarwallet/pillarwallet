@@ -61,7 +61,6 @@ export default class ChatWebSocket {
       const message = this.WebSocketMessage.toObject(received, {
         bytes: String,
       });
-      console.log('onMessage2 ', message);
       if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST) {
         const webSocketResponse = this.prepareResponse(message.request.id, 200, 'OK');
         if (webSocketResponse != null) this.send(webSocketResponse);
