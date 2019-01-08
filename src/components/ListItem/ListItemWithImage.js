@@ -40,7 +40,8 @@ type Props = {
   acceptInvitation?: ?Function,
   type?: string,
   children?: React.Node,
-  small?: boolean
+  small?: boolean,
+  shouldIgnoreTap?: boolean,
 }
 
 const ItemWrapper = styled.TouchableOpacity`

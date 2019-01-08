@@ -85,10 +85,18 @@ type Props = {
   localContacts: Object[],
 };
 
-class PeopleSearchResults extends React.Component<Props> {
+// every shouldIgnoreTapFor${username} state propery is dynamic
+type State = {
+};
+
+class PeopleSearchResults extends React.Component<Props, State> {
   state = {};
 
   componentDidUpdate() {
+    this.updateShouldIgnoreTapForInvitations();
+  }
+
+  updateShouldIgnoreTapForInvitations() {
     const { invitations } = this.props;
     const ignoreTaps = {};
 

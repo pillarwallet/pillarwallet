@@ -31,11 +31,8 @@ type Props = {
   iconSize?: string,
   listItemButton?: boolean,
   height?: number,
+  shouldIgnoreTap?: boolean,
   textStyle?: ?Object,
-};
-
-type State = {
-  addonWasTapped: boolean,
 };
 
 const themes = {
