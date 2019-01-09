@@ -22,9 +22,17 @@ export const getExistingTxNotesAction = () => {
   };
 };
 
-export const sendTxNoteByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function) => {
-    await chat.client.addContact(username).catch(e => {
+export const sendTxNoteByContactAction = (username: string, userId: string, message: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accessTokens: { data: accessTokens },
+    } = getState();
+    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
+    if (!Object.keys(connectionAccessTokens).length) {
+      return;
+    }
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
+    await chat.client.addContact(username, userId, userConnectionAccessToken).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -36,7 +44,12 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
     });
     try {
       const content = JSON.stringify({ text: message.text, txHash: message.txHash });
-      await chat.client.sendSilentMessageByContact(username, content, 'tx-note');
+      await chat.client.sendSilentMessageByContact('tx-note', {
+        username,
+        userId,
+        userConnectionAccessToken,
+        message: content,
+      });
     } catch (e) {
       Toast.show({
         message: 'Unable to contact the server',
@@ -59,9 +72,17 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
   };
 };
 
-export const getTxNoteByContactAction = (username: string) => {
-  return async (dispatch: Function) => {
-    await chat.client.addContact(username).catch(e => {
+export const getTxNoteByContactAction = (username: string, userId: string) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accessTokens: { data: accessTokens },
+    } = getState();
+    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
+    if (!Object.keys(connectionAccessTokens).length) {
+      return;
+    }
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
+    await chat.client.addContact(username, userId, userConnectionAccessToken).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
