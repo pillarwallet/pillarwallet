@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
+import debounce from 'lodash.debounce';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
@@ -31,11 +32,12 @@ type Props = {
   iconSize?: string,
   listItemButton?: boolean,
   height?: number,
+  debounceTime?: number,
   textStyle?: ?Object,
 };
 
 type State = {
-  shouldIgnoreTap?: boolean,
+  shouldIgnoreTap: boolean,
 };
 
 const themes = {
@@ -228,49 +230,43 @@ const getTheme = (props: Props) => {
 };
 
 class Button extends React.Component<Props, State> {
-  state = { shouldIgnoreTap: false };
-  enableButtonTimeout = null;
-
-  componentDidUpdate() {
-    this.enableButtonAfterTap();
+  static defaultProps = {
+    debounceTime: 400,
   }
+
+  state = { shouldIgnoreTap: false };
+  ignoreTapTimeout = null;
 
   componentWillUnmount() {
-    if (!this.enableButtonTimeout) { return; }
-
-    clearTimeout(this.enableButtonTimeout);
-    this.enableButtonTimeout = null;
-  }
-
-  enableButtonAfterTap() {
-    this.enableButtonTimeout = setTimeout(() => {
-      if (this.state.shouldIgnoreTap) {
-        this.setState({ shouldIgnoreTap: false });
-      }
-    }, 500);
+    if (this.ignoreTapTimeout) {
+      clearTimeout(this.ignoreTapTimeout);
+      this.ignoreTapTimeout = null;
+    }
   }
 
   handlePress = () => {
-    const { onPress } = this.props;
     this.setState({ shouldIgnoreTap: true });
-    if (onPress) onPress();
+    if (this.props.onPress) this.props.onPress();
+
+    this.ignoreTapTimeout = setTimeout(() => {
+      this.setState({ shouldIgnoreTap: false });
+    }, 1000);
   }
 
   render() {
-    const theme = getTheme(this.props);
+    const theme = !this.state.shouldIgnoreTap ? getTheme(this.props) : themes.primaryInverted;
     const {
       disabled,
       disabledTransparent,
       children,
     } = this.props;
-    const isDisabled = disabled || disabledTransparent || this.state.shouldIgnoreTap;
 
     return (
       <ButtonWrapper
         {...this.props}
         theme={theme}
-        onPress={isDisabled ? null : this.handlePress}
-        disabled={isDisabled}
+        onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
+        disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap}
       >
         {!!this.props.icon &&
           <ButtonIcon
