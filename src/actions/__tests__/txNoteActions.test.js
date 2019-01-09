@@ -6,6 +6,7 @@ import { ADD_TX_NOTE } from 'constants/txNoteConstants';
 
 describe('Transaction Notes Actions', () => {
   const dispatchMock = jest.fn();
+  const getState = jest.fn();
 
   let chatService;
 
@@ -15,15 +16,22 @@ describe('Transaction Notes Actions', () => {
 
   afterEach(() => {
     dispatchMock.mockClear();
+    getState.mockClear();
   });
 
   describe('sendTxNoteByContactAction()', () => {
     describe('when the tx-note sent successfully', () => {
-      let username;
+      let contact;
       let message;
 
       beforeEach(async () => {
-        username = 'test-username';
+        getState.mockImplementation(() => ({
+          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
+        }));
+        contact = {
+          username: 'test-username',
+          id: 'user-id',
+        };
         message = {
           text: 'lorem',
           txHash: 'txHashStringHere',
@@ -32,7 +40,7 @@ describe('Transaction Notes Actions', () => {
         chatService.client.addContact = jest.fn().mockImplementation(() => Promise.resolve());
         chatService.client.sendSilentMessageByContact = jest.fn().mockImplementation(() => Promise.resolve());
 
-        await sendTxNoteByContactAction(username, message)(dispatchMock);
+        await sendTxNoteByContactAction(contact.username, contact.id, message)(dispatchMock, getState);
       });
 
       afterEach(() => {
@@ -42,7 +50,12 @@ describe('Transaction Notes Actions', () => {
 
       it('should call the chatService.client.sendSilentMessageByContact function', () => {
         expect(chatService.client.sendSilentMessageByContact)
-          .toBeCalledWith(username, JSON.stringify(message), 'tx-note');
+          .toBeCalledWith('tx-note', {
+            username: contact.username,
+            userId: contact.id,
+            userConnectionAccessToken: 'token',
+            message: JSON.stringify(message),
+          });
       });
 
       it('should call the dispatch function', () => {
@@ -59,12 +72,21 @@ describe('Transaction Notes Actions', () => {
     });
 
     describe('when sendSilentMessageByContact throws the exception', () => {
+      let contact;
+
       beforeEach(async () => {
+        contact = {
+          username: 'test-username',
+          id: 'user-id',
+        };
+        getState.mockImplementation(() => ({
+          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
+        }));
         chatService.client.addContact = jest.fn().mockImplementation(() => Promise.resolve());
         chatService.client.sendSilentMessageByContact = jest.fn().mockImplementation(() => Promise.reject());
         jest.spyOn(Toast, 'show');
 
-        await sendTxNoteByContactAction('userName', {})(dispatchMock);
+        await sendTxNoteByContactAction(contact.username, contact.id, {})(dispatchMock, getState);
       });
 
       afterEach(() => {
