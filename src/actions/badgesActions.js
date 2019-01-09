@@ -4,21 +4,31 @@ import { saveDbAction } from './dbActions';
 
 export const fetchBadgesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const { wallet: { data: wallet } } = getState();
+    const {
+      wallet: { data: wallet },
+      badges: { data: badges },
+    } = getState();
 
     const userBadges = await api.fetchBadges({ address: wallet.address });
     console.log('userBadges', userBadges);
     if (userBadges && Object.keys(userBadges).length) {
       const ids = Object.keys(userBadges);
       const badgesInfo = await api.fetchBadgesInfo({ address: wallet.address, ids });
-      const badges = ids.map(badgeId => ({
-        id: badgeId,
-        balance: userBadges[badgeId],
-        ...(badgesInfo[badgeId] || {}),
-      }));
-      console.log('badges', badges);
-      dispatch(saveDbAction('badges', { badges }, true));
-      dispatch({ type: UPDATE_BADGES, payload: badges });
+
+      const updatedBadges = ids.map(badgeId => {
+        badgeId = Number(badgeId);
+        const oldBadgeInfo = badges.find(badge => Number(badge.id) === badgeId) || {};
+        const badgeInfo = badgesInfo[badgeId] || oldBadgeInfo;
+        return {
+          ...badgeInfo,
+          id: badgeId,
+          balance: userBadges[badgeId],
+        };
+      });
+
+      console.log('badges', updatedBadges);
+      dispatch(saveDbAction('badges', { badges: updatedBadges }, true));
+      dispatch({ type: UPDATE_BADGES, payload: updatedBadges });
     }
   };
 };
