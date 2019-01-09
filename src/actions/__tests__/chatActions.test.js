@@ -6,6 +6,7 @@ import { ADD_MESSAGE, DELETE_CONTACT } from 'constants/chatConstants';
 
 describe('Chat Actions', () => {
   const dispatchMock = jest.fn();
+  const getState = jest.fn();
 
   let chatService;
 
@@ -15,16 +16,23 @@ describe('Chat Actions', () => {
 
   afterEach(() => {
     dispatchMock.mockClear();
+    getState.mockClear();
   });
 
   describe('sendMessageByContactAction()', () => {
     describe('when the message sent successfully', () => {
-      let username;
+      let contact;
       let message;
       let timestamp;
 
       beforeEach(async () => {
-        username = 'test-username';
+        getState.mockImplementation(() => ({
+          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
+        }));
+        contact = {
+          username: 'test-username',
+          id: 'user-id',
+        };
         message = {
           text: 'lorem',
           user: { _id: 'user-id' },
@@ -34,15 +42,21 @@ describe('Chat Actions', () => {
 
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.resolve());
 
-        await sendMessageByContactAction(username, message)(dispatchMock);
+        await sendMessageByContactAction(contact.username, contact.id, message)(dispatchMock, getState);
       });
 
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
+        getState.mockRestore();
       });
 
       it('should call the chatService.client.sendMessageByContact function', () => {
-        expect(chatService.client.sendMessageByContact).toBeCalledWith(username, message.text, 'chat');
+        expect(chatService.client.sendMessageByContact).toBeCalledWith('chat', {
+          username: contact.username,
+          userId: contact.id,
+          userConnectionAccessToken: 'token',
+          message: message.text,
+        });
       });
 
       it('should call the dispatch function', () => {
@@ -58,22 +72,32 @@ describe('Chat Actions', () => {
 
         expect(dispatchMock).toBeCalledWith({
           type: ADD_MESSAGE,
-          payload: { message: msg, username },
+          payload: { message: msg, username: contact.username },
         });
       });
     });
 
     describe('when sendMessageByContact throws the exception', () => {
+      let contact;
+
       beforeEach(async () => {
+        contact = {
+          username: 'test-username',
+          id: 'user-id',
+        };
+        getState.mockImplementation(() => ({
+          accessTokens: { data: [{ userId: 'user-id', userAccessToken: 'token' }] },
+        }));
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.reject());
         jest.spyOn(Toast, 'show');
 
-        await sendMessageByContactAction('userName', {})(dispatchMock);
+        await sendMessageByContactAction(contact.username, contact.id, {})(dispatchMock, getState);
       });
 
       afterEach(() => {
         chatService.client.sendMessageByContact.mockRestore();
         Toast.show.mockRestore();
+        getState.mockRestore();
       });
 
       it('should call the Toast.show function', () => {
