@@ -1,10 +1,9 @@
 // @flow
 import styled from 'styled-components/native';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { Platform } from 'react-native';
 
 export const BaseText = styled.Text`
-  font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App'};
+  font-family: Aktiv Grotesk App;
   font-weight: 400;
   include-font-padding: false;
   text-align-vertical: center;
@@ -12,7 +11,7 @@ export const BaseText = styled.Text`
 `;
 
 export const BoldText = styled(BaseText)`
-  font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Bold' : 'Aktiv Grotesk App'};
+  font-family: Aktiv Grotesk App;
   font-weight: 600;
   include-font-padding: false;
   text-align-vertical: center;
@@ -20,7 +19,7 @@ export const BoldText = styled(BaseText)`
 `;
 
 export const LightText = styled(BaseText)`
-  font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Light' : 'Aktiv Grotesk App'};
+  font-family: Aktiv Grotesk App;
   font-weight: 300;
   include-font-padding: false;
   text-align-vertical: center;
@@ -28,7 +27,7 @@ export const LightText = styled(BaseText)`
 `;
 
 export const MediumText = styled(BaseText)`
-  font-family: ${Platform.OS === 'android' ? 'AktivGrotesk-Medium' : 'Aktiv Grotesk App'};
+  font-family: Aktiv Grotesk App;
   font-weight: 500;
   include-font-padding: false;
   text-align-vertical: center;
