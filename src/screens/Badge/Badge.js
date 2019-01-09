@@ -53,7 +53,7 @@ class Badge extends React.Component<Props, {}> {
   render() {
     const { navigation, badges } = this.props;
     const badgeId = Number(navigation.getParam('id', 0));
-    const badge = badges.find(({ id }) => Number(id) === badgeId) || {};
+    const badge = badges.find(({ id }) => id === badgeId) || {};
     return (
       <Container inset={{ bottom: 0 }}>
         <Header

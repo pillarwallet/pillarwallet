@@ -10,14 +10,12 @@ export const fetchBadgesAction = () => {
     } = getState();
 
     const userBadges = await api.fetchBadges({ address: wallet.address });
-    console.log('userBadges', userBadges);
     if (userBadges && Object.keys(userBadges).length) {
-      const ids = Object.keys(userBadges);
+      const ids = Object.keys(userBadges).map(Number);
       const badgesInfo = await api.fetchBadgesInfo({ address: wallet.address, ids });
 
       const updatedBadges = ids.map(badgeId => {
-        badgeId = Number(badgeId);
-        const oldBadgeInfo = badges.find(({ id }) => Number(id) === badgeId) || {};
+        const oldBadgeInfo = badges.find(({ id }) => id === badgeId) || {};
         const badgeInfo = badgesInfo[badgeId] || oldBadgeInfo;
         return {
           ...badgeInfo,
@@ -26,7 +24,6 @@ export const fetchBadgesAction = () => {
         };
       });
 
-      console.log('badges', updatedBadges);
       dispatch(saveDbAction('badges', { badges: updatedBadges }, true));
       dispatch({ type: UPDATE_BADGES, payload: updatedBadges });
     }
