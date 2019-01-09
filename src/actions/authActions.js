@@ -54,28 +54,30 @@ export const loginAction = (pin: string) => {
         const userInfo = await api.userInfo(user.walletId);
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
+
+        const fcmToken = await firebase.messaging().getToken().catch(() => null);
+        let signalCredentials = {
+          userId: user.id,
+          username: user.username,
+          walletId: user.walletId,
+          ethAddress: wallet.address,
+        };
+        const { oAuthTokens: { data: OAuthTokens } } = getState();
+        signalCredentials = Object.keys(OAuthTokens) ?
+          { ...signalCredentials, ...OAuthTokens } :
+          { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
+        chat.init(signalCredentials)
+          .then(() => chat.client.registerAccount())
+          .then(() => chat.client.setFcmId(fcmToken))
+          .catch(() => null);
+      } else {
+        api.init(wallet.privateKey);
       }
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
         type: UPDATE_USER,
         payload: { user, state: userState },
       });
-
-      const fcmToken = await firebase.messaging().getToken().catch(() => null);
-      let signalCredentials = {
-        userId: user.id,
-        username: user.username,
-        walletId: user.walletId,
-        ethAddress: wallet.address,
-      };
-      const { oAuthTokens: { data: OAuthTokens } } = getState();
-      signalCredentials = Object.keys(OAuthTokens) ?
-        { ...signalCredentials, ...OAuthTokens } :
-        { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
-      chat.init(signalCredentials)
-        .then(() => chat.client.registerAccount())
-        .then(() => chat.client.setFcmId(fcmToken))
-        .catch(() => null);
 
       await storage.viewCleanup().catch(() => null);
 
