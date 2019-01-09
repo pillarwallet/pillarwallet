@@ -1,8 +1,9 @@
 // @flow
 import { UPDATE_BADGES } from 'constants/badgesConstants';
+import type { Badges } from 'models/Badge';
 
 export type BadgesReducerState = {
-  data: Object,
+  data: Badges,
 };
 
 export type BadgesReducerAction = {
@@ -11,7 +12,7 @@ export type BadgesReducerAction = {
 };
 
 const initialState = {
-  data: {},
+  data: [],
 };
 
 export default function badgesReducer(

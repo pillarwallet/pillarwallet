@@ -9,7 +9,7 @@ export const fetchBadgesAction = () => {
       badges: { data: badges },
     } = getState();
 
-    const userBadges = await api.fetchBadges({ address: wallet.address });
+    const userBadges = await api.fetchBadges(wallet.address);
     if (userBadges && Object.keys(userBadges).length) {
       const ids = Object.keys(userBadges).map(Number);
       const badgesInfo = await api.fetchBadgesInfo({ address: wallet.address, ids });

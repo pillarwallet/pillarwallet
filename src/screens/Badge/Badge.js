@@ -9,9 +9,10 @@ import { Container, ScrollWrapper } from 'components/Layout';
 import Header from 'components/Header';
 import BadgeImage from 'components/BadgeImage';
 import { BaseText, BoldText } from 'components/Typography';
+import type { Badges } from 'models/Badge';
 
 type Props = {
-  badges: Object[],
+  badges: Badges,
   navigation: NavigationScreenProp<*>,
 };
 

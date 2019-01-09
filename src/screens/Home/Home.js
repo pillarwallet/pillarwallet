@@ -52,6 +52,7 @@ import {
 } from 'actions/invitationsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import type { Badges } from 'models/Badge';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -71,7 +72,7 @@ type Props = {
   intercomNotificationsCount: number,
   backupStatus: Object,
   fetchBadges: Function,
-  badges: Object[],
+  badges: Badges,
 };
 
 type esDataType = {
@@ -221,7 +222,7 @@ const BadgesWrapper = styled.View`
   padding-top: 0;
 `;
 
-const Badges = styled.View`
+const BadgesBlock = styled.View`
   height: 170px;
   border-bottom-width: 1px;
   border-style: solid;
@@ -633,14 +634,14 @@ class HomeScreen extends React.Component<Props, State> {
           }
           {badges && badges.length ?
             <BadgesWrapper>
-              <Badges>
+              <BadgesBlock>
                 <View style={{ backgroundColor: baseColors.snowWhite }}>
                   <BadgesSubtitle subtitle title="game of badges." />
                 </View>
                 <BadgesScrollView horizontal nestedScrollEnabled overScrollMode="always">
                   {this.renderBadges()}
                 </BadgesScrollView>
-              </Badges>
+              </BadgesBlock>
             </BadgesWrapper> :
 
             <BadgesSpacer />

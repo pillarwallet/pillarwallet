@@ -29,6 +29,7 @@ import {
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
+import type { UserBadgesResponse, BadgesInfoResponse } from 'models/Badge';
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
@@ -350,19 +351,11 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   // return Promise.all(promises).catch(() => []);
 };
 
-SDKWrapper.prototype.fetchBadges = function ({ address }) {
-  return fetchBadges(address)
-    .then(() => ({
-      '0': 1,
-      '1': 2,
-      '2': 3,
-      '3': 4,
-      '4': 5,
-    }))
-    .catch(() => ({}));
+SDKWrapper.prototype.fetchBadges = function (address: string): Promise<UserBadgesResponse> {
+  return fetchBadges(address).catch(() => ({}));
 };
 
-SDKWrapper.prototype.fetchBadgesInfo = function ({ address, ids }) { // eslint-disable-line
+SDKWrapper.prototype.fetchBadgesInfo = function ({ address, ids }): Promise<BadgesInfoResponse> { // eslint-disable-line
   return Promise.resolve()
     .then(() => fetch('http://localhost:3900/js/badges.json'))
     .then(data => data.json())

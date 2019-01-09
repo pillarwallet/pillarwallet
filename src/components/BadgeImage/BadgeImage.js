@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
+import type { Badge } from 'models/Badge';
 
 type Props = {
-  data: Object,
+  data: Badge,
 };
 
 const defaultBadge = require('assets/images/defaultBadge.png');
