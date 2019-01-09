@@ -12,7 +12,11 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getExistingChatsAction, getChatByContactAction } from 'actions/chatActions';
+import {
+  getExistingChatsAction,
+  getChatByContactAction,
+  deleteChatAction,
+} from 'actions/chatActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -107,15 +111,13 @@ export const startListeningNotificationsAction = () => {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
         enabled = true;
-      } catch (err) { } // eslint-disable-line
-    }
 
-    if (!enabled) {
-      dispatch(fetchAllNotificationsAction());
-      disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
-      }, 30000);
-      return;
+        disabledPushNotificationsListener = setInterval(() => {
+          dispatch(fetchAllNotificationsAction());
+        }, 30000);
+        return;
+      } catch (err) { } // eslint-disable-line
     }
 
     if (notificationsListener) return;
@@ -123,6 +125,7 @@ export const startListeningNotificationsAction = () => {
       if (!message._data || !Object.keys(message._data).length) return;
       if (checkForSupportAlert(message._data)) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
+
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
@@ -136,7 +139,7 @@ export const startListeningNotificationsAction = () => {
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         if (!!navParams.username && navParams.username === notification.navigationParams.username) {
           const contact = contacts.find(c => c.username === navParams.username) || {};
-          dispatch(getChatByContactAction(navParams.username, contact.profileImage));
+          dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
           return;
         }
         dispatch({
@@ -148,6 +151,10 @@ export const startListeningNotificationsAction = () => {
         });
       }
       if (notification.type === CONNECTION) {
+        if (notification.message === 'Disconnected your connection') {
+          dispatch(deleteChatAction(notification.title));
+        }
+
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type !== SIGNAL) {
