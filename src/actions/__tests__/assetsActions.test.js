@@ -17,8 +17,16 @@ import { sendAssetAction, fetchAssetsBalancesAction } from '../assetsActions';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
+
+const getTransactionCountMock = jest.fn(() => {
+  return new Promise((resolve) => {
+    resolve(0);
+  });
+});
+
 const mockWallet: Object = {
   address: '0x9c',
+  provider: { getTransactionCount: getTransactionCountMock },
 };
 
 const mockTransaction: Object = {
@@ -57,6 +65,8 @@ Object.defineProperty(mockWallet, 'sendTransaction', {
 
 const initialState = {
   assets: { data: { [ETH]: { balance: 10 } } },
+  txCount: { data: { lastCount: 0, lastNonce: 0 } },
+  history: { data: [] },
 };
 
 describe('Wallet actions', () => {

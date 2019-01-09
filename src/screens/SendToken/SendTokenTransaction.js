@@ -92,12 +92,12 @@ class SendTokenTransaction extends React.Component<Props, State> {
     const { isSuccess, error } = navigation.state.params;
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
-    const transactionStatusTitle = isSuccess ? 'Money is on its way' : 'Transaction failed';
+    const transactionStatusTitle = isSuccess ? 'Tokens are on their way' : 'Transaction failed';
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
           <Animation source={animationSource} />
-          <Title title={transactionStatusTitle} align="center" noBlueDot />
+          <Title fullWidth title={transactionStatusTitle} align="center" noBlueDot />
           <Paragraph small light center style={{ marginBottom: 40 }}>{transactionStatusText}</Paragraph>
           {isSuccess ?
             <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" /> :

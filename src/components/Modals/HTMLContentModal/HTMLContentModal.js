@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { Platform } from 'react-native';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
 import HTMLView from 'react-native-htmlview';
@@ -35,7 +34,7 @@ const ActivityIndicatorWrapper = styled.View`
 
 const commonTextStyle = {
   color: 'black',
-  fontFamily: Platform.OS === 'android' ? 'AktivGrotesk-Regular' : 'Aktiv Grotesk App',
+  fontFamily: 'Aktiv Grotesk App',
 };
 
 export default class HTMLContentModal extends React.Component<Props, State> {

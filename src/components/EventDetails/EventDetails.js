@@ -199,7 +199,7 @@ class EventDetails extends React.Component<Props, {}> {
       txNotes,
       assets,
     } = this.props;
-    let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:MM');
+    let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
       const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
       const {
