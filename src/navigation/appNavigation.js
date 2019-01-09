@@ -61,6 +61,7 @@ import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
+import BadgeScreen from 'screens/Badge';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -120,7 +121,7 @@ import {
   ICO_LINKS,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
-  BACKUP_WALLET_IN_SETTINGS_FLOW,
+  BACKUP_WALLET_IN_SETTINGS_FLOW, BADGE,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -234,6 +235,7 @@ const homeFlow = createStackNavigator({
   [PROFILE]: ProfileScreen,
   [CONTACT]: ContactScreen,
   [CHAT]: ChatScreen,
+  [BADGE]: BadgeScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

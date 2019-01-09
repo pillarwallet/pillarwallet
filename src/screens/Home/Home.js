@@ -23,7 +23,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
-import { PROFILE, CONTACT } from 'constants/navigationConstants';
+import { PROFILE, CONTACT, BADGE } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container } from 'components/Layout';
@@ -71,7 +71,7 @@ type Props = {
   intercomNotificationsCount: number,
   backupStatus: Object,
   fetchBadges: Function,
-  badges: Object,
+  badges: Object[],
 };
 
 type esDataType = {
@@ -350,11 +350,12 @@ class HomeScreen extends React.Component<Props, State> {
   };
 
   renderBadges = () => {
-    const { badges } = this.props;
-    return Object.keys(badges)
-      .map(badgeId => (
-        <BadgesItem key={badgeId}>
-          <BadgesItemImage uri={`http://localhost:3900/images/badges/${badgeId}.png`} />
+    const { badges, navigation } = this.props;
+    return badges
+      .sort((a, b) => (b.receivedAt || 0) - (a.receivedAt || 0))
+      .map(badge => (
+        <BadgesItem key={badge.id} onPress={() => navigation.navigate(BADGE, { id: badge.id })}>
+          <BadgesItemImage data={badge} />
         </BadgesItem>
       ));
   };
@@ -630,7 +631,7 @@ class HomeScreen extends React.Component<Props, State> {
 
             <RecentConnectionsSpacer />
           }
-          {badges && Object.keys(badges).length ?
+          {badges && badges.length ?
             <BadgesWrapper>
               <Badges>
                 <View style={{ backgroundColor: baseColors.snowWhite }}>

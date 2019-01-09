@@ -17,7 +17,7 @@ export const fetchBadgesAction = () => {
 
       const updatedBadges = ids.map(badgeId => {
         badgeId = Number(badgeId);
-        const oldBadgeInfo = badges.find(badge => Number(badge.id) === badgeId) || {};
+        const oldBadgeInfo = badges.find(({ id }) => Number(id) === badgeId) || {};
         const badgeInfo = badgesInfo[badgeId] || oldBadgeInfo;
         return {
           ...badgeInfo,
