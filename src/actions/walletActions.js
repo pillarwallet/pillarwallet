@@ -37,6 +37,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
           id: address.id,
           walletId: address.walletId,
           username: address.username,
+          profileImage: address.profileImage,
         };
       }
 
@@ -72,7 +73,12 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       let apiUser = {};
       const address = await api.validateAddress(importedWallet.address);
       if (address.walletId) {
-        apiUser = await api.userInfo(address.walletId);
+        apiUser = {
+          id: address.id,
+          walletId: address.walletId,
+          username: address.username,
+          profileImage: address.profileImage,
+        };
       }
 
       const payload = {
