@@ -212,9 +212,10 @@ export const registerWalletAction = () => {
     signalCredentials = Object.keys(OAuthTokens) ?
       { ...signalCredentials, ...OAuthTokens } :
       { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
-    await chat.init(signalCredentials).catch(() => null);
-    await chat.client.registerAccount().catch(() => null);
-    await chat.client.setFcmId(fcmToken).catch(() => null);
+    chat.init(signalCredentials)
+      .then(() => chat.client.registerAccount())
+      .then(() => chat.client.setFcmId(fcmToken))
+      .catch(() => null);
 
     if (!registrationSucceed) { return; }
 
