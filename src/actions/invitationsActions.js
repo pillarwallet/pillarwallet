@@ -75,8 +75,8 @@ export const fetchInviteNotificationsAction = () => {
     // clean up local contacts
     const acceptedConnectionsIds = groupedNotifications.connectionAcceptedEvent.map(({ id: acceptedConnectionId }) =>
       acceptedConnectionId);
-    const consistentLocalContacts = groupedNotifications.connectionAcceptedEvent
-      .filter(({ id: contactId }) => acceptedConnectionsIds.includes(contactId));
+    const consistentLocalContacts = contacts.filter(({ id: contactId }) =>
+      acceptedConnectionsIds.includes(contactId));
     const updatedContacts = uniqBy(newConnections.concat(consistentLocalContacts), 'id')
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
 
