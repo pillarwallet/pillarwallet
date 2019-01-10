@@ -7,6 +7,9 @@ import {
   TYPE_REJECTED,
   TYPE_RECEIVED,
   TYPE_DISCONNECTED,
+  MESSAGE_ACCEPTED,
+  MESSAGE_DISCONNECTED,
+  MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
 
 
@@ -52,20 +55,23 @@ export const processNotification = (notification: Object, myEthAddress?: string)
     if (parsedNotification.type === 'connectionRequestedEvent') {
       result = {
         title: parsedNotification.senderUserData.username,
-        message: 'Connection request',
+        message: MESSAGE_REQUEST,
         type: 'CONNECTION',
+        status: TYPE_RECEIVED,
       };
-    } else if (parsedNotification.type === 'connectionAcceptedEvent') {
+    } else if (parsedNotification.type === TYPE_ACCEPTED) {
       result = {
         title: parsedNotification.senderUserData.username,
-        message: 'Accepted your connection request',
+        message: MESSAGE_ACCEPTED,
         type: 'CONNECTION',
+        status: TYPE_ACCEPTED,
       };
-    } else if (parsedNotification.type === 'connectionDisconnectedEvent') {
+    } else if (parsedNotification.type === TYPE_DISCONNECTED) {
       result = {
         title: parsedNotification.senderUserData.username,
-        message: 'Disconnected your connection',
+        message: MESSAGE_DISCONNECTED,
         type: 'CONNECTION',
+        status: TYPE_REJECTED,
       };
     } else {
       result = {
