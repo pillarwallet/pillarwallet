@@ -301,17 +301,13 @@ class NewProfile extends React.Component<Props, State> {
     const { apiUser } = this.props;
     return (
       <Wrapper flex={1} center regularPadding>
-        {/* //TODO:
-        remove this restriction when it will be possible to fetch user profile image on wallet import in a proper way
-        */}
-        {!!apiUser.profileImage &&
         <ProfileImage
-          uri={apiUser.profileImage}
+          uri={apiUser.profileLargeImage}
           diameter={PROFILE_IMAGE_WIDTH}
           style={{ marginBottom: 47 }}
           userName={apiUser.username}
           initialsSize={fontSizes.extraGiant}
-        />}
+        />
         <UsernameWrapper>
           <Text>Welcome back,</Text>
           <Text>{apiUser.username}.</Text>
