@@ -31,13 +31,13 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
 
       api.init(importedWallet.privateKey);
       let apiUser = {};
-      const address = await api.validateAddress(importedWallet.address);
-      if (address.walletId) {
+      const addressValidationResponse = await api.validateAddress(importedWallet.address);
+      if (addressValidationResponse.walletId) {
         apiUser = {
-          id: address.id,
-          walletId: address.walletId,
-          username: address.username,
-          profileImage: address.profileImage,
+          id: addressValidationResponse.id,
+          walletId: addressValidationResponse.walletId,
+          username: addressValidationResponse.username,
+          profileLargeImage: addressValidationResponse.profileImage,
         };
       }
 
@@ -71,13 +71,13 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
 
       api.init(importedWallet.privateKey);
       let apiUser = {};
-      const address = await api.validateAddress(importedWallet.address);
-      if (address.walletId) {
+      const addressValidationResponse = await api.validateAddress(importedWallet.address);
+      if (addressValidationResponse.walletId) {
         apiUser = {
-          id: address.id,
-          walletId: address.walletId,
-          username: address.username,
-          profileImage: address.profileImage,
+          id: addressValidationResponse.id,
+          walletId: addressValidationResponse.walletId,
+          username: addressValidationResponse.username,
+          profileLargeImage: addressValidationResponse.profileImage,
         };
       }
 
