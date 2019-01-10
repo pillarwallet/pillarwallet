@@ -57,18 +57,21 @@ export const processNotification = (notification: Object, myEthAddress?: string)
         title: parsedNotification.senderUserData.username,
         message: MESSAGE_REQUEST,
         type: 'CONNECTION',
+        status: TYPE_RECEIVED,
       };
     } else if (parsedNotification.type === TYPE_ACCEPTED) {
       result = {
         title: parsedNotification.senderUserData.username,
         message: MESSAGE_ACCEPTED,
         type: 'CONNECTION',
+        status: TYPE_ACCEPTED,
       };
     } else if (parsedNotification.type === TYPE_DISCONNECTED) {
       result = {
         title: parsedNotification.senderUserData.username,
         message: MESSAGE_DISCONNECTED,
         type: 'CONNECTION',
+        status: TYPE_REJECTED,
       };
     } else {
       result = {

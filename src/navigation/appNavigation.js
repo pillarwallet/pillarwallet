@@ -104,10 +104,10 @@ import {
 import { PENDING } from 'constants/userConstants';
 
 import {
-  MESSAGE_CANCELLED,
-  MESSAGE_BLOCKED,
-  MESSAGE_REJECTED,
-  MESSAGE_DISCONNECTED,
+  TYPE_CANCELLED,
+  TYPE_BLOCKED,
+  TYPE_REJECTED,
+  TYPE_DISCONNECTED,
 } from 'constants/invitationsConstants';
 
 // models
@@ -144,10 +144,10 @@ const iconHomeActive = require('assets/icons/icon_home_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
 
 const connectionMessagesToExclude = [
-  MESSAGE_CANCELLED,
-  MESSAGE_BLOCKED,
-  MESSAGE_REJECTED,
-  MESSAGE_DISCONNECTED,
+  TYPE_CANCELLED,
+  TYPE_BLOCKED,
+  TYPE_REJECTED,
+  TYPE_DISCONNECTED,
 ];
 
 const StackNavigatorModalConfig = {
@@ -465,13 +465,13 @@ class AppFlow extends React.Component<Props, {}> {
       const lastNotification = notifications[notifications.length - 1];
 
       if (lastNotification.type === 'CONNECTION' &&
-        connectionMessagesToExclude.includes(lastNotification.message)) {
+        connectionMessagesToExclude.includes(lastNotification.status)) {
         return;
       }
 
       Toast.show({
         message: lastNotification.message,
-        type: lastNotification.type,
+        type: lastNotification.messageType,
         title: lastNotification.title,
         autoClose: lastNotification.autoClose,
       });
