@@ -10,7 +10,7 @@ type Props = {
 const defaultBadge = require('assets/images/defaultBadge.png');
 
 const BadgeImage = ({ data: badge }: Props) => {
-  const badgeUri = badge.url ? `${badge.url}?t=${badge.updatedAt || 0}` : '';
+  const badgeUri = badge.imageUrl ? `${badge.imageUrl}?t=${badge.updatedAt || 0}` : '';
   return (
     <CachedImage
       useQueryParamsInCacheKey
