@@ -302,9 +302,11 @@ class NewProfile extends React.Component<Props, State> {
     return (
       <Wrapper flex={1} center regularPadding>
         <ProfileImage
-          uri={apiUser.profileImage}
+          uri={apiUser.profileLargeImage}
           diameter={PROFILE_IMAGE_WIDTH}
           style={{ marginBottom: 47 }}
+          userName={apiUser.username}
+          initialsSize={fontSizes.extraGiant}
         />
         <UsernameWrapper>
           <Text>Welcome back,</Text>
