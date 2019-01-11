@@ -254,7 +254,7 @@ class Button extends React.Component<Props, State> {
   }
 
   render() {
-    const theme = !this.state.shouldIgnoreTap ? getTheme(this.props) : themes.primaryInverted;
+    const theme = getTheme(this.props);
     const {
       disabled,
       disabledTransparent,
