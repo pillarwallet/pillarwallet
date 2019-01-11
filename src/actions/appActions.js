@@ -70,7 +70,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
       const { txCount = {} } = await storage.get('txCount');
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
 
-      const { badges = {} } = await storage.get('badges');
+      const { badges = [] } = await storage.get('badges');
       dispatch({ type: UPDATE_BADGES, payload: badges });
 
       const { history = [] } = await storage.get('history');
