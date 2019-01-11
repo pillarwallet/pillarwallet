@@ -15,7 +15,7 @@ export default class Chat {
     credentials.host = SIGNAL_SERVER_HOST;
 
     if (Platform.OS === 'ios') {
-      return this.client.createClient(credentials);
+      return this.client.createClient(credentials.username, credentials.accessToken, credentials.host);
     }
 
     credentials.errorTrackingDSN = SENTRY_DSN;
