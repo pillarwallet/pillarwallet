@@ -24,82 +24,56 @@ import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import { saveDbAction } from './dbActions';
 
+const importWalletGeneric = async (walletActionParams) => {
+  const { importedWallet, dispatch, api, field } = walletActionParams;
+
+  try {
+    api.init(importedWallet.privateKey);
+    let apiUser = {};
+    const addressValidationResponse = await api.validateAddress(importedWallet.address);
+    if (addressValidationResponse.walletId) {
+      apiUser = {
+        id: addressValidationResponse.id,
+        walletId: addressValidationResponse.walletId,
+        username: addressValidationResponse.username,
+        profileLargeImage: addressValidationResponse.profileImage,
+      };
+    }
+
+    const payload = {
+      importedWallet,
+      apiUser,
+    };
+    dispatch({
+      type: IMPORT_WALLET,
+      payload,
+    });
+    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
+  } catch (e) {
+    const message = field === IMPORT_WALLET_TWORDS_PHRASE ? e.toString() : e.reason.toString();
+    dispatch({
+      type: SET_WALLET_ERROR,
+      payload: {
+        code: IMPORT_ERROR,
+        message,
+        field,
+      },
+    });
+  }
+};
+
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
-    try {
-      const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
-
-      api.init(importedWallet.privateKey);
-      let apiUser = {};
-      const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      if (addressValidationResponse.walletId) {
-        apiUser = {
-          id: addressValidationResponse.id,
-          walletId: addressValidationResponse.walletId,
-          username: addressValidationResponse.username,
-          profileLargeImage: addressValidationResponse.profileImage,
-        };
-      }
-
-      const payload = {
-        importedWallet,
-        apiUser,
-      };
-      dispatch({
-        type: IMPORT_WALLET,
-        payload,
-      });
-      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
-    } catch (e) {
-      dispatch({
-        type: SET_WALLET_ERROR,
-        payload: {
-          code: IMPORT_ERROR,
-          message: e.toString(),
-          field: IMPORT_WALLET_TWORDS_PHRASE,
-        },
-      });
-    }
+    const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
+    await importWalletGeneric({ importedWallet, dispatch, api, field: IMPORT_WALLET_TWORDS_PHRASE });
   };
 };
 
 export const importWalletFromPrivateKeyAction = (privateKey: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
-    try {
-      const importedWallet = new ethers.Wallet(walletPrivateKey);
-
-      api.init(importedWallet.privateKey);
-      let apiUser = {};
-      const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      if (addressValidationResponse.walletId) {
-        apiUser = {
-          id: addressValidationResponse.id,
-          walletId: addressValidationResponse.walletId,
-          username: addressValidationResponse.username,
-          profileLargeImage: addressValidationResponse.profileImage,
-        };
-      }
-
-      const payload = {
-        importedWallet,
-        apiUser,
-      };
-      dispatch({
-        type: IMPORT_WALLET,
-        payload,
-      });
-      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
-    } catch (e) {
-      dispatch({
-        type: SET_WALLET_ERROR,
-        payload: {
-          code: IMPORT_ERROR,
-          message: e.reason.toString(),
-          field: IMPORT_WALLET_PRIVATE_KEY,
-        },
-      });
-    }
+    const importedWallet = new ethers.Wallet(walletPrivateKey);
+    await importWalletGeneric({ importedWallet, dispatch, api, field: IMPORT_WALLET_PRIVATE_KEY });
   };
 };
 
