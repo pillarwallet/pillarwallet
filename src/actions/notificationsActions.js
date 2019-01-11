@@ -26,6 +26,7 @@ import {
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import { MESSAGE_DISCONNECTED } from 'constants/invitationsConstants';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -151,7 +152,7 @@ export const startListeningNotificationsAction = () => {
         });
       }
       if (notification.type === CONNECTION) {
-        if (notification.message === 'Disconnected your connection') {
+        if (notification.message === MESSAGE_DISCONNECTED) {
           dispatch(deleteChatAction(notification.title));
         }
 

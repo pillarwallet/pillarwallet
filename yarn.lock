@@ -809,10 +809,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.16.1124":
-  version "1.16.1124"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.16.1124.tgz#a8c9d39e7fd3e2974bc2e06c9796a05e7eb3fc4b"
-  integrity sha1-qMnTnn/T4pdLwuBsl5agXn6z/Es=
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.17.1178":
+  version "1.17.1178"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.17.1178.tgz#a76887b10f71dfc6fa30dbd45dbb98a4f95fcae2"
+  integrity sha1-p2iHsQ9x38b6MNvUXbuYpPlfyuI=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -12848,10 +12848,10 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.103:
-  version "1.0.103"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.103.tgz#843831b04c5396fbcf5282ab4bcc51eb948d662f"
-  integrity sha1-hDgxsExTlvvPUoKrS8xR65SNZi8=
+rn-signal-protocol-messaging@1.0.127:
+  version "1.0.127"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.127.tgz#ef40739ff4c5c6bb352d3676ae618e71f78b61ad"
+  integrity sha1-70Bzn/TFxrs1LTZ2rmGOcfeLYa0=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
