@@ -253,15 +253,10 @@ export const stopListeningOnOpenNotificationAction = () => {
   };
 };
 
-const unsetWebSocketClient = () => {
-  const chatWebSocket = chat.getWebSocketInstance();
-  chatWebSocket.stop();
-};
-
 export const startListeningChatWebSocketAction = () => {
   return async (dispatch: Function, getState: Function) => {
     const chatWebSocket = chat.getWebSocketInstance();
-    chatWebSocket.listen();
+    await chatWebSocket.listen();
     chatWebSocket.onOpen();
     chatWebSocket.onMessage(async message => {
       if (message.type === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
@@ -319,6 +314,7 @@ export const startListeningChatWebSocketAction = () => {
 
 export const stopListeningChatWebSocketAction = () => {
   return () => {
-    unsetWebSocketClient();
+    const chatWebSocket = chat.getWebSocketInstance();
+    chatWebSocket.stop();
   };
 };
