@@ -8,7 +8,7 @@ export type Badge = {
   id: number,
   balance: number,
   name?: string,
-  url?: string,
+  imageUrl?: string,
   subtitle?: string,
   description?: string,
   createdAt?: number,
@@ -22,7 +22,7 @@ export type BadgesInfoResponse = {
   [string]: { // badgeId
     id: number,
     name: string,
-    url: string,
+    imageUrl: string,
     subtitle?: string,
     description?: string,
     createdAt: number,
