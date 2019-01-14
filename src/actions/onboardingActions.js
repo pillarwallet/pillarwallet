@@ -33,6 +33,7 @@ import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { generateChatPassword } from 'utils/chat';
 import { toastWalletBackup } from 'utils/toasts';
+import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
@@ -55,6 +56,14 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   if (Object.keys(userInfo).length) {
     dispatch(saveDbAction('user', { user: userInfo }, true));
   }
+
+  const oAuthTokens = {
+    refreshToken: sdkWallet.refreshToken,
+    accessToken: sdkWallet.accessToken,
+  };
+
+  const updateOAuth = updateOAuthTokensCB(dispatch);
+  await updateOAuth(oAuthTokens);
 
   dispatch({
     type: UPDATE_USER,
@@ -193,15 +202,20 @@ export const registerWalletAction = () => {
       registrationSucceed,
     } = await getTokenWalletAndRegister(api, user, dispatch);
 
-    await chat.init({
+    let signalCredentials = {
       userId: sdkWallet.userId,
       username: user.username,
-      password: generateChatPassword(wallet.privateKey),
       walletId: sdkWallet.walletId,
       ethAddress: wallet.address,
-    }).catch(() => null);
-    await chat.client.registerAccount().catch(() => null);
-    await chat.client.setFcmId(fcmToken).catch(() => null);
+    };
+    const { oAuthTokens: { data: OAuthTokens } } = getState();
+    signalCredentials = Object.keys(OAuthTokens) ?
+      { ...signalCredentials, ...OAuthTokens } :
+      { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
+    chat.init(signalCredentials)
+      .then(() => chat.client.registerAccount())
+      .then(() => chat.client.setFcmId(fcmToken))
+      .catch(() => null);
 
     if (!registrationSucceed) { return; }
 

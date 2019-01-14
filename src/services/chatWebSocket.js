@@ -34,7 +34,7 @@ export default class ChatWebSocket {
     const wsUrl = `wss://${this.credentials.host
       .replace(/https:\/\//gi, '')
       .replace(/http:\/\//gi, '')
-      .replace(/\/$/, '')}/v1/websocket/?login=${this.credentials.username}&password=${this.credentials.password}`;
+      .replace(/\/$/, '')}/v1/websocket/?accessToken=${this.credentials.accessToken}`;
     try {
       this.ws = new WebSocket(wsUrl);
       this.ws.binaryType = 'arraybuffer';

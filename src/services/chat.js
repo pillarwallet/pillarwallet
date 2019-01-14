@@ -15,11 +15,9 @@ export default class Chat {
 
   async init(credentials: Object) {
     credentials.host = SIGNAL_SERVER_HOST;
-
     webSocketInstance = new ChatWebSocketService(credentials);
-
     if (Platform.OS === 'ios') {
-      return this.client.createClient(credentials.username, credentials.password, credentials.host);
+      return this.client.createClient(credentials.username, credentials.accessToken, credentials.host);
     }
 
     credentials.errorTrackingDSN = SENTRY_DSN;
