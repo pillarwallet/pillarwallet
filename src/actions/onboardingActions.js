@@ -17,6 +17,8 @@ import {
   USERNAME_OK,
   CHECKING_USERNAME,
   SET_API_USER,
+  INAPPROPRIATE_USERNAME,
+  INVALID_USERNAME,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
@@ -276,11 +278,15 @@ export const validateUserDetailsAction = ({ username }: Object) => {
 
     api.init(wallet.privateKey);
     const apiUser = await api.usernameSearch(username);
-    const usernameExists = !!Object.keys(apiUser).length;
-    const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    const usernameExists = apiUser.username === username;
+    const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;
+    let usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    if (apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME) {
+      usernameStatus = INVALID_USERNAME;
+    }
     dispatch({
       type: SET_API_USER,
-      payload: usernameExists ? apiUser : { username },
+      payload: usernameExists || inappropriateUsername ? apiUser : { username },
     });
     dispatch({
       type: UPDATE_WALLET_STATE,
