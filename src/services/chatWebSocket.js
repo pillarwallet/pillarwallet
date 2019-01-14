@@ -31,12 +31,11 @@ export default class ChatWebSocket {
   listen() {
     if (this.isRunning()) this.ws.close();
     this.setRunning(false);
-    const wsUrl = `wss://${this.credentials.host
-      .replace(/https:\/\//gi, '')
-      .replace(/http:\/\//gi, '')
-      .replace(/\/$/, '')}/v1/websocket/?accessToken=${this.credentials.accessToken}`;
+    const wsUrl = `${this.credentials.host
+      .replace(/(https:\/\/)/gi, 'wss://')
+      .replace(/(http:\/\/)/gi, 'ws://')}/v1/websocket/`;
     try {
-      this.ws = new WebSocket(wsUrl);
+      this.ws = new WebSocket(wsUrl, [this.credentials.accessToken]);
       this.ws.binaryType = 'arraybuffer';
       this.setRunning(true);
     } catch (e) {
@@ -54,17 +53,13 @@ export default class ChatWebSocket {
 
   onMessage(callback?: Function) {
     if (!this.isRunning()) return;
-    this.ws.addEventListener('message', async (incoming: Object) => {
+    this.ws.onmessage = async (incoming: Object) => {
       const buffer = new Uint8Array(incoming.data);
       if (buffer === undefined || !buffer.length) return;
       const received = this.WebSocketMessage.decode(buffer);
       const message = this.WebSocketMessage.toObject(received, {
         bytes: String,
       });
-      if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST) {
-        const webSocketResponse = this.prepareResponse(message.request.id, 200, 'OK');
-        if (webSocketResponse != null) this.send(webSocketResponse);
-      }
       const receivedType = message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST ? 'request' : 'response';
       if (typeof message[receivedType].body !== 'undefined'
         && message[receivedType].body.trim() !== '') {
@@ -86,8 +81,14 @@ export default class ChatWebSocket {
             .toString('utf8');
         }
       }
+      if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST) {
+        const webSocketResponse = this.prepareResponse(message.request.id, 200, 'OK');
+        if (webSocketResponse != null) {
+          await this.ws.send(webSocketResponse);
+        }
+      }
       if (typeof callback === 'function') callback(message);
-    });
+    };
   }
 
   send(data: Uint8Array, callback?: Function) {
@@ -97,24 +98,24 @@ export default class ChatWebSocket {
   }
 
   stop(callback?: Function) {
-    if (this.isRunning()) this.ws.close();
+    if (this.isRunning()) this.ws.close(1000, 'OK');
     this.setRunning(false);
     if (typeof callback === 'function') callback();
   }
 
   onOpen(callback?: Function) {
-    this.ws.addEventListener('open', () => {
+    this.ws.onopen = () => {
       if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
       this.keepalive();
       this.setRunning(true);
       if (typeof callback === 'function') callback();
-    });
-    this.ws.addEventListener('close', () => {
+    };
+    this.ws.onclose = () => {
       this.setRunning(false);
-    });
-    this.ws.addEventListener('error', () => {
+    };
+    this.ws.onerror = () => {
       this.setRunning(false);
-    });
+    };
   }
 
   setRunning(state: boolean) {
