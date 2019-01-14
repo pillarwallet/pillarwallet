@@ -258,32 +258,37 @@ export const startListeningChatWebSocketAction = () => {
     const chatWebSocket = chat.getWebSocketInstance();
     await chatWebSocket.listen();
     chatWebSocket.onOpen();
-    chatWebSocket.onMessage(async message => {
-      if (message.type === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
-        if (message.response.message.toLowerCase() === 'gone') {
+    chatWebSocket.onMessage(async webSocketMessage => {
+      const {
+        type: messageType,
+        response: messageResponse,
+        receivedSignalMessage,
+      } = webSocketMessage;
+      if (messageType === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
+        if (messageResponse.message.toLowerCase() === 'gone') {
           const {
             chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
           } = getState();
           const messageSent = webSocketMessagesSent.find(
-            wsMessageSent => wsMessageSent.webSocketRequestId === message.response.status.id,
+            wsMessageSent => wsMessageSent.webSocketRequestId === messageResponse.status.id,
           );
           if (Object.keys(messageSent)) {
             dispatch(addContactAndSendWebSocketMessageAction(messageSent.tag, messageSent.params));
           }
         }
-        if (message.response.status === 200) {
+        if (messageResponse.status === 200) {
           dispatch({
             type: REMOVE_WEBSOCKET_SENT_MESSAGE,
-            payload: message.response.status.id,
+            payload: messageResponse.status.id,
           });
         }
       }
-      if (typeof message.receivedSignalMessage !== 'undefined') {
+      if (typeof receivedSignalMessage !== 'undefined') {
         const {
           contacts: { data: contacts },
         } = getState();
-        const { source: senderUsername } = message.receivedSignalMessage;
-        dispatch(webSocketChatMessageReceivedAction(message.receivedSignalMessage));
+        const { source: senderUsername } = receivedSignalMessage;
+        dispatch(webSocketChatMessageReceivedAction(receivedSignalMessage));
         dispatch(getExistingChatsAction());
         const { params: navParams = null } = getNavigationPathAndParamsState() || {};
         if (!navParams) return;

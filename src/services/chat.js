@@ -70,7 +70,7 @@ export default class Chat {
         'DELETE',
         `/v1/messages/${username}/${timestamp}`,
       );
-      if (request == null) throw new Error();
+      if (request == null) return;
       chatWebSocket.send(request);
     } else {
       await SignalClient.deleteSignalMessage(username, timestamp);
