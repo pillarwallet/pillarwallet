@@ -2,6 +2,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Button as NBButton } from 'native-base';
+import debounce from 'lodash.debounce';
 import { BoldText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { UIColors, baseColors, fontSizes, spacing, fontWeights } from 'utils/variables';
@@ -31,7 +32,12 @@ type Props = {
   iconSize?: string,
   listItemButton?: boolean,
   height?: number,
+  debounceTime?: number,
   textStyle?: ?Object,
+};
+
+type State = {
+  shouldIgnoreTap: boolean,
 };
 
 const themes = {
@@ -223,62 +229,68 @@ const getTheme = (props: Props) => {
   return themeToUse;
 };
 
-const Button = (props: Props) => {
-  const theme = getTheme(props);
-  const {
-    block,
-    marginTop,
-    marginBottom,
-    icon,
-    iconSize,
-    marginLeft,
-    marginRight,
-    noPadding,
-    disabled,
-    disabledTransparent,
-    onPress,
-    width,
-    height,
-    children,
-  } = props;
+class Button extends React.Component<Props, State> {
+  static defaultProps = {
+    debounceTime: 400,
+  }
 
-  return (
-    <ButtonWrapper
-      {...props}
-      theme={theme}
-      block={block}
-      marginTop={marginTop}
-      marginBottom={marginBottom}
-      marginLeft={marginLeft}
-      marginRight={marginRight}
-      noPadding={noPadding}
-      onPress={(disabled || disabledTransparent) ? null : onPress}
-      width={width}
-      height={height}
-      disabled={disabled || disabledTransparent}
-    >
-      {!!icon &&
-        <ButtonIcon
-          marginRight={marginRight}
-          iconSize={iconSize}
-          name={icon}
-          theme={theme}
-        />
-      }
-      {!!props.title &&
-      <ButtonText
+  state = { shouldIgnoreTap: false };
+  ignoreTapTimeout = null;
+
+  componentWillUnmount() {
+    if (this.ignoreTapTimeout) {
+      clearTimeout(this.ignoreTapTimeout);
+      this.ignoreTapTimeout = null;
+    }
+  }
+
+  handlePress = () => {
+    this.setState({ shouldIgnoreTap: true });
+    if (this.props.onPress) this.props.onPress();
+
+    this.ignoreTapTimeout = setTimeout(() => {
+      this.setState({ shouldIgnoreTap: false });
+    }, 1000);
+  }
+
+  render() {
+    const theme = getTheme(this.props);
+    const {
+      disabled,
+      disabledTransparent,
+      children,
+    } = this.props;
+
+    return (
+      <ButtonWrapper
+        {...this.props}
         theme={theme}
-        small={props.small}
-        extraSmall={props.extraSmall}
-        listItemButton={props.listItemButton}
-        style={props.textStyle}
+        onPress={debounce(this.handlePress, this.props.debounceTime, { leading: true, trailing: false })}
+        disabled={disabled || disabledTransparent || this.state.shouldIgnoreTap}
       >
-        {props.title}
-      </ButtonText>}
-      {children}
-    </ButtonWrapper>
-  );
-};
+        {!!this.props.icon &&
+          <ButtonIcon
+            marginRight={this.props.marginRight}
+            iconSize={this.props.iconSize}
+            name={this.props.icon}
+            theme={theme}
+          />
+        }
+        {!!this.props.title &&
+        <ButtonText
+          theme={theme}
+          small={this.props.small}
+          extraSmall={this.props.extraSmall}
+          listItemButton={this.props.listItemButton}
+          style={this.props.textStyle}
+        >
+          {this.props.title}
+        </ButtonText>}
+        {children}
+      </ButtonWrapper>
+    );
+  }
+}
 
 export default Button;
 
