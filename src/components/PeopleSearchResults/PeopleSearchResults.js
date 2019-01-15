@@ -115,15 +115,11 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   renderContact = ({ item: user }) => {
-    const { invitations, localContacts, navigation } = this.props;
-    const localContactsIds = localContacts.map(({ id }) => id);
+    const { invitations, navigation } = this.props;
     const invitation = invitations.find(({ id }) => id === user.id);
     let status = TYPE_INVITE;
     if (invitation) {
       status = invitation.type;
-    }
-    if (localContactsIds.includes(user.id)) {
-      return null;
     }
 
     return (
@@ -187,14 +183,16 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   render() {
-    const { searchResults: { apiUsers } } = this.props;
+    const { localContacts, searchResults: { apiUsers } } = this.props;
+    const localContactsIds = localContacts.map(({ id }) => id);
+    const filteredApiUsers = apiUsers.filter((user) => { return !localContactsIds.includes(user.id); });
 
     return (
       <React.Fragment>
         {this.renderLocalContactsList()}
-        {!!apiUsers.length && (
+        {!!filteredApiUsers.length && (
           <ContactCardList
-            data={apiUsers}
+            data={filteredApiUsers}
             renderItem={this.renderContact}
             onScroll={() => Keyboard.dismiss()}
             keyExtractor={({ username }) => username}
