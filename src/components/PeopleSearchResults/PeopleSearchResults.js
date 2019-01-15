@@ -142,9 +142,8 @@ class PeopleSearchResults extends React.Component<Props> {
     );
   };
 
-  renderLocalContacts = () => {
+  renderLocalContactsList = () => {
     const {
-      navigation,
       searchResults: { apiUsers, localContacts: resultsLocalContacts },
       localContacts,
     } = this.props;
@@ -152,6 +151,24 @@ class PeopleSearchResults extends React.Component<Props> {
     const updatedLocalContact = intersectionBy(localContacts, apiUsers, 'id');
     const filteredLocalContacts = unionBy(resultsLocalContacts, updatedLocalContact, 'id');
 
+    if (filteredLocalContacts.length) {
+      return (
+        <LocalContacts>
+          <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
+          <LocalContactsScrollView
+            keyboardShouldPersistTaps="always"
+            horizontal
+          >
+            {this.renderLocalContacts(filteredLocalContacts)}
+          </LocalContactsScrollView>
+        </LocalContacts>
+      );
+    }
+    return null;
+  };
+
+  renderLocalContacts = (filteredLocalContacts) => {
+    const { navigation } = this.props;
     return filteredLocalContacts
       .map(contact => (
         <LocalContactsItem
@@ -170,21 +187,11 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   render() {
-    const { searchResults: { localContacts, apiUsers } } = this.props;
+    const { searchResults: { apiUsers } } = this.props;
 
     return (
       <React.Fragment>
-        {!!localContacts.length && (
-          <LocalContacts>
-            <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
-            <LocalContactsScrollView
-              keyboardShouldPersistTaps="always"
-              horizontal
-            >
-              {this.renderLocalContacts()}
-            </LocalContactsScrollView>
-          </LocalContacts>
-        )}
+        {this.renderLocalContactsList()}
         {!!apiUsers.length && (
           <ContactCardList
             data={apiUsers}
