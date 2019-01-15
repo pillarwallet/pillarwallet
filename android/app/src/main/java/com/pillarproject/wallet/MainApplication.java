@@ -43,6 +43,7 @@ import io.sentry.RNSentryPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import nativeShadow.NativeShadowPackage;
 import iyegoroff.RNColorMatrixImageFilters.RNColorMatrixImageFiltersPackage;
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 
 // react-native-splash-screen >= 0.3.1
 
@@ -113,6 +114,9 @@ public class MainApplication extends Application implements ShareApplication, Re
       Intercom.initialize(this, "android_sdk-b989462efb366f8046f5ca1a12c75d67ecb7592c", "s70dqvb2");
     }
     SoLoader.init(this, /* native exopackage */ false);
+    long storageSizeMax = 60L * 1024L * 1024L; // 60 MB
+    // Default size of AsyncStorage is 6MB
+    com.facebook.react.modules.storage.ReactDatabaseSupplier.getInstance(getApplicationContext()).setMaximumSize(storageSizeMax);
   }
 
   @Override
