@@ -193,9 +193,6 @@ class Contact extends React.Component<Props, State> {
         <Header
           title={displayContact.username}
           onBack={() => navigation.goBack(null)}
-          nextIcon="more"
-          nextIconSize={fontSizes.extraLarge}
-          onNextPress={() => { this.setState({ showManageContactModal: true }); }}
         />
         <ScrollWrapper
           refreshControl={
