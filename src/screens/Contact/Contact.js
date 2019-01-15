@@ -96,7 +96,7 @@ class Contact extends React.Component<Props, State> {
     const { navigation, contacts, session } = this.props;
     const contact = navigation.getParam('contact', {});
     this.localContact = contacts.find(({ username }) => username === contact.username);
-    const profileImage = this.localContact ? this.localContact.profileImage : contact.profileImage;
+    const profileImage = this.localContact ? this.localContact.profileLargeImage : contact.profileLargeImage;
     this.state = {
       avatarRefreshed: !profileImage || !session.isOnline,
       showManageContactModal: false,
@@ -118,11 +118,11 @@ class Contact extends React.Component<Props, State> {
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
       fetchContactTransactions(wallet.address, localContact.ethAddress);
-      if (!localContact.profileImage) { return; }
+      if (!localContact.profileLargeImage) { return; }
 
       const defaultImageCacheManager = ImageCacheManager();
       defaultImageCacheManager
-        .deleteUrl(localContact.profileImage, {
+        .deleteUrl(localContact.profileLargeImage, {
           useQueryParamsInCacheKey: true,
         })
         .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
@@ -136,10 +136,10 @@ class Contact extends React.Component<Props, State> {
 
   getUserAvatar = (isAccepted, avatarRefreshed, displayContact) => {
     if (isAccepted) {
-      if (avatarRefreshed) return displayContact.profileImage;
+      if (avatarRefreshed) return displayContact.profileLargeImage;
       return undefined;
     }
-    return displayContact.profileImage;
+    return displayContact.profileLargeImage;
   };
 
   getUnreadCount = (chats: Object[], username: string): number => {
