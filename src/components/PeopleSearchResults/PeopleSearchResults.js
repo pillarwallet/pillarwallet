@@ -174,7 +174,7 @@ class PeopleSearchResults extends React.Component<Props> {
           <ProfileImage
             uri={contact.profileImage}
             userName={contact.username}
-            diameter={itemSizes.avaratCircleMedium}
+            diameter={itemSizes.avatarCircleMedium}
             textStyle={{ fontSize: fontSizes.medium }}
           />
           <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
