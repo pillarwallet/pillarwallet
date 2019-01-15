@@ -25,7 +25,12 @@ import { navigate } from 'services/navigation';
 import { saveDbAction } from './dbActions';
 
 const importWalletGeneric = async (walletActionParams) => {
-  const { importedWallet, dispatch, api, field } = walletActionParams;
+  const {
+    importedWallet,
+    dispatch,
+    api,
+    field,
+  } = walletActionParams;
 
   try {
     api.init(importedWallet.privateKey);
@@ -65,7 +70,12 @@ const importWalletGeneric = async (walletActionParams) => {
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
-    await importWalletGeneric({ importedWallet, dispatch, api, field: IMPORT_WALLET_TWORDS_PHRASE });
+    await importWalletGeneric({
+      importedWallet,
+      dispatch,
+      api,
+      field: IMPORT_WALLET_TWORDS_PHRASE,
+    });
   };
 };
 
@@ -73,7 +83,12 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
     const importedWallet = new ethers.Wallet(walletPrivateKey);
-    await importWalletGeneric({ importedWallet, dispatch, api, field: IMPORT_WALLET_PRIVATE_KEY });
+    await importWalletGeneric({
+      importedWallet,
+      dispatch,
+      api,
+      field: IMPORT_WALLET_PRIVATE_KEY,
+    });
   };
 };
 

@@ -161,12 +161,12 @@ SDKWrapper.prototype.userSearch = function (query: string, walletId: string) {
 SDKWrapper.prototype.usernameSearch = function (username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
-    .then(({ dara }) => data)
+    .then(({ data }) => data)
     .catch((error) => {
       const {
         response: {
           status,
-          data:{ message } = {},
+          data: { message } = {},
         },
       } = error;
 
