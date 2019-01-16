@@ -264,10 +264,14 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       type: UPDATE_WALLET_STATE,
       payload: CHECKING_USERNAME,
     });
+    const { isBackedUp, isImported } = currentState.wallet.backupStatus;
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
+    const isImportingWallet = !!importedWallet;
     const mnemonicPhrase = generateMnemonicPhrase(mnemonic.original);
-    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
-    await delay(200);
+    if (!isImported) {
+      dispatch(generateWalletMnemonicAction(mnemonicPhrase));
+      await delay(200);
+    }
 
     let wallet = importedWallet;
     if (!wallet) {
@@ -276,14 +280,21 @@ export const validateUserDetailsAction = ({ username }: Object) => {
         : ethers.Wallet.fromMnemonic(mnemonicPhrase);
     }
 
-    api.init(wallet.privateKey);
+    if (!isImported) {
+      api.init(wallet.privateKey);
+    }
     const apiUser = await api.usernameSearch(username);
     const usernameExists = apiUser.username === username;
     const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;
     let usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
-    if (apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME) {
+    if (inappropriateUsername) {
       usernameStatus = INVALID_USERNAME;
     }
+
+    if (isImported && usernameStatus === USERNAME_OK) {
+      // TODO: await api.updateUsername
+    }
+
     dispatch({
       type: SET_API_USER,
       payload: usernameExists || inappropriateUsername ? apiUser : { username },

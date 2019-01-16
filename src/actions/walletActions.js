@@ -22,6 +22,13 @@ import {
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
+import {
+  UPDATE_WALLET_STATE,
+  USERNAME_OK,
+  CHECKING_USERNAME,
+  INAPPROPRIATE_USERNAME,
+  INVALID_USERNAME,
+} from 'constants/walletConstants';
 import { saveDbAction } from './dbActions';
 
 const importWalletGeneric = async (walletActionParams) => {
@@ -37,12 +44,26 @@ const importWalletGeneric = async (walletActionParams) => {
     let apiUser = {};
     const addressValidationResponse = await api.validateAddress(importedWallet.address);
     if (addressValidationResponse.walletId) {
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: CHECKING_USERNAME,
+      });
+
+      const usernameSearch = await api.usernameSearch(addressValidationResponse.username);
+      const inappropriateUsername = usernameSearch.status === 400 && usernameSearch.message === INAPPROPRIATE_USERNAME;
+      const usernameStatus = INVALID_USERNAME; //inappropriateUsername ? INVALID_USERNAME : USERNAME_OK;
+
       apiUser = {
         id: addressValidationResponse.id,
         walletId: addressValidationResponse.walletId,
         username: addressValidationResponse.username,
         profileLargeImage: addressValidationResponse.profileImage,
       };
+
+      dispatch({
+        type: UPDATE_WALLET_STATE,
+        payload: usernameStatus,
+      });
     }
 
     const payload = {
@@ -53,6 +74,7 @@ const importWalletGeneric = async (walletActionParams) => {
       type: IMPORT_WALLET,
       payload,
     });
+
     navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
   } catch (e) {
     const message = field === IMPORT_WALLET_TWORDS_PHRASE ? e.toString() : e.reason.toString();

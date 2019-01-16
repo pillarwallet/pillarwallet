@@ -144,9 +144,9 @@ class NewProfile extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { apiUser } = props;
+    const { apiUser, backupStatus: { isImported } = {} } = props;
     const value = apiUser && apiUser.username ? { username: apiUser.username } : null;
-    const inputDisabled = !!(apiUser && apiUser.id);
+    const inputDisabled = !!(apiUser && apiUser.id) && !isImported;
     this.state = {
       value,
       formOptions: getDefaultFormOptions(inputDisabled),
@@ -174,9 +174,13 @@ class NewProfile extends React.Component<Props, State> {
 
   handleSubmit = () => {
     Keyboard.dismiss();
-    const { validateUserDetails, apiUser } = this.props;
+    const {
+      validateUserDetails,
+      apiUser,
+      backupStatus: { isImported } = {},
+    } = this.props;
 
-    if (apiUser && apiUser.id) {
+    if (!isImported && apiUser && apiUser.id) {
       this.goToNextScreen();
       return;
     }
@@ -240,12 +244,22 @@ class NewProfile extends React.Component<Props, State> {
       retry,
       registerOnBackend,
       apiUser,
+      backupStatus: { isImported } = {},
+      walletState,
     } = this.props;
     Keyboard.dismiss();
     if (retry) {
       registerOnBackend();
       return;
     }
+
+    console.log('crap', isImported, walletState)
+    if (isImported && walletState === USERNAME_OK) {
+      // here set flag to render welcomeScreen
+      return;
+    }
+
+    console.log('fuck')
     const navigationParams = {};
     if (apiUser && apiUser.id) navigationParams.returningUser = true;
     navigation.navigate(SET_WALLET_PIN_CODE, navigationParams);
@@ -257,6 +271,7 @@ class NewProfile extends React.Component<Props, State> {
       walletState,
       session,
       retry,
+      apiUser,
     } = this.props;
     const {
       fields: { username: { hasError: usernameHasErrors = false } },
@@ -265,16 +280,21 @@ class NewProfile extends React.Component<Props, State> {
     const isUsernameValid = value && value.username && !usernameHasErrors;
     const isCheckingUsernameAvailability = walletState === CHECKING_USERNAME;
     const shouldNextButtonBeDisabled = !isUsernameValid || isCheckingUsernameAvailability || !session.isOnline;
+    const headerTitle = walletState === INVALID_USERNAME ? 'update username' : "let's get started";
+    const paragraph = walletState === INVALID_USERNAME ?
+      'your current username is invalid for security reasons, please update it.' :
+      'Choose your unique username now. It cannot be changed in future.';
+
     return (
       <React.Fragment>
         <Wrapper>
           <Header
-            title="let's get started"
+            title={headerTitle}
             onBack={retry ? undefined : () => this.props.navigation.goBack()}
           />
           <Wrapper regularPadding>
             <IntroParagraph light small>
-              Choose your unique username now. It cannot be changed in future.
+              {paragraph}
             </IntroParagraph>
             <LoginForm
               innerRef={node => { this._form = node; }}
@@ -322,22 +342,31 @@ class NewProfile extends React.Component<Props, State> {
   }
 
   render() {
-    const { apiUser } = this.props;
+    const {
+      walletState,
+      apiUser,
+      backupStatus: { isImported } = {},
+    } = this.props;
 
+    const shouldRenderUsernameScreen = !apiUser.walletId || walletState === INVALID_USERNAME;
+    const shouldRenderWelcomeBackScreen = isImported && walletState === USERNAME_OK;
+
+    console.log({ walletState, shouldRenderUsernameScreen, shouldRenderWelcomeBackScreen, apiUser, walletState })
     return (
       <Container>
-        {!apiUser.walletId && this.renderChooseUsernameScreen()}
-        {apiUser.walletId && this.renderWelcomeBackScreen()}
+        {shouldRenderWelcomeBackScreen && this.renderWelcomeBackScreen()}
+        {shouldRenderUsernameScreen && this.renderChooseUsernameScreen()}
       </Container>
     );
   }
 }
 
 const mapStateToProps = ({
-  wallet: { walletState, onboarding: { apiUser } },
+  wallet: { walletState, onboarding: { apiUser }, backupStatus },
   session: { data: session },
 }) => ({
   walletState,
+  backupStatus,
   apiUser,
   session,
 });
