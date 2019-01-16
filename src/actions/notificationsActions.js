@@ -279,7 +279,7 @@ export const startListeningChatWebSocketAction = () => {
         if (messageResponse.status === 200) {
           dispatch({
             type: REMOVE_WEBSOCKET_SENT_MESSAGE,
-            payload: messageResponse.status.id,
+            payload: messageResponse.id,
           });
         }
       }
