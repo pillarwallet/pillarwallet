@@ -370,3 +370,9 @@ SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
     .then(({ data }) => data)
     .catch(() => []);
 };
+
+SDKWrapper.prototype.setUsername = function (username: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.user.setUsername(username))
+    .catch(() => ({}));
+};
