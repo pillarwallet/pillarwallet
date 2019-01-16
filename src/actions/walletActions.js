@@ -13,6 +13,11 @@ import {
   IMPORT_WALLET_TWORDS_PHRASE,
   RESET_WALLET_IMPORT,
   BACKUP_WALLET,
+  UPDATE_WALLET_STATE,
+  USERNAME_OK,
+  CHECKING_USERNAME,
+  INAPPROPRIATE_USERNAME,
+  INVALID_USERNAME,
 } from 'constants/walletConstants';
 import {
   LEGAL_TERMS,
@@ -22,13 +27,6 @@ import {
 import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
-import {
-  UPDATE_WALLET_STATE,
-  USERNAME_OK,
-  CHECKING_USERNAME,
-  INAPPROPRIATE_USERNAME,
-  INVALID_USERNAME,
-} from 'constants/walletConstants';
 import { saveDbAction } from './dbActions';
 
 const importWalletGeneric = async (walletActionParams) => {
@@ -51,7 +49,7 @@ const importWalletGeneric = async (walletActionParams) => {
 
       const usernameSearch = await api.usernameSearch(addressValidationResponse.username);
       const inappropriateUsername = usernameSearch.status === 400 && usernameSearch.message === INAPPROPRIATE_USERNAME;
-      const usernameStatus = INVALID_USERNAME; //inappropriateUsername ? INVALID_USERNAME : USERNAME_OK;
+      const usernameStatus = inappropriateUsername ? INVALID_USERNAME : USERNAME_OK;
 
       apiUser = {
         id: addressValidationResponse.id,

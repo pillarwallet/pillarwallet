@@ -126,6 +126,7 @@ type Props = {
   validateUserDetails: Function,
   resetWalletState: Function,
   walletState: ?string,
+  backupStatus: Object,
   session: Object,
   apiUser: Object,
   retry?: boolean,
@@ -172,26 +173,25 @@ class NewProfile extends React.Component<Props, State> {
     this.setState({ formOptions: options, value });
   };
 
-  handleSubmit = () => {
+  validateUsername = () => {
     Keyboard.dismiss();
-    const {
-      validateUserDetails,
-      apiUser,
-      backupStatus: { isImported } = {},
-    } = this.props;
-
-    if (!isImported && apiUser && apiUser.id) {
-      this.goToNextScreen();
-      return;
-    }
+    const { validateUserDetails } = this.props;
 
     const value = this._form.getValue();
     if (!value) return;
     validateUserDetails({ username: value.username });
   };
 
+  handleSubmit = () => {
+    const { apiUser } = this.props;
+
+    if (apiUser && apiUser.id) {
+      this.goToNextScreen();
+    }
+  };
+
   componentDidUpdate(prevProps: Props) {
-    const { walletState } = this.props;
+    const { walletState, backupStatus: { isImported } = {} } = this.props;
     if (prevProps.walletState === walletState) return;
 
     if (walletState === USERNAME_EXISTS || walletState === INVALID_USERNAME) {
@@ -223,7 +223,7 @@ class NewProfile extends React.Component<Props, State> {
       this.setState({ formOptions: options }); // eslint-disable-line
     }
 
-    if (walletState === USERNAME_OK) {
+    if (!isImported && walletState === USERNAME_OK) {
       const options = t.update(this.state.formOptions, {
         fields: {
           username: {
@@ -244,8 +244,6 @@ class NewProfile extends React.Component<Props, State> {
       retry,
       registerOnBackend,
       apiUser,
-      backupStatus: { isImported } = {},
-      walletState,
     } = this.props;
     Keyboard.dismiss();
     if (retry) {
@@ -253,13 +251,6 @@ class NewProfile extends React.Component<Props, State> {
       return;
     }
 
-    console.log('crap', isImported, walletState)
-    if (isImported && walletState === USERNAME_OK) {
-      // here set flag to render welcomeScreen
-      return;
-    }
-
-    console.log('fuck')
     const navigationParams = {};
     if (apiUser && apiUser.id) navigationParams.returningUser = true;
     navigation.navigate(SET_WALLET_PIN_CODE, navigationParams);
@@ -271,7 +262,6 @@ class NewProfile extends React.Component<Props, State> {
       walletState,
       session,
       retry,
-      apiUser,
     } = this.props;
     const {
       fields: { username: { hasError: usernameHasErrors = false } },
@@ -308,7 +298,7 @@ class NewProfile extends React.Component<Props, State> {
         <Footer>
           {!!isUsernameValid &&
           <Button
-            onPress={this.handleSubmit}
+            onPress={this.validateUsername}
             disabled={shouldNextButtonBeDisabled}
             title="Next"
           />
@@ -348,10 +338,9 @@ class NewProfile extends React.Component<Props, State> {
       backupStatus: { isImported } = {},
     } = this.props;
 
-    const shouldRenderUsernameScreen = !apiUser.walletId || walletState === INVALID_USERNAME;
+    const shouldRenderUsernameScreen = !apiUser.walletId || (isImported && walletState === INVALID_USERNAME);
     const shouldRenderWelcomeBackScreen = isImported && walletState === USERNAME_OK;
 
-    console.log({ walletState, shouldRenderUsernameScreen, shouldRenderWelcomeBackScreen, apiUser, walletState })
     return (
       <Container>
         {shouldRenderWelcomeBackScreen && this.renderWelcomeBackScreen()}

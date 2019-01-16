@@ -264,9 +264,8 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       type: UPDATE_WALLET_STATE,
       payload: CHECKING_USERNAME,
     });
-    const { isBackedUp, isImported } = currentState.wallet.backupStatus;
+    const { isImported } = currentState.wallet.backupStatus;
     const { mnemonic, importedWallet } = currentState.wallet.onboarding;
-    const isImportingWallet = !!importedWallet;
     const mnemonicPhrase = generateMnemonicPhrase(mnemonic.original);
     if (!isImported) {
       dispatch(generateWalletMnemonicAction(mnemonicPhrase));
@@ -291,13 +290,15 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       usernameStatus = INVALID_USERNAME;
     }
 
+    let payload = usernameExists || inappropriateUsername ? apiUser : { username };
     if (isImported && usernameStatus === USERNAME_OK) {
       // TODO: await api.updateUsername
+      payload = Object.assign({}, currentState.wallet.onboarding.apiUser, { username });
     }
 
     dispatch({
       type: SET_API_USER,
-      payload: usernameExists || inappropriateUsername ? apiUser : { username },
+      payload,
     });
     dispatch({
       type: UPDATE_WALLET_STATE,
