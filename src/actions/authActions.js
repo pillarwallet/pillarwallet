@@ -51,7 +51,7 @@ export const loginAction = (pin: string) => {
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
         api.init(wallet.privateKey, updateOAuth, oAuthTokens);
-        await api.setUsername(user.username);
+        api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
