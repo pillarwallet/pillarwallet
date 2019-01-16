@@ -30,3 +30,8 @@ export type BadgesInfoResponse = {
     receivedAt: number
   },
 };
+
+export type SelfAwardBadgeResponse = {
+  result: string,
+  message: string,
+};
