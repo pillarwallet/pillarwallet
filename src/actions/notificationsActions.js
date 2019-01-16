@@ -15,6 +15,8 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import {
   getExistingChatsAction,
   getChatByContactAction,
+  webSocketChatMessageReceivedAction,
+  addContactAndSendWebSocketMessageAction,
   deleteChatAction,
 } from 'actions/chatActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
@@ -26,7 +28,10 @@ import {
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import { REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
+import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import { MESSAGE_DISCONNECTED } from 'constants/invitationsConstants';
+import ChatService from 'services/chat';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -38,6 +43,8 @@ let notificationsListener = null;
 let disabledPushNotificationsListener;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
+
+const chat = new ChatService();
 
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
@@ -243,5 +250,76 @@ export const stopListeningOnOpenNotificationAction = () => {
     if (!notificationsOpenerListener) return;
     notificationsOpenerListener();
     notificationsOpenerListener = null;
+  };
+};
+
+export const startListeningChatWebSocketAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const chatWebSocket = chat.getWebSocketInstance();
+    await chatWebSocket.listen();
+    chatWebSocket.onOpen();
+    chatWebSocket.onMessage(async webSocketMessage => {
+      const {
+        type: messageType,
+        response: messageResponse,
+        receivedSignalMessage,
+      } = webSocketMessage;
+      if (messageType === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
+        if (messageResponse.message.toLowerCase() === 'gone') {
+          const {
+            chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
+          } = getState();
+          const messageSent = webSocketMessagesSent.find(
+            wsMessageSent => wsMessageSent.webSocketRequestId === messageResponse.status.id,
+          );
+          if (Object.keys(messageSent)) {
+            dispatch(addContactAndSendWebSocketMessageAction(messageSent.tag, messageSent.params));
+          }
+        }
+        if (messageResponse.status === 200) {
+          dispatch({
+            type: REMOVE_WEBSOCKET_SENT_MESSAGE,
+            payload: messageResponse.status.id,
+          });
+        }
+      }
+      if (typeof receivedSignalMessage !== 'undefined') {
+        const {
+          contacts: { data: contacts },
+        } = getState();
+        const { source: senderUsername } = receivedSignalMessage;
+        dispatch(webSocketChatMessageReceivedAction(receivedSignalMessage));
+        dispatch(getExistingChatsAction());
+        const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+        if (!navParams) return;
+        dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
+        if (!!navParams.username && navParams.username === senderUsername) {
+          const contact = contacts.find(c => c.username === navParams.username) || {};
+          dispatch(getChatByContactAction(
+            navParams.username,
+            contact.id,
+            contact.profileImage,
+            false,
+          ));
+          return;
+        }
+        const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
+        if (notification == null) return;
+        dispatch({
+          type: ADD_NOTIFICATION,
+          payload: {
+            ...notification,
+            message: `${notification.message} from ${senderUsername}`,
+          },
+        });
+      }
+    });
+  };
+};
+
+export const stopListeningChatWebSocketAction = () => {
+  return () => {
+    const chatWebSocket = chat.getWebSocketInstance();
+    chatWebSocket.stop();
   };
 };

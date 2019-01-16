@@ -1,0 +1,90 @@
+{
+  "nested": {
+    "signal": {
+      "nested": {
+        "websocket": {
+          "options": {
+            "java_package": "signal.websocket"
+          },
+          "nested": {
+            "WebSocketRequestMessage": {
+              "fields": {
+                "verb": {
+                  "type": "string",
+                  "id": 1
+                },
+                "path": {
+                  "type": "string",
+                  "id": 2
+                },
+                "headers": {
+                  "rule": "repeated",
+                  "type": "string",
+                  "id": 5
+                },
+                "body": {
+                  "type": "bytes",
+                  "id": 3
+                },
+                "id": {
+                  "type": "uint64",
+                  "id": 4
+                }
+              }
+            },
+            "WebSocketResponseMessage": {
+              "fields": {
+                "id": {
+                  "type": "uint64",
+                  "id": 1
+                },
+                "status": {
+                  "type": "uint32",
+                  "id": 2
+                },
+                "message": {
+                  "type": "string",
+                  "id": 3
+                },
+                "headers": {
+                  "rule": "repeated",
+                  "type": "string",
+                  "id": 5
+                },
+                "body": {
+                  "type": "bytes",
+                  "id": 4
+                }
+              }
+            },
+            "WebSocketMessage": {
+              "fields": {
+                "type": {
+                  "type": "Type",
+                  "id": 1
+                },
+                "request": {
+                  "type": "WebSocketRequestMessage",
+                  "id": 2
+                },
+                "response": {
+                  "type": "WebSocketResponseMessage",
+                  "id": 3
+                }
+              },
+              "nested": {
+                "Type": {
+                  "values": {
+                    "UNKNOWN": 0,
+                    "REQUEST": 1,
+                    "RESPONSE": 2
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
