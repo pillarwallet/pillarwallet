@@ -51,10 +51,10 @@ export const loginAction = (pin: string) => {
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
         api.init(wallet.privateKey, updateOAuth, oAuthTokens);
+        api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
-
         const fcmToken = await firebase.messaging().getToken().catch(() => null);
         let signalCredentials = {
           userId: user.id,
