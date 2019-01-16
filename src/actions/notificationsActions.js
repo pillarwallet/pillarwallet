@@ -270,7 +270,7 @@ export const startListeningChatWebSocketAction = () => {
             chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
           } = getState();
           const messageSent = webSocketMessagesSent.find(
-            wsMessageSent => wsMessageSent.webSocketRequestId === messageResponse.status.id,
+            wsMessageSent => wsMessageSent.webSocketRequestId === messageResponse.id,
           );
           if (Object.keys(messageSent)) {
             dispatch(addContactAndSendWebSocketMessageAction(messageSent.tag, messageSent.params));
