@@ -162,7 +162,22 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
     .then(({ data }) => data)
-    .catch(() => ({}));
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+
+      switch (status) {
+        case 400:
+          return { status, message };
+        default:
+          return {};
+      }
+    });
+
   // TODO: handle 404 and other errors in different ways (e.response.status === 404)
 };
 
