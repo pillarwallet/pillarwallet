@@ -309,7 +309,7 @@ export const startListeningChatWebSocketAction = () => {
         } = getState();
         const { source: senderUsername } = receivedSignalMessage;
         receivedSignalMessage.tag = messageTag;
-        const webSocketResponse = chatWebSocket.prepareResponse(messageRequest.id, 200, 'OK');
+        receivedSignalMessage.requestId = messageRequest.id;
         switch (messageTag) {
           case 'chat':
             dispatch({
@@ -325,9 +325,6 @@ export const startListeningChatWebSocketAction = () => {
             });
             if (!!navParams.username && navParams.username === senderUsername) {
               const contact = contacts.find(c => c.username === navParams.username) || {};
-              if (webSocketResponse != null) {
-                await chatWebSocket.send(webSocketResponse);
-              }
               dispatch(getChatByContactAction(
                 navParams.username,
                 contact.id,
@@ -347,9 +344,6 @@ export const startListeningChatWebSocketAction = () => {
             });
             break;
           case 'tx-note':
-            if (webSocketResponse != null) {
-              await chatWebSocket.send(webSocketResponse);
-            }
             dispatch(decryptReceivedWebSocketTxNoteMessageAction(receivedSignalMessage));
             break;
           default:
