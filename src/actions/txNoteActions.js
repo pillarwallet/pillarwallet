@@ -123,18 +123,19 @@ export const getTxNoteByContactAction = (username: string, userId: string) => {
 export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, params: Object) => {
   return async () => {
     const { username, userId, userConnectionAccessToken } = params;
-    await chat.client.addContact(username, userId, userConnectionAccessToken, true)
-      .then(chat.sendMessage(tag, params, true))
-      .catch(e => {
-        if (e.code === 'ERR_ADD_CONTACT_FAILED') {
-          Toast.show({
-            message: e.message,
-            type: 'warning',
-            title: 'Cannot retrieve remote user',
-            autoClose: false,
-          });
-        }
-      });
+    try {
+      await chat.client.addContact(username, userId, userConnectionAccessToken, true);
+      await chat.sendMessage(tag, params, true);
+    } catch (e) {
+      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+        Toast.show({
+          message: e.message,
+          type: 'warning',
+          title: 'Cannot retrieve remote user',
+          autoClose: false,
+        });
+      }
+    }
   };
 };
 
@@ -150,7 +151,10 @@ export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => 
       return;
     }
     const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(message.source, contact.id, userConnectionAccessToken, false).catch(e => {
+    await chat.client.addContact(message.source, contact.id, userConnectionAccessToken, false).then(async () => {
+      await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
+      await chat.deleteMessage(message.source, message.timestamp, message.requestId);
+    }).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -160,7 +164,5 @@ export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => 
         });
       }
     });
-    await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
-    await chat.deleteMessage(message.source, message.timestamp, message.requestId);
   };
 };
