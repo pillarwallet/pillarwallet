@@ -123,7 +123,7 @@ export const getTxNoteByContactAction = (username: string, userId: string) => {
 export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, params: Object) => {
   return async () => {
     const { username, userId, userConnectionAccessToken } = params;
-    chat.client.addContact(username, userId, userConnectionAccessToken, true)
+    await chat.client.addContact(username, userId, userConnectionAccessToken, true)
       .then(chat.sendMessage(tag, params, true))
       .catch(e => {
         if (e.code === 'ERR_ADD_CONTACT_FAILED') {
