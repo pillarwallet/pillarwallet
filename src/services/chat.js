@@ -16,6 +16,7 @@ export default class Chat {
   async init(credentials: Object) {
     credentials.host = SIGNAL_SERVER_HOST;
     webSocketInstance = new ChatWebSocketService(credentials);
+
     if (Platform.OS === 'ios') {
       return this.client.createClient(credentials.username, credentials.accessToken, credentials.host);
     }
@@ -29,7 +30,7 @@ export default class Chat {
     return webSocketInstance || new ChatWebSocketService({});
   }
 
-  async sendMessage(tag: string, payload: Object, webSocketSendCallback?: Function) {
+  async sendMessage(tag: string, payload: Object, silent: boolean, webSocketSendCallback?: Function) {
     const chatWebSocket = this.getWebSocketInstance();
     if (chatWebSocket.isRunning()) {
       const { username, message } = payload;
@@ -48,12 +49,14 @@ export default class Chat {
           webSocketSendCallback(requestId);
         }
         const timestamp = (new Date()).getTime() / 1000;
-        SignalClient.saveSentMessage('chat', {
+        SignalClient.saveSentMessage(tag, {
           username,
           message,
           timestamp,
         });
       });
+    } else if (silent) {
+      await SignalClient.sendSilentMessageByContact(tag, payload);
     } else {
       await SignalClient.sendMessageByContact(tag, payload);
     }

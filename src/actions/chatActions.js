@@ -9,7 +9,6 @@ import {
   FETCHING_CHATS,
   DELETE_CHAT,
   ADD_WEBSOCKET_SENT_MESSAGE,
-  ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
   DELETE_CONTACT,
 } from 'constants/chatConstants';
@@ -43,7 +42,7 @@ export const getExistingChatsAction = () => {
     const {
       unread: unreadChats = {},
     } = await chat.client.getUnreadMessagesCount('chat').then(JSON.parse).catch(() => ({}));
-    webSocketMessagesReceived.forEach(wsMessage => {
+    webSocketMessagesReceived.filter(wsMessage => wsMessage.tag === 'chat').forEach(wsMessage => {
       if (!unreadChats[wsMessage.source]) {
         unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };
       } else {
@@ -92,7 +91,7 @@ export const sendMessageByContactAction = (username: string, userId: string, mes
         userConnectionAccessToken,
         message: message.text,
       };
-      await chat.sendMessage('chat', params, (requestId) => {
+      await chat.sendMessage('chat', params, false, (requestId) => {
         // callback is ran if websocket message sent
         dispatch({
           type: ADD_WEBSOCKET_SENT_MESSAGE,
@@ -165,7 +164,7 @@ export const getChatByContactAction = (
     }
 
     await webSocketMessagesReceived
-      .filter(wsMessage => wsMessage.source === username)
+      .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
       .forEach(async (wsMessage) => {
         await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
         await chat.deleteMessage(wsMessage.source, wsMessage.timestamp);
@@ -203,11 +202,11 @@ export const getChatByContactAction = (
   };
 };
 
-export const addContactAndSendWebSocketMessageAction = (tag: string, params: Object) => {
+export const addContactAndSendWebSocketChatMessageAction = (tag: string, params: Object) => {
   return async () => {
     const { username, userId, userConnectionAccessToken } = params;
     chat.client.addContact(username, userId, userConnectionAccessToken, true)
-      .then(chat.sendMessage(tag, params))
+      .then(chat.sendMessage(tag, params, false))
       .catch(e => {
         if (e.code === 'ERR_ADD_CONTACT_FAILED') {
           Toast.show({
@@ -264,14 +263,5 @@ export const deleteContactAction = (username: string) => {
       });
       return false;
     }
-  };
-};
-
-export const webSocketChatMessageReceivedAction = (message: Object) => {
-  return (dispatch: Function) => {
-    dispatch({
-      type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
-      payload: message,
-    });
   };
 };
