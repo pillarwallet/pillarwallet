@@ -110,7 +110,7 @@ export const getTxNoteByContactAction = (username: string, userId: string) => {
       .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'tx-note')
       .forEach(async (wsMessage) => {
         await chat.client.decryptSignalMessage('tx-note', JSON.stringify(wsMessage));
-        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp);
+        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
       });
 
     await chat.client.receiveNewMessagesByContact(username, 'tx-note').catch(() => null);
@@ -161,6 +161,6 @@ export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => 
       }
     });
     await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
-    await chat.deleteMessage(message.source, message.timestamp);
+    await chat.deleteMessage(message.source, message.timestamp, message.requestId);
   };
 };

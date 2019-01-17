@@ -62,9 +62,13 @@ export default class Chat {
     }
   }
 
-  async deleteMessage(username: string, timestamp: number) {
+  async deleteMessage(username: string, timestamp: number, responseRequestId: number) {
     const chatWebSocket = this.getWebSocketInstance();
     if (chatWebSocket.isRunning()) {
+      const webSocketResponse = chatWebSocket.prepareResponse(responseRequestId, 200, 'OK');
+      if (webSocketResponse != null) {
+        await chatWebSocket.send(webSocketResponse);
+      }
       const requestId = (new Date()).getTime();
       const request = chatWebSocket.prepareRequest(
         requestId,

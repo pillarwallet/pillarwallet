@@ -167,7 +167,7 @@ export const getChatByContactAction = (
       .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
       .forEach(async (wsMessage) => {
         await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
-        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp);
+        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
       });
 
     dispatch({
