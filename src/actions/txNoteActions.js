@@ -137,3 +137,30 @@ export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, param
       });
   };
 };
+
+export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      accessTokens: { data: accessTokens },
+      contacts: { data: contacts },
+    } = getState();
+    const contact = contacts.find(c => c.username === message.source) || {};
+    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === contact.id);
+    if (!Object.keys(connectionAccessTokens).length) {
+      return;
+    }
+    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
+    await chat.client.addContact(message.source, contact.id, userConnectionAccessToken, false).catch(e => {
+      if (e.code === 'ERR_ADD_CONTACT_FAILED') {
+        Toast.show({
+          message: e.message,
+          type: 'warning',
+          title: 'Cannot retrieve remote user',
+          autoClose: false,
+        });
+      }
+    });
+    await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
+    await chat.deleteMessage(message.source, message.timestamp);
+  };
+};
