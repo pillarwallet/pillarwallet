@@ -18,7 +18,10 @@ import {
   addContactAndSendWebSocketChatMessageAction,
   deleteChatAction,
 } from 'actions/chatActions';
-import { addContactAndSendWebSocketTxNoteMessageAction } from 'actions/txNoteActions';
+import {
+  addContactAndSendWebSocketTxNoteMessageAction,
+  decryptReceivedWebSocketTxNoteMessageAction,
+} from 'actions/txNoteActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -301,43 +304,56 @@ export const startListeningChatWebSocketAction = () => {
         const messageTag = Array.isArray(messageRequest.headers)
           ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
           : '';
-
         const {
           contacts: { data: contacts },
         } = getState();
         const { source: senderUsername } = receivedSignalMessage;
         receivedSignalMessage.tag = messageTag;
-        dispatch({
-          type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
-          payload: receivedSignalMessage,
-        });
-        if (messageTag === 'chat') {
-          dispatch(getExistingChatsAction());
-          const { params: navParams = null } = getNavigationPathAndParamsState() || {};
-          if (!navParams) return;
-          dispatch({
-            type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
-            payload: true,
-          });
-          if (!!navParams.username && navParams.username === senderUsername) {
-            const contact = contacts.find(c => c.username === navParams.username) || {};
-            dispatch(getChatByContactAction(
-              navParams.username,
-              contact.id,
-              contact.profileImage,
-              false,
-            ));
-            return;
-          }
-          const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
-          if (notification == null) return;
-          dispatch({
-            type: ADD_NOTIFICATION,
-            payload: {
-              ...notification,
-              message: `${notification.message} from ${senderUsername}`,
-            },
-          });
+        const webSocketResponse = chatWebSocket.prepareResponse(messageRequest.id, 200, 'OK');
+        switch (messageTag) {
+          case 'chat':
+            dispatch({
+              type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
+              payload: receivedSignalMessage,
+            });
+            dispatch(getExistingChatsAction());
+            const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+            if (!navParams) return;
+            dispatch({
+              type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
+              payload: true,
+            });
+            if (!!navParams.username && navParams.username === senderUsername) {
+              const contact = contacts.find(c => c.username === navParams.username) || {};
+              if (webSocketResponse != null) {
+                await chatWebSocket.send(webSocketResponse);
+              }
+              dispatch(getChatByContactAction(
+                navParams.username,
+                contact.id,
+                contact.profileImage,
+                false,
+              ));
+              return;
+            }
+            const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
+            if (notification == null) return;
+            dispatch({
+              type: ADD_NOTIFICATION,
+              payload: {
+                ...notification,
+                message: `${notification.message} from ${senderUsername}`,
+              },
+            });
+            break;
+          case 'tx-note':
+            if (webSocketResponse != null) {
+              await chatWebSocket.send(webSocketResponse);
+            }
+            dispatch(decryptReceivedWebSocketTxNoteMessageAction(receivedSignalMessage));
+            break;
+          default:
+            break;
         }
       }
     });

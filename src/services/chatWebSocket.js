@@ -81,7 +81,8 @@ export default class ChatWebSocket {
             .toString('utf8');
         }
       }
-      if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST) {
+      if (message.type === WEBSOCKET_MESSAGE_TYPES.REQUEST
+        && message.request.path !== '/api/v1/message') {
         const webSocketResponse = this.prepareResponse(message.request.id, 200, 'OK');
         if (webSocketResponse != null) {
           await this.ws.send(webSocketResponse);
