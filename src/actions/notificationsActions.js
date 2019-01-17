@@ -277,9 +277,9 @@ export const startListeningChatWebSocketAction = () => {
             chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
           } = getState();
           const messageSent = webSocketMessagesSent.find(
-            wsMessageSent => wsMessageSent.webSocketRequestId === messageResponse.id,
+            wsMessageSent => wsMessageSent.requestId === messageResponse.id,
           );
-          if (Object.keys(messageSent)) {
+          if (messageSent) {
             const { tag, params } = messageSent;
             switch (tag) {
               case 'chat':
