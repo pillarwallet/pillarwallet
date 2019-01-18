@@ -8,7 +8,7 @@ import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
 import { setTopLevelNavigator } from 'services/navigation';
-import { SENTRY_DSN } from 'react-native-dotenv';
+import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
 import {
@@ -37,6 +37,9 @@ class App extends React.Component<Props, *> {
     super(props);
     if (!__DEV__) {
       Sentry.config(SENTRY_DSN).install();
+      Sentry.setTagsContext({
+        environment: BUILD_TYPE,
+      });
     }
   }
 
