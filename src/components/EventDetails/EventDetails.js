@@ -113,8 +113,9 @@ class EventDetails extends React.Component<Props, {}> {
 
     if (eventType !== TRANSACTION_EVENT) return;
 
-    if (contacts.find(contact => contact.username === eventData.username)) {
-      getTxNoteByContact(eventData.username);
+    if (contacts.find(contact => contact.username === eventData.username)
+      && Object.keys(eventData.contact).length) {
+      getTxNoteByContact(eventData.contact.username, eventData.contact.id);
     }
 
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
@@ -198,7 +199,7 @@ class EventDetails extends React.Component<Props, {}> {
       txNotes,
       assets,
     } = this.props;
-    let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:MM');
+    let eventTime = formatDate(new Date(eventData.createdAt * 1000), 'MMMM D, YYYY HH:mm');
     if (eventType === TRANSACTION_EVENT) {
       const txInfo = history.find(tx => tx.hash === eventData.hash) || {};
       const {
@@ -397,7 +398,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
-  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
+  getTxNoteByContact: (username, userId) => dispatch(getTxNoteByContactAction(username, userId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);

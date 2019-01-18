@@ -1,17 +1,18 @@
 // @flow
 import * as React from 'react';
 import { Platform } from 'react-native';
-import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
-import { BaseText, BoldText } from 'components/Typography';
-import ProfileImage from 'components/ProfileImage';
+import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
 import IconButton from 'components/IconButton';
+import { BaseText, BoldText } from 'components/Typography';
+import { baseColors, fontSizes, spacing, fontWeights, fontTrackings } from 'utils/variables';
+import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
 import { Shadow } from 'components/Shadow';
 import { Wrapper } from 'components/Layout';
+import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
 type Props = {
   label: string,
@@ -39,12 +40,8 @@ type Props = {
   acceptInvitation?: ?Function,
   type?: string,
   children?: React.Node,
-  small?: boolean
+  small?: boolean,
 }
-
-const ACTION = 'ACTION';
-const CHAT_ITEM = 'CHAT_ITEM';
-const DEFAULT = 'DEFAULT';
 
 const ItemWrapper = styled.TouchableOpacity`
   flex-direction: row;
@@ -388,7 +385,11 @@ class ListItemWithImage extends React.Component<Props, {}> {
 
     const type = getType(this.props);
     return (
-      <ItemWrapper type={type} onPress={onPress} disabled={!onPress}>
+      <ItemWrapper
+        type={type}
+        onPress={onPress}
+        disabled={!onPress}
+      >
         <ImageWrapper>
           <ItemImage {...this.props} type={type} />
         </ImageWrapper>

@@ -11,6 +11,7 @@ import {
   TYPE_BLOCKED,
   TYPE_REJECTED,
   TYPE_RECEIVED,
+  TYPE_DISCONNECTED,
 } from 'constants/invitationsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
@@ -33,6 +34,7 @@ export const fetchInviteNotificationsAction = () => {
       TYPE_CANCELLED,
       TYPE_BLOCKED,
       TYPE_REJECTED,
+      TYPE_DISCONNECTED,
     ];
     const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
     const mappedInviteNotifications = inviteNotifications
@@ -70,7 +72,12 @@ export const fetchInviteNotificationsAction = () => {
     const newConnections = groupedNotifications.connectionAcceptedEvent
       .filter(({ id }) => !contactsIds.includes(id));
 
-    const updatedContacts = uniqBy(newConnections.concat(contacts), 'id')
+    // clean up local contacts
+    const acceptedConnectionsIds = groupedNotifications.connectionAcceptedEvent.map(({ id: acceptedConnectionId }) =>
+      acceptedConnectionId);
+    const consistentLocalContacts = contacts.filter(({ id: contactId }) =>
+      acceptedConnectionsIds.includes(contactId));
+    const updatedContacts = uniqBy(newConnections.concat(consistentLocalContacts), 'id')
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
 
     // save new connections keys
@@ -81,6 +88,7 @@ export const fetchInviteNotificationsAction = () => {
         return { ...accessToken, userAccessToken: connectionKey };
       });
     });
+
     dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
     dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));

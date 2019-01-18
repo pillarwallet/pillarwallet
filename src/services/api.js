@@ -2,6 +2,7 @@
 import { transformAssetsToObject } from 'utils/assets';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import BCX from 'blockchain-explorer-sdk';
+import { Sentry } from 'react-native-sentry';
 import {
   SDK_PROVIDER,
   BCX_URL,
@@ -18,6 +19,7 @@ import {
 } from 'services/assets';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
+import type { OAuthTokens } from 'utils/oAuth';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -49,12 +51,14 @@ export default function SDKWrapper() {
   this.pillarWalletSdk = null;
 }
 
-SDKWrapper.prototype.init = function (privateKey: string) {
+SDKWrapper.prototype.init = function (privateKey: string, updateOAuth?: ?Function, oAuthTokensStored?: ?OAuthTokens) {
   this.pillarWalletSdk = new PillarSdk({
     privateKey: privateKey.slice(2),
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
     investmentsUrl: INVESTMENTS_URL,
+    updateOAuthFn: updateOAuth,
+    oAuthTokens: oAuthTokensStored,
   });
 };
 
@@ -87,6 +91,10 @@ SDKWrapper.prototype.registerOnAuthServer = function (fcm: string, username: str
     })
     .then(({ data }) => data)
     .catch((e = {}) => {
+      Sentry.captureException({
+        type: 'Registration error',
+        error: e,
+      });
       if (e.response && e.response.status === USERNAME_EXISTS_ERROR_CODE) {
         return {
           error: true,
@@ -154,7 +162,22 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
     .then(({ data }) => data)
-    .catch(() => ({}));
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+
+      switch (status) {
+        case 400:
+          return { status, message };
+        default:
+          return {};
+      }
+    });
+
   // TODO: handle 404 and other errors in different ways (e.response.status === 404)
 };
 
@@ -343,9 +366,28 @@ SDKWrapper.prototype.rejectInvitation = function (targetUserId: string, accessKe
     .catch(() => null);
 };
 
+SDKWrapper.prototype.disconnectUser =
+  function (targetUserId: string, sourceUserAccessKey: string, targetUserAccessKey: string, walletId: string) {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.connection.disconnect({
+        targetUserId,
+        sourceUserAccessKey,
+        targetUserAccessKey,
+        walletId,
+      }))
+      .then(({ data }) => data)
+      .catch(() => null);
+  };
+
 SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
     .then(({ data }) => data)
     .catch(() => []);
+};
+
+SDKWrapper.prototype.setUsername = function (username: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.configuration.setUsername(username))
+    .catch(() => null);
 };

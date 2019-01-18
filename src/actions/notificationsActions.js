@@ -12,7 +12,16 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { getExistingChatsAction, getChatByContactAction } from 'actions/chatActions';
+import {
+  getExistingChatsAction,
+  getChatByContactAction,
+  addContactAndSendWebSocketChatMessageAction,
+  deleteChatAction,
+} from 'actions/chatActions';
+import {
+  addContactAndSendWebSocketTxNoteMessageAction,
+  decryptReceivedWebSocketTxNoteMessageAction,
+} from 'actions/txNoteActions';
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
 import {
@@ -22,6 +31,13 @@ import {
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import {
+  ADD_WEBSOCKET_RECEIVED_MESSAGE,
+  REMOVE_WEBSOCKET_SENT_MESSAGE,
+} from 'constants/chatConstants';
+import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
+import { MESSAGE_DISCONNECTED } from 'constants/invitationsConstants';
+import ChatService from 'services/chat';
 
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
@@ -33,6 +49,8 @@ let notificationsListener = null;
 let disabledPushNotificationsListener;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
+
+const chat = new ChatService();
 
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
@@ -107,15 +125,13 @@ export const startListeningNotificationsAction = () => {
         await firebase.messaging().requestPermission();
         await firebase.messaging().getToken();
         enabled = true;
-      } catch (err) { } // eslint-disable-line
-    }
 
-    if (!enabled) {
-      dispatch(fetchAllNotificationsAction());
-      disabledPushNotificationsListener = setInterval(() => {
         dispatch(fetchAllNotificationsAction());
-      }, 30000);
-      return;
+        disabledPushNotificationsListener = setInterval(() => {
+          dispatch(fetchAllNotificationsAction());
+        }, 30000);
+        return;
+      } catch (err) { } // eslint-disable-line
     }
 
     if (notificationsListener) return;
@@ -123,6 +139,7 @@ export const startListeningNotificationsAction = () => {
       if (!message._data || !Object.keys(message._data).length) return;
       if (checkForSupportAlert(message._data)) return;
       const notification = processNotification(message._data, wallet.address.toUpperCase());
+
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
@@ -136,7 +153,7 @@ export const startListeningNotificationsAction = () => {
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
         if (!!navParams.username && navParams.username === notification.navigationParams.username) {
           const contact = contacts.find(c => c.username === navParams.username) || {};
-          dispatch(getChatByContactAction(navParams.username, contact.profileImage));
+          dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
           return;
         }
         dispatch({
@@ -148,6 +165,10 @@ export const startListeningNotificationsAction = () => {
         });
       }
       if (notification.type === CONNECTION) {
+        if (notification.message === MESSAGE_DISCONNECTED) {
+          dispatch(deleteChatAction(notification.title));
+        }
+
         dispatch(fetchInviteNotificationsAction());
       }
       if (notification.type !== SIGNAL) {
@@ -235,5 +256,107 @@ export const stopListeningOnOpenNotificationAction = () => {
     if (!notificationsOpenerListener) return;
     notificationsOpenerListener();
     notificationsOpenerListener = null;
+  };
+};
+
+export const startListeningChatWebSocketAction = () => {
+  return async (dispatch: Function, getState: Function) => {
+    const chatWebSocket = chat.getWebSocketInstance();
+    await chatWebSocket.listen();
+    chatWebSocket.onOpen();
+    chatWebSocket.onMessage(async webSocketMessage => {
+      const {
+        type: messageType,
+        response: messageResponse,
+        request: messageRequest,
+        receivedSignalMessage,
+      } = webSocketMessage;
+      if (messageType === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
+        if (messageResponse.message.toLowerCase() === 'gone') {
+          const {
+            chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
+          } = getState();
+          const messageSent = webSocketMessagesSent.find(
+            wsMessageSent => wsMessageSent.requestId === messageResponse.id,
+          );
+          if (messageSent) {
+            const { tag, params } = messageSent;
+            switch (tag) {
+              case 'chat':
+                dispatch(addContactAndSendWebSocketChatMessageAction(tag, params));
+                break;
+              case 'tx-note':
+                dispatch(addContactAndSendWebSocketTxNoteMessageAction(tag, params));
+                break;
+              default:
+                break;
+            }
+          }
+        }
+        if (messageResponse.status === 200) {
+          dispatch({
+            type: REMOVE_WEBSOCKET_SENT_MESSAGE,
+            payload: messageResponse.id,
+          });
+        }
+      }
+      if (typeof receivedSignalMessage !== 'undefined') {
+        const messageTag = Array.isArray(messageRequest.headers)
+          ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
+          : '';
+        const {
+          contacts: { data: contacts },
+        } = getState();
+        const { source: senderUsername } = receivedSignalMessage;
+        receivedSignalMessage.tag = messageTag;
+        receivedSignalMessage.requestId = messageRequest.id;
+        switch (messageTag) {
+          case 'chat':
+            dispatch({
+              type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
+              payload: receivedSignalMessage,
+            });
+            dispatch(getExistingChatsAction());
+            const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+            if (!navParams) return;
+            dispatch({
+              type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
+              payload: true,
+            });
+            if (!!navParams.username && navParams.username === senderUsername) {
+              const contact = contacts.find(c => c.username === navParams.username) || {};
+              dispatch(getChatByContactAction(
+                navParams.username,
+                contact.id,
+                contact.profileImage,
+                false,
+              ));
+              return;
+            }
+            const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
+            if (notification == null) return;
+            dispatch({
+              type: ADD_NOTIFICATION,
+              payload: {
+                ...notification,
+                message: `${notification.message} from ${senderUsername}`,
+              },
+            });
+            break;
+          case 'tx-note':
+            dispatch(decryptReceivedWebSocketTxNoteMessageAction(receivedSignalMessage));
+            break;
+          default:
+            break;
+        }
+      }
+    });
+  };
+};
+
+export const stopListeningChatWebSocketAction = () => {
+  return () => {
+    const chatWebSocket = chat.getWebSocketInstance();
+    chatWebSocket.stop();
   };
 };

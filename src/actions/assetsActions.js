@@ -1,6 +1,8 @@
 // @flow
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
+import { providers } from 'ethers';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -16,6 +18,7 @@ import {
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
 } from 'constants/assetsConstants';
+import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import {
@@ -46,8 +49,18 @@ export const sendAssetAction = ({
   note,
 }: TransactionPayload, wallet: Object, navigateToNextScreen: Function = noop) => {
   return async (dispatch: Function, getState: Function) => {
-    const { history: { data: currentHistory } } = getState();
+    const { history: { data: currentHistory }, txCount: { data: { lastNonce } } } = getState();
     let txStatus: TransactionStatus;
+
+    wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+    const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
+
+    let nonce;
+
+    if (lastNonce === transactionCount && lastNonce > 0) {
+      nonce = lastNonce + 1;
+    }
+
     if (symbol === ETH) {
       const ETHTrx = await transferETH({
         gasLimit,
@@ -55,6 +68,7 @@ export const sendAssetAction = ({
         to,
         amount,
         wallet,
+        nonce,
       }).catch((e) => {
         Sentry.captureException({
           tx: {
@@ -76,6 +90,13 @@ export const sendAssetAction = ({
         });
         const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
         dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+        const txCountNew = { lastCount: transactionCount, lastNonce: ETHTrx.nonce };
+        dispatch({
+          type: UPDATE_TX_COUNT,
+          payload: txCountNew,
+        });
+        dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
       }
       txStatus = ETHTrx.hash
         ? {
@@ -94,6 +115,7 @@ export const sendAssetAction = ({
       contractAddress,
       wallet,
       decimals,
+      nonce,
     }).catch((e) => {
       Sentry.captureException({
         tx: {
@@ -121,6 +143,13 @@ export const sendAssetAction = ({
       });
       const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
+
+      const txCountNew = { lastCount: transactionCount, lastNonce: ERC20Trx.nonce };
+      dispatch({
+        type: UPDATE_TX_COUNT,
+        payload: txCountNew,
+      });
+      dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
     }
     txStatus = ERC20Trx.hash
       ? {
