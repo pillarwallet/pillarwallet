@@ -48,6 +48,7 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
+import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 
 // constants
 import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
@@ -82,6 +83,7 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
+  fetchCollectibles: Function,
 }
 
 type State = {
@@ -602,8 +604,9 @@ class AssetsScreen extends React.Component<Props, State> {
               <RefreshControl
                 refreshing={false}
                 onRefresh={() => {
-                  const { fetchAssetsBalances } = this.props;
+                  const { fetchAssetsBalances, fetchCollectibles } = this.props;
                   fetchAssetsBalances(assets, wallet.address);
+                  fetchCollectibles();
                 }}
               />
             }
@@ -650,6 +653,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  fetchCollectibles: () => dispatch(fetchCollectiblesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

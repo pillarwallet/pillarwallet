@@ -1,0 +1,2 @@
+// @flow
+export const UPDATE_COLLECTIBLES = 'UPDATE_COLLECTIBLES';

@@ -20,6 +20,7 @@ import {
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
+import { parseAccountUniqueTokens } from 'utils/collectibles';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -185,6 +186,15 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
     .then(() => this.pillarWalletSdk.asset.search({ query, walletId }))
     .then(({ data }) => data)
     .catch(() => []);
+};
+
+SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // eslint-disable-line
+  const address = '0x0239769a1adf4def9f07da824b80b9c4fcb59593'; // REMOVE ME
+  return Promise.resolve()
+    .then(() => fetch(`https://api.opensea.io/api/v1/assets/?owner=${address}&order_by=current_price&order_direction=asc`))
+    .then(data => data.json())
+    .then(parseAccountUniqueTokens)
+    .catch(() => ({}));
 };
 
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
