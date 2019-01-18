@@ -15,6 +15,7 @@ export const NEW_CHAT = 'NEW_CHAT';
 export const CHAT = 'CHAT';
 export const ICO = 'ICO';
 export const BACKUP_WALLET_IN_SETTINGS_FLOW = 'BACKUP_WALLET_IN_SETTINGS_FLOW';
+export const COLLECTIBLE = 'COLLECTIBLE';
 
 // CHANGE PIN FLOW
 export const CHANGE_PIN_FLOW = 'CHANGE_PIN_FLOW';

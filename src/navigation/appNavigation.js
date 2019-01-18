@@ -43,6 +43,7 @@ import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
+import CollectibleScreen from 'screens/Collectible';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -102,6 +103,7 @@ import {
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
+  COLLECTIBLE,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -194,6 +196,7 @@ chatFlow.navigationOptions = hideTabNavigatorOnChildView;
 const assetsFlow = createStackNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
+  [COLLECTIBLE]: CollectibleScreen,
   [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 

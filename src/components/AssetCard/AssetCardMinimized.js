@@ -32,6 +32,7 @@ type Props = {
   onRemove: Function,
   forceHideRemoval?: boolean,
   assetData: Object,
+  isCollectible?: boolean,
 }
 
 type State = {
@@ -84,15 +85,16 @@ const Sizer = styled.View`
 const InnerWrapper = styled.View`
   flex: 1;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: ${props => props.justify ? props.justify : 'space-between'};
   align-items: flex-start;
   padding: ${props => props.smallScreen ? spacing.rhythm / 4 : spacing.rhythm / 2}px; 
 `;
 
 const CardRow = styled.View`
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: ${props => props.justify ? props.justify : 'flex-start'};
   align-items: center;
+  width: 100%;
 `;
 
 const TouchableWithoutFeedback = styled.TouchableWithoutFeedback`
@@ -229,17 +231,83 @@ class AssetCardMinimized extends React.Component<Props, State> {
     });
   };
 
+  renderCardContent = (isCollectible) => {
+    const {
+      smallScreen,
+      token,
+      icon,
+      extraSmall,
+      amount,
+      disclaimer,
+      balanceInFiat,
+    } = this.props;
+
+    const currencySymbol = isCollectible ? '' : getCurrencySymbol(balanceInFiat.currency);
+
+    if (isCollectible) {
+      return (
+        <InnerWrapper smallScreen={smallScreen} justify="center">
+          <CardRow justify="center" style={{ marginTop: 8 }}>
+            <IconCircle smallScreen={smallScreen} color="transparent">
+              <CachedImage
+                key={token}
+                style={{
+                  height: smallScreen ? 20 : 36,
+                  width: smallScreen ? 20 : 36,
+                  marginBottom: spacing.mediumLarge,
+                }}
+                source={{ uri: icon }}
+                fallbackSource={genericToken}
+                resizeMode="contain"
+              />
+            </IconCircle>
+          </CardRow>
+          <CardRow justify="center">
+            <Name>{token}</Name>
+          </CardRow>
+        </InnerWrapper>
+      );
+    }
+
+    return (
+      <InnerWrapper smallScreen={smallScreen}>
+        <CardRow>
+          <IconCircle smallScreen={smallScreen}>
+            <CachedImage
+              key={token}
+              style={{
+                height: smallScreen ? 20 : 36,
+                width: smallScreen ? 20 : 36,
+              }}
+              source={{ uri: icon }}
+              fallbackSource={genericToken}
+              resizeMode="contain"
+            />
+          </IconCircle>
+          <Name>{token}</Name>
+        </CardRow>
+        <CardRow>
+          <AmountWrapper extraSmall={extraSmall}>
+            <Amount>{amount}</Amount>
+            <DetailWrapper>
+              {disclaimer
+                ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
+                : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
+              }
+            </DetailWrapper>
+          </AmountWrapper>
+        </CardRow>
+      </InnerWrapper>
+    );
+  }
+
   render() {
     const {
-      amount,
-      token,
-      balanceInFiat,
-      disclaimer,
-      icon,
       extraSmall,
       smallScreen,
       disabledRemove,
       onRemove,
+      isCollectible,
     } = this.props;
     const { showHide, shakeAnimation } = this.state;
 
@@ -260,7 +328,6 @@ class AssetCardMinimized extends React.Component<Props, State> {
       ],
     };
 
-    const currencySymbol = getCurrencySymbol(balanceInFiat.currency);
     return (
       <AssetWrapperAnimated style={animatedStyle}>
         <ShadowHolder
@@ -272,35 +339,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
         >
           <Sizer smallScreen={smallScreen} extraSmall={extraSmall}>
             <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
-              <InnerWrapper smallScreen={smallScreen}>
-                <CardRow>
-                  <IconCircle smallScreen={smallScreen}>
-                    <CachedImage
-                      key={token}
-                      style={{
-                        height: smallScreen ? 20 : 36,
-                        width: smallScreen ? 20 : 36,
-                      }}
-                      source={{ uri: icon }}
-                      fallbackSource={genericToken}
-                      resizeMode="contain"
-                    />
-                  </IconCircle>
-                  <Name>{token}</Name>
-                </CardRow>
-                <CardRow>
-                  <AmountWrapper extraSmall={extraSmall}>
-                    <Amount>{amount}</Amount>
-                    {!extraSmall &&
-                    <DetailWrapper>
-                      {disclaimer
-                        ? <Disclaimer smallScreen={smallScreen}>{disclaimer}</Disclaimer>
-                        : <FiatAmount>{currencySymbol}{balanceInFiat.amount}</FiatAmount>
-                      }
-                    </DetailWrapper>}
-                  </AmountWrapper>
-                </CardRow>
-              </InnerWrapper>
+              {this.renderCardContent(isCollectible)}
             </TouchableWithoutFeedback>
           </Sizer>
         </ShadowHolder>
