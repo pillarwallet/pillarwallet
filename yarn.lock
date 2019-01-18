@@ -8846,6 +8846,11 @@ lodash.flattendeep@^4.4.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
   integrity sha1-+wMJF/hqMTTlvJvsDWngAT3f7bI=
 
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+  integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
+
 lodash.intersectionby@^4.7.0:
   version "4.7.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.intersectionby/-/lodash.intersectionby-4.7.0.tgz#12f125e4da00b22290febda1b6c1b68bb9255125"
@@ -8924,6 +8929,11 @@ lodash.partition@^4.6.0:
   version "4.6.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.partition/-/lodash.partition-4.6.0.tgz#a38e46b73469e0420b0da1212e66d414be364ba4"
   integrity sha1-o45GtzRp4EILDaEhLmbUFL42S6Q=
+
+lodash.pick@^4.4.0:
+  version "4.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
+  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
 
 lodash.set@^4.3.2:
   version "4.3.2"
