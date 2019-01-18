@@ -24,8 +24,8 @@ export default function assetsReducer(
     case UPDATE_COLLECTIBLES:
       return {
         ...state,
-        assets: action.payload.assets,
-        categories: action.payload.categories,
+        assets: action.payload.assets || [],
+        categories: action.payload.categories || [],
       };
     default:
       return state;

@@ -9,8 +9,7 @@ export const fetchCollectiblesAction = () => {
     const collectibles = await api.fetchCollectibles(wallet.address);
     console.log('collectibles', collectibles);
     if (collectibles && collectibles.assets && collectibles.categories) {
-      dispatch(saveDbAction('collectiblesAssets', { collectiblesAssets: collectibles.assets }, true));
-      dispatch(saveDbAction('collectiblesCategories', { collectiblesCategories: collectibles.categories }, true));
+      dispatch(saveDbAction('collectibles', { collectibles }, true));
       dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
     }
   };
