@@ -20,7 +20,7 @@ import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
-import { BaseText } from 'components/Typography';
+import { BaseText, SubHeading } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
@@ -33,6 +33,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
+import Tabs from 'components/Tabs';
 
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -51,9 +52,17 @@ import {
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 
 // constants
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
+import {
+  FETCH_INITIAL_FAILED,
+  defaultFiatCurrency,
+  FETCHED,
+  FETCHING,
+  ETH,
+  TOKENS,
+  COLLECTIBLES,
+} from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
-import { ASSET } from 'constants/navigationConstants';
+import { ASSET, COLLECTIBLE } from 'constants/navigationConstants';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -89,6 +98,7 @@ type Props = {
 type State = {
   forceHideRemoval: boolean,
   query: string,
+  activeTab: string,
 }
 
 const IS_IOS = Platform.OS === 'ios';
@@ -132,6 +142,10 @@ const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
 `;
 
+const ListHeader = styled.View`
+  padding: 0 ${spacing.rhythm / 2}px;
+`;
+
 class AssetsScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
@@ -141,6 +155,7 @@ class AssetsScreen extends React.Component<Props, State> {
     this.state = {
       forceHideRemoval: false,
       query: '',
+      activeTab: TOKENS,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
@@ -185,14 +200,19 @@ class AssetsScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  handleCardTap = (assetData: Object) => {
+  handleCardTap = (assetData: Object, isCollectible?: boolean) => {
+    const { navigation } = this.props;
     this.setState({ forceHideRemoval: true });
-    this.props.navigation.navigate(ASSET,
-      {
-        assetData,
-        resetHideRemoval: this.resetHideRemoval,
-      },
-    );
+    if (isCollectible) {
+      navigation.navigate(COLLECTIBLE, assetData);
+    } else {
+      navigation.navigate(ASSET,
+        {
+          assetData,
+          resetHideRemoval: this.resetHideRemoval,
+        },
+      );
+    }
   };
 
   handleSearchChange = (query: string) => {
@@ -262,7 +282,7 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
-  renderAsset = ({ item: asset }) => {
+  renderToken = ({ item: asset }) => {
     const {
       wallet,
       baseFiatCurrency,
@@ -388,6 +408,53 @@ class AssetsScreen extends React.Component<Props, State> {
     }
   };
 
+  renderCollectible = ({ item }) => {
+    const collectibleProps = {
+      id: item.id,
+      name: item.name,
+      token: item.name,
+      amount: item.name,
+      icon: item.image_preview_url,
+    };
+
+    const collectibleData = {
+      id: item.id,
+      category: item.assetContract,
+      name: item.name,
+      description: item.description,
+      icon: item.image_original_url,
+      externalLink: item.external_link,
+    }
+
+    return (
+      <AssetCardMinimized
+        {...collectibleProps}
+        smallScreen={smallScreen()}
+        onPress={() => { this.handleCardTap(collectibleData, true); }}
+        isCollectible
+      />
+    );
+  };
+
+  renderCollectibleSection = ({ item }) => {
+    return (
+      <FlatList
+        key={item.key}
+        data={item.data}
+        keyExtractor={(it) => it.name}
+        renderItem={this.renderCollectible}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          paddingVertical: 6,
+          paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
+          paddingRight: horizontalPadding(EXTRASMALL, 'right'),
+          width: '100%',
+        }}
+        numColumns={3}
+      />
+    );
+  };
+
   renderSeparator = () => {
     return (
       <View
@@ -510,20 +577,28 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
-  render() {
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
+  };
+
+  renderListTitle = (titleText: string) => {
+    return (
+      <ListHeader>
+        <SubHeading>{titleText}</SubHeading>
+      </ListHeader>
+    );
+  };
+
+  renderAssetList = () => {
     const {
       assets,
       wallet,
-      assetsState,
-      fetchInitialAssets,
       assetsLayout,
       baseFiatCurrency,
       rates,
       balances,
-      assetsSearchState,
-      navigation,
     } = this.props;
-    const { query } = this.state;
+    const { activeTab } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const sortedAssets = Object.keys(assets)
@@ -541,6 +616,133 @@ class AssetsScreen extends React.Component<Props, State> {
       }))
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
 
+    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
+
+    if (activeTab === TOKENS) {
+      return (
+        <FlatList
+          key={assetsLayout}
+          data={sortedAssets}
+          keyExtractor={(item) => item.id}
+          renderItem={this.renderToken}
+          initialNumToRender={5}
+          maxToRenderPerBatch={5}
+          onEndReachedThreshold={0.5}
+          style={{ width: '100%' }}
+          contentContainerStyle={{
+            paddingVertical: 6,
+            paddingLeft: horizontalPadding(assetsLayout, 'left'),
+            paddingRight: horizontalPadding(assetsLayout, 'right'),
+            width: '100%',
+          }}
+          numColumns={columnAmount}
+          ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+            ? this.renderSeparator
+            : null}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={() => {
+                const { fetchAssetsBalances } = this.props;
+                fetchAssetsBalances(assets, wallet.address);
+              }}
+            />
+          }
+        />
+      );
+    }
+
+    const collectiblesSections = [
+      {
+        title: 'Kudos',
+        data:
+          [{
+            key: 'Kudos',
+            data: [{
+              animation_url: null,
+              assetContract: 'Kudos',
+              background: '#fbfbfb',
+              current_price: '0',
+              description: 'Every Shill down in Shillville likes Open Source a lot. This Shillville badge is for the Shills in your life~!',
+              external_link: 'https://gitcoin.co/kudos/0x2aEa4Add166EBf38b63d09a75dE1a7b94Aa24163/137',
+              id: '663',
+              image_original_url: 'https://s.gitcoin.co/static/v2/images/kudos/shillville.svg',
+              image_preview_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-preview/663.png',
+              image_thumbnail_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-thumbnail/663.png',
+              image_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663.svg',
+              lastPrice: 0.003638784444837918,
+              name: 'Shillville',
+              permalink: 'https://opensea.io/assets/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663',
+              traits: [],
+            }],
+          }],
+        extraData: [],
+      },
+      {
+        title: 'Kudos',
+        data:
+          [{
+            key: 'Kudos',
+            data: [{
+              animation_url: null,
+              assetContract: 'Kudos',
+              background: '#fbfbfb',
+              current_price: '0',
+              description: 'Every Shill down in Shillville likes Open Source a lot. This Shillville badge is for the Shills in your life~!',
+              external_link: 'https://gitcoin.co/kudos/0x2aEa4Add166EBf38b63d09a75dE1a7b94Aa24163/137',
+              id: '663',
+              image_original_url: 'https://s.gitcoin.co/static/v2/images/kudos/shillville.svg',
+              image_preview_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-preview/663.png',
+              image_thumbnail_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-thumbnail/663.png',
+              image_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663.svg',
+              lastPrice: 0.003638784444837918,
+              name: 'Shillville',
+              permalink: 'https://opensea.io/assets/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663',
+              traits: [],
+            }],
+          }],
+        extraData: [],
+      },
+    ];
+
+    return (
+      <SectionList
+        sections={collectiblesSections}
+        renderItem={this.renderCollectibleSection}
+        renderSectionHeader={({ section }) => {
+          return section.data.length ? this.renderListTitle(section.title) : null;
+        }}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          paddingVertical: 6,
+          paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
+          paddingRight: horizontalPadding(EXTRASMALL, 'right'),
+          width: '100%',
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => {
+              const { fetchCollectibles } = this.props;
+              fetchCollectibles();
+            }}
+          />
+        }
+      />
+    );
+  };
+
+  render() {
+    const {
+      assets,
+      wallet,
+      assetsState,
+      fetchInitialAssets,
+      assetsSearchState,
+      navigation,
+    } = this.props;
+    const { query } = this.state;
+
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
         <Container center inset={{ bottom: 0 }}>
@@ -555,10 +757,24 @@ class AssetsScreen extends React.Component<Props, State> {
       );
     }
 
-    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING && query.length >= MIN_QUERY_LENGTH;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!assetsSearchState);
+
+    const assetsTabs = [
+      {
+        id: TOKENS,
+        name: 'Tokens',
+        icon: 'all',
+        onPress: () => this.setActiveTab(TOKENS),
+      },
+      {
+        id: COLLECTIBLES,
+        name: 'Collectibles',
+        icon: 'send',
+        onPress: () => this.setActiveTab(COLLECTIBLES),
+      },
+    ];
 
     return (
       <Container inset={{ bottom: 0 }}>
@@ -581,36 +797,10 @@ class AssetsScreen extends React.Component<Props, State> {
           </SearchSpinner>
           }
           {!inSearchMode &&
-          <FlatList
-            key={assetsLayout}
-            data={sortedAssets}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderAsset}
-            initialNumToRender={5}
-            maxToRenderPerBatch={5}
-            onEndReachedThreshold={0.5}
-            style={{ width: '100%' }}
-            contentContainerStyle={{
-              paddingVertical: 6,
-              paddingLeft: horizontalPadding(assetsLayout, 'left'),
-              paddingRight: horizontalPadding(assetsLayout, 'right'),
-              width: '100%',
-            }}
-            numColumns={columnAmount}
-            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-              ? this.renderSeparator
-              : null}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchAssetsBalances, fetchCollectibles } = this.props;
-                  fetchAssetsBalances(assets, wallet.address);
-                  fetchCollectibles();
-                }}
-              />
-            }
-          />}
+          <React.Fragment>
+            <Tabs tabs={assetsTabs} />
+            {this.renderAssetList()}
+          </React.Fragment>}
         </TokensWrapper>
       </Container>
     );
