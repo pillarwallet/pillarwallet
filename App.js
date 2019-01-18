@@ -36,10 +36,10 @@ class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
     if (!__DEV__) {
-      Sentry.config({
-        dsn: SENTRY_DSN,
+      Sentry.config(SENTRY_DSN).install();
+      Sentry.setTagsContext({
         environment: BUILD_TYPE,
-      }).install();
+      });
     }
   }
 
