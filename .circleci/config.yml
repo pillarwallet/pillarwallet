@@ -198,7 +198,8 @@ jobs:
       - run:
           name: Accept Android SDK licenses
           command: |
-            echo y | sdkmanager "android-28"
+            yes | sdkmanager --licenses || exit 0
+            yes | sdkmanager --update || exit 0
 
       - *gradle_depencencies
       - *gradle_save_cache
