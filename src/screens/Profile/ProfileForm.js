@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Dimensions,Keyboard } from 'react-native';
+import { Dimensions, Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import TextInput from 'components/TextInput';
