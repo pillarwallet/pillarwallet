@@ -68,6 +68,8 @@ const Title = (props: Props) => {
     dotColor,
   } = props;
 
+  const noBlueDotNeeded = noBlueDot || !title;
+
   return (
     <Wrapper
       noMargin={noMargin}
@@ -86,7 +88,7 @@ const Title = (props: Props) => {
             fullWidth={fullWidth}
           >
             {title}
-            {!subtitle && !noBlueDot && <BlueDot dotColor={dotColor}>.</BlueDot>}
+            {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
           </Text>
         </TouchableOpacity>
         :
@@ -98,7 +100,7 @@ const Title = (props: Props) => {
           fullWidth={fullWidth}
         >
           {props.title}
-          {!props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor}>.</BlueDot>}
+          {!props.subtitle && !noBlueDotNeeded && <BlueDot dotColor={props.dotColor}>.</BlueDot>}
         </Text>
       }
     </Wrapper>

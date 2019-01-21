@@ -37,6 +37,7 @@ import Tabs from 'components/Tabs';
 
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 
 // actions
 import {
@@ -77,6 +78,7 @@ type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
+  collectibles: Array<Collectible>,
   balances: Balances,
   wallet: Object,
   rates: Object,
@@ -99,6 +101,7 @@ type State = {
   forceHideRemoval: boolean,
   query: string,
   activeTab: string,
+  formatedCollectibles: Array<Object>
 }
 
 const IS_IOS = Platform.OS === 'ios';
@@ -143,7 +146,7 @@ const SearchSpinner = styled(Wrapper)`
 `;
 
 const ListHeader = styled.View`
-  padding: 0 ${spacing.rhythm / 2}px;
+  padding: ${spacing.medium}px;
 `;
 
 class AssetsScreen extends React.Component<Props, State> {
@@ -156,6 +159,7 @@ class AssetsScreen extends React.Component<Props, State> {
       forceHideRemoval: false,
       query: '',
       activeTab: TOKENS,
+      formatedCollectibles: [],
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
@@ -169,11 +173,14 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
       assets,
       wallet,
+      fetchCollectibles,
     } = this.props;
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
+
+    fetchCollectibles();
 
     this.willFocus = this.props.navigation.addListener(
       'willFocus',
@@ -200,11 +207,41 @@ class AssetsScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
+  componentDidUpdate(prevProps) {
+    const { collectibles } = this.props;
+    if (prevProps.collectibles !== collectibles) {
+      this.formatCollectibles();
+    }
+  }
+
+  formatCollectibles = () => {
+    const { collectibles } = this.props;
+    const formatedCollectibles = [];
+
+    collectibles.forEach((collectible) => {
+      if (!formatedCollectibles.find(coll => coll.title === collectible.assetContract)) {
+        formatedCollectibles.push({
+          title: collectible.assetContract,
+          data: [{
+            key: collectible.assetContract,
+            data: [{ ...collectible }],
+          }],
+        });
+      } else {
+        const thisCat = formatedCollectibles.find(coll => coll.title === collectible.assetContract);
+        if (thisCat) thisCat.data[0].data.push({ ...collectible });
+      }
+    });
+
+
+    this.setState({ formatedCollectibles });
+  }
+
   handleCardTap = (assetData: Object, isCollectible?: boolean) => {
     const { navigation } = this.props;
     this.setState({ forceHideRemoval: true });
     if (isCollectible) {
-      navigation.navigate(COLLECTIBLE, assetData);
+      navigation.navigate(COLLECTIBLE, { assetData });
     } else {
       navigation.navigate(ASSET,
         {
@@ -412,9 +449,9 @@ class AssetsScreen extends React.Component<Props, State> {
     const collectibleProps = {
       id: item.id,
       name: item.name,
-      token: item.name,
+      token: item.id.toString(),
       amount: item.name,
-      icon: item.image_preview_url,
+      icon: (/\.(png)$/i).test(item.image_preview_url) ? item.image_preview_url : '',
     };
 
     const collectibleData = {
@@ -422,9 +459,9 @@ class AssetsScreen extends React.Component<Props, State> {
       category: item.assetContract,
       name: item.name,
       description: item.description,
-      icon: item.image_original_url,
+      icon: (/\.(png)$/i).test(item.image_thumbnail_url) ? item.image_thumbnail_url : '',
       externalLink: item.external_link,
-    }
+    };
 
     return (
       <AssetCardMinimized
@@ -443,7 +480,7 @@ class AssetsScreen extends React.Component<Props, State> {
         data={item.data}
         keyExtractor={(it) => it.name}
         renderItem={this.renderCollectible}
-        style={{ width: '100%' }}
+        style={{ width: '100%', marginBottom: spacing.small }}
         contentContainerStyle={{
           paddingVertical: 6,
           paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
@@ -652,62 +689,9 @@ class AssetsScreen extends React.Component<Props, State> {
       );
     }
 
-    const collectiblesSections = [
-      {
-        title: 'Kudos',
-        data:
-          [{
-            key: 'Kudos',
-            data: [{
-              animation_url: null,
-              assetContract: 'Kudos',
-              background: '#fbfbfb',
-              current_price: '0',
-              description: 'Every Shill down in Shillville likes Open Source a lot. This Shillville badge is for the Shills in your life~!',
-              external_link: 'https://gitcoin.co/kudos/0x2aEa4Add166EBf38b63d09a75dE1a7b94Aa24163/137',
-              id: '663',
-              image_original_url: 'https://s.gitcoin.co/static/v2/images/kudos/shillville.svg',
-              image_preview_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-preview/663.png',
-              image_thumbnail_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-thumbnail/663.png',
-              image_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663.svg',
-              lastPrice: 0.003638784444837918,
-              name: 'Shillville',
-              permalink: 'https://opensea.io/assets/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663',
-              traits: [],
-            }],
-          }],
-        extraData: [],
-      },
-      {
-        title: 'Kudos',
-        data:
-          [{
-            key: 'Kudos',
-            data: [{
-              animation_url: null,
-              assetContract: 'Kudos',
-              background: '#fbfbfb',
-              current_price: '0',
-              description: 'Every Shill down in Shillville likes Open Source a lot. This Shillville badge is for the Shills in your life~!',
-              external_link: 'https://gitcoin.co/kudos/0x2aEa4Add166EBf38b63d09a75dE1a7b94Aa24163/137',
-              id: '663',
-              image_original_url: 'https://s.gitcoin.co/static/v2/images/kudos/shillville.svg',
-              image_preview_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-preview/663.png',
-              image_thumbnail_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163-thumbnail/663.png',
-              image_url: 'https://storage.googleapis.com/opensea-prod.appspot.com/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663.svg',
-              lastPrice: 0.003638784444837918,
-              name: 'Shillville',
-              permalink: 'https://opensea.io/assets/0x2aea4add166ebf38b63d09a75de1a7b94aa24163/663',
-              traits: [],
-            }],
-          }],
-        extraData: [],
-      },
-    ];
-
     return (
       <SectionList
-        sections={collectiblesSections}
+        sections={this.state.formatedCollectibles}
         renderItem={this.renderCollectibleSection}
         renderSectionHeader={({ section }) => {
           return section.data.length ? this.renderListTitle(section.title) : null;
@@ -728,6 +712,7 @@ class AssetsScreen extends React.Component<Props, State> {
             }}
           />
         }
+        stickySectionHeadersEnabled={false}
       />
     );
   };
@@ -818,6 +803,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  collectibles: { assets: collectibles, categories },
 }) => ({
   wallet,
   assets,
@@ -828,6 +814,8 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  collectibles,
+  categories,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

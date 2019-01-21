@@ -17,8 +17,9 @@ type Props = {
   token: string,
   amount: string,
   onPress: Function,
-  address: string,
-  wallpaper: string,
+  address?: string,
+  wallpaper?: string,
+  name: string,
   children?: React.Node,
   disclaimer?: string,
   balanceInFiat: {
@@ -29,9 +30,9 @@ type Props = {
   smallScreen?: boolean,
   extraSmall?: boolean,
   disabledRemove?: boolean,
-  onRemove: Function,
+  onRemove?: Function,
   forceHideRemoval?: boolean,
-  assetData: Object,
+  assetData?: Object,
   isCollectible?: boolean,
 }
 
@@ -50,7 +51,7 @@ const AssetWrapper = styled(Animated.View)`
 `;
 
 const { width } = Dimensions.get('window');
-const cardWidth = (width - 20) / 3;
+const cardWidth = ((width - 20) / 3) - 15;
 const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
@@ -144,6 +145,7 @@ const Name = styled(BoldText)`
   letter-spacing: ${fontTrackings.small};
   line-height: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
+  ${({ center }) => center ? 'width: 100%; text-align: center;' : ''}
 `;
 
 const DetailWrapper = styled.View`
@@ -179,6 +181,13 @@ class AssetCardMinimized extends React.Component<Props, State> {
       shakeAnimation: new Animated.Value(0),
     };
   }
+
+  static defaultProps = {
+    balanceInFiat: {
+      amount: 0,
+      currency: '',
+    },
+  };
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.forceHideRemoval !== this.props.forceHideRemoval && this.props.forceHideRemoval) {
@@ -231,7 +240,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
     });
   };
 
-  renderCardContent = (isCollectible) => {
+  renderCardContent = () => {
     const {
       smallScreen,
       token,
@@ -240,30 +249,30 @@ class AssetCardMinimized extends React.Component<Props, State> {
       amount,
       disclaimer,
       balanceInFiat,
+      isCollectible,
+      name,
     } = this.props;
 
     const currencySymbol = isCollectible ? '' : getCurrencySymbol(balanceInFiat.currency);
 
     if (isCollectible) {
       return (
-        <InnerWrapper smallScreen={smallScreen} justify="center">
-          <CardRow justify="center" style={{ marginTop: 8 }}>
-            <IconCircle smallScreen={smallScreen} color="transparent">
-              <CachedImage
-                key={token}
-                style={{
-                  height: smallScreen ? 20 : 36,
-                  width: smallScreen ? 20 : 36,
-                  marginBottom: spacing.mediumLarge,
-                }}
-                source={{ uri: icon }}
-                fallbackSource={genericToken}
-                resizeMode="contain"
-              />
-            </IconCircle>
+        <InnerWrapper justify="center" style={{ padding: 0, height: 80 }}>
+          <CardRow justify="center">
+            <CachedImage
+              key={token}
+              style={{
+                height: smallScreen ? 20 : 36,
+                width: smallScreen ? 20 : 36,
+                marginBottom: spacing.mediumLarge,
+              }}
+              source={{ uri: icon }}
+              fallbackSource={genericToken}
+              resizeMode="contain"
+            />
           </CardRow>
           <CardRow justify="center">
-            <Name>{token}</Name>
+            <Name center numberOfLines={1} ellipsizeMode="tail">{name}</Name>
           </CardRow>
         </InnerWrapper>
       );
@@ -299,7 +308,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
         </CardRow>
       </InnerWrapper>
     );
-  }
+  };
 
   render() {
     const {
@@ -307,7 +316,6 @@ class AssetCardMinimized extends React.Component<Props, State> {
       smallScreen,
       disabledRemove,
       onRemove,
-      isCollectible,
     } = this.props;
     const { showHide, shakeAnimation } = this.state;
 
@@ -332,14 +340,14 @@ class AssetCardMinimized extends React.Component<Props, State> {
       <AssetWrapperAnimated style={animatedStyle}>
         <ShadowHolder
           heightAndroid={cardHeight(smallScreen, extraSmall)}
-          heightIOS={cardHeight(smallScreen, extraSmall)}
           widthIOS={width / 3.6}
+          heightIOS={cardHeight(smallScreen, extraSmall)}
           marginVertical={4}
           borderShadow={5}
         >
           <Sizer smallScreen={smallScreen} extraSmall={extraSmall}>
             <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
-              {this.renderCardContent(isCollectible)}
+              {this.renderCardContent()}
             </TouchableWithoutFeedback>
           </Sizer>
         </ShadowHolder>
