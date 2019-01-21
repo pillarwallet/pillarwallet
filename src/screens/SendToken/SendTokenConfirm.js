@@ -5,11 +5,12 @@ import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { Container, Footer, ScrollWrapper } from 'components/Layout';
+import { Container, Footer } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import type { TransactionPayload } from 'models/Transaction';
 import { sendAssetAction } from 'actions/assetsActions';
 import { fontSizes } from 'utils/variables';
@@ -83,7 +84,7 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBack={() => this.props.navigation.goBack(null)}
             title="send"
           />
-          <ScrollWrapper regularPadding>
+          <ScrollWithShadow regularPadding>
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
               <Label>Amount</Label>
@@ -119,7 +120,7 @@ class SendTokenContacts extends React.Component<Props, State> {
               keyboardAvoidance
             />
             }
-          </ScrollWrapper>
+          </ScrollWithShadow>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
               <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />

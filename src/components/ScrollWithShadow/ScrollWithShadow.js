@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { FlatList, Animated } from 'react-native';
 import styled from 'styled-components/native';
+import { ScrollWrapper } from 'components/Layout';
 import { ScrollShadow } from './ScrollShadow';
 
 type Props = {
@@ -24,7 +25,9 @@ const ShadowWrapper = styled.View`
   flex: 1;
 `;
 
+
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+const AnimatedScrollView = Animated.createAnimatedComponent(ScrollWrapper);
 
 export default class ScrollWithShadow extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -74,7 +77,7 @@ export default class ScrollWithShadow extends React.Component<Props, State> {
     }
 
     return (
-      <Animated.ScrollView
+      <AnimatedScrollView
         {...allOtherProps}
         onScroll={Animated.event(
           [
@@ -93,7 +96,7 @@ export default class ScrollWithShadow extends React.Component<Props, State> {
         )}
       >
         {children}
-      </Animated.ScrollView>
+      </AnimatedScrollView>
     );
   };
 

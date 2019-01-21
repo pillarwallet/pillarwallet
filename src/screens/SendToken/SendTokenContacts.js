@@ -14,6 +14,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import type { NavigationScreenProp } from 'react-navigation';
 import QRCodeScanner from 'components/QRCodeScanner';
 import Header from 'components/Header';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import { isValidETHAddress } from 'utils/validators';
 import { pipe, decodeETHAddress } from 'utils/common';
 
@@ -37,7 +38,7 @@ const FormWrapper = styled.View`
   padding: 0 ${spacing.rhythm}px;
 `;
 
-const ContactCardList = styled.FlatList``;
+const ContactCardList = styled(ScrollWithShadow)``;
 
 // make Dynamic once more tokens supported
 const ETHValidator = (address: string): Function => pipe(decodeETHAddress, isValidETHAddress)(address);

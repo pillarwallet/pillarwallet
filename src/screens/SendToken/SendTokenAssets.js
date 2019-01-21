@@ -1,6 +1,5 @@
 // @flow
 import * as React from 'react';
-import { FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import type { Assets, Balances } from 'models/Asset';
@@ -10,6 +9,7 @@ import { Container, Wrapper } from 'components/Layout';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import ScrollWithShadow from 'components/ScrollWithShadow';
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
 import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
@@ -100,7 +100,7 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     return (
       <Container inset={{ bottom: 0 }}>
         <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} />
-        <FlatList
+        <ScrollWithShadow
           keyExtractor={item => item.symbol}
           data={nonEmptyAssets}
           renderItem={this.renderAsset}
