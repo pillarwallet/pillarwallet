@@ -23,6 +23,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import { toastWalletBackup } from 'utils/toasts';
+import { updateOAuthTokensCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { saveDbAction } from './dbActions';
 
@@ -35,6 +36,8 @@ export const loginAction = (pin: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
+    const { oAuthTokens } = await storage.get('oAuthTokens');
+    const updateOAuth = updateOAuthTokensCB(dispatch);
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
@@ -43,32 +46,38 @@ export const loginAction = (pin: string) => {
     const saltedPin = getSaltedPin(pin);
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
-      api.init(wallet.privateKey);
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
+        api.init(wallet.privateKey, updateOAuth, oAuthTokens);
+        api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
+        const fcmToken = await firebase.messaging().getToken().catch(() => null);
+        let signalCredentials = {
+          userId: user.id,
+          username: user.username,
+          walletId: user.walletId,
+          ethAddress: wallet.address,
+        };
+        const { oAuthTokens: { data: OAuthTokens } } = getState();
+        signalCredentials = Object.keys(OAuthTokens) ?
+          { ...signalCredentials, ...OAuthTokens } :
+          { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
+        chat.init(signalCredentials)
+          .then(() => chat.client.registerAccount())
+          .then(() => chat.client.setFcmId(fcmToken))
+          .catch(() => null);
+      } else {
+        api.init(wallet.privateKey);
       }
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
         type: UPDATE_USER,
         payload: { user, state: userState },
       });
-
-      const fcmToken = await firebase.messaging().getToken().catch(() => null);
-      chat.init({
-        userId: user.id,
-        username: user.username,
-        password: generateChatPassword(wallet.privateKey),
-        walletId: user.walletId,
-        ethAddress: wallet.address,
-      })
-        .then(() => chat.client.registerAccount())
-        .then(() => chat.client.setFcmId(fcmToken))
-        .catch(() => null);
 
       await storage.viewCleanup().catch(() => null);
 
@@ -217,6 +226,7 @@ export const logoutAction = () => {
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
     chat.client.resetAccount().catch(() => null);
+    await firebase.iid().delete().catch(() => {});
     await storage.removeAll();
   };
 };

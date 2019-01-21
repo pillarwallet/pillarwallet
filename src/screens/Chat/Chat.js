@@ -285,7 +285,7 @@ class ChatScreen extends React.Component<Props, State> {
   componentDidMount() {
     const { contact } = this.state;
     const { getChatByContact } = this.props;
-    getChatByContact(contact.username, contact.profileImage);
+    getChatByContact(contact.username, contact.id, contact.profileImage);
     if (Platform.OS === 'android') {
       BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
     }
@@ -304,7 +304,7 @@ class ChatScreen extends React.Component<Props, State> {
     const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
     const prevChatWithContact = prevChats.find(({ username }) => contact.username === username) || {};
     if (chatWithContact.unread !== prevChatWithContact.unread) {
-      getChatByContact(contact.username, contact.profileImage);
+      getChatByContact(contact.username, contact.id, contact.profileImage);
     }
 
     if (this.state.isFetching && !isFetching) {
@@ -329,7 +329,7 @@ class ChatScreen extends React.Component<Props, State> {
   handleLoadEarlier = () => {
     const { getChatByContact } = this.props;
     const { contact } = this.state;
-    getChatByContact(contact.username, contact.profileImage, true);
+    getChatByContact(contact.username, contact.id, contact.profileImage, true);
     this.setState({
       showLoadEarlierButton: false,
     });
@@ -338,7 +338,7 @@ class ChatScreen extends React.Component<Props, State> {
   onSend = (messages: Object[] = []) => {
     const { sendMessageByContact } = this.props;
     const { contact } = this.state;
-    sendMessageByContact(contact.username, messages[0]);
+    sendMessageByContact(contact.username, contact.id, messages[0]);
   };
 
   handleNavigationToContact = () => {
@@ -492,8 +492,15 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  sendMessageByContact: (username, message) => dispatch(sendMessageByContactAction(username, message)),
-  getChatByContact: (username, avatar, loadEarlier) => dispatch(getChatByContactAction(username, avatar, loadEarlier)),
+  getChatByContact: (
+    username,
+    userId,
+    avatar,
+    loadEarlier,
+  ) => dispatch(getChatByContactAction(username, userId, avatar, loadEarlier)),
+  sendMessageByContact: (username: string, userId: string, message: Object) => {
+    dispatch(sendMessageByContactAction(username, userId, message));
+  },
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
 

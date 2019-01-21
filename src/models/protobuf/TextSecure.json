@@ -1,0 +1,136 @@
+{
+  "nested": {
+    "signal": {
+      "nested": {
+        "websocket": {
+          "nested": {
+            "Envelope": {
+              "fields": {
+                "type": {
+                  "type": "Type",
+                  "id": 1
+                },
+                "source": {
+                  "type": "string",
+                  "id": 2
+                },
+                "sourceDevice": {
+                  "type": "uint32",
+                  "id": 7
+                },
+                "relay": {
+                  "type": "string",
+                  "id": 3
+                },
+                "timestamp": {
+                  "type": "uint64",
+                  "id": 5
+                },
+                "legacyMessage": {
+                  "type": "bytes",
+                  "id": 6
+                },
+                "content": {
+                  "type": "bytes",
+                  "id": 8
+                },
+                "serverGuid": {
+                  "type": "string",
+                  "id": 9
+                },
+                "serverTimestamp": {
+                  "type": "uint64",
+                  "id": 10
+                }
+              },
+              "nested": {
+                "Type": {
+                  "values": {
+                    "UNKNOWN": 0,
+                    "CIPHERTEXT": 1,
+                    "KEY_EXCHANGE": 2,
+                    "PREKEY_BUNDLE": 3,
+                    "RECEIPT": 5,
+                    "UNIDENTIFIED_SENDER": 6
+                  }
+                }
+              }
+            },
+            "ProvisioningUuid": {
+              "fields": {
+                "uuid": {
+                  "type": "string",
+                  "id": 1
+                }
+              }
+            },
+            "ServerCertificate": {
+              "fields": {
+                "certificate": {
+                  "type": "bytes",
+                  "id": 1
+                },
+                "signature": {
+                  "type": "bytes",
+                  "id": 2
+                }
+              },
+              "nested": {
+                "Certificate": {
+                  "fields": {
+                    "id": {
+                      "type": "uint32",
+                      "id": 1
+                    },
+                    "key": {
+                      "type": "bytes",
+                      "id": 2
+                    }
+                  }
+                }
+              }
+            },
+            "SenderCertificate": {
+              "fields": {
+                "certificate": {
+                  "type": "bytes",
+                  "id": 1
+                },
+                "signature": {
+                  "type": "bytes",
+                  "id": 2
+                }
+              },
+              "nested": {
+                "Certificate": {
+                  "fields": {
+                    "sender": {
+                      "type": "string",
+                      "id": 1
+                    },
+                    "senderDevice": {
+                      "type": "uint32",
+                      "id": 2
+                    },
+                    "expires": {
+                      "type": "fixed64",
+                      "id": 3
+                    },
+                    "identityKey": {
+                      "type": "bytes",
+                      "id": 4
+                    },
+                    "signer": {
+                      "type": "ServerCertificate",
+                      "id": 5
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

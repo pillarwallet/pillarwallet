@@ -179,7 +179,7 @@ class ActivityFeed extends React.Component<Props, State> {
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
       return (
         <ListItemWithImage
-          onPress={() => this.selectEvent({ ...notification, value }, type, notification.status)}
+          onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
           label={nameOrAddress}
           avatarUrl={contact.profileImage}
           navigateToProfile={Object.keys(contact).length !== 0 ? navigateToContact : null}

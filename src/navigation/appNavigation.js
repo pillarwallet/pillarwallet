@@ -55,6 +55,8 @@ import {
   startListeningNotificationsAction,
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
+  startListeningChatWebSocketAction,
+  stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
 import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -103,6 +105,13 @@ import {
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
+import {
+  TYPE_CANCELLED,
+  TYPE_BLOCKED,
+  TYPE_REJECTED,
+  TYPE_DISCONNECTED,
+} from 'constants/invitationsConstants';
+
 // models
 import type { Assets } from 'models/Asset';
 
@@ -135,6 +144,13 @@ const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
 // const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
+
+const connectionMessagesToExclude = [
+  TYPE_CANCELLED,
+  TYPE_BLOCKED,
+  TYPE_REJECTED,
+  TYPE_DISCONNECTED,
+];
 
 const StackNavigatorModalConfig = {
   transitionConfig: () => ({
@@ -400,6 +416,8 @@ type Props = {
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
+  startListeningChatWebSocket: Function,
+  stopListeningChatWebSocket: Function,
   fetchICOs: Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   fetchTransactionsHistoryNotifications: Function,
@@ -423,6 +441,7 @@ class AppFlow extends React.Component<Props, {}> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
+      startListeningChatWebSocket,
       fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAssetsBalances,
@@ -438,6 +457,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
+    startListeningChatWebSocket();
     addAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -449,6 +469,12 @@ class AppFlow extends React.Component<Props, {}> {
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
+
+      if (lastNotification.type === 'CONNECTION' &&
+        connectionMessagesToExclude.includes(lastNotification.status)) {
+        return;
+      }
+
       Toast.show({
         message: lastNotification.message,
         type: lastNotification.messageType,
@@ -459,9 +485,10 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    const { stopListeningNotifications, stopListeningIntercomNotifications } = this.props;
+    const { stopListeningNotifications, stopListeningIntercomNotifications, stopListeningChatWebSocket } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
+    stopListeningChatWebSocket();
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -469,6 +496,7 @@ class AppFlow extends React.Component<Props, {}> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
+      stopListeningChatWebSocket,
       navigation,
       isPickingImage,
     } = this.props;
@@ -482,6 +510,7 @@ class AppFlow extends React.Component<Props, {}> {
         navigation.navigate(AUTH_FLOW);
         stopListeningNotifications();
         stopListeningIntercomNotifications();
+        stopListeningChatWebSocket();
       }, SLEEP_TIMEOUT);
     }
   };
@@ -548,6 +577,8 @@ const mapDispatchToProps = (dispatch) => ({
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
+  stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
+  startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
