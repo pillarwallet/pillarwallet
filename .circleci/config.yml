@@ -725,7 +725,6 @@ workflows:
             branches:
               only:
                   - develop
-                  - fix/android-build-license-fix
       - stage_ios:
           requires:
             - build
