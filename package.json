@@ -58,7 +58,8 @@
     "jest": "jest --colors",
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",
-    "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && rndebugger-open"
+    "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && rndebugger-open",
+    "precommit": "yarn run validate"
   },
   "jest": {
     "preset": "react-native",
