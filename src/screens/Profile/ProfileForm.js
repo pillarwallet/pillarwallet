@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Dimensions, Keyboard } from 'react-native';
+import { Dimensions } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import TextInput from 'components/TextInput';
@@ -182,7 +182,6 @@ export default class ProfileForm extends React.Component<Props, State> {
   }
 
   handleSubmit = () => {
-    Keyboard.dismiss();
     const { onSubmit } = this.props;
     const value = this._form.getValue();
     if (!value) return;
