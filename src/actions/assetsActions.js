@@ -17,6 +17,7 @@ import {
   ETH,
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
+  COLLECTIBLES,
 } from 'constants/assetsConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION } from 'constants/historyConstants';
@@ -26,7 +27,7 @@ import {
   transferERC20,
   getExchangeRates,
 } from 'services/assets';
-import type { TransactionPayload } from 'models/Transaction';
+import type { TokenTransactionPayload, TransactionPayload } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
@@ -38,125 +39,124 @@ type TransactionStatus = {
   error: ?string,
 };
 
-export const sendAssetAction = ({
-  gasLimit,
-  amount,
-  to,
-  gasPrice,
-  symbol,
-  contractAddress,
-  decimals,
-  note,
-}: TransactionPayload, wallet: Object, navigateToNextScreen: Function = noop) => {
-  return async (dispatch: Function, getState: Function) => {
-    const { history: { data: currentHistory }, txCount: { data: { lastNonce } } } = getState();
-    let txStatus: TransactionStatus;
+const catchTransactionError = (e, type, tx) => {
+  Sentry.captureException({
+    tx,
+    type,
+    error: e.message,
+  });
+  return { error: e.message };
+};
 
+export const sendAssetAction = (
+  transaction: TransactionPayload,
+  wallet: Object,
+  navigateToNextScreen: Function = noop,
+) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      history: { data: currentHistory },
+      txCount: { data: { lastNonce } },
+    } = getState();
     wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
     const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
 
     let nonce;
+    let tokenTx = {};
+    let historyTx;
+    const { to, note } = transaction;
 
     if (lastNonce === transactionCount && lastNonce > 0) {
       nonce = lastNonce + 1;
     }
 
-    if (symbol === ETH) {
-      const ETHTrx = await transferETH({
+    if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
+      // send ERC721 here
+    } else {
+      const {
         gasLimit,
-        gasPrice,
-        to,
         amount,
-        wallet,
-        nonce,
-      }).catch((e) => {
-        Sentry.captureException({
-          tx: {
-            gasLimit,
-            gasPrice,
-            to,
-            amount,
-          },
-          type: 'ETH',
-          error: e.message,
-        });
-        return { error: e.message };
-      });
-      if (ETHTrx.hash) {
-        const historyTx = buildHistoryTransaction({ ...ETHTrx, asset: symbol, note });
-        dispatch({
-          type: ADD_TRANSACTION,
-          payload: historyTx,
-        });
-        const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
-        dispatch(saveDbAction('history', { history: updatedHistory }, true));
+        gasPrice,
+        symbol,
+        contractAddress,
+        decimals,
+        // $FlowFixMe
+      } = (transaction: TokenTransactionPayload);
 
-        const txCountNew = { lastCount: transactionCount, lastNonce: ETHTrx.nonce };
-        dispatch({
-          type: UPDATE_TX_COUNT,
-          payload: txCountNew,
-        });
-        dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
-      }
-      txStatus = ETHTrx.hash
-        ? {
-          isSuccess: true, error: null, note, to, txHash: ETHTrx.hash,
+
+      if (symbol === ETH) {
+        tokenTx = await transferETH({
+          gasLimit,
+          gasPrice,
+          to,
+          amount,
+          wallet,
+          nonce,
+        }).catch((e) => catchTransactionError(e, ETH, {
+          gasLimit,
+          gasPrice,
+          to,
+          amount,
+        }));
+        if (tokenTx.hash) {
+          historyTx = buildHistoryTransaction({
+            ...tokenTx,
+            asset: symbol,
+            note,
+          });
         }
-        : {
-          isSuccess: false, error: ETHTrx.error, note, to,
-        };
-      navigateToNextScreen(txStatus);
-      return;
-    }
-
-    const ERC20Trx = await transferERC20({
-      to,
-      amount,
-      contractAddress,
-      wallet,
-      decimals,
-      nonce,
-    }).catch((e) => {
-      Sentry.captureException({
-        tx: {
+      } else {
+        tokenTx = await transferERC20({
+          to,
+          amount,
+          contractAddress,
+          wallet,
+          decimals,
+          nonce,
+        }).catch((e) => catchTransactionError(e, 'ERC20', {
           decimals,
           contractAddress,
           to,
           amount,
-        },
-        type: 'ERC20',
-        error: e.message,
-      });
-      return { error: e.message };
-    });
-    if (ERC20Trx.hash) {
-      const historyTx = buildHistoryTransaction({
-        ...ERC20Trx,
-        asset: symbol,
-        value: amount * (10 ** decimals),
-        to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
-        note,
-      });
+        }));
+        if (tokenTx.hash) {
+          historyTx = buildHistoryTransaction({
+            ...tokenTx,
+            asset: symbol,
+            value: amount * (10 ** decimals),
+            to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
+            note,
+          });
+        }
+      }
+    }
+
+    // update transaction history
+    if (historyTx) {
       dispatch({
         type: ADD_TRANSACTION,
         payload: historyTx,
       });
       const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
       dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    }
 
-      const txCountNew = { lastCount: transactionCount, lastNonce: ERC20Trx.nonce };
+    // update transaction count
+    if (tokenTx.hash) {
+      const txCountNew = { lastCount: transactionCount, lastNonce: tokenTx.nonce };
       dispatch({
         type: UPDATE_TX_COUNT,
         payload: txCountNew,
       });
       dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
     }
-    txStatus = ERC20Trx.hash
+
+    const txStatus: TransactionStatus = tokenTx.hash
       ? {
-        isSuccess: true, error: null, note, to, txHash: ERC20Trx.hash,
+        isSuccess: true, error: null, note, to, txHash: tokenTx.hash,
       }
       : {
-        isSuccess: false, error: ERC20Trx.error, note, to,
+        isSuccess: false, error: tokenTx.error, note, to,
       };
     navigateToNextScreen(txStatus);
   };
