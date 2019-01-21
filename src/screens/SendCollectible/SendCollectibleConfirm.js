@@ -7,18 +7,26 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
-import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import type { CollectibleTransactionPayload } from 'models/Transaction';
+import type { GasInfo } from 'models/GasInfo';
+import { fetchGasInfoAction } from 'actions/historyActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+
+const GAS_LIMIT = 500000;
+const NORMAL = 'avg';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
+  categories: Object[],
+  fetchGasInfo: Function,
+  gasInfo: GasInfo,
 };
 
 type State = {
@@ -38,21 +46,58 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+  font-size: ${fontSizes.medium};
 `;
 
-class SendTokenContacts extends React.Component<Props, State> {
+class SendCollectibleConfirm extends React.Component<Props, State> {
+  assetData: Object;
+  receiver: string;
+
   constructor(props) {
     super(props);
+    this.assetData = this.props.navigation.getParam('assetData', {});
+    this.receiver = this.props.navigation.getParam('receiver', '');
     this.state = {
       note: null,
     };
   }
 
+  componentDidMount() {
+    this.props.fetchGasInfo();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
+      this.props.fetchGasInfo();
+    }
+  }
+
   handleFormSubmit = () => {
     Keyboard.dismiss();
-    const { navigation } = this.props;
-    const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
+    const { navigation, categories } = this.props;
+    const { note } = this.state;
+    const {
+      name,
+      tokenType,
+      id: tokenId,
+      assetContract,
+    } = this.assetData;
+
+    const txFeeInWei = this.getTxFeeInWei();
+    const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
+    const assetCategory = categories.find(c => c.name === assetContract) || {};
+    const transactionPayload: CollectibleTransactionPayload = {
+      to: this.receiver,
+      gasLimit: GAS_LIMIT,
+      gasPrice,
+      txFeeInWei,
+      name,
+      contractAddress: assetCategory.address,
+      tokenType,
+      tokenId,
+      note,
+    };
+
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
     });
@@ -62,15 +107,19 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({ note: text });
   }
 
-  render() {
-    const { contacts, session, navigation } = this.props;
-    const {
-      amount,
-      to,
-      txFeeInWei,
-      symbol,
-    } = navigation.getParam('transactionPayload', {});
+  getTxFeeInWei = () => {
+    const { gasInfo } = this.props;
+    const gasPrice = gasInfo.gasPrice[NORMAL] || 0;
+    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return gasPriceWei.mul(GAS_LIMIT);
+  };
 
+  render() {
+    const { contacts, session, gasInfo } = this.props;
+    const { name } = this.assetData;
+
+    const to = this.receiver;
+    const txFeeInWei = this.getTxFeeInWei();
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
     return (
@@ -78,13 +127,12 @@ class SendTokenContacts extends React.Component<Props, State> {
         <Container>
           <Header
             onBack={() => this.props.navigation.goBack(null)}
-            title="send"
+            title="review and confirm"
           />
           <ScrollWrapper regularPadding>
-            <Title subtitle title="Review and Confirm" />
             <LabeledRow>
-              <Label>Amount</Label>
-              <Value>{amount} {symbol}</Value>
+              <Label>Collectible</Label>
+              <Value>{name}</Value>
             </LabeledRow>
             {!!recipientUsername &&
             <LabeledRow>
@@ -119,7 +167,11 @@ class SendTokenContacts extends React.Component<Props, State> {
           </ScrollWrapper>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
-              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+              <Button
+                disabled={!session.isOnline || !gasInfo.isFetched}
+                onPress={this.handleFormSubmit}
+                title="Confirm Transaction"
+              />
             </FooterWrapper>
           </Footer>
         </Container>
@@ -131,9 +183,17 @@ class SendTokenContacts extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   session: { data: session },
+  history: { gasInfo },
+  collectibles: { categories },
 }) => ({
   contacts,
   session,
+  gasInfo,
+  categories,
 });
 
-export default connect(mapStateToProps)(SendTokenContacts);
+const mapDispatchToProps = (dispatch) => ({
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);
