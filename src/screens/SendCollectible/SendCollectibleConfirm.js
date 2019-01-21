@@ -83,14 +83,9 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       assetContract,
     } = this.assetData;
 
-    const txFeeInWei = this.getTxFeeInWei();
-    const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
     const assetCategory = categories.find(c => c.name === assetContract) || {};
     const transactionPayload: CollectibleTransactionPayload = {
       to: this.receiver,
-      gasLimit: GAS_LIMIT,
-      gasPrice,
-      txFeeInWei,
       name,
       contractAddress: assetCategory.address,
       tokenType,
