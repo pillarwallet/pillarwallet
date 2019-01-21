@@ -271,7 +271,10 @@ class Profile extends React.Component<Props, State> {
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
-            <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}>
+            <ScrollView
+              contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}
+              keyboardShouldPersistTaps="handled"
+            >
               <SettingsModalTitle>
                 Enter your full name
               </SettingsModalTitle>
