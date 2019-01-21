@@ -18,6 +18,7 @@ import Header from 'components/Header';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { BoldText, Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
+import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 
 
 const activeModalResetState = {
@@ -129,6 +130,10 @@ class CollectibleScreen extends React.Component<Props, State> {
     Linking.openURL(url);
   };
 
+  goToSendTokenFlow = (assetData: Object) => {
+    this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
+  };
+
   render() {
     const {
       showDescriptionModal,
@@ -173,7 +178,7 @@ class CollectibleScreen extends React.Component<Props, State> {
               <CircleButton
                 label="Send"
                 icon={iconSend}
-                onPress={() => {}}
+                onPress={() => this.goToSendTokenFlow(assetData)}
               />
             </CircleButtonsWrapper>
           </ActionButtonsWrapper>

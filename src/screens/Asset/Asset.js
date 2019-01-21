@@ -18,8 +18,8 @@ import Header from 'components/Header';
 import { Container, ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BoldText, BaseText, Paragraph } from 'components/Typography';
-import { SEND_TOKEN_FROM_ASSET_FLOW, SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
-import { defaultFiatCurrency, COLLECTIBLES } from 'constants/assetsConstants';
+import { SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { formatMoney, getCurrencySymbol } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
@@ -136,8 +136,7 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   goToSendTokenFlow = (assetData: Object) => {
-    const route = assetData.tokenType === COLLECTIBLES ? SEND_COLLECTIBLE_FROM_ASSET_FLOW : SEND_TOKEN_FROM_ASSET_FLOW;
-    this.props.navigation.navigate(route, { assetData });
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   openReceiveTokenModal = assetData => {
