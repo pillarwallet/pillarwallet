@@ -101,7 +101,7 @@ type State = {
   forceHideRemoval: boolean,
   query: string,
   activeTab: string,
-  formatedCollectibles: Array<Object>
+  formattedCollectibles: Array<Object>
 }
 
 const IS_IOS = Platform.OS === 'ios';
@@ -159,7 +159,7 @@ class AssetsScreen extends React.Component<Props, State> {
       forceHideRemoval: false,
       query: '',
       activeTab: TOKENS,
-      formatedCollectibles: [],
+      formattedCollectibles: [],
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
@@ -216,11 +216,11 @@ class AssetsScreen extends React.Component<Props, State> {
 
   formatCollectibles = () => {
     const { collectibles } = this.props;
-    const formatedCollectibles = [];
+    const formattedCollectibles = [];
 
     collectibles.forEach((collectible) => {
-      if (!formatedCollectibles.find(coll => coll.title === collectible.assetContract)) {
-        formatedCollectibles.push({
+      if (!formattedCollectibles.find(coll => coll.title === collectible.assetContract)) {
+        formattedCollectibles.push({
           title: collectible.assetContract,
           data: [{
             key: collectible.assetContract,
@@ -228,24 +228,33 @@ class AssetsScreen extends React.Component<Props, State> {
           }],
         });
       } else {
-        const thisCat = formatedCollectibles.find(coll => coll.title === collectible.assetContract);
+        const thisCat = formattedCollectibles.find(coll => coll.title === collectible.assetContract);
         if (thisCat) thisCat.data[0].data.push({ ...collectible });
       }
     });
 
 
-    this.setState({ formatedCollectibles });
-  }
+    this.setState({ formattedCollectibles });
+  };
 
   handleCardTap = (assetData: Object, isCollectible?: boolean) => {
     const { navigation } = this.props;
     this.setState({ forceHideRemoval: true });
     if (isCollectible) {
-      navigation.navigate(COLLECTIBLE, { assetData });
+      navigation.navigate(COLLECTIBLE,
+        {
+          assetData: {
+            ...assetData,
+            tokenType: COLLECTIBLES,
+          },
+        });
     } else {
       navigation.navigate(ASSET,
         {
-          assetData,
+          assetData: {
+            ...assetData,
+            tokenType: TOKENS,
+          },
           resetHideRemoval: this.resetHideRemoval,
         },
       );
@@ -691,7 +700,7 @@ class AssetsScreen extends React.Component<Props, State> {
 
     return (
       <SectionList
-        sections={this.state.formatedCollectibles}
+        sections={this.state.formattedCollectibles}
         renderItem={this.renderCollectibleSection}
         renderSectionHeader={({ section }) => {
           return section.data.length ? this.renderListTitle(section.title) : null;

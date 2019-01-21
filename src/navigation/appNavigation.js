@@ -32,6 +32,7 @@ import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
+import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
 import NewChatListScreen from 'screens/Chat/NewChatList';
@@ -104,6 +105,8 @@ import {
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   COLLECTIBLE,
+  SEND_COLLECTIBLE_FROM_ASSET_FLOW,
+  SEND_COLLECTIBLE_CONFIRM,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -378,6 +381,14 @@ const sendTokenFromContactFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
 
+// SEND COLLECTIBLE FROM ASSET FLOW
+const sendCollectibleFromAssetFlow = createStackNavigator({
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
 const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
   [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
@@ -405,6 +416,7 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
+    [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,

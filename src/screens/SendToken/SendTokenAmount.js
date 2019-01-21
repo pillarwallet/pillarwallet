@@ -23,7 +23,7 @@ import { getBalance, getRate } from 'utils/assets';
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { GasInfo } from 'models/GasInfo';
-import type { TransactionPayload } from 'models/Transaction';
+import type { TokenTransactionPayload } from 'models/Transaction';
 import type { Balances, Rates } from 'models/Asset';
 
 // constants
@@ -242,7 +242,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const { navigation } = this.props;
     const gasPrice = txFeeInWei.div(GAS_LIMIT).toNumber();
     if (!value) return;
-    const transactionPayload: TransactionPayload = {
+    const transactionPayload: TokenTransactionPayload = {
       to: this.receiver,
       amount: value.amount,
       gasLimit: GAS_LIMIT,
