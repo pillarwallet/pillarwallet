@@ -194,6 +194,11 @@ jobs:
       - *save_gems_cache_android
 
       - *gradle_restore_cache
+
+      - run:
+          name: Accept Android SDK licenses
+          command: yes | sdkmanager --licenses && sdkmanager --update
+
       - *gradle_depencencies
       - *gradle_save_cache
 
@@ -714,6 +719,7 @@ workflows:
             branches:
               only:
                   - develop
+                  - fix/android-build-license-fix
       - stage_ios:
           requires:
             - build
