@@ -25,9 +25,14 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import {
   transferETH,
   transferERC20,
+  transferERC721,
   getExchangeRates,
 } from 'services/assets';
-import type { TokenTransactionPayload, TransactionPayload } from 'models/Transaction';
+import type {
+  TokenTransactionPayload,
+  CollectibleTransactionPayload,
+  TransactionPayload,
+} from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
@@ -71,7 +76,22 @@ export const sendAssetAction = (
     }
 
     if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
-      // send ERC721 here
+      // $FlowFixMe
+      const { contractAddress, tokenId } = (transaction: CollectibleTransactionPayload);
+      tokenTx = await transferERC721({
+        from: wallet.address,
+        to,
+        contractAddress,
+        tokenId,
+        wallet,
+        nonce,
+      }).catch((e) => catchTransactionError(e, 'ERC721', {
+        contractAddress,
+        from: wallet.address,
+        to,
+        tokenId,
+      }));
+      // TODO: add record to the tx history collection
     } else {
       const {
         gasLimit,
