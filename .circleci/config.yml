@@ -194,6 +194,17 @@ jobs:
       - *save_gems_cache_android
 
       - *gradle_restore_cache
+
+      - run:
+          name: Accept Android SDK licenses
+          command: |
+            yes | sdkmanager --licenses || exit 0
+
+      - run:
+          name: Accept Android SDK licenses 2
+          command: |
+            yes | sdkmanager --update || exit 0
+
       - *gradle_depencencies
       - *gradle_save_cache
 
