@@ -135,10 +135,6 @@ const RecentConnections = styled.View`
 `;
 
 const RecentConnectionsWrapper = styled.View`
-  shadow-color: ${baseColors.pigeonPost};
-  shadow-radius: 6px;
-  shadow-opacity: 0.15;
-  shadow-offset: 0px 6px;
   padding-top: 124px;
 `;
 
