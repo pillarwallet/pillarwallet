@@ -162,7 +162,22 @@ SDKWrapper.prototype.usernameSearch = function (username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.usernameSearch({ username }))
     .then(({ data }) => data)
-    .catch(() => ({}));
+    .catch((error) => {
+      const {
+        response: {
+          status,
+          data: { message } = {},
+        },
+      } = error;
+
+      switch (status) {
+        case 400:
+          return { status, message };
+        default:
+          return {};
+      }
+    });
+
   // TODO: handle 404 and other errors in different ways (e.response.status === 404)
 };
 
@@ -369,4 +384,10 @@ SDKWrapper.prototype.fetchAccessTokens = function (walletId: string) {
     .then(() => this.pillarWalletSdk.user.accessTokens({ walletId }))
     .then(({ data }) => data)
     .catch(() => []);
+};
+
+SDKWrapper.prototype.setUsername = function (username: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.configuration.setUsername(username))
+    .catch(() => null);
 };

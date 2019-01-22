@@ -273,6 +273,7 @@ class AssetScreen extends React.Component<Props, State> {
           handleOpenShareDialog={this.handleOpenShareDialog}
         />
         <SlideModal
+          title={assetData.name}
           isVisible={showDescriptionModal}
           onModalHide={() => { this.setState({ showDescriptionModal: false }); }}
         >

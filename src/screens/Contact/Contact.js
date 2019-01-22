@@ -21,7 +21,7 @@ import ConnectionConfirmationModal from './ConnectionConfirmationModal';
 import ManageContactModal from './ManageContactModal';
 
 const iconSend = require('assets/icons/icon_send.png');
-const iconChat = require('assets/icons/icon_chat.png');
+const iconChat = require('assets/icons/icon_chat_contact.png');
 
 const ContactWrapper = styled.View`
   position: relative;

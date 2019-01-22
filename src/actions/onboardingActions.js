@@ -5,7 +5,6 @@ import firebase from 'react-native-firebase';
 import { delay, uniqBy } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
-import ChatService from 'services/chat';
 import { generateMnemonicPhrase, getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
@@ -17,6 +16,8 @@ import {
   USERNAME_OK,
   CHECKING_USERNAME,
   SET_API_USER,
+  INAPPROPRIATE_USERNAME,
+  INVALID_USERNAME,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
@@ -31,17 +32,16 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
-import { generateChatPassword } from 'utils/chat';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
 
 const storage = Storage.getInstance('db');
-const chat = new ChatService();
 
 const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Function) => {
   await firebase.messaging().requestPermission().catch(() => { });
@@ -89,6 +89,7 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
     userState,
     fcmToken,
     registrationSucceed,
+    oAuthTokens,
   };
 };
 
@@ -200,22 +201,17 @@ export const registerWalletAction = () => {
       userInfo,
       fcmToken,
       registrationSucceed,
+      oAuthTokens,
     } = await getTokenWalletAndRegister(api, user, dispatch);
 
-    let signalCredentials = {
+    dispatch(signalInitAction({
       userId: sdkWallet.userId,
       username: user.username,
       walletId: sdkWallet.walletId,
       ethAddress: wallet.address,
-    };
-    const { oAuthTokens: { data: OAuthTokens } } = getState();
-    signalCredentials = Object.keys(OAuthTokens) ?
-      { ...signalCredentials, ...OAuthTokens } :
-      { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
-    chat.init(signalCredentials)
-      .then(() => chat.client.registerAccount())
-      .then(() => chat.client.setFcmId(fcmToken))
-      .catch(() => null);
+      fcmToken,
+      ...oAuthTokens,
+    }));
 
     if (!registrationSucceed) { return; }
 
@@ -276,11 +272,16 @@ export const validateUserDetailsAction = ({ username }: Object) => {
 
     api.init(wallet.privateKey);
     const apiUser = await api.usernameSearch(username);
-    const usernameExists = !!Object.keys(apiUser).length;
-    const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    const usernameExists = apiUser.username === username;
+    const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;
+    let usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    if (apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME) {
+      usernameStatus = INVALID_USERNAME;
+    }
+
     dispatch({
       type: SET_API_USER,
-      payload: usernameExists ? apiUser : { username },
+      payload: usernameExists || inappropriateUsername ? apiUser : { username },
     });
     dispatch({
       type: UPDATE_WALLET_STATE,

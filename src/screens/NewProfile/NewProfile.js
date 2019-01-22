@@ -13,7 +13,7 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
-import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
+import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
 import { fontSizes, fontWeights } from 'utils/variables';
 
 const { Form } = t.form;
@@ -190,12 +190,14 @@ class NewProfile extends React.Component<Props, State> {
     const { walletState } = this.props;
     if (prevProps.walletState === walletState) return;
 
-    if (walletState === USERNAME_EXISTS) {
+    if (walletState === USERNAME_EXISTS || walletState === INVALID_USERNAME) {
+      const errorMessage = walletState === USERNAME_EXISTS ? 'Username taken' : 'Invalid username';
+
       const options = t.update(this.state.formOptions, {
         fields: {
           username: {
             hasError: { $set: true },
-            error: { $set: 'Username taken' },
+            error: { $set: errorMessage },
             config: {
               isLoading: { $set: false },
             },
