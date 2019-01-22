@@ -41,6 +41,7 @@ import shuffle from 'shuffle-array';
 import { generateMnemonicPhrase, generateWordsToValidate } from 'utils/wallet';
 import { navigate } from 'services/navigation';
 import { saveDbAction } from './dbActions';
+import { selfAwardBadgeAction } from './badgesActions';
 
 export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
@@ -191,5 +192,6 @@ export const backupWalletAction = () => {
     dispatch({
       type: BACKUP_WALLET,
     });
+    dispatch(selfAwardBadgeAction('wallet-backed-up'));
   };
 };

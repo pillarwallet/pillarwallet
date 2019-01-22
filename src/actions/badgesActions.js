@@ -34,8 +34,7 @@ export const fetchBadgesAction = () => {
 export const selfAwardBadgeAction = (badgeType: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { user: { data: { walletId } } } = getState();
-
-    const result = await api.selfAwardBadge(walletId, badgeType);
-    console.log('result', result);
+    // TODO: handle when user is offline
+    api.selfAwardBadge(walletId, badgeType);
   };
 };
