@@ -111,7 +111,7 @@ const finishRegistration = async (api: Object, userInfo: Object, dispatch: Funct
   dispatch(saveDbAction('assets', { assets: initialAssets }));
 
   // restore access tokens
-  dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
+  await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
@@ -290,7 +290,7 @@ export const validateUserDetailsAction = ({ username }: Object) => {
   };
 };
 
-function restoreAccessTokensAction(walletId: string) {
+export function restoreAccessTokensAction(walletId: string) {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const restoredAccessTokens = [];
     const userAccessTokens = await api.fetchAccessTokens(walletId);
@@ -334,10 +334,10 @@ function restoreAccessTokensAction(walletId: string) {
         userAccessToken: found.connectionKey,
       });
     });
-    dispatch({
+    await dispatch({
       type: UPDATE_ACCESS_TOKENS,
       payload: restoredAccessTokens,
     });
-    dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
+    await dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
   };
 }
