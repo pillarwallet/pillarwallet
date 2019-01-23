@@ -334,10 +334,10 @@ export function restoreAccessTokensAction(walletId: string) {
         userAccessToken: found.connectionKey,
       });
     });
-    dispatch({
+    await dispatch({
       type: UPDATE_ACCESS_TOKENS,
       payload: restoredAccessTokens,
     });
-    dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
+    await dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
   };
 }

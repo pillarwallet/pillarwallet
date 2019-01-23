@@ -27,13 +27,19 @@ export const fetchInviteNotificationsAction = () => {
       invitations: { data: invitations },
       contacts: { data: contacts },
       user: { data: user },
-      accessTokens: { data: accessTokens },
     } = getState();
 
+    let {
+      accessTokens: { data: accessTokens },
+    } = getState();
 
     if (accessTokens === undefined || !accessTokens.length) {
       Sentry.captureMessage('Empty connection access tokens, dispatching restoreAccessTokensAction');
       await dispatch(restoreAccessTokensAction(user.walletId));
+      const {
+        accessTokens: { data: updatedAccessTokens },
+      } = getState();
+      accessTokens = updatedAccessTokens;
     }
 
     const types = [
