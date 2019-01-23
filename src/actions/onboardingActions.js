@@ -5,7 +5,6 @@ import firebase from 'react-native-firebase';
 import { delay, uniqBy } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
-import ChatService from 'services/chat';
 import { generateMnemonicPhrase, getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
@@ -33,17 +32,16 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
-import { generateChatPassword } from 'utils/chat';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
 
 const storage = Storage.getInstance('db');
-const chat = new ChatService();
 
 const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Function) => {
   await firebase.messaging().requestPermission().catch(() => { });
@@ -91,6 +89,7 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
     userState,
     fcmToken,
     registrationSucceed,
+    oAuthTokens,
   };
 };
 
@@ -112,7 +111,7 @@ const finishRegistration = async (api: Object, userInfo: Object, dispatch: Funct
   dispatch(saveDbAction('assets', { assets: initialAssets }));
 
   // restore access tokens
-  dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
+  await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
@@ -202,22 +201,17 @@ export const registerWalletAction = () => {
       userInfo,
       fcmToken,
       registrationSucceed,
+      oAuthTokens,
     } = await getTokenWalletAndRegister(api, user, dispatch);
 
-    let signalCredentials = {
+    dispatch(signalInitAction({
       userId: sdkWallet.userId,
       username: user.username,
       walletId: sdkWallet.walletId,
       ethAddress: wallet.address,
-    };
-    const { oAuthTokens: { data: OAuthTokens } } = getState();
-    signalCredentials = Object.keys(OAuthTokens) ?
-      { ...signalCredentials, ...OAuthTokens } :
-      { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
-    chat.init(signalCredentials)
-      .then(() => chat.client.registerAccount())
-      .then(() => chat.client.setFcmId(fcmToken))
-      .catch(() => null);
+      fcmToken,
+      ...oAuthTokens,
+    }));
 
     if (!registrationSucceed) { return; }
 
@@ -296,7 +290,7 @@ export const validateUserDetailsAction = ({ username }: Object) => {
   };
 };
 
-function restoreAccessTokensAction(walletId: string) {
+export function restoreAccessTokensAction(walletId: string) {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const restoredAccessTokens = [];
     const userAccessTokens = await api.fetchAccessTokens(walletId);
@@ -340,10 +334,10 @@ function restoreAccessTokensAction(walletId: string) {
         userAccessToken: found.connectionKey,
       });
     });
-    dispatch({
+    await dispatch({
       type: UPDATE_ACCESS_TOKENS,
       payload: restoredAccessTokens,
     });
-    dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
+    await dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
   };
 }
