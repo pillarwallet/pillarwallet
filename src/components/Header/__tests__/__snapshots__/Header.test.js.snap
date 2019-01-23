@@ -8,7 +8,7 @@ exports[`Header should render Header correctly 1`] = `
         "alignItems": "flex-end",
         "borderBottomWidth": 0,
         "flexDirection": "row",
-        "height": 40,
+        "height": 48,
         "justifyContent": "flex-end",
         "marginBottom": 0,
         "marginTop": 20,
