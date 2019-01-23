@@ -1,7 +1,7 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList, Alert, ScrollView } from 'react-native';
+import { FlatList, Alert, ScrollView, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
@@ -133,6 +133,7 @@ class Profile extends React.Component<Props, State> {
   };
 
   handleUserFieldUpdate = (field: Object) => {
+    Keyboard.dismiss();
     const { updateUser, user } = this.props;
     updateUser(user.walletId, field);
     this.toggleSlideModalOpen(null);
@@ -271,7 +272,10 @@ class Profile extends React.Component<Props, State> {
           avoidKeyboard
         >
           <Wrapper regularPadding flex={1}>
-            <ScrollView contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}>
+            <ScrollView
+              contentContainerStyle={{ flex: 1, justifyContent: 'space-between' }}
+              keyboardShouldPersistTaps="handled"
+            >
               <SettingsModalTitle>
                 Enter your full name
               </SettingsModalTitle>

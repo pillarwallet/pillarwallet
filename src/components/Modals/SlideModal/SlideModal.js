@@ -190,7 +190,7 @@ export default class SlideModal extends React.Component<Props, *> {
               title={title}
               titleStyles={titleStyles}
               fullWidthTitle={fullWidthTitle}
-              noBlueDotOnTitle={noBlueDotOnTitle}
+              noBlueDotOnTitle={noBlueDotOnTitle || !title}
               dotColor={dotColor}
               onClose={!noClose ? this.hideModal : () => {}}
               noClose={noClose}
