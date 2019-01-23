@@ -222,7 +222,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                         "marginRight": 0,
                         "marginTop": 0,
                         "position": "relative",
-                        "top": 2,
+                        "top": 0,
                       },
                       undefined,
                     ]
@@ -252,7 +252,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                             Object {
                               "fontSize": 22,
                               "fontWeight": "700",
-                              "lineHeight": 22,
+                              "lineHeight": 28,
                               "maxWidth": 230,
                             },
                             Object {},
