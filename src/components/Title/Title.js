@@ -24,7 +24,7 @@ const Wrapper = styled.View`
   margin: ${props => props.noMargin ? '0' : '16px 0'};
   align-self: ${props => props.align ? props.align : 'flex-start'};
   position: relative;
-  top: 2px;
+  top: 0px;
   ${({ maxWidth }) => maxWidth && `
     width: maxWidth;
   `}
@@ -32,7 +32,7 @@ const Wrapper = styled.View`
 `;
 
 const Text = styled(BoldText)`
-  line-height: ${fontSizes.large};
+  line-height: ${fontSizes.extraLarger};
   font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
