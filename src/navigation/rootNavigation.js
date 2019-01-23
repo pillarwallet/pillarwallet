@@ -16,6 +16,7 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
+import Storybook from 'screens/Storybook';
 
 import { modalTransition } from 'utils/common';
 
@@ -36,6 +37,7 @@ import {
   ONBOARDING_HOME,
   WELCOME,
   FORGOT_PIN,
+  STORYBOOK,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -80,6 +82,7 @@ const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
+  [STORYBOOK]: Storybook,
 });
 
 export default RootSwitch;

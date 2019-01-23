@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Button } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
-import { FORGOT_PIN } from 'constants/navigationConstants';
+import { FORGOT_PIN, STORYBOOK } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
@@ -28,6 +29,10 @@ class PinCodeUnlock extends React.Component<Props, *> {
     this.props.navigation.navigate(FORGOT_PIN);
   };
 
+  handleStorybook = () => {
+    this.props.navigation.navigate(STORYBOOK);
+  };
+
   render() {
     const { walletState } = this.props.wallet;
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
@@ -44,6 +49,11 @@ class PinCodeUnlock extends React.Component<Props, *> {
 
     return (
       <Container>
+        <Button
+          onPress={this.handleStorybook}
+          title="Storybook"
+          color="#841584"
+        />
         <Header centerTitle title="enter pincode" />
         {showError}
         <PinCode

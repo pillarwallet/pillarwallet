@@ -4,6 +4,10 @@
   "private": true,
   "devDependencies": {
     "@babel/core": "7.0.0-beta.54",
+    "@storybook/addon-actions": "^4.1.9",
+    "@storybook/addon-links": "^4.1.9",
+    "@storybook/addons": "^4.1.9",
+    "@storybook/react-native": "^4.1.9",
     "babel-bridge": "^1.12.11",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.2",
@@ -59,7 +63,8 @@
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",
     "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && rndebugger-open",
-    "precommit": "yarn run validate"
+    "precommit": "yarn run validate",
+    "storybook": "storybook start"
   },
   "jest": {
     "preset": "react-native",

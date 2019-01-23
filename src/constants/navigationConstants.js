@@ -71,3 +71,6 @@ export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
 
 // HOME FLOW
 export const HOME = 'HOME';
+
+// STORYBOOK FLOW
+export const STORYBOOK = 'STORYBOOK';
