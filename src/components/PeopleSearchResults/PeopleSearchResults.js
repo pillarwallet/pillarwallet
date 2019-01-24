@@ -185,7 +185,7 @@ class PeopleSearchResults extends React.Component<Props> {
   render() {
     const { localContacts, searchResults: { apiUsers } } = this.props;
     const localContactsIds = localContacts.map(({ id }) => id);
-    const filteredApiUsers = apiUsers.filter((user) => { return !localContactsIds.includes(user.id); });
+    const filteredApiUsers = apiUsers.filter((user) => !localContactsIds.includes(user.id));
 
     return (
       <React.Fragment>
