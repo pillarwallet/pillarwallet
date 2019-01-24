@@ -521,6 +521,15 @@ jobs:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
       - run:
+          name: Accept Android SDK licenses
+          command: |
+            yes | sdkmanager --licenses || exit 0
+
+      - run:
+          name: Accept Android SDK licenses 2
+          command: |
+            yes | sdkmanager --update || exit 0
+      - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
@@ -634,6 +643,15 @@ jobs:
       - run:
           name: Chmod permissions
           command: sudo chmod +x ./gradlew
+      - run:
+          name: Accept Android SDK licenses
+          command: |
+            yes | sdkmanager --licenses || exit 0
+
+      - run:
+          name: Accept Android SDK licenses 2
+          command: |
+            yes | sdkmanager --update || exit 0
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2

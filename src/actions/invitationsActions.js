@@ -1,4 +1,5 @@
 // @flow
+import { Sentry } from 'react-native-sentry';
 import { generateAccessKey } from 'utils/invitations';
 import type { ApiUser } from 'models/Contacts';
 import { uniqBy } from 'utils/common';
@@ -17,6 +18,7 @@ import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
+import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { saveDbAction } from './dbActions';
 
 export const fetchInviteNotificationsAction = () => {
@@ -25,8 +27,20 @@ export const fetchInviteNotificationsAction = () => {
       invitations: { data: invitations },
       contacts: { data: contacts },
       user: { data: user },
+    } = getState();
+
+    let {
       accessTokens: { data: accessTokens },
     } = getState();
+
+    if (accessTokens === undefined || !accessTokens.length) {
+      Sentry.captureMessage('Empty connection access tokens, dispatching restoreAccessTokensAction');
+      await dispatch(restoreAccessTokensAction(user.walletId));
+      const {
+        accessTokens: { data: updatedAccessTokens },
+      } = getState();
+      accessTokens = updatedAccessTokens;
+    }
 
     const types = [
       TYPE_RECEIVED,

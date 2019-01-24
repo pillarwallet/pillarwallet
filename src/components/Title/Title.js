@@ -24,7 +24,7 @@ const Wrapper = styled.View`
   margin: ${props => props.noMargin ? '0' : '16px 0'};
   align-self: ${props => props.align ? props.align : 'flex-start'};
   position: relative;
-  top: 2px;
+  top: 0px;
   ${({ maxWidth }) => maxWidth && `
     width: maxWidth;
   `}
@@ -32,7 +32,7 @@ const Wrapper = styled.View`
 `;
 
 const Text = styled(BoldText)`
-  line-height: ${fontSizes.large};
+  line-height: ${fontSizes.extraLarger};
   font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
@@ -68,6 +68,8 @@ const Title = (props: Props) => {
     dotColor,
   } = props;
 
+  const noBlueDotNeeded = noBlueDot || !title;
+
   return (
     <Wrapper
       noMargin={noMargin}
@@ -76,7 +78,7 @@ const Title = (props: Props) => {
       maxWidth={maxWidth}
       fullWidth={fullWidth}
     >
-      {props.onTitlePress ?
+      {onTitlePress ?
         <TouchableOpacity onPress={onTitlePress}>
           <Text
             align={align}
@@ -86,7 +88,7 @@ const Title = (props: Props) => {
             fullWidth={fullWidth}
           >
             {title}
-            {!subtitle && !noBlueDot && <BlueDot dotColor={dotColor}>.</BlueDot>}
+            {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
           </Text>
         </TouchableOpacity>
         :
@@ -97,8 +99,8 @@ const Title = (props: Props) => {
           style={titleStyles}
           fullWidth={fullWidth}
         >
-          {props.title}
-          {!props.subtitle && !props.noBlueDot && <BlueDot dotColor={props.dotColor}>.</BlueDot>}
+          {title}
+          {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
         </Text>
       }
     </Wrapper>
