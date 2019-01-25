@@ -36,7 +36,7 @@ type Props = {
   titleStyles?: ?Object,
 }
 
-const StyledWrapper = styled(Wrapper)`
+const HeaderWrapper = styled(Wrapper)`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
   height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
@@ -136,7 +136,7 @@ const Header = (props: Props) => {
   };
 
   return (
-    <StyledWrapper
+    <HeaderWrapper
       overlay={overlay}
       noMargin={noMargin}
       flexStart={flexStart}
@@ -208,7 +208,7 @@ const Header = (props: Props) => {
           }
         </HeaderRight>
       }
-    </StyledWrapper>
+    </HeaderWrapper>
   );
 };
 
