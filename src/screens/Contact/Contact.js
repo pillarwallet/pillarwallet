@@ -81,7 +81,6 @@ type Props = {
 };
 
 type State = {
-  avatarRefreshed: boolean,
   showManageContactModal: boolean,
   showConfirmationModal: boolean,
   manageContactType: string,
@@ -93,12 +92,10 @@ class Contact extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { navigation, contacts, session } = this.props;
+    const { navigation, contacts } = this.props;
     const contact = navigation.getParam('contact', {});
     this.localContact = contacts.find(({ username }) => username === contact.username);
-    const profileImage = this.localContact ? this.localContact.profileLargeImage : contact.profileLargeImage;
     this.state = {
-      avatarRefreshed: !profileImage || !session.isOnline,
       showManageContactModal: false,
       showConfirmationModal: false,
       manageContactType: '',
@@ -111,32 +108,29 @@ class Contact extends React.Component<Props, State> {
       wallet,
       syncContact,
       session,
+      navigation,
     } = this.props;
     this.isComponentMounted = true;
+    const contact = navigation.getParam('contact', {});
+    const defaultImageCacheManager = ImageCacheManager();
+
+    if (contact.profileImage && session.isOnline) {
+      defaultImageCacheManager
+        .deleteUrl(contact.profileImage, {
+          useQueryParamsInCacheKey: true,
+        })
+        .catch(() => null);
+      defaultImageCacheManager
+        .deleteUrl(contact.profileLargeImage, {
+          useQueryParamsInCacheKey: true,
+        })
+        .catch(() => null);
+    }
 
     const localContact = this.localContact; // eslint-disable-line
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
       fetchContactTransactions(wallet.address, localContact.ethAddress);
-
-      const defaultImageCacheManager = ImageCacheManager();
-
-      if (localContact.profileImage) {
-        defaultImageCacheManager
-          .deleteUrl(localContact.profileImage, {
-            useQueryParamsInCacheKey: true,
-          })
-          .catch(() => null);
-      }
-
-      if (localContact.profileLargeImage) {
-        defaultImageCacheManager
-          .deleteUrl(localContact.profileLargeImage, {
-            useQueryParamsInCacheKey: true,
-          })
-          .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
-          .catch(() => null);
-      }
     }
   }
 
@@ -144,14 +138,11 @@ class Contact extends React.Component<Props, State> {
     this.isComponentMounted = false;
   }
 
-  getUserAvatar = (isAccepted, avatarRefreshed, displayContact) => {
-    if (isAccepted) {
-      if (avatarRefreshed && displayContact.profileLargeImage) {
-        return `${displayContact.profileLargeImage}?t=${displayContact.lastUpdateTime || 0}`;
-      }
-      return undefined;
+  getUserAvatar = (isAccepted, url, updateTime) => {
+    if (isAccepted && updateTime) {
+      return `${url}?t=${updateTime}`;
     }
-    return displayContact.profileLargeImage;
+    return url;
   };
 
   getUnreadCount = (chats: Object[], username: string): number => {
@@ -186,7 +177,6 @@ class Contact extends React.Component<Props, State> {
       chats,
     } = this.props;
     const {
-      avatarRefreshed,
       showManageContactModal,
       showConfirmationModal,
       manageContactType,
@@ -197,7 +187,9 @@ class Contact extends React.Component<Props, State> {
     const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
-    const userAvatar = this.getUserAvatar(isAccepted, avatarRefreshed, displayContact);
+    const userAvatar = displayContact.profileLargeImage
+      ? this.getUserAvatar(isAccepted, displayContact.profileLargeImage, displayContact.lastUpdateTime)
+      : undefined;
     const unreadCount = this.getUnreadCount(chats, displayContact.username);
 
     return (

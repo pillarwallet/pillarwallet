@@ -264,19 +264,25 @@ class HomeScreen extends React.Component<Props, State> {
     return contacts
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, 10)
-      .map(contact => (
-        <RecentConnectionsItem
-          key={contact.username}
-          onPress={() => navigation.navigate(CONTACT, { contact })}
-        >
-          <RecentConnectionsItemProfileImage
-            uri={`${contact.profileImage}?t=${contact.lastUpdateTime || 0}`}
-            userName={contact.username}
-            diameter={52}
-          />
-          <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
-        </RecentConnectionsItem>
-      ));
+      .map(contact => {
+        const updatedUrl = contact.lastUpdateTime
+          ? `${contact.profileImage}?t=${contact.lastUpdateTime}`
+          : contact.profileImage;
+
+        return (
+          <RecentConnectionsItem
+            key={contact.username}
+            onPress={() => navigation.navigate(CONTACT, { contact })}
+          >
+            <RecentConnectionsItemProfileImage
+              uri={updatedUrl}
+              userName={contact.username}
+              diameter={52}
+            />
+            <RecentConnectionsItemName numberOfLines={1}>{contact.username}</RecentConnectionsItemName>
+          </RecentConnectionsItem>
+        );
+      });
   };
 
   refreshScreenData = () => {
