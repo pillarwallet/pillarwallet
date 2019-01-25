@@ -177,6 +177,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const contact = contacts
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+
       return (
         <ListItemWithImage
           onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
@@ -188,6 +189,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : null}
+          imageUpdateTimeStamp={contact.lastUpdateTime}
         />
       );
     }
@@ -219,6 +221,7 @@ class ActivityFeed extends React.Component<Props, State> {
         }
         actionLabel={this.getRightLabel(notification.type)}
         labelAsButton={notification.type === TYPE_SENT}
+        imageUpdateTimeStamp={notification.lastUpdateTime}
       />
     );
   };

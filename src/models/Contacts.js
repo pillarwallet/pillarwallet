@@ -6,6 +6,7 @@ export type ApiUser = {
   profileImage?: string,
   profileLargeImage?: string,
   ethAddress: string,
+  lastUpdateTime?: number,
 };
 
 export type SearchResults = {

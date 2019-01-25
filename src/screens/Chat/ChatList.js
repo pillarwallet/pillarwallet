@@ -187,6 +187,7 @@ class ChatListScreen extends React.Component<Props, State> {
           timeSent={timeSent}
           unreadCount={unread}
           onPress={() => this.handleChatItemClick(contactInfo)}
+          imageUpdateTimeStamp={contactInfo.lastUpdateTime}
         />
       </Swipeout>
     );

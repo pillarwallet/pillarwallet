@@ -41,6 +41,7 @@ type Props = {
   type?: string,
   children?: React.Node,
   small?: boolean,
+  imageUpdateTimeStamp?: number,
 }
 
 const ItemWrapper = styled.TouchableOpacity`
@@ -224,6 +225,7 @@ const ItemImage = (props: Props) => {
     fallbackSource,
     navigateToProfile,
     type,
+    imageUpdateTimeStamp,
   } = props;
 
   if (iconName) {
@@ -250,10 +252,13 @@ const ItemImage = (props: Props) => {
       </Shadow>
     );
   }
+
+  const updatedUserImageUrl = imageUpdateTimeStamp && avatarUrl ? `${avatarUrl}?t=${imageUpdateTimeStamp}` : avatarUrl;
+
   return (
     <ProfileImage
       onPress={navigateToProfile}
-      uri={avatarUrl}
+      uri={updatedUserImageUrl}
       userName={label}
       diameter={type === ACTION ? 52 : 50}
       borderWidth={type === ACTION ? 0 : 2}

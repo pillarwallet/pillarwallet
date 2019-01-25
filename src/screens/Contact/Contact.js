@@ -118,15 +118,25 @@ class Contact extends React.Component<Props, State> {
     if (localContact && session.isOnline) {
       syncContact(localContact.id);
       fetchContactTransactions(wallet.address, localContact.ethAddress);
-      if (!localContact.profileLargeImage) { return; }
 
       const defaultImageCacheManager = ImageCacheManager();
-      defaultImageCacheManager
-        .deleteUrl(localContact.profileLargeImage, {
-          useQueryParamsInCacheKey: true,
-        })
-        .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
-        .catch(() => null);
+
+      if (localContact.profileImage) {
+        defaultImageCacheManager
+          .deleteUrl(localContact.profileImage, {
+            useQueryParamsInCacheKey: true,
+          })
+          .catch(() => null);
+      }
+
+      if (localContact.profileLargeImage) {
+        defaultImageCacheManager
+          .deleteUrl(localContact.profileLargeImage, {
+            useQueryParamsInCacheKey: true,
+          })
+          .then(() => this.isComponentMounted && this.setState({ avatarRefreshed: true }))
+          .catch(() => null);
+      }
     }
   }
 
@@ -136,7 +146,9 @@ class Contact extends React.Component<Props, State> {
 
   getUserAvatar = (isAccepted, avatarRefreshed, displayContact) => {
     if (isAccepted) {
-      if (avatarRefreshed) return displayContact.profileLargeImage;
+      if (avatarRefreshed && displayContact.profileLargeImage) {
+        return `${displayContact.profileLargeImage}?t=${displayContact.lastUpdateTime || 0}`;
+      }
       return undefined;
     }
     return displayContact.profileLargeImage;
@@ -212,6 +224,7 @@ class Contact extends React.Component<Props, State> {
               initialsSize={fontSizes.extraGiant}
               diameter={172}
               style={{ backgroundColor: baseColors.geyser }}
+              imageUpdateTimeStamp={displayContact.lastUpdateTime}
             />
           </ContactWrapper>
           <CircleButtonsWrapper center horizontal>

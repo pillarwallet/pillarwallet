@@ -270,7 +270,7 @@ class HomeScreen extends React.Component<Props, State> {
           onPress={() => navigation.navigate(CONTACT, { contact })}
         >
           <RecentConnectionsItemProfileImage
-            uri={contact.profileImage}
+            uri={`${contact.profileImage}?t=${contact.lastUpdateTime || 0}`}
             userName={contact.username}
             diameter={52}
           />
