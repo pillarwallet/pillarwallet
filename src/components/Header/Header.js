@@ -38,7 +38,7 @@ type Props = {
 const Wrapper = styled.View`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '40px'};
+  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
