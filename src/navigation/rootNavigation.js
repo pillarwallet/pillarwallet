@@ -24,6 +24,7 @@ import {
   APP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
+  STORYBOOK_FLOW,
   SECURITY_CONFIRM,
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
@@ -78,11 +79,15 @@ const authFlow = createStackNavigator({
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
 
+const storybookFlow = createStackNavigator({
+  [STORYBOOK]: Storybook,
+}, modalTransition);
+
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
-  [STORYBOOK]: Storybook,
+  [STORYBOOK_FLOW]: storybookFlow,
 });
 
 export default RootSwitch;

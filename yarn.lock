@@ -1597,17 +1597,17 @@
     xcode "https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b"
     yargs "^12.0.2"
 
-"@storybook/addon-actions@^4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addon-actions/-/addon-actions-4.1.9.tgz#6b7d6fe3e591de615bc2b7c3ba9db651fffa7c1d"
-  integrity sha1-a31v4+WR3mFbwrfDup22Uf/6fB0=
+"@storybook/addon-actions@^4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addon-actions/-/addon-actions-4.1.11.tgz#8946ea78f050ae2d06a2f2231ec56d1831942e15"
+  integrity sha1-iUbqePBQri0GovIjHsVtGDGULhU=
   dependencies:
     "@emotion/core" "^0.13.1"
     "@emotion/provider" "^0.11.2"
     "@emotion/styled" "^0.10.6"
-    "@storybook/addons" "4.1.9"
-    "@storybook/components" "4.1.9"
-    "@storybook/core-events" "4.1.9"
+    "@storybook/addons" "4.1.11"
+    "@storybook/components" "4.1.11"
+    "@storybook/core-events" "4.1.11"
     core-js "^2.5.7"
     deep-equal "^1.0.1"
     global "^4.3.2"
@@ -1617,59 +1617,59 @@
     react-inspector "^2.3.0"
     uuid "^3.3.2"
 
-"@storybook/addon-links@^4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addon-links/-/addon-links-4.1.9.tgz#ebcff50d0fb1403351ecc6e993059b39076d42b0"
-  integrity sha1-68/1DQ+xQDNR7MbpkwWbOQdtQrA=
+"@storybook/addon-links@^4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addon-links/-/addon-links-4.1.11.tgz#50e782eba46de3aac91f05a26ca92e2a5d13aa19"
+  integrity sha1-UOeC66Rt46rJHwWibKkuKl0Tqhk=
   dependencies:
-    "@storybook/addons" "4.1.9"
-    "@storybook/components" "4.1.9"
-    "@storybook/core-events" "4.1.9"
+    "@storybook/addons" "4.1.11"
+    "@storybook/components" "4.1.11"
+    "@storybook/core-events" "4.1.11"
     core-js "^2.5.7"
     global "^4.3.2"
     prop-types "^15.6.2"
 
-"@storybook/addons@4.1.9", "@storybook/addons@^4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addons/-/addons-4.1.9.tgz#d59660c7a9e1d19432b28e78c319d1c425f002a7"
-  integrity sha1-1ZZgx6nh0ZQyso54wxnRxCXwAqc=
+"@storybook/addons@4.1.11", "@storybook/addons@^4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addons/-/addons-4.1.11.tgz#a0d537bd10d123ecee6cb1f5f149b148ce250e57"
+  integrity sha1-oNU3vRDRI+zubLH18UmxSM4lDlc=
   dependencies:
-    "@storybook/channels" "4.1.9"
-    "@storybook/components" "4.1.9"
+    "@storybook/channels" "4.1.11"
+    "@storybook/components" "4.1.11"
     global "^4.3.2"
     util-deprecate "^1.0.2"
 
-"@storybook/channel-postmessage@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channel-postmessage/-/channel-postmessage-4.1.9.tgz#9b7c6acc2050274affea72c87dcc07e784f7f713"
-  integrity sha1-m3xqzCBQJ0r/6nLIfcwH54T39xM=
+"@storybook/channel-postmessage@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channel-postmessage/-/channel-postmessage-4.1.11.tgz#3320a5f3e05652466eff1c53843205c262a92dfb"
+  integrity sha1-MyCl8+BWUkZu/xxThDIFwmKpLfs=
   dependencies:
-    "@storybook/channels" "4.1.9"
+    "@storybook/channels" "4.1.11"
     global "^4.3.2"
     json-stringify-safe "^5.0.1"
 
-"@storybook/channel-websocket@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channel-websocket/-/channel-websocket-4.1.9.tgz#0fad21db63428a0c04c71096d8ae44ae0d580355"
-  integrity sha1-D60h22NCigwExxCW2K5Erg1YA1U=
+"@storybook/channel-websocket@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channel-websocket/-/channel-websocket-4.1.11.tgz#bf556d38add94d978ae88ca59718942d04bfc4d3"
+  integrity sha1-v1VtOK3ZTZeK6IyllxiULQS/xNM=
   dependencies:
-    "@storybook/channels" "4.1.9"
+    "@storybook/channels" "4.1.11"
     global "^4.3.2"
 
-"@storybook/channels@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channels/-/channels-4.1.9.tgz#34565e25f2797299b34bd1414bf9e4a93202182f"
-  integrity sha1-NFZeJfJ5cpmzS9FBS/nkqTICGC8=
+"@storybook/channels@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/channels/-/channels-4.1.11.tgz#d161497fa3cd848cc9d518aa1c37052857e22e3c"
+  integrity sha1-0WFJf6PNhIzJ1RiqHDcFKFfiLjw=
 
-"@storybook/client-logger@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/client-logger/-/client-logger-4.1.9.tgz#45deaefe36c4a52d59822bbdde04fe6a4f6a9ab5"
-  integrity sha1-Rd6u/jbEpS1Zgiu93gT+ak9qmrU=
+"@storybook/client-logger@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/client-logger/-/client-logger-4.1.11.tgz#2b1e34e892045199592fdb01656e5dcdcd1999d7"
+  integrity sha1-Kx406JIEUZlZL9sBZW5dzc0Zmdc=
 
-"@storybook/components@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/components/-/components-4.1.9.tgz#e34eba55cabfaf853ff216655439cf9a329b04a4"
-  integrity sha1-4066Vcq/r4U/8hZlVDnPmjKbBKQ=
+"@storybook/components@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/components/-/components-4.1.11.tgz#25458a4a4f2edd836b1e4b944cfcfcb4a3567036"
+  integrity sha1-JUWKSk8u3YNrHkuUTPz8tKNWcDY=
   dependencies:
     "@emotion/core" "^0.13.1"
     "@emotion/provider" "^0.11.2"
@@ -1682,27 +1682,27 @@
     react-textarea-autosize "^7.0.4"
     render-fragment "^0.1.1"
 
-"@storybook/core-events@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/core-events/-/core-events-4.1.9.tgz#30429fc82ee03e31979546e18b2d1896d0c69134"
-  integrity sha1-MEKfyC7gPjGXlUbhiy0YltDGkTQ=
+"@storybook/core-events@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/core-events/-/core-events-4.1.11.tgz#78cfb2b4014ca27909421cdebfa9c96533929a5a"
+  integrity sha1-eM+ytAFMonkJQhzev6nJZTOSmlo=
 
-"@storybook/core@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/core/-/core-4.1.9.tgz#e5be3c60bf7c0bc62d1f72a47107f3e50f41eb14"
-  integrity sha1-5b48YL98C8YtH3KkcQfz5Q9B6xQ=
+"@storybook/core@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/core/-/core-4.1.11.tgz#f91cf77d4750edeb92717f6b2a2a4258b0a06c64"
+  integrity sha1-+Rz3fUdQ7euScX9rKipCWLCgbGQ=
   dependencies:
     "@babel/plugin-proposal-class-properties" "^7.2.0"
     "@babel/preset-env" "^7.2.0"
     "@emotion/core" "^0.13.1"
     "@emotion/provider" "^0.11.2"
     "@emotion/styled" "^0.10.6"
-    "@storybook/addons" "4.1.9"
-    "@storybook/channel-postmessage" "4.1.9"
-    "@storybook/client-logger" "4.1.9"
-    "@storybook/core-events" "4.1.9"
-    "@storybook/node-logger" "4.1.9"
-    "@storybook/ui" "4.1.9"
+    "@storybook/addons" "4.1.11"
+    "@storybook/channel-postmessage" "4.1.11"
+    "@storybook/client-logger" "4.1.11"
+    "@storybook/core-events" "4.1.11"
+    "@storybook/node-logger" "4.1.11"
+    "@storybook/ui" "4.1.11"
     airbnb-js-shims "^1 || ^2"
     autoprefixer "^9.3.1"
     babel-plugin-macros "^2.4.2"
@@ -1766,10 +1766,10 @@
     "@storybook/react-simple-di" "^1.2.1"
     babel-runtime "6.x.x"
 
-"@storybook/node-logger@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/node-logger/-/node-logger-4.1.9.tgz#f23abd1fec5a2b1b042874d0f2bbfbfbae3aaa42"
-  integrity sha1-8jq9H+xaKxsEKHTQ8rv7+646qkI=
+"@storybook/node-logger@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/node-logger/-/node-logger-4.1.11.tgz#8ea9779eb6260a02bf06c02eafbff5925b883f9f"
+  integrity sha1-jql3nrYmCgK/BsAur7/1kluIP58=
   dependencies:
     chalk "^2.4.1"
     core-js "^2.5.7"
@@ -1796,17 +1796,17 @@
     lodash "^4.17.11"
     shallowequal "^1.1.0"
 
-"@storybook/react-native@^4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/react-native/-/react-native-4.1.9.tgz#e53954eb991a94e52847fa851daf2c4856a5420f"
-  integrity sha1-5TlU65kalOUoR/qFHa8sSFalQg8=
+"@storybook/react-native@^4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/react-native/-/react-native-4.1.11.tgz#c8197c349e25d9cbafe76c8dc86b29b8e3d1818c"
+  integrity sha1-yBl8NJ4l2cuv52yNyGspuOPRgYw=
   dependencies:
-    "@storybook/addons" "4.1.9"
-    "@storybook/channel-websocket" "4.1.9"
-    "@storybook/channels" "4.1.9"
-    "@storybook/core" "4.1.9"
-    "@storybook/core-events" "4.1.9"
-    "@storybook/ui" "4.1.9"
+    "@storybook/addons" "4.1.11"
+    "@storybook/channel-websocket" "4.1.11"
+    "@storybook/channels" "4.1.11"
+    "@storybook/core" "4.1.11"
+    "@storybook/core-events" "4.1.11"
+    "@storybook/ui" "4.1.11"
     babel-loader "^8.0.4"
     babel-plugin-macros "^2.4.2"
     babel-plugin-syntax-async-functions "^6.13.0"
@@ -1858,16 +1858,16 @@
   dependencies:
     babel-runtime "^6.5.0"
 
-"@storybook/ui@4.1.9":
-  version "4.1.9"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/ui/-/ui-4.1.9.tgz#b27a87ef85a02962344715bdc70ef70df059d936"
-  integrity sha1-snqH74WgKWI0RxW9xw73DfBZ2TY=
+"@storybook/ui@4.1.11":
+  version "4.1.11"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/ui/-/ui-4.1.11.tgz#0c6fc34a8096028ef236a5196e7b91831702f2fb"
+  integrity sha1-DG/DSoCWAo7yNqUZbnuRgxcC8vs=
   dependencies:
     "@emotion/core" "^0.13.1"
     "@emotion/provider" "^0.11.2"
     "@emotion/styled" "^0.10.6"
-    "@storybook/components" "4.1.9"
-    "@storybook/core-events" "4.1.9"
+    "@storybook/components" "4.1.11"
+    "@storybook/core-events" "4.1.11"
     "@storybook/mantra-core" "^1.7.2"
     "@storybook/podda" "^1.2.3"
     "@storybook/react-komposer" "^2.0.5"
@@ -5328,6 +5328,11 @@ colors@^1.1.2, colors@^1.3.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/colors/-/colors-1.3.2.tgz#2df8ff573dfbf255af562f8ce7181d6b971a359b"
   integrity sha1-Lfj/Vz378lWvVi+M5xgda5caNZs=
 
+colors@~0.6.0-1:
+  version "0.6.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/colors/-/colors-0.6.2.tgz#2423fe6678ac0c5dae8852e5d0e5be08c997abcc"
+  integrity sha1-JCP+ZnisDF2uiFLl0OW+CMmXq8w=
+
 colors@~1.1.2:
   version "1.1.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/colors/-/colors-1.1.2.tgz#168a4701756b6a7f51a12ce0c97bfa28c084ed63"
@@ -5361,6 +5366,11 @@ commander@^2.11.0, commander@^2.15.1, commander@^2.19.0, commander@^2.9.0:
   version "2.19.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/commander/-/commander-2.19.0.tgz#f6198aa84e5b83c46054b94ddedbfed5ee9ff12a"
   integrity sha1-9hmKqE5bg8RgVLlN3tv+1e6f8So=
+
+commander@~2.1.0:
+  version "2.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/commander/-/commander-2.1.0.tgz#d121bbae860d9992a3d517ba96f56588e47c6781"
+  integrity sha1-0SG7roYNmZKj1Re6lvVliOR8Z4E=
 
 commander@~2.13.0:
   version "2.13.0"
@@ -5541,7 +5551,7 @@ core-js@^2.2.2, core-js@^2.4.0, core-js@^2.4.1, core-js@^2.5.0, core-js@^2.5.3:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/core-js/-/core-js-2.5.7.tgz#f972608ff0cead68b841a16a932d0b183791814e"
   integrity sha1-+XJgj/DOrWi4QaFqky0LGDeRgU4=
 
-core-js@^2.5.7:
+core-js@^2.5.7, core-js@^2.6.3:
   version "2.6.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/core-js/-/core-js-2.6.3.tgz#4b70938bdffdaf64931e66e2db158f0892289c49"
   integrity sha1-S3CTi9/9r2STHmbi2xWPCJIonEk=
@@ -6363,6 +6373,11 @@ dot-prop@^4.1.0:
   integrity sha1-HxngwuGqDjJ5fEl5nyg3rGr2nFc=
   dependencies:
     is-obj "^1.0.0"
+
+dot@^1.1.1:
+  version "1.1.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/dot/-/dot-1.1.2.tgz#c7377019fc4e550798928b2b9afeb66abfa1f2f9"
+  integrity sha1-xzdwGfxOVQeYkosrmv62ar+h8vk=
 
 dotenv-defaults@^1.0.2:
   version "1.0.2"
@@ -7577,6 +7592,14 @@ findit@^2.0.0:
   version "2.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/findit/-/findit-2.0.0.tgz#6509f0126af4c178551cfa99394e032e13a4d56e"
   integrity sha1-ZQnwEmr0wXhVHPqZOU4DLhOk1W4=
+
+findup@^0.1.5:
+  version "0.1.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/findup/-/findup-0.1.5.tgz#8ad929a3393bac627957a7e5de4623b06b0e2ceb"
+  integrity sha1-itkpozk7rGJ5V6fl3kYjsGsOLOs=
+  dependencies:
+    colors "~0.6.0-1"
+    commander "~2.1.0"
 
 flat-cache@^1.2.1:
   version "1.3.2"
@@ -14063,6 +14086,17 @@ react-native-splash-screen@^3.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-splash-screen/-/react-native-splash-screen-3.1.1.tgz#1a4e46c9fdce53ff52af2a2cb4181788c4e30b30"
   integrity sha1-Gk5Gyf3OU/9SryostBgXiMTjCzA=
 
+react-native-storybook-loader@^1.8.0:
+  version "1.8.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-storybook-loader/-/react-native-storybook-loader-1.8.0.tgz#35056d62f01019af8692d540fd404a855464d4f3"
+  integrity sha1-NQVtYvAQGa+GktVA/UBKhVRk1PM=
+  dependencies:
+    colors "^1.1.2"
+    dot "^1.1.1"
+    findup "^0.1.5"
+    glob "^7.1.1"
+    yargs "^8.0.2"
+
 react-native-svg@^7.0.2:
   version "7.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-svg/-/react-native-svg-7.2.0.tgz#4a43e843938eb5edcb6a7ec34f0387d301533315"
@@ -15157,9 +15191,9 @@ rn-color-matrices@^4.0.0:
   dependencies:
     clamp "^1.0.1"
 
-rn-nodeify@tradle/rn-nodeify:
-  version "10.0.0"
-  resolved "https://codeload.github.com/tradle/rn-nodeify/tar.gz/f871fadfed6edef6e208bb3293e66f27466122da"
+"rn-nodeify@tradle/rn-nodeify#semver:10.0.1":
+  version "10.0.1"
+  resolved "https://codeload.github.com/tradle/rn-nodeify/tar.gz/ea456db433956aa734be6f2eca149b59f1257a39"
   dependencies:
     "@yarnpkg/lockfile" "^1.0.0"
     deep-equal "^1.0.0"

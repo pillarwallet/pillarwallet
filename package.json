@@ -4,16 +4,17 @@
   "private": true,
   "devDependencies": {
     "@babel/core": "7.0.0-beta.54",
-    "@storybook/addon-actions": "^4.1.9",
-    "@storybook/addon-links": "^4.1.9",
-    "@storybook/addons": "^4.1.9",
-    "@storybook/react-native": "^4.1.9",
+    "@storybook/addon-actions": "^4.1.11",
+    "@storybook/addon-links": "^4.1.11",
+    "@storybook/addons": "^4.1.11",
+    "@storybook/react-native": "^4.1.11",
     "babel-bridge": "^1.12.11",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.2",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "^1.5.1",
     "babel-runtime": "7.0.0-beta.3",
+    "core-js": "^2.6.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.19.1",
@@ -39,32 +40,43 @@
     "react-dom": "^16.3.0-alpha.1",
     "react-native-debugger-open": "^0.3.17",
     "react-native-dotenv": "^0.2.0",
+    "react-native-storybook-loader": "^1.8.0",
     "react-test-renderer": "16.4.2",
     "redux-mock-store": "^1.5.1",
-    "rn-nodeify": "tradle/rn-nodeify",
+    "rn-nodeify": "tradle/rn-nodeify#semver:10.0.1",
     "run-s": "^0.0.0"
   },
   "scripts": {
-    "start": "react-native start --reset-cache",
+    "start": "yarn rnstl && react-native start --reset-cache",
     "android": "react-native run-android --variant=devDebug",
     "ios": "react-native run-ios",
     "generate:ios:ipa": "mkdir  ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/pillarwallet/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'",
     "build:android": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "TEST_MODE='test' jest",
+    "test:coverage": "TEST_MODE='test' jest --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "flow": "flow",
     "flow-stop": "flow stop",
     "flow-typed": "flow-typed install",
     "validate": "run-s flow test lint",
-    "jest": "jest --colors",
-    "jest-watch": "jest --colors --watchAll",
-    "jest-update": "jest --colors -u",
+    "jest": "TEST_MODE='test' jest --colors",
+    "jest-watch": "TEST_MODE='test' jest --colors --watchAll",
+    "jest-update": "TEST_MODE='test' jest --colors -u",
     "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && rndebugger-open",
     "precommit": "yarn run validate",
-    "storybook": "storybook start"
+    "storybook": "storybook start",
+    "prestorybook": "rnstl"
+  },
+  "config": {
+    "react-native-storybook-loader": {
+      "searchDir": [
+        "./src"
+      ],
+      "pattern": "**/stories/*.js",
+      "outputFile": "./storybook/storyLoader.js"
+    }
   },
   "jest": {
     "preset": "react-native",
@@ -88,7 +100,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-color-matrix-image-filters|react-native-htmlview|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-color-matrix-image-filters|react-native-htmlview|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions|react-native-swipe-gestures)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {

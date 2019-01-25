@@ -1,7 +1,6 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Button } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN, STORYBOOK } from 'constants/navigationConstants';
@@ -21,16 +20,17 @@ type Props = {
 
 class PinCodeUnlock extends React.Component<Props, *> {
   handlePinSubmit = (pin: string) => {
-    const { login } = this.props;
-    login(pin);
+    const { login, navigation } = this.props;
+
+    if (pin === '000001') {
+      navigation.navigate(STORYBOOK);
+    } else {
+      login(pin);
+    }
   };
 
   handleForgotPasscode = () => {
     this.props.navigation.navigate(FORGOT_PIN);
-  };
-
-  handleStorybook = () => {
-    this.props.navigation.navigate(STORYBOOK);
   };
 
   render() {
@@ -49,11 +49,6 @@ class PinCodeUnlock extends React.Component<Props, *> {
 
     return (
       <Container>
-        <Button
-          onPress={this.handleStorybook}
-          title="Storybook"
-          color="#841584"
-        />
         <Header centerTitle title="enter pincode" />
         {showError}
         <PinCode
