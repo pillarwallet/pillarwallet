@@ -44,7 +44,7 @@ const filterIcosByStatus = (icos: ICOT[], status: string) => (
   })
 );
 
-class MarketScreen extends React.Component<Props, {}> {
+class MarketScreen extends React.Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
     const isFocused = this.props.navigation.isFocused();
     if (!isFocused) {
