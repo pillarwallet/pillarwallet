@@ -71,6 +71,7 @@ export default class CountrySelect extends React.Component<Props, State> {
           extraData={filteredCountries}
           renderItem={renderItem}
           keyExtractor={({ name }) => name}
+          keyboardShouldPersistTaps="handled"
           ListEmptyComponent={
             <Wrapper
               fullScreen
