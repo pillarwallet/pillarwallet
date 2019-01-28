@@ -15191,7 +15191,7 @@ rn-color-matrices@^4.0.0:
   dependencies:
     clamp "^1.0.1"
 
-"rn-nodeify@tradle/rn-nodeify#semver:10.0.1":
+rn-nodeify@tradle/rn-nodeify:
   version "10.0.1"
   resolved "https://codeload.github.com/tradle/rn-nodeify/tar.gz/ea456db433956aa734be6f2eca149b59f1257a39"
   dependencies:
