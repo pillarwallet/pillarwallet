@@ -28,7 +28,7 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-import { isIphoneX } from 'utils/common';
+import { isIphoneX, handleUrlPress } from 'utils/common';
 import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
@@ -243,24 +243,11 @@ const renderMessage = (props: Props) => (
   />
 );
 
-const onUrlPress = (url) => {
-  const WWW_URL_PATTERN = /^www\./i;
-  if (WWW_URL_PATTERN.test(url)) {
-    onUrlPress(`http://${url}`);
-  } else {
-    Linking.canOpenURL(url)
-      .then((supported) => {
-        if (supported) Linking.openURL(url);
-      })
-      .catch(() => null);
-  }
-};
-
 const parsePatterns = () => [
   {
     type: 'url',
     style: { color: baseColors.clearBlue },
-    onPress: (url) => onUrlPress(url),
+    onPress: (url) => handleUrlPress(url),
   },
   {
     type: 'email',

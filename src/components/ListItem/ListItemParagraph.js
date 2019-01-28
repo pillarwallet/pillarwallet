@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing, fontWeights, UIColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import { ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { CustomParsedText } from 'components/CustomParsedText';
 
 type Props = {
   label: string,
@@ -36,7 +37,7 @@ const ItemValueHolder = styled.View`
   height: 50px;
 `;
 
-const StyledBaseText = styled(BaseText)`
+const StyledBaseText = styled(CustomParsedText)`
   font-size: ${fontSizes.small}px;
   color: ${UIColors.defaultTextColor};
 `;
@@ -52,9 +53,7 @@ const ListItemParagraph = (props: Props) => {
       <ItemValueHolder>
         <ScrollView>
           <TouchableWithoutFeedback>
-            <StyledBaseText>
-              {value}
-            </StyledBaseText>
+            <StyledBaseText text={value} />
           </TouchableWithoutFeedback>
         </ScrollView>
       </ItemValueHolder>
