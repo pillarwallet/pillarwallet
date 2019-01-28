@@ -243,11 +243,24 @@ const renderMessage = (props: Props) => (
   />
 );
 
+const onUrlPress = (url) => {
+  const WWW_URL_PATTERN = /^www\./i;
+  if (WWW_URL_PATTERN.test(url)) {
+    onUrlPress(`http://${url}`);
+  } else {
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) Linking.openURL(url);
+      })
+      .catch(() => null);
+  }
+};
+
 const parsePatterns = () => [
   {
     type: 'url',
     style: { color: baseColors.clearBlue },
-    onPress: (url) => Linking.openURL(url),
+    onPress: (url) => onUrlPress(url),
   },
   {
     type: 'email',
