@@ -16,7 +16,7 @@ import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
+import SvgOverlay, { Path, LinearGradient, Stop } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/appSettingsActions';
 
 type Props = {
@@ -84,12 +84,6 @@ const PhotoBoundariesWrapper = styled.View`
   left: 0;
   justify-content: center;
   align-items: center;
-`;
-
-const Overlay = styled(Svg)`
-  position: absolute; 
-  top: 0;
-  left: 0;
 `;
 
 const NoPermissions = styled.View`
@@ -373,22 +367,30 @@ class Camera extends React.Component<Props, State> {
     return (
       <React.Fragment>
         {!!focusedScreen &&
-          <RNCamera
-            ref={ref => {
-              this.camera = ref;
-            }}
-            style={{
-              width: screenWidth,
-              height: screenHeight,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            ratio="16:9"
-            type={cameraType}
-            flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
-          />
+        <RNCamera
+          ref={ref => {
+            this.camera = ref;
+          }}
+          style={{
+            width: screenWidth,
+            height: screenHeight,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          ratio="16:9"
+          type={cameraType}
+          flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
+        />
         }
-        <Overlay height={screenHeight} width={screenWidth}>
+        <SvgOverlay
+          height={screenHeight}
+          width={screenWidth}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        >
           <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
             <Stop offset="0%" stopColor={overlayColor} stopOpacity="0.3" />
             <Stop offset="100%" stopColor={overlayColor} stopOpacity="0.7" />
@@ -398,7 +400,7 @@ class Camera extends React.Component<Props, State> {
             fill="url(#grad)"
             fill-rule="evenodd"
           />
-        </Overlay>
+        </SvgOverlay>
         {!!isFrontFlashVisible && <FrontFlash />}
         <HeaderWrapperCamera>
           <Header light flexStart onClose={this.closeCamera} onBack={this.handleFlash} backIcon={flashIcon} />
@@ -440,15 +442,15 @@ class Camera extends React.Component<Props, State> {
       >
         {cameraScreenContent}
         {!!this.state.showResult &&
-          <ResultScreen>
-            <PreviewWrapper>
-              {preview}
-            </PreviewWrapper>
-            <ResultScreenFooter>
-              <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
-              <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
-            </ResultScreenFooter>
-          </ResultScreen>
+        <ResultScreen>
+          <PreviewWrapper>
+            {preview}
+          </PreviewWrapper>
+          <ResultScreenFooter>
+            <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
+            <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
+          </ResultScreenFooter>
+        </ResultScreen>
         }
       </Modal>
     );
