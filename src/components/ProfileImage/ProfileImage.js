@@ -54,7 +54,6 @@ type Props = {
   children?: React.Node,
   initialsSize?: number,
   noShadow?: boolean,
-  imageUpdateTimeStamp?: number,
 }
 
 const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {

@@ -265,7 +265,7 @@ class HomeScreen extends React.Component<Props, State> {
       .sort((a, b) => b.createdAt - a.createdAt)
       .slice(0, 10)
       .map(contact => {
-        const updatedUrl = contact.lastUpdateTime
+        const profileImage = contact.lastUpdateTime
           ? `${contact.profileImage}?t=${contact.lastUpdateTime}`
           : contact.profileImage;
 
@@ -275,7 +275,7 @@ class HomeScreen extends React.Component<Props, State> {
             onPress={() => navigation.navigate(CONTACT, { contact })}
           >
             <RecentConnectionsItemProfileImage
-              uri={updatedUrl}
+              uri={profileImage}
               userName={contact.username}
               diameter={52}
             />
