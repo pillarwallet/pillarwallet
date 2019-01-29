@@ -39,7 +39,6 @@ type State = {
   isFlashOn: boolean,
   isHardwareFlashOn: boolean,
   isFrontFlashVisible: boolean,
-  focusedScreen: boolean,
 };
 
 const screenWidth = Dimensions.get('window').width;
@@ -171,22 +170,7 @@ class Camera extends React.Component<Props, State> {
     isFlashOn: false,
     isHardwareFlashOn: false,
     isFrontFlashVisible: false,
-    focusedScreen: false,
   };
-
-  componentDidMount() {
-    const { navigation } = this.props;
-    this.listeners = [
-      navigation.addListener('willFocus', () => this.setState({ focusedScreen: true })),
-      navigation.addListener('willBlur', () => this.setState({ focusedScreen: false })),
-    ];
-  }
-
-  componentWillUnmount() {
-    this.listeners.forEach((listener) => {
-      listener.remove();
-    });
-  }
 
   handleModalClose = () => {
     this.setState({ showResult: false });
@@ -350,8 +334,8 @@ class Camera extends React.Component<Props, State> {
       isFlashOn,
       isHardwareFlashOn,
       isFrontFlashVisible,
-      focusedScreen,
     } = this.state;
+    const { isVisible } = this.props;
 
     const cutOutD = screenWidth - 40;
     const cutOutR = cutOutD / 2;
@@ -366,7 +350,7 @@ class Camera extends React.Component<Props, State> {
     const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
     return (
       <React.Fragment>
-        {!!focusedScreen &&
+        {!!isVisible &&
         <RNCamera
           ref={ref => {
             this.camera = ref;
@@ -425,7 +409,8 @@ class Camera extends React.Component<Props, State> {
       : <Spinner />;
 
     const animationInTiming = 300;
-    const animationOutTiming = 300;
+    const animationOutTiming = 1;
+
     return (
       <Modal
         isVisible={isVisible}
