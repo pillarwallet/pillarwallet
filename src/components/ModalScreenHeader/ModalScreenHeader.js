@@ -1,3 +1,4 @@
+// @flow
 /*
     Pillar Wallet: the personal data locker
     Copyright (C) 2019 Stiftung Pillar Project
