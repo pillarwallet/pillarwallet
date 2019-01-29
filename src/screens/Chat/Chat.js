@@ -350,7 +350,7 @@ class ChatScreen extends React.Component<Props, State> {
   onSend = (messages: Object[] = []) => {
     const { sendMessageByContact } = this.props;
     const { contact } = this.state;
-    sendMessageByContact(contact.username, contact.id, messages[0]);
+    sendMessageByContact(contact.username, messages[0]);
   };
 
   handleNavigationToContact = () => {
@@ -459,8 +459,8 @@ const mapDispatchToProps = (dispatch) => ({
     avatar,
     loadEarlier,
   ) => dispatch(getChatByContactAction(username, userId, avatar, loadEarlier)),
-  sendMessageByContact: (username: string, userId: string, message: Object) => {
-    dispatch(sendMessageByContactAction(username, userId, message));
+  sendMessageByContact: (username: string, message: Object) => {
+    dispatch(sendMessageByContactAction(username, message));
   },
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });

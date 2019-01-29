@@ -60,7 +60,7 @@ describe('Chat Actions', () => {
 
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.resolve());
 
-        await sendMessageByContactAction(contact.username, contact.id, message)(dispatchMock, getState);
+        await sendMessageByContactAction(contact.username, message)(dispatchMock);
       });
 
       afterEach(() => {
@@ -71,8 +71,8 @@ describe('Chat Actions', () => {
       it('should call the chatService.client.sendMessageByContact function', () => {
         expect(chatService.client.sendMessageByContact).toBeCalledWith('chat', {
           username: contact.username,
-          userId: contact.id,
-          userConnectionAccessToken: 'token',
+          userId: null,
+          userConnectionAccessToken: null,
           message: message.text,
         });
       });
@@ -109,7 +109,7 @@ describe('Chat Actions', () => {
         chatService.client.sendMessageByContact = jest.fn().mockImplementation(() => Promise.reject());
         jest.spyOn(Toast, 'show');
 
-        await sendMessageByContactAction(contact.username, contact.id, {})(dispatchMock, getState);
+        await sendMessageByContactAction(contact.username, {})(dispatchMock);
       });
 
       afterEach(() => {

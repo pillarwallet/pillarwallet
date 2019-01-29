@@ -133,7 +133,7 @@ class EventDetails extends React.Component<Props, {}> {
 
     if (contacts.find(contact => contact.username === eventData.username)
       && Object.keys(eventData.contact).length) {
-      getTxNoteByContact(eventData.contact.username, eventData.contact.id);
+      getTxNoteByContact(eventData.contact.username);
     }
 
     const txInfo = this.props.history.find(tx => tx.hash === eventData.hash) || {};
@@ -416,7 +416,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
-  getTxNoteByContact: (username, userId) => dispatch(getTxNoteByContactAction(username, userId)),
+  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventDetails);
