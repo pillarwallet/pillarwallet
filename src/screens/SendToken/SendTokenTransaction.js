@@ -76,7 +76,7 @@ class SendTokenTransaction extends React.Component<Props, State> {
     this.setState({
       noteSent: true,
     }, async () => {
-      await cb(toUser.username, toUser.id, { text: note, txHash });
+      await cb(toUser.username, { text: note, txHash });
     });
   }
 
@@ -146,8 +146,8 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  sendTxNoteByContact: (username: string, userId: string, message: Object) => {
-    dispatch(sendTxNoteByContactAction(username, userId, message));
+  sendTxNoteByContact: (username: string, message: Object) => {
+    dispatch(sendTxNoteByContactAction(username, message));
   },
 });
 

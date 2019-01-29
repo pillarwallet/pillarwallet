@@ -92,21 +92,13 @@ export const resetUnreadAction = (username: string) => ({
   payload: { username },
 });
 
-export const sendMessageByContactAction = (username: string, userId: string, message: Object) => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      accessTokens: { data: accessTokens },
-    } = getState();
-    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
-    if (!Object.keys(connectionAccessTokens).length) {
-      return;
-    }
-    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
+export const sendMessageByContactAction = (username: string, message: Object) => {
+  return async (dispatch: Function) => {
     try {
       const params = {
         username,
-        userId,
-        userConnectionAccessToken,
+        userId: null,
+        userConnectionAccessToken: null,
         message: message.text,
       };
       await chat.sendMessage('chat', params, false, (requestId) => {
@@ -159,15 +151,9 @@ export const getChatByContactAction = (
       type: FETCHING_CHATS,
     });
     const {
-      accessTokens: { data: accessTokens },
       chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
-    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
-    if (!Object.keys(connectionAccessTokens).length) {
-      return;
-    }
-    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(username, userId, userConnectionAccessToken, false).catch(e => {
+    await chat.client.addContact(username, null, null, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -222,9 +208,9 @@ export const getChatByContactAction = (
 
 export const addContactAndSendWebSocketChatMessageAction = (tag: string, params: Object) => {
   return async () => {
-    const { username, userId, userConnectionAccessToken } = params;
+    const { username } = params;
     try {
-      await chat.client.addContact(username, userId, userConnectionAccessToken, true);
+      await chat.client.addContact(username, null, null, true);
       await chat.sendMessage(tag, params, false);
     } catch (e) {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
