@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Platform } from 'react-native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
@@ -177,13 +178,15 @@ const InputField = styled(Input)`
   font-weight: ${props => props.fontWeight ? props.fontWeight : fontWeights.bold};
   include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
+  textAlignVertical: center;
   background: ${props => props.theme.backgroundColor};
   border-radius: ${props => props.theme.borderRadius};
   color: ${UIColors.defaultTextColor};
   border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
   border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
-  padding: 0 12px;
-  font-family: 'Aktiv Grotesk App';
+  padding: 0 12px;  
+  ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
+  ${props => Platform.OS === 'android' && props.fontSize ? `line-height: ${props.fontSize};` : ''}
 `;
 
 const SelectedOptionWrapper = styled.View`
