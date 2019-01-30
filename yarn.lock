@@ -9660,6 +9660,13 @@ mock-fs@^4.5.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/mock-fs/-/mock-fs-4.7.0.tgz#9f17e219cacb8094f4010e0a8c38589e2b33c299"
   integrity sha1-nxfiGcrLgJT0AQ4KjDhYniszwpk=
 
+mock-socket@^8.0.5:
+  version "8.0.5"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/mock-socket/-/mock-socket-8.0.5.tgz#4ce8909601b2bcdf5f7680f35c2f7b34beb2afc4"
+  integrity sha1-TOiQlgGyvN9fdoDzXC97NL6yr8Q=
+  dependencies:
+    url-parse "^1.2.0"
+
 moment@2.19.3:
   version "2.19.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/moment/-/moment-2.19.3.tgz#bdb99d270d6d7fda78cc0fbace855e27fe7da69f"
@@ -14519,7 +14526,7 @@ url-parse@1.1.9:
     querystringify "~1.0.0"
     requires-port "1.0.x"
 
-url-parse@^1.1.8, url-parse@^1.4.3:
+url-parse@^1.1.8, url-parse@^1.2.0, url-parse@^1.4.3:
   version "1.4.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/url-parse/-/url-parse-1.4.4.tgz#cac1556e95faa0303691fec5cf9d5a1bc34648f8"
   integrity sha1-ysFVbpX6oDA2kf7Fz51aG8NGSPg=

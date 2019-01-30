@@ -38,7 +38,8 @@
     "react-test-renderer": "16.4.2",
     "redux-mock-store": "^1.5.1",
     "rn-nodeify": "tradle/rn-nodeify",
-    "run-s": "^0.0.0"
+    "run-s": "^0.0.0",
+    "mock-socket": "^8.0.5"
   },
   "scripts": {
     "start": "react-native start --reset-cache",
