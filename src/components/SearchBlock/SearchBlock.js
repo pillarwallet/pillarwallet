@@ -85,7 +85,7 @@ class SearchBlock extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this._willBlur.remove();
+    if (this._willBlur) this._willBlur.remove();
   }
 
   onScreenBlur = () => {
