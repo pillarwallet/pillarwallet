@@ -1,3 +1,4 @@
+// @flow
 import styled from 'styled-components/native';
 import { Icon } from 'native-base';
 import { BaseText } from 'components/Typography';

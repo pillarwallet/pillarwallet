@@ -55,9 +55,8 @@ class PeopleScreen extends React.Component<Props> {
     this.handleContactsSearch = debounce(this.handleContactsSearch, 500);
   }
 
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
-    return !isEq;
+  shouldComponentUpdate(nextProps: Props) {
+    return isEqual(this.props, nextProps);
   }
 
   handleSearchChange = (query: any) => {
@@ -88,6 +87,7 @@ class PeopleScreen extends React.Component<Props> {
       invitations,
       localContacts,
       fetchInviteNotifications,
+      disconnectContact,
     } = this.props;
     const pendingConnectionRequests = invitations.filter(({ type }) => type === TYPE_RECEIVED).length;
     const sortedLocalContacts = orderBy(localContacts, [user => user.username.toLowerCase()], 'asc');
@@ -96,13 +96,14 @@ class PeopleScreen extends React.Component<Props> {
       <Scene
         navigation={navigation}
         onSearchChange={(q) => this.handleSearchChange(q)}
+        searchResults={searchResults}
         contactState={contactState}
+        fetchInviteNotifications={fetchInviteNotifications}
+        disconnectContact={(contact) => disconnectContact(contact)}
         pendingConnectionRequests={pendingConnectionRequests}
         invitations={invitations}
         onHandleConnectionsRequestBannerPress={this.handleConnectionsRequestBannerPress}
-        searchResults={searchResults}
         sortedLocalContacts={sortedLocalContacts}
-        fetchInviteNotifications={fetchInviteNotifications}
         onHandleContactCardPress={(contact) => this.handleContactCardPress(contact)}
       />
     );

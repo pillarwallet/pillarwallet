@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import type { Node } from 'react';
 import {
   FlatList,
   Keyboard,
@@ -59,15 +60,16 @@ const esBackground = require('assets/images/esLeftLong.png');
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  searchContacts: (query: string) => Function,
+  onSearchChange: Function,
   searchResults: SearchResults,
   contactState: ?string,
-  user: Object,
   fetchInviteNotifications: Function,
   disconnectContact: Function,
-  resetSearchContactsState: Function,
   invitations: Object[],
-  localContacts: Object[],
+  onHandleConnectionsRequestBannerPress: Function,
+  sortedLocalContacts: Object[],
+  onHandleContactCardPress: Function,
+  pendingConnectionRequests: number,
 }
 
 type State = {
@@ -126,14 +128,14 @@ class PeopleScene extends React.Component<Props, State> {
     });
   };
 
-  renderSwipeoutBtns = (data) => {
+  renderSwipeoutBtns = (data: Object): Array<Node> => {
     const swipeButtons = [
       // { actionType: MUTE, icon: 'mute'},
       { actionType: DISCONNECT, icon: 'remove' },
       // { actionType: BLOCK, icon: 'warning'},
     ];
 
-    return swipeButtons.map((buttonDefinition) => {
+    return swipeButtons.map((buttonDefinition): Object => {
       const { actionType, icon, ...btnProps } = buttonDefinition;
 
       return {
@@ -160,7 +162,7 @@ class PeopleScene extends React.Component<Props, State> {
     });
   };
 
-  renderContact = ({ item }) => (
+  renderContact = ({ item }: Object) => (
     // please refer to https://www.pivotaltracker.com/story/show/163147492
     // to understand the reason for the temporary disabling of swipeout feature
     <Swipeout
@@ -219,7 +221,6 @@ class PeopleScene extends React.Component<Props, State> {
       fetchInviteNotifications,
     } = this.props;
 
-    console.log({ props: this.props })
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!contactState);
     const usersFound = !!searchResults.apiUsers.length || !!searchResults.localContacts.length;
     const contact = sortedLocalContacts.find((localContact) => localContact.id === manageContactId) || {};

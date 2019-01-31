@@ -1,58 +1,49 @@
 // @flow
-
 import React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
+import { navigation, searchResults } from './mocks';
 import PeopleScene from '../scene';
 
-const navigation = {
-  addListener: (event, callback) => console.log(`listener on ${event}`),
-  isFocused: () => console.log('is focused'),
-};
-
+/* eslint no-console: 0 */
 storiesOf('People', module)
   .add('Empty list', () => {
-    const searchResults = {
-      apiUsers: [],
-      localContacts: [],
-    };
-    const sortedLocalContacts = new Array();
+    const sortedLocalContacts = [];
 
     return (
       <PeopleScene
         navigation={navigation}
         onSearchChange={(q) => console.log(q)}
         contactState=""
-        pendingConnectionRequests={null}
+        pendingConnectionRequests={0}
         invitations={[]}
         onHandleConnectionsRequestBannerPress={() => console.log('handle connection request')}
         searchResults={searchResults}
         sortedLocalContacts={sortedLocalContacts}
         fetchInviteNotifications={() => console.log('fetch invite notifications')}
         onHandleContactCardPress={(contact) => console.log(contact)}
+        disconnectContact={(contact) => console.log(`disconnect contact ${contact.username}`)}
       />
     );
   })
   .add('Populated list', () => {
-    const searchResults = {
-      apiUsers: [],
-      localContacts: [],
-    };
-    const sortedLocalContacts = new Array();
-    sortedLocalContacts.push({ username: 'foobar', profileImage: '', id: 'foobar' });
+    const sortedLocalContacts = [
+      { username: 'foobar', profileImage: '', id: 'foobar' },
+    ];
 
     return (
       <PeopleScene
         navigation={navigation}
         onSearchChange={(q) => console.log(q)}
         contactState=""
-        pendingConnectionRequests={null}
+        pendingConnectionRequests={0}
         invitations={[]}
         onHandleConnectionsRequestBannerPress={() => console.log('handle connection request')}
         searchResults={searchResults}
         sortedLocalContacts={sortedLocalContacts}
         fetchInviteNotifications={() => console.log('fetch invite notifications')}
         onHandleContactCardPress={(contact) => console.log(contact)}
+        disconnectContact={(contact) => console.log(`disconnect contact ${contact.username}`)}
       />
     );
   });
