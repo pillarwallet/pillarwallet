@@ -135,11 +135,20 @@ const FloatImage = styled(CachedImage)`
 
 const FloatImageView = styled.View`
   position: absolute;
-  left: 12px;
-  top: 11px;
+  left: 10px;
+  top: 0;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  max-width: 100;
+  height: 100%;
+`;
+
+const TextHolder = styled.View`
+  flex-direction: row;
+  align-items: center;
+  width: 70%;
+  height: 100%;
 `;
 
 const InnerImageText = styled(BaseText)`
@@ -336,7 +345,10 @@ class SingleInput extends React.Component<Props, *> {
                 fallbackSource={fallbackSource}
               />
               {!!innerImageText &&
-              <InnerImageText>{innerImageText}</InnerImageText>
+                <TextHolder>
+                  <InnerImageText>= </InnerImageText>
+                  <InnerImageText numberOfLines={2} ellipsizeMode="tail" >{innerImageText}</InnerImageText>
+                </TextHolder>
               }
             </FloatImageView>
             }
