@@ -5,16 +5,16 @@
 // https://github.com/elderfo/react-native-storybook-loader.git
 
 function loadStories() {
-  require('../src/screens/People/stories/People');
-  require('../src/utils/stories/colors');
-  require('../src/utils/stories/typography');
+  require('../src/screens/People/stories/People.story');
+  require('../src/utils/stories/colors.story');
+  require('../src/utils/stories/typography.story');
   
 }
 
 const stories = [
-  '../src/screens/People/stories/People',
-  '../src/utils/stories/colors',
-  '../src/utils/stories/typography',
+  '../src/screens/People/stories/People.story',
+  '../src/utils/stories/colors.story',
+  '../src/utils/stories/typography.story',
   
 ];
 

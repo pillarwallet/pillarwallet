@@ -13875,6 +13875,11 @@ react-native-debugger-open@^0.3.17:
     minimist "^1.2.0"
     semver "^5.4.1"
 
+react-native-dev-menu@^2.0.1:
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-dev-menu/-/react-native-dev-menu-2.0.1.tgz#8a54ab04532af26e2cbbe86bd41d8ce390fe2a04"
+  integrity sha1-ilSrBFMq8m4su+hr1B2M45D+KgQ=
+
 react-native-device-info@^0.21.5:
   version "0.21.5"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-device-info/-/react-native-device-info-0.21.5.tgz#99478a2d68182e012297f2d63f2bd1b788106dee"

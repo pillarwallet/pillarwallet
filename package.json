@@ -74,7 +74,7 @@
       "searchDir": [
         "./src"
       ],
-      "pattern": "**/stories/*.js",
+      "pattern": "**/stories/*.story.js",
       "outputFile": "./storybook/storyLoader.js"
     }
   },
@@ -154,6 +154,7 @@
     "react-native-canvas": "^0.1.20",
     "react-native-color-matrix-image-filters": "^4.0.0",
     "react-native-crypto": "^2.1.0",
+    "react-native-dev-menu": "^2.0.1",
     "react-native-device-info": "^0.21.5",
     "react-native-firebase": "^4.2.0",
     "react-native-gifted-chat": "https://github.com/FaridSafi/react-native-gifted-chat",

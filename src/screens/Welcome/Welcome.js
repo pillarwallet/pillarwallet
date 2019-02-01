@@ -68,6 +68,10 @@ class Welcome extends React.Component<Props, State> {
   };
 
   componentDidMount() {
+    if (__DEV__) {
+      const DevMenu = require('react-native-dev-menu');
+      DevMenu.addItem('StoryBook', () => this.props.navigation.navigate('STORYBOOK'));
+    }
     this.listeners = [
       this.props.navigation.addListener('willFocus', () => {
         this.setState({ shouldAnimate: true });
