@@ -256,7 +256,10 @@ class Camera extends React.Component<Props, State> {
           imageUri: image.path,
         });
       })
-      .catch((err) => console.log(err)); // eslint-disable-line
+      .catch((err) => {
+        handleImagePick(false);
+        console.log(err); // eslint-disable-line
+      });
   };
 
   setImage = async () => {
@@ -328,7 +331,7 @@ class Camera extends React.Component<Props, State> {
         <FooterInner>
           <IconButton
             icon="gallery"
-            onPress={() => this.openGallery()}
+            onPress={this.openGallery}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
           />
@@ -337,7 +340,7 @@ class Camera extends React.Component<Props, State> {
           </CameraButtonOuter>
           <IconButton
             icon="flip"
-            onPress={() => this.handleCameraFlip()}
+            onPress={this.handleCameraFlip}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
           />
