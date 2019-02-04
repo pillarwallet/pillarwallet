@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
 import { saveDbAction } from 'actions/dbActions';
@@ -23,17 +41,9 @@ export const getExistingTxNotesAction = () => {
   };
 };
 
-export const sendTxNoteByContactAction = (username: string, userId: string, message: Object) => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      accessTokens: { data: accessTokens },
-    } = getState();
-    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
-    if (!Object.keys(connectionAccessTokens).length) {
-      return;
-    }
-    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(username, userId, userConnectionAccessToken, false).catch(e => {
+export const sendTxNoteByContactAction = (username: string, message: Object) => {
+  return async (dispatch: Function) => {
+    await chat.client.addContact(username, null, null, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -47,8 +57,8 @@ export const sendTxNoteByContactAction = (username: string, userId: string, mess
       const content = JSON.stringify({ text: message.text, txHash: message.txHash });
       const params = {
         username,
-        userId,
-        userConnectionAccessToken,
+        userId: null,
+        userConnectionAccessToken: null,
         message: content,
       };
       await chat.sendMessage('tx-note', params, true, (requestId) => {
@@ -84,18 +94,12 @@ export const sendTxNoteByContactAction = (username: string, userId: string, mess
   };
 };
 
-export const getTxNoteByContactAction = (username: string, userId: string) => {
+export const getTxNoteByContactAction = (username: string) => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      accessTokens: { data: accessTokens },
       chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
     } = getState();
-    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === userId);
-    if (!Object.keys(connectionAccessTokens).length) {
-      return;
-    }
-    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(username, userId, userConnectionAccessToken, false).catch(e => {
+    await chat.client.addContact(username, null, null, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -122,9 +126,9 @@ export const getTxNoteByContactAction = (username: string, userId: string) => {
 
 export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, params: Object) => {
   return async () => {
-    const { username, userId, userConnectionAccessToken } = params;
+    const { username } = params;
     try {
-      await chat.client.addContact(username, userId, userConnectionAccessToken, true);
+      await chat.client.addContact(username, null, null, true);
       await chat.sendMessage(tag, params, true);
     } catch (e) {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
@@ -140,18 +144,8 @@ export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, param
 };
 
 export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => {
-  return async (dispatch: Function, getState: Function) => {
-    const {
-      accessTokens: { data: accessTokens },
-      contacts: { data: contacts },
-    } = getState();
-    const contact = contacts.find(c => c.username === message.source) || {};
-    const connectionAccessTokens = accessTokens.find(({ userId: connectionUserId }) => connectionUserId === contact.id);
-    if (!Object.keys(connectionAccessTokens).length) {
-      return;
-    }
-    const { userAccessToken: userConnectionAccessToken } = connectionAccessTokens;
-    await chat.client.addContact(message.source, contact.id, userConnectionAccessToken, false).then(async () => {
+  return async () => {
+    await chat.client.addContact(message.source, null, null, false).then(async () => {
       await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
       await chat.deleteMessage(message.source, message.timestamp, message.requestId);
     }).catch(e => {

@@ -1,4 +1,4 @@
-git_url("git@github.com:pillarwallet/fastlane_ios_certificates.git")
+git_url("git@github.com:pillarwallet-private/fastlane_ios_certificates.git")
 
 type("appstore") # The default type, can be: appstore, adhoc, enterprise or development
 
