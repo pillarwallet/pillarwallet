@@ -364,7 +364,7 @@ class SendTokenAmount extends React.Component<Props, State> {
     const currentValue = (!!value && !!parseFloat(value.amount)) ? parseFloat(value.amount) : 0;
     const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
     const formattedValueInFiat = formatMoney(valueInFiat);
-    const valueInFiatOutput = `= ${currencySymbol}${formattedValueInFiat}`;
+    const valueInFiatOutput = `${currencySymbol}${formattedValueInFiat}`;
     const formOptions = generateFormOptions({ icon, currency: token, valueInFiatOutput });
     return (
       <Container>
