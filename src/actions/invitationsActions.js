@@ -52,7 +52,7 @@ export const fetchInviteNotificationsAction = () => {
     } = getState();
 
     if (accessTokens === undefined || !accessTokens.length) {
-      Sentry.captureMessage('Empty connection access tokens, dispatching restoreAccessTokensAction');
+      Sentry.captureMessage('Empty connection access tokens, dispatching restoreAccessTokensAction', { level: 'info' });
       await dispatch(restoreAccessTokensAction(user.walletId));
       const {
         accessTokens: { data: updatedAccessTokens },
