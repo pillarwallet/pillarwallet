@@ -46,7 +46,7 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-import { isIphoneX } from 'utils/common';
+import { isIphoneX, handleUrlPress } from 'utils/common';
 import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
@@ -265,7 +265,7 @@ const parsePatterns = () => [
   {
     type: 'url',
     style: { color: baseColors.clearBlue },
-    onPress: (url) => Linking.openURL(url),
+    onPress: (url) => handleUrlPress(url),
   },
   {
     type: 'email',
@@ -274,7 +274,8 @@ const parsePatterns = () => [
   },
   {
     type: 'phone',
-    style: { color: baseColors.black },
+    style: { color: baseColors.clearBlue },
+    onPress: (phone) => Linking.openURL(`tel:${phone}`),
   },
 ];
 
