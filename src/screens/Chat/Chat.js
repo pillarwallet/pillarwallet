@@ -274,7 +274,8 @@ const parsePatterns = () => [
   },
   {
     type: 'phone',
-    style: { color: baseColors.black },
+    style: { color: baseColors.clearBlue },
+    onPress: (phone) => Linking.openURL(`tel:${phone}`),
   },
 ];
 
