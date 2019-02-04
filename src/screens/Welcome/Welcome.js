@@ -69,7 +69,7 @@ class Welcome extends React.Component<Props, State> {
 
   componentDidMount() {
     if (__DEV__) {
-      const DevMenu = require('react-native-dev-menu');
+      const DevMenu = require('react-native-dev-menu'); // eslint-disable-line
       DevMenu.addItem('StoryBook', () => this.props.navigation.navigate('STORYBOOK'));
     }
     this.listeners = [
