@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Platform } from 'react-native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
@@ -134,11 +135,20 @@ const FloatImage = styled(CachedImage)`
 
 const FloatImageView = styled.View`
   position: absolute;
-  left: 12px;
-  top: 11px;
+  left: 10px;
+  top: 0;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  max-width: 100;
+  height: 100%;
+`;
+
+const TextHolder = styled.View`
+  flex-direction: row;
+  align-items: center;
+  width: 70%;
+  height: 100%;
 `;
 
 const InnerImageText = styled(BaseText)`
@@ -177,13 +187,15 @@ const InputField = styled(Input)`
   font-weight: ${props => props.fontWeight ? props.fontWeight : fontWeights.bold};
   include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
+  textAlignVertical: center;
   background: ${props => props.theme.backgroundColor};
   border-radius: ${props => props.theme.borderRadius};
   color: ${UIColors.defaultTextColor};
   border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
   border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
-  padding: 0 12px;
-  font-family: 'Aktiv Grotesk App';
+  padding: 0 12px;  
+  ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
+  ${props => Platform.OS === 'android' && props.fontSize ? `line-height: ${props.fontSize};` : ''}
 `;
 
 const SelectedOptionWrapper = styled.View`
@@ -333,7 +345,10 @@ class SingleInput extends React.Component<Props, *> {
                 fallbackSource={fallbackSource}
               />
               {!!innerImageText &&
-              <InnerImageText>{innerImageText}</InnerImageText>
+                <TextHolder>
+                  <InnerImageText>= </InnerImageText>
+                  <InnerImageText numberOfLines={2} ellipsizeMode="tail" >{innerImageText}</InnerImageText>
+                </TextHolder>
               }
             </FloatImageView>
             }
