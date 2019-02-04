@@ -14020,6 +14020,13 @@ react-native-parsed-text@^0.0.20:
     babel-plugin-check-es2015-constants "6.22.0"
     prop-types "^15.5.10"
 
+react-native-parsed-text@^0.0.21:
+  version "0.0.21"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-parsed-text/-/react-native-parsed-text-0.0.21.tgz#86cf233aedc7a848b801b674c81d6b5ee37162df"
+  integrity sha1-hs8jOu3HqEi4AbZ0yB1rXuNxYt8=
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-permissions@^1.1.1:
   version "1.1.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-permissions/-/react-native-permissions-1.1.1.tgz#4876004681ff8556454613d85249b01baff9b35b"
