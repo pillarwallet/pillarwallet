@@ -430,7 +430,7 @@ class Camera extends React.Component<Props, State> {
       : <Spinner />;
 
     const animationInTiming = 300;
-    const animationOutTiming = 1;
+    const animationOutTiming = !this.state.imageUri ? 300 : 1;
 
     return (
       <Modal
