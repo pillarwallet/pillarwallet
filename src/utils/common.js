@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { Dimensions, Platform, Animated, Easing } from 'react-native';
+import { Dimensions, Platform, Animated, Easing, Linking } from 'react-native';
 
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -172,3 +172,16 @@ export const modalTransition = {
   }),
 };
 
+const WWW_URL_PATTERN = /^www\./i;
+
+export const handleUrlPress = (url: string) => {
+  if (WWW_URL_PATTERN.test(url)) {
+    handleUrlPress(`http://${url}`);
+  } else {
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) Linking.openURL(url);
+      })
+      .catch(() => null);
+  }
+};
