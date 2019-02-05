@@ -144,7 +144,15 @@ export default class KeyPad extends React.Component<Props> {
     return buttons.map((btn: KeyPadButton) => {
       const {
         value,
+        label,
       } = btn;
+
+      if (!label && label !== 0) {
+        return (
+          <KeyInput key={value} />
+        );
+      }
+
       if (Platform.OS === 'ios') {
         return (
           <KeyInput key={value}>
