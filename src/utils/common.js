@@ -1,6 +1,24 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import { BigNumber } from 'bignumber.js';
-import { Dimensions, Platform, Animated, Easing } from 'react-native';
+import { Dimensions, Platform, Animated, Easing, Linking } from 'react-native';
 
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -154,3 +172,16 @@ export const modalTransition = {
   }),
 };
 
+const WWW_URL_PATTERN = /^www\./i;
+
+export const handleUrlPress = (url: string) => {
+  if (WWW_URL_PATTERN.test(url)) {
+    handleUrlPress(`http://${url}`);
+  } else {
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) Linking.openURL(url);
+      })
+      .catch(() => null);
+  }
+};
