@@ -34,7 +34,7 @@ import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import Svg, { Path, LinearGradient, Stop } from 'react-native-svg';
+import SvgOverlay, { Path, LinearGradient, Stop } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/appSettingsActions';
 
 type Props = {
@@ -57,7 +57,6 @@ type State = {
   isFlashOn: boolean,
   isHardwareFlashOn: boolean,
   isFrontFlashVisible: boolean,
-  focusedScreen: boolean,
 };
 
 const screenWidth = Dimensions.get('window').width;
@@ -102,12 +101,6 @@ const PhotoBoundariesWrapper = styled.View`
   left: 0;
   justify-content: center;
   align-items: center;
-`;
-
-const Overlay = styled(Svg)`
-  position: absolute; 
-  top: 0;
-  left: 0;
 `;
 
 const NoPermissions = styled.View`
@@ -195,22 +188,7 @@ class Camera extends React.Component<Props, State> {
     isFlashOn: false,
     isHardwareFlashOn: false,
     isFrontFlashVisible: false,
-    focusedScreen: false,
   };
-
-  componentDidMount() {
-    const { navigation } = this.props;
-    this.listeners = [
-      navigation.addListener('willFocus', () => this.setState({ focusedScreen: true })),
-      navigation.addListener('willBlur', () => this.setState({ focusedScreen: false })),
-    ];
-  }
-
-  componentWillUnmount() {
-    this.listeners.forEach((listener) => {
-      listener.remove();
-    });
-  }
 
   handleModalClose = () => {
     this.setState({ showResult: false });
@@ -278,7 +256,10 @@ class Camera extends React.Component<Props, State> {
           imageUri: image.path,
         });
       })
-      .catch((err) => console.log(err)); // eslint-disable-line
+      .catch((err) => {
+        handleImagePick(false);
+        console.log(err); // eslint-disable-line
+      });
   };
 
   setImage = async () => {
@@ -350,7 +331,7 @@ class Camera extends React.Component<Props, State> {
         <FooterInner>
           <IconButton
             icon="gallery"
-            onPress={() => this.openGallery()}
+            onPress={this.openGallery}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
           />
@@ -359,7 +340,7 @@ class Camera extends React.Component<Props, State> {
           </CameraButtonOuter>
           <IconButton
             icon="flip"
-            onPress={() => this.handleCameraFlip()}
+            onPress={this.handleCameraFlip}
             fontSize={fontSizes.extraLarge}
             color={baseColors.white}
           />
@@ -374,8 +355,8 @@ class Camera extends React.Component<Props, State> {
       isFlashOn,
       isHardwareFlashOn,
       isFrontFlashVisible,
-      focusedScreen,
     } = this.state;
+    const { isVisible } = this.props;
 
     const cutOutD = screenWidth - 40;
     const cutOutR = cutOutD / 2;
@@ -390,23 +371,31 @@ class Camera extends React.Component<Props, State> {
     const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
     return (
       <React.Fragment>
-        {!!focusedScreen &&
-          <RNCamera
-            ref={ref => {
-              this.camera = ref;
-            }}
-            style={{
-              width: screenWidth,
-              height: screenHeight,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            ratio="16:9"
-            type={cameraType}
-            flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
-          />
+        {!!isVisible &&
+        <RNCamera
+          ref={ref => {
+            this.camera = ref;
+          }}
+          style={{
+            width: screenWidth,
+            height: screenHeight,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          ratio="16:9"
+          type={cameraType}
+          flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
+        />
         }
-        <Overlay height={screenHeight} width={screenWidth}>
+        <SvgOverlay
+          height={screenHeight}
+          width={screenWidth}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        >
           <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
             <Stop offset="0%" stopColor={overlayColor} stopOpacity="0.3" />
             <Stop offset="100%" stopColor={overlayColor} stopOpacity="0.7" />
@@ -416,7 +405,7 @@ class Camera extends React.Component<Props, State> {
             fill="url(#grad)"
             fill-rule="evenodd"
           />
-        </Overlay>
+        </SvgOverlay>
         {!!isFrontFlashVisible && <FrontFlash />}
         <HeaderWrapperCamera>
           <Header light flexStart onClose={this.closeCamera} onBack={this.handleFlash} backIcon={flashIcon} />
@@ -441,7 +430,8 @@ class Camera extends React.Component<Props, State> {
       : <Spinner />;
 
     const animationInTiming = 300;
-    const animationOutTiming = 300;
+    const animationOutTiming = !this.state.imageUri ? 300 : 1;
+
     return (
       <Modal
         isVisible={isVisible}
@@ -458,15 +448,15 @@ class Camera extends React.Component<Props, State> {
       >
         {cameraScreenContent}
         {!!this.state.showResult &&
-          <ResultScreen>
-            <PreviewWrapper>
-              {preview}
-            </PreviewWrapper>
-            <ResultScreenFooter>
-              <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
-              <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
-            </ResultScreenFooter>
-          </ResultScreen>
+        <ResultScreen>
+          <PreviewWrapper>
+            {preview}
+          </PreviewWrapper>
+          <ResultScreenFooter>
+            <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
+            <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
+          </ResultScreenFooter>
+        </ResultScreen>
         }
       </Modal>
     );
