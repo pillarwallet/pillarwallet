@@ -211,7 +211,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
       : this.renderScanner();
 
     const animationInTiming = 300;
-    const animationOutTiming = 300;
+    const animationOutTiming = this.isScanned ? 1 : 300;
 
     return (
       <Modal
