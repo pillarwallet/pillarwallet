@@ -1,6 +1,25 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import * as React from 'react';
 import styled from 'styled-components/native';
+import { Platform } from 'react-native';
 import { Input, ActionSheet } from 'native-base';
 import Icon from 'components/Icon';
 import { BaseText, MediumText } from 'components/Typography';
@@ -116,11 +135,20 @@ const FloatImage = styled(CachedImage)`
 
 const FloatImageView = styled.View`
   position: absolute;
-  left: 12px;
-  top: 11px;
+  left: 10px;
+  top: 0;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  max-width: 100;
+  height: 100%;
+`;
+
+const TextHolder = styled.View`
+  flex-direction: row;
+  align-items: center;
+  width: 70%;
+  height: 100%;
 `;
 
 const InnerImageText = styled(BaseText)`
@@ -159,13 +187,15 @@ const InputField = styled(Input)`
   font-weight: ${props => props.fontWeight ? props.fontWeight : fontWeights.bold};
   include-font-padding: false;
   text-align: ${props => props.textAlign || 'right'};
+  textAlignVertical: center;
   background: ${props => props.theme.backgroundColor};
   border-radius: ${props => props.theme.borderRadius};
   color: ${UIColors.defaultTextColor};
   border-width: ${props => props.error ? '1px' : props.theme.borderWidth};
   border-color: ${props => props.error ? 'tomato' : props.theme.borderColor};
-  padding: 0 12px;
-  font-family: 'Aktiv Grotesk App';
+  padding: 0 12px;  
+  ${props => Platform.OS === 'ios' || props.value ? 'font-family: Aktiv Grotesk App;' : ''}
+  ${props => Platform.OS === 'android' && props.fontSize ? `line-height: ${props.fontSize};` : ''}
 `;
 
 const SelectedOptionWrapper = styled.View`
@@ -315,7 +345,10 @@ class SingleInput extends React.Component<Props, *> {
                 fallbackSource={fallbackSource}
               />
               {!!innerImageText &&
-              <InnerImageText>{innerImageText}</InnerImageText>
+                <TextHolder>
+                  <InnerImageText>= </InnerImageText>
+                  <InnerImageText numberOfLines={2} ellipsizeMode="tail" >{innerImageText}</InnerImageText>
+                </TextHolder>
               }
             </FloatImageView>
             }
