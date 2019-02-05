@@ -5,11 +5,13 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
+		035FA35BA3024183800DB42C /* Aktiv Grotesk App_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C8ADF4A6C06F4F2AB8A74D88 /* Aktiv Grotesk App_medium.ttf */; };
 		06F589C928FF4E118352DC39 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D8C28DEF4EBB4DD09E3DDA7D /* SimpleLineIcons.ttf */; };
 		0A77B4F9D5F7443A9BD907FD /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7C7DF229FE374F9AAB3DC3A7 /* FontAwesome5_Brands.ttf */; };
 		0EAC7CE954914376B7E5C7AC /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A448C5E5A81446A2B5F41A85 /* Roboto_medium.ttf */; };
@@ -39,6 +41,7 @@
 		16CF7AD52146D88000BEADDB /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16CF7AD42146D87300BEADDB /* libRNShare.a */; };
 		1A35E955B6E8424F983EECB2 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 54AE39B9C8BF45D98DEA6581 /* rubicon-icon-font.ttf */; };
 		1D07F721211B3CD8009D15F8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */; };
+		1F8A0045052449CDB21A74DF /* Aktiv Grotesk App_light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6BFBD6B1ACEF4837940C6C31 /* Aktiv Grotesk App_light.ttf */; };
 		3C7B672F213EADB70053E053 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C7B672E213EADB60053E053 /* Social.framework */; };
 		3C7B6731213EADC20053E053 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C7B6730213EADC20053E053 /* MessageUI.framework */; };
 		45EE92A36C08417FA16196A3 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C02001C945704A5C86A0A2FB /* EvilIcons.ttf */; };
@@ -55,18 +58,16 @@
 		9649977193B447048360D72A /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 454C1ADA396C42AB810CD4F7 /* FontAwesome5_Regular.ttf */; };
 		9780FC46A57D42758DBD034A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ADEBC7D82865437D96A0E5A4 /* FontAwesome.ttf */; };
 		A619D15ABDF942EC8912E9AD /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 65478B02B8C2492D810CAC24 /* Roboto.ttf */; };
+		A8DA03B28FB14D0F8A04D272 /* Aktiv Grotesk App.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7AE6991141C34F478E964225 /* Aktiv Grotesk App.ttf */; };
 		A9A60C1EA96A483EA7421C39 /* libTcpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BA5F62D180334F57AA8CCEEB /* libTcpSockets.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		BB05DCACFE774EEE8676B0FE /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 759BFE846E054C6189203CEF /* Octicons.ttf */; };
+		D482CFA634ED42219103179E /* Aktiv Grotesk App_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 81EA8192DC2A459991B604E1 /* Aktiv Grotesk App_bold.ttf */; };
 		D69534B8BDBF68246E3C0379 /* libPods-pillarwallet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A7A6F4ED0218800D8189BB6 /* libPods-pillarwallet.a */; };
 		E09EED9AFD9E4C58AFD03E2E /* PillarIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C179B501F4F342C9AF1613E7 /* PillarIcons.ttf */; };
 		E8197C7BA3C44222AC003DF5 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0324A5DFD23D42D79733EED0 /* Entypo.ttf */; };
 		EA4F15CCADAC44BFA9453C38 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DA123A58B3461382F464FA /* libRNOS.a */; };
 		EC113BA65B394361A4500F72 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 090B739AA78C4A9E8E5D2698 /* Foundation.ttf */; };
-		D482CFA634ED42219103179E /* Aktiv Grotesk App_bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 81EA8192DC2A459991B604E1 /* Aktiv Grotesk App_bold.ttf */; };
-		1F8A0045052449CDB21A74DF /* Aktiv Grotesk App_light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6BFBD6B1ACEF4837940C6C31 /* Aktiv Grotesk App_light.ttf */; };
-		035FA35BA3024183800DB42C /* Aktiv Grotesk App_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C8ADF4A6C06F4F2AB8A74D88 /* Aktiv Grotesk App_medium.ttf */; };
-		A8DA03B28FB14D0F8A04D272 /* Aktiv Grotesk App.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7AE6991141C34F478E964225 /* Aktiv Grotesk App.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -548,10 +549,13 @@
 		65478B02B8C2492D810CAC24 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		690777AE39E44AABA938DEFA /* libSignalMessagingSwift.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSignalMessagingSwift.a; sourceTree = "<group>"; };
 		6BA9F928B22E46C8B0C4B348 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
+		6BFBD6B1ACEF4837940C6C31 /* Aktiv Grotesk App_light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Aktiv Grotesk App_light.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_light.ttf"; sourceTree = "<group>"; };
 		6E0A7D4A8FF547D0B5B3181C /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
 		759BFE846E054C6189203CEF /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
+		7AE6991141C34F478E964225 /* Aktiv Grotesk App.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Aktiv Grotesk App.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App.ttf"; sourceTree = "<group>"; };
 		7C7DF229FE374F9AAB3DC3A7 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
+		81EA8192DC2A459991B604E1 /* Aktiv Grotesk App_bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Aktiv Grotesk App_bold.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_bold.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8B94991EB8984BD58A354B57 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = UdpSockets.xcodeproj; path = "../node_modules/react-native-udp/ios/UdpSockets.xcodeproj"; sourceTree = "<group>"; };
 		95BC91FBD2D94814AA54AE69 /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
@@ -566,15 +570,12 @@
 		C02001C945704A5C86A0A2FB /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		C179B501F4F342C9AF1613E7 /* PillarIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = PillarIcons.ttf; path = ../src/assets/fonts/PillarIcons.ttf; sourceTree = "<group>"; };
 		C5092F5F060448BDB321EF04 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		C8ADF4A6C06F4F2AB8A74D88 /* Aktiv Grotesk App_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Aktiv Grotesk App_medium.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_medium.ttf"; sourceTree = "<group>"; };
 		CA815C82E1A64CAE93EF8ED5 /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
 		D8C28DEF4EBB4DD09E3DDA7D /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		DAA37A6D0BC84F48AFD69262 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		E41429819AFB44C2B5C6BCF8 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		F1AE91BF7F0E413EB47F32BA /* libRNRandomBytes-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNRandomBytes-tvOS.a"; sourceTree = "<group>"; };
-		81EA8192DC2A459991B604E1 /* Aktiv Grotesk App_bold.ttf */ = {isa = PBXFileReference; name = "Aktiv Grotesk App_bold.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		6BFBD6B1ACEF4837940C6C31 /* Aktiv Grotesk App_light.ttf */ = {isa = PBXFileReference; name = "Aktiv Grotesk App_light.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		C8ADF4A6C06F4F2AB8A74D88 /* Aktiv Grotesk App_medium.ttf */ = {isa = PBXFileReference; name = "Aktiv Grotesk App_medium.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		7AE6991141C34F478E964225 /* Aktiv Grotesk App.ttf */ = {isa = PBXFileReference; name = "Aktiv Grotesk App.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1623,7 +1624,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport NODE_BINARY=node\n../node_modules/@sentry/cli/bin/sentry-cli react-native xcode ../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		164D049C212D7418008344CE /* Setup Fabric */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1677,7 +1678,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym";
+			shellScript = "export SENTRY_PROPERTIES=sentry.properties\n../node_modules/@sentry/cli/bin/sentry-cli upload-dsym\n";
 		};
 		C8240FE09594C0D9D51B29E1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
