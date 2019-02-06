@@ -107,7 +107,7 @@ type Props = {
   hasDBConflicts: boolean,
   repairStorage: Function,
   updateAppSettings: (path: string, value: any) => Function,
-  updateUser: (walletId: string, field: Object) => Function,
+  updateUser: (walletId: string, field: Object, callback?: Function) => Function,
   resetIncorrectPassword: () => Function,
   lockScreen: () => Function,
   logoutUser: () => Function,
@@ -153,8 +153,7 @@ class Profile extends React.Component<Props, State> {
   handleUserFieldUpdate = (field: Object) => {
     Keyboard.dismiss();
     const { updateUser, user } = this.props;
-    updateUser(user.walletId, field);
-    this.toggleSlideModalOpen(null);
+    updateUser(user.walletId, field, () => this.toggleSlideModalOpen(null));
   };
 
   handleCurrencyUpdate = ({ currency }: Object) => {
@@ -502,7 +501,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
   repairStorage: () => dispatch(repairStorageAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
+  updateUser: (walletId: string, field: Object, callback: Function) =>
+    dispatch(updateUserAction(walletId, field, callback)),
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),

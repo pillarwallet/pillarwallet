@@ -220,6 +220,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
         animationOutTiming={animationOutTiming}
         animationIn="fadeIn"
         animationOut="fadeOut"
+        hideModalContentWhileAnimating
         onBackButtonPress={this.handleAnimationDismiss}
         style={{
           margin: 0,
