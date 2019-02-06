@@ -18,20 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
+import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { saveDbAction } from './dbActions';
 
-export const updateUserAction = (walletId: string, field: Object) => {
+export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
-    const user = await api.updateUser({ walletId, ...field });
-    if (!Object.keys(user).length) return;
+    const response = await api.updateUser({ walletId, ...field });
+    const { status, ...user } = response;
 
-    const updatedUser = { ...user, lastUpdateTime: +new Date() };
-    dispatch(saveDbAction('user', { user: updatedUser }, true));
-
-    dispatch({
-      type: UPDATE_USER,
-      payload: { user: updatedUser, state: REGISTERED },
-    });
+    if (status === 200) {
+      const updatedUser = { ...user, lastUpdateTime: +new Date() };
+      dispatch(saveDbAction('user', { user: updatedUser }, true));
+      dispatch({
+        type: UPDATE_USER,
+        payload: { user: updatedUser, state: REGISTERED },
+      });
+      if (callback) callback();
+    } else {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: { message: 'Please try again later', title: 'Changes have not been saved', messageType: 'warning' },
+      }));
+    }
   };
 };
 
