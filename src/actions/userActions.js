@@ -24,9 +24,9 @@ import { saveDbAction } from './dbActions';
 export const updateUserAction = (walletId: string, field: Object, callback?: Function) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const response = await api.updateUser({ walletId, ...field });
-    const { status, ...user } = response;
+    const { responseStatus, ...user } = response;
 
-    if (status === 200) {
+    if (responseStatus === 200) {
       const updatedUser = { ...user, lastUpdateTime: +new Date() };
       dispatch(saveDbAction('user', { user: updatedUser }, true));
       dispatch({

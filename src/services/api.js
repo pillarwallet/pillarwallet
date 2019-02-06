@@ -138,7 +138,7 @@ SDKWrapper.prototype.fetchInitialAssets = function (walletId: string) {
 SDKWrapper.prototype.updateUser = function (user: Object) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.user.update(user))
-    .then(({ data }) => ({ status: 200, ...data.user, walletId: user.walletId }))
+    .then(({ data }) => ({ responseStatus: 200, ...data.user, walletId: user.walletId }))
     .catch((error) => {
       const {
         response: {
@@ -153,7 +153,7 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
         status,
         message,
       });
-      return { status, message };
+      return { responseStatus: status, message };
     });
 };
 
