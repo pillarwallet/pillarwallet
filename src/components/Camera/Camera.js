@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Dimensions, Platform, StatusBar } from 'react-native';
+import { Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Modal from 'react-native-modal';
 import styled from 'styled-components/native';
@@ -34,7 +34,7 @@ import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { updateUserAvatarAction } from 'actions/userActions';
 import { baseColors, fontSizes, UIColors } from 'utils/variables';
-import SvgOverlay, { Path, LinearGradient, Stop } from 'react-native-svg';
+import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg';
 import { handleImagePickAction } from 'actions/appSettingsActions';
 
 type Props = {
@@ -82,25 +82,6 @@ const FrontFlash = styled.View`
   top: 0;
   left: 0;
   background-color: ${baseColors.blanchedAlmond};
-`;
-
-const PhotoBoundaries = styled.View`
-  height: ${screenWidth - 40};
-  width: ${screenWidth - 40};
-  border-radius: ${(screenWidth - 40) / 2};
-  border-width: 2;
-  border-color: ${props => props.color};
-  background-color: transparent;
-`;
-
-const PhotoBoundariesWrapper = styled.View`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  justify-content: center;
-  align-items: center;
 `;
 
 const NoPermissions = styled.View`
@@ -360,7 +341,7 @@ class Camera extends React.Component<Props, State> {
 
     const cutOutD = screenWidth - 40;
     const cutOutR = cutOutD / 2;
-    const centerYpos = Platform.OS === 'ios' ? screenHeight / 2 : (screenHeight - StatusBar.currentHeight) / 2;
+    const centerYpos = screenHeight / 2;
     const overlayPath = `
     M 0 0 h${screenWidth} v${screenHeight} h-${screenWidth}Z
     M 20,${centerYpos} m 0,0
@@ -396,7 +377,7 @@ class Camera extends React.Component<Props, State> {
             left: 0,
           }}
         >
-          <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <LinearGradient id="grad" x1="0%" y1="0" x2="0%" y2={screenHeight}>
             <Stop offset="0%" stopColor={overlayColor} stopOpacity="0.3" />
             <Stop offset="100%" stopColor={overlayColor} stopOpacity="0.7" />
           </LinearGradient>
@@ -405,14 +386,19 @@ class Camera extends React.Component<Props, State> {
             fill="url(#grad)"
             fill-rule="evenodd"
           />
+          <Circle
+            cx={screenWidth / 2}
+            cy={screenHeight / 2}
+            r={cutOutR}
+            fill="none"
+            stroke={baseColors.white}
+            strokeWidth="2"
+          />
         </SvgOverlay>
         {!!isFrontFlashVisible && <FrontFlash />}
         <HeaderWrapperCamera>
           <Header light flexStart onClose={this.closeCamera} onBack={this.handleFlash} backIcon={flashIcon} />
         </HeaderWrapperCamera>
-        <PhotoBoundariesWrapper pointerEvents="none">
-          <PhotoBoundaries color={baseColors.white} />
-        </PhotoBoundariesWrapper>
         {this.renderBottomBar()}
       </React.Fragment>
     );
@@ -439,6 +425,7 @@ class Camera extends React.Component<Props, State> {
         animationOutTiming={animationOutTiming}
         animationIn="fadeIn"
         animationOut="fadeOut"
+        hideModalContentWhileAnimating
         onBackButtonPress={modalHide}
         onModalHide={this.handleModalClose}
         style={{
