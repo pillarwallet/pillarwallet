@@ -21,6 +21,7 @@ import { SignalClient } from 'rn-signal-protocol-messaging';
 import ChatWebSocketService from 'services/chatWebSocket';
 import { SENTRY_DSN, SIGNAL_SERVER_HOST } from 'react-native-dotenv';
 import { Platform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 
 let webSocketInstance;
 
@@ -41,6 +42,14 @@ export default class Chat {
 
     credentials.errorTrackingDSN = SENTRY_DSN;
     credentials.isSendingLogs = !__DEV__;
+    try {
+      credentials.buildNumber = `${DeviceInfo.getBuildNumber()}`;
+      credentials.device = `${DeviceInfo.getManufacturer()} ${DeviceInfo.getModel()}`;
+      credentials.os = `${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
+    } catch (e) {
+      //
+    }
+    console.log('credentials', credentials);
     return this.client.init(credentials);
   }
 
