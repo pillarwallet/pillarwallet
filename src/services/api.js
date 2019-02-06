@@ -146,6 +146,13 @@ SDKWrapper.prototype.updateUser = function (user: Object) {
           data: { message } = {},
         },
       } = error;
+      Sentry.captureException({
+        error: 'Failed to update user',
+        walletId: user.walletId,
+        user,
+        status,
+        message,
+      });
       return { status, message };
     });
 };
