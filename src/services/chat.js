@@ -49,7 +49,6 @@ export default class Chat {
     } catch (e) {
       //
     }
-    console.log('credentials', credentials);
     return this.client.init(credentials);
   }
 
