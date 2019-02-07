@@ -41,6 +41,12 @@ type FooterProps = {
   keyboardVerticalOffset?: number,
 };
 
+type ScrollWrapperProps = {
+  children?: React.Node,
+  regularPadding?: boolean,
+  color?: string,
+};
+
 export const Center = styled.View`
   align-items: center;
 `;
@@ -76,7 +82,7 @@ export const Wrapper = styled.View`
 
 `;
 
-export const ScrollWrapper = styled(KeyboardAwareScrollView)`
+export const KAScrollView = styled(KeyboardAwareScrollView)`
   padding: ${props => (props.regularPadding ? '0 20px' : '0')};
   background-color: ${props => (props.color ? props.color : 'transparent')};
   flex: 1;
@@ -90,6 +96,18 @@ const FooterInner = styled.KeyboardAvoidingView`
   flex-direction: ${props => (props.column ? 'row' : 'column')};
   background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
 `;
+
+export const ScrollWrapper = (props: ScrollWrapperProps) => {
+  return (
+    <KAScrollView
+      regularPadding={props.regularPadding}
+      color={props.color}
+      enableOnAndroid
+    >
+      {props.children}
+    </KAScrollView>
+  );
+};
 
 export const Footer = (props: FooterProps) => {
   return (
