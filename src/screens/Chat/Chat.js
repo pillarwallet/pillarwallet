@@ -310,16 +310,8 @@ class ChatScreen extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { chats, getChatByContact, isFetching } = this.props;
-    const { contact } = this.state;
-    const { chats: prevChats } = prevProps;
-    const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
-    const prevChatWithContact = prevChats.find(({ username }) => contact.username === username) || {};
-    if (chatWithContact.unread !== prevChatWithContact.unread) {
-      getChatByContact(contact.username, contact.id, contact.profileImage);
-    }
-
+  componentDidUpdate() {
+    const { isFetching } = this.props;
     if (this.state.isFetching && !isFetching) {
       this.setState({ isFetching: false }); // eslint-disable-line
     }
