@@ -29,6 +29,8 @@ import {
   ADD_WEBSOCKET_SENT_MESSAGE,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
   DELETE_CONTACT,
+  CHAT_DECRYPTING_FINISHED,
+  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
 } from 'constants/chatConstants';
 
 const chat = new ChatService();
@@ -147,12 +149,13 @@ export const getChatByContactAction = (
   loadEarlier: boolean = false,
 ) => {
   return async (dispatch: Function, getState: Function) => {
+    const {
+      chat: { data: { isDecrypting, webSocketMessages: { received: webSocketMessagesReceived } } },
+    } = getState();
+    if (isDecrypting) return;
     dispatch({
       type: FETCHING_CHATS,
     });
-    const {
-      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
-    } = getState();
     await chat.client.addContact(username, null, null, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -167,20 +170,44 @@ export const getChatByContactAction = (
       // TODO: split message loading in bunches and load earlier on lick
     }
 
-    await webSocketMessagesReceived
-      .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
-      .forEach(async (wsMessage) => {
-        await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
-        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
+    const data = await chat.client.receiveNewMessagesByContact(username, 'chat')
+      .then(JSON.parse)
+      .catch(() => {});
+
+    if (data !== undefined && Object.keys(data).length) {
+      const { messages: newRemoteMessages } = data;
+      if (newRemoteMessages !== undefined && newRemoteMessages.length) {
+        await newRemoteMessages.forEach(async (remoteMessage) => {
+          const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
+          await chat.deleteMessage(rmUsername, rmServerTimestamp);
+          dispatch({
+            type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+            payload: {
+              username: rmUsername,
+              timestamp: rmServerTimestamp,
+            },
+          });
+        });
+      }
+    }
+
+    if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
+      await webSocketMessagesReceived
+        .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
+        .forEach(async (wsMessage) => {
+          await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
+          await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
+        });
+      dispatch({
+        type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
+        payload: username,
       });
+    }
 
     dispatch({
-      type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
-      payload: username,
+      type: CHAT_DECRYPTING_FINISHED,
     });
 
-    await chat.client.receiveNewMessagesByContact(username, 'chat')
-      .catch(() => null);
     const receivedMessages = await chat.client.getMessagesByContact(username, 'chat')
       .then(JSON.parse)
       .catch(() => []);
