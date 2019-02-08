@@ -88,23 +88,14 @@ export default class Chat {
     }
   }
 
-  async deleteMessage(username: string, timestamp: number, responseRequestId: number) {
+  async deleteMessage(username: string, timestamp: number, responseRequestId?: number) {
     const chatWebSocket = this.getWebSocketInstance();
-    if (chatWebSocket.isRunning()) {
+    if (chatWebSocket.isRunning() && responseRequestId !== undefined) {
       const webSocketResponse = chatWebSocket.prepareResponse(responseRequestId, 200, 'OK');
       if (webSocketResponse != null) {
         await chatWebSocket.send(webSocketResponse);
       }
-      const requestId = (new Date()).getTime();
-      const request = chatWebSocket.prepareRequest(
-        requestId,
-        'DELETE',
-        `/v1/messages/${username}/${timestamp}`,
-      );
-      if (request == null) return;
-      chatWebSocket.send(request);
-    } else {
-      await SignalClient.deleteSignalMessage(username, timestamp);
     }
+    await SignalClient.deleteSignalMessage(username, timestamp);
   }
 }

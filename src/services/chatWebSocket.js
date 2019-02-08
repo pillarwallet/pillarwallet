@@ -124,6 +124,7 @@ export default class ChatWebSocket {
   }
 
   onOpen(callback?: Function) {
+    if (this.ws === undefined) return;
     this.ws.onopen = () => {
       if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
       this.keepalive();
