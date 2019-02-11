@@ -11869,10 +11869,10 @@ react-native-htmlview@^0.13.0:
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
 
-react-native-image-crop-picker@^0.21.2:
-  version "0.21.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.21.3.tgz#04457a3f2a888949f51be4a670dcf2520b9994f8"
-  integrity sha1-BEV6PyqIiUn1G+SmcNzyUguZlPg=
+react-native-image-crop-picker@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.22.0.tgz#8f7f657dcde45cc366ac529a624205155571c03f"
+  integrity sha512-F8ytcTAbrUgsCaz3v+jm/qi4XAgv4qywxNnFH/qC3cApI0KwvHZ/WjiyzJbWiLQ+6UKDUeUCGum4oY4fzOlzpA==
 
 react-native-intercom@12.3.0:
   version "12.3.0"
