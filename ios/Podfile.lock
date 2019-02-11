@@ -211,7 +211,7 @@ PODS:
     - React
   - RNDeviceInfo (0.21.5):
     - React
-  - RNImageCropPicker (0.21.3):
+  - RNImageCropPicker (0.22.0):
     - QBImagePickerController
     - React/Core
     - RSKImageCropper
