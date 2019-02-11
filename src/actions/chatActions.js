@@ -27,7 +27,6 @@ import {
   FETCHING_CHATS,
   DELETE_CHAT,
   ADD_WEBSOCKET_SENT_MESSAGE,
-  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
   DELETE_CONTACT,
   CHAT_DECRYPTING_FINISHED,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
@@ -197,13 +196,17 @@ export const getChatByContactAction = (
       await webSocketMessagesReceived
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
         .forEach(async (wsMessage) => {
+          const { source, timestamp } = wsMessage;
           await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
-          await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
+          await chat.deleteMessage(source, timestamp, wsMessage.requestId);
+          dispatch({
+            type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+            payload: {
+              username: source,
+              timestamp,
+            },
+          });
         });
-      dispatch({
-        type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
-        payload: username,
-      });
     }
 
     dispatch({
