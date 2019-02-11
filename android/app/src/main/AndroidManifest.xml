@@ -64,7 +64,7 @@
         <activity
             android:name=".experience.ExperienceActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme">
         </activity>
 
