@@ -27,7 +27,6 @@ import {
   FETCHING_CHATS,
   DELETE_CHAT,
   ADD_WEBSOCKET_SENT_MESSAGE,
-  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
   DELETE_CONTACT,
   CHAT_DECRYPTING_FINISHED,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
@@ -152,7 +151,7 @@ export const getChatByContactAction = (
 ) => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      chat: { data: { isDecrypting, webSocketMessages: { received: webSocketMessagesReceived } } },
+      chat: { data: { isDecrypting } },
     } = getState();
     if (isDecrypting) return;
     dispatch({
@@ -179,7 +178,7 @@ export const getChatByContactAction = (
     if (data !== undefined && Object.keys(data).length) {
       const { messages: newRemoteMessages } = data;
       if (newRemoteMessages !== undefined && newRemoteMessages.length) {
-        await newRemoteMessages.forEach(async (remoteMessage) => {
+        const remotePromises = newRemoteMessages.map(async remoteMessage => {
           const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
           await chat.deleteMessage(rmUsername, rmServerTimestamp);
           dispatch({
@@ -190,20 +189,30 @@ export const getChatByContactAction = (
             },
           });
         });
+        await Promise.all(remotePromises);
       }
     }
 
+    const {
+      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+    } = getState();
+
     if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
-      await webSocketMessagesReceived
+      const webSocketPromises = webSocketMessagesReceived
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
-        .forEach(async (wsMessage) => {
+        .map(async wsMessage => {
+          const { source, timestamp } = wsMessage;
           await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
-          await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
+          await chat.deleteMessage(source, timestamp, wsMessage.requestId);
+          dispatch({
+            type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+            payload: {
+              username: source,
+              timestamp,
+            },
+          });
         });
-      dispatch({
-        type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
-        payload: username,
-      });
+      await Promise.all(webSocketPromises);
     }
 
     dispatch({
