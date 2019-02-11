@@ -151,7 +151,7 @@ export const getChatByContactAction = (
 ) => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      chat: { data: { isDecrypting, webSocketMessages: { received: webSocketMessagesReceived } } },
+      chat: { data: { isDecrypting } },
     } = getState();
     if (isDecrypting) return;
     dispatch({
@@ -192,6 +192,10 @@ export const getChatByContactAction = (
         await Promise.all(remotePromises);
       }
     }
+
+    const {
+      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+    } = getState();
 
     if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
       const webSocketPromises = webSocketMessagesReceived
