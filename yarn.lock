@@ -741,10 +741,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.19.1207":
-  version "1.19.1207"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.19.1207.tgz#282775ba4c203549e6c76357cd85e8ced2fd27d2"
-  integrity sha1-KCd1ukwgNUnmx2NXzYXoztL9J9I=
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.19.1218":
+  version "1.19.1218"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.19.1218.tgz#ce014545c74bf4d3d6f75ba26bb2ef99bfe52d03"
+  integrity sha1-zgFFRcdL9NPW91uia7Lvmb/lLQM=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -11796,10 +11796,10 @@ react-native-htmlview@^0.13.0:
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
 
-react-native-image-crop-picker@^0.21.2:
-  version "0.21.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.21.3.tgz#04457a3f2a888949f51be4a670dcf2520b9994f8"
-  integrity sha1-BEV6PyqIiUn1G+SmcNzyUguZlPg=
+react-native-image-crop-picker@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.22.0.tgz#8f7f657dcde45cc366ac529a624205155571c03f"
+  integrity sha512-F8ytcTAbrUgsCaz3v+jm/qi4XAgv4qywxNnFH/qC3cApI0KwvHZ/WjiyzJbWiLQ+6UKDUeUCGum4oY4fzOlzpA==
 
 react-native-intercom@12.3.0:
   version "12.3.0"
@@ -12877,10 +12877,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.146:
-  version "1.0.146"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.146.tgz#0291de15a7f37527a2bc53ccab31f0a969ca6aa9"
-  integrity sha1-ApHeFafzdSeivFPMqzHwqWnKaqk=
+rn-signal-protocol-messaging@1.0.157:
+  version "1.0.157"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.157.tgz#28394d596e4bf825a08d5c35b4472faf069d3d9c"
+  integrity sha1-KDlNWW5L+CWgjVw1tEcvrwadPZw=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
