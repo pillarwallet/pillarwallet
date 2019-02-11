@@ -67,11 +67,13 @@ export const getExistingChatsAction = () => {
         unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };
       } else {
         const { count, latest } = unreadChats[wsMessage.source];
-        unreadChats[wsMessage.source] = {
-          ...unreadChats[wsMessage.source],
-          count: count + 1,
-          latest: latest > wsMessage.timestamp ? latest : wsMessage.timestamp,
-        };
+        if (latest < wsMessage.timestamp) {
+          unreadChats[wsMessage.source] = {
+            ...unreadChats[wsMessage.source],
+            count: count + 1,
+            latest: wsMessage.timestamp,
+          };
+        }
       }
     });
     const newChats = mergeNewChats(unreadChats, filteredChats);
