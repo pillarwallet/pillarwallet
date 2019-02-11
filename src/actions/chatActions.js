@@ -178,7 +178,7 @@ export const getChatByContactAction = (
     if (data !== undefined && Object.keys(data).length) {
       const { messages: newRemoteMessages } = data;
       if (newRemoteMessages !== undefined && newRemoteMessages.length) {
-        await newRemoteMessages.forEach(async (remoteMessage) => {
+        const remotePromises = newRemoteMessages.map(async remoteMessage => {
           const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
           await chat.deleteMessage(rmUsername, rmServerTimestamp);
           dispatch({
@@ -189,13 +189,14 @@ export const getChatByContactAction = (
             },
           });
         });
+        await Promise.all(remotePromises);
       }
     }
 
     if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
-      await webSocketMessagesReceived
+      const webSocketPromises = webSocketMessagesReceived
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
-        .forEach(async (wsMessage) => {
+        .map(async wsMessage => {
           const { source, timestamp } = wsMessage;
           await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
           await chat.deleteMessage(source, timestamp, wsMessage.requestId);
@@ -207,6 +208,7 @@ export const getChatByContactAction = (
             },
           });
         });
+      await Promise.all(webSocketPromises);
     }
 
     dispatch({

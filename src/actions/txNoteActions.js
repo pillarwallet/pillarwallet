@@ -123,10 +123,11 @@ export const getTxNoteByContactAction = (username: string) => {
     if (data !== undefined && Object.keys(data).length) {
       const { messages: newRemoteMessages } = data;
       if (newRemoteMessages !== undefined && newRemoteMessages.length) {
-        await newRemoteMessages.forEach(async (remoteMessage) => {
+        const remotePromises = newRemoteMessages.map(async remoteMessage => {
           const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
           await chat.deleteMessage(rmUsername, rmServerTimestamp);
         });
+        await Promise.all(remotePromises);
       }
     }
 
