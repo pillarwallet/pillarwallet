@@ -1,11 +1,28 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay, uniqBy } from 'utils/common';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
-import ChatService from 'services/chat';
 import { generateMnemonicPhrase, getSaltedPin } from 'utils/wallet';
 import {
   ENCRYPTING,
@@ -17,6 +34,8 @@ import {
   USERNAME_OK,
   CHECKING_USERNAME,
   SET_API_USER,
+  INAPPROPRIATE_USERNAME,
+  INVALID_USERNAME,
 } from 'constants/walletConstants';
 import { APP_FLOW, NEW_WALLET, ASSETS } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS } from 'constants/assetsConstants';
@@ -31,17 +50,16 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { PENDING, REGISTERED, UPDATE_USER } from 'constants/userConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
-import { generateChatPassword } from 'utils/chat';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
+import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
 
 const storage = Storage.getInstance('db');
-const chat = new ChatService();
 
 const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Function) => {
   await firebase.messaging().requestPermission().catch(() => { });
@@ -89,6 +107,7 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
     userState,
     fcmToken,
     registrationSucceed,
+    oAuthTokens,
   };
 };
 
@@ -110,7 +129,7 @@ const finishRegistration = async (api: Object, userInfo: Object, dispatch: Funct
   dispatch(saveDbAction('assets', { assets: initialAssets }));
 
   // restore access tokens
-  dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
+  await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
 };
 
 const navigateToAppFlow = (isWalletBackedUp: boolean) => {
@@ -200,22 +219,17 @@ export const registerWalletAction = () => {
       userInfo,
       fcmToken,
       registrationSucceed,
+      oAuthTokens,
     } = await getTokenWalletAndRegister(api, user, dispatch);
 
-    let signalCredentials = {
+    dispatch(signalInitAction({
       userId: sdkWallet.userId,
       username: user.username,
       walletId: sdkWallet.walletId,
       ethAddress: wallet.address,
-    };
-    const { oAuthTokens: { data: OAuthTokens } } = getState();
-    signalCredentials = Object.keys(OAuthTokens) ?
-      { ...signalCredentials, ...OAuthTokens } :
-      { ...signalCredentials, password: generateChatPassword(wallet.privateKey) };
-    chat.init(signalCredentials)
-      .then(() => chat.client.registerAccount())
-      .then(() => chat.client.setFcmId(fcmToken))
-      .catch(() => null);
+      fcmToken,
+      ...oAuthTokens,
+    }));
 
     if (!registrationSucceed) { return; }
 
@@ -276,11 +290,16 @@ export const validateUserDetailsAction = ({ username }: Object) => {
 
     api.init(wallet.privateKey);
     const apiUser = await api.usernameSearch(username);
-    const usernameExists = !!Object.keys(apiUser).length;
-    const usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    const usernameExists = apiUser.username === username;
+    const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;
+    let usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
+    if (apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME) {
+      usernameStatus = INVALID_USERNAME;
+    }
+
     dispatch({
       type: SET_API_USER,
-      payload: usernameExists ? apiUser : { username },
+      payload: usernameExists || inappropriateUsername ? apiUser : { username },
     });
     dispatch({
       type: UPDATE_WALLET_STATE,
@@ -289,7 +308,7 @@ export const validateUserDetailsAction = ({ username }: Object) => {
   };
 };
 
-function restoreAccessTokensAction(walletId: string) {
+export function restoreAccessTokensAction(walletId: string) {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const restoredAccessTokens = [];
     const userAccessTokens = await api.fetchAccessTokens(walletId);
@@ -333,10 +352,10 @@ function restoreAccessTokensAction(walletId: string) {
         userAccessToken: found.connectionKey,
       });
     });
-    dispatch({
+    await dispatch({
       type: UPDATE_ACCESS_TOKENS,
       payload: restoredAccessTokens,
     });
-    dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
+    await dispatch(saveDbAction('accessTokens', { accessTokens: restoredAccessTokens }, true));
   };
 }

@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
@@ -13,7 +31,7 @@ import Header from 'components/Header';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
-import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
+import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
 import { fontSizes, fontWeights } from 'utils/variables';
 
 const { Form } = t.form;
@@ -190,12 +208,14 @@ class NewProfile extends React.Component<Props, State> {
     const { walletState } = this.props;
     if (prevProps.walletState === walletState) return;
 
-    if (walletState === USERNAME_EXISTS) {
+    if (walletState === USERNAME_EXISTS || walletState === INVALID_USERNAME) {
+      const errorMessage = walletState === USERNAME_EXISTS ? 'Username taken' : 'Invalid username';
+
       const options = t.update(this.state.formOptions, {
         fields: {
           username: {
             hasError: { $set: true },
-            error: { $set: 'Username taken' },
+            error: { $set: errorMessage },
             config: {
               isLoading: { $set: false },
             },

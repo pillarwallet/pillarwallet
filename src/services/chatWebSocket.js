@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import { SignalClient } from 'rn-signal-protocol-messaging';
 import protobufjs from 'protobufjs';
 
@@ -31,6 +49,7 @@ export default class ChatWebSocket {
   listen() {
     if (this.isRunning()) this.ws.close();
     this.setRunning(false);
+    if (this.credentials.host === undefined) return;
     const wsUrl = `${this.credentials.host
       .replace(/(https:\/\/)/gi, 'wss://')
       .replace(/(http:\/\/)/gi, 'ws://')}/v1/websocket/`;
@@ -105,6 +124,7 @@ export default class ChatWebSocket {
   }
 
   onOpen(callback?: Function) {
+    if (this.ws === undefined) return;
     this.ws.onopen = () => {
       if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
       this.keepalive();

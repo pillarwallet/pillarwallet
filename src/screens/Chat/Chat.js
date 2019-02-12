@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Alert, View, Platform, Linking, BackHandler } from 'react-native';
@@ -28,7 +46,7 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
-import { isIphoneX } from 'utils/common';
+import { isIphoneX, handleUrlPress } from 'utils/common';
 import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
@@ -247,7 +265,7 @@ const parsePatterns = () => [
   {
     type: 'url',
     style: { color: baseColors.clearBlue },
-    onPress: (url) => Linking.openURL(url),
+    onPress: (url) => handleUrlPress(url),
   },
   {
     type: 'email',
@@ -256,7 +274,8 @@ const parsePatterns = () => [
   },
   {
     type: 'phone',
-    style: { color: baseColors.black },
+    style: { color: baseColors.clearBlue },
+    onPress: (phone) => Linking.openURL(`tel:${phone}`),
   },
 ];
 
@@ -291,16 +310,8 @@ class ChatScreen extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { chats, getChatByContact, isFetching } = this.props;
-    const { contact } = this.state;
-    const { chats: prevChats } = prevProps;
-    const chatWithContact = chats.find(({ username }) => contact.username === username) || {};
-    const prevChatWithContact = prevChats.find(({ username }) => contact.username === username) || {};
-    if (chatWithContact.unread !== prevChatWithContact.unread) {
-      getChatByContact(contact.username, contact.id, contact.profileImage);
-    }
-
+  componentDidUpdate() {
+    const { isFetching } = this.props;
     if (this.state.isFetching && !isFetching) {
       this.setState({ isFetching: false }); // eslint-disable-line
     }
@@ -332,7 +343,7 @@ class ChatScreen extends React.Component<Props, State> {
   onSend = (messages: Object[] = []) => {
     const { sendMessageByContact } = this.props;
     const { contact } = this.state;
-    sendMessageByContact(contact.username, contact.id, messages[0]);
+    sendMessageByContact(contact.username, messages[0]);
   };
 
   handleNavigationToContact = () => {
@@ -441,8 +452,8 @@ const mapDispatchToProps = (dispatch) => ({
     avatar,
     loadEarlier,
   ) => dispatch(getChatByContactAction(username, userId, avatar, loadEarlier)),
-  sendMessageByContact: (username: string, userId: string, message: Object) => {
-    dispatch(sendMessageByContactAction(username, userId, message));
+  sendMessageByContact: (username: string, message: Object) => {
+    dispatch(sendMessageByContactAction(username, message));
   },
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
 });
