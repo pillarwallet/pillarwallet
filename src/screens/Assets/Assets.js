@@ -194,6 +194,8 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchCollectibles,
     } = this.props;
 
+    this.formatCollectibles();
+
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
@@ -430,6 +432,7 @@ class AssetsScreen extends React.Component<Props, State> {
             disabledRemove={isETH}
             onRemove={this.handleAssetRemoval(asset)}
             forceHideRemoval={forceHideRemoval}
+            columnCount={3}
           />
         );
       }
@@ -442,6 +445,7 @@ class AssetsScreen extends React.Component<Props, State> {
             onRemove={this.handleAssetRemoval(asset)}
             forceHideRemoval={forceHideRemoval}
             extraSmall
+            columnCount={3}
           />
         );
       }
@@ -486,7 +490,7 @@ class AssetsScreen extends React.Component<Props, State> {
       category: item.assetContract,
       name: item.name,
       description: item.description,
-      icon: (/\.(png)$/i).test(item.image_thumbnail_url) ? item.image_thumbnail_url : '',
+      icon: (/\.(png)$/i).test(item.image_preview_url) ? item.image_preview_url : '',
       externalLink: item.external_link,
     };
 
@@ -496,6 +500,7 @@ class AssetsScreen extends React.Component<Props, State> {
         smallScreen={smallScreen()}
         onPress={() => { this.handleCardTap(collectibleData, true); }}
         isCollectible
+        columnCount={2}
       />
     );
   };
@@ -505,7 +510,7 @@ class AssetsScreen extends React.Component<Props, State> {
       <FlatList
         key={item.key}
         data={item.data}
-        keyExtractor={(it) => it.name}
+        keyExtractor={(it) => it.id}
         renderItem={this.renderCollectible}
         style={{ width: '100%', marginBottom: spacing.small }}
         contentContainerStyle={{
@@ -514,7 +519,7 @@ class AssetsScreen extends React.Component<Props, State> {
           paddingRight: horizontalPadding(EXTRASMALL, 'right'),
           width: '100%',
         }}
-        numColumns={3}
+        numColumns={2}
       />
     );
   };

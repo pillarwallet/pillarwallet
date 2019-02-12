@@ -22,7 +22,7 @@ import { Platform, TouchableOpacity, Animated, Easing, Dimensions } from 'react-
 import isEqual from 'lodash.isequal';
 import isEqualWith from 'lodash.isequalwith';
 import styled from 'styled-components/native';
-import { LightText, BoldText } from 'components/Typography';
+import { LightText, BaseText, BoldText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';
 import { CachedImage } from 'react-native-cached-image';
 import { getCurrencySymbol } from 'utils/common';
@@ -52,6 +52,7 @@ type Props = {
   forceHideRemoval?: boolean,
   assetData?: Object,
   isCollectible?: boolean,
+  columnCount: number,
 }
 
 type State = {
@@ -63,13 +64,13 @@ const defaultCircleColor = '#ACBCCD';
 const genericToken = require('assets/images/tokens/genericToken.png');
 
 const AssetWrapper = styled(Animated.View)`
-  width: 33.33333%;
+  width: ${props => props.columnCount ? 100 / props.columnCount : 100}%;
   justify-content: center;
   align-items: center;
 `;
 
 const { width } = Dimensions.get('window');
-const cardWidth = ((width - 20) / 3) - 15;
+const cardWidth = (columnCount) => ((width - 20) / columnCount) - 15;
 const AssetWrapperAnimated = Animated.createAnimatedComponent(AssetWrapper);
 
 const cardHeight = (smallScreen, extraSmall) => {
@@ -92,13 +93,17 @@ const ShadowHolder = styled(Shadow)`
 `;
 
 const Sizer = styled.View`
-  height: ${props => cardHeight(props.smallScreen, props.extraSmall)}px;
+  height: ${props => props.isCollectible
+    ? '100%'
+    : `${cardHeight(props.smallScreen, props.extraSmall)}px`};
   border-radius: 6px;
   background: ${baseColors.white};
   width: ${Platform.select({
     ios: '100%',
-    android: `${cardWidth}px`,
+    android: '90%',
   })};
+  justify-content: center;
+  align-items: center;
 `;
 
 const InnerWrapper = styled.View`
@@ -107,6 +112,7 @@ const InnerWrapper = styled.View`
   justify-content: ${props => props.justify ? props.justify : 'space-between'};
   align-items: flex-start;
   padding: ${props => props.smallScreen ? spacing.rhythm / 4 : spacing.rhythm / 2}px; 
+  width: 100%;
 `;
 
 const CardRow = styled.View`
@@ -158,12 +164,13 @@ const IconCircle = styled.View`
   justify-content: center;
 `;
 
-const Name = styled(BoldText)`
+const Name = styled(BaseText)`
   font-size: ${props => props.smallScreen ? fontSizes.extraExtraSmall : fontSizes.extraSmall}px;
   letter-spacing: ${fontTrackings.small};
   line-height: ${fontSizes.small}px;
   color: ${baseColors.darkGray};
   ${({ center }) => center ? 'width: 100%; text-align: center;' : ''}
+  font-weight: ${props => props.fontWeight ? props.fontWeight : 600};
 `;
 
 const DetailWrapper = styled.View`
@@ -275,13 +282,13 @@ class AssetCardMinimized extends React.Component<Props, State> {
 
     if (isCollectible) {
       return (
-        <InnerWrapper justify="center" style={{ padding: 0, height: 80 }}>
-          <CardRow justify="center">
+        <InnerWrapper justify="flex-start">
+          <CardRow justify="center" style={{ marginTop: 4 }}>
             <CachedImage
               key={token}
               style={{
-                height: smallScreen ? 20 : 36,
-                width: smallScreen ? 20 : 36,
+                height: 135,
+                width: 135,
                 marginBottom: spacing.mediumLarge,
               }}
               source={{ uri: icon }}
@@ -290,7 +297,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
             />
           </CardRow>
           <CardRow justify="center">
-            <Name center numberOfLines={1} ellipsizeMode="tail">{name}</Name>
+            <Name center numberOfLines={1} ellipsizeMode="tail" fontWeight={400}>{name}</Name>
           </CardRow>
         </InnerWrapper>
       );
@@ -334,6 +341,8 @@ class AssetCardMinimized extends React.Component<Props, State> {
       smallScreen,
       disabledRemove,
       onRemove,
+      columnCount,
+      isCollectible,
     } = this.props;
     const { showHide, shakeAnimation } = this.state;
 
@@ -355,15 +364,21 @@ class AssetCardMinimized extends React.Component<Props, State> {
     };
 
     return (
-      <AssetWrapperAnimated style={animatedStyle}>
+      <AssetWrapperAnimated style={animatedStyle} columnCount={columnCount}>
         <ShadowHolder
-          heightAndroid={cardHeight(smallScreen, extraSmall)}
-          widthIOS={width / 3.6}
-          heightIOS={cardHeight(smallScreen, extraSmall)}
+          heightAndroid={isCollectible ? 196 : cardHeight(smallScreen, extraSmall)}
+          // widthIOS={width / 3.6}
+          widthIOS={cardWidth(columnCount)}
+          heightIOS={isCollectible ? 196 : cardHeight(smallScreen, extraSmall)}
           marginVertical={4}
           borderShadow={5}
         >
-          <Sizer smallScreen={smallScreen} extraSmall={extraSmall}>
+          <Sizer
+            isCollectible={isCollectible}
+            columnCount={columnCount}
+            smallScreen={smallScreen}
+            extraSmall={extraSmall}
+          >
             <TouchableWithoutFeedback onPress={this.handlePress} onLongPress={this.handleLongPress}>
               {this.renderCardContent()}
             </TouchableWithoutFeedback>
