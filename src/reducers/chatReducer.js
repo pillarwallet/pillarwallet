@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import {
   UPDATE_MESSAGES,
   ADD_MESSAGE,
@@ -10,6 +28,8 @@ import {
   ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_SENT_MESSAGE,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
+  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+  CHAT_DECRYPTING_FINISHED,
 } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
@@ -45,6 +65,7 @@ export type ChateducerState = {
       received: Object[],
     },
     isFetching: boolean,
+    isDecrypting: boolean,
   },
 }
 
@@ -62,6 +83,7 @@ const initialState = {
       received: [],
     },
     isFetching: false,
+    isDecrypting: false,
   },
 };
 
@@ -84,6 +106,7 @@ export default function chatReducer(
               [username]: allMessages,
             },
             isFetching: false,
+            isDecrypting: false,
           },
         },
       );
@@ -95,6 +118,7 @@ export default function chatReducer(
           data: {
             chats: action.payload,
             isFetching: true,
+            isDecrypting: true,
           },
         },
       );
@@ -105,6 +129,7 @@ export default function chatReducer(
           ...state.data,
           chats: action.payload,
           isFetching: false,
+          isDecrypting: false,
           messages: { ...state.data.messages },
         },
       };
@@ -145,6 +170,7 @@ export default function chatReducer(
             messages: {
               [action.payload.username]: [...action.payload.messages],
             },
+            isDecrypting: false,
             isFetching: false,
           },
         },
@@ -213,6 +239,20 @@ export default function chatReducer(
           },
         },
       };
+    case REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          webSocketMessages: {
+            ...state.data.webSocketMessages,
+            received: state.data.webSocketMessages.received.filter(
+              chatMessage => chatMessage.source !== action.payload.username
+                && chatMessage.timestamp !== action.payload.timestamp,
+            ),
+          },
+        },
+      };
     case REMOVE_WEBSOCKET_SENT_MESSAGE:
       return {
         ...state,
@@ -224,6 +264,14 @@ export default function chatReducer(
               chatMessage => chatMessage.requestId !== action.payload,
             ),
           },
+        },
+      };
+    case CHAT_DECRYPTING_FINISHED:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          isDecrypting: false,
         },
       };
     default:

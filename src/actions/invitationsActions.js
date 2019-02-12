@@ -1,4 +1,23 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+import { Sentry } from 'react-native-sentry';
 import { generateAccessKey } from 'utils/invitations';
 import type { ApiUser } from 'models/Contacts';
 import { uniqBy } from 'utils/common';
@@ -17,6 +36,7 @@ import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
+import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { saveDbAction } from './dbActions';
 
 export const fetchInviteNotificationsAction = () => {
@@ -25,8 +45,20 @@ export const fetchInviteNotificationsAction = () => {
       invitations: { data: invitations },
       contacts: { data: contacts },
       user: { data: user },
+    } = getState();
+
+    let {
       accessTokens: { data: accessTokens },
     } = getState();
+
+    if (accessTokens === undefined || !accessTokens.length) {
+      Sentry.captureMessage('Empty connection access tokens, dispatching restoreAccessTokensAction', { level: 'info' });
+      await dispatch(restoreAccessTokensAction(user.walletId));
+      const {
+        accessTokens: { data: updatedAccessTokens },
+      } = getState();
+      accessTokens = updatedAccessTokens;
+    }
 
     const types = [
       TYPE_RECEIVED,

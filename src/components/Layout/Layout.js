@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { SafeAreaView } from 'react-navigation';
@@ -21,6 +39,12 @@ type FooterProps = {
   column?: boolean,
   backgroundColor?: string,
   keyboardVerticalOffset?: number,
+};
+
+type ScrollWrapperProps = {
+  children?: React.Node,
+  regularPadding?: boolean,
+  color?: string,
 };
 
 export const Center = styled.View`
@@ -58,7 +82,7 @@ export const Wrapper = styled.View`
 
 `;
 
-export const ScrollWrapper = styled(KeyboardAwareScrollView)`
+export const KAScrollView = styled(KeyboardAwareScrollView)`
   padding: ${props => (props.regularPadding ? '0 20px' : '0')};
   background-color: ${props => (props.color ? props.color : 'transparent')};
   flex: 1;
@@ -72,6 +96,18 @@ const FooterInner = styled.KeyboardAvoidingView`
   flex-direction: ${props => (props.column ? 'row' : 'column')};
   background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
 `;
+
+export const ScrollWrapper = (props: ScrollWrapperProps) => {
+  return (
+    <KAScrollView
+      regularPadding={props.regularPadding}
+      color={props.color}
+      enableOnAndroid
+    >
+      {props.children}
+    </KAScrollView>
+  );
+};
 
 export const Footer = (props: FooterProps) => {
   return (

@@ -809,10 +809,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.18.1197":
-  version "1.18.1197"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.18.1197.tgz#1c6c973a6db163aec0c722afe2cf483fae68a6b9"
-  integrity sha1-HGyXOm2xY67AxyKv4s9IP65oprk=
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.19.1218":
+  version "1.19.1218"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.19.1218.tgz#ce014545c74bf4d3d6f75ba26bb2ef99bfe52d03"
+  integrity sha1-zgFFRcdL9NPW91uia7Lvmb/lLQM=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -11879,10 +11879,10 @@ react-native-htmlview@^0.13.0:
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
 
-react-native-image-crop-picker@^0.21.2:
-  version "0.21.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-image-crop-picker/-/react-native-image-crop-picker-0.21.3.tgz#04457a3f2a888949f51be4a670dcf2520b9994f8"
-  integrity sha1-BEV6PyqIiUn1G+SmcNzyUguZlPg=
+react-native-image-crop-picker@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.22.0.tgz#8f7f657dcde45cc366ac529a624205155571c03f"
+  integrity sha512-F8ytcTAbrUgsCaz3v+jm/qi4XAgv4qywxNnFH/qC3cApI0KwvHZ/WjiyzJbWiLQ+6UKDUeUCGum4oY4fzOlzpA==
 
 react-native-intercom@12.3.0:
   version "12.3.0"
@@ -11943,6 +11943,13 @@ react-native-parsed-text@^0.0.20:
   integrity sha1-e9Nf7IjDyg6w6CUKmOJAkrTuf+8=
   dependencies:
     babel-plugin-check-es2015-constants "6.22.0"
+    prop-types "^15.5.10"
+
+react-native-parsed-text@^0.0.21:
+  version "0.0.21"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-parsed-text/-/react-native-parsed-text-0.0.21.tgz#86cf233aedc7a848b801b674c81d6b5ee37162df"
+  integrity sha1-hs8jOu3HqEi4AbZ0yB1rXuNxYt8=
+  dependencies:
     prop-types "^15.5.10"
 
 react-native-permissions@^1.1.1:
@@ -12945,10 +12952,10 @@ rn-nodeify@tradle/rn-nodeify:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.133:
-  version "1.0.133"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.133.tgz#419d5fa2ea4e4ad95e9042b0299a4ca380d1b4f6"
-  integrity sha1-QZ1foupOStlekEKwKZpMo4DRtPY=
+rn-signal-protocol-messaging@1.0.157:
+  version "1.0.157"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.157.tgz#28394d596e4bf825a08d5c35b4472faf069d3d9c"
+  integrity sha1-KDlNWW5L+CWgjVw1tEcvrwadPZw=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
