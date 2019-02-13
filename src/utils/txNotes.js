@@ -1,16 +1,39 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
+import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
+
 export function extractTxNotesFromMessages(txNotesRaw: Object[] = []): Object[] {
   const txNotes = [];
   if (txNotesRaw && txNotesRaw.length > 0) {
     txNotesRaw.forEach(({ messages = [] }) => {
       if (Array.isArray(messages)) {
-        messages.forEach(({ content }) => {
-          const txNote = JSON.parse(content);
+        messages.forEach((message) => {
+          if (message.status === UNDECRYPTABLE_MESSAGE) return;
+          const txNote = JSON.parse(message.content);
           txNotes.push(txNote);
         });
       } else {
-        messages.messages.forEach(({ content }) => {
-          const txNote = JSON.parse(content);
+        messages.messages.forEach((message) => {
+          if (message.status === UNDECRYPTABLE_MESSAGE) return;
+          const txNote = JSON.parse(message.content);
           txNotes.push(txNote);
         });
       }

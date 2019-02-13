@@ -1,4 +1,22 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { FlatList, Alert, ScrollView, Keyboard } from 'react-native';
@@ -89,7 +107,7 @@ type Props = {
   hasDBConflicts: boolean,
   repairStorage: Function,
   updateAppSettings: (path: string, value: any) => Function,
-  updateUser: (walletId: string, field: Object) => Function,
+  updateUser: (walletId: string, field: Object, callback?: Function) => Function,
   resetIncorrectPassword: () => Function,
   lockScreen: () => Function,
   logoutUser: () => Function,
@@ -135,8 +153,7 @@ class Profile extends React.Component<Props, State> {
   handleUserFieldUpdate = (field: Object) => {
     Keyboard.dismiss();
     const { updateUser, user } = this.props;
-    updateUser(user.walletId, field);
-    this.toggleSlideModalOpen(null);
+    updateUser(user.walletId, field, () => this.toggleSlideModalOpen(null));
   };
 
   handleCurrencyUpdate = ({ currency }: Object) => {
@@ -484,7 +501,8 @@ const mapDispatchToProps = (dispatch: Function) => ({
   saveBaseFiatCurrency: (currency) => dispatch(saveBaseFiatCurrencyAction(currency)),
   repairStorage: () => dispatch(repairStorageAction()),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
-  updateUser: (walletId: string, field: Object) => dispatch(updateUserAction(walletId, field)),
+  updateUser: (walletId: string, field: Object, callback: Function) =>
+    dispatch(updateUserAction(walletId, field, callback)),
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
