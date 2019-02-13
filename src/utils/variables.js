@@ -69,6 +69,7 @@ export const baseColors = {
   geyser: '#d1d7dd',
   fairPink: '#f7ebe6',
   tumbleweed: '#db9a84',
+  pattensBlue: '#F0F5FA',
 };
 
 export const brandColors = [

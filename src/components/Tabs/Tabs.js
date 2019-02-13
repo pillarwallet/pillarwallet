@@ -23,74 +23,79 @@ import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import { ALL } from 'constants/activityConstants';
-import { UIColors, baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, spacing, fontSizes } from 'utils/variables';
 
 type Tab = {
   id: string,
   name: string,
-  icon: string,
+  icon?: string,
   onPress: Function,
 }
 
 type Props = {
+  initialActiveTab?: string,
   title?: string,
   tabs: Tab[],
+  bgColor?: string,
 }
 
 type State = {
   activeTab: string,
 }
 
-const TabWrapperScrollView = styled.ScrollView`
-  flex-direction: row;
+const TabOuterWrapper = styled.View`
+  background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
 `;
 
-const TabOuterWrapper = styled.View`
-  background-color: ${baseColors.white};
+const TabWrapper = styled.View`
+  flex-direction: row;
+  background-color: ${baseColors.pattensBlue};
+  padding: 2px;
+  border-radius: 18px;
+  margin: 12px 16px;
 `;
 
 const TabItem = styled.TouchableOpacity`
   height: 32px;
-  padding: 0 15px;
+  padding: 7px 15px;
   align-items: center;
   justify-content: center;
-  background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
+  background-color: ${props => props.active ? baseColors.white : 'transparent'};
   border-radius: 16px;
   flex-direction: row;
+  shadow-color: ${baseColors.pigeonPost};
+  shadow-radius: 6px;
+  shadow-opacity: 0.15;
+  shadow-offset: 0px 6px;
+  flexGrow: 1;
 `;
 
 const TabItemIcon = styled(Icon)`
   font-size: ${fontSizes.extraSmall};
-  margin-right: 5px;
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
+  margin-right: 4px;
+  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
 const TabItemText = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
+  font-weight: 500;
+  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
 const ActivityFeedHeader = styled.View`
   padding: 4px ${spacing.mediumLarge}px 0;
 `;
 
-const TabWrapper = styled.View`
-  padding: 12px 16px;
-  background: ${baseColors.white};
-  border-bottom-width: 1px;
-  border-color: ${UIColors.defaultDividerColor};
-  border-style: solid;
-`;
-
 export default class Tabs extends React.Component<Props, State> {
   state = {
-    activeTab: ALL,
+    activeTab: this.props.initialActiveTab || ALL,
   };
 
   renderTabItems = (tabs: Tab[]) => {
     const { activeTab } = this.state;
     const tabItems = tabs.map(tab => {
       const isActive = activeTab === tab.id;
+
       return (
         <TabItem
           key={tab.id}
@@ -98,8 +103,9 @@ export default class Tabs extends React.Component<Props, State> {
           onPress={() => this.setState({
             activeTab: tab.id,
           }, tab.onPress)}
+          style={tabs.length === 2 ? { width: '50%' } : {}}
         >
-          <TabItemIcon active={isActive} name={tab.icon} />
+          {!!tab.icon && <TabItemIcon active={isActive} name={tab.icon} />}
           <TabItemText active={isActive}>{tab.name}</TabItemText>
         </TabItem>
       );
@@ -108,19 +114,17 @@ export default class Tabs extends React.Component<Props, State> {
   };
 
   render() {
-    const { title, tabs } = this.props;
+    const { title, tabs, bgColor } = this.props;
 
     return (
-      <TabOuterWrapper>
+      <TabOuterWrapper backgroundColor={bgColor}>
         {!!title &&
         <ActivityFeedHeader>
           <Title subtitle noMargin title={title} />
         </ActivityFeedHeader>
         }
         <TabWrapper>
-          <TabWrapperScrollView horizontal>
-            {this.renderTabItems(tabs)}
-          </TabWrapperScrollView>
+          {this.renderTabItems(tabs)}
         </TabWrapper>
       </TabOuterWrapper>
     );

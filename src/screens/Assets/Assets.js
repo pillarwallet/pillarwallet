@@ -782,13 +782,11 @@ class AssetsScreen extends React.Component<Props, State> {
       {
         id: TOKENS,
         name: 'Tokens',
-        icon: 'all',
         onPress: () => this.setActiveTab(TOKENS),
       },
       {
         id: COLLECTIBLES,
         name: 'Collectibles',
-        icon: 'send',
         onPress: () => this.setActiveTab(COLLECTIBLES),
       },
     ];
@@ -815,7 +813,7 @@ class AssetsScreen extends React.Component<Props, State> {
           }
           {!inSearchMode &&
           <React.Fragment>
-            <Tabs tabs={assetsTabs} />
+            <Tabs initialActiveTab={TOKENS} tabs={assetsTabs} />
             {this.renderAssetList()}
           </React.Fragment>}
         </TokensWrapper>
