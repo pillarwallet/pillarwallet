@@ -222,6 +222,8 @@ PODS:
   - SentryReactNative (0.39.1):
     - React
     - Sentry (~> 4.0.1)
+  - TouchID (4.3.0):
+    - React
   - yoga (0.57.8.React)
 
 DEPENDENCIES:
@@ -263,6 +265,7 @@ DEPENDENCIES:
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - SentryReactNative (from `../node_modules/react-native-sentry`)
+  - TouchID (from `../node_modules/react-native-touch-id`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -328,6 +331,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-crop-picker"
   SentryReactNative:
     :path: "../node_modules/react-native-sentry"
+  TouchID:
+    :path: "../node_modules/react-native-touch-id"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -377,8 +382,9 @@ SPEC CHECKSUMS:
   RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
   Sentry: a38f7879924c02239e121b19d993d23bdd1684db
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
+  TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: f72a28dc777229390986fd0b035fd14fbf8c9e3a
+PODFILE CHECKSUM: 48b27f0ad4524eb371f3e14574bc4e1af525aa4c
 
 COCOAPODS: 1.5.3
