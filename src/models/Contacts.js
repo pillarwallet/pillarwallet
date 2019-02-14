@@ -22,7 +22,9 @@ export type ApiUser = {
   username: string,
   connectionKey: string,
   profileImage?: string,
+  profileLargeImage?: string,
   ethAddress: string,
+  lastUpdateTime?: number,
 };
 
 export type SearchResults = {

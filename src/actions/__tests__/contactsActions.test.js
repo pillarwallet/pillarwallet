@@ -158,9 +158,9 @@ describe('Contacts Actions', () => {
     it('should sync contacts', async () => {
       await actions.syncContactAction(mockLocalContacts[0].id)(dispatchMock, getStateMock, apiMock);
 
-      const createdAt = +new Date() / 1000;
+      const createdAt = +new Date();
       const updatedContactsMock = mockLocalContacts;
-      const updateContactFirst = Object.assign({}, updatedContactsMock[0], { createdAt });
+      const updateContactFirst = Object.assign({}, updatedContactsMock[0], { createdAt, lastUpdateTime: createdAt });
       const updateContactSecond = Object.assign({}, updatedContactsMock[1]);
 
       expect(dispatchMock).toBeCalledWith({
