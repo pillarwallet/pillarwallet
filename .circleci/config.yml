@@ -157,9 +157,7 @@ jobs:
       - *install_gems_ios
       - *save_gems_cache_ios
 
-      - *restore_pod_cache
       - *install_pods
-      - *save_pod_cache
 
       - *set_staging_env
 
