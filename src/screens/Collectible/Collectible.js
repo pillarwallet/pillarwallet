@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { Platform, Linking } from 'react-native';
+import { Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
 import { baseColors, spacing, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
@@ -11,24 +11,13 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
-import SlideModal from 'components/Modals/SlideModal';
-import Button from 'components/Button';
 
 import Header from 'components/Header';
 import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
-import { BoldText, Paragraph } from 'components/Typography';
+import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 
-
-const activeModalResetState = {
-  type: null,
-  opts: {
-    address: '',
-    token: '',
-    tokenName: '',
-  },
-};
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -42,19 +31,6 @@ type Props = {
   baseFiatCurrency: ?string,
   contacts: Object,
   resetHideRemoval: Function,
-};
-
-type State = {
-  activeModal: {
-    type: string | null,
-    opts: {
-      address?: string,
-      token?: string,
-      tokenName?: string,
-      formValues?: Object,
-    },
-  },
-  showDescriptionModal: boolean,
 };
 
 const ActionButtonsWrapper = styled.View`
@@ -78,19 +54,7 @@ const DataWrapper = styled.View`
   justify-content: center;
 `;
 
-const ButtonWrapper = styled.View`
-  padding: ${spacing.large}px;
-  justify-content: center;
-`;
-
-const CollectibleTitle = styled(BoldText)`
-  font-size: ${fontSizes.semiGiant}px;
-  text-align: center;
-`;
-
-
 const Description = styled(Paragraph)`
-  padding-bottom: 80px;
   line-height: ${fontSizes.mediumLarge};
 `;
 
@@ -103,63 +67,44 @@ const CircleButtonsWrapper = styled(Wrapper)`
 
 const CollectibleImage = styled(CachedImage)`
   align-self: center;
-  height: 128px;
-  width: 128px;
+  height: 180px;
+  width: 180px;
   margin-top: 30px;
 `;
 
 const iconSend = require('assets/icons/icon_send.png');
 const genericCollectible = require('assets/images/no_logo.png');
 
-class CollectibleScreen extends React.Component<Props, State> {
-  state = {
-    activeModal: activeModalResetState,
-    showDescriptionModal: false,
-  };
-
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
+class CollectibleScreen extends React.Component<Props> {
+  shouldComponentUpdate(nextProps: Props) {
     const isFocused = this.props.navigation.isFocused();
     if (!isFocused) {
       return false;
     }
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+    const isEq = isEqual(this.props, nextProps);
     return !isEq;
   }
-
-  showMoreInfo = (url: string) => {
-    Linking.openURL(url);
-  };
 
   goToSendTokenFlow = (assetData: Object) => {
     this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
 
   render() {
-    const {
-      showDescriptionModal,
-    } = this.state;
     const { navigation } = this.props;
     const { assetData } = navigation.state.params;
 
     const {
       id,
-      category,
       name,
       description,
       icon,
-      externalLink,
     } = assetData;
 
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <Header
           onBack={() => { navigation.goBack(); }}
-          title={category}
-          onNextPress={description
-            ? () => { this.setState({ showDescriptionModal: true }); }
-            : null}
-          nextIcon="info-circle-inverse"
-          nextIconSize={fontSizes.extraLarge}
+          title={name}
         />
         <ScrollWrapper>
           <CollectibleImage
@@ -169,9 +114,9 @@ class CollectibleScreen extends React.Component<Props, State> {
             resizeMode="contain"
           />
           <DataWrapper>
-            <CollectibleTitle>
-              {name}
-            </CollectibleTitle>
+            {!!description &&
+              <Description small light>{description.replace(new RegExp('\\n\\n', 'g'), '\n')}</Description>
+            }
           </DataWrapper>
           <ActionButtonsWrapper>
             <CircleButtonsWrapper center horizontal>
@@ -182,22 +127,7 @@ class CollectibleScreen extends React.Component<Props, State> {
               />
             </CircleButtonsWrapper>
           </ActionButtonsWrapper>
-          {!!externalLink &&
-          <ButtonWrapper>
-            <Button
-              block
-              title="View more info"
-              primaryInverted
-              onPress={() => { this.showMoreInfo(externalLink); }}
-            />
-          </ButtonWrapper>}
         </ScrollWrapper>
-        <SlideModal
-          isVisible={showDescriptionModal}
-          onModalHide={() => { this.setState({ showDescriptionModal: false }); }}
-        >
-          <Description small light>{description}</Description>
-        </SlideModal>
       </Container>
     );
   }

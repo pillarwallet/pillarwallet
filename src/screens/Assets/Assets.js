@@ -253,7 +253,6 @@ class AssetsScreen extends React.Component<Props, State> {
       }
     });
 
-
     this.setState({ formattedCollectibles });
   };
 
@@ -287,8 +286,11 @@ class AssetsScreen extends React.Component<Props, State> {
     this.setState({
       query: formattedQuery,
     });
-    this.props.startAssetsSearch();
-    this.doAssetsSearch(formattedQuery);
+
+    if (this.state.activeTab === TOKENS) {
+      this.props.startAssetsSearch();
+      this.doAssetsSearch(formattedQuery);
+    }
   };
 
   doAssetsSearch = (query: string) => {
@@ -647,7 +649,9 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
+    const { query } = this.state;
     this.setState({ activeTab });
+    if (query) this.handleSearchChange(query);
   };
 
   renderListTitle = (titleText: string) => {
