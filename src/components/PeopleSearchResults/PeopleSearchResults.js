@@ -133,15 +133,11 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   renderContact = ({ item: user }) => {
-    const { invitations, localContacts, navigation } = this.props;
-    const localContactsIds = localContacts.map(({ id }) => id);
+    const { invitations, navigation } = this.props;
     const invitation = invitations.find(({ id }) => id === user.id);
     let status = TYPE_INVITE;
     if (invitation) {
       status = invitation.type;
-    }
-    if (localContactsIds.includes(user.id)) {
-      return null;
     }
 
     return (
@@ -160,9 +156,8 @@ class PeopleSearchResults extends React.Component<Props> {
     );
   };
 
-  renderLocalContacts = () => {
+  renderLocalContactsList = () => {
     const {
-      navigation,
       searchResults: { apiUsers, localContacts: resultsLocalContacts },
       localContacts,
     } = this.props;
@@ -170,6 +165,24 @@ class PeopleSearchResults extends React.Component<Props> {
     const updatedLocalContact = intersectionBy(localContacts, apiUsers, 'id');
     const filteredLocalContacts = unionBy(resultsLocalContacts, updatedLocalContact, 'id');
 
+    if (filteredLocalContacts.length) {
+      return (
+        <LocalContacts>
+          <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
+          <LocalContactsScrollView
+            keyboardShouldPersistTaps="always"
+            horizontal
+          >
+            {this.renderLocalContacts(filteredLocalContacts)}
+          </LocalContactsScrollView>
+        </LocalContacts>
+      );
+    }
+    return null;
+  };
+
+  renderLocalContacts = (filteredLocalContacts) => {
+    const { navigation } = this.props;
     return filteredLocalContacts
       .map(contact => (
         <LocalContactsItem
@@ -179,7 +192,7 @@ class PeopleSearchResults extends React.Component<Props> {
           <ProfileImage
             uri={contact.profileImage}
             userName={contact.username}
-            diameter={itemSizes.avaratCircleMedium}
+            diameter={itemSizes.avatarCircleMedium}
             textStyle={{ fontSize: fontSizes.medium }}
           />
           <LocalContactsItemName numberOfLines={1}>{contact.username}</LocalContactsItemName>
@@ -188,24 +201,16 @@ class PeopleSearchResults extends React.Component<Props> {
   };
 
   render() {
-    const { searchResults: { localContacts, apiUsers } } = this.props;
+    const { localContacts, searchResults: { apiUsers } } = this.props;
+    const localContactsIds = localContacts.map(({ id }) => id);
+    const filteredApiUsers = apiUsers.filter((user) => !localContactsIds.includes(user.id));
 
     return (
       <React.Fragment>
-        {!!localContacts.length && (
-          <LocalContacts>
-            <LocalContactsSubHeading>MY CONTACTS</LocalContactsSubHeading>
-            <LocalContactsScrollView
-              keyboardShouldPersistTaps="always"
-              horizontal
-            >
-              {this.renderLocalContacts()}
-            </LocalContactsScrollView>
-          </LocalContacts>
-        )}
-        {!!apiUsers.length && (
+        {this.renderLocalContactsList()}
+        {!!filteredApiUsers.length && (
           <ContactCardList
-            data={apiUsers}
+            data={filteredApiUsers}
             renderItem={this.renderContact}
             onScroll={() => Keyboard.dismiss()}
             keyExtractor={({ username }) => username}
