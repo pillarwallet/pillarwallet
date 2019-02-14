@@ -1,5 +1,11 @@
 version: 2
 aliases:
+  - &restore_pod_cache
+    restore_cache:
+      keys:
+        - ios-pods-{{ checksum "./ios/Podfile.lock" }}
+        # Fall back to using the latest cache if no exact match is found.
+        - ios-pods-
   - &install_pods
     run:
       name: Install CocoaPods
@@ -151,9 +157,7 @@ jobs:
       - *install_gems_ios
       - *save_gems_cache_ios
 
-      - *restore_pod_cache
       - *install_pods
-      - *save_pod_cache
 
       - *set_staging_env
 
