@@ -35,6 +35,7 @@ type Props = {
   login: (pin: string, touchID?: boolean, callback?: Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
+  useBiometrics: ?boolean,
 }
 
 class PinCodeUnlock extends React.Component<Props, *> {
@@ -50,10 +51,12 @@ class PinCodeUnlock extends React.Component<Props, *> {
   }
 
   componentDidMount() {
-    const { login } = this.props;
-    TouchID.authenticate('Authenticate with fingerprint')
-      .then(() => login('', true))
-      .catch(() => null);
+    const { login, useBiometrics } = this.props;
+    if (useBiometrics) {
+      TouchID.authenticate('Biometrics login')
+        .then(() => login('', true))
+        .catch(() => null);
+    }
   }
 
   handlePinSubmit = (pin: string) => {
@@ -96,7 +99,13 @@ class PinCodeUnlock extends React.Component<Props, *> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({
+  wallet,
+  appSettings: { data: { useBiometrics = false } },
+}) => ({
+  wallet,
+  useBiometrics,
+});
 
 const mapDispatchToProps = (dispatch: Function) => ({
   login: (pin: string, touchID?: boolean, callback?: Function) => dispatch(loginAction(pin, callback)),
