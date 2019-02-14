@@ -43,6 +43,12 @@ import { parseAccountUniqueTokens } from 'utils/collectibles';
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
 
+
+// TODO: move to constants
+// const OPEN_SEA = 'https://api.opensea.io/api/v1';
+const OPEN_SEA_RINKEBY = 'https://rinkeby-api.opensea.io/api/v1';
+
+
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
 type HistoryPayload = {
@@ -237,11 +243,18 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 };
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // eslint-disable-line
-  const address = '0x0239769a1adf4def9f07da824b80b9c4fcb59593'; // REMOVE ME
+  // const address = '0x0239769a1adf4def9f07da824b80b9c4fcb59593'; // REMOVE ME
   return Promise.resolve()
-    .then(() => fetch(`https://api.opensea.io/api/v1/assets/?owner=${address}&order_by=current_price&order_direction=asc`))
+    .then(() => fetch(`${OPEN_SEA_RINKEBY}/assets/?owner=${walletAddress}&order_by=current_price&order_direction=asc`))
     .then(data => data.json())
     .then(parseAccountUniqueTokens)
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) { // eslint-disable-line
+  return Promise.resolve()
+    .then(() => fetch(`${OPEN_SEA_RINKEBY}/api/v1/events/?account_address=${walletAddress}&event_type=transfer`))
+    .then(data => data.json())
     .catch(() => ({}));
 };
 

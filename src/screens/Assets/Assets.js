@@ -236,22 +236,23 @@ class AssetsScreen extends React.Component<Props, State> {
 
   formatCollectibles = () => {
     const { collectibles } = this.props;
-    const formattedCollectibles = [];
-
-    collectibles.forEach((collectible) => {
-      if (!formattedCollectibles.find(coll => coll.title === collectible.assetContract)) {
-        formattedCollectibles.push({
-          title: collectible.assetContract,
-          data: [{
-            key: collectible.assetContract,
-            data: [{ ...collectible }],
-          }],
-        });
-      } else {
-        const thisCat = formattedCollectibles.find(coll => coll.title === collectible.assetContract);
-        if (thisCat) thisCat.data[0].data.push({ ...collectible });
-      }
-    });
+    const formattedCollectibles = collectibles;
+    // const formattedCollectibles = [];
+    //
+    // collectibles.forEach((collectible) => {
+    //   if (!formattedCollectibles.find(coll => coll.title === collectible.assetContract)) {
+    //     formattedCollectibles.push({
+    //       title: collectible.assetContract,
+    //       data: [{
+    //         key: collectible.assetContract,
+    //         data: [{ ...collectible }],
+    //       }],
+    //     });
+    //   } else {
+    //     const thisCat = formattedCollectibles.find(coll => coll.title === collectible.assetContract);
+    //     if (thisCat) thisCat.data[0].data.push({ ...collectible });
+    //   }
+    // });
 
     this.setState({ formattedCollectibles });
   };
@@ -507,25 +508,6 @@ class AssetsScreen extends React.Component<Props, State> {
     );
   };
 
-  renderCollectibleSection = ({ item }) => {
-    return (
-      <FlatList
-        key={item.key}
-        data={item.data}
-        keyExtractor={(it) => it.id}
-        renderItem={this.renderCollectible}
-        style={{ width: '100%', marginBottom: spacing.small }}
-        contentContainerStyle={{
-          paddingVertical: 6,
-          paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
-          paddingRight: horizontalPadding(EXTRASMALL, 'right'),
-          width: '100%',
-        }}
-        numColumns={2}
-      />
-    );
-  };
-
   renderSeparator = () => {
     return (
       <View
@@ -671,7 +653,6 @@ class AssetsScreen extends React.Component<Props, State> {
       rates,
       balances,
     } = this.props;
-    const { activeTab } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const sortedAssets = Object.keys(assets)
@@ -691,54 +672,53 @@ class AssetsScreen extends React.Component<Props, State> {
 
     const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
 
-    if (activeTab === TOKENS) {
-      return (
-        <FlatList
-          key={assetsLayout}
-          data={sortedAssets}
-          keyExtractor={(item) => item.id}
-          renderItem={this.renderToken}
-          initialNumToRender={5}
-          maxToRenderPerBatch={5}
-          onEndReachedThreshold={0.5}
-          style={{ width: '100%' }}
-          contentContainerStyle={{
-            paddingVertical: 6,
-            paddingLeft: horizontalPadding(assetsLayout, 'left'),
-            paddingRight: horizontalPadding(assetsLayout, 'right'),
-            width: '100%',
-          }}
-          numColumns={columnAmount}
-          ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-            ? this.renderSeparator
-            : null}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {
-                const { fetchAssetsBalances } = this.props;
-                fetchAssetsBalances(assets, wallet.address);
-              }}
-            />
-          }
-        />
-      );
-    }
-
     return (
-      <SectionList
-        sections={this.state.formattedCollectibles}
-        renderItem={this.renderCollectibleSection}
-        renderSectionHeader={({ section }) => {
-          return section.data.length ? this.renderListTitle(section.title) : null;
-        }}
+      <FlatList
+        key={assetsLayout}
+        data={sortedAssets}
+        keyExtractor={(item) => item.id}
+        renderItem={this.renderToken}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        onEndReachedThreshold={0.5}
         style={{ width: '100%' }}
+        contentContainerStyle={{
+          paddingVertical: 6,
+          paddingLeft: horizontalPadding(assetsLayout, 'left'),
+          paddingRight: horizontalPadding(assetsLayout, 'right'),
+          width: '100%',
+        }}
+        numColumns={columnAmount}
+        ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+          ? this.renderSeparator
+          : null}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => {
+              const { fetchAssetsBalances } = this.props;
+              fetchAssetsBalances(assets, wallet.address);
+            }}
+          />
+        }
+      />
+    );
+  };
+
+  renderCollectiblesList = (collectibles) => {
+    return (
+      <FlatList
+        data={collectibles}
+        keyExtractor={(it) => it.id}
+        renderItem={this.renderCollectible}
+        style={{ width: '100%', marginBottom: spacing.small }}
         contentContainerStyle={{
           paddingVertical: 6,
           paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
           paddingRight: horizontalPadding(EXTRASMALL, 'right'),
           width: '100%',
         }}
+        numColumns={2}
         refreshControl={
           <RefreshControl
             refreshing={false}
@@ -748,10 +728,25 @@ class AssetsScreen extends React.Component<Props, State> {
             }}
           />
         }
-        stickySectionHeadersEnabled={false}
+        onScroll={() => Keyboard.dismiss()}
+        ListEmptyComponent={
+          <Wrapper
+            fullScreen
+            style={{
+              paddingTop: 90,
+              paddingBottom: 90,
+              alignItems: 'center',
+            }}
+          >
+            <EmptyStateParagraph
+              title="Collectible not found"
+              bodyText="Check if the name was entered correctly"
+            />
+          </Wrapper>
+        }
       />
     );
-  };
+  }
 
   render() {
     const {
@@ -761,8 +756,9 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
       assetsSearchState,
       navigation,
+      collectibles,
     } = this.props;
-    const { query } = this.state;
+    const { query, activeTab } = this.state;
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -781,6 +777,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING && query.length >= MIN_QUERY_LENGTH;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!assetsSearchState);
+    const isInCollectiblesSearchMode = (query && query.length >= MIN_QUERY_LENGTH) && activeTab === COLLECTIBLES;
 
     const assetsTabs = [
       {
@@ -795,13 +792,17 @@ class AssetsScreen extends React.Component<Props, State> {
       },
     ];
 
+    const filteredCollectibles = isInCollectiblesSearchMode
+      ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
+      : collectibles;
+
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
           headerProps={{ title: 'assets' }}
-          searchInputPlaceholder="Search or add new asset"
+          searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
           onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={assetsSearchState}
+          itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
           navigation={navigation}
         />
         <TokensWrapper>
@@ -817,8 +818,9 @@ class AssetsScreen extends React.Component<Props, State> {
           }
           {!inSearchMode &&
           <React.Fragment>
-            <Tabs initialActiveTab={TOKENS} tabs={assetsTabs} />
-            {this.renderAssetList()}
+            {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
+            {activeTab === TOKENS && this.renderAssetList()}
+            {activeTab === COLLECTIBLES && this.renderCollectiblesList(filteredCollectibles)}
           </React.Fragment>}
         </TokensWrapper>
       </Container>
