@@ -739,7 +739,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/circleciPodlockFix
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
