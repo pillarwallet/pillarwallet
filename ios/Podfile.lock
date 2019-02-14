@@ -133,7 +133,7 @@ PODS:
     - gRPC-Core (= 1.18.0)
     - gRPC-RxLibrary (= 1.18.0)
   - GTMSessionFetcher/Core (1.2.1)
-  - Intercom (5.2)
+  - Intercom (5.2.1)
   - leveldb-library (1.20)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
@@ -360,7 +360,7 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: 8e49c501c166d221cf9e44076b20580171f8ecd0
   gRPC-RxLibrary: bf23bc3bfde06674a794bb63f458f8d67d4038bb
   GTMSessionFetcher: 32aeca0aa144acea523e1c8e053089dec2cb98ca
-  Intercom: fd0c7377d49cc2f1a94e7fc0bcc9ccfcdab0a7dc
+  Intercom: 53f07c24f0ca18c1e910750e79b75f9c9867338f
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
@@ -379,6 +379,6 @@ SPEC CHECKSUMS:
   SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
   yoga: b1ce48b6cf950b98deae82838f5173ea7cf89e85
 
-PODFILE CHECKSUM: f72a28dc777229390986fd0b035fd14fbf8c9e3a
+PODFILE CHECKSUM: 6d4662b991d8296c39ef5ce884d82159c1db3c30
 
 COCOAPODS: 1.5.3
