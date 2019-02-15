@@ -30,6 +30,9 @@ import Spinner from 'components/Spinner';
 import Header from 'components/Header';
 import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
+import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+
+const ACTIVE_APP_STATE = 'active';
 
 type Props = {
   login: (pin: string, touchID?: boolean, callback?: Function) => Function,
@@ -51,12 +54,29 @@ class PinCodeUnlock extends React.Component<Props, *> {
   }
 
   componentDidMount() {
-    const { login, useBiometrics } = this.props;
+    addAppStateChangeListener(this.handleAppStateChange);
+    const { useBiometrics } = this.props;
     if (useBiometrics) {
-      TouchID.authenticate('Biometric login')
-        .then(() => login('', true))
-        .catch(() => null);
+      this.showBiometricLogin();
     }
+  }
+
+  componentWillUnmount() {
+    removeAppStateChangeListener(this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState: string) => {
+    const { useBiometrics } = this.props;
+    if (nextAppState === ACTIVE_APP_STATE && useBiometrics) {
+      this.showBiometricLogin();
+    }
+  };
+
+  showBiometricLogin() {
+    const { login } = this.props;
+    TouchID.authenticate('Biometric login')
+      .then(() => login('', true))
+      .catch(() => null);
   }
 
   handlePinSubmit = (pin: string) => {
