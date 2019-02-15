@@ -53,7 +53,7 @@ class PinCodeUnlock extends React.Component<Props, *> {
   componentDidMount() {
     const { login, useBiometrics } = this.props;
     if (useBiometrics) {
-      TouchID.authenticate('Biometrics login')
+      TouchID.authenticate('Biometric login')
         .then(() => login('', true))
         .catch(() => null);
     }
