@@ -38,10 +38,11 @@ import Swipeout from 'react-native-swipeout';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // components
-import { BaseText, SubHeading } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
+
 // import AssetCard from 'components/AssetCard';
 import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
@@ -119,7 +120,6 @@ type State = {
   forceHideRemoval: boolean,
   query: string,
   activeTab: string,
-  formattedCollectibles: Array<Object>
 }
 
 const IS_IOS = Platform.OS === 'ios';
@@ -163,10 +163,6 @@ const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
 `;
 
-const ListHeader = styled.View`
-  padding: ${spacing.medium}px;
-`;
-
 const EmptyStateWrapper = styled(Wrapper)`
   padding-top: 90px;
   padding-bottom: 90px;
@@ -183,7 +179,6 @@ class AssetsScreen extends React.Component<Props, State> {
       forceHideRemoval: false,
       query: '',
       activeTab: TOKENS,
-      formattedCollectibles: [],
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
@@ -199,8 +194,6 @@ class AssetsScreen extends React.Component<Props, State> {
       wallet,
       fetchCollectibles,
     } = this.props;
-
-    this.formatCollectibles();
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
@@ -232,36 +225,6 @@ class AssetsScreen extends React.Component<Props, State> {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;
   }
-
-  componentDidUpdate(prevProps) {
-    const { collectibles } = this.props;
-    if (prevProps.collectibles !== collectibles) {
-      this.formatCollectibles();
-    }
-  }
-
-  formatCollectibles = () => {
-    const { collectibles } = this.props;
-    const formattedCollectibles = collectibles;
-    // const formattedCollectibles = [];
-    //
-    // collectibles.forEach((collectible) => {
-    //   if (!formattedCollectibles.find(coll => coll.title === collectible.assetContract)) {
-    //     formattedCollectibles.push({
-    //       title: collectible.assetContract,
-    //       data: [{
-    //         key: collectible.assetContract,
-    //         data: [{ ...collectible }],
-    //       }],
-    //     });
-    //   } else {
-    //     const thisCat = formattedCollectibles.find(coll => coll.title === collectible.assetContract);
-    //     if (thisCat) thisCat.data[0].data.push({ ...collectible });
-    //   }
-    // });
-
-    this.setState({ formattedCollectibles });
-  };
 
   handleCardTap = (assetData: Object, isCollectible?: boolean) => {
     const { navigation } = this.props;
@@ -630,17 +593,7 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   setActiveTab = (activeTab) => {
-    const { query } = this.state;
     this.setState({ activeTab });
-    if (query) this.handleSearchChange(query);
-  };
-
-  renderListTitle = (titleText: string) => {
-    return (
-      <ListHeader>
-        <SubHeading>{titleText}</SubHeading>
-      </ListHeader>
-    );
   };
 
   renderAssetList = () => {
@@ -744,7 +697,7 @@ class AssetsScreen extends React.Component<Props, State> {
         }
       />
     );
-  }
+  };
 
   render() {
     const {
