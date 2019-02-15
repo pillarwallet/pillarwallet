@@ -167,6 +167,12 @@ const ListHeader = styled.View`
   padding: ${spacing.medium}px;
 `;
 
+const EmptyStateWrapper = styled(Wrapper)`
+  padding-top: 90px;
+  padding-bottom: 90px;
+  align-items: center;
+`;
+
 class AssetsScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
@@ -580,19 +586,12 @@ class AssetsScreen extends React.Component<Props, State> {
         stickySectionHeadersEnabled={false}
         ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         ListEmptyComponent={
-          <Wrapper
-            fullScreen
-            style={{
-              paddingTop: 90,
-              paddingBottom: 90,
-              alignItems: 'center',
-            }}
-          >
+          <EmptyStateWrapper fullScreen>
             <EmptyStateParagraph
               title="Token not found"
               bodyText="Check if the name was entered correctly or add custom token"
             />
-          </Wrapper>
+          </EmptyStateWrapper>
         }
         onScroll={() => Keyboard.dismiss()}
       />
@@ -706,6 +705,15 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   renderCollectiblesList = (collectibles) => {
+    const emptyStateInfo = {
+      title: 'No collectibles',
+      bodyText: 'There are no collectibles in this wallet',
+    };
+
+    if (this.state.query) {
+      emptyStateInfo.title = 'Collectible not found';
+      emptyStateInfo.bodyText = 'Check if the name was entered correctly';
+    }
     return (
       <FlatList
         data={collectibles}
@@ -730,19 +738,9 @@ class AssetsScreen extends React.Component<Props, State> {
         }
         onScroll={() => Keyboard.dismiss()}
         ListEmptyComponent={
-          <Wrapper
-            fullScreen
-            style={{
-              paddingTop: 90,
-              paddingBottom: 90,
-              alignItems: 'center',
-            }}
-          >
-            <EmptyStateParagraph
-              title="Collectible not found"
-              bodyText="Check if the name was entered correctly"
-            />
-          </Wrapper>
+          <EmptyStateWrapper fullScreen>
+            <EmptyStateParagraph {...emptyStateInfo} />
+          </EmptyStateWrapper>
         }
       />
     );
