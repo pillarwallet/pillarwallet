@@ -101,7 +101,6 @@ aliases:
           cp environments/.env.staging ./.env
           sed -i.bak "s/_build_number_/$buildNumber/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-
 # Default for iOS Build machine
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
@@ -168,13 +167,11 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
-
       - run:
           name: prepare to archive ipa file
           command: |
             mkdir -p ./toArchive
             cp ./ios/pillarwallet-staging.ipa ./toArchive
-
       - store_artifacts:
           path: ./toArchive
           destination: app_build
@@ -199,12 +196,10 @@ jobs:
           name: Accept Android SDK licenses
           command: |
             yes | sdkmanager --licenses || exit 0
-
       - run:
           name: Accept Android SDK licenses 2
           command: |
             yes | sdkmanager --update || exit 0
-
       - *gradle_depencencies
       - *gradle_save_cache
 
@@ -215,14 +210,12 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
-
       - run:
           name: Upload to Hockeyapp
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_staging_build
-
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
@@ -527,7 +520,6 @@ jobs:
           name: Accept Android SDK licenses
           command: |
             yes | sdkmanager --licenses || exit 0
-
       - run:
           name: Accept Android SDK licenses 2
           command: |
@@ -578,7 +570,6 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-prod.txt)"
-
   stage_android:
     working_directory: ~/pillarwallet/android
     resource_class: large
@@ -650,7 +641,6 @@ jobs:
           name: Accept Android SDK licenses
           command: |
             yes | sdkmanager --licenses || exit 0
-
       - run:
           name: Accept Android SDK licenses 2
           command: |
@@ -704,7 +694,6 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-stage.txt)"
-
   whitesource:
     working_directory: ~/pillarwallet
     docker:
@@ -721,7 +710,6 @@ jobs:
           command: |
             cd .whitesource/
             chmod +x wss_agent.sh && ./wss_agent.sh -apiKey $WHITESOURCE_API_KEY -c ./whitesource-fs-agent.config  -project pillarwallet -f files.list
-
 workflows:
   version: 2
   build_and_deploy:
@@ -732,30 +720,13 @@ workflows:
               only:
                   - master
       - build-and-test
-      - whitesource:
-          requires:
-            - build-and-test
-      - dev_build_ios:
-          requires:
-            - build-and-test
-          filters:
-            branches:
-              only:
-                  - develop
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
-      - stage_ios:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                  - master
+                  - "fix/163972629_iconsBundle"
       - stage_android:
           requires:
             - build
@@ -766,11 +737,7 @@ workflows:
       - release_to_prod:
           type: approval
           requires:
-            - stage_ios
             - stage_android
-      - prod_ios:
-          requires:
-            - release_to_prod
       - prod_android:
           requires:
             - release_to_prod
