@@ -720,14 +720,14 @@ workflows:
               only:
                   - master
       - build-and-test
-      - dev_build_android:
+      - dev_build_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
                   - "fix/163972629_iconsBundle"
-      - stage_android:
+      - stage_ios:
           requires:
             - build
           filters:
@@ -737,7 +737,7 @@ workflows:
       - release_to_prod:
           type: approval
           requires:
-            - stage_android
-      - prod_android:
+            - stage_ios
+      - prod_ios:
           requires:
             - release_to_prod
