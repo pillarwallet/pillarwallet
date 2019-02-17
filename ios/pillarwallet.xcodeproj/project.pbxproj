@@ -449,6 +449,13 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
+		690DC59222161538001EB112 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 690DC55F22161537001EB112 /* RNSentry.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNSentry;
+		};
 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */;
@@ -548,6 +555,7 @@
 		62DA123A58B3461382F464FA /* libRNOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNOS.a; sourceTree = "<group>"; };
 		65478B02B8C2492D810CAC24 /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
 		690777AE39E44AABA938DEFA /* libSignalMessagingSwift.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSignalMessagingSwift.a; sourceTree = "<group>"; };
+		690DC55F22161537001EB112 /* RNSentry.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSentry.xcodeproj; path = "../node_modules/react-native-sentry/ios/RNSentry.xcodeproj"; sourceTree = "<group>"; };
 		6BA9F928B22E46C8B0C4B348 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		6BFBD6B1ACEF4837940C6C31 /* Aktiv Grotesk App_light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Aktiv Grotesk App_light.ttf"; path = "../src/assets/fonts/Aktiv Grotesk App_light.ttf"; sourceTree = "<group>"; };
 		6E0A7D4A8FF547D0B5B3181C /* libRNVectorIcons.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNVectorIcons.a; sourceTree = "<group>"; };
@@ -886,6 +894,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		690DC56022161537001EB112 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				690DC59322161538001EB112 /* libRNSentry.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		78C398B11ACF4ADC00677621 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -898,6 +914,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				690DC55F22161537001EB112 /* RNSentry.xcodeproj */,
 				16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */,
 				16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */,
 				165F273A21244AC70089F39A /* SplashScreen.xcodeproj */,
@@ -1144,6 +1161,10 @@
 				{
 					ProductGroup = 162E1AD02119CFA90028BE96 /* Products */;
 					ProjectRef = 162E1ACF2119CFA90028BE96 /* RNScrypt.xcodeproj */;
+				},
+				{
+					ProductGroup = 690DC56022161537001EB112 /* Products */;
+					ProjectRef = 690DC55F22161537001EB112 /* RNSentry.xcodeproj */;
 				},
 				{
 					ProductGroup = 16CF7AD02146D87300BEADDB /* Products */;
@@ -1551,6 +1572,13 @@
 			fileType = archive.ar;
 			path = libRCTAnimation.a;
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		690DC59322161538001EB112 /* libRNSentry.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSentry.a;
+			remoteRef = 690DC59222161538001EB112 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {

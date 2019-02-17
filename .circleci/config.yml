@@ -4,8 +4,6 @@ aliases:
     restore_cache:
       keys:
         - ios-pods-{{ checksum "./ios/Podfile.lock" }}
-        # Fall back to using the latest cache if no exact match is found.
-        - ios-pods-
   - &install_pods
     run:
       name: Install CocoaPods
@@ -21,15 +19,11 @@ aliases:
       name: Restore cache
       keys:
         - ios-gems-{{ checksum "Gemfile.lock" }}
-        # Fall back to using the latest cache if no exact match is found.
-        - ios-gems-
   - &restore_gems_cache_android
     restore_cache:
       name: Restore cache
       keys:
         - android-gems-{{ checksum "Gemfile.lock" }}
-        # Fall back to using the latest cache if no exact match is found.
-        - android-gems-
   - &install_gems_ios
     run:
       name: Bundle install
