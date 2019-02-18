@@ -48,6 +48,7 @@ import {
   TYPE_REJECTED,
   TYPE_SENT,
 } from 'constants/invitationsConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
@@ -95,6 +96,7 @@ type Props = {
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
   noBorder?: boolean,
+  collectiblesHistory: Object[],
 };
 
 type State = {
@@ -132,9 +134,9 @@ class ActivityFeed extends React.Component<Props, State> {
     resetUnread(contact.username);
   };
 
-  mapTransactionsHistory(history, contacts) {
+  mapTransactionsHistory(history, contacts, eventType) {
     const concatedHistory = history
-      .map(({ ...rest }) => ({ ...rest, type: TRANSACTION_EVENT }))
+      .map(({ ...rest }) => ({ ...rest, type: eventType }))
       .map(({ to, from, ...rest }) => {
         const contact = contacts.find(({ ethAddress }) => {
           return from.toUpperCase() === ethAddress.toUpperCase()
@@ -210,6 +212,33 @@ class ActivityFeed extends React.Component<Props, State> {
       );
     }
 
+    if (type === COLLECTIBLE_TRANSACTION) {
+      const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
+      const address = isReceived ? notification.from : notification.to;
+      const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
+      const directionIcon = isReceived ? 'Received' : 'Sent';
+
+      const contact = contacts
+        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      return (
+        <ListItemWithImage
+          onPress={() => this.selectEvent({ ...notification, contact }, type, notification.status)}
+          label={nameOrAddress}
+          navigateToProfile={Object.keys(contact).length !== 0 ? navigateToContact : () => {}}
+          avatarUrl={notification.icon}
+          imageAddonUrl={contact.profileImage}
+          imageAddonName={nameOrAddress}
+          imageAddonIconName={Object.keys(contact).length === 0 || showArrowsOnly
+            ? directionIcon.toLowerCase()
+            : undefined}
+          subtext={dateTime}
+          itemValue={directionIcon}
+          itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
+          valueColor={isReceived ? baseColors.jadeGreen : null}
+        />
+      );
+    }
+
     let onItemPress;
     if (type === TYPE_ACCEPTED || type === TYPE_RECEIVED || type === TYPE_SENT) {
       onItemPress = () => this.selectEvent(notification, CONNECTION_EVENT, type);
@@ -270,6 +299,7 @@ class ActivityFeed extends React.Component<Props, State> {
       backgroundColor,
       wrapperStyle,
       noBorder,
+      collectiblesHistory,
     } = this.props;
 
     const {
@@ -280,7 +310,9 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.state;
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-    const mappedHistory = this.mapTransactionsHistory(history, mappedContacts);
+    const mappedHistory = this.mapTransactionsHistory(history, mappedContacts, TRANSACTION_EVENT);
+    const mappedCollectiblesHistory =
+      this.mapTransactionsHistory(collectiblesHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
     const chatNotifications = [];
     /* chats.chats
       .map((
@@ -296,7 +328,12 @@ class ActivityFeed extends React.Component<Props, State> {
           createdAt: lastMessage.savedTimestamp,
         };
       }); */
-    const allFeedData = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
+    const allFeedData = [
+      ...mappedContacts,
+      ...invitations,
+      ...mappedHistory,
+      ...chatNotifications,
+      ...mappedCollectiblesHistory]
       .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
 
@@ -372,6 +409,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
+  collectibles: { transactionHistory: collectiblesHistory },
 }) => ({
   contacts,
   notifications,
@@ -379,6 +417,7 @@ const mapStateToProps = ({
   invitations,
   assets: Object.values(assets),
   wallet,
+  collectiblesHistory,
 });
 
 const mapDispatchToProps = (dispatch) => ({

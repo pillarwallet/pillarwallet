@@ -48,7 +48,8 @@ import {
   TYPE_REJECTED,
   TYPE_SENT,
 } from 'constants/invitationsConstants';
-import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
+import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT, COLLECTIBLE } from 'constants/navigationConstants';
+import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 
 import EventHeader from './EventHeader';
 
@@ -189,6 +190,15 @@ class EventDetails extends React.Component<Props, {}> {
     navigation.navigate(CONTACT, { contact });
   };
 
+  goToCollectible = (assetData = {}) => {
+    const {
+      navigation,
+      onClose,
+    } = this.props;
+    onClose();
+    navigation.navigate(COLLECTIBLE, { assetData });
+  };
+
   sendTokensToUser = (contact) => {
     const {
       navigation,
@@ -314,6 +324,68 @@ class EventDetails extends React.Component<Props, {}> {
                 onPress={() => viewTransactionOnBlockchain(hash)}
               />
             </ButtonsWrapper>
+          </EventBody>
+        </React.Fragment>
+      );
+    }
+
+    if (eventType === COLLECTIBLE_TRANSACTION) {
+      const {
+        to,
+        from,
+        note,
+        icon,
+        assetData,
+      } = eventData;
+
+      const isReceived = to.toUpperCase() === myAddress.toUpperCase();
+      const status = isReceived ? COLLECTIBLE_RECEIVED : COLLECTIBLE_SENT;
+      let transactionNote = note;
+      if (txNotes && txNotes.length > 0) {
+        const txNote = txNotes.find(txn => txn.txHash === eventData.hash);
+        if (txNote) {
+          transactionNote = txNote.text;
+        }
+      }
+      const hasNote = transactionNote && transactionNote !== '';
+      const recipientContact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const senderContact = contacts.find(({ ethAddress }) => from.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const relatedUser = isReceived ? senderContact : recipientContact;
+      const relatedUserTitle = relatedUser.username || (isReceived
+        ? `${from.slice(0, 7)}…${from.slice(-7)}`
+        : `${to.slice(0, 7)}…${to.slice(-7)}`);
+
+      return (
+        <React.Fragment>
+          <EventHeader
+            eventType={COLLECTIBLE_TRANSACTION}
+            eventStatus={status}
+            eventTime={eventTime}
+            onClose={onClose}
+            iconUrl={icon}
+            onIconPress={() => this.goToCollectible(assetData)}
+          />
+          <EventBody>
+            <ListItemUnderlined
+              label={isReceived ? 'SENDER' : 'RECIPIENT'}
+              value={relatedUserTitle}
+              valueAddon={(!!relatedUser.username && <EventProfileImage
+                uri={relatedUser.profileImage}
+                userName={relatedUserTitle}
+                diameter={40}
+                initialsSize={fontSizes.extraSmall}
+                style={{ marginBottom: 4 }}
+                onPress={() => this.goToProfile(relatedUser)}
+                noShadow
+                borderWidth={0}
+              />)}
+            />
+            {!!hasNote &&
+            <ListItemParagraph
+              label="NOTE"
+              value={transactionNote}
+            />
+            }
           </EventBody>
         </React.Fragment>
       );

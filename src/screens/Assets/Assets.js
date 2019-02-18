@@ -230,13 +230,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const { navigation } = this.props;
     this.setState({ forceHideRemoval: true });
     if (isCollectible) {
-      navigation.navigate(COLLECTIBLE,
-        {
-          assetData: {
-            ...assetData,
-            tokenType: COLLECTIBLES,
-          },
-        });
+      navigation.navigate(COLLECTIBLE, { assetData });
     } else {
       navigation.navigate(ASSET,
         {
@@ -449,28 +443,11 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   renderCollectible = ({ item }) => {
-    const collectibleProps = {
-      id: item.id,
-      name: item.name,
-      token: item.id.toString(),
-      amount: item.name,
-      icon: (/\.(png)$/i).test(item.image_preview_url) ? item.image_preview_url : '',
-    };
-
-    const collectibleData = {
-      id: item.id,
-      category: item.assetContract,
-      name: item.name,
-      description: item.description,
-      icon: (/\.(png)$/i).test(item.image_preview_url) ? item.image_preview_url : '',
-      externalLink: item.external_link,
-    };
-
     return (
       <AssetCardMinimized
-        {...collectibleProps}
+        {...item}
         smallScreen={smallScreen()}
-        onPress={() => { this.handleCardTap(collectibleData, true); }}
+        onPress={() => { this.handleCardTap(item, true); }}
         isCollectible
         columnCount={2}
       />
@@ -670,7 +647,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <FlatList
         data={collectibles}
-        keyExtractor={(it) => it.id}
+        keyExtractor={(item) => item.id}
         renderItem={this.renderCollectible}
         style={{ width: '100%', marginBottom: spacing.small }}
         contentContainerStyle={{
@@ -790,7 +767,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
-  collectibles: { assets: collectibles, categories },
+  collectibles: { assets: collectibles },
 }) => ({
   wallet,
   assets,
@@ -802,7 +779,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   assetsLayout,
   collectibles,
-  categories,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

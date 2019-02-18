@@ -74,20 +74,19 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
-    const { navigation, categories } = this.props;
+    const { navigation } = this.props;
     const { note } = this.state;
     const {
       name,
       tokenType,
       id: tokenId,
-      assetContract,
+      contractAddress,
     } = this.assetData;
 
-    const assetCategory = categories.find(c => c.name === assetContract) || {};
     const transactionPayload: CollectibleTransactionPayload = {
       to: this.receiver,
       name,
-      contractAddress: assetCategory.address,
+      contractAddress,
       tokenType,
       tokenId,
       note,
