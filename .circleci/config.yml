@@ -328,9 +328,6 @@ jobs:
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd ./ios/
-            touch ios-s3-URL-stage.txt
-            aws s3 cp pillarwallet-staging.ipa $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
-            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-stage.txt
             touch ios-s3-URL-qa.txt
             aws s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
             aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-qa.txt
@@ -339,7 +336,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "staging" "iOS" "$(cat ~/pillarwallet/ios/ios-s3-URL-stage.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "staging" "iOS" "$(cat ~/pillarwallet/ios/ios-s3-URL-qa.txt)"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -680,9 +677,6 @@ jobs:
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
-            touch android-s3-URL-stage.txt
-            aws s3 cp app-prod-staging.apk $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
             touch android-s3-URL-qa.txt
             aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
             aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
@@ -697,7 +691,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-stage.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)"
 
   whitesource:
     working_directory: ~/pillarwallet
