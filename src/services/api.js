@@ -251,11 +251,12 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // e
     .catch(() => ({}));
 };
 
-SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) { // eslint-disable-line
+SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_RINKEBY}/api/v1/events/?account_address=${walletAddress}&event_type=transfer`))
+    .then(() => fetch(`${OPEN_SEA_RINKEBY}/events/?account_address=${walletAddress}`))
     .then(data => data.json())
-    .catch(() => ({}));
+    .then(parsedData => ({ success: parsedData.success ? parsedData.success : true, ...parsedData }))
+    .catch(() => { return { success: false }; });
 };
 
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {

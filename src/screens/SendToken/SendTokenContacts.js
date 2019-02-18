@@ -208,6 +208,7 @@ class SendTokenContacts extends React.Component<Props, State> {
         return usernameFound || ethAddress.toLowerCase().startsWith(searchStr);
       });
     }
+
     const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
     return (
       <Container inset={{ bottom: 0 }}>

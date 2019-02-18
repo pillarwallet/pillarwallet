@@ -111,7 +111,6 @@ class CollectibleScreen extends React.Component<Props> {
   render() {
     const { navigation } = this.props;
     const { assetData } = navigation.state.params;
-
     const {
       id,
       name,
@@ -122,7 +121,7 @@ class CollectibleScreen extends React.Component<Props> {
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
         <Header
-          onBack={() => { navigation.goBack(); }}
+          onBack={() => { navigation.goBack(null); }}
           title={name}
         />
         <ScrollWrapper>
