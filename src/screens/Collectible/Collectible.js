@@ -26,8 +26,10 @@ import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
+import ActivityFeed from 'components/ActivityFeed';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { TRANSACTIONS } from 'constants/activityConstants';
 import type { Transaction } from 'models/Transaction';
 import type { Assets, Balances } from 'models/Asset';
 
@@ -36,7 +38,7 @@ import { Container, ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
-
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 type Props = {
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
@@ -50,6 +52,7 @@ type Props = {
   baseFiatCurrency: ?string,
   contacts: Object,
   resetHideRemoval: Function,
+  collectibles: Object[],
 };
 
 const ActionButtonsWrapper = styled.View`
@@ -109,7 +112,7 @@ class CollectibleScreen extends React.Component<Props> {
   };
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, collectibles } = this.props;
     const { assetData } = navigation.state.params;
     const {
       id,
@@ -117,6 +120,10 @@ class CollectibleScreen extends React.Component<Props> {
       description,
       icon,
     } = assetData;
+
+    const isOwned = collectibles.find(collectible => {
+      return collectible.id === id;
+    });
 
     return (
       <Container color={baseColors.white} inset={{ bottom: 0 }}>
@@ -142,9 +149,21 @@ class CollectibleScreen extends React.Component<Props> {
                 label="Send"
                 icon={iconSend}
                 onPress={() => this.goToSendTokenFlow(assetData)}
+                disabled={!isOwned}
               />
             </CircleButtonsWrapper>
           </ActionButtonsWrapper>
+          <ActivityFeed
+            feedTitle="transactions."
+            navigation={navigation}
+            activeTab={TRANSACTIONS}
+            additionalFiltering={data => data.filter(({ type, assetData: thisAssetData }) =>
+              type === COLLECTIBLE_TRANSACTION && !!thisAssetData.id && thisAssetData.id === id)}
+            backgroundColor={baseColors.white}
+            noBorder
+            wrapperStyle={{ marginTop: 10 }}
+            invertAddon
+          />
         </ScrollWrapper>
       </Container>
     );
@@ -158,6 +177,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   history: { data: history },
   appSettings: { data: { baseFiatCurrency } },
+  collectibles: { assets: collectibles },
 }) => ({
   wallet,
   contacts,
@@ -166,6 +186,7 @@ const mapStateToProps = ({
   rates,
   history,
   baseFiatCurrency,
+  collectibles,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

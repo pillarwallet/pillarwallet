@@ -45,7 +45,9 @@ export type TokenTransactionPayload = {
   symbol: string,
   contractAddress: ?string,
   decimals: number,
-  note?: ?string
+  note?: ?string,
+  name?: string,
+  tokenId?: string
 }
 
 export type CollectibleTransactionPayload = {
@@ -55,6 +57,8 @@ export type CollectibleTransactionPayload = {
   tokenType: string,
   tokenId: string,
   note?: ?string,
+  name: string,
+  tokenId: string
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;

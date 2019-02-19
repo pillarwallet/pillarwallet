@@ -69,7 +69,7 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
-import { fetchCollectiblesAction } from 'actions/collectiblesActions';
+import { fetchCollectiblesAction, fetchCollectiblesHistoryAction } from 'actions/collectiblesActions';
 
 // constants
 import {
@@ -114,6 +114,7 @@ type Props = {
   addAsset: Function,
   removeAsset: Function,
   fetchCollectibles: Function,
+  fetchCollectiblesHistory: Function,
 }
 
 type State = {
@@ -192,14 +193,13 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
       assets,
       wallet,
-      fetchCollectibles,
     } = this.props;
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
 
-    fetchCollectibles();
+    this.fetchCollectiblesData();
 
     this.willFocus = this.props.navigation.addListener(
       'willFocus',
@@ -211,6 +211,17 @@ class AssetsScreen extends React.Component<Props, State> {
       () => { this.setState({ forceHideRemoval: true }); },
     );
   }
+
+  fetchCollectiblesData = () => {
+    const {
+      fetchCollectibles,
+      fetchCollectiblesHistory,
+    } = this.props;
+
+    fetchCollectibles()
+      .then(() => { fetchCollectiblesHistory(); })
+      .catch(() => {});
+  };
 
   componentWillUnmount() {
     this.didBlur.remove();
@@ -660,10 +671,7 @@ class AssetsScreen extends React.Component<Props, State> {
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={() => {
-              const { fetchCollectibles } = this.props;
-              fetchCollectibles();
-            }}
+            onRefresh={this.fetchCollectiblesData}
           />
         }
         onScroll={() => Keyboard.dismiss()}
@@ -795,6 +803,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
   fetchCollectibles: () => dispatch(fetchCollectiblesAction()),
+  fetchCollectiblesHistory: () => dispatch(fetchCollectiblesHistoryAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

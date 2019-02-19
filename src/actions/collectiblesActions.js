@@ -28,14 +28,49 @@ import { saveDbAction } from './dbActions';
 export const fetchCollectiblesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { wallet: { data: wallet } } = getState();
-
     const collectibles = [];
+    const collectiblesResponse = await api.fetchCollectibles(wallet.address);
+
+    if (collectiblesResponse.error || collectiblesResponse.assets === undefined) return;
+
+    collectiblesResponse.assets.forEach((collectible) => {
+      const {
+        token_id: id,
+        asset_contract: assetContract,
+        name,
+        description,
+        image_preview_url: image,
+      } = collectible;
+      const { name: category, address: contractAddress } = assetContract;
+      const assetData = {
+        id,
+        category,
+        name,
+        description,
+        icon: (/\.(png)$/i).test(image) ? image : '',
+        contractAddress,
+        assetContract: category,
+        tokenType: COLLECTIBLES,
+      };
+      collectibles.push(assetData);
+    });
+
+    dispatch(saveDbAction('collectibles', { collectibles }, true));
+    dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
+  };
+};
+
+export const fetchCollectiblesHistoryAction = () => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const { wallet: { data: wallet } } = getState();
+
+    // const collectibles = [];
     const collectiblesHistory = [];
-    const transactionEvents = await api.fetchCollectiblesTransactionHistory(wallet.address);
+    const transactionEventsResponse = await api.fetchCollectiblesTransactionHistory(wallet.address);
 
-    if (!transactionEvents.success) return;
+    if (transactionEventsResponse.error || transactionEventsResponse.asset_events === undefined) return;
 
-    transactionEvents.asset_events.forEach((event) => {
+    transactionEventsResponse.asset_events.forEach((event) => {
       const {
         asset,
         transaction,
@@ -45,26 +80,27 @@ export const fetchCollectiblesAction = () => {
       const {
         asset_contract: assetContract,
         name,
-        token_id: tokenId,
+        token_id: id,
         description,
+        image_preview_url: image,
       } = asset;
-      const { name: assetContractName, address: contractAddress } = assetContract;
+      const { name: category, address: contractAddress } = assetContract;
       const { transaction_hash: trxHash, block_number: blockNumber, timestamp } = transaction;
 
-      const collectibleName = name || `${assetContractName} ${tokenId}`;
+      const collectibleName = name || `${category} ${id}`;
 
       const assetData = {
-        id: tokenId,
-        category: assetContractName,
+        id,
+        category,
         name,
         description,
-        icon: (/\.(png)$/i).test(asset.image_preview_url) ? asset.image_preview_url : '',
+        icon: (/\.(png)$/i).test(image) ? image : '',
         contractAddress,
-        assetContract: assetContractName,
+        assetContract: category,
         tokenType: COLLECTIBLES,
       };
 
-      if (asset.owner.address.toUpperCase() === wallet.address.toUpperCase()) { collectibles.push(assetData); }
+      // if (asset.owner.address.toUpperCase() === wallet.address.toUpperCase()) { collectibles.push(assetData); }
 
       const transactionEvent = {
         to: toAcc.address,
@@ -88,8 +124,8 @@ export const fetchCollectiblesAction = () => {
       collectiblesHistory.push(transactionEvent);
     });
 
-    dispatch(saveDbAction('collectibles', { collectibles }, true));
-    dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
+    // dispatch(saveDbAction('collectibles', { collectibles }, true));
+    // dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory }, true));
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
   };

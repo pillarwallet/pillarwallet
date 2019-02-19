@@ -33,7 +33,8 @@ import Animation from 'components/Animation';
 import { baseColors, fontSizes } from 'utils/variables';
 
 // constants
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
 import { sendTxNoteByContactAction } from '../../actions/txNoteActions';
 
@@ -102,15 +103,26 @@ class SendTokenTransaction extends React.Component<Props, State> {
 
   handleNavigationBack = () => {
     const { navigation } = this.props;
-    navigation.navigate(SEND_TOKEN_CONFIRM);
+    const {
+      transactionPayload,
+    } = navigation.state.params;
+
+    if (transactionPayload.tokenType === COLLECTIBLES) {
+      navigation.navigate(SEND_COLLECTIBLE_CONFIRM, { transactionPayload });
+      return;
+    }
+    navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 
   render() {
     const { navigation } = this.props;
-    const { isSuccess, error } = navigation.state.params;
+    const { isSuccess, error, transactionPayload } = navigation.state.params;
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
-    const transactionStatusTitle = isSuccess ? 'Tokens are on their way' : 'Transaction failed';
+    const successText = transactionPayload.tokenType === COLLECTIBLES
+      ? 'Collectible is on its way'
+      : 'Tokens are on their way';
+    const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>

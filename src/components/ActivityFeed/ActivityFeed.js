@@ -53,6 +53,7 @@ import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
+import { fetchCollectiblesAction, fetchCollectiblesHistoryAction } from 'actions/collectiblesActions';
 
 const SOCIAL_TYPES = [
   TYPE_RECEIVED,
@@ -97,6 +98,9 @@ type Props = {
   showArrowsOnly?: boolean,
   noBorder?: boolean,
   collectiblesHistory: Object[],
+  invertAddon?: boolean,
+  fetchCollectibles: Function,
+  fetchCollectiblesHistory: Function,
 };
 
 type State = {
@@ -112,6 +116,21 @@ class ActivityFeed extends React.Component<Props, State> {
     selectedEventData: null,
     eventType: '',
     eventStatus: '',
+  };
+
+  componentDidMount() {
+    this.fetchCollectiblesData();
+  }
+
+  fetchCollectiblesData = () => {
+    const {
+      fetchCollectibles,
+      fetchCollectiblesHistory,
+    } = this.props;
+
+    fetchCollectibles()
+      .then(() => { fetchCollectiblesHistory(); })
+      .catch(() => {});
   };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -142,6 +161,7 @@ class ActivityFeed extends React.Component<Props, State> {
           return from.toUpperCase() === ethAddress.toUpperCase()
             || to.toUpperCase() === ethAddress.toUpperCase();
         });
+
         return {
           username: getUserName(contact),
           to,
@@ -175,6 +195,7 @@ class ActivityFeed extends React.Component<Props, State> {
       onAcceptInvitation,
       onRejectInvitation,
       showArrowsOnly,
+      invertAddon,
     } = this.props;
 
     const walletAddress = wallet.address;
@@ -228,9 +249,10 @@ class ActivityFeed extends React.Component<Props, State> {
           avatarUrl={notification.icon}
           imageAddonUrl={contact.profileImage}
           imageAddonName={nameOrAddress}
-          imageAddonIconName={Object.keys(contact).length === 0 || showArrowsOnly
+          imageAddonIconName={(Object.keys(contact).length === 0 || showArrowsOnly) && !invertAddon
             ? directionIcon.toLowerCase()
             : undefined}
+          iconName={invertAddon ? directionIcon.toLowerCase() : null}
           subtext={dateTime}
           itemValue={directionIcon}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
@@ -342,7 +364,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
-        return type === TRANSACTION_EVENT;
+        return type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION;
       }
       if (activeTab === SOCIAL) {
         return SOCIAL_TYPES.includes(type);
@@ -422,6 +444,8 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
+  fetchCollectibles: () => dispatch(fetchCollectiblesAction()),
+  fetchCollectiblesHistory: () => dispatch(fetchCollectiblesHistoryAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ActivityFeed);

@@ -38,7 +38,6 @@ import {
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
-import { parseAccountUniqueTokens } from 'utils/collectibles';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -243,20 +242,31 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 };
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // eslint-disable-line
-  // const address = '0x0239769a1adf4def9f07da824b80b9c4fcb59593'; // REMOVE ME
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_RINKEBY}/assets/?owner=${walletAddress}&order_by=current_price&order_direction=asc`))
+    .then(() => fetch(`${OPEN_SEA_RINKEBY}/assets/?owner=${walletAddress}&order_by=current_price&order_direction=asc`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': '43a6b0b3fc5645fe826f392e7ac88bdf',
+      },
+    }))
     .then(data => data.json())
-    .then(parseAccountUniqueTokens)
-    .catch(() => ({}));
+    .catch(() => ({ error: true }));
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_RINKEBY}/events/?account_address=${walletAddress}`))
+    .then(() => fetch(`${OPEN_SEA_RINKEBY}/events/?account_address=${walletAddress}&event_type=transfer`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': '43a6b0b3fc5645fe826f392e7ac88bdf',
+      },
+    }))
     .then(data => data.json())
-    .then(parsedData => ({ success: parsedData.success ? parsedData.success : true, ...parsedData }))
-    .catch(() => { return { success: false }; });
+    .catch(() => ({ error: true }));
 };
 
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {

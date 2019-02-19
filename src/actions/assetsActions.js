@@ -40,6 +40,8 @@ import {
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
+import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
+
 import {
   transferETH,
   transferERC20,
@@ -80,6 +82,7 @@ export const sendAssetAction = (
     const {
       history: { data: currentHistory },
       txCount: { data: { lastNonce } },
+      collectibles: { assets: collectibles, transactionHistory: collectiblesHistory },
     } = getState();
     wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
     const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
@@ -96,20 +99,46 @@ export const sendAssetAction = (
     if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
       // $FlowFixMe
       const { contractAddress, tokenId } = (transaction: CollectibleTransactionPayload);
-      tokenTx = await transferERC721({
-        from: wallet.address,
-        to,
-        contractAddress,
-        tokenId,
-        wallet,
-        nonce,
-      }).catch((e) => catchTransactionError(e, 'ERC721', {
-        contractAddress,
-        from: wallet.address,
-        to,
-        tokenId,
-      }));
-      // TODO: add record to the tx history collection
+
+      const thisCollectible = collectibles.find(collectible => {
+        return collectible.id === tokenId;
+      });
+
+      if (!thisCollectible) {
+        tokenTx = {
+          error: 'You do not longer own this collectible',
+          hash: null,
+        };
+      } else {
+        tokenTx = await transferERC721({
+          from: wallet.address,
+          to,
+          contractAddress,
+          tokenId,
+          wallet,
+          nonce,
+        }).catch((e) => catchTransactionError(e, 'ERC721', {
+          contractAddress,
+          from: wallet.address,
+          to,
+          tokenId,
+        }));
+        if (tokenTx.hash) {
+          const historyTxPart = buildHistoryTransaction({
+            ...tokenTx,
+            asset: transaction.name,
+            note,
+          });
+          historyTx = {
+            ...historyTxPart,
+            to,
+            from: wallet.address,
+            assetData: { ...thisCollectible },
+            type: COLLECTIBLE_TRANSACTION,
+            icon: thisCollectible.icon,
+          };
+        }
+      }
     } else {
       const {
         gasLimit,
@@ -120,7 +149,6 @@ export const sendAssetAction = (
         decimals,
         // $FlowFixMe
       } = (transaction: TokenTransactionPayload);
-
 
       if (symbol === ETH) {
         tokenTx = await transferETH({
@@ -171,12 +199,23 @@ export const sendAssetAction = (
 
     // update transaction history
     if (historyTx) {
-      dispatch({
-        type: ADD_TRANSACTION,
-        payload: historyTx,
-      });
-      const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
-      dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
+        dispatch({
+          type: ADD_COLLECTIBLE_TRANSACTION,
+          payload: { transactionData: { ...historyTx }, tokenId: transaction.tokenId },
+        });
+        const updatedCollectiblesHistory = [...collectiblesHistory, historyTx];
+        await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
+        const updatedCollectibles = collectibles.filter(thisAsset => thisAsset.id !== transaction.tokenId);
+        dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
+      } else {
+        dispatch({
+          type: ADD_TRANSACTION,
+          payload: historyTx,
+        });
+        const updatedHistory = uniqBy([historyTx, ...currentHistory], 'hash');
+        dispatch(saveDbAction('history', { history: updatedHistory }, true));
+      }
     }
 
     // update transaction count

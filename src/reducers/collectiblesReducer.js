@@ -18,10 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
+import {
+  UPDATE_COLLECTIBLES,
+  SET_COLLECTIBLES_TRANSACTION_HISTORY,
+  ADD_COLLECTIBLE_TRANSACTION,
+} from 'constants/collectiblesConstants';
+
+type Asset = {
+  id: number,
+  category: string,
+  name: string,
+  description: string,
+  icon?: string,
+  contractAddress: string,
+  assetContract: string,
+  tokenType: string,
+}
 
 export type CollectiblesReducerState = {
-  assets: Object[],
+  assets: Asset[],
   transactionHistory: Object[],
 };
 
@@ -35,10 +50,11 @@ const initialState = {
   transactionHistory: [],
 };
 
+
 export default function assetsReducer(
   state: CollectiblesReducerState = initialState,
   action: CollectiblesReducerAction,
-) {
+): CollectiblesReducerState {
   switch (action.type) {
     case UPDATE_COLLECTIBLES:
       return {
@@ -50,7 +66,14 @@ export default function assetsReducer(
         ...state,
         transactionHistory: action.payload || [],
       };
+    case ADD_COLLECTIBLE_TRANSACTION:
+      return {
+        ...state,
+        assets: [...state.assets].filter(({ id }) => id !== action.payload.tokenId),
+        transactionHistory: [...state.transactionHistory, action.payload.transactionData],
+      };
     default:
       return state;
   }
 }
+
