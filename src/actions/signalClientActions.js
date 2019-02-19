@@ -19,14 +19,18 @@
 */
 
 import ChatService from 'services/chat';
+import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 
 const chat = new ChatService();
 
 export const signalInitAction = (credentials: Object) => {
-  return () => {
+  return async (dispatch: Function, getState: Function) => {
     if (typeof credentials.accessToken === 'undefined'
       || credentials.accessToken === undefined) return;
-    chat.init(credentials)
+    const { session: { data: { isSignalInitiated } } } = getState();
+    if (isSignalInitiated) return;
+    dispatch(updateSignalInitiatedStateAction(true));
+    await chat.init(credentials)
       .then(() => chat.client.registerAccount())
       .then(() => chat.client.setFcmId(credentials.fcmToken))
       .catch(() => null);
