@@ -19,7 +19,7 @@ global.WebSocket = WebSocket;
 global.SignalClient = SignalClient;
 
 describe('chat service', () => {
-  const fakeHost = 'wss://localhost:3292';
+  const fakeHost = 'https://localhost:3292';
   const fakeURL = `${fakeHost}/v1/websocket/`;
   const client = SignalClient;
   let mockServer;
@@ -50,7 +50,7 @@ describe('chat service', () => {
   };
 
   beforeEach(() => {
-    mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL.replace('https', 'wss'));
   });
 
   afterEach(() => {
