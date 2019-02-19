@@ -32,7 +32,9 @@ export const updateOAuthTokensCB = (dispatch: Function, signalCredentials?: Obje
       type: UPDATE_OAUTH_TOKENS,
       payload: oAuthTokens,
     });
-    if (typeof signalCredentials !== 'undefined') dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
+    if (typeof signalCredentials !== 'undefined') {
+      await dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
+    }
     dispatch(saveDbAction('oAuthTokens', { oAuthTokens }, true));
   };
 };
