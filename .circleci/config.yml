@@ -732,8 +732,8 @@ workflows:
           filters:
             branches:
               only:
-                  - master
-      - build-and-test
+                  - fix/remove-keystores-change-circleci
+#      - build-and-test
       - whitesource:
           requires:
             - build-and-test
