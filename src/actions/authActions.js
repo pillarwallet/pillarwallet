@@ -74,12 +74,12 @@ export const loginAction = (pin: string) => {
           ethAddress: wallet.address,
           fcmToken,
         };
-        const { oAuthTokens: { data: OAuthTokensObject } } = getState();
-        dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
         api.init(wallet.privateKey, updateOAuth, oAuthTokens);
         api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
+        const { oAuthTokens: { data: OAuthTokensObject } } = getState();
+        await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
       } else {
