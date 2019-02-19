@@ -728,12 +728,8 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                  - fix/remove-keystores-change-circleci
-#      - build-and-test
+      - build
+      - build-and-test
       - whitesource:
           requires:
             - build-and-test
