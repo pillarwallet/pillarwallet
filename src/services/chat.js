@@ -21,6 +21,7 @@ import { SignalClient } from 'rn-signal-protocol-messaging';
 import ChatWebSocketService from 'services/chatWebSocket';
 import { SENTRY_DSN, SIGNAL_SERVER_HOST } from 'react-native-dotenv';
 import { Platform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 
 let webSocketInstance;
 
@@ -35,12 +36,20 @@ export default class Chat {
     credentials.host = SIGNAL_SERVER_HOST;
     webSocketInstance = new ChatWebSocketService(credentials);
 
-    if (Platform.OS === 'ios') {
-      return this.client.createClient(credentials.username, credentials.accessToken, credentials.host);
-    }
-
     credentials.errorTrackingDSN = SENTRY_DSN;
     credentials.isSendingLogs = !__DEV__;
+
+    if (Platform.OS === 'ios') {
+      return this.client.createClient(credentials);
+    }
+
+    try {
+      credentials.buildNumber = `${DeviceInfo.getBuildNumber()}`;
+      credentials.device = `${DeviceInfo.getManufacturer()} ${DeviceInfo.getModel()}`;
+      credentials.os = `${DeviceInfo.getSystemName()} ${DeviceInfo.getSystemVersion()}`;
+    } catch (e) {
+      //
+    }
     return this.client.init(credentials);
   }
 
@@ -80,23 +89,14 @@ export default class Chat {
     }
   }
 
-  async deleteMessage(username: string, timestamp: number, responseRequestId: number) {
+  async deleteMessage(username: string, timestamp: number, responseRequestId?: number) {
     const chatWebSocket = this.getWebSocketInstance();
-    if (chatWebSocket.isRunning()) {
+    if (chatWebSocket.isRunning() && responseRequestId !== undefined) {
       const webSocketResponse = chatWebSocket.prepareResponse(responseRequestId, 200, 'OK');
       if (webSocketResponse != null) {
         await chatWebSocket.send(webSocketResponse);
       }
-      const requestId = (new Date()).getTime();
-      const request = chatWebSocket.prepareRequest(
-        requestId,
-        'DELETE',
-        `/v1/messages/${username}/${timestamp}`,
-      );
-      if (request == null) return;
-      chatWebSocket.send(request);
-    } else {
-      await SignalClient.deleteSignalMessage(username, timestamp);
     }
+    await SignalClient.deleteSignalMessage(username, timestamp);
   }
 }

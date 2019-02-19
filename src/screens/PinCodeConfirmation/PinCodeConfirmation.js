@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import Header from 'components/Header';
 import PinCode from 'components/PinCode';
@@ -74,15 +74,17 @@ class PinCodeConfirmation extends React.Component<Props, State> {
       <Container>
         {!!this.state.errorMessage && <ErrorMessage>{this.state.errorMessage}</ErrorMessage>}
         <Header title="confirm pincode" onBack={() => this.props.navigation.goBack(null)} />
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          onPinChanged={this.handlePinChange}
-          pageInstructions="Confirm your Pincode"
-          showForgotButton={false}
-          pinError={!!this.state.errorMessage}
-          flex={false}
-          customStyle={{ marginTop: 100 }}
-        />
+        <Wrapper regularPadding flex={1}>
+          <PinCode
+            onPinEntered={this.handlePinSubmit}
+            onPinChanged={this.handlePinChange}
+            pageInstructions="Confirm your Pincode"
+            showForgotButton={false}
+            pinError={!!this.state.errorMessage}
+            flex={false}
+            customStyle={{ marginTop: 100 }}
+          />
+        </Wrapper>
       </Container>
     );
   }
