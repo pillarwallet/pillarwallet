@@ -24,6 +24,7 @@ import {
   COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 import { saveDbAction } from './dbActions';
+import { getExistingTxNotesAction } from './txNoteActions';
 
 export const fetchCollectiblesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -123,6 +124,7 @@ export const fetchCollectiblesHistoryAction = () => {
 
       collectiblesHistory.push(transactionEvent);
     });
+    dispatch(getExistingTxNotesAction());
 
     // dispatch(saveDbAction('collectibles', { collectibles }, true));
     // dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
