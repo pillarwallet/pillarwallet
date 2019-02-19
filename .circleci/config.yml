@@ -673,39 +673,39 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
-#      - run:
-#          name: Fastlane deploy to Google Play
-#          command: |
-#            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-#            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-#            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
-#            bundle exec fastlane deploy_staging --verbose
-#          environment:
-#            BUNDLE_PATH: vendor/bundle
-#      - store_artifacts:
-#          path: app/build/outputs/apk
-#          destination: apks
-#      - run:
-#          name: Copy stage android artifact to S3
-#          command: |
-#            export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
-#            export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
-#            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
-#            touch android-s3-URL-qa.txt
-#            aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-#            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
-#      - run:
-#          name: Announce Deployment
-#          command: |
-#            cd ~/pillarwallet
-#            chmod +x .circleci/announceDeployment.sh
-#            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
-#      - run:
-#          name: Announce Stage Android URL
-#          command: |
-#            cd ~/pillarwallet
-#            chmod +x .circleci/announceURLs.sh
-#            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)"
+      - run:
+          name: Fastlane deploy to Google Play
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
+            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
+            bundle exec fastlane deploy_staging --verbose
+          environment:
+            BUNDLE_PATH: vendor/bundle
+      - store_artifacts:
+          path: app/build/outputs/apk
+          destination: apks
+      - run:
+          name: Copy stage android artifact to S3
+          command: |
+            export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            touch android-s3-URL-qa.txt
+            aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
+      - run:
+          name: Announce Deployment
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
+      - run:
+          name: Announce Stage Android URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)"
 
   whitesource:
     working_directory: ~/pillarwallet
@@ -728,7 +728,11 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                  - master
       - build-and-test
       - whitesource:
           requires:
@@ -760,7 +764,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/remove-keystores-change-circleci
+                  - master
       - release_to_prod:
           type: approval
           requires:
