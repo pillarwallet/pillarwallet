@@ -14,7 +14,7 @@ function toArrayBuffer(buf) {
 }
 
 describe('chatWebSocket service', () => {
-  const fakeHost = 'wss://localhost:3292';
+  const fakeHost = 'https://localhost:3292';
   const fakeURL = `${fakeHost}/v1/websocket/`;
   let mockServer;
   let websocket1;
@@ -30,7 +30,7 @@ describe('chatWebSocket service', () => {
   };
 
   beforeEach(() => {
-    mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL.replace('https', 'wss'));
     websocket1 = new ChatWebSocketService(credentials1);
     websocket2 = new ChatWebSocketService(credentials2);
   });
