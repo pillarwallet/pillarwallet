@@ -190,6 +190,16 @@ jobs:
       - *gradle_restore_cache
 
       - run:
+          name: Install Python
+          command: sudo apt-get update && sudo apt-get install python
+      - run:
+          name: Install Python dependencies
+          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+      - run:
+          name: Install AWS CLI
+          command: sudo pip install awscli
+
+      - run:
           name: Get keystore file
           command: |
             cd /home/circleci/pillarwallet/android/
