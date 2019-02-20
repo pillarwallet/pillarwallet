@@ -65,8 +65,6 @@ export const fetchCollectiblesAction = () => {
 export const fetchCollectiblesHistoryAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const { wallet: { data: wallet } } = getState();
-
-    // const collectibles = [];
     const collectiblesHistory = [];
     const transactionEventsResponse = await api.fetchCollectiblesTransactionHistory(wallet.address);
 
@@ -102,8 +100,6 @@ export const fetchCollectiblesHistoryAction = () => {
         tokenType: COLLECTIBLES,
       };
 
-      // if (asset.owner.address.toUpperCase() === wallet.address.toUpperCase()) { collectibles.push(assetData); }
-
       const transactionEvent = {
         to: toAcc.address,
         from: fromAcc.address,
@@ -111,13 +107,11 @@ export const fetchCollectiblesHistoryAction = () => {
         createdAt: (new Date(timestamp).getTime()) / 1000,
         _id: transaction.id,
         protocol: 'Ethereum',
-        // pillarId: null
         asset: collectibleName,
         contractAddress,
         value: 1,
         blockNumber,
         status: 'confirmed',
-        // gasUsed: 0,
         type: COLLECTIBLE_TRANSACTION,
         icon: asset.image_preview_url,
         assetData,
@@ -126,10 +120,17 @@ export const fetchCollectiblesHistoryAction = () => {
       collectiblesHistory.push(transactionEvent);
     });
     dispatch(getExistingTxNotesAction());
-
-    // dispatch(saveDbAction('collectibles', { collectibles }, true));
-    // dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory }, true));
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
+  };
+};
+
+export const fetchAllCollectiblesDataAction = () => {
+  return async (dispatch: Function) => {
+    dispatch(fetchCollectiblesAction())
+      .then(() => {
+        dispatch(fetchCollectiblesHistoryAction());
+      })
+      .catch(() => {});
   };
 };

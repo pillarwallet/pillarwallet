@@ -53,7 +53,7 @@ import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
-import { fetchCollectiblesAction, fetchCollectiblesHistoryAction } from 'actions/collectiblesActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 const SOCIAL_TYPES = [
   TYPE_RECEIVED,
@@ -99,8 +99,7 @@ type Props = {
   noBorder?: boolean,
   collectiblesHistory: Object[],
   invertAddon?: boolean,
-  fetchCollectibles: Function,
-  fetchCollectiblesHistory: Function,
+  fetchAllCollectiblesData: Function,
 };
 
 type State = {
@@ -119,19 +118,9 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.fetchCollectiblesData();
+    const { fetchAllCollectiblesData } = this.props;
+    fetchAllCollectiblesData();
   }
-
-  fetchCollectiblesData = () => {
-    const {
-      fetchCollectibles,
-      fetchCollectiblesHistory,
-    } = this.props;
-
-    fetchCollectibles()
-      .then(() => { fetchCollectiblesHistory(); })
-      .catch(() => {});
-  };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
@@ -444,8 +433,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch) => ({
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
-  fetchCollectibles: () => dispatch(fetchCollectiblesAction()),
-  fetchCollectiblesHistory: () => dispatch(fetchCollectiblesHistoryAction()),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ActivityFeed);

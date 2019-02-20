@@ -22,9 +22,9 @@ import { Platform } from 'react-native';
 import { BoldText, BaseText } from 'components/Typography';
 import { fontTrackings, baseColors, fontSizes, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
-import ProfileImage from 'components/ProfileImage';
 
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';
@@ -33,6 +33,8 @@ import {
   TYPE_ACCEPTED,
 } from 'constants/invitationsConstants';
 
+const genericToken = require('assets/images/tokens/genericToken.png');
+
 type Props = {
   onClose: Function,
   eventType?: string,
@@ -40,6 +42,7 @@ type Props = {
   eventTime: string,
   iconUrl?: string,
   onIconPress?: Function,
+  imageKey?: string,
 }
 
 const getEventInfo = (eventType, eventStatus) => {
@@ -79,7 +82,6 @@ const getEventInfo = (eventType, eventStatus) => {
     iconName: 'connection-circle',
   };
 };
-
 
 const Wrapper = styled.View`
   width: 100%;
@@ -125,9 +127,19 @@ const EventIcon = styled(Icon)`
   margin-top: ${spacing.medium}px;
 `;
 
-const EventImage = styled(ProfileImage)`
-  opacity: 0.7;
-  margin-top: ${spacing.medium}px;
+const EventImage = styled(CachedImage)`
+  width: 58px;
+  height: 58px;
+`;
+
+const ImageTouchable = styled.TouchableOpacity`
+  width: 58px;
+  height: 58px;
+  border-radius: 29px;
+  overflow: hidden;
+  margin-top: 12px;
+  justify-content: center;
+  align-items: center;
 `;
 
 const EventHeader = (props: Props) => {
@@ -138,6 +150,7 @@ const EventHeader = (props: Props) => {
     eventTime,
     iconUrl,
     onIconPress,
+    imageKey,
   } = props;
 
   const thisEvent = getEventInfo(eventType, eventStatus);
@@ -163,15 +176,14 @@ const EventHeader = (props: Props) => {
         }}
       />}
       {!!showImage &&
-      <EventImage
-        // TODO: add fallback image
-        uri={iconUrl}
-        diameter={58}
-        style={{ marginBottom: 4 }}
-        onPress={onIconPress}
-        noShadow
-        borderWidth={0}
-      />}
+        <ImageTouchable onPress={onIconPress}>
+          <EventImage
+            key={imageKey}
+            source={{ uri: iconUrl }}
+            fallbackSource={genericToken}
+            resizeMode="contain"
+          />
+        </ImageTouchable>}
     </Wrapper>
   );
 };

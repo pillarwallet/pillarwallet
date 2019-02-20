@@ -293,7 +293,7 @@ class AssetCardMinimized extends React.Component<Props, State> {
         <InnerWrapper justify="flex-start">
           <CardRow justify="center" style={{ marginTop: 4, height: 150 }}>
             <CachedImage
-              key={token}
+              key={name}
               style={{
                 height: imageSize,
                 width: imageSize,

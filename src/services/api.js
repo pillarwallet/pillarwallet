@@ -26,6 +26,7 @@ import {
   BCX_URL,
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
+  OPEN_SEA_API,
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
@@ -41,12 +42,6 @@ import type { OAuthTokens } from 'utils/oAuth';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
-
-
-// TODO: move to constants
-// const OPEN_SEA = 'https://api.opensea.io/api/v1';
-const OPEN_SEA_RINKEBY = 'https://rinkeby-api.opensea.io/api/v1';
-
 
 const USERNAME_EXISTS_ERROR_CODE = 409;
 
@@ -243,7 +238,7 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // eslint-disable-line
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_RINKEBY}/assets/?owner=${walletAddress}&order_by=current_price&order_direction=asc`, {
+    .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=current_price&order_direction=asc`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
@@ -257,7 +252,7 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // e
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_RINKEBY}/events/?account_address=${walletAddress}&event_type=transfer`, {
+    .then(() => fetch(`${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

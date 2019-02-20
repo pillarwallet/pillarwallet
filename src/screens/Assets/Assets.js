@@ -69,7 +69,7 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
-import { fetchCollectiblesAction, fetchCollectiblesHistoryAction } from 'actions/collectiblesActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import {
@@ -113,8 +113,7 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
-  fetchCollectibles: Function,
-  fetchCollectiblesHistory: Function,
+  fetchAllCollectiblesData: Function,
 }
 
 type State = {
@@ -193,13 +192,14 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
       assets,
       wallet,
+      fetchAllCollectiblesData,
     } = this.props;
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
 
-    this.fetchCollectiblesData();
+    fetchAllCollectiblesData();
 
     this.willFocus = this.props.navigation.addListener(
       'willFocus',
@@ -211,17 +211,6 @@ class AssetsScreen extends React.Component<Props, State> {
       () => { this.setState({ forceHideRemoval: true }); },
     );
   }
-
-  fetchCollectiblesData = () => {
-    const {
-      fetchCollectibles,
-      fetchCollectiblesHistory,
-    } = this.props;
-
-    fetchCollectibles()
-      .then(() => { fetchCollectiblesHistory(); })
-      .catch(() => {});
-  };
 
   componentWillUnmount() {
     this.didBlur.remove();
@@ -646,6 +635,7 @@ class AssetsScreen extends React.Component<Props, State> {
   };
 
   renderCollectiblesList = (collectibles) => {
+    const { fetchAllCollectiblesData } = this.props;
     const emptyStateInfo = {
       title: 'No collectibles',
       bodyText: 'There are no collectibles in this wallet',
@@ -657,7 +647,7 @@ class AssetsScreen extends React.Component<Props, State> {
     }
     return (
       <FlatList
-        data={collectibles || []}
+        data={collectibles}
         keyExtractor={(item) => item.id}
         renderItem={this.renderCollectible}
         style={{ width: '100%', marginBottom: spacing.small }}
@@ -671,7 +661,7 @@ class AssetsScreen extends React.Component<Props, State> {
         refreshControl={
           <RefreshControl
             refreshing={false}
-            onRefresh={this.fetchCollectiblesData}
+            onRefresh={() => fetchAllCollectiblesData()}
           />
         }
         onScroll={() => Keyboard.dismiss()}
@@ -802,8 +792,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
-  fetchCollectibles: () => dispatch(fetchCollectiblesAction()),
-  fetchCollectiblesHistory: () => dispatch(fetchCollectiblesHistoryAction()),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

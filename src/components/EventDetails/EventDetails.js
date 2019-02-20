@@ -341,6 +341,7 @@ class EventDetails extends React.Component<Props, {}> {
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
       const status = isReceived ? COLLECTIBLE_RECEIVED : COLLECTIBLE_SENT;
       let transactionNote = note;
+
       if (txNotes && txNotes.length > 0) {
         const txNote = txNotes.find(txn => txn.txHash === eventData.hash);
         if (txNote) {
@@ -364,6 +365,7 @@ class EventDetails extends React.Component<Props, {}> {
             onClose={onClose}
             iconUrl={icon}
             onIconPress={() => this.goToCollectible(assetData)}
+            imageKey={assetData.name}
           />
           <EventBody>
             <ListItemUnderlined
