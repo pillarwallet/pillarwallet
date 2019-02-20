@@ -180,7 +180,9 @@ export const clearChatDraftStateAction = () => {
 export const saveDraftAction = (contactId: string, draftText: string) => {
   return async (dispatch: Function) => {
     try {
-      const { drafts } = await storage.get('chat');
+      const chatStorage = await storage.get('chat');
+      const { drafts = [] } = chatStorage || {};
+
       const chatDrafts = drafts.filter((draft) => draft.contactId !== contactId);
       chatDrafts.push({ contactId, draftText });
       dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));

@@ -353,7 +353,7 @@ class ChatScreen extends React.Component<Props, State> {
     const { saveDraft } = this.props;
     const { chatText, contact } = this.state;
 
-    if (nextAppState === 'inactive') {
+    if (nextAppState === 'inactive' || nextAppState === 'background') {
       saveDraft(contact.id, chatText);
     }
   };
