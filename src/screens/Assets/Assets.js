@@ -22,9 +22,7 @@ import {
   RefreshControl,
   FlatList,
   SectionList,
-  Dimensions,
   Platform,
-  PixelRatio,
   View,
   Alert,
   Keyboard,
@@ -88,7 +86,7 @@ import { ASSET, COLLECTIBLE } from 'constants/navigationConstants';
 import assetsConfig from 'configs/assetsConfig';
 
 // utils
-import { formatMoney } from 'utils/common';
+import { formatMoney, smallScreen } from 'utils/common';
 import { spacing, baseColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import debounce from 'lodash.debounce';
@@ -125,13 +123,6 @@ type State = {
 const IS_IOS = Platform.OS === 'ios';
 const MIN_QUERY_LENGTH = 2;
 const genericToken = require('assets/images/tokens/genericToken.png');
-
-const smallScreen = () => {
-  if (IS_IOS) {
-    return Dimensions.get('window').width * PixelRatio.get() < 650;
-  }
-  return Dimensions.get('window').width < 410;
-};
 
 const horizontalPadding = (layout, side) => {
   switch (layout) {

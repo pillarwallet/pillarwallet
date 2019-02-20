@@ -140,6 +140,7 @@ const ImageTouchable = styled.TouchableOpacity`
   margin-top: 12px;
   justify-content: center;
   align-items: center;
+  background-color: ${baseColors.lightGray};
 `;
 
 const EventHeader = (props: Props) => {

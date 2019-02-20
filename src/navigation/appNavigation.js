@@ -63,6 +63,7 @@ import ICOLinks from 'screens/ICOLinks';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import SendCollectibleAssetsScreen from 'screens/SendCollectible/SendCollectibleAssets';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -125,6 +126,8 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
+  SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
+  SEND_COLLECTIBLE_ASSETS,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -409,6 +412,14 @@ const sendCollectibleFromAssetFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
 
+// SEND COLLECTIBLE FROM CONTACT / CONNECTION EVENT FLOW
+const sendCollectibleFromContactFlow = createStackNavigator({
+  [SEND_COLLECTIBLE_ASSETS]: SendCollectibleAssetsScreen,
+  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
 const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
   [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
@@ -437,6 +448,7 @@ const AppFlowNavigation = createStackNavigator(
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
+    [SEND_COLLECTIBLE_FROM_CONTACT_FLOW]: sendCollectibleFromContactFlow,
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
