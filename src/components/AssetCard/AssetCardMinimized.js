@@ -67,6 +67,10 @@ const AssetWrapper = styled(Animated.View)`
   width: ${props => props.columnCount ? 100 / props.columnCount : 100}%;
   justify-content: center;
   align-items: center;
+  margin-bottom: ${Platform.select({
+    ios: '2px',
+    android: 0,
+  })};
 `;
 
 const { width } = Dimensions.get('window');
@@ -221,6 +225,9 @@ class AssetCardMinimized extends React.Component<Props, State> {
   }
 
   handleLongPress = () => {
+    const { isCollectible } = this.props;
+    if (isCollectible) return;
+
     if (this.state.showHide) {
       this.hideRemoval();
     } else {
@@ -281,14 +288,15 @@ class AssetCardMinimized extends React.Component<Props, State> {
     const currencySymbol = isCollectible ? '' : getCurrencySymbol(balanceInFiat.currency);
 
     if (isCollectible) {
+      const imageSize = icon ? 135 : 55;
       return (
         <InnerWrapper justify="flex-start">
-          <CardRow justify="center" style={{ marginTop: 4 }}>
+          <CardRow justify="center" style={{ marginTop: 4, height: 150 }}>
             <CachedImage
               key={token}
               style={{
-                height: 135,
-                width: 135,
+                height: imageSize,
+                width: imageSize,
                 marginBottom: spacing.mediumLarge,
               }}
               source={{ uri: icon }}

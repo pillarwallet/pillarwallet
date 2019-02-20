@@ -657,7 +657,7 @@ class AssetsScreen extends React.Component<Props, State> {
     }
     return (
       <FlatList
-        data={collectibles}
+        data={collectibles || []}
         keyExtractor={(item) => item.id}
         renderItem={this.renderCollectible}
         style={{ width: '100%', marginBottom: spacing.small }}

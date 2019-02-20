@@ -43,10 +43,11 @@ export const fetchCollectiblesAction = () => {
         image_preview_url: image,
       } = collectible;
       const { name: category, address: contractAddress } = assetContract;
+      const collectibleName = name || `${category} ${id}`;
       const assetData = {
         id,
         category,
-        name,
+        name: collectibleName,
         description,
         icon: (/\.(png)$/i).test(image) ? image : '',
         contractAddress,
@@ -93,7 +94,7 @@ export const fetchCollectiblesHistoryAction = () => {
       const assetData = {
         id,
         category,
-        name,
+        name: collectibleName,
         description,
         icon: (/\.(png)$/i).test(image) ? image : '',
         contractAddress,
