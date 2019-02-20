@@ -41,8 +41,11 @@ import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import {
   sendMessageByContactAction,
+  clearChatDraftStateAction,
   getChatByContactAction,
   resetUnreadAction,
+  getChatDraftByContactAction,
+  saveDraftAction,
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { getUserName } from 'utils/contacts';
@@ -54,7 +57,10 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   user: Object,
   sendMessageByContact: Function,
+  clearChatDraftState: Function,
   getChatByContact: Function,
+  getChatDraftByContact: Function,
+  saveDraft: Function,
   messages: Object,
   isFetching: boolean,
   resetUnread: Function,
@@ -62,12 +68,15 @@ type Props = {
   chats: any,
   contacts: Object,
   currentMessage: Object,
+  draft: ?string,
 }
 
 type State = {
   contact: Object,
   showLoadEarlierButton: boolean,
   isFetching: boolean,
+  chatText: string,
+  firstChatLoaded: boolean,
 }
 
 const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
@@ -292,28 +301,47 @@ class ChatScreen extends React.Component<Props, State> {
       contact,
       showLoadEarlierButton: false, // make dynamic depending on number of messages in memory?
       isFetching: true,
+      chatText: '',
+      firstChatLoaded: true, // check this issue https://github.com/FaridSafi/react-native-gifted-chat/issues/638
     };
   }
 
   componentDidMount() {
     const { contact } = this.state;
-    const { getChatByContact } = this.props;
+    const { getChatByContact, getChatDraftByContact } = this.props;
+
     getChatByContact(contact.username, contact.id, contact.profileImage);
+    getChatDraftByContact(contact.id);
     if (Platform.OS === 'android') {
       BackHandler.addEventListener('hardwareBackPress', this.physicalBackAction);
     }
   }
 
   componentWillUnmount() {
+    const { saveDraft, clearChatDraftState } = this.props;
+    const { chatText, contact } = this.state;
+
     if (Platform.OS === 'android') {
       BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
     }
+
+    if (chatText && chatText !== '') {
+      saveDraft(contact.id, chatText);
+    }
+
+    clearChatDraftState();
   }
 
-  componentDidUpdate() {
-    const { isFetching } = this.props;
+  componentDidUpdate(prevProps: Props) {
+    const { isFetching, draft } = this.props;
+    const { draft: prevDraft } = prevProps;
+
     if (this.state.isFetching && !isFetching) {
       this.setState({ isFetching: false }); // eslint-disable-line
+    }
+
+    if (!prevDraft && draft) {
+      this.setState({ chatText: draft }); // eslint-disable-line
     }
   }
 
@@ -341,9 +369,12 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   onSend = (messages: Object[] = []) => {
-    const { sendMessageByContact } = this.props;
+    const { sendMessageByContact, clearChatDraftState } = this.props;
     const { contact } = this.state;
+
     sendMessageByContact(contact.username, messages[0]);
+    clearChatDraftState();
+    this.setState({ chatText: '' });
   };
 
   handleNavigationToContact = () => {
@@ -391,9 +422,23 @@ class ChatScreen extends React.Component<Props, State> {
     );
   };
 
+  updateChatInput(text) {
+    const { firstChatLoaded } = this.state;
+
+    if (firstChatLoaded) {
+      this.setState({ firstChatLoaded: false });
+    } else {
+      this.setState({ chatText: text });
+    }
+  }
+
   render() {
     const { messages } = this.props;
-    const { contact, showLoadEarlierButton } = this.state;
+    const {
+      contact,
+      showLoadEarlierButton,
+      chatText,
+    } = this.state;
     const title = getUserName(contact).toLowerCase();
     return (
       <ChatContainer inset={{ bottom: 0 }}>
@@ -409,6 +454,8 @@ class ChatScreen extends React.Component<Props, State> {
             </View>}
           {!this.state.isFetching &&
             <GiftedChat
+              text={chatText}
+              onInputTextChanged={(text) => this.updateChatInput(text)}
               messages={messages[contact.username]}
               onSend={msgs => this.onSend(msgs)}
               user={{
@@ -435,7 +482,7 @@ class ChatScreen extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  chat: { data: { messages, isFetching, chats } },
+  chat: { data: { messages, isFetching, chats }, draft },
   contacts: { data: contacts },
 }) => ({
   user,
@@ -443,6 +490,7 @@ const mapStateToProps = ({
   isFetching,
   chats,
   contacts,
+  draft,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -455,7 +503,10 @@ const mapDispatchToProps = (dispatch) => ({
   sendMessageByContact: (username: string, message: Object) => {
     dispatch(sendMessageByContactAction(username, message));
   },
+  clearChatDraftState: () => dispatch(clearChatDraftStateAction()),
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
+  getChatDraftByContact: (contactId: string) => dispatch(getChatDraftByContactAction(contactId)),
+  saveDraft: (contactId: string, draftText: string) => dispatch(saveDraftAction(contactId, draftText)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);
