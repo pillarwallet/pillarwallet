@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Alert, View, Platform, Linking, BackHandler } from 'react-native';
+import { Alert, View, Platform, Linking, BackHandler, AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { Container, Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -310,6 +310,8 @@ class ChatScreen extends React.Component<Props, State> {
     const { contact } = this.state;
     const { getChatByContact, getChatDraftByContact } = this.props;
 
+    AppState.addEventListener('change', this.shouldPersistDraft);
+
     getChatByContact(contact.username, contact.id, contact.profileImage);
     getChatDraftByContact(contact.id);
     if (Platform.OS === 'android') {
@@ -320,6 +322,8 @@ class ChatScreen extends React.Component<Props, State> {
   componentWillUnmount() {
     const { saveDraft, clearChatDraftState } = this.props;
     const { chatText, contact } = this.state;
+
+    AppState.removeEventListener('change', this.shouldPersistDraft);
 
     if (Platform.OS === 'android') {
       BackHandler.removeEventListener('hardwareBackPress', this.physicalBackAction);
@@ -344,6 +348,15 @@ class ChatScreen extends React.Component<Props, State> {
       this.setState({ chatText: draft }); // eslint-disable-line
     }
   }
+
+  shouldPersistDraft = (nextAppState) => {
+    const { saveDraft } = this.props;
+    const { chatText, contact } = this.state;
+
+    if (nextAppState === 'inactive') {
+      saveDraft(contact.id, chatText);
+    }
+  };
 
   handleChatDismissal = () => {
     const {
