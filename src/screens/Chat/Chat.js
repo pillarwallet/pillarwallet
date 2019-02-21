@@ -468,7 +468,7 @@ class ChatScreen extends React.Component<Props, State> {
           {!this.state.isFetching &&
             <GiftedChat
               text={chatText}
-              onInputTextChanged={this.updateChatInput}
+              onInputTextChanged={(text) => this.updateChatInput(text)}
               messages={messages[contact.username]}
               onSend={msgs => this.onSend(msgs)}
               user={{
