@@ -100,6 +100,7 @@ aliases:
           rm .env
           cp environments/.env.staging ./.env
           sed -i.bak "s/_build_number_/$buildNumber/g" .env
+          sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 # Default for iOS Build machine

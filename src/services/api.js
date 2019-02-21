@@ -237,7 +237,8 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
     .catch(() => []);
 };
 
-SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // eslint-disable-line
+SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
+  console.log('OPEN_SEA_API_KEY -->', OPEN_SEA_API_KEY);
   return Promise.resolve()
     .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=current_price&order_direction=asc`, {
       method: 'GET',
@@ -252,7 +253,6 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // e
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
-  console.log('OPEN_SEA_API_KEY -->', OPEN_SEA_API_KEY);
   return Promise.resolve()
     .then(() => fetch(`${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`, {
       method: 'GET',

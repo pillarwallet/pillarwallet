@@ -641,7 +641,7 @@ class AssetsScreen extends React.Component<Props, State> {
         data={collectibles}
         keyExtractor={(item) => item.id}
         renderItem={this.renderCollectible}
-        style={{ width: '100%', marginBottom: spacing.small }}
+        style={{ width: '100%' }}
         contentContainerStyle={{
           paddingVertical: 6,
           paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
