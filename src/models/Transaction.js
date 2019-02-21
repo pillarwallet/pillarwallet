@@ -33,7 +33,7 @@ export type Transaction = {
   value: string,
   __v: number,
   receipt: Object,
-  note?: ?string
+  note?: ?string,
 }
 
 export type TokenTransactionPayload = {
@@ -47,7 +47,7 @@ export type TokenTransactionPayload = {
   decimals: number,
   note?: ?string,
   name?: string,
-  tokenId?: string
+  tokenId?: string,
 }
 
 export type CollectibleTransactionPayload = {
@@ -58,7 +58,7 @@ export type CollectibleTransactionPayload = {
   tokenId: string,
   note?: ?string,
   name: string,
-  tokenId: string
+  tokenId: string,
 }
 
 export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
@@ -71,5 +71,5 @@ export type TransactionEthers = {
   gasPrice: Object,
   gasLimit: Object,
   asset: string,
-  note?: ?string
+  note?: ?string,
 }
