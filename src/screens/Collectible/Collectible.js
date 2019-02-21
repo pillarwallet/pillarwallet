@@ -84,7 +84,7 @@ const CircleButtonsWrapper = styled(Wrapper)`
   margin-top: ${Platform.select({
     ios: 0,
     android: '-20px',
-  })}
+  })};
 `;
 
 const CollectibleImage = styled(CachedImage)`
