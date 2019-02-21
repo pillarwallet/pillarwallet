@@ -222,7 +222,7 @@ export const registerWalletAction = () => {
       oAuthTokens,
     } = await getTokenWalletAndRegister(api, user, dispatch);
 
-    dispatch(signalInitAction({
+    await dispatch(signalInitAction({
       userId: sdkWallet.userId,
       username: user.username,
       walletId: sdkWallet.walletId,

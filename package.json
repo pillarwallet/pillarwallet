@@ -41,7 +41,8 @@
     "redux-mock-store": "^1.5.1",
     "rn-nodeify": "^10.0.1",
     "run-s": "^0.0.0",
-    "@babel/preset-flow": "^7.0.0"
+    "@babel/preset-flow": "^7.0.0",
+    "mock-socket": "^8.0.5"
   },
   "scripts": {
     "start": "react-native start --reset-cache",
@@ -174,7 +175,7 @@
     "redux-async-queue": "^1.0.0",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
-    "rn-signal-protocol-messaging": "1.0.157",
+    "rn-signal-protocol-messaging": "1.0.189",
     "shuffle-array": "^1.0.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",

@@ -36,12 +36,13 @@ export default class Chat {
     credentials.host = SIGNAL_SERVER_HOST;
     webSocketInstance = new ChatWebSocketService(credentials);
 
-    if (Platform.OS === 'ios') {
-      return this.client.createClient(credentials.username, credentials.accessToken, credentials.host);
-    }
-
     credentials.errorTrackingDSN = SENTRY_DSN;
     credentials.isSendingLogs = !__DEV__;
+
+    if (Platform.OS === 'ios') {
+      return this.client.createClient(credentials);
+    }
+
     try {
       credentials.buildNumber = `${DeviceInfo.getBuildNumber()}`;
       credentials.device = `${DeviceInfo.getManufacturer()} ${DeviceInfo.getModel()}`;
@@ -96,6 +97,6 @@ export default class Chat {
         await chatWebSocket.send(webSocketResponse);
       }
     }
-    await SignalClient.deleteSignalMessage(username, timestamp);
+    await SignalClient.deleteSignalMessage(username, timestamp).catch(() => {});
   }
 }
