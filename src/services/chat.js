@@ -97,6 +97,6 @@ export default class Chat {
         await chatWebSocket.send(webSocketResponse);
       }
     }
-    await SignalClient.deleteSignalMessage(username, timestamp);
+    await SignalClient.deleteSignalMessage(username, timestamp).catch(() => {});
   }
 }
