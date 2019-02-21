@@ -258,7 +258,7 @@ export const getChatByContactAction = (
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
         .map(async wsMessage => {
           const { source, timestamp } = wsMessage;
-          await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
+          await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage)).catch(() => {});
           await chat.deleteMessage(source, timestamp, wsMessage.requestId);
           dispatch({
             type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
