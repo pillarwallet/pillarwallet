@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Sentry } from 'react-native-sentry';
 import partition from 'lodash.partition';
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
@@ -152,11 +153,11 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
 export const getChatDraftByContactAction = (contactId: string) => {
   return async (dispatch: Function) => {
     try {
-      const { drafts } = await storage.get('chat');
+      const { drafts = {} } = await storage.get('chat');
       const [chatDraft, chatDrafts] = partition(drafts, { contactId });
       const { draftText = '' } = chatDraft[0] || {};
 
-      if (!draftText || draftText === '') { return; }
+      if (!draftText) { return; }
 
       dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
       dispatch({
@@ -164,7 +165,10 @@ export const getChatDraftByContactAction = (contactId: string) => {
         payload: { draftText },
       });
     } catch (e) {
-      console.log(e); // eslint-disable-line
+      Sentry.captureException({
+        type: 'Registration error',
+        error: e,
+      });
     }
   };
 };
@@ -187,7 +191,10 @@ export const saveDraftAction = (contactId: string, draftText: string) => {
       chatDrafts.push({ contactId, draftText });
       dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
     } catch (e) {
-      console.log(e); // eslint-disable-line
+      Sentry.captureException({
+        type: 'Registration error',
+        error: e,
+      });
     }
   };
 };
