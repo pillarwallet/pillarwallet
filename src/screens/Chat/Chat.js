@@ -435,7 +435,7 @@ class ChatScreen extends React.Component<Props, State> {
     );
   };
 
-  updateChatInput(text) {
+  updateChatInput = (text) => {
     const { firstChatLoaded } = this.state;
 
     if (firstChatLoaded) {
