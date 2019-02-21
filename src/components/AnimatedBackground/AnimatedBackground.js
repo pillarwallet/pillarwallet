@@ -138,7 +138,6 @@ export default class AnimatedBackground extends React.Component<Props, State> {
         }: Item) => (
           <AnimatedBackroundItem
             key={`${positionY}_${positionX}_${color}_${size}`}
-            testkey={`${positionY}_${positionX}_${color}_${size}`}
             size={size}
             color={color}
             positionX={positionX}
