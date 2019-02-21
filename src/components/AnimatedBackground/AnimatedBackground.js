@@ -57,12 +57,16 @@ const colors = [
   'rgb(80,227,194)',
 ];
 
+const particleInterval = 1000;
+
 export default class AnimatedBackground extends React.Component<Props, State> {
   timer: ?IntervalID;
 
   constructor(props: Props) {
     super(props);
-    this.timer = !this.props.disabledAnimation ? setInterval(this.generateAnimatedBackgroundItemList, 500) : null;
+    this.timer = !this.props.disabledAnimation
+      ? setInterval(this.generateAnimatedBackgroundItemList, particleInterval)
+      : null;
     this.state = {
       animatedBackgroundItemList: [],
     };
@@ -84,7 +88,7 @@ export default class AnimatedBackground extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     if (this.props.shouldAnimate === prevProps.shouldAnimate || !this.timer) return;
     if (this.props.shouldAnimate) {
-      this.timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
+      this.timer = setInterval(this.generateAnimatedBackgroundItemList, particleInterval);
     } else {
       clearInterval(this.timer);
     }
@@ -110,7 +114,7 @@ export default class AnimatedBackground extends React.Component<Props, State> {
 
   generateAnimatedBackgroundItemList = () => {
     let animatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
-    if (animatedBackgroundItemList.length >= 25) {
+    if (animatedBackgroundItemList.length >= 5) {
       animatedBackgroundItemList = animatedBackgroundItemList.slice(1);
     }
     animatedBackgroundItemList = animatedBackgroundItemList.concat(this.generateRandomSquare());
@@ -134,6 +138,7 @@ export default class AnimatedBackground extends React.Component<Props, State> {
         }: Item) => (
           <AnimatedBackroundItem
             key={`${positionY}_${positionX}_${color}_${size}`}
+            testkey={`${positionY}_${positionX}_${color}_${size}`}
             size={size}
             color={color}
             positionX={positionX}
