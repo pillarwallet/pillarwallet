@@ -218,7 +218,6 @@ const renderDay = (props: Props) => (
       fontWeight: '400',
       fontSize: fontSizes.extraSmall,
       fontFamily: 'Aktiv Grotesk App',
-      textTransform: 'capitalize',
     }}
     dateFormat="LL"
   />
