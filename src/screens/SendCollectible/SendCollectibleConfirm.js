@@ -15,7 +15,9 @@ import type { GasInfo } from 'models/GasInfo';
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
+import { fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
 
 const GAS_LIMIT = 500000;
 const NORMAL = 'avg';
@@ -27,10 +29,12 @@ type Props = {
   categories: Object[],
   fetchGasInfo: Function,
   gasInfo: GasInfo,
+  wallet: Object,
 };
 
 type State = {
   note: ?string,
+  rinkebyETH: string,
 };
 
 const FooterWrapper = styled.View`
@@ -59,17 +63,25 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.state = {
       note: null,
+      rinkebyETH: '',
     };
   }
 
   componentDidMount() {
     this.props.fetchGasInfo();
+    this.fetchETHBalanceInRinkeby();
   }
 
   componentDidUpdate(prevProps: Props) {
     if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
       this.props.fetchGasInfo();
     }
+  }
+
+  fetchETHBalanceInRinkeby = async () => {
+    const { wallet } = this.props;
+    const rinkebyETHBlanace = await fetchRinkebyETHBalance(wallet.address);
+    this.setState({ rinkebyETH: rinkebyETHBlanace });
   }
 
   handleFormSubmit = () => {
@@ -111,11 +123,15 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   render() {
     const { contacts, session, gasInfo } = this.props;
     const { name } = this.assetData;
+    const { rinkebyETH } = this.state;
 
     const to = this.receiver;
     const txFeeInWei = this.getTxFeeInWei();
+    const txFee = utils.formatEther(txFeeInWei.toString());
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
+    const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee);
+
     return (
       <React.Fragment>
         <Container>
@@ -140,8 +156,13 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             </LabeledRow>
             <LabeledRow>
               <Label>Est. Network Fee</Label>
-              <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
+              <Value>{txFee} ETH</Value>
             </LabeledRow>
+            {NETWORK_PROVIDER === 'ropsten' &&
+            <LabeledRow>
+              <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
+              <Value>{rinkebyETH} ETH</Value>
+            </LabeledRow>}
             {!!recipientUsername &&
             <TextInput
               inputProps={{
@@ -162,7 +183,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
               <Button
-                disabled={!session.isOnline || !gasInfo.isFetched}
+                disabled={!session.isOnline || !gasInfo.isFetched || !canProceedTesting}
                 onPress={this.handleFormSubmit}
                 title="Confirm Transaction"
               />
@@ -179,11 +200,13 @@ const mapStateToProps = ({
   session: { data: session },
   history: { gasInfo },
   collectibles: { categories },
+  wallet: { data: wallet },
 }) => ({
   contacts,
   session,
   gasInfo,
   categories,
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -27,6 +27,7 @@ import {
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
   OPEN_SEA_API,
+  OPEN_SEA_API_KEY,
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
@@ -243,7 +244,7 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // e
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'X-API-KEY': '43a6b0b3fc5645fe826f392e7ac88bdf',
+        'X-API-KEY': OPEN_SEA_API_KEY,
       },
     }))
     .then(data => data.json())
@@ -251,13 +252,14 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) { // e
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
+  console.log('OPEN_SEA_API_KEY -->', OPEN_SEA_API_KEY);
   return Promise.resolve()
     .then(() => fetch(`${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'X-API-KEY': '43a6b0b3fc5645fe826f392e7ac88bdf',
+        'X-API-KEY': OPEN_SEA_API_KEY,
       },
     }))
     .then(data => data.json())

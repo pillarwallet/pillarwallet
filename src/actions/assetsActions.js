@@ -58,6 +58,7 @@ import { transformAssetsToObject } from 'utils/assets';
 import { delay, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction } from 'utils/history';
 import { saveDbAction } from './dbActions';
+import { fetchCollectiblesAction } from './collectiblesActions';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -82,7 +83,7 @@ export const sendAssetAction = (
     const {
       history: { data: currentHistory },
       txCount: { data: { lastNonce } },
-      collectibles: { assets: collectibles, transactionHistory: collectiblesHistory },
+      collectibles: { assets, transactionHistory: collectiblesHistory },
     } = getState();
     wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
     const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
@@ -90,6 +91,7 @@ export const sendAssetAction = (
     let nonce;
     let tokenTx = {};
     let historyTx;
+    let collectibles = assets;
     const { to, note } = transaction;
 
     if (lastNonce === transactionCount && lastNonce > 0) {
@@ -99,7 +101,12 @@ export const sendAssetAction = (
     if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
       // $FlowFixMe
       const { contractAddress, tokenId } = (transaction: CollectibleTransactionPayload);
+      await dispatch(fetchCollectiblesAction());
+      const {
+        collectibles: { assets: newlyFetchedCollectibles },
+      } = getState();
 
+      collectibles = newlyFetchedCollectibles;
       const thisCollectible = collectibles.find(collectible => {
         return collectible.id === tokenId;
       });

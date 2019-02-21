@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Contract, utils, providers } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
 import type { Asset } from 'models/Asset';
@@ -82,7 +82,7 @@ export function transferERC721(options: ERC721TransferOptions) {
     wallet,
     nonce,
   } = options;
-  wallet.provider = providers.getDefaultProvider(PROVIDER);
+  wallet.provider = providers.getDefaultProvider(COLLECTIBLES_NETWORK);
   const contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
   return contract.safeTransferFrom(from, to, tokenId, { nonce });
 }
@@ -111,6 +111,11 @@ export function transferETH(options: ETHTransferOptions) {
 
 export function fetchETHBalance(walletAddress: Address) {
   const provider = providers.getDefaultProvider(PROVIDER);
+  return provider.getBalance(walletAddress).then(utils.formatEther);
+}
+
+export function fetchRinkebyETHBalance(walletAddress: Address) {
+  const provider = providers.getDefaultProvider('rinkeby');
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 

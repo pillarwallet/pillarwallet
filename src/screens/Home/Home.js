@@ -36,6 +36,7 @@ import {
   fetchTransactionsHistoryNotificationsAction,
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
@@ -68,6 +69,7 @@ type Props = {
   homeNotifications: Object[],
   intercomNotificationsCount: number,
   backupStatus: Object,
+  fetchAllCollectiblesData: Function,
 };
 
 type esDataType = {
@@ -301,9 +303,11 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
+      fetchAllCollectiblesData,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
+    fetchAllCollectiblesData();
   };
 
   setActiveTab = (activeTab, esData?) => {
@@ -617,6 +621,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
