@@ -741,15 +741,15 @@ workflows:
           filters:
             branches:
               only:
-#                  - develop
-                  - feature/collectibles
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+#                  - develop
+                   - feature/collectibles
       - stage_ios:
           requires:
             - build
