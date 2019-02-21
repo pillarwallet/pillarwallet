@@ -30,6 +30,8 @@ import {
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
   CHAT_DECRYPTING_FINISHED,
+  ADD_CHAT_DRAFT,
+  CLEAR_CHAT_DRAFT,
 } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
@@ -67,6 +69,7 @@ export type ChateducerState = {
     isFetching: boolean,
     isDecrypting: boolean,
   },
+  draft: ?string,
 }
 
 export type ChateducerAction = {
@@ -85,6 +88,7 @@ const initialState = {
     isFetching: false,
     isDecrypting: false,
   },
+  draft: null,
 };
 
 export default function chatReducer(
@@ -273,6 +277,17 @@ export default function chatReducer(
           ...state.data,
           isDecrypting: false,
         },
+      };
+    case ADD_CHAT_DRAFT:
+      const { draftText } = action.payload;
+      return {
+        ...state,
+        draft: draftText,
+      };
+    case CLEAR_CHAT_DRAFT:
+      return {
+        ...state,
+        draft: null,
       };
     default:
       return state;
