@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Sentry } from 'react-native-sentry';
 import partition from 'lodash.partition';
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
@@ -152,24 +151,17 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
 
 export const getChatDraftByContactAction = (contactId: string) => {
   return async (dispatch: Function) => {
-    try {
-      const { drafts = {} } = await storage.get('chat');
-      const [chatDraft, chatDrafts] = partition(drafts, { contactId });
-      const { draftText = '' } = chatDraft[0] || {};
+    const { drafts = {} } = await storage.get('chat');
+    const [chatDraft, chatDrafts] = partition(drafts, { contactId });
+    const { draftText = '' } = chatDraft[0] || {};
 
-      if (!draftText) { return; }
+    if (!draftText) { return; }
 
-      dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
-      dispatch({
-        type: ADD_CHAT_DRAFT,
-        payload: { draftText },
-      });
-    } catch (e) {
-      Sentry.captureException({
-        type: 'Registration error',
-        error: e,
-      });
-    }
+    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
+    dispatch({
+      type: ADD_CHAT_DRAFT,
+      payload: { draftText },
+    });
   };
 };
 
@@ -183,19 +175,12 @@ export const clearChatDraftStateAction = () => {
 
 export const saveDraftAction = (contactId: string, draftText: string) => {
   return async (dispatch: Function) => {
-    try {
-      const chatStorage = await storage.get('chat');
-      const { drafts = [] } = chatStorage || {};
+    const chatStorage = await storage.get('chat');
+    const { drafts = [] } = chatStorage || {};
 
-      const chatDrafts = drafts.filter((draft) => draft.contactId !== contactId);
-      chatDrafts.push({ contactId, draftText });
-      dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
-    } catch (e) {
-      Sentry.captureException({
-        type: 'Registration error',
-        error: e,
-      });
-    }
+    const chatDrafts = drafts.filter((draft) => draft.contactId !== contactId);
+    chatDrafts.push({ contactId, draftText });
+    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
   };
 };
 
