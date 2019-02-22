@@ -389,7 +389,7 @@ class ActivityFeed extends React.Component<Props, State> {
           maxToRenderPerBatch={5}
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
-          keyExtractor={(item) => item.createdAt.toString()}
+          keyExtractor={(item) => `${item.createdAt.toString()}${item.id || item._id}`}
           ListEmptyComponent={
             !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
           }
