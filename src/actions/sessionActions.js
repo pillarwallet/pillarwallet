@@ -39,3 +39,12 @@ export const checkDBConflictsAction = () => {
   };
 };
 
+export const updateSignalInitiatedStateAction = (isSignalInitiated: boolean) => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: UPDATE_SESSION,
+      payload: { isSignalInitiated },
+    });
+  };
+};
+

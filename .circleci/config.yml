@@ -4,8 +4,6 @@ aliases:
     restore_cache:
       keys:
         - ios-pods-{{ checksum "./ios/Podfile.lock" }}
-        # Fall back to using the latest cache if no exact match is found.
-        - ios-pods-
   - &install_pods
     run:
       name: Install CocoaPods
@@ -21,15 +19,11 @@ aliases:
       name: Restore cache
       keys:
         - ios-gems-{{ checksum "Gemfile.lock" }}
-        # Fall back to using the latest cache if no exact match is found.
-        - ios-gems-
   - &restore_gems_cache_android
     restore_cache:
       name: Restore cache
       keys:
         - android-gems-{{ checksum "Gemfile.lock" }}
-        # Fall back to using the latest cache if no exact match is found.
-        - android-gems-
   - &install_gems_ios
     run:
       name: Bundle install
@@ -197,6 +191,24 @@ jobs:
       - *gradle_restore_cache
 
       - run:
+          name: Install Python
+          command: sudo apt-get update && sudo apt-get install python
+      - run:
+          name: Install Python dependencies
+          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+      - run:
+          name: Install AWS CLI
+          command: sudo pip install awscli
+
+      - run:
+          name: Get keystore file
+          command: |
+            cd /home/circleci/pillarwallet/android/
+            export AWS_ACCESS_KEY_ID=$NONPROD_APP_STORE_ACCESS_KEY
+            export AWS_SECRET_ACCESS_KEY=$NONPROD_APP_STORE_SECRET_KEY_ID
+            aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
+
+      - run:
           name: Accept Android SDK licenses
           command: |
             yes | sdkmanager --licenses || exit 0
@@ -336,9 +348,6 @@ jobs:
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd ./ios/
-            touch ios-s3-URL-stage.txt
-            aws s3 cp pillarwallet-staging.ipa $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
-            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-stage.txt
             touch ios-s3-URL-qa.txt
             aws s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
             aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-qa.txt
@@ -347,7 +356,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "staging" "iOS" "$(cat ~/pillarwallet/ios/ios-s3-URL-stage.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "staging" "iOS" "$(cat ~/pillarwallet/ios/ios-s3-URL-qa.txt)"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -483,6 +492,13 @@ jobs:
           name: Install AWS CLI
           command: sudo pip install awscli
       - run:
+          name: Get keystore file
+          command: |
+            cd /home/circleci/pillarwallet/android/
+            export AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
+            aws s3 cp s3://pillar-prod-app-keystore-eu-west-2-304069782345/release.keystore .
+      - run:
           name: Append circleCI build number to version
           command: |
             cd ~/pillarwallet
@@ -607,6 +623,13 @@ jobs:
           name: Install AWS CLI
           command: sudo pip install awscli
       - run:
+          name: Get keystore file
+          command: |
+            cd /home/circleci/pillarwallet/android/
+            export AWS_ACCESS_KEY_ID=$NONPROD_APP_STORE_ACCESS_KEY
+            export AWS_SECRET_ACCESS_KEY=$NONPROD_APP_STORE_SECRET_KEY_ID
+            aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
+      - run:
           name: Append circleCI build number to version
           command: |
             cd ~/pillarwallet
@@ -690,9 +713,6 @@ jobs:
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
-            touch android-s3-URL-stage.txt
-            aws s3 cp app-prod-staging.apk $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $PILLAR_STAGE_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-stage.txt
             touch android-s3-URL-qa.txt
             aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
             aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
@@ -707,7 +727,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-stage.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)"
 
   whitesource:
     working_directory: ~/pillarwallet

@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import partition from 'lodash.partition';
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
 import {
@@ -30,9 +31,14 @@ import {
   DELETE_CONTACT,
   CHAT_DECRYPTING_FINISHED,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+  ADD_CHAT_DRAFT,
+  CLEAR_CHAT_DRAFT,
 } from 'constants/chatConstants';
+import Storage from 'services/storage';
+import { saveDbAction } from './dbActions';
 
 const chat = new ChatService();
+const storage = Storage.getInstance('db');
 
 const mergeNewChats = (newChats, existingChats) => {
   return Object.keys(newChats)
@@ -143,6 +149,41 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
   };
 };
 
+export const getChatDraftByContactAction = (contactId: string) => {
+  return async (dispatch: Function) => {
+    const { drafts = {} } = await storage.get('chat');
+    const [chatDraft, chatDrafts] = partition(drafts, { contactId });
+    const { draftText = '' } = chatDraft[0] || {};
+
+    if (!draftText) { return; }
+
+    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
+    dispatch({
+      type: ADD_CHAT_DRAFT,
+      payload: { draftText },
+    });
+  };
+};
+
+export const clearChatDraftStateAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: CLEAR_CHAT_DRAFT,
+    });
+  };
+};
+
+export const saveDraftAction = (contactId: string, draftText: string) => {
+  return async (dispatch: Function) => {
+    const chatStorage = await storage.get('chat');
+    const { drafts = [] } = chatStorage || {};
+
+    const chatDrafts = drafts.filter((draft) => draft.contactId !== contactId);
+    chatDrafts.push({ contactId, draftText });
+    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
+  };
+};
+
 export const getChatByContactAction = (
   username: string,
   userId: string,
@@ -202,7 +243,7 @@ export const getChatByContactAction = (
         .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
         .map(async wsMessage => {
           const { source, timestamp } = wsMessage;
-          await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
+          await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage)).catch(() => {});
           await chat.deleteMessage(source, timestamp, wsMessage.requestId);
           dispatch({
             type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,

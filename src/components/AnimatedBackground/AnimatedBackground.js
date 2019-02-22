@@ -36,6 +36,7 @@ type State = {
 
 type Props = {
   shouldAnimate: boolean,
+  disabledAnimation?: boolean,
 }
 
 const window = Dimensions.get('window');
@@ -56,45 +57,68 @@ const colors = [
   'rgb(80,227,194)',
 ];
 
+const particleInterval = 1000;
+
 export default class AnimatedBackground extends React.Component<Props, State> {
-  timer: IntervalID;
+  timer: ?IntervalID;
 
   constructor(props: Props) {
     super(props);
-    this.timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
+    this.timer = !this.props.disabledAnimation
+      ? setInterval(this.generateAnimatedBackgroundItemList, particleInterval)
+      : null;
     this.state = {
       animatedBackgroundItemList: [],
     };
   }
 
+  componentDidMount() {
+    if (this.props.disabledAnimation) this.renderStaticPattern();
+  }
+
+  renderStaticPattern = () => {
+    const staticSquareList = [];
+    [...Array(7)].forEach(() => { staticSquareList.push(this.generateRandomSquare()); });
+
+    this.setState({
+      animatedBackgroundItemList: staticSquareList,
+    });
+  };
+
   componentDidUpdate(prevProps: Props) {
-    if (this.props.shouldAnimate === prevProps.shouldAnimate) return;
+    if (this.props.shouldAnimate === prevProps.shouldAnimate || !this.timer) return;
     if (this.props.shouldAnimate) {
-      this.timer = setInterval(this.generateAnimatedBackgroundItemList, 500);
+      this.timer = setInterval(this.generateAnimatedBackgroundItemList, particleInterval);
     } else {
       clearInterval(this.timer);
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.timer);
+    if (this.timer) clearInterval(this.timer);
   }
 
-  generateAnimatedBackgroundItemList = () => {
-    let animatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
+  generateRandomSquare = () => {
     const newPositionX = getRandomInt(0, window.width);
     const newPositionY = getRandomInt(0, window.height - 50);
     const newSize = getRandomInt(15, 40);
     const newColor = colors[getRandomInt(0, colors.length - 1)];
-    if (animatedBackgroundItemList.length >= 25) {
-      animatedBackgroundItemList = animatedBackgroundItemList.slice(1);
-    }
-    animatedBackgroundItemList = animatedBackgroundItemList.concat({
+    const randomSquare = {
       positionX: newPositionX,
       positionY: newPositionY,
       size: newSize,
       color: newColor,
-    });
+    };
+    return randomSquare;
+  };
+
+  generateAnimatedBackgroundItemList = () => {
+    let animatedBackgroundItemList = [...this.state.animatedBackgroundItemList];
+    if (animatedBackgroundItemList.length >= 5) {
+      animatedBackgroundItemList = animatedBackgroundItemList.slice(1);
+    }
+    animatedBackgroundItemList = animatedBackgroundItemList.concat(this.generateRandomSquare());
+
     this.setState({
       animatedBackgroundItemList,
     });
@@ -102,6 +126,7 @@ export default class AnimatedBackground extends React.Component<Props, State> {
 
   render() {
     const { animatedBackgroundItemList } = this.state;
+    const { disabledAnimation } = this.props;
 
     return (
       <Wrapper>
@@ -117,6 +142,7 @@ export default class AnimatedBackground extends React.Component<Props, State> {
             color={color}
             positionX={positionX}
             positionY={positionY}
+            animated={!disabledAnimation}
           />
         ))}
       </Wrapper>

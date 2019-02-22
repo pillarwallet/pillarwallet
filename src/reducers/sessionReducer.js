@@ -33,6 +33,7 @@ const initialState = {
   data: {
     isOnline: true,
     hasDBConflicts: false,
+    isSignalInitiated: false,
   },
 };
 

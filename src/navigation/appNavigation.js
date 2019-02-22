@@ -84,6 +84,7 @@ import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
+import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 
 // constants
 import {
@@ -479,6 +480,7 @@ type Props = {
   backupStatus: Object,
   assets: Object,
   isPickingImage: boolean,
+  updateSignalInitiatedState: Function,
 }
 
 let lockTimer;
@@ -532,10 +534,16 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   componentWillUnmount() {
-    const { stopListeningNotifications, stopListeningIntercomNotifications, stopListeningChatWebSocket } = this.props;
+    const {
+      stopListeningNotifications,
+      stopListeningIntercomNotifications,
+      stopListeningChatWebSocket,
+      updateSignalInitiatedState,
+    } = this.props;
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     stopListeningChatWebSocket();
+    updateSignalInitiatedState(false);
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -544,6 +552,7 @@ class AppFlow extends React.Component<Props, {}> {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
       stopListeningChatWebSocket,
+      updateSignalInitiatedState,
       navigation,
       isPickingImage,
     } = this.props;
@@ -558,6 +567,7 @@ class AppFlow extends React.Component<Props, {}> {
         stopListeningNotifications();
         stopListeningIntercomNotifications();
         stopListeningChatWebSocket();
+        updateSignalInitiatedState(false);
       }, SLEEP_TIMEOUT);
     }
   };
@@ -637,6 +647,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   getExistingChats: () => dispatch(getExistingChatsAction()),
   fetchICOs: () => dispatch(fetchICOsAction()),
+  updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
 });
 
 const ConnectedAppFlow = connect(mapStateToProps, mapDispatchToProps)(AppFlow);

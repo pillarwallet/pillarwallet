@@ -241,8 +241,9 @@ class PeopleScreen extends React.Component<Props, State> {
       <ListItemWithImage
         label={item.username}
         onPress={this.handleContactCardPress(item)}
-        avatarUrl={item.profileImage}
+        avatarUrl={item.profileLargeImage}
         navigateToProfile={this.handleContactCardPress(item)}
+        imageUpdateTimeStamp={item.lastUpdateTime}
       />
     </Swipeout>
   );
