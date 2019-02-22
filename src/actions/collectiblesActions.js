@@ -127,10 +127,7 @@ export const fetchCollectiblesHistoryAction = () => {
 
 export const fetchAllCollectiblesDataAction = () => {
   return async (dispatch: Function) => {
-    dispatch(fetchCollectiblesAction())
-      .then(() => {
-        dispatch(fetchCollectiblesHistoryAction());
-      })
-      .catch(() => {});
+    await dispatch(fetchCollectiblesAction());
+    await dispatch(fetchCollectiblesHistoryAction());
   };
 };
