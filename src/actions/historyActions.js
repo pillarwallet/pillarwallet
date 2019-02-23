@@ -84,7 +84,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
     const {
       user: { data: { walletId } },
       history: { data: currentHistory },
-      appSettings: { data: { lastTxSyncDatetime } },
+      appSettings: { data: { lastTxSyncDatetime = 0 } },
     } = getState();
 
     const d = new Date(lastTxSyncDatetime * 1000);
