@@ -109,7 +109,8 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
       .filter(tx => tx.status === TX_PENDING_STATUS);
 
     // add new records & update data for mined transactions
-    const updatedHistory = uniqBy([...currentHistory, ...pendingTransactions], 'hash')
+    const fixedCurrentHistory = currentHistory.filter(tx => !!tx.createdAt);
+    const updatedHistory = uniqBy([...fixedCurrentHistory, ...pendingTransactions], 'hash')
       .map(tx => {
         if (!minedTransactions[tx.hash]) return tx;
         const { status, gasUsed, blockNumber } = minedTransactions[tx.hash];
@@ -121,7 +122,7 @@ export const fetchTransactionsHistoryNotificationsAction = () => {
         };
       });
 
-    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0));
+    const lastCreatedAt = Math.max(...updatedHistory.map(({ createdAt }) => createdAt).concat(0)) || 0;
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch(saveDbAction('app_settings', { appSettings: { lastTxSyncDatetime: lastCreatedAt } }));
     dispatch({
