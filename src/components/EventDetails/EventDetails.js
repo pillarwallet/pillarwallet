@@ -263,7 +263,7 @@ class EventDetails extends React.Component<Props, {}> {
         eventTime = `${pendingHours}${pendingMinutes}${pendingSeconds} AGO`;
       }
 
-      const fee = gasUsed ? Math.round(gasUsed * gasPrice) : 0;
+      const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
 
       return (
         <React.Fragment>
