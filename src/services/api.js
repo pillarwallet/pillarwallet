@@ -305,7 +305,7 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
         to: toAddress,
         from: fromAddress,
         hash: txHash,
-        createdAt: timestamp,
+        createdAt: timestamp || 0,
         ...rest,
       }));
     })
