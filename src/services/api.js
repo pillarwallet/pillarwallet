@@ -424,3 +424,9 @@ SDKWrapper.prototype.setUsername = function (username: string) {
     .then(() => this.pillarWalletSdk.configuration.setUsername(username))
     .catch(() => null);
 };
+
+SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.wallet.register.approveExternalLogin(loginToken))
+    .catch(() => null);
+};
