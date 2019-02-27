@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { IMPORT_WALLET } from 'constants/navigationConstants';
@@ -85,7 +86,10 @@ class Welcome extends React.Component<Props, State> {
   render() {
     return (
       <Container>
-        <AnimatedBackground shouldAnimate={this.state.shouldAnimate} />
+        <AnimatedBackground
+          shouldAnimate={this.state.shouldAnimate}
+          disabledAnimation={Platform.OS === 'android' && Platform.Version < 24}
+        />
         <Wrapper fullScreen center>
           <PillarLogo source={pillarLogoSource} />
         </Wrapper>

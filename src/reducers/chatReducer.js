@@ -28,6 +28,10 @@ import {
   ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_SENT_MESSAGE,
   REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
+  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+  CHAT_DECRYPTING_FINISHED,
+  ADD_CHAT_DRAFT,
+  CLEAR_CHAT_DRAFT,
 } from 'constants/chatConstants';
 import merge from 'lodash.merge';
 
@@ -63,7 +67,9 @@ export type ChateducerState = {
       received: Object[],
     },
     isFetching: boolean,
+    isDecrypting: boolean,
   },
+  draft: ?string,
 }
 
 export type ChateducerAction = {
@@ -80,7 +86,9 @@ const initialState = {
       received: [],
     },
     isFetching: false,
+    isDecrypting: false,
   },
+  draft: null,
 };
 
 export default function chatReducer(
@@ -102,6 +110,7 @@ export default function chatReducer(
               [username]: allMessages,
             },
             isFetching: false,
+            isDecrypting: false,
           },
         },
       );
@@ -113,6 +122,7 @@ export default function chatReducer(
           data: {
             chats: action.payload,
             isFetching: true,
+            isDecrypting: true,
           },
         },
       );
@@ -123,6 +133,7 @@ export default function chatReducer(
           ...state.data,
           chats: action.payload,
           isFetching: false,
+          isDecrypting: false,
           messages: { ...state.data.messages },
         },
       };
@@ -163,6 +174,7 @@ export default function chatReducer(
             messages: {
               [action.payload.username]: [...action.payload.messages],
             },
+            isDecrypting: false,
             isFetching: false,
           },
         },
@@ -231,6 +243,20 @@ export default function chatReducer(
           },
         },
       };
+    case REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          webSocketMessages: {
+            ...state.data.webSocketMessages,
+            received: state.data.webSocketMessages.received.filter(
+              chatMessage => chatMessage.source !== action.payload.username
+                && chatMessage.timestamp !== action.payload.timestamp,
+            ),
+          },
+        },
+      };
     case REMOVE_WEBSOCKET_SENT_MESSAGE:
       return {
         ...state,
@@ -243,6 +269,25 @@ export default function chatReducer(
             ),
           },
         },
+      };
+    case CHAT_DECRYPTING_FINISHED:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          isDecrypting: false,
+        },
+      };
+    case ADD_CHAT_DRAFT:
+      const { draftText } = action.payload;
+      return {
+        ...state,
+        draft: draftText,
+      };
+    case CLEAR_CHAT_DRAFT:
+      return {
+        ...state,
+        draft: null,
       };
     default:
       return state;

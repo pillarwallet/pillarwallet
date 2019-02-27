@@ -195,6 +195,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
       const contact = contacts
         .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+
       return (
         <ListItemWithImage
           onPress={() => this.selectEvent({ ...notification, value, contact }, type, notification.status)}
@@ -206,6 +207,7 @@ class ActivityFeed extends React.Component<Props, State> {
           itemValue={`${directionSymbol} ${formattedValue} ${notification.asset}`}
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : null}
+          imageUpdateTimeStamp={contact.lastUpdateTime}
         />
       );
     }
@@ -237,6 +239,7 @@ class ActivityFeed extends React.Component<Props, State> {
         }
         actionLabel={this.getRightLabel(notification.type)}
         labelAsButton={notification.type === TYPE_SENT}
+        imageUpdateTimeStamp={notification.lastUpdateTime}
       />
     );
   };
@@ -255,6 +258,11 @@ class ActivityFeed extends React.Component<Props, State> {
 
   handleClose = () => {
     this.setState({ showModal: false });
+  };
+
+  getActivityFeedListKeyExtractor = (item: Object = {}) => {
+    const { createdAt = '' } = item;
+    return `${createdAt.toString()}${item.id || item._id || ''}`;
   };
 
   render() {
@@ -338,7 +346,7 @@ class ActivityFeed extends React.Component<Props, State> {
           maxToRenderPerBatch={5}
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
-          keyExtractor={(item) => item.createdAt.toString()}
+          keyExtractor={this.getActivityFeedListKeyExtractor}
           ListEmptyComponent={
             !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
           }

@@ -162,14 +162,14 @@ const ProfileImage = (props: Props) => {
       >
         {!uri && renderDefaultImage()}
         {!!uri &&
-          <CircleImage
-            useQueryParamsInCacheKey
-            additionalImageStyle={imageStyle}
-            diameter={diameter}
-            renderImage={renderImage}
-            fallbackSource={IMAGE_LOAD_FAILED}
-            source={{ uri }}
-          />
+        <CircleImage
+          useQueryParamsInCacheKey
+          additionalImageStyle={imageStyle}
+          diameter={diameter}
+          renderImage={renderImage}
+          fallbackSource={IMAGE_LOAD_FAILED}
+          source={{ uri }}
+        />
         }
       </ImageTouchable>
     </Wrapper>

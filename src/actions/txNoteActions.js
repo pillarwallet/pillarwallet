@@ -24,6 +24,8 @@ import { extractTxNotesFromMessages } from 'utils/txNotes';
 import {
   UPDATE_TX_NOTES,
   ADD_TX_NOTE,
+  TX_NOTE_DECRYPTING_FINISHED,
+  TX_NOTE_DECRYPTING_STARTED,
 } from 'constants/txNoteConstants';
 import { ADD_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
 
@@ -97,8 +99,12 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
 export const getTxNoteByContactAction = (username: string) => {
   return async (dispatch: Function, getState: Function) => {
     const {
-      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+      chat: { data: { isDecrypting } },
     } = getState();
+    if (isDecrypting) return;
+    dispatch({
+      type: TX_NOTE_DECRYPTING_STARTED,
+    });
     await chat.client.addContact(username, null, null, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -110,15 +116,24 @@ export const getTxNoteByContactAction = (username: string) => {
       }
     });
 
-    await webSocketMessagesReceived
-      .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'tx-note')
-      .forEach(async (wsMessage) => {
-        await chat.client.decryptSignalMessage('tx-note', JSON.stringify(wsMessage));
-        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
-      });
+    const data = await chat.client.receiveNewMessagesByContact(username, 'tx-note')
+      .then(JSON.parse)
+      .catch(() => {});
 
-    await chat.client.receiveNewMessagesByContact(username, 'tx-note').catch(() => null);
-    await chat.client.getMessagesByContact(username, 'tx-note').catch(() => []);
+    if (data !== undefined && Object.keys(data).length) {
+      const { messages: newRemoteMessages } = data;
+      if (newRemoteMessages !== undefined && newRemoteMessages.length) {
+        const remotePromises = newRemoteMessages.map(async remoteMessage => {
+          const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
+          await chat.deleteMessage(rmUsername, rmServerTimestamp);
+        });
+        await Promise.all(remotePromises);
+      }
+    }
+
+    dispatch({
+      type: TX_NOTE_DECRYPTING_FINISHED,
+    });
 
     await dispatch(getExistingTxNotesAction());
   };

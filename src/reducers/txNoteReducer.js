@@ -20,6 +20,8 @@
 import {
   UPDATE_TX_NOTES,
   ADD_TX_NOTE,
+  TX_NOTE_DECRYPTING_STARTED,
+  TX_NOTE_DECRYPTING_FINISHED,
 } from 'constants/txNoteConstants';
 import merge from 'lodash.merge';
 
@@ -30,7 +32,7 @@ type TxNote = {
 
 export type TxNoteReducerState = {
   data: TxNote[],
-  isFetching: boolean,
+  isDecrypting: boolean,
 }
 
 export type TxNoteReducerAction = {
@@ -40,7 +42,7 @@ export type TxNoteReducerAction = {
 
 const initialState = {
   data: [],
-  isFetching: false,
+  isDecrypting: false,
 };
 
 export default function txNoteReducer(
@@ -57,14 +59,24 @@ export default function txNoteReducer(
         state,
         {
           data: allTxNotes,
-          isFetching: false,
+          isDecrypting: false,
         },
       );
     case UPDATE_TX_NOTES:
       return {
         ...state,
         data: action.payload,
-        isFetching: false,
+        isDecrypting: false,
+      };
+    case TX_NOTE_DECRYPTING_STARTED:
+      return {
+        ...state,
+        isDecrypting: true,
+      };
+    case TX_NOTE_DECRYPTING_FINISHED:
+      return {
+        ...state,
+        isDecrypting: false,
       };
     default:
       return state;

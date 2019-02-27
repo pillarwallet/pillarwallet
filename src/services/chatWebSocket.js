@@ -49,6 +49,7 @@ export default class ChatWebSocket {
   listen() {
     if (this.isRunning()) this.ws.close();
     this.setRunning(false);
+    if (this.credentials.host === undefined) return;
     const wsUrl = `${this.credentials.host
       .replace(/(https:\/\/)/gi, 'wss://')
       .replace(/(http:\/\/)/gi, 'ws://')}/v1/websocket/`;
@@ -123,6 +124,7 @@ export default class ChatWebSocket {
   }
 
   onOpen(callback?: Function) {
+    if (this.ws === undefined) return;
     this.ws.onopen = () => {
       if (typeof keepaliveTimer !== 'undefined') clearTimeout(keepaliveTimer);
       this.keepalive();

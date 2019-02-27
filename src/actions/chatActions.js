@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import partition from 'lodash.partition';
 import ChatService from 'services/chat';
 import Toast from 'components/Toast';
 import {
@@ -27,11 +28,17 @@ import {
   FETCHING_CHATS,
   DELETE_CHAT,
   ADD_WEBSOCKET_SENT_MESSAGE,
-  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
   DELETE_CONTACT,
+  CHAT_DECRYPTING_FINISHED,
+  REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+  ADD_CHAT_DRAFT,
+  CLEAR_CHAT_DRAFT,
 } from 'constants/chatConstants';
+import Storage from 'services/storage';
+import { saveDbAction } from './dbActions';
 
 const chat = new ChatService();
+const storage = Storage.getInstance('db');
 
 const mergeNewChats = (newChats, existingChats) => {
   return Object.keys(newChats)
@@ -65,11 +72,13 @@ export const getExistingChatsAction = () => {
         unreadChats[wsMessage.source] = { count: 1, latest: wsMessage.timestamp };
       } else {
         const { count, latest } = unreadChats[wsMessage.source];
-        unreadChats[wsMessage.source] = {
-          ...unreadChats[wsMessage.source],
-          count: count + 1,
-          latest: latest > wsMessage.timestamp ? latest : wsMessage.timestamp,
-        };
+        if (latest < wsMessage.timestamp) {
+          unreadChats[wsMessage.source] = {
+            ...unreadChats[wsMessage.source],
+            count: count + 1,
+            latest: wsMessage.timestamp,
+          };
+        }
       }
     });
     const newChats = mergeNewChats(unreadChats, filteredChats);
@@ -140,6 +149,41 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
   };
 };
 
+export const getChatDraftByContactAction = (contactId: string) => {
+  return async (dispatch: Function) => {
+    const { drafts = {} } = await storage.get('chat');
+    const [chatDraft, chatDrafts] = partition(drafts, { contactId });
+    const { draftText = '' } = chatDraft[0] || {};
+
+    if (!draftText) { return; }
+
+    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
+    dispatch({
+      type: ADD_CHAT_DRAFT,
+      payload: { draftText },
+    });
+  };
+};
+
+export const clearChatDraftStateAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: CLEAR_CHAT_DRAFT,
+    });
+  };
+};
+
+export const saveDraftAction = (contactId: string, draftText: string) => {
+  return async (dispatch: Function) => {
+    const chatStorage = await storage.get('chat');
+    const { drafts = [] } = chatStorage || {};
+
+    const chatDrafts = drafts.filter((draft) => draft.contactId !== contactId);
+    chatDrafts.push({ contactId, draftText });
+    dispatch(saveDbAction('chat', { drafts: chatDrafts }, true));
+  };
+};
+
 export const getChatByContactAction = (
   username: string,
   userId: string,
@@ -147,12 +191,13 @@ export const getChatByContactAction = (
   loadEarlier: boolean = false,
 ) => {
   return async (dispatch: Function, getState: Function) => {
+    const {
+      chat: { data: { isDecrypting } },
+    } = getState();
+    if (isDecrypting) return;
     dispatch({
       type: FETCHING_CHATS,
     });
-    const {
-      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
-    } = getState();
     await chat.client.addContact(username, null, null, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
@@ -167,20 +212,54 @@ export const getChatByContactAction = (
       // TODO: split message loading in bunches and load earlier on lick
     }
 
-    await webSocketMessagesReceived
-      .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
-      .forEach(async (wsMessage) => {
-        await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage));
-        await chat.deleteMessage(wsMessage.source, wsMessage.timestamp, wsMessage.requestId);
-      });
+    const data = await chat.client.receiveNewMessagesByContact(username, 'chat')
+      .then(JSON.parse)
+      .catch(() => {});
+
+    if (data !== undefined && Object.keys(data).length) {
+      const { messages: newRemoteMessages } = data;
+      if (newRemoteMessages !== undefined && newRemoteMessages.length) {
+        const remotePromises = newRemoteMessages.map(async remoteMessage => {
+          const { username: rmUsername, serverTimestamp: rmServerTimestamp } = remoteMessage;
+          await chat.deleteMessage(rmUsername, rmServerTimestamp);
+          dispatch({
+            type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+            payload: {
+              username: rmUsername,
+              timestamp: rmServerTimestamp,
+            },
+          });
+        });
+        await Promise.all(remotePromises);
+      }
+    }
+
+    const {
+      chat: { data: { webSocketMessages: { received: webSocketMessagesReceived } } },
+    } = getState();
+
+    if (webSocketMessagesReceived !== undefined && webSocketMessagesReceived.length) {
+      const webSocketPromises = webSocketMessagesReceived
+        .filter(wsMessage => wsMessage.source === username && wsMessage.tag === 'chat')
+        .map(async wsMessage => {
+          const { source, timestamp } = wsMessage;
+          await chat.client.decryptSignalMessage('chat', JSON.stringify(wsMessage)).catch(() => {});
+          await chat.deleteMessage(source, timestamp, wsMessage.requestId);
+          dispatch({
+            type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGE,
+            payload: {
+              username: source,
+              timestamp,
+            },
+          });
+        });
+      await Promise.all(webSocketPromises);
+    }
 
     dispatch({
-      type: REMOVE_WEBSOCKET_RECEIVED_USER_MESSAGES,
-      payload: username,
+      type: CHAT_DECRYPTING_FINISHED,
     });
 
-    await chat.client.receiveNewMessagesByContact(username, 'chat')
-      .catch(() => null);
     const receivedMessages = await chat.client.getMessagesByContact(username, 'chat')
       .then(JSON.parse)
       .catch(() => []);

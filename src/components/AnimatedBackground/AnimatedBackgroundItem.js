@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { getRandomInt } from 'utils/common';
-import { Animated } from 'react-native';
+import { Animated, View } from 'react-native';
 
 type State = {
   movement: number,
@@ -30,7 +30,8 @@ type Props = {
   positionX: number,
   positionY: number,
   size: number,
-  color: string
+  color: string,
+  animated?: boolean,
 }
 
 export default class AnimatedBackroundItem extends React.Component<Props, State> {
@@ -79,8 +80,25 @@ export default class AnimatedBackroundItem extends React.Component<Props, State>
   render() {
     const { movement, opacity } = this.state;
     const {
-      positionX, positionY, size, color,
+      positionX,
+      positionY,
+      size,
+      color,
+      animated,
     } = this.props;
+    if (!animated) {
+      return (
+        <View style={{
+          position: 'absolute',
+          bottom: positionY,
+          left: positionX,
+          width: size,
+          height: size,
+          backgroundColor: color,
+        }}
+        />
+      );
+    }
     return (
       <Animated.View style={{
         position: 'absolute',
