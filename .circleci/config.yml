@@ -266,7 +266,7 @@ jobs:
   stage_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.4.0"
+      xcode: "10.1.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -367,7 +367,7 @@ jobs:
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.4.0"
+      xcode: "10.1.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -761,7 +761,7 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/change-xcode-version
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
