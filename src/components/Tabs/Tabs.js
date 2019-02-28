@@ -21,6 +21,7 @@ import * as React from 'react';
 import { Platform, PixelRatio } from 'react-native';
 import styled from 'styled-components/native';
 import ImageCapInset from 'react-native-image-capinsets';
+import { CachedImage } from 'react-native-cached-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
@@ -33,6 +34,8 @@ type Tab = {
   icon?: string,
   onPress: Function,
   unread?: number,
+  tabImageNormal?: string,
+  tabImageActive?: string
 }
 
 type Props = {
@@ -146,11 +149,44 @@ const UnreadText = styled(BaseText)`
   color: ${baseColors.white};
 `;
 
+const TabImage = styled(CachedImage)`
+  font-size: ${fontSizes.extraSmall};
+  font-weight: 500;
+  color: ${baseColors.white};
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+`;
+
 const tabBackground9Patch = require('assets/images/tab.png');
 
 export default class Tabs extends React.Component<Props, State> {
   state = {
     activeTab: this.props.initialActiveTab || ALL,
+  };
+
+  renderIcon = (tab: Object) => {
+    const {
+      icon,
+      tabImageNormal,
+      tabImageActive,
+      id,
+    } = tab;
+    const { activeTab } = this.state;
+    const isActive = activeTab === id;
+    const tabImage = isActive ? tabImageActive : tabImageNormal;
+
+    if (icon || tabImageActive || tabImageNormal) {
+      if (icon) {
+        return (
+          <TabItemIcon active={isActive} name={icon} />
+        );
+      }
+      return (
+        <TabImage source={tabImage} resizeMethod="resize" resizeMode={Platform.OS === 'ios' ? 'contain' : 'cover'} />
+      );
+    }
+    return null;
   };
 
   renderTabItems = (tabs: Tab[]) => {
@@ -159,7 +195,6 @@ export default class Tabs extends React.Component<Props, State> {
       const isActive = activeTab === tab.id;
       const {
         id,
-        icon,
         name,
         unread,
       } = tab;
@@ -187,7 +222,7 @@ export default class Tabs extends React.Component<Props, State> {
                 }, tab.onPress)}
               >
                 <TextWrapper extraPadding={!!unread}>
-                  {!!icon && <TabItemIcon active={isActive} name={icon} />}
+                  {this.renderIcon(tab)}
                   <TabItemText active={isActive}>{name}</TabItemText>
                   {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
                 </TextWrapper>
@@ -211,7 +246,7 @@ export default class Tabs extends React.Component<Props, State> {
             }, tab.onPress)}
           >
             <TextWrapper extraPadding={!!unread}>
-              {!!icon && <TabItemIcon active={isActive} name={icon} />}
+              {this.renderIcon(tab)}
               <TabItemText active={isActive}>{name}</TabItemText>
               {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
             </TextWrapper>

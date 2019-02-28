@@ -213,6 +213,14 @@ const TabsHeader = styled.View`
   background-color: ${baseColors.white};
 `;
 
+const allIconNormal = require('assets/icons/all_normal.png');
+const allIconActive = require('assets/icons/all_active.png');
+const socialIconNormal = require('assets/icons/social_normal.png');
+const socialIconActive = require('assets/icons/social_active.png');
+const transactionsIconNormal = require('assets/icons/transactions_normal.png');
+const transactionsIconActive = require('assets/icons/transactions_active.png');
+
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
@@ -400,13 +408,15 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: ALL,
         name: 'All',
-        icon: 'all',
+        tabImageNormal: allIconNormal,
+        tabImageActive: allIconActive,
         onPress: () => this.setActiveTab(ALL),
       },
       {
         id: TRANSACTIONS,
         name: 'Transactions',
-        icon: 'send',
+        tabImageNormal: transactionsIconNormal,
+        tabImageActive: transactionsIconActive,
         onPress: () => this.setActiveTab(
           TRANSACTIONS,
           {
@@ -418,7 +428,8 @@ class HomeScreen extends React.Component<Props, State> {
       {
         id: SOCIAL,
         name: 'Social',
-        icon: 'social',
+        tabImageNormal: socialIconNormal,
+        tabImageActive: socialIconActive,
         onPress: () => this.setActiveTab(
           SOCIAL,
           {
