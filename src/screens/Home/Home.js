@@ -574,7 +574,7 @@ class HomeScreen extends React.Component<Props, State> {
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
           </TabsHeader>
-          <Tabs tabs={activityFeedTabs} />
+          <Tabs tabs={activityFeedTabs} bgColor={baseColors.white} />
           <ActivityFeed
             backgroundColor={baseColors.white}
             onCancelInvitation={cancelInvitation}

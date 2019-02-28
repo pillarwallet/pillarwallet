@@ -18,109 +18,174 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform, PixelRatio } from 'react-native';
 import styled from 'styled-components/native';
+import ImageCapInset from 'react-native-image-capinsets';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import { ALL } from 'constants/activityConstants';
-import { UIColors, baseColors, spacing, fontSizes } from 'utils/variables';
+import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
 
 type Tab = {
   id: string,
   name: string,
-  icon: string,
+  icon?: string,
   onPress: Function,
 }
 
 type Props = {
+  initialActiveTab?: string,
   title?: string,
   tabs: Tab[],
+  bgColor?: string,
 }
 
 type State = {
   activeTab: string,
 }
 
-const TabWrapperScrollView = styled.ScrollView`
-  flex-direction: row;
-`;
+const pixelRatio = PixelRatio.get();
+const androidTabSpacing = pixelRatio > 3 ? 2 : 1;
+const androidFixHorizontalSpacing = 10 - androidTabSpacing;
 
 const TabOuterWrapper = styled.View`
-  background-color: ${baseColors.white};
+`;
+
+const TabWrapper = styled.View`
+  flex-direction: row;
+  background-color: ${baseColors.pattensBlue};
+  padding: ${Platform.select({
+    ios: '2px',
+    android: '2px 0',
+  })}
+  border-radius: 18px;
+  margin: 12px 16px;
+  height: 36px;
+`;
+
+const TabSizer = styled.View`
+  flex-grow: 1;
+  position: relative;
+  ${props => props.fixSpacing
+    ? `margin-top: -4px;
+      margin-left: -${androidFixHorizontalSpacing}px;
+      margin-right: -${androidFixHorizontalSpacing}px;`
+    : ''}
 `;
 
 const TabItem = styled.TouchableOpacity`
-  height: 32px;
-  padding: 0 15px;
-  align-items: center;
+  height: ${props => props.isAndroid ? 53.5 : 32};
+  padding: ${props => props.isAndroid ? '10px 15px' : '7px 15px'};
+  align-items: flex-start;
   justify-content: center;
-  background-color: ${props => props.active ? baseColors.electricBlue : 'transparent'};
+  background-color: ${props => props.active ? baseColors.white : 'transparent'};
   border-radius: 16px;
   flex-direction: row;
+  flex-grow: 1;
+  ${props => props.active
+    ? `
+    shadow-color: ${UIColors.tabShadowColor};
+    shadow-radius: 10px;
+    shadow-opacity: 1;
+    shadow-offset: 0px 7px;
+    `
+    : ''}
 `;
 
 const TabItemIcon = styled(Icon)`
   font-size: ${fontSizes.extraSmall};
-  margin-right: 5px;
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
+  margin-right: 4px;
+  margin-top: 2px;
+  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
 const TabItemText = styled(BaseText)`
   font-size: ${fontSizes.extraSmall};
-  color: ${props => props.active ? baseColors.white : baseColors.darkGray};
+  font-weight: 500;
+  color: ${props => props.active ? baseColors.slateBlack : baseColors.electricBlue};
 `;
 
 const ActivityFeedHeader = styled.View`
   padding: 4px ${spacing.mediumLarge}px 0;
 `;
 
-const TabWrapper = styled.View`
-  padding: 12px 16px;
-  background: ${baseColors.white};
-  border-bottom-width: 1px;
-  border-color: ${UIColors.defaultDividerColor};
-  border-style: solid;
-`;
+
+const tabBackground9Patch = require('assets/images/tab.png');
 
 export default class Tabs extends React.Component<Props, State> {
   state = {
-    activeTab: ALL,
+    activeTab: this.props.initialActiveTab || ALL,
   };
 
   renderTabItems = (tabs: Tab[]) => {
     const { activeTab } = this.state;
     const tabItems = tabs.map(tab => {
       const isActive = activeTab === tab.id;
+
+      if (isActive && Platform.OS === 'android') {
+        return (
+          <TabSizer
+            key={tab.id}
+            style={tabs.length === 2 ? { width: '50%' } : {}}
+            fixSpacing
+          >
+            <ImageCapInset
+              source={tabBackground9Patch}
+              capInsets={{
+                top: 14 / pixelRatio,
+                right: 105 / pixelRatio,
+                bottom: 35 / pixelRatio,
+                left: 105 / pixelRatio,
+              }}
+            >
+              <TabItem
+                isAndroid
+                onPress={() => this.setState({
+                  activeTab: tab.id,
+                }, tab.onPress)}
+              >
+                {!!tab.icon && <TabItemIcon active={isActive} name={tab.icon} />}
+                <TabItemText active={isActive}>{tab.name}</TabItemText>
+              </TabItem>
+            </ImageCapInset>
+          </TabSizer>
+        );
+      }
+
       return (
-        <TabItem
+        <TabSizer
           key={tab.id}
-          active={isActive}
-          onPress={() => this.setState({
-            activeTab: tab.id,
-          }, tab.onPress)}
+          style={tabs.length === 2 ? { width: '50%' } : {}}
+          fixSpacing={Platform.OS === 'android'}
         >
-          <TabItemIcon active={isActive} name={tab.icon} />
-          <TabItemText active={isActive}>{tab.name}</TabItemText>
-        </TabItem>
+          <TabItem
+            isAndroid={Platform.OS === 'android'}
+            active={isActive && Platform.OS === 'ios'}
+            onPress={() => this.setState({
+              activeTab: tab.id,
+            }, tab.onPress)}
+          >
+            {!!tab.icon && <TabItemIcon active={isActive} name={tab.icon} />}
+            <TabItemText active={isActive}>{tab.name}</TabItemText>
+          </TabItem>
+        </TabSizer>
       );
     });
     return tabItems;
   };
 
   render() {
-    const { title, tabs } = this.props;
-
+    const { title, tabs, bgColor } = this.props;
     return (
-      <TabOuterWrapper>
+      <TabOuterWrapper backgroundColor={bgColor}>
         {!!title &&
         <ActivityFeedHeader>
           <Title subtitle noMargin title={title} />
         </ActivityFeedHeader>
         }
         <TabWrapper>
-          <TabWrapperScrollView horizontal>
-            {this.renderTabItems(tabs)}
-          </TabWrapperScrollView>
+          {this.renderTabItems(tabs)}
         </TabWrapper>
       </TabOuterWrapper>
     );
