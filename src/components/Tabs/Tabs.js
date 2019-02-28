@@ -197,6 +197,7 @@ export default class Tabs extends React.Component<Props, State> {
         id,
         name,
         unread,
+        onPress,
       } = tab;
 
       if (isActive && Platform.OS === 'android') {
@@ -218,8 +219,8 @@ export default class Tabs extends React.Component<Props, State> {
               <TabItem
                 isAndroid
                 onPress={() => this.setState({
-                  activeTab: tab.id,
-                }, tab.onPress)}
+                  activeTab: id,
+                }, onPress)}
               >
                 <TextWrapper extraPadding={!!unread}>
                   {this.renderIcon(tab)}
@@ -242,8 +243,8 @@ export default class Tabs extends React.Component<Props, State> {
             isAndroid={Platform.OS === 'android'}
             active={isActive && Platform.OS === 'ios'}
             onPress={() => this.setState({
-              activeTab: tab.id,
-            }, tab.onPress)}
+              activeTab: id,
+            }, onPress)}
           >
             <TextWrapper extraPadding={!!unread}>
               {this.renderIcon(tab)}
