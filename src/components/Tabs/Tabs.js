@@ -32,6 +32,7 @@ type Tab = {
   name: string,
   icon?: string,
   onPress: Function,
+  unread?: number,
 }
 
 type Props = {
@@ -76,7 +77,6 @@ const TabSizer = styled.View`
 
 const TabItem = styled.TouchableOpacity`
   height: ${props => props.isAndroid ? 53.5 : 32};
-  padding: ${props => props.isAndroid ? '10px 15px' : '7px 15px'};
   align-items: flex-start;
   justify-content: center;
   background-color: ${props => props.active ? baseColors.white : 'transparent'};
@@ -110,6 +110,41 @@ const ActivityFeedHeader = styled.View`
   padding: 4px ${spacing.mediumLarge}px 0;
 `;
 
+const TextWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  margin-top: ${Platform.select({
+    ios: '0',
+    android: '3px',
+  })}
+  ${props => props.extraPadding
+    ? `padding-left: 34px;
+      padding-right: 34px;`
+    : ''}
+`;
+
+const UnreadBadge = styled.View`
+  height: 24px;
+  width: 24px;
+  border-radius: 12px;
+  background-color: ${baseColors.electricBlue};
+  position: absolute;
+  top: ${Platform.select({
+    ios: '4px',
+    android: '4.5px',
+  })}
+  right: 2px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const UnreadText = styled(BaseText)`
+  font-size: ${fontSizes.extraSmall};
+  font-weight: 500;
+  color: ${baseColors.white};
+`;
 
 const tabBackground9Patch = require('assets/images/tab.png');
 
@@ -122,11 +157,17 @@ export default class Tabs extends React.Component<Props, State> {
     const { activeTab } = this.state;
     const tabItems = tabs.map(tab => {
       const isActive = activeTab === tab.id;
+      const {
+        id,
+        icon,
+        name,
+        unread,
+      } = tab;
 
       if (isActive && Platform.OS === 'android') {
         return (
           <TabSizer
-            key={tab.id}
+            key={id}
             style={tabs.length === 2 ? { width: '50%' } : {}}
             fixSpacing
           >
@@ -145,8 +186,11 @@ export default class Tabs extends React.Component<Props, State> {
                   activeTab: tab.id,
                 }, tab.onPress)}
               >
-                {!!tab.icon && <TabItemIcon active={isActive} name={tab.icon} />}
-                <TabItemText active={isActive}>{tab.name}</TabItemText>
+                <TextWrapper extraPadding={!!unread}>
+                  {!!icon && <TabItemIcon active={isActive} name={icon} />}
+                  <TabItemText active={isActive}>{name}</TabItemText>
+                  {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
+                </TextWrapper>
               </TabItem>
             </ImageCapInset>
           </TabSizer>
@@ -155,7 +199,7 @@ export default class Tabs extends React.Component<Props, State> {
 
       return (
         <TabSizer
-          key={tab.id}
+          key={id}
           style={tabs.length === 2 ? { width: '50%' } : {}}
           fixSpacing={Platform.OS === 'android'}
         >
@@ -166,8 +210,11 @@ export default class Tabs extends React.Component<Props, State> {
               activeTab: tab.id,
             }, tab.onPress)}
           >
-            {!!tab.icon && <TabItemIcon active={isActive} name={tab.icon} />}
-            <TabItemText active={isActive}>{tab.name}</TabItemText>
+            <TextWrapper extraPadding={!!unread}>
+              {!!icon && <TabItemIcon active={isActive} name={icon} />}
+              <TabItemText active={isActive}>{name}</TabItemText>
+              {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
+            </TextWrapper>
           </TabItem>
         </TabSizer>
       );
