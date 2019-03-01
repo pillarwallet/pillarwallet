@@ -447,8 +447,8 @@ class HomeScreen extends React.Component<Props, State> {
     const hasIntercomNotifications = !!intercomNotificationsCount;
     const isWalletBackedUp = isImported || isBackedUp;
 
-    const { loginAttemptQuery } = deepLinkData;
-    const showLoginApproveModal = loginAttemptQuery !== null && loginAttemptQuery !== undefined;
+    const { loginAttemptToken } = deepLinkData;
+    const showLoginApproveModal = loginAttemptToken !== null && loginAttemptToken !== undefined;
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -628,7 +628,7 @@ class HomeScreen extends React.Component<Props, State> {
               </Description>
               <Button
                 title="Confirm login"
-                onPress={() => approveLoginAttempt(loginAttemptQuery)}
+                onPress={() => approveLoginAttempt(loginAttemptToken)}
                 style={{
                   marginBottom: 13,
                 }}
@@ -669,7 +669,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
-  approveLoginAttempt: loginAttemptQuery => dispatch(approveLoginAttemptAction(loginAttemptQuery)),
+  approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

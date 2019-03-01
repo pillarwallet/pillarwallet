@@ -427,6 +427,12 @@ SDKWrapper.prototype.setUsername = function (username: string) {
 
 SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: string) {
   return Promise.resolve()
-    .then(() => this.pillarWalletSdk.wallet.register.approveExternalLogin(loginToken))
-    .catch(() => null);
+    .then(() => this.pillarWalletSdk.register.approveExternalLogin({ loginToken }))
+    .catch(error => {
+      Sentry.captureException({
+        type: 'External login approve error',
+        error,
+      });
+      return { error };
+    });
 };

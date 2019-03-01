@@ -27,13 +27,13 @@ import { ADD_DEEP_LINK_DATA, RESET_DEEP_LINK_DATA } from 'constants/deepLinkCons
 
 export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Function) => {
-    const params = url.parse(deepLink);
+    const params: Object = url.parse(deepLink, true);
     if (params.protocol !== 'pillarwallet:') return;
     if (params.host === 'approve') {
-      const { query } = params;
+      const { query: { loginToken: loginAttemptToken } } = params;
       dispatch({
         type: ADD_DEEP_LINK_DATA,
-        payload: { loginAttemptQuery: query },
+        payload: { loginAttemptToken },
       });
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
@@ -67,11 +67,16 @@ export const resetDeepLinkDataAction = () => {
   };
 };
 
-export const approveLoginAttemptAction = (loginAttemptQuery: string) => {
+export const approveLoginAttemptAction = (loginAttemptToken: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     try {
-      await api.approveLoginToExternalResource(loginAttemptQuery);
-      dispatch({ type: RESET_DEEP_LINK_DATA });
+      const result = await api.approveLoginToExternalResource(loginAttemptToken);
+      if (result !== undefined
+        && result.error === undefined) {
+        dispatch({ type: RESET_DEEP_LINK_DATA });
+      } else {
+        throw new Error();
+      }
     } catch (e) {
       Toast.show({
         message: 'Failed to approve your login, please try again.',
