@@ -71,12 +71,8 @@ export const approveLoginAttemptAction = (loginAttemptToken: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     try {
       const result = await api.approveLoginToExternalResource(loginAttemptToken);
-      if (result !== undefined
-        && result.error === undefined) {
-        dispatch({ type: RESET_DEEP_LINK_DATA });
-      } else {
-        throw new Error();
-      }
+      if (!result || result.error) throw new Error();
+      dispatch({ type: RESET_DEEP_LINK_DATA });
     } catch (e) {
       Toast.show({
         message: 'Failed to approve your login, please try again.',
