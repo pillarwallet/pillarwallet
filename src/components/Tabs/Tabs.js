@@ -211,9 +211,9 @@ export default class Tabs extends React.Component<Props, State> {
               source={tabBackground9Patch}
               capInsets={{
                 top: 14 / pixelRatio,
-                right: 105 / pixelRatio,
+                right: 90 / pixelRatio,
                 bottom: 35 / pixelRatio,
-                left: 105 / pixelRatio,
+                left: 90 / pixelRatio,
               }}
             >
               <TabItem
