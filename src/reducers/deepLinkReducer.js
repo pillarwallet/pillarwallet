@@ -25,7 +25,7 @@ export type DeepLinkRecucerState = {
 
 export type DeepLinkRecucerAction = {
   type: string,
-  payload: any
+  payload: any,
 }
 
 const initialState = {
