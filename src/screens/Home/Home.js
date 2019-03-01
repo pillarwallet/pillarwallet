@@ -448,7 +448,6 @@ class HomeScreen extends React.Component<Props, State> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     const { loginAttemptToken } = deepLinkData;
-    const showLoginApproveModal = loginAttemptToken !== null && loginAttemptToken !== undefined;
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -612,7 +611,7 @@ class HomeScreen extends React.Component<Props, State> {
           navigation={navigation}
         />
         <SlideModal
-          isVisible={showLoginApproveModal}
+          isVisible={!!loginAttemptToken}
           fullScreen
           showHeader
           onModalHide={resetDeepLinkData}
