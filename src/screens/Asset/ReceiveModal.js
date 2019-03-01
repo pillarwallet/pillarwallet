@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Clipboard } from 'react-native';
+import { Clipboard, View } from 'react-native';
 import QRCode from 'react-native-qrcode';
 import { TextLink, BaseText } from 'components/Typography';
 import { Footer } from 'components/Layout';
@@ -92,7 +92,13 @@ export default class ReceiveModal extends React.Component<Props, *> {
         <WarningBanner rounded small />
         <ContentWrapper>
           <QRCodeWrapper>
-            <QRCode value={address} size={160} />
+            <View
+              style={{
+                overflow: 'hidden',
+              }}
+            >
+              <QRCode value={address} size={160} />
+            </View>
             <CopyAddressLink onPress={this.handleAddressClipboardSet}>
               <TextLink>Copy wallet address to clipboard</TextLink>
             </CopyAddressLink>
