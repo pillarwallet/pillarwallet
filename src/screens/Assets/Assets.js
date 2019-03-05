@@ -183,14 +183,11 @@ class AssetsScreen extends React.Component<Props, State> {
       fetchInitialAssets,
       assets,
       wallet,
-      fetchAllCollectiblesData,
     } = this.props;
 
     if (!Object.keys(assets).length) {
       fetchInitialAssets(wallet.address);
     }
-
-    fetchAllCollectiblesData();
 
     this.willFocus = this.props.navigation.addListener(
       'willFocus',

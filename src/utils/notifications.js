@@ -47,6 +47,12 @@ const validBcxTransaction = (transaction: ?Object): boolean => {
   return true;
 };
 
+const validCollectibleTransaction = (transaction: ?Object): boolean => {
+  if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
+  if (!transaction.status || !transaction.tokenId || !transaction.contractName) return false;
+  return true;
+};
+
 const connectionEvents = [
   TYPE_ACCEPTED,
   TYPE_CANCELLED,
@@ -133,6 +139,32 @@ export const processNotification = (notification: Object, myEthAddress?: string)
       asset,
       status,
       type: notification.type,
+    };
+  }
+
+  if (notification.type === 'collectible') {
+    if (!parsedNotification || !validCollectibleTransaction(parsedNotification)) return result;
+
+    let message = '';
+    let title = '';
+    const {
+      contractName,
+    } = parsedNotification;
+    const sender = parsedNotification.fromAddress.toUpperCase();
+    const receiver = parsedNotification.toAddress.toUpperCase();
+
+    if (receiver === myEthAddress) {
+      title = contractName;
+      message = 'You received collectible';
+    } else if (sender === myEthAddress) {
+      title = contractName;
+      message = 'Your collectible has been received';
+    }
+
+    result = {
+      title,
+      message,
+      type: parsedNotification.type.toUpperCase(),
     };
   }
 

@@ -117,11 +117,6 @@ class ActivityFeed extends React.Component<Props, State> {
     eventStatus: '',
   };
 
-  componentDidMount() {
-    const { fetchAllCollectiblesData } = this.props;
-    fetchAllCollectiblesData();
-  }
-
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
     return !isEq;

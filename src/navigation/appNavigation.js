@@ -85,6 +85,7 @@ import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActi
 import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import {
@@ -481,6 +482,7 @@ type Props = {
   assets: Object,
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
+  fetchAllCollectiblesData: Function,
 }
 
 let lockTimer;
@@ -498,6 +500,7 @@ class AppFlow extends React.Component<Props, {}> {
       getExistingChats,
       assets,
       wallet,
+      fetchAllCollectiblesData,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -506,6 +509,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
+    fetchAllCollectiblesData();
     startListeningChatWebSocket();
     addAppStateChangeListener(this.handleAppStateChange);
   }
@@ -648,6 +652,7 @@ const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
   fetchICOs: () => dispatch(fetchICOsAction()),
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 const ConnectedAppFlow = connect(mapStateToProps, mapDispatchToProps)(AppFlow);

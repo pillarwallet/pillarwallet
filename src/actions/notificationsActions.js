@@ -30,6 +30,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import {
   getExistingChatsAction,
   getChatByContactAction,
@@ -60,6 +61,7 @@ import ChatService from 'services/chat';
 const CONNECTION = 'CONNECTION';
 const SIGNAL = 'SIGNAL';
 const BCX = 'BCX';
+const COLLECTIBLE = 'COLLECTIBLE';
 
 const storage = Storage.getInstance('db');
 
@@ -74,6 +76,7 @@ const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
   [BCX]: HOME,
   [SIGNAL]: CHAT,
+  [COLLECTIBLE]: HOME,
 };
 
 function checkForSupportAlert(messageData) {
@@ -127,6 +130,7 @@ export const fetchAllNotificationsAction = () => {
   return async (dispatch: Function) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
     dispatch(fetchInviteNotificationsAction());
+    dispatch(fetchAllCollectiblesDataAction());
   };
 };
 
@@ -163,6 +167,9 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchTransactionsHistoryNotificationsAction());
         dispatch(fetchTransactionsHistoryAction(wallet.address, notification.asset));
         dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+      }
+      if (notification.type === COLLECTIBLE) {
+        dispatch(fetchAllCollectiblesDataAction());
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
@@ -243,6 +250,9 @@ export const startListeningOnOpenNotificationAction = () => {
           dispatch(fetchTransactionsHistoryNotificationsAction());
           dispatch(fetchTransactionsHistoryAction(wallet.address, asset));
           dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+        }
+        if (type === COLLECTIBLE) {
+          dispatch(fetchAllCollectiblesDataAction());
         }
         if (type === CONNECTION) {
           dispatch(fetchInviteNotificationsAction());
