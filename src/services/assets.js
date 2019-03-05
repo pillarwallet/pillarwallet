@@ -26,6 +26,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
+import { Sentry } from 'react-native-sentry';
 
 const PROVIDER = NETWORK_PROVIDER;
 
@@ -104,6 +105,15 @@ export async function transferERC721(options: ERC721TransferOptions) {
     contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
     return contract.transferFrom(from, to, tokenId, { nonce });
   }
+  Sentry.captureMessage('Could not transfer collectible',
+    {
+      level: 'info',
+      extra: {
+        networkProvider: COLLECTIBLES_NETWORK,
+        contractAddress,
+        tokenId,
+      },
+    });
   return { error: 'can not be transferred', noRetry: true };
 }
 
