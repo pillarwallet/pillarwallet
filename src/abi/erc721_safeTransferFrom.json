@@ -23,9 +23,12 @@
     "type":"function"
   },
   {
-    "name":"transfer",
-    "type":"function",
+    "constant":false,
     "inputs":[
+      {
+        "name":"_from",
+        "type":"address"
+      },
       {
         "name":"_to",
         "type":"address"
@@ -35,10 +38,12 @@
         "type":"uint256"
       }
     ],
-    "constant":false,
+    "name":"safeTransferFrom",
     "outputs":[
 
     ],
-    "payable":false
+    "payable":false,
+    "stateMutability":"nonpayable",
+    "type":"function"
   }
 ]

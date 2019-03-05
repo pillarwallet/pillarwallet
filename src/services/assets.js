@@ -24,6 +24,8 @@ import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
 import type { Asset } from 'models/Asset';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
+import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
+import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 
 const PROVIDER = NETWORK_PROVIDER;
 
@@ -73,7 +75,7 @@ export function transferERC20(options: ERC20TransferOptions) {
   return contract.transfer(to, utils.bigNumberify(amount.toString()), { nonce });
 }
 
-export function transferERC721(options: ERC721TransferOptions) {
+export async function transferERC721(options: ERC721TransferOptions) {
   const {
     contractAddress,
     from,
@@ -83,8 +85,26 @@ export function transferERC721(options: ERC721TransferOptions) {
     nonce,
   } = options;
   wallet.provider = providers.getDefaultProvider(COLLECTIBLES_NETWORK);
-  const contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
-  return contract.safeTransferFrom(from, to, tokenId, { nonce });
+
+  const code = await wallet.provider.getCode(contractAddress).then((result) => result);
+
+  // signature keccak256
+  const transferHash = 'a9059cbb';
+  const transferFromHash = '23b872dd';
+  const safeTransferFromHash = '42842e0e';
+
+  let contract;
+  if (code.indexOf(safeTransferFromHash) > 0) {
+    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
+    return contract.safeTransferFrom(from, to, tokenId, { nonce });
+  } else if (code.indexOf(transferHash) > 0) {
+    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
+    return contract.transfer(to, tokenId, { nonce });
+  } else if (code.indexOf(transferFromHash) > 0) {
+    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
+    return contract.transferFrom(from, to, tokenId, { nonce });
+  }
+  return { error: 'can not be transferred', noRetry: true };
 }
 
 export function transferETH(options: ETHTransferOptions) {

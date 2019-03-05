@@ -113,8 +113,9 @@ export const sendAssetAction = (
 
       if (!thisCollectible) {
         tokenTx = {
-          error: 'You do not longer own this collectible',
+          error: 'is not owned',
           hash: null,
+          noRetry: true,
         };
       } else {
         tokenTx = await transferERC721({
@@ -124,12 +125,14 @@ export const sendAssetAction = (
           tokenId,
           wallet,
           nonce,
-        }).catch((e) => catchTransactionError(e, 'ERC721', {
-          contractAddress,
-          from: wallet.address,
-          to,
-          tokenId,
-        }));
+        }).catch((e) => {
+          catchTransactionError(e, 'ERC721', {
+            contractAddress,
+            from: wallet.address,
+            to,
+            tokenId,
+          });
+        });
         if (tokenTx.hash) {
           const historyTxPart = buildHistoryTransaction({
             ...tokenTx,
@@ -240,7 +243,7 @@ export const sendAssetAction = (
         isSuccess: true, error: null, note, to, txHash: tokenTx.hash,
       }
       : {
-        isSuccess: false, error: tokenTx.error, note, to,
+        isSuccess: false, error: tokenTx.error, note, to, noRetry: tokenTx.noRetry,
       };
     navigateToNextScreen(txStatus);
   };

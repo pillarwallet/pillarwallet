@@ -58,6 +58,8 @@ const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
     'transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
     'replacement transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
+    'is not owned': 'You do not longer own this collectible',
+    'can not be transferred': 'This collectible can not be transferred',
   };
   const transactionFailureText = 'Something went wrong';
   return TRANSACTION_ERRORS[error] || transactionFailureText;
@@ -116,7 +118,12 @@ class SendTokenTransaction extends React.Component<Props, State> {
 
   render() {
     const { navigation } = this.props;
-    const { isSuccess, error, transactionPayload } = navigation.state.params;
+    const {
+      isSuccess,
+      error,
+      transactionPayload,
+      noRetry,
+    } = navigation.state.params;
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
     const successText = transactionPayload.tokenType === COLLECTIBLES
@@ -132,7 +139,7 @@ class SendTokenTransaction extends React.Component<Props, State> {
           {isSuccess ?
             <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" /> :
             <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-              <Button marginBottom="20px" onPress={this.handleNavigationBack} title="Retry" />
+              {!noRetry && <Button marginBottom="20px" onPress={this.handleNavigationBack} title="Retry" />}
               <TouchableOpacity onPress={this.handleDismissal}>
                 <CancelText>Cancel</CancelText>
               </TouchableOpacity>

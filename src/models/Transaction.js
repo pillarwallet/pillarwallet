@@ -57,7 +57,6 @@ export type CollectibleTransactionPayload = {
   tokenType: string,
   tokenId: string,
   note?: ?string,
-  name: string,
   tokenId: string,
 }
 
