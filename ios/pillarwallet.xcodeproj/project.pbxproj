@@ -52,6 +52,7 @@
 		6612AEE4BC954980A8267D91 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5B7C1C2FA84B4C4C956B4AB7 /* Ionicons.ttf */; };
 		6620E2D8C717452AA263A579 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAA37A6D0BC84F48AFD69262 /* MaterialCommunityIcons.ttf */; };
 		73D45330BF5C4B1095BDF850 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 033589BA85814B0A94F2DD0E /* Zocial.ttf */; };
+		8018645422DF4DC3855F3A3D /* libRNThread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CC6F631CBBF458CB455FF9C /* libRNThread.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		89C1EE957D6A43FB8C1FC49C /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4CDE8FF1C4DA4CF98827F55D /* libRNRandomBytes.a */; };
 		8EEF9B60C31F49C08366F324 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6BA9F928B22E46C8B0C4B348 /* FontAwesome5_Solid.ttf */; };
@@ -68,6 +69,7 @@
 		E8197C7BA3C44222AC003DF5 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0324A5DFD23D42D79733EED0 /* Entypo.ttf */; };
 		EA4F15CCADAC44BFA9453C38 /* libRNOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62DA123A58B3461382F464FA /* libRNOS.a */; };
 		EC113BA65B394361A4500F72 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 090B739AA78C4A9E8E5D2698 /* Foundation.ttf */; };
+		FA315B5922256F1F008E0303 /* index.thread.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = FA315B2022256F1F008E0303 /* index.thread.jsbundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -484,6 +486,13 @@
 			remoteGlobalIDString = 83CBBA2D1A601D0E00E9B192;
 			remoteInfo = React;
 		};
+		FA5C5CBE22255FFB00ADDEA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FA5C5CBA22255FFB00ADDEA3 /* RNThread.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNThread;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -539,6 +548,7 @@
 		1A7A6F4ED0218800D8189BB6 /* libPods-pillarwallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pillarwallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1D4CC066FEC94A60A27A859B /* AktivGrotesk-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "AktivGrotesk-Light.ttf"; path = "../src/assets/fonts/AktivGrotesk-Light.ttf"; sourceTree = "<group>"; };
+		2CC6F631CBBF458CB455FF9C /* libRNThread.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNThread.a; sourceTree = "<group>"; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3210E9C8E16545A8811B7F79 /* libUdpSockets.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libUdpSockets.a; sourceTree = "<group>"; };
 		3C6BE9948FEC483EA9345AC5 /* TcpSockets.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = TcpSockets.xcodeproj; path = "../node_modules/react-native-tcp/ios/TcpSockets.xcodeproj"; sourceTree = "<group>"; };
@@ -584,6 +594,8 @@
 		DAA37A6D0BC84F48AFD69262 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		E41429819AFB44C2B5C6BCF8 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		F1AE91BF7F0E413EB47F32BA /* libRNRandomBytes-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNRandomBytes-tvOS.a"; sourceTree = "<group>"; };
+		FA315B2022256F1F008E0303 /* index.thread.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = index.thread.jsbundle; sourceTree = "<group>"; };
+		FA5C5CBA22255FFB00ADDEA3 /* RNThread.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNThread.xcodeproj; path = "rn-libs/react-native-threads/ios/RNThread.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -623,6 +635,7 @@
 				111D0E4BCBE44B3D826C91A9 /* libUdpSockets.a in Frameworks */,
 				162E1794211325E60028BE96 /* SignalProtocol.framework in Frameworks */,
 				5CE273F7A2B74EA88EB55CA9 /* libz.tbd in Frameworks */,
+				8018645422DF4DC3855F3A3D /* libRNThread.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -694,6 +707,7 @@
 		13B07FAE1A68108700A75B9A /* pillarwallet */ = {
 			isa = PBXGroup;
 			children = (
+				FA315B2022256F1F008E0303 /* index.thread.jsbundle */,
 				1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */,
 				162E180B21186C160028BE96 /* launch_background_image.png */,
 				16A4A6E6211227BF008E645C /* pillarwallet.entitlements */,
@@ -793,6 +807,7 @@
 				3210E9C8E16545A8811B7F79 /* libUdpSockets.a */,
 				690777AE39E44AABA938DEFA /* libSignalMessagingSwift.a */,
 				F1AE91BF7F0E413EB47F32BA /* libRNRandomBytes-tvOS.a */,
+				2CC6F631CBBF458CB455FF9C /* libRNThread.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -914,6 +929,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				FA5C5CBA22255FFB00ADDEA3 /* RNThread.xcodeproj */,
 				690DC55F22161537001EB112 /* RNSentry.xcodeproj */,
 				16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */,
 				16CF7ACF2146D87300BEADDB /* RNShare.xcodeproj */,
@@ -1020,6 +1036,14 @@
 				7AE6991141C34F478E964225 /* Aktiv Grotesk App.ttf */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		FA5C5CBB22255FFB00ADDEA3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FA5C5CBF22255FFB00ADDEA3 /* libRNThread.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1173,6 +1197,10 @@
 				{
 					ProductGroup = 16CE22A42163AC150098C3C7 /* Products */;
 					ProjectRef = 16CE22A32163AC150098C3C7 /* RNSVG.xcodeproj */;
+				},
+				{
+					ProductGroup = FA5C5CBB22255FFB00ADDEA3 /* Products */;
+					ProjectRef = FA5C5CBA22255FFB00ADDEA3 /* RNThread.xcodeproj */;
 				},
 				{
 					ProductGroup = 16891C75211A61AA002BFCD6 /* Products */;
@@ -1602,6 +1630,13 @@
 			remoteRef = ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		FA5C5CBF22255FFB00ADDEA3 /* libRNThread.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNThread.a;
+			remoteRef = FA5C5CBE22255FFB00ADDEA3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -1633,6 +1668,7 @@
 				D482CFA634ED42219103179E /* Aktiv Grotesk App_bold.ttf in Resources */,
 				1F8A0045052449CDB21A74DF /* Aktiv Grotesk App_light.ttf in Resources */,
 				035FA35BA3024183800DB42C /* Aktiv Grotesk App_medium.ttf in Resources */,
+				FA315B5922256F1F008E0303 /* index.thread.jsbundle in Resources */,
 				A8DA03B28FB14D0F8A04D272 /* Aktiv Grotesk App.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1794,6 +1830,7 @@
 					"$(SRCROOT)/../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/**",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios/**",
 					"$(REACT_HEADERS_PATH)",
+					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1846,6 +1883,7 @@
 					"$(SRCROOT)/../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/**",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios/**",
 					"$(REACT_HEADERS_PATH)",
+					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -2013,6 +2051,7 @@
 					"$(SRCROOT)/../node_modules/rn-signal-protocol-messaging/ios/SignalMessagingSwift/**",
 					"$(SRCROOT)/../node_modules/react-native-splash-screen/ios/**",
 					"$(REACT_HEADERS_PATH)",
+					"$(SRCROOT)/rn-libs/react-native-threads/ios",
 				);
 				INFOPLIST_FILE = pillarwallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

@@ -43,6 +43,7 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
+import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
@@ -62,7 +63,10 @@ export const loginAction = (pin: string) => {
     await delay(100);
     const saltedPin = getSaltedPin(pin);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      const wallet = await ethers.Wallet.RNfromEncryptedWallet(
+        JSON.stringify(encryptedWallet),
+        saltedPin,
+        { mnemonic: true });
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
@@ -81,6 +85,7 @@ export const loginAction = (pin: string) => {
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
+        dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
         dispatch(saveDbAction('user', { user }, true));
       } else {
         api.init(wallet.privateKey);

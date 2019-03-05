@@ -63,7 +63,9 @@
     "jest-watch": "jest --colors --watchAll",
     "jest-update": "jest --colors -u",
     "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && rndebugger-open",
-    "precommit": "yarn run validate"
+    "precommit": "yarn run validate",
+    "build-thread-ios": "node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./ios --entry-file index.thread.js --platform ios --bundle-output ./ios/index.thread.jsbundle",
+    "build-thread-android": "node node_modules/react-native/local-cli/cli.js bundle --dev false --assets-dest ./android/app/src/main/res/ --entry-file index.thread.js --platform android --bundle-output ./android/app/src/main/assets/threads/index.thread.bundle"
   },
   "jest": {
     "preset": "react-native",
@@ -101,7 +103,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
-    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.19.1218",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.19.1267",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
@@ -163,6 +165,7 @@
     "react-native-svg": "^7.0.2",
     "react-native-swipeout": "^2.3.6",
     "react-native-tcp": "^3.2.1",
+    "react-native-threads": "^0.0.15",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "2.11.2",

@@ -784,10 +784,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.19.1218":
-  version "1.19.1218"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.19.1218.tgz#ce014545c74bf4d3d6f75ba26bb2ef99bfe52d03"
-  integrity sha1-zgFFRcdL9NPW91uia7Lvmb/lLQM=
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.19.1267":
+  version "1.20.1267"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.20.1267.tgz#00f0a28facf825c42e0ca9d18cbec1cd6dd0f0ba"
+  integrity sha1-APCij6z4JcQuDKnRjL7BzW3Q8Lo=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -11983,6 +11983,11 @@ react-native-tcp@^3.2.1:
     ip-regex "^1.0.3"
     process "^0.11.9"
     util "^0.10.3"
+
+react-native-threads@^0.0.15:
+  version "0.0.15"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-threads/-/react-native-threads-0.0.15.tgz#7dee96658065aa74ca65a27995e29d97da3aae34"
+  integrity sha1-fe6WZYBlqnTKZaJ5leKdl9o6rjQ=
 
 react-native-udp@^2.1.0:
   version "2.3.1"

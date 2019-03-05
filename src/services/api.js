@@ -424,3 +424,12 @@ SDKWrapper.prototype.setUsername = function (username: string) {
     .then(() => this.pillarWalletSdk.configuration.setUsername(username))
     .catch(() => null);
 };
+
+SDKWrapper.prototype.connectionsCount = function (walletId: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.count(({ walletId })))
+    .then(({ data }) => data)
+    .catch((e) => {
+      throw e;
+    });
+};

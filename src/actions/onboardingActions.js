@@ -58,6 +58,7 @@ import { getExchangeRates } from 'services/assets';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from './dbActions';
 import { generateWalletMnemonicAction } from './walletActions';
+import { updateConnectionKeyPairs } from './connectionKeyPairActions';
 
 const storage = Storage.getInstance('db');
 
@@ -111,7 +112,8 @@ const getTokenWalletAndRegister = async (api: Object, user: Object, dispatch: Fu
   };
 };
 
-const finishRegistration = async (api: Object, userInfo: Object, dispatch: Function) => {
+const finishRegistration = async (
+  api: Object, userInfo: Object, dispatch: Function, mnemonic: string, privateKey: string) => {
   // get & store initial assets
   const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
   const rates = await getExchangeRates(Object.keys(initialAssets));
@@ -127,6 +129,8 @@ const finishRegistration = async (api: Object, userInfo: Object, dispatch: Funct
   });
 
   dispatch(saveDbAction('assets', { assets: initialAssets }));
+
+  dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
   // restore access tokens
   await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line
@@ -234,7 +238,7 @@ export const registerWalletAction = () => {
     if (!registrationSucceed) { return; }
 
     // STEP 5: finish registration
-    await finishRegistration(api, userInfo, dispatch);
+    await finishRegistration(api, userInfo, dispatch, mnemonicPhrase, wallet.privateKey);
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;
@@ -246,7 +250,7 @@ export const registerOnBackendAction = () => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const {
       wallet: {
-        onboarding: { apiUser },
+        onboarding: { apiUser, mnemonic, privateKey },
         backupStatus: { isBackedUp, isImported },
       },
     } = getState();
@@ -263,7 +267,7 @@ export const registerOnBackendAction = () => {
     const { registrationSucceed, userInfo } = await getTokenWalletAndRegister(api, user, dispatch);
     if (!registrationSucceed) { return; }
 
-    await finishRegistration(api, userInfo, dispatch);
+    await finishRegistration(api, userInfo, dispatch, mnemonic, privateKey);
     const isWalletBackedUp = isImported || isBackedUp;
     navigateToAppFlow(isWalletBackedUp);
   };
