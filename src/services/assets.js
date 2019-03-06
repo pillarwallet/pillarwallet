@@ -59,6 +59,10 @@ type ETHTransferOptions = {
   nonce?: number,
 };
 
+function contractHasMethod(encodedMethodName, contractCode) {
+  return contractCode.includes(encodedMethodName);
+}
+
 export function transferERC20(options: ERC20TransferOptions) {
   const {
     contractAddress,
@@ -89,19 +93,20 @@ export async function transferERC721(options: ERC721TransferOptions) {
 
   const code = await wallet.provider.getCode(contractAddress).then((result) => result);
 
-  // signature keccak256
-  const transferHash = 'a9059cbb';
-  const transferFromHash = '23b872dd';
-  const safeTransferFromHash = '42842e0e';
+  // first 4 bytes of the encoded signature for a lookup in the contract code
+  // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
+  const transferHash = 'a9059cbb'; // transfer(address,uint256)
+  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
+  const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
 
   let contract;
-  if (code.indexOf(safeTransferFromHash) > 0) {
+  if (contractHasMethod(code, safeTransferFromHash)) {
     contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
     return contract.safeTransferFrom(from, to, tokenId, { nonce });
-  } else if (code.indexOf(transferHash) > 0) {
+  } else if (contractHasMethod(code, transferHash)) {
     contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
     return contract.transfer(to, tokenId, { nonce });
-  } else if (code.indexOf(transferFromHash) > 0) {
+  } else if (contractHasMethod(code, transferFromHash)) {
     contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
     return contract.transferFrom(from, to, tokenId, { nonce });
   }
