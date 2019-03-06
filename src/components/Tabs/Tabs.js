@@ -62,7 +62,7 @@ const TabWrapper = styled.View`
   padding: ${Platform.select({
     ios: '2px',
     android: '2px 0',
-  })}
+  })};
   border-radius: 18px;
   margin: 12px 16px;
   height: 36px;
@@ -121,7 +121,7 @@ const TextWrapper = styled.View`
   margin-top: ${Platform.select({
     ios: '0',
     android: '3px',
-  })}
+  })};
   ${props => props.extraPadding
     ? `padding-left: 34px;
       padding-right: 34px;`
@@ -137,7 +137,7 @@ const UnreadBadge = styled.View`
   top: ${Platform.select({
     ios: '4px',
     android: '4.5px',
-  })}
+  })};
   right: 2px;
   align-items: center;
   justify-content: center;
@@ -176,16 +176,18 @@ export default class Tabs extends React.Component<Props, State> {
     const isActive = activeTab === id;
     const tabImage = isActive ? tabImageActive : tabImageNormal;
 
-    if (icon || tabImageActive || tabImageNormal) {
-      if (icon) {
-        return (
-          <TabItemIcon active={isActive} name={icon} />
-        );
-      }
+    if (icon) {
+      return (
+        <TabItemIcon active={isActive} name={icon} />
+      );
+    }
+
+    if (tabImageActive || tabImageNormal) {
       return (
         <TabImage source={tabImage} resizeMethod="resize" resizeMode={Platform.OS === 'ios' ? 'contain' : 'cover'} />
       );
     }
+
     return null;
   };
 
