@@ -40,6 +40,7 @@ import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
+import deepLinkReducer from './deepLinkReducer';
 
 const appReducer = combineReducers({
   wallet: walletReducer,
@@ -59,6 +60,7 @@ const appReducer = combineReducers({
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
+  deepLink: deepLinkReducer,
 });
 
 const initialState = appReducer(undefined, {});

@@ -97,6 +97,7 @@ import {
   PEOPLE,
   CONTACT,
   HOME,
+  HOME_TAB,
   CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -330,7 +331,7 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('People'),
       }),
     },
-    [HOME]: {
+    [HOME_TAB]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: tabBarIcon(

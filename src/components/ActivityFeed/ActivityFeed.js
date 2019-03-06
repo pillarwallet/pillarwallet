@@ -295,6 +295,11 @@ class ActivityFeed extends React.Component<Props, State> {
     this.setState({ showModal: false });
   };
 
+  getActivityFeedListKeyExtractor = (item: Object = {}) => {
+    const { createdAt = '' } = item;
+    return `${createdAt.toString()}${item.id || item._id || ''}`;
+  };
+
   render() {
     const {
       notifications,
@@ -384,7 +389,7 @@ class ActivityFeed extends React.Component<Props, State> {
           maxToRenderPerBatch={5}
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
-          keyExtractor={(item) => `${item.createdAt.toString()}${item.id || item._id}`}
+          keyExtractor={this.getActivityFeedListKeyExtractor}
           ListEmptyComponent={
             !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
           }

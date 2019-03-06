@@ -101,7 +101,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
-    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.19.1218",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.20.1300",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
@@ -151,7 +151,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-level-fs": "^3.0.0",
     "react-native-linear-gradient": "2.4.0",
-    "react-native-modal": "6.5.0",
+    "react-native-modal": "7.0.2",
     "react-native-os": "^1.0.1",
     "react-native-parsed-text": "^0.0.21",
     "react-native-permissions": "^1.1.1",
@@ -177,7 +177,7 @@
     "redux-async-queue": "^1.0.0",
     "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
-    "rn-signal-protocol-messaging": "1.0.189",
+    "rn-signal-protocol-messaging": "1.0.193",
     "shuffle-array": "^1.0.1",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",

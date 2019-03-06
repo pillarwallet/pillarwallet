@@ -335,7 +335,7 @@ SDKWrapper.prototype.fetchHistory = function (payload: HistoryPayload) {
         to: toAddress,
         from: fromAddress,
         hash: txHash,
-        createdAt: timestamp,
+        createdAt: timestamp || 0,
         ...rest,
       }));
     })
@@ -453,4 +453,16 @@ SDKWrapper.prototype.setUsername = function (username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.configuration.setUsername(username))
     .catch(() => null);
+};
+
+SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.register.approveExternalLogin({ loginToken }))
+    .catch(error => {
+      Sentry.captureException({
+        type: 'External login approve error',
+        error,
+      });
+      return { error };
+    });
 };

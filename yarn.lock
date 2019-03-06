@@ -784,10 +784,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.19.1218":
-  version "1.19.1218"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.19.1218.tgz#ce014545c74bf4d3d6f75ba26bb2ef99bfe52d03"
-  integrity sha1-zgFFRcdL9NPW91uia7Lvmb/lLQM=
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.20.1300":
+  version "1.20.1300"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.20.1300.tgz#34e8f8234044ebba40b1b564c8f19387c6b858a8"
+  integrity sha1-NOj4I0BE67pAsbVkyPGTh8a4WKg=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -11851,10 +11851,10 @@ react-native-linear-gradient@2.4.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-modal@6.5.0:
-  version "6.5.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-modal/-/react-native-modal-6.5.0.tgz#46220b2289a41597d344c1db17454611b426a758"
-  integrity sha1-RiILIomkFZfTRMHbF0VGEbQmp1g=
+react-native-modal@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.npmjs.org/react-native-modal/-/react-native-modal-7.0.2.tgz#6048217807e03cd585204dace2e1ca1726c0b647"
+  integrity sha512-IRTDeErr4asDdPs4DGbaKvz3fgr56tcVA7nAdCLu4IkjNw7DaIlAbQelg0Sdirb+8+RbIDPyrrnuEH84Fnj4ZA==
   dependencies:
     prop-types "^15.6.1"
     react-native-animatable "^1.2.4"
@@ -12888,10 +12888,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.189:
-  version "1.0.189"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.189.tgz#3d64fb27242cccf87824b559bfc5ba1e93700f5a"
-  integrity sha1-PWT7JyQszPh4JLVZv8W6HpNwD1o=
+rn-signal-protocol-messaging@1.0.193:
+  version "1.0.193"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.193.tgz#04edd75af97c961daa8accb157aa6d6b1b9f45ac"
+  integrity sha1-BO3XWvl8lh2qisyxV6ptaxufRaw=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

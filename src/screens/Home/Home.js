@@ -26,9 +26,9 @@ import { Animated, RefreshControl, Platform, View } from 'react-native';
 import { PROFILE, CONTACT } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
-import { Container } from 'components/Layout';
+import { Container, Wrapper } from 'components/Layout';
 import Intercom from 'react-native-intercom';
-import { BaseText } from 'components/Typography';
+import { BaseText, Paragraph } from 'components/Typography';
 import Title from 'components/Title';
 import PortfolioBalance from 'components/PortfolioBalance';
 import {
@@ -37,11 +37,14 @@ import {
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { resetDeepLinkDataAction, approveLoginAttemptAction } from 'actions/deepLinkActions';
 import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
 import Camera from 'components/Camera';
+import SlideModal from 'components/Modals/SlideModal';
+import Button from 'components/Button';
 import Permissions from 'react-native-permissions';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import {
@@ -70,6 +73,9 @@ type Props = {
   intercomNotificationsCount: number,
   backupStatus: Object,
   fetchAllCollectiblesData: Function,
+  deepLinkData: Object,
+  resetDeepLinkData: Function,
+  approveLoginAttempt: Function,
 };
 
 type esDataType = {
@@ -215,6 +221,11 @@ const TabsHeader = styled.View`
   background-color: ${baseColors.white};
 `;
 
+const Description = styled(Paragraph)`
+  padding-bottom: ${spacing.rhythm}px;
+  line-height: ${fontSizes.mediumLarge};
+`;
+
 class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
@@ -247,6 +258,7 @@ class HomeScreen extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
+    this.props.resetDeepLinkData();
     this._willFocus.remove();
   }
 
@@ -332,6 +344,9 @@ class HomeScreen extends React.Component<Props, State> {
       intercomNotificationsCount,
       navigation,
       backupStatus,
+      deepLinkData,
+      resetDeepLinkData,
+      approveLoginAttempt,
     } = this.props;
     const {
       showCamera,
@@ -435,6 +450,8 @@ class HomeScreen extends React.Component<Props, State> {
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
     const isWalletBackedUp = isImported || isBackedUp;
+
+    const { loginAttemptToken } = deepLinkData;
 
     return (
       <Container color={baseColors.snowWhite} inset={{ bottom: 0 }}>
@@ -597,6 +614,31 @@ class HomeScreen extends React.Component<Props, State> {
           permissionsGranted={permissionsGranted}
           navigation={navigation}
         />
+        <SlideModal
+          isVisible={!!loginAttemptToken}
+          fullScreen
+          showHeader
+          onModalHide={resetDeepLinkData}
+          backgroundColor={baseColors.snowWhite}
+          avoidKeyboard
+          centerTitle
+          title="confirm"
+        >
+          <Wrapper flex={1} center regularPadding>
+            <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
+              <Description style={{ textAlign: 'center' }}>
+                You are about to confirm your login with your Pillar wallet to external resource.
+              </Description>
+              <Button
+                title="Confirm login"
+                onPress={() => approveLoginAttempt(loginAttemptToken)}
+                style={{
+                  marginBottom: 13,
+                }}
+              />
+            </View>
+          </Wrapper>
+        </SlideModal>
       </Container>
     );
   }
@@ -609,6 +651,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   wallet: { data: wallet, backupStatus },
   notifications: { intercomNotificationsCount },
+  deepLink: { data: deepLinkData },
 }) => ({
   contacts,
   user,
@@ -617,6 +660,7 @@ const mapStateToProps = ({
   wallet,
   intercomNotificationsCount,
   backupStatus,
+  deepLinkData,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -628,6 +672,8 @@ const mapDispatchToProps = (dispatch) => ({
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
+  approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
