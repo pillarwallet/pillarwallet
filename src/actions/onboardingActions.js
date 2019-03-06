@@ -238,7 +238,15 @@ export const registerWalletAction = () => {
     if (!registrationSucceed) { return; }
 
     // STEP 5: finish registration
-    await finishRegistration(api, userInfo, dispatch, mnemonicPhrase, wallet.privateKey);
+    let finalMnemonic = mnemonicPhrase;
+    if (importedWallet) {
+      if (importedWallet.mnemonic) {
+        finalMnemonic = importedWallet.mnemonic;
+      } else {
+        finalMnemonic = '';
+      }
+    }
+    await finishRegistration(api, userInfo, dispatch, finalMnemonic, wallet.privateKey);
 
     // STEP 6: all done, navigate to the assets screen
     const isWalletBackedUp = isImported || isBackedUp;
