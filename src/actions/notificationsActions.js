@@ -48,6 +48,10 @@ import {
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
+  CONNECTION,
+  SIGNAL,
+  BCX,
+  COLLECTIBLE,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
 import {
@@ -57,11 +61,6 @@ import {
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import { MESSAGE_DISCONNECTED } from 'constants/invitationsConstants';
 import ChatService from 'services/chat';
-
-const CONNECTION = 'CONNECTION';
-const SIGNAL = 'SIGNAL';
-const BCX = 'BCX';
-const COLLECTIBLE = 'COLLECTIBLE';
 
 const storage = Storage.getInstance('db');
 
