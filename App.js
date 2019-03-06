@@ -20,7 +20,7 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, NetInfo, AppState, Platform } from 'react-native';
+import { StatusBar, NetInfo, AppState, Platform, Linking } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
@@ -33,6 +33,7 @@ import {
   startListeningOnOpenNotificationAction,
   stopListeningOnOpenNotificationAction,
 } from 'actions/notificationsActions';
+import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import Root from 'components/Root';
 import Toast from 'components/Toast';
 import configureStore from './src/configureStore';
@@ -48,6 +49,7 @@ type Props = {
   checkDBConflicts: Function,
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
+  executeDeepLink: Function,
 }
 
 class App extends React.Component<Props, *> {
@@ -65,16 +67,26 @@ class App extends React.Component<Props, *> {
     const { stopListeningOnOpenNotification } = this.props;
     stopListeningOnOpenNotification();
     NetInfo.isConnected.removeEventListener('connectionChange', this.handleConnectivityChange);
+    Linking.removeEventListener('url', this.handleDeepLinkEvent);
   }
 
   componentDidMount() {
-    const { fetchAppSettingsAndRedirect, startListeningOnOpenNotification, checkDBConflicts } = this.props;
+    const {
+      fetchAppSettingsAndRedirect,
+      startListeningOnOpenNotification,
+      checkDBConflicts,
+      executeDeepLink,
+    } = this.props;
     checkDBConflicts();
     Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
+    Linking.getInitialURL()
+      .then(url => executeDeepLink(url))
+      .catch(() => {});
+    Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
   }
 
@@ -91,6 +103,13 @@ class App extends React.Component<Props, *> {
     } else {
       Toast.close();
     }
+  };
+
+  handleDeepLinkEvent = event => {
+    const { executeDeepLink } = this.props;
+    const { url: deepLink } = event;
+    if (deepLink === undefined) return;
+    executeDeepLink(deepLink);
   };
 
   render() {
@@ -118,6 +137,7 @@ const mapDispatchToProps = (dispatch) => ({
   checkDBConflicts: () => dispatch(checkDBConflictsAction()),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),
+  executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
 });
 
 const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);

@@ -89,3 +89,4 @@ export const CONNECTION_REQUESTS = 'CONNECTION_REQUESTS';
 
 // HOME FLOW
 export const HOME = 'HOME';
+export const HOME_TAB = 'HOME_TAB';
