@@ -54,9 +54,11 @@ import {
   ONBOARDING_HOME,
   WELCOME,
   FORGOT_PIN,
+  STYLEGUIDE_SYSTEM_FLOW,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
+import StyleguideFlow from './styleguideNavigation';
 
 const StackNavigatorConfig = {
   navigationOptions: {
@@ -95,6 +97,7 @@ const authFlow = createStackNavigator({
 }, modalTransition);
 
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
+  [STYLEGUIDE_SYSTEM_FLOW]: StyleguideFlow,
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,

@@ -114,7 +114,7 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched } = this.props;
-    if (!isFetched) return null;
+    // if (!isFetched) return null;
     return (
       <RootNavigation
         ref={(node) => {
