@@ -353,6 +353,13 @@ class HomeScreen extends React.Component<Props, State> {
   goToProfileEmailSettings = () => {
     const { navigation } = this.props;
     this.setState({ forceCloseLoginApprovalModal: true }, () => {
+      /**
+       * NOTE: `forceCloseLoginApprovalModal` needs reset because
+       * after: (1) navigating to email settings with login token to approve
+       * then (2) saving email and (3) closing email modal should have
+       * login approve modal open in Home screen, however,
+       * login approve modal cannot be open while navigating
+       */
       this.setState({ forceCloseLoginApprovalModal: false });
       navigation.navigate(PROFILE, { visibleModal: 'email' });
     });
