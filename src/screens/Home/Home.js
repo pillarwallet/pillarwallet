@@ -36,7 +36,10 @@ import {
   fetchTransactionsHistoryNotificationsAction,
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
-import { resetDeepLinkDataAction, approveLoginAttemptAction } from 'actions/deepLinkActions';
+import {
+  resetDeepLinkDataAction,
+  approveLoginAttemptAction,
+} from 'actions/deepLinkActions';
 import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
@@ -87,6 +90,7 @@ type State = {
   esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
+  forceCloseLoginApprovalModal: boolean,
 };
 
 const profileImageWidth = 96;
@@ -235,6 +239,7 @@ class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
+    forceCloseLoginApprovalModal: false,
     showCamera: false,
     permissionsGranted: false,
     scrollY: new Animated.Value(0),
@@ -338,6 +343,14 @@ class HomeScreen extends React.Component<Props, State> {
     });
   };
 
+  goToProfileEmailSettings = () => {
+    const { navigation } = this.props;
+    this.setState({ forceCloseLoginApprovalModal: true }, () => {
+      this.setState({ forceCloseLoginApprovalModal: false });
+      navigation.navigate(PROFILE, { visibleModal: 'email' });
+    });
+  };
+
   render() {
     const {
       user,
@@ -357,6 +370,7 @@ class HomeScreen extends React.Component<Props, State> {
       scrollY,
       esData,
       usernameWidth,
+      forceCloseLoginApprovalModal,
     } = this.state;
 
     const {
@@ -618,7 +632,7 @@ class HomeScreen extends React.Component<Props, State> {
           navigation={navigation}
         />
         <SlideModal
-          isVisible={!!loginAttemptToken}
+          isVisible={!!loginAttemptToken && !forceCloseLoginApprovalModal}
           fullScreen
           showHeader
           onModalHide={resetDeepLinkData}
@@ -639,7 +653,10 @@ class HomeScreen extends React.Component<Props, State> {
               }
               <Button
                 title={!user.email ? 'Add your email' : 'Confirm login'}
-                onPress={() => approveLoginAttempt(loginAttemptToken)}
+                onPress={() => user.email
+                  ? approveLoginAttempt(loginAttemptToken)
+                  : this.goToProfileEmailSettings()
+                }
                 style={{
                   marginBottom: 13,
                 }}
