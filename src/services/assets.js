@@ -59,7 +59,7 @@ type ETHTransferOptions = {
   nonce?: number,
 };
 
-function contractHasMethod(encodedMethodName, contractCode) {
+function contractHasMethod(contractCode, encodedMethodName) {
   return contractCode.includes(encodedMethodName);
 }
 

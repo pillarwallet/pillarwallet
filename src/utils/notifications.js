@@ -50,7 +50,7 @@ const validBcxTransaction = (transaction: ?Object): boolean => {
 
 const validCollectibleTransaction = (transaction: ?Object): boolean => {
   if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
-  if (!transaction.status || !transaction.tokenId || !transaction.contractName) return false;
+  if (!transaction.status || !transaction.contractAddress) return false;
   return true;
 };
 
