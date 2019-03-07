@@ -45,7 +45,7 @@ import Camera from 'components/Camera';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import Permissions from 'react-native-permissions';
-import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -220,8 +220,15 @@ const TabsHeader = styled.View`
 `;
 
 const Description = styled(Paragraph)`
+  text-align: center;
   padding-bottom: ${spacing.rhythm}px;
   line-height: ${fontSizes.mediumLarge};
+`;
+
+const DescriptionWarning = styled(Description)`
+  font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.bold};
+  color: ${baseColors.burningFire};
 `;
 
 class HomeScreen extends React.Component<Props, State> {
@@ -622,11 +629,16 @@ class HomeScreen extends React.Component<Props, State> {
         >
           <Wrapper flex={1} center regularPadding>
             <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-              <Description style={{ textAlign: 'center' }}>
+              <Description>
                 You are about to confirm your login with your Pillar wallet to external resource.
               </Description>
+              { !user.email &&
+                <DescriptionWarning>
+                  In order to proceed with Discourse login you must have email added to your profile.
+                </DescriptionWarning>
+              }
               <Button
-                title="Confirm login"
+                title={!user.email ? 'Add your email' : 'Confirm login'}
                 onPress={() => approveLoginAttempt(loginAttemptToken)}
                 style={{
                   marginBottom: 13,
