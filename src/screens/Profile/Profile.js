@@ -124,8 +124,10 @@ type State = {
 class Profile extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
+    const visibleModal = navigation.getParam('visibleModal', null);
     this.state = {
-      visibleModal: null,
+      visibleModal,
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
