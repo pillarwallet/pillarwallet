@@ -1,22 +1,4 @@
 // @flow
-/*
-    Pillar Wallet: the personal data locker
-    Copyright (C) 2019 Stiftung Pillar Project
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
@@ -25,22 +7,34 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
-import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import type { CollectibleTransactionPayload } from 'models/Transaction';
+import type { GasInfo } from 'models/GasInfo';
+import { fetchGasInfoAction } from 'actions/historyActions';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
+import { fetchRinkebyETHBalance } from 'services/assets';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
+
+const GAS_LIMIT = 500000;
+const NORMAL = 'avg';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
+  categories: Object[],
+  fetchGasInfo: Function,
+  gasInfo: GasInfo,
+  wallet: Object,
 };
 
 type State = {
   note: ?string,
+  rinkebyETH: string,
 };
 
 const FooterWrapper = styled.View`
@@ -56,21 +50,60 @@ const LabeledRow = styled.View`
 `;
 
 const Value = styled(BoldText)`
-  font-size: ${fontSizes.medium}
+  font-size: ${fontSizes.medium};
 `;
 
-class SendTokenContacts extends React.Component<Props, State> {
+class SendCollectibleConfirm extends React.Component<Props, State> {
+  assetData: Object;
+  receiver: string;
+
   constructor(props) {
     super(props);
+    this.assetData = this.props.navigation.getParam('assetData', {});
+    this.receiver = this.props.navigation.getParam('receiver', '');
     this.state = {
       note: null,
+      rinkebyETH: '',
     };
+  }
+
+  componentDidMount() {
+    this.props.fetchGasInfo();
+    this.fetchETHBalanceInRinkeby();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (prevProps.session.isOnline !== this.props.session.isOnline && this.props.session.isOnline) {
+      this.props.fetchGasInfo();
+    }
+  }
+
+  fetchETHBalanceInRinkeby = async () => {
+    const { wallet } = this.props;
+    const rinkebyETHBlanace = await fetchRinkebyETHBalance(wallet.address);
+    this.setState({ rinkebyETH: rinkebyETHBlanace });
   }
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
+    const { note } = this.state;
+    const {
+      name,
+      tokenType,
+      id: tokenId,
+      contractAddress,
+    } = this.assetData;
+
+    const transactionPayload: CollectibleTransactionPayload = {
+      to: this.receiver,
+      name,
+      contractAddress,
+      tokenType,
+      tokenId,
+      note,
+    };
+
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
     });
@@ -80,29 +113,36 @@ class SendTokenContacts extends React.Component<Props, State> {
     this.setState({ note: text });
   }
 
-  render() {
-    const { contacts, session, navigation } = this.props;
-    const {
-      amount,
-      to,
-      txFeeInWei,
-      symbol,
-    } = navigation.getParam('transactionPayload', {});
+  getTxFeeInWei = () => {
+    const { gasInfo } = this.props;
+    const gasPrice = gasInfo.gasPrice[NORMAL] || 0;
+    const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+    return gasPriceWei.mul(GAS_LIMIT);
+  };
 
+  render() {
+    const { contacts, session, gasInfo } = this.props;
+    const { name } = this.assetData;
+    const { rinkebyETH } = this.state;
+
+    const to = this.receiver;
+    const txFeeInWei = this.getTxFeeInWei();
+    const txFee = utils.formatEther(txFeeInWei.toString());
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
+    const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee);
+
     return (
       <React.Fragment>
         <Container>
           <Header
             onBack={() => this.props.navigation.goBack(null)}
-            title="send"
+            title="review and confirm"
           />
           <ScrollWrapper regularPadding>
-            <Title subtitle title="Review and Confirm" />
             <LabeledRow>
-              <Label>Amount</Label>
-              <Value>{amount} {symbol}</Value>
+              <Label>Collectible</Label>
+              <Value>{name}</Value>
             </LabeledRow>
             {!!recipientUsername &&
             <LabeledRow>
@@ -116,8 +156,13 @@ class SendTokenContacts extends React.Component<Props, State> {
             </LabeledRow>
             <LabeledRow>
               <Label>Est. Network Fee</Label>
-              <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
+              <Value>{txFee} ETH</Value>
             </LabeledRow>
+            {NETWORK_PROVIDER === 'ropsten' &&
+            <LabeledRow>
+              <Label>Balance in Rinkeby ETH (visible in dev and staging)</Label>
+              <Value>{rinkebyETH} ETH</Value>
+            </LabeledRow>}
             {!!recipientUsername &&
             <TextInput
               inputProps={{
@@ -137,7 +182,11 @@ class SendTokenContacts extends React.Component<Props, State> {
           </ScrollWrapper>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
-              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+              <Button
+                disabled={!session.isOnline || !gasInfo.isFetched || !canProceedTesting}
+                onPress={this.handleFormSubmit}
+                title="Confirm Transaction"
+              />
             </FooterWrapper>
           </Footer>
         </Container>
@@ -149,9 +198,19 @@ class SendTokenContacts extends React.Component<Props, State> {
 const mapStateToProps = ({
   contacts: { data: contacts },
   session: { data: session },
+  history: { gasInfo },
+  collectibles: { categories },
+  wallet: { data: wallet },
 }) => ({
   contacts,
   session,
+  gasInfo,
+  categories,
+  wallet,
 });
 
-export default connect(mapStateToProps)(SendTokenContacts);
+const mapDispatchToProps = (dispatch) => ({
+  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);

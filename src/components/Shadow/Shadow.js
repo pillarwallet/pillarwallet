@@ -34,7 +34,7 @@ type Props = {
   shadowSpread?: number,
   paddingFixAndroid?: number,
   shadowColorAndroid?: string,
-  shadowColoriOS?: string,
+  shadowColorOS?: string,
   widthIOS: number,
   heightIOS: number,
   widthAndroid?: number | string,
@@ -44,7 +44,7 @@ type Props = {
 };
 
 const ShadowInnerWrapper = styled.View`
-  height: ${props => props.heightWithPaddings}px;
+  height: ${props => props.heightWithPaddings};
 `;
 
 export const Shadow = (props: Props) => {
@@ -62,7 +62,7 @@ export const Shadow = (props: Props) => {
     widthIOS = 100,
     heightIOS = 70,
     shadowColorAndroid = '#14105baa',
-    shadowColoriOS = UIColors.cardShadowColor,
+    shadowColorOS = UIColors.cardShadowColor,
   } = props;
 
   const pixelRatio = PixelRatio.get();
@@ -80,14 +80,14 @@ export const Shadow = (props: Props) => {
     ? widthAndroid + (((sDistance + sSpread) * 2) / pixelRatio)
     : '100%';
   const heightWithPaddings = heightAndroid
-    ? heightAndroid + (((sDistance + sSpread) * 2) / pixelRatio)
+    ? `${heightAndroid + (((sDistance + sSpread) * 2) / pixelRatio)}px`
     : '100%';
 
   if (Platform.OS === 'ios') {
     return (
       <BoxShadow
         setting={{
-          color: shadowColoriOS,
+          color: shadowColorOS,
           x: shadowOffsetX,
           y: shadowOffsetY,
           opacity: 1,

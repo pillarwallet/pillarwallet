@@ -36,6 +36,7 @@ import {
   fetchTransactionsHistoryNotificationsAction,
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import {
   resetDeepLinkDataAction,
   approveLoginAttemptAction,
@@ -74,6 +75,7 @@ type Props = {
   homeNotifications: Object[],
   intercomNotificationsCount: number,
   backupStatus: Object,
+  fetchAllCollectiblesData: Function,
   deepLinkData: Object,
   resetDeepLinkData: Function,
   approveLoginAttempt: Function,
@@ -338,9 +340,11 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
+      fetchAllCollectiblesData,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
+    fetchAllCollectiblesData();
   };
 
   setActiveTab = (activeTab, esData?) => {
@@ -713,6 +717,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
 });

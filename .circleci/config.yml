@@ -94,6 +94,7 @@ aliases:
           rm .env
           cp environments/.env.staging ./.env
           sed -i.bak "s/_build_number_/$buildNumber/g" .env
+          sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 # Default for iOS Build machine
@@ -286,6 +287,7 @@ jobs:
             rm .env
             cp environments/.env.staging ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -387,6 +389,7 @@ jobs:
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -506,6 +509,7 @@ jobs:
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "../yarn.lock" }}

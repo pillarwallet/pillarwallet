@@ -35,7 +35,7 @@ import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { formatFullAmount } from 'utils/common';
+import { formatFullAmount, noop } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
@@ -48,7 +48,14 @@ import {
   TYPE_REJECTED,
   TYPE_SENT,
 } from 'constants/invitationsConstants';
-import { CONTACT, SEND_TOKEN_FROM_CONTACT_FLOW, CHAT } from 'constants/navigationConstants';
+import {
+  CONTACT,
+  SEND_TOKEN_FROM_CONTACT_FLOW,
+  CHAT,
+  COLLECTIBLE,
+  SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
+} from 'constants/navigationConstants';
+import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT, COLLECTIBLE_RECEIVED } from 'constants/collectiblesConstants';
 
 import EventHeader from './EventHeader';
 
@@ -189,6 +196,15 @@ class EventDetails extends React.Component<Props, {}> {
     navigation.navigate(CONTACT, { contact });
   };
 
+  goToCollectible = (assetData = {}) => {
+    const {
+      navigation,
+      onClose,
+    } = this.props;
+    onClose();
+    navigation.navigate(COLLECTIBLE, { assetData });
+  };
+
   sendTokensToUser = (contact) => {
     const {
       navigation,
@@ -196,6 +212,15 @@ class EventDetails extends React.Component<Props, {}> {
     } = this.props;
     onClose();
     navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
+  };
+
+  sendCollectiblesToUser = (contact) => {
+    const {
+      navigation,
+      onClose,
+    } = this.props;
+    onClose();
+    navigation.navigate(SEND_COLLECTIBLE_FROM_CONTACT_FLOW, { contact });
   };
 
   goToChatWithUser = (contact) => {
@@ -319,6 +344,92 @@ class EventDetails extends React.Component<Props, {}> {
       );
     }
 
+    if (eventType === COLLECTIBLE_TRANSACTION) {
+      const {
+        to,
+        from,
+        note,
+        icon,
+        assetData = {},
+        gasUsed,
+        gasPrice,
+        hash,
+      } = eventData;
+
+      const { name = '' } = assetData;
+
+      const isReceived = to.toUpperCase() === myAddress.toUpperCase();
+      const status = isReceived ? COLLECTIBLE_RECEIVED : COLLECTIBLE_SENT;
+      const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
+      let transactionNote = note;
+
+      if (txNotes && txNotes.length > 0) {
+        const txNote = txNotes.find(txn => txn.txHash === eventData.hash);
+        if (txNote) {
+          transactionNote = txNote.text;
+        }
+      }
+      const hasNote = transactionNote && transactionNote !== '';
+      const recipientContact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const senderContact = contacts.find(({ ethAddress }) => from.toUpperCase() === ethAddress.toUpperCase()) || {};
+      const relatedUser = isReceived ? senderContact : recipientContact;
+      const relatedUserTitle = relatedUser.username || (isReceived
+        ? `${from.slice(0, 7)}…${from.slice(-7)}`
+        : `${to.slice(0, 7)}…${to.slice(-7)}`);
+
+      return (
+        <React.Fragment>
+          <EventHeader
+            eventType={COLLECTIBLE_TRANSACTION}
+            eventStatus={status}
+            eventTime={eventTime}
+            onClose={onClose}
+            iconUrl={icon}
+            onIconPress={Object.keys(assetData).length ? () => this.goToCollectible(assetData) : noop}
+            imageKey={name}
+            touchDisabled={!Object.keys(assetData).length}
+          />
+          <EventBody>
+            <ListItemUnderlined
+              label={isReceived ? 'SENDER' : 'RECIPIENT'}
+              value={relatedUserTitle}
+              valueAddon={(!!relatedUser.username && <EventProfileImage
+                uri={relatedUser.profileImage}
+                userName={relatedUserTitle}
+                diameter={40}
+                initialsSize={fontSizes.extraSmall}
+                style={{ marginBottom: 4 }}
+                onPress={() => this.goToProfile(relatedUser)}
+                noShadow
+                borderWidth={0}
+              />)}
+            />
+            {!isReceived && !!fee &&
+            <ListItemUnderlined
+              label="TRANSACTION FEE"
+              value={utils.formatEther(fee.toString())}
+              valueAdditionalText="ETH"
+            />
+            }
+            {!!hasNote &&
+            <ListItemParagraph
+              label="NOTE"
+              value={transactionNote}
+            />
+            }
+            <ButtonsWrapper>
+              <EventButton
+                block
+                title="View on the blockchain"
+                primaryInverted
+                onPress={() => viewTransactionOnBlockchain(hash)}
+              />
+            </ButtonsWrapper>
+          </EventBody>
+        </React.Fragment>
+      );
+    }
+
     const userData = {
       username: eventData.username,
       name: eventData.firstName,
@@ -381,6 +492,12 @@ class EventDetails extends React.Component<Props, {}> {
           {eventStatus === TYPE_ACCEPTED &&
           <ButtonsWrapper>
             <EventButton block title="Send tokens" primaryInverted onPress={() => this.sendTokensToUser(userData)} />
+            <EventButton
+              block
+              title="Send collectibles"
+              primaryInverted
+              onPress={() => this.sendCollectiblesToUser(userData)}
+            />
             <EventButton block title="Send message" primaryInverted onPress={() => this.goToChatWithUser(userData)} />
           </ButtonsWrapper>
           }

@@ -22,9 +22,7 @@ import {
   RefreshControl,
   FlatList,
   SectionList,
-  Dimensions,
   Platform,
-  PixelRatio,
   View,
   Alert,
   Keyboard,
@@ -42,6 +40,7 @@ import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
+
 // import AssetCard from 'components/AssetCard';
 import AssetCardSimplified from 'components/AssetCard/AssetCardSimplified';
 import AssetCardMinimized from 'components/AssetCard/AssetCardMinimized';
@@ -51,9 +50,11 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import SearchBlock from 'components/SearchBlock';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import Separator from 'components/Separator';
+import Tabs from 'components/Tabs';
 
 // types
 import type { Assets, Balances, Asset } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
 
 // actions
 import {
@@ -66,17 +67,26 @@ import {
   addAssetAction,
   removeAssetAction,
 } from 'actions/assetsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
-import { FETCH_INITIAL_FAILED, defaultFiatCurrency, FETCHED, FETCHING, ETH } from 'constants/assetsConstants';
+import {
+  FETCH_INITIAL_FAILED,
+  defaultFiatCurrency,
+  FETCHED,
+  FETCHING,
+  ETH,
+  TOKENS,
+  COLLECTIBLES,
+} from 'constants/assetsConstants';
 import { EXPANDED, SIMPLIFIED, MINIMIZED, EXTRASMALL } from 'constants/assetsLayoutConstants';
-import { ASSET } from 'constants/navigationConstants';
+import { ASSET, COLLECTIBLE } from 'constants/navigationConstants';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
 
 // utils
-import { formatMoney } from 'utils/common';
+import { formatMoney, smallScreen } from 'utils/common';
 import { spacing, baseColors } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import debounce from 'lodash.debounce';
@@ -85,6 +95,7 @@ type Props = {
   fetchInitialAssets: (walletAddress: string) => Function,
   fetchAssetsBalances: (assets: Assets, walletAddress: string) => Function,
   assets: Assets,
+  collectibles: Array<Collectible>,
   balances: Balances,
   wallet: Object,
   rates: Object,
@@ -100,23 +111,18 @@ type Props = {
   assetsSearchState: string,
   addAsset: Function,
   removeAsset: Function,
+  fetchAllCollectiblesData: Function,
 }
 
 type State = {
   forceHideRemoval: boolean,
   query: string,
+  activeTab: string,
 }
 
 const IS_IOS = Platform.OS === 'ios';
 const MIN_QUERY_LENGTH = 2;
 const genericToken = require('assets/images/tokens/genericToken.png');
-
-const smallScreen = () => {
-  if (IS_IOS) {
-    return Dimensions.get('window').width * PixelRatio.get() < 650;
-  }
-  return Dimensions.get('window').width < 410;
-};
 
 const horizontalPadding = (layout, side) => {
   switch (layout) {
@@ -148,6 +154,12 @@ const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
 `;
 
+const EmptyStateWrapper = styled(Wrapper)`
+  padding-top: 90px;
+  padding-bottom: 90px;
+  align-items: center;
+`;
+
 class AssetsScreen extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
   willFocus: NavigationEventSubscription;
@@ -157,6 +169,7 @@ class AssetsScreen extends React.Component<Props, State> {
     this.state = {
       forceHideRemoval: false,
       query: '',
+      activeTab: TOKENS,
     };
     this.doAssetsSearch = debounce(this.doAssetsSearch, 500);
   }
@@ -201,14 +214,22 @@ class AssetsScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  handleCardTap = (assetData: Object) => {
+  handleCardTap = (assetData: Object, isCollectible?: boolean) => {
+    const { navigation } = this.props;
     this.setState({ forceHideRemoval: true });
-    this.props.navigation.navigate(ASSET,
-      {
-        assetData,
-        resetHideRemoval: this.resetHideRemoval,
-      },
-    );
+    if (isCollectible) {
+      navigation.navigate(COLLECTIBLE, { assetData });
+    } else {
+      navigation.navigate(ASSET,
+        {
+          assetData: {
+            ...assetData,
+            tokenType: TOKENS,
+          },
+          resetHideRemoval: this.resetHideRemoval,
+        },
+      );
+    }
   };
 
   handleSearchChange = (query: string) => {
@@ -217,8 +238,11 @@ class AssetsScreen extends React.Component<Props, State> {
     this.setState({
       query: formattedQuery,
     });
-    this.props.startAssetsSearch();
-    this.doAssetsSearch(formattedQuery);
+
+    if (this.state.activeTab === TOKENS) {
+      this.props.startAssetsSearch();
+      this.doAssetsSearch(formattedQuery);
+    }
   };
 
   doAssetsSearch = (query: string) => {
@@ -278,7 +302,7 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
-  renderAsset = ({ item: asset }) => {
+  renderToken = ({ item: asset }) => {
     const {
       wallet,
       baseFiatCurrency,
@@ -362,6 +386,7 @@ class AssetsScreen extends React.Component<Props, State> {
             disabledRemove={isETH}
             onRemove={this.handleAssetRemoval(asset)}
             forceHideRemoval={forceHideRemoval}
+            columnCount={3}
           />
         );
       }
@@ -374,6 +399,7 @@ class AssetsScreen extends React.Component<Props, State> {
             onRemove={this.handleAssetRemoval(asset)}
             forceHideRemoval={forceHideRemoval}
             extraSmall
+            columnCount={3}
           />
         );
       }
@@ -402,6 +428,18 @@ class AssetsScreen extends React.Component<Props, State> {
         // );
       }
     }
+  };
+
+  renderCollectible = ({ item }) => {
+    return (
+      <AssetCardMinimized
+        {...item}
+        smallScreen={smallScreen()}
+        onPress={() => { this.handleCardTap(item, true); }}
+        isCollectible
+        columnCount={2}
+      />
+    );
   };
 
   renderSeparator = () => {
@@ -476,19 +514,12 @@ class AssetsScreen extends React.Component<Props, State> {
         stickySectionHeadersEnabled={false}
         ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
         ListEmptyComponent={
-          <Wrapper
-            fullScreen
-            style={{
-              paddingTop: 90,
-              paddingBottom: 90,
-              alignItems: 'center',
-            }}
-          >
+          <EmptyStateWrapper fullScreen>
             <EmptyStateParagraph
               title="Token not found"
               bodyText="Check if the name was entered correctly or add custom token"
             />
-          </Wrapper>
+          </EmptyStateWrapper>
         }
         onScroll={() => Keyboard.dismiss()}
       />
@@ -526,20 +557,19 @@ class AssetsScreen extends React.Component<Props, State> {
     });
   };
 
-  render() {
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
+  };
+
+  renderAssetList = () => {
     const {
       assets,
       wallet,
-      assetsState,
-      fetchInitialAssets,
       assetsLayout,
       baseFiatCurrency,
       rates,
       balances,
-      assetsSearchState,
-      navigation,
     } = this.props;
-    const { query } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     const sortedAssets = Object.keys(assets)
@@ -557,6 +587,93 @@ class AssetsScreen extends React.Component<Props, State> {
       }))
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
 
+    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
+
+    return (
+      <FlatList
+        key={assetsLayout}
+        data={sortedAssets}
+        keyExtractor={(item) => item.id}
+        renderItem={this.renderToken}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
+        onEndReachedThreshold={0.5}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          paddingVertical: 6,
+          paddingLeft: horizontalPadding(assetsLayout, 'left'),
+          paddingRight: horizontalPadding(assetsLayout, 'right'),
+          width: '100%',
+        }}
+        numColumns={columnAmount}
+        ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
+          ? this.renderSeparator
+          : null}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => {
+              const { fetchAssetsBalances } = this.props;
+              fetchAssetsBalances(assets, wallet.address);
+            }}
+          />
+        }
+      />
+    );
+  };
+
+  renderCollectiblesList = (collectibles) => {
+    const { fetchAllCollectiblesData } = this.props;
+    const emptyStateInfo = {
+      title: 'No collectibles',
+      bodyText: 'There are no collectibles in this wallet',
+    };
+
+    if (this.state.query) {
+      emptyStateInfo.title = 'Collectible not found';
+      emptyStateInfo.bodyText = 'Check if the name was entered correctly';
+    }
+    return (
+      <FlatList
+        data={collectibles}
+        keyExtractor={(item) => item.id}
+        renderItem={this.renderCollectible}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          paddingVertical: 6,
+          paddingLeft: horizontalPadding(EXTRASMALL, 'left'),
+          paddingRight: horizontalPadding(EXTRASMALL, 'right'),
+          width: '100%',
+        }}
+        numColumns={2}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={() => fetchAllCollectiblesData()}
+          />
+        }
+        onScroll={() => Keyboard.dismiss()}
+        ListEmptyComponent={
+          <EmptyStateWrapper fullScreen>
+            <EmptyStateParagraph {...emptyStateInfo} />
+          </EmptyStateWrapper>
+        }
+      />
+    );
+  };
+
+  render() {
+    const {
+      assets,
+      wallet,
+      assetsState,
+      fetchInitialAssets,
+      assetsSearchState,
+      navigation,
+      collectibles,
+    } = this.props;
+    const { query, activeTab } = this.state;
+
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
         <Container center inset={{ bottom: 0 }}>
@@ -571,18 +688,35 @@ class AssetsScreen extends React.Component<Props, State> {
       );
     }
 
-    const columnAmount = (assetsLayout === MINIMIZED || assetsLayout === EXTRASMALL) ? 3 : 1;
     const isSearchOver = assetsSearchState === FETCHED;
     const isSearching = assetsSearchState === FETCHING && query.length >= MIN_QUERY_LENGTH;
     const inSearchMode = (query.length >= MIN_QUERY_LENGTH && !!assetsSearchState);
+    const isInCollectiblesSearchMode = (query && query.length >= MIN_QUERY_LENGTH) && activeTab === COLLECTIBLES;
+
+    const assetsTabs = [
+      {
+        id: TOKENS,
+        name: 'Tokens',
+        onPress: () => this.setActiveTab(TOKENS),
+      },
+      {
+        id: COLLECTIBLES,
+        name: 'Collectibles',
+        onPress: () => this.setActiveTab(COLLECTIBLES),
+      },
+    ];
+
+    const filteredCollectibles = isInCollectiblesSearchMode
+      ? collectibles.filter(({ name }) => name.toUpperCase().includes(query.toUpperCase()))
+      : collectibles;
 
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
           headerProps={{ title: 'assets' }}
-          searchInputPlaceholder="Search or add new asset"
+          searchInputPlaceholder={activeTab === TOKENS ? 'Search or add new asset' : 'Search'}
           onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={assetsSearchState}
+          itemSearchState={activeTab === TOKENS ? !!assetsSearchState : !!isInCollectiblesSearchMode}
           navigation={navigation}
         />
         <TokensWrapper>
@@ -597,35 +731,11 @@ class AssetsScreen extends React.Component<Props, State> {
           </SearchSpinner>
           }
           {!inSearchMode &&
-          <FlatList
-            key={assetsLayout}
-            data={sortedAssets}
-            keyExtractor={(item) => item.id}
-            renderItem={this.renderAsset}
-            initialNumToRender={5}
-            maxToRenderPerBatch={5}
-            onEndReachedThreshold={0.5}
-            style={{ width: '100%' }}
-            contentContainerStyle={{
-              paddingVertical: 6,
-              paddingLeft: horizontalPadding(assetsLayout, 'left'),
-              paddingRight: horizontalPadding(assetsLayout, 'right'),
-              width: '100%',
-            }}
-            numColumns={columnAmount}
-            ItemSeparatorComponent={(assetsLayout === SIMPLIFIED || assetsLayout === EXPANDED)
-              ? this.renderSeparator
-              : null}
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={() => {
-                  const { fetchAssetsBalances } = this.props;
-                  fetchAssetsBalances(assets, wallet.address);
-                }}
-              />
-            }
-          />}
+          <React.Fragment>
+            {!isInCollectiblesSearchMode && <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />}
+            {activeTab === TOKENS && this.renderAssetList()}
+            {activeTab === COLLECTIBLES && this.renderCollectiblesList(filteredCollectibles)}
+          </React.Fragment>}
         </TokensWrapper>
       </Container>
     );
@@ -643,6 +753,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  collectibles: { assets: collectibles },
 }) => ({
   wallet,
   assets,
@@ -653,6 +764,7 @@ const mapStateToProps = ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  collectibles,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -668,6 +780,7 @@ const mapDispatchToProps = (dispatch: Function) => ({
   resetSearchAssetsResult: () => dispatch(resetSearchAssetsResultAction()),
   addAsset: (asset: Asset) => dispatch(addAssetAction(asset)),
   removeAsset: (asset: Asset) => dispatch(removeAssetAction(asset)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AssetsScreen);

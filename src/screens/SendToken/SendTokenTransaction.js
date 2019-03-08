@@ -33,7 +33,8 @@ import Animation from 'components/Animation';
 import { baseColors, fontSizes } from 'utils/variables';
 
 // constants
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
 import { sendTxNoteByContactAction } from '../../actions/txNoteActions';
 
@@ -57,6 +58,8 @@ const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
     'transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
     'replacement transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
+    'is not owned': 'You do not longer own this collectible',
+    'can not be transferred': 'This collectible can not be transferred',
   };
   const transactionFailureText = 'Something went wrong';
   return TRANSACTION_ERRORS[error] || transactionFailureText;
@@ -102,15 +105,31 @@ class SendTokenTransaction extends React.Component<Props, State> {
 
   handleNavigationBack = () => {
     const { navigation } = this.props;
-    navigation.navigate(SEND_TOKEN_CONFIRM);
+    const {
+      transactionPayload,
+    } = navigation.state.params;
+
+    if (transactionPayload.tokenType === COLLECTIBLES) {
+      navigation.navigate(SEND_COLLECTIBLE_CONFIRM, { transactionPayload });
+      return;
+    }
+    navigation.navigate(SEND_TOKEN_CONFIRM, { transactionPayload });
   };
 
   render() {
     const { navigation } = this.props;
-    const { isSuccess, error } = navigation.state.params;
+    const {
+      isSuccess,
+      error,
+      transactionPayload,
+      noRetry,
+    } = navigation.state.params;
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess ? transactionSuccessText : getTransactionErrorMessage(error);
-    const transactionStatusTitle = isSuccess ? 'Tokens are on their way' : 'Transaction failed';
+    const successText = transactionPayload.tokenType === COLLECTIBLES
+      ? 'Collectible is on its way'
+      : 'Tokens are on their way';
+    const transactionStatusTitle = isSuccess ? successText : 'Transaction failed';
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>
@@ -120,7 +139,7 @@ class SendTokenTransaction extends React.Component<Props, State> {
           {isSuccess ?
             <Button marginBottom="20px" onPress={this.handleDismissal} title="Magic!" /> :
             <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-              <Button marginBottom="20px" onPress={this.handleNavigationBack} title="Retry" />
+              {!noRetry && <Button marginBottom="20px" onPress={this.handleNavigationBack} title="Retry" />}
               <TouchableOpacity onPress={this.handleDismissal}>
                 <CancelText>Cancel</CancelText>
               </TouchableOpacity>

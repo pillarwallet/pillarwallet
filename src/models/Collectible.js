@@ -17,11 +17,21 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const ADD_NOTIFICATION = 'ADD_NOTIFICATION';
-export const UPDATE_INTERCOM_NOTIFICATIONS_COUNT = 'UPDATE_INTERCOM_NOTIFICATIONS_COUNT';
-export const SET_UNREAD_NOTIFICATIONS_STATUS = 'SET_UNREAD_NOTIFICATIONS_STATUS';
-export const SET_UNREAD_CHAT_NOTIFICATIONS_STATUS = 'SET_UNREAD_CHAT_NOTIFICATION_STATUS';
-export const COLLECTIBLE = 'COLLECTIBLE';
-export const CONNECTION = 'CONNECTION';
-export const SIGNAL = 'SIGNAL';
-export const BCX = 'BCX';
+
+export type Collectible = {
+  animation_url: string,
+  assetContract: string,
+  background: string,
+  current_price: string,
+  description: string,
+  external_link: string,
+  id: string,
+  image_original_url: string,
+  image_preview_url: string,
+  image_thumbnail_url: string,
+  image_url: string,
+  lastPrice: number,
+  name: string,
+  permalink: string,
+  traits: Object[],
+};

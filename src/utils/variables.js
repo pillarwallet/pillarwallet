@@ -70,6 +70,7 @@ export const baseColors = {
   fairPink: '#f7ebe6',
   tumbleweed: '#db9a84',
   pattensBlue: '#F0F5FA',
+  shark: '#292c33',
 };
 
 export const brandColors = [
