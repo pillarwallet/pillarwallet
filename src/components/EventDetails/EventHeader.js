@@ -43,6 +43,7 @@ type Props = {
   iconUrl?: string,
   onIconPress?: Function,
   imageKey?: string,
+  touchDisabled?: boolean,
 }
 
 const getEventInfo = (eventType, eventStatus) => {
@@ -152,6 +153,7 @@ const EventHeader = (props: Props) => {
     iconUrl,
     onIconPress,
     imageKey,
+    touchDisabled,
   } = props;
 
   const thisEvent = getEventInfo(eventType, eventStatus);
@@ -177,7 +179,7 @@ const EventHeader = (props: Props) => {
         }}
       />}
       {!!showImage &&
-        <ImageTouchable onPress={onIconPress}>
+        <ImageTouchable onPress={onIconPress} disabled={touchDisabled}>
           <EventImage
             key={imageKey}
             source={{ uri: iconUrl }}

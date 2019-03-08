@@ -239,7 +239,7 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
   return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=current_price&order_direction=asc`, {
+    .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`, {
       method: 'GET',
       headers: {
         Accept: 'application/json',

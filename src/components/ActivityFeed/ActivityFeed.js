@@ -20,6 +20,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
+import merge from 'lodash.merge';
+import keyBy from 'lodash.keyby';
+import values from 'lodash.values';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
@@ -297,7 +300,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
     const { createdAt = '' } = item;
-    return `${createdAt.toString()}${item.id || item._id || ''}`;
+    return `${createdAt.toString()}${item.id || item._id || item.hash || ''}`;
   };
 
   render() {
@@ -323,10 +326,16 @@ class ActivityFeed extends React.Component<Props, State> {
       eventStatus,
     } = this.state;
 
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const collectibleTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+    // merging BCX and OpenSea transaction data by hash
+    const mergedCollectibleTxHistory = values(
+      merge({}, keyBy(collectibleTxHistory, 'hash'), keyBy(collectiblesHistory, 'hash')));
+
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-    const mappedHistory = this.mapTransactionsHistory(history, mappedContacts, TRANSACTION_EVENT);
+    const mappedHistory = this.mapTransactionsHistory(tokenTxHistory, mappedContacts, TRANSACTION_EVENT);
     const mappedCollectiblesHistory =
-      this.mapTransactionsHistory(collectiblesHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
+      this.mapTransactionsHistory(mergedCollectibleTxHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
     const chatNotifications = [];
     /* chats.chats
       .map((

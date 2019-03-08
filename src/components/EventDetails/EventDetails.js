@@ -35,7 +35,7 @@ import ListItemParagraph from 'components/ListItem/ListItemParagraph';
 import ListItemUnderlined from 'components/ListItem';
 import ProfileImage from 'components/ProfileImage';
 import { spacing, baseColors, fontSizes, fontWeights } from 'utils/variables';
-import { formatFullAmount } from 'utils/common';
+import { formatFullAmount, noop } from 'utils/common';
 import { createAlert } from 'utils/alerts';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { getTxNoteByContactAction } from 'actions/txNoteActions';
@@ -350,11 +350,17 @@ class EventDetails extends React.Component<Props, {}> {
         from,
         note,
         icon,
-        assetData,
+        assetData = {},
+        gasUsed,
+        gasPrice,
+        hash,
       } = eventData;
+
+      const { name = '' } = assetData;
 
       const isReceived = to.toUpperCase() === myAddress.toUpperCase();
       const status = isReceived ? COLLECTIBLE_RECEIVED : COLLECTIBLE_SENT;
+      const fee = gasUsed && gasPrice ? Math.round(gasUsed * gasPrice) : 0;
       let transactionNote = note;
 
       if (txNotes && txNotes.length > 0) {
@@ -379,8 +385,9 @@ class EventDetails extends React.Component<Props, {}> {
             eventTime={eventTime}
             onClose={onClose}
             iconUrl={icon}
-            onIconPress={() => this.goToCollectible(assetData)}
-            imageKey={assetData.name}
+            onIconPress={Object.keys(assetData).length ? () => this.goToCollectible(assetData) : noop}
+            imageKey={name}
+            touchDisabled={!Object.keys(assetData).length}
           />
           <EventBody>
             <ListItemUnderlined
@@ -397,12 +404,27 @@ class EventDetails extends React.Component<Props, {}> {
                 borderWidth={0}
               />)}
             />
+            {!isReceived && !!fee &&
+            <ListItemUnderlined
+              label="TRANSACTION FEE"
+              value={utils.formatEther(fee.toString())}
+              valueAdditionalText="ETH"
+            />
+            }
             {!!hasNote &&
             <ListItemParagraph
               label="NOTE"
               value={transactionNote}
             />
             }
+            <ButtonsWrapper>
+              <EventButton
+                block
+                title="View on the blockchain"
+                primaryInverted
+                onPress={() => viewTransactionOnBlockchain(hash)}
+              />
+            </ButtonsWrapper>
           </EventBody>
         </React.Fragment>
       );
