@@ -20,15 +20,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
-import { Container } from 'components/Layout';
-import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
-import Header from 'components/Header';
-import ErrorMessage from 'components/ErrorMessage';
-import PinCode from 'components/PinCode';
+import Scene from './scene';
 
 type Props = {
   login: (pin: string) => Function,
@@ -48,29 +42,13 @@ class PinCodeUnlock extends React.Component<Props, *> {
 
   render() {
     const { walletState } = this.props.wallet;
-    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
-    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
-
-    if (walletState === DECRYPTING) {
-      return (
-        <Container center>
-          <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
-          <Spinner />
-        </Container>
-      );
-    }
 
     return (
-      <Container>
-        <Header centerTitle title="enter pincode" />
-        {showError}
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          pageInstructions=""
-          onForgotPin={this.handleForgotPasscode}
-          pinError={!!pinError}
-        />
-      </Container>
+      <Scene
+        onPinEntered={this.handlePinSubmit}
+        onForgotPin={this.handleForgotPasscode}
+        walletState={walletState}
+      />
     );
   }
 }

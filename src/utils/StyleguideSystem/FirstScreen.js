@@ -6,7 +6,7 @@ class FirstScreen extends Component {
   render() {
     return (
       <Container>
-        <Text>bye</Text>
+        <Text>this.props.text</Text>
       </Container>
     );
   }

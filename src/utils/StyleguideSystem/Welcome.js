@@ -3,7 +3,9 @@ import { Text } from 'react-native';
 import { Container, Footer, Wrapper } from 'components/Layout';
 import * as styled from './styles';
 
-class StyleguideSystem extends Component {
+require('./guidesToLoad');
+
+class Welcome extends Component {
   static navigationOptions = {
     drawerLabel: 'WELCOME',
   };
@@ -23,4 +25,4 @@ class StyleguideSystem extends Component {
   }
 };
 
-export default StyleguideSystem;
+export default Welcome;
