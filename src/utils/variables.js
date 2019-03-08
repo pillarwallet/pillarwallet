@@ -91,6 +91,7 @@ export const UIColors = {
   defaultBorderColor: 'rgba(0, 0, 0, 0.085)',
   focusedBorderColor: baseColors.electricBlue,
   defaultShadowColor: 'rgba(0, 0, 0, 0.25)',
+  tabShadowColor: 'rgba(128, 128, 128, 0.2)',
   placeholderTextColor: baseColors.darkGray,
   cardShadowColor: '#EEF3F9',
   actionButtonShadowColor: 'rgba(18, 63, 111, 0.1)',

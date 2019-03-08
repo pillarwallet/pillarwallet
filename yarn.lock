@@ -11816,6 +11816,11 @@ react-native-htmlview@^0.13.0:
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
 
+react-native-image-capinsets@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-capinsets/-/react-native-image-capinsets-0.5.0.tgz#577385772779f71b0ff1d7a96996a29add024b5d"
+  integrity sha512-cvJMldl0iju8bS1NAWL2Up1sBW4wlXdnlgmLhqom4hTOfhKqHdlDfuUmhixCR0vbb5pLgbEn/09T2X5IhQ9HYQ==
+
 react-native-image-crop-picker@^0.22.0:
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.22.0.tgz#8f7f657dcde45cc366ac529a624205155571c03f"
