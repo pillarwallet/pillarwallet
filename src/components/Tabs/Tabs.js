@@ -150,9 +150,6 @@ const UnreadText = styled(BaseText)`
 `;
 
 const TabImage = styled(CachedImage)`
-  font-size: ${fontSizes.extraSmall};
-  font-weight: 500;
-  color: ${baseColors.white};
   width: 16px;
   height: 16px;
   margin-right: 4px;
