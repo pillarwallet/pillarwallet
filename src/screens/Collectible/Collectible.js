@@ -158,7 +158,7 @@ class CollectibleScreen extends React.Component<Props> {
             navigation={navigation}
             activeTab={TRANSACTIONS}
             additionalFiltering={data => data.filter(({ type, assetData: thisAssetData }) =>
-              type === COLLECTIBLE_TRANSACTION && !!thisAssetData.id && thisAssetData.id === id)}
+              type === COLLECTIBLE_TRANSACTION && !!thisAssetData && !!thisAssetData.id && thisAssetData.id === id)}
             backgroundColor={baseColors.white}
             noBorder
             wrapperStyle={{ marginTop: 10 }}
