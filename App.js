@@ -63,6 +63,10 @@ class App extends React.Component<Props, *> {
     }
   }
 
+  componentWillMount() {
+    Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
+  }
+
   componentWillUnmount() {
     const { stopListeningOnOpenNotification } = this.props;
     stopListeningOnOpenNotification();
@@ -78,14 +82,13 @@ class App extends React.Component<Props, *> {
       executeDeepLink,
     } = this.props;
     checkDBConflicts();
-    Intercom.setInAppMessageVisibility('GONE'); // prevent messanger launcher to appear
     SplashScreen.hide();
     fetchAppSettingsAndRedirect(AppState.currentState, Platform.OS);
     StatusBar.setBarStyle('dark-content');
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     Linking.getInitialURL()
       .then(url => executeDeepLink(url))
-      .catch(() => {});
+      .catch(() => { });
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
   }
