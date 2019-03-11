@@ -57,6 +57,10 @@ platform :ios do
     # trigger the build
     sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
 
+    # remove arm64e architecture in 2 iterations
+    sh "cd ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app/Frameworks && lipo libswiftCore.dylib -remove arm64e -output libswiftCore.dylib && lipo libswiftCoreFoundation.dylib -remove arm64e -output libswiftCoreFoundation.dylib && lipo libswiftCoreGraphics.dylib -remove arm64e -output libswiftCoreGraphics.dylib && lipo libswiftCoreImage.dylib -remove arm64e -output libswiftCoreImage.dylib && lipo libswiftDarwin.dylib -remove arm64e -output libswiftDarwin.dylib"
+    sh "cd ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app/Frameworks && lipo libswiftDispatch.dylib -remove arm64e -output libswiftDispatch.dylib && lipo libswiftFoundation.dylib -remove arm64e -output libswiftFoundation.dylib && lipo libswiftMetal.dylib -remove arm64e -output libswiftMetal.dylib && lipo libswiftObjectiveC.dylib -remove arm64e -output libswiftObjectiveC.dylib && lipo libswiftQuartzCore.dylib -remove arm64e -output libswiftQuartzCore.dylib && lipo libswiftUIKit.dylib -remove arm64e -output libswiftUIKit.dylib && lipo libswiftos.dylib -remove arm64e -output libswiftos.dylib"
+
     # manually zip the results into an ipa
     sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
 
