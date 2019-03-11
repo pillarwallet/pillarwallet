@@ -754,7 +754,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - fix/remove-arm64e-lipo
       - build-and-test
       - whitesource:
           requires:
@@ -779,7 +779,7 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - fix/remove-arm64e-lipo
       - stage_android:
           requires:
             - build
