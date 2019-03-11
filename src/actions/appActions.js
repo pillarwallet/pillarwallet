@@ -33,6 +33,7 @@ import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
+import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
@@ -68,6 +69,12 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { txCount = {} } = await storage.get('txCount');
       dispatch({ type: UPDATE_TX_COUNT, payload: txCount });
+
+      const { collectibles = [] } = await storage.get('collectibles');
+      dispatch({ type: UPDATE_COLLECTIBLES, payload: collectibles });
+
+      const { collectiblesHistory = [] } = await storage.get('collectiblesHistory');
+      dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
 
       const { history = [] } = await storage.get('history');
       // TEMP FIX, REMOVE LATER

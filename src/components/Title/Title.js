@@ -57,7 +57,7 @@ const Text = styled(BoldText)`
     width: 100%;
     text-align: center;
   `}
-  ${({ fullWidth }) => !fullWidth ? 'max-width: 230px;' : 'width: 100%;'}
+  ${({ fullWidth }) => !fullWidth ? 'max-width: 210px;' : 'width: 100%;'}
 `;
 
 const BlueDot = styled(BoldText)`

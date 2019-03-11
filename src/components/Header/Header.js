@@ -31,7 +31,7 @@ type Props = {
   onClose?: Function,
   noClose?: boolean,
   onCloseText?: string,
-  onNextPress?: Function,
+  onNextPress?: ?Function,
   onTitlePress?: Function,
   nextText?: string,
   nextIcon?: string,
