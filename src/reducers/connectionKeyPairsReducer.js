@@ -42,7 +42,7 @@ export default function connectionKeyPairsReducer(
     case UPDATE_CONNECTION_KEY_PAIRS:
       let lastConnIndex = -1;
       if (action.payload && action.payload.length > 0) {
-        lastConnIndex = action.payload[action.payload.length].connIndex;
+        lastConnIndex = action.payload[action.payload.length - 1].connIndex;
       }
       return {
         ...state,
