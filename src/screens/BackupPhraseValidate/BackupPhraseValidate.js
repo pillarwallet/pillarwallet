@@ -30,6 +30,7 @@ import Header from 'components/Header';
 import IconButton from 'components/IconButton';
 import { LEGAL_TERMS, PROFILE } from 'constants/navigationConstants';
 import { backupWalletAction } from 'actions/walletActions';
+import { baseColors } from '../../utils/variables';
 
 type State = {
   enteredWords: string[],
@@ -43,7 +44,7 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
-  margin: 20px 0;
+  margin: 20px 0 0;
 `;
 
 const MnemonicPhraseWord = styled.TouchableHighlight`
@@ -106,6 +107,11 @@ const ShuffledWordWrapper = styled.View`
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+`;
+
+const ErrorParagraph = styled(Paragraph)`
+  color: ${baseColors.fireEngineRed};
+  font-size: ${fontSizes.extraSmall}px;
 `;
 
 class BackupPhraseValidate extends React.Component<Props, State> {
@@ -218,7 +224,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
   render() {
     const { onboarding: wallet } = this.props.wallet;
-    const { isFormValid } = this.state;
+    const { isFormValid, enteredWords } = this.state;
     if (!wallet.mnemonic.original) return null;
 
     return (
@@ -231,8 +237,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           <WordInputFields>
             {this.renderInputFields()}
           </WordInputFields>
+          {enteredWords.length === 3 && !isFormValid &&
+          <ErrorParagraph>
+            Incorrect words selected
+          </ErrorParagraph>
+          }
         </Wrapper>
-        <Footer>
+        <Footer style={{ paddingTop: 20 }}>
           <ShuffledWordWrapper>
             {this.renderShuffledWordList()}
             {!!__DEV__ && (
