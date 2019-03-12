@@ -20,7 +20,8 @@
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 
 export type ConnectionKeyPairsReducerState = {
-  data: Object[]
+  data: Object[],
+  lastConnectionKeyIndex: number,
 }
 
 export type ConnectionKeyPairsReducerAction = {
@@ -30,6 +31,7 @@ export type ConnectionKeyPairsReducerAction = {
 
 const initialState = {
   data: [],
+  lastConnectionKeyIndex: -1,
 };
 
 export default function connectionKeyPairsReducer(
@@ -38,9 +40,14 @@ export default function connectionKeyPairsReducer(
 ): ConnectionKeyPairsReducerState {
   switch (action.type) {
     case UPDATE_CONNECTION_KEY_PAIRS:
+      let lastConnIndex = -1;
+      if (action.payload && action.payload.length > 0) {
+        lastConnIndex = action.payload[action.payload.length].connIndex;
+      }
       return {
         ...state,
         data: action.payload,
+        lastConnectionKeyIndex: lastConnIndex,
       };
     default:
       return state;

@@ -34,10 +34,11 @@ describe('keyPairGenerator utils tests', () => {
     const hdnodebase = await HDNode.fromMnemonic(MOCK_MNEMONIC);
     const keyPair = generateHDKeyPair(
       hdnodebase,
-      'm/44/60\'/0\'/connType/0');
+      'm/44/60\'/0\'/connType/0', 0);
     expect(keyPair).toBeTruthy();
     expect(keyPair.A).toBeTruthy();
     expect(keyPair.Ad).toBeTruthy();
+    expect(keyPair.connIndex).toEqual(0);
     expect(keyPair.A).not.toBe(keyPair.Ad);
   });
 
@@ -45,10 +46,11 @@ describe('keyPairGenerator utils tests', () => {
     const hdnodebase = await HDNode.fromSeed(MOCK_PRIVKEY);
     const keyPair = generateHDKeyPair(
       hdnodebase,
-      'm/44/60\'/0\'/connType/0');
+      'm/44/60\'/0\'/connType/0', 0);
     expect(keyPair).toBeTruthy();
     expect(keyPair.A).toBeTruthy();
     expect(keyPair.Ad).toBeTruthy();
+    expect(keyPair.connIndex).toEqual(0);
     expect(keyPair.A).not.toBe(keyPair.Ad);
   });
 

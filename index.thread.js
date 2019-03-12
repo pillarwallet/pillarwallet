@@ -17,7 +17,7 @@ self.onmessage = (message) => {
     const newIndex = kpArgs.lastCount + i;
     const A = hdnodebase.derivePath(`m/44/60'/0'/0/${newIndex}`);
     const Ad = hdnodebase.derivePath(`m/44/60'/0'/1/${newIndex}`);
-    keyPairs.push({ A: A.publicKey, Ad: Ad.publicKey });
+    keyPairs.push({ A: A.publicKey, Ad: Ad.publicKey, connIndex: newIndex });
   }
   self.postMessage(JSON.stringify(keyPairs));
 };

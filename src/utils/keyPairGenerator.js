@@ -20,7 +20,7 @@
 import { HDNode } from 'ethers';
 import { Thread } from 'react-native-threads';
 
-export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string): any {
+export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string, connIndex: number): any {
   const dP1 = derivePath.replace('connType', '0');
   const dP2 = derivePath.replace('connType', '1');
   try {
@@ -29,9 +29,10 @@ export function generateHDKeyPair(hdnodebase: HDNode, derivePath: string): any {
     return {
       A: hdnode1.publicKey,
       Ad: hdnode2.publicKey,
+      connIndex,
     };
   } catch (e) {
-    return false;
+    throw e;
   }
 }
 
@@ -48,7 +49,7 @@ export async function generateKeyPairPool(
     const derivePathBase = `m/44/60'/0'/connType/${i}`;
     const jobTask = () => {
       return new Promise(async (resolve) => {
-        resolve(generateHDKeyPair(hdnodebase, derivePathBase));
+        resolve(generateHDKeyPair(hdnodebase, derivePathBase, i));
       });
     };
     keyPairs.push(jobTask);
@@ -56,13 +57,27 @@ export async function generateKeyPairPool(
   return Promise.all(keyPairs.map(task => task()));
 }
 
-const threadJobWorker = (mnemonic, privateKey, derivePathBase, threadIndex, connectionsCount, thread) => {
+const threadJobWorkerSeed = (
+  mnemonic,
+  privateKey,
+  derivePathBase,
+  threadIndex,
+  connectionsCount,
+  thread,
+  lastConnectionKeyIndex,
+) => {
   return () => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      let count = 20;
+      let lastCount = connectionsCount + (threadIndex * 20);
+      if (lastConnectionKeyIndex < 0) {
+        count = Math.ceil((100 + connectionsCount) / 5);
+        lastCount = threadIndex * count;
+      }
       try {
         const params = {
-          lastCount: connectionsCount + (threadIndex * 20),
-          count: 20,
+          lastCount,
+          count,
           derivePathBase,
           mnemonic,
           privateKey,
@@ -75,7 +90,7 @@ const threadJobWorker = (mnemonic, privateKey, derivePathBase, threadIndex, conn
           thread.terminate();
         };
       } catch (e) {
-        resolve(false);
+        reject(e);
       }
     });
   };
@@ -100,16 +115,26 @@ export async function generateKeyPairThreadPool(
   mnemonic: string,
   privateKey: string,
   connectionsCount: number = 0,
-  connectionsKeyPairCount: number = 0): Promise<Array<any>> {
+  connectionsKeyPairCount: number = 0,
+  lastConnectionKeyIndex: number = -1): Promise<Array<any>> {
   const derivePathBase = 'm/44/60\'/0\'/0/0';
   const promiseJobs = [];
   if (connectionsKeyPairCount < 20) {
     const threads = await threadPoolCreation();
     for (let i = 0; i < 5; i++) {
-      const job = threadJobWorker(mnemonic, privateKey, derivePathBase, i, connectionsCount, threads[i]);
+      const job = threadJobWorkerSeed(
+        mnemonic,
+        privateKey,
+        derivePathBase,
+        i,
+        connectionsCount,
+        threads[i],
+        lastConnectionKeyIndex,
+      );
       promiseJobs.push(job);
     }
   }
   const threadPairs = await Promise.all(promiseJobs.map(task => task()));
-  return [].concat(...threadPairs);
+  const allPairsResults = [].concat(...threadPairs);
+  return allPairsResults.sort((a, b) => { return a.connIndex < b.connIndex ? -1 : 1; });
 }
