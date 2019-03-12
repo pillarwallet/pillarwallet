@@ -75,7 +75,7 @@ export const loginAction = (pin: string) => {
           fcmToken,
         };
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
-        api.init(wallet.privateKey, updateOAuth, oAuthTokens);
+        api.init(updateOAuth, oAuthTokens);
         api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
@@ -83,7 +83,7 @@ export const loginAction = (pin: string) => {
         user = merge({}, user, userInfo);
         dispatch(saveDbAction('user', { user }, true));
       } else {
-        api.init(wallet.privateKey);
+        api.init();
       }
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
