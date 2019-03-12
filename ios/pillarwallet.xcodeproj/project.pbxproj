@@ -1815,7 +1815,6 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1867,7 +1866,6 @@
 				REACT_HEADERS_PATH = "$(BUILD_DIR)/Release-$(PLATFORM_NAME)/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -2062,7 +2060,6 @@
 				REACT_HEADERS_PATH = "$(BUILD_DIR)/Release-$(PLATFORM_NAME)/include";
 				SWIFT_OBJC_BRIDGING_HEADER = "pillarwallet-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
-				VALID_ARCHS = "arm64 armv7 armv7s";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Staging.Release;
