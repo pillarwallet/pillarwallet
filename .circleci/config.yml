@@ -442,7 +442,7 @@ jobs:
       - run:
            name: Announce Deployment
            command: |
-             chmod +x .circleci/announceDeployment.sh
+             chmod +x .circleci/announceProdBuilds.sh
              .circleci/announceDeployment.sh "Pillar Wallet" "Production TestFlight"
       - run:
           name: Copy production iOS artifact to S3
@@ -590,7 +590,7 @@ jobs:
           name: Announce Deployment
           command: |
             cd ~/pillarwallet
-            chmod +x .circleci/announceDeployment.sh
+            chmod +x .circleci/announceProdBuilds.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
       - run:
           name: Announce Prod Android URL
