@@ -22,7 +22,7 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import Storage from 'services/storage';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
-import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
+import { updateConnectionKeyPairs, useConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import * as keyPairUtils from 'utils/keyPairGenerator';
 
 const pillarSdk = {
@@ -41,6 +41,17 @@ const walletId = 'walletId';
 const mnemonic = 'one two three four five six seven eight nine ten eleven twelve';
 const privateKey = '0x0123456789012345678901234567890123456789012345678901234567890123';
 
+const connectionKeyPairsStoreMock = {
+  connectionKeyPairs: {
+    data: [{
+      A: '0x0123456789012345678901234567890123456789012345678901234567890123',
+      Ad: '0x0123456789012345678901234567890123456789012345678901234567890124',
+      connIndex: 1,
+    }],
+    lastConnectionKeyIndex: 1,
+  },
+};
+
 describe('ConnectionKeyPair actions', () => {
   let store;
 
@@ -50,16 +61,12 @@ describe('ConnectionKeyPair actions', () => {
   });
 
   beforeEach(() => {
-    store = mockStore({
-      connectionKeyPairs: {
-        data: [],
-      },
-    });
+    store = mockStore(connectionKeyPairsStoreMock);
   });
 
   it('should expect series of actions with payload to be dispatch on updateConnectionKeyPairs execution', () => {
     const expectedActions = [
-      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: connectionKeyPairsStoreMock.connectionKeyPairs.data },
     ];
 
     // $FlowFixMe
@@ -68,7 +75,23 @@ describe('ConnectionKeyPair actions', () => {
     return store.dispatch(updateConnectionKeyPairs(mnemonic, privateKey, walletId))
       .then(() => {
         const actualActions = store.getActions();
+        const actualState = store.getState();
         expect(actualActions).toEqual(expectedActions);
+        expect(actualState).toEqual(connectionKeyPairsStoreMock);
+      });
+  });
+
+  it('Should expect empty mock state list when using 1 connectionKeyPair from the pre-keys pool', () => {
+    const expectedActions = [
+      { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [] },
+    ];
+
+    return store.dispatch(useConnectionKeyPairs(1))
+      .then((result) => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual(expectedActions);
+        expect(connectionKeyPairsStoreMock.connectionKeyPairs.data.length).toEqual(0);
+        expect(result.length).toEqual(1);
       });
   });
 });

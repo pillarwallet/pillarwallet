@@ -47,7 +47,7 @@ export const useConnectionKeyPairs = (count: number = 1) => {
     const resultConnectionKeys = connectionKeyPairs.splice(0, count);
     dispatch({
       type: UPDATE_CONNECTION_KEY_PAIRS,
-      payload: resultConnectionKeys,
+      payload: connectionKeyPairs,
     });
     dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs }, true));
     return resultConnectionKeys;
