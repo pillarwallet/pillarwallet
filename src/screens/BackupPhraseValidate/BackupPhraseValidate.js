@@ -33,6 +33,7 @@ import { baseColors } from '../../utils/variables';
 
 type State = {
   enteredWords: string[],
+  enteredIndex: string[],
   isFormValid: boolean,
 };
 
@@ -46,8 +47,8 @@ const WordInputFields = styled.View`
   margin: 20px 0 0;
 `;
 
-const MnemonicPhraseWord = styled.TouchableHighlight`
-  background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
+const MnemonicPhraseWord = styled.TouchableOpacity`
+  background-color: ${props => (props.disabled ? UIColors.disabled : UIColors.primary)};
   border-radius: 6;
   padding: 14px 5px;
   margin: 0 2.5px 5px;
@@ -113,18 +114,21 @@ const ErrorParagraph = styled(Paragraph)`
 class BackupPhraseValidate extends React.Component<Props, State> {
   state = {
     enteredWords: [],
+    enteredIndex: [],
     isFormValid: false,
   };
 
-  handleWordSetting = (word) => {
-    let { enteredWords } = this.state;
+  handleWordSetting = (word, index) => {
+    let { enteredWords, enteredIndex } = this.state;
     const { onboarding: wallet } = this.props.wallet;
     const maxWords = wallet.mnemonic.wordsToValidate.length;
     if (enteredWords.length === maxWords) return;
     enteredWords = [...enteredWords, word];
+    enteredIndex = [...enteredIndex, index];
 
     this.setState({
       enteredWords,
+      enteredIndex,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
       this.setState({
@@ -134,11 +138,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   };
 
   handleLastWordRemoval = () => {
-    let { enteredWords } = this.state;
+    let { enteredWords, enteredIndex } = this.state;
     enteredWords = [...enteredWords.slice(0, -1)];
+    enteredIndex = [...enteredIndex.slice(0, -1)];
 
     this.setState({
       enteredWords,
+      enteredIndex,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
       this.setState({
@@ -171,7 +177,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     return [...Array(wordsToValidate.length)]
       .map((el, i) => {
         return (
-          <WordInputWrapper key={mnemonicList[i]}>
+          <WordInputWrapper key={`${mnemonicList[i]}_${i}`}>
             <WordInputPrefix><WordInputNumber>{wordsToValidate[i]}</WordInputNumber></WordInputPrefix>
             <WordInput filled={!!enteredWords[i]}>
               <WordInputText>{enteredWords[i] || ''}</WordInputText>
@@ -191,16 +197,17 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
   renderShuffledWordList = () => {
     const { onboarding: wallet } = this.props.wallet;
-    const { enteredWords } = this.state;
+    const { enteredIndex } = this.state;
     const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
     return shuffledMnemonicList.map((word: string, index: number) => {
-      const isEntered = enteredWords.indexOf(word) > -1;
+      const indexAsString = index.toString();
+      const isEntered = enteredIndex.indexOf(indexAsString) > -1;
       return (
         <MnemonicPhraseWord
           key={`${word}${index}`}
-          onPress={() => this.handleWordSetting(word)}
-          entered={isEntered}
+          onPress={() => this.handleWordSetting(word, indexAsString)}
+          disabled={isEntered}
         >
           <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
         </MnemonicPhraseWord>
