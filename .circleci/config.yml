@@ -101,7 +101,7 @@ aliases:
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
   macos:
-    xcode: "10.1.0"
+    xcode: "9.4.0"
   environment:
     FL_OUTPUT_DIR: output
     _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
@@ -243,7 +243,7 @@ jobs:
   build:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.1.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     resource_class: large
@@ -267,7 +267,7 @@ jobs:
   stage_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.1.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -369,7 +369,7 @@ jobs:
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.1.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -442,7 +442,7 @@ jobs:
       - run:
            name: Announce Deployment
            command: |
-             chmod +x .circleci/announceDeployment.sh
+             chmod +x .circleci/announceProdBuilds.sh
              .circleci/announceDeployment.sh "Pillar Wallet" "Production TestFlight"
       - run:
           name: Copy production iOS artifact to S3
@@ -590,7 +590,7 @@ jobs:
           name: Announce Deployment
           command: |
             cd ~/pillarwallet
-            chmod +x .circleci/announceDeployment.sh
+            chmod +x .circleci/announceProdBuilds.sh
             .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
       - run:
           name: Announce Prod Android URL
