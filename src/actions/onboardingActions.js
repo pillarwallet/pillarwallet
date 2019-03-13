@@ -282,17 +282,10 @@ export const validateUserDetailsAction = ({ username }: Object) => {
       type: UPDATE_WALLET_STATE,
       payload: CHECKING_USERNAME,
     });
-    const { mnemonic, importedWallet } = currentState.wallet.onboarding;
+    const { mnemonic } = currentState.wallet.onboarding;
     const mnemonicPhrase = generateMnemonicPhrase(mnemonic.original);
     dispatch(generateWalletMnemonicAction(mnemonicPhrase));
     await delay(200);
-
-    let wallet = importedWallet;
-    if (!wallet) {
-      wallet = currentState.wallet.data.privateKey
-        ? currentState.wallet.data
-        : ethers.Wallet.fromMnemonic(mnemonicPhrase);
-    }
 
     api.init();
     const apiUser = await api.usernameSearch(username);

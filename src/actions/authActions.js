@@ -93,12 +93,13 @@ export const loginAction = (pin: string) => {
 
       await storage.viewCleanup().catch(() => null);
 
+
+      const { address, privateKey } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
-        payload: {
-          address: wallet.address,
-        },
+        payload: { address, privateKey },
       });
+
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
