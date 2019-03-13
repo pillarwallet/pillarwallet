@@ -59,6 +59,9 @@ type Props = {
   type?: string,
   children?: React.Node,
   small?: boolean,
+  imageAddonIconName?: string,
+  imageAddonUrl?: string,
+  imageAddonName?: string,
   imageUpdateTimeStamp?: number,
 }
 
@@ -124,16 +127,18 @@ const ItemSubText = styled(BaseText)`
 `;
 
 const IconCircle = styled.View`
-  width: 52px;
-  height: 52px;
-  border-radius: 26px;
+  width: ${props => props.diameter || 52}px;
+  height: ${props => props.diameter || 52}px;
+  border-radius: ${props => props.diameter ? props.diameter / 2 : 26}px;
   background-color: ${props => props.warm ? baseColors.fairPink : baseColors.lightGray};
   align-items: center;
   justify-content: center;
+  text-align: center;
+  ${props => props.bordered ? `border: 1px solid ${baseColors.white}` : ''};
 `;
 
 const ItemIcon = styled(Icon)`
-  font-size: ${fontSizes.extraGiant};
+  font-size: ${props => props.fontSize || fontSizes.extraGiant};
   color: ${props => props.warm ? baseColors.tumbleweed : baseColors.offBlue};
 `;
 
@@ -234,6 +239,12 @@ const ActionCircleButton = styled(IconButton)`
   background: ${props => props.accept ? baseColors.electricBlue : 'rgba(0,0,0,0)'};
 `;
 
+const ImageAddonHolder = styled.View`
+  position: absolute;
+  top: 0;
+  right: 10px;
+`;
+
 const ItemImage = (props: Props) => {
   const {
     label,
@@ -283,6 +294,44 @@ const ItemImage = (props: Props) => {
       textStyle={{ fontSize: fontSizes.medium }}
       noShadow={type === ACTION}
     />
+  );
+};
+
+const ImageAddon = (props: Props) => {
+  const {
+    imageAddonIconName,
+    imageAddonUrl,
+    imageAddonName,
+  } = props;
+
+  if (imageAddonIconName) {
+    const warm = imageAddonIconName === 'sent';
+    return (
+      <ImageAddonHolder>
+        <IconCircle warm={warm} diameter={22} bordered>
+          <ItemIcon
+            name={imageAddonIconName}
+            warm={warm}
+            fontSize={fontSizes.extraLarger}
+            style={{ position: 'absolute', top: -5, right: 4 }}
+          />
+        </IconCircle>
+      </ImageAddonHolder>
+    );
+  }
+
+  return (
+    <ImageAddonHolder>
+      <ProfileImage
+        onPress={() => {}}
+        uri={imageAddonUrl}
+        userName={imageAddonName}
+        diameter={22}
+        borderWidth={2}
+        noShadow
+        initialsSize={fontSizes.extraExtraSmall}
+      />
+    </ImageAddonHolder>
   );
 };
 
@@ -404,6 +453,9 @@ class ListItemWithImage extends React.Component<Props, {}> {
       timeSent,
       unreadCount,
       children,
+      imageAddonUrl,
+      imageAddonIconName,
+      imageAddonName,
     } = this.props;
 
     const type = getType(this.props);
@@ -415,6 +467,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       >
         <ImageWrapper>
           <ItemImage {...this.props} type={type} />
+          {(imageAddonUrl || imageAddonIconName || imageAddonName) && <ImageAddon {...this.props} />}
         </ImageWrapper>
         <InfoWrapper type={type}>
           <Column type={type}>

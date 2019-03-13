@@ -26,6 +26,8 @@ import {
   BCX_URL,
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
+  OPEN_SEA_API,
+  OPEN_SEA_API_KEY,
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
@@ -235,6 +237,34 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
     .catch(() => []);
 };
 
+SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': OPEN_SEA_API_KEY,
+      },
+    }))
+    .then(data => data.json())
+    .catch(() => ({ error: true }));
+};
+
+SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => fetch(`${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': OPEN_SEA_API_KEY,
+      },
+    }))
+    .then(data => data.json())
+    .catch(() => ({ error: true }));
+};
+
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.notification.list({
@@ -423,6 +453,18 @@ SDKWrapper.prototype.setUsername = function (username: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.configuration.setUsername(username))
     .catch(() => null);
+};
+
+SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: string) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.register.approveExternalLogin({ loginToken }))
+    .catch(error => {
+      Sentry.captureException({
+        type: 'External login approve error',
+        error,
+      });
+      return { error };
+    });
 };
 
 SDKWrapper.prototype.connectionsCount = function (walletId: string) {

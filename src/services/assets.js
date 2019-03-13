@@ -18,48 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Contract, utils, providers } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
 import type { Asset } from 'models/Asset';
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import ERC721_CONTRACT_ABI from 'abi/erc721.json';
+import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
+import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
+import { Sentry } from 'react-native-sentry';
 
 const PROVIDER = NETWORK_PROVIDER;
-
-const CONTRACT_ABI = [{
-  constant: true,
-  inputs: [
-    {
-      name: '_owner',
-      type: 'address',
-    },
-  ],
-  name: 'balanceOf',
-  outputs: [
-    {
-      name: 'balance',
-      type: 'uint256',
-    },
-  ],
-  payable: false,
-  type: 'function',
-},
-{
-  name: 'transfer',
-  type: 'function',
-  inputs: [
-    {
-      name: '_to',
-      type: 'address',
-    },
-    {
-      type: 'uint256',
-      name: '_tokens',
-    },
-  ],
-  constant: false,
-  outputs: [],
-  payable: false,
-}];
 
 type Address = string;
 
@@ -70,7 +39,16 @@ type ERC20TransferOptions = {
   wallet: Object,
   decimals: number,
   nonce?: number,
-}
+};
+
+type ERC721TransferOptions = {
+  contractAddress: ?string,
+  from: Address,
+  to: Address,
+  tokenId: string,
+  wallet: Object,
+  nonce?: number,
+};
 
 type ETHTransferOptions = {
   gasLimit: number,
@@ -79,6 +57,10 @@ type ETHTransferOptions = {
   to: Address,
   wallet: Object,
   nonce?: number,
+};
+
+function contractHasMethod(contractCode, encodedMethodName) {
+  return contractCode.includes(encodedMethodName);
 }
 
 export function transferERC20(options: ERC20TransferOptions) {
@@ -91,11 +73,53 @@ export function transferERC20(options: ERC20TransferOptions) {
     nonce,
   } = options;
   wallet.provider = providers.getDefaultProvider(PROVIDER);
-  const contract = new Contract(contractAddress, CONTRACT_ABI, wallet);
+  const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   if (decimals > 0) {
     return contract.transfer(to, utils.parseUnits(amount.toString(), decimals), { nonce });
   }
   return contract.transfer(to, utils.bigNumberify(amount.toString()), { nonce });
+}
+
+export async function transferERC721(options: ERC721TransferOptions) {
+  const {
+    contractAddress,
+    from,
+    to,
+    tokenId,
+    wallet,
+    nonce,
+  } = options;
+  wallet.provider = providers.getDefaultProvider(COLLECTIBLES_NETWORK);
+
+  const code = await wallet.provider.getCode(contractAddress).then((result) => result);
+
+  // first 4 bytes of the encoded signature for a lookup in the contract code
+  // encoding: utils.keccak256(utils.toUtf8Bytes(signature)
+  const transferHash = 'a9059cbb'; // transfer(address,uint256)
+  const transferFromHash = '23b872dd'; // transferFrom(address,address,uint256)
+  const safeTransferFromHash = '42842e0e'; // safeTransferFrom(address,address,uint256)
+
+  let contract;
+  if (contractHasMethod(code, safeTransferFromHash)) {
+    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM, wallet);
+    return contract.safeTransferFrom(from, to, tokenId, { nonce });
+  } else if (contractHasMethod(code, transferHash)) {
+    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI, wallet);
+    return contract.transfer(to, tokenId, { nonce });
+  } else if (contractHasMethod(code, transferFromHash)) {
+    contract = new Contract(contractAddress, ERC721_CONTRACT_ABI_TRANSFER_FROM, wallet);
+    return contract.transferFrom(from, to, tokenId, { nonce });
+  }
+  Sentry.captureMessage('Could not transfer collectible',
+    {
+      level: 'info',
+      extra: {
+        networkProvider: COLLECTIBLES_NETWORK,
+        contractAddress,
+        tokenId,
+      },
+    });
+  return { error: 'can not be transferred', noRetry: true };
 }
 
 export function transferETH(options: ETHTransferOptions) {
@@ -125,9 +149,14 @@ export function fetchETHBalance(walletAddress: Address) {
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
+export function fetchRinkebyETHBalance(walletAddress: Address) {
+  const provider = providers.getDefaultProvider('rinkeby');
+  return provider.getBalance(walletAddress).then(utils.formatEther);
+}
+
 export function fetchERC20Balance(walletAddress: Address, contractAddress: Address, decimals: number = 18) {
   const provider = providers.getDefaultProvider(PROVIDER);
-  const contract = new Contract(contractAddress, CONTRACT_ABI, provider);
+  const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
 

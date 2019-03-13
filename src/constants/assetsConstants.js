@@ -42,3 +42,6 @@ export const USD = 'USD';
 
 export const supportedFiatCurrencies = [GBP, EUR, USD];
 export const defaultFiatCurrency = GBP;
+
+export const TOKENS = 'TOKENS';
+export const COLLECTIBLES = 'COLLECTIBLES';

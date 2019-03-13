@@ -53,18 +53,18 @@ exports[`Header should render Header correctly 1`] = `
       onStartShouldSetResponder={[Function]}
       style={
         Object {
-          "alignItems": "center",
+          "alignItems": "flex-start",
           "alignSelf": "flex-start",
           "height": 44,
           "justifyContent": "center",
-          "marginLeft": -20,
+          "marginLeft": -10,
           "opacity": 1,
           "paddingBottom": 0,
-          "paddingLeft": 20,
+          "paddingLeft": 10,
           "paddingRight": 0,
           "paddingTop": 0,
           "position": "relative",
-          "width": 64,
+          "width": 44,
         }
       }
     >

@@ -291,7 +291,7 @@ class PeopleScreen extends React.Component<Props, State> {
           headerProps={{ title: 'people' }}
           searchInputPlaceholder="Search or add new contact"
           onSearchChange={(q) => this.handleSearchChange(q)}
-          itemSearchState={contactState}
+          itemSearchState={!!contactState}
           navigation={navigation}
         />
         {!inSearchMode && !!pendingConnectionRequests &&

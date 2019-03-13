@@ -784,10 +784,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.19.1267":
-  version "1.20.1267"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.20.1267.tgz#00f0a28facf825c42e0ca9d18cbec1cd6dd0f0ba"
-  integrity sha1-APCij6z4JcQuDKnRjL7BzW3Q8Lo=
+"@pillarwallet/pillarwallet-nodejs-sdk@^1.20.1300":
+  version "1.20.1300"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.20.1300.tgz#34e8f8234044ebba40b1b564c8f19387c6b858a8"
+  integrity sha1-NOj4I0BE67pAsbVkyPGTh8a4WKg=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -8692,6 +8692,11 @@ lodash.flattendeep@^4.4.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
   integrity sha1-+wMJF/hqMTTlvJvsDWngAT3f7bI=
 
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+  integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
+
 lodash.intersectionby@^4.7.0:
   version "4.7.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.intersectionby/-/lodash.intersectionby-4.7.0.tgz#12f125e4da00b22290febda1b6c1b68bb9255125"
@@ -8726,6 +8731,11 @@ lodash.isplainobject@^4.0.6:
   version "4.0.6"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.isplainobject/-/lodash.isplainobject-4.0.6.tgz#7c526a52d89b45c45cc690b88163be0497f550cb"
   integrity sha1-fFJqUtibRcRcxpC4gWO+BJf1UMs=
+
+lodash.keyby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.keyby/-/lodash.keyby-4.6.0.tgz#7f6a1abda93fd24e22728a4d361ed8bcba5a4354"
+  integrity sha1-f2oavak/0k4icopNNh7YvLpaQ1Q=
 
 lodash.keys@^3.0.0:
   version "3.1.2"
@@ -8771,6 +8781,11 @@ lodash.partition@^4.6.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.partition/-/lodash.partition-4.6.0.tgz#a38e46b73469e0420b0da1212e66d414be364ba4"
   integrity sha1-o45GtzRp4EILDaEhLmbUFL42S6Q=
 
+lodash.pick@^4.4.0:
+  version "4.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
+  integrity sha1-UvBWEP/53tQiYRRB7R/BI6AwAbM=
+
 lodash.set@^4.3.2:
   version "4.3.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
@@ -8795,6 +8810,11 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
+
+lodash.values@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/lodash.values/-/lodash.values-4.3.0.tgz#a3a6c2b0ebecc5c2cba1c17e6e620fe81b53d347"
+  integrity sha1-o6bCsOvsxcLLocF+bmIP6BtT00c=
 
 lodash@4.17.0:
   version "4.17.0"
@@ -11796,6 +11816,11 @@ react-native-htmlview@^0.13.0:
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
 
+react-native-image-capinsets@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-image-capinsets/-/react-native-image-capinsets-0.5.0.tgz#577385772779f71b0ff1d7a96996a29add024b5d"
+  integrity sha512-cvJMldl0iju8bS1NAWL2Up1sBW4wlXdnlgmLhqom4hTOfhKqHdlDfuUmhixCR0vbb5pLgbEn/09T2X5IhQ9HYQ==
+
 react-native-image-crop-picker@^0.22.0:
   version "0.22.0"
   resolved "https://registry.yarnpkg.com/react-native-image-crop-picker/-/react-native-image-crop-picker-0.22.0.tgz#8f7f657dcde45cc366ac529a624205155571c03f"
@@ -11841,10 +11866,10 @@ react-native-linear-gradient@2.4.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-modal@6.5.0:
-  version "6.5.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-modal/-/react-native-modal-6.5.0.tgz#46220b2289a41597d344c1db17454611b426a758"
-  integrity sha1-RiILIomkFZfTRMHbF0VGEbQmp1g=
+react-native-modal@7.0.2:
+  version "7.0.2"
+  resolved "https://registry.npmjs.org/react-native-modal/-/react-native-modal-7.0.2.tgz#6048217807e03cd585204dace2e1ca1726c0b647"
+  integrity sha512-IRTDeErr4asDdPs4DGbaKvz3fgr56tcVA7nAdCLu4IkjNw7DaIlAbQelg0Sdirb+8+RbIDPyrrnuEH84Fnj4ZA==
   dependencies:
     prop-types "^15.6.1"
     react-native-animatable "^1.2.4"
