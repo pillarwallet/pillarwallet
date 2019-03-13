@@ -264,7 +264,12 @@ class ImportWallet extends React.Component<Props, State> {
             <TextInput
               inputProps={Platform.OS === 'ios'
                 ? inputProps
-                : { ...inputProps, keyboardType: 'email-address', importantForAutofill: 'no' }}
+                : {
+                ...inputProps,
+                  keyboardType: 'email-address',
+                  importantForAutofill: 'no',
+                  autoComplete: 'off',
+              }}
               label={tabsInfo[activeTab].inputLabel}
               errorMessage={tabsInfo[activeTab].errorMessage}
               viewWidth={activeTab === TWORDSPHRASE ? (window.width - (spacing.rhythm * 2) - 2) : window.width - 95}
