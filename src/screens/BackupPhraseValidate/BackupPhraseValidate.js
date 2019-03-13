@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { UIColors, fontSizes } from 'utils/variables';
+import { UIColors, fontSizes, baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import { Paragraph, Label, BoldText } from 'components/Typography';
@@ -29,7 +29,6 @@ import Header from 'components/Header';
 import IconButton from 'components/IconButton';
 import { LEGAL_TERMS, PROFILE } from 'constants/navigationConstants';
 import { backupWalletAction } from 'actions/walletActions';
-import { baseColors } from '../../utils/variables';
 
 type State = {
   enteredWords: string[],
@@ -84,8 +83,6 @@ const WordInputPrefix = styled.View`
   justify-content: center;
   align-items: flex-start;
 `;
-
-const WordInputNumber = styled(Label)``;
 
 const RemoveWordButtonIcon = styled(IconButton)`
   height: 36px;
@@ -178,7 +175,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
       .map((el, i) => {
         return (
           <WordInputWrapper key={`${mnemonicList[i]}_${i}`}>
-            <WordInputPrefix><WordInputNumber>{wordsToValidate[i]}</WordInputNumber></WordInputPrefix>
+            <WordInputPrefix><Label>{wordsToValidate[i]}</Label></WordInputPrefix>
             <WordInput filled={!!enteredWords[i]}>
               <WordInputText>{enteredWords[i] || ''}</WordInputText>
             </WordInput>
@@ -202,7 +199,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     return shuffledMnemonicList.map((word: string, index: number) => {
       const indexAsString = index.toString();
-      const isEntered = enteredIndex.indexOf(indexAsString) > -1;
+      const isEntered = enteredIndex.includes(indexAsString);
       return (
         <MnemonicPhraseWord
           key={`${word}${index}`}
@@ -232,7 +229,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} />
+        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} fullWidthTitle />
         <Wrapper regularPadding>
           <Paragraph>
             Please select the correct words.
