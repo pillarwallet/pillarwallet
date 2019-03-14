@@ -36,7 +36,11 @@ import {
   fetchTransactionsHistoryNotificationsAction,
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
-import { resetDeepLinkDataAction, approveLoginAttemptAction } from 'actions/deepLinkActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import {
+  resetDeepLinkDataAction,
+  approveLoginAttemptAction,
+} from 'actions/deepLinkActions';
 import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
@@ -45,7 +49,7 @@ import Camera from 'components/Camera';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import Permissions from 'react-native-permissions';
-import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, fontWeights, spacing } from 'utils/variables';
 import {
   cancelInvitationAction,
   acceptInvitationAction,
@@ -71,6 +75,7 @@ type Props = {
   homeNotifications: Object[],
   intercomNotificationsCount: number,
   backupStatus: Object,
+  fetchAllCollectiblesData: Function,
   deepLinkData: Object,
   resetDeepLinkData: Function,
   approveLoginAttempt: Function,
@@ -87,6 +92,7 @@ type State = {
   esData: esDataType,
   permissionsGranted: boolean,
   scrollY: Animated.Value,
+  forceCloseLoginApprovalModal: boolean,
 };
 
 const profileImageWidth = 96;
@@ -220,8 +226,15 @@ const TabsHeader = styled.View`
 `;
 
 const Description = styled(Paragraph)`
+  text-align: center;
   padding-bottom: ${spacing.rhythm}px;
   line-height: ${fontSizes.mediumLarge};
+`;
+
+const DescriptionWarning = styled(Description)`
+  font-size: ${fontSizes.small};
+  font-weight: ${fontWeights.bold};
+  color: ${baseColors.burningFire};
 `;
 
 const allIconNormal = require('assets/icons/all_normal.png');
@@ -235,6 +248,7 @@ class HomeScreen extends React.Component<Props, State> {
   _willFocus: NavigationEventSubscription;
 
   state = {
+    forceCloseLoginApprovalModal: false,
     showCamera: false,
     permissionsGranted: false,
     scrollY: new Animated.Value(0),
@@ -326,15 +340,32 @@ class HomeScreen extends React.Component<Props, State> {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
+      fetchAllCollectiblesData,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
+    fetchAllCollectiblesData();
   };
 
   setActiveTab = (activeTab, esData?) => {
     this.setState({
       activeTab,
       esData,
+    });
+  };
+
+  goToProfileEmailSettings = () => {
+    const { navigation } = this.props;
+    this.setState({ forceCloseLoginApprovalModal: true }, () => {
+      /**
+       * NOTE: `forceCloseLoginApprovalModal` needs reset because
+       * after: (1) navigating to email settings with login token to approve
+       * then (2) saving email and (3) closing email modal should have
+       * login approve modal open in Home screen, however,
+       * login approve modal cannot be open while navigating
+       */
+      this.setState({ forceCloseLoginApprovalModal: false });
+      navigation.navigate(PROFILE, { visibleModal: 'email' });
     });
   };
 
@@ -357,6 +388,7 @@ class HomeScreen extends React.Component<Props, State> {
       scrollY,
       esData,
       usernameWidth,
+      forceCloseLoginApprovalModal,
     } = this.state;
 
     const {
@@ -621,7 +653,7 @@ class HomeScreen extends React.Component<Props, State> {
           navigation={navigation}
         />
         <SlideModal
-          isVisible={!!loginAttemptToken}
+          isVisible={!!loginAttemptToken && !forceCloseLoginApprovalModal}
           fullScreen
           showHeader
           onModalHide={resetDeepLinkData}
@@ -632,12 +664,20 @@ class HomeScreen extends React.Component<Props, State> {
         >
           <Wrapper flex={1} center regularPadding>
             <View style={{ justifyContent: 'center', display: 'flex', alignItems: 'center' }}>
-              <Description style={{ textAlign: 'center' }}>
+              <Description>
                 You are about to confirm your login with your Pillar wallet to external resource.
               </Description>
+              { !user.email &&
+                <DescriptionWarning>
+                  In order to proceed with Discourse login you must have email added to your profile.
+                </DescriptionWarning>
+              }
               <Button
-                title="Confirm login"
-                onPress={() => approveLoginAttempt(loginAttemptToken)}
+                title={!user.email ? 'Add your email' : 'Confirm login'}
+                onPress={() => user.email
+                  ? approveLoginAttempt(loginAttemptToken)
+                  : this.goToProfileEmailSettings()
+                }
                 style={{
                   marginBottom: 13,
                 }}
@@ -677,6 +717,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchTransactionsHistory: (walletAddress) => dispatch(fetchTransactionsHistoryAction(walletAddress)),
   fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: (status) => dispatch(setUnreadNotificationsStatusAction(status)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
 });

@@ -28,23 +28,20 @@ import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import type { TransactionPayload } from 'models/Transaction';
-import { sendAssetAction } from 'actions/assetsActions';
+import TextInput from 'components/TextInput';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import TextInput from '../../components/TextInput';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: Function,
   session: Object,
   contacts: Object[],
-}
+};
 
 type State = {
-  note: ?string
-}
+  note: ?string,
+};
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -157,8 +154,4 @@ const mapStateToProps = ({
   session,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload, navigate) => dispatch(sendAssetAction(transaction, navigate)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);
+export default connect(mapStateToProps)(SendTokenContacts);

@@ -154,9 +154,7 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   goToSendTokenFlow = (assetData: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, {
-      assetData,
-    });
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   openReceiveTokenModal = assetData => {

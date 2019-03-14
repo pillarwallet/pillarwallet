@@ -22,20 +22,28 @@ import { Platform } from 'react-native';
 import { BoldText, BaseText } from 'components/Typography';
 import { fontTrackings, baseColors, fontSizes, spacing } from 'utils/variables';
 import styled from 'styled-components/native';
+import { CachedImage } from 'react-native-cached-image';
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
+import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';
 import {
   TYPE_RECEIVED,
   TYPE_ACCEPTED,
 } from 'constants/invitationsConstants';
+
+const genericToken = require('assets/images/tokens/genericToken.png');
 
 type Props = {
   onClose: Function,
   eventType?: string,
   eventStatus: string,
   eventTime: string,
+  iconUrl?: string,
+  onIconPress?: Function,
+  imageKey?: string,
+  touchDisabled?: boolean,
 }
 
 const getEventInfo = (eventType, eventStatus) => {
@@ -47,7 +55,6 @@ const getEventInfo = (eventType, eventStatus) => {
       iconName: isPending ? 'pending-circle' : 'tick-circle',
     };
   }
-
   if (eventStatus === TYPE_RECEIVED) {
     return {
       title: 'Incoming connection',
@@ -62,6 +69,13 @@ const getEventInfo = (eventType, eventStatus) => {
       iconName: 'connection-circle',
     };
   }
+  if (eventType === COLLECTIBLE_TRANSACTION) {
+    return {
+      title: eventStatus === COLLECTIBLE_SENT ? 'Collectible sent' : 'Collectible received',
+      background: baseColors.shark,
+      iconName: null,
+    };
+  }
 
   return {
     title: 'Requested',
@@ -69,7 +83,6 @@ const getEventInfo = (eventType, eventStatus) => {
     iconName: 'connection-circle',
   };
 };
-
 
 const Wrapper = styled.View`
   width: 100%;
@@ -115,15 +128,37 @@ const EventIcon = styled(Icon)`
   margin-top: ${spacing.medium}px;
 `;
 
+const EventImage = styled(CachedImage)`
+  width: 58px;
+  height: 58px;
+`;
+
+const ImageTouchable = styled.TouchableOpacity`
+  width: 58px;
+  height: 58px;
+  border-radius: 29px;
+  overflow: hidden;
+  margin-top: 12px;
+  justify-content: center;
+  align-items: center;
+  background-color: ${baseColors.lightGray};
+`;
+
 const EventHeader = (props: Props) => {
   const {
     onClose,
     eventType,
     eventStatus,
     eventTime,
+    iconUrl,
+    onIconPress,
+    imageKey,
+    touchDisabled,
   } = props;
 
   const thisEvent = getEventInfo(eventType, eventStatus);
+  // in case iconUrl is an empty string, but it's an COLLECTIBLE TRX event
+  const showImage = iconUrl || eventType === COLLECTIBLE_TRANSACTION;
 
   return (
     <Wrapper background={thisEvent.background}>
@@ -135,13 +170,23 @@ const EventHeader = (props: Props) => {
       />
       <EventTitle>{thisEvent.title}</EventTitle>
       <EventSubtitle>{eventTime}</EventSubtitle>
+      {!showImage && !!thisEvent.iconName &&
       <EventIcon
         name={thisEvent.iconName}
         style={{
           color: baseColors.white,
           fontSize: 58,
         }}
-      />
+      />}
+      {!!showImage &&
+        <ImageTouchable onPress={onIconPress} disabled={touchDisabled}>
+          <EventImage
+            key={imageKey}
+            source={{ uri: iconUrl }}
+            fallbackSource={genericToken}
+            resizeMode="contain"
+          />
+        </ImageTouchable>}
     </Wrapper>
   );
 };

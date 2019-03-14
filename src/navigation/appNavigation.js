@@ -50,6 +50,7 @@ import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
+import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
 import HomeScreen from 'screens/Home';
 import ChatListScreen from 'screens/Chat/ChatList';
 import NewChatListScreen from 'screens/Chat/NewChatList';
@@ -61,6 +62,8 @@ import ConfirmScreen from 'screens/Participate/Confirm';
 import ICOLinks from 'screens/ICOLinks';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
+import CollectibleScreen from 'screens/Collectible';
+import SendCollectibleAssetsScreen from 'screens/SendCollectible/SendCollectibleAssets';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -82,6 +85,7 @@ import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActi
 import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
 import {
@@ -122,6 +126,11 @@ import {
   BACKUP_PHRASE,
   BACKUP_PHRASE_VALIDATE,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
+  COLLECTIBLE,
+  SEND_COLLECTIBLE_FROM_ASSET_FLOW,
+  SEND_COLLECTIBLE_CONFIRM,
+  SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
+  SEND_COLLECTIBLE_ASSETS,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -214,6 +223,7 @@ chatFlow.navigationOptions = hideTabNavigatorOnChildView;
 const assetsFlow = createStackNavigator({
   [ASSETS]: AssetsScreen,
   [ASSET]: AssetScreen,
+  [COLLECTIBLE]: CollectibleScreen,
   [CONTACT]: ContactScreen,
 }, StackNavigatorConfig);
 
@@ -225,6 +235,7 @@ const peopleFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
   [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
   [CHAT]: ChatScreen,
+  [COLLECTIBLE]: CollectibleScreen,
 }, StackNavigatorConfig);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -235,6 +246,7 @@ const homeFlow = createStackNavigator({
   [PROFILE]: ProfileScreen,
   [CONTACT]: ContactScreen,
   [CHAT]: ChatScreen,
+  [COLLECTIBLE]: CollectibleScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -395,6 +407,22 @@ const sendTokenFromContactFlow = createStackNavigator({
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorModalConfig);
 
+// SEND COLLECTIBLE FROM ASSET FLOW
+const sendCollectibleFromAssetFlow = createStackNavigator({
+  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
+// SEND COLLECTIBLE FROM CONTACT / CONNECTION EVENT FLOW
+const sendCollectibleFromContactFlow = createStackNavigator({
+  [SEND_COLLECTIBLE_ASSETS]: SendCollectibleAssetsScreen,
+  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorModalConfig);
+
 const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
   [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
@@ -422,6 +450,8 @@ const AppFlowNavigation = createStackNavigator(
     [ADD_TOKEN]: AddTokenScreen,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
+    [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
+    [SEND_COLLECTIBLE_FROM_CONTACT_FLOW]: sendCollectibleFromContactFlow,
     [PARTICIPATE_IN_ICO_FLOW]: participateInICOFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
@@ -453,6 +483,7 @@ type Props = {
   assets: Object,
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
+  fetchAllCollectiblesData: Function,
 }
 
 let lockTimer;
@@ -470,6 +501,7 @@ class AppFlow extends React.Component<Props, {}> {
       getExistingChats,
       assets,
       wallet,
+      fetchAllCollectiblesData,
     } = this.props;
     startListeningNotifications();
     startListeningIntercomNotifications();
@@ -478,6 +510,7 @@ class AppFlow extends React.Component<Props, {}> {
     fetchTransactionsHistoryNotifications();
     fetchICOs();
     getExistingChats();
+    fetchAllCollectiblesData();
     startListeningChatWebSocket();
     addAppStateChangeListener(this.handleAppStateChange);
   }
@@ -620,6 +653,7 @@ const mapDispatchToProps = (dispatch) => ({
   getExistingChats: () => dispatch(getExistingChatsAction()),
   fetchICOs: () => dispatch(fetchICOsAction()),
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 const ConnectedAppFlow = connect(mapStateToProps, mapDispatchToProps)(AppFlow);

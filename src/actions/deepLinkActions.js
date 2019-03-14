@@ -36,7 +36,13 @@ export const executeDeepLinkAction = (deepLink: string) => {
         payload: { loginAttemptToken },
       });
       const pathAndParams = getNavigationPathAndParamsState();
-      if (!pathAndParams) return;
+      if (!pathAndParams) {
+        updateNavigationLastScreenState({
+          lastActiveScreen: HOME,
+          lastActiveScreenParams: {},
+        });
+        return;
+      }
       const pathParts = pathAndParams.path.split('/');
       const currentFlow = pathParts[0];
       const currentScreen = pathParts[pathAndParams.path.length - 1];

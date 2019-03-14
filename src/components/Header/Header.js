@@ -31,7 +31,7 @@ type Props = {
   onClose?: Function,
   noClose?: boolean,
   onCloseText?: string,
-  onNextPress?: Function,
+  onNextPress?: ?Function,
   onTitlePress?: Function,
   nextText?: string,
   nextIcon?: string,
@@ -69,9 +69,9 @@ const BackIcon = styled(IconButton)`
   position: relative;
   align-self: flex-start;
   height: 44px;
-  width: 64px;
-  padding-left: ${spacing.rhythm}px;
-  margin-left: -${spacing.rhythm}px;
+  width: 44px;
+  padding-left: 10px;
+  margin-left: -10px;
 `;
 
 const CloseIconText = styled(BaseText)`
@@ -87,9 +87,9 @@ const IconWrapper = styled.View`
 
 const NextIcon = styled(IconButton)`
   height: 44px;
-  width: 64px;
-  padding-right: ${spacing.rhythm}px;
-  margin-right: -${spacing.rhythm}px;
+  width: 44px;
+  padding-right: 10px;
+  margin-right: -10px;
   align-items: flex-end;
 `;
 
@@ -100,7 +100,7 @@ const HeaderLeft = styled(Left)`
 `;
 
 const HeaderBody = styled(Body)`
-  flex: ${props => props.onCloseText ? 2 : 4};
+  flex: ${props => props.onCloseText ? 2 : 5};
 `;
 
 const HeaderRight = styled(Right)`
@@ -167,6 +167,7 @@ const Header = (props: Props) => {
             color={light ? baseColors.white : UIColors.defaultNavigationColor}
             onPress={() => onBack()}
             fontSize={fontSizes.extraLarge}
+            horizontalAlign="flex-start"
           />
         }
         {showTitleLeft &&
@@ -206,6 +207,7 @@ const Header = (props: Props) => {
                 color={light ? baseColors.white : UIColors.primary}
                 onPress={onNextPress}
                 fontSize={nextIconSize || fontSizes.small}
+                horizontalAlign="flex-end"
               />
             </IconWrapper>
           }
@@ -219,6 +221,7 @@ const Header = (props: Props) => {
                 color={light ? baseColors.white : UIColors.defaultNavigationColor}
                 onPress={onClose}
                 fontSize={fontSizes.small}
+                horizontalAlign="flex-end"
               />
             </IconWrapper>
           }
