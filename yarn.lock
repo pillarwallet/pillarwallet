@@ -784,7 +784,7 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@^1.20.1300":
+"@pillarwallet/pillarwallet-nodejs-sdk@1.20.1300":
   version "1.20.1300"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.20.1300.tgz#34e8f8234044ebba40b1b564c8f19387c6b858a8"
   integrity sha1-NOj4I0BE67pAsbVkyPGTh8a4WKg=
