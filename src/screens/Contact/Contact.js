@@ -205,9 +205,14 @@ class Contact extends React.Component<Props, State> {
     const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
     const displayContact = localContact || contact;
-    const userAvatar = displayContact.profileLargeImage
-      ? this.getUserAvatar(isAccepted, displayContact.profileLargeImage, displayContact.lastUpdateTime)
+
+    // due to the fact that profileLargeImage is not being passed in connections notifications payload for now
+    // profileImage is set here as a fallback so requester's avatar (if exists) would be visible
+    const existingProfileImage = displayContact.profileLargeImage || displayContact.profileImage;
+    const userAvatar = existingProfileImage
+      ? this.getUserAvatar(isAccepted, existingProfileImage, displayContact.lastUpdateTime)
       : undefined;
+
     const unreadCount = this.getUnreadCount(chats, displayContact.username);
 
     return (
