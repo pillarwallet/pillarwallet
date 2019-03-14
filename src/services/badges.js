@@ -1,11 +1,9 @@
 // @flow
 import { Contract, providers } from 'ethers';
 // import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { BADGES_CONTRACT_ADDRESS } from 'react-native-dotenv';
 import badgesAbi from 'abi/badges.json';
 import type { UserBadgesResponse } from 'models/Badge';
-
-// const PROVIDER = NETWORK_PROVIDER;
-const BADGES_CONTRACT_ADDRESS = '0x65b4443040b60D9de6145025a14173C41487Ed36';
 
 export function fetchBadges(walletAddress: string): Promise<UserBadgesResponse> {
   const provider = new providers.JsonRpcProvider();
