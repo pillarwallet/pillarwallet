@@ -20,6 +20,7 @@
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from 'actions/dbActions';
+import { lockScreenAction } from 'actions/authActions';
 
 export type OAuthTokens = {
   refreshToken?: string,
@@ -36,5 +37,11 @@ export const updateOAuthTokensCB = (dispatch: Function, signalCredentials?: Obje
       await dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
     }
     dispatch(saveDbAction('oAuthTokens', { oAuthTokens }, true));
+  };
+};
+
+export const tokensFailedCB = (dispatch: Function) => {
+  return async (callback: Function) => {
+    dispatch(lockScreenAction(callback, 'Authentication tokens expired, please enter your PIN to proceed.'));
   };
 };

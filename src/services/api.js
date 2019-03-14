@@ -71,13 +71,18 @@ export default function SDKWrapper() {
   this.pillarWalletSdk = null;
 }
 
-SDKWrapper.prototype.init = function (updateOAuth?: ?Function, oAuthTokensStored?: ?OAuthTokens) {
+SDKWrapper.prototype.init = function (
+  updateOAuth?: ?Function,
+  oAuthTokensStored?: ?OAuthTokens,
+  tokensFailed?: ?Function,
+) {
   this.pillarWalletSdk = new PillarSdk({
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
     investmentsUrl: INVESTMENTS_URL,
     updateOAuthFn: updateOAuth,
     oAuthTokens: oAuthTokensStored,
+    tokensFailedCallbackFn: tokensFailed,
   });
 };
 
