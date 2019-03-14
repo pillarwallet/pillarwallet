@@ -34,11 +34,12 @@ type Props = {
   type?: string,
   margin?: number,
   iconText?: string,
+  horizontalAlign?: string,
 }
 
 const IconButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
-  align-items: center;
+  align-items: ${props => props.horizontalAlign ? props.horizontalAlign : 'center'};
   padding: 0;
 `;
 
@@ -59,6 +60,7 @@ const IconButton = (props: Props) => {
     type,
     iconText,
     iconStyle = {},
+    horizontalAlign,
   } = props;
   const iconParams = {
     active: false,
@@ -76,7 +78,7 @@ const IconButton = (props: Props) => {
     type,
   };
   return (
-    <IconButtonWrapper style={style} onPress={onPress}>
+    <IconButtonWrapper style={style} onPress={onPress} horizontalAlign={horizontalAlign}>
       <Icon {...iconParams} />
       {!!iconText && <ButtonText>{iconText}</ButtonText>}
     </IconButtonWrapper>

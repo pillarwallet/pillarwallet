@@ -130,7 +130,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const txFee = utils.formatEther(txFeeInWei.toString());
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
-    const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee);
+    const canProceedTesting = parseFloat(rinkebyETH) > parseFloat(txFee) || NETWORK_PROVIDER !== 'ropsten';
 
     return (
       <React.Fragment>

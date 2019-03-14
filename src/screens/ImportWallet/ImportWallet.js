@@ -241,6 +241,13 @@ class ImportWallet extends React.Component<Props, State> {
         errorMessage: this.getError(IMPORT_WALLET_PRIVATE_KEY),
       },
     };
+    const inputProps = {
+      onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
+      value: tabsInfo[activeTab].value,
+      autoCapitalize: 'none',
+      multiline: activeTab === TWORDSPHRASE,
+      numberOfLines: 3,
+    };
 
     return (
       <Container>
@@ -255,14 +262,15 @@ class ImportWallet extends React.Component<Props, State> {
           </Paragraph>
           <InputWrapper>
             <TextInput
-              label={tabsInfo[activeTab].inputLabel}
-              inputProps={{
-                onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
-                value: tabsInfo[activeTab].value,
-                autoCapitalize: 'none',
-                multiline: activeTab === TWORDSPHRASE,
-                numberOfLines: 3,
+              inputProps={Platform.OS === 'ios'
+                ? inputProps
+                : {
+                ...inputProps,
+                  keyboardType: 'email-address',
+                  importantForAutofill: 'no',
+                  autoComplete: 'off',
               }}
+              label={tabsInfo[activeTab].inputLabel}
               errorMessage={tabsInfo[activeTab].errorMessage}
               viewWidth={activeTab === TWORDSPHRASE ? (window.width - (spacing.rhythm * 2) - 2) : window.width - 95}
               inputType="secondary"
