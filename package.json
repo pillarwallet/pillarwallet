@@ -101,7 +101,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
-    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.20.1300",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.21.1334",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
