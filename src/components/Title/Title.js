@@ -60,7 +60,7 @@ const Text = styled(BoldText)`
 `;
 
 const BlueDot = styled(BoldText)`
-  color: ${baseColors.brightSkyBlue};
+  color: ${({ dotColor = baseColors.brightSkyBlue }) => dotColor};
   font-size: ${Platform.OS === 'ios' ? 30 : 26}px;
 `;
 

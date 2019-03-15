@@ -66,7 +66,6 @@ const ConnectionConfirmationModal = (props: Props) => {
       onModalHide={onModalHide}
       title={titleConfirmation(contactType, username)}
       fullWidthTitle
-      noWrapTitle
       noClose
       subtitle={subtitle}
       subtitleStyles={{

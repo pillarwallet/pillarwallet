@@ -43,7 +43,6 @@ type Props = {
   isVisible: boolean,
   showHeader?: boolean,
   centerTitle?: boolean,
-  noWrapTitle?: boolean,
   backgroundColor?: string,
   avoidKeyboard?: boolean,
   eventDetail?: boolean,
@@ -183,7 +182,6 @@ export default class SlideModal extends React.Component<Props, *> {
       isVisible,
       showHeader,
       centerTitle,
-      noWrapTitle,
       backgroundColor,
       avoidKeyboard,
       eventDetail,
@@ -203,7 +201,6 @@ export default class SlideModal extends React.Component<Props, *> {
             <Header
               noMargin={!fullScreen}
               centerTitle={centerTitle}
-              noWrapTitle={noWrapTitle}
               noPadding={!fullScreen}
               title={title}
               titleStyles={titleStyles}

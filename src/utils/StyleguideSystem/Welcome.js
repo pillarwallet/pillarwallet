@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
+import { DrawerActions } from 'react-navigation-drawer';
 import { Container, Footer, Wrapper } from 'components/Layout';
 import * as styled from './styles';
 
@@ -10,6 +11,11 @@ class Welcome extends Component {
     drawerLabel: 'WELCOME',
   };
 
+  openDrawer = () => {
+    const { navigation } = this.props;
+    navigation.dispatch(DrawerActions.toggleDrawer());
+  }
+
   render() {
     return (
       <Container>
@@ -18,7 +24,11 @@ class Welcome extends Component {
           <styled.Subtitle>Styleguide System</styled.Subtitle>
         </Wrapper>
         <Footer>
-          <styled.Note>open the drawer on your left</styled.Note>
+          <styled.Note
+            onPress={this.openDrawer}
+          >
+            open the drawer or slide
+          </styled.Note>
         </Footer>
       </Container>
     );

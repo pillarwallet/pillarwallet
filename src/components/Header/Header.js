@@ -40,7 +40,6 @@ type Props = {
   noBlueDotOnTitle?: boolean,
   dotColor?: string,
   centerTitle?: boolean,
-  noWrapTitle?: boolean,
   noPadding?: boolean,
   noMargin?: boolean,
   flexStart?: boolean,
@@ -56,7 +55,7 @@ type Props = {
 const Wrapper = styled.View`
   border-bottom-width: 0;
   padding: ${props => props.noPadding ? 0 : '0 20px'};
-  height: ${({ noWrapTitle }) => noWrapTitle ? 'auto' : '48px'};
+  height: 48px;
   justify-content: flex-end;
   align-items: flex-end;
   flex-direction: row;
@@ -125,7 +124,6 @@ const Header = (props: Props) => {
     noBlueDotOnTitle,
     dotColor,
     centerTitle,
-    noWrapTitle,
     noPadding,
     noMargin,
     style,
@@ -158,7 +156,6 @@ const Header = (props: Props) => {
       flexStart={flexStart}
       style={style}
       noPadding={noPadding}
-      noWrapTitle={noWrapTitle}
     >
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&
