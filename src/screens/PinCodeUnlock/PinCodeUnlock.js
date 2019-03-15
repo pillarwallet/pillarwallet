@@ -128,7 +128,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string, touchID?: boolean, callback?: Function) => dispatch(loginAction(pin, callback)),
+  login: (pin: string, touchID?: boolean, callback?: Function) => dispatch(loginAction(pin, touchID, callback)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
