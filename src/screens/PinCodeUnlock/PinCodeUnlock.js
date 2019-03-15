@@ -20,20 +20,61 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import TouchID from 'react-native-touch-id';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import Scene from './scene';
+import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+
+const ACTIVE_APP_STATE = 'active';
 
 type Props = {
-  login: (pin: string) => Function,
+  login: (pin: string, touchID?: boolean, callback?: Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
+  useBiometrics: ?boolean,
 }
 
-class PinCodeUnlock extends React.Component<Props, *> {
+class PinCodeUnlock extends React.Component<Props> {
+  errorMessage: string;
+  onLoginSuccess: ?Function;
+
+  constructor(props) {
+    super(props);
+    const { navigation } = this.props;
+    this.errorMessage = navigation.getParam('errorMessage', '');
+    this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
+  }
+
+  componentDidMount() {
+    addAppStateChangeListener(this.handleAppStateChange);
+    const { useBiometrics } = this.props;
+    if (useBiometrics && !this.errorMessage) {
+      this.showBiometricLogin();
+    }
+  }
+
+  componentWillUnmount() {
+    removeAppStateChangeListener(this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState: string) => {
+    const { useBiometrics } = this.props;
+    if (nextAppState === ACTIVE_APP_STATE && useBiometrics && !this.errorMessage) {
+      this.showBiometricLogin();
+    }
+  };
+
+  showBiometricLogin() {
+    const { login } = this.props;
+    TouchID.authenticate('Biometric login')
+      .then(() => login('', true))
+      .catch(() => null);
+  }
+
   handlePinSubmit = (pin: string) => {
     const { login } = this.props;
-    login(pin);
+    login(pin, false, this.onLoginSuccess || undefined);
   };
 
   handleForgotPasscode = () => {
@@ -53,10 +94,16 @@ class PinCodeUnlock extends React.Component<Props, *> {
   }
 }
 
-const mapStateToProps = ({ wallet }) => ({ wallet });
+const mapStateToProps = ({
+  wallet,
+  appSettings: { data: { useBiometrics = false } },
+}) => ({
+  wallet,
+  useBiometrics,
+});
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string) => dispatch(loginAction(pin)),
+  login: (pin: string, touchID?: boolean, callback?: Function) => dispatch(loginAction(pin, touchID, callback)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

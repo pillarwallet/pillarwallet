@@ -91,6 +91,7 @@ export const startListeningIntercomNotificationsAction = () => {
     const { user } = await storage.get('user');
     if (!user) return;
     const { username } = user;
+    Intercom.handlePushMessage();
     Intercom.registerIdentifiedUser({ userId: username });
     Intercom.updateUser({ user_id: username, name: username });
     intercomNotificationsListener = ({ count }) => dispatch({
@@ -100,6 +101,7 @@ export const startListeningIntercomNotificationsAction = () => {
     Intercom.getUnreadConversationCount()
       .then(count => ({ count }))
       .then(intercomNotificationsListener)
+      .then(() => Intercom.setInAppMessageVisibility('VISIBLE'))
       .catch(() => { });
     Intercom.addEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
   };

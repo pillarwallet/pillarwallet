@@ -36,5 +36,7 @@
 	<string>1:811306482558:ios:b11c9bc5b2ad0ff7</string>
 	<key>DATABASE_URL</key>
 	<string>https://pillar-project-1506420699556.firebaseio.com</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Enabling Face ID allows you quick and secure access to your account.</string>
 </dict>
 </plist>

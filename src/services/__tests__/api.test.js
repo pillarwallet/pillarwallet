@@ -83,17 +83,25 @@ const mockPillarSDK: Object = {
 
 describe('API service', () => {
   beforeEach(() => {
-    sdkWrapper.init(mockWallet.privateKey);
+    sdkWrapper.init();
     sdkWrapper.pillarWalletSdk = mockPillarSDK;
   });
 
   it('Should successfully register an account with the given username and fcm token and return userId', async () => {
-    const result = await sdkWrapper.registerOnAuthServer('uniqueFCMToken', 'uniqueUsernameString');
+    const result = await sdkWrapper.registerOnAuthServer(
+      mockWallet.privateKey,
+      'uniqueFCMToken',
+      'uniqueUsernameString',
+    );
     expect(result).toBe(mockResponseSuccess.data);
   });
 
   it('Should fail to register an account with a duplicate username and return USERNAME_EXISTS reason', async () => {
-    const result = await sdkWrapper.registerOnAuthServer('anyFCMToken', 'duplicateUsernameString');
+    const result = await sdkWrapper.registerOnAuthServer(
+      mockWallet.privateKey,
+      'anyFCMToken',
+      'duplicateUsernameString',
+    );
     expect(result).toEqual({
       error: true,
       reason: USERNAME_EXISTS,
@@ -101,7 +109,7 @@ describe('API service', () => {
   });
 
   it('Should fail to register an account with empty parameters and return REGISTRATION_FAILED reason', async () => {
-    const result = await sdkWrapper.registerOnAuthServer('', '');
+    const result = await sdkWrapper.registerOnAuthServer('', '', '');
     expect(result).toEqual({
       error: true,
       reason: REGISTRATION_FAILED,
