@@ -37,6 +37,7 @@ import {
   RESET_WALLET_IMPORT,
   UPDATE_WALLET_IMPORT_STATE,
   BACKUP_WALLET,
+  REMOVE_PRIVATE_KEY,
 } from 'constants/walletConstants';
 
 export type Wallet = {
@@ -141,6 +142,11 @@ export default function newWalletReducer(
         state,
         { backupStatus: { ...state.backupStatus, isBackedUp: true } },
       );
+    case REMOVE_PRIVATE_KEY:
+      return {
+        ...state,
+        data: { ...state.data, privateKey: '' },
+      };
     default:
       return state;
   }

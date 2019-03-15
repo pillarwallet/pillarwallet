@@ -31,15 +31,27 @@ import ErrorMessage from 'components/ErrorMessage';
 import PinCode from 'components/PinCode';
 
 type Props = {
-  login: (pin: string) => Function,
+  login: (pin: string, callback?: Function) => Function,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
 }
 
 class PinCodeUnlock extends React.Component<Props, *> {
+  constructor(props) {
+    super(props);
+    const { navigation } = this.props;
+    const errorMessage = navigation.getParam('errorMessage', '');
+    const onLoginSuccess = navigation.getParam('onLoginSuccess', null);
+    this.state = {
+      errorMessage,
+      onLoginSuccess,
+    };
+  }
+
   handlePinSubmit = (pin: string) => {
     const { login } = this.props;
-    login(pin);
+    const { onLoginSuccess } = this.state;
+    login(pin, onLoginSuccess);
   };
 
   handleForgotPasscode = () => {
@@ -48,7 +60,8 @@ class PinCodeUnlock extends React.Component<Props, *> {
 
   render() {
     const { walletState } = this.props.wallet;
-    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : null;
+    const { errorMessage } = this.state;
+    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING) {
@@ -78,7 +91,7 @@ class PinCodeUnlock extends React.Component<Props, *> {
 const mapStateToProps = ({ wallet }) => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Function) => ({
-  login: (pin: string) => dispatch(loginAction(pin)),
+  login: (pin: string, callback?: Function) => dispatch(loginAction(pin, callback)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);
