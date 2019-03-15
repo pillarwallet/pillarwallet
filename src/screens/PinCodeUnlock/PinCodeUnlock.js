@@ -55,7 +55,7 @@ class PinCodeUnlock extends React.Component<Props> {
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
     const { useBiometrics } = this.props;
-    if (useBiometrics) {
+    if (useBiometrics && !this.errorMessage) {
       this.showBiometricLogin();
     }
   }
@@ -66,7 +66,7 @@ class PinCodeUnlock extends React.Component<Props> {
 
   handleAppStateChange = (nextAppState: string) => {
     const { useBiometrics } = this.props;
-    if (nextAppState === ACTIVE_APP_STATE && useBiometrics) {
+    if (nextAppState === ACTIVE_APP_STATE && useBiometrics && !this.errorMessage) {
       this.showBiometricLogin();
     }
   };
