@@ -91,7 +91,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
         api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
-        if (onLoginSuccess) {
+        if (onLoginSuccess && wallet.privateKey) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
           await onLoginSuccess(privateKeyParam);
@@ -113,11 +113,10 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
 
       await storage.viewCleanup().catch(() => null);
 
-
-      const { address, privateKey } = wallet;
+      const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
-        payload: { address, privateKey },
+        payload: { address },
       });
 
       if (!__DEV__) {
