@@ -41,17 +41,17 @@ class PinCodeUnlock extends React.Component<Props, *> {
     super(props);
     const { navigation } = this.props;
     const errorMessage = navigation.getParam('errorMessage', '');
-    const loginSuccessCallback = navigation.getParam('successCallback', null);
+    const onLoginSuccess = navigation.getParam('onLoginSuccess', null);
     this.state = {
       errorMessage,
-      loginSuccessCallback,
+      onLoginSuccess,
     };
   }
 
   handlePinSubmit = (pin: string) => {
     const { login } = this.props;
-    const { loginSuccessCallback } = this.state;
-    login(pin, loginSuccessCallback);
+    const { onLoginSuccess } = this.state;
+    login(pin, onLoginSuccess);
   };
 
   handleForgotPasscode = () => {

@@ -48,7 +48,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import { toastWalletBackup } from 'utils/toasts';
-import { updateOAuthTokensCB, tokensFailedCB } from 'utils/oAuth';
+import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from './dbActions';
@@ -58,7 +58,7 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const loginAction = (pin: string, successCallback?: Function) => {
+export const loginAction = (pin: string, onLoginSuccess?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -83,12 +83,12 @@ export const loginAction = (pin: string, successCallback?: Function) => {
           fcmToken,
         };
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
-        const tokensFailed = tokensFailedCB(dispatch);
-        api.init(updateOAuth, oAuthTokens, tokensFailed);
-        if (successCallback) {
+        const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
+        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+        if (onLoginSuccess) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
-          await successCallback(privateKeyParam);
+          await onLoginSuccess(privateKeyParam);
         }
         api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
@@ -241,7 +241,7 @@ export const resetIncorrectPasswordAction = () => {
   };
 };
 
-export const lockScreenAction = (successCallback?: Function, errorMessage?: string) => {
+export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: string) => {
   return async () => {
     navigate(NavigationActions.navigate({
       routeName: AUTH_FLOW,
@@ -249,7 +249,7 @@ export const lockScreenAction = (successCallback?: Function, errorMessage?: stri
       action: NavigationActions.navigate({
         routeName: PIN_CODE_UNLOCK,
         params: {
-          successCallback,
+          onLoginSuccess,
           errorMessage,
         },
       }),

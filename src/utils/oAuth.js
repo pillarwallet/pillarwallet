@@ -40,7 +40,7 @@ export const updateOAuthTokensCB = (dispatch: Function, signalCredentials?: Obje
   };
 };
 
-export const tokensFailedCB = (dispatch: Function) => {
+export const onOAuthTokensFailedCB = (dispatch: Function) => {
   return async (callback: Function) => {
     dispatch(lockScreenAction(callback, 'Authentication tokens expired, please enter your PIN to proceed.'));
   };
