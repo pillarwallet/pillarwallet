@@ -42,7 +42,7 @@ const Wrapper = styled.View`
   margin: ${props => props.noMargin ? '0' : '16px 0'};
   align-self: ${props => props.align ? props.align : 'flex-start'};
   position: relative;
-  top: 0px;
+  top: 0;
   ${({ maxWidth }) => maxWidth && `
     width: maxWidth;
   `}
@@ -57,7 +57,6 @@ const Text = styled(BoldText)`
     width: 100%;
     text-align: center;
   `}
-  ${({ fullWidth }) => !fullWidth ? 'max-width: 230px;' : 'width: 100%;'}
 `;
 
 const BlueDot = styled(BoldText)`

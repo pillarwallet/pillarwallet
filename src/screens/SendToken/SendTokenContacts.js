@@ -22,7 +22,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import Separator from 'components/Separator';
-import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
+import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
 import t from 'tcomb-form-native';
 import { fontSizes, spacing } from 'utils/variables';
 import { Container, Footer } from 'components/Layout';
@@ -179,6 +180,14 @@ class SendTokenContacts extends React.Component<Props, State> {
   };
 
   navigateToNextScreen(ethAddress) {
+    if (this.assetData.tokenType === COLLECTIBLES) {
+      this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+        assetData: this.assetData,
+        receiver: ethAddress,
+      });
+      return;
+    }
+
     this.props.navigation.navigate(SEND_TOKEN_AMOUNT, {
       assetData: this.assetData,
       receiver: ethAddress,
@@ -199,9 +208,11 @@ class SendTokenContacts extends React.Component<Props, State> {
         return usernameFound || ethAddress.toLowerCase().startsWith(searchStr);
       });
     }
+
+    const tokenName = this.assetData.tokenType === COLLECTIBLES ? this.assetData.name : this.assetData.token;
     return (
       <Container inset={{ bottom: 0 }}>
-        <Header onBack={this.props.navigation.dismiss} title={`send ${this.assetData.token}`} centerTitle />
+        <Header onBack={this.props.navigation.dismiss} title={`send ${tokenName}`} centerTitle />
         <FormWrapper>
           <Form
             ref={node => {

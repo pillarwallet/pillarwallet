@@ -48,12 +48,12 @@ type Props = {
 type State = {
   activeTab: string,
 }
-
 const pixelRatio = PixelRatio.get();
 const androidTabSpacing = pixelRatio > 3 ? 2 : 1;
 const androidFixHorizontalSpacing = 10 - androidTabSpacing;
 
 const TabOuterWrapper = styled.View`
+  background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
 `;
 
 const TabWrapper = styled.View`

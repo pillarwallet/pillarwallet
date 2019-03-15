@@ -26,6 +26,8 @@ import {
   BCX_URL,
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
+  OPEN_SEA_API,
+  OPEN_SEA_API_KEY,
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
@@ -69,14 +71,18 @@ export default function SDKWrapper() {
   this.pillarWalletSdk = null;
 }
 
-SDKWrapper.prototype.init = function (privateKey: string, updateOAuth?: ?Function, oAuthTokensStored?: ?OAuthTokens) {
+SDKWrapper.prototype.init = function (
+  updateOAuth?: ?Function,
+  oAuthTokensStored?: ?OAuthTokens,
+  onOAuthTokensFailed?: ?Function,
+) {
   this.pillarWalletSdk = new PillarSdk({
-    privateKey: privateKey.slice(2),
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
     investmentsUrl: INVESTMENTS_URL,
     updateOAuthFn: updateOAuth,
     oAuthTokens: oAuthTokensStored,
+    tokensFailedCallbackFn: onOAuthTokensFailed,
   });
 };
 
@@ -98,13 +104,14 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
     });
 };
 
-SDKWrapper.prototype.registerOnAuthServer = function (fcm: string, username: string) {
+SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, fcm: string, username: string) {
+  const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
   return Promise.resolve()
     .then(() => {
       return this.pillarWalletSdk.wallet.registerAuthServer({
+        privateKey,
         fcmToken: fcm,
         username,
-        privateKey: PillarSdk.accessKeys.privateKey,
       });
     })
     .then(({ data }) => data)
@@ -233,6 +240,34 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
     .then(() => this.pillarWalletSdk.asset.search({ query, walletId }))
     .then(({ data }) => data)
     .catch(() => []);
+};
+
+SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': OPEN_SEA_API_KEY,
+      },
+    }))
+    .then(data => data.json())
+    .catch(() => ({ error: true }));
+};
+
+SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
+  return Promise.resolve()
+    .then(() => fetch(`${OPEN_SEA_API}/events/?account_address=${walletAddress}&event_type=transfer`, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-API-KEY': OPEN_SEA_API_KEY,
+      },
+    }))
+    .then(data => data.json())
+    .catch(() => ({ error: true }));
 };
 
 SDKWrapper.prototype.fetchNotifications = function (walletId: string, type: string, fromTimestamp?: string) {

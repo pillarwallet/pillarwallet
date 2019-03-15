@@ -20,6 +20,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
+import merge from 'lodash.merge';
+import keyBy from 'lodash.keyby';
+import values from 'lodash.values';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
@@ -48,10 +51,12 @@ import {
   TYPE_REJECTED,
   TYPE_SENT,
 } from 'constants/invitationsConstants';
+import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
 import { TRANSACTION_EVENT, CONNECTION_EVENT } from 'constants/historyConstants';
 import { CONTACT } from 'constants/navigationConstants';
 import { CHAT } from 'constants/chatConstants';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 const SOCIAL_TYPES = [
   TYPE_RECEIVED,
@@ -95,6 +100,9 @@ type Props = {
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
   noBorder?: boolean,
+  collectiblesHistory: Object[],
+  invertAddon?: boolean,
+  fetchAllCollectiblesData: Function,
 };
 
 type State = {
@@ -132,14 +140,15 @@ class ActivityFeed extends React.Component<Props, State> {
     resetUnread(contact.username);
   };
 
-  mapTransactionsHistory(history, contacts) {
+  mapTransactionsHistory(history, contacts, eventType) {
     const concatedHistory = history
-      .map(({ ...rest }) => ({ ...rest, type: TRANSACTION_EVENT }))
+      .map(({ ...rest }) => ({ ...rest, type: eventType }))
       .map(({ to, from, ...rest }) => {
         const contact = contacts.find(({ ethAddress }) => {
           return from.toUpperCase() === ethAddress.toUpperCase()
             || to.toUpperCase() === ethAddress.toUpperCase();
         });
+
         return {
           username: getUserName(contact),
           to,
@@ -173,6 +182,7 @@ class ActivityFeed extends React.Component<Props, State> {
       onAcceptInvitation,
       onRejectInvitation,
       showArrowsOnly,
+      invertAddon,
     } = this.props;
 
     const walletAddress = wallet.address;
@@ -208,6 +218,34 @@ class ActivityFeed extends React.Component<Props, State> {
           itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
           valueColor={isReceived ? baseColors.jadeGreen : null}
           imageUpdateTimeStamp={contact.lastUpdateTime}
+        />
+      );
+    }
+
+    if (type === COLLECTIBLE_TRANSACTION) {
+      const isReceived = notification.to.toUpperCase() === walletAddress.toUpperCase();
+      const address = isReceived ? notification.from : notification.to;
+      const nameOrAddress = notification.username || `${address.slice(0, 6)}…${address.slice(-6)}`;
+      const directionIcon = isReceived ? 'Received' : 'Sent';
+
+      const contact = contacts
+        .find(({ ethAddress }) => address.toUpperCase() === ethAddress.toUpperCase()) || {};
+      return (
+        <ListItemWithImage
+          onPress={() => this.selectEvent({ ...notification, contact }, type, notification.status)}
+          label={nameOrAddress}
+          navigateToProfile={Object.keys(contact).length !== 0 ? navigateToContact : () => {}}
+          avatarUrl={notification.icon}
+          imageAddonUrl={contact.profileImage}
+          imageAddonName={nameOrAddress}
+          imageAddonIconName={(Object.keys(contact).length === 0 || showArrowsOnly) && !invertAddon
+            ? directionIcon.toLowerCase()
+            : undefined}
+          iconName={invertAddon ? directionIcon.toLowerCase() : null}
+          subtext={dateTime}
+          itemValue={directionIcon}
+          itemStatusIcon={notification.status === 'pending' ? 'pending' : ''}
+          valueColor={isReceived ? baseColors.jadeGreen : null}
         />
       );
     }
@@ -262,7 +300,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
     const { createdAt = '' } = item;
-    return `${createdAt.toString()}${item.id || item._id || ''}`;
+    return `${createdAt.toString()}${item.id || item._id || item.hash || ''}`;
   };
 
   render() {
@@ -278,6 +316,7 @@ class ActivityFeed extends React.Component<Props, State> {
       backgroundColor,
       wrapperStyle,
       noBorder,
+      collectiblesHistory,
     } = this.props;
 
     const {
@@ -287,8 +326,16 @@ class ActivityFeed extends React.Component<Props, State> {
       eventStatus,
     } = this.state;
 
+    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+    const collectibleTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+    // merging BCX and OpenSea transaction data by hash
+    const mergedCollectibleTxHistory = values(
+      merge({}, keyBy(collectibleTxHistory, 'hash'), keyBy(collectiblesHistory, 'hash')));
+
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
-    const mappedHistory = this.mapTransactionsHistory(history, mappedContacts);
+    const mappedHistory = this.mapTransactionsHistory(tokenTxHistory, mappedContacts, TRANSACTION_EVENT);
+    const mappedCollectiblesHistory =
+      this.mapTransactionsHistory(mergedCollectibleTxHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
     const chatNotifications = [];
     /* chats.chats
       .map((
@@ -304,7 +351,12 @@ class ActivityFeed extends React.Component<Props, State> {
           createdAt: lastMessage.savedTimestamp,
         };
       }); */
-    const allFeedData = [...mappedContacts, ...invitations, ...mappedHistory, ...chatNotifications]
+    const allFeedData = [
+      ...mappedContacts,
+      ...invitations,
+      ...mappedHistory,
+      ...chatNotifications,
+      ...mappedCollectiblesHistory]
       .filter(value => Object.keys(value).length !== 0)
       .sort((a, b) => b.createdAt - a.createdAt);
 
@@ -313,7 +365,7 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
-        return type === TRANSACTION_EVENT;
+        return type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION;
       }
       if (activeTab === SOCIAL) {
         return SOCIAL_TYPES.includes(type);
@@ -380,6 +432,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
+  collectibles: { transactionHistory: collectiblesHistory },
 }) => ({
   contacts,
   notifications,
@@ -387,10 +440,12 @@ const mapStateToProps = ({
   invitations,
   assets: Object.values(assets),
   wallet,
+  collectiblesHistory,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ActivityFeed);

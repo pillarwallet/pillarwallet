@@ -87,8 +87,10 @@ class App extends React.Component<Props, *> {
     StatusBar.setBarStyle('dark-content');
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectivityChange);
     Linking.getInitialURL()
-      .then(url => executeDeepLink(url))
-      .catch(() => { });
+      .then(url => {
+        if (url) executeDeepLink(url);
+      })
+      .catch(() => {});
     Linking.addEventListener('url', this.handleDeepLinkEvent);
     startListeningOnOpenNotification();
   }

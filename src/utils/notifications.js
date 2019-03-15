@@ -29,6 +29,7 @@ import {
   MESSAGE_DISCONNECTED,
   MESSAGE_REQUEST,
 } from 'constants/invitationsConstants';
+import { COLLECTIBLE, SIGNAL, CONNECTION, BCX } from 'constants/notificationConstants';
 
 
 const parseNotification = (notificationBody: string): ?Object => {
@@ -47,6 +48,12 @@ const validBcxTransaction = (transaction: ?Object): boolean => {
   return true;
 };
 
+const validCollectibleTransaction = (transaction: ?Object): boolean => {
+  if (!transaction || !transaction.fromAddress || !transaction.toAddress) return false;
+  if (!transaction.status || !transaction.contractAddress) return false;
+  return true;
+};
+
 const connectionEvents = [
   TYPE_ACCEPTED,
   TYPE_CANCELLED,
@@ -60,11 +67,11 @@ export const processNotification = (notification: Object, myEthAddress?: string)
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
-  if (parsedNotification.type === 'signal') {
+  if (!!parsedNotification.type && parsedNotification.type.toUpperCase() === SIGNAL) {
     return {
       message: 'New message',
       title: parsedNotification.sender,
-      type: 'SIGNAL',
+      type: SIGNAL,
       navigationParams: { username: parsedNotification.sender },
     };
   }
@@ -74,31 +81,31 @@ export const processNotification = (notification: Object, myEthAddress?: string)
       result = {
         title: parsedNotification.senderUserData.username,
         message: MESSAGE_REQUEST,
-        type: 'CONNECTION',
+        type: CONNECTION,
         status: TYPE_RECEIVED,
       };
     } else if (parsedNotification.type === TYPE_ACCEPTED) {
       result = {
         title: parsedNotification.senderUserData.username,
         message: MESSAGE_ACCEPTED,
-        type: 'CONNECTION',
+        type: CONNECTION,
         status: TYPE_ACCEPTED,
       };
     } else if (parsedNotification.type === TYPE_DISCONNECTED) {
       result = {
         title: parsedNotification.senderUserData.username,
         message: MESSAGE_DISCONNECTED,
-        type: 'CONNECTION',
+        type: CONNECTION,
         status: TYPE_REJECTED,
       };
     } else {
       result = {
         message: 'Connection update',
-        type: 'CONNECTION',
+        type: CONNECTION,
       };
     }
   }
-  if (notification.type === 'BCX') {
+  if (notification.type === BCX) {
     if (!parsedNotification || !validBcxTransaction(parsedNotification)) return result;
 
     let message = '';
@@ -133,6 +140,32 @@ export const processNotification = (notification: Object, myEthAddress?: string)
       asset,
       status,
       type: notification.type,
+    };
+  }
+
+  if (!!notification.type && notification.type.toUpperCase() === COLLECTIBLE) {
+    if (!parsedNotification || !validCollectibleTransaction(parsedNotification)) return result;
+
+    let message = '';
+    let title = '';
+    const {
+      contractName,
+    } = parsedNotification;
+    const sender = parsedNotification.fromAddress.toUpperCase();
+    const receiver = parsedNotification.toAddress.toUpperCase();
+
+    if (receiver === myEthAddress) {
+      title = contractName;
+      message = 'You received collectible';
+    } else if (sender === myEthAddress) {
+      title = contractName;
+      message = 'Your collectible has been received';
+    }
+
+    result = {
+      title,
+      message,
+      type: COLLECTIBLE,
     };
   }
 

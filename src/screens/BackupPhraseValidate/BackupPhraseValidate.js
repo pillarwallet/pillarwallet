@@ -20,8 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Platform } from 'react-native';
-import { UIColors, fontSizes } from 'utils/variables';
+import { UIColors, fontSizes, baseColors } from 'utils/variables';
 import styled from 'styled-components/native';
 import { Container, Wrapper, Footer } from 'components/Layout';
 import { Paragraph, Label, BoldText } from 'components/Typography';
@@ -33,6 +32,7 @@ import { backupWalletAction } from 'actions/walletActions';
 
 type State = {
   enteredWords: string[],
+  enteredIndex: string[],
   isFormValid: boolean,
 };
 
@@ -43,11 +43,11 @@ type Props = {
 };
 
 const WordInputFields = styled.View`
-  margin: 20px 0;
+  margin: 20px 0 0;
 `;
 
-const MnemonicPhraseWord = styled.TouchableHighlight`
-  background-color: ${props => (props.entered ? UIColors.disabled : UIColors.primary)};
+const MnemonicPhraseWord = styled.TouchableOpacity`
+  background-color: ${props => (props.disabled ? UIColors.disabled : UIColors.primary)};
   border-radius: 6;
   padding: 14px 5px;
   margin: 0 2.5px 5px;
@@ -63,6 +63,7 @@ const WordInputWrapper = styled.View`
   flex-direction: row;
   align-items: flex-start;
   justify-content: center;
+  height: 36px;
 `;
 
 const WordInput = styled.View`
@@ -78,20 +79,14 @@ const WordInput = styled.View`
 
 const WordInputPrefix = styled.View`
   flex: 0 0 24px;
-  height: 40px;
+  height: 36px;
   justify-content: center;
   align-items: flex-start;
 `;
 
-const WordInputNumber = styled(Label)`
-  line-height: 40px;
-`;
-
 const RemoveWordButtonIcon = styled(IconButton)`
-  height: 42px;
-  margin-left: ${Platform.OS === 'ios' ? '14px' : '6px'};
-  margin-top: ${Platform.OS === 'ios' ? 0 : '-4px'};
-  margin-right: ${Platform.OS === 'ios' ? 0 : '-6px'};
+  height: 36px;
+  margin-left: 14px;
 `;
 
 const WordInputText = styled(BoldText)`
@@ -108,21 +103,29 @@ const ShuffledWordWrapper = styled.View`
   margin-bottom: 20px;
 `;
 
+const ErrorParagraph = styled(Paragraph)`
+  color: ${baseColors.fireEngineRed};
+  font-size: ${fontSizes.extraSmall}px;
+`;
+
 class BackupPhraseValidate extends React.Component<Props, State> {
   state = {
     enteredWords: [],
+    enteredIndex: [],
     isFormValid: false,
   };
 
-  handleWordSetting = (word) => {
-    let { enteredWords } = this.state;
+  handleWordSetting = (word, index) => {
+    let { enteredWords, enteredIndex } = this.state;
     const { onboarding: wallet } = this.props.wallet;
     const maxWords = wallet.mnemonic.wordsToValidate.length;
     if (enteredWords.length === maxWords) return;
     enteredWords = [...enteredWords, word];
+    enteredIndex = [...enteredIndex, index];
 
     this.setState({
       enteredWords,
+      enteredIndex,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
       this.setState({
@@ -132,11 +135,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
   };
 
   handleLastWordRemoval = () => {
-    let { enteredWords } = this.state;
+    let { enteredWords, enteredIndex } = this.state;
     enteredWords = [...enteredWords.slice(0, -1)];
+    enteredIndex = [...enteredIndex.slice(0, -1)];
 
     this.setState({
       enteredWords,
+      enteredIndex,
     }, () => {
       const isFormValid = this.validateForm(this.state.enteredWords);
       this.setState({
@@ -169,8 +174,8 @@ class BackupPhraseValidate extends React.Component<Props, State> {
     return [...Array(wordsToValidate.length)]
       .map((el, i) => {
         return (
-          <WordInputWrapper key={mnemonicList[i]}>
-            <WordInputPrefix><WordInputNumber>{wordsToValidate[i]}</WordInputNumber></WordInputPrefix>
+          <WordInputWrapper key={`${mnemonicList[i]}_${i}`}>
+            <WordInputPrefix><Label>{wordsToValidate[i]}</Label></WordInputPrefix>
             <WordInput filled={!!enteredWords[i]}>
               <WordInputText>{enteredWords[i] || ''}</WordInputText>
             </WordInput>
@@ -189,16 +194,17 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
   renderShuffledWordList = () => {
     const { onboarding: wallet } = this.props.wallet;
-    const { enteredWords } = this.state;
+    const { enteredIndex } = this.state;
     const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
 
     return shuffledMnemonicList.map((word: string, index: number) => {
-      const isEntered = enteredWords.indexOf(word) > -1;
+      const indexAsString = index.toString();
+      const isEntered = enteredIndex.includes(indexAsString);
       return (
         <MnemonicPhraseWord
           key={`${word}${index}`}
-          onPress={() => this.handleWordSetting(word)}
-          entered={isEntered}
+          onPress={() => this.handleWordSetting(word, indexAsString)}
+          disabled={isEntered}
         >
           <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
         </MnemonicPhraseWord>
@@ -218,12 +224,12 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
   render() {
     const { onboarding: wallet } = this.props.wallet;
-    const { isFormValid } = this.state;
+    const { isFormValid, enteredWords } = this.state;
     if (!wallet.mnemonic.original) return null;
 
     return (
       <Container>
-        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} />
+        <Header title="verify backup phrase" onBack={() => this.props.navigation.goBack(null)} fullWidthTitle />
         <Wrapper regularPadding>
           <Paragraph>
             Please select the correct words.
@@ -231,8 +237,13 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           <WordInputFields>
             {this.renderInputFields()}
           </WordInputFields>
+          {enteredWords.length === 3 && !isFormValid &&
+          <ErrorParagraph>
+            Incorrect words selected
+          </ErrorParagraph>
+          }
         </Wrapper>
-        <Footer>
+        <Footer style={{ paddingTop: 20 }}>
           <ShuffledWordWrapper>
             {this.renderShuffledWordList()}
             {!!__DEV__ && (
