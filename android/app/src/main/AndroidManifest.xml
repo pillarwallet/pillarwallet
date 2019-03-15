@@ -235,7 +235,7 @@
 
         <!-- ADD FCM CONFIG HERE -->
 
-        <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+        <service android:name="com.pillarproject.wallet.PillarFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
