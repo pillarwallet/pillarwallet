@@ -41,21 +41,15 @@ type Props = {
   useBiometrics: ?boolean,
 }
 
-type State = {
-  errorMessage: string,
-  onLoginSuccess: ?Function,
-}
+class PinCodeUnlock extends React.Component<Props> {
+  errorMessage: string;
+  onLoginSuccess: ?Function;
 
-class PinCodeUnlock extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const { navigation } = this.props;
-    const errorMessage = navigation.getParam('errorMessage', '');
-    const onLoginSuccess = navigation.getParam('onLoginSuccess', null);
-    this.state = {
-      errorMessage,
-      onLoginSuccess,
-    };
+    this.errorMessage = navigation.getParam('errorMessage', '');
+    this.onLoginSuccess = navigation.getParam('onLoginSuccess', null);
   }
 
   componentDidMount() {
@@ -86,8 +80,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handlePinSubmit = (pin: string) => {
     const { login } = this.props;
-    const { onLoginSuccess } = this.state;
-    login(pin, false, onLoginSuccess || undefined);
+    login(pin, false, this.onLoginSuccess || undefined);
   };
 
   handleForgotPasscode = () => {
@@ -96,8 +89,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   render() {
     const { walletState } = this.props.wallet;
-    const { errorMessage } = this.state;
-    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (errorMessage || null);
+    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING) {
