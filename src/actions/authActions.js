@@ -116,7 +116,10 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
-        payload: { address },
+        payload: {
+          address,
+          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
+        },
       });
 
       if (!__DEV__) {
