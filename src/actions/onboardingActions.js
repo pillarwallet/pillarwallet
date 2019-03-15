@@ -207,7 +207,7 @@ export const registerWalletAction = () => {
       },
     });
 
-    // STEP 4: Initialize SDK annd register user
+    // STEP 4: Initialize SDK and register user
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,

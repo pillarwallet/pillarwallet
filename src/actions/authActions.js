@@ -58,7 +58,7 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const loginAction = (pin: string, onLoginSuccess?: Function) => {
+export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -70,7 +70,13 @@ export const loginAction = (pin: string, onLoginSuccess?: Function) => {
     await delay(100);
     const saltedPin = getSaltedPin(pin);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      let wallet;
+      if (!touchID) {
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+      } else {
+        wallet = { ...encryptedWallet };
+      }
+
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
@@ -85,7 +91,7 @@ export const loginAction = (pin: string, onLoginSuccess?: Function) => {
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
         api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
-        if (onLoginSuccess) {
+        if (onLoginSuccess && wallet.privateKey) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
           await onLoginSuccess(privateKeyParam);
@@ -107,11 +113,13 @@ export const loginAction = (pin: string, onLoginSuccess?: Function) => {
 
       await storage.viewCleanup().catch(() => null);
 
-
-      const { address, privateKey } = wallet;
+      const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
-        payload: { address, privateKey },
+        payload: {
+          address,
+          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
+        },
       });
 
       if (!__DEV__) {

@@ -135,7 +135,6 @@ export default function newWalletReducer(
         {},
         state, { backupStatus: { ...state.backupStatus, ...action.payload } },
       );
-
     case BACKUP_WALLET:
       return merge(
         {},
