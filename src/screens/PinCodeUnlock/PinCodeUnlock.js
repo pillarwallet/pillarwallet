@@ -41,7 +41,12 @@ type Props = {
   useBiometrics: ?boolean,
 }
 
-class PinCodeUnlock extends React.Component<Props, *> {
+type State = {
+  errorMessage: string,
+  onLoginSuccess: ?Function,
+}
+
+class PinCodeUnlock extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     const { navigation } = this.props;
@@ -82,7 +87,7 @@ class PinCodeUnlock extends React.Component<Props, *> {
   handlePinSubmit = (pin: string) => {
     const { login } = this.props;
     const { onLoginSuccess } = this.state;
-    login(pin, false, onLoginSuccess);
+    login(pin, false, onLoginSuccess || undefined);
   };
 
   handleForgotPasscode = () => {
