@@ -25,7 +25,7 @@ import {
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { AppState, Animated, Easing, View, Platform, Image, DeviceEventEmitter } from 'react-native';
+import { Animated, Easing, View, Platform, Image } from 'react-native';
 import { BaseText } from 'components/Typography';
 
 // services
@@ -86,6 +86,7 @@ import { getExistingChatsAction } from 'actions/chatActions';
 import { fetchICOsAction } from 'actions/icosActions';
 import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 
 // constants
 import {
@@ -132,7 +133,7 @@ import {
   SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
   SEND_COLLECTIBLE_ASSETS,
 } from 'constants/navigationConstants';
-import { PENDING } from 'constants/userConstants';
+import { PENDING, REGISTERED } from 'constants/userConstants';
 
 import {
   TYPE_CANCELLED,
@@ -144,24 +145,13 @@ import {
 // models
 import type { Assets } from 'models/Asset';
 
+// utils
 import { UIColors, baseColors, fontSizes } from 'utils/variables';
-import { modalTransition } from 'utils/common';
+import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 
 const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
-
-const addAppStateChangeListener = (callback) => {
-  return Platform.OS === 'ios'
-    ? AppState.addEventListener('change', callback)
-    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
-};
-
-const removeAppStateChangeListener = (callback) => {
-  return Platform.OS === 'ios'
-    ? AppState.removeEventListener('change', callback)
-    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
-};
 
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
@@ -484,6 +474,7 @@ type Props = {
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
+  removePrivateKeyFromMemory: Function,
 }
 
 let lockTimer;
@@ -518,8 +509,15 @@ class AppFlow extends React.Component<Props, {}> {
   componentDidUpdate(prevProps: Props) {
     const {
       notifications,
+      userState,
+      wallet,
+      removePrivateKeyFromMemory,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
+
+    if (userState === REGISTERED && wallet.privateKey) {
+      removePrivateKeyFromMemory();
+    }
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
@@ -654,6 +652,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchICOs: () => dispatch(fetchICOsAction()),
   updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
+  removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
 });
 
 const ConnectedAppFlow = connect(mapStateToProps, mapDispatchToProps)(AppFlow);

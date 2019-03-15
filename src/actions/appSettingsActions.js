@@ -54,3 +54,15 @@ export const handleImagePickAction = (isPickingImage: boolean) => {
     });
   };
 };
+
+export const changeUseBiometricsAction = (value: boolean) => {
+  return async (dispatch: Function) => {
+    dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
+    dispatch({
+      type: UPDATE_APP_SETTINGS,
+      payload: {
+        useBiometrics: value,
+      },
+    });
+  };
+};
