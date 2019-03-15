@@ -1,3 +1,2 @@
 import PinCodeUnlock from 'screens/PinCodeUnlock/PinCodeUnlock.styleguide';
-import FirstScreen from './FirstScreen.styleguide';
-
+import Me from 'screens/Me/Me.styleguide';
