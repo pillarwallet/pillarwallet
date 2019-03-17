@@ -1,18 +1,27 @@
 import React, { Component } from 'react';
 import {
   ScrollView,
-  View,
-  Text,
-  TouchableOpacity,
   AsyncStorage,
 } from 'react-native';
+import styledComponent from 'styled-components/native';
 import { DrawerItems } from 'react-navigation';
 import capitalize from 'lodash.capitalize';
 import forEach from 'lodash.foreach';
 import map from 'lodash.map';
 import groupBy from 'lodash.groupby';
 import { STYLEGUIDE_SYSTEM } from 'constants/navigationConstants';
+import { baseColors } from 'utils/variables';
+
+import Section from './drawerParent';
 import * as styled from './styles';
+
+export const Group = styledComponent(Section)`
+  background-color: red;
+  width: 80%;
+  margin: 0 0 8px 16px;
+  border-left-width: 1px;
+  border-left-color: ${baseColors.mediumGray};
+`;
 
 storeLastRoute = async (currentRoute) => {
   try {
@@ -55,31 +64,21 @@ function ComponentsGroup(hierarchy, props) {
   } = props;
 
   return map(hierarchy, (parentGroup, parentName) => (
-    <styled.Parent key={`parent-item-${parentName}`}>
-      <styled.ParentSection>
-        <styled.ParentName
-          key={`parent-name-${parentName}`}
-          onPress={() => {
-            console.log(parentName)
-          }}
-        >
-          {capitalize(parentName)}
-        </styled.ParentName>
-      </styled.ParentSection>
+    <Section
+      key={`parent-item-${parentName}`}
+      shouldCollapse={parentName === 'COMPONENT'}
+      title={capitalize(parentName)}
+    >
 
       {map(parentGroup, (componentItem, groupName) => (
-        <styled.Group key={`group-item-${groupName}`}>
-          <styled.GroupSection>
-            <styled.GroupName
-              key={`group-name-${groupName}`}
-              onPress={() => {
-                console.log(groupName)
-              }}
-            >
-              {groupName}
-            </styled.GroupName>
-          </styled.GroupSection>
-
+        <Section
+          key={`group-item-${groupName}`}
+          title={groupName}
+          sectionColor={baseColors.mediumGray}
+          sectionHeight={30}
+          sectionFontSize={18}
+          levelPosition={2}
+        >
           {map(componentItem, ({ key, title, routeName }) => (
             <ItemComponent
               hasPadding
@@ -92,9 +91,9 @@ function ComponentsGroup(hierarchy, props) {
               }}
             />
           ))}
-        </styled.Group>
+        </Section>
       ))}
-    </styled.Parent>
+    </Section>
   ));
 }
 

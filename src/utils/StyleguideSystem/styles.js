@@ -26,6 +26,7 @@ export const SafeView = styled(SafeAreaView)`
 
 export const Item = styled.TouchableOpacity`
   padding: ${({ hasPadding }) => !hasPadding ? 0 : '3px 12px'};
+  height: 40px;
 `;
 
 export const ItemList = styled.Text`
@@ -36,35 +37,37 @@ export const ItemList = styled.Text`
 `;
 
 export const Parent = styled.View`
-  margin: 8px 0;
+  ${({ levelPosition, sectionColor }) => {
+    switch (levelPosition) {
+      case 1:
+        return `
+          margin: 4px 0;
+        `;
+      case 2:
+        return `
+          margin: 0 0 4px 16px;
+          border-left-width: 1px;
+          border-left-color: ${sectionColor};
+        `;
+      default:
+        return '0';
+    }
+  }};
+
+  ${({ isCollapsed, sectionHeight }) => isCollapsed ? `
+    height: ${sectionHeight};
+    overflow: hidden;
+  ` : ''}
 `;
 
 export const ParentSection = styled.View`
-  background-color: ${baseColors.darkGray};
-  height: 32px;
+  background-color: ${({ sectionColor }) => sectionColor};
+  height: ${({ sectionHeight }) => sectionHeight};
   padding: 3px 12px 3px 20px;
 `;
 
 export const ParentName = styled.Text`
   color: ${baseColors.snowWhite};
-  font-size: 20px;
-  font-weight: bold;
-`;
-
-export const Group = styled.View`
-  margin: 0 0 8px 16px;
-  border-left-width: 1px;
-  border-left-color: ${baseColors.mediumGray};
-`;
-
-export const GroupSection = styled.View`
-  background-color: ${baseColors.mediumGray};
-  height: 30px;
-  padding: 3px 12px 3px 20px;
-`;
-
-export const GroupName = styled.Text`
-  color: ${baseColors.snowWhite};
-  font-size: 18;
+  font-size: ${({ sectionFontSize }) => sectionFontSize};
   font-weight: bold;
 `;
