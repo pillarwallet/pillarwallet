@@ -6,6 +6,7 @@ import {
 import styledComponent from 'styled-components/native';
 import { DrawerItems } from 'react-navigation';
 import capitalize from 'lodash.capitalize';
+import filter from 'lodash.filter';
 import forEach from 'lodash.foreach';
 import map from 'lodash.map';
 import groupBy from 'lodash.groupby';
@@ -58,7 +59,7 @@ function ItemComponent(props) {
   );
 }
 
-function ComponentsGroup(hierarchy, props) {
+function ComponentsGroup(hierarchy, props, isFiltering) {
   const {
     activeItemKey: currentRoute
   } = props;
@@ -66,7 +67,7 @@ function ComponentsGroup(hierarchy, props) {
   return map(hierarchy, (parentGroup, parentName) => (
     <Section
       key={`parent-item-${parentName}`}
-      shouldCollapse={parentName === 'COMPONENT'}
+      shouldCollapse={!isFiltering}
       title={capitalize(parentName)}
     >
 
@@ -78,6 +79,7 @@ function ComponentsGroup(hierarchy, props) {
           sectionHeight={30}
           sectionFontSize={18}
           levelPosition={2}
+          shouldCollapse={!isFiltering}
         >
           {map(componentItem, ({ key, title, routeName }) => (
             <ItemComponent
@@ -98,12 +100,39 @@ function ComponentsGroup(hierarchy, props) {
 }
 
 class CustomDrawer extends Component {
+  state = {
+    filterValue: null,
+    filteredComps:[],
+    isFiltering: false,
+  };
+
   componentDidMount() {
     const { activeItemKey: currentRoute, navigation } = this.props;
     retrieveLastRoute(currentRoute, navigation);
   }
 
+  filterStyleguides = (text) => {
+    const { customItems } = this.props;
+    const [Welcome, ...componentItems] = customItems;
+
+    const isFiltering = !!text;
+
+    const filterRegex = new RegExp(text, 'i');
+    const filteredComps = isFiltering ?
+      filter(componentItems, (item) =>
+        filterRegex.test(item.title) || filterRegex.test(item.group)
+      ) :
+      [];
+
+    this.setState({
+      filterValue: text,
+      filteredComps,
+      isFiltering,
+    });
+  };
+
   render() {
+    const { isFiltering, filterValue, filteredComps } = this.state;
     const {
       customItems,
       activeItemKey: currentRoute,
@@ -111,10 +140,12 @@ class CustomDrawer extends Component {
     } = this.props;
 
     const [Welcome, ...componentItems] = customItems;
-    const hierarchy = groupBy(componentItems, 'parent');
-    const groups = forEach(hierarchy, (group, parent) => {
+
+    const hierarchy = groupBy(isFiltering ? filteredComps : componentItems, 'parent');
+    forEach(hierarchy, (group, parent) => {
       hierarchy[parent] = groupBy(group, 'group');
     });
+
     const isActive = currentRoute === Welcome.key;
 
     return (
@@ -122,15 +153,23 @@ class CustomDrawer extends Component {
         <styled.SafeView
           forceInset={{ top: 'always', horizontal: 'never' }}
         >
-          <ItemComponent
-            isActive={currentRoute === Welcome.key}
-            title={Welcome.title}
-            onPress={() => {
-              storeLastRoute(Welcome.routeName);
-              navigation.navigate({ routeName: Welcome.routeName })
-            }}
+          <styled.FilterComps
+            placeholder="filter..."
+            value={filterValue}
+            onChangeText={this.filterStyleguides}
           />
-          {ComponentsGroup(hierarchy, this.props)}
+
+          {!isFiltering && (
+            <ItemComponent
+              isActive={currentRoute === Welcome.key}
+              title={Welcome.title}
+              onPress={() => {
+                storeLastRoute(Welcome.routeName);
+                navigation.navigate({ routeName: Welcome.routeName })
+              }}
+            />
+          )}
+          {ComponentsGroup(hierarchy, this.props, isFiltering)}
         </styled.SafeView>
       </ScrollView>
     );

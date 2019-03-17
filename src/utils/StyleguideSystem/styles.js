@@ -60,7 +60,7 @@ export const Parent = styled.View`
   ` : ''}
 `;
 
-export const ParentSection = styled.View`
+export const ParentSection = styled.TouchableOpacity`
   background-color: ${({ sectionColor }) => sectionColor};
   height: ${({ sectionHeight }) => sectionHeight};
   padding: 3px 12px 3px 20px;
@@ -70,4 +70,13 @@ export const ParentName = styled.Text`
   color: ${baseColors.snowWhite};
   font-size: ${({ sectionFontSize }) => sectionFontSize};
   font-weight: bold;
+`;
+
+export const FilterComps = styled.TextInput`
+  color: ${baseColors.darkGray};
+  font-size: 24px;
+  margin: 8px 0 16px;
+  padding: 0 16px 8px;
+  border-bottom-width: 1px;
+  border-bottom-color: ${baseColors.mediumGray};
 `;

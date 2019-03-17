@@ -4,15 +4,15 @@ import * as styled from './styles';
 
 class DrawerSection extends Component {
   state = {
-    isCollapsed: false,
+    isCollapsed: true,
   };
 
-  componentDidMount() {
+  componentDidUpdate(prevProps) {
+    const { shouldCollapse: prevShouldCollapse } = prevProps;
     const { shouldCollapse } = this.props;
-    const { isCollapsed } = this.state;
 
-    if (shouldCollapse !== isCollapsed) {
-      this.toggleCollapsed();
+    if (shouldCollapse !== prevShouldCollapse) {
+      this.setState({ isCollapsed: shouldCollapse });
     }
   }
 
@@ -41,10 +41,10 @@ class DrawerSection extends Component {
         <styled.ParentSection
           sectionColor={sectionColor}
           sectionHeight={sectionHeight}
+          onPress={this.toggleCollapsed}
         >
           <styled.ParentName
             sectionFontSize={sectionFontSize}
-            onPress={this.toggleCollapsed}
           >
             {title}
           </styled.ParentName>
