@@ -5,8 +5,14 @@ const components = [];
 const Styleguide = {
 
   add: (config) => {
-    const { id, group, title } = config;
-    components.push({ id, group, title, component: guideSystem(config) });
+    const { id, group, title, parent } = config;
+    components.push({
+      id,
+      parent,
+      group,
+      title,
+      component: guideSystem(config),
+    });
   },
 
   uiComponents: () => {

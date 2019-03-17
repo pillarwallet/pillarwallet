@@ -14,12 +14,13 @@
     ],
     [
       "babel-plugin-styled-components"
-    ]
+    ],
   ],
   "env": {
     "development": {
       "plugins": [
-        "babel-plugin-styled-components"
+        "babel-plugin-styled-components",
+        "transform-inline-environment-variables"
       ]
     }
   }

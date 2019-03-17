@@ -96,11 +96,16 @@ const authFlow = createStackNavigator({
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
 
-const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
-  [STYLEGUIDE_SYSTEM_FLOW]: StyleguideFlow,
+const RootNavigation = {
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
-});
+};
+
+if (process.env['STYLEGUIDE']) {
+  RootNavigation[STYLEGUIDE_SYSTEM_FLOW] = StyleguideFlow;
+}
+
+const RootSwitch: SwitchNavigatorType = createSwitchNavigator(RootNavigation);
 
 export default RootSwitch;

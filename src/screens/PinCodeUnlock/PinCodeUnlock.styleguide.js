@@ -5,6 +5,7 @@ import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import Scene from './scene.js';
 
 Styleguide.add({
+  parent: 'SCREEN',
   group: 'Pin Code Unlock',
   id: 'PIN_CODE_UNLOCK_DEFAULT',
   title: 'Default',
@@ -17,6 +18,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'SCREEN',
   group: 'Pin Code Unlock',
   id: 'PIN_CODE_UNLOCK_INVALID_PASSWORD',
   title: 'Invalid Password',
@@ -30,6 +32,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'SCREEN',
   group: 'Pin Code Unlock',
   id: 'PIN_CODE_UNLOCK_DECRYPTING',
   title: 'Decrypting wallet',

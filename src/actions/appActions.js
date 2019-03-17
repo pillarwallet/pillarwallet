@@ -46,9 +46,10 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
-    navigate(NavigationActions.navigate({ routeName: STYLEGUIDE_SYSTEM_FLOW }));
-    return;
-    console.log('end navigate')
+    if (process.env['STYLEGUIDE']) {
+      navigate(NavigationActions.navigate({ routeName: STYLEGUIDE_SYSTEM_FLOW }));
+      return;
+    }
 
     const { appSettings = {} } = await storage.get('app_settings');
     const { wallet } = await storage.get('wallet');

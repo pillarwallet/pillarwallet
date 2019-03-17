@@ -1,9 +1,38 @@
-import React from 'react';
-import { ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import React, { Component } from 'react';
+import {
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  AsyncStorage,
+} from 'react-native';
 import { DrawerItems } from 'react-navigation';
+import capitalize from 'lodash.capitalize';
+import forEach from 'lodash.foreach';
 import map from 'lodash.map';
 import groupBy from 'lodash.groupby';
+import { STYLEGUIDE_SYSTEM } from 'constants/navigationConstants';
 import * as styled from './styles';
+
+storeLastRoute = async (currentRoute) => {
+  try {
+    await AsyncStorage.setItem('LAST_ROUTE', currentRoute);
+  } catch (error) {
+    // Error saving data
+  }
+};
+
+retrieveLastRoute = async (currentRoute, navigation) => {
+  try {
+    const value = await AsyncStorage.getItem('LAST_ROUTE');
+    const lastRoute = value || STYLEGUIDE_SYSTEM;
+
+    if (currentRoute !== lastRoute) {
+      navigation.navigate({ routeName: lastRoute })
+    }
+  } catch (error) {
+  }
+};
 
 function ItemComponent(props) {
   return (
@@ -20,62 +49,93 @@ function ItemComponent(props) {
   );
 }
 
-function ComponentsGroup(groups, props) {
+function ComponentsGroup(hierarchy, props) {
   const {
     activeItemKey: currentRoute
   } = props;
 
-  return map(groups, (componentItem, groupName) => (
-    <styled.Group key={`group-item-${groupName}`}>
-      <styled.GroupSection>
-        <styled.GroupName
-          key={`group-item-${groupName}`}
+  return map(hierarchy, (parentGroup, parentName) => (
+    <styled.Parent key={`parent-item-${parentName}`}>
+      <styled.ParentSection>
+        <styled.ParentName
+          key={`parent-name-${parentName}`}
           onPress={() => {
-            console.log(groupName)
+            console.log(parentName)
           }}
         >
-          {groupName}
-        </styled.GroupName>
-      </styled.GroupSection>
+          {capitalize(parentName)}
+        </styled.ParentName>
+      </styled.ParentSection>
 
-      {map(componentItem, ({ key, title, routeName }) => (
-        <ItemComponent
-          hasPadding
-          key={`view-item-${key}`}
-          isActive={currentRoute === key}
-          title={title}
-          onPress={() => props.navigation.navigate({ routeName })}
-        />
+      {map(parentGroup, (componentItem, groupName) => (
+        <styled.Group key={`group-item-${groupName}`}>
+          <styled.GroupSection>
+            <styled.GroupName
+              key={`group-name-${groupName}`}
+              onPress={() => {
+                console.log(groupName)
+              }}
+            >
+              {groupName}
+            </styled.GroupName>
+          </styled.GroupSection>
+
+          {map(componentItem, ({ key, title, routeName }) => (
+            <ItemComponent
+              hasPadding
+              key={`view-item-${key}`}
+              isActive={currentRoute === key}
+              title={title}
+              onPress={() => {
+                storeLastRoute(routeName);
+                props.navigation.navigate({ routeName })
+              }}
+            />
+          ))}
+        </styled.Group>
       ))}
-    </styled.Group>
+    </styled.Parent>
   ));
 }
 
-const CustomDrawer = (props) => {
-  const {
-    customItems,
-    activeItemKey: currentRoute
-  } = props;
-  const [Welcome, ...componentItems] = customItems;
-  const groups = groupBy(componentItems, 'group');
-  const isActive = currentRoute === Welcome.key;
+class CustomDrawer extends Component {
+  componentDidMount() {
+    const { activeItemKey: currentRoute, navigation } = this.props;
+    retrieveLastRoute(currentRoute, navigation);
+  }
 
-  return (
-    <ScrollView>
-      <styled.SafeView
-        forceInset={{ top: 'always', horizontal: 'never' }}
-      >
-        <ItemComponent
-          isActive={currentRoute === Welcome.key}
-          title={Welcome.title}
-          onPress={() => props.navigation.navigate({
-            routeName: Welcome.routeName,
-          })}
-        />
-        {ComponentsGroup(groups, props)}
-      </styled.SafeView>
-    </ScrollView>
-  );
-};
+  render() {
+    const {
+      customItems,
+      activeItemKey: currentRoute,
+      navigation,
+    } = this.props;
+
+    const [Welcome, ...componentItems] = customItems;
+    const hierarchy = groupBy(componentItems, 'parent');
+    const groups = forEach(hierarchy, (group, parent) => {
+      hierarchy[parent] = groupBy(group, 'group');
+    });
+    const isActive = currentRoute === Welcome.key;
+
+    return (
+      <ScrollView>
+        <styled.SafeView
+          forceInset={{ top: 'always', horizontal: 'never' }}
+        >
+          <ItemComponent
+            isActive={currentRoute === Welcome.key}
+            title={Welcome.title}
+            onPress={() => {
+              storeLastRoute(Welcome.routeName);
+              navigation.navigate({ routeName: Welcome.routeName })
+            }}
+          />
+          {ComponentsGroup(hierarchy, this.props)}
+        </styled.SafeView>
+      </ScrollView>
+    );
+  }
+}
 
 export default CustomDrawer;

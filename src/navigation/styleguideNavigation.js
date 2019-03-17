@@ -19,12 +19,13 @@ function styleGuides() {
 }
 
 function drawerItems() {
-  return components.map(({ id, group = 'UNGROUPED', title }) => (
+  return components.map(({ id, group = 'UNGROUPED', title, parent = 'NOPARENT' }) => (
     {
       key: id,
       routeName: id,
       group,
       title,
+      parent,
     }
   ));
 }

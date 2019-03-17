@@ -6,6 +6,7 @@ import { baseColors } from 'utils/variables';
 import Header from './Header.js';
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_DEFAULT',
   title: 'Default',
@@ -17,6 +18,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_TITLE_PRESS',
   title: 'Press Title',
@@ -29,6 +31,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_CENTER_TITLE',
   title: 'Center Title',
@@ -41,6 +44,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_WRAP',
   title: 'Wrap Title',
@@ -54,6 +58,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_DOT_COLOR',
   title: 'Dot Color',
@@ -66,6 +71,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NO_DOT',
   title: 'No Dot',
@@ -79,6 +85,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NEXT',
   title: 'Next Button',
@@ -92,6 +99,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NEXT_ICON',
   title: 'Next Icon',
@@ -105,6 +113,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_DEFAULT_BACK_ICON',
   title: 'Back Icon',
@@ -117,6 +126,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_CUSTOM_BACK_ICON',
   title: 'Custom Back Icon',
@@ -130,6 +140,7 @@ Styleguide.add({
 });
 
 Styleguide.add({
+  parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_ON_CLOSE',
   title: 'On Close',
