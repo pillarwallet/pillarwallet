@@ -73,13 +73,11 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     try {
       let wallet;
       if (!touchID) {
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(
-          JSON.stringify(encryptedWallet),
-          saltedPin,
-          { mnemonic: true });
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       } else {
         wallet = { ...encryptedWallet };
       }
+
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
