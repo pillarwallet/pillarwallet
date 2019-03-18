@@ -74,7 +74,10 @@ class PinCodeUnlock extends React.Component<Props> {
   showBiometricLogin() {
     const { login } = this.props;
     TouchID.authenticate('Biometric login')
-      .then(() => login('', true))
+      .then(() => {
+        removeAppStateChangeListener(this.handleAppStateChange);
+        login('', true);
+      })
       .catch(() => null);
   }
 
