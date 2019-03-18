@@ -30,7 +30,15 @@ import {
   GENERATE_ENCRYPTED_WALLET,
   DECRYPTED,
 } from 'constants/walletConstants';
-import { APP_FLOW, AUTH_FLOW, ONBOARDING_FLOW, ASSETS, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import {
+  APP_FLOW,
+  AUTH_FLOW,
+  ONBOARDING_FLOW,
+  ASSETS,
+  CHAT,
+  CHAT_LIST,
+  PIN_CODE_UNLOCK,
+} from 'constants/navigationConstants';
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -40,7 +48,7 @@ import { navigate, getNavigationState, getNavigationPathAndParamsState } from 's
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
 import { toastWalletBackup } from 'utils/toasts';
-import { updateOAuthTokensCB } from 'utils/oAuth';
+import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
 import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
@@ -51,7 +59,7 @@ const Crashlytics = firebase.crashlytics();
 const storage = Storage.getInstance('db');
 const chat = new ChatService();
 
-export const loginAction = (pin: string) => {
+export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
@@ -63,10 +71,15 @@ export const loginAction = (pin: string) => {
     await delay(100);
     const saltedPin = getSaltedPin(pin);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(
-        JSON.stringify(encryptedWallet),
-        saltedPin,
-        { mnemonic: true });
+      let wallet;
+      if (!touchID) {
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(
+          JSON.stringify(encryptedWallet),
+          saltedPin,
+          { mnemonic: true });
+      } else {
+        wallet = { ...encryptedWallet };
+      }
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
@@ -79,7 +92,13 @@ export const loginAction = (pin: string) => {
           fcmToken,
         };
         const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
-        api.init(wallet.privateKey, updateOAuth, oAuthTokens);
+        const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
+        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+        if (onLoginSuccess && wallet.privateKey) {
+          let { privateKey: privateKeyParam } = wallet;
+          privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
+          await onLoginSuccess(privateKeyParam);
+        }
         api.setUsername(user.username);
         const userInfo = await api.userInfo(user.walletId);
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
@@ -88,7 +107,7 @@ export const loginAction = (pin: string) => {
         dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
         dispatch(saveDbAction('user', { user }, true));
       } else {
-        api.init(wallet.privateKey);
+        api.init();
       }
       Crashlytics.setUserIdentifier(user.username);
       dispatch({
@@ -98,12 +117,15 @@ export const loginAction = (pin: string) => {
 
       await storage.viewCleanup().catch(() => null);
 
+      const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
         payload: {
-          address: wallet.address,
+          address,
+          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
         },
       });
+
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
       }
@@ -231,9 +253,19 @@ export const resetIncorrectPasswordAction = () => {
   };
 };
 
-export const lockScreenAction = () => {
+export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: string) => {
   return async () => {
-    navigate(NavigationActions.navigate({ routeName: AUTH_FLOW }));
+    navigate(NavigationActions.navigate({
+      routeName: AUTH_FLOW,
+      params: {},
+      action: NavigationActions.navigate({
+        routeName: PIN_CODE_UNLOCK,
+        params: {
+          onLoginSuccess,
+          errorMessage,
+        },
+      }),
+    }));
   };
 };
 

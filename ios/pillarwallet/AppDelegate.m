@@ -67,5 +67,11 @@
   return [RCTLinkingManager application:application openURL:url
                       sourceApplication:sourceApplication annotation:annotation];
 }
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+  [application registerUserNotificationSettings:
+   [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeBadge | UIUserNotificationTypeSound | UIUserNotificationTypeAlert)
+                                     categories:nil]];
+  [application registerForRemoteNotifications];
+}
 
 @end

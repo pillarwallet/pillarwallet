@@ -49,6 +49,7 @@
     "no-confusing-arrow": ["off"],
     "no-plusplus": ["off"],
     "function-paren-newline": [0],
-    "no-param-reassign": ["off"]
+    "no-param-reassign": ["off"],
+    "react/default-props-match-prop-types": ["off"]
   }
 }

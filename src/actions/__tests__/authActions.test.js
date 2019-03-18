@@ -74,7 +74,13 @@ describe('Wallet actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
-      { type: DECRYPT_WALLET, payload: mockWallet },
+      {
+        type: DECRYPT_WALLET,
+        payload: {
+          ...mockWallet,
+          privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
+        },
+      },
     ];
 
     const pin = '123456';
