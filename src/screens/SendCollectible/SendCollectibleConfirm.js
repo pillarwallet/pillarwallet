@@ -191,8 +191,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
               onLayout={(e) => {
                 const scrollPosition = e.nativeEvent.layout.y + 180;
                 this.setState({ scrollPos: scrollPosition });
-              }
-              }
+              }}
             />
             }
           </ScrollWrapper>
