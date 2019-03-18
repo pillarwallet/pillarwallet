@@ -74,7 +74,11 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       if (!touchID) {
         wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       } else {
-        wallet = { ...encryptedWallet };
+        let walletAddress = encryptedWallet.address;
+        if (walletAddress.indexOf('0x') !== 0) {
+          walletAddress = `0x${walletAddress}`;
+        }
+        wallet = { ...encryptedWallet, address: walletAddress };
       }
 
       let { user = {} } = await storage.get('user');
