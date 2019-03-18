@@ -35,6 +35,7 @@ type Props = {
 type State = {
   note: ?string,
   rinkebyETH: string,
+  scrollPos: number,
 };
 
 const FooterWrapper = styled.View`
@@ -56,14 +57,17 @@ const Value = styled(BoldText)`
 class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
   receiver: string;
+  scroll: Object;
 
   constructor(props) {
     super(props);
+    this.scroll = React.createRef();
     this.assetData = this.props.navigation.getParam('assetData', {});
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.state = {
       note: null,
       rinkebyETH: '',
+      scrollPos: 0,
     };
   }
 
@@ -82,7 +86,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const { wallet } = this.props;
     const rinkebyETHBlanace = await fetchRinkebyETHBalance(wallet.address);
     this.setState({ rinkebyETH: rinkebyETHBlanace });
-  }
+  };
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
@@ -123,7 +127,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   render() {
     const { contacts, session, gasInfo } = this.props;
     const { name } = this.assetData;
-    const { rinkebyETH } = this.state;
+    const { rinkebyETH, scrollPos } = this.state;
 
     const to = this.receiver;
     const txFeeInWei = this.getTxFeeInWei();
@@ -139,7 +143,14 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             onBack={() => this.props.navigation.goBack(null)}
             title="review and confirm"
           />
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper
+            regularPadding
+            disableAutomaticScroll
+            innerRef={ref => { this.scroll = ref; }}
+            onKeyboardWillShow={() => {
+              this.scroll.scrollToPosition(0, scrollPos);
+            }}
+          >
             <LabeledRow>
               <Label>Collectible</Label>
               <Value>{name}</Value>
@@ -177,6 +188,11 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
               labelBigger
               noBorder
               keyboardAvoidance
+              onLayout={(e) => {
+                const scrollPosition = e.nativeEvent.layout.y + 180;
+                this.setState({ scrollPos: scrollPosition });
+              }
+              }
             />
             }
           </ScrollWrapper>
