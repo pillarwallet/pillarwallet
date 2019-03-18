@@ -39,6 +39,7 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
+  connectionKeyPairs: Object,
 }
 
 class PinCodeUnlock extends React.Component<Props> {
@@ -54,8 +55,8 @@ class PinCodeUnlock extends React.Component<Props> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics } = this.props;
-    if (useBiometrics && !this.errorMessage) {
+    const { useBiometrics, connectionKeyPairs: { data, lastConnectionKeyIndex } } = this.props;
+    if (useBiometrics && !this.errorMessage && data.length > 20 && lastConnectionKeyIndex > -1) {
       this.showBiometricLogin();
     }
   }
@@ -122,9 +123,11 @@ class PinCodeUnlock extends React.Component<Props> {
 const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
+  connectionKeyPairs,
 }) => ({
   wallet,
   useBiometrics,
+  connectionKeyPairs,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({

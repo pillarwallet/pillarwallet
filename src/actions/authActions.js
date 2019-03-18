@@ -73,7 +73,11 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     try {
       let wallet;
       if (!touchID) {
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(
+          JSON.stringify(encryptedWallet),
+          saltedPin,
+          { mnemonic: true },
+        );
       } else {
         wallet = { ...encryptedWallet };
       }
