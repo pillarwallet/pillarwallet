@@ -71,14 +71,18 @@ export default function SDKWrapper() {
   this.pillarWalletSdk = null;
 }
 
-SDKWrapper.prototype.init = function (privateKey: string, updateOAuth?: ?Function, oAuthTokensStored?: ?OAuthTokens) {
+SDKWrapper.prototype.init = function (
+  updateOAuth?: ?Function,
+  oAuthTokensStored?: ?OAuthTokens,
+  onOAuthTokensFailed?: ?Function,
+) {
   this.pillarWalletSdk = new PillarSdk({
-    privateKey: privateKey.slice(2),
     apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
     notificationsUrl: NOTIFICATIONS_URL,
     investmentsUrl: INVESTMENTS_URL,
     updateOAuthFn: updateOAuth,
     oAuthTokens: oAuthTokensStored,
+    tokensFailedCallbackFn: onOAuthTokensFailed,
   });
 };
 
@@ -100,13 +104,14 @@ SDKWrapper.prototype.registerOnBackend = function (fcm: string, username: string
     });
 };
 
-SDKWrapper.prototype.registerOnAuthServer = function (fcm: string, username: string) {
+SDKWrapper.prototype.registerOnAuthServer = function (walletPrivateKey: string, fcm: string, username: string) {
+  const privateKey = walletPrivateKey.indexOf('0x') === 0 ? walletPrivateKey.slice(2) : walletPrivateKey;
   return Promise.resolve()
     .then(() => {
       return this.pillarWalletSdk.wallet.registerAuthServer({
+        privateKey,
         fcmToken: fcm,
         username,
-        privateKey: PillarSdk.accessKeys.privateKey,
       });
     })
     .then(({ data }) => data)

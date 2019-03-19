@@ -31,6 +31,7 @@ import {
   IMPORT_WALLET_TWORDS_PHRASE,
   RESET_WALLET_IMPORT,
   BACKUP_WALLET,
+  REMOVE_PRIVATE_KEY,
 } from 'constants/walletConstants';
 import {
   LEGAL_TERMS,
@@ -47,7 +48,7 @@ export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
     try {
       const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
 
-      api.init(importedWallet.privateKey);
+      api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
       if (addressValidationResponse.walletId) {
@@ -87,7 +88,7 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
 
-      api.init(importedWallet.privateKey);
+      api.init();
       let apiUser = {};
       const addressValidationResponse = await api.validateAddress(importedWallet.address);
       if (addressValidationResponse.walletId) {
@@ -191,5 +192,11 @@ export const backupWalletAction = () => {
     dispatch({
       type: BACKUP_WALLET,
     });
+  };
+};
+
+export const removePrivateKeyFromMemoryAction = () => {
+  return async (dispatch: Function) => {
+    dispatch({ type: REMOVE_PRIVATE_KEY });
   };
 };

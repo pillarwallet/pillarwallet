@@ -87,7 +87,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-color-matrix-image-filters|react-native-htmlview|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions|react-native-image-capinsets)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-touch-id|react-native-color-matrix-image-filters|react-native-htmlview|react-native-video|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions|react-native-image-capinsets)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -101,7 +101,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
-    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.20.1300",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.21.1334",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
@@ -112,6 +112,7 @@
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
     "ethers": "https://github.com/pillarwallet/ethers.js#master",
+    "events": "^1.0.0",
     "https-browserify": "~0.0.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.debounce": "^4.0.8",
@@ -168,6 +169,7 @@
     "react-native-svg": "^7.0.2",
     "react-native-swipeout": "^2.3.6",
     "react-native-tcp": "^3.2.1",
+    "react-native-touch-id": "^4.3.0",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "2.11.2",
