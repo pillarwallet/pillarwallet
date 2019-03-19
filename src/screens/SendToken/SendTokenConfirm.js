@@ -41,6 +41,7 @@ type Props = {
 
 type State = {
   note: ?string,
+  scrollPos: number,
 };
 
 const FooterWrapper = styled.View`
@@ -60,10 +61,14 @@ const Value = styled(BoldText)`
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
+  scroll: Object;
+
   constructor(props) {
     super(props);
+    this.scroll = React.createRef();
     this.state = {
       note: null,
+      scrollPos: 0,
     };
   }
 
@@ -81,6 +86,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   render() {
+    const { scrollPos } = this.state;
     const { contacts, session, navigation } = this.props;
     const {
       amount,
@@ -98,7 +104,14 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBack={() => this.props.navigation.goBack(null)}
             title="send"
           />
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper
+            regularPadding
+            disableAutomaticScroll
+            innerRef={ref => { this.scroll = ref; }}
+            onKeyboardWillShow={() => {
+              this.scroll.scrollToPosition(0, scrollPos);
+            }}
+          >
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
               <Label>Amount</Label>
@@ -132,6 +145,11 @@ class SendTokenContacts extends React.Component<Props, State> {
               labelBigger
               noBorder
               keyboardAvoidance
+              onLayout={(e) => {
+                const scrollPosition = e.nativeEvent.layout.y + 180;
+                this.setState({ scrollPos: scrollPosition });
+                }
+              }
             />
             }
           </ScrollWrapper>
