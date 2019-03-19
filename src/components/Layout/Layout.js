@@ -45,6 +45,9 @@ type ScrollWrapperProps = {
   children?: React.Node,
   regularPadding?: boolean,
   color?: string,
+  disableAutomaticScroll?: boolean,
+  onKeyboardWillShow?: Function,
+  innerRef?: Object,
 };
 
 export const Center = styled.View`
@@ -103,6 +106,9 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       regularPadding={props.regularPadding}
       color={props.color}
       enableOnAndroid
+      enableAutomaticScroll={!props.disableAutomaticScroll}
+      innerRef={props.innerRef}
+      onKeyboardWillShow={props.onKeyboardWillShow}
     >
       {props.children}
     </KAScrollView>
