@@ -159,7 +159,6 @@ const AbsoluteSpinner = styled(Spinner)`
 `;
 
 class TextInput extends React.Component<Props, State> {
-  rnInput: Object;
   multilineInputField: Object;
 
   state = {
@@ -174,8 +173,6 @@ class TextInput extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-
-    this.rnInput = React.createRef();
     this.multilineInputField = React.createRef();
   }
 
