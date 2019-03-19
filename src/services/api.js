@@ -40,6 +40,7 @@ import {
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
+import { getLimitedData } from 'utils/opensea';
 
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
@@ -243,17 +244,14 @@ SDKWrapper.prototype.assetsSearch = function (query: string, walletId: string) {
 };
 
 SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
-  return Promise.resolve()
-    .then(() => fetch(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        'X-API-KEY': OPEN_SEA_API_KEY,
-      },
-    }))
-    .then(data => data.json())
-    .catch(() => ({ error: true }));
+  return new Promise((resolve, reject) => {
+    getLimitedData(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`,
+      [], 300, 0, 'assets', resolve, reject);
+  })
+    .then(response => {
+      return { assets: response };
+    })
+    .catch(() => { return { error: true }; });
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {

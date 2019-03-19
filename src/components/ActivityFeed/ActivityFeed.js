@@ -20,9 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
-import merge from 'lodash.merge';
-import keyBy from 'lodash.keyby';
-import values from 'lodash.values';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
@@ -157,6 +154,22 @@ class ActivityFeed extends React.Component<Props, State> {
         };
       });
     return uniqBy(concatedHistory, 'hash');
+  }
+
+  mapOpenSeaAndBCXTransactionsHistory(openSeaHistory, BCXHistory) {
+    const concatedCollectiblesHistory = openSeaHistory
+      .map(({ hash, ...rest }) => {
+        const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
+          return hash.toUpperCase() === bcxHash.toUpperCase();
+        });
+
+        return {
+          hash,
+          ...rest,
+          ...historyEntry,
+        };
+      });
+    return uniqBy(concatedCollectiblesHistory, 'hash');
   }
 
   getRightLabel = (type: string) => {
@@ -328,14 +341,15 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const collectibleTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
-    // merging BCX and OpenSea transaction data by hash
-    const mergedCollectibleTxHistory = values(
-      merge({}, keyBy(collectibleTxHistory, 'hash'), keyBy(collectiblesHistory, 'hash')));
+
+    // extending OpenSea transaction data with BCX data
+    const extendedCollectiblesTransactionData =
+      this.mapOpenSeaAndBCXTransactionsHistory(collectiblesHistory, collectibleTxHistory);
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(tokenTxHistory, mappedContacts, TRANSACTION_EVENT);
     const mappedCollectiblesHistory =
-      this.mapTransactionsHistory(mergedCollectibleTxHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
+      this.mapTransactionsHistory(extendedCollectiblesTransactionData, mappedContacts, COLLECTIBLE_TRANSACTION);
     const chatNotifications = [];
     /* chats.chats
       .map((
