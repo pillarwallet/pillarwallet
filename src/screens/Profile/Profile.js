@@ -23,6 +23,7 @@ import { FlatList, Alert, ScrollView, Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import TouchID from 'react-native-touch-id';
 import {
   CHANGE_PIN_FLOW,
   REVEAL_BACKUP_PHRASE,
@@ -37,8 +38,10 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import SystemInfoModal from 'components/SystemInfoModal';
 import Toast from 'components/Toast';
 import CountrySelect from 'components/CountrySelect';
+import CheckPin from 'components/CheckPin';
 import {
   saveBaseFiatCurrencyAction,
+  changeUseBiometricsAction,
   updateAppSettingsAction,
 } from 'actions/appSettingsActions';
 import { updateUserAction } from 'actions/userActions';
@@ -47,6 +50,7 @@ import { resetIncorrectPasswordAction, lockScreenAction, logoutAction } from 'ac
 import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
+import { delay } from 'utils/common';
 import ProfileSettingsItem from './ProfileSettingsItem';
 import ProfileForm from './ProfileForm';
 import SettingsModalTitle from './SettingsModalTitle';
@@ -112,6 +116,8 @@ type Props = {
   lockScreen: () => Function,
   logoutUser: () => Function,
   backupStatus: Object,
+  useBiometrics: ?boolean,
+  changeUseBiometrics: (value: boolean) => Function,
 }
 
 type State = {
@@ -119,17 +125,33 @@ type State = {
   showTermsConditionsModal: boolean,
   showPrivacyPolicyModal: boolean,
   showSystemInfoModal: boolean,
+  showCheckPinModal: boolean,
+  showBiometricsSelector: boolean,
 }
 
 class Profile extends React.Component<Props, State> {
+  static defaultProps = {
+    useBiometrics: false,
+  };
+
   constructor(props: Props) {
     super(props);
+    const { navigation } = this.props;
+    const visibleModal = navigation.getParam('visibleModal', null);
     this.state = {
-      visibleModal: null,
+      visibleModal,
       showTermsConditionsModal: false,
       showPrivacyPolicyModal: false,
       showSystemInfoModal: false,
+      showCheckPinModal: false,
+      showBiometricsSelector: false,
     };
+  }
+
+  componentDidMount() {
+    TouchID.isSupported({})
+      .then(() => this.setState({ showBiometricsSelector: true }))
+      .catch(() => null);
   }
 
   clearLocalStorage() {
@@ -148,6 +170,23 @@ class Profile extends React.Component<Props, State> {
 
   togglePrivacyPolicyModal = () => {
     this.setState({ showPrivacyPolicyModal: !this.state.showPrivacyPolicyModal });
+  };
+
+  handleChangeUseBiometrics = (value) => {
+    const { changeUseBiometrics } = this.props;
+    changeUseBiometrics(value);
+    this.setState({ showCheckPinModal: false }, () => {
+      const message = value ? 'Biometric login enabled' : 'Biometric login disabled';
+      delay(500)
+        .then(() => Toast.show({ title: 'Success', type: 'success', message }))
+        .catch(() => null);
+    });
+  };
+
+  handleCheckPinModalClose = () => {
+    const { resetIncorrectPassword } = this.props;
+    resetIncorrectPassword();
+    this.setState({ showCheckPinModal: false });
   };
 
   handleUserFieldUpdate = (field: Object) => {
@@ -207,6 +246,7 @@ class Profile extends React.Component<Props, State> {
       hasDBConflicts,
       repairStorage,
       backupStatus,
+      useBiometrics,
     } = this.props;
 
     const {
@@ -218,6 +258,8 @@ class Profile extends React.Component<Props, State> {
       showTermsConditionsModal,
       showPrivacyPolicyModal,
       showSystemInfoModal,
+      showCheckPinModal,
+      showBiometricsSelector,
     } = this.state;
 
     const isWalletBackedUp = isImported || isBackedUp;
@@ -379,6 +421,29 @@ class Profile extends React.Component<Props, State> {
               onPress={() => this.props.navigation.navigate(CHANGE_PIN_FLOW)}
             />
 
+            {showBiometricsSelector &&
+            <ProfileSettingsItem
+              key="useBiometrics"
+              label="Biometric Login"
+              value={useBiometrics}
+              toggle
+              onPress={() => this.setState({ showCheckPinModal: true })}
+            />
+            }
+
+            <SlideModal
+              isVisible={showCheckPinModal}
+              onModalHide={this.handleCheckPinModalClose}
+              title="enter pincode"
+              centerTitle
+              fullScreen
+              showHeader
+            >
+              <Wrapper flex={1}>
+                <CheckPin onPinValid={() => this.handleChangeUseBiometrics(!useBiometrics)} />
+              </Wrapper>
+            </SlideModal>
+
             <ListSeparator>
               <SubHeading>APPEARANCE SETTINGS</SubHeading>
             </ListSeparator>
@@ -484,7 +549,7 @@ class Profile extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   user: { data: user },
-  appSettings: { data: { baseFiatCurrency }, data: appSettings },
+  appSettings: { data: { useBiometrics = false, baseFiatCurrency }, data: appSettings },
   notifications: { intercomNotificationsCount },
   session: { data: { hasDBConflicts } },
   wallet: { backupStatus },
@@ -495,6 +560,7 @@ const mapStateToProps = ({
   appSettings,
   hasDBConflicts,
   backupStatus,
+  useBiometrics,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
@@ -506,6 +572,9 @@ const mapDispatchToProps = (dispatch: Function) => ({
   updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
   lockScreen: () => dispatch(lockScreenAction()),
   logoutUser: () => dispatch(logoutAction()),
+  changeUseBiometrics: (value) => {
+    dispatch(changeUseBiometricsAction(value));
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

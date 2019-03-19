@@ -7,6 +7,7 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.google.android.cameraview.AspectRatio;
+import com.google.android.cameraview.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,9 @@ public class CameraViewManager extends ViewGroupManager<RNCameraView> {
     EVENT_ON_BARCODES_DETECTED("onGoogleVisionBarcodesDetected"),
     EVENT_ON_FACE_DETECTION_ERROR("onFaceDetectionError"),
     EVENT_ON_BARCODE_DETECTION_ERROR("onGoogleVisionBarcodeDetectionError"),
-    EVENT_ON_TEXT_RECOGNIZED("onTextRecognized");
+    EVENT_ON_TEXT_RECOGNIZED("onTextRecognized"),
+    EVENT_ON_PICTURE_TAKEN("onPictureTaken"),
+    EVENT_ON_PICTURE_SAVED("onPictureSaved");
 
     private final String mName;
 
@@ -99,6 +102,11 @@ public class CameraViewManager extends ViewGroupManager<RNCameraView> {
     view.setWhiteBalance(whiteBalance);
   }
 
+  @ReactProp(name = "pictureSize")
+  public void setPictureSize(RNCameraView view, String size) {
+    view.setPictureSize(size.equals("None") ? null : Size.parse(size));
+  }
+
   @ReactProp(name = "barCodeTypes")
   public void setBarCodeTypes(RNCameraView view, ReadableArray barCodeTypes) {
     if (barCodeTypes == null) {
@@ -154,6 +162,11 @@ public class CameraViewManager extends ViewGroupManager<RNCameraView> {
   @ReactProp(name = "googleVisionBarcodeType")
   public void setGoogleVisionBarcodeType(RNCameraView view, int barcodeType) {
     view.setGoogleVisionBarcodeType(barcodeType);
+  }
+
+  @ReactProp(name = "googleVisionBarcodeMode")
+  public void setGoogleVisionBarcodeMode(RNCameraView view, int barcodeMode) {
+    view.setGoogleVisionBarcodeMode(barcodeMode);
   }
 
   @ReactProp(name = "textRecognizerEnabled")

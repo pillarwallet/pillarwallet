@@ -28,23 +28,21 @@ import { Label, BoldText } from 'components/Typography';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
-import type { TransactionPayload } from 'models/Transaction';
-import { sendAssetAction } from 'actions/assetsActions';
+import TextInput from 'components/TextInput';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import TextInput from '../../components/TextInput';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: Function,
   session: Object,
   contacts: Object[],
-}
+};
 
 type State = {
-  note: ?string
-}
+  note: ?string,
+  scrollPos: number,
+};
 
 const FooterWrapper = styled.View`
   flex-direction: row;
@@ -63,10 +61,14 @@ const Value = styled(BoldText)`
 `;
 
 class SendTokenContacts extends React.Component<Props, State> {
+  scroll: Object;
+
   constructor(props) {
     super(props);
+    this.scroll = React.createRef();
     this.state = {
       note: null,
+      scrollPos: 0,
     };
   }
 
@@ -84,6 +86,7 @@ class SendTokenContacts extends React.Component<Props, State> {
   }
 
   render() {
+    const { scrollPos } = this.state;
     const { contacts, session, navigation } = this.props;
     const {
       amount,
@@ -101,7 +104,14 @@ class SendTokenContacts extends React.Component<Props, State> {
             onBack={() => this.props.navigation.goBack(null)}
             title="send"
           />
-          <ScrollWrapper regularPadding>
+          <ScrollWrapper
+            regularPadding
+            disableAutomaticScroll
+            innerRef={ref => { this.scroll = ref; }}
+            onKeyboardWillShow={() => {
+              this.scroll.scrollToPosition(0, scrollPos);
+            }}
+          >
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
               <Label>Amount</Label>
@@ -135,6 +145,11 @@ class SendTokenContacts extends React.Component<Props, State> {
               labelBigger
               noBorder
               keyboardAvoidance
+              onLayout={(e) => {
+                const scrollPosition = e.nativeEvent.layout.y + 180;
+                this.setState({ scrollPos: scrollPosition });
+                }
+              }
             />
             }
           </ScrollWrapper>
@@ -157,8 +172,4 @@ const mapStateToProps = ({
   session,
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  sendAsset: (transaction: TransactionPayload, navigate) => dispatch(sendAssetAction(transaction, navigate)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SendTokenContacts);
+export default connect(mapStateToProps)(SendTokenContacts);

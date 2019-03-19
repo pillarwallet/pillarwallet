@@ -39,6 +39,8 @@ import icosReducer from './icosReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
+import collectiblesReducer from './collectiblesReducer';
+import deepLinkReducer from './deepLinkReducer';
 import badgesReducer from './badgesReducer';
 
 const appReducer = combineReducers({
@@ -58,6 +60,8 @@ const appReducer = combineReducers({
   txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
+  collectibles: collectiblesReducer,
+  deepLink: deepLinkReducer,
   badges: badgesReducer,
 });
 

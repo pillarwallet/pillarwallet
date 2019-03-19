@@ -30,6 +30,7 @@ import {
   fetchTransactionsHistoryAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import {
   getExistingChatsAction,
   getChatByContactAction,
@@ -47,6 +48,10 @@ import {
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SET_UNREAD_NOTIFICATIONS_STATUS,
   SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
+  CONNECTION,
+  SIGNAL,
+  BCX,
+  COLLECTIBLE,
 } from 'constants/notificationConstants';
 import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
 import {
@@ -56,10 +61,6 @@ import {
 import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
 import { MESSAGE_DISCONNECTED } from 'constants/invitationsConstants';
 import ChatService from 'services/chat';
-
-const CONNECTION = 'CONNECTION';
-const SIGNAL = 'SIGNAL';
-const BCX = 'BCX';
 
 const storage = Storage.getInstance('db');
 
@@ -74,6 +75,7 @@ const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
   [BCX]: HOME,
   [SIGNAL]: CHAT,
+  [COLLECTIBLE]: HOME,
 };
 
 function checkForSupportAlert(messageData) {
@@ -89,6 +91,7 @@ export const startListeningIntercomNotificationsAction = () => {
     const { user } = await storage.get('user');
     if (!user) return;
     const { username } = user;
+    Intercom.handlePushMessage();
     Intercom.registerIdentifiedUser({ userId: username });
     Intercom.updateUser({ user_id: username, name: username });
     intercomNotificationsListener = ({ count }) => dispatch({
@@ -98,6 +101,7 @@ export const startListeningIntercomNotificationsAction = () => {
     Intercom.getUnreadConversationCount()
       .then(count => ({ count }))
       .then(intercomNotificationsListener)
+      .then(() => Intercom.setInAppMessageVisibility('VISIBLE'))
       .catch(() => { });
     Intercom.addEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
   };
@@ -106,7 +110,6 @@ export const startListeningIntercomNotificationsAction = () => {
 export const stopListeningIntercomNotificationsAction = () => {
   return () => {
     if (!intercomNotificationsListener) return;
-    Intercom.logout();
     Intercom.removeEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
   };
 };
@@ -127,6 +130,7 @@ export const fetchAllNotificationsAction = () => {
   return async (dispatch: Function) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
     dispatch(fetchInviteNotificationsAction());
+    dispatch(fetchAllCollectiblesDataAction());
   };
 };
 
@@ -163,6 +167,9 @@ export const startListeningNotificationsAction = () => {
         dispatch(fetchTransactionsHistoryNotificationsAction());
         dispatch(fetchTransactionsHistoryAction(wallet.address, notification.asset));
         dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+      }
+      if (notification.type === COLLECTIBLE) {
+        dispatch(fetchAllCollectiblesDataAction());
       }
       if (notification.type === SIGNAL) {
         dispatch(getExistingChatsAction());
@@ -243,6 +250,9 @@ export const startListeningOnOpenNotificationAction = () => {
           dispatch(fetchTransactionsHistoryNotificationsAction());
           dispatch(fetchTransactionsHistoryAction(wallet.address, asset));
           dispatch(fetchAssetsBalancesAction(assets, wallet.address));
+        }
+        if (type === COLLECTIBLE) {
+          dispatch(fetchAllCollectiblesDataAction());
         }
         if (type === CONNECTION) {
           dispatch(fetchInviteNotificationsAction());

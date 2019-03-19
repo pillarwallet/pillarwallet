@@ -37,6 +37,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <!-- END OPTIONAL PERMISSIONS -->
 
     <!-- ADD TEST PERMISSIONS HERE -->
@@ -79,6 +80,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter android:label="@string/label_deep_link">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="pillarwallet" android:host="approve" />
             </intent-filter>
         </activity>
 
@@ -228,7 +235,7 @@
 
         <!-- ADD FCM CONFIG HERE -->
 
-        <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+        <service android:name="com.pillarproject.wallet.PillarFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

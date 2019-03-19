@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.0.0",
+    "@babel/preset-flow": "^7.0.0",
     "babel-bridge": "^1.12.11",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.2",
@@ -32,6 +33,7 @@
     "jest-react-native": "^18.0.0",
     "jest-styled-components": "^5.0.1",
     "metro-react-native-babel-preset": "^0.51.1",
+    "mock-socket": "^8.0.5",
     "npm-run-all": "^4.1.5",
     "prop-types": "^15.6.1",
     "react-dom": "^16.3.0-alpha.1",
@@ -40,9 +42,7 @@
     "react-test-renderer": "16.6.3",
     "redux-mock-store": "^1.5.1",
     "rn-nodeify": "^10.0.1",
-    "run-s": "^0.0.0",
-    "@babel/preset-flow": "^7.0.0",
-    "mock-socket": "^8.0.5"
+    "run-s": "^0.0.0"
   },
   "scripts": {
     "start": "react-native start --reset-cache",
@@ -87,7 +87,7 @@
     ],
     "coverageDirectory": "./reports",
     "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-color-matrix-image-filters|react-native-htmlview|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions)/)"
+      "node_modules/(?!(react-native|react-native-modal|react-native-cached-image|concat-color-matrices|rn-color-matrices|react-native-touch-id|react-native-color-matrix-image-filters|react-native-htmlview|react-native-video|react-native-shadow|react-native-background-timer|react-native-share|react-native-communications|react-native-qrcode|react-native-gifted-chat|react-native-svg|@expo/react-native-action-sheet|react-native-parsed-text|react-native-camera|react-native-intercom|react-native-firebase|react-native-animatable|react-native-vector-icons|react-native-linear-gradient|react-native-invertible-scroll-view|react-native-scrollable-mixin|react-native-device-info|react-native-lightbox|react-native-keyboard-aware-scroll-view|react-navigation|react-native-safe-area-view|native-base-shoutem-theme|react-native-easy-grid|react-native-drawer|react-native-scrypt|react|pouchdb-react-native|react-navigation-redux-helpers|pouchdb-core|pouchdb-adapter-asyncstorage|react-native-maps|react-native-iphone-x-helper|tcomb-form-native|react-navigation-tabs|native-base|react-native-sentry|react-native-image-crop-picker|react-navigation-fluid-transitions|react-native-image-capinsets)/)"
     ],
     "setupTestFrameworkScriptFile": "./src/testUtils/jestSetup.js",
     "moduleNameMapper": {
@@ -101,7 +101,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
-    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.19.1218",
+    "@pillarwallet/pillarwallet-nodejs-sdk": "^1.21.1334",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
@@ -112,18 +112,23 @@
     "date-fns": "^1.29.0",
     "dns.js": "^1.0.1",
     "ethers": "https://github.com/pillarwallet/ethers.js#master",
+    "events": "^1.0.0",
     "https-browserify": "~0.0.0",
     "lodash.capitalize": "^4.2.1",
     "lodash.debounce": "^4.0.8",
+    "lodash.get": "^4.4.2",
     "lodash.intersectionby": "^4.7.0",
     "lodash.isequal": "^4.5.0",
     "lodash.isequalwith": "^4.4.0",
+    "lodash.keyby": "^4.6.0",
     "lodash.merge": "^4.6.1",
     "lodash.orderby": "^4.6.0",
     "lodash.partition": "^4.6.0",
+    "lodash.pick": "^4.4.0",
     "lodash.set": "^4.3.2",
     "lodash.throttle": "^4.1.1",
     "lodash.unionby": "^4.8.0",
+    "lodash.values": "^4.3.0",
     "lottie-react-native": "^2.5.6",
     "native-base": "2.7.2",
     "polished": "^1.9.2",
@@ -144,6 +149,7 @@
     "react-native-firebase": "^4.2.0",
     "react-native-gifted-chat": "https://github.com/FaridSafi/react-native-gifted-chat",
     "react-native-htmlview": "^0.13.0",
+    "react-native-image-capinsets": "^0.5.0",
     "react-native-image-crop-picker": "^0.22.0",
     "react-native-intercom": "12.3.0",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
@@ -163,6 +169,7 @@
     "react-native-svg": "^7.0.2",
     "react-native-swipeout": "^2.3.6",
     "react-native-tcp": "^3.2.1",
+    "react-native-touch-id": "^4.3.0",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "2.11.2",

@@ -94,13 +94,14 @@ aliases:
           rm .env
           cp environments/.env.staging ./.env
           sed -i.bak "s/_build_number_/$buildNumber/g" .env
+          sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
 # Default for iOS Build machine
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
   macos:
-    xcode: "10.1.0"
+    xcode: "9.4.0"
   environment:
     FL_OUTPUT_DIR: output
     _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
@@ -242,7 +243,7 @@ jobs:
   build:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.1.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     resource_class: large
@@ -266,7 +267,7 @@ jobs:
   stage_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.1.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -286,6 +287,7 @@ jobs:
             rm .env
             cp environments/.env.staging ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -367,7 +369,7 @@ jobs:
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "10.1.0"
+      xcode: "9.4.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -387,6 +389,7 @@ jobs:
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: ios-node-{{ checksum "./yarn.lock" }}
@@ -439,8 +442,8 @@ jobs:
       - run:
            name: Announce Deployment
            command: |
-             chmod +x .circleci/announceDeployment.sh
-             .circleci/announceDeployment.sh "Pillar Wallet" "Production TestFlight"
+             chmod +x .circleci/announceProdBuilds.sh
+             .circleci/announceProdBuilds.sh "Pillar Wallet" "Production TestFlight"
       - run:
           name: Copy production iOS artifact to S3
           command: |
@@ -506,6 +509,7 @@ jobs:
             rm .env
             cp environments/.env.production ./.env
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - restore_cache:
           key: android-node-{{ checksum "../yarn.lock" }}
@@ -586,8 +590,8 @@ jobs:
           name: Announce Deployment
           command: |
             cd ~/pillarwallet
-            chmod +x .circleci/announceDeployment.sh
-            .circleci/announceDeployment.sh "Pillar Wallet" "Production Google Play Store"
+            chmod +x .circleci/announceProdBuilds.sh
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "Production Google Play Store"
       - run:
           name: Announce Prod Android URL
           command: |
