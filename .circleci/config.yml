@@ -96,7 +96,6 @@ aliases:
           sed -i.bak "s/_build_number_/$buildNumber/g" .env
           sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-
 # Default for iOS Build machine
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
@@ -129,6 +128,17 @@ jobs:
     <<: *defaults_ios
     steps:
       - checkout
+      - run:
+          name: Save build number - hockeyapp
+          command: |
+            HOCKEY_BUILDS_NUM=${CIRCLE_BUILD_NUM}
+            mkdir -p /tmp/workspace/build-num-hockey
+            cd /tmp/workspace/build-num-hockey
+            echo ${HOCKEY_BUILDS_NUM} > hockey_build_number.txt
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build-num-hockey
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -142,6 +152,8 @@ jobs:
     <<: *defaults_ios
     steps:
       - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -156,20 +168,32 @@ jobs:
       - *install_pods
       - *save_pod_cache
 
-      - *set_staging_env
-
+      - run:
+          name: Set staging environment
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
+            echo $HOCKEY_BUILDS_NUM
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$HOCKEY_BUILDS_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            rm .env
+            cp environments/.env.staging ./.env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Upload to Hockeyapp
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            cd ios && bundle exec fastlane deploy_staging_adhoc build_number:$buildNumber
-
+            echo $buildNumber
+            cd ios && bundle exec fastlane deploy_ios_hockeyapp HOCKEY_BUILDS_NUM:$HOCKEY_BUILDS_NUM build_number:$buildNumber
       - run:
           name: prepare to archive ipa file
           command: |
             mkdir -p ./toArchive
             cp ./ios/pillarwallet-staging.ipa ./toArchive
-
       - store_artifacts:
           path: ./toArchive
           destination: app_build
@@ -178,6 +202,8 @@ jobs:
     <<: *defaults_android
     steps:
       - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -207,35 +233,45 @@ jobs:
             export AWS_ACCESS_KEY_ID=$NONPROD_APP_STORE_ACCESS_KEY
             export AWS_SECRET_ACCESS_KEY=$NONPROD_APP_STORE_SECRET_KEY_ID
             aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
-
       - run:
           name: Accept Android SDK licenses
           command: |
             yes | sdkmanager --licenses || exit 0
-
       - run:
           name: Accept Android SDK licenses 2
           command: |
             yes | sdkmanager --update || exit 0
-
       - *gradle_depencencies
       - *gradle_save_cache
 
-      - *set_staging_env
-
+      - run:
+          name: Set staging environment
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
+            echo $HOCKEY_BUILDS_NUM
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$HOCKEY_BUILDS_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            rm .env
+            cp environments/.env.staging ./.env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Initial build
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
-
+            echo $buildNumber
+            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$HOCKEY_BUILDS_NUM
       - run:
           name: Upload to Hockeyapp
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            echo $buildNumber
             export ENVFILE=$(echo ~/pillarwallet/.env)
-            cd android && bundle exec fastlane deploy_staging_build
-
+            cd android && bundle exec fastlane deploy_android_hockeyapp
       - store_artifacts:
           path: android/app/build/outputs/apk
           destination: apks
@@ -275,6 +311,17 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Save build number (for deploy steps)
+          command: |
+            STAGE_BUILDS_NUM=${CIRCLE_BUILD_NUM}
+            mkdir -p /tmp/workspace/build-num
+            cd /tmp/workspace/build-num
+            echo ${STAGE_BUILDS_NUM} > stage_build_number.txt
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build-num
+      - run:
           name: Install AWS CLI
           command: sudo pip install awscli
       - run:
@@ -282,7 +329,9 @@ jobs:
           command: |
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
-            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
+            export STAGE_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/stage_build_number.txt)"
+            echo $STAGE_BUILDS_NUM
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$STAGE_BUILDS_NUM
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -366,6 +415,138 @@ jobs:
           path: ./toArchive
           destination: app_build
 
+  stage_android:
+    working_directory: ~/pillarwallet/android
+    resource_class: large
+    docker:
+      - image: circleci/android:api-26-node8-alpha
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+    steps:
+      - checkout:
+          path: ~/pillarwallet
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - run:
+          name: Install Python
+          command: sudo apt-get update && sudo apt-get install python
+      - run:
+          name: Install Python dependencies
+          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+      - run:
+          name: Install AWS CLI
+          command: sudo pip install awscli
+      - run:
+          name: Get keystore file
+          command: |
+            cd /home/circleci/pillarwallet/android/
+            export AWS_ACCESS_KEY_ID=$NONPROD_APP_STORE_ACCESS_KEY
+            export AWS_SECRET_ACCESS_KEY=$NONPROD_APP_STORE_SECRET_KEY_ID
+            aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
+      - run:
+          name: Append circleCI build number to version
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export STAGE_BUILDS_NUM="$(cat /tmp/workspace/build-num/stage_build_number.txt)"
+            echo $STAGE_BUILDS_NUM
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$STAGE_BUILDS_NUM
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            rm .env
+            cp environments/.env.staging ./.env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+      - restore_cache:
+          key: android-node-{{ checksum "../yarn.lock" }}
+      - run:
+            name: Authenticate with Artifactory
+            command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+      - run:
+            name: set Registry to use Artifactory
+            command: cd .. && npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - run:
+            name: set Yarn to use Artifactory
+            command: cd .. && echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+      - run:
+          name: Install node dependencies
+          command: cd .. && yarn install
+      - save_cache:
+          key: android-node-{{ checksum "../yarn.lock" }}
+          paths:
+            - ~/pillarwallet/nodes_modules
+      - restore_cache:
+          key: android-gems-{{ checksum "Gemfile" }}
+      - run:
+          name: Bundle install
+          command: bundle check || bundle install --path vendor/bundle
+      - save_cache:
+          key: android-gems-{{ checksum "Gemfile" }}
+          paths:
+            - vendor/bundle
+      - restore_cache:
+          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+      - run:
+          name: Chmod permissions
+          command: sudo chmod +x ./gradlew
+      - run:
+          name: Accept Android SDK licenses
+          command: |
+            yes | sdkmanager --licenses || exit 0
+      - run:
+          name: Accept Android SDK licenses 2
+          command: |
+            yes | sdkmanager --update || exit 0
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+      - save_cache:
+          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
+          paths:
+            - ~/.gradle
+            - ~/.m2
+      - run:
+          name: Initial build
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+      - run:
+          name: Fastlane deploy to Google Play
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
+            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
+            bundle exec fastlane deploy_staging --verbose
+          environment:
+            BUNDLE_PATH: vendor/bundle
+      - store_artifacts:
+          path: app/build/outputs/apk
+          destination: apks
+      - run:
+          name: Copy stage android artifact to S3
+          command: |
+            export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
+            export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            touch android-s3-URL-qa.txt
+            aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
+            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
+      - run:
+          name: Announce Deployment
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceDeployment.sh
+            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
+      - run:
+          name: Announce Stage Android URL
+          command: |
+            cd ~/pillarwallet
+            chmod +x .circleci/announceURLs.sh
+            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)"
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
@@ -547,7 +728,6 @@ jobs:
           name: Accept Android SDK licenses
           command: |
             yes | sdkmanager --licenses || exit 0
-
       - run:
           name: Accept Android SDK licenses 2
           command: |
@@ -598,137 +778,6 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-prod.txt)"
-
-  stage_android:
-    working_directory: ~/pillarwallet/android
-    resource_class: large
-    docker:
-      - image: circleci/android:api-26-node8-alpha
-    environment:
-      TERM: dumb
-      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
-    steps:
-      - checkout:
-          path: ~/pillarwallet
-      - run:
-          name: Install Python
-          command: sudo apt-get update && sudo apt-get install python
-      - run:
-          name: Install Python dependencies
-          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
-      - run:
-          name: Install AWS CLI
-          command: sudo pip install awscli
-      - run:
-          name: Get keystore file
-          command: |
-            cd /home/circleci/pillarwallet/android/
-            export AWS_ACCESS_KEY_ID=$NONPROD_APP_STORE_ACCESS_KEY
-            export AWS_SECRET_ACCESS_KEY=$NONPROD_APP_STORE_SECRET_KEY_ID
-            aws s3 cp s3://pillar-app-keystore-eu-west-2-861741397496/staging-key.keystore .
-      - run:
-          name: Append circleCI build number to version
-          command: |
-            cd ~/pillarwallet
-            git config user.email "devops@pillar.io"
-            git config user.name "Issabot"
-            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$CIRCLE_BUILD_NUM
-            export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            rm .env
-            cp environments/.env.staging ./.env
-            sed -i.bak "s/_build_number_/$buildNumber/g" .env
-            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-      - restore_cache:
-          key: android-node-{{ checksum "../yarn.lock" }}
-      - run:
-            name: Authenticate with Artifactory
-            command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-      - run:
-            name: set Registry to use Artifactory
-            command: cd .. && npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-      - run:
-            name: set Yarn to use Artifactory
-            command: cd .. && echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
-      - run:
-          name: Install node dependencies
-          command: cd .. && yarn install
-      - save_cache:
-          key: android-node-{{ checksum "../yarn.lock" }}
-          paths:
-            - ~/pillarwallet/nodes_modules
-      - restore_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
-      - run:
-          name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
-      - save_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
-          paths:
-            - vendor/bundle
-      - restore_cache:
-          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
-      - run:
-          name: Chmod permissions
-          command: sudo chmod +x ./gradlew
-      - run:
-          name: Accept Android SDK licenses
-          command: |
-            yes | sdkmanager --licenses || exit 0
-
-      - run:
-          name: Accept Android SDK licenses 2
-          command: |
-            yes | sdkmanager --update || exit 0
-      - run:
-          name: Download Dependencies
-          command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
-      - save_cache:
-          key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
-          paths:
-            - ~/.gradle
-            - ~/.m2
-      - run:
-          name: Initial build
-          command: |
-            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
-      - run:
-          name: Fastlane deploy to Google Play
-          command: |
-            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-            bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
-            bundle exec fastlane deploy_staging --verbose
-          environment:
-            BUNDLE_PATH: vendor/bundle
-      - store_artifacts:
-          path: app/build/outputs/apk
-          destination: apks
-      - run:
-          name: Copy stage android artifact to S3
-          command: |
-            export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
-            export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
-            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
-            touch android-s3-URL-qa.txt
-            aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
-      - run:
-          name: Announce Deployment
-          command: |
-            cd ~/pillarwallet
-            chmod +x .circleci/announceDeployment.sh
-            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
-      - run:
-          name: Announce Stage Android URL
-          command: |
-            cd ~/pillarwallet
-            chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)"
-
   whitesource:
     working_directory: ~/pillarwallet
     docker:
@@ -745,7 +794,6 @@ jobs:
           command: |
             cd .whitesource/
             chmod +x wss_agent.sh && ./wss_agent.sh -apiKey $WHITESOURCE_API_KEY -c ./whitesource-fs-agent.config  -project pillarwallet -f files.list
-
 workflows:
   version: 2
   build_and_deploy:
@@ -765,14 +813,14 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - feature/same-build-number
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+                  - feature/same-build-number
       - stage_ios:
           requires:
             - build
