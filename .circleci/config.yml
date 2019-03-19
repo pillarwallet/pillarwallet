@@ -188,6 +188,8 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             echo $buildNumber
+            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
+            echo $HOCKEY_BUILDS_NUM
             cd ios && bundle exec fastlane deploy_ios_hockeyapp HOCKEY_BUILDS_NUM:$HOCKEY_BUILDS_NUM build_number:$buildNumber
       - run:
           name: prepare to archive ipa file
@@ -263,13 +265,17 @@ jobs:
           name: Initial build
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
             echo $buildNumber
+            echo $HOCKEY_BUILDS_NUM
             cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$HOCKEY_BUILDS_NUM
       - run:
           name: Upload to Hockeyapp
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             echo $buildNumber
+            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
+            echo $HOCKEY_BUILDS_NUM
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_hockeyapp
       - store_artifacts:
