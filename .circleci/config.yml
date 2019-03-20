@@ -96,6 +96,7 @@ aliases:
           sed -i.bak "s/_build_number_/$buildNumber/g" .env
           sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+          
 # Default for iOS Build machine
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
@@ -775,6 +776,7 @@ jobs:
           command: |
             cd .whitesource/
             chmod +x wss_agent.sh && ./wss_agent.sh -apiKey $WHITESOURCE_API_KEY -c ./whitesource-fs-agent.config  -project pillarwallet -f files.list
+
 workflows:
   version: 2
   build_and_deploy:
@@ -787,28 +789,28 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/same-build-number
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/same-build-number
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/same-build-number
+                  - master
       - stage_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/same-build-number
+                  - master
       - release_to_prod:
           type: approval
           requires:
