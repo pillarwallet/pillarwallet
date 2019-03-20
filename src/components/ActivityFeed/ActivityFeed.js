@@ -97,7 +97,7 @@ type Props = {
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
   noBorder?: boolean,
-  collectiblesHistory: Object[],
+  openSeaTxHistory: Object[],
   invertAddon?: boolean,
   fetchAllCollectiblesData: Function,
 };
@@ -329,7 +329,7 @@ class ActivityFeed extends React.Component<Props, State> {
       backgroundColor,
       wrapperStyle,
       noBorder,
-      collectiblesHistory,
+      openSeaTxHistory,
     } = this.props;
 
     const {
@@ -340,16 +340,16 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const collectibleTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
 
     // extending OpenSea transaction data with BCX data
-    const extendedCollectiblesTransactionData =
-      this.mapOpenSeaAndBCXTransactionsHistory(collectiblesHistory, collectibleTxHistory);
+    const collectiblesHistory =
+      this.mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(tokenTxHistory, mappedContacts, TRANSACTION_EVENT);
     const mappedCollectiblesHistory =
-      this.mapTransactionsHistory(extendedCollectiblesTransactionData, mappedContacts, COLLECTIBLE_TRANSACTION);
+      this.mapTransactionsHistory(collectiblesHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
     const chatNotifications = [];
     /* chats.chats
       .map((
@@ -446,7 +446,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
-  collectibles: { transactionHistory: collectiblesHistory },
+  collectibles: { transactionHistory: openSeaTxHistory },
 }) => ({
   contacts,
   notifications,
@@ -454,7 +454,7 @@ const mapStateToProps = ({
   invitations,
   assets: Object.values(assets),
   wallet,
-  collectiblesHistory,
+  openSeaTxHistory,
 });
 
 const mapDispatchToProps = (dispatch) => ({

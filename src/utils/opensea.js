@@ -29,11 +29,11 @@ const headers = {
 export const getLimitedData =
   (url: string, data: Array<Object>, limit: number, offset: number,
     responseDataKey: string, resolve: Function, reject: Function) => {
-    return axios.get(`${url}&limit=${limit}&offset=${offset}`, { headers })
+    axios.get(`${url}&limit=${limit}&offset=${offset}`, { headers })
       .then(response => {
         const retrievedData = data.concat(response.data[responseDataKey]);
         const newOffset = offset + limit;
-        if (response.data[responseDataKey].length) {
+        if (response.data[responseDataKey].length === limit) {
           setTimeout(() => {
             getLimitedData(`${url}&limit=${limit}&offset=${newOffset}`,
               retrievedData, limit, newOffset, responseDataKey, resolve, reject);

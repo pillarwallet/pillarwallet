@@ -248,10 +248,8 @@ SDKWrapper.prototype.fetchCollectibles = function (walletAddress: string) {
     getLimitedData(`${OPEN_SEA_API}/assets/?owner=${walletAddress}&order_by=listing_date&order_direction=asc`,
       [], 300, 0, 'assets', resolve, reject);
   })
-    .then(response => {
-      return { assets: response };
-    })
-    .catch(() => { return { error: true }; });
+    .then(response => ({ assets: response }))
+    .catch(() => ({ error: true }));
 };
 
 SDKWrapper.prototype.fetchCollectiblesTransactionHistory = function (walletAddress: string) {
