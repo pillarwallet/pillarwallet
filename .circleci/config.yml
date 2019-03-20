@@ -817,14 +817,14 @@ workflows:
                   - feature/same-build-number
       - stage_ios:
           requires:
-            - build
+            - build-and-test
           filters:
             branches:
               only:
                   - feature/same-build-number
       - stage_android:
           requires:
-            - build
+            - build-and-test
           filters:
             branches:
               only:
