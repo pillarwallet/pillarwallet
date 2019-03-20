@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import styled from 'styled-components/native';
-import { Platform } from 'react-native';
 import { UIColors, baseColors, fontSizes, fontWeights } from 'utils/variables';
 
 export const BaseText = styled.Text`
@@ -30,7 +29,7 @@ export const BaseText = styled.Text`
 `;
 
 export const BoldText = styled(BaseText)`
-  font-family: Aktiv Grotesk App${Platform.OS === 'android' && '_bold'};
+  font-family: Aktiv Grotesk App;
   font-weight: 600;
   include-font-padding: false;
   text-align-vertical: center;

@@ -91,6 +91,13 @@ const Title = (props: Props) => {
 
   const noBlueDotNeeded = noBlueDot || !title;
 
+  /**
+   *  `fontFamily` has to stay here as it affects font rendering
+   *  otherwise if it's taken then once font is being shorten with ellipsis
+   *  on Android it gets cut
+   */
+  const titleStylesFix = { ...titleStyles, fontFamily: `Aktiv Grotesk App${Platform.OS === 'android' ? '_bold' : ''}` };
+
   return (
     <Wrapper
       noMargin={noMargin}
@@ -105,7 +112,7 @@ const Title = (props: Props) => {
             align={align}
             subtitle={subtitle}
             {...ellipsized}
-            style={titleStyles}
+            style={titleStylesFix}
             fullWidth={fullWidth}
           >
             {title}
@@ -117,7 +124,7 @@ const Title = (props: Props) => {
           align={align}
           subtitle={subtitle}
           {...ellipsized}
-          style={titleStyles}
+          style={titleStylesFix}
           fullWidth={fullWidth}
         >
           {title}
