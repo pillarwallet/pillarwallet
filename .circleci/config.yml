@@ -129,16 +129,16 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Save build number - hockeyapp
+          name: Save build number
           command: |
-            HOCKEY_BUILDS_NUM=${CIRCLE_BUILD_NUM}
-            mkdir -p /tmp/workspace/build-num-hockey
-            cd /tmp/workspace/build-num-hockey
-            echo ${HOCKEY_BUILDS_NUM} > hockey_build_number.txt
+            APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
+            mkdir -p /tmp/workspace/build-num
+            cd /tmp/workspace/build-num
+            echo ${APP_BUILD_NUMBER} > app_build_number.txt
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
-            - build-num-hockey
+            - build-num
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
@@ -174,9 +174,9 @@ jobs:
             cd ~/pillarwallet
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
-            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
-            echo $HOCKEY_BUILDS_NUM
-            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$HOCKEY_BUILDS_NUM
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            echo $APP_BUILD_NUMBER
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -187,10 +187,8 @@ jobs:
           name: Upload to Hockeyapp
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            echo $buildNumber
-            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
-            echo $HOCKEY_BUILDS_NUM
-            cd ios && bundle exec fastlane deploy_ios_hockeyapp HOCKEY_BUILDS_NUM:$HOCKEY_BUILDS_NUM build_number:$buildNumber
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            cd ios && bundle exec fastlane deploy_ios_hockeyapp APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber
       - run:
           name: prepare to archive ipa file
           command: |
@@ -252,9 +250,8 @@ jobs:
             cd ~/pillarwallet
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
-            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
-            echo $HOCKEY_BUILDS_NUM
-            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$HOCKEY_BUILDS_NUM
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -265,17 +262,13 @@ jobs:
           name: Initial build
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
-            echo $buildNumber
-            echo $HOCKEY_BUILDS_NUM
-            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$HOCKEY_BUILDS_NUM
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Upload to Hockeyapp
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            echo $buildNumber
-            export HOCKEY_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/hockey_build_number.txt)"
-            echo $HOCKEY_BUILDS_NUM
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_hockeyapp
       - store_artifacts:
@@ -316,17 +309,8 @@ jobs:
 
     steps:
       - checkout
-      - run:
-          name: Save build number (for deploy steps)
-          command: |
-            STAGE_BUILDS_NUM=${CIRCLE_BUILD_NUM}
-            mkdir -p /tmp/workspace/build-num
-            cd /tmp/workspace/build-num
-            echo ${STAGE_BUILDS_NUM} > stage_build_number.txt
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - build-num
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
       - run:
           name: Install AWS CLI
           command: sudo pip install awscli
@@ -335,9 +319,8 @@ jobs:
           command: |
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
-            export STAGE_BUILDS_NUM="$(cat /tmp/workspace/build-num-hockey/stage_build_number.txt)"
-            echo $STAGE_BUILDS_NUM
-            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$STAGE_BUILDS_NUM
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -391,7 +374,8 @@ jobs:
           name: Upload to TestFlight
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            cd ios && bundle exec fastlane deploy_staging build_number:$buildNumber
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            cd ios && bundle exec fastlane deploy_staging APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber
       - run:
            name: Announce Deployment
            command: |
@@ -404,8 +388,8 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd ./ios/
             touch ios-s3-URL-qa.txt
-            aws s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --region eu-west-2
-            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$CIRCLE_BUILD_NUM.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-qa.txt
+            aws s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$APP_BUILD_NUMBER.ipa --region eu-west-2
+            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$APP_BUILD_NUMBER.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-qa.txt
       - run:
           name: Announce staging iOS URL
           command: |
@@ -459,9 +443,9 @@ jobs:
             cd ~/pillarwallet
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
-            export STAGE_BUILDS_NUM="$(cat /tmp/workspace/build-num/stage_build_number.txt)"
-            echo $STAGE_BUILDS_NUM
-            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$STAGE_BUILDS_NUM
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/build_number.txt)"
+            echo $APP_BUILD_NUMBER
+            npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
             rm .env
             cp environments/.env.staging ./.env
@@ -519,11 +503,13 @@ jobs:
           name: Initial build
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$CIRCLE_BUILD_NUM
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/build_number.txt)"
+            ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Fastlane deploy to Google Play
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/build_number.txt)"
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
             bundle exec fastlane supply init --package_name 'com.pillarproject.wallet.staging' --track internal --json_key_data="$GOOGLE_JSON_DATA"
             bundle exec fastlane deploy_staging --verbose
@@ -538,9 +524,10 @@ jobs:
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
             cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/build_number.txt)"
             touch android-s3-URL-qa.txt
-            aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --region eu-west-2
-            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$CIRCLE_BUILD_NUM.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
+            aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$APP_BUILD_NUMBER.apk --region eu-west-2
+            aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$APP_BUILD_NUMBER.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-qa.txt
       - run:
           name: Announce Deployment
           command: |
@@ -553,6 +540,7 @@ jobs:
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)"
+
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
@@ -833,14 +821,14 @@ workflows:
           filters:
             branches:
               only:
-                  - master
+                  - feature/same-build-number
       - stage_android:
           requires:
             - build
           filters:
             branches:
               only:
-                  - master
+                  - feature/same-build-number
       - release_to_prod:
           type: approval
           requires:

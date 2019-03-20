@@ -33,7 +33,7 @@ platform :ios do
   lane :deploy_staging do |options|
 
     # insert circleCI's build number as our build number
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     # ensure we don't have automatic code signing set up
@@ -114,7 +114,7 @@ platform :ios do
   lane :deploy_ios_hockeyapp do |options|
 
     # insert circleCI's build number as our build number
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:HOCKEY_BUILDS_NUM]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     # ensure we don't have automatic code signing set up
