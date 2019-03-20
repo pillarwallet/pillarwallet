@@ -54,7 +54,7 @@ const Text = styled(BoldText)`
   font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
-    width: 100%;
+    flex: 1;
     text-align: center;
   `}
 `;
