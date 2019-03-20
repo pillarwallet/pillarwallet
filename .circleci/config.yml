@@ -353,11 +353,6 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             cd ios && bundle exec fastlane deploy_staging APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber
       - run:
-           name: Announce Deployment
-           command: |
-             chmod +x .circleci/announceDeployment.sh
-             .circleci/announceDeployment.sh "Pillar Wallet" "Staging TestFlight"
-      - run:
           name: Copy staging iOS artifact to S3
           command: |
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
@@ -366,6 +361,11 @@ jobs:
             touch ios-s3-URL-qa.txt
             aws s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$APP_BUILD_NUMBER.ipa --region eu-west-2
             aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$APP_BUILD_NUMBER.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-qa.txt
+      - run:
+           name: Announce Deployment
+           command: |
+             chmod +x .circleci/announceDeployment.sh
+             .circleci/announceDeployment.sh "Pillar Wallet" "Staging TestFlight" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: Announce staging iOS URL
           command: |
@@ -508,7 +508,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceDeployment.sh
-            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store"
+            .circleci/announceDeployment.sh "Pillar Wallet" "Staging Google Play Store" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: Announce Stage Android URL
           command: |
@@ -594,11 +594,6 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             cd ios && bundle exec fastlane deploy_prod APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber
       - run:
-           name: Announce Deployment
-           command: |
-             chmod +x .circleci/announceProdBuilds.sh
-             .circleci/announceProdBuilds.sh "Pillar Wallet" "Production TestFlight"
-      - run:
           name: Copy production iOS artifact to S3
           command: |
             export AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_ACCESS_KEY_ID
@@ -608,6 +603,11 @@ jobs:
             touch ios-s3-URL-prod.txt
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$APP_BUILD_NUMBER.ipa --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$APP_BUILD_NUMBER.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
+      - run:
+           name: Announce Deployment
+           command: |
+             chmod +x .circleci/announceProdBuilds.sh
+             .circleci/announceProdBuilds.sh "Pillar Wallet" "Production TestFlight" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: Announce production iOS URL
           command: |
@@ -751,7 +751,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceProdBuilds.sh
-            .circleci/announceProdBuilds.sh "Pillar Wallet" "Production Google Play Store"
+            .circleci/announceProdBuilds.sh "Pillar Wallet" "Production Google Play Store" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: Announce Prod Android URL
           command: |
