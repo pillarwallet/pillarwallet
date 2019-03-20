@@ -120,9 +120,15 @@ type State = {
   activeTab: string,
 }
 
+const genericToken = require('assets/images/tokens/genericToken.png');
+
 const IS_IOS = Platform.OS === 'ios';
 const MIN_QUERY_LENGTH = 2;
-const genericToken = require('assets/images/tokens/genericToken.png');
+const viewConfig = {
+  minimumViewTime: 300,
+  viewAreaCoveragePercentThreshold: 100,
+  waitForInteraction: true,
+};
 
 const horizontalPadding = (layout, side) => {
   switch (layout) {
@@ -658,6 +664,9 @@ class AssetsScreen extends React.Component<Props, State> {
             <EmptyStateParagraph {...emptyStateInfo} />
           </EmptyStateWrapper>
         }
+        initialNumToRender={10}
+        removeClippedSubviews
+        viewabilityConfig={viewConfig}
       />
     );
   };
