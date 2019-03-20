@@ -47,6 +47,10 @@ const Wrapper = styled.View`
     width: maxWidth;
   `}
   ${({ fullWidth }) => fullWidth ? 'width: 100%;' : ''}
+  ${({ align }) => align === 'center' && `
+    flex-direction: row;
+    align-items: center;
+  `}
 `;
 
 const Text = styled(BoldText)`
