@@ -42,6 +42,7 @@ import txCountReducer from './txCountReducer';
 import connectionKeyPairsReducer from './connectionKeyPairsReducer';
 import collectiblesReducer from './collectiblesReducer';
 import deepLinkReducer from './deepLinkReducer';
+import connectionIdentityKeysReducer from './connectionIdentityKeysReducer';
 
 const appReducer = combineReducers({
   wallet: walletReducer,
@@ -63,6 +64,7 @@ const appReducer = combineReducers({
   collectibles: collectiblesReducer,
   deepLink: deepLinkReducer,
   connectionKeyPairs: connectionKeyPairsReducer,
+  connectionIdentityKeys: connectionIdentityKeysReducer,
 });
 
 const initialState = appReducer(undefined, {});

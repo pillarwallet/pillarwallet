@@ -40,7 +40,7 @@ import {
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
-
+import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
 // temporary here
 import { icoFundingInstructions as icoFundingInstructionsFixtures } from 'fixtures/icos';
 
@@ -478,5 +478,23 @@ SDKWrapper.prototype.connectionsCount = function (walletId: string) {
     .then(({ data }) => data)
     .catch((e) => {
       throw e;
+    });
+};
+
+SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
+    .then(({ data }) => data)
+    .catch((e) => {
+      throw e;
+    });
+};
+
+SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.connection.updateIdentityKeys(updatedIdentityKeys))
+    .then(({ data }) => data)
+    .catch(() => {
+      return false;
     });
 };
