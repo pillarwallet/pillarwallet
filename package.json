@@ -118,6 +118,7 @@
     "lodash.capitalize": "^4.2.1",
     "lodash.debounce": "^4.0.8",
     "lodash.get": "^4.4.2",
+    "lodash.includes": "^4.3.0",
     "lodash.intersectionby": "^4.7.0",
     "lodash.isequal": "^4.5.0",
     "lodash.isequalwith": "^4.4.0",
