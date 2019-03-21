@@ -22,15 +22,23 @@ import { FlatList } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import type { Assets, Balances } from 'models/Asset';
+import type { Collectible } from 'models/Collectible';
+
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
+
 import Header from 'components/Header';
 import { Container, Wrapper } from 'components/Layout';
 import Separator from 'components/Separator';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Tabs from 'components/Tabs';
+
 import { formatAmount } from 'utils/common';
 import { getBalance } from 'utils/assets';
-import { SEND_TOKEN_AMOUNT } from 'constants/navigationConstants';
+
+import { SEND_TOKEN_AMOUNT, SEND_COLLECTIBLE_CONFIRM } from 'constants/navigationConstants';
+import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import assetsConfig from 'configs/assetsConfig';
 
@@ -40,7 +48,13 @@ type Props = {
   balances: Balances,
   wallet: Object,
   navigation: NavigationScreenProp<*>,
+  fetchAllCollectiblesData: Function,
+  collectibles: Array<Collectible>,
 };
+
+type State = {
+  activeTab: string,
+}
 
 type NextScreenAssetData = {
   ethAddress: string,
@@ -50,10 +64,24 @@ type NextScreenAssetData = {
   icon: string,
 };
 
+type NextScreenCollectibleData = {
+  assetContract: string,
+  category: string,
+  contractAddress: string,
+  description: string,
+  icon: string,
+  id: string,
+  tokenType: string,
+};
+
 const genericToken = require('assets/images/tokens/genericToken.png');
 
-class SendTokenAssetsScreen extends React.Component<Props, {}> {
-  navigateToNextScreen(nextScreenAssetData: NextScreenAssetData) {
+class SendTokenAssetsScreen extends React.Component<Props, State> {
+  state = {
+    activeTab: TOKENS,
+  };
+
+  proceedSendingAsset(nextScreenAssetData: NextScreenAssetData) {
     const {
       ethAddress,
       token,
@@ -72,6 +100,17 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
       receiver: ethAddress,
     });
   }
+
+  proceedSendingCollectible(assetData: NextScreenCollectibleData) {
+    const { navigation } = this.props;
+    const contact = navigation.getParam('contact', {});
+
+    this.props.navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+      assetData,
+      receiver: contact.ethAddress,
+    });
+  }
+
 
   renderAsset = ({ item }) => {
     const { balances, navigation } = this.props;
@@ -93,11 +132,22 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
 
     return (
       <ListItemWithImage
-        onPress={() => this.navigateToNextScreen(nextScreenAssetData)}
+        onPress={() => this.proceedSendingAsset(nextScreenAssetData)}
         label={item.name}
-        itemImageUrl={fullIconUrl}
-        fallbackSource={genericToken}
+        itemImageUrl={fullIconUrl || genericToken}
         itemValue={`${assetBalance} ${item.symbol}`}
+        fallbackSource={genericToken}
+      />
+    );
+  };
+
+  renderCollectible = ({ item }) => {
+    return (
+      <ListItemWithImage
+        onPress={() => this.proceedSendingCollectible(item)}
+        label={item.name}
+        itemImageUrl={item.icon || genericToken}
+        fallbackSource={genericToken}
       />
     );
   };
@@ -107,40 +157,100 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
     fetchAssetsBalances(assets, wallet.address);
   };
 
-  render() {
-    const { assets, balances, navigation } = this.props;
+  setActiveTab = (activeTab) => {
+    this.setState({ activeTab });
+  };
+
+  renderAssets = () => {
+    const { assets, balances } = this.props;
     const assetsArray = Object.values(assets);
     const nonEmptyAssets = assetsArray.filter((asset: any) => {
       return getBalance(balances, asset.symbol) !== 0;
     });
+
+    return (
+      <FlatList
+        keyExtractor={item => item.symbol}
+        data={nonEmptyAssets}
+        renderItem={this.renderAsset}
+        ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        refreshing={false}
+        onRefresh={() => this.refreshAssetsList()}
+        ListEmptyComponent={
+          <Wrapper
+            fullScreen
+            style={{
+              paddingTop: 90,
+              paddingBottom: 90,
+              alignItems: 'center',
+            }}
+          >
+            <EmptyStateParagraph title="No assets to send" bodyText="None of your assets have a balance" />
+          </Wrapper>
+        }
+      />
+    );
+  };
+
+  renderCollectibles = () => {
+    const { collectibles, fetchAllCollectiblesData } = this.props;
+
+    return (
+      <FlatList
+        keyExtractor={item => `${item.assetContract}${item.id}`}
+        data={collectibles}
+        renderItem={this.renderCollectible}
+        ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        refreshing={false}
+        onRefresh={fetchAllCollectiblesData}
+        ListEmptyComponent={
+          <Wrapper
+            fullScreen
+            style={{
+              paddingTop: 90,
+              paddingBottom: 90,
+              alignItems: 'center',
+            }}
+          >
+            <EmptyStateParagraph title="No collectibles to send" bodyText="There are no collectibles in this wallet" />
+          </Wrapper>
+        }
+      />
+    );
+  };
+
+  render() {
+    const { navigation } = this.props;
+    const { activeTab } = this.state;
     const contact = navigation.getParam('contact', {});
     const contactUsername = contact.username;
+
+    const assetsTabs = [
+      {
+        id: TOKENS,
+        name: 'Tokens',
+        onPress: () => this.setActiveTab(TOKENS),
+      },
+      {
+        id: COLLECTIBLES,
+        name: 'Collectibles',
+        onPress: () => this.setActiveTab(COLLECTIBLES),
+      },
+    ];
+
+
     return (
       <Container inset={{ bottom: 0 }}>
         <Header title={`send to ${contactUsername}`} centerTitle onBack={navigation.dismiss} />
-        <FlatList
-          keyExtractor={item => item.symbol}
-          data={nonEmptyAssets}
-          renderItem={this.renderAsset}
-          ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-          refreshing={false}
-          onRefresh={() => this.refreshAssetsList()}
-          ListEmptyComponent={
-            <Wrapper
-              fullScreen
-              style={{
-                paddingTop: 90,
-                paddingBottom: 90,
-                alignItems: 'center',
-              }}
-            >
-              <EmptyStateParagraph title="No assets to send" bodyText="None of your assets have a balance" />
-            </Wrapper>
-          }
-        />
+        <Tabs initialActiveTab={activeTab} tabs={assetsTabs} />
+        {activeTab === TOKENS && this.renderAssets()}
+        {activeTab === COLLECTIBLES && this.renderCollectibles()}
       </Container>
     );
   }
@@ -149,16 +259,19 @@ class SendTokenAssetsScreen extends React.Component<Props, {}> {
 const mapStateToProps = ({
   wallet: { data: wallet },
   assets: { data: assets, balances },
+  collectibles: { assets: collectibles },
 }) => ({
   wallet,
   assets,
   balances,
+  collectibles,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
   fetchAssetsBalances: (assets, walletAddress) => {
     dispatch(fetchAssetsBalancesAction(assets, walletAddress));
   },
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenAssetsScreen);
