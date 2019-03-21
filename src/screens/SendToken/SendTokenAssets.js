@@ -178,7 +178,7 @@ class SendTokenAssetsScreen extends React.Component<Props, State> {
           flexGrow: 1,
         }}
         refreshing={false}
-        onRefresh={() => this.refreshAssetsList()}
+        onRefresh={this.refreshAssetsList}
         ListEmptyComponent={
           <Wrapper
             fullScreen
