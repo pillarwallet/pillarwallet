@@ -156,7 +156,7 @@ export const processNotification = (notification: Object, myEthAddress?: string)
 
     if (receiver === myEthAddress) {
       title = contractName;
-      message = 'You received collectible';
+      message = 'You received a collectible';
     } else if (sender === myEthAddress) {
       title = contractName;
       message = 'Your collectible has been received';
