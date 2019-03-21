@@ -58,7 +58,7 @@ const Text = styled(BoldText)`
   font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
-    flex: 1;
+    line-height: 25px;
     text-align: center;
   `}
 `;
@@ -68,6 +68,15 @@ const BlueDot = styled(BoldText)`
   font-size: ${Platform.OS === 'ios' ? 30 : 26}px;
 `;
 
+
+/**
+ *  this separate definition has to stay here as it affects font rendering
+ *  otherwise if it's taken then once font is being shorten with ellipsis
+ *  on Android it gets cut
+ */
+const AktivTextTitle = styled(Text)`
+  fontFamily: 'Aktiv Grotesk App${Platform.OS === 'android' ? '_bold' : ''};
+`;
 
 const Title = (props: Props) => {
   const ellipsized = !props.fullWidth ? {
@@ -91,13 +100,6 @@ const Title = (props: Props) => {
 
   const noBlueDotNeeded = noBlueDot || !title;
 
-  /**
-   *  `fontFamily` has to stay here as it affects font rendering
-   *  otherwise if it's taken then once font is being shorten with ellipsis
-   *  on Android it gets cut
-   */
-  const titleStylesFix = { ...titleStyles, fontFamily: `Aktiv Grotesk App${Platform.OS === 'android' ? '_bold' : ''}` };
-
   return (
     <Wrapper
       noMargin={noMargin}
@@ -108,28 +110,28 @@ const Title = (props: Props) => {
     >
       {onTitlePress ?
         <TouchableOpacity onPress={onTitlePress}>
-          <Text
+          <AktivTextTitle
             align={align}
             subtitle={subtitle}
             {...ellipsized}
-            style={titleStylesFix}
+            style={titleStyles}
             fullWidth={fullWidth}
           >
             {title}
             {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
-          </Text>
+          </AktivTextTitle>
         </TouchableOpacity>
         :
-        <Text
+        <AktivTextTitle
           align={align}
           subtitle={subtitle}
           {...ellipsized}
-          style={titleStylesFix}
+          style={titleStyles}
           fullWidth={fullWidth}
         >
           {title}
           {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
-        </Text>
+        </AktivTextTitle>
       }
     </Wrapper>
   );
