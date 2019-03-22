@@ -21,7 +21,7 @@ import * as React from 'react';
 import { createIconSet } from 'react-native-vector-icons';
 import { Platform } from 'react-native';
 
-const glyphMap = {
+export const glyphMap = {
   chat: '\uE801',
   back: '\uE819',
   close: '\uE802',

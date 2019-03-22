@@ -3,7 +3,7 @@ import { Alert } from 'react-native';
 import Styleguide from 'utils/StyleguideSystem/styleguide';
 
 import { baseColors } from 'utils/variables';
-import Header from './Header.js';
+import Header from './Header';
 
 Styleguide.add({
   parent: 'COMPONENT',
