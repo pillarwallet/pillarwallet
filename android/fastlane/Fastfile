@@ -82,7 +82,7 @@ platform :android do
   end
 
   desc "Deploy staging development build to hockeyapp"
-  lane :deploy_staging_build do
+  lane :deploy_android_hockeyapp do
     buildApp(
       flavorName: 'prod',
       hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN"],
