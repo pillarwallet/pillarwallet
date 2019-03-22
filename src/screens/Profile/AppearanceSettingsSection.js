@@ -30,7 +30,7 @@ import { baseColors, fontSizes, spacing } from 'utils/variables';
 // components
 import { BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
-import ProfileSettingsItem from './ProfileSettingsItem';
+import ProfileSettingsItem from 'components/SettingsListItem';
 import SettingsModalTitle from './SettingsModalTitle';
 
 const SIMPLIFIED_IMG = require('assets/images/assetsSimplified.png');

@@ -100,6 +100,12 @@ const WarningIcon = styled(Icon)`
   color: ${baseColors.burningFire};
 `;
 
+const LockedIcon = styled(Icon)`
+  font-size: ${fontSizes.medium};
+  margin-right: 10px;
+  color: ${baseColors.brightSkyBlue};
+`;
+
 const ListAddon = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -133,12 +139,13 @@ type Props = {
   label: string,
   notificationsCount?: number,
   warningNotification?: ?boolean,
+  isLocked?: ?boolean,
   onPress?: ?Function,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
 }
 
-export default class ProfileSettingsItem extends React.Component<Props> {
+export default class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
     const {
       label,
@@ -146,6 +153,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
       onPress,
       notificationsCount,
       warningNotification,
+      isLocked,
     } = this.props;
     if (!toggle) {
       return (
@@ -157,6 +165,7 @@ export default class ProfileSettingsItem extends React.Component<Props> {
           <ListAddon>
             {!!notificationsCount && <Badge><BadgeText>{notificationsCount}</BadgeText></Badge>}
             {!!warningNotification && <WarningIcon name="warning-circle" />}
+            {!!isLocked && <LockedIcon name="lock" />}
             <Icon
               name="chevron-right"
               style={{

@@ -51,7 +51,7 @@ import Storage from 'services/storage';
 import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
 import { delay } from 'utils/common';
-import ProfileSettingsItem from './ProfileSettingsItem';
+import ProfileSettingsItem from 'components/SettingsListItem';
 import ProfileForm from './ProfileForm';
 import SettingsModalTitle from './SettingsModalTitle';
 
