@@ -59,19 +59,18 @@ export default function reducer(
   action: OfflineQueueReducerAction,
 ) {
   switch (action.type) {
-    case UPDATE_OFFLINE_QUEUE: {
+    case UPDATE_OFFLINE_QUEUE:
       return { ...state, queue: action.payload };
-    }
     case QUEUE_ACTION:
       return { ...state, queue: state.queue.concat(action.payload) };
     case REMOVE_FROM_QUEUE:
       return { ...state, queue: state.queue.filter((el) => !isEqual(el, action.payload)) };
+    case RESET_QUEUE:
+      return { ...state, queue: [] };
     case ONLINE:
       return { ...state, isConnected: true };
     case OFFLINE:
       return { ...state, isConnected: false };
-    case RESET_QUEUE:
-      return { ...state, queue: [] };
     default:
       return state;
   }
