@@ -71,7 +71,9 @@ describe('Transaction Notes Actions', () => {
           .toBeCalledWith('tx-note', {
             username: contact.username,
             userId: null,
-            userConnectionAccessToken: null,
+            targetUserId: null,
+            sourceIdentityKey: null,
+            targetIdentityKey: null,
             message: JSON.stringify(message),
           });
       });

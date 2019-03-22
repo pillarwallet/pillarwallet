@@ -107,7 +107,9 @@ export const sendMessageByContactAction = (username: string, message: Object) =>
       const params = {
         username,
         userId: null,
-        userConnectionAccessToken: null,
+        targetUserId: null,
+        sourceIdentityKey: null,
+        targetIdentityKey: null,
         message: message.text,
       };
       await chat.sendMessage('chat', params, false, (requestId) => {
@@ -198,7 +200,14 @@ export const getChatByContactAction = (
     dispatch({
       type: FETCHING_CHATS,
     });
-    await chat.client.addContact(username, null, null, false).catch(e => {
+    const addContactParams = {
+      username,
+      userId: null,
+      targetUserId: null,
+      sourceIdentityKey: null,
+      targetIdentityKey: null,
+    };
+    await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -288,8 +297,15 @@ export const getChatByContactAction = (
 export const addContactAndSendWebSocketChatMessageAction = (tag: string, params: Object) => {
   return async () => {
     const { username } = params;
+    const addContactParams = {
+      username,
+      userId: null,
+      targetUserId: null,
+      sourceIdentityKey: null,
+      targetIdentityKey: null,
+    };
     try {
-      await chat.client.addContact(username, null, null, true);
+      await chat.client.addContact(addContactParams, true);
       await chat.sendMessage(tag, params, false);
     } catch (e) {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {

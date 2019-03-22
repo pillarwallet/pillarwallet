@@ -45,7 +45,14 @@ export const getExistingTxNotesAction = () => {
 
 export const sendTxNoteByContactAction = (username: string, message: Object) => {
   return async (dispatch: Function) => {
-    await chat.client.addContact(username, null, null, false).catch(e => {
+    const addContactParams = {
+      username,
+      userId: null,
+      targetUserId: null,
+      sourceIdentityKey: null,
+      targetIdentityKey: null,
+    };
+    await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -60,7 +67,9 @@ export const sendTxNoteByContactAction = (username: string, message: Object) => 
       const params = {
         username,
         userId: null,
-        userConnectionAccessToken: null,
+        targetUserId: null,
+        sourceIdentityKey: null,
+        targetIdentityKey: null,
         message: content,
       };
       await chat.sendMessage('tx-note', params, true, (requestId) => {
@@ -105,7 +114,14 @@ export const getTxNoteByContactAction = (username: string) => {
     dispatch({
       type: TX_NOTE_DECRYPTING_STARTED,
     });
-    await chat.client.addContact(username, null, null, false).catch(e => {
+    const addContactParams = {
+      username,
+      userId: null,
+      targetUserId: null,
+      sourceIdentityKey: null,
+      targetIdentityKey: null,
+    };
+    await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
         Toast.show({
           message: e.message,
@@ -142,8 +158,15 @@ export const getTxNoteByContactAction = (username: string) => {
 export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, params: Object) => {
   return async () => {
     const { username } = params;
+    const addContactParams = {
+      username,
+      userId: null,
+      targetUserId: null,
+      sourceIdentityKey: null,
+      targetIdentityKey: null,
+    };
     try {
-      await chat.client.addContact(username, null, null, true);
+      await chat.client.addContact(addContactParams, true);
       await chat.sendMessage(tag, params, true);
     } catch (e) {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
@@ -160,7 +183,14 @@ export const addContactAndSendWebSocketTxNoteMessageAction = (tag: string, param
 
 export const decryptReceivedWebSocketTxNoteMessageAction = (message: Object) => {
   return async () => {
-    await chat.client.addContact(message.source, null, null, false).then(async () => {
+    const addContactParams = {
+      username: message.source,
+      userId: null,
+      targetUserId: null,
+      sourceIdentityKey: null,
+      targetIdentityKey: null,
+    };
+    await chat.client.addContact(addContactParams, false).then(async () => {
       await chat.client.decryptSignalMessage('tx-note', JSON.stringify(message));
       await chat.deleteMessage(message.source, message.timestamp, message.requestId);
     }).catch(e => {

@@ -72,7 +72,9 @@ describe('Chat Actions', () => {
         expect(chatService.client.sendMessageByContact).toBeCalledWith('chat', {
           username: contact.username,
           userId: null,
-          userConnectionAccessToken: null,
+          targetUserId: null,
+          sourceIdentityKey: null,
+          targetIdentityKey: null,
           message: message.text,
         });
       });
