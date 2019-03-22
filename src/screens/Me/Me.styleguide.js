@@ -5,9 +5,9 @@ import Styleguide from 'utils/StyleguideSystem/styleguide';
 import Scene from './scene.js';
 
 const meUser = {
-  picture: 'someUrl',
+  profileUri: 'someUrl',
   username: 'foobar',
-  persona: 'Master',
+  activePersona: 'Master',
 };
 
 Styleguide.add({
@@ -17,7 +17,24 @@ Styleguide.add({
   title: 'Default',
   component: (
     <Scene
-      currentPersona={meUser}
+      profile={meUser}
+      onSwitchPersona={() => Alert.alert('switch persona')}
+      onNewSession={() => Alert.alert('new session')}
+      onPersonalData={() => Alert.alert('personal data and visibility')}
+      onAssociated={() => Alert.alert('associated DIDs')}
+      onPermissions={() => Alert.alert('permissions')}
+    />
+  ),
+});
+
+Styleguide.add({
+  parent: 'SCREEN',
+  group: 'Me',
+  id: 'ME_PREMIUM',
+  title: 'Premium User',
+  component: (
+    <Scene
+      profile={{ ...meUser, isPremium: true }}
       onSwitchPersona={() => Alert.alert('switch persona')}
       onNewSession={() => Alert.alert('new session')}
       onPersonalData={() => Alert.alert('personal data and visibility')}
