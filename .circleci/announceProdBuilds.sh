@@ -10,9 +10,9 @@ cat <<EOM
 {
     "attachments": [
         {
-            "fallback": "$applicationName has succesfully deployed to $targetEnvironment.",
+            "fallback": "<!here> - $applicationName has succesfully deployed to $targetEnvironment.",
             "color": "#33CC66",
-            "pretext": "$applicationName has succesfully deployed to $targetEnvironment.",
+            "pretext": "<!here> - $applicationName has succesfully deployed to $targetEnvironment.",
             "title": "$CIRCLE_PROJECT_REPONAME",
             "title_link": "https://circleci.com/workflow-run/$CIRCLE_WORKFLOW_WORKSPACE_ID",
             "text": "build number: $appBuildNumber",
