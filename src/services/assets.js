@@ -17,18 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Contract, utils, providers } from 'ethers';
+import { Contract, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
+import { Sentry } from 'react-native-sentry';
 import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
 import type { Asset } from 'models/Asset';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
-import { Sentry } from 'react-native-sentry';
-
-const PROVIDER = NETWORK_PROVIDER;
+import { getEthereumProvider } from 'utils/common';
 
 type Address = string;
 
@@ -72,7 +71,7 @@ export function transferERC20(options: ERC20TransferOptions) {
     decimals = 18,
     nonce,
   } = options;
-  wallet.provider = providers.getDefaultProvider(PROVIDER);
+  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   if (decimals > 0) {
     return contract.transfer(to, utils.parseUnits(amount.toString(), decimals), { nonce });
@@ -89,7 +88,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
     wallet,
     nonce,
   } = options;
-  wallet.provider = providers.getDefaultProvider(COLLECTIBLES_NETWORK);
+  wallet.provider = getEthereumProvider(COLLECTIBLES_NETWORK);
 
   const code = await wallet.provider.getCode(contractAddress).then((result) => result);
 
@@ -138,24 +137,24 @@ export function transferETH(options: ETHTransferOptions) {
     to,
     nonce,
   };
-  wallet.provider = providers.getDefaultProvider(PROVIDER);
+  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   return wallet.sendTransaction(trx);
 }
 
 // Fetch methods are temporary until the BCX API provided
 
 export function fetchETHBalance(walletAddress: Address) {
-  const provider = providers.getDefaultProvider(PROVIDER);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
 export function fetchRinkebyETHBalance(walletAddress: Address) {
-  const provider = providers.getDefaultProvider('rinkeby');
+  const provider = getEthereumProvider('rinkeby');
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
 export function fetchERC20Balance(walletAddress: Address, contractAddress: Address, decimals: number = 18) {
-  const provider = providers.getDefaultProvider(PROVIDER);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
@@ -181,17 +180,17 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
 
 // from the getTransaction() method you'll get the the basic tx info without the status
 export function fetchTransactionInfo(hash: string): Promise<?Object> {
-  const provider = providers.getDefaultProvider(PROVIDER);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getTransaction(hash).catch(() => null);
 }
 
 // receipt available for mined transactions only, here you can get the status of the tx
 export function fetchTransactionReceipt(hash: string): Promise<?Object> {
-  const provider = providers.getDefaultProvider(PROVIDER);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getTransactionReceipt(hash).catch(() => null);
 }
 
 export function fetchLastBlockNumber(): Promise<number> {
-  const provider = providers.getDefaultProvider(PROVIDER);
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
 }
