@@ -76,9 +76,9 @@ jest.setMock('ethers', {
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
-    JsonRpcProvider: () => mockInjectedProvider,
-    EtherscanProvider: () => mockInjectedProvider,
-    FallbackProvider: () => mockInjectedProvider,
+    JsonRpcProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+    EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+    FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
   },
 });
 
