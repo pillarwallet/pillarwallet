@@ -733,7 +733,7 @@ jobs:
           name: Fastlane deploy to Google Play
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-            export ="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
             bundle exec fastlane supply init --package_name 'com.pillarproject.wallet' --track internal --json_key_data="$GOOGLE_JSON_DATA"
             bundle exec fastlane deploy_internal --verbose
