@@ -1,12 +1,12 @@
 // @flow
-import { Contract, providers } from 'ethers';
-// import { NETWORK_PROVIDER } from 'react-native-dotenv';
-import { BADGES_CONTRACT_ADDRESS } from 'react-native-dotenv';
+import { Contract } from 'ethers';
+import { BADGES_CONTRACT_ADDRESS, NETWORK_PROVIDER } from 'react-native-dotenv';
 import badgesAbi from 'abi/badges.json';
 import type { UserBadgesResponse } from 'models/Badge';
+import { getEthereumProvider } from 'utils/common';
 
 export function fetchBadges(walletAddress: string): Promise<UserBadgesResponse> {
-  const provider = new providers.JsonRpcProvider();
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(BADGES_CONTRACT_ADDRESS, badgesAbi, provider);
   return contract.tokensOwned(walletAddress).then(data => {
     const indexes = data.indexes.map(bgNumber => bgNumber.toNumber());
