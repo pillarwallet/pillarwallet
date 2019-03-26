@@ -11,46 +11,32 @@ import Button from 'components/Button';
 import { baseColors } from 'utils/variables';
 
 type Props = {
-  personas: Array,
-  onActivatePersona: Function,
   onCreatePersona: Function,
   onBack: Function,
 };
 
-const PersonasScene = (props: Props) => {
-  const { onBack, onActivatePersona, onCreatePersona, personas } = props;
+const PersonaScene = (props: Props) => {
+  const { onBack, onCreatePersona } = props;
 
   return (
     <Container>
       <Header
         centerTitle
         hasSeparator
-        title="personas"
+        title="create persona"
         onBack={onBack}
-      />
-
-      <FlatList
-        data={personas}
-        renderItem={({ item }) => (
-          <ListItemWithImage
-            label={item.alias}
-            onPress={() => onActivatePersona(item.id)}
-          />
-        )}
-        ItemSeparatorComponent={() => <Separator spaceOnLeft={82} />}
-        keyboardShouldPersistTaps="handled"
       />
 
       <Footer>
         <Button
-          block
           marginBottom="20px"
+          width="143px"
           onPress={onCreatePersona}
-          title="Create new persona"
+          title="Save"
         />
       </Footer>
     </Container>
   );
 };
 
-export default PersonasScene;
+export default PersonaScene;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert } from 'react-native';
 import Styleguide from 'utils/StyleguideSystem/styleguide';
 
-import Scene from './scene.js';
+import Scene from './scene';
 
 const Personas = [
   {
@@ -51,7 +51,7 @@ const Personas = [
 
 Styleguide.add({
   parent: 'SCREEN',
-  group: 'Persona',
+  group: 'Personas',
   id: 'PERSONAS_DEFAULT',
   title: 'Default',
   component: (
