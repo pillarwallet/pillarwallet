@@ -1,6 +1,7 @@
 // @flow
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { saveDbAction } from './dbActions';
+import { offlineApiCall } from './offlineApiActions';
 
 export const fetchBadgesAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -32,9 +33,8 @@ export const fetchBadgesAction = () => {
 };
 
 export const selfAwardBadgeAction = (badgeType: string) => {
-  return async (dispatch: Function, getState: Function, api: Object) => {
+  return async (dispatch: Function, getState: Function) => {
     const { user: { data: { walletId } } } = getState();
-    // TODO: handle when user is offline
-    api.selfAwardBadge(walletId, badgeType);
+    dispatch(offlineApiCall('selfAwardBadge', walletId, badgeType));
   };
 };
