@@ -19,7 +19,6 @@
 */
 import merge from 'lodash.merge';
 import { Sentry } from 'react-native-sentry';
-import { providers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
   UPDATE_ASSETS_STATE,
@@ -55,7 +54,7 @@ import type {
 } from 'models/Transaction';
 import type { Asset, Assets } from 'models/Asset';
 import { transformAssetsToObject } from 'utils/assets';
-import { delay, noop, uniqBy } from 'utils/common';
+import { delay, getEthereumProvider, noop, uniqBy } from 'utils/common';
 import { buildHistoryTransaction } from 'utils/history';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -85,7 +84,7 @@ export const sendAssetAction = (
       txCount: { data: { lastNonce } },
       collectibles: { assets, transactionHistory: collectiblesHistory },
     } = getState();
-    wallet.provider = providers.getDefaultProvider(NETWORK_PROVIDER);
+    wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
     const transactionCount = await wallet.provider.getTransactionCount(wallet.address, 'pending');
 
     let nonce;

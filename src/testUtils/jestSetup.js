@@ -59,6 +59,10 @@ Object.defineProperty(mockWallet, 'RNencrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
+const mockInjectedProvider = {
+  getBalance: () => Promise.resolve(1), // dummy balance
+};
+
 jest.setMock('ethers', {
   Wallet: {
     fromMnemonic: () => mockWallet,
@@ -71,9 +75,10 @@ jest.setMock('ethers', {
     getAddress: utils.getAddress,
   },
   providers: {
-    getDefaultProvider: () => ({
-      getBalance: () => Promise.resolve(1), // ropsten dummy balance
-    }),
+    getDefaultProvider: () => mockInjectedProvider,
+    JsonRpcProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+    EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
+    FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
   },
   HDNode,
 });
