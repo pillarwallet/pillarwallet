@@ -13,7 +13,7 @@ export type Badge = {
   description?: string,
   createdAt?: number,
   updatedAt?: number,
-  receivedAt?: number
+  receivedAt?: number,
 };
 
 export type Badges = Badge[];
@@ -27,7 +27,7 @@ export type BadgesInfoResponse = {
     description?: string,
     createdAt: number,
     updatedAt: number,
-    receivedAt: number
+    receivedAt: number,
   },
 };
 
