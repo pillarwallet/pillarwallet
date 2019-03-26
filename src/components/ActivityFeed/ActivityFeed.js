@@ -20,9 +20,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
-import merge from 'lodash.merge';
-import keyBy from 'lodash.keyby';
-import values from 'lodash.values';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { utils } from 'ethers';
@@ -100,7 +97,7 @@ type Props = {
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
   noBorder?: boolean,
-  collectiblesHistory: Object[],
+  openSeaTxHistory: Object[],
   invertAddon?: boolean,
   fetchAllCollectiblesData: Function,
 };
@@ -157,6 +154,22 @@ class ActivityFeed extends React.Component<Props, State> {
         };
       });
     return uniqBy(concatedHistory, 'hash');
+  }
+
+  mapOpenSeaAndBCXTransactionsHistory(openSeaHistory, BCXHistory) {
+    const concatedCollectiblesHistory = openSeaHistory
+      .map(({ hash, ...rest }) => {
+        const historyEntry = BCXHistory.find(({ hash: bcxHash }) => {
+          return hash.toUpperCase() === bcxHash.toUpperCase();
+        });
+
+        return {
+          hash,
+          ...rest,
+          ...historyEntry,
+        };
+      });
+    return uniqBy(concatedCollectiblesHistory, 'hash');
   }
 
   getRightLabel = (type: string) => {
@@ -316,7 +329,7 @@ class ActivityFeed extends React.Component<Props, State> {
       backgroundColor,
       wrapperStyle,
       noBorder,
-      collectiblesHistory,
+      openSeaTxHistory,
     } = this.props;
 
     const {
@@ -327,15 +340,16 @@ class ActivityFeed extends React.Component<Props, State> {
     } = this.state;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const collectibleTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
-    // merging BCX and OpenSea transaction data by hash
-    const mergedCollectibleTxHistory = values(
-      merge({}, keyBy(collectibleTxHistory, 'hash'), keyBy(collectiblesHistory, 'hash')));
+    const bcxCollectiblesTxHistory = history.filter(({ tranType }) => tranType === 'collectible');
+
+    // extending OpenSea transaction data with BCX data
+    const collectiblesHistory =
+      this.mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
 
     const mappedContacts = contacts.map(({ ...rest }) => ({ ...rest, type: TYPE_ACCEPTED }));
     const mappedHistory = this.mapTransactionsHistory(tokenTxHistory, mappedContacts, TRANSACTION_EVENT);
     const mappedCollectiblesHistory =
-      this.mapTransactionsHistory(mergedCollectibleTxHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
+      this.mapTransactionsHistory(collectiblesHistory, mappedContacts, COLLECTIBLE_TRANSACTION);
     const chatNotifications = [];
     /* chats.chats
       .map((
@@ -432,7 +446,7 @@ const mapStateToProps = ({
   invitations: { data: invitations },
   assets: { data: assets },
   wallet: { data: wallet },
-  collectibles: { transactionHistory: collectiblesHistory },
+  collectibles: { transactionHistory: openSeaTxHistory },
 }) => ({
   contacts,
   notifications,
@@ -440,7 +454,7 @@ const mapStateToProps = ({
   invitations,
   assets: Object.values(assets),
   wallet,
-  collectiblesHistory,
+  openSeaTxHistory,
 });
 
 const mapDispatchToProps = (dispatch) => ({

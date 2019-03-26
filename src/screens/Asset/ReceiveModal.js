@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { Clipboard, View } from 'react-native';
-import QRCode from 'react-native-qrcode';
+import QRCode from 'react-native-qrcode-svg';
 import { TextLink, BaseText } from 'components/Typography';
 import { Footer } from 'components/Layout';
 import { spacing, fontSizes } from 'utils/variables';
