@@ -3,7 +3,7 @@ import { Alert, Text } from 'react-native';
 import Styleguide from 'utils/StyleguideSystem/styleguide';
 
 import { Container } from 'components/Layout';
-import SettingsListItem from 'components/SettingsListItem';
+import SettingsListItem from 'components/ListItem/SettingsItem';
 import CountrySelect from './CountrySelect';
 
 Styleguide.add({

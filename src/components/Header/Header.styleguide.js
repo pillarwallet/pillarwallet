@@ -20,6 +20,19 @@ Styleguide.add({
 Styleguide.add({
   parent: 'COMPONENT',
   group: 'Header',
+  id: 'HEADER_WITH_SEPARATOR',
+  title: 'With Separator',
+  component: (
+    <Header
+      hasSeparator
+      title="foo"
+    />
+  ),
+});
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'Header',
   id: 'HEADER_TITLE_PRESS',
   title: 'Press Title',
   component: (

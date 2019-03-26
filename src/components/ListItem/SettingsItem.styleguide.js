@@ -3,11 +3,11 @@ import { Alert, Text } from 'react-native';
 import Styleguide from 'utils/StyleguideSystem/styleguide';
 
 import { Container } from 'components/Layout';
-import SettingsListItem from 'components/SettingsListItem';
+import SettingsListItem from './SettingsItem';
 
 Styleguide.add({
   parent: 'COMPONENT',
-  group: 'SettingsListItem',
+  group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM',
   title: 'default',
   component: (
@@ -23,7 +23,7 @@ Styleguide.add({
 
 Styleguide.add({
   parent: 'COMPONENT',
-  group: 'SettingsListItem',
+  group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM_WITH_NOTIFICATIONS',
   title: 'With Notification',
   component: (
@@ -40,7 +40,7 @@ Styleguide.add({
 
 Styleguide.add({
   parent: 'COMPONENT',
-  group: 'SettingsListItem',
+  group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM_WITH_WARNING_NOTIFICATIONS',
   title: 'Warning Notification',
   component: (
@@ -57,13 +57,30 @@ Styleguide.add({
 
 Styleguide.add({
   parent: 'COMPONENT',
-  group: 'SettingsListItem',
+  group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM_WITH_LOCK',
   title: 'Locked Item',
   component: (
     <Container>
       <SettingsListItem
         isLocked
+        key="foo"
+        label="foo bar"
+        onPress={() => Alert.alert('foo bar')}
+      />
+    </Container>
+  ),
+});
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'ListItem',
+  id: 'SETTINGS_LIST_ITEM_WITH_SWITCH',
+  title: 'Switch Item',
+  component: (
+    <Container>
+      <SettingsListItem
+        toggle
         key="foo"
         label="foo bar"
         onPress={() => Alert.alert('foo bar')}

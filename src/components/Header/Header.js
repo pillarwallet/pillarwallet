@@ -30,6 +30,7 @@ type Props = {
   onBack?: Function,
   onClose?: Function,
   noClose?: boolean,
+  hasSeparator?: boolean,
   onCloseText?: string,
   onNextPress?: ?Function,
   onTitlePress?: Function,
@@ -53,7 +54,11 @@ type Props = {
 }
 
 const Wrapper = styled.View`
-  border-bottom-width: 0;
+  border-bottom-width: ${({ hasSeparator }) => !hasSeparator ? 0 : 1};
+  ${({ hasSeparator }) => !hasSeparator ?
+    '' :
+    `border-bottom-color: ${baseColors.mediumLightGray};`
+  };
   padding: ${props => props.noPadding ? 0 : '0 20px'};
   height: 48px;
   justify-content: flex-end;
@@ -118,6 +123,7 @@ const Header = (props: Props) => {
     onTitlePress,
     onClose,
     noClose,
+    hasSeparator,
     onCloseText,
     title,
     fullWidthTitle,
@@ -156,6 +162,7 @@ const Header = (props: Props) => {
       flexStart={flexStart}
       style={style}
       noPadding={noPadding}
+      hasSeparator={hasSeparator}
     >
       <HeaderLeft showTitleLeft={showTitleLeft}>
         {onBack &&

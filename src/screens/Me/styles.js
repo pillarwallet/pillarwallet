@@ -5,7 +5,6 @@ import { BaseText } from 'components/Typography';
 
 export const CardContainer = styled.View` 
   align-items: center;
-  background-color: ${baseColors.whiteSmoke};
   padding: 16px;
   border-bottom-width: 1;
   border-bottom-color: ${baseColors.mediumLightGray};

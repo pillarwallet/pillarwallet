@@ -5,7 +5,7 @@ import { Dimensions, FlatList, Alert } from 'react-native';
 import capitalize from 'lodash.capitalize';
 import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage/ProfileImage';
-import SettingsListItem from 'components/SettingsListItem';
+import SettingsListItem from 'components/ListItem/SettingsItem';
 import CircleButton from 'components/CircleButton';
 import { Container, ScrollWrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
@@ -60,14 +60,11 @@ const MeScene = (props: Props) => {
   return (
     <Container>
       <Header
+        hasSeparator
         headerRightFlex="2"
         title="me"
         nextText="Switch persona"
         onNextPress={onSwitchPersona}
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: baseColors.mediumLightGray,
-        }}
       />
 
       <ScrollWrapper>
