@@ -44,7 +44,7 @@ type Option = {
 type Props = {
   icon?: string,
   inlineLabel?: boolean,
-  alignRight?: boolean,
+  textAlign?: string,
   postfix?: string,
   innerImageURI?: string,
   fallbackSource?: string,
@@ -186,7 +186,7 @@ const InputField = styled(Input)`
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.extraExtraLarge}px;
   font-weight: ${props => props.fontWeight ? props.fontWeight : fontWeights.bold};
   include-font-padding: false;
-  text-align: ${props => props.textAlign || 'right'};
+  text-align: ${props => props.textAlign};
   textAlignVertical: center;
   background: ${props => props.theme.backgroundColor};
   border-radius: ${props => props.theme.borderRadius};
@@ -220,6 +220,7 @@ class SingleInput extends React.Component<Props, *> {
     innerImageText: '',
     trim: true,
     options: [],
+    textAlign: 'right',
   };
 
   handleBlur = () => {
@@ -314,6 +315,7 @@ class SingleInput extends React.Component<Props, *> {
       options,
       fontSize,
       marginTop,
+      textAlign,
     } = this.props;
     const { value = '' } = inputProps;
     const theme = getTheme(this.props);
@@ -336,6 +338,7 @@ class SingleInput extends React.Component<Props, *> {
               textAlignVertical="center"
               fontSize={fontSize}
               placeholderTextColor={baseColors.darkGray}
+              textAlign={textAlign}
               theme={theme}
             />
             {!!innerImageURI &&

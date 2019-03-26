@@ -37,7 +37,6 @@ type inputPropsType = {
 type Props = {
   icon?: string,
   inlineLabel?: boolean,
-  alignRight?: boolean,
   postfix?: string,
   label?: string,
   id?: string,
