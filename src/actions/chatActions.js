@@ -35,6 +35,10 @@ import {
   CLEAR_CHAT_DRAFT,
 } from 'constants/chatConstants';
 import Storage from 'services/storage';
+import {
+  getConnectionStateCheckParamsByUsername,
+  getConnectionStateCheckParamsByUserId,
+} from 'utils/chat';
 import { saveDbAction } from './dbActions';
 
 const chat = new ChatService();
@@ -102,15 +106,13 @@ export const resetUnreadAction = (username: string) => ({
 });
 
 export const sendMessageByContactAction = (username: string, message: Object) => {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     try {
+      const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
       const params = {
         username,
-        userId: null,
-        targetUserId: null,
-        sourceIdentityKey: null,
-        targetIdentityKey: null,
         message: message.text,
+        ...connectionStateCheckParams,
       };
       await chat.sendMessage('chat', params, false, (requestId) => {
         // callback is ran if websocket message sent
@@ -188,7 +190,7 @@ export const saveDraftAction = (contactId: string, draftText: string) => {
 
 export const getChatByContactAction = (
   username: string,
-  userId: string,
+  targetUserId: string,
   avatar: string,
   loadEarlier: boolean = false,
 ) => {
@@ -200,12 +202,10 @@ export const getChatByContactAction = (
     dispatch({
       type: FETCHING_CHATS,
     });
+    const connectionStateCheckParams = getConnectionStateCheckParamsByUserId(getState, targetUserId);
     const addContactParams = {
       username,
-      userId: null,
-      targetUserId: null,
-      sourceIdentityKey: null,
-      targetIdentityKey: null,
+      ...connectionStateCheckParams,
     };
     await chat.client.addContact(addContactParams, false).catch(e => {
       if (e.code === 'ERR_ADD_CONTACT_FAILED') {
@@ -295,14 +295,12 @@ export const getChatByContactAction = (
 };
 
 export const addContactAndSendWebSocketChatMessageAction = (tag: string, params: Object) => {
-  return async () => {
+  return async (dispatch: Function, getState: Function) => {
     const { username } = params;
+    const connectionStateCheckParams = getConnectionStateCheckParamsByUsername(getState, username);
     const addContactParams = {
       username,
-      userId: null,
-      targetUserId: null,
-      sourceIdentityKey: null,
-      targetIdentityKey: null,
+      ...connectionStateCheckParams,
     };
     try {
       await chat.client.addContact(addContactParams, true);
