@@ -61,6 +61,7 @@ const ItemValue = styled(Input)`
   flex: 1;
   padding: 0 ${spacing.rhythm / 2}px
   align-self: flex-start;
+  width:100%;
 `;
 
 const ListAddon = styled.View`

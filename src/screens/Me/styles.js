@@ -1,3 +1,5 @@
+// @flow
+
 import { Platform } from 'react-native';
 import styled from 'styled-components/native';
 import { spacing, fontSizes, fontTrackings, baseColors } from 'utils/variables';
