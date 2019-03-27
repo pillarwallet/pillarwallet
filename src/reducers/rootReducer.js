@@ -23,6 +23,7 @@ import { combineReducers } from 'redux';
 import { LOG_OUT } from 'constants/authConstants';
 
 // reducers
+import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
@@ -43,6 +44,7 @@ import collectiblesReducer from './collectiblesReducer';
 import deepLinkReducer from './deepLinkReducer';
 
 const appReducer = combineReducers({
+  offlineQueue: offlineQueueReducer,
   wallet: walletReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,

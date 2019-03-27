@@ -46,7 +46,7 @@ const Wrapper = styled.View`
   ${({ maxWidth }) => maxWidth && `
     width: maxWidth;
   `}
-  ${({ fullWidth }) => fullWidth ? 'width: 100%;' : ''}
+  ${({ fullWidth, align }) => fullWidth && align !== 'center' ? 'width: 100%;' : ''}
   ${({ align }) => align === 'center' && `
     flex-direction: row;
     align-items: center;
