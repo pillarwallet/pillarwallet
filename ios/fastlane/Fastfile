@@ -9,9 +9,8 @@ platform :ios do
 
   desc "Release to production TestFlight"
   lane :deploy_prod do |options|
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     match(type: "appstore",
           readonly: true,
@@ -34,9 +33,8 @@ platform :ios do
   lane :deploy_staging do |options|
 
     # insert circleCI's build number as our build number
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     # ensure we don't have automatic code signing set up
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
@@ -45,6 +43,7 @@ platform :ios do
     match(type: "appstore",
       readonly: true,
       git_branch: "develop",
+      clone_branch_directly: true,
       app_identifier: "com.pillarproject.wallet.staging",
       team_id: "J9DEY3FGPD",
     )
@@ -56,20 +55,29 @@ platform :ios do
       team_id: "J9DEY3FGPD",
     )
 
-    # trigger the build
-    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
+    ## trigger the build
+    #sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
 
-    # manually zip the results into an ipa
-    sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
+    ## manually zip the results into an ipa
+    #sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
 
-    # download the signing cert
-    sigh(
-      app_identifier: "com.pillarproject.wallet.staging",
-      force: true
+    gym(
+      workspace: "pillarwallet.xcworkspace",
+      configuration: "Staging.Release",
+      scheme: "Staging",
+      clean: true,
+      derived_data_path: "build",
+      xcargs: "-UseModernBuildSystem=NO"
     )
 
+    # download the signing cert
+    #sigh(
+    #  app_identifier: "com.pillarproject.wallet.staging",
+    #  force: true
+    #)
+
     # apply the signing certs to the build
-    sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
+    #sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
 
     # questions remaining:
     # 1. do we need to download certs, then build, then download more certs and re-sign? sounds like at least one step doesnt' need doing
@@ -113,12 +121,11 @@ platform :ios do
   end
 
   desc "Release to adhoc TestFlight"
-  lane :deploy_ios_hockeyapp do |options|
+  lane :deploy_staging_adhoc do |options|
 
     # insert circleCI's build number as our build number
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion $CIRCLE_BUILD_NUM' ~/pillarwallet/ios/pillarwallet/Info.plist"
     sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     # ensure we don't have automatic code signing set up
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
