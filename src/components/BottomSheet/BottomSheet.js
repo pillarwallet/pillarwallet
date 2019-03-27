@@ -27,15 +27,20 @@ import {
 } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
+import { getiOSNavbarHeight } from 'utils/common';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 
 type Props = {
+  screenHeight?: number, // IMPORTANT to calculate sheet height,
+  // preferably getting parent Container height onLayout.
+  // Will fallback to not that accurate calculations if not provided
   initialSheetHeight: number,
   topOffset: number,
   swipeToCloseHeight: number,
   onSheetOpen?: Function,
   onSheetClose?: Function,
-  scrollingComponentsRefs: Array<Object>,
+  scrollingComponentsRefs: Array<Object>, // list of refs of scrollable components.
+  // Used to scroll all content of those components to the top once sheet is closed
   children: React.Node,
 }
 
@@ -46,16 +51,18 @@ type State = {
   isSheetOpen: boolean,
 }
 
-let SCREEN_HEIGHT = Dimensions.get('window').height;
+let USABLE_SCREEN_HEIGHT;
 if (Platform.OS === 'android') {
-  SCREEN_HEIGHT = ExtraDimensions.get('REAL_WINDOW_HEIGHT')
-    - ExtraDimensions.getStatusBarHeight() - ExtraDimensions.getSoftMenuBarHeight();
+  USABLE_SCREEN_HEIGHT = ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight();
+} else {
+  USABLE_SCREEN_HEIGHT = Dimensions.get('window').height - getiOSNavbarHeight();
 }
 
 const ModalWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   padding: 20px 0;
+  flex: 1;
 `;
 
 const Sheet = styled.View`
@@ -87,7 +94,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.panResponder = React.createRef();
-    this.initialPosition = SCREEN_HEIGHT - this.props.initialSheetHeight;
+    this.initialPosition = USABLE_SCREEN_HEIGHT - this.props.initialSheetHeight;
     this.state = {
       isTouched: false,
       isMoved: false,
@@ -169,7 +176,7 @@ export default class BottomSheet extends React.Component<Props, State> {
       isGoingToUp = true;
     }
     const endPosition = isGoingToUp ? topOffset : this.initialPosition;
-    if (!isGoingToUp && scrollingComponentsRefs.length) {
+    if (!isGoingToUp && scrollingComponentsRefs && scrollingComponentsRefs.length) {
       scrollingComponentsRefs.forEach((ref) => {
         ref.scrollToOffset({ x: 0, y: 0, animated: false });
       });
@@ -183,9 +190,8 @@ export default class BottomSheet extends React.Component<Props, State> {
 
   render = () => {
     const { topSheetPosition } = this.state;
-    const { topOffset, children } = this.props;
-
-    const sheetHeight = SCREEN_HEIGHT - topOffset;
+    const { topOffset, children, screenHeight } = this.props;
+    const sheetHeight = screenHeight ? screenHeight - topOffset : USABLE_SCREEN_HEIGHT - topOffset;
 
     return (
       <AnimatedSheet
