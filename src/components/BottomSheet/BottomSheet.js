@@ -35,6 +35,8 @@ type Props = {
   swipeToCloseHeight: number,
   onSheetOpen?: Function,
   onSheetClose?: Function,
+  scrollingComponentsRefs: Array<Object>,
+  children: React.Node,
 }
 
 type State = {
@@ -180,12 +182,8 @@ export default class BottomSheet extends React.Component<Props, State> {
   };
 
   render = () => {
-    const {
-      topSheetPosition,
-    } = this.state;
-    const {
-      topOffset,
-    } = this.props;
+    const { topSheetPosition } = this.state;
+    const { topOffset, children } = this.props;
 
     const sheetHeight = SCREEN_HEIGHT - topOffset;
 
@@ -195,7 +193,7 @@ export default class BottomSheet extends React.Component<Props, State> {
         {...this.panResponder.panHandlers}
       >
         <ModalWrapper>
-          {this.props.children}
+          {children}
         </ModalWrapper>
       </AnimatedSheet>
     );
