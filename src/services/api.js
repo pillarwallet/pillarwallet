@@ -31,12 +31,14 @@ import {
 } from 'react-native-dotenv'; // SDK_PROVIDER, ONLY if you have platform running locally
 import type { Asset } from 'models/Asset';
 import type { Transaction } from 'models/Transaction';
+import type { UserBadgesResponse, BadgesInfoResponse, SelfAwardBadgeResponse } from 'models/Badge';
 import {
   fetchAssetBalances,
   fetchLastBlockNumber,
   fetchTransactionInfo,
   fetchTransactionReceipt,
 } from 'services/assets';
+import { fetchBadges } from 'services/badges';
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { isTransactionEvent } from 'utils/history';
 import type { OAuthTokens } from 'utils/oAuth';
@@ -378,6 +380,25 @@ SDKWrapper.prototype.fetchBalances = function ({ address, assets }: BalancePaylo
   //   return { balance: response.balance, symbol: response.ticker };
   // });
   // return Promise.all(promises).catch(() => []);
+};
+
+SDKWrapper.prototype.fetchBadges = function (address: string): Promise<UserBadgesResponse> {
+  return fetchBadges(address).catch(() => ({}));
+};
+
+SDKWrapper.prototype.fetchBadgesInfo = function (walletId: string): Promise<BadgesInfoResponse> {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.badge.my({ walletId }))
+    .then(({ data }) => data)
+    .then(data => data.reduce((memo, badge) => ({ ...memo, [badge.id]: badge }), {}))
+    .catch(() => ({}));
+};
+
+SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string): Promise<SelfAwardBadgeResponse | {}> {
+  return Promise.resolve()
+    .then(() => this.pillarWalletSdk.badge.selfAward({ walletId, event }))
+    .then(({ data }) => data)
+    .catch(() => ({}));
 };
 
 SDKWrapper.prototype.sendInvitation = function (targetUserId: string, accessKey: string, walletId: string) {

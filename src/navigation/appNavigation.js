@@ -63,6 +63,7 @@ import ICOLinks from 'screens/ICOLinks';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
+import BadgeScreen from 'screens/Badge';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -129,6 +130,7 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
+  BADGE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -234,6 +236,7 @@ const homeFlow = createStackNavigator({
   [CONTACT]: ContactScreen,
   [CHAT]: ChatScreen,
   [COLLECTIBLE]: CollectibleScreen,
+  [BADGE]: BadgeScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
