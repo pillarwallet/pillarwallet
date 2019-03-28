@@ -34,6 +34,7 @@ import { UPDATE_WALLET_IMPORT_STATE } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
+import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import { saveDbAction } from './dbActions';
 
@@ -76,6 +77,9 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
 
       const { collectiblesHistory = [] } = await storage.get('collectiblesHistory');
       dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: collectiblesHistory });
+
+      const { badges = [] } = await storage.get('badges');
+      dispatch({ type: UPDATE_BADGES, payload: badges });
 
       const { offlineQueue = [] } = await storage.get('offlineQueue');
       dispatch({ type: UPDATE_OFFLINE_QUEUE, payload: offlineQueue });

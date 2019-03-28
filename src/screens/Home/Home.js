@@ -23,7 +23,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { Animated, RefreshControl, Platform, View } from 'react-native';
-import { PROFILE, CONTACT } from 'constants/navigationConstants';
+import { PROFILE, CONTACT, BADGE } from 'constants/navigationConstants';
 import ActivityFeed from 'components/ActivityFeed';
 import styled from 'styled-components/native';
 import { Container, Wrapper } from 'components/Layout';
@@ -45,6 +45,7 @@ import IconButton from 'components/IconButton';
 import Tabs from 'components/Tabs';
 import Icon from 'components/Icon';
 import ProfileImage from 'components/ProfileImage';
+import BadgeImage from 'components/BadgeImage';
 import Camera from 'components/Camera';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
@@ -56,7 +57,9 @@ import {
   rejectInvitationAction,
   fetchInviteNotificationsAction,
 } from 'actions/invitationsActions';
+import { fetchBadgesAction } from 'actions/badgesActions';
 import { ALL, TRANSACTIONS, SOCIAL } from 'constants/activityConstants';
+import type { Badges } from 'models/Badge';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -79,6 +82,8 @@ type Props = {
   deepLinkData: Object,
   resetDeepLinkData: Function,
   approveLoginAttempt: Function,
+  fetchBadges: Function,
+  badges: Badges,
 };
 
 type esDataType = {
@@ -237,6 +242,48 @@ const DescriptionWarning = styled(Description)`
   color: ${baseColors.burningFire};
 `;
 
+const BadgesWrapper = styled.View`
+  padding-top: 0;
+`;
+
+const BadgesBlock = styled.View`
+  height: 170px;
+  border-bottom-width: 1px;
+  border-style: solid;
+  border-color: ${UIColors.defaultBorderColor};
+`;
+
+const BadgesSubtitle = styled(Title)`
+  margin-left: ${spacing.mediumLarge}px;
+`;
+
+const BadgesScrollView = styled.ScrollView`
+  background-color: ${baseColors.snowWhite};
+  padding-left: 6px;
+  margin-top: -4px;
+  padding-top: ${Platform.select({
+    ios: '4px',
+    android: 0,
+  })};
+`;
+
+const BadgesItem = styled.TouchableOpacity`
+  align-items: center;
+  width: 96px;
+  margin: ${Platform.select({
+    ios: '4px 4px 0',
+    android: '0',
+  })};
+`;
+
+const BadgesItemImage = styled(BadgeImage)`
+  margin-bottom: ${spacing.rhythm / 2};
+`;
+
+const BadgesSpacer = styled.View`
+  min-height: 0;
+`;
+
 const allIconNormal = require('assets/icons/all_normal.png');
 const allIconActive = require('assets/icons/all_active.png');
 const socialIconNormal = require('assets/icons/social_normal.png');
@@ -336,15 +383,28 @@ class HomeScreen extends React.Component<Props, State> {
       });
   };
 
+  renderBadges = () => {
+    const { badges, navigation } = this.props;
+    return badges
+      .sort((a, b) => (b.receivedAt || 0) - (a.receivedAt || 0))
+      .map(badge => (
+        <BadgesItem key={badge.id} onPress={() => navigation.navigate(BADGE, { id: badge.id })}>
+          <BadgesItemImage data={badge} />
+        </BadgesItem>
+      ));
+  };
+
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
       fetchInviteNotifications,
       fetchAllCollectiblesData,
+      fetchBadges,
     } = this.props;
     fetchTransactionsHistoryNotifications();
     fetchInviteNotifications();
     fetchAllCollectiblesData();
+    fetchBadges();
   };
 
   setActiveTab = (activeTab, esData?) => {
@@ -381,6 +441,7 @@ class HomeScreen extends React.Component<Props, State> {
       deepLinkData,
       resetDeepLinkData,
       approveLoginAttempt,
+      badges,
     } = this.props;
     const {
       showCamera,
@@ -594,7 +655,7 @@ class HomeScreen extends React.Component<Props, State> {
           </HomeHeaderRow>
         </AnimatedHomeHeader>
         <Animated.ScrollView
-          stickyHeaderIndices={[2]}
+          stickyHeaderIndices={[3]}
           style={{
             marginTop: this.props.contacts.length ? -100 : -76,
           }}
@@ -629,6 +690,20 @@ class HomeScreen extends React.Component<Props, State> {
             </RecentConnectionsWrapper> :
 
             <RecentConnectionsSpacer />
+          }
+          {badges && badges.length ?
+            <BadgesWrapper>
+              <BadgesBlock>
+                <View style={{ backgroundColor: baseColors.snowWhite }}>
+                  <BadgesSubtitle subtitle title="game of badges." />
+                </View>
+                <BadgesScrollView horizontal nestedScrollEnabled overScrollMode="always">
+                  {this.renderBadges()}
+                </BadgesScrollView>
+              </BadgesBlock>
+            </BadgesWrapper> :
+
+            <BadgesSpacer />
           }
           <TabsHeader>
             <Title subtitle noMargin title="your activity." />
@@ -698,6 +773,7 @@ const mapStateToProps = ({
   wallet: { data: wallet, backupStatus },
   notifications: { intercomNotificationsCount },
   deepLink: { data: deepLinkData },
+  badges: { data: badges },
 }) => ({
   contacts,
   user,
@@ -707,6 +783,7 @@ const mapStateToProps = ({
   intercomNotificationsCount,
   backupStatus,
   deepLinkData,
+  badges,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -720,6 +797,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   resetDeepLinkData: () => dispatch(resetDeepLinkDataAction()),
   approveLoginAttempt: loginAttemptToken => dispatch(approveLoginAttemptAction(loginAttemptToken)),
+  fetchBadges: () => dispatch(fetchBadgesAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

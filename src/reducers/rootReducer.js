@@ -42,6 +42,7 @@ import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
 import deepLinkReducer from './deepLinkReducer';
+import badgesReducer from './badgesReducer';
 
 const appReducer = combineReducers({
   offlineQueue: offlineQueueReducer,
@@ -63,6 +64,7 @@ const appReducer = combineReducers({
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
   deepLink: deepLinkReducer,
+  badges: badgesReducer,
 });
 
 const initialState = appReducer(undefined, {});
