@@ -16,46 +16,53 @@ import * as styled from './styles';
 const iconReceive = require('assets/icons/icon_receive.png');
 
 type Props = {
-  onSwitchPersona: Function,
+  profile: Object,
+  onNewSession: Function,
+  onManageDetails: Function,
+  onSetupRecovery: Function,
+  onPermissions: Function,
 };
 
-const MeSettingsItems = (isPremium) => {
-  const premiumItem = isPremium ? {
-      key: 'manageSmartContract',
-      title: 'Manage smart contract',
-      onPress: () => Alert.alert('manage smart contract'),
-  } : {
-      key: 'activatePremium',
-      title: 'Upgrade to Premium',
-      onPress: () => Alert.alert('activate premium'),
-  };
+const meSettingsItems = (props) => {
+  const {
+    onManageDetails,
+    onSetupRecovery,
+    onPermissions,
+  } = props;
 
   return [
-    premiumItem,
     {
       key: 'manageDetailsSessions',
-      title: 'Manage details / sessions',
-      onPress: () => Alert.alert('manage details'),
+      title: 'Manage details / Sessions',
+      onPress: onManageDetails,
     },
     {
-      key: 'associatedDIDs',
-      title: 'Associated DIDs',
-      onPress: () => Alert.alert('associated DIDs'),
+      key: 'setupRecovery',
+      title: 'Setup Recovery',
+      onPress: onSetupRecovery,
     },
     {
       key: 'permissions',
       title: 'Permissions',
-      onPress: () => Alert.alert('permissions'),
+      onPress: onPermissions,
     },
   ];
 };
 
 const MeScene = (props: Props) => {
-  const { onSwitchPersona, onNewSession, profile } = props;
+  const {
+    onNewSession,
+    onManageDetails,
+    onSetupRecovery,
+    onPermissions,
+    profile,
+  } = props;
   const height = 330;
   const { width } = Dimensions.get('window');
 
-  const { username, profileUri, activePersona, isPremium } = profile;
+  const giftBoxHeight = 70;
+
+  const { username, profileUri, activePersona } = profile;
 
   return (
     <Container>
@@ -64,7 +71,10 @@ const MeScene = (props: Props) => {
         headerRightFlex="2"
         title="me"
         nextText="Switch persona"
-        onNextPress={onSwitchPersona}
+        nextIcon="down-arrow"
+        nextIconColor={baseColors.mediumGray}
+        nextIconSize={12}
+        onNextPress={() => Alert.alert('modal to change persona')}
       />
 
       <ScrollWrapper>
@@ -114,10 +124,33 @@ const MeScene = (props: Props) => {
               </styled.CardBoard>
             </Shadow>
           </styled.Card>
+
+          <styled.Card
+            style={{ marginTop: 20 }}
+          >
+            <Shadow
+              heightAndroid={giftBoxHeight}
+              heightIOS={giftBoxHeight}
+              widthIOS={width - 80}
+              shadowRadius={6}
+              shadowDistance={0}
+              shadowSpread={10}
+              shadowOffsetX={0}
+              shadowOffsetY={1}
+              shadowColorOS={baseColors.mediumLightGray}
+              shadowBorder={8}
+            >
+              <styled.GiftCard>
+                <styled.GiftLabel>
+                  Invite your friends to Pillar and you both will earn 100 PLR
+                </styled.GiftLabel>
+              </styled.GiftCard>
+            </Shadow>
+          </styled.Card>
         </styled.CardContainer>
 
         <FlatList
-          data={MeSettingsItems(isPremium)}
+          data={meSettingsItems(props)}
           renderItem={({ item: { key, title, onPress } }) => (
             <SettingsListItem
               key={key}

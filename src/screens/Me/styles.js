@@ -23,6 +23,12 @@ export const CardBoard = styled.View`
   padding: 15px 0 10px;
 `;
 
+export const GiftCard = styled(CardBoard)`
+  background-color: ${baseColors.brightPurple};
+  height: 70px;
+  padding: 15px 29px 15px 56px;
+`;
+
 export const PersonaLabel = styled.View`
   align-items: center;
   flex-direction: row;
@@ -33,7 +39,7 @@ export const PersonaLabel = styled.View`
 
 export const CurrentPersona = styled(BaseText)`
   color: ${baseColors.slateBlack};
-  font-size: 16px;
+  font-size: ${fontSizes.small};
   font-weight: bold;
 `;
 
@@ -46,7 +52,12 @@ export const PersonaSquare = styled.View`
 
 export const PersonaTrademark = styled(BaseText)`
   color: ${baseColors.burningFire};
-  font-size: 10px;
+  font-size: ${fontSizes.tiny};
+`;
+
+export const GiftLabel = styled(BaseText)`
+  color: ${baseColors.white};
+  font-size: ${fontSizes.extraSmall};
 `;
 
 export const NewSession = styled.View`
