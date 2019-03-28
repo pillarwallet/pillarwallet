@@ -51,12 +51,10 @@ type State = {
   isSheetOpen: boolean,
 }
 
-let USABLE_SCREEN_HEIGHT;
-if (Platform.OS === 'android') {
-  USABLE_SCREEN_HEIGHT = ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight();
-} else {
-  USABLE_SCREEN_HEIGHT = Dimensions.get('window').height - getiOSNavbarHeight();
-}
+const USABLE_SCREEN_HEIGHT = Platform.OS === 'android'
+  ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
+  : Dimensions.get('window').height - getiOSNavbarHeight();
+
 
 const ModalWrapper = styled.View`
   border-top-left-radius: 30px;
