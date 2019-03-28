@@ -5,6 +5,7 @@ import { FlatList, View } from 'react-native';
 import capitalize from 'lodash.capitalize';
 import clone from 'lodash.clone';
 import findIndex from 'lodash.findindex';
+import filter from 'lodash.filter';
 import Header from 'components/Header';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import InputSwitchItem from 'components/ListItem/ListItemInputSwitch';
@@ -40,8 +41,19 @@ class PersonaScene extends Component {
     this.setState({ persona });
   };
 
-  render() {
+  backToScreen = () => {
     const { onBack, onSavePersona } = this.props;
+    const { persona } = this.state;
+
+    if (persona.id) {
+      onSavePersona(persona);
+    }
+
+    onBack();
+  }
+
+  render() {
+    const { onSavePersona } = this.props;
     const { persona: { id, details: personaData } } = this.state;
 
     const createDetail = !id ? (
@@ -66,13 +78,15 @@ class PersonaScene extends Component {
       </Footer>
     ) : null;
 
+    const screenTitle = !id ? 'create persona' : filter(personaData, { key: 'username' })[0].value;
+
     return (
       <Container>
         <Header
           centerTitle
           hasSeparator
-          title="create persona"
-          onBack={onBack}
+          title={screenTitle}
+          onBack={this.backToScreen}
           style={{ marginBottom: 20 }}
         />
         <Container
