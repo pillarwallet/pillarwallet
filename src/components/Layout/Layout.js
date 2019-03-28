@@ -31,6 +31,7 @@ type ContainerProps = {
   color?: string,
   style?: Object,
   inset?: Object,
+  onLayout?: Function,
 };
 
 type FooterProps = {
@@ -70,7 +71,7 @@ export const Container = (props: ContainerProps) => {
 
   return (
     <ContainerOuter color={props.color} style={props.style} forceInset={{ top: 'always', ...inset }}>
-      <ContainerInner center={props.center}>{props.children}</ContainerInner>
+      <ContainerInner center={props.center} onLayout={props.onLayout}>{props.children}</ContainerInner>
     </ContainerOuter>
   );
 };

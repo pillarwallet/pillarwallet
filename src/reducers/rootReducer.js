@@ -23,6 +23,7 @@ import { combineReducers } from 'redux';
 import { LOG_OUT } from 'constants/authConstants';
 
 // reducers
+import offlineQueueReducer from './offlineQueueReducer';
 import walletReducer from './walletReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
@@ -41,8 +42,10 @@ import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
 import deepLinkReducer from './deepLinkReducer';
+import badgesReducer from './badgesReducer';
 
 const appReducer = combineReducers({
+  offlineQueue: offlineQueueReducer,
   wallet: walletReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,
@@ -61,6 +64,7 @@ const appReducer = combineReducers({
   txCount: txCountReducer,
   collectibles: collectiblesReducer,
   deepLink: deepLinkReducer,
+  badges: badgesReducer,
 });
 
 const initialState = appReducer(undefined, {});
