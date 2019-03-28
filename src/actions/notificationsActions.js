@@ -110,7 +110,6 @@ export const startListeningIntercomNotificationsAction = () => {
 export const stopListeningIntercomNotificationsAction = () => {
   return () => {
     if (!intercomNotificationsListener) return;
-    Intercom.logout();
     Intercom.removeEventListener(Intercom.Notifications.UNREAD_COUNT, intercomNotificationsListener);
   };
 };

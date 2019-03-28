@@ -31,6 +31,7 @@ type ContainerProps = {
   color?: string,
   style?: Object,
   inset?: Object,
+  onLayout?: Function,
 };
 
 type FooterProps = {
@@ -45,6 +46,9 @@ type ScrollWrapperProps = {
   children?: React.Node,
   regularPadding?: boolean,
   color?: string,
+  disableAutomaticScroll?: boolean,
+  onKeyboardWillShow?: Function,
+  innerRef?: Object,
 };
 
 export const Center = styled.View`
@@ -67,7 +71,7 @@ export const Container = (props: ContainerProps) => {
 
   return (
     <ContainerOuter color={props.color} style={props.style} forceInset={{ top: 'always', ...inset }}>
-      <ContainerInner center={props.center}>{props.children}</ContainerInner>
+      <ContainerInner center={props.center} onLayout={props.onLayout}>{props.children}</ContainerInner>
     </ContainerOuter>
   );
 };
@@ -103,6 +107,9 @@ export const ScrollWrapper = (props: ScrollWrapperProps) => {
       regularPadding={props.regularPadding}
       color={props.color}
       enableOnAndroid
+      enableAutomaticScroll={!props.disableAutomaticScroll}
+      innerRef={props.innerRef}
+      onKeyboardWillShow={props.onKeyboardWillShow}
     >
       {props.children}
     </KAScrollView>

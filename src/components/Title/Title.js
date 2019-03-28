@@ -46,7 +46,11 @@ const Wrapper = styled.View`
   ${({ maxWidth }) => maxWidth && `
     width: maxWidth;
   `}
-  ${({ fullWidth }) => fullWidth ? 'width: 100%;' : ''}
+  ${({ fullWidth, align }) => fullWidth && align !== 'center' ? 'width: 100%;' : ''}
+  ${({ align }) => align === 'center' && `
+    flex-direction: row;
+    align-items: center;
+  `}
 `;
 
 const Text = styled(BoldText)`
@@ -54,7 +58,7 @@ const Text = styled(BoldText)`
   font-size: ${props => props.subtitle ? fontSizes.medium : fontSizes.large};
   font-weight: ${fontWeights.bold};
   ${({ align }) => align === 'center' && `
-    width: 100%;
+    line-height: 25px;
     text-align: center;
   `}
 `;
@@ -64,6 +68,15 @@ const BlueDot = styled(BoldText)`
   font-size: ${Platform.OS === 'ios' ? 30 : 26}px;
 `;
 
+
+/**
+ *  this separate definition has to stay here as it affects font rendering
+ *  otherwise if it's taken then once font is being shorten with ellipsis
+ *  on Android it gets cut
+ */
+const AktivTextTitle = styled(Text)`
+  fontFamily: 'Aktiv Grotesk App${Platform.OS === 'android' ? '_bold' : ''};
+`;
 
 const Title = (props: Props) => {
   const ellipsized = !props.fullWidth ? {
@@ -97,7 +110,7 @@ const Title = (props: Props) => {
     >
       {onTitlePress ?
         <TouchableOpacity onPress={onTitlePress}>
-          <Text
+          <AktivTextTitle
             align={align}
             subtitle={subtitle}
             {...ellipsized}
@@ -106,10 +119,10 @@ const Title = (props: Props) => {
           >
             {title}
             {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
-          </Text>
+          </AktivTextTitle>
         </TouchableOpacity>
         :
-        <Text
+        <AktivTextTitle
           align={align}
           subtitle={subtitle}
           {...ellipsized}
@@ -118,7 +131,7 @@ const Title = (props: Props) => {
         >
           {title}
           {!subtitle && !noBlueDotNeeded && <BlueDot dotColor={dotColor}>.</BlueDot>}
-        </Text>
+        </AktivTextTitle>
       }
     </Wrapper>
   );

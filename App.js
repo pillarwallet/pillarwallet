@@ -29,6 +29,7 @@ import { setTopLevelNavigator } from 'services/navigation';
 import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
+import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
 import {
   startListeningOnOpenNotificationAction,
   stopListeningOnOpenNotificationAction,
@@ -46,6 +47,7 @@ type Props = {
   isFetched: Boolean,
   fetchAppSettingsAndRedirect: Function,
   updateSessionNetworkStatus: Function,
+  updateOfflineQueueNetworkStatus: Function,
   checkDBConflicts: Function,
   startListeningOnOpenNotification: Function,
   stopListeningOnOpenNotification: Function,
@@ -96,8 +98,9 @@ class App extends React.Component<Props, *> {
   }
 
   handleConnectivityChange = isOnline => {
-    const { updateSessionNetworkStatus } = this.props;
+    const { updateSessionNetworkStatus, updateOfflineQueueNetworkStatus } = this.props;
     updateSessionNetworkStatus(isOnline);
+    updateOfflineQueueNetworkStatus(isOnline);
     if (!isOnline) {
       Toast.show({
         message: 'No active internet connection found!',
@@ -139,6 +142,7 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAppSettingsAndRedirect: (appState: string, platform: string) =>
     dispatch(initAppAndRedirectAction(appState, platform)),
   updateSessionNetworkStatus: (isOnline: boolean) => dispatch(updateSessionNetworkStatusAction(isOnline)),
+  updateOfflineQueueNetworkStatus: (isOnline: boolean) => dispatch(updateOfflineQueueNetworkStatusAction(isOnline)),
   checkDBConflicts: () => dispatch(checkDBConflictsAction()),
   startListeningOnOpenNotification: () => dispatch(startListeningOnOpenNotificationAction()),
   stopListeningOnOpenNotification: () => dispatch(stopListeningOnOpenNotificationAction()),

@@ -25,6 +25,8 @@ import {
   TX_DETAILS_URL,
   NETWORK_PROVIDER,
   NOTIFICATIONS_URL,
+  COLLECTIBLES_NETWORK,
+  OPEN_SEA_API,
 } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
@@ -32,7 +34,7 @@ import { BoldText } from 'components/Typography';
 import { baseColors, fontSizes } from 'utils/variables';
 
 const LabeledRow = styled.View`
-  margin: 10px 0;
+  margin: 6px 0;
 `;
 
 const Label = styled(BoldText)`
@@ -71,8 +73,16 @@ const SystemInfoModal = () => {
         <Value>{NETWORK_PROVIDER}</Value>
       </LabeledRow>
       <LabeledRow>
+        <Label>COLLECTIBLES_NETWORK</Label>
+        <Value>{COLLECTIBLES_NETWORK}</Value>
+      </LabeledRow>
+      <LabeledRow>
         <Label>NOTIFICATIONS_URL</Label>
         <Value>{NOTIFICATIONS_URL}</Value>
+      </LabeledRow>
+      <LabeledRow>
+        <Label>OPEN_SEA_API</Label>
+        <Value>{OPEN_SEA_API}</Value>
       </LabeledRow>
     </Wrapper>
   );

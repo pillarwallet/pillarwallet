@@ -47,6 +47,7 @@ import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
 import firebase from 'react-native-firebase';
+import Intercom from 'react-native-intercom';
 import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
@@ -74,13 +75,18 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       if (!touchID) {
         wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
       } else {
-        wallet = { ...encryptedWallet };
+        let walletAddress = encryptedWallet.address;
+        if (walletAddress.indexOf('0x') !== 0) {
+          walletAddress = `0x${walletAddress}`;
+        }
+        wallet = { ...encryptedWallet, address: walletAddress };
       }
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
       if (userState === REGISTERED) {
         const fcmToken = await firebase.messaging().getToken().catch(() => null);
+        await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
         const signalCredentials = {
           userId: user.id,
           username: user.username,
@@ -267,6 +273,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 
 export const logoutAction = () => {
   return async (dispatch: Function) => {
+    Intercom.logout();
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
     dispatch({ type: LOG_OUT });
     dispatch({ type: UPDATE_APP_SETTINGS, payload: {} });
