@@ -128,6 +128,37 @@ Styleguide.add({
 Styleguide.add({
   parent: 'COMPONENT',
   group: 'Header',
+  id: 'HEADER_NEXT_ICON_TEXT',
+  title: 'Next Text Icon',
+  component: (
+    <Header
+      title="foo"
+      nextText="bar"
+      nextIcon="flash-on"
+      onNextPress={() => Alert.alert('next icon')}
+    />
+  ),
+});
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'Header',
+  id: 'HEADER_NEXT_ICON_COLOR_TEXT',
+  title: 'Next Text Icon Color',
+  component: (
+    <Header
+      title="foo"
+      nextText="bar"
+      nextIcon="flash-on"
+      nextIconColor={baseColors.mediumLightGray}
+      onNextPress={() => Alert.alert('next icon')}
+    />
+  ),
+});
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'Header',
   id: 'HEADER_DEFAULT_BACK_ICON',
   title: 'Back Icon',
   component: (

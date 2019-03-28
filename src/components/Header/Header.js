@@ -94,6 +94,8 @@ const NextIcon = styled(IconButton)`
   width: 44px;
   padding-right: 10px;
   margin-right: -10px;
+  margin-left: 4px;
+  width: auto;
   align-items: flex-end;
 `;
 
@@ -108,9 +110,10 @@ const HeaderBody = styled(Body)`
 `;
 
 const HeaderRight = styled(Right)`
+  flex-direction: row;
   flex: ${props => props.flex};
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: center;
 `;
 
 const Header = (props: Props) => {
@@ -134,6 +137,7 @@ const Header = (props: Props) => {
     noMargin,
     style,
     light,
+    nextIconColor,
     headerRightFlex,
     overlay,
     flexStart,
@@ -154,6 +158,9 @@ const Header = (props: Props) => {
     }
     return 1;
   };
+
+  const defaultNextIconColor = light ? baseColors.white : UIColors.primary;
+  const nextIconColorToUse = nextIconColor || defaultNextIconColor;
 
   return (
     <Wrapper
@@ -202,13 +209,15 @@ const Header = (props: Props) => {
       {showRight && !noClose &&
         <HeaderRight flex={getHeaderRightFlex} onClose={onClose || noop}>
           {nextText &&
-            <TextLink onPress={onNextPress}>{nextText}</TextLink>
+            <TextLink onPress={onNextPress}>
+              {nextText}
+            </TextLink>
           }
           {nextIcon &&
             <IconWrapper>
               <NextIcon
                 icon={nextIcon}
-                color={light ? baseColors.white : UIColors.primary}
+                color={nextIconColorToUse}
                 onPress={onNextPress}
                 fontSize={nextIconSize || fontSizes.small}
                 horizontalAlign="flex-end"
