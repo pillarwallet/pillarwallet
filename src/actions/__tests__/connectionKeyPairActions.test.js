@@ -21,6 +21,7 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import Storage from 'services/storage';
+import PillarSdk from 'services/api';
 import type { ConnectionIdentityKeyMap, ConnectionUpdateIdentityKeys } from 'models/Connections';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
@@ -151,26 +152,32 @@ const mapIdentityKeysResponseMock = [
   },
 ];
 
-const pillarSdk = {
-  connectionsCount: jest.fn((walletIdParam) => {
-    if (walletIdParam) {
-      return connectionCountResponseMock;
-    }
-    return null;
-  }),
-  updateIdentityKeys: jest.fn((updatedIdentityKeys: ConnectionUpdateIdentityKeys) => {
-    if (updatedIdentityKeys) {
-      return updateIdentityKeysResponseMock;
-    }
-    return null;
-  }),
-  mapIdentityKeys: jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
-    if (connectionKeyIdentityMap) {
-      return mapIdentityKeysResponseMock;
-    }
-    return null;
-  }),
+type SDK = {
+  connectionsCount: Function,
+  updateIdentityKeys: Function,
+  mapIdentityKeys: Function,
 };
+
+const pillarSdk: SDK = new PillarSdk();
+pillarSdk.connectionsCount = jest.fn((walletIdParam) => {
+  if (walletIdParam) {
+    return connectionCountResponseMock;
+  }
+  return null;
+});
+pillarSdk.updateIdentityKeys = jest.fn((updatedIdentityKeys: ConnectionUpdateIdentityKeys) => {
+  if (updatedIdentityKeys) {
+    return updateIdentityKeysResponseMock;
+  }
+  return null;
+});
+pillarSdk.mapIdentityKeys = jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
+  if (connectionKeyIdentityMap) {
+    return mapIdentityKeysResponseMock;
+  }
+  return null;
+});
+
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
 describe('ConnectionKeyPair actions', () => {

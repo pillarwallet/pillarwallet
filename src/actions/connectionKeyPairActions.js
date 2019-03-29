@@ -20,6 +20,7 @@
 import { generateKeyPairThreadPool } from 'utils/keyPairGenerator';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
+import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { saveDbAction } from './dbActions';
 
 export const useConnectionKeyPairs = (count: number = 1) => {
@@ -158,8 +159,12 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
     await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
 
     if (lastConnectionKeyIndex === -1) {
-      await
-      dispatch(importOldAndCurrentConnections(resultConnectionKeys, oldConnectionsCount, currentConnectionsCount));
+      await dispatch(restoreAccessTokensAction(walletId));
+      await dispatch(importOldAndCurrentConnections(
+        resultConnectionKeys,
+        oldConnectionsCount,
+        currentConnectionsCount,
+      ));
     }
   };
 };
