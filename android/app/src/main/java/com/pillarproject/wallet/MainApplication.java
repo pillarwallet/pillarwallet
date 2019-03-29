@@ -9,6 +9,7 @@ import com.bitgo.randombytes.RandomBytesPackage;
 import com.crashlytics.android.Crashlytics;
 import com.crypho.scrypt.RNScryptPackage;
 import com.facebook.react.ReactApplication;
+import ca.jaysoo.extradimensions.ExtraDimensionsPackage;
 import dk.madslee.imageCapInsets.RCTImageCapInsetPackage;
 import com.rnfingerprint.FingerprintAuthPackage;
 import com.facebook.react.ReactNativeHost;
@@ -60,6 +61,7 @@ public class MainApplication extends Application implements ShareApplication, Re
       return Arrays.<ReactPackage>asList(
         new RNColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
+        new ExtraDimensionsPackage(),
         new RCTImageCapInsetPackage(),
         new FingerprintAuthPackage(),
         new RNSentryPackage(),
