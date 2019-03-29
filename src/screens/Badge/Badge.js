@@ -63,7 +63,7 @@ class Badge extends React.Component<Props, {}> {
         />
         <ScrollWrapper>
           <BadgeWrapper>
-            <Image data={badge} />
+            <Image data={badge} size="150" />
             {!!badge.subtitle && (
             <Subtitle>
               {badge.subtitle}
