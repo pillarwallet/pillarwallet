@@ -1,5 +1,5 @@
 import React from 'react';
-import Styleguide from 'utils/StyleguideSystem/styleguide';
+import { Styleguide } from 'StyleguideSystem';
 import { Container } from 'components/Layout';
 import ProfileImage from './ProfileImage';
 

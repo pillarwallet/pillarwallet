@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, Text } from 'react-native';
-import Styleguide from 'utils/StyleguideSystem/styleguide';
+import { Styleguide } from 'StyleguideSystem';
 
 import { Container } from 'components/Layout';
 import SettingsListItem from 'components/ListItem/SettingsItem';

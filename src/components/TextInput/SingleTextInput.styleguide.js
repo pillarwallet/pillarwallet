@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert, View } from 'react-native';
-import Styleguide from 'utils/StyleguideSystem/styleguide';
+import { Styleguide } from 'StyleguideSystem';
 
 import SingleInput from './SingleInput';
 import TextInput from './TextInput';

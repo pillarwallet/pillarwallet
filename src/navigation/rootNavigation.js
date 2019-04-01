@@ -20,6 +20,9 @@
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
+// STYLEGUIDE
+import * as Styleguide from 'StyleguideSystem';
+
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
@@ -54,11 +57,9 @@ import {
   ONBOARDING_HOME,
   WELCOME,
   FORGOT_PIN,
-  STYLEGUIDE_SYSTEM_FLOW,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
-import StyleguideFlow from './styleguideNavigation';
 
 const StackNavigatorConfig = {
   navigationOptions: {
@@ -103,7 +104,7 @@ const RootNavigation = {
 };
 
 if (process.env['STYLEGUIDE']) {
-  RootNavigation[STYLEGUIDE_SYSTEM_FLOW] = StyleguideFlow;
+  RootNavigation['STYLEGUIDE_SYSTEM_FLOW'] = Styleguide.StyleguideFlow;
 }
 
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator(RootNavigation);

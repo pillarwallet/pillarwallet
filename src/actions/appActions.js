@@ -21,7 +21,7 @@ import { NavigationActions } from 'react-navigation';
 import { Sentry } from 'react-native-sentry';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { AUTH_FLOW, ONBOARDING_FLOW, STYLEGUIDE_SYSTEM_FLOW } from 'constants/navigationConstants';
+import { AUTH_FLOW, ONBOARDING_FLOW } from 'constants/navigationConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { UPDATE_CONTACTS } from 'constants/contactsConstants';
@@ -49,7 +49,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     if (appState === BACKGROUND && platform === ANDROID) return;
 
     if (process.env['STYLEGUIDE']) {
-      navigate(NavigationActions.navigate({ routeName: STYLEGUIDE_SYSTEM_FLOW }));
+      navigate(NavigationActions.navigate({ routeName: 'STYLEGUIDE_SYSTEM_FLOW' }));
       return;
     }
 

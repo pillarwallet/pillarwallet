@@ -1,5 +1,5 @@
 import React from 'react';
-import Styleguide from 'utils/StyleguideSystem/styleguide';
+import { Styleguide } from 'StyleguideSystem';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 
 import Scene from './scene.js';

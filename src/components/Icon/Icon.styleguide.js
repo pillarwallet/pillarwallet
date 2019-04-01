@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import map from 'lodash.map';
 import { ScrollWrapper } from 'components/Layout';
-import Styleguide from 'utils/StyleguideSystem/styleguide';
+import { Styleguide } from 'StyleguideSystem';
 import { baseColors } from 'utils/variables';
 
 import Icon, { glyphMap } from './Icon';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import Styleguide from 'utils/StyleguideSystem/styleguide';
+import { Styleguide } from 'StyleguideSystem';
 
 import Scene from './scene.js';
 
