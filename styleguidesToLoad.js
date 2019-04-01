@@ -5,7 +5,6 @@ import 'components/CountrySelect/CountrySelect.styleguide';
 import 'components/ProfileImage/ProfileImage.styleguide';
 import 'components/ListItem/SettingsItem.styleguide';
 import 'components/ListItem/ListItemInputSwitch.styleguide';
-
 import 'screens/PinCodeUnlock/PinCodeUnlock.styleguide';
 import 'screens/Me/Me.styleguide';
 import 'screens/Personas/Personas.styleguide';

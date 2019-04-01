@@ -1246,6 +1246,18 @@ Base64@~0.2.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/Base64/-/Base64-0.2.1.tgz#ba3a4230708e186705065e66babdd4c35cf60028"
   integrity sha1-ujpCMHCOGGcFBl5mur3Uw1z2ACg=
 
+StyleguideSystem@/Users/owl/Developer/diablo/StyleguideSystem:
+  version "0.0.3"
+  dependencies:
+    lodash.capitalize "^4.2.1"
+    lodash.clone "^4.5.0"
+    lodash.filter "^4.6.0"
+    lodash.findindex "^4.6.0"
+    lodash.foreach "^4.5.0"
+    lodash.groupby "^4.6.0"
+    react-navigation "2.11.2"
+    styled-components "^3.2.5"
+
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
