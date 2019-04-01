@@ -49,3 +49,27 @@ Styleguide.add({
     </Container>
   ),
 });
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'ListItem',
+  id: 'INPUT_SWITCH_LIST_ITEM_SELECT',
+  title: 'Input Switch with Select',
+  component: (
+    <Container>
+      <InputSwitch
+        key="foo"
+        inputType="Select"
+        inputProps={{
+          label: 'username',
+          value: 'foo',
+          onSelect: () => Alert.alert(`it should display modal to select an option`)
+        }}
+        switchProps={{
+          switchStatus: true,
+          onPress: () => Alert.alert('set on foo')
+        }}
+      />
+    </Container>
+  ),
+});

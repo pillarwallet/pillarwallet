@@ -64,6 +64,18 @@ const ItemValue = styled(Input)`
   width:100%;
 `;
 
+const SelectedOption = styled(BaseText)`
+  color: ${baseColors.slateBlack};
+  font-size: ${fontSizes.small};
+  flex-wrap: wrap;
+  flex: 1;
+  padding: 0 ${spacing.rhythm / 2}px
+  align-self: flex-start;
+  width:100%;
+`;
+
+const ItemSelectHolder = styled.TouchableOpacity``;
+
 const ListAddon = styled.View`
   flex-direction: row;
   justify-content: center;
@@ -74,6 +86,7 @@ type InputProps = {
   label: string,
   value?: ?string,
   onChange?: ?Function,
+  onSelect?: ?Function,
   onBlur?: ?Function,
 };
 
@@ -83,6 +96,7 @@ type SwitchProps = {
 }
 
 type Props = {
+  inputType?: string,
   inputProps: InputProps,
   switchProps: SwitchProps,
 }
@@ -105,21 +119,37 @@ export default class InputSwitch extends React.Component<Props> {
 
   render() {
     const {
-      inputProps: { value = '', label },
+      inputType,
+      inputProps: { value = '', label, onSelect },
       switchProps: { switchStatus, onPress },
     } = this.props;
 
+    let inputSection = (
+      <ItemLabelHolder>
+        <ItemLabel>{label}</ItemLabel>
+        <ItemValue
+          onChange={this.handleChange}
+          onBlur={this.handleBlur}
+          numberOfLines={1}
+          value={value}
+        />
+      </ItemLabelHolder>
+    );
+
+    if (inputType && inputType === 'Select' && onSelect) {
+      inputSection = (
+        <ItemSelectHolder
+          onPress={onSelect}
+        >
+          <ItemLabel>{label}</ItemLabel>
+          <SelectedOption>{value}</SelectedOption>
+        </ItemSelectHolder>
+      );
+    }
+
     return (
       <StyledItemView>
-        <ItemLabelHolder>
-          <ItemLabel>{label}</ItemLabel>
-          <ItemValue
-            onChange={this.handleChange}
-            onBlur={this.handleBlur}
-            numberOfLines={1}
-            value={value}
-          />
-        </ItemLabelHolder>
+        {inputSection}
         <ListAddon>
           <Switch
             onValueChange={onPress}

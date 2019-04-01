@@ -7,10 +7,13 @@ import clone from 'lodash.clone';
 import findIndex from 'lodash.findindex';
 import filter from 'lodash.filter';
 import Header from 'components/Header';
+import SlideModal from 'components/Modals/SlideModal';
+import CountrySelect from 'components/CountrySelect';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import InputSwitchItem from 'components/ListItem/ListItemInputSwitch';
+import SettingsItem from 'components/ListItem/SettingsItem';
 import Separator from 'components/Separator';
-import { Container, Footer } from 'components/Layout';
+import { Container, Wrapper, Footer } from 'components/Layout';
 import Button from 'components/Button';
 import { baseColors } from 'utils/variables';
 import * as styled from './styles';
@@ -27,10 +30,11 @@ class PersonaScene extends Component {
 
     this.state = {
       persona: props.persona,
+      isModalVisible: false,
     };
   }
 
-  updatePersonaDetail = (objectToUpdate) => {
+  updatePersonaDetail = (objectToUpdate, shouldCloseModal = false) => {
     const persona = clone(this.state.persona);
 
     const detailIndexToUpdate = findIndex(persona.details, { key: objectToUpdate.key });
@@ -38,7 +42,14 @@ class PersonaScene extends Component {
 
     persona.details[detailIndexToUpdate] = detailToUpdate;
 
-    this.setState({ persona });
+    if (shouldCloseModal) {
+      this.setState({
+        persona,
+        isModalVisible: false,
+      });
+    } else {
+      this.setState({ persona });
+    }
   };
 
   backToScreen = () => {
@@ -52,9 +63,35 @@ class PersonaScene extends Component {
     onBack();
   }
 
+  toggleSlideModal = () => {
+    this.setState({ isModalVisible: !this.state.isModalVisible });
+  };
+
+  renderListItem = (field: string) => ({ item: { name } }: Object) => (
+    <SettingsItem
+      key={name}
+      label={name}
+      onPress={() => {
+        this.updatePersonaDetail({ key: 'country', value: name }, true)
+      }}
+    />
+  );
+
+  personaInputProps = ({ key, value }) => (
+    key === 'country' ? {
+      value,
+      label: key,
+      onSelect: () => this.toggleSlideModal(),
+    } : {
+      value,
+      label: key,
+      onChange: (newValue) => this.updatePersonaDetail({ key, value: newValue }),
+    }
+  );
+
   render() {
     const { onSavePersona } = this.props;
-    const { persona: { id, details: personaData } } = this.state;
+    const { persona: { id, details: personaData }, isModalVisible } = this.state;
 
     const createDetail = !id ? (
       <styled.DetailView>
@@ -89,6 +126,25 @@ class PersonaScene extends Component {
           onBack={this.backToScreen}
           style={{ marginBottom: 20 }}
         />
+
+        <SlideModal
+          fullScreen
+          showHeader
+          avoidKeyboard
+          isVisible={isModalVisible}
+          onModalHide={this.toggleSlideModal}
+          backgroundColor={baseColors.lightGray}
+        >
+          <Wrapper flex={1}>
+            <styled.ModalTitle extraHorizontalSpacing>
+              Choose your country
+            </styled.ModalTitle>
+            <CountrySelect
+              renderItem={this.renderListItem('country')}
+            />
+          </Wrapper>
+        </SlideModal>
+
         <Container
           color={baseColors.lighterGray}
           inset={{
@@ -104,11 +160,8 @@ class PersonaScene extends Component {
                 return (
                   <InputSwitchItem
                     key={key}
-                    inputProps={{
-                      value,
-                      label: key,
-                      onChange: (newValue) => this.updatePersonaDetail({ key, value: newValue })
-                    }}
+                    inputType={key === 'country' ? 'Select' : null}
+                    inputProps={this.personaInputProps({ key, value })}
                     switchProps={{
                       switchStatus: isVisible,
                       onPress: () => this.updatePersonaDetail({ key, isVisible: !isVisible })
