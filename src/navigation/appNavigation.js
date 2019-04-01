@@ -64,6 +64,9 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import SendCollectibleAssetsScreen from 'screens/SendCollectible/SendCollectibleAssets';
+import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
+import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
+import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -131,6 +134,10 @@ import {
   SEND_COLLECTIBLE_CONFIRM,
   SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
   SEND_COLLECTIBLE_ASSETS,
+  WALLETCONNECT_FLOW,
+  WALLETCONNECT_SESSION_REQUEST_SCREEN,
+  WALLETCONNECT_CALL_REQUEST_SCREEN,
+  WALLETCONNECT_PIN_CONFIRM_SCREEN,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
@@ -442,6 +449,13 @@ const backupWalletFlow = createStackNavigator({
   [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
 }, StackNavigatorModalConfig);
 
+// WALLET BACKUP IN SETTINGS FLOW
+const walletConnectFlow = createStackNavigator({
+  [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
+  [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
+  [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+}, StackNavigatorModalConfig);
+
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -456,6 +470,7 @@ const AppFlowNavigation = createStackNavigator(
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
+    [WALLETCONNECT_FLOW]: walletConnectFlow,
   }, modalTransition,
 );
 

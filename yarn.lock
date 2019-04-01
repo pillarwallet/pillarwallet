@@ -952,6 +952,36 @@
   dependencies:
     "@types/node" "*"
 
+"@walletconnect/core@^1.0.0-beta.7":
+  version "1.0.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.0.0-beta.7.tgz#716dbc22e73265bf5479c0102cf6c9dae84d9457"
+  integrity sha512-VwvM0o1Bt48F73P8fNsI0otKUvzmwelNPlYI/JbXf9e6qfUzM5WhQelL9pNnHTBqy8mvz3JwR6AFJUrl/IT9sw==
+  dependencies:
+    "@walletconnect/types" "^1.0.0-beta.7"
+    "@walletconnect/utils" "^1.0.0-beta.7"
+
+"@walletconnect/react-native@^1.0.0-beta.7":
+  version "1.0.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0-beta.7.tgz#0b62e087192cf1714d546381dc25482d8e3c015d"
+  integrity sha512-0opZBFhZWFYQk3Z+BL4rWljI1Z4FdV9sioOfgarhn0IX0gnTHuaIc+lmOIjWDDVAloLMwlZ/ZN0rdtSkty1HHQ==
+  dependencies:
+    "@walletconnect/core" "^1.0.0-beta.7"
+    "@walletconnect/types" "^1.0.0-beta.7"
+    "@walletconnect/utils" "^1.0.0-beta.7"
+
+"@walletconnect/types@^1.0.0-beta.7":
+  version "1.0.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.0-beta.7.tgz#4f573057773509db5ba08f4b6b10079cd7431d18"
+  integrity sha512-bocS8YZ53nGY42DV6kqzkeJvVWH7KeQG7RwvUVjgAa16Lvmj81rDUdC2NXPkoV7NwO02/AY/rv4xiyObQSLKYg==
+
+"@walletconnect/utils@^1.0.0-beta.7":
+  version "1.0.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.0-beta.7.tgz#a30e4744fc63fa1912b77e8c3359d9775bfa109c"
+  integrity sha512-RXTVRjjXmw7BXEuyPoJ70ze8Mc/Xqcgt/0Tj1a1mQhkf7+sGKGYhjWj9BxZxsuqki1xVbFBbmr0zvLalcTRxzA==
+  dependencies:
+    "@walletconnect/types" "^1.0.0-beta.7"
+    lodash.isnumber "^3.0.3"
+
 "@webassemblyjs/ast@1.5.9":
   version "1.5.9"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@webassemblyjs/ast/-/ast-1.5.9.tgz#b2770182678691ab4949d593105c15d4074fedb6"
@@ -8726,6 +8756,11 @@ lodash.isnull@^3.0.0:
   version "3.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/lodash.isnull/-/lodash.isnull-3.0.0.tgz#fafbe59ea1dca27eed786534039dd84c2e07c56e"
   integrity sha1-+vvlnqHcon7teGU0A53YTC4HxW4=
+
+lodash.isnumber@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
+  integrity sha1-POdoEMWSjQM1IwGsKHMX8RwLH/w=
 
 lodash.isplainobject@^4.0.6:
   version "4.0.6"

@@ -24,6 +24,7 @@ import { LOG_OUT } from 'constants/authConstants';
 
 // reducers
 import walletReducer from './walletReducer';
+import walletConnectReducer from './walletConnectReducer';
 import assetsReducer from './assetsReducer';
 import appSettingsReducer from './appSettingsReducer';
 import ratesReducer from './ratesReducer';
@@ -44,6 +45,7 @@ import deepLinkReducer from './deepLinkReducer';
 
 const appReducer = combineReducers({
   wallet: walletReducer,
+  walletConnect: walletConnectReducer,
   assets: assetsReducer,
   appSettings: appSettingsReducer,
   rates: ratesReducer,

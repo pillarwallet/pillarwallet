@@ -103,6 +103,7 @@
   "dependencies": {
     "@pillarwallet/pillarwallet-nodejs-sdk": "^1.20.1300",
     "@tradle/react-native-http": "^2.0.0",
+    "@walletconnect/react-native": "^1.0.0-beta.7",
     "add": "^2.0.6",
     "asyncstorage-down": "^4.0.1",
     "bignumber.js": "^7.2.1",
