@@ -92,7 +92,9 @@ class Contact extends React.Component<Props, State> {
     super(props);
     const { navigation, contacts } = this.props;
     this.activityFeedRef = React.createRef();
-    const contact = navigation.getParam('contact', {});
+    const contactName = navigation.getParam('username', '');
+    const shouldOpenSheet = navigation.getParam('chatTabOpen', false);
+    const contact = navigation.getParam('contact', { username: contactName });
     this.localContact = contacts.find(({ username }) => username === contact.username);
     this.state = {
       showManageContactModal: false,
@@ -101,7 +103,7 @@ class Contact extends React.Component<Props, State> {
       screenHeight: 0,
       chatHeight: 0,
       activeTab: 'CHAT',
-      isSheetOpen: false,
+      isSheetOpen: shouldOpenSheet,
     };
   }
 
@@ -114,7 +116,8 @@ class Contact extends React.Component<Props, State> {
       navigation,
     } = this.props;
     this.isComponentMounted = true;
-    const contact = navigation.getParam('contact', {});
+    const contactName = navigation.getParam('username', '');
+    const contact = navigation.getParam('contact', { username: contactName });
     const defaultImageCacheManager = ImageCacheManager();
 
     if (contact.profileImage && session.isOnline) {
@@ -212,9 +215,11 @@ class Contact extends React.Component<Props, State> {
       manageContactType,
       screenHeight,
       activeTab,
+      isSheetOpen,
     } = this.state;
 
-    const contact = navigation.getParam('contact', {});
+    const contactName = navigation.getParam('username', '');
+    const contact = navigation.getParam('contact', { username: contactName });
     // NOTE: we need a fresh copy of the contact here as the avatar might be changed
     const localContact = contacts.find(({ username }) => username === contact.username);
     const isAccepted = !!localContact;
@@ -287,8 +292,9 @@ class Contact extends React.Component<Props, State> {
             )}
           </CircleButtonsWrapper>
         </ScrollWrapper>
-        {isAccepted &&
+        {isAccepted && !!screenHeight &&
         <BottomSheet
+          forceOpen={isSheetOpen}
           initialSheetHeight={250}
           swipeToCloseHeight={62}
           // scrollingComponentsRefs={[this.activityFeedRef]}

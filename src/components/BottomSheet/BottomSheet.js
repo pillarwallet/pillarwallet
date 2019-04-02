@@ -45,6 +45,7 @@ type Props = {
   children: React.Node,
   floatingHeaderContent?: React.Node,
   sheetWrapperStyle?: Object,
+  forceOpen: boolean,
 }
 
 type State = {
@@ -110,12 +111,21 @@ export default class BottomSheet extends React.Component<Props, State> {
     super(props);
     this.panResponder = React.createRef();
     this.initialPosition = USABLE_SCREEN_HEIGHT - this.props.initialSheetHeight;
+    const {
+      forceOpen,
+      screenHeight,
+      topOffset,
+      initialSheetHeight,
+    } = this.props;
+    const initialTopPosition = forceOpen ? topOffset : initialSheetHeight;
+    const initialHeight = forceOpen ? screenHeight - topOffset : initialSheetHeight;
+
     this.state = {
       isTouched: false,
       isMoved: false,
-      topSheetPosition: new Animated.Value(400),
-      animatedHeight: new Animated.Value(this.props.initialSheetHeight),
-      isSheetOpen: false,
+      topSheetPosition: new Animated.Value(initialTopPosition),
+      animatedHeight: new Animated.Value(initialHeight),
+      isSheetOpen: forceOpen,
     };
   }
 

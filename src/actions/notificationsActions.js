@@ -53,7 +53,7 @@ import {
   BCX,
   COLLECTIBLE,
 } from 'constants/notificationConstants';
-import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CHAT, CHAT_LIST } from 'constants/navigationConstants';
+import { PEOPLE, HOME, AUTH_FLOW, APP_FLOW, CONTACT } from 'constants/navigationConstants';
 import {
   ADD_WEBSOCKET_RECEIVED_MESSAGE,
   REMOVE_WEBSOCKET_SENT_MESSAGE,
@@ -74,7 +74,7 @@ const chat = new ChatService();
 const NOTIFICATION_ROUTES = {
   [CONNECTION]: PEOPLE,
   [BCX]: HOME,
-  [SIGNAL]: CHAT,
+  [SIGNAL]: CONTACT,
   [COLLECTIBLE]: HOME,
 };
 
@@ -216,13 +216,25 @@ export const stopListeningNotificationsAction = () => {
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Function, getState: Function) => { // eslint-disable-line
     const notificationOpen = await firebase.notifications().getInitialNotification();
+    const {
+      contacts: { data: contacts },
+    } = getState();
+
     if (notificationOpen) {
       checkForSupportAlert(notificationOpen.notification._data);
       const { type, navigationParams } = processNotification(notificationOpen.notification._data) || {};
+      let chatTabOpen = false;
+      if (type === SIGNAL) {
+        dispatch(getExistingChatsAction());
+        chatTabOpen = true;
+      }
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
-        lastActiveScreenParams: navigationParams,
+        lastActiveScreenParams: {
+          ...navigationParams,
+          chatTabOpen,
+        },
       });
       firebase.notifications().setBadge(0);
     }
@@ -233,15 +245,14 @@ export const startListeningOnOpenNotificationAction = () => {
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
-      const { type, navigationParams = {}, asset } = processNotification(message.notification._data) || {};
+      const { type, asset, navigationParams = {} } = processNotification(message.notification._data) || {};
+      let navParams = navigationParams;
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
-        lastActiveScreenParams: navigationParams,
+        lastActiveScreenParams: navParams,
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
-        let backTo = null;
-
         if (type === BCX) {
           const {
             wallet: { data: wallet },
@@ -259,7 +270,8 @@ export const startListeningOnOpenNotificationAction = () => {
         }
         if (type === SIGNAL) {
           dispatch(getExistingChatsAction());
-          backTo = CHAT_LIST;
+          const contact = contacts.find(c => c.username === navigationParams.username) || {};
+          navParams = { contact };
         }
         const routeName = notificationRoute || HOME;
         const navigateToAppAction = NavigationActions.navigate({
@@ -267,10 +279,7 @@ export const startListeningOnOpenNotificationAction = () => {
           params: {},
           action: NavigationActions.navigate({
             routeName,
-            params: {
-              ...navigationParams,
-              backTo,
-            },
+            params: navParams,
           }),
         });
         navigate(navigateToAppAction);
