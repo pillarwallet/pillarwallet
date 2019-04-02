@@ -1,0 +1,7 @@
+{
+  "name": "UpgradeToSmartWallet",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./UpgradeToSmartWallet.js"
+}
+
