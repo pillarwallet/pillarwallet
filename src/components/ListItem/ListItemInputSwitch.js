@@ -96,6 +96,7 @@ type SwitchProps = {
 }
 
 type Props = {
+  disabledInput?: ?boolean,
   inputType?: string,
   inputProps: InputProps,
   switchProps: SwitchProps,
@@ -120,6 +121,7 @@ export default class InputSwitch extends React.Component<Props> {
   render() {
     const {
       inputType,
+      disabledInput,
       inputProps: { value = '', label, onSelect },
       switchProps: { switchStatus, onPress },
     } = this.props;
@@ -128,6 +130,7 @@ export default class InputSwitch extends React.Component<Props> {
       <ItemLabelHolder>
         <ItemLabel>{label}</ItemLabel>
         <ItemValue
+          disabled={disabledInput}
           onChange={this.handleChange}
           onBlur={this.handleBlur}
           numberOfLines={1}

@@ -160,6 +160,7 @@ class PersonaScene extends Component {
                 return (
                   <InputSwitchItem
                     key={key}
+                    disabledInput={id && key === 'username'}
                     inputType={key === 'country' ? 'Select' : null}
                     inputProps={this.personaInputProps({ key, value })}
                     switchProps={{
