@@ -9,3 +9,4 @@ import 'screens/PinCodeUnlock/PinCodeUnlock.styleguide';
 import 'screens/Me/Me.styleguide';
 import 'screens/Personas/Personas.styleguide';
 import 'screens/Persona/Persona.styleguide';
+import 'screens/UpgradeToSmartWallet/UpgradeToSmartWallet.styleguide';
