@@ -31,23 +31,27 @@ import { getiOSNavbarHeight } from 'utils/common';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 
 type Props = {
-  screenHeight?: number, // IMPORTANT to calculate sheet height,
+  screenHeight: number, // IMPORTANT to calculate sheet height,
   // preferably getting parent Container height onLayout.
   // Will fallback to not that accurate calculations if not provided
   initialSheetHeight: number,
   topOffset: number,
   swipeToCloseHeight: number,
+  animateHeight?: boolean,
   onSheetOpen?: Function,
   onSheetClose?: Function,
-  scrollingComponentsRefs: Array<Object>, // list of refs of scrollable components.
+  scrollingComponentsRefs?: Array<Object>, // list of refs of scrollable components.
   // Used to scroll all content of those components to the top once sheet is closed
   children: React.Node,
+  floatingHeaderContent?: React.Node,
+  sheetWrapperStyle?: Object,
 }
 
 type State = {
   isTouched: boolean,
   isMoved: boolean,
   topSheetPosition: Animated.Value,
+  animatedHeight: Animated.Value,
   isSheetOpen: boolean,
 }
 
@@ -55,11 +59,11 @@ const USABLE_SCREEN_HEIGHT = Platform.OS === 'android'
   ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
   : Dimensions.get('window').height - getiOSNavbarHeight();
 
-
 const ModalWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-  padding: 20px 0;
+  padding: 10px 0;
+  position: relative;
   flex: 1;
 `;
 
@@ -77,6 +81,18 @@ const Sheet = styled.View`
   z-index: 9999;
 `;
 
+const FloatingHeader = styled.View`
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background-color: white;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  height: 40px;
+`;
+
 const AnimatedSheet = Animated.createAnimatedComponent(Sheet);
 
 export default class BottomSheet extends React.Component<Props, State> {
@@ -84,9 +100,10 @@ export default class BottomSheet extends React.Component<Props, State> {
   panResponder: Object;
 
   static defaultProps = {
+    screenHeight: USABLE_SCREEN_HEIGHT,
     initialSheetHeight: 100,
     topOffset: 68,
-    swipeToCloseHeight: 100,
+    swipeToCloseHeight: 120,
   };
 
   constructor(props: Props) {
@@ -96,7 +113,8 @@ export default class BottomSheet extends React.Component<Props, State> {
     this.state = {
       isTouched: false,
       isMoved: false,
-      topSheetPosition: new Animated.Value(this.initialPosition),
+      topSheetPosition: new Animated.Value(400),
+      animatedHeight: new Animated.Value(this.props.initialSheetHeight),
       isSheetOpen: false,
     };
   }
@@ -134,7 +152,6 @@ export default class BottomSheet extends React.Component<Props, State> {
       },
       onPanResponderRelease: (e, gestureState) => {
         const { isTouched, isMoved } = this.state;
-
         if (isTouched || isMoved) {
           this.animateSheet(gestureState, isTouched);
         }
@@ -154,49 +171,121 @@ export default class BottomSheet extends React.Component<Props, State> {
   };
 
   moveDrawerView = (gestureState: Object) => {
-    const { topSheetPosition } = this.state;
+    const { topSheetPosition, animatedHeight } = this.state;
+    const { animateHeight, initialSheetHeight, screenHeight } = this.props;
     let position = gestureState.moveY;
+    let sheetHeight = screenHeight - position;
 
-    if (position > this.initialPosition) {
-      position = this.initialPosition;
+    if (animateHeight) {
+      if (sheetHeight < initialSheetHeight) {
+        sheetHeight = initialSheetHeight;
+      }
+      animatedHeight.setValue(sheetHeight);
+    } else {
+      if (position > this.initialPosition) {
+        position = this.initialPosition;
+      }
+      topSheetPosition.setValue(position);
     }
-
-    topSheetPosition.setValue(position);
   };
 
   animateSheet = (gestureState: Object, isPressed: boolean) => {
-    const { isSheetOpen, topSheetPosition } = this.state;
-    const { scrollingComponentsRefs } = this.props;
+    const { isSheetOpen, topSheetPosition, animatedHeight } = this.state;
+    const {
+      scrollingComponentsRefs,
+      animateHeight,
+      initialSheetHeight,
+      screenHeight,
+      topOffset,
+    } = this.props;
 
-    const { topOffset } = this.props;
     let isGoingToUp = gestureState.vy < 0;
     if (isPressed && !isSheetOpen) {
       isGoingToUp = true;
     }
+
+    const sheetHeight = isGoingToUp ? screenHeight - topOffset : initialSheetHeight;
     const endPosition = isGoingToUp ? topOffset : this.initialPosition;
-    if (!isGoingToUp && scrollingComponentsRefs && scrollingComponentsRefs.length) {
-      scrollingComponentsRefs.forEach((ref) => {
-        ref.scrollToOffset({ x: 0, y: 0, animated: false });
+
+    if (animateHeight) {
+      if (!isGoingToUp && scrollingComponentsRefs && scrollingComponentsRefs.length) {
+        scrollingComponentsRefs.forEach((ref) => {
+          ref.scrollToOffset({ x: 0, y: 0, animated: false });
+        });
+      }
+      Animated.timing(animatedHeight, {
+        toValue: sheetHeight,
+        easing: Easing.linear,
+        duration: 300,
+      }).start(() => {
+        topSheetPosition.setValue(endPosition);
+        this.setState({ isSheetOpen: isGoingToUp });
+      });
+    } else {
+      if (!isGoingToUp && scrollingComponentsRefs && scrollingComponentsRefs.length) {
+        scrollingComponentsRefs.forEach((ref) => {
+          ref.scrollToOffset({ x: 0, y: 0, animated: false });
+        });
+      }
+      Animated.timing(topSheetPosition, {
+        toValue: endPosition,
+        easing: Easing.linear,
+        duration: 300,
+      }).start(() => {
+        animatedHeight.setValue(sheetHeight);
+        this.setState({ isSheetOpen: isGoingToUp });
       });
     }
-    Animated.timing(topSheetPosition, {
-      toValue: endPosition,
-      easing: Easing.linear,
-      duration: 500,
-    }).start(this.setState({ isSheetOpen: isGoingToUp }));
   };
 
   render = () => {
-    const { topSheetPosition } = this.state;
-    const { topOffset, children, screenHeight } = this.props;
-    const sheetHeight = screenHeight ? screenHeight - topOffset : USABLE_SCREEN_HEIGHT - topOffset;
+    const { topSheetPosition, animatedHeight } = this.state;
+    const {
+      topOffset,
+      children,
+      floatingHeaderContent,
+      screenHeight,
+      sheetWrapperStyle,
+      animateHeight,
+    } = this.props;
+
+    const sheetHeight = screenHeight - topOffset;
+
+    let style = {
+      top: topSheetPosition,
+      height: sheetHeight,
+    };
+
+    let wrapperStyle = {};
+
+    if (animateHeight) {
+      style = {
+        height: animatedHeight,
+        overflow: 'hidden',
+        bottom: 0,
+        left: 0,
+      };
+
+      wrapperStyle = {
+        height: sheetHeight,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+      };
+    }
 
     return (
       <AnimatedSheet
-        style={{ top: topSheetPosition, height: sheetHeight }}
+        style={style}
         {...this.panResponder.panHandlers}
       >
-        <ModalWrapper>
+        <FloatingHeader>
+          {floatingHeaderContent}
+        </FloatingHeader>
+        <ModalWrapper
+          style={[wrapperStyle, { sheetWrapperStyle }]}
+        >
           {children}
         </ModalWrapper>
       </AnimatedSheet>

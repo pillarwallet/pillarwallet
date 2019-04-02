@@ -100,6 +100,8 @@ type Props = {
   openSeaTxHistory: Object[],
   invertAddon?: boolean,
   fetchAllCollectiblesData: Function,
+  contentContainerStyle?: Object,
+  initialNumToRender: number,
 };
 
 type State = {
@@ -115,6 +117,10 @@ class ActivityFeed extends React.Component<Props, State> {
     selectedEventData: null,
     eventType: '',
     eventStatus: '',
+  };
+
+  static defaultProps = {
+    initialNumToRender: 7,
   };
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
@@ -330,6 +336,8 @@ class ActivityFeed extends React.Component<Props, State> {
       wrapperStyle,
       noBorder,
       openSeaTxHistory,
+      contentContainerStyle,
+      initialNumToRender,
     } = this.props;
 
     const {
@@ -401,7 +409,7 @@ class ActivityFeed extends React.Component<Props, State> {
         </ActivityFeedHeader>}
         <ActivityFeedList
           data={processedHistory}
-          initialNumToRender={5}
+          initialNumToRender={initialNumToRender}
           extraData={notifications}
           renderItem={this.renderActivityFeedItem}
           getItemLayout={(data, index) => ({
@@ -409,13 +417,14 @@ class ActivityFeed extends React.Component<Props, State> {
             offset: 70 * index,
             index,
           })}
-          maxToRenderPerBatch={5}
+          maxToRenderPerBatch={initialNumToRender}
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
           ListEmptyComponent={
             !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
           }
+          contentContainerStyle={contentContainerStyle}
         />
         <SlideModal
           isVisible={showModal}

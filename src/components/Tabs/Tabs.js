@@ -43,6 +43,7 @@ type Props = {
   title?: string,
   tabs: Tab[],
   bgColor?: string,
+  wrapperStyle?: Object,
 }
 
 type State = {
@@ -54,6 +55,7 @@ const androidFixHorizontalSpacing = 10 - androidTabSpacing;
 
 const TabOuterWrapper = styled.View`
   background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
+  padding: 12px 16px;
 `;
 
 const TabWrapper = styled.View`
@@ -64,7 +66,6 @@ const TabWrapper = styled.View`
     android: '2px 0',
   })};
   border-radius: 18px;
-  margin: 12px 16px;
   height: 36px;
 `;
 
@@ -258,9 +259,14 @@ export default class Tabs extends React.Component<Props, State> {
   };
 
   render() {
-    const { title, tabs, bgColor } = this.props;
+    const {
+      title,
+      tabs,
+      bgColor,
+      wrapperStyle,
+    } = this.props;
     return (
-      <TabOuterWrapper backgroundColor={bgColor}>
+      <TabOuterWrapper backgroundColor={bgColor} style={wrapperStyle}>
         {!!title &&
         <ActivityFeedHeader>
           <Title subtitle noMargin title={title} />

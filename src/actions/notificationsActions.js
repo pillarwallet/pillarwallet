@@ -139,7 +139,6 @@ export const startListeningNotificationsAction = () => {
     const {
       wallet: { data: wallet },
       assets: { data: assets },
-      contacts: { data: contacts },
     } = getState();
     let enabled = await firebase.messaging().hasPermission();
     if (!enabled) {
@@ -176,9 +175,10 @@ export const startListeningNotificationsAction = () => {
         const { params: navParams = null } = getNavigationPathAndParamsState() || {};
         if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        if (!!navParams.username && navParams.username === notification.navigationParams.username) {
-          const contact = contacts.find(c => c.username === navParams.username) || {};
-          dispatch(getChatByContactAction(navParams.username, contact.id, contact.profileImage));
+        if (!!navParams.contact && !!navParams.contact.username
+          && navParams.contact.username === notification.navigationParams.username && navParams.chatTabOpen) {
+          const { contact } = navParams;
+          dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
           return;
         }
         dispatch({
@@ -332,9 +332,6 @@ export const startListeningChatWebSocketAction = () => {
         const messageTag = Array.isArray(messageRequest.headers)
           ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
           : '';
-        const {
-          contacts: { data: contacts },
-        } = getState();
         const { source: senderUsername } = receivedSignalMessage;
         receivedSignalMessage.tag = messageTag;
         receivedSignalMessage.requestId = messageRequest.id;
@@ -344,23 +341,20 @@ export const startListeningChatWebSocketAction = () => {
               type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
               payload: receivedSignalMessage,
             });
-            dispatch(getExistingChatsAction());
             const { params: navParams = null } = getNavigationPathAndParamsState() || {};
+
             if (!navParams) return;
             dispatch({
               type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
               payload: true,
             });
-            if (!!navParams.username && navParams.username === senderUsername) {
-              const contact = contacts.find(c => c.username === navParams.username) || {};
-              dispatch(getChatByContactAction(
-                navParams.username,
-                contact.id,
-                contact.profileImage,
-                false,
-              ));
+            if (!!navParams.contact && !!navParams.contact.username
+              && navParams.contact.username === senderUsername && navParams.chatTabOpen) {
+              const { contact } = navParams;
+              dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
               return;
             }
+            dispatch(getExistingChatsAction());
             const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
             if (notification == null) return;
             dispatch({
