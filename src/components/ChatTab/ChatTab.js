@@ -49,7 +49,6 @@ import {
 } from 'actions/chatActions';
 import Spinner from 'components/Spinner';
 import { isIphoneX, handleUrlPress } from 'utils/common';
-import { CONTACT } from 'constants/navigationConstants';
 import { UNDECRYPTABLE_MESSAGE } from 'constants/messageStatus';
 
 type Props = {
@@ -91,7 +90,54 @@ const SystemMessageWrapper = styled.View`
   align-items: center;
 `;
 
+const TimeWrapper = styled.View`
+  flex: 1;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-bottom: 2px;
+`;
+
 // chat elements
+const renderDay = (props: Props) => (
+  <Day
+    {...props}
+    containerStyle={{
+      marginTop: 30,
+      marginBottom: 36,
+    }}
+    textStyle={{
+      color: baseColors.darkGray,
+      fontWeight: '400',
+      fontSize: fontSizes.extraSmall,
+      fontFamily: 'Aktiv Grotesk App',
+    }}
+    dateFormat="LL"
+  />
+);
+
+const renderTime = (props: Props) => {
+  return (
+    <Time
+      {...props}
+      textStyle={{
+        right: {
+          color: baseColors.darkGray,
+          fontFamily: 'Aktiv Grotesk App',
+          fontWeight: '400',
+          fontSize: fontSizes.extraExtraSmall,
+        },
+        left: {
+          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
+          fontFamily: 'Aktiv Grotesk App',
+          fontWeight: '400',
+          fontSize: fontSizes.extraExtraSmall,
+        },
+      }}
+      timeFormat="HH:mm"
+    />
+  );
+};
+
 const renderBubble = (props: Props) => {
   const isWarning = isWarningMessage(props.currentMessage.type);
   return (<Bubble
@@ -112,26 +158,34 @@ const renderBubble = (props: Props) => {
     }}
     wrapperStyle={{
       left: {
-        backgroundColor: isWarning ? baseColors.brightBlue : baseColors.white,
+        backgroundColor: isWarning ? baseColors.brightBlue : baseColors.zumthor,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: isWarning ? baseColors.brightBlue : baseColors.whiterSmoke,
+        borderColor: isWarning ? baseColors.brightBlue : baseColors.tropicalBlue,
         maxWidth: 262,
         marginTop: 4,
-        marginLeft: Platform.select({
-          ios: 10,
-          android: 16,
-        }),
+        paddingHorizontal: 2,
+        paddingTop: 2,
+        minWidth: 120,
       },
       right: {
-        backgroundColor: baseColors.lightYellow,
+        backgroundColor: baseColors.white,
         borderRadius: 5,
         borderWidth: 1,
-        borderColor: baseColors.whiterSmoke,
+        borderColor: baseColors.tropicalBlue,
         maxWidth: 262,
         marginTop: 4,
+        paddingHorizontal: 2,
+        paddingTop: 2,
+        minWidth: 120,
+        marginLeft: 20,
       },
     }}
+    renderTime={() => (
+      <TimeWrapper>
+        {renderTime(props)}
+      </TimeWrapper>
+    )}
     touchableProps={{
       onPress: () => {
         const { status } = props.currentMessage;
@@ -212,46 +266,6 @@ const renderInputToolbar = (props: Props) => {
   );
 };
 
-const renderDay = (props: Props) => (
-  <Day
-    {...props}
-    containerStyle={{
-      marginTop: 30,
-      marginBottom: 36,
-    }}
-    textStyle={{
-      color: baseColors.darkGray,
-      fontWeight: '400',
-      fontSize: fontSizes.extraSmall,
-      fontFamily: 'Aktiv Grotesk App',
-    }}
-    dateFormat="LL"
-  />
-);
-
-const renderTime = (props: Props) => {
-  return (
-    <Time
-      {...props}
-      textStyle={{
-        right: {
-          color: baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
-        },
-        left: {
-          color: isWarningMessage(props.currentMessage.type) ? baseColors.veryLightBlue : baseColors.darkGray,
-          fontFamily: 'Aktiv Grotesk App',
-          fontWeight: '400',
-          fontSize: fontSizes.extraExtraSmall,
-        },
-      }}
-      timeFormat="HH:mm"
-    />
-  );
-};
-
 const renderLoadEarlier = (props: Props) => (
   <LoadEarlier
     {...props}
@@ -266,10 +280,10 @@ const renderMessage = (props: Props) => (
     {...props}
     containerStyle={{
       left: {
-        paddingLeft: 10,
+        paddingLeft: 8,
       },
       right: {
-        paddingRight: 10,
+        paddingRight: 8,
       },
     }}
   />
@@ -419,24 +433,23 @@ class ChatTab extends React.Component<Props, State> {
     this.setState({ chatText: '' });
   };
 
-  handleNavigationToContact = () => {
-    const { navigation, resetUnread } = this.props;
-    const { contact } = this.state;
-    resetUnread(this.state.contact.username);
-    navigation.navigate(CONTACT, { contact });
-  };
 
   renderCustomAvatar = () => {
     const { contact } = this.state;
+    const { profileImage, lastUpdateTime, username } = contact;
+    const updatedUserImageUrl = profileImage && lastUpdateTime ? `${profileImage}?t=${lastUpdateTime}` : profileImage;
+
     return (
       <ProfileImage
-        uri={contact.profileImage}
-        userName={contact.username}
-        diameter={34}
-        onPress={this.handleNavigationToContact}
+        uri={updatedUserImageUrl}
+        userName={username}
+        diameter={32}
+        onPress={null}
         textStyle={{
           fontSize: 16,
         }}
+        noShadow
+        borderWidth={0}
       />
     );
   };
@@ -449,10 +462,7 @@ class ChatTab extends React.Component<Props, State> {
         renderAvatar={this.renderCustomAvatar}
         containerStyle={{
           left: {
-            marginRight: Platform.select({
-              ios: -2,
-              android: -14,
-            }),
+            marginRight: 4,
           },
         }}
       />
@@ -470,7 +480,12 @@ class ChatTab extends React.Component<Props, State> {
   };
 
   render() {
-    const { messages, isOpen, chats } = this.props;
+    const {
+      messages,
+      isOpen,
+      chats,
+      user,
+    } = this.props;
     const {
       contact,
       showLoadEarlierButton,
@@ -478,7 +493,7 @@ class ChatTab extends React.Component<Props, State> {
     } = this.state;
 
     const chatInfo = chats.find(({ username }) => username === contact.username) || {};
-    const { lastMessage = {}, unread = 0 } = chatInfo;
+    const { unread = 0 } = chatInfo;
 
     let messagesToShow = [];
 
@@ -497,13 +512,12 @@ class ChatTab extends React.Component<Props, State> {
         {
           _id: 1,
           text: unread > 1
-            ? 'You received new messages. Tap here to decrypt and read them'
-            : 'You received a new message. Tap here to encrypt and read it',
-          createdAt: lastMessage.serverTimestamp,
+            ? 'You have received new messages. Tap here to decrypt and read them'
+            : 'You have received a new message. Tap here to encrypt and read it',
+          createdAt: '',
           user: {
-            _id: contact.username,
-            name: contact.username,
-            avatar: contact.profileImage,
+            _id: user.username,
+            name: user.username,
           },
         },
       ];
@@ -538,7 +552,6 @@ class ChatTab extends React.Component<Props, State> {
             renderTime={renderTime}
             minInputToolbarHeight={INPUT_HEIGHT}
             parsePatterns={parsePatterns}
-            // scrollToBottom={false}
             renderSystemMessage={customSystemMessage}
           />}
       </Wrapper>
