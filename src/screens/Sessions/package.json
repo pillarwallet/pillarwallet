@@ -1,7 +1,7 @@
 {
-  "name": "UpgradeToSmartWallet",
+  "name": "Sessions",
   "version": "0.0.0",
   "private": true,
-  "main": "./UpgradeToSmartWallet.js"
+  "main": "./Sessions.js"
 }
 
