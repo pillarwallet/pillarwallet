@@ -22,6 +22,7 @@ import { Alert, View, Platform, Linking, AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
+import styled from 'styled-components/native';
 import {
   GiftedChat,
   Bubble,
@@ -37,6 +38,7 @@ import {
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
+import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import {
   sendMessageByContactAction,
   clearChatDraftStateAction,
@@ -82,6 +84,12 @@ const INPUT_HEIGHT = isIphoneX() ? 62 : 52;
 const isWarningMessage = (type) => {
   return type === 'warning';
 };
+
+const SystemMessageWrapper = styled.View`
+  flex: 1;
+  padding: 30px;
+  align-items: center;
+`;
 
 // chat elements
 const renderBubble = (props: Props) => {
@@ -267,6 +275,20 @@ const renderMessage = (props: Props) => (
   />
 );
 
+const customSystemMessage = (props) => {
+  if (props.currentMessage.empty) {
+    return (
+      <SystemMessageWrapper>
+        <EmptyStateParagraph
+          title="Break the ice"
+          bodyText={`Start chatting with ${props.currentMessage.contactName}. Recent chats will appear here`}
+        />
+      </SystemMessageWrapper>
+    );
+  }
+  return null;
+};
+
 const parsePatterns = () => [
   {
     type: 'url',
@@ -312,7 +334,7 @@ class ChatTab extends React.Component<Props, State> {
       navigation,
       resetUnread,
     } = this.props;
-    const chatInfo = chats.find(({ username }) => username === contact.username);
+    const chatInfo = chats.find(({ username }) => username === contact.username) || {};
 
     if (!chatInfo.unread) getChatByContact(contact.username, contact.id, contact.profileImage);
     if (isOpen) {
@@ -455,16 +477,28 @@ class ChatTab extends React.Component<Props, State> {
       chatText,
     } = this.state;
 
-    const chatInfo = chats.find(({ username }) => username === contact.username);
-    const { lastMessage, unread } = chatInfo;
+    const chatInfo = chats.find(({ username }) => username === contact.username) || {};
+    const { lastMessage = {}, unread = 0 } = chatInfo;
 
     let messagesToShow = [];
 
-    if (unread && !isOpen) {
+    if (!Object.keys(chatInfo).length
+      && (!messages[contact.username] || !messages[contact.username].length) && !isOpen) {
       messagesToShow = [
         {
           _id: 1,
-          text: unread > 1 ? 'New Messages' : 'New Message',
+          system: true,
+          empty: true,
+          contactName: contact.username,
+        },
+      ];
+    } else if (unread && !isOpen) {
+      messagesToShow = [
+        {
+          _id: 1,
+          text: unread > 1
+            ? 'You received new messages. Tap here to decrypt and read them'
+            : 'You received a new message. Tap here to encrypt and read it',
           createdAt: lastMessage.serverTimestamp,
           user: {
             _id: contact.username,
@@ -475,15 +509,6 @@ class ChatTab extends React.Component<Props, State> {
       ];
     } else if (messages[contact.username] && messages[contact.username].length) {
       messagesToShow = messages[contact.username];
-    } else {
-      messagesToShow = [
-        {
-          _id: 1,
-          text: 'NO MESSAGES',
-          createdAt: lastMessage.serverTimestamp,
-          system: true,
-        },
-      ];
     }
 
     return (
@@ -505,7 +530,7 @@ class ChatTab extends React.Component<Props, State> {
             renderAvatar={this.renderAvatar}
             renderComposer={renderComposer}
             renderInputToolbar={renderInputToolbar}
-            renderDay={isOpen ? renderDay : () => null}
+            renderDay={renderDay}
             loadEarlier={showLoadEarlierButton}
             onLoadEarlier={this.handleLoadEarlier}
             renderLoadEarlier={renderLoadEarlier}
@@ -514,7 +539,7 @@ class ChatTab extends React.Component<Props, State> {
             minInputToolbarHeight={INPUT_HEIGHT}
             parsePatterns={parsePatterns}
             // scrollToBottom={false}
-            // renderSystemMessage={() => { <View></View> }}
+            renderSystemMessage={customSystemMessage}
           />}
       </Wrapper>
     );
