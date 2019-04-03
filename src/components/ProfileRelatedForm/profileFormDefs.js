@@ -1,4 +1,7 @@
+// @flow
+
 import t from 'tcomb-form-native';
+import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
 
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
@@ -92,7 +95,7 @@ CityStructDef.getValidationErrorMessage = (city): string => {
   return 'Please specify your city';
 };
 
-export const Username =UsernameDef;
+export const Username = UsernameDef;
 export const FirstNameStruct = FirstNameStructDef;
 export const LastNameStruct = LastNameStructDef;
 export const EmailStruct = EmailStructDef;

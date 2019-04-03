@@ -26,7 +26,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, Wrapper } from 'components/Layout';
 import { BoldText, Paragraph } from 'components/Typography';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
-import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';

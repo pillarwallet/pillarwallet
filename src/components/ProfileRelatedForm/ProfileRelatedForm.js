@@ -1,12 +1,11 @@
 // @flow
 import * as React from 'react';
-import { Keyboard } from 'react-native';
 import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
 
 export const { Form } = t.form;
 
-export const InputTemplate = (locals) => {
+export const InputTemplate = (locals: Object) => {
   const { config } = locals;
   const errorMessage = locals.error;
   const inputProps = {
@@ -25,7 +24,6 @@ export const InputTemplate = (locals) => {
 
   const propsToInclude = {};
 
-  console.log({ locals, label: locals.label })
   if (config.includeLabel) {
     propsToInclude.label = locals.label;
   }
@@ -48,4 +46,4 @@ export const InputTemplate = (locals) => {
       {...propsToInclude}
     />
   );
-}
+};
