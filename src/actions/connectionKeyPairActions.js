@@ -53,62 +53,14 @@ export const updateConnectionIdentityKeys = (successfullConnIdentityKeys: Object
   };
 };
 
-export const importOldAndCurrentConnections = (
-  resultConnectionKeys: Object[],
-  oldConnectionCount: number,
-  currentConnectionCout: number) => {
+export const mapIdentityKeysAction = (connectionPreKeyCount: number) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
       user: { data: { walletId } },
-      contacts: { data: contacts },
-      accessTokens: { data: accessTokens },
+      connectionKeyPairs: { data: connectionKeyPairs },
     } = getState();
 
-    const mappedOldContactsAccessTokens = contacts.map((contact) => {
-      const contactAccessTokens = accessTokens.find((at) => {
-        return at.userId === contact.id;
-      });
-      return {
-        ...contact,
-        ...contactAccessTokens,
-      };
-    });
-
-    let successUpdateCount = 0;
-    if (oldConnectionCount > 0) {
-      const mappedOldContacts = mappedOldContactsAccessTokens
-        .filter((res) => { return res.myAccessToken && res.userAccessToken; });
-
-      const mappedOldInvitations = accessTokens
-        .filter((res) => { return res.userAccessToken === '' || res.myAccessToken === ''; });
-
-      const mappedOldConnections = mappedOldContacts.concat(mappedOldInvitations);
-      const identityKeysOldConnections = resultConnectionKeys.slice(0, mappedOldConnections.length);
-      const oldConnectionsUpdateList = identityKeysOldConnections.map((keyPair, index) => {
-        return {
-          sourceUserAccessKey: mappedOldConnections[index].myAccessToken,
-          targetUserAccessKey: mappedOldConnections[index].userAccessToken,
-          sourceIdentityKey: keyPair.A,
-          targetIdentityKey: keyPair.Ad,
-          targetUserId: mappedOldConnections[index].userId,
-        };
-      });
-      const oldConnectionsUpdateData = {
-        walletId,
-        connections: oldConnectionsUpdateList,
-      };
-
-      const resultOldConnections = await api.updateIdentityKeys(oldConnectionsUpdateData);
-      if (resultOldConnections) {
-        resultOldConnections.forEach((conn) => {
-          if (conn.updated) {
-            successUpdateCount++;
-          }
-        });
-      }
-    }
-
-    const currentConnectionKeyPairs = resultConnectionKeys.slice(0, successUpdateCount + currentConnectionCout);
+    const currentConnectionKeyPairs = connectionKeyPairs.slice(0, connectionPreKeyCount);
     const currentConnectionKeyPairList = currentConnectionKeyPairs.map((keyPair) => {
       return {
         sourceIdentityKey: keyPair.A,
@@ -136,6 +88,63 @@ export const importOldAndCurrentConnections = (
   };
 };
 
+export const updateOldConnections = (oldConnectionCount: number) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const {
+      user: { data: { walletId } },
+      contacts: { data: contacts },
+      accessTokens: { data: accessTokens },
+      connectionKeyPairs: { data: connectionKeyPairs },
+    } = getState();
+
+    const mappedOldContactsAccessTokens = contacts.map((contact) => {
+      const contactAccessTokens = accessTokens.find((at) => {
+        return at.userId === contact.id;
+      });
+      return {
+        ...contact,
+        ...contactAccessTokens,
+      };
+    });
+
+    let successUpdateCount = 0;
+    if (oldConnectionCount > 0) {
+      const mappedOldContacts = mappedOldContactsAccessTokens
+        .filter((res) => { return res.myAccessToken && res.userAccessToken; });
+
+      const mappedOldInvitations = accessTokens
+        .filter((res) => { return res.userAccessToken === '' || res.myAccessToken === ''; });
+
+      const mappedOldConnections = mappedOldContacts.concat(mappedOldInvitations);
+      const identityKeysOldConnections = connectionKeyPairs.slice(0, mappedOldConnections.length);
+      const oldConnectionsUpdateList = identityKeysOldConnections.map((keyPair, index) => {
+        return {
+          sourceUserAccessKey: mappedOldConnections[index].myAccessToken,
+          targetUserAccessKey: mappedOldConnections[index].userAccessToken,
+          sourceIdentityKey: keyPair.A,
+          targetIdentityKey: keyPair.Ad,
+          targetUserId: mappedOldConnections[index].userId,
+        };
+      });
+      const oldConnectionsUpdateData = {
+        walletId,
+        connections: oldConnectionsUpdateList,
+      };
+
+      const resultOldConnections = await api.updateIdentityKeys(oldConnectionsUpdateData);
+      if (resultOldConnections) {
+        resultOldConnections.forEach((conn) => {
+          if (conn.updated) {
+            successUpdateCount++;
+          }
+        });
+      }
+    }
+
+    await dispatch(mapIdentityKeysAction(successUpdateCount));
+  };
+};
+
 export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, walletId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
@@ -158,13 +167,12 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
     });
     await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
 
+
+    // TODO: Check all cases if old -> new connection gets updated but map returns false for the immediate update.
+    await dispatch(updateOldConnections(oldConnectionsCount));
     if (lastConnectionKeyIndex === -1) {
       await dispatch(restoreAccessTokensAction(walletId));
-      await dispatch(importOldAndCurrentConnections(
-        resultConnectionKeys,
-        oldConnectionsCount,
-        currentConnectionsCount,
-      ));
+      await dispatch(mapIdentityKeysAction(currentConnectionsCount));
     }
   };
 };
