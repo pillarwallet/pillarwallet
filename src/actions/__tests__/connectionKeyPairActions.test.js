@@ -166,7 +166,11 @@ const pillarSdk = {
   }),
   mapIdentityKeys: jest.fn((connectionKeyIdentityMap: ConnectionIdentityKeyMap) => {
     if (connectionKeyIdentityMap) {
-      return mapIdentityKeysResponseMock;
+      return connectionKeyIdentityMap.identityKeys.map((e) => {
+        return mapIdentityKeysResponseMock.find((p) => {
+          return p.sourceIdentityKey === e.sourceIdentityKey && p.targetIdentityKey === e.targetIdentityKey;
+        });
+      });
     }
     return null;
   }),
@@ -200,14 +204,17 @@ describe('ConnectionKeyPair actions', () => {
         data: connectionIdentityKeysMock,
       },
     };
-    store = mockStore(connectionKeyPairsStoreMock);
+    store = mockStore({ ...connectionKeyPairsStoreMock });
   });
 
   it('should expect series of actions with payload to be dispatched on first updateConnectionKeyPairs execution',
     () => {
+      // TODO : The second call to UPDATE_CONNECTION_KEY_PAIRS should have 5 elements, state is not updated.
       const expectedActions = [
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: connectionKeyPairsMock },
-        { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock },
+        { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock.slice(0, 2) },
+        { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[6]] },
+        { type: UPDATE_CONNECTION_IDENTITY_KEYS, payload: mapIdentityKeysResponseMock.slice(2, 6) },
         { type: UPDATE_CONNECTION_KEY_PAIRS, payload: [connectionKeyPairsMock[6]] },
       ];
 
