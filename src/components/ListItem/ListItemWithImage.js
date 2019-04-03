@@ -45,7 +45,7 @@ type Props = {
   itemImageUrl?: string,
   fallbackSource?: string,
   timeSent?: string,
-  unreadCount?: number,
+  unreadCount?: number | string,
   itemValue?: string,
   itemStatusIcon?: string,
   valueColor?: ?string,

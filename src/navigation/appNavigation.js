@@ -316,8 +316,11 @@ const tabNavigation = createBottomTabNavigator(
     },
     [PEOPLE]: {
       screen: peopleFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconPeopleActive, iconPeople),
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon(
+          iconPeopleActive,
+          iconPeople,
+          !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
         tabBarLabel: tabBarLabel('People'),
       }),
     },
