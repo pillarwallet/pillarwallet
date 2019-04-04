@@ -43,7 +43,6 @@ import {
   sendMessageByContactAction,
   clearChatDraftStateAction,
   getChatByContactAction,
-  resetUnreadAction,
   getChatDraftByContactAction,
   saveDraftAction,
 } from 'actions/chatActions';
@@ -61,7 +60,6 @@ type Props = {
   saveDraft: Function,
   messages: Object,
   isFetching: boolean,
-  resetUnread: Function,
   contact: Object,
   chats: any,
   contacts: Object,
@@ -347,14 +345,12 @@ class ChatTab extends React.Component<Props, State> {
       isOpen,
       chats,
       navigation,
-      resetUnread,
     } = this.props;
     const chatInfo = chats.find(({ username }) => username === contact.username) || {};
 
     if (!chatInfo.unread) getChatByContact(contact.username, contact.id, contact.profileImage);
     if (isOpen) {
       getChatByContact(contact.username, contact.id, contact.profileImage);
-      resetUnread(this.state.contact.username);
       navigation.setParams({ chatTabOpen: true });
     }
     AppState.addEventListener('change', this.shouldPersistDraft);
@@ -368,7 +364,6 @@ class ChatTab extends React.Component<Props, State> {
       draft,
       isOpen,
       getChatByContact,
-      resetUnread,
       navigation,
       hasUnreads,
     } = this.props;
@@ -386,7 +381,6 @@ class ChatTab extends React.Component<Props, State> {
     if (prevProps.isOpen !== isOpen && isOpen && hasUnreads) {
       navigation.setParams({ chatTabOpen: true });
       getChatByContact(contact.username, contact.id, contact.profileImage);
-      resetUnread(this.state.contact.username);
     }
 
     if (prevProps.isOpen !== isOpen && !isOpen) {
@@ -584,7 +578,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(sendMessageByContactAction(username, message));
   },
   clearChatDraftState: () => dispatch(clearChatDraftStateAction()),
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   getChatDraftByContact: (contactId: string) => dispatch(getChatDraftByContactAction(contactId)),
   saveDraft: (contactId: string, draftText: string) => dispatch(saveDraftAction(contactId, draftText)),
 });

@@ -43,7 +43,6 @@ import {
   sendMessageByContactAction,
   clearChatDraftStateAction,
   getChatByContactAction,
-  resetUnreadAction,
   getChatDraftByContactAction,
   saveDraftAction,
 } from 'actions/chatActions';
@@ -63,7 +62,6 @@ type Props = {
   saveDraft: Function,
   messages: Object,
   isFetching: boolean,
-  resetUnread: Function,
   contact: Object,
   chats: any,
   contacts: Object,
@@ -360,9 +358,7 @@ class ChatScreen extends React.Component<Props, State> {
   handleChatDismissal = () => {
     const {
       navigation,
-      resetUnread,
     } = this.props;
-    resetUnread(this.state.contact.username);
     const { backTo } = navigation.state.params;
     if (backTo) {
       navigation.navigate(backTo);
@@ -390,9 +386,8 @@ class ChatScreen extends React.Component<Props, State> {
   };
 
   handleNavigationToContact = () => {
-    const { navigation, resetUnread } = this.props;
+    const { navigation } = this.props;
     const { contact } = this.state;
-    resetUnread(this.state.contact.username);
     navigation.navigate(CONTACT, { contact });
   };
 
@@ -516,7 +511,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(sendMessageByContactAction(username, message));
   },
   clearChatDraftState: () => dispatch(clearChatDraftStateAction()),
-  resetUnread: (contactUsername) => dispatch(resetUnreadAction(contactUsername)),
   getChatDraftByContact: (contactId: string) => dispatch(getChatDraftByContactAction(contactId)),
   saveDraft: (contactId: string, draftText: string) => dispatch(saveDraftAction(contactId, draftText)),
 });

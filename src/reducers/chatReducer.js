@@ -21,7 +21,6 @@ import {
   UPDATE_MESSAGES,
   ADD_MESSAGE,
   UPDATE_CHATS,
-  RESET_UNREAD_MESSAGE,
   FETCHING_CHATS,
   DELETE_CHAT,
   ADD_WEBSOCKET_SENT_MESSAGE,
@@ -137,34 +136,6 @@ export default function chatReducer(
           messages: { ...state.data.messages },
         },
       };
-    case RESET_UNREAD_MESSAGE:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          chats: state.data.chats
-            .map(_chat => {
-              let { lastMessage, unread } = _chat;
-              const { username: contactUsername } = _chat;
-              if (contactUsername === action.payload.username
-                && Object.keys(state.data.messages).length
-                && state.data.messages[contactUsername] !== undefined
-                && state.data.messages[contactUsername].length) {
-                const { text, createdAt } = state.data.messages[contactUsername][0];
-                lastMessage = {
-                  content: text,
-                  username: contactUsername,
-                  device: 1,
-                  serverTimestamp: createdAt,
-                  savedTimestamp: 0,
-                };
-                unread = 0;
-                return { ..._chat, lastMessage, unread };
-              }
-              return _chat;
-            }),
-        },
-      };
     case UPDATE_MESSAGES:
       return merge(
         {},
@@ -176,6 +147,27 @@ export default function chatReducer(
             },
             isDecrypting: false,
             isFetching: false,
+            chats: state.data.chats
+              .map(_chat => {
+                let { lastMessage, unread } = _chat;
+                const { username: contactUsername } = _chat;
+                if (contactUsername === action.payload.username
+                  && Object.keys(state.data.messages).length
+                  && state.data.messages[contactUsername] !== undefined
+                  && state.data.messages[contactUsername].length) {
+                  const { text, createdAt } = state.data.messages[contactUsername][0];
+                  lastMessage = {
+                    content: text,
+                    username: contactUsername,
+                    device: 1,
+                    serverTimestamp: createdAt,
+                    savedTimestamp: 0,
+                  };
+                  unread = 0;
+                  return { ..._chat, lastMessage, unread };
+                }
+                return _chat;
+              }),
           },
         },
       );
