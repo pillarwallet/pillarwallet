@@ -10,6 +10,8 @@ before_install:
   - chmod +x pods.sh
   - chmod +x bundles.sh
   - chmod +x upload.sh
+  - echo $TRAVIS_BUILD_NUMBER
+  - touch buildNumber.txt
 
 jobs:
   include:
