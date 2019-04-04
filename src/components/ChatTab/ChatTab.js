@@ -488,7 +488,7 @@ class ChatTab extends React.Component<Props, State> {
     } = this.state;
 
     const chatInfo = chats.find(({ username }) => username === contact.username) || {};
-    const { unread = 0 } = chatInfo;
+    const { unread = 0, lastMessage = { serverTimestamp: '' } } = chatInfo;
 
     let messagesToShow = [];
 
@@ -509,7 +509,7 @@ class ChatTab extends React.Component<Props, State> {
           text: unread > 1
             ? 'You have received new messages. Tap here to decrypt and read them'
             : 'You have received a new message. Tap here to encrypt and read it',
-          createdAt: '',
+          createdAt: lastMessage.serverTimestamp,
           user: {
             _id: user.username,
             name: user.username,
