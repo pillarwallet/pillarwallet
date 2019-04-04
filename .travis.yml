@@ -13,6 +13,7 @@ before_install:
   - chmod +x bundles.sh
   - chmod +x upload.sh
   - chmod +x yarn.sh
+  - chmod +x uninstall-pods.sh
   - touch /Users/travis/build/pillarwallet/pillarwallet/buildNumber.txt
 
 jobs:
