@@ -25,13 +25,13 @@ import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { spacing } from 'utils/variables';
 import Button from 'components/Button';
-import { InputTemplate, Form } from 'components/ProfileRelatedForm';
+import { InputTemplate, Form } from 'components/ProfileForm';
 import {
   FirstNameStruct,
   LastNameStruct,
   EmailStruct,
   CityStruct,
-} from 'components/ProfileRelatedForm/profileFormDefs';
+} from 'components/ProfileForm/profileFormDefs';
 
 const window = Dimensions.get('window');
 

@@ -9,7 +9,7 @@ export const InputTemplate = (locals: Object) => {
   const { config } = locals;
   const errorMessage = locals.error;
   const inputProps = {
-    autoCapitalize: config.autoCapitalize || 'words', // THIS HAS TO BE ADJUSTABLE
+    autoCapitalize: config.autoCapitalize || 'words',
     onChange: locals.onChange,
     onBlur: locals.onBlur,
     value: locals.value,
@@ -22,18 +22,18 @@ export const InputTemplate = (locals: Object) => {
     ...config.inputProps,
   };
 
-  const propsToInclude = {};
+  const additionalProps = {};
 
   if (config.includeLabel) {
-    propsToInclude.label = locals.label;
+    additionalProps.label = locals.label;
   }
 
   if (config.isLoading !== undefined) {
-    propsToInclude.loading = config.isLoading;
+    additionalProps.loading = config.isLoading;
   }
 
   if (config.viewWidth) {
-    propsToInclude.viewWidth = config.viewWidth;
+    additionalProps.viewWidth = config.viewWidth;
   }
 
   return (
@@ -43,7 +43,7 @@ export const InputTemplate = (locals: Object) => {
       inputProps={inputProps}
       inputType="secondary"
       noBorder
-      {...propsToInclude}
+      {...additionalProps}
     />
   );
 };
