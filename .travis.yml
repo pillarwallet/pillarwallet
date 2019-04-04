@@ -3,7 +3,7 @@ language: objective-c
 
 xcode_scheme: Staging
 xcode_project: pillarwallet.xcodeproj
-podfile: /Users/travis/build/pillarwallet/pillarwallet/ios/Podfile
+#podfile: /Users/travis/build/pillarwallet/pillarwallet/ios/Podfile
 
 before_install:
   - sudo pip install awscli
