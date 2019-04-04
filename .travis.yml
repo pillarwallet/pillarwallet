@@ -1,0 +1,33 @@
+osx_image: xcode10.2
+language: objective-c
+
+xcode_scheme: Staging
+xcode_project: pillarwallet.xcodeproj
+
+before_install:
+  - sudo pip install awscli
+  - chmod +x pre-install.sh
+  - chmod +x pods.sh
+  - chmod +x bundles.sh
+  - chmod +x upload.sh
+
+jobs:
+  include:
+    - stage: preinstall
+      script: ./pre-install.sh
+    - stage: install-node
+      script: yarn install
+    - stage: install-pods
+      script: ./pods.sh
+    - stage: bundle
+      script: ./bundles.sh
+    - stage: upload
+      script: ./upload.sh
+
+stages:
+  - preinstall
+  - install-node
+  - install-pods
+  - bundle
+  - name: upload
+    if: branch = chore/ios_swift_version_increase4.2

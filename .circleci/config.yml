@@ -294,6 +294,15 @@ jobs:
           name: Install AWS CLI
           command: sudo pip install awscli
       - run:
+          name: Install xcversion
+          command: sudo gem install xcode-install
+      - run:
+          name: Uninstall container Xcode
+          command: xcversion uninstall 10.2
+      - run:
+          name: Install Xcode 10.2
+          command: xcversion install 10.2
+      - run:
           name: Append circleCI build number to version
           command: |
             git config user.email "devops@pillar.io"
