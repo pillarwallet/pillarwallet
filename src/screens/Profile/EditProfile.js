@@ -22,11 +22,16 @@ import React from 'react';
 import { Dimensions } from 'react-native';
 import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
-import TextInput from 'components/TextInput';
 import { Wrapper } from 'components/Layout';
 import { spacing } from 'utils/variables';
 import Button from 'components/Button';
-import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
+import { InputTemplate, Form } from 'components/ProfileForm';
+import {
+  FirstNameStruct,
+  LastNameStruct,
+  EmailStruct,
+  CityStruct,
+} from 'components/ProfileForm/profileFormDefs';
 
 const window = Dimensions.get('window');
 
@@ -61,101 +66,6 @@ type State = {
   value: Object,
 }
 
-function InputTemplate(locals) {
-  const { config } = locals;
-  const errorMessage = locals.error;
-  const inputProps = {
-    autoCapitalize: config.autoCapitalize || 'words',
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    value: locals.value,
-    keyboardType: config.keyboardType || 'default',
-    style: {
-      fontSize: 24,
-      lineHeight: 0,
-    },
-    placeholder: config.placeholder,
-    ...locals.config.inputProps,
-  };
-
-  return (
-    <TextInput
-      errorMessage={errorMessage}
-      id={locals.label}
-      inputProps={inputProps}
-      inputType="secondary"
-      noBorder
-      viewWidth={window.width - 65}
-    />
-  );
-}
-
-const { Form } = t.form;
-
-const maxLength = 100;
-const halfMaxLength = maxLength / 2;
-
-const FirstNameStruct = t.refinement(t.String, (firstName: string = ''): boolean => {
-  return !!firstName && !!firstName.length && isValidName(firstName) && firstName.length <= halfMaxLength;
-});
-
-const LastNameStruct = t.refinement(t.String, (lastName: string = ''): boolean => {
-  return !!lastName && !!lastName.length && isValidName(lastName) && lastName.length <= halfMaxLength;
-});
-
-const EmailStruct = t.refinement(t.String, (email: string = ''): boolean => {
-  return !!email && !!email.length && isValidEmail(email) && email.length <= maxLength;
-});
-
-const CityStruct = t.refinement(t.String, (city: string = ''): boolean => {
-  return !!city && !!city.length && isValidCityName(city) && city.length <= maxLength;
-});
-
-FirstNameStruct.getValidationErrorMessage = (firstName): string => {
-  if (firstName) {
-    if (!isValidName(firstName)) {
-      return 'Please enter a valid first name';
-    } else if (firstName.length > halfMaxLength) {
-      return `First name should not be longer than ${halfMaxLength} symbols`;
-    }
-  }
-  return 'Please specify your first name';
-};
-
-LastNameStruct.getValidationErrorMessage = (lastName): string => {
-  if (lastName) {
-    if (!isValidName(lastName)) {
-      return 'Please enter a valid last name';
-    } else if (lastName.length > halfMaxLength) {
-      return `Last name should not be longer than ${halfMaxLength} symbols`;
-    }
-  }
-  return 'Please specify your last name';
-};
-
-EmailStruct.getValidationErrorMessage = (email): string => {
-  if (email) {
-    if (!isValidEmail(email)) {
-      return 'Please enter a valid email';
-    } else if (email.length > maxLength) {
-      return `Email should not be longer than ${maxLength} symbols`;
-    }
-  }
-  return 'Please specify your email';
-};
-
-CityStruct.getValidationErrorMessage = (city): string => {
-  if (city) {
-    if (!isValidCityName(city)) {
-      return 'Please enter a valid city';
-    } else if (city.length > maxLength) {
-      return `City should not be longer than ${maxLength} symbols`;
-    }
-  }
-  return 'Please specify your city';
-};
-
-
 const defaultTypes = {
   string: t.String,
   number: t.Number,
@@ -177,7 +87,7 @@ const generateFormOptions = (fields: Field[]): Object => {
   const options = fields.reduce((memo, field) => {
     memo[field.name] = {
       template: InputTemplate,
-      config: field.config,
+      config: { ...field.config, viewWidth: (window.width - 65), includeLabel: false },
     };
 
     return memo;

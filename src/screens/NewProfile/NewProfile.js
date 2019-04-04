@@ -26,17 +26,14 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Container, Footer, Wrapper } from 'components/Layout';
 import { BoldText, Paragraph } from 'components/Typography';
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
-import TextInput from 'components/TextInput';
 import Header from 'components/Header';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
 import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onboardingActions';
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
 import { fontSizes, fontWeights } from 'utils/variables';
-
-const { Form } = t.form;
-const MIN_USERNAME_LENGTH = 4;
-const MAX_USERNAME_LENGTH = 30;
+import { InputTemplate, Form } from 'components/ProfileForm';
+import { Username, MAX_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
 
 const IntroParagraph = styled(Paragraph)`
   margin: 10px 0 50px;
@@ -61,58 +58,6 @@ const Text = styled(BoldText)`
   text-align: center;
   max-width: 230px;
 `;
-
-function InputTemplate(locals) {
-  const errorMessage = locals.error;
-  const inputProps = {
-    onChange: locals.onChange,
-    onBlur: locals.onBlur,
-    value: locals.value,
-    keyboardType: locals.keyboardType,
-    style: {
-      fontSize: 24,
-      lineHeight: 0,
-    },
-    ...locals.config.inputProps,
-  };
-
-  return (
-    <TextInput
-      errorMessage={errorMessage}
-      id={locals.label}
-      label={locals.label}
-      inputProps={inputProps}
-      inputType="secondary"
-      noBorder
-      loading={locals.config.isLoading}
-    />
-  );
-}
-const usernameRegex = /^[a-z]+([a-z0-9-]+[a-z0-9])?$/i;
-const startsWithNumberRegex = /^[0-9]/i;
-const startsOrEndsWithDash = /(^-|-$)/i;
-const Username = t.refinement(t.String, (username): boolean => {
-  return username !== null
-    && username.length >= MIN_USERNAME_LENGTH
-    && username.length <= MAX_USERNAME_LENGTH
-    && usernameRegex.test(username);
-});
-
-Username.getValidationErrorMessage = (username): string => {
-  if (!usernameRegex.test(username)) {
-    if (startsWithNumberRegex.test(username)) return 'Username can not start with a number';
-    if (startsOrEndsWithDash.test(username)) return 'Username can not start or end with a dash';
-    return 'Only use alpha-numeric characters or dashes.';
-  }
-  if (username.length < MIN_USERNAME_LENGTH) {
-    return `Username should be longer than ${MIN_USERNAME_LENGTH - 1} characters.`;
-  }
-  if (username.length > MAX_USERNAME_LENGTH) {
-    return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
-  }
-
-  return 'Please specify the username.';
-};
 
 const formStructure = t.struct({
   username: Username,
