@@ -10,7 +10,8 @@ before_install:
   - chmod +x pre-install.sh
   - chmod +x pods.sh
   - chmod +x bundles.sh
-  - chmod +x upload.sh 
+  - chmod +x upload.sh
+  - chmod +x yarn.sh
   - touch /Users/travis/build/pillarwallet/pillarwallet/buildNumber.txt
 
 jobs:
@@ -18,7 +19,7 @@ jobs:
     - stage: preinstall
       script: ./pre-install.sh
     - stage: install-node
-      script: yarn install
+      script: ./yarn.sh
     - stage: install-pods
       script: ./pods.sh
     - stage: bundle
