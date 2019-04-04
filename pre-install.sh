@@ -8,5 +8,4 @@ cp environments/.env.staging ./.env
 sed -i.bak "s/_build_number_/$buildNumber/g" .env
 sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
 sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
-touch ~/pillarwallet/buildNumber.txt
 echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
