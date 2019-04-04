@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd $TRAVIS_BUILD_DIR
 export APP_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
 npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
 export buildNumber=$(node -e "console.log(require('./package.json').version);")
