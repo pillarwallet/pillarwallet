@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Alert, View, Platform, Linking, AppState } from 'react-native';
+import { Alert, View, Platform, Linking, AppState, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -68,6 +68,7 @@ type Props = {
   currentMessage: Object,
   draft: ?string,
   isOpen: boolean,
+  hasUnreads?: boolean,
 }
 
 type State = {
@@ -369,6 +370,7 @@ class ChatTab extends React.Component<Props, State> {
       getChatByContact,
       resetUnread,
       navigation,
+      hasUnreads,
     } = this.props;
     const { contact } = this.state;
     const { draft: prevDraft } = prevProps;
@@ -381,7 +383,7 @@ class ChatTab extends React.Component<Props, State> {
       this.setState({ chatText: draft }); // eslint-disable-line
     }
 
-    if (prevProps.isOpen !== isOpen && isOpen) {
+    if (prevProps.isOpen !== isOpen && isOpen && hasUnreads) {
       navigation.setParams({ chatTabOpen: true });
       getChatByContact(contact.username, contact.id, contact.profileImage);
       resetUnread(this.state.contact.username);
@@ -389,6 +391,7 @@ class ChatTab extends React.Component<Props, State> {
 
     if (prevProps.isOpen !== isOpen && !isOpen) {
       navigation.setParams({ chatTabOpen: false });
+      Keyboard.dismiss();
     }
   }
 
@@ -402,7 +405,6 @@ class ChatTab extends React.Component<Props, State> {
     if (chatText && chatText !== '') {
       saveDraft(contact.id, chatText);
     }
-
     clearChatDraftState();
   }
 
@@ -432,7 +434,6 @@ class ChatTab extends React.Component<Props, State> {
     clearChatDraftState();
     this.setState({ chatText: '' });
   };
-
 
   renderCustomAvatar = () => {
     const { contact } = this.state;
@@ -528,7 +529,7 @@ class ChatTab extends React.Component<Props, State> {
     return (
       <Wrapper flex={1}>
         {!!this.state.isFetching &&
-          <View style={{ flex: 1, alignItems: 'center' }}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Spinner />
           </View>}
         {!this.state.isFetching &&

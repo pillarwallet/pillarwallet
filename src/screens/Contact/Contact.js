@@ -26,7 +26,7 @@ import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
+import { Container, ScrollWrapper } from 'components/Layout';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
@@ -49,17 +49,25 @@ const ContactWrapper = styled.View`
   align-items: center;
   margin: 5px 20px 20px;
   padding-top: ${Platform.select({
-    ios: '20px',
-    android: '14px',
+    ios: '15px',
+    android: '9px',
   })};
 `;
 
-const CircleButtonsWrapper = styled(Wrapper)`
-  margin-bottom: 35px;
+const CircleButtonsWrapper = styled.View`
   margin-top: ${Platform.select({
-    ios: 0,
-    android: '-20px',
-  })}
+    ios: '30px',
+    android: '15px',
+  })};
+  margin-bottom: 25px;
+  padding-top: 20px;
+  padding-bottom: 30px;
+  background-color: ${baseColors.snowWhite};
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: ${baseColors.mediumLightGray};
+  justify-content: center;
+  align-items: center;
 `;
 
 type Props = {
@@ -80,7 +88,7 @@ type State = {
   activeTab: string,
   isSheetOpen: boolean,
   screenHeight: number,
-  chatHeight: number,
+  forceOpen: boolean,
 };
 
 class Contact extends React.Component<Props, State> {
@@ -101,9 +109,9 @@ class Contact extends React.Component<Props, State> {
       showConfirmationModal: false,
       manageContactType: '',
       screenHeight: 0,
-      chatHeight: 0,
       activeTab: 'CHAT',
       isSheetOpen: shouldOpenSheet,
+      forceOpen: shouldOpenSheet,
     };
   }
 
@@ -176,8 +184,8 @@ class Contact extends React.Component<Props, State> {
     this.setState({ isSheetOpen: true });
   };
 
-  renderSheetContent = (displayContact) => {
-    const { activeTab, isSheetOpen, chatHeight } = this.state;
+  renderSheetContent = (displayContact, unreadCount) => {
+    const { activeTab, isSheetOpen } = this.state;
     const { navigation } = this.props;
     if (activeTab === ACTIVITY) {
       return (
@@ -187,16 +195,16 @@ class Contact extends React.Component<Props, State> {
           activeTab={TRANSACTIONS}
           additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
           showArrowsOnly
-          contentContainerStyle={{ paddingTop: 20 }}
+          contentContainerStyle={{ paddingTop: 10 }}
         />
       );
     }
     return (
       <ChatTab
-        height={chatHeight}
         contact={displayContact}
         isOpen={activeTab === CHAT && isSheetOpen}
         navigation={navigation}
+        hasUnreads={!!unreadCount}
       />
     );
   };
@@ -215,7 +223,7 @@ class Contact extends React.Component<Props, State> {
       manageContactType,
       screenHeight,
       activeTab,
-      isSheetOpen,
+      forceOpen,
     } = this.state;
 
     const contactName = navigation.getParam('username', '');
@@ -232,14 +240,15 @@ class Contact extends React.Component<Props, State> {
       ? this.getUserAvatar(isAccepted, existingProfileImage, displayContact.lastUpdateTime)
       : undefined;
 
-    const chatInfo = chats.find(chat => chat.username === displayContact.username) || {};
+    const chatInfo = chats.find(chat => chat.username === displayContact.username) || { unread: 0 };
+    const unreadCount = chatInfo.unread;
 
     const contactTabs = [
       {
         id: CHAT,
         name: 'Chat',
         onPress: () => this.setActiveTab(CHAT),
-        unread: chatInfo.unread,
+        unread: unreadCount,
       },
       {
         id: ACTIVITY,
@@ -254,6 +263,8 @@ class Contact extends React.Component<Props, State> {
         onLayout={(event) => {
           this.setState({ screenHeight: event.nativeEvent.layout.height });
         }}
+        innerStyle={{ paddingBottom: 215 }}
+        color={baseColors.white}
       >
         <Header
           title={displayContact.username}
@@ -280,32 +291,26 @@ class Contact extends React.Component<Props, State> {
               imageUpdateTimeStamp={displayContact.lastUpdateTime}
             />
           </ContactWrapper>
-          <CircleButtonsWrapper center horizontal>
-            {isAccepted && (
-              <React.Fragment>
-                <CircleButton
-                  label="Send"
-                  icon={iconSend}
-                  onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
-                />
-              </React.Fragment>
-            )}
+          {isAccepted &&
+          <CircleButtonsWrapper>
+            <CircleButton
+              label="Send"
+              icon={iconSend}
+              onPress={() => navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact: displayContact })}
+            />
           </CircleButtonsWrapper>
+         }
         </ScrollWrapper>
         {isAccepted && !!screenHeight &&
         <BottomSheet
-          forceOpen={isSheetOpen}
-          initialSheetHeight={250}
+          forceOpen={forceOpen}
+          initialSheetHeight={240}
           swipeToCloseHeight={62}
           // scrollingComponentsRefs={[this.activityFeedRef]}
           screenHeight={screenHeight}
           onSheetOpen={this.handleSheetOpen}
           onSheetClose={() => { this.setState({ isSheetOpen: false }); }}
           // sheetWrapperStyle={{ marginTop: 38 }}
-          onAnimate={(pos) => {
-            const chatHeight = screenHeight - pos - 68;
-            this.setState({ chatHeight });
-          }}
           animateHeight={activeTab === CHAT}
           floatingHeaderContent={(<Tabs
             initialActiveTab={activeTab}
@@ -320,7 +325,7 @@ class Contact extends React.Component<Props, State> {
           />)}
         >
           <View style={{ paddingTop: 30, flex: 1 }}>
-            {this.renderSheetContent(displayContact)}
+            {this.renderSheetContent(displayContact, unreadCount)}
           </View>
         </BottomSheet>
         }

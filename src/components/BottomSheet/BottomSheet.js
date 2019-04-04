@@ -23,7 +23,6 @@ import {
   PanResponder,
   Dimensions,
   Platform,
-  Easing,
 } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors } from 'utils/variables';
@@ -63,18 +62,19 @@ const USABLE_SCREEN_HEIGHT = Platform.OS === 'android'
 const ModalWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-  padding: 10px 0;
+  padding-top: 10px;
   position: relative;
   flex: 1;
 `;
 
+
 const Sheet = styled.View`
   width: 100%;
   position: absolute;
-  elevation: 10;
   background-color: white;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+  elevation: 10;
   shadow-color: ${baseColors.black};
   shadow-radius: 10px;
   shadow-opacity: 0.2;
@@ -87,7 +87,7 @@ const FloatingHeader = styled.View`
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 2;
+  z-index: 10;
   background-color: white;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
@@ -99,18 +99,20 @@ const AnimatedSheet = Animated.createAnimatedComponent(Sheet);
 export default class BottomSheet extends React.Component<Props, State> {
   initialPosition: number;
   panResponder: Object;
+  isTransitioning: boolean;
 
   static defaultProps = {
     screenHeight: USABLE_SCREEN_HEIGHT,
     initialSheetHeight: 100,
     topOffset: 68,
-    swipeToCloseHeight: 120,
+    swipeToCloseHeight: 150,
   };
 
   constructor(props: Props) {
     super(props);
     this.panResponder = React.createRef();
     this.initialPosition = USABLE_SCREEN_HEIGHT - this.props.initialSheetHeight;
+    this.isTransitioning = false;
     const {
       forceOpen,
       screenHeight,
@@ -133,37 +135,36 @@ export default class BottomSheet extends React.Component<Props, State> {
     this.buildPanResponder();
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
-    const { isSheetOpen } = this.state;
-    const { onSheetOpen, onSheetClose } = this.props;
-    if (prevState.isSheetOpen !== isSheetOpen) {
-      if (isSheetOpen && onSheetOpen) {
-        onSheetOpen();
-      } else if (onSheetClose) {
-        onSheetClose();
-      }
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.forceOpen && !prevProps.forceOpen) {
+      this.animateSheet(true);
+    } else if (!this.props.forceOpen && prevProps.forceOpen) {
+      this.animateSheet(true);
     }
   }
 
   buildPanResponder = () => {
     this.panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: (e, gestureState) => {
+        if (this.isTransitioning) return false;
         const { isSheetOpen } = this.state;
         const { topOffset, swipeToCloseHeight } = this.props;
         const swipeToCloseZone = topOffset + swipeToCloseHeight;
         if (isSheetOpen) {
-          return gestureState.moveY > 0 && gestureState.moveY < swipeToCloseZone;
+          return gestureState.moveY > 0 && gestureState.moveY < swipeToCloseZone && gestureState.dy > 10;
         }
-        return true;
+        return Math.abs(gestureState.dx) >= 8 || Math.abs(gestureState.dy) >= 8;
       },
       onPanResponderMove: (e, gestureState) => {
+        if (this.isTransitioning) return;
         this.setState({ isTouched: false, isMoved: true });
         this.moveDrawerView(gestureState);
       },
       onPanResponderRelease: (e, gestureState) => {
+        if (this.isTransitioning) return;
         const { isTouched, isMoved } = this.state;
         if (isTouched || isMoved) {
-          this.animateSheet(gestureState, isTouched);
+          this.animateSheet(isTouched, gestureState);
         }
         this.setState({
           isTouched: false,
@@ -181,6 +182,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   };
 
   moveDrawerView = (gestureState: Object) => {
+    if (this.isTransitioning) return;
     const { topSheetPosition, animatedHeight } = this.state;
     const { animateHeight, initialSheetHeight, screenHeight } = this.props;
     let position = gestureState.moveY;
@@ -199,7 +201,9 @@ export default class BottomSheet extends React.Component<Props, State> {
     }
   };
 
-  animateSheet = (gestureState: Object, isPressed: boolean) => {
+  animateSheet = (isPressed: boolean, gestureState?: Object) => {
+    if (this.isTransitioning) return;
+    this.isTransitioning = true;
     const { isSheetOpen, topSheetPosition, animatedHeight } = this.state;
     const {
       scrollingComponentsRefs,
@@ -209,9 +213,9 @@ export default class BottomSheet extends React.Component<Props, State> {
       topOffset,
     } = this.props;
 
-    let isGoingToUp = gestureState.vy < 0;
-    if (isPressed && !isSheetOpen) {
-      isGoingToUp = true;
+    let isGoingToUp = !isSheetOpen;
+    if (gestureState) {
+      isGoingToUp = gestureState.vy < 0;
     }
 
     const sheetHeight = isGoingToUp ? screenHeight - topOffset : initialSheetHeight;
@@ -223,13 +227,13 @@ export default class BottomSheet extends React.Component<Props, State> {
           ref.scrollToOffset({ x: 0, y: 0, animated: false });
         });
       }
-      Animated.timing(animatedHeight, {
+      Animated.spring(animatedHeight, {
         toValue: sheetHeight,
-        easing: Easing.linear,
-        duration: 300,
+        bounciness: 0,
       }).start(() => {
         topSheetPosition.setValue(endPosition);
         this.setState({ isSheetOpen: isGoingToUp });
+        this.isTransitioning = false;
       });
     } else {
       if (!isGoingToUp && scrollingComponentsRefs && scrollingComponentsRefs.length) {
@@ -237,14 +241,22 @@ export default class BottomSheet extends React.Component<Props, State> {
           ref.scrollToOffset({ x: 0, y: 0, animated: false });
         });
       }
-      Animated.timing(topSheetPosition, {
+      Animated.spring(topSheetPosition, {
         toValue: endPosition,
-        easing: Easing.linear,
-        duration: 300,
+        bounciness: 0,
       }).start(() => {
         animatedHeight.setValue(sheetHeight);
         this.setState({ isSheetOpen: isGoingToUp });
+        this.isTransitioning = false;
       });
+    }
+
+    const { onSheetOpen, onSheetClose } = this.props;
+
+    if (isGoingToUp && onSheetOpen) {
+      onSheetOpen();
+    } else if (onSheetClose) {
+      onSheetClose();
     }
   };
 
