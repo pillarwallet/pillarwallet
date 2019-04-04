@@ -1246,7 +1246,7 @@ Base64@~0.2.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/Base64/-/Base64-0.2.1.tgz#ba3a4230708e186705065e66babdd4c35cf60028"
   integrity sha1-ujpCMHCOGGcFBl5mur3Uw1z2ACg=
 
-StyleguideSystem@/Users/owl/Developer/diablo/StyleguideSystem:
+"StyleguideSystem@file:../../diablo/styleguide":
   version "0.0.3"
   dependencies:
     lodash.capitalize "^4.2.1"
