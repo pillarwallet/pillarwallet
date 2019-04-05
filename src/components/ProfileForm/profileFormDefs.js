@@ -1,13 +1,15 @@
 // @flow
 
+import capitalize from 'lodash.capitalize';
 import t from 'tcomb-form-native';
-import { isValidEmail, isValidName, isValidCityName } from 'utils/validators';
+import { isValidEmail, isValidName, isValidCityName, isValidPhone } from 'utils/validators';
 
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
 
 const maxLength = 100;
 const halfMaxLength = maxLength / 2;
+const phoneMaxLength = 15;
 
 const usernameRegex = /^[a-z]+([a-z0-9-]+[a-z0-9])?$/i;
 const startsWithNumberRegex = /^[0-9]/i;
@@ -35,6 +37,10 @@ UsernameDef.getValidationErrorMessage = (username): string => {
   return 'Please specify the username.';
 };
 
+const NameStructDef = t.refinement(t.String, (name: string = ''): boolean => {
+  return !!name && !!name.length && isValidName(name) && name.length <= maxLength;
+});
+
 const FirstNameStructDef = t.refinement(t.String, (firstName: string = ''): boolean => {
   return !!firstName && !!firstName.length && isValidName(firstName) && firstName.length <= halfMaxLength;
 });
@@ -47,31 +53,33 @@ const EmailStructDef = t.refinement(t.String, (email: string = ''): boolean => {
   return !!email && !!email.length && isValidEmail(email) && email.length <= maxLength;
 });
 
+const PhoneStructDef = t.refinement(t.String, (phone: string = ''): boolean => {
+  return !!phone && !!phone.length && isValidEmail(phone) && phone.length <= phoneMaxLength;
+});
+
 const CityStructDef = t.refinement(t.String, (city: string = ''): boolean => {
   return !!city && !!city.length && isValidCityName(city) && city.length <= maxLength;
 });
 
-FirstNameStructDef.getValidationErrorMessage = (firstName): string => {
-  if (firstName) {
-    if (!isValidName(firstName)) {
-      return 'Please enter a valid first name';
-    } else if (firstName.length > halfMaxLength) {
-      return `First name should not be longer than ${halfMaxLength} symbols`;
+function getValidationErrorMessageForName(name, nameDefForMessage) {
+  if (name) {
+    if (!isValidName(name)) {
+      return `Please enter a valid ${nameDefForMessage}`;
+    } else if (name.length > halfMaxLength) {
+      return `${capitalize(nameDefForMessage)} should not be longer than ${halfMaxLength} symbols`;
     }
   }
   return 'Please specify your first name';
-};
+}
 
-LastNameStructDef.getValidationErrorMessage = (lastName): string => {
-  if (lastName) {
-    if (!isValidName(lastName)) {
-      return 'Please enter a valid last name';
-    } else if (lastName.length > halfMaxLength) {
-      return `Last name should not be longer than ${halfMaxLength} symbols`;
-    }
-  }
-  return 'Please specify your last name';
-};
+NameStructDef.getValidationErrorMessage = (name): string =>
+  getValidationErrorMessageForName(name, 'name');
+
+FirstNameStructDef.getValidationErrorMessage = (firstName): string =>
+  getValidationErrorMessageForName(firstName, 'first name');
+
+LastNameStructDef.getValidationErrorMessage = (lastName): string =>
+  getValidationErrorMessageForName(lastName, 'last name');
 
 EmailStructDef.getValidationErrorMessage = (email): string => {
   if (email) {
@@ -82,6 +90,18 @@ EmailStructDef.getValidationErrorMessage = (email): string => {
     }
   }
   return 'Please specify your email';
+};
+
+PhoneStructDef.getValidationErrorMessage = (phone): string => {
+  if (phone) {
+    if (!isValidPhone(phone)) {
+      return 'Please enter a valid phone';
+    } else if (phone.length > phoneMaxLength) {
+      return `Phone should not be longer than ${phoneMaxLength} symbols`;
+    }
+  }
+
+  return 'Please specify your phone';
 };
 
 CityStructDef.getValidationErrorMessage = (city): string => {
@@ -95,8 +115,18 @@ CityStructDef.getValidationErrorMessage = (city): string => {
   return 'Please specify your city';
 };
 
-export const Username = UsernameDef;
+export const getFormStructure = (fields: Field[], defaultTypes) => {
+  const fieldsStructure = fields.reduce((memo, field) => {
+    memo[field.name] = defaultTypes[field.type];
+    return memo;
+  }, {});
+  return t.struct(fieldsStructure);
+};
+
+export const UsernameStruct = UsernameDef;
+export const NameStruct = NameStructDef;
 export const FirstNameStruct = FirstNameStructDef;
 export const LastNameStruct = LastNameStructDef;
 export const EmailStruct = EmailStructDef;
+export const PhoneStruct = PhoneStructDef;
 export const CityStruct = CityStructDef;

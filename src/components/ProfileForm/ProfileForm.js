@@ -2,6 +2,7 @@
 import * as React from 'react';
 import t from 'tcomb-form-native';
 import TextInput from 'components/TextInput';
+import InputSwitchItem from 'components/ListItem/ListItemInputSwitch';
 
 export const { Form } = t.form;
 
@@ -44,6 +45,33 @@ export const InputTemplate = (locals: Object) => {
       inputType="secondary"
       noBorder
       {...additionalProps}
+    />
+  );
+};
+
+export const InputSwitchTemplate = (locals: Object) => {
+  const { config } = locals;
+  const {
+    fieldDetails: { disabledInput = false, inputType = null, isVerified = false, includeVerified = false },
+    inputProps,
+    switchProps,
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+  } = config;
+  return (
+    <InputSwitchItem
+      disabledInput={disabledInput}
+      inputType={inputType}
+      includeVerified={includeVerified}
+      isVerified={isVerified}
+      inputProps={inputProps}
+      switchProps={switchProps}
+      marginTop={marginTop}
+      marginBottom={marginBottom}
+      marginLeft={marginLeft}
+      marginRight={marginRight}
     />
   );
 };

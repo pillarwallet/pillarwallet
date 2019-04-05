@@ -18,11 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { Platform, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, fontSizes, spacing } from 'utils/variables';
 import { Switch, Input } from 'native-base';
 import { BaseText } from 'components/Typography';
-import { Platform, StyleSheet } from 'react-native';
+import Icon from 'components/Icon';
 
 const StyledItemView = styled.View`
   display: flex;
@@ -36,6 +37,10 @@ const StyledItemView = styled.View`
   border-bottom-width: ${StyleSheet.hairlineWidth};
   border-top-width: ${StyleSheet.hairlineWidth};
   height: 60px;
+  marginTop: ${({ marginTop = 0 }) => marginTop};
+  marginBottom: ${({ marginBottom = 0 }) => marginBottom};
+  marginLeft: ${({ marginLeft = 0 }) => marginLeft};
+  marginRight: ${({ marginRight = 0 }) => marginRight};
 `;
 
 const ItemLabelHolder = styled.View`
@@ -74,12 +79,24 @@ const SelectedOption = styled(BaseText)`
   width:100%;
 `;
 
+const VerifyView = styled.View`
+  align-items: center;
+  flex-direction: row;
+`;
+
+const VerifyLabel = styled(BaseText)`
+  color: ${({ isVerified }) => isVerified ? baseColors.jadeGreen : baseColors.brightBlue};
+  font-size: ${fontSizes.extraSmall};
+  margin: 0 4px 0;
+`;
+
 const ItemSelectHolder = styled.TouchableOpacity``;
 
 const ListAddon = styled.View`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  margin: 0 0 0 15px;
 `;
 
 type InputProps = {
@@ -96,8 +113,14 @@ type SwitchProps = {
 }
 
 type Props = {
+  includeVerified?: ?boolean,
+  isVerified?: ?boolean,
   disabledInput?: ?boolean,
   inputType?: string,
+  marginTop?: ?string,
+  marginBottom?: ?string,
+  marginLeft?: ?string,
+  marginRight?: ?string,
   inputProps: InputProps,
   switchProps: SwitchProps,
 }
@@ -122,8 +145,14 @@ export default class InputSwitch extends React.Component<Props> {
     const {
       inputType,
       disabledInput,
+      includeVerified = false,
+      isVerified,
       inputProps: { value = '', label, onSelect },
       switchProps: { switchStatus, onPress },
+      marginTop,
+      marginBottom,
+      marginLeft,
+      marginRight,
     } = this.props;
 
     let inputSection = (
@@ -150,9 +179,34 @@ export default class InputSwitch extends React.Component<Props> {
       );
     }
 
+    const verified = isVerified ? 'Verified' : 'Verify';
+
     return (
-      <StyledItemView>
+      <StyledItemView
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        marginLeft={marginLeft}
+        marginRight={marginRight}
+      >
         {inputSection}
+
+        {includeVerified &&
+          <VerifyView>
+            <VerifyLabel isVerified={isVerified}>
+              {isVerified ? 'Verified' : 'Verify'}
+            </VerifyLabel>
+            {isVerified &&
+              <Icon
+                name="check"
+                style={{
+                  color: baseColors.limeGreen,
+                  fontSize: fontSizes.tiny,
+                }}
+              />
+            }
+          </VerifyView>
+        }
+
         <ListAddon>
           <Switch
             onValueChange={onPress}

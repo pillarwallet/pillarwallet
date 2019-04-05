@@ -31,6 +31,7 @@ import {
   LastNameStruct,
   EmailStruct,
   CityStruct,
+  getFormStructure,
 } from 'components/ProfileForm/profileFormDefs';
 
 const window = Dimensions.get('window');
@@ -75,14 +76,6 @@ const defaultTypes = {
   city: CityStruct,
 };
 
-const getFormStructure = (fields: Field[]) => {
-  const fieldsStructure = fields.reduce((memo, field) => {
-    memo[field.name] = defaultTypes[field.type];
-    return memo;
-  }, {});
-  return t.struct(fieldsStructure);
-};
-
 const generateFormOptions = (fields: Field[]): Object => {
   const options = fields.reduce((memo, field) => {
     memo[field.name] = {
@@ -124,7 +117,7 @@ export default class ProfileForm extends React.Component<Props, State> {
     const { value } = this.state;
     const { fields } = this.props;
     const formOptions = generateFormOptions(fields);
-    const formStructure = getFormStructure(fields);
+    const formStructure = getFormStructure(fields, defaultTypes);
 
     return (
       <StyledWrapper flex={1}>

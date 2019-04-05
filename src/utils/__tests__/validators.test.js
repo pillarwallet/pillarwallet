@@ -25,6 +25,7 @@ import {
   isValidEmail,
   isValidName,
   isValidCityName,
+  isValidPhone,
 } from '../validators';
 
 describe('Validators', () => {
@@ -121,6 +122,28 @@ describe('Validators', () => {
     it('should return true if city name is valid', () => {
       const cityName = 'San Fransisco';
       expect(isValidCityName(cityName)).toBeTruthy();
+    });
+  });
+
+  describe('isValidPhone', () => {
+    it('should return false if phone has alpha chars', () => {
+      expect(isValidPhone('something 9999')).toBeFalsy();
+    });
+
+    it('should return false if phone has something diff than numbers or starts +', () => {
+      expect(isValidPhone('+9999-(44444)')).toBeFalsy();
+      expect(isValidPhone('+9999 (44444)')).toBeFalsy();
+      expect(isValidPhone('+9999 44444')).toBeFalsy();
+      expect(isValidPhone('+999944444+')).toBeFalsy();
+      expect(isValidPhone('-999944444+')).toBeFalsy();
+    });
+
+    it('should return true if phone has only numbers', () => {
+      expect(isValidPhone('999944444')).toBeTruthy();
+    });
+
+    it('should return true if phone has numbers and starts with +', () => {
+      expect(isValidPhone('+999944444')).toBeTruthy();
     });
   });
 });

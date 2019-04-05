@@ -33,7 +33,7 @@ import { validateUserDetailsAction, registerOnBackendAction } from 'actions/onbo
 import { USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME, INVALID_USERNAME } from 'constants/walletConstants';
 import { fontSizes, fontWeights } from 'utils/variables';
 import { InputTemplate, Form } from 'components/ProfileForm';
-import { Username, MAX_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
+import { UsernameStruct, MAX_USERNAME_LENGTH } from 'components/ProfileForm/profileFormDefs';
 
 const IntroParagraph = styled(Paragraph)`
   margin: 10px 0 50px;
@@ -60,7 +60,7 @@ const Text = styled(BoldText)`
 `;
 
 const formStructure = t.struct({
-  username: Username,
+  username: UsernameStruct,
 });
 
 const PROFILE_IMAGE_WIDTH = 144;

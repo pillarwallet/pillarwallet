@@ -5,7 +5,7 @@ import { fontSizes, fontWeights, baseColors } from 'utils/variables';
 import { BaseText, BoldText } from 'components/Typography';
 
 export const DetailView = styled.View`
-  padding: 0 20px 16px 20px;
+  padding: 0 20px 0;
 `;
 
 export const Detail = styled(BaseText)`

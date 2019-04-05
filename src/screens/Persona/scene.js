@@ -1,20 +1,30 @@
 // @flow
 
 import React, { Component } from 'react';
-import { FlatList, View } from 'react-native';
+import t from 'tcomb-form-native';
 import capitalize from 'lodash.capitalize';
 import clone from 'lodash.clone';
 import findIndex from 'lodash.findindex';
 import filter from 'lodash.filter';
+import partition from 'lodash.partition';
+import map from 'lodash.map';
 import Header from 'components/Header';
 import SlideModal from 'components/Modals/SlideModal';
 import CountrySelect from 'components/CountrySelect';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import InputSwitchItem from 'components/ListItem/ListItemInputSwitch';
 import SettingsItem from 'components/ListItem/SettingsItem';
 import Separator from 'components/Separator';
-import { Container, Wrapper, Footer } from 'components/Layout';
+import { Container, ScrollWrapper, Wrapper, Footer } from 'components/Layout';
 import Button from 'components/Button';
+import { InputSwitchTemplate, Form } from 'components/ProfileForm';
+import {
+  UsernameStruct,
+  NameStruct,
+  EmailStruct,
+  PhoneStruct,
+  CityStruct,
+  getFormStructure,
+} from 'components/ProfileForm/profileFormDefs';
 import { baseColors } from 'utils/variables';
 import * as styled from './styles';
 
@@ -24,9 +34,77 @@ type Props = {
   persona?: Object,
 };
 
+const usernameFormFields = [{
+  name: 'username',
+  type: 'username',
+  config: { autoCapitalize: 'none', error: 'Please specify valid username' },
+}];
+
+const personaFormFields = [
+  {
+    name: 'name',
+    type: 'name',
+    config: { autoCapitalize: 'none', error: 'Please specify valid name' },
+  },
+  {
+    name: 'email',
+    type: 'email',
+    config: { autoCapitalize: 'none', error: 'Please specify valid email' },
+  },
+  {
+    name: 'phone',
+    type: 'phone',
+    config: { autoCapitalize: 'none', error: 'Please specify valid phone' },
+  },
+  {
+    name: 'city',
+    type: 'city',
+    config: { autoCapitalize: 'words', error: 'Please specify valid city' },
+  },
+];
+
+const defaultTypes = {
+  username: UsernameStruct,
+  name: NameStruct,
+  email: EmailStruct,
+  phone: PhoneStruct,
+  // country: CountryStruct,
+  city: CityStruct,
+};
+
+const generateFormOptions = (fields: Field[], personaProps): Object => {
+  const options = fields.reduce((memo, field) => {
+    const propsToUse = filter(personaProps, { key: field.name })[0] || {};
+    const { fieldDetails, inputProps, switchProps } = propsToUse;
+
+    memo[field.name] = {
+      template: InputSwitchTemplate,
+      config: {
+        ...field.config,
+        fieldDetails,
+        inputProps,
+        switchProps,
+        marginTop: 11,
+        marginBottom: field.name === 'username' ? 22 : 11,
+      },
+    };
+
+    return memo;
+  }, {});
+
+  return {
+    fields: {
+      ...options,
+    },
+  };
+};
+
 class PersonaScene extends Component {
   constructor(props) {
     super(props);
+
+    this._usernameForm = clone(t.form);
+    this._personaForm = clone(t.form);
 
     this.state = {
       persona: props.persona,
@@ -80,28 +158,66 @@ class PersonaScene extends Component {
   personaInputProps = ({ key, value }) => (
     key === 'country' ? {
       value,
-      label: key,
+      label: capitalize(key),
       onSelect: () => this.toggleSlideModal(),
     } : {
       value,
-      label: key,
+      label: capitalize(key),
       onChange: (newValue) => this.updatePersonaDetail({ key, value: newValue }),
     }
   );
+
+  personaForm(details, formFields) {
+    const { persona: { id } } = this.state;
+    const propsToUse = map(details, ({ key, value, isVisible, isVerified }) => (
+      {
+        key,
+        fieldDetails: {
+          isVerified,
+          includeVerified: !!id,
+          disabledInput: id && key === 'username',
+          inputType: key === 'country' ? 'Select' : null,
+        },
+        inputProps: this.personaInputProps({ key, value }),
+        switchProps: {
+          switchStatus: isVisible,
+          onPress: () => this.updatePersonaDetail({ key, isVisible: !isVisible }),
+        },
+      }
+    ));
+
+    const inputProps = this.personaInputProps({ key: 'username', value: 'foo' })
+    const switchProps = {
+      switchStatus: false,
+      onPress: () => this.updatePersonaDetail({ key: 'username', isVisible: false }),
+    };
+
+    const formOptions = generateFormOptions(formFields, propsToUse);
+    const formStructure = getFormStructure(formFields, defaultTypes);
+
+    return { formOptions, formStructure };
+  }
 
   render() {
     const { onSavePersona } = this.props;
     const { persona: { id, details: personaData }, isModalVisible } = this.state;
 
+    const [personaDetails, usernameDetails] = partition(personaData, (data) => data.key !== 'username');
+
+    const {
+      formStructure: usernameFormStructure,
+      formOptions: usernameFormOptions,
+    } = this.personaForm(usernameDetails, usernameFormFields);
+
+    const {
+      formStructure: personaFormStructure,
+      formOptions: personaFormOptions,
+    } = this.personaForm(personaDetails, personaFormFields);
+
     const createDetail = !id ? (
-      <styled.DetailView>
-        <styled.Detail>
-          Fill in the details and set visibility settings for each piece of data.
-        </styled.Detail>
-        <styled.VisibleLabel>
-          Make visible
-        </styled.VisibleLabel>
-      </styled.DetailView>
+      <styled.Detail>
+        Fill in the details and set visibility settings for each piece of data.
+      </styled.Detail>
     ) : null;
 
     const saveButton = !id ? (
@@ -151,31 +267,35 @@ class PersonaScene extends Component {
             top: 'never',
           }}
         >
-            {createDetail}
+          <ScrollWrapper>
+            <styled.DetailView>
+              {createDetail}
+              <styled.VisibleLabel>
+                Discoverable in search
+              </styled.VisibleLabel>
+            </styled.DetailView>
 
-            <FlatList
-              data={personaData}
-              renderItem={({ item }) => {
-                const { key, value, isVisible } = item;
-                return (
-                  <InputSwitchItem
-                    key={key}
-                    disabledInput={id && key === 'username'}
-                    inputType={key === 'country' ? 'Select' : null}
-                    inputProps={this.personaInputProps({ key, value })}
-                    switchProps={{
-                      switchStatus: isVisible,
-                      onPress: () => this.updatePersonaDetail({ key, isVisible: !isVisible })
-                    }}
-                  />
-                );
-              }}
-              keyboardShouldPersistTaps="handled"
-              ItemSeparatorComponent={() => <View style={{ margin: 16 }} />}
+            <Form
+              ref={node => { this._usernameForm = node; }}
+              type={usernameFormStructure}
+              options={usernameFormOptions}
             />
 
-            {saveButton}
-          </Container>
+            <styled.DetailView>
+              <styled.VisibleLabel>
+                Visible in your profile
+              </styled.VisibleLabel>
+            </styled.DetailView>
+
+            <Form
+              ref={node => { this._personaForm = node; }}
+              type={personaFormStructure}
+              options={personaFormOptions}
+            />
+          </ScrollWrapper>
+
+          {saveButton}
+        </Container>
       </Container>
     );
   }

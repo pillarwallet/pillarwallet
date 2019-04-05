@@ -16,12 +16,12 @@ Styleguide.add({
       persona={{
         id: null,
         details: [
-          { value: null, isVisible: false, key: 'username' },
-          { value: null, isVisible: false, key: 'name' },
-          { value: null, isVisible: false, key: 'email' },
-          { value: null, isVisible: false, key: 'phone' },
-          { value: null, isVisible: false, key: 'country' },
-          { value: null, isVisible: false, key: 'city' },
+          { value: null, isVisible: false, key: 'username', isVerified: false },
+          { value: null, isVisible: false, key: 'name', isVerified: false },
+          { value: null, isVisible: false, key: 'email', isVerified: false },
+          { value: null, isVisible: false, key: 'phone', isVerified: false },
+          { value: null, isVisible: false, key: 'country', isVerified: false },
+          { value: null, isVisible: false, key: 'city', isVerified: false },
         ]
       }}
     />
@@ -40,12 +40,12 @@ Styleguide.add({
       persona={{
         id: 1,
         details: [
-          { value: 'foo', isVisible: true, key: 'username' },
-          { value: 'foo bar', isVisible: false, key: 'name' },
-          { value: 'foo@bar.com', isVisible: false, key: 'email' },
-          { value: '+555888979', isVisible: false, key: 'phone' },
-          { value: 'Uruguay', isVisible: false, key: 'country' },
-          { value: 'Montevideo', isVisible: false, key: 'city' },
+          { value: 'foo', isVisible: true, key: 'username', isVerified: true },
+          { value: 'foo bar', isVisible: false, key: 'name', isVerified: false },
+          { value: 'foo@bar.com', isVisible: false, key: 'email', isVerified: false },
+          { value: '+555888979', isVisible: true, key: 'phone', isVerified: true },
+          { value: 'Uruguay', isVisible: false, key: 'country', isVerified: false },
+          { value: 'Montevideo', isVisible: true, key: 'city', isVerified: false },
         ],
       }}
     />
