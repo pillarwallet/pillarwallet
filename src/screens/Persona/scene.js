@@ -6,6 +6,7 @@ import capitalize from 'lodash.capitalize';
 import clone from 'lodash.clone';
 import findIndex from 'lodash.findindex';
 import filter from 'lodash.filter';
+import forEach from 'lodash.foreach';
 import partition from 'lodash.partition';
 import map from 'lodash.map';
 import Header from 'components/Header';
@@ -22,6 +23,7 @@ import {
   NameStruct,
   EmailStruct,
   PhoneStruct,
+  CountryStruct,
   CityStruct,
   getFormStructure,
 } from 'components/ProfileForm/profileFormDefs';
@@ -57,6 +59,11 @@ const personaFormFields = [
     config: { autoCapitalize: 'none', error: 'Please specify valid phone' },
   },
   {
+    name: 'country',
+    type: 'country',
+    config: { autoCapitalize: 'words', error: 'Please specify valid country' },
+  },
+  {
     name: 'city',
     type: 'city',
     config: { autoCapitalize: 'words', error: 'Please specify valid city' },
@@ -65,11 +72,11 @@ const personaFormFields = [
 
 const defaultTypes = {
   username: UsernameStruct,
-  name: NameStruct,
-  email: EmailStruct,
-  phone: PhoneStruct,
-  // country: CountryStruct,
-  city: CityStruct,
+  name: t.maybe(NameStruct),
+  email: t.maybe(EmailStruct),
+  phone: t.maybe(PhoneStruct),
+  country: t.maybe(CountryStruct),
+  city: t.maybe(CityStruct),
 };
 
 const generateFormOptions = (fields: Field[], personaProps): Object => {
@@ -131,11 +138,10 @@ class PersonaScene extends Component {
   };
 
   backToScreen = () => {
-    const { onBack, onSavePersona } = this.props;
-    const { persona } = this.state;
+    const { onBack } = this.props;
 
     if (persona.id) {
-      onSavePersona(persona);
+      this.handleSubmit();
     }
 
     onBack();
@@ -166,6 +172,18 @@ class PersonaScene extends Component {
       onChange: (newValue) => this.updatePersonaDetail({ key, value: newValue }),
     }
   );
+
+  handleSubmit = () => {
+    const { onSavePersona } = this.props;
+    const { persona } = this.state;
+
+    const usernameValidation = this._usernameForm.getValue();
+    const personaValidation = this._personaForm.getValue();
+
+    if (!usernameValidation || !personaValidation) return;
+
+    onSavePersona(persona);
+  };
 
   personaForm(details, formFields) {
     const { persona: { id } } = this.state;
@@ -199,7 +217,6 @@ class PersonaScene extends Component {
   }
 
   render() {
-    const { onSavePersona } = this.props;
     const { persona: { id, details: personaData }, isModalVisible } = this.state;
 
     const [personaDetails, usernameDetails] = partition(personaData, (data) => data.key !== 'username');
@@ -220,12 +237,17 @@ class PersonaScene extends Component {
       </styled.Detail>
     ) : null;
 
+    const personaDetailValues = {};
+    forEach(personaDetails, ({ key, value }) => {
+      personaDetailValues[key] = value;
+    });
+
     const saveButton = !id ? (
       <Footer>
         <Button
           marginBottom="20px"
           width="143px"
-          onPress={onSavePersona}
+          onPress={this.handleSubmit}
           title="Save"
         />
       </Footer>
@@ -279,6 +301,7 @@ class PersonaScene extends Component {
               ref={node => { this._usernameForm = node; }}
               type={usernameFormStructure}
               options={usernameFormOptions}
+              value={{ username: usernameDetails[0].value }}
             />
 
             <styled.DetailView>
@@ -291,6 +314,7 @@ class PersonaScene extends Component {
               ref={node => { this._personaForm = node; }}
               type={personaFormStructure}
               options={personaFormOptions}
+              value={personaDetailValues}
             />
           </ScrollWrapper>
 

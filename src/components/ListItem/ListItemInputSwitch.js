@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { baseColors, fontSizes, spacing } from 'utils/variables';
+import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Switch, Input } from 'native-base';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -32,8 +32,8 @@ const StyledItemView = styled.View`
   align-items: center;
   padding: 9px ${spacing.rhythm}px;
   background-color: #ffffff;
-  border-bottom-color: ${baseColors.lightGray};
-  border-top-color: ${baseColors.lightGray};
+  border-bottom-color: ${({ hasErrors }) => hasErrors ? UIColors.danger : baseColors.lightGray};
+  border-top-color: ${({ hasErrors }) => hasErrors ? UIColors.danger : baseColors.lightGray};
   border-bottom-width: ${StyleSheet.hairlineWidth};
   border-top-width: ${StyleSheet.hairlineWidth};
   height: 60px;
@@ -51,8 +51,8 @@ const ItemLabelHolder = styled.View`
 `;
 
 const ItemLabel = styled(BaseText)`
-  font-size: ${fontSizes.extraSmall};
-  color: ${baseColors.coolGrey};
+  font-size: ${({ hasErrors }) => hasErrors ? fontSizes.extraExtraSmall : fontSizes.extraSmall};
+  color: ${({ hasErrors }) => hasErrors ? UIColors.danger : baseColors.coolGrey};
   flex-wrap: wrap;
   flex: 1;
   padding: 0 ${spacing.rhythm / 2}px
@@ -117,6 +117,7 @@ type Props = {
   isVerified?: ?boolean,
   disabledInput?: ?boolean,
   inputType?: string,
+  errorMessage?: ?string,
   marginTop?: ?string,
   marginBottom?: ?string,
   marginLeft?: ?string,
@@ -145,6 +146,7 @@ export default class InputSwitch extends React.Component<Props> {
     const {
       inputType,
       disabledInput,
+      errorMessage,
       includeVerified = false,
       isVerified,
       inputProps: { value = '', label, onSelect },
@@ -155,34 +157,40 @@ export default class InputSwitch extends React.Component<Props> {
       marginRight,
     } = this.props;
 
-    let inputSection = (
-      <ItemLabelHolder>
-        <ItemLabel>{label}</ItemLabel>
-        <ItemValue
-          disabled={disabledInput}
-          onChange={this.handleChange}
-          onBlur={this.handleBlur}
-          numberOfLines={1}
-          value={value}
-        />
-      </ItemLabelHolder>
-    );
+    const hasErrors = !!errorMessage;
+    const errorMessageLabel = hasErrors ? <ItemLabel hasErrors={hasErrors}>  *{errorMessage}</ItemLabel> : null;
 
-    if (inputType && inputType === 'Select' && onSelect) {
-      inputSection = (
-        <ItemSelectHolder
-          onPress={onSelect}
-        >
-          <ItemLabel>{label}</ItemLabel>
-          <SelectedOption>{value}</SelectedOption>
-        </ItemSelectHolder>
-      );
-    }
+    const inputSection = (inputType && inputType === 'Select' && onSelect) ? (
+      <ItemSelectHolder
+        onPress={onSelect}
+      >
+        <ItemLabel>
+          {label}
+          {errorMessageLabel}
+        </ItemLabel>
+        <SelectedOption>{value}</SelectedOption>
+      </ItemSelectHolder>
+    ) : (
+    <ItemLabelHolder>
+      <ItemLabel>
+        {label}
+        {errorMessageLabel}
+      </ItemLabel>
+      <ItemValue
+        disabled={disabledInput}
+        onChange={this.handleChange}
+        onBlur={this.handleBlur}
+        numberOfLines={1}
+        value={value}
+      />
+    </ItemLabelHolder>
+    );
 
     const verified = isVerified ? 'Verified' : 'Verify';
 
     return (
       <StyledItemView
+        hasErrors={hasErrors}
         marginTop={marginTop}
         marginBottom={marginBottom}
         marginLeft={marginLeft}

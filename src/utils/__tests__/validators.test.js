@@ -113,6 +113,18 @@ describe('Validators', () => {
     });
   });
 
+  describe('isValidCountryName', () => {
+    it('should return false if city name isn\'t valid', () => {
+      const countryName = 'S3ct0r 9!';
+      expect(isValidCountryName(countryName)).toBeFalsy();
+    });
+
+    it('should return true if city name is valid', () => {
+      expect(isValidCountryName('Uruguay')).toBeTruthy();
+      expect(isValidCountryName('United Kingdom')).toBeTruthy();
+    });
+  });
+
   describe('isValidCityName', () => {
     it('should return false if city name isn\'t valid', () => {
       const cityName = 'S3ct0r 9!';

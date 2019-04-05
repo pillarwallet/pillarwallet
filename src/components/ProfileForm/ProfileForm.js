@@ -50,7 +50,7 @@ export const InputTemplate = (locals: Object) => {
 };
 
 export const InputSwitchTemplate = (locals: Object) => {
-  const { config } = locals;
+  const { config, error: errorMessage } = locals;
   const {
     fieldDetails: { disabledInput = false, inputType = null, isVerified = false, includeVerified = false },
     inputProps,
@@ -60,8 +60,10 @@ export const InputSwitchTemplate = (locals: Object) => {
     marginLeft,
     marginRight,
   } = config;
+
   return (
     <InputSwitchItem
+      errorMessage={errorMessage}
       disabledInput={disabledInput}
       inputType={inputType}
       includeVerified={includeVerified}

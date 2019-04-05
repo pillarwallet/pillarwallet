@@ -30,6 +30,29 @@ Styleguide.add({
 Styleguide.add({
   parent: 'COMPONENT',
   group: 'ListItem',
+  id: 'INPUT_SWITCH_LIST_ITEM_ERROR',
+  title: 'Input Switch Error',
+  component: (
+    <Container>
+      <InputSwitch
+        key="foo"
+        errorMessage="some error happened"
+        inputProps={{
+          label: 'username',
+          value: 'foo',
+          onChange: (newValue) => Alert.alert(`it will change to ${newValue}`)
+        }}
+        switchProps={{
+          onPress: () => Alert.alert('set on foo')
+        }}
+      />
+    </Container>
+  ),
+});
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'ListItem',
   id: 'INPUT_SWITCH_LIST_ITEM_ON',
   title: 'Input Switch ON',
   component: (

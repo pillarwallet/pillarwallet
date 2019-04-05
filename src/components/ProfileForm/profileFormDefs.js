@@ -2,7 +2,13 @@
 
 import capitalize from 'lodash.capitalize';
 import t from 'tcomb-form-native';
-import { isValidEmail, isValidName, isValidCityName, isValidPhone } from 'utils/validators';
+import {
+  isValidEmail,
+  isValidName,
+  isValidCountryName,
+  isValidCityName,
+  isValidPhone,
+} from 'utils/validators';
 
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
@@ -22,6 +28,8 @@ const UsernameDef = t.refinement(t.String, (username): boolean => {
 });
 
 UsernameDef.getValidationErrorMessage = (username): string => {
+  if (!username) return 'Please specify the username.';
+
   if (!usernameRegex.test(username)) {
     if (startsWithNumberRegex.test(username)) return 'Username can not start with a number';
     if (startsOrEndsWithDash.test(username)) return 'Username can not start or end with a dash';
@@ -33,8 +41,6 @@ UsernameDef.getValidationErrorMessage = (username): string => {
   if (username.length > MAX_USERNAME_LENGTH) {
     return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
   }
-
-  return 'Please specify the username.';
 };
 
 const NameStructDef = t.refinement(t.String, (name: string = ''): boolean => {
@@ -57,6 +63,10 @@ const PhoneStructDef = t.refinement(t.String, (phone: string = ''): boolean => {
   return !!phone && !!phone.length && isValidEmail(phone) && phone.length <= phoneMaxLength;
 });
 
+const CountryStructDef = t.refinement(t.String, (country: string = ''): boolean => {
+  return !!country && !!country.length && isValidCountryName(country) && country.length <= maxLength;
+});
+
 const CityStructDef = t.refinement(t.String, (city: string = ''): boolean => {
   return !!city && !!city.length && isValidCityName(city) && city.length <= maxLength;
 });
@@ -69,7 +79,7 @@ function getValidationErrorMessageForName(name, nameDefForMessage) {
       return `${capitalize(nameDefForMessage)} should not be longer than ${halfMaxLength} symbols`;
     }
   }
-  return 'Please specify your first name';
+  return `Please specify your ${nameDefForMessage}`;
 }
 
 NameStructDef.getValidationErrorMessage = (name): string =>
@@ -104,6 +114,17 @@ PhoneStructDef.getValidationErrorMessage = (phone): string => {
   return 'Please specify your phone';
 };
 
+CountryStructDef.getValidationErrorMessage = (country): string => {
+  if (country) {
+    if (!isValidCountryName(country)) {
+      return 'Please enter a valid country';
+    } else if (country.length > maxLength) {
+      return `Country should not be longer than ${maxLength} symbols`;
+    }
+  }
+  return 'Please specify your country';
+};
+
 CityStructDef.getValidationErrorMessage = (city): string => {
   if (city) {
     if (!isValidCityName(city)) {
@@ -129,4 +150,5 @@ export const FirstNameStruct = FirstNameStructDef;
 export const LastNameStruct = LastNameStructDef;
 export const EmailStruct = EmailStructDef;
 export const PhoneStruct = PhoneStructDef;
+export const CountryStruct = CountryStructDef;
 export const CityStruct = CityStructDef;
