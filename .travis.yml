@@ -8,31 +8,14 @@ xcode_project: pillarwallet.xcodeproj
 before_install:
   - sudo pip install awscli
   - cd $TRAVIS_BUILD_DIR
-  - chmod +x pre-install.sh
-  - chmod +x pods.sh
-  - chmod +x bundles.sh
-  - chmod +x upload.sh
-  - chmod +x yarn.sh
-  - chmod +x uninstall-pods.sh
+  - chmod +x build-upload.sh
   - touch /Users/travis/build/pillarwallet/pillarwallet/buildNumber.txt
 
 jobs:
   include:
-    - stage: preinstall
-      script: ./pre-install.sh
-    - stage: install-node
-      script: ./yarn.sh
-    - stage: install-pods
-      script: ./pods.sh
-    - stage: bundle
-      script: ./bundles.sh
-    - stage: upload
-      script: ./upload.sh
+    - stage: build-and-upload
+      script: ./build-upload.sh
 
 stages:
-  - preinstall
-  - install-node
-  - install-pods
-  - bundle
-  - name: upload
+  - name: build-and-upload
     if: branch = chore/ios_swift_version_increase4.2
