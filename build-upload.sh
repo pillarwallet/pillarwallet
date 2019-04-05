@@ -19,7 +19,7 @@ cd $TRAVIS_BUILD_DIR/ios && pod install --verbose
 gem install bundler
 cd $TRAVIS_BUILD_DIR/ios && bundle check || bundle install --path vendor/bundle
 cd $TRAVIS_BUILD_DIR/ios && bundle update
-export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+export buildNumber=$(cat $TRAVIS_BUILD_DIR/buildNumber.txt)
 export APP_BUILD_NUMBER=7785
 echo $FASTLANE_PASSWORD
 echo $OAUTH_TOKEN
