@@ -10,14 +10,15 @@ sed -i.bak "s/_build_number_/$buildNumber/g" .env
 sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
 sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
 echo "$buildNumber" >> $TRAVIS_BUILD_DIR/buildNumber.txt
+cd $TRAVIS_BUILD_DIR
 brew install yarn
 yarn install
 yes | gem uninstall cocoapods
 gem install cocoapods -v 1.5.3
-cd ios && pod install --verbose
+cd $TRAVIS_BUILD_DIR/ios && pod install --verbose
 gem install bundler
-cd ios && bundle check || bundle install --path vendor/bundle
-cd ios && bundle update
+cd $TRAVIS_BUILD_DIR/ios && bundle check || bundle install --path vendor/bundle
+cd $TRAVIS_BUILD_DIR/ios && bundle update
 export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
 export APP_BUILD_NUMBER=7790
-cd ios && bundle exec fastlane deploy_staging APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
+cd $TRAVIS_BUILD_DIR/ios && bundle exec fastlane deploy_staging APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
