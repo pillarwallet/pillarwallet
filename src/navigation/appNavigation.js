@@ -18,10 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import {
-  createStackNavigator,
-  createBottomTabNavigator,
-} from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
@@ -64,6 +61,7 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import SendCollectibleAssetsScreen from 'screens/SendCollectible/SendCollectibleAssets';
+import WalletConnectScanQRCode from 'screens/WalletConnect/WalletConnectScanQRCode';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
@@ -101,6 +99,7 @@ import {
   CONTACT,
   HOME,
   HOME_TAB,
+  SCAN_TAB,
   CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -135,18 +134,14 @@ import {
   SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
   SEND_COLLECTIBLE_ASSETS,
   WALLETCONNECT_FLOW,
+  WALLETCONNECT_SCAN_QRCODE_SCREEN,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
 } from 'constants/navigationConstants';
 import { PENDING } from 'constants/userConstants';
 
-import {
-  TYPE_CANCELLED,
-  TYPE_BLOCKED,
-  TYPE_REJECTED,
-  TYPE_DISCONNECTED,
-} from 'constants/invitationsConstants';
+import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
 
 // models
 import type { Assets } from 'models/Asset';
@@ -158,13 +153,13 @@ const SLEEP_TIMEOUT = 20000;
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
 
-const addAppStateChangeListener = (callback) => {
+const addAppStateChangeListener = callback => {
   return Platform.OS === 'ios'
     ? AppState.addEventListener('change', callback)
     : DeviceEventEmitter.addListener('ActivityStateChange', callback);
 };
 
-const removeAppStateChangeListener = (callback) => {
+const removeAppStateChangeListener = callback => {
   return Platform.OS === 'ios'
     ? AppState.removeEventListener('change', callback)
     : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
@@ -173,20 +168,18 @@ const removeAppStateChangeListener = (callback) => {
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
+// const iconScan = require('assets/icons/icon_scan_new.png');
 // const iconMarket = require('assets/icons/icon_marketplace_new.png');
 const iconChat = require('assets/icons/icon_chat_new.png');
+
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
+// const iconScanActive = require('assets/scans/icon_scan_active.png');
 // const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
 
-const connectionMessagesToExclude = [
-  TYPE_CANCELLED,
-  TYPE_BLOCKED,
-  TYPE_REJECTED,
-  TYPE_DISCONNECTED,
-];
+const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
 const StackNavigatorModalConfig = {
   transitionConfig: () => ({
@@ -217,53 +210,79 @@ const hideTabNavigatorOnChildView = ({ navigation }) => {
 };
 
 // CHAT FLOW
-const chatFlow = createStackNavigator({
-  [CHAT_LIST]: ChatListScreen,
-  [NEW_CHAT]: NewChatListScreen,
-  [CONTACT]: ContactScreen,
-  [CHAT]: ChatScreen,
-}, StackNavigatorConfig);
+const chatFlow = createStackNavigator(
+  {
+    [CHAT_LIST]: ChatListScreen,
+    [NEW_CHAT]: NewChatListScreen,
+    [CONTACT]: ContactScreen,
+    [CHAT]: ChatScreen,
+  },
+  StackNavigatorConfig,
+);
 
 chatFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // ASSETS FLOW
-const assetsFlow = createStackNavigator({
-  [ASSETS]: AssetsScreen,
-  [ASSET]: AssetScreen,
-  [COLLECTIBLE]: CollectibleScreen,
-  [CONTACT]: ContactScreen,
-}, StackNavigatorConfig);
+const assetsFlow = createStackNavigator(
+  {
+    [ASSETS]: AssetsScreen,
+    [ASSET]: AssetScreen,
+    [COLLECTIBLE]: CollectibleScreen,
+    [CONTACT]: ContactScreen,
+  },
+  StackNavigatorConfig,
+);
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // PEOPLE FLOW
-const peopleFlow = createStackNavigator({
-  [PEOPLE]: PeopleScreen,
-  [CONTACT]: ContactScreen,
-  [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
-  [CHAT]: ChatScreen,
-  [COLLECTIBLE]: CollectibleScreen,
-}, StackNavigatorConfig);
+const peopleFlow = createStackNavigator(
+  {
+    [PEOPLE]: PeopleScreen,
+    [CONTACT]: ContactScreen,
+    [CONNECTION_REQUESTS]: ConnectionRequestsScreen,
+    [CHAT]: ChatScreen,
+    [COLLECTIBLE]: CollectibleScreen,
+  },
+  StackNavigatorConfig,
+);
 
 peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+// WALLETCONNECT FLOW
+const walletConnectFlow = createStackNavigator(
+  {
+    [WALLETCONNECT_SCAN_QRCODE_SCREEN]: WalletConnectScanQRCode,
+    [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
+    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
+    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+  },
+  StackNavigatorModalConfig,
+);
+
 // HOME FLOW
-const homeFlow = createStackNavigator({
-  [HOME]: HomeScreen,
-  [PROFILE]: ProfileScreen,
-  [CONTACT]: ContactScreen,
-  [CHAT]: ChatScreen,
-  [COLLECTIBLE]: CollectibleScreen,
-}, StackNavigatorConfig);
+const homeFlow = createStackNavigator(
+  {
+    [HOME]: HomeScreen,
+    [PROFILE]: ProfileScreen,
+    [CONTACT]: ContactScreen,
+    [CHAT]: ChatScreen,
+    [COLLECTIBLE]: CollectibleScreen,
+  },
+  StackNavigatorConfig,
+);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // ICO FLOW
-const icoFlow = createStackNavigator({
-  [MARKET]: MarketScreen,
-  [ICO]: ICOScreen,
-  [ICO_LINKS]: ICOLinks,
-}, StackNavigatorConfig);
+const icoFlow = createStackNavigator(
+  {
+    [MARKET]: MarketScreen,
+    [ICO]: ICOScreen,
+    [ICO_LINKS]: ICOLinks,
+  },
+  StackNavigatorConfig,
+);
 
 icoFlow.navigationOptions = hideTabNavigatorOnChildView;
 
@@ -280,7 +299,7 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
         resizeMode="contain"
         source={focused ? iconActive : icon}
       />
-      {!!hasAddon &&
+      {!!hasAddon && (
         <View
           style={{
             width: 8,
@@ -292,12 +311,12 @@ const tabBarIcon = (iconActive, icon, hasAddon, warningNotification = false) => 
             right: 4,
           }}
         />
-      }
+      )}
     </View>
   );
 };
 
-const tabBarLabel = (labelText) => ({ focused, tintColor }) => (
+const tabBarLabel = labelText => ({ focused, tintColor }) => (
   <BaseText
     style={{
       fontSize: fontSizes.extraExtraSmall,
@@ -338,6 +357,13 @@ const tabNavigation = createBottomTabNavigator(
         tabBarLabel: tabBarLabel('People'),
       }),
     },
+    [SCAN_TAB]: {
+      screen: walletConnectFlow,
+      navigationOptions: () => ({
+        tabBarIcon: tabBarIcon(iconHomeActive, iconHome),
+        tabBarLabel: tabBarLabel('Scan'),
+      }),
+    },
     [HOME_TAB]: {
       screen: homeFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
@@ -345,9 +371,10 @@ const tabNavigation = createBottomTabNavigator(
           iconHomeActive,
           iconHome,
           !screenProps.isWalletBackedUp ||
-          (!navigation.isFocused() &&
-            (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
-          !screenProps.isWalletBackedUp),
+            (!navigation.isFocused() &&
+              (screenProps.hasUnreadNotifications || !!screenProps.intercomNotificationsCount)),
+          !screenProps.isWalletBackedUp,
+        ),
         tabBarLabel: tabBarLabel('Home'),
       }),
     },
@@ -361,16 +388,17 @@ const tabNavigation = createBottomTabNavigator(
     [CHAT_LIST]: {
       screen: chatFlow,
       navigationOptions: ({ navigation, screenProps }) => ({
-        tabBarIcon:
-          tabBarIcon(
-            iconChatActive,
-            iconChat,
-            !navigation.isFocused() && screenProps.hasUnreadChatNotifications),
+        tabBarIcon: tabBarIcon(
+          iconChatActive,
+          iconChat,
+          !navigation.isFocused() && screenProps.hasUnreadChatNotifications,
+        ),
 
         tabBarLabel: tabBarLabel('Chat'),
       }),
     },
-  }, {
+  },
+  {
     tabBarOptions: {
       activeTintColor: UIColors.primary,
       inactiveTintColor: 'gray',
@@ -397,65 +425,78 @@ const tabNavigation = createBottomTabNavigator(
 );
 
 // SEND TOKEN FROM ASSET FLOW
-const sendTokenFromAssetFlow = createStackNavigator({
-  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorModalConfig);
+const sendTokenFromAssetFlow = createStackNavigator(
+  {
+    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // SEND TOKEN FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorModalConfig);
+const sendTokenFromContactFlow = createStackNavigator(
+  {
+    [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
+    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // SEND COLLECTIBLE FROM ASSET FLOW
-const sendCollectibleFromAssetFlow = createStackNavigator({
-  [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorModalConfig);
+const sendCollectibleFromAssetFlow = createStackNavigator(
+  {
+    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
+    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // SEND COLLECTIBLE FROM CONTACT / CONNECTION EVENT FLOW
-const sendCollectibleFromContactFlow = createStackNavigator({
-  [SEND_COLLECTIBLE_ASSETS]: SendCollectibleAssetsScreen,
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorModalConfig);
+const sendCollectibleFromContactFlow = createStackNavigator(
+  {
+    [SEND_COLLECTIBLE_ASSETS]: SendCollectibleAssetsScreen,
+    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
+    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
-const changePinFlow = createStackNavigator({
-  [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
-  [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
-  [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
-}, StackNavigatorModalConfig);
+const changePinFlow = createStackNavigator(
+  {
+    [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
+    [CHANGE_PIN_NEW_PIN]: ChangePinNewPinScreen,
+    [CHANGE_PIN_CONFIRM_NEW_PIN]: ChangePinConfirmNewPinScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // PARTICIPATE IN ICO FLOW
-const participateInICOFlow = createStackNavigator({
-  [ICO_PARTICIPATE]: ParticipateScreen,
-  [ICO_INSTRUCTIONS]: InstructionsScreen,
-  [ICO_CONFIRM]: ConfirmScreen,
-}, StackNavigatorModalConfig);
+const participateInICOFlow = createStackNavigator(
+  {
+    [ICO_PARTICIPATE]: ParticipateScreen,
+    [ICO_INSTRUCTIONS]: InstructionsScreen,
+    [ICO_CONFIRM]: ConfirmScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // WALLET BACKUP IN SETTINGS FLOW
-const backupWalletFlow = createStackNavigator({
-  [BACKUP_PHRASE]: BackupPhraseScreen,
-  [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
-}, StackNavigatorModalConfig);
-
-// WALLET BACKUP IN SETTINGS FLOW
-const walletConnectFlow = createStackNavigator({
-  [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
-  [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
-  [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
-}, StackNavigatorModalConfig);
-
+const backupWalletFlow = createStackNavigator(
+  {
+    [BACKUP_PHRASE]: BackupPhraseScreen,
+    [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
+  },
+  StackNavigatorModalConfig,
+);
 
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
@@ -471,7 +512,8 @@ const AppFlowNavigation = createStackNavigator(
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
-  }, modalTransition,
+  },
+  modalTransition,
 );
 
 type Props = {
@@ -499,7 +541,7 @@ type Props = {
   isPickingImage: boolean,
   updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
-}
+};
 
 let lockTimer;
 
@@ -531,16 +573,13 @@ class AppFlow extends React.Component<Props, {}> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const {
-      notifications,
-    } = this.props;
+    const { notifications } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
     if (notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
 
-      if (lastNotification.type === 'CONNECTION' &&
-        connectionMessagesToExclude.includes(lastNotification.status)) {
+      if (lastNotification.type === 'CONNECTION' && connectionMessagesToExclude.includes(lastNotification.status)) {
         return;
       }
 
@@ -606,10 +645,7 @@ class AppFlow extends React.Component<Props, {}> {
       return <RetryApiRegistration />;
     }
 
-    const {
-      isImported,
-      isBackedUp,
-    } = backupStatus;
+    const { isImported, isBackedUp } = backupStatus;
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
@@ -636,7 +672,9 @@ const mapStateToProps = ({
   },
   assets: { data: assets },
   wallet: { data: wallet, backupStatus },
-  appSettings: { data: { isPickingImage } },
+  appSettings: {
+    data: { isPickingImage },
+  },
 }) => ({
   userState,
   notifications,
@@ -649,7 +687,7 @@ const mapStateToProps = ({
   isPickingImage,
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   stopListeningNotifications: () => dispatch(stopListeningNotificationsAction()),
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
@@ -671,7 +709,10 @@ const mapDispatchToProps = (dispatch) => ({
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
 });
 
-const ConnectedAppFlow = connect(mapStateToProps, mapDispatchToProps)(AppFlow);
+const ConnectedAppFlow = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AppFlow);
 ConnectedAppFlow.router = AppFlowNavigation.router;
 ConnectedAppFlow.navigationOptions = AppFlowNavigation.navigationOptions;
 

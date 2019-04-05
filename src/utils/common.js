@@ -21,7 +21,7 @@ import { BigNumber } from 'bignumber.js';
 import { Dimensions, Platform, Animated, Easing, Linking, PixelRatio } from 'react-native';
 
 export function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const timeout = setTimeout(() => {
       clearTimeout(timeout);
       resolve();
@@ -47,7 +47,7 @@ export function pipe(...fns: Function[]) {
   return fns.reduceRight((a, b) => (...args) => a(b(...args)));
 }
 
-export function noop() { }
+export function noop() {}
 
 /**
  * formatMoney(n, x, s, c)
@@ -135,7 +135,6 @@ export const isIphoneX = () => {
   return (
     // This has to be iOS duh
     Platform.OS === 'ios' &&
-
     // Accounting for the height in either orientation
     (height === 812 || width === 812)
   );
@@ -179,7 +178,7 @@ export const handleUrlPress = (url: string) => {
     handleUrlPress(`http://${url}`);
   } else {
     Linking.canOpenURL(url)
-      .then((supported) => {
+      .then(supported => {
         if (supported) Linking.openURL(url);
       })
       .catch(() => null);
