@@ -33,6 +33,7 @@ import * as styled from './styles';
 type Props = {
   onSavePersona: Function,
   onBack: Function,
+  onGetHelp: Function,
   persona?: Object,
 };
 
@@ -139,6 +140,7 @@ class PersonaScene extends Component {
 
   backToScreen = () => {
     const { onBack } = this.props;
+    const { persona } = this.state;
 
     if (persona.id) {
       this.handleSubmit();
@@ -218,6 +220,7 @@ class PersonaScene extends Component {
 
   render() {
     const { persona: { id, details: personaData }, isModalVisible } = this.state;
+    const { onGetHelp } = this.props;
 
     const [personaDetails, usernameDetails] = partition(personaData, (data) => data.key !== 'username');
 
@@ -262,6 +265,8 @@ class PersonaScene extends Component {
           hasSeparator
           title={screenTitle}
           onBack={this.backToScreen}
+          nextText="Get help"
+          onNextPress={onGetHelp}
           style={{ marginBottom: 20 }}
         />
 

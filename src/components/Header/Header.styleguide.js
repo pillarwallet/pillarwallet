@@ -104,6 +104,7 @@ Styleguide.add({
   title: 'Next Button',
   component: (
     <Header
+      centerTitle
       title="foo"
       nextText="next bar"
       onNextPress={() => Alert.alert('next bar')}

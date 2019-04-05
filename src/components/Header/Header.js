@@ -101,6 +101,7 @@ const NextIcon = styled(IconButton)`
 
 const HeaderLeft = styled(Left)`
   flex: ${props => props.showTitleLeft ? 2 : 1};
+  flex-grow: 2;
   justify-content: flex-start;
   align-items: flex-end;
 `;
@@ -110,10 +111,11 @@ const HeaderBody = styled(Body)`
 `;
 
 const HeaderRight = styled(Right)`
+  align-items: center;
   flex-direction: row;
   flex: ${props => props.flex};
+  flex-grow: 2;
   justify-content: flex-end;
-  align-items: center;
 `;
 
 const Header = (props: Props) => {

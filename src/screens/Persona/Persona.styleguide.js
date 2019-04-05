@@ -13,6 +13,7 @@ Styleguide.add({
     <Scene
       onBack={() => Alert.alert('back to Personas')}
       onSavePersona={(persona) => Alert.alert('Save Persona')}
+      onGetHelp={() => Alert.alert('get help')}
       persona={{
         id: null,
         details: [
@@ -37,6 +38,7 @@ Styleguide.add({
     <Scene
       onBack={() => Alert.alert('back to Personas')}
       onSavePersona={(persona) => Alert.alert('Save Persona')}
+      onGetHelp={() => Alert.alert('get help')}
       persona={{
         id: 1,
         details: [
