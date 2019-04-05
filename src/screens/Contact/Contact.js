@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { RefreshControl, Platform, View } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -68,6 +68,11 @@ const CircleButtonsWrapper = styled.View`
   border-color: ${baseColors.mediumLightGray};
   justify-content: center;
   align-items: center;
+`;
+
+const SheetContentWrapper = styled.View`
+  flex: 1;
+  padding-top: 30px;
 `;
 
 type Props = {
@@ -196,6 +201,10 @@ class Contact extends React.Component<Props, State> {
           additionalFiltering={data => data.filter(({ username }) => username === displayContact.username)}
           showArrowsOnly
           contentContainerStyle={{ paddingTop: 10 }}
+          esData={{
+            title: 'Make your first step',
+            body: 'Your activity will appear here.',
+          }}
         />
       );
     }
@@ -306,11 +315,9 @@ class Contact extends React.Component<Props, State> {
           forceOpen={forceOpen}
           initialSheetHeight={240}
           swipeToCloseHeight={62}
-          // scrollingComponentsRefs={[this.activityFeedRef]}
           screenHeight={screenHeight}
           onSheetOpen={this.handleSheetOpen}
           onSheetClose={() => { this.setState({ isSheetOpen: false }); }}
-          // sheetWrapperStyle={{ marginTop: 38 }}
           animateHeight={activeTab === CHAT}
           floatingHeaderContent={(<Tabs
             initialActiveTab={activeTab}
@@ -324,9 +331,9 @@ class Contact extends React.Component<Props, State> {
             }}
           />)}
         >
-          <View style={{ paddingTop: 30, flex: 1 }}>
+          <SheetContentWrapper>
             {this.renderSheetContent(displayContact, unreadCount)}
-          </View>
+          </SheetContentWrapper>
         </BottomSheet>
         }
         <ManageContactModal

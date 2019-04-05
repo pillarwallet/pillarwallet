@@ -517,7 +517,12 @@ class HomeScreen extends React.Component<Props, State> {
         name: 'All',
         tabImageNormal: allIconNormal,
         tabImageActive: allIconActive,
-        onPress: () => this.setActiveTab(ALL),
+        onPress: () => this.setActiveTab(
+          ALL,
+          {
+            title: 'Make your first step',
+            body: 'Your activity will appear here.',
+          }),
       },
       {
         id: TRANSACTIONS,
@@ -718,7 +723,6 @@ class HomeScreen extends React.Component<Props, State> {
             activeTab={this.state.activeTab}
             esData={esData}
             sortable
-            showEmptyState
           />
         </Animated.ScrollView>
         <Camera

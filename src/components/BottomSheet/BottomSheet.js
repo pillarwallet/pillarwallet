@@ -53,7 +53,6 @@ type State = {
   isMoved: boolean,
   yTranslate: Animated.Value,
   animatedHeight: Animated.Value,
-  isSheetOpen: boolean,
 }
 
 const screenHeightFromDimensions = Dimensions.get('window').height;
@@ -103,6 +102,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   initialPosition: number;
   panResponder: Object;
   isTransitioning: boolean;
+  isSheetOpen: boolean;
 
   static defaultProps = {
     screenHeight: USABLE_SCREEN_HEIGHT,
@@ -121,6 +121,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     } = this.props;
     this.panResponder = React.createRef();
     this.isTransitioning = false;
+    this.isSheetOpen = forceOpen;
     this.initialPosition = screenHeightFromDimensions - initialSheetHeight - topOffset;
 
     const initialTopPosition = forceOpen ? 0 : this.initialPosition;
@@ -131,7 +132,6 @@ export default class BottomSheet extends React.Component<Props, State> {
       isMoved: false,
       animatedHeight: new Animated.Value(initialHeight),
       yTranslate: new Animated.Value(initialTopPosition),
-      isSheetOpen: forceOpen,
     };
   }
 
@@ -141,9 +141,9 @@ export default class BottomSheet extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     if (this.props.forceOpen && !prevProps.forceOpen) {
-      this.animateSheet(true);
+      this.animateSheet();
     } else if (!this.props.forceOpen && prevProps.forceOpen) {
-      this.animateSheet(true);
+      this.animateSheet();
     }
   }
 
@@ -151,11 +151,10 @@ export default class BottomSheet extends React.Component<Props, State> {
     this.panResponder = PanResponder.create({
       onMoveShouldSetPanResponder: (e, gestureState) => {
         if (this.isTransitioning) return false;
-        const { isSheetOpen } = this.state;
         const { topOffset, swipeToCloseHeight } = this.props;
         const swipeToCloseZone = topOffset + swipeToCloseHeight;
-        if (isSheetOpen) {
-          return gestureState.moveY > 0 && gestureState.moveY < swipeToCloseZone && gestureState.dy > 10;
+        if (this.isSheetOpen) {
+          return gestureState.moveY > 0 && gestureState.moveY < swipeToCloseZone && Math.abs(gestureState.dy) >= 8;
         }
         return Math.abs(gestureState.dx) >= 8 || Math.abs(gestureState.dy) >= 8;
       },
@@ -168,17 +167,16 @@ export default class BottomSheet extends React.Component<Props, State> {
         if (this.isTransitioning) return;
         const { isTouched, isMoved } = this.state;
         if (isTouched || isMoved) {
-          this.animateSheet(isTouched, gestureState);
+          this.animateSheet(gestureState);
         }
         this.setState({
           isTouched: false,
           isMoved: false,
         });
       },
-      onStartShouldSetPanResponderCapture: () => !this.state.isSheetOpen,
+      onStartShouldSetPanResponderCapture: () => !this.isSheetOpen,
       onPanResponderGrant: () => {
-        const { isSheetOpen } = this.state;
-        if (isSheetOpen) return;
+        if (this.isSheetOpen) return;
         this.setState({ isTouched: true });
       },
       onPanResponderTerminationRequest: () => false,
@@ -213,10 +211,20 @@ export default class BottomSheet extends React.Component<Props, State> {
     }
   };
 
-  animateSheet = (isPressed: boolean, gestureState?: Object) => {
+  onAnimationEnd = (isGoingToUp: boolean) => {
+    this.isTransitioning = false;
+    const { onSheetOpen, onSheetClose } = this.props;
+    if (isGoingToUp && onSheetOpen) {
+      onSheetOpen();
+    } else if (onSheetClose) {
+      onSheetClose();
+    }
+  };
+
+  animateSheet = (gestureState?: Object) => {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
-    const { isSheetOpen, animatedHeight, yTranslate } = this.state;
+    const { animatedHeight, yTranslate } = this.state;
     const {
       scrollingComponentsRefs,
       animateHeight,
@@ -225,8 +233,8 @@ export default class BottomSheet extends React.Component<Props, State> {
       topOffset,
     } = this.props;
 
-    let isGoingToUp = !isSheetOpen;
-    if (gestureState) {
+    let isGoingToUp = !this.isSheetOpen;
+    if (gestureState && gestureState !== 0) {
       isGoingToUp = gestureState.vy < 0;
     }
 
@@ -239,14 +247,12 @@ export default class BottomSheet extends React.Component<Props, State> {
           ref.scrollToOffset({ x: 0, y: 0, animated: false });
         });
       }
-
       Animated.spring(animatedHeight, {
         toValue: sheetHeight,
         bounciness: 0,
       }).start(() => {
         yTranslate.setValue(endPosition);
-        this.setState({ isSheetOpen: isGoingToUp });
-        this.isTransitioning = false;
+        this.onAnimationEnd(isGoingToUp);
       });
     } else {
       if (!isGoingToUp && scrollingComponentsRefs && scrollingComponentsRefs.length) {
@@ -256,21 +262,12 @@ export default class BottomSheet extends React.Component<Props, State> {
       }
       Animated.spring(this.state.yTranslate, {
         toValue: endPosition,
-        friction: 10,
+        bounciness: 0,
       }).start(() => {
-        animatedHeight.setValue(sheetHeight);
-        this.setState({ isSheetOpen: isGoingToUp });
-        this.isTransitioning = false;
+        this.onAnimationEnd(isGoingToUp);
       });
     }
-
-    const { onSheetOpen, onSheetClose } = this.props;
-
-    if (isGoingToUp && onSheetOpen) {
-      onSheetOpen();
-    } else if (onSheetClose) {
-      onSheetClose();
-    }
+    this.isSheetOpen = isGoingToUp;
   };
 
   render = () => {
@@ -292,7 +289,9 @@ export default class BottomSheet extends React.Component<Props, State> {
       transform: [{ translateY: yTranslate }],
     };
 
-    let wrapperStyle = {};
+    let wrapperStyle = {
+      flex: 1,
+    };
 
     if (animateHeight) {
       style = {

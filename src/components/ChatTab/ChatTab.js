@@ -431,12 +431,11 @@ class ChatTab extends React.Component<Props, State> {
 
   renderCustomAvatar = () => {
     const { contact } = this.state;
-    const { profileImage, lastUpdateTime, username } = contact;
-    const updatedUserImageUrl = profileImage && lastUpdateTime ? `${profileImage}?t=${lastUpdateTime}` : profileImage;
+    const { profileImage, username } = contact;
 
     return (
       <ProfileImage
-        uri={updatedUserImageUrl}
+        uri={profileImage}
         userName={username}
         diameter={32}
         onPress={null}

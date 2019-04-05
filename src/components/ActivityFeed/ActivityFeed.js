@@ -91,7 +91,6 @@ type Props = {
   invitations: Object,
   additionalFiltering?: Function,
   feedTitle?: string,
-  showEmptyState?: boolean,
   backgroundColor?: string,
   wrapperStyle?: Object,
   showArrowsOnly?: boolean,
@@ -381,7 +380,7 @@ class ActivityFeed extends React.Component<Props, State> {
       .sort((a, b) => b.createdAt - a.createdAt);
 
     const feedData = customFeedData || allFeedData;
-    const { activeTab, esData, showEmptyState } = this.props;
+    const { activeTab, esData } = this.props;
 
     const filteredHistory = feedData.filter(({ type }) => {
       if (activeTab === TRANSACTIONS) {
@@ -395,13 +394,13 @@ class ActivityFeed extends React.Component<Props, State> {
 
     const processedHistory = additionalFiltering ? additionalFiltering(filteredHistory) : filteredHistory;
 
-    if (processedHistory.length < 1) {
+    if (processedHistory.length < 1 && !esData) {
       return null;
     }
 
     return (
       <ActivityFeedWrapper color={backgroundColor} style={wrapperStyle}>
-        {!!feedTitle && (!!processedHistory.length || !!showEmptyState) &&
+        {!!feedTitle &&
         <ActivityFeedHeader noBorder={noBorder}>
           <Title subtitle title={feedTitle} />
         </ActivityFeedHeader>}
@@ -419,9 +418,7 @@ class ActivityFeed extends React.Component<Props, State> {
           onEndReachedThreshold={0.5}
           ItemSeparatorComponent={() => <Separator spaceOnLeft={80} />}
           keyExtractor={this.getActivityFeedListKeyExtractor}
-          ListEmptyComponent={
-            !!showEmptyState && <EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />
-          }
+          ListEmptyComponent={<EmptyTransactions title={esData && esData.title} bodyText={esData && esData.body} />}
           contentContainerStyle={contentContainerStyle}
         />
         <SlideModal
