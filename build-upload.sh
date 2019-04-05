@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd $TRAVIS_BUILD_DIR
-export APP_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
+export APP_BUILD_NUMBER=7790
 npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
 export buildNumber=$(node -e "console.log(require('./package.json').version);")
 rm .env
@@ -19,5 +19,5 @@ gem install bundler
 cd ios && bundle check || bundle install --path vendor/bundle
 cd ios && bundle update
 export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-export APP_BUILD_NUMBER=$TRAVIS_BUILD_NUMBER
+export APP_BUILD_NUMBER=7790
 cd ios && bundle exec fastlane deploy_staging APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
