@@ -2,7 +2,7 @@
 
 cd $TRAVIS_BUILD_DIR
 export APP_BUILD_NUMBER=7785
-export NODE_OPTIONS=--max_old_space_size=2048; api-console build -n "5.0.0-preview-1" -t "RAML 1.0" -a api.raml --verbose
+export NODE_OPTIONS=--max_old_space_size=2048;
 npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
 export buildNumber=$(node -e "console.log(require('./package.json').version);")
 rm .env
@@ -24,5 +24,4 @@ export buildNumber=$(cat $TRAVIS_BUILD_DIR/buildNumber.txt)
 export APP_BUILD_NUMBER=7785
 echo $FASTLANE_PASSWORD
 echo $OAUTH_TOKEN
-yarn build:ios
 cd $TRAVIS_BUILD_DIR/ios && bundle exec fastlane deploy_staging APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
