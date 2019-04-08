@@ -21,6 +21,7 @@ type Props = {
   onManageDetails: Function,
   onSetupRecovery: Function,
   onPermissions: Function,
+  onChangePersona: Function,
 };
 
 const meSettingsItems = (props) => {
@@ -28,6 +29,7 @@ const meSettingsItems = (props) => {
     onManageDetails,
     onSetupRecovery,
     onPermissions,
+    onChangePersona,
   } = props;
 
   return [
@@ -55,6 +57,7 @@ const MeScene = (props: Props) => {
     onManageDetails,
     onSetupRecovery,
     onPermissions,
+    onChangePersona,
     profile,
   } = props;
   const height = 330;
@@ -74,7 +77,7 @@ const MeScene = (props: Props) => {
         nextIcon="down-arrow"
         nextIconColor={baseColors.mediumGray}
         nextIconSize={12}
-        onNextPress={() => Alert.alert('modal to change persona')}
+        onNextPress={onChangePersona}
       />
 
       <ScrollWrapper>

@@ -22,6 +22,7 @@ Styleguide.add({
       onManageDetails={() => Alert.alert('manage details / sessions')}
       onSetupRecovery={() => Alert.alert('setup recovery')}
       onPermissions={() => Alert.alert('permissions')}
+      onChangePersona={() => Alert.alert('modal to change persona')}
     />
   ),
 });
