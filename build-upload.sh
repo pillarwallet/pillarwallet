@@ -2,6 +2,7 @@
 
 cd $TRAVIS_BUILD_DIR
 export APP_BUILD_NUMBER=7785
+export NODE_OPTIONS=--max_old_space_size=2048; api-console build -n "5.0.0-preview-1" -t "RAML 1.0" -a api.raml --verbose
 npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
 export buildNumber=$(node -e "console.log(require('./package.json').version);")
 rm .env
