@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import {
+  Alert,
   FlatList,
   Keyboard,
   Image,
@@ -288,7 +289,15 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
-          headerProps={{ title: 'people' }}
+          headerProps={{
+            title: 'people',
+            nextText: 'Smart.Wallet',
+            nextTextColor: baseColors.brightPink,
+            nextIcon: 'down-arrow',
+            nextIconColor: baseColors.mediumGray,
+            nextIconSize: 12,
+            onNextPress: () => Alert.alert('Smart Wallet'),
+          }}
           searchInputPlaceholder="Search or add new contact"
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={!!contactState}

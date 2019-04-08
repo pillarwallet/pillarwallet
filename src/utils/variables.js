@@ -57,6 +57,7 @@ export const baseColors = {
   veryLightBlue: '#e0edff',
   dawnPink: '#f2eae4',
   rose: '#f5078d',
+  brightPink: '#ec7786',
   cerulean: '#07b0f5',
   beige: '#f7f7df',
   coconutCream: '#e3e3bd',
