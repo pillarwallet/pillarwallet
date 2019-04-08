@@ -11,3 +11,5 @@ import 'screens/Sessions/Sessions.styleguide';
 import 'screens/Personas/Personas.styleguide';
 import 'screens/Persona/Persona.styleguide';
 import 'screens/UpgradeToSmartWallet/UpgradeToSmartWallet.styleguide';
+
+import 'screens/PersonaWorkflowStyleguide/PersonaWorkflow.styleguide';
