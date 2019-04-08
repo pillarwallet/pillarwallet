@@ -696,6 +696,7 @@
 		13B07FAE1A68108700A75B9A /* pillarwallet */ = {
 			isa = PBXGroup;
 			children = (
+				FAC0948B225B8CD1009420B0 /* main.jsbundle */,
 				1D07F6ED211B3CD8009D15F8 /* GoogleService-Info.plist */,
 				162E180B21186C160028BE96 /* launch_background_image.png */,
 				16A4A6E6211227BF008E645C /* pillarwallet.entitlements */,
@@ -959,7 +960,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				FAC0948B225B8CD1009420B0 /* main.jsbundle */,
 				162E17912113256A0028BE96 /* SignalProtocol.framework */,
 				13B07FAE1A68108700A75B9A /* pillarwallet */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
