@@ -157,6 +157,7 @@ android {
 
 
 dependencies {
+    compile project(':react-native-extra-dimensions-android')
   compile project(':react-native-image-capinsets')
   compile project(':react-native-touch-id')
   compile project(':react-native-color-matrix-image-filters')

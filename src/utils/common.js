@@ -152,6 +152,26 @@ export const isIphoneX = () => {
   );
 };
 
+export const getiOSNavbarHeight = () => {
+  const { height, width } = Dimensions.get('window');
+
+  // for iPhone X and iPhone XS
+  const X_WIDTH = 375;
+  const X_HEIGHT = 812;
+
+  // for iPhone XS Max and iPhone XR
+  const XSMAX_WIDTH = 414;
+  const XSMAX_HEIGHT = 896;
+
+  if (Platform.OS === 'ios') {
+    if ((width === X_WIDTH && height === X_HEIGHT) || (width === XSMAX_WIDTH && height === XSMAX_HEIGHT)) {
+      return 44;
+    }
+    return 20;
+  }
+  return 0;
+};
+
 export const modalTransition = {
   mode: 'modal',
   navigationOptions: {

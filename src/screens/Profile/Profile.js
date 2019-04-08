@@ -52,7 +52,7 @@ import ChatService from 'services/chat';
 import { baseColors, spacing } from 'utils/variables';
 import { delay } from 'utils/common';
 import ProfileSettingsItem from './ProfileSettingsItem';
-import ProfileForm from './ProfileForm';
+import EditProfile from './EditProfile';
 import SettingsModalTitle from './SettingsModalTitle';
 
 // sections
@@ -296,7 +296,7 @@ class Profile extends React.Component<Props, State> {
             <SettingsModalTitle>
               Enter your city name
             </SettingsModalTitle>
-            <ProfileForm
+            <EditProfile
               fields={cityFormFields}
               onSubmit={this.handleUserFieldUpdate}
               value={{ city: user.city }}
@@ -315,7 +315,7 @@ class Profile extends React.Component<Props, State> {
             <SettingsModalTitle>
               Enter your email
             </SettingsModalTitle>
-            <ProfileForm
+            <EditProfile
               fields={emailFormFields}
               onSubmit={this.handleUserFieldUpdate}
               value={{ email: user.email }}
@@ -338,7 +338,7 @@ class Profile extends React.Component<Props, State> {
               <SettingsModalTitle>
                 Enter your full name
               </SettingsModalTitle>
-              <ProfileForm
+              <EditProfile
                 fields={fullNameFormFields}
                 onSubmit={this.handleUserFieldUpdate}
                 value={{ firstName: user.firstName, lastName: user.lastName }}
