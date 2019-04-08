@@ -1,5 +1,6 @@
 import 'components/Icon/Icon.styleguide';
 import 'components/Header/Header.styleguide';
+import 'components/SearchBlock/SearchBlock.styleguide';
 import 'components/TextInput/SingleTextInput.styleguide';
 import 'components/CountrySelect/CountrySelect.styleguide';
 import 'components/ProfileImage/ProfileImage.styleguide';

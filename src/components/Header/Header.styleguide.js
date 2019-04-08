@@ -160,6 +160,22 @@ Styleguide.add({
 Styleguide.add({
   parent: 'COMPONENT',
   group: 'Header',
+  id: 'HEADER_NEXT_TEXT_COLOR',
+  title: 'Next Text Color',
+  component: (
+    <Header
+      title="foo"
+      nextText="bar"
+      nextIcon="flash-on"
+      nextTextColor={baseColors.burningFire}
+      onNextPress={() => Alert.alert('next icon')}
+    />
+  ),
+});
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'Header',
   id: 'HEADER_DEFAULT_BACK_ICON',
   title: 'Back Icon',
   component: (

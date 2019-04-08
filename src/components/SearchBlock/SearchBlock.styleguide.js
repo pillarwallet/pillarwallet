@@ -1,0 +1,68 @@
+import React from 'react';
+import { Alert } from 'react-native';
+import { Styleguide } from 'StyleguideSystem';
+
+import { baseColors } from 'utils/variables';
+import SearchBlock from './SearchBlock';
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'SearchBlock',
+  id: 'SEARCH_BLOCK_DEFAULT',
+  title: 'Default',
+  component: (
+    <SearchBlock
+      itemSearchState
+      headerProps={{ title: 'foo' }}
+      searchInputPlaceholder="search foo"
+      onSearchChange={(q) => console.log(q)}
+    />
+  ),
+});
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'SearchBlock',
+  id: 'SEARCH_BLOCK_SMART_WALLET',
+  title: 'Smart Wallet',
+  component: (
+    <SearchBlock
+      itemSearchState
+      headerProps={{
+        title: 'foo',
+        nextText: 'Smart.Wallet',
+        nextTextColor: baseColors.brightPink,
+        nextIcon: 'down-arrow',
+        nextIconColor: baseColors.mediumGray,
+        nextIconSize: 12,
+        onNextPress: () => Alert.alert('Smart Wallet'),
+      }}
+      searchInputPlaceholder="search foo"
+      onSearchChange={(q) => console.log(q)}
+    />
+  ),
+});
+
+
+Styleguide.add({
+  parent: 'COMPONENT',
+  group: 'SearchBlock',
+  id: 'SEARCH_BLOCK_SWITCH_PERSONA',
+  title: 'Switch Persona',
+  component: (
+    <SearchBlock
+      itemSearchState
+      headerProps={{
+        title: 'foo',
+        nextText: 'Switch persona',
+        nextIcon: 'down-arrow',
+        nextIconColor: baseColors.mediumGray,
+        nextIconSize: 12,
+        onNextPress: () => Alert.alert('Switch Persona'),
+      }}
+      searchInputPlaceholder="search foo"
+      onSearchChange={(q) => console.log(q)}
+    />
+  ),
+});
+

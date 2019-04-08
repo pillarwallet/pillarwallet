@@ -86,7 +86,7 @@ export const Paragraph = styled(BaseText)`
 
 export const TextLink = styled(BaseText)`
   font-size: ${fontSizes.small};
-  color: ${UIColors.primary};
+  color: ${({ color = UIColors.primary }) => color};
 `;
 
 export const Label = styled(BaseText)`

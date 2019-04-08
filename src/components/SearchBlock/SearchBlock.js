@@ -81,11 +81,15 @@ class SearchBlock extends React.Component<Props, State> {
 
   componentDidMount() {
     const { navigation } = this.props;
-    this._willBlur = navigation.addListener('willBlur', this.onScreenBlur);
+    if (navigation) {
+      this._willBlur = navigation.addListener('willBlur', this.onScreenBlur);
+    }
   }
 
   componentWillUnmount() {
-    this._willBlur.remove();
+    if (this._willBlur) {
+        this._willBlur.remove();
+    }
   }
 
   onScreenBlur = () => {
