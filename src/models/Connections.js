@@ -38,3 +38,22 @@ export type ConnectionUpdateIdentityKeys = {
       targetUserId: string,
   }],
 }
+
+export type ConnectionIdentityKey = {
+  userId: string,
+  targetUserId: string,
+  sourceUserAccessKey?: ?string,
+  targetUserAccessKey?: ?string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
+  status: string,
+  createdAt: string,
+  updatedAt: string,
+  targetUserInfo: {
+    userId: string,
+    username: string,
+    profileImage?: ?string,
+    profileLargeImage?: ?string,
+    ethAddress: string
+  }
+}
