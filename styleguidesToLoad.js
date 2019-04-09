@@ -1,3 +1,5 @@
+import 'utils/variablesColors.styleguide';
+import 'utils/variablesFonts.styleguide';
 import 'components/Icon/Icon.styleguide';
 import 'components/Header/Header.styleguide';
 import 'components/SearchBlock/SearchBlock.styleguide';
