@@ -402,10 +402,9 @@ SDKWrapper.prototype.selfAwardBadge = function (walletId: string, event: string)
     .catch(() => ({}));
 };
 
-SDKWrapper.prototype.sendOldInvitation = function (targetUserId: string, accessKey: string, walletId: string) {
+SDKWrapper.prototype.sendOldInvitation = function (targetUserId: string, walletId: string) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.invite({
-      accessKey,
       targetUserId,
       walletId,
     }))
@@ -427,12 +426,10 @@ SDKWrapper.prototype.cancelOldInvitation = function (targetUserId: string, acces
 SDKWrapper.prototype.acceptOldInvitation = function (
   targetUserId: string,
   targetUserAccessKey: string,
-  accessKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.accept({
-      sourceUserAccessKey: accessKey,
       targetUserId,
       targetUserAccessKey,
       walletId,

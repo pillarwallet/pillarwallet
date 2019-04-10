@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Sentry } from 'react-native-sentry';
-import { generateAccessKey } from 'utils/invitations';
 import type { ApiUser } from 'models/Contacts';
 import { uniqBy } from 'utils/common';
 import {
@@ -60,7 +59,7 @@ export const fetchOldInviteNotificationsAction = () => {
       accessTokens = updatedAccessTokens;
     }
 
-    const types = [
+    const typesToGroupBy = [
       TYPE_RECEIVED,
       TYPE_ACCEPTED,
       TYPE_CANCELLED,
@@ -68,13 +67,22 @@ export const fetchOldInviteNotificationsAction = () => {
       TYPE_REJECTED,
       TYPE_DISCONNECTED,
     ];
-    const inviteNotifications = await api.fetchNotifications(user.walletId, types.join(' '));
-    const mappedInviteNotifications = inviteNotifications
+
+    const typesToFetch = [
+      ...typesToGroupBy,
+      TYPE_SENT,
+    ];
+
+    const connectionNotifications = await api.fetchNotifications(user.walletId, typesToFetch.join(' '));
+    const mappedInviteNotifications = connectionNotifications
       .map(({ payload: { msg }, createdAt }) => ({ ...JSON.parse(msg), createdAt }))
       .map(({ senderUserData, type, createdAt }) => ({ ...senderUserData, type, createdAt }))
       .sort((a, b) => b.createdAt - a.createdAt);
 
-    const groupedByUserId = mappedInviteNotifications.reduce((memo, invitation, index, arr) => {
+    const mappedInviteNotificationsWithoutSentRequests =
+      mappedInviteNotifications.filter(({ type: invType }) => invType !== TYPE_SENT);
+
+    const groupedByUserId = mappedInviteNotificationsWithoutSentRequests.reduce((memo, invitation, index, arr) => {
       const group = arr.filter(({ id: userId }) => userId === invitation.id);
       const uniqGroup = uniqBy(group, 'id');
       memo[invitation.id] = uniqGroup;
@@ -82,7 +90,7 @@ export const fetchOldInviteNotificationsAction = () => {
     }, {});
 
     const latestEventPerId = Object.keys(groupedByUserId).map((key) => groupedByUserId[key][0]);
-    const groupedNotifications = types.reduce((memo, type) => {
+    const groupedNotifications = typesToGroupBy.reduce((memo, type) => {
       const group = latestEventPerId.filter(({ type: invType }) => invType === type);
       memo[type] = group;
       return memo;
@@ -99,6 +107,31 @@ export const fetchOldInviteNotificationsAction = () => {
     const updatedInvitations = uniqBy(latestEventPerId.concat(invitations), 'id')
       .filter(({ id }) => !invitationsToExclude.includes(id));
 
+    // handle SENT connection invites
+    const mappedSentInviteNotifications =
+      mappedInviteNotifications.filter(({ type: invType }) => invType === TYPE_SENT);
+
+    const sentInvitationsById = mappedSentInviteNotifications.reduce((memo, invitation, index, arr) => {
+      const group = arr.filter(({ id: userId }) => userId === invitation.id);
+      const uniqGroup = uniqBy(group, 'id');
+      memo[invitation.id] = uniqGroup;
+      return memo;
+    }, {});
+
+    const latestSentInvitationPerId = Object.keys(sentInvitationsById).map((key) => groupedByUserId[key][0]);
+
+    // add user accessKeys received in the payload of connectionRequestedSenderEvent
+    const updatedInvitationsWithAccessKeys = updatedInvitations.map((invitation) => {
+      if (!invitation.connectionKey) {
+        const sentInvitation = latestSentInvitationPerId.find(invite => invite.id === invitation.id) || {};
+        return {
+          ...invitation,
+          connectionKey: sentInvitation.connectionKey,
+        };
+      }
+      return invitation;
+    });
+
     // find new connections
     const contactsIds = contacts.map(({ id: userId }) => userId);
     const newConnections = groupedNotifications.connectionAcceptedEvent
@@ -112,22 +145,38 @@ export const fetchOldInviteNotificationsAction = () => {
     const updatedContacts = uniqBy(newConnections.concat(consistentLocalContacts), 'id')
       .map(({ type, connectionKey, ...rest }) => ({ ...rest }));
 
-    // save new connections keys
-    let updatedAccessTokens = [...accessTokens];
-    newConnections.forEach(({ id, connectionKey }) => {
-      updatedAccessTokens = accessTokens.map(accessToken => {
-        if (accessToken.userId !== id) return accessToken;
-        return { ...accessToken, userAccessToken: connectionKey };
-      });
+    // save new connections' (accepted by other users and this user) keys
+    const updatedAccessTokens = accessTokens.map((tokens) => {
+      if (!tokens.myAccessToken || !tokens.userAccessToken) {
+        const sentRelatedInvitation =
+          latestSentInvitationPerId.find((invitation) => invitation.id === tokens.userId) || {};
+        const acceptedRelatedInvitation =
+          groupedNotifications.connectionAcceptedEvent.find((invitation) => invitation.id === tokens.userId) || {};
+        let {
+          myAccessToken = null,
+          userAccessToken = null,
+        } = tokens;
+        if (Object.keys(sentRelatedInvitation).length) myAccessToken = sentRelatedInvitation.connectionKey;
+        if (Object.keys(acceptedRelatedInvitation).length) {
+          if (!myAccessToken) myAccessToken = acceptedRelatedInvitation.connectionKey;
+          if (!userAccessToken) userAccessToken = acceptedRelatedInvitation.connectionKey;
+        }
+        return {
+          ...tokens,
+          myAccessToken,
+          userAccessToken,
+        };
+      }
+      return tokens;
     });
 
-    dispatch(saveDbAction('invitations', { invitations: updatedInvitations }, true));
+    dispatch(saveDbAction('invitations', { invitations: updatedInvitationsWithAccessKeys }, true));
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
     dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     dispatch({
       type: UPDATE_INVITATIONS,
-      payload: updatedInvitations,
+      payload: updatedInvitationsWithAccessKeys,
     });
     dispatch({
       type: UPDATE_CONTACTS,
@@ -158,13 +207,12 @@ export const sendOldInvitationAction = (user: ApiUser) => {
       return;
     }
 
-    const accessKey = generateAccessKey();
-    const sentInvitation = await api.sendOldInvitation(user.id, accessKey, walletId);
+    const sentInvitation = await api.sendOldInvitation(user.id, walletId);
     if (!sentInvitation) return;
     const invitation = {
       ...user,
       type: TYPE_SENT,
-      connectionKey: accessKey,
+      connectionKey: null,
       createdAt: +new Date() / 1000,
     };
     dispatch(saveDbAction('invitations', { invitations: [...invitations, invitation] }, true));
@@ -173,8 +221,8 @@ export const sendOldInvitationAction = (user: ApiUser) => {
       .filter(({ userId }) => userId !== user.id)
       .concat({
         userId: user.id,
-        myAccessToken: accessKey,
-        userAccessToken: '',
+        myAccessToken: null,
+        userAccessToken: null,
       });
     dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
@@ -190,6 +238,7 @@ export const sendOldInvitationAction = (user: ApiUser) => {
       type: UPDATE_ACCESS_TOKENS,
       payload: updatedAccessTokens,
     });
+    dispatch(fetchOldInviteNotificationsAction());
   };
 };
 
@@ -201,14 +250,13 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
     } = getState();
-    const sourceUserAccessKey = generateAccessKey();
 
     const acceptedInvitation = await api.acceptOldInvitation(
       invitation.id,
       invitation.connectionKey,
-      sourceUserAccessKey,
       walletId,
     );
+
     if (!acceptedInvitation) {
       dispatch(({
         type: ADD_NOTIFICATION,
@@ -231,9 +279,10 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       .filter(({ userId }) => userId !== invitation.id)
       .concat({
         userId: invitation.id,
-        myAccessToken: sourceUserAccessKey,
+        myAccessToken: null,
         userAccessToken: invitation.connectionKey,
       });
+
     dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
     dispatch({
@@ -252,6 +301,7 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       type: ADD_NOTIFICATION,
       payload: { message: 'Connection request accepted' },
     }));
+    dispatch(fetchOldInviteNotificationsAction());
   };
 };
 
