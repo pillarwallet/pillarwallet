@@ -354,6 +354,7 @@ class Camera extends React.Component<Props, State> {
       <React.Fragment>
         {!!isVisible &&
         <RNCamera
+          captureAudio={false}
           ref={ref => {
             this.camera = ref;
           }}
