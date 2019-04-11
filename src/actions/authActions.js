@@ -69,7 +69,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = getSaltedPin(pin);
+    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       let wallet;
       if (!touchID) {
@@ -192,7 +192,7 @@ export const checkPinAction = (
       payload: DECRYPTING,
     });
     await delay(100);
-    const saltedPin = getSaltedPin(pin);
+    const saltedPin = await getSaltedPin(pin, dispatch);
     try {
       const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
       dispatch({
@@ -222,7 +222,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
       payload: ENCRYPTING,
     });
     await delay(50);
-    const currentSaltedPin = getSaltedPin(currentPin);
+    const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
     const wallet = await ethers.Wallet.RNfromEncryptedWallet(
       JSON.stringify(encryptedWallet),
       currentSaltedPin,
@@ -230,7 +230,7 @@ export const changePinAction = (newPin: string, currentPin: string) => {
         mnemonic: true,
       });
 
-    const newSaltedPin = getSaltedPin(newPin);
+    const newSaltedPin = await getSaltedPin(newPin, dispatch);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));

@@ -186,7 +186,7 @@ export const registerWalletAction = () => {
       payload: ENCRYPTING,
     });
     await delay(50);
-    const saltedPin = getSaltedPin(pin);
+    const saltedPin = await getSaltedPin(pin, dispatch);
     const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
