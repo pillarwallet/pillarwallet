@@ -13,7 +13,6 @@ aliases:
       key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
       paths:
         - ./ios/Pods
-
   - &restore_gems_cache_ios
     restore_cache:
       name: Restore cache
