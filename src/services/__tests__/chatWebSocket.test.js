@@ -83,9 +83,7 @@ describe('chatWebSocket service', () => {
         username: 'websocket1',
         message: 'hello there',
         userId: null,
-        targetUserId: null,
-        sourceIdentityKey: null,
-        targetIdentityKey: null,
+        userConnectionAccessToken: null,
       }),
       ['content-type:application/json;'],
     ) || new Uint8Array(0);
