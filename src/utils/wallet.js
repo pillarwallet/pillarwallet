@@ -42,7 +42,7 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
 
 
 export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
-  let { deviceUniqueId = null } = await storage.get('deviceUniqueId');
+  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
   if (!deviceUniqueId) {
     deviceUniqueId = DeviceInfo.getUniqueID();
     await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
