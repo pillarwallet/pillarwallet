@@ -12774,10 +12774,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.193:
-  version "1.0.193"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.193.tgz#04edd75af97c961daa8accb157aa6d6b1b9f45ac"
-  integrity sha1-BO3XWvl8lh2qisyxV6ptaxufRaw=
+rn-signal-protocol-messaging@1.0.204:
+  version "1.0.204"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.204.tgz#ff5f0534fb3c81262fcfd29b3ab15d0f9b28a0f6"
+  integrity sha1-/18FNPs8gSYvz9KbOrFdD5sooPY=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"
