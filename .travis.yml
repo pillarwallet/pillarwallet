@@ -4,7 +4,7 @@ language: objective-c
 before_install:
   - sudo pip install awscli
   - cd $TRAVIS_BUILD_DIR
-  - export APP_BUILD_NUMBER=7795
+  - export APP_BUILD_NUMBER=7797
   - export NODE_OPTIONS=--max_old_space_size=2048;
   - npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
   - export buildNumber=$(node -e "console.log(require('./package.json').version);")
@@ -53,9 +53,7 @@ jobs:
 
 stages:
   - name: Build and Test
-  - name: Build and Deploy - iOS Hockeyapp
-    if: branch = develop
   - name: Build and Deploy - iOS Staging
-    if: branch = fix/travis-ci-automation
+    if: branch = fix/travisXcode10.2updates
   - name: Build and Deploy - iOS Prod
     if: branch = master
