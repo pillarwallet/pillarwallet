@@ -800,7 +800,7 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - fix/updatedAndroidRNversion
       - stage_ios:
           requires:
             - build-and-test
