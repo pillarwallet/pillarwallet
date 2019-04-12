@@ -7,7 +7,6 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-apply plugin: 'com.neenbedankt.android-apt'
 import com.android.build.OutputFile
 
 project.ext.react = [
@@ -79,6 +78,8 @@ android {
   dexOptions {
     javaMaxHeapSize "1G"
   }
+
+  flavorDimensions "version"
   productFlavors {
     // Define separate dev and prod product flavors.
     dev {
@@ -157,100 +158,102 @@ android {
 
 
 dependencies {
-    compile project(':react-native-extra-dimensions-android')
-  compile project(':react-native-image-capinsets')
-  compile project(':react-native-touch-id')
-  compile project(':react-native-color-matrix-image-filters')
-  compile project(':react-native-image-crop-picker')
-  compile project(':react-native-svg')
-  compile project(':react-native-background-timer')
-  compile project(':react-native-sentry')
-  compile 'com.android.support:multidex:1.0.1'
-  compile fileTree(dir: 'libs', include: ['*.jar'])
+  implementation project(':react-native-extra-dimensions-android')
+  implementation project(':react-native-image-capinsets')
+  implementation project(':react-native-touch-id')
+  implementation project(':react-native-color-matrix-image-filters')
+  implementation project(':react-native-image-crop-picker')
+  implementation project(':react-native-svg')
+  implementation project(':react-native-background-timer')
+  implementation project(':react-native-sentry')
+  implementation 'com.android.support:multidex:1.0.1'
+  implementation fileTree(dir: 'libs', include: ['*.jar'])
 
   // Our dependencies
-  compile "com.google.android.gms:play-services-base:15.0.1"
-  compile "com.google.firebase:firebase-core:15.0.2"
-  compile "com.google.firebase:firebase-crash:15.0.2"
-  compile 'com.google.android.gms:play-services-vision:15.0.1'
-  compile('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
+  implementation "com.google.android.gms:play-services-base:15.0.1"
+  implementation "com.google.firebase:firebase-core:15.0.2"
+  implementation "com.google.firebase:firebase-crash:15.0.2"
+  implementation 'com.google.android.gms:play-services-vision:15.0.1'
+  implementation('com.crashlytics.sdk.android:crashlytics:2.9.4@aar') {
     transitive = true
   }
-  compile "com.google.firebase:firebase-messaging:17.1.0"
-  compile 'me.leolin:ShortcutBadger:1.1.21@aar'
-  compile project(':react-native-linear-gradient')
+  implementation "com.google.firebase:firebase-messaging:17.1.0"
+  implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
+  implementation project(':react-native-linear-gradient')
 
-  provided 'org.glassfish:javax.annotation:3.1.1'
-  compile 'com.jakewharton:butterknife:7.0.1'
-  compile 'de.greenrobot:eventbus:2.4.0'
-  compile 'com.amplitude:android-sdk:2.9.2' // Be careful when upgrading! Upgrading might break experience scoping. Check with Jesse. See Analytics.resetAmplitudeDatabaseHelper
-  compile 'com.squareup.picasso:picasso:2.5.2'
-  compile 'com.google.android.gms:play-services-gcm:15.0.1'
-  compile 'com.google.android.gms:play-services-analytics:15.0.0'
-  compile 'com.google.android.gms:play-services-maps:15.0.0'
-  compile 'com.google.android.gms:play-services-auth:15.0.0'
-  compile 'com.google.android.gms:play-services-location:15.0.0'
+  compileOnly 'org.glassfish:javax.annotation:3.1.1'
+
+  annotationProcessor 'com.jakewharton:butterknife:7.0.1'
+  implementation 'com.jakewharton:butterknife:7.0.1'
+  implementation 'de.greenrobot:eventbus:2.4.0'
+  implementation 'com.amplitude:android-sdk:2.9.2' // Be careful when upgrading! Upgrading might break experience scoping. Check with Jesse. See Analytics.resetAmplitudeDatabaseHelper
+  implementation 'com.squareup.picasso:picasso:2.5.2'
+  implementation 'com.google.android.gms:play-services-gcm:15.0.1'
+  implementation 'com.google.android.gms:play-services-analytics:15.0.0'
+  implementation 'com.google.android.gms:play-services-maps:15.0.0'
+  implementation 'com.google.android.gms:play-services-auth:15.0.0'
+  implementation 'com.google.android.gms:play-services-location:15.0.0'
 //  compile 'com.google.android.gms:play-services-ads:15.0.0'
-  apt 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
-  compile "com.raizlabs.android:DBFlow-Core:2.2.1"
-  compile "com.raizlabs.android:DBFlow:2.2.1"
-  compile "com.madgag.spongycastle:core:1.53.0.0"
-  compile "com.madgag.spongycastle:prov:1.53.0.0"
-  debugCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
-  // debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta1'
-  releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
-  compile 'com.facebook.device.yearclass:yearclass:1.0.1'
-  compile 'commons-io:commons-io:1.3.2'
-  compile 'me.leolin:ShortcutBadger:1.1.4@aar'
-  compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
-  compile 'com.theartofdev.edmodo:android-image-cropper:2.4.7'
-  compile 'com.yqritc:android-scalablevideoview:1.0.1'
-  compile 'commons-codec:commons-codec:1.10'
-  compile 'com.segment.analytics.android:analytics:4.3.0'
-  compile 'com.google.zxing:core:3.2.1'
-  compile 'net.openid:appauth:0.4.1'
-  compile 'com.airbnb.android:lottie:2.2.0'
-  compile 'io.branch.sdk.android:library:2.6.1'
-  compile('io.nlopez.smartlocation:library:3.2.11') {
+  annotationProcessor 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
+  implementation "com.raizlabs.android:DBFlow-Core:2.2.1"
+  implementation "com.raizlabs.android:DBFlow:2.2.1"
+  implementation "com.madgag.spongycastle:core:1.53.0.0"
+  implementation "com.madgag.spongycastle:prov:1.53.0.0"
+  debugImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
+  // debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.4-beta1'
+  releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta1'
+  implementation 'com.facebook.device.yearclass:yearclass:1.0.1'
+  implementation 'commons-io:commons-io:1.3.2'
+  implementation 'me.leolin:ShortcutBadger:1.1.4@aar'
+  implementation 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+  implementation 'com.theartofdev.edmodo:android-image-cropper:2.4.7'
+  implementation 'com.yqritc:android-scalablevideoview:1.0.1'
+  implementation 'commons-codec:commons-codec:1.10'
+  implementation 'com.segment.analytics.android:analytics:4.3.0'
+  implementation 'com.google.zxing:core:3.2.1'
+  implementation 'net.openid:appauth:0.4.1'
+  implementation 'com.airbnb.android:lottie:2.2.0'
+  implementation 'io.branch.sdk.android:library:2.6.1'
+  implementation('io.nlopez.smartlocation:library:3.2.11') {
     transitive = false
   }
-  compile 'io.intercom.android:intercom-sdk-base:5.+'
-  compile 'io.intercom.android:intercom-sdk-fcm:5.+'
-  compile 'com.android.support:exifinterface:26.0.1'
-  compile 'com.squareup.okhttp3:okhttp:3.4.1'
-  compile 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
-  compile 'com.squareup.okio:okio:1.9.0'
-  compile project(':react-native-scrypt')
-  compile project(':lottie-react-native')
-  compile project(':rn-signal-protocol-messaging')
-  compile project(':react-native-intercom')
-  compile project(':react-native-udp')
-  compile project(':react-native-tcp')
-  compile project(':react-native-randombytes')
-  compile project(':react-native-os')
-  compile project(':react-native-fetch-blob')
-  compile project(':react-native-camera')
-  compile project(':react-native-vector-icons')
-  compile project(':react-native-share')
-  compile(project(':react-native-firebase')) {
+  implementation 'io.intercom.android:intercom-sdk-base:5.+'
+  implementation 'io.intercom.android:intercom-sdk-fcm:5.+'
+  implementation 'com.android.support:exifinterface:26.0.1'
+  implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+  implementation 'com.squareup.okhttp3:okhttp-urlconnection:3.4.1'
+  implementation 'com.squareup.okio:okio:1.9.0'
+  implementation project(':react-native-scrypt')
+  implementation project(':lottie-react-native')
+  implementation project(':rn-signal-protocol-messaging')
+  implementation project(':react-native-intercom')
+  implementation project(':react-native-udp')
+  implementation project(':react-native-tcp')
+  implementation project(':react-native-randombytes')
+  implementation project(':react-native-os')
+  implementation project(':react-native-fetch-blob')
+  implementation project(':react-native-camera')
+  implementation project(':react-native-vector-icons')
+  implementation project(':react-native-share')
+  implementation(project(':react-native-firebase')) {
       transitive = false
   }
-  compile project(':react-native-splash-screen')
-  compile project(':react-native-device-info')
-  compile "com.android.support:appcompat-v7:26.0.1"
-  compile "com.facebook.react:react-native:+"  // From node_modules
+  implementation project(':react-native-splash-screen')
+  implementation project(':react-native-device-info')
+  implementation "com.android.support:appcompat-v7:26.0.1"
+  implementation "com.facebook.react:react-native:+"  // From node_modules
 
   // Testing
-  androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
   // We use a modified build of com.android.support.test:runner:1.0.1. Explanation in maven-test/README
-  androidTestCompile 'com.android.support.test:runner:1.0.1'
-  androidTestCompile 'com.android.support:support-annotations:26.0.1'
-  androidTestCompile 'com.google.code.findbugs:jsr305:3.0.0'
-  androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
-  androidTestCompile 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
+  androidTestImplementation 'com.android.support.test:runner:1.0.1'
+  androidTestImplementation 'com.android.support:support-annotations:26.0.1'
+  androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.0'
+  androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
+  androidTestImplementation 'com.azimolabs.conditionwatcher:conditionwatcher:0.2'
 
   // Shadows
-  compile 'com.github.devlight.shadowlayout:library:1.0.2'
+  implementation 'com.github.devlight.shadowlayout:library:1.0.2'
 }
 
 configurations.all {

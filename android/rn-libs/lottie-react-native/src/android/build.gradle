@@ -4,7 +4,6 @@ def safeExtGet(prop, fallback) {
 
 apply plugin: 'com.android.library'
 apply from: 'gradle-maven-push.gradle'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
   compileSdkVersion safeExtGet('compileSdkVersion', 26)
@@ -27,6 +26,7 @@ android {
 }
 
 dependencies {
-  provided "com.facebook.react:react-native:+"
-  compile 'com.airbnb.android:lottie:2.5.5'
+  compileOnly "com.facebook.react:react-native:+"
+  implementation 'com.airbnb.android:lottie:2.5.5'
+  implementation "com.android.support:appcompat-v7:28.0.0"
 }
