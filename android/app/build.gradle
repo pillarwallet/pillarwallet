@@ -112,6 +112,7 @@ android {
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
       zipAlignEnabled true
+      matchingFallbacks = ['debug', 'release']
     }
     release {
       buildConfigField "String", "CODEPUSH_KEY", '"com.pillarproject.wallet"'
