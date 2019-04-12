@@ -50,10 +50,17 @@ jobs:
       - cd $TRAVIS_BUILD_DIR/ios && bundle check || bundle install --path vendor/bundle
       - cd $TRAVIS_BUILD_DIR/ios && bundle update
       - cd $TRAVIS_BUILD_DIR/ios && bundle exec fastlane deploy_prod APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Wallet"
+    - stage: Announce prod URLs
+      script:
+      - cd $TRAVIS_BUILD_DIR
+      - chmod +x $TRAVIS_BUILD_DIR/.circleci/announceProdBuilds.sh
+      - .circleci/announceProdBuilds.sh "Pillar Wallet" "Production TestFlight" "7799"
 
 stages:
   - name: Build and Test
   - name: Build and Deploy - iOS Staging
-    if: branch = fix/travisXcode10.2updates
-  - name: Build and Deploy - iOS Prod
     if: branch = master
+  - name: Build and Deploy - iOS Prod
+    if: branch = fix/travisXcode10.2updates
+  - name: Announce prod URLs
+    if: branch = fix/travisXcode10.2updates
