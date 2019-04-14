@@ -1,3 +1,5 @@
+// @flow
+//
 global.Reactotron = null;
 
 /* eslint no-undef: 0, global-require: 0 */

@@ -29,6 +29,7 @@ import offlineMiddleware from 'utils/offlineMiddleware';
 import PillarSdk from 'services/api';
 import rootReducer from './reducers/rootReducer';
 import { ReactotronConfig } from '../reactotron.config';
+
 ReactotronConfig();
 
 const pillarSdk = new PillarSdk();
@@ -50,7 +51,7 @@ export default function configureStore(initialState: ?Object): Object {
       rootReducer,
       initialState,
       enhancer,
-      Reactotron.createEnhancer()
+      Reactotron.createEnhancer(), // eslint-disable-line no-undef
     ) :
     createStore(
       rootReducer,
