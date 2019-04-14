@@ -4,7 +4,8 @@ global.Reactotron = null;
 
 /* eslint no-undef: 0, global-require: 0 */
 export const ReactotronConfig = function ReactotronConfig() {
-  if (__DEV__ && process.env['TEST'] !== 'TEST') { // eslint-disable-line dot-notation
+  console.log('fuck', __DEV__, process.env.NODE_ENV)
+  if (__DEV__ && process.env.NODE_ENV !== 'test') { // eslint-disable-line dot-notation
     const Reactotron = require('reactotron-react-native').default;
 
     const {
