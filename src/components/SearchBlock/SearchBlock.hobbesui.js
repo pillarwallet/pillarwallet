@@ -23,30 +23,6 @@ Hobbes.add({
 Hobbes.add({
   parent: 'COMPONENT',
   group: 'SearchBlock',
-  id: 'SEARCH_BLOCK_SMART_WALLET',
-  title: 'Smart Wallet',
-  component: (
-    <SearchBlock
-      itemSearchState
-      headerProps={{
-        title: 'foo',
-        nextText: 'Smart.Wallet',
-        nextTextColor: baseColors.brightPink,
-        nextIcon: 'down-arrow',
-        nextIconColor: baseColors.mediumGray,
-        nextIconSize: 12,
-        onNextPress: () => Alert.alert('Smart Wallet'),
-      }}
-      searchInputPlaceholder="search foo"
-      onSearchChange={(q) => console.log(q)}
-    />
-  ),
-});
-
-
-Hobbes.add({
-  parent: 'COMPONENT',
-  group: 'SearchBlock',
   id: 'SEARCH_BLOCK_SWITCH_PERSONA',
   title: 'Switch Persona',
   component: (

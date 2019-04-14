@@ -289,15 +289,7 @@ class PeopleScreen extends React.Component<Props, State> {
     return (
       <Container inset={{ bottom: 0 }}>
         <SearchBlock
-          headerProps={{
-            title: 'people',
-            nextText: 'Smart.Wallet',
-            nextTextColor: baseColors.brightPink,
-            nextIcon: 'down-arrow',
-            nextIconColor: baseColors.mediumGray,
-            nextIconSize: 12,
-            onNextPress: () => Alert.alert('Smart Wallet'),
-          }}
+          headerProps={{ title: 'assets' }}
           searchInputPlaceholder="Search or add new contact"
           onSearchChange={(q) => this.handleSearchChange(q)}
           itemSearchState={!!contactState}
