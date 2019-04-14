@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import { navigate } from 'services/navigation';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import Me from 'screens/Me/scene.js';
 import Personas from 'screens/Personas/scene.js';
@@ -13,7 +13,7 @@ const meUser = {
   activePersona: 'Master',
 };
 
-Styleguide.add({
+Hobbes.add({
   parent: 'WORKFLOW',
   group: 'Personas',
   id: 'ME_WORKFLOW',
@@ -75,7 +75,7 @@ const PersonasDef = [
   },
 ];
 
-Styleguide.add({
+Hobbes.add({
   parent: 'WORKFLOW',
   group: 'Personas',
   id: 'PERSONAS_WORKFLOW',
@@ -90,7 +90,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'WORKFLOW',
   group: 'Personas',
   id: 'PERSONA_CREATE_WORKFLOW',
@@ -115,7 +115,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'WORKFLOW',
   group: 'Personas',
   id: 'PERSONA_EDIT_WORKFLOW',

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import { baseColors } from 'utils/variables';
 import Header from './Header';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_DEFAULT',
@@ -17,7 +17,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_WITH_SEPARATOR',
@@ -30,7 +30,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_TITLE_PRESS',
@@ -43,7 +43,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_CENTER_TITLE',
@@ -56,7 +56,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_WRAP',
@@ -70,7 +70,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_DOT_COLOR',
@@ -83,7 +83,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NO_DOT',
@@ -97,7 +97,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NEXT',
@@ -112,7 +112,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NEXT_ICON',
@@ -126,7 +126,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NEXT_ICON_TEXT',
@@ -141,7 +141,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NEXT_ICON_COLOR_TEXT',
@@ -157,7 +157,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_NEXT_TEXT_COLOR',
@@ -173,7 +173,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_DEFAULT_BACK_ICON',
@@ -186,7 +186,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_CUSTOM_BACK_ICON',
@@ -200,7 +200,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Header',
   id: 'HEADER_ON_CLOSE',

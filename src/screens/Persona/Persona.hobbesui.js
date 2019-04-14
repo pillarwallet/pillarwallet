@@ -1,10 +1,10 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import Scene from './scene';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'SCREEN',
   group: 'Persona',
   id: 'PERSONA_CREATE',
@@ -29,7 +29,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'SCREEN',
   group: 'Persona',
   id: 'PERSONA_EDIT',

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 
 import Scene from './scene.js';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'SCREEN',
   group: 'Pin Code Unlock',
   id: 'PIN_CODE_UNLOCK_DEFAULT',
@@ -17,7 +17,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'SCREEN',
   group: 'Pin Code Unlock',
   id: 'PIN_CODE_UNLOCK_INVALID_PASSWORD',
@@ -31,7 +31,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'SCREEN',
   group: 'Pin Code Unlock',
   id: 'PIN_CODE_UNLOCK_DECRYPTING',

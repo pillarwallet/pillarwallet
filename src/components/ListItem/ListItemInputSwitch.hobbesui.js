@@ -1,11 +1,11 @@
 import React from 'react';
 import { Alert, Text } from 'react-native';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import { Container } from 'components/Layout';
 import InputSwitch from './ListItemInputSwitch';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'INPUT_SWITCH_LIST_ITEM',
@@ -27,7 +27,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'INPUT_SWITCH_LIST_ITEM_ERROR',
@@ -50,7 +50,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'INPUT_SWITCH_LIST_ITEM_ON',
@@ -73,7 +73,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'INPUT_SWITCH_LIST_ITEM_SELECT',

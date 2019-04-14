@@ -5,7 +5,7 @@
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-flow": "^7.0.0",
-    "StyleguideSystem": "/Users/owl/Developer/diablo/styleguide",
+    "HobbesUI": "/Users/owl/Developer/diablo/hobbesui",
     "babel-bridge": "^1.12.11",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^8.2.2",
@@ -48,7 +48,7 @@
   },
   "scripts": {
     "start": "react-native start --reset-cache",
-    "styleguide": "STYLEGUIDE=STYLEGUIDE react-native start --reset-cache",
+    "hobbesui": "HOBBESUI=HOBBESUI react-native start --reset-cache",
     "android": "react-native run-android --variant=devDebug",
     "ios": "react-native run-ios",
     "generate:ios:ipa": "mkdir  ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",

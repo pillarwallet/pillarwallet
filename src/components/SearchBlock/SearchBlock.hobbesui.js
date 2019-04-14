@@ -1,11 +1,11 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import { baseColors } from 'utils/variables';
 import SearchBlock from './SearchBlock';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'SearchBlock',
   id: 'SEARCH_BLOCK_DEFAULT',
@@ -20,7 +20,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'SearchBlock',
   id: 'SEARCH_BLOCK_SMART_WALLET',
@@ -44,7 +44,7 @@ Styleguide.add({
 });
 
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'SearchBlock',
   id: 'SEARCH_BLOCK_SWITCH_PERSONA',

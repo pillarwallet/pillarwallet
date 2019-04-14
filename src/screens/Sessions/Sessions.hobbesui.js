@@ -1,6 +1,6 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import Scene from './scene';
 
@@ -32,7 +32,7 @@ const sessionsHistory = [
   },
 ];
 
-Styleguide.add({
+Hobbes.add({
   parent: 'SCREEN',
   group: 'ManageSessions',
   id: 'MANAGE_SESSIONS',

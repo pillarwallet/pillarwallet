@@ -1,11 +1,11 @@
 import React from 'react';
 import { Alert, Text } from 'react-native';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import { Container } from 'components/Layout';
 import SettingsListItem from './SettingsItem';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM',
@@ -21,7 +21,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM_WITH_NOTIFICATIONS',
@@ -38,7 +38,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM_WITH_WARNING_NOTIFICATIONS',
@@ -55,7 +55,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM_WITH_LOCK',
@@ -72,7 +72,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'ListItem',
   id: 'SETTINGS_LIST_ITEM_WITH_SWITCH',

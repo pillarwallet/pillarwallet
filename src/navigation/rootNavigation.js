@@ -20,8 +20,7 @@
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
-// STYLEGUIDE
-import * as Styleguide from 'StyleguideSystem';
+import { HobbesFlow } from 'HobbesUI';
 
 // screens
 import OnboardingScreen from 'screens/Onboarding';
@@ -103,8 +102,8 @@ const RootNavigation = {
   [APP_FLOW]: AppFlow,
 };
 
-if (process.env['STYLEGUIDE']) {
-  RootNavigation['STYLEGUIDE_SYSTEM_FLOW'] = Styleguide.StyleguideFlow;
+if (process.env['HOBBESUI']) {
+  RootNavigation['HOBBESUI_FLOW'] = HobbesFlow;
 }
 
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator(RootNavigation);

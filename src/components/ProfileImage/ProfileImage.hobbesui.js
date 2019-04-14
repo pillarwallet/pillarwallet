@@ -1,9 +1,9 @@
 import React from 'react';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 import { Container } from 'components/Layout';
 import ProfileImage from './ProfileImage';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Profile Image',
   id: 'PROFILE_IMAGE_DEFAULT',
@@ -19,7 +19,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Profile Image',
   id: 'PROFILE_IMAGE_WITHOUT_SHADOW',

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import map from 'lodash.map';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import {
   baseColors,
@@ -11,7 +11,7 @@ import {
   fontWeights,
 } from './variables'
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'VARIABLES',
   id: 'FONT_SIZES',
@@ -57,7 +57,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'VARIABLES',
   id: 'FONT_SPACING',
@@ -104,7 +104,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'VARIABLES',
   id: 'FONT_WEIGHTS',

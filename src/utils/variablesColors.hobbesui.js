@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import map from 'lodash.map';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import {
   baseColors,
@@ -58,7 +58,7 @@ const colorContainer = (colorsToUse) => (
   </Container>
 );
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'VARIABLES',
   id: 'BASE_COLORS',
@@ -66,7 +66,7 @@ Styleguide.add({
   component: colorContainer(baseColors),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'VARIABLES',
   id: 'UI_COLORS',
@@ -74,7 +74,7 @@ Styleguide.add({
   component: colorContainer(UIColors),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'VARIABLES',
   id: 'BRAND_COLORS',

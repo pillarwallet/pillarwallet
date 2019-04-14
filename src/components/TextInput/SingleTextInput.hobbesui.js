@@ -1,11 +1,11 @@
 import React from 'react';
 import { Alert, View } from 'react-native';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 
 import SingleInput from './SingleInput';
 import TextInput from './TextInput';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Text Input',
   id: 'SINGLE_INPUT_DEFAULT',
@@ -26,7 +26,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Text Input',
   id: 'SINGLE_INPUT_TO_LEFT',
@@ -48,7 +48,7 @@ Styleguide.add({
   ),
 });
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Text Input',
   id: 'TEXT_INPUT_DEFAULT',

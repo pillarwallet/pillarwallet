@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import map from 'lodash.map';
 import { Container, ScrollWrapper } from 'components/Layout';
-import { Styleguide } from 'StyleguideSystem';
+import { Hobbes } from 'HobbesUI';
 import { baseColors } from 'utils/variables';
 
 import Icon, { glyphMap } from './Icon';
 
-Styleguide.add({
+Hobbes.add({
   parent: 'COMPONENT',
   group: 'Icon',
   id: 'ICON_DEFAULT',
