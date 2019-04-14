@@ -19,12 +19,7 @@
   "env": {
     "development": {
       "plugins": [
-        "babel-plugin-styled-components",
-        ["transform-inline-environment-variables", {
-          "include": [
-            "NODE_ENV"
-          ]
-        }]
+        "babel-plugin-styled-components"
       ]
     }
   }

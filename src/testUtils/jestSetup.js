@@ -25,6 +25,8 @@ import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
+process.env['IS_TEST'] = 'TEST';
+
 jest.mock('NativeAnimatedHelper');
 
 Enzyme.configure({ adapter: new Adapter() });
