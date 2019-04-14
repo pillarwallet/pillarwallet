@@ -44,7 +44,7 @@ const enhancer = composeWithDevTools({
 })(applyMiddleware(...middlewares));
 
 export default function configureStore(initialState: ?Object): Object {
-  const useReactotron = __DEV__ && process.env.NODE_ENV !== 'test';
+  const useReactotron = __DEV__ && !process.env['TEST']; // eslint-disable-line dot-notation
 
   const store = useReactotron ?
     createStore(
