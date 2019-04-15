@@ -146,13 +146,13 @@ PODS:
     - React/Core (= 0.59.4)
   - react-native-background-timer (2.1.0-alpha.6):
     - React
-  - react-native-camera (1.10.2):
+  - react-native-camera (1.13.1):
     - React
-    - react-native-camera/RCT (= 1.10.2)
-    - react-native-camera/RN (= 1.10.2)
-  - react-native-camera/RCT (1.10.2):
+    - react-native-camera/RCT (= 1.13.1)
+    - react-native-camera/RN (= 1.13.1)
+  - react-native-camera/RCT (1.13.1):
     - React
-  - react-native-camera/RN (1.10.2):
+  - react-native-camera/RN (1.13.1):
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
