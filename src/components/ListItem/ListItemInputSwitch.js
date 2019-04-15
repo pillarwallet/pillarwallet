@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { baseColors, UIColors, fontSizes, spacing } from 'utils/variables';
 import { Switch, Input } from 'native-base';
@@ -101,10 +101,10 @@ const ListAddon = styled.View`
 
 type InputProps = {
   label: string,
-  value?: ?string,
-  onChange?: ?Function,
-  onSelect?: ?Function,
-  onBlur?: ?Function,
+  value?: string,
+  onChange?: Function,
+  onSelect?: Function,
+  onBlur?: Function,
 };
 
 type SwitchProps = {
@@ -126,6 +126,10 @@ type Props = {
   switchProps: SwitchProps,
 }
 
+type EventLike = {
+  nativeEvent: Object,
+}
+
 export default class InputSwitch extends React.Component<Props> {
   fieldValue: string = '';
 
@@ -139,7 +143,10 @@ export default class InputSwitch extends React.Component<Props> {
   handleChange = (e: EventLike) => {
     const { inputProps: { onChange } } = this.props;
     this.fieldValue = e.nativeEvent.text;
-    onChange(this.fieldValue);
+
+    if (onChange) {
+      onChange(this.fieldValue);
+    }
   }
 
   render() {
@@ -171,22 +178,20 @@ export default class InputSwitch extends React.Component<Props> {
         <SelectedOption>{value}</SelectedOption>
       </ItemSelectHolder>
     ) : (
-    <ItemLabelHolder>
-      <ItemLabel>
-        {label}
-        {errorMessageLabel}
-      </ItemLabel>
-      <ItemValue
-        disabled={disabledInput}
-        onChange={this.handleChange}
-        onBlur={this.handleBlur}
-        numberOfLines={1}
-        value={value}
-      />
-    </ItemLabelHolder>
+      <ItemLabelHolder>
+        <ItemLabel>
+          {label}
+          {errorMessageLabel}
+        </ItemLabel>
+        <ItemValue
+          disabled={disabledInput}
+          onChange={this.handleChange}
+          onBlur={this.handleBlur}
+          numberOfLines={1}
+          value={value}
+        />
+      </ItemLabelHolder>
     );
-
-    const verified = isVerified ? 'Verified' : 'Verify';
 
     return (
       <StyledItemView

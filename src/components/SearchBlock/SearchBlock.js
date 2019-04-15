@@ -33,7 +33,7 @@ type State = {
 }
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation?: NavigationScreenProp<*>,
   onSearchChange: Function,
   headerProps: Object,
   itemSearchState?: boolean,
@@ -88,7 +88,7 @@ class SearchBlock extends React.Component<Props, State> {
 
   componentWillUnmount() {
     if (this._willBlur) {
-        this._willBlur.remove();
+      this._willBlur.remove();
     }
   }
 

@@ -1,5 +1,7 @@
+// @flow
+
 import React from 'react';
-import { Alert, Text } from 'react-native';
+import { Alert } from 'react-native';
 import { Hobbes } from 'HobbesUI';
 
 import { Container } from 'components/Layout';
@@ -17,10 +19,10 @@ Hobbes.add({
         inputProps={{
           label: 'username',
           value: 'foo',
-          onChange: (newValue) => Alert.alert(`it will change to ${newValue}`)
+          onChange: (newValue) => Alert.alert(`it will change to ${newValue}`),
         }}
         switchProps={{
-          onPress: () => Alert.alert('set on foo')
+          onPress: () => Alert.alert('set on foo'),
         }}
       />
     </Container>
@@ -40,10 +42,10 @@ Hobbes.add({
         inputProps={{
           label: 'username',
           value: 'foo',
-          onChange: (newValue) => Alert.alert(`it will change to ${newValue}`)
+          onChange: (newValue) => Alert.alert(`it will change to ${newValue}`),
         }}
         switchProps={{
-          onPress: () => Alert.alert('set on foo')
+          onPress: () => Alert.alert('set on foo'),
         }}
       />
     </Container>
@@ -62,11 +64,11 @@ Hobbes.add({
         inputProps={{
           label: 'username',
           value: 'foo',
-          onChange: (newValue) => Alert.alert(`it will change to ${newValue}`)
+          onChange: (newValue) => Alert.alert(`it will change to ${newValue}`),
         }}
         switchProps={{
           switchStatus: true,
-          onPress: () => Alert.alert('set on foo')
+          onPress: () => Alert.alert('set on foo'),
         }}
       />
     </Container>
@@ -86,11 +88,11 @@ Hobbes.add({
         inputProps={{
           label: 'username',
           value: 'foo',
-          onSelect: () => Alert.alert(`it should display modal to select an option`)
+          onSelect: () => Alert.alert('it should display modal to select an option'),
         }}
         switchProps={{
           switchStatus: true,
-          onPress: () => Alert.alert('set on foo')
+          onPress: () => Alert.alert('set on foo'),
         }}
       />
     </Container>

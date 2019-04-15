@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { Alert } from 'react-native';
 import { Hobbes } from 'HobbesUI';

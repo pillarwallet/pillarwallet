@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { Alert } from 'react-native';
 import { Hobbes } from 'HobbesUI';
@@ -5,6 +7,7 @@ import { Hobbes } from 'HobbesUI';
 import { baseColors } from 'utils/variables';
 import SearchBlock from './SearchBlock';
 
+/* eslint no-console: 0 */
 Hobbes.add({
   parent: 'COMPONENT',
   group: 'SearchBlock',
@@ -41,4 +44,3 @@ Hobbes.add({
     />
   ),
 });
-

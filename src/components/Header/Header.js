@@ -51,6 +51,7 @@ type Props = {
   overlay?: boolean,
   backIcon?: string,
   nextIconSize?: number,
+  nextIconColor?: string,
   titleStyles?: ?Object,
 }
 
@@ -58,8 +59,7 @@ const Wrapper = styled.View`
   border-bottom-width: ${({ hasSeparator }) => !hasSeparator ? 0 : 1};
   ${({ hasSeparator }) => !hasSeparator ?
     '' :
-    `border-bottom-color: ${baseColors.mediumLightGray};`
-  };
+    `border-bottom-color: ${baseColors.mediumLightGray};`};
   padding: ${props => props.noPadding ? 0 : '0 20px'};
   height: 48px;
   justify-content: flex-end;

@@ -56,6 +56,7 @@ import {
   ONBOARDING_HOME,
   WELCOME,
   FORGOT_PIN,
+  HOBBESUI_FLOW,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -96,15 +97,13 @@ const authFlow = createStackNavigator({
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
 
-const RootNavigation = {
+const RootNavigation = process.env['HOBBESUI'] ? { // eslint-disable-line dot-notation
+  [HOBBESUI_FLOW]: HobbesFlow,
+} : {
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
 };
-
-if (process.env['HOBBESUI']) {
-  RootNavigation['HOBBESUI_FLOW'] = HobbesFlow;
-}
 
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator(RootNavigation);
 

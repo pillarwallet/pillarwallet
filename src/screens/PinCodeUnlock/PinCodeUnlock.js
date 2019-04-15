@@ -23,8 +23,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 import TouchID from 'react-native-touch-id';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
-import Scene from './scene';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
+import Scene from './scene';
 
 const ACTIVE_APP_STATE = 'active';
 

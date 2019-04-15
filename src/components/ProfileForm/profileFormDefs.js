@@ -13,6 +13,13 @@ import {
 export const MIN_USERNAME_LENGTH = 4;
 export const MAX_USERNAME_LENGTH = 30;
 
+type Field = {
+  name: string,
+  type: string,
+  label: string,
+  config: Object,
+}
+
 const maxLength = 100;
 const halfMaxLength = maxLength / 2;
 const phoneMaxLength = 15;
@@ -41,6 +48,8 @@ UsernameDef.getValidationErrorMessage = (username): string => {
   if (username.length > MAX_USERNAME_LENGTH) {
     return `Username should be less than ${MAX_USERNAME_LENGTH + 1} characters.`;
   }
+
+  return 'Please specify the username.';
 };
 
 const NameStructDef = t.refinement(t.String, (name: string = ''): boolean => {
@@ -136,7 +145,7 @@ CityStructDef.getValidationErrorMessage = (city): string => {
   return 'Please specify your city';
 };
 
-export const getFormStructure = (fields: Field[], defaultTypes) => {
+export const getFormStructure = (fields: Field[], defaultTypes: Object) => {
   const fieldsStructure = fields.reduce((memo, field) => {
     memo[field.name] = defaultTypes[field.type];
     return memo;

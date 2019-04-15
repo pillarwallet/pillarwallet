@@ -48,7 +48,7 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
-    if (process.env['HOBBESUI']) {
+    if (process.env['HOBBESUI']) { // eslint-disable-line dot-notation
       navigate(NavigationActions.navigate({ routeName: 'HOBBESUI_FLOW' }));
       return;
     }

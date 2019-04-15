@@ -80,5 +80,5 @@ export function isValidCityName(cityName: string) {
 
 export function isValidPhone(phone: string) {
   const re = /^\+?\d*$/;
-  return re.test(phone)
+  return re.test(phone);
 }

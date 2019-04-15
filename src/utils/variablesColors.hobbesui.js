@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import map from 'lodash.map';
@@ -8,19 +10,21 @@ import {
   baseColors,
   UIColors,
   brandColors,
-} from './variables'
+} from './variables';
 
 const colorContainer = (colorsToUse) => (
   <Container>
     <ScrollWrapper>
-      <View style={{
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginTop: 60,
-        marginBottom: 20,
-        marginLeft: 20,
-        marginRight: 20,
-      }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          marginTop: 60,
+          marginBottom: 20,
+          marginLeft: 20,
+          marginRight: 20,
+        }}
+      >
         {map(colorsToUse, (color, name) => (
           <View
             key={`view-color-${name}`}

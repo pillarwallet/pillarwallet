@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { Hobbes } from 'HobbesUI';
 import { Container } from 'components/Layout';

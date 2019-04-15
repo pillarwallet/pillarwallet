@@ -49,10 +49,35 @@ export const InputTemplate = (locals: Object) => {
   );
 };
 
-export const InputSwitchTemplate = (locals: Object) => {
+type Config = {
+  fieldDetails: {
+    disabledInput?: boolean,
+    inputType?: string,
+    isVerified?: boolean,
+    includeVerified?: boolean,
+  },
+  inputProps: Object,
+  switchProps: Object,
+  marginTop: string,
+  marginBottom: string,
+  marginLeft: string,
+  marginRight: string,
+};
+
+type Locals = {
+  config: Config,
+  error: string,
+};
+
+export const InputSwitchTemplate = (locals: Locals) => {
   const { config, error: errorMessage } = locals;
   const {
-    fieldDetails: { disabledInput = false, inputType = null, isVerified = false, includeVerified = false },
+    fieldDetails: {
+      disabledInput = false,
+      inputType,
+      isVerified = false,
+      includeVerified = false,
+    },
     inputProps,
     switchProps,
     marginTop,

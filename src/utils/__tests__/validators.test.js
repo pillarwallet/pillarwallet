@@ -24,6 +24,7 @@ import {
   isValidFullname,
   isValidEmail,
   isValidName,
+  isValidCountryName,
   isValidCityName,
   isValidPhone,
 } from '../validators';

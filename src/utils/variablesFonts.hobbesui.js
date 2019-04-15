@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import { View, Text } from 'react-native';
 import map from 'lodash.map';
@@ -9,7 +11,7 @@ import {
   fontSizes,
   spacing,
   fontWeights,
-} from './variables'
+} from './variables';
 
 Hobbes.add({
   parent: 'COMPONENT',
@@ -19,14 +21,16 @@ Hobbes.add({
   component: (
     <Container>
       <ScrollWrapper>
-        <View style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          marginTop: 10,
-          marginBottom: 10,
-          marginLeft: 20,
-          marginRight: 20,
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginTop: 10,
+            marginBottom: 10,
+            marginLeft: 20,
+            marginRight: 20,
+          }}
+        >
           {map(fontSizes, (fontSize, name) => (
             <View
               key={`view-fontVar-${name}`}
@@ -65,14 +69,16 @@ Hobbes.add({
   component: (
     <Container>
       <ScrollWrapper>
-        <View style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          marginTop: 10,
-          marginBottom: 10,
-          marginLeft: 20,
-          marginRight: 20,
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginTop: 10,
+            marginBottom: 10,
+            marginLeft: 20,
+            marginRight: 20,
+          }}
+        >
           {map(spacing, (fontSpacing, name) => (
             <View
               key={`view-fontVar-${name}`}
@@ -112,14 +118,16 @@ Hobbes.add({
   component: (
     <Container>
       <ScrollWrapper>
-        <View style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          marginTop: 10,
-          marginBottom: 10,
-          marginLeft: 20,
-          marginRight: 20,
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginTop: 10,
+            marginBottom: 10,
+            marginLeft: 20,
+            marginRight: 20,
+          }}
+        >
           {map(fontWeights, (fontWeight, name) => (
             <View
               key={`view-fontVar-${name}`}

@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import Header from 'components/Header';
 import { Container } from 'components/Layout';
@@ -7,7 +9,13 @@ import PinCode from 'components/PinCode';
 import ErrorMessage from 'components/ErrorMessage';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 
-const PinCodeUnlockScene = (props) => {
+type Props = {
+  onPinEntered: Function,
+  onForgotPin: Function,
+  walletState?: string,
+}
+
+const PinCodeUnlockScene = (props: Props) => {
   const {
     onPinEntered,
     onForgotPin,

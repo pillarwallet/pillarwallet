@@ -122,7 +122,10 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched } = this.props;
-    // if (!isFetched) return null;
+    const isHobbesUI = !!process.env['HOBBESUI']; // eslint-disable-line dot-notation
+
+    if (!isFetched && !isHobbesUI) return null;
+
     return (
       <RootNavigation
         ref={(node) => {

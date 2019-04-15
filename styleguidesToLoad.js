@@ -1,3 +1,5 @@
+// @flow
+
 import 'utils/variablesColors.hobbesui';
 import 'utils/variablesFonts.hobbesui';
 import 'components/Icon/Icon.hobbesui';
