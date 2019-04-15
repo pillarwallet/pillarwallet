@@ -793,21 +793,21 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - fix/travisXcode10.2updates
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+                  - fix/travisXcode10.2updates
       - stage_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - master
+                  - fix/travisXcode10.2updates
       - stage_android:
           requires:
             - build-and-test
