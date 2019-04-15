@@ -503,7 +503,7 @@ jobs:
           command: |
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
-            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/staging/
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             touch android-s3-URL-qa.txt
             aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$APP_BUILD_NUMBER.apk --region eu-west-2
@@ -751,7 +751,7 @@ jobs:
             export AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/
             touch android-s3-URL-prod.txt
             aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$APP_BUILD_NUMBER.apk --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$APP_BUILD_NUMBER.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
