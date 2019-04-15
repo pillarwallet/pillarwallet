@@ -1246,19 +1246,6 @@ Base64@~0.2.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/Base64/-/Base64-0.2.1.tgz#ba3a4230708e186705065e66babdd4c35cf60028"
   integrity sha1-ujpCMHCOGGcFBl5mur3Uw1z2ACg=
 
-"HobbesUI@file:../../diablo/hobbesui":
-  version "0.0.2"
-  dependencies:
-    lodash.capitalize "^4.2.1"
-    lodash.clone "^4.5.0"
-    lodash.filter "^4.6.0"
-    lodash.findindex "^4.6.0"
-    lodash.foreach "^4.5.0"
-    lodash.groupby "^4.6.0"
-    lodash.isempty "^4.4.0"
-    lodash.map "^4.6.0"
-    styled-components "^3.2.5"
-
 abab@^2.0.0:
   version "2.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/abab/-/abab-2.0.0.tgz#aba0ab4c5eee2d4c79d3487d85450fb2376ebb0f"
@@ -6427,6 +6414,21 @@ hmac-drbg@^1.0.0:
     hash.js "^1.0.3"
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.1"
+
+hobbesui@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/hobbesui/-/hobbesui-0.0.3.tgz#f3ffbe1995b6fbf436e92df6813fef1428c115c0"
+  integrity sha512-NKriD1Arwpj4m97H4f7PmznhBQdeaxsghjDPpqzhM/HxbNsDXptftTiau8r5zG3K2s/P52z6wTVasks7ZLskPA==
+  dependencies:
+    lodash.capitalize "^4.2.1"
+    lodash.clone "^4.5.0"
+    lodash.filter "^4.6.0"
+    lodash.findindex "^4.6.0"
+    lodash.foreach "^4.5.0"
+    lodash.groupby "^4.6.0"
+    lodash.isempty "^4.4.0"
+    lodash.map "^4.6.0"
+    styled-components "^3.2.5"
 
 hoek@4.x.x:
   version "4.2.1"
