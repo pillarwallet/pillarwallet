@@ -57,10 +57,10 @@ import {
   HOBBESUI_FLOW,
 } from 'constants/navigationConstants';
 
-const HobbesUI = (!!process.env['HOBBESUI']) ? // eslint-disable-line dot-notation
-  require('hobbesui') : {};
-
 import AppFlow from './appNavigation';
+
+const HobbesUI = process.env['HOBBESUI'] ? // eslint-disable-line dot-notation
+  require('hobbesui') : {};
 
 const StackNavigatorConfig = {
   navigationOptions: {
