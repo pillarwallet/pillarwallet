@@ -1,0 +1,59 @@
+osx_image: xcode10.2
+language: objective-c
+
+before_install:
+  - sudo pip install awscli
+  - cd $TRAVIS_BUILD_DIR
+  - export APP_BUILD_NUMBER=7799
+  - export NODE_OPTIONS=--max_old_space_size=2048;
+  - npm version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
+  - export buildNumber=$(node -e "console.log(require('./package.json').version);")
+
+jobs:
+  include:
+    - stage: Build and Test
+      script:
+      - curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> $TRAVIS_BUILD_DIR/.npmrc
+      - npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+      - brew install yarn
+      - yarn install
+      - yarn validate
+    - stage: Build and Deploy - iOS Staging
+      script:
+      - rm .env && cp environments/.env.staging ./.env
+      - sed -i.bak "s/_build_number_/$buildNumber/g" .env
+      - sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
+      - sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+      - echo "$buildNumber" >> $TRAVIS_BUILD_DIR/buildNumber.txt
+      - brew install yarn
+      - cd $TRAVIS_BUILD_DIR && yarn install
+      - yes | gem uninstall cocoapods
+      - gem install cocoapods -v 1.5.3
+      - cd $TRAVIS_BUILD_DIR/ios && pod install --verbose
+      - cd $TRAVIS_BUILD_DIR && gem install bundler
+      - cd $TRAVIS_BUILD_DIR/ios && bundle check || bundle install --path vendor/bundle
+      - cd $TRAVIS_BUILD_DIR/ios && bundle update
+      - cd $TRAVIS_BUILD_DIR/ios && bundle exec fastlane deploy_staging APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
+    - stage: Build and Deploy - iOS Prod
+      script:
+      - rm .env && cp environments/.env.production ./.env
+      - sed -i.bak "s/_build_number_/$buildNumber/g" .env
+      - sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
+      - sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+      - echo "$buildNumber" >> $TRAVIS_BUILD_DIR/buildNumber.txt
+      - brew install yarn
+      - cd $TRAVIS_BUILD_DIR && yarn install
+      - yes | gem uninstall cocoapods
+      - gem install cocoapods -v 1.5.3
+      - cd $TRAVIS_BUILD_DIR/ios && pod install --verbose
+      - cd $TRAVIS_BUILD_DIR && gem install bundler
+      - cd $TRAVIS_BUILD_DIR/ios && bundle check || bundle install --path vendor/bundle
+      - cd $TRAVIS_BUILD_DIR/ios && bundle update
+      - cd $TRAVIS_BUILD_DIR/ios && bundle exec fastlane deploy_prod APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Wallet"
+
+stages:
+  - name: Build and Test
+  - name: Build and Deploy - iOS Staging
+    if: branch = fix/travisXcode10.2updates
+  - name: Build and Deploy - iOS Prod
+    if: branch = master
