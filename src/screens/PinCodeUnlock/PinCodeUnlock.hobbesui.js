@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Hobbes } from 'HobbesUI';
+import { Hobbes } from 'hobbesui';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 
 import Scene from './scene.js';

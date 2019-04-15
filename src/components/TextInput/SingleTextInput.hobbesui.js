@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { Alert, View } from 'react-native';
-import { Hobbes } from 'HobbesUI';
+import { Hobbes } from 'hobbesui';
 
 import SingleInput from './SingleInput';
 import TextInput from './TextInput';

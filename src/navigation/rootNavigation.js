@@ -58,7 +58,7 @@ import {
 } from 'constants/navigationConstants';
 
 const HobbesUI = (!!process.env['HOBBESUI']) ? // eslint-disable-line dot-notation
-  require('HobbesUI') : {};
+  require('hobbesui') : {};
 
 import AppFlow from './appNavigation';
 

@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { Hobbes } from 'HobbesUI';
+import { Hobbes } from 'hobbesui';
 import { Container } from 'components/Layout';
 import ProfileImage from './ProfileImage';
 

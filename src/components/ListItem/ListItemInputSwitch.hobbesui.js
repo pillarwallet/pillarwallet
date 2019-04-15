@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Alert } from 'react-native';
-import { Hobbes } from 'HobbesUI';
+import { Hobbes } from 'hobbesui';
 
 import { Container } from 'components/Layout';
 import InputSwitch from './ListItemInputSwitch';
