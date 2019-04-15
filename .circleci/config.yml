@@ -101,7 +101,7 @@ aliases:
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
   macos:
-    xcode: "9.4.0"
+    xcode: "10.2.0"
   environment:
     FL_OUTPUT_DIR: output
     _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
@@ -280,7 +280,7 @@ jobs:
   stage_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.4.0"
+      xcode: "10.2.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -522,7 +522,7 @@ jobs:
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.4.0"
+      xcode: "10.2.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -800,7 +800,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/updatedAndroidRNversion
+                  - develop
       - stage_ios:
           requires:
             - build-and-test

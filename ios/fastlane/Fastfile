@@ -9,9 +9,9 @@ platform :ios do
 
   desc "Release to production TestFlight"
   lane :deploy_prod do |options|
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' $TRAVIS_BUILD_DIR/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' $TRAVIS_BUILD_DIR/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' $TRAVIS_BUILD_DIR/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     match(type: "appstore",
           readonly: true,
@@ -45,9 +45,9 @@ platform :ios do
   lane :deploy_staging do |options|
 
     # insert circleCI's build number as our build number
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' $TRAVIS_BUILD_DIR/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' $TRAVIS_BUILD_DIR/ios/pillarwallet/Info.plist"
-    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' $TRAVIS_BUILD_DIR/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleVersion #{options[:APP_BUILD_NUMBER]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleShortVersionString #{options[:build_number]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
+    sh "/usr/libexec/PlistBuddy -c 'Set :CFBundleDisplayName #{options[:APP_NAME]}' ~/pillarwallet/ios/pillarwallet/Info.plist"
 
     # ensure we don't have automatic code signing set up
     disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
