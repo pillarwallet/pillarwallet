@@ -311,9 +311,10 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                       "flex": 1,
                     },
                     Object {
-                      "alignItems": "flex-end",
+                      "alignItems": "center",
                       "flexBasis": 44,
-                      "flexGrow": 0,
+                      "flexDirection": "row",
+                      "flexGrow": 2,
                       "flexShrink": 0,
                       "justifyContent": "flex-end",
                     },
@@ -347,13 +348,14 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                         "alignItems": "flex-end",
                         "height": 44,
                         "justifyContent": "center",
+                        "marginLeft": 4,
                         "marginRight": -10,
                         "opacity": 1,
                         "paddingBottom": 0,
                         "paddingLeft": 0,
                         "paddingRight": 10,
                         "paddingTop": 0,
-                        "width": 44,
+                        "width": "auto",
                       }
                     }
                   >

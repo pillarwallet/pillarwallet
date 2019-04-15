@@ -20,8 +20,6 @@
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
 
-import { HobbesFlow } from 'HobbesUI';
-
 // screens
 import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
@@ -58,6 +56,9 @@ import {
   FORGOT_PIN,
   HOBBESUI_FLOW,
 } from 'constants/navigationConstants';
+
+const HobbesUI = (!!process.env['HOBBESUI']) ? // eslint-disable-line dot-notation
+  require('HobbesUI') : {};
 
 import AppFlow from './appNavigation';
 
@@ -98,7 +99,7 @@ const authFlow = createStackNavigator({
 }, modalTransition);
 
 const RootNavigation = process.env['HOBBESUI'] ? { // eslint-disable-line dot-notation
-  [HOBBESUI_FLOW]: HobbesFlow,
+  [HOBBESUI_FLOW]: HobbesUI.HobbesFlow,
 } : {
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,

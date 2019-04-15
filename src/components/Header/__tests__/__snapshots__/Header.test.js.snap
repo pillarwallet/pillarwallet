@@ -34,7 +34,7 @@ exports[`Header should render Header correctly 1`] = `
         Object {
           "alignItems": "flex-end",
           "flexBasis": 0,
-          "flexGrow": 1,
+          "flexGrow": 2,
           "flexShrink": 1,
           "justifyContent": "flex-start",
         },
@@ -95,9 +95,10 @@ exports[`Header should render Header correctly 1`] = `
           "flex": 1,
         },
         Object {
-          "alignItems": "flex-end",
+          "alignItems": "center",
           "flexBasis": 0,
-          "flexGrow": 1,
+          "flexDirection": "row",
+          "flexGrow": 2,
           "flexShrink": 1,
           "justifyContent": "flex-end",
         },
