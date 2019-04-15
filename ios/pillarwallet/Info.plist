@@ -77,8 +77,6 @@
 	<string>Allow Pillar Wallet to access your contacts</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Pillar Wallet to use your location</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Pillar Wallet to access your microphone</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Allow Pillar Wallet to access your device&apos;s accelerometer</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
