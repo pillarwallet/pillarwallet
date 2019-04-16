@@ -952,34 +952,34 @@
   dependencies:
     "@types/node" "*"
 
-"@walletconnect/core@^1.0.0-beta.11":
-  version "1.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.0.0-beta.11.tgz#d83b17488cf0f3fff6818009d705081963ad9fbd"
-  integrity sha512-Lh51x4J9yXTS87C0YtNigVRo+3XggStSTH0VlJrwW7l7XFkBJwDCzYwwKyM5h7w91WGlrn6tSjnJl6nE4V2W/w==
+"@walletconnect/core@^1.0.0-beta.12":
+  version "1.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.0.0-beta.12.tgz#d4866f291313700b84e6332b4b8ed7494b2d6dc9"
+  integrity sha512-OJuDebBmJsLSLkZkxA9gDBD4ZJwEUiqfTVr/DCQIgoICt1RZD+MChKbfMOK1w2uFwcpz0KQyAs0W/kCCQ2GMtw==
   dependencies:
-    "@walletconnect/types" "^1.0.0-beta.10"
-    "@walletconnect/utils" "^1.0.0-beta.11"
+    "@walletconnect/types" "^1.0.0-beta.12"
+    "@walletconnect/utils" "^1.0.0-beta.12"
 
-"@walletconnect/react-native@^1.0.0-beta.11":
-  version "1.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0-beta.11.tgz#0b66d1db71553eac792d911e7bbe5fa43fe28a80"
-  integrity sha512-qKMXss2F75K0tgTzaxaC2OcedmGHFS73AbP7r2JmUYLNDz7jePisgebg89+n4tnoy5MmjD0+zRYnZ1UtIWrwQQ==
+"@walletconnect/react-native@^1.0.0-beta.12":
+  version "1.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/@walletconnect/react-native/-/react-native-1.0.0-beta.12.tgz#f3d771e9506684ee47983cab10a9b945189cb715"
+  integrity sha512-j2R/+4sC5nYQ3rqegTHWF1Ja7vc5TkGnpaJBWzd/79sxZQPSrpxBCp4nD20EGujz4dVq3xT/X32LpkKepCpyIg==
   dependencies:
-    "@walletconnect/core" "^1.0.0-beta.11"
-    "@walletconnect/types" "^1.0.0-beta.10"
-    "@walletconnect/utils" "^1.0.0-beta.11"
+    "@walletconnect/core" "^1.0.0-beta.12"
+    "@walletconnect/types" "^1.0.0-beta.12"
+    "@walletconnect/utils" "^1.0.0-beta.12"
 
-"@walletconnect/types@^1.0.0-beta.10":
-  version "1.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.0-beta.11.tgz#e9e751268c73945255484adcbddaabda4a81dab4"
-  integrity sha512-LgO/R5WGUIwbn9Euzwbx2tWC/XtlFVtRR3ulSldsl5wUA+y04XlAcHsirp2b3ebuaaOJGcAnfFdwK3Qa7k5K5g==
+"@walletconnect/types@^1.0.0-beta.12":
+  version "1.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.0-beta.12.tgz#f95789de6e46060043da73a4ffc3a9cb2a088404"
+  integrity sha512-yZHA9ftYiLl1IE7wLEx5lTLtc3cSdJDaytM41zaa6wo7fzt4jQ0tg9xpnjsma7enY2ZyX1o5naty3yHA3bLWHw==
 
-"@walletconnect/utils@^1.0.0-beta.11":
-  version "1.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.0-beta.11.tgz#25fadd17973086df8f10d625161c0c3cb1f61bc1"
-  integrity sha512-El+OVX4T+5xZcfCYunHECkPBcX6AKiuhwxzQ1ElQ9jnujEr6Z1+KP1DptLnAGMfvNKZ/dbJlqh8Y1K0wYV0hOQ==
+"@walletconnect/utils@^1.0.0-beta.12":
+  version "1.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.0-beta.12.tgz#e14eee0184f3a10e773ee9d4c7ab58c45403d2e3"
+  integrity sha512-E0LJouatTv/YleJLyd4BmLc5xV3ph6HuIX2znCKRCxPlufTHvbrmngCkjIrzEFZ7YvL9YXahRMUbxe0FmnXvGw==
   dependencies:
-    "@walletconnect/types" "^1.0.0-beta.10"
+    "@walletconnect/types" "^1.0.0-beta.12"
     lodash.isnumber "^3.0.3"
 
 "@webassemblyjs/ast@1.5.9":
