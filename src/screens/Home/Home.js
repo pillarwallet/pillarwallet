@@ -529,6 +529,18 @@ class HomeScreen extends React.Component<Props, State> {
                 fontSize={24}
                 onPress={() => this.goToProfile()}
               />
+              <IconButton
+                icon="scan"
+                color={baseColors.electricBlue}
+                fontSize={fontSizes.extraLarge}
+                onPress={this.toggleQRScanner}
+                iconText="SCAN"
+                style={{
+                  marginTop: 5,
+                  marginRight: -2,
+                  alignItems: 'center',
+                }}
+              />
             </HomeHeaderRight>
           </HomeHeaderRow>
           <HomeHeaderRow>
