@@ -59,8 +59,12 @@ import {
 
 import AppFlow from './appNavigation';
 
-const HobbesUI = process.env['HOBBESUI'] ? // eslint-disable-line dot-notation
-  require('hobbesui') : {};
+console.log('damn isTestEnv', global.isTestEnv) // eslint-disable-line no-console
+let HobbesUI = {};
+if (!global.isTestEnv) {
+  HobbesUI = process.env['HOBBESUI'] ? // eslint-disable-line dot-notation
+    require('hobbesui') : {};
+}
 
 const StackNavigatorConfig = {
   navigationOptions: {
@@ -98,13 +102,20 @@ const authFlow = createStackNavigator({
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
 
-const RootNavigation = process.env['HOBBESUI'] ? { // eslint-disable-line dot-notation
-  [HOBBESUI_FLOW]: HobbesUI.HobbesFlow,
-} : {
+console.log('damn processNav', global.isTestEnv) // eslint-disable-line no-console
+let RootNavigation = {
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,
 };
+
+if (!global.isTestEnv) {
+  if (process.env['HOBBESUI']) { // eslint-disable-line dot-notation
+    RootNavigation = {
+      [HOBBESUI_FLOW]: HobbesUI.HobbesFlow,
+    }
+  }
+}
 
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator(RootNavigation);
 

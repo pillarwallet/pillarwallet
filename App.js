@@ -122,7 +122,6 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched } = this.props;
-    let isHobbesUI = false;
 
     /*
      * the reason for this validation is because process.env is being set on utils/shim.js
@@ -136,6 +135,8 @@ class App extends React.Component<Props, *> {
      *
      * which is caused when we tried to assign a variable to process.env, i.e. 'HOBBESUI'
     * */
+    console.log(global.isTestEnv) // eslint-disable-line no-console
+    let isHobbesUI = false;
     if (!global.isTestEnv) {
       isHobbesUI = !!process.env['HOBBESUI']; // eslint-disable-line dot-notation
     }
