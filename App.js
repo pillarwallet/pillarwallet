@@ -122,7 +122,6 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched } = this.props;
-    const isTestEnv = !!process.env['IS_TEST']; // eslint-disable-line dot-notation
     let isHobbesUI = false;
 
     /*
@@ -137,7 +136,7 @@ class App extends React.Component<Props, *> {
      *
      * which is caused when we tried to assign a variable to process.env, i.e. 'HOBBESUI'
     * */
-    if (!isTestEnv) {
+    if (!global.isTestEnv) {
       isHobbesUI = !!process.env['HOBBESUI']; // eslint-disable-line dot-notation
     }
 
