@@ -25,17 +25,9 @@ import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
-if (typeof process === 'undefined') {
-  global.process = require('process')
-} else {
-  const bProcess = require('process')
-  for (var p in bProcess) {
-    if (!(p in process)) {
-      process[p] = bProcess[p]
-    }
-  }
-}
-process.env['IS_TEST'] = 'TEST'; // eslint-disable-line dot-notation
+const testEnv = process.env || {};
+testEnv['IS_TEST'] = 'TEST'; // eslint-disable-line dot-notation
+process.env = testEnv;
 
 jest.mock('NativeAnimatedHelper');
 
