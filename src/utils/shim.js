@@ -31,12 +31,7 @@ if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer
 
 // global.location = global.location || { port: 80 }
 const isDev = typeof __DEV__ === 'boolean' && __DEV__
-if (global.isTestEnv) {
-  process.env['NODE_ENV'] = 'test'
-} else {
-  process.env['NODE_ENV'] = isDev ? 'development' : 'production'
-}
-console.log(process.env['NODE_ENV']) // eslint-disable-line no-console
+process.env['NODE_ENV'] = isDev ? 'development' : 'production'
 if (typeof localStorage !== 'undefined') {
   localStorage.debug = isDev ? '*' : ''
 }
