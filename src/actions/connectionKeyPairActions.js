@@ -146,6 +146,21 @@ export const updateOldConnections = (oldConnectionCount: number) => {
   };
 };
 
+export const prependConnectionKeyPairs = (connKeyPairs: Object[] = []) => {
+  return async (dispatch: Function, getState: Function) => {
+    const {
+      connectionKeyPairs: { data: connectionKeyPairs },
+    } = getState();
+
+    const resultConnectionKeys = connKeyPairs.concat(connectionKeyPairs);
+    await dispatch({
+      type: UPDATE_CONNECTION_KEY_PAIRS,
+      payload: resultConnectionKeys,
+    });
+    await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
+  };
+};
+
 export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, walletId: string) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
