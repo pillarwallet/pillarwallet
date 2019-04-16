@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 aliases:
   - &restore_pod_cache
     restore_cache:
@@ -17,12 +17,12 @@ aliases:
     restore_cache:
       name: Restore cache
       keys:
-        - ios-gems-{{ checksum "./ios/Gemfile.lock" }}
+        - ios-gems-{{ checksum "./ios/Gemfile" }}
   - &restore_gems_cache_android
     restore_cache:
       name: Restore cache
       keys:
-        - android-gems-{{ checksum "./android/Gemfile.lock" }}
+        - android-gems-{{ checksum "./android/Gemfile" }}
   - &install_gems_ios
     run:
       name: Bundle install
@@ -39,12 +39,12 @@ aliases:
         BUNDLE_RETRY: 3
   - &save_gems_cache_ios
     save_cache:
-      key: ios-gems-{{ checksum "./ios/Gemfile.lock" }}
+      key: ios-gems-{{ checksum "./ios/Gemfile" }}
       paths:
         - vendor/bundle
   - &save_gems_cache_android
     save_cache:
-      key: android-gems-{{ checksum "./android/Gemfile.lock" }}
+      key: android-gems-{{ checksum "./android/Gemfile" }}
       paths:
         - vendor/bundle
   - &node_restore_cache
@@ -815,14 +815,14 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/pipeline-upgrades
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/pipeline-upgrades
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
