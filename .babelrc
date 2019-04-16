@@ -13,14 +13,17 @@
       }
     ],
     [
-      "babel-plugin-styled-components",
-    ],
-    [
-      "transform-inline-environment-variables"
-    ],
+      "babel-plugin-styled-components"
+    ]
   ],
   "env": {
     "development": {
+      "plugins": [
+        "babel-plugin-styled-components",
+        "transform-inline-environment-variables"
+      ]
+    },
+    "test": {
       "plugins": [
         "babel-plugin-styled-components"
       ]
