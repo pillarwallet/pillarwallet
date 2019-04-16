@@ -36,6 +36,7 @@ if (global.isTestEnv) {
 } else {
   process.env['NODE_ENV'] = isDev ? 'development' : 'production'
 }
+console.log(process.env['NODE_ENV']) // eslint-disable-line no-console
 if (typeof localStorage !== 'undefined') {
   localStorage.debug = isDev ? '*' : ''
 }
