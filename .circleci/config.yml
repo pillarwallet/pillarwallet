@@ -105,7 +105,7 @@ aliases:
           sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
-# Default for iOS Build machine
+#Default for iOS Build machine
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
   macos:
@@ -117,7 +117,7 @@ defaults_ios: &defaults_ios
   resource_class: large
   shell: /bin/bash --login -o pipefail
 
-# Default for Android Build machine
+#Default for Android Build machine
 defaults_android: &defaults_android
     working_directory: ~/pillarwallet
     resource_class: large
