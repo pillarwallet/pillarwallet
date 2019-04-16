@@ -108,16 +108,23 @@ export const onWalletConnectSessionApproval = (peerId: string) => {
     try {
       const { pending, connectors } = getState().walletConnect;
 
+      console.log('[onWalletConnectSessionApproval] peerId', peerId);
+
       const matchingPending = pending.filter(c => c.peerId === peerId);
 
       if (matchingPending && matchingPending.length) {
         const connector = matchingPending[0];
 
+        console.log('[onWalletConnectSessionApproval] connector', connector);
+
         const { data } = getState().wallet;
+
+        console.log('[onWalletConnectSessionApproval] data.address', data.address);
+        console.log('[onWalletConnectSessionApproval] chainId', 3);
 
         connector.approveSession({
           accounts: [data.address],
-          chainId: 1,
+          chainId: 3,
         });
 
         const newRequests = pending.filter(c => c.peerId !== peerId);

@@ -168,14 +168,12 @@ const removeAppStateChangeListener = callback => {
 const iconWallet = require('assets/icons/icon_wallet_new.png');
 const iconPeople = require('assets/icons/icon_people_new.png');
 const iconHome = require('assets/icons/icon_home_new.png');
-// const iconScan = require('assets/icons/icon_scan_new.png');
 // const iconMarket = require('assets/icons/icon_marketplace_new.png');
 const iconChat = require('assets/icons/icon_chat_new.png');
 
 const iconWalletActive = require('assets/icons/icon_wallet_active.png');
 const iconPeopleActive = require('assets/icons/icon_people_active.png');
 const iconHomeActive = require('assets/icons/icon_home_active.png');
-// const iconScanActive = require('assets/scans/icon_scan_active.png');
 // const iconMarketActive = require('assets/icons/icon_marketplace_active.png');
 const iconChatActive = require('assets/icons/icon_chat_active.png');
 
@@ -355,13 +353,6 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: () => ({
         tabBarIcon: tabBarIcon(iconPeopleActive, iconPeople),
         tabBarLabel: tabBarLabel('People'),
-      }),
-    },
-    [SCAN_TAB]: {
-      screen: walletConnectFlow,
-      navigationOptions: () => ({
-        tabBarIcon: tabBarIcon(iconHomeActive, iconHome),
-        tabBarLabel: tabBarLabel('Scan'),
       }),
     },
     [HOME_TAB]: {
