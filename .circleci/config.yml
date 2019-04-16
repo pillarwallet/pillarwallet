@@ -17,12 +17,12 @@ aliases:
     restore_cache:
       name: Restore cache
       keys:
-        - ios-gems-{{ checksum "Gemfile.lock" }}
+        - ios-gems-{{ checksum "./ios/Gemfile.lock" }}
   - &restore_gems_cache_android
     restore_cache:
       name: Restore cache
       keys:
-        - android-gems-{{ checksum "Gemfile.lock" }}
+        - android-gems-{{ checksum "./android/Gemfile.lock" }}
   - &install_gems_ios
     run:
       name: Bundle install
@@ -39,12 +39,12 @@ aliases:
         BUNDLE_RETRY: 3
   - &save_gems_cache_ios
     save_cache:
-      key: ios-gems-{{ checksum "Gemfile.lock" }}
+      key: ios-gems-{{ checksum "./ios/Gemfile.lock" }}
       paths:
         - vendor/bundle
   - &save_gems_cache_android
     save_cache:
-      key: android-gems-{{ checksum "Gemfile.lock" }}
+      key: android-gems-{{ checksum "./android/Gemfile.lock" }}
       paths:
         - vendor/bundle
   - &node_restore_cache
@@ -58,7 +58,15 @@ aliases:
     run:
       name: set Registry to use Artifactory
       command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-  - &node_install
+  - &ios_latest_yarn
+     run:
+      name: Install latest yarn version
+      command: npm install -g yarn
+  - &android_latest_yarn
+     run:
+      name: Install latest yarn version
+      command: sudo npm install -g yarn
+  - &yarn_install
      run:
       name: Install node dependencies
       command: yarn install
@@ -114,7 +122,7 @@ defaults_android: &defaults_android
     working_directory: ~/pillarwallet
     resource_class: large
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-28-node8-alpha
     environment:
       TERM: dumb
       _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
@@ -143,7 +151,8 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *node_install
+      - *ios_latest_yarn
+      - *yarn_install
       - *node_save_cache
       - run:
           name: Run validation
@@ -155,10 +164,16 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+
+      - run:
+          name: Install AWS CLI
+          command: pip3 install awscli
+
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *node_install
+      - *ios_latest_yarn
+      - *yarn_install
       - *node_save_cache
 
       - *restore_gems_cache_ios
@@ -208,7 +223,8 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *node_install
+      - *android_latest_yarn
+      - *yarn_install
       - *node_save_cache
 
       - *restore_gems_cache_android
@@ -218,15 +234,11 @@ jobs:
       - *gradle_restore_cache
 
       - run:
-          name: Install Python
-          command: sudo apt-get update && sudo apt-get install python
-      - run:
           name: Install Python dependencies
-          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+          command: sudo apt-get update && sudo apt-get install -y python3-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
-
+          command: sudo pip3 install awscli
       - run:
           name: Get keystore file
           command: |
@@ -244,7 +256,6 @@ jobs:
             yes | sdkmanager --update || exit 0
       - *gradle_depencencies
       - *gradle_save_cache
-
       - run:
           name: Set staging environment
           command: |
@@ -289,9 +300,10 @@ jobs:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: sudo pip3 install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -314,6 +326,9 @@ jobs:
       - run:
             name: set Registry to use Artifactory
             command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+
+      - *ios_latest_yarn
+
       - run:
           name: Install node dependencies
           command: yarn install
@@ -390,7 +405,7 @@ jobs:
     working_directory: ~/pillarwallet/android
     resource_class: large
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-28-node8-alpha
     environment:
       TERM: dumb
       _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
@@ -402,15 +417,18 @@ jobs:
           path: ~/pillarwallet
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+
+      - *android_latest_yarn
+
       - run:
           name: Install Python
-          command: sudo apt-get update && sudo apt-get install python
+          command: sudo apt-get update && sudo apt-get install python3
       - run:
           name: Install Python dependencies
-          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+          command: sudo apt-get update && sudo apt-get install -y python3-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: sudo pip3 install awscli
       - run:
           name: Get keystore file
           command: |
@@ -450,12 +468,12 @@ jobs:
           paths:
             - ~/pillarwallet/nodes_modules
       - restore_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "./android/Gemfile" }}
       - run:
           name: Bundle install
           command: bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "./android/Gemfile" }}
           paths:
             - vendor/bundle
       - restore_cache:
@@ -535,7 +553,7 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: sudo pip3 install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -635,7 +653,7 @@ jobs:
     working_directory: ~/pillarwallet/android
     resource_class: large
     docker:
-      - image: circleci/android:api-26-node8-alpha
+      - image: circleci/android:api-28-node8-alpha
     environment:
       TERM: dumb
       _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
@@ -649,13 +667,13 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Install Python
-          command: sudo apt-get update && sudo apt-get install python
+          command: sudo apt-get update && sudo apt-get install python3
       - run:
           name: Install Python dependencies
-          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+          command: sudo apt-get update && sudo apt-get install -y python3-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: sudo pip3 install awscli
       - run:
           name: Get keystore file
           command: |
@@ -797,14 +815,14 @@ workflows:
           filters:
             branches:
               only:
-                  - develop
+                  - feature/pipeline-upgrades
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - develop
+                  - feature/pipeline-upgrades
       - stage_ios:
           requires:
             - build-and-test
