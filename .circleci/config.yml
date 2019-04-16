@@ -1,4 +1,27 @@
 version: 2.1
+executors:
+  ios-executor:
+    working_directory: ~/pillarwallet
+    macos:
+      xcode: "10.2.0"
+    environment:
+      FL_OUTPUT_DIR: output
+      _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
+    resource_class: large
+    shell: /bin/bash --login -o pipefail
+  android-executor:
+    working_directory: ~/pillarwallet
+    resource_class: large
+    docker:
+      - image: circleci/android:api-28-node8-alpha
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+
 aliases:
   - &restore_pod_cache
     restore_cache:
@@ -134,7 +157,7 @@ defaults_android: &defaults_android
 
 jobs:
   build-and-test:
-    <<: *defaults_ios
+    executor: ios-executor
     steps:
       - checkout
       - run:
@@ -159,7 +182,7 @@ jobs:
           command: yarn validate
 
   dev_build_ios:
-    <<: *defaults_ios
+    executor: ios-executor
     steps:
       - checkout
       - attach_workspace: &attach_workspace
@@ -215,7 +238,7 @@ jobs:
           destination: app_build
 
   dev_build_android:
-    <<: *defaults_android
+    executor: android-executor
     steps:
       - checkout
       - attach_workspace: &attach_workspace
