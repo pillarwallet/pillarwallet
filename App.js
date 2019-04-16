@@ -122,24 +122,7 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched } = this.props;
-
-    /*
-     * the reason for this validation is because process.env is being set on utils/shim.js
-     * and that setting can't be modified, and several validations run around
-     * _DEV_ && process.env['NODE_ENV'] === 'development'
-     *
-     * on the local machine there's no problem, however circleCI stops working with following
-     * issue:
-     *
-     * 'Property left of AssignmentExpression expected node to be of a type ["LVal"] but instead got "StringLiteral"'
-     *
-     * which is caused when we tried to assign a variable to process.env, i.e. 'HOBBESUI'
-    * */
-    console.log(global.isTestEnv) // eslint-disable-line no-console
-    let isHobbesUI = false;
-    if (!global.isTestEnv) {
-      isHobbesUI = !!process.env['HOBBESUI']; // eslint-disable-line dot-notation
-    }
+    const isHobbesUI = !!process.env['HOBBESUI']; // eslint-disable-line dot-notation
 
     if (!isFetched && !isHobbesUI) return null;
 

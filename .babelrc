@@ -22,6 +22,11 @@
         "babel-plugin-styled-components",
         "transform-inline-environment-variables"
       ]
+    },
+    "test": {
+      "plugins": [
+        "babel-plugin-styled-components"
+      ]
     }
   }
 }
