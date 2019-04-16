@@ -61,7 +61,6 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import SendCollectibleAssetsScreen from 'screens/SendCollectible/SendCollectibleAssets';
-import WalletConnectScanQRCode from 'screens/WalletConnect/WalletConnectScanQRCode';
 import WalletConnectSessionRequest from 'screens/WalletConnect/WalletConnectSessionRequest';
 import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallRequest';
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
@@ -99,7 +98,6 @@ import {
   CONTACT,
   HOME,
   HOME_TAB,
-  SCAN_TAB,
   CONNECTION_REQUESTS,
   CHANGE_PIN_FLOW,
   CHANGE_PIN_CURRENT_PIN,
@@ -134,7 +132,6 @@ import {
   SEND_COLLECTIBLE_FROM_CONTACT_FLOW,
   SEND_COLLECTIBLE_ASSETS,
   WALLETCONNECT_FLOW,
-  WALLETCONNECT_SCAN_QRCODE_SCREEN,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
   WALLETCONNECT_PIN_CONFIRM_SCREEN,
@@ -250,7 +247,6 @@ peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
-    [WALLETCONNECT_SCAN_QRCODE_SCREEN]: WalletConnectScanQRCode,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
     [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
     [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
