@@ -122,7 +122,8 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched } = this.props;
-    const isHobbesUI = HOBBESUI === 'HOBBESUI' && process.env['NODE_ENV'] === 'development';
+    const isHobbesUI = HOBBESUI === 'HOBBESUI' &&
+      process.env['NODE_ENV'] === 'development'; // eslint-disable-line dot-notation
 
     if (!isFetched && !isHobbesUI) return null;
 

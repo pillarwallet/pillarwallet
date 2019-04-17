@@ -60,7 +60,8 @@ import {
 
 import AppFlow from './appNavigation';
 
-const isHobbesUI = HOBBESUI === 'HOBBESUI' && process.env['NODE_ENV'] === 'development';
+const isHobbesUI = HOBBESUI === 'HOBBESUI' &&
+  process.env['NODE_ENV'] === 'development'; // eslint-disable-line dot-notation
 const HobbesUI = isHobbesUI ? require('hobbesui') : {};
 
 const StackNavigatorConfig = {
