@@ -25,10 +25,12 @@ import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
+import type { Asset } from 'models/Asset';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
+import { sanitizeHex } from 'utils/common';
 import { fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
@@ -37,6 +39,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
   contacts: Object[],
+  supportedAssets: Asset[],
 };
 
 type State = {
@@ -70,9 +73,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
+    const request = { ...navigation.getParam('request', {}), note: this.state.note };
     navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-      transactionPayload,
+      request,
     });
   };
 
@@ -81,35 +84,48 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { contacts, session, navigation } = this.props;
     const {
-      amount,
-      to,
-      txFeeInWei,
-      symbol,
-    } = navigation.getParam('transactionPayload', {});
+      contacts, session, supportedAssets, navigation,
+    } = this.props;
+    const {
+      to, gasPrice, gasLimit, value, data,
+    } = navigation.getParam('request', {});
+
+    let symbol = 'ETH';
+
+    const amount = utils.formatEther(value).toString();
+
+    if (sanitizeHex(data) !== '0x') {
+      if (data.toLowerCase().startsWith('0xa9059cbb')) {
+        const matchingAssets = supportedAssets.filter(asset => asset.address === to);
+        if (matchingAssets && matchingAssets.length) {
+          symbol = matchingAssets[0].symbol; // eslint-disable-line
+        }
+      }
+    }
+
+    const txFeeInWei = utils.bigNumberify(gasLimit).mul(utils.bigNumberify(gasPrice));
 
     const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
     const recipientUsername = getUserName(contact);
     return (
       <React.Fragment>
         <Container>
-          <Header
-            onBack={() => this.props.navigation.goBack(null)}
-            title="send"
-          />
+          <Header onBack={() => this.props.navigation.goBack(null)} title="send" />
           <ScrollWrapper regularPadding>
             <Title subtitle title="Review and Confirm" />
             <LabeledRow>
               <Label>Amount</Label>
-              <Value>{amount} {symbol}</Value>
+              <Value>
+                {amount} {symbol}
+              </Value>
             </LabeledRow>
-            {!!recipientUsername &&
-            <LabeledRow>
-              <Label>Recipient Username</Label>
-              <Value>{recipientUsername}</Value>
-            </LabeledRow>
-            }
+            {!!recipientUsername && (
+              <LabeledRow>
+                <Label>Recipient Username</Label>
+                <Value>{recipientUsername}</Value>
+              </LabeledRow>
+            )}
             <LabeledRow>
               <Label>Recipient Address</Label>
               <Value>{to}</Value>
@@ -118,22 +134,22 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
               <Label>Est. Network Fee</Label>
               <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
             </LabeledRow>
-            {!!recipientUsername &&
-            <TextInput
-              inputProps={{
-                onChange: (text) => this.handleNoteChange(text),
-                value: this.state.note,
-                autoCapitalize: 'none',
-                multiline: true,
-                numberOfLines: 3,
-                placeholder: 'Add a note to this transaction',
-              }}
-              inputType="secondary"
-              labelBigger
-              noBorder
-              keyboardAvoidance
-            />
-            }
+            {!!recipientUsername && (
+              <TextInput
+                inputProps={{
+                  onChange: text => this.handleNoteChange(text),
+                  value: this.state.note,
+                  autoCapitalize: 'none',
+                  multiline: true,
+                  numberOfLines: 3,
+                  placeholder: 'Add a note to this transaction',
+                }}
+                inputType="secondary"
+                labelBigger
+                noBorder
+                keyboardAvoidance
+              />
+            )}
           </ScrollWrapper>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
@@ -147,11 +163,13 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
+  assets: { supportedAssets },
   contacts: { data: contacts },
   session: { data: session },
 }) => ({
   contacts,
   session,
+  supportedAssets,
 });
 
 export default connect(mapStateToProps)(WalletConnectCallRequestScreen);

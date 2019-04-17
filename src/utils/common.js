@@ -107,6 +107,15 @@ export function formatFullAmount(amount: string | number): string {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 }
 
+export function sanitizeHex(hex: string): string {
+  hex = hex.substring(0, 2) === '0x' ? hex.substring(2) : hex;
+  if (hex === '') {
+    return '';
+  }
+  hex = hex.length % 2 !== 0 ? `0${hex}` : hex;
+  return `0x${hex}`;
+}
+
 export function getCurrencySymbol(currency: string): string {
   const currencies = {
     USD: '$',

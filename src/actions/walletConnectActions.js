@@ -62,141 +62,6 @@ const getNativeOptions = async () => {
   return nativeOptions;
 };
 
-export const onWalletConnectSessionRequest = (uri: string) => {
-  return async (dispatch: Function, getState: () => Object) => {
-    try {
-      const { pending } = getState().walletConnect;
-
-      const nativeOptions = await getNativeOptions();
-
-      const connector = new WalletConnect({ uri }, nativeOptions);
-
-      const newPending = [...pending, connector];
-
-      dispatch({ type: WALLETCONNECT_SESSION_REQUEST, payload: newPending });
-
-      connector.on(SESSION_REQUEST_EVENT, (error: any, payload: any) => {
-        if (error) {
-          dispatch({
-            type: WALLETCONNECT_ERROR,
-            payload: {
-              code: SESSION_REQUEST_ERROR,
-              message: error.toString(),
-            },
-          });
-        }
-        const { peerId, peerMeta } = payload.params[0];
-
-        navigate(
-          NavigationActions.navigate({ routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN, params: { peerId, peerMeta } }),
-        );
-      });
-    } catch (e) {
-      dispatch({
-        type: WALLETCONNECT_ERROR,
-        payload: {
-          code: SESSION_REQUEST_ERROR,
-          message: e.toString(),
-        },
-      });
-    }
-  };
-};
-
-export const onWalletConnectSessionApproval = (peerId: string) => {
-  return async (dispatch: Function, getState: () => Object) => {
-    try {
-      const { pending, connectors } = getState().walletConnect;
-
-      console.log('[onWalletConnectSessionApproval] peerId', peerId);
-
-      const matchingPending = pending.filter(c => c.peerId === peerId);
-
-      if (matchingPending && matchingPending.length) {
-        const connector = matchingPending[0];
-
-        console.log('[onWalletConnectSessionApproval] connector', connector);
-
-        const { data } = getState().wallet;
-
-        console.log('[onWalletConnectSessionApproval] data.address', data.address);
-        console.log('[onWalletConnectSessionApproval] chainId', 3);
-
-        connector.approveSession({
-          accounts: [data.address],
-          chainId: 3,
-        });
-
-        const newPending = pending.filter(c => c.peerId !== peerId);
-        const newConnectors = [...connectors, connector];
-
-        dispatch({
-          type: WALLETCONNECT_SESSION_APPROVED,
-          payload: {
-            pending: newPending,
-            connectors: newConnectors,
-          },
-        });
-      } else {
-        dispatch({
-          type: WALLETCONNECT_ERROR,
-          payload: {
-            code: SESSION_REQUEST_ERROR,
-            message: 'No Matching WalletConnect Requests Found',
-          },
-        });
-      }
-    } catch (e) {
-      dispatch({
-        type: WALLETCONNECT_ERROR,
-        payload: {
-          code: SESSION_REQUEST_ERROR,
-          message: e.toString(),
-        },
-      });
-    }
-  };
-};
-
-export const onWalletConnectSessionRejection = (peerId: string) => {
-  return async (dispatch: Function, getState: () => Object) => {
-    try {
-      const { pending } = getState().walletConnect;
-
-      const matchingPending = pending.filter(c => c.peerId === peerId);
-
-      if (matchingPending && matchingPending.length) {
-        const connector = matchingPending[0];
-
-        connector.rejectSession();
-
-        const newPending = pending.filter(c => c.peerId !== peerId);
-
-        dispatch({
-          type: WALLETCONNECT_SESSION_REJECTED,
-          payload: newPending,
-        });
-      } else {
-        dispatch({
-          type: WALLETCONNECT_ERROR,
-          payload: {
-            code: SESSION_REQUEST_ERROR,
-            message: 'No Matching WalletConnect Requests Found',
-          },
-        });
-      }
-    } catch (e) {
-      dispatch({
-        type: WALLETCONNECT_ERROR,
-        payload: {
-          code: SESSION_REQUEST_ERROR,
-          message: e.toString(),
-        },
-      });
-    }
-  };
-};
-
 export const onWalletConnectCallRequest = (peerId: string, payload: Object) => {
   return async (dispatch: Function, getState: () => Object) => {
     try {
@@ -322,6 +187,136 @@ export const onWalletConnectSubscribeToEvents = (peerId: string) => {
         payload: {
           code: SESSION_REQUEST_ERROR,
           message: error.toString(),
+        },
+      });
+    }
+  };
+};
+
+export const onWalletConnectSessionRequest = (uri: string) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    try {
+      const { pending } = getState().walletConnect;
+
+      const nativeOptions = await getNativeOptions();
+
+      const connector = new WalletConnect({ uri }, nativeOptions);
+
+      const newPending = [...pending, connector];
+
+      dispatch({ type: WALLETCONNECT_SESSION_REQUEST, payload: newPending });
+
+      connector.on(SESSION_REQUEST_EVENT, (error: any, payload: any) => {
+        if (error) {
+          dispatch({
+            type: WALLETCONNECT_ERROR,
+            payload: {
+              code: SESSION_REQUEST_ERROR,
+              message: error.toString(),
+            },
+          });
+        }
+        const { peerId, peerMeta } = payload.params[0];
+
+        navigate(
+          NavigationActions.navigate({ routeName: WALLETCONNECT_SESSION_REQUEST_SCREEN, params: { peerId, peerMeta } }),
+        );
+      });
+    } catch (e) {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: SESSION_REQUEST_ERROR,
+          message: e.toString(),
+        },
+      });
+    }
+  };
+};
+
+export const onWalletConnectSessionApproval = (peerId: string) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    try {
+      const { pending, connectors } = getState().walletConnect;
+
+      const matchingPending = pending.filter(c => c.peerId === peerId);
+
+      if (matchingPending && matchingPending.length) {
+        const connector = matchingPending[0];
+
+        const { data } = getState().wallet;
+
+        connector.approveSession({
+          accounts: [data.address],
+          chainId: 3,
+        });
+
+        const newPending = pending.filter(c => c.peerId !== peerId);
+        const newConnectors = [...connectors, connector];
+
+        dispatch({
+          type: WALLETCONNECT_SESSION_APPROVED,
+          payload: {
+            pending: newPending,
+            connectors: newConnectors,
+          },
+        });
+
+        dispatch(onWalletConnectSubscribeToEvents(peerId));
+      } else {
+        dispatch({
+          type: WALLETCONNECT_ERROR,
+          payload: {
+            code: SESSION_REQUEST_ERROR,
+            message: 'No Matching WalletConnect Requests Found',
+          },
+        });
+      }
+    } catch (e) {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: SESSION_REQUEST_ERROR,
+          message: e.toString(),
+        },
+      });
+    }
+  };
+};
+
+export const onWalletConnectSessionRejection = (peerId: string) => {
+  return async (dispatch: Function, getState: () => Object) => {
+    try {
+      const { pending } = getState().walletConnect;
+
+      const matchingPending = pending.filter(c => c.peerId === peerId);
+
+      if (matchingPending && matchingPending.length) {
+        const connector = matchingPending[0];
+
+        connector.rejectSession();
+
+        const newPending = pending.filter(c => c.peerId !== peerId);
+
+        dispatch({
+          type: WALLETCONNECT_SESSION_REJECTED,
+          payload: newPending,
+        });
+      } else {
+        dispatch({
+          type: WALLETCONNECT_ERROR,
+          payload: {
+            code: SESSION_REQUEST_ERROR,
+            message: 'No Matching WalletConnect Requests Found',
+          },
+        });
+      }
+    } catch (e) {
+      dispatch({
+        type: WALLETCONNECT_ERROR,
+        payload: {
+          code: SESSION_REQUEST_ERROR,
+          message: e.toString(),
         },
       });
     }
