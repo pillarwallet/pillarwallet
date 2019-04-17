@@ -13,7 +13,7 @@ executors:
 
   android-executor:
     working_directory: ~/pillarwallet
-    resource_class: medium
+    resource_class: large
     docker:
       - image: circleci/android:api-26-node8-alpha
     environment:
