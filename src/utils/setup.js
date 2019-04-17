@@ -29,7 +29,3 @@ YellowBox.ignoreWarnings([
 ]);
 import 'utils/shim';
 import'crypto';
-
-if (global.isTestEnv) {
-  global.process.env['NODE_ENV'] = 'test';
-}
