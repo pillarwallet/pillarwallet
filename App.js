@@ -26,7 +26,7 @@ import { Provider, connect } from 'react-redux';
 import RootNavigation from 'navigation/rootNavigation';
 import { Sentry } from 'react-native-sentry';
 import { setTopLevelNavigator } from 'services/navigation';
-import { SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
+import { HOBBESUI, SENTRY_DSN, BUILD_TYPE } from 'react-native-dotenv';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import { updateSessionNetworkStatusAction, checkDBConflictsAction } from 'actions/sessionActions';
 import { updateOfflineQueueNetworkStatusAction } from 'actions/offlineApiActions';
@@ -122,7 +122,7 @@ class App extends React.Component<Props, *> {
 
   render() {
     const { isFetched } = this.props;
-    const isHobbesUI = !!process.env['HOBBESUI']; // eslint-disable-line dot-notation
+    const isHobbesUI = HOBBESUI === 'HOBBESUI' && process.env['NODE_ENV'] === 'development';
 
     if (!isFetched && !isHobbesUI) return null;
 

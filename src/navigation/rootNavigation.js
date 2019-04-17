@@ -34,6 +34,7 @@ import PinCodeConfirmationScreen from 'screens/PinCodeConfirmation';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import WelcomeScreen from 'screens/Welcome';
 import ForgotPinScreen from 'screens/ForgotPin';
+import { HOBBESUI } from 'react-native-dotenv';
 
 import { modalTransition } from 'utils/common';
 
@@ -59,8 +60,8 @@ import {
 
 import AppFlow from './appNavigation';
 
-const HobbesUI = !!process.env['HOBBESUI'] ? // eslint-disable-line dot-notation
-  require('hobbesui') : {};
+const isHobbesUI = HOBBESUI === 'HOBBESUI' && process.env['NODE_ENV'] === 'development';
+const HobbesUI = isHobbesUI ? require('hobbesui') : {};
 
 const StackNavigatorConfig = {
   navigationOptions: {
@@ -98,7 +99,7 @@ const authFlow = createStackNavigator({
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
 
-const RootNavigation = !!process.env['HOBBESUI'] ? { // eslint-disable-line dot-notation
+const RootNavigation = isHobbesUI ? {
   [HOBBESUI_FLOW]: HobbesUI.HobbesFlow,
 } : {
   [ONBOARDING_FLOW]: onBoardingFlow,

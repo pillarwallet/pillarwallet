@@ -11,7 +11,6 @@
     "babel-jest": "^23.4.2",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-styled-components": "^1.5.1",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "babel-runtime": "7.0.0-beta.3",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
@@ -48,7 +47,6 @@
   },
   "scripts": {
     "start": "react-native start --reset-cache",
-    "hobbesui": "HOBBESUI=HOBBESUI react-native start --reset-cache",
     "android": "react-native run-android --variant=devDebug",
     "ios": "react-native run-ios",
     "generate:ios:ipa": "mkdir  ./ios/build/Build/Products/Release-iphoneos/Payload && cp -R ./ios/build/Build/Products/Release-iphoneos/pillarwallet.app ./ios/build/Build/Products/Release-iphoneos/Payload && cd ./ios/build/Build/Products/Release-iphoneos/ && /usr/bin/zip -r  pillarwallet.ipa Payload && rm -rf Payload && mv pillarwallet.ipa ../../../..",

@@ -36,6 +36,7 @@ import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
+import { HOBBESUI } from 'react-native-dotenv';
 import { saveDbAction } from './dbActions';
 
 const storage = Storage.getInstance('db');
@@ -48,7 +49,8 @@ export const initAppAndRedirectAction = (appState: string, platform: string) => 
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
 
-    if (process.env['HOBBESUI']) { // eslint-disable-line dot-notation
+    const isHobbesUI = HOBBESUI === 'HOBBESUI' && process.env['NODE_ENV'] === 'development';
+    if (isHobbesUI) { // eslint-disable-line dot-notation
       navigate(NavigationActions.navigate({ routeName: 'HOBBESUI_FLOW' }));
       return;
     }

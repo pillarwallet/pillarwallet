@@ -44,6 +44,14 @@ Like yarn start, but also attempts to open your app in the iOS Simulator if you'
 
 _note_: after any compilation (i.e. after linking a native library) please restart the metro server
 
+## Rapid Development UI
+Using [HobbesUI](https://github.com/diablourbano/HobbesUI) (if you've used Storybook, this is almost the same
+but for ReactNative) you can focus on the UI development.
+
+Please check the documentation to understand how to use it, (there's a few sample codes already in this project).
+
+To start the app in HobbesUI mode, open `.env` file and add/update `HOBBESUI=HOBBESUI` variable and run `yarn start` or `HOBBESUI=SOMETHINGELSE` to load the regular app.
+
 ## Debugging
 
 First, you need to install the [React Native Debugger](https://github.com/jhen0409/react-native-debugger)
