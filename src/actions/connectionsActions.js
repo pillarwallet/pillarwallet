@@ -84,6 +84,8 @@ export const updateConnectionsAction = () => {
             connectionKey: resConn.sourceUserAccessKey,
             profileImage: resConn.targetUserInfo.profileImage,
             type: TYPE_SENT,
+            sourceIdentityKey: resConn.sourceIdentityKey,
+            targetIdentityKey: resConn.targetIdentityKey,
             createdAt: resConn.createdAt ? Date.parse(resConn.createdAt) / 1000 : null,
             sourceUserIdentityKeys: {
               sourceIdentityKey: resConn.sourceIdentityKey,
