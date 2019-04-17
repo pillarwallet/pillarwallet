@@ -169,9 +169,10 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
     await dispatch(saveDbAction('connectionKeyPairs', { connectionKeyPairs: resultConnectionKeys }, true));
 
 
-    // TODO: Check all cases if old -> new connection gets updated but map returns false for the immediate update.
-    await dispatch(updateOldConnections(oldConnectionsCount));
-    if (lastConnectionKeyIndex === -1) {
+    if (oldConnectionsCount > 0) {
+      await dispatch(updateOldConnections(oldConnectionsCount));
+    }
+    if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
       await dispatch(restoreAccessTokensAction(walletId));
       await dispatch(mapIdentityKeysAction(currentConnectionsCount));
     }

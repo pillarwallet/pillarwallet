@@ -21,6 +21,7 @@ import { Sentry } from 'react-native-sentry';
 import { generateAccessKey } from 'utils/invitations';
 import type { ApiUser } from 'models/Contacts';
 import { uniqBy } from 'utils/common';
+import { getIdentityKeyPairs } from 'utils/connections';
 import {
   ADD_INVITATION,
   TYPE_SENT,
@@ -37,6 +38,8 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { UPDATE_ACCESS_TOKENS } from 'constants/accessTokensConstants';
 import { getExistingChatsAction } from 'actions/chatActions';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
+import { updateConnectionsAction } from 'actions/connectionsActions';
+import { mapIdentityKeysAction } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
 export const fetchOldInviteNotificationsAction = () => {
@@ -125,18 +128,20 @@ export const fetchOldInviteNotificationsAction = () => {
     dispatch(saveDbAction('contacts', { contacts: updatedContacts }, true));
     dispatch(saveDbAction('accessTokens', { accessTokens: updatedAccessTokens }, true));
 
-    dispatch({
+    await dispatch({
       type: UPDATE_INVITATIONS,
       payload: updatedInvitations,
     });
-    dispatch({
+    await dispatch({
       type: UPDATE_CONTACTS,
       payload: updatedContacts,
     });
-    dispatch({
+    await dispatch({
       type: UPDATE_ACCESS_TOKENS,
       payload: updatedAccessTokens,
     });
+
+    await dispatch(updateConnectionsAction());
     dispatch(getExistingChatsAction());
   };
 };
@@ -200,13 +205,23 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       invitations: { data: invitations },
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
+      connectionKeyPairs: { data: connectionKeyPairs },
+      connectionIdentityKeys: { data: connectionIdentityKeys },
     } = getState();
     const sourceUserAccessKey = generateAccessKey();
+
+    const {
+      sourceIdentityKey,
+      targetIdentityKey,
+      connIdKeyResult,
+    } = getIdentityKeyPairs(invitation.id, connectionIdentityKeys, connectionKeyPairs);
 
     const acceptedInvitation = await api.acceptOldInvitation(
       invitation.id,
       invitation.connectionKey,
       sourceUserAccessKey,
+      sourceIdentityKey,
+      targetIdentityKey,
       walletId,
     );
     if (!acceptedInvitation) {
@@ -216,6 +231,10 @@ export const acceptOldInvitationAction = (invitation: Object) => {
       }));
       dispatch(fetchOldInviteNotificationsAction());
       return;
+    }
+
+    if (!connIdKeyResult) {
+      await dispatch(mapIdentityKeysAction(1));
     }
 
     const updatedInvitations = invitations.filter(({ id }) => id !== invitation.id);

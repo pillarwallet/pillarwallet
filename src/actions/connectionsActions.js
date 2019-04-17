@@ -56,8 +56,8 @@ export const updateConnectionsAction = () => {
           ethAddress: resConn.targetUserInfo.ethAddress,
           username: resConn.targetUserInfo.username,
           profileImage: resConn.targetUserInfo.profileImage,
-          createdAt: resConn.createdAt,
-          updatedAt: resConn.updatedAt,
+          createdAt: resConn.createdAt ? Date.parse(resConn.createdAt) / 1000 : null,
+          updatedAt: resConn.updatedAt ? Date.parse(resConn.updatedAt) / 1000 : null,
         };
         contacts.push(contact);
       } else if (resConn.status === 'pending') {
@@ -72,6 +72,10 @@ export const updateConnectionsAction = () => {
               sourceIdentityKey: resConn.sourceIdentityKey,
               targetIdentityKey: resConn.targetIdentityKey,
             },
+            targetUserIdentityKeys: {
+              sourceIdentityKey: invitation.sourceIdentityKey,
+              targetIdentityKey: invitation.targetIdentityKey,
+            },
           };
         } else {
           invi = {
@@ -80,7 +84,7 @@ export const updateConnectionsAction = () => {
             connectionKey: resConn.sourceUserAccessKey,
             profileImage: resConn.targetUserInfo.profileImage,
             type: TYPE_SENT,
-            createdAt: resConn.createdAt,
+            createdAt: resConn.createdAt ? Date.parse(resConn.createdAt) / 1000 : null,
             sourceUserIdentityKeys: {
               sourceIdentityKey: resConn.sourceIdentityKey,
               targetIdentityKey: resConn.targetIdentityKey,

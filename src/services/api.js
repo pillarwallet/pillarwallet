@@ -428,6 +428,8 @@ SDKWrapper.prototype.acceptOldInvitation = function (
   targetUserId: string,
   targetUserAccessKey: string,
   accessKey: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
@@ -435,6 +437,10 @@ SDKWrapper.prototype.acceptOldInvitation = function (
       sourceUserAccessKey: accessKey,
       targetUserId,
       targetUserAccessKey,
+      sourceUserIdentityKeys: {
+        sourceIdentityKey,
+        targetIdentityKey,
+      },
       walletId,
     }))
     .then(({ data }) => data)
@@ -471,13 +477,15 @@ SDKWrapper.prototype.sendInvitation = function (
 
 SDKWrapper.prototype.cancelInvitation = function (
   targetUserId: string,
-  accessKey: string,
+  sourceIdentityKey: string,
+  targetIdentityKey: string,
   walletId: string,
 ) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connectionV2.cancel({
       targetUserId,
-      accessKey,
+      sourceIdentityKey,
+      targetIdentityKey,
       walletId,
     }))
     .then(({ data }) => data)
