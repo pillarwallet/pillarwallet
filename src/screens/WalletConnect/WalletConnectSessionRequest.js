@@ -77,10 +77,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props, State> {
   render() {
     const { navigation } = this.props;
     const {
-      description,
-      url,
-      icons,
-      name,
+      description, url, icons, name,
     } = navigation.getParam('peerMeta', {});
 
     const icon = icons && icons.length ? icons[0] : null;
@@ -88,10 +85,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props, State> {
     return (
       <React.Fragment>
         <Container>
-          <Header
-            onBack={() => this.props.navigation.goBack(null)}
-            title="walletconnect"
-          />
+          <Header onBack={() => this.props.navigation.goBack(null)} title="walletconnect" />
           <ScrollWrapper regularPadding>
             <Title subtitle title="WalletConnect Request" />
             {!!icon && (
@@ -111,18 +105,18 @@ class WalletConnectSessionRequestScreen extends React.Component<Props, State> {
               <Label>Name</Label>
               <Value>{name || 'Unknown'}</Value>
             </LabeledRow>
-            {!!description &&
-            <LabeledRow>
-              <Label>Description</Label>
-              <Value>{description}</Value>
-            </LabeledRow>
-            }
-            {!!url &&
-            <LabeledRow>
-              <Label>Url</Label>
-              <Value>{url}</Value>
-            </LabeledRow>
-            }
+            {!!description && (
+              <LabeledRow>
+                <Label>Description</Label>
+                <Value>{description}</Value>
+              </LabeledRow>
+            )}
+            {!!url && (
+              <LabeledRow>
+                <Label>Url</Label>
+                <Value>{url}</Value>
+              </LabeledRow>
+            )}
           </ScrollWrapper>
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
@@ -136,7 +130,12 @@ class WalletConnectSessionRequestScreen extends React.Component<Props, State> {
   }
 }
 
-export default connect(null, {
-  onWalletConnectSessionApproval,
-  onWalletConnectSessionRejection,
-})(WalletConnectSessionRequestScreen);
+const mapDispatchToProps = dispatch => ({
+  onWalletConnectSessionApproval: peerId => dispatch(onWalletConnectSessionApproval(peerId)),
+  onWalletConnectSessionRejection: peerId => dispatch(onWalletConnectSessionRejection(peerId)),
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(WalletConnectSessionRequestScreen);

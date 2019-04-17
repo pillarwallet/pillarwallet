@@ -71,9 +71,9 @@ export const onWalletConnectSessionRequest = (uri: string) => {
 
       const connector = new WalletConnect({ uri }, nativeOptions);
 
-      const newRequests = [...pending, connector];
+      const newPending = [...pending, connector];
 
-      dispatch({ type: WALLETCONNECT_SESSION_REQUEST, payload: newRequests });
+      dispatch({ type: WALLETCONNECT_SESSION_REQUEST, payload: newPending });
 
       connector.on(SESSION_REQUEST_EVENT, (error: any, payload: any) => {
         if (error) {
@@ -127,13 +127,13 @@ export const onWalletConnectSessionApproval = (peerId: string) => {
           chainId: 3,
         });
 
-        const newRequests = pending.filter(c => c.peerId !== peerId);
+        const newPending = pending.filter(c => c.peerId !== peerId);
         const newConnectors = [...connectors, connector];
 
         dispatch({
           type: WALLETCONNECT_SESSION_APPROVED,
           payload: {
-            pending: newRequests,
+            pending: newPending,
             connectors: newConnectors,
           },
         });
@@ -170,11 +170,11 @@ export const onWalletConnectSessionRejection = (peerId: string) => {
 
         connector.rejectSession();
 
-        const newRequests = pending.filter(c => c.peerId !== peerId);
+        const newPending = pending.filter(c => c.peerId !== peerId);
 
         dispatch({
           type: WALLETCONNECT_SESSION_REJECTED,
-          payload: newRequests,
+          payload: newPending,
         });
       } else {
         dispatch({
@@ -215,11 +215,11 @@ export const onWalletConnectCallRequest = (peerId: string, payload: Object) => {
           payload,
         };
 
-        const newRequests = [...requests, request];
+        const newPending = [...requests, request];
 
         dispatch({
           type: WALLETCONNECT_CALL_REQUEST,
-          payload: newRequests,
+          payload: newPending,
         });
 
         navigate(
