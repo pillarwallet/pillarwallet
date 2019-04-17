@@ -890,9 +890,9 @@
     xmldoc "^0.4.0"
 
 "@sentry/cli@^1.36.1":
-  version "1.39.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/cli/-/cli-1.39.1.tgz#a707af5027257df79f1d2dc7731fd14494b5bd3e"
-  integrity sha1-pwevUCclffefHS3Hcx/RRJS1vT4=
+  version "1.41.0"
+  resolved "https://registry.yarnpkg.com/@sentry/cli/-/cli-1.41.0.tgz#0300019076924cb075d631cf52e3757d8f49c51f"
+  integrity sha512-+yMncHRfEDa18T9XIyNkmkUdw+Qc3eQCtP9dlJ+Voqo2jccOkOqMKjt/3HDtapkPCYiqepxQkb7xg1omYXyAhw==
   dependencies:
     fs-copy-file-sync "^1.1.1"
     https-proxy-agent "^2.2.1"
@@ -903,8 +903,8 @@
 
 "@sentry/wizard@^0.12.1":
   version "0.12.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@sentry/wizard/-/wizard-0.12.1.tgz#e63bb94c26479e958418dfdce6387ad39b31bdbc"
-  integrity sha1-5ju5TCZHnpWEGN/c5jh605sxvbw=
+  resolved "https://registry.yarnpkg.com/@sentry/wizard/-/wizard-0.12.1.tgz#e63bb94c26479e958418dfdce6387ad39b31bdbc"
+  integrity sha512-kSqGcETUHR6n3DlyU/gcCwu+fcDVveEFXmLqGvib7c4nlV/ZwxT0J9TQi2u3Ux5EZQjYjTsdtvw6PYXvPXRPZA==
   dependencies:
     "@sentry/cli" "^1.36.1"
     chalk "^2.4.1"
@@ -1548,6 +1548,11 @@ ansi-regex@^4.0.0:
   version "4.0.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/ansi-regex/-/ansi-regex-4.0.0.tgz#70de791edf021404c3fd615aa89118ae0432e5a9"
   integrity sha1-cN55Ht8CFATD/WFaqJEYrgQy5ak=
+
+ansi-regex@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-4.1.0.tgz#8b9f8f08cf1acb843756a839ca8c7e3168c51997"
+  integrity sha512-1apePfXM1UOSqw0o9IiFAovVz9M5S1Dg+4TrDwfMewQ6p/rmMueb7tWZjQ1rx4Loy1ArBggoqGpfqqdI4rondg==
 
 ansi-styles@^2.1.0, ansi-styles@^2.2.1:
   version "2.2.1"
@@ -2765,7 +2770,7 @@ base64-js@0.0.8:
 
 base64-js@1.1.2:
   version "1.1.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/base64-js/-/base64-js-1.1.2.tgz#d6400cac1c4c660976d90d07a04351d89395f5e8"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.1.2.tgz#d6400cac1c4c660976d90d07a04351d89395f5e8"
   integrity sha1-1kAMrBxMZgl22Q0HoENR2JOV9eg=
 
 base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.2.3:
@@ -3500,8 +3505,8 @@ chardet@^0.4.0:
 
 chardet@^0.7.0:
   version "0.7.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
-  integrity sha1-kAlISfCTfy7twkJdDSip5fDLrZ4=
+  resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
+  integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
 charenc@~0.0.1:
   version "0.0.2"
@@ -5490,8 +5495,8 @@ external-editor@^2.0.1, external-editor@^2.0.4, external-editor@^2.1.0:
 
 external-editor@^3.0.3:
   version "3.0.3"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/external-editor/-/external-editor-3.0.3.tgz#5866db29a97826dbe4bf3afd24070ead9ea43a27"
-  integrity sha1-WGbbKal4Jtvkvzr9JAcOrZ6kOic=
+  resolved "https://registry.yarnpkg.com/external-editor/-/external-editor-3.0.3.tgz#5866db29a97826dbe4bf3afd24070ead9ea43a27"
+  integrity sha512-bn71H9+qWoOQKyZDo25mOMVpSmXROAsTJVVVYzrrtol3d4y+AsKjf4Iwl2Q+IuT0kFSQ1qo166UuIwqYq7mGnA==
   dependencies:
     chardet "^0.7.0"
     iconv-lite "^0.4.24"
@@ -5894,8 +5899,8 @@ from2@^2.1.0:
 
 fs-copy-file-sync@^1.1.1:
   version "1.1.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/fs-copy-file-sync/-/fs-copy-file-sync-1.1.1.tgz#11bf32c096c10d126e5f6b36d06eece776062918"
-  integrity sha1-Eb8ywJbBDRJuX2s20G7s53YGKRg=
+  resolved "https://registry.yarnpkg.com/fs-copy-file-sync/-/fs-copy-file-sync-1.1.1.tgz#11bf32c096c10d126e5f6b36d06eece776062918"
+  integrity sha512-2QY5eeqVv4m2PfyMiEuy9adxNP+ajf+8AR05cEi+OAzPcOj90hvFImeZhTmKLBgSd9EvG33jsD7ZRxsx9dThkQ==
 
 fs-extra@^0.22.1:
   version "0.22.1"
@@ -6837,9 +6842,9 @@ inquirer@^5.2.0:
     through "^2.3.6"
 
 inquirer@^6.2.0:
-  version "6.2.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/inquirer/-/inquirer-6.2.2.tgz#46941176f65c9eb20804627149b743a218f25406"
-  integrity sha1-RpQRdvZcnrIIBGJxSbdDohjyVAY=
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-6.3.1.tgz#7a413b5e7950811013a3db491c61d1f3b776e8e7"
+  integrity sha512-MmL624rfkFt4TG9y/Jvmt8vdmOo836U7Y0Hxr2aFk3RelZEGX4Igk0KabWrcaaZaTv9uzglOqWh1Vly+FAWAXA==
   dependencies:
     ansi-escapes "^3.2.0"
     chalk "^2.4.2"
@@ -6852,7 +6857,7 @@ inquirer@^6.2.0:
     run-async "^2.2.0"
     rxjs "^6.4.0"
     string-width "^2.1.0"
-    strip-ansi "^5.0.0"
+    strip-ansi "^5.1.0"
     through "^2.3.6"
 
 internal-ip@1.2.0:
@@ -10196,10 +10201,17 @@ opn@^3.0.2:
   dependencies:
     object-assign "^4.0.1"
 
-opn@^5.1.0, opn@^5.4.0:
+opn@^5.1.0:
   version "5.4.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/opn/-/opn-5.4.0.tgz#cb545e7aab78562beb11aa3bfabc7042e1761035"
   integrity sha1-y1Reeqt4VivrEao7+rxwQuF2EDU=
+  dependencies:
+    is-wsl "^1.1.0"
+
+opn@^5.4.0:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/opn/-/opn-5.5.0.tgz#fc7164fab56d235904c51c3b27da6758ca3b9bfc"
+  integrity sha512-PqHpggC9bLV0VeWcdKhkpxY+3JTzetLSqTCWL/z/tFIbI6G8JCjondXklT1JinczLz2Xib62sSp0T/gKT4KksA==
   dependencies:
     is-wsl "^1.1.0"
 
@@ -10628,7 +10640,7 @@ please-upgrade-node@^3.1.1:
 
 plist@2.0.1:
   version "2.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/plist/-/plist-2.0.1.tgz#0a32ca9481b1c364e92e18dc55c876de9d01da8b"
+  resolved "https://registry.yarnpkg.com/plist/-/plist-2.0.1.tgz#0a32ca9481b1c364e92e18dc55c876de9d01da8b"
   integrity sha1-CjLKlIGxw2TpLhjcVch23p0B2os=
   dependencies:
     base64-js "1.1.2"
@@ -11296,7 +11308,7 @@ process@~0.5.1:
 
 progress@2.0.0:
   version "2.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
+  resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
   integrity sha1-ihvjZr+Pwj2yvSPxDG/pILQ4nR8=
 
 progress@^2.0.0:
@@ -11378,7 +11390,7 @@ proxy-addr@~2.0.4:
 
 proxy-from-env@^1.0.0:
   version "1.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/proxy-from-env/-/proxy-from-env-1.0.0.tgz#33c50398f70ea7eb96d21f7b817630a55791c7ee"
+  resolved "https://registry.yarnpkg.com/proxy-from-env/-/proxy-from-env-1.0.0.tgz#33c50398f70ea7eb96d21f7b817630a55791c7ee"
   integrity sha1-M8UDmPcOp+uW0h97gXYwpVeRx+4=
 
 prr@~0.0.0:
@@ -11512,8 +11524,8 @@ querystringify@~1.0.0:
 
 r2@^2.0.1:
   version "2.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/r2/-/r2-2.0.1.tgz#94cd802ecfce9a622549c8182032d8e4a2b2e612"
-  integrity sha1-lM2ALs/OmmIlScgYIDLY5KKy5hI=
+  resolved "https://registry.yarnpkg.com/r2/-/r2-2.0.1.tgz#94cd802ecfce9a622549c8182032d8e4a2b2e612"
+  integrity sha512-EEmxoxYCe3LHzAUhRIRxdCKERpeRNmlLj6KLUSORqnK6dWl/K5ShmDGZqM2lRZQeqJgF+wyqk0s1M7SWUveNOQ==
   dependencies:
     caseless "^0.12.0"
     node-fetch "^2.0.0-alpha.8"
@@ -11570,8 +11582,8 @@ range-parser@^1.0.3, range-parser@~1.2.0:
 
 raven-js@^3.24.2:
   version "3.27.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/raven-js/-/raven-js-3.27.0.tgz#9f47c03e17933ce756e189f3669d49c441c1ba6e"
-  integrity sha1-n0fAPheTPOdW4YnzZp1JxEHBum4=
+  resolved "https://registry.yarnpkg.com/raven-js/-/raven-js-3.27.0.tgz#9f47c03e17933ce756e189f3669d49c441c1ba6e"
+  integrity sha512-vChdOL+yzecfnGA+B5EhEZkJ3kY3KlMzxEhShKh6Vdtooyl0yZfYNFQfYzgMf2v4pyQa+OTZ5esTxxgOOZDHqw==
 
 raw-body@2.3.3:
   version "2.3.3"
@@ -11924,10 +11936,10 @@ react-native-scrypt@1.0.0, react-native-scrypt@^1.0.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-scrypt/-/react-native-scrypt-1.0.0.tgz#c397c951fa53b0a6b82f6da980bb3b090cd961e4"
   integrity sha1-w5fJUfpTsKa4L22pgLs7CQzZYeQ=
 
-react-native-sentry@^0.39.0:
-  version "0.39.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-sentry/-/react-native-sentry-0.39.1.tgz#61fc1214515bea614f03aa9f76fee1b48aae3671"
-  integrity sha1-YfwSFFFb6mFPA6qfdv7htIquNnE=
+react-native-sentry@^0.42.0:
+  version "0.42.0"
+  resolved "https://registry.yarnpkg.com/react-native-sentry/-/react-native-sentry-0.42.0.tgz#9cd59659d9b6cd36d6fc4c48f50613cd82cde25f"
+  integrity sha512-Nt3/yDSiK0QCtuWMEX04e4DJ3sWyMbjUPiiRNs3omD0rCzt51i4F5/fORDz7aMuYH2tSUw6RWCfJmxc3ILvx7Q==
   dependencies:
     "@sentry/wizard" "^0.12.1"
     raven-js "^3.24.2"
@@ -12238,8 +12250,8 @@ react@^16.8.6:
 
 read-env@^1.3.0:
   version "1.3.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/read-env/-/read-env-1.3.0.tgz#e26e1e446992b3216e9a3c6f6ac51064fe91fdff"
-  integrity sha1-4m4eRGmSsyFumjxvasUQZP6R/f8=
+  resolved "https://registry.yarnpkg.com/read-env/-/read-env-1.3.0.tgz#e26e1e446992b3216e9a3c6f6ac51064fe91fdff"
+  integrity sha512-DbCgZ8oHwZreK/E2E27RGk3EUPapMhYGSGIt02k9sX6R3tCFc4u4tkltKvkCvzEQ3SOLUaiYHAnGb+TdsnPp0A==
   dependencies:
     camelcase "5.0.0"
 
@@ -12936,8 +12948,8 @@ rxjs@^5.5.2:
 
 rxjs@^6.4.0:
   version "6.4.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rxjs/-/rxjs-6.4.0.tgz#f3bb0fe7bda7fb69deac0c16f17b50b0b8790504"
-  integrity sha1-87sP572n+2nerAwW8XtQsLh5BQQ=
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.4.0.tgz#f3bb0fe7bda7fb69deac0c16f17b50b0b8790504"
+  integrity sha512-Z9Yfa11F6B9Sg/BK9MnqnQ+aQYicPLtilXBp2yUtDt2JRCE0h26d33EnfO3ZxoNxG0T92OUucP3Ct7cpfkdFfw==
   dependencies:
     tslib "^1.9.0"
 
@@ -13241,7 +13253,7 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
 
 simple-plist@^0.2.1:
   version "0.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/simple-plist/-/simple-plist-0.2.1.tgz#71766db352326928cf3a807242ba762322636723"
+  resolved "https://registry.yarnpkg.com/simple-plist/-/simple-plist-0.2.1.tgz#71766db352326928cf3a807242ba762322636723"
   integrity sha1-cXZts1IyaSjPOoByQrp2IyJjZyM=
   dependencies:
     bplist-creator "0.0.7"
@@ -13727,12 +13739,12 @@ strip-ansi@^4.0.0:
   dependencies:
     ansi-regex "^3.0.0"
 
-strip-ansi@^5.0.0:
-  version "5.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/strip-ansi/-/strip-ansi-5.0.0.tgz#f78f68b5d0866c20b2c9b8c61b5298508dc8756f"
-  integrity sha1-949otdCGbCCyybjGG1KYUI3IdW8=
+strip-ansi@^5.1.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-5.2.0.tgz#8c9a536feb6afc962bdfa5b104a5091c1ad9c0ae"
+  integrity sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA==
   dependencies:
-    ansi-regex "^4.0.0"
+    ansi-regex "^4.1.0"
 
 strip-bom@3.0.0, strip-bom@^3.0.0:
   version "3.0.0"
@@ -14312,8 +14324,8 @@ type-is@~1.6.16:
 
 typedarray-to-buffer@^3.1.2:
   version "3.1.5"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/typedarray-to-buffer/-/typedarray-to-buffer-3.1.5.tgz#a97ee7a9ff42691b9f783ff1bc5112fe3fca9080"
-  integrity sha1-qX7nqf9CaRufeD/xvFES/j/KkIA=
+  resolved "https://registry.yarnpkg.com/typedarray-to-buffer/-/typedarray-to-buffer-3.1.5.tgz#a97ee7a9ff42691b9f783ff1bc5112fe3fca9080"
+  integrity sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
   dependencies:
     is-typedarray "^1.0.0"
 
@@ -14603,7 +14615,7 @@ uuid@2.0.1:
 
 uuid@3.0.1:
   version "3.0.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.0.1.tgz#6544bba2dfda8c1cf17e629a3a305e2bb1fee6c1"
   integrity sha1-ZUS7ot/ajBzxfmKaOjBeK7H+5sE=
 
 uuid@3.2.1:
@@ -15174,9 +15186,9 @@ xcode@^2.0.0:
     simple-plist "^1.0.0"
     uuid "^3.3.2"
 
-"xcode@https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b":
+"xcode@git+https://github.com/apache/cordova-node-xcode.git#e7646f0680d509b590b839e567c217590451505b":
   version "1.0.1-dev"
-  resolved "https://github.com/apache/cordova-node-xcode#e7646f0680d509b590b839e567c217590451505b"
+  resolved "git+https://github.com/apache/cordova-node-xcode.git#e7646f0680d509b590b839e567c217590451505b"
   dependencies:
     simple-plist "^0.2.1"
     uuid "3.0.1"
