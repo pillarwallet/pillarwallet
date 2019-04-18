@@ -161,7 +161,7 @@
     "react-native-parsed-text": "^0.0.21",
     "react-native-permissions": "^1.1.1",
     "react-native-qrcode-svg": "^5.1.2",
-    "react-native-randombytes": "^3.5.2",
+    "react-native-randombytes": "3.2.0",
     "react-native-scrypt": "^1.0.0",
     "react-native-sentry": "^0.39.0",
     "react-native-shadow": "^1.2.2",
