@@ -17,16 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { ethers, utils } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
-import ethers from 'ethers';
-import { getRandomInt } from 'utils/common';
+import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { getEthereumProvider, getRandomInt } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 
 const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
-  return mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+  return mnemonicPhrase || utils.HDNode.entropyToMnemonic(utils.randomBytes(16));
 }
 
 export function generateWordsToValidate(numWordsToGenerate: number, maxWords: number) {
@@ -48,4 +49,11 @@ export async function getSaltedPin(pin: string, dispatch: Function): Promise<str
     await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
   }
   return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
+}
+
+export async function decryptWallet(encryptedWallet: Object, saltedPin: string, options?: Object) {
+  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  let wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
+  wallet = wallet.connect(provider);
+  return wallet;
 }

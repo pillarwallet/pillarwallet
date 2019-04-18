@@ -17,9 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import { getSaltedPin } from 'utils/wallet';
 import merge from 'lodash.merge';
 import {
   DECRYPT_WALLET,
@@ -43,6 +41,7 @@ import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import { LOG_OUT } from 'constants/authConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { delay } from 'utils/common';
+import { getSaltedPin, decryptWallet } from 'utils/wallet';
 import Storage from 'services/storage';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import ChatService from 'services/chat';
@@ -73,7 +72,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     try {
       let wallet;
       if (!touchID) {
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+        wallet = await decryptWallet(encryptedWallet, saltedPin);
       } else {
         let walletAddress = encryptedWallet.address;
         if (walletAddress.indexOf('0x') !== 0) {
@@ -194,7 +193,8 @@ export const checkPinAction = (
     await delay(100);
     const saltedPin = await getSaltedPin(pin, dispatch);
     try {
-      const wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin, options);
+      // const wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin); // , options
+      const wallet = await decryptWallet(encryptedWallet, saltedPin); // , options
       dispatch({
         type: DECRYPT_WALLET,
         payload: {
@@ -223,12 +223,9 @@ export const changePinAction = (newPin: string, currentPin: string) => {
     });
     await delay(50);
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
-    const wallet = await ethers.Wallet.RNfromEncryptedWallet(
-      JSON.stringify(encryptedWallet),
-      currentSaltedPin,
-      {
-        mnemonic: true,
-      });
+    const wallet = await decryptWallet(encryptedWallet, currentSaltedPin, {
+      mnemonic: true,
+    });
 
     const newSaltedPin = await getSaltedPin(newPin, dispatch);
     const newEncryptedWallet = await wallet.RNencrypt(newSaltedPin, { scrypt: { N: 16384 } })
