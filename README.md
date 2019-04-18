@@ -62,6 +62,9 @@ Start your application an open Reactotron, that's it!
 
 There's one change, instead of adding `console.log('something to log')` you should use `Reactotron.log('something to log')`
 
+#### Android
+For android you'd probably need to execute following command `adb reverse tcp:9090 tcp:9090`
+
 **Network Requests**
 
 If you head to the `Network` and find your XHR requests are not being logged, you will notice that you are unable to see any.
