@@ -24,7 +24,6 @@ import com.tradle.react.UdpSocketsModule;
 import com.peel.react.TcpSocketsModule;
 import com.peel.react.rnos.RNOSModule;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
-import com.robinpowered.react.Intercom.IntercomPackage;
 import com.tradle.react.UdpSocketsModule;
 
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
@@ -36,6 +35,7 @@ import java.util.List;
 import cl.json.RNSharePackage;
 import cl.json.ShareApplication;
 import io.fabric.sdk.android.Fabric;
+import com.robinpowered.react.Intercom.IntercomPackage;
 import io.intercom.android.sdk.Intercom;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
