@@ -1,1 +1,0 @@
-To create the shared libraries run ndk-build from inside the jni directory
