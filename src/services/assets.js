@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Contract, utils } from 'ethers';
+import { Contract, ethers, utils } from 'ethers';
 import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
 import { Sentry } from 'react-native-sentry';
@@ -71,7 +71,6 @@ export function transferERC20(options: ERC20TransferOptions) {
     decimals = 18,
     nonce,
   } = options;
-  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, wallet);
   if (decimals > 0) {
     return contract.transfer(to, utils.parseUnits(amount.toString(), decimals), { nonce });
@@ -85,11 +84,10 @@ export async function transferERC721(options: ERC721TransferOptions) {
     from,
     to,
     tokenId,
-    wallet,
+    wallet: walletInstance,
     nonce,
   } = options;
-  wallet.provider = getEthereumProvider(COLLECTIBLES_NETWORK);
-
+  const wallet = walletInstance.connect(getEthereumProvider(COLLECTIBLES_NETWORK));
   const code = await wallet.provider.getCode(contractAddress).then((result) => result);
 
   // first 4 bytes of the encoded signature for a lookup in the contract code
@@ -137,7 +135,6 @@ export function transferETH(options: ETHTransferOptions) {
     to,
     nonce,
   };
-  wallet.provider = getEthereumProvider(NETWORK_PROVIDER);
   return wallet.sendTransaction(trx);
 }
 
