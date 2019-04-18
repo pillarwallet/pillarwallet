@@ -87,6 +87,8 @@
 	<string>Allow Pillar Wallet to access your reminders</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Allow Pillar Wallet recognize speech</string>
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string>Allow Pillar Wallet to always access the location of your device</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>PillarIcons.ttf</string>
