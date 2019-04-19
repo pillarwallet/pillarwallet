@@ -26,7 +26,8 @@ import { ImageCacheManager } from 'react-native-cached-image';
 import { baseColors, fontSizes } from 'utils/variables';
 import { syncContactAction } from 'actions/contactsActions';
 import { fetchContactTransactionsAction } from 'actions/historyActions';
-import { Container, ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
+import ContainerWithBottomSheet from 'components/Layout/ContainerWithBottomSheet';
 import { SEND_TOKEN_FROM_CONTACT_FLOW } from 'constants/navigationConstants';
 import { TRANSACTIONS } from 'constants/activityConstants';
 import { CHAT, ACTIVITY } from 'constants/tabsConstants';
@@ -34,7 +35,6 @@ import Header from 'components/Header';
 import ProfileImage from 'components/ProfileImage';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
-import BottomSheet from 'components/BottomSheet';
 import ChatTab from 'components/ChatTab';
 import Tabs from 'components/Tabs';
 import type { ApiUser } from 'models/Contacts';
@@ -92,7 +92,6 @@ type State = {
   manageContactType: string,
   activeTab: string,
   isSheetOpen: boolean,
-  screenHeight: number,
   forceOpen: boolean,
 };
 
@@ -113,7 +112,6 @@ class Contact extends React.Component<Props, State> {
       showManageContactModal: false,
       showConfirmationModal: false,
       manageContactType: '',
-      screenHeight: 0,
       activeTab: 'CHAT',
       isSheetOpen: shouldOpenSheet,
       forceOpen: shouldOpenSheet,
@@ -230,7 +228,6 @@ class Contact extends React.Component<Props, State> {
       showManageContactModal,
       showConfirmationModal,
       manageContactType,
-      screenHeight,
       activeTab,
       forceOpen,
     } = this.state;
@@ -267,13 +264,38 @@ class Contact extends React.Component<Props, State> {
     ];
 
     return (
-      <Container
+      <ContainerWithBottomSheet
         inset={{ bottom: 0 }}
-        onLayout={(event) => {
-          this.setState({ screenHeight: event.nativeEvent.layout.height });
-        }}
-        innerStyle={{ paddingBottom: 215 }}
         color={baseColors.white}
+        hideSheet={!isAccepted}
+        bottomSheetProps={{
+          forceOpen,
+          initialSheetHeight: 240,
+          swipeToCloseHeight: 62,
+          onSheetOpen: this.handleSheetOpen,
+          onSheetClose: () => { this.setState({ isSheetOpen: false }); },
+          animateHeight: activeTab === CHAT,
+          floatingHeaderContent: (
+            <Tabs
+              initialActiveTab={activeTab}
+              tabs={contactTabs}
+              wrapperStyle={{
+                position: 'absolute',
+                top: 8,
+                left: 0,
+                zIndex: 2,
+                width: '100%',
+              }}
+            />
+          ),
+        }}
+        bottomSheetChildren={
+          (
+            <SheetContentWrapper>
+              {this.renderSheetContent(displayContact, unreadCount)}
+            </SheetContentWrapper>
+          )
+        }
       >
         <Header
           title={displayContact.username}
@@ -310,32 +332,6 @@ class Contact extends React.Component<Props, State> {
           </CircleButtonsWrapper>
          }
         </ScrollWrapper>
-        {isAccepted && !!screenHeight &&
-        <BottomSheet
-          forceOpen={forceOpen}
-          initialSheetHeight={240}
-          swipeToCloseHeight={62}
-          screenHeight={screenHeight}
-          onSheetOpen={this.handleSheetOpen}
-          onSheetClose={() => { this.setState({ isSheetOpen: false }); }}
-          animateHeight={activeTab === CHAT}
-          floatingHeaderContent={(<Tabs
-            initialActiveTab={activeTab}
-            tabs={contactTabs}
-            wrapperStyle={{
-              position: 'absolute',
-              top: 8,
-              left: 0,
-              zIndex: 2,
-              width: '100%',
-            }}
-          />)}
-        >
-          <SheetContentWrapper>
-            {this.renderSheetContent(displayContact, unreadCount)}
-          </SheetContentWrapper>
-        </BottomSheet>
-        }
         <ManageContactModal
           showManageContactModal={showManageContactModal}
           onManageContact={this.manageContact}
@@ -352,7 +348,7 @@ class Contact extends React.Component<Props, State> {
             this.setState({ showConfirmationModal: false });
           }}
         />
-      </Container>
+      </ContainerWithBottomSheet>
     );
   }
 }

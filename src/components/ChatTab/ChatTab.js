@@ -18,9 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Alert, View, Platform, Linking, AppState, Keyboard } from 'react-native';
+import { Alert, Platform, Linking, AppState, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import { Wrapper } from 'components/Layout';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import {
@@ -294,8 +293,15 @@ const customSystemMessage = (props) => {
       <SystemMessageWrapper>
         <EmptyStateParagraph
           title="Break the ice"
-          bodyText={`Start chatting with ${props.currentMessage.contactName}. Recent chats will appear here`}
+          bodyText="Start chatting - recent chats will appear here"
         />
+      </SystemMessageWrapper>
+    );
+  }
+  if (props.currentMessage.loading) {
+    return (
+      <SystemMessageWrapper>
+        <Spinner />
       </SystemMessageWrapper>
     );
   }
@@ -484,6 +490,7 @@ class ChatTab extends React.Component<Props, State> {
       contact,
       showLoadEarlierButton,
       chatText,
+      isFetching,
     } = this.state;
 
     const chatInfo = chats.find(({ username }) => username === contact.username) || {};
@@ -498,6 +505,15 @@ class ChatTab extends React.Component<Props, State> {
           _id: 1,
           system: true,
           empty: true,
+          contactName: contact.username,
+        },
+      ];
+    } else if (isFetching) {
+      messagesToShow = [
+        {
+          _id: 1,
+          system: true,
+          loading: true,
           contactName: contact.username,
         },
       ];
@@ -520,35 +536,28 @@ class ChatTab extends React.Component<Props, State> {
     }
 
     return (
-      <Wrapper flex={1}>
-        {!!this.state.isFetching &&
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Spinner />
-          </View>}
-        {!this.state.isFetching &&
-          <GiftedChat
-            text={chatText}
-            onInputTextChanged={this.updateChatInput}
-            messages={messagesToShow}
-            onSend={msgs => this.onSend(msgs)}
-            user={{
-              _id: this.props.user.username,
-            }}
-            renderBubble={renderBubble}
-            renderAvatar={this.renderAvatar}
-            renderComposer={renderComposer}
-            renderInputToolbar={renderInputToolbar}
-            renderDay={renderDay}
-            loadEarlier={showLoadEarlierButton}
-            onLoadEarlier={this.handleLoadEarlier}
-            renderLoadEarlier={renderLoadEarlier}
-            renderMessage={renderMessage}
-            renderTime={renderTime}
-            minInputToolbarHeight={INPUT_HEIGHT}
-            parsePatterns={parsePatterns}
-            renderSystemMessage={customSystemMessage}
-          />}
-      </Wrapper>
+      <GiftedChat
+        text={chatText}
+        onInputTextChanged={this.updateChatInput}
+        messages={messagesToShow}
+        onSend={msgs => this.onSend(msgs)}
+        user={{
+          _id: this.props.user.username,
+        }}
+        renderBubble={renderBubble}
+        renderAvatar={this.renderAvatar}
+        renderComposer={renderComposer}
+        renderInputToolbar={renderInputToolbar}
+        renderDay={renderDay}
+        loadEarlier={showLoadEarlierButton}
+        onLoadEarlier={this.handleLoadEarlier}
+        renderLoadEarlier={renderLoadEarlier}
+        renderMessage={renderMessage}
+        renderTime={renderTime}
+        minInputToolbarHeight={INPUT_HEIGHT}
+        parsePatterns={parsePatterns}
+        renderSystemMessage={customSystemMessage}
+      />
     );
   }
 }

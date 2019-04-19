@@ -109,6 +109,7 @@ export default class BottomSheet extends React.Component<Props, State> {
     initialSheetHeight: 100,
     topOffset: 68,
     swipeToCloseHeight: 150,
+    forceOpen: false,
   };
 
   constructor(props: Props) {
@@ -140,10 +141,19 @@ export default class BottomSheet extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (this.props.forceOpen && !prevProps.forceOpen) {
+    const { forceOpen, screenHeight, topOffset } = this.props;
+    const { animatedHeight } = this.state;
+    if (forceOpen && !prevProps.forceOpen) {
       this.animateSheet();
-    } else if (!this.props.forceOpen && prevProps.forceOpen) {
+    } else if (!forceOpen && prevProps.forceOpen) {
       this.animateSheet();
+    }
+
+    if (prevProps.screenHeight !== screenHeight && this.isSheetOpen) {
+      Animated.spring(animatedHeight, {
+        toValue: screenHeight - topOffset,
+        bounciness: 0,
+      }).start();
     }
   }
 

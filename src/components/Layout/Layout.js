@@ -56,11 +56,11 @@ export const Center = styled.View`
   align-items: center;
 `;
 
-const ContainerOuter = styled(SafeAreaView)`
+export const ContainerOuter = styled(SafeAreaView)`
   background-color: ${props => (props.color ? props.color : UIColors.defaultBackgroundColor)};
 `;
 
-const ContainerInner = styled.View`
+export const ContainerInner = styled.View`
   height: 100%;
   align-items: ${props => (props.center ? 'center' : 'stretch')};
   justify-content: ${props => (props.center ? 'center' : 'flex-start')};
