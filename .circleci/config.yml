@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  slack: circleci/slack@2.3.0
+
 executors:
   ios-executor:
     working_directory: ~/pillarwallet
@@ -23,8 +27,10 @@ executors:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
 
-orbs:
-  slack: circleci/slack@2.3.0
+  node8-executor:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: circleci/openjdk:8-node-browsers
 
 aliases:
   - &restore_pod_cache
@@ -254,8 +260,10 @@ jobs:
           name: Accept Android SDK licenses 2
           command: |
             yes | sdkmanager --update || exit 0
+
       - *gradle_depencencies
       - *gradle_save_cache
+
       - run:
           name: Set staging environment
           command: |
@@ -297,7 +305,7 @@ jobs:
 
       - run:
           name: Install AWS CLI
-          command: sudo pip3 install awscli
+          command: pip3 install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -527,6 +535,16 @@ jobs:
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/staging/android-s3-URL-qa.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
 
+  slack-prod-approval:
+    executor: node8-executor
+    steps:
+      - slack/approval:
+          mentions: "here"
+          color: '#f28c10'
+          message: Staging builds finished successfully, prod approval step is pending.
+          webhook: $APPROVAL_SLACK_WEBHOOK
+          url: 'https://circleci.com/workflow-run/$CIRCLE_WORKFLOW_WORKSPACE_ID'
+
   prod_ios:
     executor: ios-executor
     steps:
@@ -535,7 +553,7 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Install AWS CLI
-          command: sudo pip3 install awscli
+          command: pip3 install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -763,20 +781,8 @@ jobs:
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
 
-  slack-approval:
-    docker:
-      - image: circleci/openjdk:8-node-browsers
-    steps:
-      - slack/approval:
-          message: Staging builds successful, prod approval step is pending.
-          webhook: $TEST_SLACK_HOOK
-          mentions: "here"
-          url: 'https://circleci.com/workflow-run/$CIRCLE_WORKFLOW_WORKSPACE_ID'
-
   whitesource:
-    working_directory: ~/pillarwallet
-    docker:
-      - image: circleci/openjdk:8-node-browsers
+    executor: node8-executor
     steps:
       - checkout
       - attach_workspace:
@@ -802,44 +808,40 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/pipeline-upgrades
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/pipeline-upgrades
-      - slack-approval:
-          requires:
-            - dev_build_ios
-            - dev_build_android
-          filters:
-            branches:
-              only:
-                  - feature/pipeline-upgrades
+                  - develop
       - stage_ios:
           requires:
-            - release_to_prod
+            - build-and-test
           filters:
             branches:
               only:
-                  - feature/pipeline-upgrades
+                  - master
       - stage_android:
           requires:
-            - release_to_prod
+            - build-and-test
           filters:
             branches:
               only:
-                  - feature/pipeline-upgrades
+                  - master
+      - slack-prod-approval:
+          requires:
+            - stage_ios
+            - stage_android
       - release_to_prod:
           type: approval
           requires:
-            - dev_build_ios
-            - dev_build_android
+            - stage_ios
+            - stage_android
       - prod_ios:
           requires:
-            - stage_ios
+            - release_to_prod
       - prod_android:
           requires:
-            - stage_ios
+            - release_to_prod
