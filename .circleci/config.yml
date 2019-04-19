@@ -797,28 +797,28 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/163525244_Deterministic-Key-Pair-Generation
+                  - develop
       - dev_build_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/163525244_Deterministic-Key-Pair-Generation
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - master
+                  - feature/163525244_Deterministic-Key-Pair-Generation
       - stage_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - master
+                  - feature/163525244_Deterministic-Key-Pair-Generation
       - release_to_prod:
           type: approval
           requires:
