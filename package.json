@@ -143,7 +143,7 @@
     "react-native-cached-image": "^1.4.3",
     "react-native-camera": "^1.1.4",
     "react-native-canvas": "^0.1.20",
-    "react-native-color-matrix-image-filters": "^4.0.0",
+    "react-native-color-matrix-image-filters": "^5.1.4",
     "react-native-crypto": "^2.1.0",
     "react-native-device-info": "^0.21.5",
     "react-native-extra-dimensions-android": "^1.2.5",

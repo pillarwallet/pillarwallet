@@ -45,7 +45,8 @@ import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 import io.sentry.RNSentryPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import nativeShadow.NativeShadowPackage;
-import iyegoroff.RNColorMatrixImageFilters.RNColorMatrixImageFiltersPackage;
+import iyegoroff.RNColorMatrixImageFilters.ColorMatrixImageFiltersPackage;
+
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 
 // react-native-splash-screen >= 0.3.1
@@ -58,7 +59,7 @@ public class MainApplication extends Application implements ShareApplication, Re
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
-        new RNColorMatrixImageFiltersPackage(),
+        new ColorMatrixImageFiltersPackage(),
         new MainReactPackage(),
         new ExtraDimensionsPackage(),
         new RCTImageCapInsetPackage(),

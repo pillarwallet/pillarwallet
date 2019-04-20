@@ -3841,8 +3841,8 @@ compression@^1.5.2, compression@^1.7.1:
 
 concat-color-matrices@^1.0.0:
   version "1.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/concat-color-matrices/-/concat-color-matrices-1.0.0.tgz#7d77baa4148264806d4318d9a2378e7dec4bc413"
-  integrity sha1-fXe6pBSCZIBtQxjZojeOfexLxBM=
+  resolved "https://registry.yarnpkg.com/concat-color-matrices/-/concat-color-matrices-1.0.0.tgz#7d77baa4148264806d4318d9a2378e7dec4bc413"
+  integrity sha512-K0IMtl4m9LcHg4vVFb40Txmie/GwCJBkquGSn6wtA9yIcszzFZgGc6co4sSnjFdqeJAv+q2LrCHMUSb2GHAChA==
   dependencies:
     invariant "^2.2.4"
 
@@ -11691,10 +11691,10 @@ react-native-clcasher@1.0.0:
   dependencies:
     mock-async-storage "^1.0.3"
 
-react-native-color-matrix-image-filters@^4.0.0:
-  version "4.0.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-color-matrix-image-filters/-/react-native-color-matrix-image-filters-4.0.0.tgz#b09eaf3861abc54420fd3230de986f19f13e4423"
-  integrity sha1-sJ6vOGGrxUQg/TIw3phvGfE+RCM=
+react-native-color-matrix-image-filters@^5.1.4:
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-color-matrix-image-filters/-/react-native-color-matrix-image-filters-5.1.4.tgz#15ca04cb3b9499727cc8983b7a63d4c6e0824ea3"
+  integrity sha512-hQHqsk0vRSr6ZsWdVa6vJheHlO7KhhgC+OXir7kIaWoPWTk6toZ8p4X/RXYMi0Pasw2uZRV1X9lMqMOj0yJRLg==
   dependencies:
     concat-color-matrices "^1.0.0"
     rn-color-matrices "^4.0.0"
@@ -12858,8 +12858,8 @@ rlp@^2.0.0:
 
 rn-color-matrices@^4.0.0:
   version "4.1.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-color-matrices/-/rn-color-matrices-4.1.0.tgz#9ac5ce3d7daaf33d336b877508649469cb39f8a5"
-  integrity sha1-msXOPX2q8z0za4d1CGSUacs5+KU=
+  resolved "https://registry.yarnpkg.com/rn-color-matrices/-/rn-color-matrices-4.1.0.tgz#9ac5ce3d7daaf33d336b877508649469cb39f8a5"
+  integrity sha512-a8++z3Zi4GhA0oWwKS3etdrVuVQ2q/ByTMh6lMxo+vaSv3SRSSg5SzpZk65GS0NCAqMhFT8WSvgSgNhO/F+xag==
   dependencies:
     clamp "^1.0.1"
 
