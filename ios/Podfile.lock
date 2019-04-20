@@ -219,7 +219,7 @@ PODS:
     - React
   - RNDeviceInfo (0.21.5):
     - React
-  - RNImageCropPicker (0.22.0):
+  - RNImageCropPicker (0.23.1):
     - QBImagePickerController
     - React/Core
     - RSKImageCropper
@@ -393,6 +393,6 @@ SPEC CHECKSUMS:
   TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: fbd1cf43f7c0662a58129b2e2441d831dad82085
+PODFILE CHECKSUM: 8827ce248a1a3a08b56dfb278a0e4ba800a428ee
 
 COCOAPODS: 1.5.3
