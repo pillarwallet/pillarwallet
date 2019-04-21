@@ -13,7 +13,6 @@ aliases:
       key: ios-pods-{{ checksum "./ios/Podfile.lock" }}
       paths:
         - ./ios/Pods
-
   - &restore_gems_cache_ios
     restore_cache:
       name: Restore cache
@@ -102,7 +101,7 @@ aliases:
 defaults_ios: &defaults_ios
   working_directory: ~/pillarwallet
   macos:
-    xcode: "9.4.0"
+    xcode: "10.2.0"
   environment:
     FL_OUTPUT_DIR: output
     _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
@@ -281,7 +280,7 @@ jobs:
   stage_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.4.0"
+      xcode: "10.2.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -327,7 +326,9 @@ jobs:
       - run:
           name: Fetch CocoaPods Specs
           command: |
-            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+            Y | sudo gem uninstall cocoapods
+            sudo gem install cocoapods -v 1.5.3
+            pod --version
       - run:
           name: Install CocoaPods
           command: cd ios && pod install --verbose
@@ -361,7 +362,7 @@ jobs:
           command: |
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
-            cd ./ios/
+            cd ./ios/output/gym/
             touch ios-s3-URL-qa.txt
             aws s3 cp pillarwallet-staging.ipa $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$APP_BUILD_NUMBER.ipa --region eu-west-2
             aws s3 presign $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-ios-staging-$APP_BUILD_NUMBER.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-qa.txt
@@ -380,7 +381,7 @@ jobs:
           name: prepare to archive ipa file
           command: |
             mkdir -p ./toArchive
-            cp ./ios/pillarwallet-staging.ipa ./toArchive
+            cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
       - store_artifacts:
           path: ./toArchive
           destination: app_build
@@ -495,14 +496,14 @@ jobs:
           environment:
             BUNDLE_PATH: vendor/bundle
       - store_artifacts:
-          path: app/build/outputs/apk
+          path: app/build/outputs/apk/prod/staging
           destination: apks
       - run:
           name: Copy stage android artifact to S3
           command: |
             export AWS_ACCESS_KEY_ID=$STAGING_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$STAGING_AWS_SECRET_ACCESS_KEY
-            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/staging/
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             touch android-s3-URL-qa.txt
             aws s3 cp app-prod-staging.apk $PILLAR_QA_ARTIFACTS_BUCKET/pillarwallet-android-staging-$APP_BUILD_NUMBER.apk --region eu-west-2
@@ -518,12 +519,12 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-qa.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/staging/android-s3-URL-qa.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
 
   prod_ios:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "9.4.0"
+      xcode: "10.2.0"
     environment:
       FL_OUTPUT_DIR: output
     shell: /bin/bash --login -o pipefail
@@ -569,7 +570,9 @@ jobs:
       - run:
           name: Fetch CocoaPods Specs
           command: |
-            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+            Y | sudo gem uninstall cocoapods
+            sudo gem install cocoapods -v 1.5.3
+            pod --version
       - run:
           name: Install CocoaPods
           command: cd ios && pod install --verbose
@@ -604,7 +607,7 @@ jobs:
             export AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd ./ios/
+            cd ./ios/output/gym/
             touch ios-s3-URL-prod.txt
             aws s3 cp pillarwallet.ipa $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$APP_BUILD_NUMBER.ipa --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-ios-prod-$APP_BUILD_NUMBER.ipa --expires-in 604800 --region eu-west-2 > ios-s3-URL-prod.txt
@@ -623,7 +626,7 @@ jobs:
           name: prepare to archive ipa file
           command: |
             mkdir -p ./toArchive
-            cp ./ios/pillarwallet.ipa ./toArchive
+            cp ./ios/output/gym/pillarwallet.ipa ./toArchive
       - store_artifacts:
           path: ./toArchive
           destination: app_build
@@ -740,7 +743,7 @@ jobs:
           environment:
             BUNDLE_PATH: vendor/bundle
       - store_artifacts:
-          path: app/build/outputs/apk
+          path: app/build/outputs/apk/prod/release
           destination: apks
       - run:
           name: Copy prod android artifact to S3
@@ -748,7 +751,7 @@ jobs:
             export AWS_ACCESS_KEY_ID=$PRODUCTION_AWS_ACCESS_KEY_ID
             export AWS_SECRET_ACCESS_KEY=$PRODUCTION_AWS_SECRET_ACCESS_KEY
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/
+            cd /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/
             touch android-s3-URL-prod.txt
             aws s3 cp app-prod-release.apk $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$APP_BUILD_NUMBER.apk --region eu-west-2
             aws s3 presign $PILLAR_PROD_ARTIFACTS_BUCKET/pillarwallet-android-prod-$APP_BUILD_NUMBER.apk --expires-in 604800 --region eu-west-2 > android-s3-URL-prod.txt
@@ -763,7 +766,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
 
   whitesource:
     working_directory: ~/pillarwallet
@@ -820,6 +823,7 @@ workflows:
           type: approval
           requires:
             - stage_android
+            - stage_ios
       - prod_ios:
           requires:
             - release_to_prod
