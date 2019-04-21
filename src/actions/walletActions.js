@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import {
   UPDATE_WALLET_MNEMONIC,

@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import ethers from 'ethers';
+import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import firebase from 'react-native-firebase';
 import { delay, uniqBy } from 'utils/common';
@@ -187,7 +187,7 @@ export const registerWalletAction = () => {
     });
     await delay(50);
     const saltedPin = await getSaltedPin(pin, dispatch);
-    const encryptedWallet = await wallet.RNencrypt(saltedPin, { scrypt: { N: 16384 } })
+    const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
       .catch(() => ({}));
 
