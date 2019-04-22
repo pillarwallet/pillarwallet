@@ -50,7 +50,6 @@ target 'pillarwallet' do
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
-  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
 
   pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
 
@@ -64,6 +63,8 @@ target 'pillarwallet' do
   pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
+  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
 
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';
