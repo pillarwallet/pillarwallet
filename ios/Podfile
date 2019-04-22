@@ -3,6 +3,7 @@ platform :ios, '9.0'
 
 target 'pillarwallet' do
   pod 'Fabric', '~> 1.7.5'
+  pod 'Answers', '~> 1.3.7'
   pod 'Crashlytics', '~> 3.10.4'
 
   pod 'React',
@@ -60,6 +61,8 @@ target 'pillarwallet' do
   pod 'RNColorMatrixImageFilters', :path => '../node_modules/react-native-color-matrix-image-filters'
 
   pod 'TouchID', :path => '../node_modules/react-native-touch-id'
+
+  pod 'ReactNativeFabric', :path => '../node_modules/react-native-fabric'
 
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';
