@@ -11729,10 +11729,10 @@ react-native-debugger-open@^0.3.19:
     minimist "^1.2.0"
     semver "^5.4.1"
 
-react-native-device-info@^0.21.5:
-  version "0.21.5"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-device-info/-/react-native-device-info-0.21.5.tgz#99478a2d68182e012297f2d63f2bd1b788106dee"
-  integrity sha1-mUeKLWgYLgEil/LWPyvRt4gQbe4=
+react-native-device-info@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-1.5.0.tgz#09e17c8199ac51082d72193f17eb445e9c83e68d"
+  integrity sha512-TiZxPkiuKR1GLS9wWAqjKzk37viBLt64EGzjn0IoySosXJpa7E4XKOwAvNR9xcSZ4iSlsVMtRM2QnA8wHe5M2g==
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
