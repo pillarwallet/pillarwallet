@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import TouchID from 'react-native-touch-id';
-import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
+import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
@@ -96,7 +96,7 @@ class PinCodeUnlock extends React.Component<Props> {
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING) {
+    if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>

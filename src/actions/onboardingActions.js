@@ -130,7 +130,7 @@ const finishRegistration = async (
 
   dispatch(saveDbAction('assets', { assets: initialAssets }));
 
-  dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
+  await dispatch(updateConnectionKeyPairs(mnemonic, privateKey, userInfo.walletId));
 
   // restore access tokens
   await dispatch(restoreAccessTokensAction(userInfo.walletId)); // eslint-disable-line

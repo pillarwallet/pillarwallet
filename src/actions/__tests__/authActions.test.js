@@ -28,6 +28,7 @@ import {
 import { UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
+import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { loginAction } from '../authActions';
 
 const pillarSdk = new PillarSdk();
@@ -102,6 +103,10 @@ describe('Wallet actions', () => {
     ];
 
     const pin = '123456';
+
+    // $FlowFixMe
+    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
+
     return store.dispatch(loginAction(pin))
       .then(() => {
         const actualActions = store.getActions();

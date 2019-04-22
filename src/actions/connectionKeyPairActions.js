@@ -19,6 +19,7 @@
 */
 import { generateKeyPairThreadPool } from 'utils/keyPairGenerator';
 import { UPDATE_CONNECTION_KEY_PAIRS } from 'constants/connectionKeyPairsConstants';
+import { GENERATING_CONNECTIONS, UPDATE_WALLET_STATE } from 'constants/walletConstants';
 import { UPDATE_CONNECTION_IDENTITY_KEYS } from 'constants/connectionIdentityKeysConstants';
 import { restoreAccessTokensAction } from 'actions/onboardingActions';
 import { updateConnectionsAction } from 'actions/connectionsActions';
@@ -166,6 +167,12 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
     const {
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
     } = getState();
+
+    dispatch({
+      type: UPDATE_WALLET_STATE,
+      payload: GENERATING_CONNECTIONS,
+    });
+
     const numberOfConnections = await api.connectionsCount(walletId);
     const { currentConnectionsCount, oldConnectionsCount } = numberOfConnections;
     const totalConnections = currentConnectionsCount + oldConnectionsCount;
@@ -193,5 +200,7 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
     }
 
     await dispatch(updateConnectionsAction());
+
+    return Promise.resolve(true);
   };
 };

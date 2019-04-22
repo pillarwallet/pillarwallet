@@ -34,6 +34,10 @@ export const updateConnectionsAction = () => {
       invitations: { data: allInvitations },
     } = getState();
 
+    if (!walletId) {
+      return;
+    }
+
     const currentConnectionKeyPairList = connectionIdentityKeys.map((cik: ConnectionIdentityKey) => {
       return {
         sourceIdentityKey: cik.sourceIdentityKey,

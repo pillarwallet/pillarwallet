@@ -112,7 +112,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
-        dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
+        await dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
         dispatch(saveDbAction('user', { user }, true));
       } else {
         api.init();
