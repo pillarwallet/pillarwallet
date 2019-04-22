@@ -168,12 +168,16 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
       connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
     } = getState();
 
+    const numberOfConnections = await api.connectionsCount(walletId);
+    if (!numberOfConnections) {
+      return Promise.resolve(false);
+    }
+
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: GENERATING_CONNECTIONS,
     });
 
-    const numberOfConnections = await api.connectionsCount(walletId);
     const { currentConnectionsCount, oldConnectionsCount } = numberOfConnections;
     const totalConnections = currentConnectionsCount + oldConnectionsCount;
     const newKeyPairs =

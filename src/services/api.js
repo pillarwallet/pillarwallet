@@ -572,20 +572,16 @@ SDKWrapper.prototype.approveLoginToExternalResource = function (loginToken: stri
 
 SDKWrapper.prototype.connectionsCount = function (walletId: string) {
   return Promise.resolve()
-    .then(() => this.pillarWalletSdk.connection.count(({ walletId })))
+    .then(() => this.pillarWalletSdk.connection.count({ walletId }))
     .then(({ data }) => data)
-    .catch((e) => {
-      throw e;
-    });
+    .catch(() => null);
 };
 
 SDKWrapper.prototype.mapIdentityKeys = function (connectionKeyIdentityMap: ConnectionIdentityKeyMap) {
   return Promise.resolve()
     .then(() => this.pillarWalletSdk.connection.mapIdentityKeys(connectionKeyIdentityMap))
     .then(({ data }) => data)
-    .catch((e) => {
-      throw e;
-    });
+    .catch(() => []);
 };
 
 SDKWrapper.prototype.updateIdentityKeys = function (updatedIdentityKeys: ConnectionUpdateIdentityKeys) {
