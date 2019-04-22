@@ -11852,12 +11852,10 @@ react-native-lightbox@^0.7.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-linear-gradient@2.4.0:
-  version "2.4.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-linear-gradient/-/react-native-linear-gradient-2.4.0.tgz#51d8ea12bb72a59bede9edc87b694b16b64cf435"
-  integrity sha1-UdjqErtypZvt6e3Ie2lLFrZM9DU=
-  dependencies:
-    prop-types "^15.5.10"
+react-native-linear-gradient@2.5.4:
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.5.4.tgz#dce133526f5a5510a639af94544f1ed0c984bd1e"
+  integrity sha512-FF1NhlerA4uBiS0gFIHa4FBp8/aftv4vPj14Y47lGNkYjSI94tnI6oYO3EfUxXjEyCUPiOVNKZOB9kScyjc5Ew==
 
 react-native-modal@7.0.2:
   version "7.0.2"

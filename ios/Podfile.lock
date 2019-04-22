@@ -6,7 +6,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.2):
     - BoringSSL-GRPC/Interface (= 0.0.2)
   - BoringSSL-GRPC/Interface (0.0.2)
-  - BVLinearGradient (2.4.0):
+  - BVLinearGradient (2.5.4):
     - React
   - Crashlytics (3.10.9):
     - Fabric (~> 1.7.13)
@@ -347,7 +347,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BoringSSL-GRPC: 2a230d9cd93e7ce39916044f645cebb31f37dde6
-  BVLinearGradient: 4b3f3bdf1ac1a52a5ef5e65c9585d793a7c3f825
+  BVLinearGradient: b0b70acf63ee888829b7c2ebbf6b50e227396e55
   Crashlytics: 55e24fc23989680285a21cb1146578d9d18e432c
   DoubleConversion: bb338842f62ab1d708ceb63ec3d999f0f3d98ecd
   Fabric: 25d0963b691fc97be566392243ff0ecef5a68338
