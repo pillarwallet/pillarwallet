@@ -12000,10 +12000,10 @@ react-native-touch-id@^4.3.0:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-touch-id/-/react-native-touch-id-4.3.0.tgz#c25abd1d03d1ce5075f73ca87b18b47e7d60fa71"
   integrity sha1-wlq9HQPRzlB19zyoexi0fn1g+nE=
 
-react-native-udp@^2.1.0:
-  version "2.4.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-udp/-/react-native-udp-2.4.0.tgz#69141757aff7b10e5a3ea1f6017127f334a5749f"
-  integrity sha1-aRQXV6/3sQ5aPqH2AXEn8zSldJ8=
+react-native-udp@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-udp/-/react-native-udp-2.6.0.tgz#6fe64467073a47aa728c70d35c899ddbc0b23886"
+  integrity sha512-P7aFWYbOPFmLgcza7zc1OVV2NqyYhpfb3/Fz3Bi6yy4e4G8Qt7/btfjy22+Y4pMQV1ogXCa2RR1zOdkbMoCczQ==
   dependencies:
     base64-js "0.0.8"
     events "^1.0.2"
