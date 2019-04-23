@@ -52,6 +52,7 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
+import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
 import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
@@ -73,7 +74,11 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     try {
       let wallet;
       if (!touchID) {
-        wallet = await ethers.Wallet.RNfromEncryptedWallet(JSON.stringify(encryptedWallet), saltedPin);
+        wallet = await ethers.Wallet.RNfromEncryptedWallet(
+          JSON.stringify(encryptedWallet),
+          saltedPin,
+          { mnemonic: true },
+        );
       } else {
         let walletAddress = encryptedWallet.address;
         if (walletAddress.indexOf('0x') !== 0) {
@@ -107,6 +112,7 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
+        await dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
         dispatch(saveDbAction('user', { user }, true));
       } else {
         api.init();
