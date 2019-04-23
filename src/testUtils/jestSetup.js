@@ -21,7 +21,7 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { View as mockView } from 'react-native';
-import { utils } from 'ethers';
+import { utils, HDNode } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
@@ -80,6 +80,7 @@ jest.setMock('ethers', {
     EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
   },
+  HDNode,
 });
 
 jest.setMock('react-native-background-timer', {
@@ -160,4 +161,11 @@ jest.setMock('react-native-cached-image', {
     clearCache: () => Promise.resolve(),
   }),
   CachedImage: jest.fn(),
+});
+
+jest.setMock('react-native-threads', {
+  Thread: () => ({
+    onmessage: () => Promise.resolve(),
+    postMessage: () => Promise.resolve(),
+  }),
 });

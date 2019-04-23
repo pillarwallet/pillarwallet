@@ -18,11 +18,10 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:2.3.3'
+    classpath 'com.android.tools.build:gradle:3.3.2'
     classpath 'com.google.gms:google-services:3.2.0'
     classpath 'de.undercouch:gradle-download-task:2.0.0'
-    classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-    classpath 'io.fabric.tools:gradle:1.25.4'
+    classpath 'io.fabric.tools:gradle:1.28.0'
   }
 }
 
@@ -52,6 +51,12 @@ allprojects {
     jcenter()
     // Want this last so that we never end up with a stale cache
     mavenLocal()
+
+    configurations.all {
+      resolutionStrategy {
+          force "com.android.support:appcompat-v7:28.0.0"
+      }
+    }
   }
 }
 
@@ -66,5 +71,5 @@ task clean(type: Delete) {
 
 ext {
   googlePlayServicesVersion = "15.0.0"
-  buildToolsVersion = "25.0.2"
+  buildToolsVersion = "28.0.3"
 }

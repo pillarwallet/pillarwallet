@@ -20,7 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
-import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
+import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { checkPinAction } from 'actions/authActions';
 import { Container, Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
@@ -74,7 +74,7 @@ class CheckPin extends React.Component<Props, *> {
     const pinError = this.getPinError(walletState);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING || isChecking) {
+    if (walletState === DECRYPTING || isChecking || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>Checking</BaseText>
