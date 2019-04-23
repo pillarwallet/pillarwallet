@@ -1,4 +1,37 @@
-version: 2
+version: 2.1
+
+orbs:
+  slack: circleci/slack@2.3.0
+
+executors:
+  ios-executor:
+    working_directory: ~/pillarwallet
+    macos:
+      xcode: "10.2.0"
+    environment:
+      FL_OUTPUT_DIR: output
+      _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
+    resource_class: medium
+    shell: /bin/bash --login -o pipefail
+
+  android-executor:
+    working_directory: ~/pillarwallet
+    resource_class: large
+    docker:
+      - image: circleci/android:api-26-node8-alpha
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+
+  node8-executor:
+    working_directory: ~/pillarwallet
+    docker:
+      - image: circleci/openjdk:8-node-browsers
+
 aliases:
   - &restore_pod_cache
     restore_cache:
@@ -17,12 +50,12 @@ aliases:
     restore_cache:
       name: Restore cache
       keys:
-        - ios-gems-{{ checksum "Gemfile.lock" }}
+        - ios-gems-{{ checksum "./ios/Gemfile" }}
   - &restore_gems_cache_android
     restore_cache:
       name: Restore cache
       keys:
-        - android-gems-{{ checksum "Gemfile.lock" }}
+        - android-gems-{{ checksum "./android/Gemfile" }}
   - &install_gems_ios
     run:
       name: Bundle install
@@ -39,12 +72,12 @@ aliases:
         BUNDLE_RETRY: 3
   - &save_gems_cache_ios
     save_cache:
-      key: ios-gems-{{ checksum "Gemfile.lock" }}
+      key: ios-gems-{{ checksum "./ios/Gemfile" }}
       paths:
         - vendor/bundle
   - &save_gems_cache_android
     save_cache:
-      key: android-gems-{{ checksum "Gemfile.lock" }}
+      key: android-gems-{{ checksum "./android/Gemfile" }}
       paths:
         - vendor/bundle
   - &node_restore_cache
@@ -58,7 +91,15 @@ aliases:
     run:
       name: set Registry to use Artifactory
       command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
-  - &node_install
+  - &ios_latest_yarn
+     run:
+      name: Install latest yarn version
+      command: npm install -g yarn
+  - &android_latest_yarn
+     run:
+      name: Install latest yarn version
+      command: sudo npm install -g yarn
+  - &yarn_install
      run:
       name: Install node dependencies
       command: yarn install
@@ -97,36 +138,9 @@ aliases:
           sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
           echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
-# Default for iOS Build machine
-defaults_ios: &defaults_ios
-  working_directory: ~/pillarwallet
-  macos:
-    xcode: "10.2.0"
-  environment:
-    FL_OUTPUT_DIR: output
-    _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
-    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
-  resource_class: large
-  shell: /bin/bash --login -o pipefail
-
-# Default for Android Build machine
-defaults_android: &defaults_android
-    working_directory: ~/pillarwallet
-    resource_class: large
-    docker:
-      - image: circleci/android:api-26-node8-alpha
-    environment:
-      TERM: dumb
-      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
-
-
-
 jobs:
   build-and-test:
-    <<: *defaults_ios
+    executor: ios-executor
     steps:
       - checkout
       - run:
@@ -143,22 +157,29 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *node_install
+      - *ios_latest_yarn
+      - *yarn_install
       - *node_save_cache
       - run:
           name: Run validation
           command: yarn validate
 
   dev_build_ios:
-    <<: *defaults_ios
+    executor: ios-executor
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+
+      - run:
+          name: Install AWS CLI
+          command: pip3 install awscli
+
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *node_install
+      - *ios_latest_yarn
+      - *yarn_install
       - *node_save_cache
 
       - *restore_gems_cache_ios
@@ -200,7 +221,7 @@ jobs:
           destination: app_build
 
   dev_build_android:
-    <<: *defaults_android
+    executor: android-executor
     steps:
       - checkout
       - attach_workspace: &attach_workspace
@@ -208,7 +229,8 @@ jobs:
       - *node_restore_cache
       - *node_artifactory_authenticate
       - *node_artifactory_set_registry
-      - *node_install
+      - *android_latest_yarn
+      - *yarn_install
       - *node_save_cache
 
       - *restore_gems_cache_android
@@ -218,15 +240,11 @@ jobs:
       - *gradle_restore_cache
 
       - run:
-          name: Install Python
-          command: sudo apt-get update && sudo apt-get install python
-      - run:
           name: Install Python dependencies
-          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+          command: sudo apt-get update && sudo apt-get install -y python3-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
-
+          command: sudo pip3 install awscli
       - run:
           name: Get keystore file
           command: |
@@ -242,6 +260,7 @@ jobs:
           name: Accept Android SDK licenses 2
           command: |
             yes | sdkmanager --update || exit 0
+
       - *gradle_depencencies
       - *gradle_save_cache
 
@@ -278,20 +297,15 @@ jobs:
           destination: apks
 
   stage_ios:
-    working_directory: ~/pillarwallet
-    macos:
-      xcode: "10.2.0"
-    environment:
-      FL_OUTPUT_DIR: output
-    shell: /bin/bash --login -o pipefail
-
+    executor: ios-executor
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: pip3 install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -314,6 +328,9 @@ jobs:
       - run:
             name: set Registry to use Artifactory
             command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+
+      - *ios_latest_yarn
+
       - run:
           name: Install node dependencies
           command: yarn install
@@ -376,7 +393,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "staging" "iOS" "$(cat ~/pillarwallet/ios/ios-s3-URL-qa.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "staging" "iOS" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-qa.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -387,30 +404,24 @@ jobs:
           destination: app_build
 
   stage_android:
-    working_directory: ~/pillarwallet/android
-    resource_class: large
-    docker:
-      - image: circleci/android:api-26-node8-alpha
-    environment:
-      TERM: dumb
-      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
+    executor: android-executor
     steps:
       - checkout:
           path: ~/pillarwallet
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+
+      - *android_latest_yarn
+
       - run:
           name: Install Python
-          command: sudo apt-get update && sudo apt-get install python
+          command: sudo apt-get update && sudo apt-get install python3
       - run:
           name: Install Python dependencies
-          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+          command: sudo apt-get update && sudo apt-get install -y python3-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: sudo pip3 install awscli
       - run:
           name: Get keystore file
           command: |
@@ -435,45 +446,47 @@ jobs:
           key: android-node-{{ checksum "../yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
-            command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
             name: set Registry to use Artifactory
-            command: cd .. && npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
       - run:
             name: set Yarn to use Artifactory
-            command: cd .. && echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+            command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
       - run:
           name: Install node dependencies
-          command: cd .. && yarn install
+          command: yarn install
       - save_cache:
           key: android-node-{{ checksum "../yarn.lock" }}
           paths:
             - ~/pillarwallet/nodes_modules
       - restore_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "./android/Gemfile" }}
       - run:
           name: Bundle install
           command: bundle check || bundle install --path vendor/bundle
       - save_cache:
-          key: android-gems-{{ checksum "Gemfile" }}
+          key: android-gems-{{ checksum "./android/Gemfile" }}
           paths:
             - vendor/bundle
       - restore_cache:
           key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
           name: Chmod permissions
-          command: sudo chmod +x ./gradlew
+          command: cd android && sudo chmod +x ./gradlew
       - run:
           name: Accept Android SDK licenses
           command: |
+            cd android
             yes | sdkmanager --licenses || exit 0
       - run:
           name: Accept Android SDK licenses 2
           command: |
+            cd android
             yes | sdkmanager --update || exit 0
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+          command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
           key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
           paths:
@@ -484,10 +497,11 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
+            cd android && ./gradlew clean assembleProdStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Fastlane deploy to Google Play
           command: |
+            cd android
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
@@ -521,21 +535,25 @@ jobs:
             chmod +x .circleci/announceURLs.sh
             .circleci/announceURLs.sh "pillarwallet" "staging" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/staging/android-s3-URL-qa.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
 
-  prod_ios:
-    working_directory: ~/pillarwallet
-    macos:
-      xcode: "10.2.0"
-    environment:
-      FL_OUTPUT_DIR: output
-    shell: /bin/bash --login -o pipefail
+  slack-prod-approval:
+    executor: node8-executor
+    steps:
+      - slack/approval:
+          mentions: "here"
+          color: '#f28c10'
+          message: Staging builds finished successfully, prod approval step is pending.
+          webhook: $APPROVAL_SLACK_WEBHOOK
+          url: 'https://circleci.com/workflow-run/$CIRCLE_WORKFLOW_WORKSPACE_ID'
 
+  prod_ios:
+    executor: ios-executor
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: pip3 install awscli
       - run:
           name: Append circleCI build number to version
           command: |
@@ -621,7 +639,7 @@ jobs:
           command: |
             cd ~/pillarwallet
             chmod +x .circleci/announceURLs.sh
-            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$(cat ~/pillarwallet/ios/ios-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            .circleci/announceURLs.sh "pillarwallet" "production" "ios" "$(cat ~/pillarwallet/ios/output/gym/ios-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
       - run:
           name: prepare to archive ipa file
           command: |
@@ -632,16 +650,7 @@ jobs:
           destination: app_build
 
   prod_android:
-    working_directory: ~/pillarwallet/android
-    resource_class: large
-    docker:
-      - image: circleci/android:api-26-node8-alpha
-    environment:
-      TERM: dumb
-      _JAVA_OPTIONS: "-Xmx3072m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx3072m -Dfile.encoding=UTF-8"'
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
+    executor: android-executor
     steps:
       - checkout:
           path: ~/pillarwallet
@@ -649,13 +658,13 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Install Python
-          command: sudo apt-get update && sudo apt-get install python
+          command: sudo apt-get update && sudo apt-get install python3
       - run:
           name: Install Python dependencies
-          command: sudo apt-get update && sudo apt-get install -y python-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
+          command: sudo apt-get update && sudo apt-get install -y python3-pip && sudo apt-get install -y libxml2-dev libxslt1-dev build-essential python-dev libssl-dev
       - run:
           name: Install AWS CLI
-          command: sudo pip install awscli
+          command: sudo pip3 install awscli
       - run:
           name: Get keystore file
           command: |
@@ -682,16 +691,16 @@ jobs:
           key: android-node-{{ checksum "../yarn.lock" }}
       - run:
             name: Authenticate with Artifactory
-            command: cd .. && curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
+            command: curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
       - run:
             name: set Registry to use Artifactory
-            command: cd .. && npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
+            command: npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
       - run:
             name: set Yarn to use Artifactory
-            command: cd .. && echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
+            command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
       - run:
           name: Install node dependencies
-          command: cd .. && yarn install
+          command: yarn install
       - save_cache:
           key: android-node-{{ checksum "../yarn.lock" }}
           paths:
@@ -700,7 +709,7 @@ jobs:
           key: android-gems-{{ checksum "Gemfile" }}
       - run:
           name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
+          command: cd android && bundle check || bundle install --path vendor/bundle
       - save_cache:
           key: android-gems-{{ checksum "Gemfile" }}
           paths:
@@ -709,18 +718,20 @@ jobs:
           key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
       - run:
           name: Chmod permissions
-          command: sudo chmod +x ./gradlew
+          command: cd android && sudo chmod +x ./gradlew
       - run:
           name: Accept Android SDK licenses
           command: |
+            cd android
             yes | sdkmanager --licenses || exit 0
       - run:
           name: Accept Android SDK licenses 2
           command: |
+            cd android
             yes | sdkmanager --update || exit 0
       - run:
           name: Download Dependencies
-          command: ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
+          command: cd android && ./gradlew androidDependencies --no-daemon --stacktrace --max-workers=2
       - save_cache:
           key: android-jars-{{ checksum "build.gradle" }}-{{ checksum "app/build.gradle" }}
           paths:
@@ -729,12 +740,14 @@ jobs:
       - run:
           name: Initial build
           command: |
+            cd android
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             ./gradlew clean assembleProdRelease --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
       - run:
           name: Fastlane deploy to Google Play
           command: |
+            cd android
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
@@ -769,9 +782,7 @@ jobs:
             .circleci/announceURLs.sh "pillarwallet" "production" "android" "$(cat /home/circleci/pillarwallet/android/app/build/outputs/apk/prod/release/android-s3-URL-prod.txt)" "$(cat /tmp/workspace/build-num/app_build_number.txt)"
 
   whitesource:
-    working_directory: ~/pillarwallet
-    docker:
-      - image: circleci/openjdk:8-node-browsers
+    executor: node8-executor
     steps:
       - checkout
       - attach_workspace:
@@ -786,7 +797,7 @@ jobs:
             chmod +x wss_agent.sh && ./wss_agent.sh -apiKey $WHITESOURCE_API_KEY -c ./whitesource-fs-agent.config  -project pillarwallet -f files.list
 
 workflows:
-  version: 2
+  version: 2.1
   build_and_deploy:
     jobs:
       - build-and-test
@@ -819,11 +830,15 @@ workflows:
             branches:
               only:
                   - master
+      - slack-prod-approval:
+          requires:
+            - stage_ios
+            - stage_android
       - release_to_prod:
           type: approval
           requires:
-            - stage_android
             - stage_ios
+            - stage_android
       - prod_ios:
           requires:
             - release_to_prod
