@@ -464,7 +464,9 @@ jobs:
           key: android-gems-{{ checksum "./android/Gemfile" }}
       - run:
           name: Bundle install
-          command: bundle check || bundle install --path vendor/bundle
+          command: |
+            cd android
+            bundle check || bundle install --path vendor/bundle
       - save_cache:
           key: android-gems-{{ checksum "./android/Gemfile" }}
           paths:
@@ -709,7 +711,9 @@ jobs:
           key: android-gems-{{ checksum "Gemfile" }}
       - run:
           name: Bundle install
-          command: cd android && bundle check || bundle install --path vendor/bundle
+          command: |
+            cd android
+            bundle check || bundle install --path vendor/bundle
       - save_cache:
           key: android-gems-{{ checksum "Gemfile" }}
           paths:
