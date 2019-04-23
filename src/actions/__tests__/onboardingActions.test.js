@@ -39,6 +39,7 @@ import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
+import * as connectionKeyActions from 'actions/connectionKeyPairActions';
 import { transformAssetsToObject } from 'utils/assets';
 import PillarSdk from 'services/api';
 import Storage from 'services/storage';
@@ -105,7 +106,7 @@ describe('Wallet actions', () => {
     return storage.save('user', { user: { username: 'asd' } });
   });
 
-  it(`should expect series of actions with payload to be dispatch 
+  it(`should expect series of actions with payload to be dispatched 
   on registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
       session: { data: { isSignalInitiated: false } },
@@ -132,6 +133,9 @@ describe('Wallet actions', () => {
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: SET_INITIAL_ASSETS, payload: transformAssetsToObject(mockInitialAssets) },
     ];
+
+    // $FlowFixMe
+    connectionKeyActions.updateConnectionKeyPairs = () => async () => Promise.resolve(true);
 
     return store.dispatch(registerWalletAction())
       .then(() => {

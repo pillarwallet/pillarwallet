@@ -1,7 +1,0 @@
-rootProject.name = 'lottie-react-native'
-
-include ":example"
-project(":example").projectDir = file("./example/android/app")
-
-include ":lottie-react-native"
-project(":lottie-react-native").projectDir = file("./src/android")

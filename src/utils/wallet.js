@@ -17,9 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { getRandomInt } from 'utils/common';
 import DeviceInfo from 'react-native-device-info';
 import ethers from 'ethers';
+import { getRandomInt } from 'utils/common';
+import Storage from 'services/storage';
+import { saveDbAction } from 'actions/dbActions';
+
+const storage = Storage.getInstance('db');
 
 export function generateMnemonicPhrase(mnemonicPhrase?: string) {
   return mnemonicPhrase || ethers.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
@@ -37,7 +41,11 @@ export function generateWordsToValidate(numWordsToGenerate: number, maxWords: nu
 }
 
 
-export function getSaltedPin(pin: string): string {
-  const uniqueId = DeviceInfo.getUniqueID();
-  return uniqueId + pin + uniqueId.slice(0, 5);
+export async function getSaltedPin(pin: string, dispatch: Function): Promise<string> {
+  let { deviceUniqueId = null } = await storage.get('deviceUniqueId') || {};
+  if (!deviceUniqueId) {
+    deviceUniqueId = DeviceInfo.getUniqueID();
+    await dispatch(saveDbAction('deviceUniqueId', { deviceUniqueId }, true));
+  }
+  return deviceUniqueId + pin + deviceUniqueId.slice(0, 5);
 }
