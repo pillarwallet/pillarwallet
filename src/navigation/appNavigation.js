@@ -64,6 +64,7 @@ import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
 import CollectibleScreen from 'screens/Collectible';
 import BadgeScreen from 'screens/Badge';
+import OTPScreen from 'screens/OTP/OTP';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -131,6 +132,7 @@ import {
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
   BADGE,
+  OTP,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -233,6 +235,7 @@ peopleFlow.navigationOptions = hideTabNavigatorOnChildView;
 const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [PROFILE]: ProfileScreen,
+  [OTP]: OTPScreen,
   [CONTACT]: ContactScreen,
   [CHAT]: ChatScreen,
   [COLLECTIBLE]: CollectibleScreen,

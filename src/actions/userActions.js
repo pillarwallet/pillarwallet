@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_USER, REGISTERED } from 'constants/userConstants';
+import { UPDATE_USER, REGISTERED, USER_PHONE_VERIFIED } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { saveDbAction } from './dbActions';
 
@@ -38,6 +38,56 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
       dispatch(({
         type: ADD_NOTIFICATION,
         payload: { message: 'Please try again later', title: 'Changes have not been saved', messageType: 'warning' },
+      }));
+    }
+  };
+};
+
+export const createOneTimePasswordAction = (walletId: string, field: Object, callback?: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const response = await api.createOneTimePassword({ walletId, ...field });
+    const { responseStatus } = response;
+
+    if (responseStatus === 200 && callback) {
+      callback();
+    } else {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: 'Please try again later',
+          title: 'We can\'t verify your phone at this time',
+          messageType: 'warning',
+        },
+      }));
+    }
+  };
+};
+
+export const verifyPhoneAction = ({ walletId, phone, oneTimePassword }: Object, callback?: Function) => {
+  return async (dispatch: Function, getState: Function, api: Object) => {
+    const response = await api.verifyPhone({ walletId, phone, oneTimePassword });
+    const { responseStatus } = response;
+    if (responseStatus === 200) {
+      dispatch({
+        type: USER_PHONE_VERIFIED,
+      });
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: 'Phone verification was successful',
+          title: 'Validation successful',
+          messageType: 'success',
+        },
+      }));
+      if (callback) callback();
+    } else {
+      dispatch(({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: 'Please try again later',
+          title: 'We can\'t verify your phone at this time',
+          messageType: 'warning',
+        },
       }));
     }
   };

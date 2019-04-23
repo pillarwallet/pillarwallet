@@ -20,17 +20,21 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import type { NavigationScreenProp } from 'react-navigation';
 import { Paragraph, Label } from 'components/Typography';
 import { Center, Container, Wrapper } from 'components/Layout';
-import Title from 'components/Title';
 import Button from 'components/Button';
 import { Picker } from 'native-base';
 import countries from 'utils/countries.json';
-import { confirmOTPAction } from 'actions/signupActions';
+import Header from 'components/Header';
+import { createOneTimePasswordAction, verifyPhoneAction } from 'actions/userActions';
 import SMSConfirmationInput from './SMSConfirmationInput';
 
 type Props = {
   confirmOTP: Function,
+  createOneTimePassword: Function,
+  user: Object,
+  navigation: NavigationScreenProp<*>,
 }
 
 const SMSConfirmationLabel = styled(Label)`
@@ -53,24 +57,30 @@ class OTP extends React.Component<Props> {
   }
 
   handleOTPConfirmation = (code: string) => {
-    const { confirmOTP } = this.props;
-    confirmOTP(code);
+    const { confirmOTP, user, navigation } = this.props;
+    confirmOTP({ walletId: user.walletId, phone: user.phone, oneTimePassword: code }, () => {
+      navigation.goBack();
+    });
   };
 
   handleOTPResend = () => {
+    const { createOneTimePassword, user } = this.props;
+    createOneTimePassword(user.walletId, { phone: user.phone });
   };
 
   render() {
+    const { navigation } = this.props;
+    const phone = this.props.navigation.getParam('phone');
     return (
       <Container>
+        <Header gray title="confirm" onBack={() => navigation.goBack(null)} />
         <Wrapper regularPadding>
-          <Title title="confirm" />
           <Paragraph>We sent your code to</Paragraph>
-          <Paragraph>+441234 567 890</Paragraph>
+          <Paragraph>{phone}</Paragraph>
           <Center>
             <SMSConfirmationInput onCodeFilled={this.handleOTPConfirmation} />
             <SMSConfirmationLabel>Please allow up to 10 minutes for your code to arrive.</SMSConfirmationLabel>
-            <Button secondary onPress={this.handleOTPResend} title="Re-send Code" />
+            <Button style={{ marginTop: 30 }} secondary onPress={this.handleOTPResend} title="Re-send Code" />
           </Center>
         </Wrapper>
       </Container>
@@ -79,7 +89,13 @@ class OTP extends React.Component<Props> {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  confirmOTP: (code: string) => dispatch(confirmOTPAction(code)),
+  confirmOTP: (props: Object, callback: Function) => dispatch(verifyPhoneAction(props, callback)),
+  createOneTimePassword: (walletId: string, field: Object, callback: Function) =>
+    dispatch(createOneTimePasswordAction(walletId, field, callback)),
 });
 
-export default connect(null, mapDispatchToProps)(OTP);
+const mapStateToProps = ({ user: { data: user } }) => ({
+  user,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(OTP);
