@@ -141,7 +141,7 @@
     "react-native": "0.59.4",
     "react-native-background-timer": "2.1.1",
     "react-native-cached-image": "^1.4.3",
-    "react-native-camera": "^1.1.4",
+    "react-native-camera": "^2.6.0",
     "react-native-canvas": "^0.1.20",
     "react-native-color-matrix-image-filters": "^5.1.4",
     "react-native-crypto": "^2.1.0",

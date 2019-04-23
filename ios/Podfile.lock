@@ -146,13 +146,13 @@ PODS:
     - React/Core (= 0.59.4)
   - react-native-background-timer (2.1.1):
     - React
-  - react-native-camera (1.13.1):
+  - react-native-camera (2.6.0):
     - React
-    - react-native-camera/RCT (= 1.13.1)
-    - react-native-camera/RN (= 1.13.1)
-  - react-native-camera/RCT (1.13.1):
+    - react-native-camera/RCT (= 2.6.0)
+    - react-native-camera/RN (= 2.6.0)
+  - react-native-camera/RCT (2.6.0):
     - React
-  - react-native-camera/RN (1.13.1):
+  - react-native-camera/RN (2.6.0):
     - React
   - react-native-fetch-blob (0.10.6):
     - React/Core
@@ -380,7 +380,7 @@ SPEC CHECKSUMS:
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: 1d605e098d69bdf08960787f3446f0a9dc2e2ccf
   react-native-background-timer: bb7a98c8e97fc7c290de2d423dd09ddb73dcbcbb
-  react-native-camera: a8d04ef12749def72cae86b0b8d28c2de891a392
+  react-native-camera: 9c50d7def800895e7991ccda6203929553ceec9c
   react-native-fetch-blob: 63394b1d7b0781547b3e4463b3195790177b1222
   react-native-intercom: 85ebcd1eb3887c3cab7b32fe57e7a641b801d8bb
   ReactNativePermissions: 9f2d9c45c98800795e6c2ed330e25d11a66a8169
@@ -393,6 +393,6 @@ SPEC CHECKSUMS:
   TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 
-PODFILE CHECKSUM: be1207145bff6ed26dd4d0d7db60c2360f720fe3
+PODFILE CHECKSUM: 3f8bd6b4b4ff58f019ac13d11ed8c02f30895864
 
 COCOAPODS: 1.5.3

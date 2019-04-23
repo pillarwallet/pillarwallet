@@ -46,7 +46,6 @@ target 'pillarwallet' do
   pod 'Firebase/RemoteConfig'
   pod 'Firebase/Storage'
   pod 'Firebase/Performance'
-  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
   pod 'ReactNativePermissions', :path => '../node_modules/react-native-permissions'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
@@ -65,6 +64,8 @@ target 'pillarwallet' do
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
   pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
+
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
   post_install do |installer|
     installer.pods_project.main_group.tab_width = '2';
