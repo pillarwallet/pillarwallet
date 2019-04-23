@@ -811,14 +811,14 @@ workflows:
           filters:
             branches:
               only:
-                  - feature/163525244_Deterministic-Key-Pair-Generation
+                  - master
       - stage_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                  - feature/163525244_Deterministic-Key-Pair-Generation
+                  - master
       - release_to_prod:
           type: approval
           requires:
