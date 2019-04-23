@@ -45,7 +45,6 @@ const ANDROID = 'android';
 
 export const initAppAndRedirectAction = (appState: string, platform: string) => {
   return async (dispatch: Function) => {
-
     // Appears that android back-handler on exit causes the app to mount once again.
     if (appState === BACKGROUND && platform === ANDROID) return;
     const { appSettings = {} } = await storage.get('app_settings');
