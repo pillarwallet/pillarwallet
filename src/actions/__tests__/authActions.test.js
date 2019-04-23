@@ -68,6 +68,7 @@ describe('Wallet actions', () => {
       wallet: {
         backupStatus: { isBackedUp: false, isImported: false },
       },
+      connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
     });
   });
 
