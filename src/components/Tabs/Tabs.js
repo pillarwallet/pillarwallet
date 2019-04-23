@@ -18,15 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Platform, PixelRatio } from 'react-native';
+import { Platform } from 'react-native';
 import styled from 'styled-components/native';
-import ImageCapInset from 'react-native-image-capinsets';
 import { CachedImage } from 'react-native-cached-image';
 import Title from 'components/Title';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
 import { ALL } from 'constants/activityConstants';
 import { baseColors, UIColors, spacing, fontSizes } from 'utils/variables';
+import { Shadow } from '../Shadow';
 
 type Tab = {
   id: string,
@@ -46,25 +46,26 @@ type Props = {
   wrapperStyle?: Object,
 }
 
+type TabWrapperProps = {
+  children: React.Node,
+  width?: number,
+  showSVGShadow?: boolean,
+}
+
 type State = {
   activeTab: string,
+  tabLengths: Object,
 }
-const pixelRatio = PixelRatio.get();
-const androidTabSpacing = pixelRatio > 3 ? 2 : 1;
-const androidFixHorizontalSpacing = 10 - androidTabSpacing;
 
 const TabOuterWrapper = styled.View`
   background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
   padding: 12px 16px;
 `;
 
-const TabWrapper = styled.View`
+const TabsWrapper = styled.View`
   flex-direction: row;
   background-color: ${baseColors.pattensBlue};
-  padding: ${Platform.select({
-    ios: '2px',
-    android: '2px 0',
-  })};
+  padding: 2px;
   border-radius: 18px;
   height: 36px;
 `;
@@ -72,11 +73,6 @@ const TabWrapper = styled.View`
 const TabSizer = styled.View`
   flex-grow: 1;
   position: relative;
-  ${props => props.fixSpacing
-    ? `margin-top: -4px;
-      margin-left: -${androidFixHorizontalSpacing}px;
-      margin-right: -${androidFixHorizontalSpacing}px;`
-    : ''}
 `;
 
 const TabItem = styled.TouchableOpacity`
@@ -119,15 +115,37 @@ const TextWrapper = styled.View`
   align-items: center;
   justify-content: center;
   height: 32px;
-  margin-top: ${Platform.select({
-    ios: '0',
-    android: '3px',
-  })};
   ${props => props.extraPadding
     ? `padding-left: 34px;
       padding-right: 34px;`
     : ''}
 `;
+
+const TabWrapper = (props: TabWrapperProps) => {
+  const {
+    children,
+    width,
+    showSVGShadow,
+  } = props;
+  if (showSVGShadow && width) {
+    return (
+      <Shadow
+        useSVGShadow
+        widthIOS={width}
+        heightIOS={32}
+        shadowColorOS="#d8d8d8"
+        shadowRadius={16}
+        shadowOpacity={0.3}
+        shadowOffsetY={3}
+        shadowOffsetX={0}
+        shadowBorder={8}
+      >
+        {children}
+      </Shadow>
+    );
+  }
+  return children;
+};
 
 const UnreadBadge = styled.View`
   height: 24px;
@@ -135,10 +153,7 @@ const UnreadBadge = styled.View`
   border-radius: 12px;
   background-color: ${baseColors.electricBlue};
   position: absolute;
-  top: ${Platform.select({
-    ios: '4px',
-    android: '4.5px',
-  })};
+  top 4px;
   right: 2px;
   align-items: center;
   justify-content: center;
@@ -156,11 +171,10 @@ const TabImage = styled(CachedImage)`
   margin-right: 4px;
 `;
 
-const tabBackground9Patch = require('assets/images/tab.png');
-
 export default class Tabs extends React.Component<Props, State> {
   state = {
     activeTab: this.props.initialActiveTab || ALL,
+    tabLengths: {},
   };
 
   renderIcon = (tab: Object) => {
@@ -190,7 +204,8 @@ export default class Tabs extends React.Component<Props, State> {
   };
 
   renderTabItems = (tabs: Tab[]) => {
-    const { activeTab } = this.state;
+    const { activeTab, tabLengths } = this.state;
+
     const tabItems = tabs.map(tab => {
       const isActive = activeTab === tab.id;
       const {
@@ -200,58 +215,41 @@ export default class Tabs extends React.Component<Props, State> {
         onPress,
       } = tab;
 
-      if (isActive && Platform.OS === 'android') {
-        return (
-          <TabSizer
-            key={id}
-            style={tabs.length === 2 ? { width: '50%' } : {}}
-            fixSpacing
-          >
-            <ImageCapInset
-              source={tabBackground9Patch}
-              capInsets={{
-                top: 14 / pixelRatio,
-                right: 90 / pixelRatio,
-                bottom: 35 / pixelRatio,
-                left: 90 / pixelRatio,
-              }}
-            >
-              <TabItem
-                isAndroid
-                onPress={() => this.setState({
-                  activeTab: id,
-                }, onPress)}
-              >
-                <TextWrapper extraPadding={!!unread}>
-                  {this.renderIcon(tab)}
-                  <TabItemText active={isActive}>{name}</TabItemText>
-                  {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
-                </TextWrapper>
-              </TabItem>
-            </ImageCapInset>
-          </TabSizer>
-        );
+      const tabSizerStyle = {};
+      if (Platform.OS === 'android') {
+        if (tabs.length === 2) {
+          tabSizerStyle.width = '50%';
+        } else {
+          tabSizerStyle.width = tabLengths[id];
+        }
       }
 
       return (
         <TabSizer
           key={id}
-          style={tabs.length === 2 ? { width: '50%' } : {}}
-          fixSpacing={Platform.OS === 'android'}
+          style={tabSizerStyle}
         >
-          <TabItem
-            isAndroid={Platform.OS === 'android'}
-            active={isActive && Platform.OS === 'ios'}
-            onPress={() => this.setState({
-              activeTab: id,
-            }, onPress)}
-          >
-            <TextWrapper extraPadding={!!unread}>
-              {this.renderIcon(tab)}
-              <TabItemText active={isActive}>{name}</TabItemText>
-              {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
-            </TextWrapper>
-          </TabItem>
+          <TabWrapper showSVGShadow={isActive && Platform.OS === 'android' && tabLengths[id]} width={tabLengths[id]}>
+            <TabItem
+              active={isActive}
+              onPress={() => this.setState({
+                activeTab: id,
+              }, onPress)}
+              onLayout={(e) => {
+                if (tabLengths[id]) return;
+                const thisTabLength = e.nativeEvent.layout.width;
+                const newLengths = { ...tabLengths };
+                newLengths[id] = thisTabLength;
+                this.setState({ tabLengths: newLengths });
+              }}
+            >
+              <TextWrapper extraPadding={!!unread}>
+                {this.renderIcon(tab)}
+                <TabItemText active={isActive}>{name}</TabItemText>
+                {!!unread && <UnreadBadge><UnreadText>{unread < 10 ? unread : '9+'}</UnreadText></UnreadBadge>}
+              </TextWrapper>
+            </TabItem>
+          </TabWrapper>
         </TabSizer>
       );
     });
@@ -265,6 +263,7 @@ export default class Tabs extends React.Component<Props, State> {
       bgColor,
       wrapperStyle,
     } = this.props;
+
     return (
       <TabOuterWrapper backgroundColor={bgColor} style={wrapperStyle}>
         {!!title &&
@@ -272,9 +271,9 @@ export default class Tabs extends React.Component<Props, State> {
           <Title subtitle noMargin title={title} />
         </ActivityFeedHeader>
         }
-        <TabWrapper>
+        <TabsWrapper>
           {this.renderTabItems(tabs)}
-        </TabWrapper>
+        </TabsWrapper>
       </TabOuterWrapper>
     );
   }
