@@ -85,7 +85,7 @@ platform :android do
   lane :deploy_android_hockeyapp do
     buildApp(
       flavorName: 'prod',
-      hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN"],
+      hockeyAppToken: ENV["HOCKEYAPP_UPLOAD_TOKEN_TEST_SENTRY"],
       apkName: 'app-prod-staging.apk'
     )
   end
