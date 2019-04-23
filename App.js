@@ -57,11 +57,12 @@ type Props = {
 class App extends React.Component<Props, *> {
   constructor(props: Props) {
     super(props);
+    if (!__DEV__) {
       Sentry.config(SENTRY_DSN).install();
-      Sentry.captureMessage('[IGNORE] android - This is just another test message to check updated library');
       Sentry.setTagsContext({
         environment: BUILD_TYPE,
       });
+    }
   }
 
   componentWillMount() {

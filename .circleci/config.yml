@@ -145,6 +145,59 @@ jobs:
       - *node_artifactory_set_registry
       - *node_install
       - *node_save_cache
+      - run:
+          name: Run validation
+          command: yarn validate
+
+  dev_build_ios:
+    <<: *defaults_ios
+    steps:
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
+      - *node_restore_cache
+      - *node_artifactory_authenticate
+      - *node_artifactory_set_registry
+      - *node_install
+      - *node_save_cache
+
+      - *restore_gems_cache_ios
+      - *install_gems_ios
+      - *save_gems_cache_ios
+
+      - *restore_pod_cache
+      - *install_pods
+      - *save_pod_cache
+
+      - run:
+          name: Set staging environment
+          command: |
+            cd ~/pillarwallet
+            git config user.email "devops@pillar.io"
+            git config user.name "Issabot"
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
+            export buildNumber=$(node -e "console.log(require('./package.json').version);")
+            rm .env
+            cp environments/.env.staging ./.env
+            sed -i.bak "s/_build_number_/$buildNumber/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
+            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+      - run:
+          name: Upload to Hockeyapp
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            cd ios && bundle exec fastlane deploy_ios_hockeyapp APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
+      - run:
+          name: prepare to archive ipa file
+          command: |
+            mkdir -p ./toArchive
+            cp ./ios/pillarwallet-staging.ipa ./toArchive
+      - store_artifacts:
+          path: ./toArchive
+          destination: app_build
 
   dev_build_android:
     <<: *defaults_android
@@ -751,7 +804,7 @@ workflows:
           filters:
             branches:
               only:
-                  - fix/165454813_updateRNLibsDependencies
+                  - develop
       - stage_ios:
           requires:
             - build-and-test
