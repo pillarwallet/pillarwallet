@@ -768,10 +768,10 @@
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/common-formatters/-/@pillarwallet/common-formatters-0.2.29.tgz#c0f15172f170276c3407953b8674ef110d75e687"
   integrity sha1-wPFRcvFwJ2w0B5U7hnTvEQ115oc=
 
-"@pillarwallet/pillarwallet-nodejs-sdk@1.21.1334":
-  version "1.21.1334"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.21.1334.tgz#49e204bd27811f43966ace99f83bc57e612f9291"
-  integrity sha1-SeIEvSeBH0OWas6Z+DvFfmEvkpE=
+"@pillarwallet/pillarwallet-nodejs-sdk@1.27.1514":
+  version "1.27.1514"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@pillarwallet/pillarwallet-nodejs-sdk/-/@pillarwallet/pillarwallet-nodejs-sdk-1.27.1514.tgz#9e97e5dfbb2e79b4432fad8efc3c6eb5b2a3df56"
+  integrity sha1-npfl37suebRDL62O/DxutbKj31Y=
   dependencies:
     "@pillarwallet/common-formatters" "0.2.29"
     "@pillarwallet/plr-auth-sdk" "1.1.2-84"
@@ -12002,6 +12002,11 @@ react-native-tcp@^3.2.1:
     process "^0.11.9"
     util "^0.10.3"
 
+react-native-threads@^0.0.15:
+  version "0.0.15"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-threads/-/react-native-threads-0.0.15.tgz#7dee96658065aa74ca65a27995e29d97da3aae34"
+  integrity sha1-fe6WZYBlqnTKZaJ5leKdl9o6rjQ=
+
 react-native-touch-id@^4.3.0:
   version "4.3.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-touch-id/-/react-native-touch-id-4.3.0.tgz#c25abd1d03d1ce5075f73ca87b18b47e7d60fa71"
@@ -12883,10 +12888,10 @@ rn-nodeify@^10.0.1:
     semver "^5.0.1"
     xtend "^4.0.0"
 
-rn-signal-protocol-messaging@1.0.205:
-  version "1.0.205"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.205.tgz#8a9c86d7b8ada5f28762d2af502989b2521da91f"
-  integrity sha1-ipyG17itpfKHYtKvUCmJslIdqR8=
+rn-signal-protocol-messaging@1.0.209:
+  version "1.0.209"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/rn-signal-protocol-messaging/-/rn-signal-protocol-messaging-1.0.209.tgz#8c1158091f313e0851a4a961873a59774a004016"
+  integrity sha1-jBFYCR8xPghRpKlhhzpZd0oAQBY=
 
 rst-selector-parser@^2.2.3:
   version "2.2.3"

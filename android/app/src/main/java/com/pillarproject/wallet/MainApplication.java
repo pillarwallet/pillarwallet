@@ -44,6 +44,7 @@ import nativeShadow.NativeShadowPackage;
 import iyegoroff.RNColorMatrixImageFilters.ColorMatrixImageFiltersPackage;
 
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+import com.reactlibrary.RNThreadPackage;
 
 // react-native-splash-screen >= 0.3.1
 
@@ -84,7 +85,8 @@ public class MainApplication extends Application implements ShareApplication, Re
         new RNFirebaseNotificationsPackage(),
         new RandomBytesPackage(),
         new PickerPackage(),
-        new NativeShadowPackage()
+        new NativeShadowPackage(),
+        new RNThreadPackage(mReactNativeHost)
       );
     }
 
