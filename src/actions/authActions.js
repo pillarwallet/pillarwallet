@@ -193,8 +193,7 @@ export const checkPinAction = (
     await delay(100);
     const saltedPin = await getSaltedPin(pin, dispatch);
     try {
-      // const wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin); // , options
-      const wallet = await decryptWallet(encryptedWallet, saltedPin); // , options
+      const wallet = await decryptWallet(encryptedWallet, saltedPin, options);
       dispatch({
         type: DECRYPT_WALLET,
         payload: {
