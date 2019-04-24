@@ -17,10 +17,10 @@ const Value = styled(BoldText)`
   padding: 14px
 `;
 
-const shareOnSocialMedia = (sharerUrl: string, onModalClose) => () => {
+const shareOnSocialMedia = (username: string, onModalClose) => () => {
   const options = {
     message: 'Get your 25 PLR',
-    url: sharerUrl,
+    url: `pillarwallet://referral/${username}`,
   };
   Share.open(options)
     .then(onModalClose)
