@@ -21,7 +21,7 @@
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { View as mockView } from 'react-native';
-import { utils, HDNode } from 'ethers';
+import { utils } from 'ethers';
 import StorageMock from './asyncStorageMock';
 import FirebaseMock from './firebaseMock';
 
@@ -76,6 +76,7 @@ jest.setMock('ethers', {
     bigNumberify: x => x,
     id: utils.id,
     getAddress: utils.getAddress,
+    HDNode: utils.HDNode,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -84,7 +85,6 @@ jest.setMock('ethers', {
     EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
   },
-  HDNode,
 });
 
 jest.setMock('react-native-background-timer', {
