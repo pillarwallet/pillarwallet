@@ -18,7 +18,6 @@
 */
 // $FlowIgnore
 /* eslint-disable */
-import 'ethers/dist/shims.js';
 import { YellowBox } from 'react-native';
 YellowBox.ignoreWarnings([
   'Class RCTCxxModule',
