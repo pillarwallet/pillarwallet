@@ -51,6 +51,8 @@ import { toastWalletBackup } from 'utils/toasts';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { setupSentryAction } from 'actions/appActions';
 import { signalInitAction } from 'actions/signalClientActions';
+import { updateConnectionKeyPairs } from 'actions/connectionKeyPairActions';
+import { updateConnectionsAction } from 'actions/connectionsActions';
 import { saveDbAction } from './dbActions';
 
 const Crashlytics = firebase.crashlytics();
@@ -60,9 +62,15 @@ const chat = new ChatService();
 
 export const loginAction = (pin: string, touchID?: boolean = false, onLoginSuccess?: Function) => {
   return async (dispatch: Function, getState: () => Object, api: Object) => {
+    const {
+      connectionKeyPairs: { data: connectionKeyPairs, lastConnectionKeyIndex },
+    } = getState();
     const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { oAuthTokens } = await storage.get('oAuthTokens');
+
+    const generateNewConnKeys = !(connectionKeyPairs.length > 20 && lastConnectionKeyIndex > -1);
+
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: DECRYPTING,
@@ -72,7 +80,8 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
     try {
       let wallet;
       if (!touchID) {
-        wallet = await decryptWallet(encryptedWallet, saltedPin);
+        const decryptionOptions = generateNewConnKeys ? { mnemonic: true } : {};
+        wallet = await decryptWallet(encryptedWallet, saltedPin, decryptionOptions);
       } else {
         let walletAddress = encryptedWallet.address;
         if (walletAddress.indexOf('0x') !== 0) {
@@ -106,6 +115,11 @@ export const loginAction = (pin: string, touchID?: boolean = false, onLoginSucce
         const { oAuthTokens: { data: OAuthTokensObject } } = getState();
         await dispatch(signalInitAction({ ...signalCredentials, ...OAuthTokensObject }));
         user = merge({}, user, userInfo);
+        if (generateNewConnKeys) {
+          await dispatch(updateConnectionKeyPairs(wallet.mnemonic, wallet.privateKey, user.walletId));
+        } else {
+          dispatch(updateConnectionsAction());
+        }
         dispatch(saveDbAction('user', { user }, true));
       } else {
         api.init();
