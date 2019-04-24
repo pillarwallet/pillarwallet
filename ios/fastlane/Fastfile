@@ -19,12 +19,23 @@ platform :ios do
           app_identifier: "com.pillarproject.wallet",
           team_id: "J9DEY3FGPD"
         )
-    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath ../build"
-    sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet.ipa *"
-    sigh(force: true)
-    sh "fastlane sigh resign ../pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.mobileprovision'"
-    commit = last_git_commit
+    #sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath ../build"
+    #sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet.ipa *"
 
+    gym(
+      workspace: "pillarwallet.xcworkspace",
+      configuration: "Release",
+      scheme: "pillarwallet",
+      clean: true,
+      derived_data_path: "build",
+      xcargs: "-UseModernBuildSystem=NO"
+    )
+
+    sigh(force: true)
+
+    sh "cd /Users/distiller/pillarwallet/ios/output/gym/ && fastlane sigh resign pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
+
+    commit = last_git_commit
     upload_to_testflight(changelog: commit[:message],
       skip_waiting_for_build_processing: true,
     )
@@ -56,11 +67,20 @@ platform :ios do
       team_id: "J9DEY3FGPD",
     )
 
+    gym(
+      workspace: "pillarwallet.xcworkspace",
+      configuration: "Staging.Release",
+      scheme: "Staging",
+      clean: true,
+      derived_data_path: "build",
+      xcargs: "-UseModernBuildSystem=NO"
+    )
+
     # trigger the build
-    sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
+    #sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
 
     # manually zip the results into an ipa
-    sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
+    #sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
 
     # download the signing cert
     sigh(
@@ -69,7 +89,7 @@ platform :ios do
     )
 
     # apply the signing certs to the build
-    sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
+    sh "cd /Users/distiller/pillarwallet/ios/output/gym/ && fastlane sigh resign pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
 
     # questions remaining:
     # 1. do we need to download certs, then build, then download more certs and re-sign? sounds like at least one step doesnt' need doing

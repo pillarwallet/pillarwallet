@@ -21,7 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import TouchID from 'react-native-touch-id';
-import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
+import { DECRYPTING, INVALID_PASSWORD, GENERATING_CONNECTIONS } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { Container } from 'components/Layout';
@@ -39,6 +39,7 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
+  connectionKeyPairs: Object,
 }
 
 class PinCodeUnlock extends React.Component<Props> {
@@ -54,8 +55,8 @@ class PinCodeUnlock extends React.Component<Props> {
 
   componentDidMount() {
     addAppStateChangeListener(this.handleAppStateChange);
-    const { useBiometrics } = this.props;
-    if (useBiometrics && !this.errorMessage) {
+    const { useBiometrics, connectionKeyPairs: { data, lastConnectionKeyIndex } } = this.props;
+    if (useBiometrics && !this.errorMessage && data.length > 20 && lastConnectionKeyIndex > -1) {
       this.showBiometricLogin();
     }
   }
@@ -95,7 +96,7 @@ class PinCodeUnlock extends React.Component<Props> {
     const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING) {
+    if (walletState === DECRYPTING || walletState === GENERATING_CONNECTIONS) {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>{walletState}</BaseText>
@@ -122,9 +123,11 @@ class PinCodeUnlock extends React.Component<Props> {
 const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics = false } },
+  connectionKeyPairs,
 }) => ({
   wallet,
   useBiometrics,
+  connectionKeyPairs,
 });
 
 const mapDispatchToProps = (dispatch: Function) => ({
