@@ -224,12 +224,12 @@ PODS:
     - React/Core
     - RSKImageCropper
   - RSKImageCropper (2.2.1)
-  - Sentry (4.0.1):
-    - Sentry/Core (= 4.0.1)
-  - Sentry/Core (4.0.1)
-  - SentryReactNative (0.39.1):
+  - Sentry (4.1.3):
+    - Sentry/Core (= 4.1.3)
+  - Sentry/Core (4.1.3)
+  - SentryReactNative (0.42.0):
     - React
-    - Sentry (~> 4.0.1)
+    - Sentry (~> 4.1.3)
   - TouchID (4.3.0):
     - React
   - yoga (0.59.4.React)
@@ -388,8 +388,8 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 08dd79c5adef48b6dc103bf3ddf208039aa78664
   RNImageCropPicker: 32ca4b9fef4e1b7b85ba69494242122948117e06
   RSKImageCropper: 98296ad26b41753f796b6898d015509598f13d97
-  Sentry: a38f7879924c02239e121b19d993d23bdd1684db
-  SentryReactNative: d476259b21060a59dc637a29a40d60f0aac09cf7
+  Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
+  SentryReactNative: fc630be25b30c1a494b478ba1fa38f761cc6da20
   TouchID: b0640fedb86fa2db2fe1df15b61594ad49e76288
   yoga: 128daf064cacaede0c3bb27424b6b4c71052e6cd
 

@@ -50,7 +50,6 @@ target 'pillarwallet' do
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
 
-  pod 'SentryReactNative', :path => '../node_modules/react-native-sentry'
 
 
   pod 'TouchID', :path => '../node_modules/react-native-touch-id'
