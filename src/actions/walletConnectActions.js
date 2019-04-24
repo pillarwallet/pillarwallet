@@ -202,6 +202,14 @@ export const onWalletConnectSessionRequest = (uri: string) => {
 
       const connector = new WalletConnect({ uri }, nativeOptions);
 
+      if (pending && pending.length) {
+        const matchingPending = pending.filter(c => c.peerId === connector.peerId);
+
+        if (matchingPending && matchingPending.length) {
+          return;
+        }
+      }
+
       const newPending = [...pending, connector];
 
       dispatch({ type: WALLETCONNECT_SESSION_REQUEST, payload: newPending });

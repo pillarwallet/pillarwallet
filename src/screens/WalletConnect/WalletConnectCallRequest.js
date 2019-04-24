@@ -23,15 +23,14 @@ import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
+import { CachedImage } from 'react-native-cached-image';
 import { Container, Footer, ScrollWrapper } from 'components/Layout';
 import { Label, BoldText } from 'components/Typography';
 import type { Asset } from 'models/Asset';
-import Title from 'components/Title';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import TextInput from 'components/TextInput';
-import { sanitizeHex } from 'utils/common';
-import { fontSizes } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
 import { getUserName } from 'utils/contacts';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 
@@ -62,6 +61,8 @@ const Value = styled(BoldText)`
   font-size: ${fontSizes.medium};
 `;
 
+const genericToken = require('assets/images/tokens/genericToken.png');
+
 class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   constructor(props) {
     super(props);
@@ -73,9 +74,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const request = { ...navigation.getParam('request', {}), note: this.state.note };
+    const payload = { ...navigation.getParam('payload', {}), note: this.state.note };
     navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
-      request,
+      payload,
     });
   };
 
@@ -87,33 +88,63 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const {
       contacts, session, supportedAssets, navigation,
     } = this.props;
-    const {
-      to, gasPrice, gasLimit, value, data,
-    } = navigation.getParam('request', {});
 
-    let symbol = 'ETH';
+    const payload = navigation.getParam('payload', {});
 
-    const amount = utils.formatEther(value).toString();
+    const { icon, name } = navigation.getParam('peerMeta', {});
 
-    if (sanitizeHex(data) !== '0x') {
-      if (data.toLowerCase().startsWith('0xa9059cbb')) {
-        const matchingAssets = supportedAssets.filter(asset => asset.address === to);
-        if (matchingAssets && matchingAssets.length) {
-          symbol = matchingAssets[0].symbol; // eslint-disable-line
+    let type = 'Call';
+    let body = null;
+
+    switch (payload.method) {
+      case 'eth_sendTransaction':
+      case 'eth_signTransaction':
+        const {
+          to, gasPrice, gasLimit, value, data,
+        } = payload.params[0];
+
+        type = 'Transaction';
+
+        let symbol = 'ETH';
+        let amount = utils.formatEther(value).toString();
+
+        const isEthTransfer = data.toLowerCase() === '0x';
+        const isTokenTransfer = !isEthTransfer && data.toLowerCase().startsWith('0xa9059cbb');
+
+        if (isTokenTransfer) {
+          const matchingAssets = supportedAssets.filter(asset => asset.address === to);
+          if (matchingAssets && matchingAssets.length) {
+            const asset = matchingAssets[0];
+            symbol = asset.symbol; // eslint-disable-line
+            amount = utils.bigNumberify(data.substring(73)).times(utils.bigNumberify('10').pow(asset.decimals));
+          }
         }
-      }
-    }
 
-    const txFeeInWei = utils.bigNumberify(gasLimit).mul(utils.bigNumberify(gasPrice));
+        const txFeeInWei = utils.bigNumberify(gasLimit).mul(utils.bigNumberify(gasPrice));
+        const txFee = utils.formatEther(txFeeInWei.toString());
 
-    const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
-    const recipientUsername = getUserName(contact);
-    return (
-      <React.Fragment>
-        <Container>
-          <Header onBack={() => this.props.navigation.goBack(null)} title="send" />
+        const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
+        const recipientUsername = getUserName(contact);
+
+        body = (
           <ScrollWrapper regularPadding>
-            <Title subtitle title="Review and Confirm" />
+            <LabeledRow>
+              <Label>Request From</Label>
+              <Value>{name}</Value>
+            </LabeledRow>
+            {!!icon && (
+              <CachedImage
+                key={name}
+                style={{
+                  height: 55,
+                  width: 55,
+                  marginBottom: spacing.mediumLarge,
+                }}
+                source={{ uri: icon }}
+                fallbackSource={genericToken}
+                resizeMode="contain"
+              />
+            )}
             <LabeledRow>
               <Label>Amount</Label>
               <Value>
@@ -132,8 +163,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             </LabeledRow>
             <LabeledRow>
               <Label>Est. Network Fee</Label>
-              <Value>{utils.formatEther(txFeeInWei.toString())} ETH</Value>
+              <Value>{txFee} ETH</Value>
             </LabeledRow>
+            {!isEthTransfer && (
+              <LabeledRow>
+                <Label>Data</Label>
+                <Value>{data}</Value>
+              </LabeledRow>
+            )}
             {!!recipientUsername && (
               <TextInput
                 inputProps={{
@@ -151,9 +188,39 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
               />
             )}
           </ScrollWrapper>
+        );
+        break;
+      case 'eth_sign':
+      case 'personal_sign':
+        type = 'Message';
+
+        const address = payload.params[0];
+        const message = payload.method === 'eth_sign' ? payload.params[1] : utils.toUtf8String(payload.params[1]);
+        body = (
+          <ScrollWrapper regularPadding>
+            <LabeledRow>
+              <Label>Address</Label>
+              <Value>{address}</Value>
+            </LabeledRow>
+            <LabeledRow>
+              <Label>Message</Label>
+              <Value>{message}</Value>
+            </LabeledRow>
+          </ScrollWrapper>
+        );
+        break;
+      default:
+        break;
+    }
+
+    return (
+      <React.Fragment>
+        <Container>
+          <Header onBack={() => this.props.navigation.goBack(null)} title={`${type} Request`} />
+          {body}
           <Footer keyboardVerticalOffset={40}>
             <FooterWrapper>
-              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title="Confirm Transaction" />
+              <Button disabled={!session.isOnline} onPress={this.handleFormSubmit} title={`Confirm ${type}`} />
             </FooterWrapper>
           </Footer>
         </Container>
