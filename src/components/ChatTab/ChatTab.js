@@ -450,10 +450,11 @@ class ChatTab extends React.Component<Props, State> {
     );
   };
 
-  renderComposer = () => {
+  renderComposer = (props: Props) => {
     const { isOpen } = this.props;
     return (
       <Composer
+        {...props}
         textInputStyle={{
           width: '100%',
           marginTop: Platform.select({
