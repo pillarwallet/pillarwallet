@@ -53,7 +53,9 @@ export async function getSaltedPin(pin: string, dispatch: Function): Promise<str
 
 export async function decryptWallet(encryptedWallet: Object, saltedPin: string, options?: Object) {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
-  let wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
-  wallet = wallet.connect(provider);
+  let wallet = await ethers.Wallet.RNfromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin, options);
+  if (wallet) {
+    wallet = wallet.connect(provider);
+  }
   return wallet;
 }
