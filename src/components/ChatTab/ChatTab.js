@@ -200,25 +200,6 @@ const renderBubble = (props: Props) => {
   />);
 };
 
-const renderComposer = (props: Props) => {
-  return (
-    <Composer
-      {...props}
-      textInputStyle={{
-        width: '100%',
-        marginTop: Platform.select({
-          ios: 12,
-          android: 8,
-        }),
-        marginBottom: 5,
-        fontSize: fontSizes.extraSmall,
-        lineHeight: fontSizes.small,
-      }}
-      placeholder="Type your message here"
-    />
-  );
-};
-
 const renderSend = (props: Props) => (
   <Send
     {...props}
@@ -469,6 +450,28 @@ class ChatTab extends React.Component<Props, State> {
     );
   };
 
+  renderComposer = () => {
+    const { isOpen } = this.props;
+    return (
+      <Composer
+        textInputStyle={{
+          width: '100%',
+          marginTop: Platform.select({
+            ios: 12,
+            android: 8,
+          }),
+          marginBottom: 5,
+          fontSize: fontSizes.extraSmall,
+          lineHeight: fontSizes.small,
+        }}
+        placeholder="Type your message here"
+        textInputProps={{
+          editable: isOpen,
+        }}
+      />
+    );
+  };
+
   updateChatInput = (text) => {
     const { firstChatLoaded } = this.state;
 
@@ -546,7 +549,7 @@ class ChatTab extends React.Component<Props, State> {
         }}
         renderBubble={renderBubble}
         renderAvatar={this.renderAvatar}
-        renderComposer={renderComposer}
+        renderComposer={this.renderComposer}
         renderInputToolbar={renderInputToolbar}
         renderDay={renderDay}
         loadEarlier={showLoadEarlierButton}

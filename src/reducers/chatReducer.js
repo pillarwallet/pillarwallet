@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import get from 'lodash.get';
 import {
   UPDATE_MESSAGES,
   ADD_MESSAGE,
@@ -149,12 +150,10 @@ export default function chatReducer(
             isFetching: false,
             chats: state.data.chats
               .map(_chat => {
-                let { lastMessage, unread } = _chat;
+                let { lastMessage } = _chat;
                 const { username: contactUsername } = _chat;
-                if (contactUsername === action.payload.username
-                  && Object.keys(state.data.messages).length
-                  && state.data.messages[contactUsername] !== undefined
-                  && state.data.messages[contactUsername].length) {
+                if (contactUsername === action.payload.username &&
+                  get(state, 'data.messages.contactUsername', '').length) {
                   const { text, createdAt } = state.data.messages[contactUsername][0];
                   lastMessage = {
                     content: text,
@@ -163,10 +162,9 @@ export default function chatReducer(
                     serverTimestamp: createdAt,
                     savedTimestamp: 0,
                   };
-                  unread = 0;
-                  return { ..._chat, lastMessage, unread };
+                  return { ..._chat, lastMessage, unread: 0 };
                 }
-                return _chat;
+                return { ..._chat, unread: 0 };
               }),
           },
         },

@@ -19,6 +19,7 @@
 */
 
 import debounce from 'lodash.debounce';
+import get from 'lodash.get';
 import firebase from 'react-native-firebase';
 import Intercom from 'react-native-intercom';
 import { NavigationActions } from 'react-navigation';
@@ -175,8 +176,8 @@ export const startListeningNotificationsAction = () => {
         const { params: navParams = null } = getNavigationPathAndParamsState() || {};
         if (!navParams) return;
         dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        if (!!navParams.contact && !!navParams.contact.username
-          && navParams.contact.username === notification.navigationParams.username && navParams.chatTabOpen) {
+        if (get(navParams, 'contact.username', '') === notification.navigationParams.username
+          && navParams.chatTabOpen) {
           const { contact } = navParams;
           dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
           return;

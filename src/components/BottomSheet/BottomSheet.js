@@ -49,8 +49,6 @@ type Props = {
 }
 
 type State = {
-  isTouched: boolean,
-  isMoved: boolean,
   yTranslate: Animated.Value,
   animatedHeight: Animated.Value,
 }
@@ -129,8 +127,6 @@ export default class BottomSheet extends React.Component<Props, State> {
     const initialHeight = forceOpen ? screenHeight - topOffset : initialSheetHeight;
 
     this.state = {
-      isTouched: false,
-      isMoved: false,
       animatedHeight: new Animated.Value(initialHeight),
       yTranslate: new Animated.Value(initialTopPosition),
     };
@@ -143,9 +139,7 @@ export default class BottomSheet extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const { forceOpen, screenHeight, topOffset } = this.props;
     const { animatedHeight } = this.state;
-    if (forceOpen && !prevProps.forceOpen) {
-      this.animateSheet();
-    } else if (!forceOpen && prevProps.forceOpen) {
+    if (forceOpen !== prevProps.forceOpen) {
       this.animateSheet();
     }
 
@@ -170,25 +164,13 @@ export default class BottomSheet extends React.Component<Props, State> {
       },
       onPanResponderMove: (e, gestureState) => {
         if (this.isTransitioning) return;
-        this.setState({ isTouched: false, isMoved: true });
         this.moveSheet(gestureState);
       },
-      onPanResponderRelease: (e, gestureState) => {
+      onPanResponderRelease: () => {
         if (this.isTransitioning) return;
-        const { isTouched, isMoved } = this.state;
-        if (isTouched || isMoved) {
-          this.animateSheet(gestureState);
-        }
-        this.setState({
-          isTouched: false,
-          isMoved: false,
-        });
+        this.animateSheet();
       },
       onStartShouldSetPanResponderCapture: () => !this.isSheetOpen,
-      onPanResponderGrant: () => {
-        if (this.isSheetOpen) return;
-        this.setState({ isTouched: true });
-      },
       onPanResponderTerminationRequest: () => false,
     });
   };
