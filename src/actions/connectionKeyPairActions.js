@@ -197,7 +197,7 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
 
 
     if (oldConnectionsCount > 0) {
-      await fetchOldInviteNotificationsAction();
+      await dispatch(fetchOldInviteNotificationsAction(walletId));
       await dispatch(updateOldConnections(oldConnectionsCount, walletId));
     }
     if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
