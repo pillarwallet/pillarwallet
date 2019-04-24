@@ -103,6 +103,7 @@
     "includeFailureMsg": true
   },
   "dependencies": {
+    "@archanova/wallet-sdk": "^0.0.4",
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.27.1514",
     "@tradle/react-native-http": "^2.0.0",
     "add": "^2.0.6",
@@ -172,8 +173,8 @@
     "react-native-svg": "^9.3.7",
     "react-native-swipeout": "^2.3.6",
     "react-native-tcp": "^3.2.1",
-    "react-native-touch-id": "^4.3.0",
     "react-native-threads": "^0.0.15",
+    "react-native-touch-id": "^4.3.0",
     "react-native-udp": "^2.1.0",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "2.11.2",
