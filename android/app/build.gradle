@@ -180,6 +180,7 @@ dependencies {
   implementation "com.google.firebase:firebase-messaging:17.1.0"
   implementation 'me.leolin:ShortcutBadger:1.1.21@aar'
   implementation project(':react-native-linear-gradient')
+  implementation project(':react-native-threads')
 
   compileOnly 'org.glassfish:javax.annotation:3.1.1'
 
