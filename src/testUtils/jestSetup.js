@@ -53,6 +53,7 @@ jest.setMock('react-native-permissions', {
 const mockWallet: Object = {
   address: '0x9c',
   privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
+  connect: () => mockWallet,
 };
 
 Object.defineProperty(mockWallet, 'RNencrypt', {
@@ -64,9 +65,11 @@ const mockInjectedProvider = {
 };
 
 jest.setMock('ethers', {
-  Wallet: {
-    fromMnemonic: () => mockWallet,
-    RNfromEncryptedWallet: () => mockWallet,
+  ethers: {
+    Wallet: {
+      fromMnemonic: () => mockWallet,
+      RNfromEncryptedJson: () => mockWallet,
+    },
   },
   utils: {
     parseEther: x => x,
@@ -76,6 +79,7 @@ jest.setMock('ethers', {
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
+    InfuraProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     JsonRpcProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),

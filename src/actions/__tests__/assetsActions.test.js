@@ -87,7 +87,7 @@ const initialState = {
   history: { data: [] },
 };
 
-describe('Wallet actions', () => {
+describe('Assets actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore(initialState);

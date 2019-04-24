@@ -45,7 +45,7 @@ Object.defineProperty(mockWallet, 'RNencrypt', {
   value: () => Promise.resolve({ address: 'encry_pted' }),
 });
 
-describe('Wallet actions', () => {
+describe('Auth actions', () => {
   let store;
 
   beforeAll(() => {
