@@ -23,28 +23,28 @@ import { connect } from 'react-redux';
 import { Container } from 'components/Layout';
 import CheckPin from 'components/CheckPin';
 import Header from 'components/Header';
-import type { TransactionPayload } from 'models/Transaction';
-import { sendAssetAction } from 'actions/assetsActions';
+import type { JsonRpcRequest } from 'models/JsonRpc';
+// import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  sendAsset: (transactionPayload: TransactionPayload, wallet: Object, navigate: Function) => Function,
+  // sendAsset: (payload: JsonRpcRequest, wallet: Object, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
 };
 
 type State = {
-  transactionPayload: TransactionPayload,
+  payload: JsonRpcRequest,
   isChecking: boolean,
 };
 
 class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const transactionPayload = this.props.navigation.getParam('transactionPayload', {});
+    const payload = this.props.navigation.getParam('payload', {});
     this.state = {
-      transactionPayload,
+      payload,
       isChecking: false,
     };
   }
@@ -56,20 +56,21 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   };
 
   handleTransaction = (pin: string, wallet: Object) => {
-    const { sendAsset } = this.props;
-    const { transactionPayload } = this.state;
+    // const { sendAsset } = this.props;
+    // const { payload } = this.state;
+    console.log('wallet', wallet);
     this.setState(
       {
         isChecking: true,
       },
-      () => sendAsset(transactionPayload, wallet, this.handleNavigationToTransactionState),
+      // () => sendAsset(payload, wallet, this.handleNavigationToTransactionState),
     );
   };
 
   handleNavigationToTransactionState = (params: ?Object) => {
     const { navigation } = this.props;
-    const { transactionPayload } = this.state;
-    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, transactionPayload });
+    const { payload } = this.state;
+    navigation.navigate(SEND_TOKEN_TRANSACTION, { ...params, payload });
   };
 
   handleBack = () => {
@@ -90,9 +91,9 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 }
 
 const mapDispatchToProps = dispatch => ({
-  sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
-    dispatch(sendAssetAction(transaction, wallet, navigate));
-  },
+  // sendAsset: (transaction: JsonRpcRequest, wallet: Object, navigate) => {
+  //   dispatch(() => {});
+  // },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
