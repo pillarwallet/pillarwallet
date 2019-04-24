@@ -11,7 +11,9 @@ SignalClient.prepareApiBody = () => {
     username: 'websocket1',
     message: 'hello there',
     userId: null,
-    userConnectionAccessToken: null,
+    targetUserId: null,
+    sourceIdentityKey: null,
+    targetIdentityKey: null,
   }));
 };
 
@@ -93,7 +95,9 @@ describe('chat service', () => {
     const params = {
       username: 'targetUsername',
       userId: null,
-      userConnectionAccessToken: null,
+      targetUserId: null,
+      sourceIdentityKey: null,
+      targetIdentityKey: null,
       message: 'Hello there',
     };
     await chatMock.sendMessage('chat', params, false);

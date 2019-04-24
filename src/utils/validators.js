@@ -72,3 +72,8 @@ export function isValidCityName(cityName: string) {
   const re = /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/u;
   return re.test(cityName);
 }
+
+export function isValidUKPhone(phone: string) {
+  const re = /^(\+44\d{10}\b)/;
+  return re.test(phone);
+}
