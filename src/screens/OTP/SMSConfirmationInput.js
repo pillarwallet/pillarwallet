@@ -57,7 +57,7 @@ const EMPTY_STRING = '';
 
 export default class SMSConfirmationInput extends React.Component<Props, State> {
   static defaultProps = {
-    length: 4,
+    length: 5,
     onCodeFilled: (x: string) => x,
   };
 
