@@ -55,10 +55,10 @@ export const updateConnectionIdentityKeys = (successfullConnIdentityKeys: Object
   };
 };
 
-export const mapIdentityKeysAction = (connectionPreKeyCount: number) => {
+export const mapIdentityKeysAction = (connectionPreKeyCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
+      user: { data: { walletId = theWalletId } },
       connectionKeyPairs: { data: connectionKeyPairs },
     } = getState();
 
@@ -90,10 +90,10 @@ export const mapIdentityKeysAction = (connectionPreKeyCount: number) => {
   };
 };
 
-export const updateOldConnections = (oldConnectionCount: number) => {
+export const updateOldConnections = (oldConnectionCount: number, theWalletId?: ?string = null) => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     const {
-      user: { data: { walletId } },
+      user: { data: { walletId = theWalletId } },
       contacts: { data: contacts },
       accessTokens: { data: accessTokens },
       connectionKeyPairs: { data: connectionKeyPairs },
@@ -196,14 +196,14 @@ export const updateConnectionKeyPairs = (mnemonic: string, privateKey: string, w
 
 
     if (oldConnectionsCount > 0) {
-      await dispatch(updateOldConnections(oldConnectionsCount));
+      await dispatch(updateOldConnections(oldConnectionsCount, walletId));
     }
     if (lastConnectionKeyIndex === -1 && currentConnectionsCount > 0) {
       await dispatch(restoreAccessTokensAction(walletId));
-      await dispatch(mapIdentityKeysAction(currentConnectionsCount));
+      await dispatch(mapIdentityKeysAction(currentConnectionsCount, walletId));
     }
 
-    await dispatch(updateConnectionsAction());
+    await dispatch(updateConnectionsAction(walletId));
 
     return Promise.resolve(true);
   };
