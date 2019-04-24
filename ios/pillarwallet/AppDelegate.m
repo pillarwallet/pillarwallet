@@ -10,6 +10,7 @@
 #import "RNSplashScreen.h"
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+#import "RNSentry.h"
 
 @implementation AppDelegate
 
@@ -26,10 +27,12 @@
       [Intercom setApiKey:@"ios_sdk-f210e1d785d4c0e64ab3ba0f529d64c47da59186" forAppId:@"s70dqvb2"];
       jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
     #endif
-    RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
+RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                         moduleName:@"pillarwallet"
                                                 initialProperties:nil
                                                     launchOptions:launchOptions];
+    [RNSentry installWithRootView:rootView];
+
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     UIViewController *rootViewController = [UIViewController new];
     rootViewController.view = rootView;

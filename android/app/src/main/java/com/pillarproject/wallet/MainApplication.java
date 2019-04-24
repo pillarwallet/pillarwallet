@@ -42,6 +42,10 @@ import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 import lt.imas.react_native_signal.RNSignalClientPackage;
 import nativeShadow.NativeShadowPackage;
 import iyegoroff.RNColorMatrixImageFilters.ColorMatrixImageFiltersPackage;
+import io.sentry.RNSentryPackage;
+import com.tradle.react.UdpSocketsModule;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.bitgo.randombytes.RandomBytesPackage;
 
 import com.facebook.react.modules.storage.ReactDatabaseSupplier;
 import com.reactlibrary.RNThreadPackage;
